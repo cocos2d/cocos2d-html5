@@ -485,10 +485,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * Return sourcePosition of the emitter
-     * @return {cc.Point}
+     * @return {cc.Point | Object}
      */
     getSourcePosition:function () {
-        return this._sourcePosition;
+        return {x:this._sourcePosition.x, y:this._sourcePosition.y};
     },
 
     /**
@@ -501,10 +501,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * Return Position variance of the emitter
-     * @return {cc.Point}
+     * @return {cc.Point | Object}
      */
     getPosVar:function () {
-        return this._posVar;
+        return {x: this._posVar.x, y: this._posVar.y};
     },
 
     /**
@@ -711,7 +711,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @returns {boolean}
      */
     getRotationIsDir: function(){
-        return false;
+        cc.Assert( this._emitterMode === cc.PARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
+        return this.modeA.rotationIsDir;
     },
 
     /**
@@ -719,7 +720,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {boolean} t
      */
     setRotationIsDir: function(t){
-
+        cc.Assert( this._emitterMode === cc.PARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
+        this.modeA.rotationIsDir = t;
     },
 
     // mode B
@@ -1258,7 +1260,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *      http://particledesigner.71squared.com/
      * </p>
      * @param {String} plistFile
-     * @return {cc.ParticleSystem}
+     * @return {boolean}
      */
     initWithFile:function (plistFile) {
         this._plistFile = plistFile;
@@ -1288,103 +1290,113 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var ret = false;
         var buffer = null;
         var image = null;
+        var locValueForKey = this._valueForKey;
 
-        var maxParticles = parseInt(this._valueForKey("maxParticles", dictionary));
+        var maxParticles = parseInt(locValueForKey("maxParticles", dictionary));
         // self, not super
         if (this.initWithTotalParticles(maxParticles)) {
             // angle
-            this._angle = parseFloat(this._valueForKey("angle", dictionary));
-            this._angleVar = parseFloat(this._valueForKey("angleVariance", dictionary));
+            this._angle = parseFloat(locValueForKey("angle", dictionary));
+            this._angleVar = parseFloat(locValueForKey("angleVariance", dictionary));
 
             // duration
-            this._duration = parseFloat(this._valueForKey("duration", dictionary));
+            this._duration = parseFloat(locValueForKey("duration", dictionary));
 
             // blend function
-            this._blendFunc.src = parseInt(this._valueForKey("blendFuncSource", dictionary));
-            this._blendFunc.dst = parseInt(this._valueForKey("blendFuncDestination", dictionary));
+            this._blendFunc.src = parseInt(locValueForKey("blendFuncSource", dictionary));
+            this._blendFunc.dst = parseInt(locValueForKey("blendFuncDestination", dictionary));
 
             // color
-            this._startColor.r = parseFloat(this._valueForKey("startColorRed", dictionary));
-            this._startColor.g = parseFloat(this._valueForKey("startColorGreen", dictionary));
-            this._startColor.b = parseFloat(this._valueForKey("startColorBlue", dictionary));
-            this._startColor.a = parseFloat(this._valueForKey("startColorAlpha", dictionary));
+            var locStartColor = this._startColor;
+            locStartColor.r = parseFloat(locValueForKey("startColorRed", dictionary));
+            locStartColor.g = parseFloat(locValueForKey("startColorGreen", dictionary));
+            locStartColor.b = parseFloat(locValueForKey("startColorBlue", dictionary));
+            locStartColor.a = parseFloat(locValueForKey("startColorAlpha", dictionary));
 
-            this._startColorVar.r = parseFloat(this._valueForKey("startColorVarianceRed", dictionary));
-            this._startColorVar.g = parseFloat(this._valueForKey("startColorVarianceGreen", dictionary));
-            this._startColorVar.b = parseFloat(this._valueForKey("startColorVarianceBlue", dictionary));
-            this._startColorVar.a = parseFloat(this._valueForKey("startColorVarianceAlpha", dictionary));
+            var locStartColorVar = this._startColorVar;
+            locStartColorVar.r = parseFloat(locValueForKey("startColorVarianceRed", dictionary));
+            locStartColorVar.g = parseFloat(locValueForKey("startColorVarianceGreen", dictionary));
+            locStartColorVar.b = parseFloat(locValueForKey("startColorVarianceBlue", dictionary));
+            locStartColorVar.a = parseFloat(locValueForKey("startColorVarianceAlpha", dictionary));
 
-            this._endColor.r = parseFloat(this._valueForKey("finishColorRed", dictionary));
-            this._endColor.g = parseFloat(this._valueForKey("finishColorGreen", dictionary));
-            this._endColor.b = parseFloat(this._valueForKey("finishColorBlue", dictionary));
-            this._endColor.a = parseFloat(this._valueForKey("finishColorAlpha", dictionary));
+            var locEndColor = this._endColor;
+            locEndColor.r = parseFloat(locValueForKey("finishColorRed", dictionary));
+            locEndColor.g = parseFloat(locValueForKey("finishColorGreen", dictionary));
+            locEndColor.b = parseFloat(locValueForKey("finishColorBlue", dictionary));
+            locEndColor.a = parseFloat(locValueForKey("finishColorAlpha", dictionary));
 
-            this._endColorVar.r = parseFloat(this._valueForKey("finishColorVarianceRed", dictionary));
-            this._endColorVar.g = parseFloat(this._valueForKey("finishColorVarianceGreen", dictionary));
-            this._endColorVar.b = parseFloat(this._valueForKey("finishColorVarianceBlue", dictionary));
-            this._endColorVar.a = parseFloat(this._valueForKey("finishColorVarianceAlpha", dictionary));
+            var locEndColorVar = this._endColorVar;
+            locEndColorVar.r = parseFloat(locValueForKey("finishColorVarianceRed", dictionary));
+            locEndColorVar.g = parseFloat(locValueForKey("finishColorVarianceGreen", dictionary));
+            locEndColorVar.b = parseFloat(locValueForKey("finishColorVarianceBlue", dictionary));
+            locEndColorVar.a = parseFloat(locValueForKey("finishColorVarianceAlpha", dictionary));
 
             // particle size
-            this._startSize = parseFloat(this._valueForKey("startParticleSize", dictionary));
-            this._startSizeVar = parseFloat(this._valueForKey("startParticleSizeVariance", dictionary));
-            this._endSize = parseFloat(this._valueForKey("finishParticleSize", dictionary));
-            this._endSizeVar = parseFloat(this._valueForKey("finishParticleSizeVariance", dictionary));
+            this._startSize = parseFloat(locValueForKey("startParticleSize", dictionary));
+            this._startSizeVar = parseFloat(locValueForKey("startParticleSizeVariance", dictionary));
+            this._endSize = parseFloat(locValueForKey("finishParticleSize", dictionary));
+            this._endSizeVar = parseFloat(locValueForKey("finishParticleSizeVariance", dictionary));
 
             // position
-            var x = parseFloat(this._valueForKey("sourcePositionx", dictionary));
-            var y = parseFloat(this._valueForKey("sourcePositiony", dictionary));
+            var x = parseFloat(locValueForKey("sourcePositionx", dictionary));
+            var y = parseFloat(locValueForKey("sourcePositiony", dictionary));
             this.setPosition(cc.p(x, y));
-            this._posVar.x = parseFloat(this._valueForKey("sourcePositionVariancex", dictionary));
-            this._posVar.y = parseFloat(this._valueForKey("sourcePositionVariancey", dictionary));
+            this._posVar.x = parseFloat(locValueForKey("sourcePositionVariancex", dictionary));
+            this._posVar.y = parseFloat(locValueForKey("sourcePositionVariancey", dictionary));
 
             // Spinning
-            this._startSpin = parseFloat(this._valueForKey("rotationStart", dictionary));
-            this._startSpinVar = parseFloat(this._valueForKey("rotationStartVariance", dictionary));
-            this._endSpin = parseFloat(this._valueForKey("rotationEnd", dictionary));
-            this._endSpinVar = parseFloat(this._valueForKey("rotationEndVariance", dictionary));
+            this._startSpin = parseFloat(locValueForKey("rotationStart", dictionary));
+            this._startSpinVar = parseFloat(locValueForKey("rotationStartVariance", dictionary));
+            this._endSpin = parseFloat(locValueForKey("rotationEnd", dictionary));
+            this._endSpinVar = parseFloat(locValueForKey("rotationEndVariance", dictionary));
 
-            this._emitterMode = parseInt(this._valueForKey("emitterType", dictionary));
+            this._emitterMode = parseInt(locValueForKey("emitterType", dictionary));
 
             // Mode A: Gravity + tangential accel + radial accel
             if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
+                var locModeA = this.modeA;
                 // gravity
-                this.modeA.gravity.x = parseFloat(this._valueForKey("gravityx", dictionary));
-                this.modeA.gravity.y = parseFloat(this._valueForKey("gravityy", dictionary));
+                locModeA.gravity.x = parseFloat(locValueForKey("gravityx", dictionary));
+                locModeA.gravity.y = parseFloat(locValueForKey("gravityy", dictionary));
 
                 // speed
-                this.modeA.speed = parseFloat(this._valueForKey("speed", dictionary));
-                this.modeA.speedVar = parseFloat(this._valueForKey("speedVariance", dictionary));
+                locModeA.speed = parseFloat(locValueForKey("speed", dictionary));
+                locModeA.speedVar = parseFloat(locValueForKey("speedVariance", dictionary));
 
                 // radial acceleration
-                var pszTmp = this._valueForKey("radialAcceleration", dictionary);
-                this.modeA.radialAccel = (pszTmp) ? parseFloat(pszTmp) : 0;
+                var pszTmp = locValueForKey("radialAcceleration", dictionary);
+                locModeA.radialAccel = (pszTmp) ? parseFloat(pszTmp) : 0;
 
-                pszTmp = this._valueForKey("radialAccelVariance", dictionary);
-                this.modeA.radialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
+                pszTmp = locValueForKey("radialAccelVariance", dictionary);
+                locModeA.radialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
 
                 // tangential acceleration
-                pszTmp = this._valueForKey("tangentialAcceleration", dictionary);
-                this.modeA.tangentialAccel = (pszTmp) ? parseFloat(pszTmp) : 0;
+                pszTmp = locValueForKey("tangentialAcceleration", dictionary);
+                locModeA.tangentialAccel = (pszTmp) ? parseFloat(pszTmp) : 0;
 
-                pszTmp = this._valueForKey("tangentialAccelVariance", dictionary);
-                this.modeA.tangentialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
+                pszTmp = locValueForKey("tangentialAccelVariance", dictionary);
+                locModeA.tangentialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
 
+                // rotation is dir
+                var locRotationIsDir = locValueForKey("rotationIsDir", dictionary).toLowerCase();
+                locModeA.rotationIsDir = (locRotationIsDir != null && (locRotationIsDir === "true" || locRotationIsDir === "1"));
             } else if (this._emitterMode == cc.PARTICLE_MODE_RADIUS) {
                 // or Mode B: radius movement
-                this.modeB.startRadius = parseFloat(this._valueForKey("maxRadius", dictionary));
-                this.modeB.startRadiusVar = parseFloat(this._valueForKey("maxRadiusVariance", dictionary));
-                this.modeB.endRadius = parseFloat(this._valueForKey("minRadius", dictionary));
-                this.modeB.endRadiusVar = 0;
-                this.modeB.rotatePerSecond = parseFloat(this._valueForKey("rotatePerSecond", dictionary));
-                this.modeB.rotatePerSecondVar = parseFloat(this._valueForKey("rotatePerSecondVariance", dictionary));
+                var locModeB = this.modeB;
+                locModeB.startRadius = parseFloat(locValueForKey("maxRadius", dictionary));
+                locModeB.startRadiusVar = parseFloat(locValueForKey("maxRadiusVariance", dictionary));
+                locModeB.endRadius = parseFloat(locValueForKey("minRadius", dictionary));
+                locModeB.endRadiusVar = 0;
+                locModeB.rotatePerSecond = parseFloat(locValueForKey("rotatePerSecond", dictionary));
+                locModeB.rotatePerSecondVar = parseFloat(locValueForKey("rotatePerSecondVariance", dictionary));
             } else {
                 cc.Assert(false, "Invalid emitterType in config file");
                 return false;
             }
 
             // life span
-            this._life = parseFloat(this._valueForKey("particleLifespan", dictionary));
-            this._lifeVar = parseFloat(this._valueForKey("particleLifespanVariance", dictionary));
+            this._life = parseFloat(locValueForKey("particleLifespan", dictionary));
+            this._lifeVar = parseFloat(locValueForKey("particleLifespanVariance", dictionary));
 
             // emission Rate
             this._emissionRate = this._totalParticles / this._life;
@@ -1396,7 +1408,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                 // texture
                 // Try to get the texture from the cache
-                var textureName = this._valueForKey("textureFileName", dictionary);
+                var textureName = locValueForKey("textureFileName", dictionary);
                 var fullpath = cc.FileUtils.getInstance().fullPathFromRelativeFile(textureName, this._plistFile);
 
                 var tex = cc.TextureCache.getInstance().textureForKey(fullpath);
@@ -1404,7 +1416,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 if (tex) {
                     this.setTexture(tex);
                 } else {
-                    var textureData = this._valueForKey("textureImageData", dictionary);
+                    var textureData = locValueForKey("textureImageData", dictionary);
 
                     if (textureData && textureData.length == 0) {
                         cc.Assert(textureData, "cc.ParticleSystem.initWithDictory:textureImageData is null");
@@ -1542,69 +1554,73 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Particle} particle
      */
     initParticle:function (particle) {
+        var locRandomMinus11 = cc.RANDOM_MINUS1_1;
         // timeToLive
         // no negative life. prevent division by 0
-        particle.timeToLive = this._life + this._lifeVar * cc.RANDOM_MINUS1_1();
+        particle.timeToLive = this._life + this._lifeVar * locRandomMinus11();
         particle.timeToLive = Math.max(0, particle.timeToLive);
 
         // position
-        particle.pos.x = this._sourcePosition.x + this._posVar.x * cc.RANDOM_MINUS1_1();
-        particle.pos.y = this._sourcePosition.y + this._posVar.y * cc.RANDOM_MINUS1_1();
+        particle.pos.x = this._sourcePosition.x + this._posVar.x * locRandomMinus11();
+        particle.pos.y = this._sourcePosition.y + this._posVar.y * locRandomMinus11();
 
         // Color
         var start, end;
+        var locStartColor = this._startColor, locStartColorVar = this._startColorVar;
+        var locEndColor = this._endColor, locEndColorVar = this._endColorVar;
         if (cc.renderContextType === cc.CANVAS) {
             start = new cc.Color4F(
-                cc.clampf(this._startColor.r + this._startColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-                cc.clampf(this._startColor.g + this._startColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-                cc.clampf(this._startColor.b + this._startColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-                cc.clampf(this._startColor.a + this._startColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 1),
+                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 1),
+                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 1),
+                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 1)
             );
             end = new cc.Color4F(
-                cc.clampf(this._endColor.r + this._endColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-                cc.clampf(this._endColor.g + this._endColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-                cc.clampf(this._endColor.b + this._endColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-                cc.clampf(this._endColor.a + this._endColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 1),
+                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 1),
+                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 1),
+                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 1)
             );
         } else {
             start = {
-                r: cc.clampf(this._startColor.r + this._startColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-                g: cc.clampf(this._startColor.g + this._startColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-                b: cc.clampf(this._startColor.b + this._startColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-                a: cc.clampf(this._startColor.a + this._startColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+                r: cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 1),
+                g: cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 1),
+                b: cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 1),
+                a: cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 1)
             };
             end = {
-                r: cc.clampf(this._endColor.r + this._endColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-                g: cc.clampf(this._endColor.g + this._endColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-                b: cc.clampf(this._endColor.b + this._endColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-                a: cc.clampf(this._endColor.a + this._endColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+                r: cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 1),
+                g: cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 1),
+                b: cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 1),
+                a: cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 1)
             };
         }
 
         particle.color = start;
-        particle.deltaColor.r = (end.r - start.r) / particle.timeToLive;
-        particle.deltaColor.g = (end.g - start.g) / particle.timeToLive;
-        particle.deltaColor.b = (end.b - start.b) / particle.timeToLive;
-        particle.deltaColor.a = (end.a - start.a) / particle.timeToLive;
+        var locParticleDeltaColor = particle.deltaColor, locParticleTimeToLive = particle.timeToLive;
+        locParticleDeltaColor.r = (end.r - start.r) / locParticleTimeToLive;
+        locParticleDeltaColor.g = (end.g - start.g) / locParticleTimeToLive;
+        locParticleDeltaColor.b = (end.b - start.b) / locParticleTimeToLive;
+        locParticleDeltaColor.a = (end.a - start.a) / locParticleTimeToLive;
 
         // size
-        var startS = this._startSize + this._startSizeVar * cc.RANDOM_MINUS1_1();
+        var startS = this._startSize + this._startSizeVar * locRandomMinus11();
         startS = Math.max(0, startS); // No negative value
 
         particle.size = startS;
         if (this._endSize === cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE) {
             particle.deltaSize = 0;
         } else {
-            var endS = this._endSize + this._endSizeVar * cc.RANDOM_MINUS1_1();
+            var endS = this._endSize + this._endSizeVar * locRandomMinus11();
             endS = Math.max(0, endS); // No negative values
-            particle.deltaSize = (endS - startS) / particle.timeToLive;
+            particle.deltaSize = (endS - startS) / locParticleTimeToLive;
         }
 
         // rotation
-        var startA = this._startSpin + this._startSpinVar * cc.RANDOM_MINUS1_1();
-        var endA = this._endSpin + this._endSpinVar * cc.RANDOM_MINUS1_1();
+        var startA = this._startSpin + this._startSpinVar * locRandomMinus11();
+        var endA = this._endSpin + this._endSpinVar * locRandomMinus11();
         particle.rotation = startA;
-        particle.deltaRotation = (endA - startA) / particle.timeToLive;
+        particle.deltaRotation = (endA - startA) / locParticleTimeToLive;
 
         // position
         if (this._positionType == cc.PARTICLE_TYPE_FREE)
@@ -1613,38 +1629,40 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             particle.startPos = this._position;
 
         // direction
-        var a = cc.DEGREES_TO_RADIANS(this._angle + this._angleVar * cc.RANDOM_MINUS1_1());
+        var a = cc.DEGREES_TO_RADIANS(this._angle + this._angleVar * locRandomMinus11());
 
         // Mode Gravity: A
         if (this._emitterMode === cc.PARTICLE_MODE_GRAVITY) {
-            var s = this.modeA.speed + this.modeA.speedVar * cc.RANDOM_MINUS1_1();
+            var locModeA = this.modeA, locParticleModeA = particle.modeA;
+            var s = locModeA.speed + locModeA.speedVar * locRandomMinus11();
 
             // direction
-            particle.modeA.dir.x = Math.cos(a);
-            particle.modeA.dir.y = Math.sin(a);
-            cc.pMultIn(particle.modeA.dir, s);
+            locParticleModeA.dir.x = Math.cos(a);
+            locParticleModeA.dir.y = Math.sin(a);
+            cc.pMultIn(locParticleModeA.dir, s);
 
             // radial accel
-            particle.modeA.radialAccel = this.modeA.radialAccel + this.modeA.radialAccelVar * cc.RANDOM_MINUS1_1();
+            locParticleModeA.radialAccel = locModeA.radialAccel + locModeA.radialAccelVar * locRandomMinus11();
 
             // tangential accel
-            particle.modeA.tangentialAccel = this.modeA.tangentialAccel + this.modeA.tangentialAccelVar * cc.RANDOM_MINUS1_1();
+            locParticleModeA.tangentialAccel = locModeA.tangentialAccel + locModeA.tangentialAccelVar * locRandomMinus11();
+
+            // rotation is dir
+            if(locModeA.rotationIsDir)
+                particle.rotation = -cc.RADIANS_TO_DEGREES(cc.pToAngle(locParticleModeA.dir));
         } else {
             // Mode Radius: B
+            var locModeB = this.modeB, locParitlceModeB = particle.modeB;
 
             // Set the default diameter of the particle from the source position
-            var startRadius = this.modeB.startRadius + this.modeB.startRadiusVar * cc.RANDOM_MINUS1_1();
-            var endRadius = this.modeB.endRadius + this.modeB.endRadiusVar * cc.RANDOM_MINUS1_1();
+            var startRadius = locModeB.startRadius + locModeB.startRadiusVar * locRandomMinus11();
+            var endRadius = locModeB.endRadius + locModeB.endRadiusVar * locRandomMinus11();
 
-            particle.modeB.radius = startRadius;
-            if (this.modeB.endRadius === cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS) {
-                particle.modeB.deltaRadius = 0;
-            } else {
-                particle.modeB.deltaRadius = (endRadius - startRadius) / particle.timeToLive;
-            }
+            locParitlceModeB.radius = startRadius;
+            locParitlceModeB.deltaRadius = (locModeB.endRadius === cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS) ? 0 : (endRadius - startRadius) / locParticleTimeToLive;
 
-            particle.modeB.angle = a;
-            particle.modeB.degreesPerSecond = cc.DEGREES_TO_RADIANS(this.modeB.rotatePerSecond + this.modeB.rotatePerSecondVar * cc.RANDOM_MINUS1_1());
+            locParitlceModeB.angle = a;
+            locParitlceModeB.degreesPerSecond = cc.DEGREES_TO_RADIANS(locModeB.rotatePerSecond + locModeB.rotatePerSecondVar * locRandomMinus11());
         }
     },
 

@@ -107,7 +107,7 @@ cc.PointObject.create = function (ratio, offset) {
  */
 cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
     _lastPosition:null,
-    _parallaxArray:[],
+    _parallaxArray:null,
 
     /**
      * @return {Array}
@@ -128,7 +128,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      * Constructor
      */
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._parallaxArray = [];
         this._lastPosition = cc.p(-100, -100);
     },
@@ -145,7 +145,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      * voidNode.addChild(background, -1, cc.p(0.4, 0.5), cc.PointZero());
      */
     addChild:function (child, z, ratio, offset) {
-        if (arguments.length == 3) {
+        if (arguments.length === 3) {
             cc.Assert(0, "ParallaxNode: use addChild:z:parallaxRatio:positionOffset instead");
             return;
         }
@@ -159,7 +159,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         pos.y = pos.y * ratio.y + offset.y;
         child.setPosition(pos);
 
-        this._super(child, z, child.getTag());
+        cc.Node.prototype.addChild.call(this, child, z, child.getTag());
     },
 
     /**
@@ -171,14 +171,15 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      * voidNode.removeChild(background,true);
      */
     removeChild:function (child, cleanup) {
-        for (var i = 0; i < this._parallaxArray.length; i++) {
-            var point = this._parallaxArray[i];
+        var locParallaxArray = this._parallaxArray;
+        for (var i = 0; i < locParallaxArray.length; i++) {
+            var point = locParallaxArray[i];
             if (point.getChild() == child) {
-                this._parallaxArray.splice(i, 1);
+                locParallaxArray.splice(i, 1);
                 break;
             }
         }
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -187,7 +188,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      */
     removeAllChildren:function (cleanup) {
         this._parallaxArray = [];
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
     },
 
     /**
@@ -196,15 +197,16 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
     visit:function () {
         var pos = this._absolutePosition();
         if (!cc.pointEqualToPoint(pos, this._lastPosition)) {
-            for (var i = 0; i < this._parallaxArray.length; i++) {
-                var point = this._parallaxArray[i];
+            var locParallaxArray = this._parallaxArray;
+            for (var i = 0, len = locParallaxArray.length; i < len; i++) {
+                var point = locParallaxArray[i];
                 var x = -pos.x + pos.x * point.getRatio().x + point.getOffset().x;
                 var y = -pos.y + pos.y * point.getRatio().y + point.getOffset().y;
                 point.getChild().setPosition(cc.p(x, y));
             }
             this._lastPosition = pos;
         }
-        this._super();
+        cc.Node.prototype.visit.call(this);
     },
 
     _absolutePosition:function () {

@@ -111,9 +111,13 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     _tileProperties:null,
 
     ctor:function(){
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._mapSize = cc.SizeZero();
         this._tileSize = cc.SizeZero();
+        this._properties = null;
+        this._objectGroups = null;
+        this._mapOrientation = null;
+        this._TMXLayers = null;
 
         this._tileProperties = [];
     },

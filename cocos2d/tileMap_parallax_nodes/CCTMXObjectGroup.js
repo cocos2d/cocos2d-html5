@@ -31,7 +31,7 @@
  */
 cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     //name of the group
-    _groupName:"",
+    _groupName:null,
     _positionOffset:null,
     _properties:null,
     _objects:null,
@@ -40,9 +40,10 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      *  Constructor
      */
     ctor:function () {
+        this._groupName = "";
+        this._positionOffset = cc.PointZero();
         this._properties = [];
         this._objects = [];
-        this._positionOffset = cc.PointZero();
     },
 
     /**
@@ -106,10 +107,11 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      */
     objectNamed:function (objectName) {
         if (this._objects && this._objects.length > 0) {
-            for (var i = 0, len = this._objects.length; i < len; i++) {
-                var name = this._objects[i]["name"];
+            var locObjects = this._objects;
+            for (var i = 0, len = locObjects.length; i < len; i++) {
+                var name = locObjects[i]["name"];
                 if (name && name == objectName)
-                    return this._objects[i];
+                    return locObjects[i];
             }
         }
         // object not found
