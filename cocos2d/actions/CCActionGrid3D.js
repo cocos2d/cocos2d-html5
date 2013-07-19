@@ -384,7 +384,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, position, radius) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._position = cc.p(-1, -1);
             this.setPosition(position);
             this._radius = radius;
@@ -526,7 +526,7 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, position, radius, waves, amplitude) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this.setPosition(position);
             this._radius = radius;
             this._waves = waves;
@@ -600,7 +600,7 @@ cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, range, shakeZ) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._randRange = range;
             this._shakeZ = shakeZ;
             return true;
@@ -699,7 +699,7 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, waves, amplitude) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._waves = waves;
             this._amplitude = amplitude;
             this._amplitudeRate = 1.0;
@@ -803,7 +803,7 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, waves, amplitude, horizontal, vertical) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._waves = waves;
             this._amplitude = amplitude;
             this._amplitudeRate = 1.0;
@@ -921,7 +921,7 @@ cc.Twirl = cc.Grid3DAction.extend({
 
     /** initializes the action with center position, number of twirls, amplitude, a grid size and duration */
     initWithDuration:function (duration, gridSize, position, twirls, amplitude) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this.setPosition(position);
             this._twirls = twirls;
             this._amplitude = amplitude;
