@@ -1687,7 +1687,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         // quick return if not visible
         if (!this._visible)
             return;
-
         var context = cc.renderContext, i, currentStack = cc.current_stack;
         this._stackMatrix = this._stackMatrix || new cc.kmMat4();
         //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
@@ -1724,7 +1723,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             this.draw(context);
 
         this._orderOfArrival = 0;
-        if (locGrid && locGrid.isActive())
+        if (locGrid && locGrid._active)
             locGrid.afterDraw(this);
 
         //cc.kmGLPopMatrix();

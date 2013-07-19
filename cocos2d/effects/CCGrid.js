@@ -403,7 +403,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
             gl.deleteBuffer(this._indicesBuffer);
         this._indicesBuffer = gl.createBuffer();
 
-        var x, y, i, locIndices = this._indices, locTexCoordinates = this._texCoordinates, locIsTextureFlipped = this._isTextureFlipped;
+        var x, y, i, locIndices = this._indices, locTexCoordinates = this._texCoordinates;
+        var locIsTextureFlipped = this._isTextureFlipped, locVertices = this._vertices;
         for (x = 0; x < locGridSize.width; ++x) {
             for (y = 0; y < locGridSize.height; ++y) {
                 var idx = (y * locGridSize.width) + x;
@@ -434,9 +435,9 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
                 var tex1 = [a * 2, b * 2, c * 2, d * 2];
                 var tex2 = [cc.p(x1, y1), cc.p(x2, y1), cc.p(x2, y2), cc.p(x1, y2)];
                 for (i = 0; i < 4; ++i) {
-                    locIndices[l1[i]] = l2[i].x;
-                    locIndices[l1[i] + 1] = l2[i].y;
-                    locIndices[l1[i] + 2] = l2[i].z;
+                    locVertices[l1[i]] = l2[i].x;
+                    locVertices[l1[i] + 1] = l2[i].y;
+                    locVertices[l1[i] + 2] = l2[i].z;
                     locTexCoordinates[tex1[i]] = tex2[i].x / width;
                     if (locIsTextureFlipped)
                         locTexCoordinates[tex1[i] + 1] = (imageH - tex2[i].y) / height;
@@ -662,14 +663,15 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
             }
         }
 
+        var locIndices = this._indices;
         for (x = 0; x < numQuads; x++) {
-            locVertices[x * 6 + 0] = (x * 4 + 0);
-            locVertices[x * 6 + 1] = (x * 4 + 1);
-            locVertices[x * 6 + 2] = (x * 4 + 2);
+            locIndices[x * 6 + 0] = (x * 4 + 0);
+            locIndices[x * 6 + 1] = (x * 4 + 1);
+            locIndices[x * 6 + 2] = (x * 4 + 2);
 
-            locVertices[x * 6 + 3] = (x * 4 + 1);
-            locVertices[x * 6 + 4] = (x * 4 + 2);
-            locVertices[x * 6 + 5] = (x * 4 + 3);
+            locIndices[x * 6 + 3] = (x * 4 + 1);
+            locIndices[x * 6 + 4] = (x * 4 + 2);
+            locIndices[x * 6 + 5] = (x * 4 + 3);
         }
         this._originalVertices = new Float32Array(this._vertices);
 
