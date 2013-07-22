@@ -171,7 +171,8 @@ ClassManager.getNewID=function(){
         for (var p in prototype) {
             functionBody += "this." + p + "=this." + p + ";";
         }
-        functionBody += "if(this.ctor)this.ctor.apply(this,arguments)";
+        if (prototype.ctor)
+            functionBody += "this.ctor.apply(this,arguments)";
         var Class = new Function(functionBody);
 
         Class.id = classId;
