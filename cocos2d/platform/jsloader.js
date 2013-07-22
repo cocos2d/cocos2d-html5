@@ -26,6 +26,9 @@
  ****************************************************************************/
 (function () {
     var engine = [
+        'cocoa/CCGeometry.js',
+        'platform/Sys.js',
+        'platform/CCConfig.js',
         'platform/CCClass.js',
         'platform/miniFramework.js',
         'platform/CCCommon.js',
@@ -38,9 +41,6 @@
 		'platform/CCAccelerometer.js',
         'platform/zlib.min.js',
         'platform/CCEGLView.js',
-        'cocoa/CCGeometry.js',
-        'platform/Sys.js',
-        'platform/CCConfig.js',
         'platform/CCImage.js',
         'kazmath/utility.js',
         'kazmath/vec2.js',
