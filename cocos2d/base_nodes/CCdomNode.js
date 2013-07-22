@@ -317,7 +317,7 @@ cc.DOM.parentDOM = function (x) {
         cc.DOM.parentDOM(p);
     } else {
         //parent has no more parent, if its running, then add it to the container
-        if (p.isRunning()) {
+        //if (p.isRunning()) {
             //find EGLView div
             var eglViewDiv = cc.$("#EGLViewDiv");
             if(eglViewDiv){
@@ -346,7 +346,7 @@ cc.DOM.parentDOM = function (x) {
                 p.dom.appendTo(eglViewDiv);
                 eglViewDiv.appendTo(cc.container);
             }
-        }
+        //}
     }
     return true;
 };

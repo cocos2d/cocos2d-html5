@@ -27,6 +27,9 @@
 (function () {
     var engine = [
         'platform/CCClass.js',
+        'cocoa/CCGeometry.js',
+        'platform/Sys.js',
+        'platform/CCConfig.js',
         'platform/miniFramework.js',
         'platform/CCCommon.js',
         'platform/ZipUtils.js',
@@ -38,9 +41,6 @@
 		'platform/CCAccelerometer.js',
         'platform/zlib.min.js',
         'platform/CCEGLView.js',
-        'cocoa/CCGeometry.js',
-        'platform/Sys.js',
-        'platform/CCConfig.js',
         'platform/CCImage.js',
         'kazmath/utility.js',
         'kazmath/vec2.js',
@@ -173,7 +173,29 @@
             '../extensions/CCBReader/CCBSequence.js',
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
-            '../extensions/CCEditBox.js'
+            '../extensions/CCEditBox.js',
+            '../extensions/CCArmature/utils/CCArmatureDefine.js',
+            '../extensions/CCArmature/utils/CCDataReaderHelper.js',
+            '../extensions/CCArmature/utils/CCSpriteFrameCacheHelper.js',
+            '../extensions/CCArmature/utils/CCTransformHelp.js',
+            '../extensions/CCArmature/utils/CCTweenFunction.js',
+            '../extensions/CCArmature/utils/CCUtilMath.js',
+            '../extensions/CCArmature/utils/CSArmatureDataManager.js',
+            '../extensions/CCArmature/datas/CCDatas.js',
+            '../extensions/CCArmature/display/CCBatchNode.js',
+            '../extensions/CCArmature/display/CCDecorativeDisplay.js',
+            '../extensions/CCArmature/display/CCDisplayFactory.js',
+            '../extensions/CCArmature/display/CCDisplayManager.js',
+            '../extensions/CCArmature/display/CCShaderNode.js',
+            '../extensions/CCArmature/display/CCSkin.js',
+            '../extensions/CCArmature/animation/CCProcessBase.js',
+            '../extensions/CCArmature/animation/CCArmatureAnimation.js',
+            '../extensions/CCArmature/animation/CCTween.js',
+            '../extensions/CCArmature/physics/CCColliderDetector.js',
+            '../extensions/CCArmature/physics/CCPhysicsWorld.js',
+            '../extensions/CCArmature/CCArmature.js',
+            '../extensions/CCArmature/CCBone.js'
+
         ]);
     }
 

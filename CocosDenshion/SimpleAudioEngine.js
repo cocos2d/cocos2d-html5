@@ -385,6 +385,9 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                 if (reclaim[i].ended) {
                     au = reclaim[i];
                     au.currentTime = 0;
+                    if (window.chrome){
+                        au.load();
+                    }
                     break;
                 }
             }

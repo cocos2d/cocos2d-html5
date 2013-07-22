@@ -468,7 +468,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     setScale:function (scale, scaleY) {
         this._scaleX = scale;
-        this._scaleY = scaleY || scale;
+        this._scaleY = (scaleY || scaleY === 0) ? scaleY : scale;
         this.setNodeDirty();
     },
 
@@ -1687,7 +1687,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         // quick return if not visible
         if (!this._visible)
             return;
-
         var context = cc.renderContext, i, currentStack = cc.current_stack;
         this._stackMatrix = this._stackMatrix || new cc.kmMat4();
         //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
@@ -1724,7 +1723,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             this.draw(context);
 
         this._orderOfArrival = 0;
-        if (locGrid && locGrid.isActive())
+        if (locGrid && locGrid._active)
             locGrid.afterDraw(this);
 
         //cc.kmGLPopMatrix();
@@ -3844,16 +3843,17 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     updateDisplayedColor:function(parentColor){
-        this._displayedColor.r = this._realColor.r * parentColor.r/255.0;
-        this._displayedColor.g = this._realColor.g * parentColor.g/255.0;
-        this._displayedColor.b = this._realColor.b * parentColor.b/255.0;
+        var locDispColor = this._displayedColor, locRealColor = this._realColor;
+        locDispColor.r = locRealColor.r * parentColor.r/255.0;
+        locDispColor.g = locRealColor.g * parentColor.g/255.0;
+        locDispColor.b = locRealColor.b * parentColor.b/255.0;
 
         if (this._cascadeColorEnabled){
             var selChildren = this._children;
             for(var i = 0; i< selChildren.length;i++){
                 var item = selChildren[i];
                 if(item && item.RGBAProtocol)
-                    item.updateDisplayedColor(this._displayedColor);
+                    item.updateDisplayedColor(locDispColor);
             }
         }
     },
