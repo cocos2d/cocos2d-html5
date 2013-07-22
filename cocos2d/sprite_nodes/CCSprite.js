@@ -1246,7 +1246,6 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
 
         context.globalAlpha = this._realOpacity / 255;
         var locRect = this._rect;
-        var scaledRect = cc.RECT_POINTS_TO_PIXELS(locRect);
         var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.height;
         if (this._flipX) {
             flipXOffset = -this._offsetPosition.x - locRect.width;
@@ -1257,13 +1256,14 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             context.scale(1, -1);
         }
         if (this._texture) {
+            var scaleFactor = cc.CONTENT_SCALE_FACTOR();
             if (this._colorized) {
                 context.drawImage(this._texture,
-                    0, 0, scaledRect.width, scaledRect.height,
+                    0, 0, locRect.width * scaleFactor, locRect.height * scaleFactor,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(this._texture,
-                    scaledRect.x, scaledRect.y, scaledRect.width, scaledRect.height,
+                    locRect.x * scaleFactor, locRect.y * scaleFactor, locRect.width * scaleFactor, locRect.height * scaleFactor,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (this._contentSize.width !== 0) {
