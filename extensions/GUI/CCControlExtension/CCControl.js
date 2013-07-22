@@ -26,8 +26,10 @@
  * converted to Javascript / cocos2d-x by Angus C
  */
 
+/** Number of kinds of control event. */
 cc.CONTROL_EVENT_TOTAL_NUMBER = 9;
 
+/** Kinds of possible events for the control objects. */
 cc.CONTROL_EVENT_TOUCH_DOWN = 1 << 0;    // A touch-down event in the control.
 cc.CONTROL_EVENT_TOUCH_DRAG_INSIDE = 1 << 1;    // An event where a finger is dragged inside the bounds of the control.
 cc.CONTROL_EVENT_TOUCH_DRAG_OUTSIDE = 1 << 2;    // An event where a finger is dragged just outside the bounds of the control.
@@ -38,24 +40,33 @@ cc.CONTROL_EVENT_TOUCH_UP_OUTSIDE = 1 << 6;    // A touch-up event in the contro
 cc.CONTROL_EVENT_TOUCH_CANCEL = 1 << 7;    // A system event canceling the current touches for the control.
 cc.CONTROL_EVENT_VALUECHANGED = 1 << 8;    // A touch dragging or otherwise manipulating a control; causing it to emit a series of different values.
 
+/** The possible state for a control.  */
 cc.CONTROL_STATE_NORMAL = 1 << 0; // The normal; or default state of a control梩hat is; enabled but neither selected nor highlighted.
 cc.CONTROL_STATE_HIGHLIGHTED = 1 << 1; // Highlighted state of a control. A control enters this state when a touch down; drag inside or drag enter is performed. You can retrieve and set this value through the highlighted property.
 cc.CONTROL_STATE_DISABLED = 1 << 2; // Disabled state of a control. This state indicates that the control is currently disabled. You can retrieve and set this value through the enabled property.
 cc.CONTROL_STATE_SELECTED = 1 << 3;  // Selected state of a control. This state indicates that the control is currently selected. You can retrieve and set this value through the selected property.
 cc.CONTROL_STATE_INITIAL = 1 << 3;
 
-
-cc.Control = cc.Layer.extend({
-    RGBAProtocol:true,
-    _opacity:0,
-    _color:null,
-    _opacityModifyRGB:false,
+/**
+ * CCControl is inspired by the UIControl API class from the UIKit library of
+ * CocoaTouch. It provides a base class for control CCSprites such as CCButton
+ * or CCSlider that convey user intent to the application.
+ * The goal of CCControl is to define an interface and base implementation for
+ * preparing action messages and initially dispatching them to their targets when
+ * certain events occur.
+ * To use the CCControl you have to subclass it.
+ * @class
+ * @extends cc.LayerRGBA
+ */
+cc.Control = cc.LayerRGBA.extend({
+    _isOpacityModifyRGB:false,
+    _hasVisibleParents:false,
 
     isOpacityModifyRGB:function () {
-        return this._opacityModifyRGB;
+        return this._isOpacityModifyRGB;
     },
     setOpacityModifyRGB:function (opacityModifyRGB) {
-        this._opacityModifyRGB = opacityModifyRGB;
+        this._isOpacityModifyRGB = opacityModifyRGB;
 
         var children = this.getChildren();
         for (var i = 0; i < children.length; i++) {
@@ -64,15 +75,6 @@ cc.Control = cc.Layer.extend({
                 selNode.setOpacityModifyRGB(opacityModifyRGB);
             }
         }
-    },
-
-    /** Changes the priority of the button. The lower the number, the higher the priority. */
-    _defaultTouchPriority:0,
-    getDefaultTouchPriority:function () {
-        return this._defaultTouchPriority;
-    },
-    setDefaultTouchPriority:function (defaultTouchPriority) {
-        this._defaultTouchPriority = defaultTouchPriority;
     },
 
     /** The current control state constant. */
@@ -87,58 +89,56 @@ cc.Control = cc.Layer.extend({
 
     _dispatchTable:{},
 
-    setOpacity:function (opacity) {
-        this._opacity = opacity;
-
-        var children = this.getChildren();
-        for (var i = 0; i < children.length; i++) {
-            var selNode = children[i];
-            if (selNode && selNode.RGBAProtocol) {
-                selNode.setOpacity(opacity);
-            }
-        }
-    },
-    getOpacity:function () {
-        return this._opacity;
-    },
-
-    getColor:function () {
-        return this._color;
-    },
-    setColor:function (color) {
-        this._color = color;
-
-        var children = this.getChildren();
-        for (var i = 0; i < children.length; i++) {
-            var selNode = children[i];
-            if (selNode && selNode.RGBAProtocol) {
-                selNode.setColor(color);
-            }
-        }
-    },
-
-    /** Tells whether the control is enabled. */
+    /**
+     * Tells whether the control is enabled
+     * @param {Boolean} enabled
+     */
     setEnabled:function (enabled) {
         this._enabled = enabled;
+        if (this._enabled) {
+            this._state = cc.CONTROL_STATE_NORMAL;
+        } else {
+            this._state = cc.CONTROL_STATE_DISABLED;
+        }
+
+        this.needsLayout();
     },
     isEnabled:function () {
         return this._enabled;
     },
 
-    /** A Boolean value that determines the control selected state. */
+    /**
+     * A Boolean value that determines the control selected state.
+     * @param {Boolean} selected
+     */
     setSelected:function (selected) {
         this._selected = selected;
+        this.needsLayout();
     },
     isSelected:function () {
         return this._selected;
     },
 
-    /** A Boolean value that determines whether the control is highlighted. */
+    /**
+     *  A Boolean value that determines whether the control is highlighted.
+     * @param {Boolean} highlighted
+     */
     setHighlighted:function (highlighted) {
         this._highlighted = highlighted;
+        this.needsLayout();
     },
     isHighlighted:function () {
         return this._highlighted;
+    },
+
+    hasVisibleParents:function () {
+        var parent = this.getParent();
+        for (var c = parent; c != null; c = c.getParent()) {
+            if (!c.isVisible()) {
+                return false;
+            }
+        }
+        return true;
     },
 
     ctor:function () {
@@ -159,7 +159,7 @@ cc.Control = cc.Layer.extend({
 
             // Set the touch dispatcher priority by default to 1
             this._defaultTouchPriority = 1;
-            this.setDefaultTouchPriority(this._defaultTouchPriority);
+            this.setTouchPriority(1);
             // Initialise the tables
             this._dispatchTable = {};
             //dispatchTable.autorelease();
@@ -181,9 +181,8 @@ cc.Control = cc.Layer.extend({
 
     /**
      * Sends action messages for the given control events.
-     *
-     * @param controlEvents A bitmask whose set flags specify the control events for
      * which action messages are sent. See "CCControlEvent" for bitmask constants.
+     * @param controlEvents A bitmask whose set flags specify the control events for
      */
     sendActionsForControlEvents:function (controlEvents) {
         // For each control events
@@ -252,7 +251,7 @@ cc.Control = cc.Layer.extend({
      */
     getTouchLocation:function (touch) {
         var touchLocation = touch.getLocation();                      // Get the touch position
-        touchLocation = this.getParent().convertToNodeSpace(touchLocation);  // Convert to the node space of this class
+        touchLocation = this.convertToNodeSpace(touchLocation);  // Convert to the node space of this class
 
         return touchLocation;
     },
@@ -266,7 +265,9 @@ cc.Control = cc.Layer.extend({
      * @return YES whether a touch is inside the receiver抯 rect.
      */
     isTouchInside:function (touch) {
-        return cc.rectContainsPoint(this.getBoundingBox(), this.getTouchLocation(touch));
+        var touchLocation = touch.getLocation(); // Get the touch position
+        touchLocation = this.getParent().convertToNodeSpace(touchLocation);
+        return cc.rectContainsPoint(this.getBoundingBox(), touchLocation);
     },
 
     /**
@@ -366,6 +367,13 @@ cc.Control = cc.Layer.extend({
                     cc.ArrayRemoveObject(eventInvocationList, invocation);
             }
         }
+    },
+
+    /**
+     * Updates the control layout using its current internal state.
+     */
+    needsLayout:function () {
+
     }
 });
 

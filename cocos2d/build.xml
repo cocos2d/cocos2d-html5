@@ -152,6 +152,8 @@
                 <file name="GUI/CCControlExtension/CCControlColourPicker.js"/>
                 <file name="GUI/CCControlExtension/CCControlHuePicker.js"/>
                 <file name="GUI/CCControlExtension/CCControlSaturationBrightnessPicker.js"/>
+                <file name="GUI/CCControlExtension/CCControlStepper.js"/>
+                <file name="GUI/CCControlExtension/CCControlPotentiometer.js"/>
                 <file name="GUI/CCControlExtension/CCMenuPassive.js"/>
                 <file name="GUI/CCScrollView/CCSorting.js"/>
                 <file name="GUI/CCScrollView/CCScrollView.js"/>
