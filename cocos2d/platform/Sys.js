@@ -42,7 +42,7 @@ try{
 */
 Object.defineProperties(sys,
 {
-	"capabilities" : {
+	capabilities : {
 		get : function(){
 			var capabilities = {"canvas":true};
 
@@ -68,7 +68,7 @@ Object.defineProperties(sys,
 		enumerable : true,
 		configurable : true
 	},
-	"os" : {
+	os : {
 		get : function() {
 			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false );
 			var isAndroid = navigator.userAgent.match(/android/i) || navigator.platform.match(/android/i) ? true : false;
@@ -90,14 +90,14 @@ Object.defineProperties(sys,
 		enumerable : true,
 		configurable : true
 	},
-	"platform" : {
+	platform : {
 		get : function(){
 			return "browser";
 		},
 		enumerable : true,
 		configurable : true
 	},
-	"version" : {
+	version : {
 		get : function(){
 			return cc.ENGINE_VERSION;
 		},

@@ -878,7 +878,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
             this.setString(strInfo);
             this._updateTexture();
-
+            this._needUpdateTexture = false;
             return true;
         }
         return false;
@@ -1402,6 +1402,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
+
+        window._drawTTF++;
+        if(window._drawTTF == 1)
+            console.log("Draw LabelTTF :" + this._string);
+
         this._texture.handleLoadedTexture();
 
         this.setTextureRect(cc.rect(0, 0, width, height));
@@ -1419,7 +1424,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
     /**
      * draw sprite to canvas
-     * @param {WebGLRenderContext} ctx 3d context of canvas
+     * @param {WebGLRenderingContext} ctx 3d context of canvas
      */
     draw:function (ctx) {
         var gl = ctx || cc.renderContext, locTexture = this._texture;

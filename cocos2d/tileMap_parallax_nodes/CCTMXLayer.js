@@ -47,33 +47,33 @@
  */
 cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //size of the layer in tiles
-    _layerSize:null,
-    _mapTileSize:null,
-    _tiles:null,
-    _tileSet:null,
-    _layerOrientation:null,
-    _properties:null,
+    _layerSize: null,
+    _mapTileSize: null,
+    _tiles: null,
+    _tileSet: null,
+    _layerOrientation: null,
+    _properties: null,
     //name of the layer
-    _layerName:"",
+    _layerName: "",
     //TMX Layer supports opacity
-    _opacity:255,
-    _minGID:null,
-    _maxGID:null,
+    _opacity: 255,
+    _minGID: null,
+    _maxGID: null,
     //Only used when vertexZ is used
-    _vertexZvalue:null,
-    _useAutomaticVertexZ:null,
-    _alphaFuncValue:null,
+    _vertexZvalue: null,
+    _useAutomaticVertexZ: null,
+    _alphaFuncValue: null,
     //used for optimization
-    _reusedTile:null,
-    _atlasIndexArray:null,
+    _reusedTile: null,
+    _atlasIndexArray: null,
     //used for retina display
-    _contentScaleFactor:null,
+    _contentScaleFactor: null,
 
     /**
      *  Constructor
      */
     ctor:function () {
-        this._super();
+        cc.SpriteBatchNode.prototype.ctor.call(this);
         this._children = [];
         this._descendants = [];
         this._useCache = true;
@@ -386,8 +386,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
                 // update possible children
                 if (this._children) {
-                    for (var i = 0; i < this._children.length; i++) {
-                        var child = this._children[i];
+                    var locChildren = this._children;
+                    for (var i = 0, len = locChildren.length; i < len; i++) {
+                        var child = locChildren[i];
                         if (child) {
                             var ai = child.getAtlasIndex();
                             if (ai >= atlasIndex)
@@ -455,9 +456,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (cc.renderContextType === cc.CANVAS)
             this._setNodeDirtyForCache();
 
-        for (var y = 0; y < this._layerSize.height; y++) {
-            for (var x = 0; x < this._layerSize.width; x++) {
-                var pos = x + this._layerSize.width * y;
+        var locLayerHeight = this._layerSize.height, locLayerWidth = this._layerSize.width;
+        for (var y = 0; y < locLayerHeight; y++) {
+            for (var x = 0; x < locLayerWidth; x++) {
+                var pos = x + locLayerWidth * y;
                 var gid = this._tiles[pos];
 
                 // XXX: gid == 0 -. empty tile
@@ -479,6 +481,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * cc.TMXLayer doesn't support adding a cc.Sprite manually.
      * @warning addChild(child); is not supported on cc.TMXLayer. Instead of setTileGID.
      * @param {cc.Node} child
+     * @param {number} zOrder
+     * @param {number} tag
      */
     addChild:function (child, zOrder, tag) {
         cc.Assert(0, "addChild: is not supported on cc.TMXLayer. Instead use setTileGID:at:/tileAt:");
@@ -591,8 +595,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._atlasIndexArray = cc.ArrayAppendObjectToIndex(this._atlasIndexArray, z, indexForZ);
         // update possible children
         if (this._children) {
-            for (var i = 0; i < this._children.length; i++) {
-                var child = this._children[i];
+            var locChildren = this._children;
+            for (var i = 0, len = locChildren.length; i < len; i++) {
+                var child = locChildren[i];
                 if (child) {
                     var ai = child.getAtlasIndex();
                     if (ai >= indexForZ)
@@ -606,8 +611,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _updateTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
-        rect = cc.rect(rect.x / this._contentScaleFactor, rect.y / this._contentScaleFactor,
-            rect.width / this._contentScaleFactor, rect.height / this._contentScaleFactor);
+        var locScaleFactor = this._contentScaleFactor;
+        rect = cc.rect(rect.x / locScaleFactor, rect.y / locScaleFactor,
+            rect.width / locScaleFactor, rect.height / locScaleFactor);
         var z = pos.x + pos.y * this._layerSize.width;
 
         var tile = this._reusedTileWithRect(rect);
@@ -748,8 +754,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _atlasIndexForExistantZ:function (z) {
         var item;
         if (this._atlasIndexArray) {
-            for (var i = 0; i < this._atlasIndexArray.length; i++) {
-                item = this._atlasIndexArray[i];
+            var locAtlasIndexArray = this._atlasIndexArray;
+            for (var i = 0, len = locAtlasIndexArray.length; i < len; i++) {
+                item = locAtlasIndexArray[i];
                 if (item == z)
                     break;
             }
@@ -759,8 +766,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _atlasIndexForNewZ:function (z) {
-        for (var i = 0; i < this._atlasIndexArray.length; i++) {
-            var val = this._atlasIndexArray[i];
+        var locAtlasIndexArray = this._atlasIndexArray;
+        for (var i = 0, len = locAtlasIndexArray.length; i < len; i++) {
+            var val = locAtlasIndexArray[i];
             if (z < val)
                 break;
         }
