@@ -32,89 +32,86 @@
 
 
 cc.ControlColourPicker = cc.Control.extend({
-    _colorValue:null,
     _hsv:null,
     _colourPicker:null,
     _huePicker:null,
 
     _background:null,
 
-    hueSliderValueChanged:function(sender, controlEvent){
-        this._hsv.h      = sender.getHue();
+    hueSliderValueChanged:function (sender, controlEvent) {
+        this._hsv.h = sender.getHue();
 
         // Update the value
-        var rgb    = cc.ControlUtils.RGBfromHSV(this._hsv);
-        this._colorValue= cc.c3( 0|(rgb.r * 255), 0|(rgb.g * 255), 0|(rgb.b * 255));
+        var rgb = cc.ControlUtils.RGBfromHSV(this._hsv);
+        cc.Control.prototype.setColor.call(this,cc.c3(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
 
         // Send CCControl callback
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
         this._updateControlPicker();
     },
 
-    colourSliderValueChanged:function(sender,controlEvent){
-        this._hsv.s= sender.getSaturation();
-        this._hsv.v= sender.getBrightness();
+    colourSliderValueChanged:function (sender, controlEvent) {
+        this._hsv.s = sender.getSaturation();
+        this._hsv.v = sender.getBrightness();
 
 
         // Update the value
-        var rgb    = cc.ControlUtils.RGBfromHSV(this._hsv);
-        this._colorValue=cc.c3(0|(rgb.r * 255), 0|(rgb.g * 255), 0|(rgb.b * 255));
+        var rgb = cc.ControlUtils.RGBfromHSV(this._hsv);
+        cc.Control.prototype.setColor.call(this,cc.c3(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
 
         // Send CCControl callback
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
     },
 
-    getColorValue:function(){return this._colorValue;},
-
-    setColorValue:function(colorValue){
-        this._colorValue      = colorValue;
-
+    setColor:function (color) {
+        cc.Control.prototype.setColor.call(this,color);
+        //this._colorValue = color;
         var rgba = new cc.RGBA();
-        rgba.r      = colorValue.r / 255.0;
-        rgba.g      = colorValue.g / 255.0;
-        rgba.b      = colorValue.b / 255.0;
-        rgba.a      = 1.0;
+        rgba.r = color.r / 255.0;
+        rgba.g = color.g / 255.0;
+        rgba.b = color.b / 255.0;
+        rgba.a = 1.0;
 
-        this._hsv=cc.ControlUtils.HSVfromRGB(rgba);
+        this._hsv = cc.ControlUtils.HSVfromRGB(rgba);
         this._updateHueAndControlPicker();
     },
 
-    getBackground:function(){return this._background;},
+    getBackground:function () {
+        return this._background;
+    },
 
-    init:function(){
-        if (this._super()) {
+    init:function () {
+        if (cc.Control.prototype.init.call(this)) {
             this.setTouchEnabled(true);
             // Cache the sprites
-            cc.SpriteFrameCache.getInstance().addSpriteFrames("extensions/CCControlColourPickerSpriteSheet.plist");
+            cc.SpriteFrameCache.getInstance().addSpriteFrames("res/extensions/CCControlColourPickerSpriteSheet.plist");
 
             // Create the sprite batch node
-            var spriteSheet  = cc.SpriteBatchNode.create("extensions/CCControlColourPickerSpriteSheet.png");
+            var spriteSheet = cc.SpriteBatchNode.create("res/extensions/CCControlColourPickerSpriteSheet.png");
             this.addChild(spriteSheet);
 
-            // MIPMAP
+          /*// MIPMAP
             //TODO WebGL code
-            var params  = [GL_LINEAR_MIPMAP_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT];
+            var params = [gl.LINEAR_MIPMAP_NEAREST, gl.LINEAR, gl.REPEAT, gl.CLAMP_TO_EDGE];
             spriteSheet.getTexture().setAliasTexParameters();
             spriteSheet.getTexture().setTexParameters(params);
-            spriteSheet.getTexture().generateMipmap();
+            spriteSheet.getTexture().generateMipmap();*/
 
             // Init default color
-            this._hsv.h = 0;
-            this._hsv.s = 0;
-            this._hsv.v = 0;
+            this._hsv = new cc.HSV(0, 0, 0);
 
             // Add image
-            this._background=cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("menuColourPanelBackground.png", spriteSheet, cc.PointZero, cc.p(0.5, 0.5));
+            this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("menuColourPanelBackground.png", spriteSheet, cc.PointZero, cc.p(0.5, 0.5));
 
             var backgroundPointZero = cc.pSub(this._background.getPosition(),
                 cc.p(this._background.getContentSize().width / 2, this._background.getContentSize().height / 2));
 
             // Setup panels . currently hard-coded...
-            var hueShift                = 8;
-            var colourShift             = 28;
+            var hueShift = 8;
+            var colourShift = 28;
 
-            this._huePicker=cc.ControlHuePicker.create(spriteSheet, cc.p(backgroundPointZero.x + hueShift, backgroundPointZero.y + hueShift));
-            this._colourPicker=cc.ControlSaturationBrightnessPicker.create(spriteSheet, cc.p(backgroundPointZero.x + colourShift, backgroundPointZero.y + colourShift));
+            this._huePicker = cc.ControlHuePicker.create(spriteSheet, cc.p(backgroundPointZero.x + hueShift, backgroundPointZero.y + hueShift));
+            this._colourPicker = cc.ControlSaturationBrightnessPicker.create(spriteSheet, cc.p(backgroundPointZero.x + colourShift, backgroundPointZero.y + colourShift));
 
             // Setup events
             this._huePicker.addTargetWithActionForControlEvents(this, this.hueSliderValueChanged, cc.CONTROL_EVENT_VALUECHANGED);
@@ -133,24 +130,32 @@ cc.ControlColourPicker = cc.Control.extend({
             return false;
     },
 
-    _updateControlPicker:function(){
+    _updateControlPicker:function () {
         this._huePicker.setHue(this._hsv.h);
         this._colourPicker.updateWithHSV(this._hsv);
     },
 
-    _updateHueAndControlPicker:function(){
+    _updateHueAndControlPicker:function () {
         this._huePicker.setHue(this._hsv.h);
         this._colourPicker.updateWithHSV(this._hsv);
         this._colourPicker.updateDraggerWithHSV(this._hsv);
     },
-
-    onTouchBegan:function(){
+    setEnabled:function (enabled) {
+        cc.Control.prototype.setEnabled.call(this, enabled);
+        if (this._huePicker != null) {
+            this._huePicker.setEnabled(enabled);
+        }
+        if (this._colourPicker) {
+            this._colourPicker.setEnabled(enabled);
+        }
+    },
+    onTouchBegan:function () {
         //ignore all touches, handled by children
         return false;
     }
 });
 
-cc.ControlColourPicker.create = function(){
+cc.ControlColourPicker.create = function () {
     var pRet = new cc.ControlColourPicker();
     pRet.init();
     return pRet;

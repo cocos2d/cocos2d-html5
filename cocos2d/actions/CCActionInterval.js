@@ -2310,7 +2310,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      */
     clone: function(){
         var action = new cc.Animate();
-        action.initWithDuration(this._animation.clone());
+        action.initWithAnimation(this._animation.clone());
         return action;
     },
 

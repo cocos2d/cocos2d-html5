@@ -317,36 +317,47 @@ cc.DOM.parentDOM = function (x) {
         cc.DOM.parentDOM(p);
     } else {
         //parent has no more parent, if its running, then add it to the container
-        if (p.isRunning()) {
-            //find EGLView div
-            var eglViewDiv = cc.$("#EGLViewDiv");
-            if(eglViewDiv){
-                p.dom.appendTo(eglViewDiv);
-            } else {
-                eglViewDiv = cc.$new("div");
-                eglViewDiv.id = "EGLViewDiv";
+        //if (p.isRunning()) {
+        //find EGLView div
+        var eglViewDiv = cc.$("#EGLViewDiv");
+        if(eglViewDiv){
+            p.dom.appendTo(eglViewDiv);
+        } else {
+            eglViewDiv = cc.$new("div");
+            eglViewDiv.id = "EGLViewDiv";
 
-                var eglViewer = cc.EGLView.getInstance();
-                var designSize = eglViewer.getDesignResolutionSize();
-                var viewPortRect = eglViewer.getViewPortRect();
-                var screenSize = eglViewer.getFrameSize();
-
-                eglViewDiv.style.position = 'absolute';
-                eglViewDiv.style.bottom = 0;
-                //x.dom.style.display='block';
-                eglViewDiv.style.width = designSize.width + "px";
-                eglViewDiv.style.maxHeight = designSize.height + "px";
-                eglViewDiv.style.margin = 0;
-
-                eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleX());
-                eglViewDiv.style.left = ((viewPortRect.size.width - designSize.width) /2
-                    + (screenSize.width -viewPortRect.size.width )/2) + "px";
-                eglViewDiv.style.bottom =  ((screenSize.height -viewPortRect.size.height )/2) + "px";
-
-                p.dom.appendTo(eglViewDiv);
-                eglViewDiv.appendTo(cc.container);
+            var eglViewer = cc.EGLView.getInstance();
+            var designSize = eglViewer.getDesignResolutionSize();
+            var viewPortRect = eglViewer.getViewPortRect();
+            var screenSize = eglViewer.getFrameSize();
+            var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
+            if((designSize.width === 0) && (designSize.height === 0)){
+                designSizeWidth = screenSize.width;
+                designSizeHeight = screenSize.height;
             }
+
+            var viewPortWidth = viewPortRect.size.width, viewPortHeight = viewPortRect.size.height;
+            if((viewPortRect.size.width === 0) && (viewPortRect.size.height === 0)){
+                viewPortWidth = screenSize.width;
+                viewPortHeight = screenSize.height;
+            }
+
+            eglViewDiv.style.position = 'absolute';
+            eglViewDiv.style.bottom = 0;
+            //x.dom.style.display='block';
+            eglViewDiv.style.width = designSizeWidth + "px";
+            eglViewDiv.style.maxHeight = designSizeHeight + "px";
+            eglViewDiv.style.margin = 0;
+
+            eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleX());
+            eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
+                + (screenSize.width - viewPortWidth ) / 2) + "px";
+            eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+
+            p.dom.appendTo(eglViewDiv);
+            eglViewDiv.appendTo(cc.container);
         }
+        //}
     }
     return true;
 };

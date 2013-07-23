@@ -106,26 +106,24 @@ ClassManager.getNewID=function(){
 
         // Instantiate a base Class (but only create the instance,
         // don't run the init constructor)
-        initializing = true;
-        var prototype = new this();
-        initializing = false;
+        var prototype = Object.create(_super);
 
-        // The dummy Class constructor
-        function Class() {
-            // All construction is actually done in the init method
-            if (!initializing && this.ctor)
-                this.ctor.apply(this, arguments);
-        }
-        Class.id = ClassManager.getNewID();
-        ClassManager[Class.id] = _super;
-        // Copy the properties over onto the new prototype
+        var classId = ClassManager.getNewID();
+        ClassManager[classId] = _super;
+        // Copy the properties over onto the new prototype. We make function
+        // properties non-eumerable as this makes typeof === 'function' check
+        // unneccessary in the for...in loop used 1) for generating Class()
+        // 2) for cc.clone and perhaps more. It is also required to make
+        // these function properties cacheable in Carakan.
+        var desc = { writable: true, enumerable: false, configurable: true };
         for (var name in prop) {
             if(releaseMode && typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name]))
             {
-                prototype[name] = ClassManager.compileSuper(prop[name], name, Class.id);
+                desc.value = ClassManager.compileSuper(prop[name], name, classId);
+                Object.defineProperty(prototype, name, desc);
             }
             else if(typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name])){
-                prototype[name] = (function (name, fn) {
+                desc.value = (function (name, fn) {
                     return function () {
                         var tmp = this._super;
 
@@ -141,18 +139,54 @@ ClassManager.getNewID=function(){
                         return ret;
                     };
                 })(name, prop[name]);
+                Object.defineProperty(prototype, name, desc);
+            }
+            else if(typeof prop[name] == "function") {
+                desc.value = prop[name];
+                Object.defineProperty(prototype, name, desc);
             }
             else{
                 prototype[name] = prop[name];
             }
         }
-        prototype.__pid = Class.id;
+
+        // The dummy Class constructor. The properties are initialized in
+        // the constructor in advance so that the hidden class an instance
+        // of this belongs is stable. We need to create this constructor on
+        // the fly with "new Function" intead of doing
+        //
+        //     function Class () {
+        //       for (var p in this)
+        //         this[p] = this[p];
+        //     }
+        //
+        // because using keyed assignment (this[x] = y instead of this.x = y)
+        // to append new proeprties is almost certainly going to make an object
+        // turn into dictionary mode in V8.
+        //
+        // See https://github.com/oupengsoftware/v8/wiki/Dictionary-mode-%28English%29#wiki-append-property
+        //
+        // for principles under the hood.
+        var functionBody = releaseMode? "": "this._super=null;";
+        for (var p in prototype) {
+            functionBody += "this." + p + "=this." + p + ";";
+        }
+        if (prototype.ctor)
+            functionBody += "this.ctor.apply(this,arguments)";
+        var Class = new Function(functionBody);
+
+        Class.id = classId;
+        // desc = { writable: true, enumerable: false, configurable: true,
+        //          value: XXX }; Again, we make this non-enumerable.
+        desc.value = classId;
+        Object.defineProperty(prototype, '__pid', desc);
 
         // Populate our constructed prototype object
         Class.prototype = prototype;
 
         // Enforce the constructor to be what we expect
-        Class.prototype.constructor = Class;
+        desc.value = Class;
+        Object.defineProperty(Class.prototype, 'constructor', desc);
 
         // And make this Class extendable
         Class.extend = arguments.callee;
