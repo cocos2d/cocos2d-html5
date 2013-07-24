@@ -424,7 +424,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @param {String} text text for the label
      */
     setString:function (text) {
-        cc.Assert(text != null, "Invalid string");
+        text = String(text);
         if (this._string != text) {
             this._string = text + "";
 
@@ -1104,7 +1104,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {String} text text for the label
      */
     setString:function (text) {
-        cc.Assert(text != null, "Invalid string");
+        text = String(text);
         if (this._string != text) {
             this._string = text + "";
 
