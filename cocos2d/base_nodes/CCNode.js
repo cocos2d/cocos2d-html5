@@ -3546,23 +3546,40 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         var children = this._children,child;
         context.save();
         this.transform(context);
-        if (children && children.length > 0) {
-            var len = children.length;
+        var len = children.length;
+        if (len > 0) {
             this.sortAllChildren();
             // draw children zOrder < 0
+            /*var tag = children[0]._zOrder,tmpTag;
+            if(tag >= 0){
+                this.draw();
+            }
+            for(i = 0; i < len;i++){
+                child = children[i];
+                tmpTag = child._zOrder;
+                if(tmpTag>=0 && tag < 0){
+                    this.draw();
+                }
+                child.visit(context);
+                tag = tmpTag;
+            }
+            if(tag<0){
+                this.draw();
+            }*/
+
             for (i = 0; i < len; i++) {
-                child = children[i];
-                if (child && child._zOrder < 0)
-                    child.visit(context);
-                else
-                    break;
-            }
-            this.draw(context);
-            for (; i < len; i++) {
-                child = children[i];
-                if (child && child._zOrder >= 0)
-                    child.visit(context);
-            }
+             child = children[i];
+             if (child._zOrder < 0)
+             child.visit(context);
+             else
+             break;
+             }
+             this.draw(context);
+             for (; i < len; i++) {
+             child = children[i];
+             if (child._zOrder >= 0)
+             child.visit(context);
+             }
 
         } else
             this.draw(context);
