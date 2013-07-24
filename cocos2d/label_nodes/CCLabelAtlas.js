@@ -157,6 +157,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      * @param {String} label
      */
     setString:function (label) {
+        label = String(label);
         var len = label.length;
         this._string = label;
         this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
@@ -370,6 +371,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      * @param {String} label
      */
     setString:function (label) {
+        label = String(label);
         var len = label.length;
         if (len > this._textureAtlas.getTotalQuads())
             this._textureAtlas.resizeCapacity(len);
