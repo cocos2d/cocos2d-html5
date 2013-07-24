@@ -569,13 +569,23 @@ cc.FileUtils = cc.Class.extend({
 
     /**
      * Generate an Dictionary of object by file
-     * @function
+     * @deprecated
      * @param fileName The file name of *.plist file
      * @return {object} The Dictionary of object generated from the file
      */
     dictionaryWithContentsOfFile:function (fileName) {
+        cc.log("dictionaryWithContentsOfFile is deprecated. Use createDictionaryWithContentsOfFile instead");
+        return this.createDictionaryWithContentsOfFile(fileName);
+    },
+
+    /**
+     * Generate an Dictionary of object by file
+     * @param filename The file name of *.plist file
+     * @return {object} The Dictionary of object generated from the file
+     */
+    createDictionaryWithContentsOfFile: function(filename){
         var parser = cc.SAXParser.getInstance();
-        this.rootDict = parser.parse(fileName);
+        this.rootDict = parser.parse(filename);
         return this.rootDict;
     },
 

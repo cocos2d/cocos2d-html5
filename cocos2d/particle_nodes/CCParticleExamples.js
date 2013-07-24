@@ -47,7 +47,7 @@ cc.ParticleFire = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFire# */{
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -151,7 +151,7 @@ cc.ParticleFireworks = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFirewo
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -253,7 +253,7 @@ cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // additive
             this.setBlendAdditive(true);
 
@@ -261,19 +261,18 @@ cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, 0);
+            this.setGravity(cc.p(0, 0));
 
             // Gravity mode: radial acceleration
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(0);
 
             // Gravity mode: speed of particles
-            this.modeA.speed = 20;
-            this.modeA.speedVar = 5;
-
+            this.setSpeed(20);
+            this.setSpeedVar(5);
 
             // angle
             this._angle = 90;
@@ -282,7 +281,7 @@ cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
-            this._posVar = cc.PointZero();
+            this.setPosVar(cc.PointZero());
 
             // life of particles
             this._life = 1;
@@ -360,7 +359,7 @@ cc.ParticleGalaxy = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleGalaxy# *
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -466,7 +465,7 @@ cc.ParticleFlower = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFlower# *
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -574,7 +573,7 @@ cc.ParticleMeteor = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleMeteor# *
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -681,7 +680,7 @@ cc.ParticleSpiral = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSpiral# *
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -789,7 +788,7 @@ cc.ParticleExplosion = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleExplos
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = 0.1;
 
@@ -896,7 +895,7 @@ cc.ParticleSmoke = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSmoke# */{
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -999,7 +998,7 @@ cc.ParticleSnow = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSnow# */{
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 
@@ -1107,7 +1106,7 @@ cc.ParticleRain = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleRain# */{
      * @return {Boolean}
      */
     initWithTotalParticles:function (numberOfParticles) {
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystemQuad.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
             this._duration = cc.PARTICLE_DURATION_INFINITY;
 

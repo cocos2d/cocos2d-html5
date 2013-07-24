@@ -109,13 +109,27 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var sizableHeight = size.height - this._topLeft.getContentSize().height - this._bottomRight.getContentSize().height;
         var horizontalScale = sizableWidth / this._centre.getContentSize().width;
         var verticalScale = sizableHeight / this._centre.getContentSize().height;
-        this._centre.setScaleX(horizontalScale);
-        this._centre.setScaleY(verticalScale);
         var rescaledWidth = this._centre.getContentSize().width * horizontalScale;
         var rescaledHeight = this._centre.getContentSize().height * verticalScale;
 
         var leftWidth = this._bottomLeft.getContentSize().width;
         var bottomHeight = this._bottomLeft.getContentSize().height;
+
+        if(!cc.Browser.supportWebGL) {
+            //browser is in canvas mode, need to manually control rounding to prevent overlapping pixels
+            var roundedRescaledWidth = Math.round(rescaledWidth);
+            if(rescaledWidth != roundedRescaledWidth) {
+                rescaledWidth = roundedRescaledWidth;
+                horizontalScale = rescaledWidth/this._centre.getContentSize().width;
+            }
+            var roundedRescaledHeight = Math.round(rescaledHeight);
+            if(rescaledHeight != roundedRescaledHeight) {
+                rescaledHeight = roundedRescaledHeight;
+                verticalScale = rescaledHeight/this._centre.getContentSize().height;
+            }
+        }
+        this._centre.setScaleX(horizontalScale);
+        this._centre.setScaleY(verticalScale);
 
         this._bottomLeft.setAnchorPoint(cc.p(0, 0));
         this._bottomRight.setAnchorPoint(cc.p(0, 0));

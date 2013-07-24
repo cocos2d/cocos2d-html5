@@ -35,7 +35,7 @@ cc.RESOURCE_TYPE = {
     "XML": ["plist", "xml", "fnt", "tmx", "tsx"],
     "BINARY": ["ccbi"],
     "FONT": "FONT",
-    "TEXT": ["txt", "vsh", "fsh"],
+    "TEXT":["txt", "vsh", "fsh","json"],
     "UNKNOW": []
 };
 
@@ -239,7 +239,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     _getResType: function (resInfo) {
         var isFont = resInfo.fontName;
         if (isFont != null) {
-            return cc.RESOURCE_TYPE.FONT;
+            return cc.RESOURCE_TYPE["FONT"];
         } else {
             var src = resInfo.src;
             var ext = src.substring(src.lastIndexOf(".") + 1, src.length);
@@ -453,12 +453,12 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     },
 
     onEnter: function () {
-        this._super();
+        cc.Node.prototype.onEnter.call(this);
         this.schedule(this._startLoading, 0.3);
     },
 
     onExit: function () {
-        this._super();
+        cc.Node.prototype.onExit.call(this);
         var tmpStr = "Loading... 0%";
         this._label.setString(tmpStr);
     },
@@ -476,7 +476,6 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     },
 
     _startLoading: function () {
-        this._isLoading = true;
         this.unschedule(this._startLoading);
         cc.Loader.preload(this.resources, this.selector, this.target);
         this.schedule(this._updatePercent);
@@ -500,9 +499,8 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         var tmpStr = "Loading... " + percent + "%";
         this._label.setString(tmpStr);
 
-        if (percent >= 100) {
+        if (percent >= 100)
             this.unschedule(this._updatePercent);
-        }
     }
 });
 

@@ -33,7 +33,7 @@
  * @constant
  * @type String
  */
-cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.4";
+cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.5";
 
 /**
  * <p>
@@ -113,7 +113,7 @@ cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
  * @constant
  * @type Number
  */
-cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 1;
+cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 0;
 
 /**
  * <p>

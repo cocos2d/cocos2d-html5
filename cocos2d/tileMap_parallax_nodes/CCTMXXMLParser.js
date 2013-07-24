@@ -139,8 +139,15 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
 
     ctor:function () {
         this._properties = [];
+        this.name = "";
+        this._layerSize = null;
         this._tiles = [];
-        this._offset = cc.PointZero();
+        this.visible = true;
+        this._opacity = 0;
+        this.ownTiles = true;
+        this._minGID = 100000;
+        this._maxGID = 0;
+        this.offset = cc.PointZero();
     },
 
     /**
@@ -260,6 +267,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     // tile properties
     _tileProperties:null,
     _resources:"",
+    _currentFirstGID:0,
 
     ctor:function () {
         this._tileSets = [];
@@ -267,6 +275,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._properties = [];
         this._mapSize = cc.SizeZero();
         this._tileSize = cc.SizeZero();
+        this._currentFirstGID = 0;
     },
     /**
      * @return {Number}
@@ -436,11 +445,12 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * Initializes a TMX format with a  tmx file
      * @param {String} tmxFile
      * @param {String} resourcePath
-     * @return {String}
+     * @return {Element}
      */
     initWithTMXFile:function (tmxFile, resourcePath) {
         this._internalInit(tmxFile, resourcePath);
         return this.parseXMLFile(this._TMXFileName);
+        //return this.parseXMLFile(cc.FileUtils.getInstance().fullPathForFilename(this._TMXFileName));
     },
 
     /**
@@ -456,6 +466,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
     /** Initalises parsing of an XML file, either a tmx (Map) file or tsx (Tileset) file
      * @param {String} tmxFile
+     * @param {boolean} [isXmlString=false]
      * @return {Element}
      */
     parseXMLFile:function (tmxFile, isXmlString) {
@@ -516,11 +527,19 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             // If this is an external tileset then start parsing that
             var externalTilesetFilename = selTileset.getAttribute('source');
             if (externalTilesetFilename) {
+                //this._currentFirstGID = parseInt(selTileset.getAttribute('firstgid'));
                 this.parseXMLFile(cc.FileUtils.getInstance().fullPathFromRelativeFile(externalTilesetFilename, isXmlString ? this._resources + "/" : tmxFile));
             } else {
                 var tileset = new cc.TMXTilesetInfo();
                 tileset.name = selTileset.getAttribute('name') || "";
-                tileset.firstGid = parseInt(selTileset.getAttribute('firstgid')) || 1;
+                //TODO need fix
+                //if(this._currentFirstGID === 0){
+                tileset.firstGid = parseInt(selTileset.getAttribute('firstgid')) || 0;
+                //}else{
+                //    tileset.firstGid = this._currentFirstGID;
+                //    this._currentFirstGID = 0;
+                //}
+
                 tileset.spacing = parseInt(selTileset.getAttribute('spacing')) || 0;
                 tileset.margin = parseInt(selTileset.getAttribute('margin')) || 0;
 
@@ -692,6 +711,22 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                                 objectProp[docObjProps[k].getAttribute('name')] = docObjProps[k].getAttribute('value');
                         }
 
+                        //polygon
+                        var polygonProps = selObj.querySelectorAll("polygon");
+                        if(polygonProps && polygonProps.length > 0) {
+                            var selPgPointStr = polygonProps[0].getAttribute('points');
+                            if(selPgPointStr)
+                                objectProp["polygonPoints"] = this._parsePointsString(selPgPointStr);
+                        }
+
+                        //polyline
+                        var polylineProps = selObj.querySelectorAll("polyline");
+                        if(polylineProps && polylineProps.length > 0) {
+                            var selPlPointStr = polylineProps[0].getAttribute('points');
+                            if(selPlPointStr)
+                                objectProp["polylinePoints"] = this._parsePointsString(selPlPointStr);
+                        }
+
                         // Add the object to the objectGroup
                         objectGroup.setObjects(objectProp);
                     }
@@ -701,6 +736,19 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             }
         }
         return map;
+    },
+
+    _parsePointsString:function(pointsString){
+         if(!pointsString)
+            return null;
+
+        var points = [];
+        var pointsStr = pointsString.split(' ');
+        for(var i = 0; i < pointsStr.length; i++){
+            var selPointStr = pointsStr[i].split(',');
+            points.push({'x':selPointStr[0], 'y':selPointStr[1]});
+        }
+        return points;
     },
 
     /**
@@ -775,6 +823,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._storingCharacters = false;
         this._layerAttribs = cc.TMX_LAYER_ATTRIB_NONE;
         this._parentElement = cc.TMX_PROPERTY_NONE;
+        this._currentFirstGID = 0;
     }
 });
 

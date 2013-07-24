@@ -42,8 +42,8 @@ cc.ControlHuePicker = cc.Control.extend({
         return this._hue;
     },
     setHue:function (hueValue) {
-        m_hue = hueValue;
-        this.setHuePercentage(m_hue / 360.0);
+        this._hue = hueValue;
+        this.setHuePercentage(this._hue / 360.0);
     },
 
     getHuePercentage:function () {
@@ -73,6 +73,13 @@ cc.ControlHuePicker = cc.Control.extend({
         this._slider.setPosition(cc.p(x, y));
     },
 
+    setEnabled:function (enabled) {
+        cc.Control.prototype.setEnabled.call(this, enabled);
+        if (this._slider) {
+            this._slider.setOpacity(enabled ? 255 : 128);
+        }
+    },
+
     getBackground:function () {
         return this._background;
     },
@@ -84,7 +91,7 @@ cc.ControlHuePicker = cc.Control.extend({
     },
 
     initWithTargetAndPos:function (target, pos) {
-        if (this.init()) {
+        if (cc.Control.prototype.init.call(this)) {
             this.setTouchEnabled(true);
             // Add background and slider sprites
             this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("huePickerBackground.png", target, pos, cc.p(0.0, 0.0));
@@ -124,8 +131,11 @@ cc.ControlHuePicker = cc.Control.extend({
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
     },
     _checkSliderPosition:function (location) {
-        // check that the touch location is within the bounding rectangle before sending updates
-        if (cc.rectContainsPoint(this._background.getBoundingBox(), location)) {
+        // compute the distance between the current location and the center
+        var distance = Math.sqrt(Math.pow(location.x + 10, 2) + Math.pow(location.y, 2));
+
+        // check that the touch location is within the circle
+        if (80 > distance && distance > 59)        {
             this._updateSliderPosition(location);
             return true;
         }
@@ -133,6 +143,9 @@ cc.ControlHuePicker = cc.Control.extend({
     },
 
     onTouchBegan:function (touch, event) {
+        if (!this.isEnabled() || !this.isVisible())        {
+            return false;
+        }
         var touchLocation = this.getTouchLocation(touch);
 
         // Check the touch position on the slider
@@ -143,10 +156,10 @@ cc.ControlHuePicker = cc.Control.extend({
         var touchLocation = this.getTouchLocation(touch);
 
         //small modification: this allows changing of the colour, even if the touch leaves the bounding area
-        this._updateSliderPosition(touchLocation);
-        this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
+        //this._updateSliderPosition(touchLocation);
+        //this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
         // Check the touch position on the slider
-        //checkSliderPosition(touchLocation);
+        this._checkSliderPosition(touchLocation);
     }
 });
 

@@ -424,7 +424,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @param {String} text text for the label
      */
     setString:function (text) {
-        cc.Assert(text != null, "Invalid string");
+        text = String(text);
         if (this._string != text) {
             this._string = text + "";
 
@@ -599,7 +599,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
 
         var locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
             locContentSizeWidth = this._contentSize.width, locContentSizeHeight = this._contentSize.height;
-        var locFontSize = this._fontSize;
+        var locFontHeight = this._fontClientHeight;
 
         context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
         context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
@@ -611,13 +611,13 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         if (this._isMultiLine) {
             var yOffset = 0, strLen = this._strings.length;
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
-                yOffset = locFontSize + locContentSizeHeight - locFontSize * strLen;
+                yOffset = locFontHeight + locContentSizeHeight - locFontHeight * strLen;
             else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
-                yOffset = locFontSize / 2 + (locContentSizeHeight - locFontSize * strLen) / 2;
+                yOffset = locFontHeight / 2 + (locContentSizeHeight - locFontHeight * strLen) / 2;
 
             for (var i = 0; i < strLen; i++) {
                 var line = this._strings[i];
-                context.fillText(line, xoffset, -locContentSizeHeight + (locFontSize * i) + yOffset);
+                context.fillText(line, xoffset, -locContentSizeHeight + (locFontHeight * i) + yOffset);
             }
         } else {
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM){
@@ -873,7 +873,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
             this.setString(strInfo);
             this._updateTexture();
-
+            this._needUpdateTexture = false;
             return true;
         }
         return false;
@@ -1104,7 +1104,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {String} text text for the label
      */
     setString:function (text) {
-        cc.Assert(text != null, "Invalid string");
+        text = String(text);
         if (this._string != text) {
             this._string = text + "";
 
@@ -1185,7 +1185,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             return;
 
         var locContentSizeHeight = this._contentSize.height, locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
-            locFontSize = this._fontSize;
+            locFontHeight = this._fontClientHeight;
 
         context.setTransform(1, 0, 0, 1, 0, locContentSizeHeight);
         //this is fillText for canvas
@@ -1226,11 +1226,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         if (this._isMultiLine) {
             var locStrLen = this._strings.length;
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM){
-                yOffset = locFontSize + locContentSizeHeight - locFontSize * locStrLen;
+                yOffset = locFontHeight + locContentSizeHeight - locFontHeight * locStrLen;
                 if(isNegForOffsetY)
                     yOffset -= locStrokeShadowOffsetY;
             } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER){
-                yOffset = locFontSize / 2 + (locContentSizeHeight - locFontSize * locStrLen) / 2;
+                yOffset = locFontHeight / 2 + (locContentSizeHeight - locFontHeight * locStrLen) / 2;
                 if(isNegForOffsetY)
                     yOffset -= locStrokeShadowOffsetY;
             } else{
@@ -1242,7 +1242,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
             for (var i = 0; i < locStrLen; i++) {
                 var line = this._strings[i];
-                var tmpOffsetY = -locContentSizeHeight + (locFontSize * i) + yOffset;
+                var tmpOffsetY = -locContentSizeHeight + (locFontHeight * i) + yOffset;
                 context.fillText(line, xOffset, tmpOffsetY);
                 if (this._strokeEnabled)
                     context.strokeText(line, xOffset, tmpOffsetY);
@@ -1393,6 +1393,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
+
+        window._drawTTF++;
+        if(window._drawTTF == 1)
+            console.log("Draw LabelTTF :" + this._string);
+
         this._texture.handleLoadedTexture();
 
         this.setTextureRect(cc.rect(0, 0, width, height));
@@ -1410,7 +1415,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
     /**
      * draw sprite to canvas
-     * @param {WebGLRenderContext} ctx 3d context of canvas
+     * @param {WebGLRenderingContext} ctx 3d context of canvas
      */
     draw:function (ctx) {
         var gl = ctx || cc.renderContext, locTexture = this._texture;

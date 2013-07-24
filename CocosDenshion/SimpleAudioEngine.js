@@ -385,6 +385,9 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                 if (reclaim[i].ended) {
                     au = reclaim[i];
                     au.currentTime = 0;
+                    if (window.chrome){
+                        au.load();
+                    }
                     break;
                 }
             }
@@ -577,7 +580,6 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         if (!path) return;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
-            this.stopEffect(path);
             delete this._effectList[keyname];
         }
 
@@ -585,7 +587,8 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         for (var k in this._audioIDList) {
             au = this._audioIDList[k];
             pathName  = this._getPathWithoutExt(au.src);
-            if(pathName == keyname){
+            if(pathName.indexOf(keyname) > -1){
+                this.stopEffect(k);
                 delete this._audioIDList[k];
             }
         }
@@ -602,7 +605,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     },
 
     /**
-     * search in this._supportedFormat if @param ext is there
+     * search in this._supportedFormat if ext is there
      * @param {String} ext
      * @returns {Boolean}
      */
@@ -632,8 +635,6 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         }
     }
 });
-
-
 
 /**
  * The entity stored in cc.WebAudioEngine, representing a sound object
@@ -734,7 +735,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     * search in this._supportedFormat if @param ext is there
+     * search in this._supportedFormat if ext is there
      * @param {String} ext
      * @returns {Boolean}
      */
@@ -805,7 +806,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Init a new WebAudioSFX and play it, return this WebAudioSFX object
-     * assuming that @param key exists in this._audioData
+     * assuming that key exists in this._audioData
      * @param {String} key
      * @param {Boolean} loop Default value is false
      * @param {Number} volume 0.0 - 1.0, default value is 1.0
@@ -866,14 +867,16 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     * According to the spec: dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
-     *      const unsigned short UNSCHEDULED_STATE = 0;
-     *      const unsigned short SCHEDULED_STATE = 1;
-     *      const unsigned short PLAYING_STATE = 2;     // this means it is playing
-     *      const unsigned short FINISHED_STATE = 3;
+     * <p>
+     * According to the spec: dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html                                      <br/>
+     *      const unsigned short UNSCHEDULED_STATE = 0;                                                                          <br/>
+     *      const unsigned short SCHEDULED_STATE = 1;                                                                            <br/>
+     *      const unsigned short PLAYING_STATE = 2;     // this means it is playing                                              <br/>
+     *      const unsigned short FINISHED_STATE = 3;                                                                             <br/>
      * However, the older specification doesn't include this property, such as this one: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
+     * </p>
      * @param {Object} sfxCache Assuming not null
-     * @returns {Boolean} Whether @param sfxCache is playing or not
+     * @returns {Boolean} Whether sfxCache is playing or not
      * @private
      */
     _isSoundPlaying: function(sfxCache) {
@@ -1260,6 +1263,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     /**
      * Used in resumeEffect() and resumeAllEffects()
      * @param {Object} effectList A list of sounds, each sound may be playing/paused/finished
+     * @param {Number} volume
      * @private
      */
     _resumeSoundList: function(effectList, volume) {
@@ -1347,13 +1351,13 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
      */
     unloadEffect: function(path) {
-        if (!path) {
+        if (!path)
             return;
-        }
 
         var keyName = this._getPathWithoutExt(path);
-        if (keyName in this._effects) {
+        if (this._effects.hasOwnProperty(keyName)) {
             this.stopEffect(path);
+            delete this._effects[keyname];
         }
 
         if (keyName in this._audioData) {
@@ -1361,8 +1365,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
     }
 });
-
-
 
 cc.AudioEngine._instance = null;
 

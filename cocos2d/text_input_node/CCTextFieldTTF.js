@@ -179,6 +179,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      * @param {Boolean} isCallParent
      */
     setString:function (text, isCallParent) {
+        text = String(text);
         if (isCallParent && isCallParent == true) {
             this._super(text);
             return;
