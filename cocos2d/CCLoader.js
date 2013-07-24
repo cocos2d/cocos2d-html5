@@ -239,7 +239,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     _getResType: function (resInfo) {
         var isFont = resInfo.fontName;
         if (isFont != null) {
-            return cc.RESOURCE_TYPE.FONT;
+            return cc.RESOURCE_TYPE["FONT"];
         } else {
             var src = resInfo.src;
             var ext = src.substring(src.lastIndexOf(".") + 1, src.length);
