@@ -247,6 +247,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * menu.alignItemsInColumns(3,3)//this creates 2 columns, each have 3 items
      */
     alignItemsInColumns:function (/*Multiple Arguments*/) {
+        if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+            cc.log("parameters should not be ending with null in Javascript");
+
         var rows = [];
         for (var i = 0; i < arguments.length; i++) {
             rows.push(arguments[i]);
@@ -326,6 +329,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * menu.alignItemsInRows(4,4,4,4)//this creates 4 rows each have 4 items
      */
     alignItemsInRows:function (/*Multiple arguments*/) {
+        if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+            cc.log("parameters should not be ending with null in Javascript");
         var columns = [];
         for (var i = 0; i < arguments.length; i++) {
             columns.push(arguments[i]);
@@ -553,6 +558,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
  * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu.create = function (/*Multiple Arguments*/) {
+    if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+        cc.log("parameters should not be ending with null in Javascript");
+
     var ret = new cc.Menu();
 
     if (arguments.length == 0) {
