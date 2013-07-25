@@ -74,9 +74,10 @@ cc.ArrayRemoveObjectAtIndex = function (arr, index) {
  * @param {*} delObj  remove object
  */
 cc.ArrayRemoveObject = function (arr, delObj) {
-    for (var i = 0; i < arr.length; i++) {
+    for (var i = 0, l = arr.length; i < l; i++) {
         if (arr[i] == delObj) {
             arr.splice(i, 1);
+            break;
         }
     }
 };
@@ -88,7 +89,7 @@ cc.ArrayRemoveObject = function (arr, delObj) {
  * @param {Array} minusArr minus Array
  */
 cc.ArrayRemoveArray = function (arr, minusArr) {
-    for (var i = 0; i < minusArr.length; i++) {
+    for (var i = 0, l = minusArr.length; i < l; i++) {
         cc.ArrayRemoveObject(arr, minusArr[i]);
     }
 };
@@ -101,12 +102,7 @@ cc.ArrayRemoveArray = function (arr, minusArr) {
  * @return {Number} index of first occurence of value
  */
 cc.ArrayGetIndexOfValue = function (arr, value) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] == value) {
-            return i;
-        }
-    }
-    return -1;
+    return arr.indexOf(value);
 };
 
 /**
@@ -128,10 +124,7 @@ cc.ArrayAppendObject = function (arr, addObj) {
  * @return {Array}
  */
 cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
-    var part1 = arr.slice(0, index);
-    var part2 = arr.slice(index);
-    part1.push(addObj);
-    arr = (part1.concat(part2));
+    arr.splice(index, 0, addObj);
     return arr;
 };
 
@@ -144,12 +137,7 @@ cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
  * @return {Array}
  */
 cc.ArrayAppendObjectsToIndex = function(arr, addObjs,index){
-    var part1 = arr.slice(0, index);
-    var part2 = arr.slice(index);
-    for(var i = 0; i< addObjs.length;i++){
-        part1.push(addObjs[i]);
-    }
-    arr = (part1.concat(part2));
+    arr.splice.apply(arr, [index, 0].concat(addObjs));
     return arr;
 };
 
@@ -161,7 +149,7 @@ cc.ArrayAppendObjectsToIndex = function(arr, addObjs,index){
  * @return {Number} index of first occurence of value
  */
 cc.ArrayGetIndexOfObject = function (arr, findObj) {
-    for (var i = 0; i < arr.length; i++) {
+    for (var i = 0, l = arr.length; i < l; i++) {
         if (arr[i] == findObj)
             return i;
     }
@@ -310,23 +298,21 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
      * Initializes a timer with a target, a selector and an interval in seconds.
      * @param {cc.Class} target target
      * @param {String|function} selector Selector
-     * @param {Number} seconds second
-     * @return {Boolean} <tt>true</tt> if inintialized
+     * @param {Number} [seconds=0] second
+     * @param {Number} [repeat=cc.REPEAT_FOREVER] repeat times
+     * @param {Number} [delay=0] delay
+     * @return {Boolean} <tt>true</tt> if initialized
      * * */
-    initWithTarget:function (target, selector, seconds, repeat, delay) {
-        try {
-            this._target = target;
-            this._selector = selector;
-            this._elapsed = -1;
-            this._interval = seconds || 0;
-            this._delay = delay || 0;
-            this._useDelay = this._delay > 0;
-            this._repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
-            this._runForever = (this._repeat == cc.REPEAT_FOREVER);
-            return true;
-        } catch (e) {
-            return false;
-        }
+    initWithTarget: function (target, selector, seconds, repeat, delay) {
+        this._target = target;
+        this._selector = selector;
+        this._elapsed = -1;
+        this._interval = seconds || 0;
+        this._delay = delay || 0;
+        this._useDelay = this._delay > 0;
+        this._repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
+        this._runForever = (this._repeat == cc.REPEAT_FOREVER);
+        return true;
     },
 
     _callSelector:function(){
@@ -350,7 +336,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 this._elapsed += dt;
 
                 if (this._elapsed >= this._interval) {
-                    if (this._selector)
+                    if (this._target && this._selector)
                        this._callSelector();
                     this._elapsed = 0;
                 }
@@ -392,15 +378,13 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
  * @return {cc.Timer} a cc.Timer instance
  * */
 cc.Timer.timerWithTarget = function (target, selector, seconds) {
-    if (arguments < 2)
+    if (arguments.length < 2){
         throw new Error("timerWithTarget'argument can't is null");
+    }
 
     var timer = new cc.Timer();
-    if (arguments.length == 2) {
-        timer.initWithTarget(target, selector, 0, cc.REPEAT_FOREVER, 0);
-    } else {
-        timer.initWithTarget(target, selector, seconds, cc.REPEAT_FOREVER, 0);
-    }
+    seconds = seconds||0;
+    timer.initWithTarget(target, selector, seconds, cc.REPEAT_FOREVER, 0);
     return timer;
 };
 

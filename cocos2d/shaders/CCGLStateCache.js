@@ -71,7 +71,8 @@ if (cc.ENABLE_GL_STATE_CACHE) {
     cc._blendingSource = -1;
     cc._blendingDest = -1;
     cc._GLServerState = 0;
-    cc._uVAO = 0;
+    if(cc.TEXTURE_ATLAS_USE_VAO)
+        cc._uVAO = 0;
 }
 
 // GL State Cache functions
@@ -105,13 +106,13 @@ cc.glInvalidateStateCache = function () {
 cc.glUseProgram = function (program) {
     if (program !== cc._currentShaderProgram) {
         cc._currentShaderProgram = program;
-        gl.useProgram(program);
+        cc.renderContext.useProgram(program);
     }
 };
 
 if(!cc.ENABLE_GL_STATE_CACHE){
     cc.glUseProgram = function (program) {
-        gl.useProgram(program);
+        cc.renderContext.useProgram(program);
     }
 }
 

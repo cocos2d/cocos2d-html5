@@ -100,7 +100,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Constructor
      */
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
 
         if (cc.renderContextType === cc.CANVAS) {
             this.canvas = document.createElement('canvas');
@@ -111,7 +111,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         }
     },
 
-    destroyRenderTexture:function () {
+    onExit:function () {
+        cc.Node.prototype.onExit.call(this);
         if (cc.renderContextType === cc.WEBGL) {
             this._sprite = null;
             this._textureCopy = null;
@@ -120,8 +121,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             gl.deleteFramebuffer(this._fBO);
             if (this._depthRenderBuffer)
                 gl.deleteRenderbuffer(this._depthRenderBuffer);
-
             this._uITextureImage = null;
+            if(this._texture)
+                this._texture.releaseTexture();
         }
     },
 
@@ -181,7 +183,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
             return true;
         } else {
-            cc.Assert(this._pixelFormat != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
+            cc.Assert(format != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
 
             var gl = cc.renderContext;
 
@@ -234,7 +236,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             // associate texture with FBO
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
 
-            if (this._depthRenderBuffer != 0) {
+            if (depthStencilFormat != 0) {
                 //create and attach depth buffer
                 this._depthRenderBuffer = gl.createRenderbuffer();
                 gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
@@ -275,7 +277,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return;
 
         // Save the current matrix
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLPushMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();
+
+        var director = cc.Director.getInstance();
+        director.setProjection(director.getProjection());
 
         var texSize = this._texture.getContentSizeInPixels();
 
@@ -378,12 +386,17 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return;
 
         var gl = cc.renderContext;
+        var director = cc.Director.getInstance();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
+
+        //restore viewport
+        director.setViewport();
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
         cc.kmGLPopMatrix();
 
-        var director = cc.Director.getInstance();
-
-        var size = director.getWinSizeInPixels();
+        /* var size = director.getWinSizeInPixels();
 
         // restore viewport
         gl.viewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
@@ -393,7 +406,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
         }
 
-        director.setProjection(director.getProjection());
+        director.setProjection(director.getProjection());*/
     },
 
     /**
@@ -418,7 +431,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a specified depth value
-     * @param {Number} dep
+     * @param {Number} depthValue
      */
     clearDepth:function (depthValue) {
         if (cc.renderContextType === cc.CANVAS)

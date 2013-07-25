@@ -44,11 +44,20 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     _dirty:false,
 
     ctor:function () {
+        this._active=false;
+        this._reuseGrid=0;
+        this._gridSize=null;
+        this._texture=null;
         this._step = cc.p(0, 0);
+        this._grabber=null;
+        this._isTextureFlipped=false;
+        this._shaderProgram=null;
+        this._directorProjection=0;
+        this._dirty=false;
     },
 
     /**
-     * return wheter or not the grid is active
+     * whether or not the grid is active
      * @return {Boolean}
      */
     isActive:function () {
@@ -56,7 +65,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     },
 
     /**
-     * set wheter or not the grid is active
+     * whether or not the grid is active
      * @param {Number} active
      */
     setActive:function (active) {
@@ -85,7 +94,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
     /**
      * get size of the grid
-     * @return {cc.GridSize}
+     * @return {cc.Size}
      */
     getGridSize:function () {
         return this._gridSize;
@@ -93,7 +102,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
     /**
      * set size of the grid
-     * @param {cc.size} gridSize
+     * @param {cc.Size} gridSize
      */
     setGridSize:function (gridSize) {
         this._gridSize.width = parseInt(gridSize.width);
@@ -135,6 +144,13 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         }
     },
 
+    /**
+     *
+     * @param {cc.Size} gridSize
+     * @param {cc.Texture2D} [texture=]
+     * @param {Boolean} [flipped=false]
+     * @returns {boolean}
+     */
     initWithSize:function (gridSize, texture, flipped) {
         if (!texture) {
             var director = cc.Director.getInstance();
@@ -167,8 +183,8 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._isTextureFlipped = flipped;
 
         var texSize = this._texture.getContentSize();
-        this._step.x = texSize.width / this._gridSize.width;
-        this._step.y = texSize.height / this._gridSize.height;
+        this._step.x = texSize.width / gridSize.width;
+        this._step.y = texSize.height / gridSize.height;
 
         this._grabber = new cc.Grabber();
         if (!this._grabber)
@@ -230,12 +246,12 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         var winSize = cc.Director.getInstance().getWinSizeInPixels();
 
         var gl = cc.renderContext;
-        gl.viewport(0, 0, winSize.width * cc.CONTENT_SCALE_FACTOR(), winSize.height * cc.CONTENT_SCALE_FACTOR());
+        gl.viewport(0, 0, winSize.width , winSize.height);
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLLoadIdentity();
 
         var orthoMatrix = new cc.kmMat4();
-        cc.kmMat4OrthographicProjection(orthoMatrix, 0, winSize.width * cc.CONTENT_SCALE_FACTOR(), 0, winSize.height * cc.CONTENT_SCALE_FACTOR(), -1, 1);
+        cc.kmMat4OrthographicProjection(orthoMatrix, 0, winSize.width, 0, winSize.height, -1, 1);
         cc.kmGLMultMatrix(orthoMatrix);
 
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
@@ -246,9 +262,9 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
 /**
  * create one cc.GridBase Object
- * @param {cc.GridSize} gridSize
- * @param {cc.Texture2D} texture
- * @param {Boolean} flipped
+ * @param {cc.Size} gridSize
+ * @param {cc.Texture2D} [texture=]
+ * @param {Boolean} [flipped=]
  * @return {cc.GridBase}
  */
 cc.GridBase.create = function (gridSize, texture, flipped) {
@@ -274,35 +290,48 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     _indicesBuffer:null,
 
     ctor:function () {
-        this._super();
+        cc.GridBase.prototype.ctor.call(this);
+        this._texCoordinates=null;
+        this._vertices=null;
+        this._originalVertices=null;
+        this._indices=null;
+
+        this._texCoordinateBuffer=null;
+        this._verticesBuffer=null;
+        this._indicesBuffer=null;
     },
 
     /**
      * returns the vertex at a given position
-     * @param {cc.GridSize} pos
+     * @param {cc.Point} pos
      * @return {cc.Vertex3F}
      */
     vertex:function (pos) {
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
-        return new cc.Vertex3F(this._vertices[index], this._vertices[index + 1], this._vertices[index + 2]);
+        var locVertices = this._vertices;
+        return new cc.Vertex3F(locVertices[index], locVertices[index + 1], locVertices[index + 2]);
     },
 
     /**
      * returns the original (non-transformed) vertex at a given position
-     * @param {cc.GridSize} pos
+     * @param {cc.Point} pos
      * @return {cc.Vertex3F}
      */
     originalVertex:function (pos) {
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
-        return new cc.Vertex3F(this._originalVertices[index], this._originalVertices[index + 1], this._originalVertices[index + 2]);
+        var locOriginalVertices = this._originalVertices;
+        return new cc.Vertex3F(locOriginalVertices[index], locOriginalVertices[index + 1], locOriginalVertices[index + 2]);
     },
 
     /**
      * sets a new vertex at a given position
-     * @param {cc.GridSize} pos
+     * @param {cc.Point} pos
      * @param {cc.Vertex3F} vertex
      */
     setVertex:function (pos, vertex) {
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         var vertArray = this._vertices;
         vertArray[index] = vertex.x;
@@ -317,35 +346,36 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
 
-        var gl = cc.renderContext;
+        var gl = cc.renderContext, locDirty = this._dirty;
         //
         // Attributes
         //
         // position
         gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
-        if (this._dirty)
+        if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
 
         // texCoords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
-        if (this._dirty)
+        if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
-        if (this._dirty)
+        if (locDirty)
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
-        if (this._dirty)
+        if (locDirty)
             this._dirty = false;
         cc.INCREMENT_GL_DRAWS(1);
     },
 
     reuse:function () {
         if (this._reuseGrid > 0) {
-            for (var i = 0; i < this._vertices.length; i++)
-                this._originalVertices[i] = this._vertices[i];
+            var locOriginalVertices = this._originalVertices, locVertices = this._vertices;
+            for (var i = 0, len =  this._vertices.length; i < len; i++)
+                locOriginalVertices[i] = locVertices[i];
             --this._reuseGrid;
         }
     },
@@ -356,55 +386,63 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         var width = this._texture.getPixelsWide();
         var height = this._texture.getPixelsHigh();
         var imageH = this._texture.getContentSizeInPixels().height;
+        var locGridSize = this._gridSize;
 
-        var numOfPoints = (this._gridSize.width + 1) * (this._gridSize.height + 1);
+        var numOfPoints = (locGridSize.width + 1) * (locGridSize.height + 1);
         this._vertices = new Float32Array(numOfPoints * 3);
         this._texCoordinates = new Float32Array(numOfPoints * 2);
-        this._indices = new Uint16Array(this._gridSize.width * this._gridSize.height * 6);
+        this._indices = new Uint16Array(locGridSize.width * locGridSize.height * 6);
 
+        if(this._verticesBuffer)
+            gl.deleteBuffer(this._verticesBuffer);
         this._verticesBuffer = gl.createBuffer();
+        if(this._texCoordinateBuffer)
+            gl.deleteBuffer(this._texCoordinateBuffer);
         this._texCoordinateBuffer = gl.createBuffer();
+        if(this._indicesBuffer)
+            gl.deleteBuffer(this._indicesBuffer);
         this._indicesBuffer = gl.createBuffer();
 
-        var x, y, i;
-        for (x = 0; x < this._gridSize.width; ++x) {
-            for (y = 0; y < this._gridSize.height; ++y) {
-                var idx = (y * this._gridSize.width) + x;
+        var x, y, i, locIndices = this._indices, locTexCoordinates = this._texCoordinates;
+        var locIsTextureFlipped = this._isTextureFlipped, locVertices = this._vertices;
+        for (x = 0; x < locGridSize.width; ++x) {
+            for (y = 0; y < locGridSize.height; ++y) {
+                var idx = (y * locGridSize.width) + x;
                 var x1 = x * this._step.x;
                 var x2 = x1 + this._step.x;
                 var y1 = y * this._step.y;
                 var y2 = y1 + this._step.y;
 
-                var a = (x * (this._gridSize.height + 1) + y);
-                var b = ((x + 1) * (this._gridSize.height + 1) + y);
-                var c = ((x + 1) * (this._gridSize.height + 1) + (y + 1));
-                var d = (x * (this._gridSize.height + 1) + (y + 1));
+                var a = (x * (locGridSize.height + 1) + y);
+                var b = ((x + 1) * (locGridSize.height + 1) + y);
+                var c = ((x + 1) * (locGridSize.height + 1) + (y + 1));
+                var d = (x * (locGridSize.height + 1) + (y + 1));
 
-                this._indices[idx * 6] = a;
-                this._indices[idx * 6 + 1] = b;
-                this._indices[idx * 6 + 2] = d;
-                this._indices[idx * 6 + 3] = b;
-                this._indices[idx * 6 + 4] = c;
-                this._indices[idx * 6 + 5] = d;
+                locIndices[idx * 6] = a;
+                locIndices[idx * 6 + 1] = b;
+                locIndices[idx * 6 + 2] = d;
+                locIndices[idx * 6 + 3] = b;
+                locIndices[idx * 6 + 4] = c;
+                locIndices[idx * 6 + 5] = d;
 
                 var l1 = [a * 3, b * 3, c * 3, d * 3];
-                var e = new cc.Vertex3F(x1, y1, 0);
-                var f = new cc.Vertex3F(x2, y1, 0);
-                var g = new cc.Vertex3F(x2, y2, 0);
-                var h = new cc.Vertex3F(x1, y2, 0);
+                var e = {x:x1, y:y1, z:0};   //new cc.Vertex3F(x1, y1, 0);
+                var f = {x:x2, y:y1, z:0};   //new cc.Vertex3F(x2, y1, 0);
+                var g = {x:x2, y:y2, z:0};   // new cc.Vertex3F(x2, y2, 0);
+                var h = {x:x1, y:y2, z:0};   //new cc.Vertex3F(x1, y2, 0);
 
                 var l2 = [e, f, g, h];
                 var tex1 = [a * 2, b * 2, c * 2, d * 2];
                 var tex2 = [cc.p(x1, y1), cc.p(x2, y1), cc.p(x2, y2), cc.p(x1, y2)];
                 for (i = 0; i < 4; ++i) {
-                    this._vertices[l1[i]] = l2[i].x;
-                    this._vertices[l1[i] + 1] = l2[i].y;
-                    this._vertices[l1[i] + 2] = l2[i].z;
-                    this._texCoordinates[tex1[i]] = tex2[i].x / width;
-                    if (this._isTextureFlipped)
-                        this._texCoordinates[tex1[i] + 1] = (imageH - tex2[i].y) / height;
+                    locVertices[l1[i]] = l2[i].x;
+                    locVertices[l1[i] + 1] = l2[i].y;
+                    locVertices[l1[i] + 2] = l2[i].z;
+                    locTexCoordinates[tex1[i]] = tex2[i].x / width;
+                    if (locIsTextureFlipped)
+                        locTexCoordinates[tex1[i] + 1] = (imageH - tex2[i].y) / height;
                     else
-                        this._texCoordinates[tex1[i] + 1] = tex2[i].y / height;
+                        locTexCoordinates[tex1[i] + 1] = tex2[i].y / height;
                 }
             }
         }
@@ -422,9 +460,9 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 
 /**
  * create one Grid3D object
- * @param {cc.GridSize} gridSize
- * @param {cc.Texture2D} texture
- * @param {Boolean} flipped
+ * @param {cc.Size} gridSize
+ * @param {cc.Texture2D} [texture=]
+ * @param {Boolean} [flipped=]
  * @return {cc.Grid3D}
  */
 cc.Grid3D.create = function (gridSize, texture, flipped) {
@@ -433,7 +471,6 @@ cc.Grid3D.create = function (gridSize, texture, flipped) {
         return grid3D;
     return null;
 };
-
 
 /**
  * cc.TiledGrid3D is a 3D grid implementation. It differs from Grid3D in that   <br/>
@@ -452,54 +489,71 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
     _indicesBuffer:null,
 
     ctor:function () {
-        this._super();
+        cc.GridBase.prototype.ctor.call(this);
+        this._texCoordinates=null;
+        this._vertices=null;
+        this._originalVertices=null;
+        this._indices=null;
+
+        this._texCoordinateBuffer=null;
+        this._verticesBuffer=null;
+        this._indicesBuffer=null;
     },
 
     /**
      * returns the tile at the given position
-     * @param {cc.GridSize} pos
+     * @param {cc.Point} pos
      * @return {cc.Quad3}
      */
     tile:function (pos) {
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+
         var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
-        return new cc.Quad3(new cc.Vertex3F(this._vertices[idx], this._vertices[idx + 1], this._vertices[idx + 2]),
-            new cc.Vertex3F(this._vertices[idx + 3], this._vertices[idx + 4], this._vertices[idx + 5]),
-            new cc.Vertex3F(this._vertices[idx + 6 ], this._vertices[idx + 7], this._vertices[idx + 8]),
-            new cc.Vertex3F(this._vertices[idx + 9], this._vertices[idx + 10], this._vertices[idx + 11]));
+        var locVertices = this._vertices;
+        return new cc.Quad3(new cc.Vertex3F(locVertices[idx], locVertices[idx + 1], locVertices[idx + 2]),
+            new cc.Vertex3F(locVertices[idx + 3], locVertices[idx + 4], locVertices[idx + 5]),
+            new cc.Vertex3F(locVertices[idx + 6 ], locVertices[idx + 7], locVertices[idx + 8]),
+            new cc.Vertex3F(locVertices[idx + 9], locVertices[idx + 10], locVertices[idx + 11]));
     },
 
     /**
      * returns the original tile (untransformed) at the given position
-     * @param {cc.GridSize} pos
+     * @param {cc.Point} pos
      * @return {cc.Quad3}
      */
     originalTile:function (pos) {
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+
         var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
-        return new cc.Quad3(new cc.Vertex3F(this._originalVertices[idx], this._originalVertices[idx + 1], this._originalVertices[idx + 2]),
-            new cc.Vertex3F(this._originalVertices[idx + 3], this._originalVertices[idx + 4], this._originalVertices[idx + 5]),
-            new cc.Vertex3F(this._originalVertices[idx + 6 ], this._originalVertices[idx + 7], this._originalVertices[idx + 8]),
-            new cc.Vertex3F(this._originalVertices[idx + 9], this._originalVertices[idx + 10], this._originalVertices[idx + 11]));
+        var locOriginalVertices = this._originalVertices;
+        return new cc.Quad3(new cc.Vertex3F(locOriginalVertices[idx], locOriginalVertices[idx + 1], locOriginalVertices[idx + 2]),
+            new cc.Vertex3F(locOriginalVertices[idx + 3], locOriginalVertices[idx + 4], locOriginalVertices[idx + 5]),
+            new cc.Vertex3F(locOriginalVertices[idx + 6 ], locOriginalVertices[idx + 7], locOriginalVertices[idx + 8]),
+            new cc.Vertex3F(locOriginalVertices[idx + 9], locOriginalVertices[idx + 10], locOriginalVertices[idx + 11]));
     },
 
     /**
      * sets a new tile
-     * @param {cc.GridSize} pos
+     * @param {cc.Point} pos
      * @param {cc.Quad3} coords
      */
     setTile:function (pos, coords) {
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+
         var idx = (this._gridSize.height * pos.x + pos.y) * 12;
-        this._vertices[idx] = coords.bl.x;
-        this._vertices[idx + 1] = coords.bl.y;
-        this._vertices[idx + 2] = coords.bl.z;
-        this._vertices[idx + 3] = coords.br.x;
-        this._vertices[idx + 4] = coords.br.y;
-        this._vertices[idx + 5] = coords.br.z;
-        this._vertices[idx + 6] = coords.tl.x;
-        this._vertices[idx + 7] = coords.tl.y;
-        this._vertices[idx + 8] = coords.tl.z;
-        this._vertices[idx + 9] = coords.tr.x;
-        this._vertices[idx + 10] = coords.tr.y;
-        this._vertices[idx + 11] = coords.tr.z;
+        var locVertices = this._vertices;
+        locVertices[idx] = coords.bl.x;
+        locVertices[idx + 1] = coords.bl.y;
+        locVertices[idx + 2] = coords.bl.z;
+        locVertices[idx + 3] = coords.br.x;
+        locVertices[idx + 4] = coords.br.y;
+        locVertices[idx + 5] = coords.br.z;
+        locVertices[idx + 6] = coords.tl.x;
+        locVertices[idx + 7] = coords.tl.y;
+        locVertices[idx + 8] = coords.tl.z;
+        locVertices[idx + 9] = coords.tr.x;
+        locVertices[idx + 10] = coords.tr.y;
+        locVertices[idx + 11] = coords.tr.z;
         this._dirty = true;
     },
 
@@ -512,34 +566,35 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         //
         // Attributes
         //
-        var gl = cc.renderContext;
+        var gl = cc.renderContext, locDirty = this._dirty;
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
 
         // position
         gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
-        if (this._dirty)
+        if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, this._vertices);
 
         // texCoords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
-        if (this._dirty)
+        if (locDirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
-        if (this._dirty)
+        if (locDirty)
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
-        if (this._dirty)
+        if (locDirty)
             this._dirty = false;
         cc.INCREMENT_GL_DRAWS(1);
     },
 
     reuse:function () {
         if (this._reuseGrid > 0) {
-            for (var i = 0; i < this._vertices.length; i++)
-                this._originalVertices[i] = this._vertices[i];
+            var locVertices = this._vertices, locOriginalVertices = this._originalVertices;
+            for (var i = 0; i < locVertices.length; i++)
+                locOriginalVertices[i] = locVertices[i];
             --this._reuseGrid;
         }
     },
@@ -548,66 +603,75 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         var width = this._texture.getPixelsWide();
         var height = this._texture.getPixelsHigh();
         var imageH = this._texture.getContentSizeInPixels().height;
+        var locGridSize = this._gridSize;
 
-        var numQuads = this._gridSize.width * this._gridSize.height;
+        var numQuads = locGridSize.width * locGridSize.height;
         this._vertices = new Float32Array(numQuads * 12);
         this._texCoordinates = new Float32Array(numQuads * 8);
         this._indices = new Uint16Array(numQuads * 6);
 
         var gl = cc.renderContext;
+        if(this._verticesBuffer)
+            gl.deleteBuffer(this._verticesBuffer);
         this._verticesBuffer = gl.createBuffer();
+        if(this._texCoordinateBuffer)
+            gl.deleteBuffer(this._texCoordinateBuffer);
         this._texCoordinateBuffer = gl.createBuffer();
+        if(this._indicesBuffer)
+            gl.deleteBuffer(this._indicesBuffer);
         this._indicesBuffer = gl.createBuffer();
 
         var x, y, i = 0;
-        for (x = 0; x < this._gridSize.width; x++) {
-            for (y = 0; y < this._gridSize.height; y++) {
-                var x1 = x * this._step.x;
-                var x2 = x1 + this._step.x;
-                var y1 = y * this._step.y;
-                var y2 = y1 + this._step.y;
+        var locStep = this._step, locVertices = this._vertices, locTexCoords = this._texCoordinates, locIsTextureFlipped = this._isTextureFlipped;
+        for (x = 0; x < locGridSize.width; x++) {
+            for (y = 0; y < locGridSize.height; y++) {
+                var x1 = x * locStep.x;
+                var x2 = x1 + locStep.x;
+                var y1 = y * locStep.y;
+                var y2 = y1 + locStep.y;
 
-                this._vertices[i * 12] = x1;
-                this._vertices[i * 12 + 1] = y1;
-                this._vertices[i * 12 + 2] = 0;
-                this._vertices[i * 12 + 3] = x2;
-                this._vertices[i * 12 + 4] = y1;
-                this._vertices[i * 12 + 5] = 0;
-                this._vertices[i * 12 + 6] = x1;
-                this._vertices[i * 12 + 7] = y2;
-                this._vertices[i * 12 + 8] = 0;
-                this._vertices[i * 12 + 9] = x2;
-                this._vertices[i * 12 + 10] = y2;
-                this._vertices[i * 12 + 11] = 0;
+                locVertices[i * 12] = x1;
+                locVertices[i * 12 + 1] = y1;
+                locVertices[i * 12 + 2] = 0;
+                locVertices[i * 12 + 3] = x2;
+                locVertices[i * 12 + 4] = y1;
+                locVertices[i * 12 + 5] = 0;
+                locVertices[i * 12 + 6] = x1;
+                locVertices[i * 12 + 7] = y2;
+                locVertices[i * 12 + 8] = 0;
+                locVertices[i * 12 + 9] = x2;
+                locVertices[i * 12 + 10] = y2;
+                locVertices[i * 12 + 11] = 0;
 
                 var newY1 = y1;
                 var newY2 = y2;
 
-                if (this._isTextureFlipped) {
+                if (locIsTextureFlipped) {
                     newY1 = imageH - y1;
                     newY2 = imageH - y2;
                 }
 
-                this._texCoordinates[i * 8] = x1 / width;
-                this._texCoordinates[i * 8 + 1] = newY1 / height;
-                this._texCoordinates[i * 8 + 2] = x2 / width;
-                this._texCoordinates[i * 8 + 3] = newY1 / height;
-                this._texCoordinates[i * 8 + 4] = x1 / width;
-                this._texCoordinates[i * 8 + 5] = newY2 / height;
-                this._texCoordinates[i * 8 + 6] = x2 / width;
-                this._texCoordinates[i * 8 + 7] = newY2 / height;
+                locTexCoords[i * 8] = x1 / width;
+                locTexCoords[i * 8 + 1] = newY1 / height;
+                locTexCoords[i * 8 + 2] = x2 / width;
+                locTexCoords[i * 8 + 3] = newY1 / height;
+                locTexCoords[i * 8 + 4] = x1 / width;
+                locTexCoords[i * 8 + 5] = newY2 / height;
+                locTexCoords[i * 8 + 6] = x2 / width;
+                locTexCoords[i * 8 + 7] = newY2 / height;
                 i++;
             }
         }
 
+        var locIndices = this._indices;
         for (x = 0; x < numQuads; x++) {
-            this._indices[x * 6 + 0] = (x * 4 + 0);
-            this._indices[x * 6 + 1] = (x * 4 + 1);
-            this._indices[x * 6 + 2] = (x * 4 + 2);
+            locIndices[x * 6 + 0] = (x * 4 + 0);
+            locIndices[x * 6 + 1] = (x * 4 + 1);
+            locIndices[x * 6 + 2] = (x * 4 + 2);
 
-            this._indices[x * 6 + 3] = (x * 4 + 1);
-            this._indices[x * 6 + 4] = (x * 4 + 2);
-            this._indices[x * 6 + 5] = (x * 4 + 3);
+            locIndices[x * 6 + 3] = (x * 4 + 1);
+            locIndices[x * 6 + 4] = (x * 4 + 2);
+            locIndices[x * 6 + 5] = (x * 4 + 3);
         }
         this._originalVertices = new Float32Array(this._vertices);
 
@@ -623,9 +687,9 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
 
 /**
  * create one TiledGrid3D object
- * @param {cc.GridSize} gridSize
- * @param {cc.Texture2D} texture
- * @param {Boolean} flipped
+ * @param {cc.Size} gridSize
+ * @param {cc.Texture2D} [texture=]
+ * @param {Boolean} [flipped=]
  * @return {cc.TiledGrid3D}
  */
 cc.TiledGrid3D.create = function (gridSize, texture, flipped) {

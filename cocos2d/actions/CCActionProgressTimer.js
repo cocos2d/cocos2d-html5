@@ -32,40 +32,55 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     _to:0,
     _from:0,
 
+    ctor: function(){
+        cc.ActionInterval.prototype.ctor.call(this);
+        this._to = 0;
+        this._from = 0;
+    },
+
     /** Initializes with a duration and a percent
      * @param {Number} duration duration in seconds
      * @param {Number} percent
      * @return {Boolean}
      */
     initWithDuration:function (duration, percent) {
-        if (this._super(duration)) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this._to = percent;
             return true;
         }
         return false;
     },
 
+    clone:function(){
+        var action = new cc.ProgressTo();
+        action.initWithDuration(this._duration, this._to);
+        return action;
+    },
+
+    reverse: function(){
+        cc.Assert(false, "reverse() not supported in ProgressTo");
+        return null;
+    },
+
     /**
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        this._super(target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._from = target.getPercentage();
 
         // XXX: Is this correct ?
         // Adding it to support CCRepeat
-        if (this._from == 100) {
+        if (this._from == 100)
             this._from = 0;
-        }
     },
 
     /**
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this._target  instanceof cc.ProgressTimer) {
+        if (this._target  instanceof cc.ProgressTimer)
             this._target.setPercentage(this._from + (this._to - this._from) * time);
-        }
     }
 });
 
@@ -81,7 +96,6 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
 cc.ProgressTo.create = function (duration, percent) {
     var progressTo = new cc.ProgressTo();
     progressTo.initWithDuration(duration, percent);
-
     return progressTo;
 };
 
@@ -93,6 +107,13 @@ cc.ProgressTo.create = function (duration, percent) {
 cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
     _to:0,
     _from:0,
+
+    ctor:function(){
+        cc.ActionInterval.prototype.ctor.call(this);
+        this._to = 0;
+        this._from = 0;
+    },
+
     /** Initializes the action with a duration, a "from" percentage and a "to" percentage
      * @param {Number} duration duration in seconds
      * @param {Number} fromPercentage
@@ -100,12 +121,18 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, fromPercentage, toPercentage) {
-        if (this._super(duration)) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this._to = toPercentage;
             this._from = fromPercentage;
             return true;
         }
         return false;
+    },
+
+    clone:function(){
+        var action = new cc.ProgressFromTo();
+        action.initWithDuration(this._duration, this._from, this._to);
+        return action;
     },
 
     /**
@@ -119,16 +146,15 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        this._super(target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
     },
 
     /**
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this._target  instanceof cc.ProgressTimer) {
+        if (this._target  instanceof cc.ProgressTimer)
             this._target.setPercentage(this._from + (this._to - this._from) * time);
-        }
     }
 });
 

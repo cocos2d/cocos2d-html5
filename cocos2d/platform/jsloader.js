@@ -27,6 +27,9 @@
 (function () {
     var engine = [
         'platform/CCClass.js',
+        'cocoa/CCGeometry.js',
+        'platform/Sys.js',
+        'platform/CCConfig.js',
         'platform/miniFramework.js',
         'platform/CCCommon.js',
         'platform/ZipUtils.js',
@@ -38,9 +41,6 @@
 		'platform/CCAccelerometer.js',
         'platform/zlib.min.js',
         'platform/CCEGLView.js',
-        'cocoa/CCGeometry.js',
-        'platform/Sys.js',
-        'platform/CCConfig.js',
         'platform/CCImage.js',
         'kazmath/utility.js',
         'kazmath/vec2.js',
@@ -64,6 +64,8 @@
         'support/CCTGAlib.js',
         'support/CCPNGReader.js',
         'support/CCTIFFReader.js',
+        'support/component/CCComponent.js',
+        'support/component/CCComponentContainer.js',
         'shaders/CCShaders.js',
         'shaders/CCShaderCache.js',
         'shaders/CCGLProgram.js',
@@ -92,6 +94,7 @@
         'actions/CCActionTiledGrid.js',
         'actions/CCActionCatmullRom.js',
         'actions/CCActionPageTurn3D.js',
+        'actions/CCActionTween.js',
         'layers_scenes_transitions_nodes/CCScene.js',
         'layers_scenes_transitions_nodes/CCLayer.js',
         'layers_scenes_transitions_nodes/CCTransition.js',
@@ -154,6 +157,8 @@
             '../extensions/GUI/CCControlExtension/CCControlColourPicker.js',
             '../extensions/GUI/CCControlExtension/CCControlSlider.js',
             '../extensions/GUI/CCControlExtension/CCControlSwitch.js',
+            '../extensions/GUI/CCControlExtension/CCControlStepper.js',
+            '../extensions/GUI/CCControlExtension/CCControlPotentiometer.js',
             '../extensions/GUI/CCScrollView/CCScrollView.js',
             '../extensions/GUI/CCScrollView/CCSorting.js',
             '../extensions/GUI/CCScrollView/CCTableView.js',
@@ -168,7 +173,29 @@
             '../extensions/CCBReader/CCBSequence.js',
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
-            '../extensions/CCEditBox.js'
+            '../extensions/CCEditBox.js',
+            '../extensions/CCArmature/utils/CCArmatureDefine.js',
+            '../extensions/CCArmature/utils/CCDataReaderHelper.js',
+            '../extensions/CCArmature/utils/CCSpriteFrameCacheHelper.js',
+            '../extensions/CCArmature/utils/CCTransformHelp.js',
+            '../extensions/CCArmature/utils/CCTweenFunction.js',
+            '../extensions/CCArmature/utils/CCUtilMath.js',
+            '../extensions/CCArmature/utils/CSArmatureDataManager.js',
+            '../extensions/CCArmature/datas/CCDatas.js',
+            '../extensions/CCArmature/display/CCBatchNode.js',
+            '../extensions/CCArmature/display/CCDecorativeDisplay.js',
+            '../extensions/CCArmature/display/CCDisplayFactory.js',
+            '../extensions/CCArmature/display/CCDisplayManager.js',
+            '../extensions/CCArmature/display/CCShaderNode.js',
+            '../extensions/CCArmature/display/CCSkin.js',
+            '../extensions/CCArmature/animation/CCProcessBase.js',
+            '../extensions/CCArmature/animation/CCArmatureAnimation.js',
+            '../extensions/CCArmature/animation/CCTween.js',
+            '../extensions/CCArmature/physics/CCColliderDetector.js',
+            '../extensions/CCArmature/physics/CCPhysicsWorld.js',
+            '../extensions/CCArmature/CCArmature.js',
+            '../extensions/CCArmature/CCBone.js'
+
         ]);
     }
 
@@ -212,8 +239,8 @@
                 f.serial = s;
                 f.onload = loadNext;
                 d.body.appendChild(f);
-                p = s / (que.length - 1);
                 //TODO: code for updating progress bar
+                //p = s / (que.length - 1);
             }
         };
         loadNext();
@@ -225,8 +252,8 @@
             s.src = f;
             s.onload = function () {
                 loaded++;
-                p = loaded / que.length;
                 //TODO: code for updating progress bar
+                //p = loaded / que.length;
             };
             d.body.appendChild(s);
             que[i] = s;

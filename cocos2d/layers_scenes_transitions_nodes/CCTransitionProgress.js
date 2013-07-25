@@ -94,7 +94,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
      */
     onExit:function () {
         // remove our layer and release all containing objects
-        this.removeChildByTag(cc.SCENE_RADIAL, false);
+        this.removeChildByTag(cc.SCENE_RADIAL, true);
         this._super();
     },
 

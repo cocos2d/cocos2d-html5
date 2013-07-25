@@ -34,9 +34,9 @@
  * length is the how many pixels the texture is stretched across. The texture               <br/>
  * is vertically aligned along the streak segment.
  * @class
- * @extends cc.Node
+ * @extends cc.NodeRGBA
  */
-cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
+cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     _fastMode:false,
     _startingPositionInitialized:false,
 
@@ -44,7 +44,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     _texture:null,
     _blendFunc:null,
     _positionR:null,
-    _color:null,
 
     _stroke:0,
     _fadeDelta:0,
@@ -62,9 +61,46 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     _vertices:null,
     _colorPointer:null,
     _texCoords:null,
+
     _verticesBuffer:null,
     _colorPointerBuffer:null,
     _texCoordsBuffer:null,
+
+    /**
+     * Constructor
+     */
+    ctor: function () {
+        cc.NodeRGBA.prototype.ctor.call(this);
+        this._positionR = cc.PointZero();
+        this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        this._vertexWebGLBuffer = cc.renderContext.createBuffer();
+
+        this._fastMode = false;
+        this._startingPositionInitialized = false;
+
+        this._texture = null;
+
+        this._stroke = 0;
+        this._fadeDelta = 0;
+        this._minSeg = 0;
+
+        this._maxPoints = 0;
+        this._nuPoints = 0;
+        this._previousNuPoints = 0;
+
+        /** Pointers */
+        this._pointVertexes = null;
+        this._pointState = null;
+
+        // webgl
+        this._vertices = null;
+        this._colorPointer = null;
+        this._texCoords = null;
+
+        this._verticesBuffer = null;
+        this._colorPointerBuffer = null;
+        this._texCoordsBuffer = null;
+    },
 
     /**
      * @return {cc.Texture2D}
@@ -101,14 +137,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         }
     },
 
-    setColor:function (color) {
-        this._color = color;
-    },
-
-    getColor:function () {
-        return this._color;
-    },
-
     getOpacity:function () {
         cc.Assert(false, "Opacity no supported");
         return 0;
@@ -125,14 +153,14 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         return false;
     },
 
-    /**
-     * Constructor
-     */
-    ctor:function () {
-        this._super();
-        this._positionR = cc.PointZero();
-        this._color = cc.c3(0, 0, 0);
-        this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    onExit:function(){
+        cc.Node.prototype.onExit.call(this);
+        if(this._verticesBuffer)
+            cc.renderContext.deleteBuffer(this._verticesBuffer);
+        if(this._texCoordsBuffer)
+            cc.renderContext.deleteBuffer(this._texCoordsBuffer);
+        if(this._colorPointerBuffer)
+            cc.renderContext.deleteBuffer(this._colorPointerBuffer);
     },
 
     isFastMode:function () {
@@ -175,7 +203,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this.ignoreAnchorPointForPosition(true);
         this._startingPositionInitialized = false;
 
-        this._positionR = cc.PointZero();
         this._fastMode = true;
         this._minSeg = (minSeg == -1.0) ? (stroke / 5.0) : minSeg;
         this._minSeg *= this._minSeg;
@@ -183,14 +210,15 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this._stroke = stroke;
         this._fadeDelta = 1.0 / fade;
 
-        this._maxPoints = (0 | (fade * 60)) + 2;
+        var locMaxPoints = (0 | (fade * 60)) + 2;
         this._nuPoints = 0;
-        this._pointState = new Float32Array(this._maxPoints);
-        this._pointVertexes = new Float32Array(this._maxPoints * 2);
+        this._pointState = new Float32Array(locMaxPoints);
+        this._pointVertexes = new Float32Array(locMaxPoints * 2);
 
-        this._vertices = new Float32Array(this._maxPoints * 4);
-        this._texCoords = new Float32Array(this._maxPoints * 4);
-        this._colorPointer = new Uint8Array(this._maxPoints * 8);
+        this._vertices = new Float32Array(locMaxPoints * 4);
+        this._texCoords = new Float32Array(locMaxPoints * 4);
+        this._colorPointer = new Uint8Array(locMaxPoints * 8);
+        this._maxPoints = locMaxPoints;
 
         var gl = cc.renderContext;
 
@@ -216,7 +244,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         gl.bufferData(gl.ARRAY_BUFFER, this._texCoords, gl.DYNAMIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._colorPointerBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._colorPointer, gl.DYNAMIC_DRAW);
-        this._isDirty = true;
 
         return true;
     },
@@ -229,12 +256,12 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this.setColor(colors);
 
         // Fast assignation
-        for (var i = 0; i < this._nuPoints * 2; i++) {
-            this._colorPointer[i * 4] = colors.r;
-            this._colorPointer[i * 4 + 1] = colors.g;
-            this._colorPointer[i * 4 + 2] = colors.b;
+        var locColorPointer = this._colorPointer;
+        for (var i = 0, len = this._nuPoints * 2; i < len; i++) {
+            locColorPointer[i * 4] = colors.r;
+            locColorPointer[i * 4 + 1] = colors.g;
+            locColorPointer[i * 4 + 2] = colors.b;
         }
-        this._isDirty = true;
     },
 
     /**
@@ -255,7 +282,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
 
     /**
      * @override
-     * @param {cc.WebGLRenderingContext} ctx
+     * @param {WebGLRenderingContext} ctx
      */
     draw:function (ctx) {
         if (this._nuPoints <= 1)
@@ -285,7 +312,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
 
             ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, this._nuPoints * 2);
-            cc.INCREMENT_GL_DRAWS(1);
+            cc.g_NumberOfDraws ++;
         }
     },
 
@@ -303,106 +330,114 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         var mov = 0;
 
         // Update current points
-        for (i = 0; i < this._nuPoints; i++) {
-            this._pointState[i] -= delta;
+        var locNuPoints = this._nuPoints;
+        var locPointState = this._pointState, locPointVertexes = this._pointVertexes, locVertices = this._vertices;
+        var locColorPointer = this._colorPointer;
 
-            if (this._pointState[i] <= 0)
+        for (i = 0; i < locNuPoints; i++) {
+            locPointState[i] -= delta;
+
+            if (locPointState[i] <= 0)
                 mov++;
             else {
                 newIdx = i - mov;
                 if (mov > 0) {
                     // Move data
-                    this._pointState[newIdx] = this._pointState[i];
+                    locPointState[newIdx] = locPointState[i];
                     // Move point
-                    this._pointVertexes[newIdx * 2] = this._pointVertexes[i * 2];
-                    this._pointVertexes[newIdx * 2 + 1] = this._pointVertexes[i * 2 + 1];
+                    locPointVertexes[newIdx * 2] = locPointVertexes[i * 2];
+                    locPointVertexes[newIdx * 2 + 1] = locPointVertexes[i * 2 + 1];
 
                     // Move vertices
                     i2 = i * 2;
                     newIdx2 = newIdx * 2;
-                    this._vertices[newIdx2 * 2] = this._vertices[i2 * 2];
-                    this._vertices[newIdx2 * 2 + 1] = this._vertices[i2 * 2 + 1];
-                    this._vertices[(newIdx2 + 1) * 2] = this._vertices[(i2 + 1) * 2];
-                    this._vertices[(newIdx2 + 1) * 2 + 1] = this._vertices[(i2 + 1) * 2 + 1];
+                    locVertices[newIdx2 * 2] = locVertices[i2 * 2];
+                    locVertices[newIdx2 * 2 + 1] = locVertices[i2 * 2 + 1];
+                    locVertices[(newIdx2 + 1) * 2] = locVertices[(i2 + 1) * 2];
+                    locVertices[(newIdx2 + 1) * 2 + 1] = locVertices[(i2 + 1) * 2 + 1];
 
                     // Move color
                     i2 *= 4;
                     newIdx2 *= 4;
-                    this._colorPointer[newIdx2 + 0] = this._colorPointer[i2 + 0];
-                    this._colorPointer[newIdx2 + 1] = this._colorPointer[i2 + 1];
-                    this._colorPointer[newIdx2 + 2] = this._colorPointer[i2 + 2];
-                    this._colorPointer[newIdx2 + 4] = this._colorPointer[i2 + 4];
-                    this._colorPointer[newIdx2 + 5] = this._colorPointer[i2 + 5];
-                    this._colorPointer[newIdx2 + 6] = this._colorPointer[i2 + 6];
+                    locColorPointer[newIdx2 + 0] = locColorPointer[i2 + 0];
+                    locColorPointer[newIdx2 + 1] = locColorPointer[i2 + 1];
+                    locColorPointer[newIdx2 + 2] = locColorPointer[i2 + 2];
+                    locColorPointer[newIdx2 + 4] = locColorPointer[i2 + 4];
+                    locColorPointer[newIdx2 + 5] = locColorPointer[i2 + 5];
+                    locColorPointer[newIdx2 + 6] = locColorPointer[i2 + 6];
                 } else
                     newIdx2 = newIdx * 8;
 
-                var op = this._pointState[newIdx] * 255.0;
-                this._colorPointer[newIdx2 + 3] = op;
-                this._colorPointer[newIdx2 + 7] = op;
+                var op = locPointState[newIdx] * 255.0;
+                locColorPointer[newIdx2 + 3] = op;
+                locColorPointer[newIdx2 + 7] = op;
             }
         }
-        this._nuPoints -= mov;
+        locNuPoints -= mov;
 
         // Append new point
         var appendNewPoint = true;
-        if (this._nuPoints >= this._maxPoints)
+        if (locNuPoints >= this._maxPoints)
             appendNewPoint = false;
-        else if (this._nuPoints > 0) {
-            var a1 = cc.pDistanceSQ(cc.p(this._pointVertexes[(this._nuPoints - 1) * 2], this._pointVertexes[(this._nuPoints - 1) * 2 + 1]),
+        else if (locNuPoints > 0) {
+            var a1 = cc.pDistanceSQ(cc.p(locPointVertexes[(locNuPoints - 1) * 2], locPointVertexes[(locNuPoints - 1) * 2 + 1]),
                 this._positionR) < this._minSeg;
-            var a2 = (this._nuPoints == 1) ? false : (cc.pDistanceSQ(
-                cc.p(this._pointVertexes[(this._nuPoints - 2) * 2], this._pointVertexes[(this._nuPoints - 2) * 2 + 1]), this._positionR) < (this._minSeg * 2.0));
+            var a2 = (locNuPoints == 1) ? false : (cc.pDistanceSQ(
+                cc.p(locPointVertexes[(locNuPoints - 2) * 2], locPointVertexes[(locNuPoints - 2) * 2 + 1]), this._positionR) < (this._minSeg * 2.0));
             if (a1 || a2)
                 appendNewPoint = false;
         }
 
         if (appendNewPoint) {
-            this._pointVertexes[this._nuPoints * 2] = this._positionR.x;
-            this._pointVertexes[this._nuPoints * 2 + 1] = this._positionR.y;
-            this._pointState[this._nuPoints] = 1.0;
+            locPointVertexes[locNuPoints * 2] = this._positionR.x;
+            locPointVertexes[locNuPoints * 2 + 1] = this._positionR.y;
+            locPointState[locNuPoints] = 1.0;
 
             // Color assignment
-            var offset = this._nuPoints * 8;
+            var offset = locNuPoints * 8;
 
-            this._colorPointer[offset] = this._color.r;
-            this._colorPointer[offset + 1] = this._color.g;
-            this._colorPointer[offset + 2] = this._color.b;
+            var locDisplayedColor = this._displayedColor;
+            locColorPointer[offset] = locDisplayedColor.r;
+            locColorPointer[offset + 1] = locDisplayedColor.g;
+            locColorPointer[offset + 2] = locDisplayedColor.b;
             //*((ccColor3B*)(m_pColorPointer + offset+4)) = this._color;
-            this._colorPointer[offset + 4] = this._color.r;
-            this._colorPointer[offset + 5] = this._color.g;
-            this._colorPointer[offset + 6] = this._color.b;
+            locColorPointer[offset + 4] = locDisplayedColor.r;
+            locColorPointer[offset + 5] = locDisplayedColor.g;
+            locColorPointer[offset + 6] = locDisplayedColor.b;
 
             // Opacity
-            this._colorPointer[offset + 3] = 255;
-            this._colorPointer[offset + 7] = 255;
+            locColorPointer[offset + 3] = 255;
+            locColorPointer[offset + 7] = 255;
 
             // Generate polygon
-            if (this._nuPoints > 0 && this._fastMode) {
-                if (this._nuPoints > 1)
-                    cc.vertexLineToPolygon(this._pointVertexes, this._stroke, this._vertices, this._nuPoints, 1);
+            if (locNuPoints > 0 && this._fastMode) {
+                if (locNuPoints > 1)
+                    cc.vertexLineToPolygon(locPointVertexes, this._stroke, this._vertices, locNuPoints, 1);
                 else
-                    cc.vertexLineToPolygon(this._pointVertexes, this._stroke, this._vertices, 0, 2);
+                    cc.vertexLineToPolygon(locPointVertexes, this._stroke, this._vertices, 0, 2);
             }
-            this._nuPoints++;
+            locNuPoints++;
         }
 
         if (!this._fastMode)
-            cc.vertexLineToPolygon(this._pointVertexes, this._stroke, this._vertices, 0, this._nuPoints);
+            cc.vertexLineToPolygon(locPointVertexes, this._stroke, this._vertices, 0, locNuPoints);
 
         // Updated Tex Coords only if they are different than previous step
-        if (this._nuPoints && this._previousNuPoints != this._nuPoints) {
-            var texDelta = 1.0 / this._nuPoints;
-            for (i = 0; i < this._nuPoints; i++) {
-                this._texCoords[i * 4] = 0;
-                this._texCoords[i * 4 + 1] = texDelta * i;
+        if (locNuPoints && this._previousNuPoints != locNuPoints) {
+            var texDelta = 1.0 / locNuPoints;
+            var locTexCoords = this._texCoords;
+            for (i = 0; i < locNuPoints; i++) {
+                locTexCoords[i * 4] = 0;
+                locTexCoords[i * 4 + 1] = texDelta * i;
 
-                this._texCoords[(i * 2 + 1) * 2] = 1;
-                this._texCoords[(i * 2 + 1) * 2 + 1] = texDelta * i;
+                locTexCoords[(i * 2 + 1) * 2] = 1;
+                locTexCoords[(i * 2 + 1) * 2 + 1] = texDelta * i;
             }
 
-            this._previousNuPoints = this._nuPoints;
+            this._previousNuPoints = locNuPoints;
         }
+
+        this._nuPoints = locNuPoints;
     }
 });
 

@@ -31,6 +31,13 @@
  */
 
 cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
+    _inner:null,
+
+    ctor:function(){
+        cc.ActionInterval.prototype.ctor.call(this);
+        this._inner = null;
+    },
+
     /** initializes the action
      * @param {cc.ActionInterval} action
      * @return {Boolean}
@@ -39,10 +46,16 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
         cc.Assert(action != null, "");
 
         if (this.initWithDuration(action.getDuration())) {
-            this._other = action;
+            this._inner = action;
             return true;
         }
         return false;
+    },
+
+    clone:function(){
+       var action = new cc.ActionEase();
+        action.initWithAction(this._inner.clone());
+        return action;
     },
 
     /**
@@ -50,32 +63,34 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._other.startWithTarget(this._target);
+        this._inner.startWithTarget(this._target);
     },
 
     /**
      * Stop the action.
      */
     stop:function () {
-        this._other.stop();
-        this._super();
+        this._inner.stop();
+        cc.ActionInterval.prototype.stop.call(this);
     },
 
     /**
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(time1);
+        this._inner.update(time1);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.ActionEase.create(this._other.reverse());
+        return cc.ActionEase.create(this._inner.reverse());
     },
 
-    _other:null
+    getInnerAction:function(){
+       return this._inner;
+    }
 });
 
 /** creates the action of ActionEase
@@ -87,9 +102,8 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
  */
 cc.ActionEase.create = function (action) {
     var ret = new cc.ActionEase();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -99,6 +113,11 @@ cc.ActionEase.create = function (action) {
  * @extends cc.ActionEase
  */
 cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
+    _rate:0,
+    ctor:function(){
+        cc.ActionEase.prototype.ctor.call(this);
+        this._rate = 0;
+    },
 
     /** set rate value for the actions
      * @param {Number} rate
@@ -121,21 +140,25 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
      * @return {Boolean}
      */
     initWithAction:function (action, rate) {
-        if (this._super(action)) {
+        if (cc.ActionEase.prototype.initWithAction.call(this, action)) {
             this._rate = rate;
             return true;
         }
         return false;
     },
 
+    clone:function(){
+        var action = new cc.EaseRateAction();
+        action.initWithAction(this._inner.clone(), this._rate);
+        return action;
+    },
+
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseRateAction.create(this._other.reverse(), 1 / this._rate);
-    },
-
-    _rate:null
+        return cc.EaseRateAction.create(this._inner.reverse(), 1 / this._rate);
+    }
 });
 
 /** Creates the action with the inner action and the rate parameter
@@ -148,9 +171,8 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
  */
 cc.EaseRateAction.create = function (action, rate) {
     var ret = new cc.EaseRateAction();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action, rate);
-    }
     return ret;
 };
 
@@ -164,14 +186,20 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(Math.pow(time1, this._rate));
+        this._inner.update(Math.pow(time1, this._rate));
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseIn.create(this._other.reverse(), 1 / this._rate);
+        return cc.EaseIn.create(this._inner.reverse(), 1 / this._rate);
+    },
+
+    clone:function(){
+        var action = new cc.EaseIn();
+        action.initWithAction(this._inner.clone(), this._rate);
+        return action;
     }
 });
 
@@ -185,9 +213,8 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
  */
 cc.EaseIn.create = function (action, rate) {
     var ret = new cc.EaseIn();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action, rate);
-    }
     return ret;
 };
 /**
@@ -200,14 +227,20 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(Math.pow(time1, 1 / this._rate));
+        this._inner.update(Math.pow(time1, 1 / this._rate));
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseOut.create(this._other.reverse(), 1 / this._rate);
+        return cc.EaseOut.create(this._inner.reverse(), 1 / this._rate);
+    },
+
+    clone:function(){
+        var action = new cc.EaseOut();
+        action.initWithAction(this._inner.clone(),this._rate);
+        return action;
     }
 });
 
@@ -221,9 +254,8 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
  */
 cc.EaseOut.create = function (action, rate) {
     var ret = new cc.EaseOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action, rate);
-    }
     return ret;
 };
 
@@ -233,24 +265,28 @@ cc.EaseOut.create = function (action, rate) {
  * @extends cc.EaseRateAction
  */
 cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
-
     /**
      * @param {Number} time1
      */
     update:function (time1) {
         time1 *= 2;
-        if (time1 < 1) {
-            this._other.update(0.5 * Math.pow(time1, this._rate));
-        } else {
-            this._other.update(1.0 - 0.5 * Math.pow(2 - time1, this._rate));
-        }
+        if (time1 < 1)
+            this._inner.update(0.5 * Math.pow(time1, this._rate));
+        else
+            this._inner.update(1.0 - 0.5 * Math.pow(2 - time1, this._rate));
+    },
+
+    clone:function(){
+        var action = new cc.EaseInOut();
+        action.initWithAction(this._inner.clone(), this._rate);
+        return action;
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseInOut.create(this._other.reverse(), this._rate);
+        return cc.EaseInOut.create(this._inner.reverse(), this._rate);
     }
 });
 
@@ -264,9 +300,8 @@ cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
  */
 cc.EaseInOut.create = function (action, rate) {
     var ret = new cc.EaseInOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action, rate);
-    }
     return ret;
 };
 /**
@@ -279,14 +314,20 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(time1 === 0 ? 0 : Math.pow(2, 10 * (time1 - 1)));
+        this._inner.update(time1 === 0 ? 0 : Math.pow(2, 10 * (time1 - 1)));
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseExponentialOut.create(this._other.reverse());
+        return cc.EaseExponentialOut.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseExponentialIn();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -299,9 +340,8 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
  */
 cc.EaseExponentialIn.create = function (action) {
     var ret = new cc.EaseExponentialIn();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 /**
@@ -315,14 +355,20 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1)) + 1));
+        this._inner.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1)) + 1));
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseExponentialIn.create(this._other.reverse());
+        return cc.EaseExponentialIn.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseExponentialOut();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -335,9 +381,8 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
  */
 cc.EaseExponentialOut.create = function (action) {
     var ret = new cc.EaseExponentialOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -358,15 +403,20 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
             else
                 time = 0.5 * (-Math.pow(2, -10 * (time - 1)) + 2);
         }
-
-        this._other.update(time);
+        this._inner.update(time);
     },
 
     /**
      * @return {cc.EaseExponentialInOut}
      */
     reverse:function () {
-        return cc.EaseExponentialInOut.create(this._other.reverse());
+        return cc.EaseExponentialInOut.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseExponentialInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -379,9 +429,8 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
  */
 cc.EaseExponentialInOut.create = function (action) {
     var ret = new cc.EaseExponentialInOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -397,14 +446,20 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
      */
     update:function (time1) {
         time1 = time1===0 || time1==1 ? time1 : -1 * Math.cos(time1 * Math.PI / 2) + 1;
-        this._other.update(time1);
+        this._inner.update(time1);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseSineOut.create(this._other.reverse());
+        return cc.EaseSineOut.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseSineIn();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -417,9 +472,8 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
  */
 cc.EaseSineIn.create = function (action) {
     var ret = new cc.EaseSineIn();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 /**
@@ -433,14 +487,20 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
      */
     update:function (time1) {
         time1 = time1===0 || time1==1 ? time1 : Math.sin(time1 * Math.PI / 2);
-        this._other.update(time1);
+        this._inner.update(time1);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseSineIn.create(this._other.reverse());
+        return cc.EaseSineIn.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseSineOut();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -454,9 +514,8 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
  */
 cc.EaseSineOut.create = function (action) {
     var ret = new cc.EaseSineOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -467,21 +526,26 @@ cc.EaseSineOut.create = function (action) {
  * @extends cc.ActionEase
  */
 cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
-
     /**
      * @param {Number} time1
      */
     update:function (time1) {
         time1 = time1===0 || time1==1 ? time1 : -0.5 * (Math.cos(Math.PI * time1) - 1);
-        this._other.update(time1);
+        this._inner.update(time1);
 
+    },
+
+    clone:function(){
+        var action = new cc.EaseSineInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseSineInOut.create(this._other.reverse());
+        return cc.EaseSineInOut.create(this._inner.reverse());
     }
 });
 
@@ -494,9 +558,8 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
  */
 cc.EaseSineInOut.create = function (action) {
     var ret = new cc.EaseSineInOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -506,6 +569,11 @@ cc.EaseSineInOut.create = function (action) {
  * @extends cc.ActionEase
  */
 cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
+    _period:null,
+    ctor:function(){
+        cc.ActionEase.prototype.ctor.call(this);
+        this._period = 0.3;
+    },
 
     /** get period of the wave in radians. default is 0.3
      * @return {Number}
@@ -523,11 +591,11 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
 
     /** Initializes the action with the inner action and the period in radians (default is 0.3)
      * @param {cc.ActionInterval} action
-     * @param {Number} period
+     * @param {Number} [period=0.3]
      * @return {Boolean}
      */
     initWithAction:function (action, period) {
-        this._super(action);
+        cc.ActionEase.prototype.initWithAction.call(this, action);
         this._period = (period == null) ? 0.3 : period;
         return true;
     },
@@ -540,12 +608,16 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
         return null;
     },
 
-    _period:null
+    clone:function(){
+        var action = new cc.EaseElastic();
+        action.initWithAction(this._inner.clone(), this._period);
+        return action;
+    }
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
  * @param {cc.ActionInterval} action
- * @param {Number} period
+ * @param {Number} [period=0.3]
  * @return {cc.EaseElastic}
  * @example
  * // example
@@ -557,7 +629,6 @@ cc.EaseElastic.create = function (action, period) {
         return ret;
     return null;
 };
-
 
 /**
  * Ease Elastic In action.
@@ -578,21 +649,27 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
             time1 = time1 - 1;
             newT = -Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
         }
-        this._other.update(newT);
+        this._inner.update(newT);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseElasticOut.create(this._other.reverse(), this._period);
+        return cc.EaseElasticOut.create(this._inner.reverse(), this._period);
+    },
+
+    clone:function(){
+        var action = new cc.EaseElasticIn();
+        action.initWithAction(this._inner.clone(), this._period);
+        return action;
     }
 });
 
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
  * @param {cc.ActionInterval} action
- * @param {Number} period
+ * @param {Number} [period=]
  * @return {cc.EaseElasticIn}
  * @example
  * // example
@@ -624,21 +701,27 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
             newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period) + 1;
         }
 
-        this._other.update(newT);
+        this._inner.update(newT);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseElasticIn.create(this._other.reverse(), this._period);
+        return cc.EaseElasticIn.create(this._inner.reverse(), this._period);
+    },
+
+    clone:function(){
+        var action = new cc.EaseElasticOut();
+        action.initWithAction(this._inner.clone(), this._period);
+        return action;
     }
 });
 
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
  * @param {cc.ActionInterval} action
- * @param {Number} period
+ * @param {Number} [period=0.3]
  * @return {cc.EaseElasticOut}
  * @example
  * // example
@@ -646,13 +729,8 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
  */
 cc.EaseElasticOut.create = function (action, period) {
     var ret = new cc.EaseElasticOut();
-    if (ret) {
-        if (period == null) {
-            ret.initWithAction(action);
-        } else {
-            ret.initWithAction(action, period);
-        }
-    }
+    if (ret)
+        ret.initWithAction(action, period);
     return ret;
 };
 
@@ -682,20 +760,26 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
             else
                 newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period) * 0.5 + 1;
         }
-        this._other.update(newT);
+        this._inner.update(newT);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseElasticInOut.create(this._other.reverse(), this._period);
+        return cc.EaseElasticInOut.create(this._inner.reverse(), this._period);
+    },
+
+    clone:function(){
+        var action = new cc.EaseElasticInOut();
+        action.initWithAction(this._inner.clone(), this._period);
+        return action;
     }
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
  * @param {cc.ActionInterval} action
- * @param {Number} period
+ * @param {Number} [period=0.3]
  * @return {cc.EaseElasticInOut}
  * @example
  * // example
@@ -703,13 +787,8 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
  */
 cc.EaseElasticInOut.create = function (action, period) {
     var ret = new cc.EaseElasticInOut();
-    if (ret) {
-        if (period == null) {
-            ret.initWithAction(action);
-        } else {
-            ret.initWithAction(action, period);
-        }
-    }
+    if (ret)
+        ret.initWithAction(action, period);
     return ret;
 };
 
@@ -738,11 +817,17 @@ cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
         return 7.5625 * time1 * time1 + 0.984375;
     },
 
+    clone:function(){
+        var action = new cc.EaseBounce();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseBounce.create(this._other.reverse());
+        return cc.EaseBounce.create(this._inner.reverse());
     }
 });
 
@@ -755,9 +840,8 @@ cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
  */
 cc.EaseBounce.create = function (action) {
     var ret = new cc.EaseBounce();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -773,14 +857,20 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
      */
     update:function (time1) {
         var newT = 1 - this.bounceTime(1 - time1);
-        this._other.update(newT);
+        this._inner.update(newT);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseBounceOut.create(this._other.reverse());
+        return cc.EaseBounceOut.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseBounceIn();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -793,9 +883,8 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
  */
 cc.EaseBounceIn.create = function (action) {
     var ret = new cc.EaseBounceIn();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 /**
@@ -805,20 +894,25 @@ cc.EaseBounceIn.create = function (action) {
  * @extends cc.EaseBounce
  */
 cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
-
     /**
      * @param {Number} time1
      */
     update:function (time1) {
         var newT = this.bounceTime(time1);
-        this._other.update(newT);
+        this._inner.update(newT);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseBounceIn.create(this._other.reverse());
+        return cc.EaseBounceIn.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseBounceOut();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -831,9 +925,8 @@ cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
  */
 cc.EaseBounceOut.create = function (action) {
     var ret = new cc.EaseBounceOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -844,7 +937,6 @@ cc.EaseBounceOut.create = function (action) {
  * @extends cc.EaseBounce
  */
 cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
-
     /**
      * @param {Number} time1
      */
@@ -856,16 +948,20 @@ cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
         } else {
             newT = this.bounceTime(time1 * 2 - 1) * 0.5 + 0.5;
         }
-
-        this._other.update(newT);
+        this._inner.update(newT);
     },
 
+    clone:function(){
+        var action = new cc.EaseBounceInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseBounceInOut.create(this._other.reverse());
+        return cc.EaseBounceInOut.create(this._inner.reverse());
     }
 });
 
@@ -878,9 +974,8 @@ cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
  */
 cc.EaseBounceInOut.create = function (action) {
     var ret = new cc.EaseBounceInOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -891,22 +986,26 @@ cc.EaseBounceInOut.create = function (action) {
  * @extends cc.ActionEase
  */
 cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
-
     /**
      * @param {Number} time1
      */
     update:function (time1) {
         var overshoot = 1.70158;
         time1 = time1===0 || time1==1 ? time1 : time1 * time1 * ((overshoot + 1) * time1 - overshoot);
-        this._other.update(time1);
+        this._inner.update(time1);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseBackOut.create(this._other.reverse());
+        return cc.EaseBackOut.create(this._inner.reverse());
+    },
 
+    clone:function(){
+        var action = new cc.EaseBackIn();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -920,9 +1019,8 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
  */
 cc.EaseBackIn.create = function (action) {
     var ret = new cc.EaseBackIn();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -940,14 +1038,20 @@ cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
         var overshoot = 1.70158;
 
         time1 = time1 - 1;
-        this._other.update(time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1);
+        this._inner.update(time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1);
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseBackIn.create(this._other.reverse());
+        return cc.EaseBackIn.create(this._inner.reverse());
+    },
+
+    clone:function(){
+        var action = new cc.EaseBackOut();
+        action.initWithAction(this._inner.clone());
+        return action;
     }
 });
 
@@ -960,9 +1064,8 @@ cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
  */
 cc.EaseBackOut.create = function (action) {
     var ret = new cc.EaseBackOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 
@@ -981,18 +1084,24 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
 
         time1 = time1 * 2;
         if (time1 < 1) {
-            this._other.update((time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2);
+            this._inner.update((time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2);
         } else {
             time1 = time1 - 2;
-            this._other.update((time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1);
+            this._inner.update((time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1);
         }
+    },
+
+    clone:function(){
+        var action = new cc.EaseBackInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
     },
 
     /**
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseBackInOut.create(this._other.reverse());
+        return cc.EaseBackInOut.create(this._inner.reverse());
     }
 });
 
@@ -1006,9 +1115,8 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
  */
 cc.EaseBackInOut.create = function (action) {
     var ret = new cc.EaseBackInOut();
-    if (ret) {
+    if (ret)
         ret.initWithAction(action);
-    }
     return ret;
 };
 

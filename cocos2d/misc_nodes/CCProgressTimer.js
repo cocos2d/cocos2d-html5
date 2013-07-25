@@ -54,11 +54,10 @@ cc.PROGRESS_TEXTURE_COORDS = 0x4b;
  * It renders the inner sprite according to the percentage.<br/>
  * The progress can be Radial, Horizontal or vertical.
  * @class
- * @extends cc.Node
+ * @extends cc.NodeRGBA
  */
-cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
+cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# */{
     /// ---- common properties start ----
-    RGBAProtocol:true,
     _type:null,
     _percentage:0.0,
     _sprite:null,
@@ -66,15 +65,6 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
     _midPoint:null,
     _barChangeRate:null,
     _reverseDirection:false,
-
-    ctor:function () {
-        this._super();
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
-        this._percentage = 0.0;
-        this._midPoint = cc.p(0, 0);
-        this._barChangeRate = cc.p(0, 0);
-        this._reverseDirection = false;
-    },
 
     /**
      *    Midpoint is used to modify the progress start position.
@@ -152,22 +142,6 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
         }
     },
 
-    /**
-     * return color of sprite
-     * @return {cc.Color3B}
-     */
-    getColor:function () {
-        return this._sprite.getColor();
-    },
-
-    /**
-     * return Opacity of sprite
-     * @return {Number}
-     */
-    getOpacity:function () {
-        return this._sprite.getOpacity();
-    },
-
     setOpacityModifyRGB:function (bValue) {
     },
 
@@ -181,14 +155,43 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
 
     _boundaryTexCoord:function (index) {
         if (index < cc.PROGRESS_TEXTURE_COORDS_COUNT) {
+            var locProTextCoords = cc.PROGRESS_TEXTURE_COORDS;
             if (this._reverseDirection)
-                return cc.p((cc.PROGRESS_TEXTURE_COORDS >> (7 - (index << 1))) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (7 - ((index << 1) + 1))) & 1);
+                return cc.p((locProTextCoords >> (7 - (index << 1))) & 1, (locProTextCoords >> (7 - ((index << 1) + 1))) & 1);
             else
-                return cc.p((cc.PROGRESS_TEXTURE_COORDS >> ((index << 1) + 1)) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (index << 1)) & 1);
+                return cc.p((locProTextCoords >> ((index << 1) + 1)) & 1, (locProTextCoords >> (index << 1)) & 1);
         }
         return cc.PointZero();
     },
+
     /// ---- common properties end   ----
+    _origin:cc.PointZero(),
+    _originSize:cc.SizeZero(),
+    _drawSize:cc.SizeZero(),
+    _drawPosition:cc.PointZero(),
+    _startAngle:270,
+    _endAngle:270,
+    _radius:0,
+
+    ctor:function () {
+        cc.NodeRGBA.prototype.ctor.call(this);
+
+        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._percentage = 0.0;
+        this._midPoint = cc.p(0, 0);
+        this._barChangeRate = cc.p(0, 0);
+        this._reverseDirection = false;
+
+        this._sprite = null;
+
+        this._origin = cc.PointZero();
+        this._originSize = cc.SizeZero();
+        this._drawSize = cc.SizeZero();
+        this._drawPosition = cc.PointZero();
+        this._startAngle = 270;
+        this._endAngle = 270;
+        this._radius = 0;
+    },
 
     /**
      * @param {Boolean} reverse
@@ -236,6 +239,22 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
     },
 
     /**
+     * return color of sprite
+     * @return {cc.Color3B}
+     */
+    getColor:function () {
+        return this._sprite.getColor();
+    },
+
+    /**
+     * return Opacity of sprite
+     * @return {Number}
+     */
+    getOpacity:function () {
+        return this._sprite.getOpacity();
+    },
+
+    /**
      * Reverse Progress setter
      * @param {Boolean} reverse
      */
@@ -265,22 +284,23 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
 
     /**
      * stuff gets drawn here
-     * @param {CanvasContext} ctx
+     * @param {CanvasRenderingContext2D} ctx
      */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
-        context.globalAlpha = this._sprite._opacity / 255;
+        var locSprite = this._sprite;
+        context.globalAlpha = locSprite._opacity / 255;
         var centerPoint, mpX = 0, mpY = 0;
-        var spriteContentSize = this._sprite._contentSize;
-        var spriteAnchorPoint = this._sprite._anchorPointInPoints;
-        if (this._sprite._flipX) {
+        var spriteContentSize = locSprite._contentSize;
+        var spriteAnchorPoint = locSprite._anchorPointInPoints;
+        if (locSprite._flipX) {
             centerPoint = cc.p(spriteContentSize.width * 0.5, spriteContentSize.height * 0.5);
             mpX = 0 | (centerPoint.x - spriteAnchorPoint.x);
             context.translate(mpX, 0);
             context.scale(-1, 1);
         }
 
-        if (this._sprite._flipY) {
+        if (locSprite._flipY) {
             centerPoint = cc.p(spriteContentSize.width * 0.5, spriteContentSize.height * 0.5);
             mpY = -(0 | (centerPoint.y - spriteAnchorPoint.y));
             context.translate(0, mpY);
@@ -289,68 +309,63 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
         context.translate(spriteAnchorPoint.x, -spriteAnchorPoint.y);
 
         var pos;
+        var offsetPixels = locSprite._offsetPosition, locSpriteTexture = locSprite._texture, locSpriteRect = locSprite._rect;
+        var locOrigin = this._origin;
         if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
-            pos = cc.p(( -spriteAnchorPoint.x + this._sprite._offsetPosition.x + this._drawPosition.x),
-                ( -spriteAnchorPoint.y + this._sprite._offsetPosition.y + this._drawPosition.y));
-
-            if (this._sprite._texture instanceof HTMLImageElement) {
-                if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
-                    context.drawImage(this._sprite._texture,
-                        this._sprite._rect.x + this._origin.x, this._sprite._rect.y + this._origin.y,
-                        this._originSize.width, this._originSize.height,
+            pos = cc.p(( -spriteAnchorPoint.x + offsetPixels.x + this._drawPosition.x),
+                ( -spriteAnchorPoint.y + offsetPixels.y + this._drawPosition.y));
+            var locOriginSize = this._originSize;
+            if (locSpriteTexture instanceof HTMLImageElement) {
+                if ((locOriginSize.width != 0) && (locOriginSize.height != 0)) {
+                    context.drawImage(locSpriteTexture,
+                        locSpriteRect.x + locOrigin.x, locSpriteRect.y + locOrigin.y,
+                        locOriginSize.width, locOriginSize.height,
                         pos.x, -(pos.y + this._drawSize.height),
-                        this._originSize.width, this._originSize.height);
+                        locOriginSize.width, locOriginSize.height);
                 }
-            } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
-                if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
-                    context.drawImage(this._sprite._texture,
-                        this._origin.x, this._origin.y,
-                        this._originSize.width, this._originSize.height,
+            } else if (locSpriteTexture instanceof  HTMLCanvasElement) {
+                if ((locOriginSize.width != 0) && (locOriginSize.height != 0)) {
+                    context.drawImage(locSpriteTexture,
+                        locOrigin.x, locOrigin.y,
+                        locOriginSize.width, locOriginSize.height,
                         pos.x, -(pos.y + this._drawSize.height),
-                        this._originSize.width, this._originSize.height);
+                        locOriginSize.width, locOriginSize.height);
                 }
             }
         } else {
             context.beginPath();
-            context.arc(this._origin.x, this._origin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
-            context.lineTo(this._origin.x, this._origin.y);
+            context.arc(locOrigin.x, locOrigin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
+            context.lineTo(locOrigin.x, locOrigin.y);
             context.clip();
             context.closePath();
 
-            var offsetPixels = this._sprite._offsetPosition;
             pos = cc.p(0 | ( -spriteAnchorPoint.x + offsetPixels.x),
                 0 | ( -spriteAnchorPoint.y + offsetPixels.y));
 
-            if (this._sprite._texture instanceof HTMLImageElement) {
-                context.drawImage(this._sprite._texture,
-                    this._sprite._rect.x, this._sprite._rect.y,
-                    this._sprite._rect.width, this._sprite._rect.height,
-                    pos.x, -(pos.y + this._sprite._rect.height),
-                    this._sprite._rect.width, this._sprite._rect.height);
-            } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
-                context.drawImage(this._sprite._texture,
+            if (locSpriteTexture instanceof HTMLImageElement) {
+                context.drawImage(locSpriteTexture,
+                    locSpriteRect.x, locSpriteRect.y,
+                    locSpriteRect.width, locSpriteRect.height,
+                    pos.x, -(pos.y + locSpriteRect.height),
+                    locSpriteRect.width, locSpriteRect.height);
+            } else if (locSpriteTexture instanceof  HTMLCanvasElement) {
+                context.drawImage(locSpriteTexture,
                     0, 0,
-                    this._sprite._rect.width, this._sprite._rect.height,
-                    pos.x, -(pos.y + this._sprite._rect.height),
-                    this._sprite._rect.width, this._sprite._rect.height);
+                    locSpriteRect.width, locSpriteRect.height,
+                    pos.x, -(pos.y + locSpriteRect.height),
+                    locSpriteRect.width, locSpriteRect.height);
             }
         }
         cc.INCREMENT_GL_DRAWS(1);
     },
 
-    _origin:cc.PointZero(),
-    _originSize:cc.SizeZero(),
-    _drawSize:cc.SizeZero(),
-    _drawPosition:cc.PointZero(),
-    _startAngle:270,
-    _endAngle:270,
-    _radius:0,
     _updateProgress:function () {
         var size = this._sprite.getContentSize();
         var textureSize = this._sprite.getTextureRect().size;
+        var locMidPoint = this._midPoint;
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
 
-            this._origin = cc.p(-(size.width * (0.5 - this._midPoint.x)), -(size.height * (0.5 - this._midPoint.y)));
+            this._origin = cc.p(-(size.width * (0.5 - locMidPoint.x)), -(size.height * (0.5 - locMidPoint.y)));
             this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
             if (this._reverseDirection) {
                 this._startAngle = 270 - 3.6 * this._percentage;
@@ -360,16 +375,17 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
         } else {
             this._origin = cc.p(0, 0);
             this._drawPosition = cc.p(0, 0);
+            var locBarChangeRate = this._barChangeRate;
 
             var percentageF = this._percentage / 100;
-            var startPoint = cc.p(size.width * this._midPoint.x, size.height * this._midPoint.y);
-            var startPointTx = cc.p(textureSize.width * this._midPoint.x, textureSize.height * this._midPoint.y);
+            var startPoint = cc.p(size.width * locMidPoint.x, size.height * locMidPoint.y);
+            var startPointTx = cc.p(textureSize.width * locMidPoint.x, textureSize.height * locMidPoint.y);
 
-            var drawedSize = cc.size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
+            var drawedSize = cc.size((size.width * (1 - locBarChangeRate.x)), (size.height * (1 - locBarChangeRate.y)));
             var drawingSize = cc.size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
             this._drawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
 
-            var txDrawedSize = cc.size((textureSize.width * (1 - this._barChangeRate.x)), (textureSize.height * (1 - this._barChangeRate.y)));
+            var txDrawedSize = cc.size((textureSize.width * (1 - locBarChangeRate.x)), (textureSize.height * (1 - locBarChangeRate.y)));
             var txDrawingSize = cc.size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
             this._originSize = cc.size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
 
@@ -400,7 +416,7 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage
  * @param {cc.Sprite} sprite
- * @return {cc.ProgressTimerCanvas}
+ * @return {cc.ProgressTimer}
  * @example
  * // Example
  * var progress = cc.ProgressTimer.create('progress.png')
@@ -417,11 +433,10 @@ cc.ProgressTimerCanvas.create = function (sprite) {
  * It renders the inner sprite according to the percentage.<br/>
  * The progress can be Radial, Horizontal or vertical.
  * @class
- * @extends cc.Node
+ * @extends cc.NodeRGBA
  */
-cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
+cc.ProgressTimerWebGL = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerWebGL# */{
     /// ---- common properties start ----
-    RGBAProtocol:true,
     _type:null,
     _percentage:0.0,
     _sprite:null,
@@ -429,15 +444,6 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
     _midPoint:null,
     _barChangeRate:null,
     _reverseDirection:false,
-
-    ctor:function () {
-        this._super();
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
-        this._percentage = 0.0;
-        this._midPoint = cc.p(0, 0);
-        this._barChangeRate = cc.p(0, 0);
-        this._reverseDirection = false;
-    },
 
     /**
      *    Midpoint is used to modify the progress start position.
@@ -515,22 +521,6 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         }
     },
 
-    /**
-     * return color of sprite
-     * @return {cc.Color3B}
-     */
-    getColor:function () {
-        return this._sprite.getColor();
-    },
-
-    /**
-     * return Opacity of sprite
-     * @return {Number}
-     */
-    getOpacity:function () {
-        return this._sprite.getOpacity();
-    },
-
     setOpacityModifyRGB:function (bValue) {
     },
 
@@ -555,9 +545,58 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
     _vertexDataCount:0,
     _vertexData:null,
-    _verticesFloat32Buffer:null,
-    _textureCoordsFloat32Buffer:null,
-    _colorsUint8Buffer:null,
+    _vertexArrayBuffer:null,
+    _vertexWebGLBuffer:null,
+    _vertexDataDirty:false,
+
+    ctor:function () {
+        cc.NodeRGBA.prototype.ctor.call(this);
+        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._percentage = 0.0;
+        this._midPoint = cc.p(0, 0);
+        this._barChangeRate = cc.p(0, 0);
+        this._reverseDirection = false;
+
+        this._sprite = null;
+
+        this._vertexWebGLBuffer = cc.renderContext.createBuffer();
+        this._vertexDataCount = 0;
+        this._vertexData = null;
+        this._vertexArrayBuffer = null;
+        this._vertexDataDirty = false;
+    },
+
+    /**
+     * set color of sprite
+     * @param {cc.Color3B} color
+     */
+    setColor:function (color) {
+        this._sprite.setColor(color);
+    },
+
+    /**
+     * Opacity
+     * @param {Number} opacity
+     */
+    setOpacity:function (opacity) {
+        this._sprite.setOpacity(opacity);
+    },
+
+    /**
+     * return color of sprite
+     * @return {cc.Color3B}
+     */
+    getColor:function () {
+        return this._sprite.getColor();
+    },
+
+    /**
+     * return Opacity of sprite
+     * @return {Number}
+     */
+    getOpacity:function () {
+        return this._sprite.getOpacity();
+    },
 
     /**
      * @param {Boolean} reverse
@@ -568,6 +607,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
             //    release all previous information
             this._vertexData = null;
+            this._vertexArrayBuffer = null;
             this._vertexDataCount = 0;
         }
     },
@@ -583,6 +623,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
                 this._vertexData = null;
+                this._vertexArrayBuffer = null;
                 this._vertexDataCount = 0;
             }
         }
@@ -597,28 +638,12 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             //	release all previous information
             if (this._vertexData) {
                 this._vertexData = null;
+                this._vertexArrayBuffer = null;
                 this._vertexDataCount = 0;
             }
 
             this._type = type;
         }
-    },
-
-    /**
-     * set color of sprite
-     * @param {cc.Color3B} color
-     */
-    setColor:function (color) {
-        this._sprite.setColor(color);
-        this._updateColor();
-    },
-    /**
-     * Opacity
-     * @param {Number} opacity
-     */
-    setOpacity:function (opacity) {
-        this._sprite.setOpacity(opacity);
-        this._updateColor();
     },
 
     /**
@@ -630,43 +655,42 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             this._reverseDirection = reverse;
             //release all previous information
             this._vertexData = null;
+            this._vertexArrayBuffer = null;
             this._vertexDataCount = 0;
         }
     },
 
     /**
      * @param {cc.Point} alpha
-     * @return {cc.Vertex2F} the vertex position from the texture coordinate
+     * @return {cc.Vertex2F | Object} the vertex position from the texture coordinate
      * @private
      */
     _textureCoordFromAlphaPoint:function (alpha) {
-        if (!this._sprite) {
-            return new cc.Tex2F(0, 0);
+        var locSprite = this._sprite;
+        if (!locSprite) {
+            return {u:0, v:0}; //new cc.Tex2F(0, 0);
         }
-        var quad = this._sprite.getQuad();
+        var quad = locSprite.getQuad();
         var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
         var max = cc.p(quad.tr.texCoords.u, quad.tr.texCoords.v);
 
         //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
-        if (this._sprite.isTextureRectRotated()) {
+        if (locSprite.isTextureRectRotated()) {
             var temp = alpha.x;
             alpha.x = alpha.y;
             alpha.y = temp;
         }
-        return new cc.Tex2F(min.x * (1 - alpha.x) + max.x * alpha.x, min.y * (1 - alpha.y) + max.y * alpha.y);
+        return {u: min.x * (1 - alpha.x) + max.x * alpha.x, v: min.y * (1 - alpha.y) + max.y * alpha.y};
     },
 
     _vertexFromAlphaPoint:function (alpha) {
-        var ret = new cc.Tex2F(0, 0);
         if (!this._sprite) {
-            return ret;
+            return {x: 0, y: 0};
         }
         var quad = this._sprite.getQuad();
         var min = cc.p(quad.bl.vertices.x, quad.bl.vertices.y);
         var max = cc.p(quad.tr.vertices.x, quad.tr.vertices.y);
-        ret.x = min.x * (1 - alpha.x) + max.x * alpha.x;
-        ret.y = min.y * (1 - alpha.y) + max.y * alpha.y;
-        return ret;
+        return {x: min.x * (1 - alpha.x) + max.x * alpha.x, y: min.y * (1 - alpha.y) + max.y * alpha.y};
     },
     /**
      * Initializes a progress timer with the sprite as the shape the timer goes through
@@ -676,6 +700,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
     initWithSprite:function (sprite) {
         this.setPercentage(0);
         this._vertexData = null;
+        this._vertexArrayBuffer = null;
         this._vertexDataCount = 0;
         this.setAnchorPoint(cc.p(0.5, 0.5));
 
@@ -687,47 +712,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
         //shader program
         this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
-
         return true;
-    },
-
-    _getProgressTimerVertexArray:function () {
-        var vertexBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
-        var vertiesArray = new Float32Array(2 * this._vertexDataCount);
-        for (var i = 0; i < this._vertexDataCount; i++) {
-            vertiesArray[i * 2] = this._vertexData[i].vertices.x;
-            vertiesArray[i * 2 + 1] = this._vertexData[i].vertices.y;
-        }
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, vertiesArray, cc.renderContext.STATIC_DRAW);
-        return vertexBuffer;
-    },
-
-    _getProgressTimerColorArray:function () {
-        var colorsBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorsBuffer);
-        var verticesArray = new Uint8Array(4 * this._vertexDataCount);
-        for (var i = 0; i < this._vertexDataCount; i++) {
-            verticesArray[i * 4] = this._vertexData[i].colors.r;
-            verticesArray[i * 4 + 1] = this._vertexData[i].colors.g;
-            verticesArray[i * 4 + 2] = this._vertexData[i].colors.b;
-            verticesArray[i * 4 + 3] = this._vertexData[i].colors.a;
-        }
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, verticesArray, cc.renderContext.STATIC_DRAW);
-        return colorsBuffer;
-    },
-
-    _getProgressTimerTexCoodsArray:function () {
-        var vertexBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
-        var vertiesArray = new Float32Array(2 * this._vertexDataCount);
-        for (var i = 0; i < this._vertexDataCount; i++) {
-            vertiesArray[i * 2] = this._vertexData[i].texCoords.u;
-            vertiesArray[i * 2 + 1] = this._vertexData[i].texCoords.v;
-        }
-
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, vertiesArray, cc.renderContext.STATIC_DRAW);
-        return vertexBuffer;
     },
 
     /**
@@ -741,7 +726,8 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
         cc.NODE_DRAW_SETUP(this);
 
-        cc.glBlendFunc(this._sprite.getBlendFunc().src, this._sprite.getBlendFunc().dst);
+        var blendFunc = this._sprite.getBlendFunc();
+        cc.glBlendFunc(blendFunc.src, blendFunc.dst);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
         if (this._sprite.getTexture())
@@ -749,14 +735,15 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         else
             cc.glBindTexture2D(null);
 
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
+        context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
+        if(this._vertexDataDirty){
+            context.bufferData(context.ARRAY_BUFFER, this._vertexArrayBuffer, context.DYNAMIC_DRAW);
+            this._vertexDataDirty = false;
+        }
+        var locVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, locVertexDataLen, 0);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, locVertexDataLen, 8);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, locVertexDataLen, 12);
 
         if (this._type === cc.PROGRESS_TIMER_TYPE_RADIAL)
             context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
@@ -767,20 +754,10 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
                 context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount / 2);
                 context.drawArrays(context.TRIANGLE_STRIP, 4, this._vertexDataCount / 2);
                 // 2 draw calls
-                cc.INCREMENT_GL_DRAWS(1);
+                cc.g_NumberOfDraws++;
             }
         }
-        cc.INCREMENT_GL_DRAWS(1);
-    },
-
-    _updateColor:function () {
-        if (!this._sprite || !this._vertexData)
-            return;
-
-        var sc = this._sprite.getQuad().tl.colors;
-        for (var i = 0; i < this._vertexDataCount; ++i)
-            this._vertexData[i].colors = sc;
-        this._colorsUint8Buffer = this._getProgressTimerColorArray();
+        cc.g_NumberOfDraws++;
     },
 
     /**
@@ -798,15 +775,15 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         if (!this._sprite)
             return;
 
-        var i;
+        var i, locMidPoint = this._midPoint;
         var alpha = this._percentage / 100;
         var angle = 2 * (cc.PI) * ( this._reverseDirection ? alpha : 1.0 - alpha);
 
         //    We find the vector to do a hit detection based on the percentage
         //    We know the first vector is the one @ 12 o'clock (top,mid) so we rotate
         //    from that by the progress angle around the m_tMidpoint pivot
-        var topMid = cc.p(this._midPoint.x, 1);
-        var percentagePt = cc.pRotateByAngle(topMid, this._midPoint, angle);
+        var topMid = cc.p(locMidPoint.x, 1);
+        var percentagePt = cc.pRotateByAngle(topMid, locMidPoint, angle);
 
         var index = 0;
         var hit;
@@ -827,23 +804,23 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             //    We loop through five points since the top is split in half
 
             var min_t = cc.FLT_MAX;
+            var locProTextCoordsCount = cc.PROGRESS_TEXTURE_COORDS_COUNT;
+            for (i = 0; i <= locProTextCoordsCount; ++i) {
+                var pIndex = (i + (locProTextCoordsCount - 1)) % locProTextCoordsCount;
 
-            for (i = 0; i <= cc.PROGRESS_TEXTURE_COORDS_COUNT; ++i) {
-                var pIndex = (i + (cc.PROGRESS_TEXTURE_COORDS_COUNT - 1)) % cc.PROGRESS_TEXTURE_COORDS_COUNT;
-
-                var edgePtA = this._boundaryTexCoord(i % cc.PROGRESS_TEXTURE_COORDS_COUNT);
+                var edgePtA = this._boundaryTexCoord(i % locProTextCoordsCount);
                 var edgePtB = this._boundaryTexCoord(pIndex);
 
                 //    Remember that the top edge is split in half for the 12 o'clock position
                 //    Let's deal with that here by finding the correct endpoints
                 if (i == 0)
-                    edgePtB = cc.pLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
+                    edgePtB = cc.pLerp(edgePtA, edgePtB, 1 - locMidPoint.x);
                 else if (i == 4)
-                    edgePtA = cc.pLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
+                    edgePtA = cc.pLerp(edgePtA, edgePtB, 1 - locMidPoint.x);
 
                 // retPoint are returned by ccpLineIntersect
                 var retPoint = cc.p(0, 0);
-                if (cc.pLineIntersect(edgePtA, edgePtB, this._midPoint, percentagePt, retPoint)) {
+                if (cc.pLineIntersect(edgePtA, edgePtB, locMidPoint, percentagePt, retPoint)) {
                     //    Since our hit test is on rays we have to deal with the top edge
                     //    being in split in half so we have to test as a segment
                     if ((i == 0 || i == 4)) {
@@ -865,7 +842,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             }
 
             //    Now that we have the minimum magnitude we can use that to find our intersection
-            hit = cc.pAdd(this._midPoint, cc.pMult(cc.pSub(percentagePt, this._midPoint), min_t));
+            hit = cc.pAdd(locMidPoint, cc.pMult(cc.pSub(percentagePt, locMidPoint), min_t));
         }
 
         //    The size of the vertex data is the index from the hitpoint
@@ -874,41 +851,42 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         if (this._vertexDataCount != index + 3) {
             sameIndexCount = false;
             this._vertexData = null;
+            this._vertexArrayBuffer = null;
             this._vertexDataCount = 0;
         }
 
         if (!this._vertexData) {
             this._vertexDataCount = index + 3;
-            this._vertexData = [];
-            for (i = 0; i < this._vertexDataCount; i++) {
-                this._vertexData[i] = new cc.V2F_C4B_T2F();
-            }
+            var locCount = this._vertexDataCount, vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+            this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
+            var locData = [];
+            for (i = 0; i < locCount; i++)
+                locData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
+
+            this._vertexData = locData;
             cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
         }
 
+        var locVertexData = this._vertexData;
         if (!sameIndexCount) {
             //    First we populate the array with the m_tMidpoint, then all
             //    vertices/texcoords/colors of the 12 'o clock start and edges and the hitpoint
-            this._vertexData[0].texCoords = this._textureCoordFromAlphaPoint(this._midPoint);
-            this._vertexData[0].vertices = this._vertexFromAlphaPoint(this._midPoint);
+            locVertexData[0].texCoords = this._textureCoordFromAlphaPoint(locMidPoint);
+            locVertexData[0].vertices = this._vertexFromAlphaPoint(locMidPoint);
 
-            this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(topMid);
-            this._vertexData[1].vertices = this._vertexFromAlphaPoint(topMid);
+            locVertexData[1].texCoords = this._textureCoordFromAlphaPoint(topMid);
+            locVertexData[1].vertices = this._vertexFromAlphaPoint(topMid);
 
             for (i = 0; i < index; i++) {
                 var alphaPoint = this._boundaryTexCoord(i);
-                this._vertexData[i + 2].texCoords = this._textureCoordFromAlphaPoint(alphaPoint);
-                this._vertexData[i + 2].vertices = this._vertexFromAlphaPoint(alphaPoint);
+                locVertexData[i + 2].texCoords = this._textureCoordFromAlphaPoint(alphaPoint);
+                locVertexData[i + 2].vertices = this._vertexFromAlphaPoint(alphaPoint);
             }
         }
 
         //    hitpoint will go last
-        this._vertexData[this._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
-        this._vertexData[this._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
-
-        this._verticesFloat32Buffer = this._getProgressTimerVertexArray();
-        this._textureCoordsFloat32Buffer = this._getProgressTimerTexCoodsArray();
-        this._updateColor();
+        locVertexData[this._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
+        locVertexData[this._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
     },
 
     /**
@@ -928,8 +906,9 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
         var i;
         var alpha = this._percentage / 100.0;
-        var alphaOffset = cc.pMult(cc.p((1.0 - this._barChangeRate.x) + alpha * this._barChangeRate.x,
-            (1.0 - this._barChangeRate.y) + alpha * this._barChangeRate.y), 0.5);
+        var locBarChangeRate = this._barChangeRate;
+        var alphaOffset = cc.pMult(cc.p((1.0 - locBarChangeRate.x) + alpha * locBarChangeRate.x,
+            (1.0 - locBarChangeRate.y) + alpha * locBarChangeRate.y), 0.5);
         var min = cc.pSub(this._midPoint, alphaOffset);
         var max = cc.pAdd(this._midPoint, alphaOffset);
 
@@ -953,95 +932,109 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             max.y = 1;
         }
 
+        var locVertexData;
         if (!this._reverseDirection) {
             if (!this._vertexData) {
                 this._vertexDataCount = 4;
+                var vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, locCount = 4;
+                this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
                 this._vertexData = [];
-                for (i = 0; i < this._vertexDataCount; i++) {
-                    this._vertexData[i] = new cc.V2F_C4B_T2F();
+                for (i = 0; i < locCount; i++) {
+                    this._vertexData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
                 }
                 cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
             }
 
+            locVertexData = this._vertexData;
             //    TOPLEFT
-            this._vertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
-            this._vertexData[0].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
+            locVertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
+            locVertexData[0].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
 
             //    BOTLEFT
-            this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
-            this._vertexData[1].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
+            locVertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
+            locVertexData[1].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
 
             //    TOPRIGHT
-            this._vertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
-            this._vertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
+            locVertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
+            locVertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
 
             //    BOTRIGHT
-            this._vertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
-            this._vertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
+            locVertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
+            locVertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         } else {
             if (!this._vertexData) {
-                this._vertexData = 8;
-                this._vertexData = [];
-                for (i = 0; i < this._vertexDataCount; i++) {
-                    this._vertexData[i] = new cc.V2F_C4B_T2F();
-                }
-                cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
+                this._vertexDataCount = 8;
+                var rVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, rLocCount = 8;
+                this._vertexArrayBuffer = new ArrayBuffer(rLocCount * rVertexDataLen);
+                var rTempData = [];
+                for (i = 0; i < rLocCount; i++)
+                    rTempData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * rVertexDataLen);
+
+                cc.Assert(rTempData, "cc.ProgressTimer. Not enough memory");
                 //    TOPLEFT 1
-                this._vertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 1));
-                this._vertexData[0].vertices = this._vertexFromAlphaPoint(cc.p(0, 1));
+                rTempData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 1));
+                rTempData[0].vertices = this._vertexFromAlphaPoint(cc.p(0, 1));
 
                 //    BOTLEFT 1
-                this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 0));
-                this._vertexData[1].vertices = this._vertexFromAlphaPoint(cc.p(0, 0));
+                rTempData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 0));
+                rTempData[1].vertices = this._vertexFromAlphaPoint(cc.p(0, 0));
 
                 //    TOPRIGHT 2
-                this._vertexData[6].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 1));
-                this._vertexData[6].vertices = this._vertexFromAlphaPoint(cc.p(1, 1));
+                rTempData[6].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 1));
+                rTempData[6].vertices = this._vertexFromAlphaPoint(cc.p(1, 1));
 
                 //    BOTRIGHT 2
-                this._vertexData[7].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 0));
-                this._vertexData[7].vertices = this._vertexFromAlphaPoint(cc.p(1, 0));
+                rTempData[7].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 0));
+                rTempData[7].vertices = this._vertexFromAlphaPoint(cc.p(1, 0));
+
+                this._vertexData = rTempData;
             }
 
+            locVertexData = this._vertexData;
             //    TOPRIGHT 1
-            this._vertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
-            this._vertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
+            locVertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
+            locVertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
 
             //    BOTRIGHT 1
-            this._vertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
-            this._vertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
+            locVertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
+            locVertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
 
             //    TOPLEFT 2
-            this._vertexData[4].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
-            this._vertexData[4].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
+            locVertexData[4].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
+            locVertexData[4].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
 
             //    BOTLEFT 2
-            this._vertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
-            this._vertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
+            locVertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
+            locVertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         }
-        this._verticesFloat32Buffer = this._getProgressTimerVertexArray();
-        this._textureCoordsFloat32Buffer = this._getProgressTimerTexCoodsArray();
-        this._updateColor();
+    },
+
+    _updateColor:function () {
+        if (!this._sprite || !this._vertexData)
+            return;
+
+        var sc = this._sprite.getQuad().tl.colors;
+        var locVertexData = this._vertexData;
+        for (var i = 0, len = this._vertexDataCount; i < len; ++i)
+            locVertexData[i].colors = sc;
+        this._vertexDataDirty = true;
     },
 
     _updateProgress:function () {
-        switch (this._type) {
-            case cc.PROGRESS_TIMER_TYPE_RADIAL:
-                this._updateRadial();
-                break;
-            case cc.PROGRESS_TIMER_TYPE_BAR:
-                this._updateBar();
-                break;
-            default:
-                break;
-        }
+        var locType = this._type;
+        if(locType === cc.PROGRESS_TIMER_TYPE_RADIAL)
+            this._updateRadial();
+        else if(locType === cc.PROGRESS_TIMER_TYPE_BAR)
+            this._updateBar();
+        this._updateColor();
+        this._vertexDataDirty = true;
     }
 });
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage
  * @param {cc.Sprite} sprite
- * @return {cc.ProgressTimerCanvas}
+ * @return {cc.ProgressTimer}
  * @example
  * // Example
  * var progress = cc.ProgressTimer.create('progress.png')

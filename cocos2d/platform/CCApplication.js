@@ -208,7 +208,7 @@ cc.setup = function (el, width, height) {
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
-        window.gl = cc.renderContext;
+        gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc.TextureCache.getInstance()._initializingRenderer();
     } else {
@@ -273,32 +273,6 @@ cc._addUserSelectStatus = function(){
 
     fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
         +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
-};
-
-cc.bindingRendererClass = function(renderType){
-     if(renderType === cc.WEBGL){
-         cc.Node = cc.NodeWebGL;
-         cc.Sprite = cc.SpriteWebGL;
-         cc.SpriteBatchNode = cc.SpriteBatchNodeWebGL;
-         cc.TextureCache = cc.TextureCacheWebGL;
-         cc.ProgressTimer = cc.ProgressTimerWebGL;
-         cc.AtlasNode = cc.AtlasNodeWebGL;
-         cc.LabelTTF = cc.LabelTTFWebGL;
-         cc.LayerColor = cc.LayerColorWebGL;
-         cc.DrawNode = cc.DrawNodeWebGL;
-         cc.LabelAtlas = cc.LabelAtlasWebGL;
-     } else {
-         cc.Node = cc.NodeCanvas;
-         cc.Sprite = cc.SpriteCanvas;
-         cc.SpriteBatchNode = cc.SpriteBatchNodeCanvas;
-         cc.TextureCache = cc.TextureCacheCanvas;
-         cc.ProgressTimer = cc.ProgressTimerCanvas;
-         cc.AtlasNode = cc.AtlasNodeCanvas;
-         cc.LabelTTF = cc.LabelTTFCanvas;
-         cc.LayerColor = cc.LayerColorCanvas;
-         cc.DrawNode = cc.DrawNodeCanvas;
-         cc.LabelAtlas = cc.LabelAtlasCanvas;
-     }
 };
 
 cc._isContextMenuEnable = false;
@@ -426,6 +400,27 @@ cc.Application.getCurrentLanguage = function () {
             break;
         case "ru":
             ret = cc.LANGUAGE_RUSSIAN;
+            break;
+        case "ko":
+            ret = cc.LANGUAGE_KOREAN;
+            break;
+        case "ja":
+            ret = cc.LANGUAGE_JAPANESE;
+            break;
+        case "hu":
+            ret = cc.LANGUAGE_HUNGARIAN;
+            break;
+        case "pt":
+            ret = cc.LANGUAGE_PORTUGUESE;
+            break;
+        case "ar":
+            ret = cc.LANGUAGE_ARABIC;
+            break;
+        case "no":
+            ret = cc.LANGUAGE_NORWEGIAN;
+            break;
+        case "pl":
+            ret = cc.LANGUAGE_POLISH;
             break;
     }
 

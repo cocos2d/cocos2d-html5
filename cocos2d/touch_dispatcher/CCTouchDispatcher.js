@@ -235,9 +235,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         for (var i = 0; i < array.length; i++) {
             h = array[i];
             if (h) {
-                if (h.getPriority() < handler.getPriority()) {
+                if (h.getPriority() < handler.getPriority())
                     ++u;
-                }
                 if (h.getDelegate() == handler.getDelegate()) {
                     cc.Assert(0, "TouchDispatcher.forceAddHandler()");
                     return array;

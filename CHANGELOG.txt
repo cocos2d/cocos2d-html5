@@ -1,3 +1,23 @@
+Cocos2d-html5-v2.1.5 @ July.24, 2013
+* Ported engine API to keep the same as Cocos2d-x v2.1.4 API
+* Optimized John Resig's inheritance pattern (cc.Class.extend) with advanced property initialization.
+* Implemented the rest of extensions features according to Cocos2d-x v2.1.4
+* Integrated Armature module
+* Rewrote CCGrid, CCMotionStreak , CCProgressTimer with TypeArray
+* Optimized performance for actions
+* Optimized performance for MoonWarriors and CocosDragonJS
+
+* Bug fix:
+  1. Fixed cc.EditBox Dom Element position issue when EGLView is setted
+  2. Fixed cc.EGLView adjustSize bug
+  3. Fixed the bug of cc.ParticleBatchNode that it doesn't hide particles after particle life has expired when calling stopSystem()
+  4. Fixed a bug that LabelTTF dimension behavior doesn't support height=0
+  5. Fixed line height for multiline LabelTTF and overlapping pixels in Scale9Sprite on Canvas browsers
+  6. Fixed a bug of cc.SimpleAudioEngine that unloading effect doesn't work
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. ClipNodeTest effects varies in different browsers
+
 Cocos2d-html5-v2.1.4 @ Jun.12, 2013
 * Added support for multiple resources loading. This mechanic is the same as cocos2d-x now
 * Optimised "Performance Tests -> Sprites Test", and increased its benchmark to 220%!
