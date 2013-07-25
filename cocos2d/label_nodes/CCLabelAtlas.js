@@ -42,7 +42,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      * a) string, fntFile
      * b) label, textureFilename, width, height, startChar
      * @param {String} strText
-     * @param {String} charMapFile  charMapFile or fntFile
+     * @param {String|cc.Texture2D} charMapFile  charMapFile or fntFile or texture file
      * @param {Number} itemWidth
      * @param {Number} itemHeight
      * @param {Number} startCharMap
@@ -52,10 +52,14 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
         var label = strText + "", textureFilename, width, height, startChar;
         cc.Assert(label !== null, "Label must be non-nil");
         if (arguments.length === 2) {
-            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(charMapFile);
+            var fileUtils = cc.FileUtils.getInstance();
+            var pathStr = fileUtils.fullPathForFilename(charMapFile);
+            var relPathStr = pathStr.substr(0, pathStr.lastIndexOf('/')) + '/';
+
+            var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(pathStr);
             cc.Assert(parseInt(dict["version"], 10) == 1, "Unsupported version. Upgrade cocos2d version");
 
-            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], charMapFile);
+            textureFilename = relPathStr + dict["textureFilename"];
             width = parseInt(dict["itemWidth"], 10) / cc.CONTENT_SCALE_FACTOR();
             height = parseInt(dict["itemHeight"], 10) / cc.CONTENT_SCALE_FACTOR();
             startChar = String.fromCharCode(parseInt(dict["firstChar"], 10));
@@ -66,7 +70,13 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
             startChar = startCharMap || " ";
         }
 
-        if (this.initWithTileFile(textureFilename, width, height, label.length)) {
+        var texture = null;
+        if(textureFilename instanceof cc.Texture2D)
+            texture = textureFilename;
+        else
+            texture = cc.TextureCache.getInstance().addImage(textureFilename);
+
+        if (this.initWithTexture(texture, width, height, label.length)) {
             this._mapStartChar = startChar;
             this.setString(label);
             return true;
@@ -108,12 +118,13 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      */
     updateAtlasValues:function () {
         var texture = this.getTexture();
+        var locItemWidth = this._itemWidth, locItemHeight = this._itemHeight;
         for (var i = 0; i < this._string.length; i++) {
             var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
             var row = parseInt(a % this._itemsPerRow, 10) * cc.CONTENT_SCALE_FACTOR();
             var col = parseInt(a / this._itemsPerRow, 10) * cc.CONTENT_SCALE_FACTOR();
 
-            var rect = cc.rect(row * this._itemWidth, col * this._itemHeight, this._itemWidth, this._itemHeight);
+            var rect = cc.rect(row * locItemWidth, col * locItemHeight, locItemWidth, locItemHeight);
             var c = this._string.charCodeAt(i);
             var fontChar = this.getChildByTag(i);
             if (!fontChar) {
@@ -137,7 +148,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
                     fontChar.setOpacity(this._opacity);
                 }
             }
-            fontChar.setPosition(cc.p(i * this._itemWidth + this._itemWidth / 2, this._itemHeight / 2));
+            fontChar.setPosition(cc.p(i * locItemWidth + locItemWidth / 2, locItemHeight / 2));
         }
     },
 
@@ -146,6 +157,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      * @param {String} label
      */
     setString:function (label) {
+        label = String(label);
         var len = label.length;
         this._string = label;
         this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
@@ -211,7 +223,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      * a) string, fntFile
      * b) label, textureFilename, width, height, startChar
      * @param {String} strText
-     * @param {String} charMapFile  charMapFile or fntFile
+     * @param {String | cc.Texture2D} charMapFile  charMapFile or fntFile
      * @param {Number} itemWidth
      * @param {Number} itemHeight
      * @param {Number} startCharMap
@@ -221,10 +233,14 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
         var label = strText + "", textureFilename, width, height, startChar;
         cc.Assert(label !== null, "Label must be non-nil");
         if (arguments.length === 2) {
-            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(charMapFile);
+            var fileUtils = cc.FileUtils.getInstance();
+            var pathStr = fileUtils.fullPathForFilename(charMapFile);
+            var relPathStr = pathStr.substr(0, pathStr.lastIndexOf('/')) + '/';
+
+            var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(pathStr);
             cc.Assert(parseInt(dict["version"], 10) == 1, "Unsupported version. Upgrade cocos2d version");
 
-            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], charMapFile);
+            textureFilename = relPathStr + dict["textureFilename"];
             width = parseInt(dict["itemWidth"], 10) / cc.CONTENT_SCALE_FACTOR();
             height = parseInt(dict["itemHeight"], 10) / cc.CONTENT_SCALE_FACTOR();
             startChar = String.fromCharCode(parseInt(dict["firstChar"], 10));
@@ -235,7 +251,13 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
             startChar = startCharMap || " ";
         }
 
-        if (this.initWithTileFile(textureFilename, width, height, label.length)) {
+        var texture = null;
+        if(textureFilename instanceof cc.Texture2D)
+            texture = textureFilename;
+        else
+            texture = cc.TextureCache.getInstance().addImage(textureFilename);
+
+        if (this.initWithTexture(texture, width, height, label.length)) {
             this._mapStartChar = startChar;
             this.setString(label);
             return true;
@@ -276,13 +298,22 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      *  Atlas generation
      */
     updateAtlasValues:function () {
-        var texture = this._textureAtlas.getTexture();
+        var n = this._string.length;
+        var locTextureAtlas = this._textureAtlas;
+
+        var texture = locTextureAtlas.getTexture();
         var textureWide = texture.getPixelsWide();
         var textureHigh = texture.getPixelsHigh();
-        var itemWidthInPixels = this._itemWidth * cc.CONTENT_SCALE_FACTOR();
-        var itemHeightInPixels = this._itemHeight * cc.CONTENT_SCALE_FACTOR();
-
-        for (var i = 0; i < this._string.length; i++) {
+        var itemWidthInPixels = this._itemWidth ;
+        var itemHeightInPixels = this._itemHeight;
+        if(!this._ignoreContentScaleFactor){
+            itemWidthInPixels = this._itemWidth * cc.CONTENT_SCALE_FACTOR();
+            itemHeightInPixels = this._itemHeight * cc.CONTENT_SCALE_FACTOR();
+        }
+        cc.Assert( n <= locTextureAtlas.getCapacity(), "updateAtlasValues: Invalid String length");
+        var quads = locTextureAtlas.getQuads();
+        var curColor = {r: this._displayedColor.r, g:this._displayedColor.g, b:this._displayedColor.b, a:this._displayedOpacity};
+        for (var i = 0; i < n; i++) {
             var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
             var row = a % this._itemsPerRow;
             var col = 0 | (a / this._itemsPerRow);
@@ -300,7 +331,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
                 top = col * itemHeightInPixels / textureHigh;
                 bottom = top + itemHeightInPixels / textureHigh;
             }
-            var quad = new cc.V3F_C4B_T2F_Quad();
+            var quad = quads[i];
             quad.tl.texCoords.u = left;
             quad.tl.texCoords.v = top;
             quad.tr.texCoords.u = right;
@@ -322,12 +353,16 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
             quad.tr.vertices.x = i * this._itemWidth + this._itemWidth;
             quad.tr.vertices.y = this._itemHeight;
             quad.tr.vertices.z = 0.0;
-            var c = cc.c4b(this._color.r, this._color.g, this._color.b, this._opacity);
-            quad.tl.colors = c;
-            quad.tr.colors = c;
-            quad.bl.colors = c;
-            quad.br.colors = c;
-            this._textureAtlas.updateQuad(quad, i);
+            quad.tl.colors = curColor;
+            quad.tr.colors = curColor;
+            quad.bl.colors = curColor;
+            quad.br.colors = curColor;
+        }
+        if (n > 0 ){
+            locTextureAtlas.setDirty(true);
+            var totalQuads = locTextureAtlas.getTotalQuads();
+            if (n > totalQuads)
+                locTextureAtlas.increaseTotalQuadsWith(n - totalQuads);
         }
     },
 
@@ -336,6 +371,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      * @param {String} label
      */
     setString:function (label) {
+        label = String(label);
         var len = label.length;
         if (len > this._textureAtlas.getTotalQuads())
             this._textureAtlas.resizeCapacity(len);

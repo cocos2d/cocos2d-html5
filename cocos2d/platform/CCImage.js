@@ -53,11 +53,18 @@ cc.FMT_TIFF = 2;
 cc.FMT_RAWDATA = 3;
 
 /**
+ * Image Format:WEBP
+ * @constant
+ * @type Number
+ */
+cc.FMT_WEBP = 4;
+
+/**
  * Image Format:UNKNOWN
  * @constant
  * @type Number
  */
-cc.FMT_UNKNOWN = 4;
+cc.FMT_UNKNOWN = 5;
 
 /**
  * Horizontal center and vertical center.

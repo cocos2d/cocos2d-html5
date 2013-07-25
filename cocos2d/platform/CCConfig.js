@@ -33,7 +33,7 @@
  * @constant
  * @type String
  */
-cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.4";
+cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.5";
 
 /**
  * <p>
@@ -113,7 +113,7 @@ cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
  * @constant
  * @type Number
  */
-cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 1;
+cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 0;
 
 /**
  * <p>
@@ -282,18 +282,30 @@ cc.dumpConfig = function() {
         cc.log( i + " = " + sys[i] );
 };
 
-/** @def CC_ENABLE_GL_STATE_CACHE
- If enabled, cocos2d will maintain an OpenGL state cache internally to avoid unnecessary switches.
- In order to use them, you have to use the following functions, insead of the the GL ones:
- - ccGLUseProgram() instead of glUseProgram()
- - ccGLDeleteProgram() instead of glDeleteProgram()
- - ccGLBlendFunc() instead of glBlendFunc()
+/**
+ * <p>
+ *    If enabled, actions that alter the position property (eg: CCMoveBy, CCJumpBy, CCBezierBy, etc..) will be stacked.                  <br/>
+ *    If you run 2 or more 'position' actions at the same time on a node, then end position will be the sum of all the positions.        <br/>
+ *    If disabled, only the last run action will take effect.
+ * </p>
+ * @constant
+ * @type {number}
+ */
+cc.ENABLE_STACKABLE_ACTIONS = 1;
 
- If this functionality is disabled, then ccGLUseProgram(), ccGLDeleteProgram(), ccGLBlendFunc() will call the GL ones, without using the cache.
-
- It is recommened to enable whenever possible to improve speed.
- If you are migrating your code from GL ES 1.1, then keep it disabled. Once all your code works as expected, turn it on.
-
- @since v2.0.0
+/**
+ * <p>
+ *      If enabled, cocos2d will maintain an OpenGL state cache internally to avoid unnecessary switches.                                     <br/>
+ *      In order to use them, you have to use the following functions, insead of the the GL ones:                                             <br/>
+ *          - ccGLUseProgram() instead of glUseProgram()                                                                                      <br/>
+ *          - ccGLDeleteProgram() instead of glDeleteProgram()                                                                                <br/>
+ *          - ccGLBlendFunc() instead of glBlendFunc()                                                                                        <br/>
+ *                                                                                                                                            <br/>
+ *      If this functionality is disabled, then ccGLUseProgram(), ccGLDeleteProgram(), ccGLBlendFunc() will call the GL ones, without using the cache.              <br/>
+ *      It is recommened to enable whenever possible to improve speed.                                                                        <br/>
+ *      If you are migrating your code from GL ES 1.1, then keep it disabled. Once all your code works as expected, turn it on.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.ENABLE_GL_STATE_CACHE = 1;

@@ -7,8 +7,14 @@
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
                 debug="false" output="myApp-HelloWorld.js">
+            <externs dir="${basedir}/../cocos2d">
+                <file name="cocos2d_externs.js"/>
+            </externs>
             <sources dir="${basedir}/../cocos2d">
                 <file name="platform/CCClass.js"/>
+                <file name="cocoa/CCGeometry.js"/>
+                <file name="platform/Sys.js"/>
+                <file name="platform/CCConfig.js"/>
                 <file name="platform/CCCommon.js"/>
                 <file name="platform/miniFramework.js"/>
                 <file name="platform/ZipUtils.js"/>
@@ -21,9 +27,6 @@
                 <file name="platform/CCEGLView.js"/>
                 <file name="platform/CCImage.js"/>
                 <file name="platform/zlib.min.js"/>
-                <file name="cocoa/CCGeometry.js"/>
-                <file name="platform/Sys.js"/>
-                <file name="platform/CCConfig.js"/>
                 <file name="cocoa/CCNS.js"/>
                 <file name="cocoa/CCSet.js"/>
                 <file name="kazmath/vec2.js"/>
@@ -45,6 +48,8 @@
                 <file name="support/CCUserDefault.js"/>
                 <file name="support/CCVertex.js"/>
                 <file name="support/TransformUtils.js"/>
+                <file name="support/component/CCComponent.js"/>
+                <file name="support/component/CCComponentContainer.js"/>
                 <file name="shaders/CCShaders.js"/>
                 <file name="shaders/CCGLProgram.js"/>
                 <file name="shaders/CCGLStateCache.js"/>
@@ -119,7 +124,6 @@
                 <file name="tileMap_parallax_nodes/CCTMXObjectGroup.js"/>
                 <file name="tileMap_parallax_nodes/CCTMXLayer.js"/>
                 <file name="tileMap_parallax_nodes/CCParallaxNode.js"/>
-                <file name="platform/jsloader.js"/>
             </sources>
             <sources dir="${basedir}/../CocosDenshion">
                 <file name="SimpleAudioEngine.js"/>
@@ -137,9 +141,9 @@
                 <file name="CCBReader/CCNodeLoaderLibrary.js"/>
                 <file name="CCBReader/CCBRelativePositioning.js"/>
                 <file name="CCBReader/CCBAnimationManager.js"/>
+                <file name="GUI/CCControlExtension/CCControlUtils.js"/>
                 <file name="GUI/CCControlExtension/CCControl.js"/>
                 <file name="GUI/CCControlExtension/CCControlButton.js"/>
-                <file name="GUI/CCControlExtension/CCControlUtils.js"/>
                 <file name="GUI/CCControlExtension/CCInvocation.js"/>
                 <file name="GUI/CCControlExtension/CCScale9Sprite.js"/>
                 <file name="GUI/CCControlExtension/CCControlSlider.js"/>
@@ -147,11 +151,34 @@
                 <file name="GUI/CCControlExtension/CCControlColourPicker.js"/>
                 <file name="GUI/CCControlExtension/CCControlHuePicker.js"/>
                 <file name="GUI/CCControlExtension/CCControlSaturationBrightnessPicker.js"/>
+                <file name="GUI/CCControlExtension/CCControlStepper.js"/>
+                <file name="GUI/CCControlExtension/CCControlPotentiometer.js"/>
                 <file name="GUI/CCControlExtension/CCMenuPassive.js"/>
                 <file name="GUI/CCScrollView/CCSorting.js"/>
                 <file name="GUI/CCScrollView/CCScrollView.js"/>
                 <file name="GUI/CCScrollView/CCTableView.js"/>
                 <file name="CCEditBox.js"/>
+                <file name="CCArmature/utils/CCArmatureDefine.js"/>
+                <file name="CCArmature/utils/CCDataReaderHelper.js"/>
+                <file name="CCArmature/utils/CCSpriteFrameCacheHelper.js"/>
+                <file name="CCArmature/utils/CCTransformHelp.js"/>
+                <file name="CCArmature/utils/CCTweenFunction.js"/>
+                <file name="CCArmature/utils/CCUtilMath.js"/>
+                <file name="CCArmature/utils/CSArmatureDataManager.js"/>
+                <file name="CCArmature/datas/CCDatas.js"/>
+                <file name="CCArmature/display/CCBatchNode.js"/>
+                <file name="CCArmature/display/CCDecorativeDisplay.js"/>
+                <file name="CCArmature/display/CCDisplayFactory.js"/>
+                <file name="CCArmature/display/CCDisplayManager.js"/>
+                <file name="CCArmature/display/CCShaderNode.js"/>
+                <file name="CCArmature/display/CCSkin.js"/>
+                <file name="CCArmature/animation/CCProcessBase.js"/>
+                <file name="CCArmature/animation/CCArmatureAnimation.js"/>
+                <file name="CCArmature/animation/CCTween.js"/>
+                <file name="CCArmature/physics/CCColliderDetector.js"/>
+                <file name="CCArmature/physics/CCPhysicsWorld.js"/>
+                <file name="CCArmature/CCArmature.js"/>
+                <file name="CCArmature/CCBone.js"/>
             </sources>
             <sources dir="${basedir}">
                 <file name="src/resource.js"/>

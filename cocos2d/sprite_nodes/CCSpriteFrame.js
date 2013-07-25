@@ -43,7 +43,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _offset:null,
     _originalSize:null,
     _rectInPixels:null,
-    _rotated:null,
+    _rotated:false,
     _rect:null,
     _offsetInPixels:null,
     _originalSizeInPixels:null,
@@ -55,9 +55,11 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offsetInPixels = cc.p(0, 0);
         this._originalSize = cc.size(0, 0);
         this._rectInPixels = cc.rect(0, 0, 0, 0);
+        this._rotated = false;
         this._rect = cc.rect(0, 0, 0, 0);
         this._originalSizeInPixels = cc.size(0, 0);
         this._textureFilename = "";
+        this._texture = null;
     },
 
     // attributes
@@ -75,7 +77,6 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._rectInPixels = rectInPixels;
         this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
     },
-
 
     /**
      * <p>
@@ -199,6 +200,13 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offset = offsets;
     },
 
+    clone: function(){
+        var frame = new cc.SpriteFrame();
+        frame.initWithTextureFilename(this._textureFilename, this._rectInPixels, this._rotated, this._offsetInPixels, this._originalSizeInPixels);
+        frame.setTexture(this._texture);
+        return frame;
+    },
+
     /**
      * copy a new SpriteFrame
      * @return {cc.SpriteFrame}
@@ -218,9 +226,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * Initializes SpriteFrame with Texture, rect, rotated, offset and originalSize in pixels.
      * @param {cc.Texture2D|HTMLImageElement} texture
      * @param {cc.Rect} rect
-     * @param {Boolean} rotated
-     * @param {cc.Point} offset
-     * @param {cc.Size} originalSize
+     * @param {Boolean} [rotated=]
+     * @param {cc.Point} [offset=]
+     * @param {cc.Size} [originalSize=]
      * @return {Boolean}
      */
     initWithTexture:function (texture, rect, rotated, offset, originalSize) {

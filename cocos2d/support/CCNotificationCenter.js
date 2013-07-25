@@ -49,6 +49,7 @@ cc.NotificationCenter = cc.Class.extend({
     },
 
     /**
+     * Removes the observer by the specified target and name.
      * @param {cc.Class} target
      * @param {String} name
      */
@@ -62,6 +63,22 @@ cc.NotificationCenter = cc.Class.extend({
                 return;
             }
         }
+    },
+
+    /**
+     * Removes all notifications registered by this target
+     * @param {cc.Class} target  The target of this notification.
+     * @returns {number} the number of observers removed
+     */
+    removeAllObservers:function(target){
+        var removes = [];
+        for(var i = 0; i< this._observers.length;i++){
+            var selObserver = this._observers[i];
+            if(selObserver.getTarget() == target)
+                removes.push(selObserver);
+        }
+        cc.ArrayRemoveArray(this._observers, removes);
+        return removes.length;
     },
 
     /**
@@ -85,7 +102,6 @@ cc.NotificationCenter = cc.Class.extend({
      * @private
      */
     _observerExisted:function(target, name) {
-        var obj = null;
         for (var i = 0; i < this._observers.length; i++)
         {
             var observer = this._observers[i];

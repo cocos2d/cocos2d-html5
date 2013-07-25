@@ -50,11 +50,11 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     // indices
     _indices:null,
 
-    _VAOname:0,
+    //_VAOname:0,
     //0: vertex  1: indices
     _buffersVBO:null,
-
     _pointRect:null,
+
     /**
      * Constructor
      * @override
@@ -62,8 +62,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     ctor:function () {
         cc.ParticleSystem.prototype.ctor.call(this);
         this._buffersVBO = [0, 0];
-        //this._quads = [];
-        //this._indices = [];
+        this._quads = [];
+        this._indices = [];
         this._pointRect = cc.RectZero();
 
         if (cc.renderContextType === cc.WEBGL) {
@@ -75,16 +75,17 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * initialices the indices for the vertices
      */
     initIndices:function () {
-        for (var i = 0; i < this._totalParticles; ++i) {
+        var locIndices = this._indices;
+        for (var i = 0, len = this._totalParticles; i < len; ++i) {
             var i6 = i * 6;
             var i4 = i * 4;
-            this._indices[i6 + 0] = i4 + 0;
-            this._indices[i6 + 1] = i4 + 1;
-            this._indices[i6 + 2] = i4 + 2;
+            locIndices[i6 + 0] = i4 + 0;
+            locIndices[i6 + 1] = i4 + 1;
+            locIndices[i6 + 2] = i4 + 2;
 
-            this._indices[i6 + 5] = i4 + 1;
-            this._indices[i6 + 4] = i4 + 2;
-            this._indices[i6 + 3] = i4 + 3;
+            locIndices[i6 + 5] = i4 + 1;
+            locIndices[i6 + 4] = i4 + 2;
+            locIndices[i6 + 3] = i4 + 3;
         }
     },
 
@@ -185,25 +186,29 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             retParticle._blendFunc.dst = this._blendFunc.dst;
 
             // color
-            retParticle._startColor.r = this._startColor.r;
-            retParticle._startColor.g = this._startColor.g;
-            retParticle._startColor.b = this._startColor.b;
-            retParticle._startColor.a = this._startColor.a;
+            var particleStartColor = retParticle._startColor, locStartColor = this._startColor;
+            particleStartColor.r = locStartColor.r;
+            particleStartColor.g = locStartColor.g;
+            particleStartColor.b = locStartColor.b;
+            particleStartColor.a = locStartColor.a;
 
-            retParticle._startColorVar.r = this._startColorVar.r;
-            retParticle._startColorVar.g = this._startColorVar.g;
-            retParticle._startColorVar.b = this._startColorVar.b;
-            retParticle._startColorVar.a = this._startColorVar.a;
+            var particleStartColorVar =  retParticle._startColorVar, locStartColorVar = this._startColorVar;
+            particleStartColorVar.r = locStartColorVar.r;
+            particleStartColorVar.g = locStartColorVar.g;
+            particleStartColorVar.b = locStartColorVar.b;
+            particleStartColorVar.a = locStartColorVar.a;
 
-            retParticle._endColor.r = this._endColor.r;
-            retParticle._endColor.g = this._endColor.g;
-            retParticle._endColor.b = this._endColor.b;
-            retParticle._endColor.a = this._endColor.a;
+            var particleEndColor = retParticle._endColor, locEndColor = this._endColor;
+            particleEndColor.r = locEndColor.r;
+            particleEndColor.g = locEndColor.g;
+            particleEndColor.b = locEndColor.b;
+            particleEndColor.a = locEndColor.a;
 
-            retParticle._endColorVar.r = this._endColorVar.r;
-            retParticle._endColorVar.g = this._endColorVar.g;
-            retParticle._endColorVar.b = this._endColorVar.b;
-            retParticle._endColorVar.a = this._endColorVar.a;
+            var particleEndColorVar = retParticle._endColorVar, locEndColorVar = this._endColorVar;
+            particleEndColorVar.r = locEndColorVar.r;
+            particleEndColorVar.g = locEndColorVar.g;
+            particleEndColorVar.b = locEndColorVar.b;
+            particleEndColorVar.a = locEndColorVar.a;
 
             // particle size
             retParticle._startSize = this._startSize;
@@ -226,31 +231,33 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
             // Mode A: Gravity + tangential accel + radial accel
             if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
+                var particleModeA = retParticle.modeA, locModeA = this.modeA;
                 // gravity
-                retParticle.modeA.gravity.x = this.modeA.gravity.x;
-                retParticle.modeA.gravity.y = this.modeA.gravity.y;
+                particleModeA.gravity.x = locModeA.gravity.x;
+                particleModeA.gravity.y = locModeA.gravity.y;
 
                 // speed
-                retParticle.modeA.speed = this.modeA.speed;
-                retParticle.modeA.speedVar = this.modeA.speedVar;
+                particleModeA.speed = locModeA.speed;
+                particleModeA.speedVar = locModeA.speedVar;
 
                 // radial acceleration
-                retParticle.modeA.radialAccel = this.modeA.radialAccel;
+                particleModeA.radialAccel = locModeA.radialAccel;
 
-                retParticle.modeA.radialAccelVar = this.modeA.radialAccelVar;
+                particleModeA.radialAccelVar = locModeA.radialAccelVar;
 
                 // tangential acceleration
-                retParticle.modeA.tangentialAccel = this.modeA.tangentialAccel;
+                particleModeA.tangentialAccel = locModeA.tangentialAccel;
 
-                retParticle.modeA.tangentialAccelVar = this.modeA.tangentialAccelVar;
+                particleModeA.tangentialAccelVar = locModeA.tangentialAccelVar;
             } else if (this._emitterMode == cc.PARTICLE_MODE_RADIUS) {
+                var particleModeB = retParticle.modeB, locModeB = this.modeB;
                 // or Mode B: radius movement
-                retParticle.modeB.startRadius = this.modeB.startRadius;
-                retParticle.modeB.startRadiusVar = this.modeB.startRadiusVar;
-                retParticle.modeB.endRadius = this.modeB.endRadius;
-                retParticle.modeB.endRadiusVar = this.modeB.endRadiusVar;
-                retParticle.modeB.rotatePerSecond = this.modeB.rotatePerSecond;
-                retParticle.modeB.rotatePerSecondVar = this.modeB.rotatePerSecondVar;
+                particleModeB.startRadius = locModeB.startRadius;
+                particleModeB.startRadiusVar = locModeB.startRadiusVar;
+                particleModeB.endRadius = locModeB.endRadius;
+                particleModeB.endRadiusVar = locModeB.endRadiusVar;
+                particleModeB.rotatePerSecond = locModeB.rotatePerSecond;
+                particleModeB.rotatePerSecondVar = locModeB.rotatePerSecondVar;
             }
 
             // life span
@@ -389,25 +396,29 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             a = 0 | (particle.color.a * 255);
         }
 
-        quad.bl.colors.r = r;
-        quad.bl.colors.g = g;
-        quad.bl.colors.b = b;
-        quad.bl.colors.a = a;
+        var locColors = quad.bl.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
 
-        quad.br.colors.r = r;
-        quad.br.colors.g = g;
-        quad.br.colors.b = b;
-        quad.br.colors.a = a;
+        locColors = quad.br.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
 
-        quad.tl.colors.r = r;
-        quad.tl.colors.g = g;
-        quad.tl.colors.b = b;
-        quad.tl.colors.a = a;
+        locColors = quad.tl.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
 
-        quad.tr.colors.r = r;
-        quad.tr.colors.g = g;
-        quad.tr.colors.b = b;
-        quad.tr.colors.a = a;
+        locColors = quad.tr.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
 
         // vertices
         var size_2 = particle.size / 2;
@@ -649,23 +660,28 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
             // Allocate new memory
             this._indices = new Uint16Array(tp * 6);
-            this._quadsArrayBuffer = new ArrayBuffer(tp * quadSize);
+            var locQuadsArrayBuffer = new ArrayBuffer(tp * quadSize);
             //TODO need fix
             // Assign pointers
-            this._particles = [];
-            this._quads = [];
+            var locParticles = [];
+            var locQuads = [];
             for (var j = 0; j < tp; j++) {
-                this._particles[j] = new cc.Particle();
-                this._quads[j] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, j * quadSize);
+                locParticles[j] = new cc.Particle();
+                locQuads[j] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, locQuadsArrayBuffer, j * quadSize);
             }
             this._allocatedParticles = tp;
             this._totalParticles = tp;
 
             // Init particles
             if (this._batchNode) {
-                for (var i = 0; i < this._totalParticles; i++)
-                    this._particles[i].atlasIndex = i;
+                for (var i = 0; i < tp; i++)
+                    locParticles[i].atlasIndex = i;
             }
+
+            this._particles = locParticles;
+            this._quadsArrayBuffer = locQuadsArrayBuffer;
+            this._quads = locQuads;
+
             this.initIndices();
             //if (cc.TEXTURE_ATLAS_USE_VAO)
             //    this._setupVBOandVAO();
@@ -756,18 +772,20 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         //cc.Assert((!this._quads && !this._indices), "Memory already allocated");
         cc.Assert(!this._batchNode, "Memory should not be allocated when not using batchNode");
-
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         var totalParticles = this._totalParticles;
-        this._quads = [];
+        var locQuads = [];
         this._indices = new Uint16Array(totalParticles * 6);
-        this._quadsArrayBuffer = new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT * totalParticles);
+        var locQuadsArrayBuffer = new ArrayBuffer(quadSize * totalParticles);
 
         for (var i = 0; i < totalParticles; i++)
-            this._quads[i] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, i * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
-        if (!this._quads || !this._indices) {
+            locQuads[i] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, locQuadsArrayBuffer, i * quadSize);
+        if (!locQuads || !this._indices) {
             cc.log("cocos2d: Particle system: not enough memory");
             return false;
         }
+        this._quads = locQuads;
+        this._quadsArrayBuffer = locQuadsArrayBuffer;
         return true;
     }
 });

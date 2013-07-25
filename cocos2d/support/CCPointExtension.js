@@ -243,7 +243,7 @@ cc.clampf = function (value, min_inclusive, max_inclusive) {
 
 /**
  * Clamp a point between from and to.
- * @param {Number} p
+ * @param {Point} p
  * @param {Number} min_inclusive
  * @param {Number} max_inclusive
  * @return {cc.Point}
@@ -297,9 +297,8 @@ cc.pLerp = function (a, b, alpha) {
  */
 cc.pFuzzyEqual = function (a, b, variance) {
     if (a.x - variance <= b.x && b.x <= a.x + variance) {
-        if (a.y - variance <= b.y && b.y <= a.y + variance) {
+        if (a.y - variance <= b.y && b.y <= a.y + variance)
             return true;
-        }
     }
     return false;
 };
@@ -323,9 +322,8 @@ cc.pAngleSigned = function (a, b) {
     var a2 = cc.pNormalize(a);
     var b2 = cc.pNormalize(b);
     var angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, cc.pDot(a2, b2));
-    if (Math.abs(angle) < cc.POINT_EPSILON) {
+    if (Math.abs(angle) < cc.POINT_EPSILON)
         return 0.0;
-    }
     return angle;
 };
 

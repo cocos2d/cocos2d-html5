@@ -38,6 +38,14 @@ cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
     _amplitude:null,
     _amplitudeRate:null,
 
+    ctor:function(){
+        cc.GridAction.prototype.ctor.call(this);
+
+        this._waves = 0;
+        this._amplitude = 0;
+        this._amplitudeRate = 0;
+    },
+
     /**
      * get Amplitude
      * @return {Number}
@@ -79,7 +87,7 @@ cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, waves, amplitude) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._waves = waves;
             this._amplitude = amplitude;
             this._amplitudeRate = 1.0;
@@ -89,12 +97,17 @@ cc.Waves3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
     },
 
     update:function (time) {
-        for (var i = 0; i < this._gridSize.width + 1; ++i) {
-            for (var j = 0; j < this._gridSize.height + 1; ++j) {
-                var v = this.originalVertex(cc.g(i, j));
-                v.z += (Math.sin(Math.PI * time * this._waves * 2 + (v.y + v.x) * 0.01) * this._amplitude * this._amplitudeRate);
+        var locGridSize = this._gridSize;
+        var locAmplitude = this._amplitude, locPos = cc.p(0,0);
+        var locAmplitudeRate = this._amplitudeRate, locWaves = this._waves;
+        for (var i = 0; i < locGridSize.width + 1; ++i) {
+            for (var j = 0; j < locGridSize.height + 1; ++j) {
+                locPos.x = i;
+                locPos.y = j;
+                var v = this.originalVertex(locPos);
+                v.z += (Math.sin(Math.PI * time * locWaves * 2 + (v.y + v.x) * 0.01) * locAmplitude * locAmplitudeRate);
                 //cc.log("v.z offset is" + (Math.sin(Math.PI * time * this._waves * 2 + (v.y + v.x) * 0.01) * this._amplitude * this._amplitudeRate));
-                this.setVertex(cc.p(i, j), v);
+                this.setVertex(locPos, v);
             }
         }
     }
@@ -126,7 +139,7 @@ cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration) {
-        return this._super(duration, cc.size(1, 1));
+        return cc.Grid3DAction.prototype.initWithDuration.call(this, duration, cc.size(1, 1));
     },
 
     /**
@@ -305,8 +318,19 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
     _radius:0,
     /** lens effect. Defaults to 0.7 - 0 means no effect, 1 is very strong effect */
     _lensEffect:0,
-
+    /** lens is concave. (true = concave, false = convex) default is convex i.e. false */
+    _concave:false,
     _dirty:false,
+
+    ctor:function(){
+        cc.GridAction.prototype.ctor.call(this);
+
+        this._position = null;
+        this._radius = 0;
+        this._lensEffect = 0;
+        this._concave = false;
+        this._dirty = false;
+    },
 
     /**
      * Get lens center position
@@ -322,6 +346,14 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
      */
     setLensEffect:function (lensEffect) {
         this._lensEffect = lensEffect;
+    },
+
+    /**
+     * Set whether lens is concave
+     * @param {Boolean} concave
+     */
+    setConcave:function(concave){
+        this._concave = concave;
     },
 
     /**
@@ -352,7 +384,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, position, radius) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._position = cc.p(-1, -1);
             this.setPosition(position);
             this._radius = radius;
@@ -365,28 +397,32 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
 
     update:function (time) {
         if (this._dirty) {
-            for (var i = 0; i < this._gridSize.width + 1; ++i) {
-                for (var j = 0; j < this._gridSize.height + 1; ++j) {
-                    var v = this.originalVertex(cc.p(i, j));
-                    var vect = cc.pSub(this._position, cc.p(v.x, v.y));
+            var locGridSizeWidth = this._gridSize.width, locGridSizeHeight = this._gridSize.height;
+            var locRadius = this._radius, locLensEffect = this._lensEffect;
+            var locPos = cc.p(0,0);
+            for (var i = 0; i < locGridSizeWidth + 1; ++i) {
+                for (var j = 0; j < locGridSizeHeight + 1; ++j) {
+                    locPos.x = i;
+                    locPos.y = j;
+                    var v = this.originalVertex(locPos);
+                    var vect = cc.pSub(this._position, v);
                     var r = cc.pLength(vect);
 
-                    if (r < this._radius) {
-                        r = this._radius - r;
-                        var pre_log = r / this._radius;
+                    if (r < locRadius) {
+                        r = locRadius - r;
+                        var pre_log = r / locRadius;
                         if (pre_log == 0)
                             pre_log = 0.001;
 
-                        var l = Math.log(pre_log) * this._lensEffect;
-                        var new_r = Math.exp(l) * this._radius;
+                        var l = Math.log(pre_log) * locLensEffect;
+                        var new_r = Math.exp(l) * locRadius;
 
                         if (cc.pLength(vect) > 0) {
                             vect = cc.pNormalize(vect);
-                            var new_vect = cc.pMult(vect, new_r);
-                            v.z += cc.pLength(new_vect) * this._lensEffect;
+                            v.z += cc.pLength(cc.pMult(vect, new_r)) * locLensEffect;
                         }
                     }
-                    this.setVertex(cc.p(i, j), v);
+                    this.setVertex(locPos, v);
                 }
             }
             this._dirty = false;
@@ -420,6 +456,16 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
     _waves:null,
     _amplitude:null,
     _amplitudeRate:null,
+
+    ctor:function(){
+        cc.GridAction.prototype.ctor.call(this);
+
+        this._position = null;
+        this._radius = 0;
+        this._waves = 0;
+        this._amplitude = 0;
+        this._amplitudeRate = 0;
+    },
 
     /**
      * get center position
@@ -480,7 +526,7 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, position, radius, waves, amplitude) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this.setPosition(position);
             this._radius = radius;
             this._waves = waves;
@@ -492,19 +538,22 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
     },
 
     update:function (time) {
-        for (var i = 0; i < (this._gridSize.width + 1); ++i) {
-            for (var j = 0; j < (this._gridSize.height + 1); ++j) {
-                var v = this.originalVertex(cc.p(i, j));
-                var vect = cc.pSub(this._position, cc.p(v.x, v.y));
-                var r = cc.pLength(vect);
+        var locGridSizeWidth = this._gridSize.width, locGridSizeHeight = this._gridSize.height;
+        var locPos = cc.p(0,0), locRadius = this._radius;
+        var locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
+        for (var i = 0; i < (locGridSizeWidth + 1); ++i) {
+            for (var j = 0; j < (locGridSizeHeight + 1); ++j) {
+                locPos.x = i;
+                locPos.y = j;
+                var v = this.originalVertex(locPos);
+                var r = cc.pLength(cc.pSub(this._position, v));
 
-                if (r < this._radius) {
-                    r = this._radius - r;
-                    var rate = Math.pow(r / this._radius, 2);
-                    v.z += (Math.sin(time * Math.PI * this._waves * 2 + r * 0.1) * this._amplitude * this._amplitudeRate * rate);
+                if (r < locRadius) {
+                    r = locRadius - r;
+                    var rate = Math.pow(r / locRadius, 2);
+                    v.z += (Math.sin(time * Math.PI * locWaves * 2 + r * 0.1) * locAmplitude * locAmplitudeRate * rate);
                 }
-
-                this.setVertex(cc.p(i, j), v);
+                this.setVertex(locPos, v);
             }
         }
     }
@@ -535,6 +584,13 @@ cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
     _randRange:null,
     _shakeZ:null,
 
+    ctor:function(){
+        cc.GridAction.prototype.ctor.call(this);
+
+        this._randRange = 0;
+        this._shakeZ = false;
+    },
+
     /**
      * initializes the action with a range, shake Z vertices, a grid and duration
      * @param {Number} duration
@@ -544,7 +600,7 @@ cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, range, shakeZ) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._randRange = range;
             this._shakeZ = shakeZ;
             return true;
@@ -553,14 +609,18 @@ cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
     },
 
     update:function (time) {
-        for (var i = 0; i < (this._gridSize.width + 1); ++i) {
-            for (var j = 0; j < (this._gridSize.height + 1); ++j) {
-                var v = this.originalVertex(cc.p(i, j));
-                v.x += (cc.rand() % (this._randRange * 2)) - this._randRange;
-                v.y += (cc.rand() % (this._randRange * 2)) - this._randRange;
-                if (this._shakeZ)
-                    v.z += (cc.rand() % (this._randRange * 2)) - this._randRange;
-                this.setVertex(cc.p(i, j), v);
+        var locGridSizeWidth = this._gridSize.width, locGridSizeHeight = this._gridSize.height;
+        var locRandRange = this._randRange, locShakeZ = this._shakeZ, locP = cc.p(0,0);
+        for (var i = 0; i < (locGridSizeWidth + 1); ++i) {
+            for (var j = 0; j < (locGridSizeHeight + 1); ++j) {
+                locP.x = i;
+                locP.y = j;
+                var v = this.originalVertex(locP);
+                v.x += (cc.rand() % (locRandRange * 2)) - locRandRange;
+                v.y += (cc.rand() % (locRandRange * 2)) - locRandRange;
+                if (locShakeZ)
+                    v.z += (cc.rand() % (locRandRange * 2)) - locRandRange;
+                this.setVertex(locP, v);
             }
         }
     }
@@ -589,6 +649,14 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
     _waves:null,
     _amplitude:null,
     _amplitudeRate:null,
+
+    ctor:function(){
+        cc.GridAction.prototype.ctor.call(this);
+
+        this._waves = 0;
+        this._amplitude = 0;
+        this._amplitudeRate = 0;
+    },
 
     /**
      * get amplitude
@@ -631,7 +699,7 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, waves, amplitude) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._waves = waves;
             this._amplitude = amplitude;
             this._amplitudeRate = 1.0;
@@ -641,12 +709,16 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
     },
 
     update:function (time) {
-        for (var i = 1; i < this._gridSize.width; ++i) {
-            for (var j = 1; j < this._gridSize.height; ++j) {
-                var v = this.originalVertex(cc.p(i, j));
-                v.x = (v.x + (Math.sin(time * Math.PI * this._waves * 2 + v.x * .01) * this._amplitude * this._amplitudeRate));
-                v.y = (v.y + (Math.sin(time * Math.PI * this._waves * 2 + v.y * .01) * this._amplitude * this._amplitudeRate));
-                this.setVertex(cc.p(i, j), v);
+        var locSizeWidth = this._gridSize.width, locSizeHeight = this._gridSize.height, locPos = cc.p(0,0);
+        var locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
+        for (var i = 1; i < locSizeWidth; ++i) {
+            for (var j = 1; j < locSizeHeight; ++j) {
+                locPos.x = i;
+                locPos.y = j;
+                var v = this.originalVertex(locPos);
+                v.x = (v.x + (Math.sin(time * Math.PI * locWaves * 2 + v.x * .01) * locAmplitude * locAmplitudeRate));
+                v.y = (v.y + (Math.sin(time * Math.PI * locWaves * 2 + v.y * .01) * locAmplitude * locAmplitudeRate));
+                this.setVertex(locPos, v);
             }
         }
     }
@@ -677,6 +749,16 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
     _amplitudeRate:null,
     _vertical:null,
     _horizontal:null,
+
+    ctor:function(){
+        cc.GridAction.prototype.ctor.call(this);
+
+        this._waves = 0;
+        this._amplitude = 0;
+        this._amplitudeRate = 0;
+        this._vertical = false;
+        this._horizontal = false;
+    },
 
     /**
      * get amplitude
@@ -721,7 +803,7 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, waves, amplitude, horizontal, vertical) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._waves = waves;
             this._amplitude = amplitude;
             this._amplitudeRate = 1.0;
@@ -733,14 +815,19 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
     },
 
     update:function (time) {
-        for (var i = 0; i < this._gridSize.width + 1; ++i) {
-            for (var j = 0; j < this._gridSize.height + 1; ++j) {
-                var v = this.originalVertex(cc.p(i, j));
-                if (this._vertical)
-                    v.x = (v.x + (Math.sin(time * Math.PI * this._waves * 2 + v.y * .01) * this._amplitude * this._amplitudeRate));
-                if (this._horizontal)
-                    v.y = (v.y + (Math.sin(time * Math.PI * this._waves * 2 + v.x * .01) * this._amplitude * this._amplitudeRate));
-                this.setVertex(cc.p(i, j), v);
+        var locSizeWidth = this._gridSize.width, locSizeHeight = this._gridSize.height, locPos = cc.p(0,0);
+        var locVertical = this._vertical, locHorizontal = this._horizontal;
+        var locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
+        for (var i = 0; i < locSizeWidth + 1; ++i) {
+            for (var j = 0; j < locSizeHeight + 1; ++j) {
+                locPos.x = i;
+                locPos.y = j;
+                var v = this.originalVertex(locPos);
+                if (locVertical)
+                    v.x = (v.x + (Math.sin(time * Math.PI * locWaves * 2 + v.y * .01) * locAmplitude * locAmplitudeRate));
+                if (locHorizontal)
+                    v.y = (v.y + (Math.sin(time * Math.PI * locWaves * 2 + v.x * .01) * locAmplitude * locAmplitudeRate));
+                this.setVertex(locPos, v);
             }
         }
     }
@@ -774,6 +861,15 @@ cc.Twirl = cc.Grid3DAction.extend({
     _twirls:null,
     _amplitude:null,
     _amplitudeRate:null,
+
+    ctor:function(){
+        cc.GridAction.prototype.ctor.call(this);
+
+        this._position = null;
+        this._twirls = 0;
+        this._amplitude = 0;
+        this._amplitudeRate = 0;
+    },
 
     /**
      * get twirl center
@@ -825,7 +921,7 @@ cc.Twirl = cc.Grid3DAction.extend({
 
     /** initializes the action with center position, number of twirls, amplitude, a grid size and duration */
     initWithDuration:function (duration, gridSize, position, twirls, amplitude) {
-        if (this._super(duration, gridSize)) {
+        if (cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this.setPosition(position);
             this._twirls = twirls;
             this._amplitude = amplitude;
@@ -837,21 +933,24 @@ cc.Twirl = cc.Grid3DAction.extend({
 
     update:function (time) {
         var c = this._position;
-        for (var i = 0; i < (this._gridSize.width + 1); ++i) {
-            for (var j = 0; j < (this._gridSize.height + 1); ++j) {
-                var v = this.originalVertex(cc.p(i, j));
+        var locSizeWidth = this._gridSize.width, locSizeHeight = this._gridSize.height, locPos = cc.p(0,0);
+        var amp = 0.1 * this._amplitude * this._amplitudeRate;
+        var locTwirls = this._twirls;
+        for (var i = 0; i < (locSizeWidth + 1); ++i) {
+            for (var j = 0; j < (locSizeHeight + 1); ++j) {
+                locPos.x = i;
+                locPos.y = j;
+                var v = this.originalVertex(locPos);
 
-                var avg = cc.p(i - (this._gridSize.width / 2.0), j - (this._gridSize.height / 2.0));
+                var avg = cc.p(i - (locSizeWidth / 2.0), j - (locSizeHeight / 2.0));
 
-                var amp = 0.1 * this._amplitude * this._amplitudeRate;
-                var a = cc.pLength(avg) * Math.cos(Math.PI / 2.0 + time * Math.PI * this._twirls * 2) * amp;
-
+                var a = cc.pLength(avg) * Math.cos(Math.PI / 2.0 + time * Math.PI * locTwirls * 2) * amp;
                 var d = cc.p(Math.sin(a) * (v.y - c.y) + Math.cos(a) * (v.x - c.x), Math.cos(a) * (v.y - c.y) - Math.sin(a) * (v.x - c.x));
 
                 v.x = c.x + d.x;
                 v.y = c.y + d.y;
 
-                this.setVertex(cc.p(i, j), v);
+                this.setVertex(locPos, v);
             }
         }
     }
