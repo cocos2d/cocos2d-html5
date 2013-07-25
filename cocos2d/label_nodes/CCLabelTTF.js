@@ -252,46 +252,31 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @param {cc.Size} shadowOffset
      * @param {Number} shadowOpacity
      * @param {Number} shadowBlur
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     enableShadow:function(shadowOffset, shadowOpacity, shadowBlur, mustUpdateTexture){
-        var valueChanged = false;
-
-        if (false === this._shadowEnabled) {
+         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
-            valueChanged = true;
-        }
 
         if ((this._shadowOffset.width != shadowOffset.width) || (this._shadowOffset.height != shadowOffset.height)) {
             this._shadowOffset.width  = shadowOffset.width;
             this._shadowOffset.height = shadowOffset.height;
-            valueChanged = true;
         }
 
-        if (this._shadowOpacity != shadowOpacity ) {
+        if (this._shadowOpacity != shadowOpacity )
             this._shadowOpacity = shadowOpacity;
-            valueChanged = true;
-        }
 
-        if (this._shadowBlur != shadowBlur) {
+        if (this._shadowBlur != shadowBlur)
             this._shadowBlur = shadowBlur;
-            valueChanged = true;
-        }
-
-        if ( valueChanged && mustUpdateTexture )
-            this._updateTexture();
     },
 
     /**
      * disable shadow rendering
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     disableShadow:function(mustUpdateTexture){
         if (this._shadowEnabled) {
             this._shadowEnabled = false;
-
-            if (mustUpdateTexture)
-                this._updateTexture();
         }
     },
 
@@ -299,30 +284,20 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * enable or disable stroke
      * @param {cc.Color3B} strokeColor
      * @param {Number} strokeSize
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=]
      */
     enableStroke:function(strokeColor, strokeSize, mustUpdateTexture){
-        var valueChanged = false;
-
-        if(this._strokeEnabled === false){
+        if(this._strokeEnabled === false)
             this._strokeEnabled = true;
-            valueChanged = true;
-        }
 
         var locStrokeColor = this._strokeColor;
         if ( (locStrokeColor.r !== strokeColor.r) || (locStrokeColor.g !== strokeColor.g) || (locStrokeColor.b !== strokeColor.b) ) {
             this._strokeColor = strokeColor;
             this._strokeColorStr = "rgba("+ (0 | strokeColor.r) + "," + (0 | strokeColor.g) + "," + (0 | strokeColor.b) + ", 1)";
-            valueChanged = true;
         }
 
-        if (this._strokeSize!== strokeSize){
+        if (this._strokeSize!== strokeSize)
             this._strokeSize = strokeSize;
-            valueChanged = true;
-        }
-
-        if ( valueChanged && mustUpdateTexture )
-            this._updateTexture();
     },
 
     /**
@@ -332,8 +307,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     disableStroke:function(mustUpdateTexture){
         if (this._strokeEnabled){
             this._strokeEnabled = false;
-            if (mustUpdateTexture)
-                this._updateTexture();
         }
     },
 
@@ -347,8 +320,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b){
             this._textFillColor = tintColor;
             this._setColorStyleStr();
-            //if (mustUpdateTexture)
-            //    this._updateTexture();
         }
     },
 
@@ -372,9 +343,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
 
         // fill color
         this.setFontFillColor(textDefinition.fontFillColor, false);
-
-        if (mustUpdateTexture)
-            this._updateTexture();
     },
 
     _prepareTextDefinition:function(adjustForResolution){
