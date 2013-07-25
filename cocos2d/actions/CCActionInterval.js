@@ -298,6 +298,9 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
  */
 cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
     var paraArray = (tempArray instanceof Array) ? tempArray : arguments;
+    if((paraArray.length > 0) && (paraArray[paraArray.length-1] == null))
+        cc.log("parameters should not be ending with null in Javascript");
+
     var prev = paraArray[0];
     for (var i = 1; i < paraArray.length; i++) {
         if (paraArray[i])
@@ -673,6 +676,9 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
  */
 cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
     var paramArray = (tempArray instanceof Array) ? tempArray : arguments;
+    if((paramArray.length > 0) && (paramArray[paramArray.length-1] == null))
+        cc.log("parameters should not be ending with null in Javascript");
+
     var prev = paramArray[0];
     for (var i = 1; i < paramArray.length; i++) {
         if (paramArray[i] != null)
