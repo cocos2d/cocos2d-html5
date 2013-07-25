@@ -1394,10 +1394,6 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
 
-        window._drawTTF++;
-        if(window._drawTTF == 1)
-            console.log("Draw LabelTTF :" + this._string);
-
         this._texture.handleLoadedTexture();
 
         this.setTextureRect(cc.rect(0, 0, width, height));
