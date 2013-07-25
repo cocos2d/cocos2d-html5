@@ -1162,6 +1162,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
  * //this is useful for constructing a toggler without a callback function (you wish to control the behavior from somewhere else)
  */
 cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
+    if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+        cc.log("parameters should not be ending with null in Javascript");
     var ret = new cc.MenuItemToggle();
     ret.initWithItems(arguments);
     return ret;
