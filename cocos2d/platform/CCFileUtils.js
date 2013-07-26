@@ -584,9 +584,7 @@ cc.FileUtils = cc.Class.extend({
      * @return {object} The Dictionary of object generated from the file
      */
     createDictionaryWithContentsOfFile: function(filename){
-        var parser = cc.SAXParser.getInstance();
-        this.rootDict = parser.parse(filename);
-        return this.rootDict;
+        return  cc.SAXParser.getInstance().parse(filename);
     },
 
     /**
