@@ -917,7 +917,7 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
     ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
     var reader = new cc.BuilderReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
     reader.setCCBRootPath(ccbRootPath);
-    if(ccbFilePath.toLowerCase().lastIndexOf(".ccbi") != ccbFilePath.length - 5)
+    if((ccbFilePath.length < 5)||(ccbFilePath.toLowerCase().lastIndexOf(".ccbi") != ccbFilePath.length - 5))
         ccbFilePath = ccbFilePath + ".ccbi";
 
     var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
@@ -996,14 +996,12 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
         for (j = 0; j < keyframeCallbacks.length; j++) {
             var callbackSplit = keyframeCallbacks[j].split(":");
             var callbackType = callbackSplit[0];
-            var callbackName = callbackSplit[1];
+            var kfCallbackName = callbackSplit[1];
 
             if (callbackType == 1){ // Document callback
-                var callfunc = cc.CallFunc.create(controller[callbackName], controller);
-                animationManager.setCallFunc(callfunc, keyframeCallbacks[j]);
+                animationManager.setCallFunc(cc.CallFunc.create(controller[kfCallbackName], controller), keyframeCallbacks[j]);
             } else if (callbackType == 2 && owner) {// Owner callback
-                var callfunc = cc.CallFunc.create(owner[callbackName], owner);
-                animationManager.setCallFunc(callfunc, keyframeCallbacks[j]);
+                animationManager.setCallFunc(cc.CallFunc.create(owner[kfCallbackName], owner), keyframeCallbacks[j]);
             }
         }
     }
