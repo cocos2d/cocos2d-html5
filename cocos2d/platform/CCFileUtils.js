@@ -584,9 +584,7 @@ cc.FileUtils = cc.Class.extend({
      * @return {object} The Dictionary of object generated from the file
      */
     createDictionaryWithContentsOfFile: function(filename){
-        var parser = cc.SAXParser.getInstance();
-        this.rootDict = parser.parse(filename);
-        return this.rootDict;
+        return  cc.SAXParser.getInstance().parse(filename);
     },
 
     /**
@@ -606,8 +604,7 @@ cc.FileUtils = cc.Class.extend({
      * @return {object} The Dictionary of object generated from the file
      */
     dictionaryWithContentsOfFileThreadSafe:function (fileName) {
-        var tMaker = new cc.DictMaker();
-        return tMaker.dictionaryWithContentsOfFile(fileName);
+        return cc.SAXParser.getInstance().parse(fileName);
     },
 
     /**
@@ -806,26 +803,3 @@ cc.FileUtils.getInstance = function () {
     }
     return cc.s_SharedFileUtils;
 };
-
-/**
- * plist Dictionary Maker
- * @class
- * @extends cc.Class
- * @example
- * //create a DictMaker
- * var tMaker = new cc.DictMaker();
- * tMaker.dictionaryWithContentsOfFile(fileName);
- */
-cc.DictMaker = cc.Class.extend(/** @lends cc.DictMaker# */{
-    rootDict:[],
-    /**
-     * Generate dictionary with contents of file
-     * @param {String} fileName
-     * @return {Array}
-     */
-    dictionaryWithContentsOfFile:function (fileName) {
-        var parser = cc.SAXParser.getInstance();
-        this.rootDict = parser.parse(fileName);
-        return this.rootDict;
-    }
-});
