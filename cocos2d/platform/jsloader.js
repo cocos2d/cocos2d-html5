@@ -26,6 +26,9 @@
  ****************************************************************************/
 (function () {
     var engine = [
+        'cocoa/CCGeometry.js',
+        'platform/Sys.js',
+        'platform/CCConfig.js',
         'platform/CCClass.js',
         'cocoa/CCGeometry.js',
         'platform/Sys.js',
