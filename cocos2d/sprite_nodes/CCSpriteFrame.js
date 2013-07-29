@@ -198,6 +198,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      */
     setOffset:function (offsets) {
         this._offset = offsets;
+        this._offsetInPixels = cc.POINT_POINTS_TO_PIXELS(offsetInPixels);
     },
 
     clone: function(){
