@@ -200,7 +200,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
             this._fontName = fontName;
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
-            this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
+            this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
             this.setString(strInfo);
@@ -332,6 +332,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         this._fontName   = textDefinition.fontName;
         this._fontSize   = textDefinition.fontSize;
         this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+
 
         // shadow
         if ( textDefinition.shadowEnabled)
@@ -566,8 +567,9 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         }
 
         var locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
-            locContentSizeWidth = this._contentSize.width, locContentSizeHeight = this._contentSize.height;
-        var locFontHeight = this._fontClientHeight;
+            locContentSizeWidth = this._contentSize.width* cc.CONTENT_SCALE_FACTOR(),
+            locContentSizeHeight = this._contentSize.height* cc.CONTENT_SCALE_FACTOR();
+        var locFontHeight = this._fontClientHeight* cc.CONTENT_SCALE_FACTOR();
 
         context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
         context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
@@ -670,6 +672,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     _string:"",
     _isMultiLine:false,
     _fontStyleStr:null,
+    _scaledFontStyleStr:null,
     _colorStyleStr:null,
 
     // font shadow
@@ -702,6 +705,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         this._vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
+        this._scaledFontStyleStr = "";
         this._colorStyleStr = "";
         this._fontName = "Arial";
         this._opacity = 255;
@@ -836,8 +840,9 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._fontName = fontName;
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
-            this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
+            this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+            this._scaledFontStyleStr = this._fontSize * cc.CONTENT_SCALE_FACTOR() + "px '" + this._fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
             this.setString(strInfo);
             this._updateTexture();
@@ -986,6 +991,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         this._fontName   = textDefinition.fontName;
         this._fontSize   = textDefinition.fontSize || 12;
         this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+        this._scaledFontStyleStr = this._fontSize * cc.CONTENT_SCALE_FACTOR() + "px '" + this._fontName + "'";
         this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
 
         // shadow
@@ -1006,6 +1012,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     _prepareTextDefinition:function(adjustForResolution){
         var texDef = new cc.FontDefinition();
 
+        //Do these reference to CONTENT_SCALE_FACTOR need to be removed ?
         if (adjustForResolution){
             texDef.fontSize = this._fontSize * cc.CONTENT_SCALE_FACTOR();
             texDef.fontDimensions = cc.SIZE_POINTS_TO_PIXELS(this._dimensions);
@@ -1107,6 +1114,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         if (this._fontSize != fontSize) {
             this._fontSize = fontSize;
             this._fontStyleStr = fontSize + "px '" + this._fontName + "'";
+            this._scaledFontStyleStr = this._fontSize * cc.CONTENT_SCALE_FACTOR() + "px '" + this._fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,fontSize);
             // Force update
             this._needUpdateTexture = true;
@@ -1121,6 +1129,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         if (this._fontName && this._fontName != fontName) {
             this._fontName = fontName;
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
+            this._scaledFontStyleStr = this._fontSize * cc.CONTENT_SCALE_FACTOR() + "px '" + this._fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
             // Force update
             this._needUpdateTexture = true;
@@ -1136,8 +1145,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
         context.setTransform(1, 0, 0, 1, 0, locContentSizeHeight);
         //this is fillText for canvas
-        if (context.font != this._fontStyleStr)
-            context.font = this._fontStyleStr;
+        if (context.font != this._scaledFontStyleStr)
+            context.font = this._scaledFontStyleStr;
         context.fillStyle = this._fillColorStr;
 
         //stroke style setup
@@ -1335,8 +1344,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         this._labelContext.font = this._fontStyleStr;
         this._updateTTF();
         var width = this._contentSize.width, height = this._contentSize.height;
-        this._labelCanvas.width = width;
-        this._labelCanvas.height = height;
+        this._labelCanvas.width = width * cc.CONTENT_SCALE_FACTOR();
+        this._labelCanvas.height = height * cc.CONTENT_SCALE_FACTOR();;
 
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
