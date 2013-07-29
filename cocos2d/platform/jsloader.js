@@ -26,9 +26,6 @@
  ****************************************************************************/
 (function () {
     var engine = [
-        'cocoa/CCGeometry.js',
-        'platform/Sys.js',
-        'platform/CCConfig.js',
         'platform/CCClass.js',
         'cocoa/CCGeometry.js',
         'platform/Sys.js',
@@ -220,7 +217,7 @@
             '../extensions/PluginX/plugins/SocialQQWeibo.js',
             '../extensions/PluginX/plugins/SocialQzone.js',
             '../extensions/PluginX/plugins/SocialTwitter.js',
-            '../extensions/PluginX/plugins/SocialFacebook.js',
+            '../extensions/PluginX/plugins/SocialFacebook.js'
             //'../extensions/PluginX/plugins/AdsGoogle.js'
         ]);
     }
