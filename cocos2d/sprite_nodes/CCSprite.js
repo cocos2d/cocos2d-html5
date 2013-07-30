@@ -122,6 +122,7 @@ cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCa
 cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
         rect = cc.rect(0, 0, texture.width, texture.height);
+        rect = cc.RECT_PIXELS_TO_POINTS(rect);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
@@ -933,6 +934,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             loadImg.addEventListener("load", function () {
                 if (!rect) {
                     rect = cc.rect(0, 0, loadImg.width, loadImg.height);
+                    rect = cc.RECT_PIXELS_TO_POINTS(rect);
                 }
                 selfPointer.initWithTexture(loadImg, rect);
                 cc.TextureCache.getInstance().cacheImage(filename, loadImg);
@@ -947,6 +949,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             if (texture) {
                 if (!rect) {
                     rect = cc.rect(0, 0, texture.width, texture.height);
+                    rect = cc.RECT_PIXELS_TO_POINTS(rect);
                 }
                 return this.initWithTexture(texture, rect);
             }
@@ -996,8 +999,10 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
 
         if (!rect) {
             rect = cc.rect(0, 0, 0, 0);
-            if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
+            if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
                 rect.size = cc.size(texture.width, texture.height);
+                rect = cc.RECT_PIXELS_TO_POINTS(rect);
+            }
         }
         this._originalTexture = texture;
 
@@ -1163,7 +1168,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         return cc.SpriteFrame._frameWithTextureForCanvas(this._texture,
             cc.RECT_POINTS_TO_PIXELS(this._rect),
             this._rectRotated,
-            this._unflippedOffsetPositionFromCenter,
+            cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),
             cc.SIZE_POINTS_TO_PIXELS(this._contentSize));
     },
 
@@ -1203,8 +1208,10 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
 
         if (this._texture != texture) {
             if (texture instanceof  HTMLImageElement) {
-                if (!this._rect || cc.rectEqualToRect(this._rect, cc.RectZero()))
+                if (!this._rect || cc.rectEqualToRect(this._rect, cc.RectZero())) {
                     this._rect = cc.rect(0, 0, texture.width, texture.height);
+                    this._rect = cc.RECT_PIXELS_TO_POINTS(this._rect);
+                }
                 this._originalTexture = texture;
             }
             this._texture = texture;
@@ -1217,10 +1224,11 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             if (cacheTextureForColor) {
                 this._colorized = true;
                 //generate color texture cache
+                var rect = cc.RECT_POINTS_TO_PIXELS(this._rect);
                 if (this._texture instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._displayedColor, this.getTextureRect(), this._texture);
+                    cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, rect, this._texture);
                 else {
-                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._displayedColor, this.getTextureRect());
+                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, rect);
                     this.setTexture(colorTexture);
                 }
             }
@@ -1248,13 +1256,14 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             context.scale(1, -1);
         }
         if (this._texture) {
+            var scaleFactor = cc.CONTENT_SCALE_FACTOR();
             if (this._colorized) {
                 context.drawImage(this._texture,
-                    0, 0, locRect.width, locRect.height,
+                    0, 0, locRect.width * scaleFactor, locRect.height * scaleFactor,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(this._texture,
-                    locRect.x, locRect.y, locRect.width, locRect.height,
+                    locRect.x * scaleFactor, locRect.y * scaleFactor, locRect.width * scaleFactor, locRect.height * scaleFactor,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (this._contentSize.width !== 0) {
@@ -2454,7 +2463,7 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         return cc.SpriteFrame.createWithTexture(this._texture,
             cc.RECT_POINTS_TO_PIXELS(this._rect),
             this._rectRotated,
-            this._unflippedOffsetPositionFromCenter,
+            cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),
             cc.SIZE_POINTS_TO_PIXELS(this._contentSize));
     },
 
