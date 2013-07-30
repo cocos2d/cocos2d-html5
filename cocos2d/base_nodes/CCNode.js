@@ -165,15 +165,14 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         this._anchorPointInPoints = cc.p(0, 0);
         this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
+        this._children = [];
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
-        this._additionalTransformDirty = false;
         this._componentContainer = new cc.ComponentContainer(this);
-        this._isTransitionFinished = false;
     },
 
     /**
@@ -195,62 +194,62 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         if (!array || array.length === 0)
             return;
 
-        var i, len = array.length;
+        var i, len = array.length,node;
         var nodeCallbackType = cc.Node.StateCallbackType;
         switch (callbackType) {
             case nodeCallbackType.onEnter:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onEnter();
+                    node = array[i];
+                    if (node)
+                        node.onEnter();
                 }
                 break;
             case nodeCallbackType.onExit:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onExit();
+                    node = array[i];
+                    if (node)
+                        node.onExit();
                 }
                 break;
             case nodeCallbackType.onEnterTransitionDidFinish:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onEnterTransitionDidFinish();
+                    node = array[i];
+                    if (node)
+                        node.onEnterTransitionDidFinish();
                 }
                 break;
             case nodeCallbackType.cleanup:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].cleanup();
+                    node = array[i];
+                    if (node)
+                        node.cleanup();
                 }
                 break;
             case nodeCallbackType.updateTransform:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].updateTransform();
+                    node = array[i];
+                    if (node)
+                        node.updateTransform();
                 }
                 break;
             case nodeCallbackType.onExitTransitionDidStart:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onExitTransitionDidStart();
+                    node = array[i];
+                    if (node)
+                        node.onExitTransitionDidStart();
                 }
                 break;
             case nodeCallbackType.sortAllChildren:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].sortAllChildren();
+                    node = array[i];
+                    if (node)
+                        node.sortAllChildren();
                 }
                 break;
             default :
                 throw "Unknown callback function";
                 break;
         }
-    },
-
-    /**
-     * set the dirty node
-     */
-    setNodeDirty:function () {
-        this._transformDirty = this._inverseDirty = true;
     },
 
     /**
@@ -589,7 +588,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @return {Number} The amount of children.
      */
     getChildrenCount:function () {
-        return this._children ? this._children.length : 0;
+        return this._children.length;
     },
 
     /**
@@ -604,8 +603,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * }
      */
     getChildren:function () {
-        if (!this._children)
-            this._children = [];
         return this._children;
     },
 
@@ -941,10 +938,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         return "<cc.Node | Tag =" + this._tag + ">";
     },
 
-    _childrenAlloc:function () {
-        this._children = [];
-    },
-
     // composition: GET
     /**
      * Gets a child from the container given its tag
@@ -985,16 +978,12 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             cc.Assert(child._parent === null, "child already added. It can't be added again");
             return;
         }
-        var tempzOrder = (zOrder != null) ? zOrder : child.getZOrder();
-        var tmptag = (tag != null) ? tag : child.getTag();
-        child.setTag(tmptag);
 
-        if (!this._children)
-            this._childrenAlloc();
+        var tmpzOrder = (zOrder != null) ? zOrder : child._zOrder;
+        child._tag = (tag != null) ? tag : child._tag;
+        this._insertChild(child, tmpzOrder);
+        child._parent = this;
 
-        this._insertChild(child, tempzOrder);
-
-        child.setParent(this);
         if (this._running) {
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -1041,7 +1030,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     removeChild:function (child, cleanup) {
         // explicit nil handling
-        if (this._children == null)
+        if (this._children.length === 0)
             return;
 
         if (cleanup == null)
@@ -1181,20 +1170,22 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var i, j, length = this._children.length;
-            var localChildren = this._children;
+            var _children = this._children;
+            var i, j, length = _children.length,tempChild;
+
             // insertion sort
             for (i = 0; i < length; i++) {
-                var tempItem = localChildren[i];
+                var tempItem = _children[i];
                 j = i - 1;
+                tempChild =  _children[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < localChildren[j]._zOrder ||
-                    ( tempItem._zOrder == localChildren[j]._zOrder && tempItem._orderOfArrival < localChildren[j]._orderOfArrival ))) {
-                    localChildren[j + 1] = localChildren[j];
+                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
+                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    _children[j + 1] = tempChild;
                     j = j - 1;
                 }
-                localChildren[j + 1] = tempItem;
+                _children[j + 1] = tempItem;
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -2044,15 +2035,14 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         this._anchorPointInPoints = cc.p(0, 0);
         this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
+        this._children = [];
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
-        this._additionalTransformDirty = false;
         this._componentContainer = new cc.ComponentContainer(this);
-        this._isTransitionFinished = false;
     },
 
     /**
@@ -2074,62 +2064,62 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         if (!array || array.length === 0)
             return;
 
-        var i, len = array.length;
+        var i, len = array.length,node;
         var nodeCallbackType = cc.Node.StateCallbackType;
         switch (callbackType) {
             case nodeCallbackType.onEnter:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onEnter();
+                    node = array[i];
+                    if (node)
+                        node.onEnter();
                 }
                 break;
             case nodeCallbackType.onExit:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onExit();
+                    node = array[i];
+                    if (node)
+                        node.onExit();
                 }
                 break;
             case nodeCallbackType.onEnterTransitionDidFinish:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onEnterTransitionDidFinish();
+                    node = array[i];
+                    if (node)
+                        node.onEnterTransitionDidFinish();
                 }
                 break;
             case nodeCallbackType.cleanup:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].cleanup();
+                    node = array[i];
+                    if (node)
+                        node.cleanup();
                 }
                 break;
             case nodeCallbackType.updateTransform:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].updateTransform();
+                    node = array[i];
+                    if (node)
+                        node.updateTransform();
                 }
                 break;
             case nodeCallbackType.onExitTransitionDidStart:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].onExitTransitionDidStart();
+                    node = array[i];
+                    if (node)
+                        node.onExitTransitionDidStart();
                 }
                 break;
             case nodeCallbackType.sortAllChildren:
                 for (i = 0; i < len; i++) {
-                    if (array[i])
-                        array[i].sortAllChildren();
+                    node = array[i];
+                    if (node)
+                        node.sortAllChildren();
                 }
                 break;
             default :
                 throw "Unknown callback function";
                 break;
         }
-    },
-
-    /**
-     * set the dirty node
-     */
-    setNodeDirty:function () {
-        this._transformDirty = this._inverseDirty = true;
     },
 
     /**
@@ -2467,7 +2457,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @return {Number} The amount of children.
      */
     getChildrenCount:function () {
-        return this._children ? this._children.length : 0;
+        return this._children.length;
     },
 
     /**
@@ -2482,8 +2472,6 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * }
      */
     getChildren:function () {
-        if (!this._children)
-            this._children = [];
         return this._children;
     },
 
@@ -2820,10 +2808,6 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         return "<cc.Node | Tag =" + this._tag + ">";
     },
 
-    _childrenAlloc:function () {
-        this._children = [];
-    },
-
     // composition: GET
     /**
      * Gets a child from the container given its tag
@@ -2864,16 +2848,12 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             cc.Assert(child._parent === null, "child already added. It can't be added again");
             return;
         }
-        var tempzOrder = (zOrder != null) ? zOrder : child.getZOrder();
-        var tmptag = (tag != null) ? tag : child.getTag();
-        child.setTag(tmptag);
 
-        if (!this._children)
-            this._childrenAlloc();
+        var tmpzOrder = (zOrder != null) ? zOrder : child._zOrder;
+        child._tag = (tag != null) ? tag : child._tag;
+        this._insertChild(child, tmpzOrder);
+        child._parent = this;
 
-        this._insertChild(child, tempzOrder);
-
-        child.setParent(this);
         if (this._running) {
             child.onEnter();
             // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
@@ -2919,7 +2899,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     removeChild:function (child, cleanup) {
         // explicit nil handling
-        if (this._children == null)
+        if (this._children.length === 0)
             return;
 
         if (cleanup == null)
@@ -3009,7 +2989,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             child.cleanup();
 
         // set parent nil at the end
-        child.setParent(null);
+        child._parent = null;
 
         cc.ArrayRemoveObject(this._children, child);
     },
@@ -3059,20 +3039,22 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var i, j, length = this._children.length;
+            var _children = this._children;
+            var i, j, length = _children.length,tempChild;
 
             // insertion sort
             for (i = 0; i < length; i++) {
-                var tempItem = this._children[i];
+                var tempItem = _children[i];
                 j = i - 1;
+                tempChild =  _children[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < this._children[j]._zOrder ||
-                    ( tempItem._zOrder == this._children[j]._zOrder && tempItem._orderOfArrival < this._children[j]._orderOfArrival ))) {
-                    this._children[j + 1] = this._children[j];
+                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
+                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    _children[j + 1] = tempChild;
                     j = j - 1;
                 }
-                this._children[j + 1] = tempItem;
+                _children[j + 1] = tempItem;
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -3560,25 +3542,26 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
         //visit for canvas
         var context = ctx || cc.renderContext, i;
-        var children = this._children;
+        var children = this._children,child;
         context.save();
         this.transform(context);
-        if (children && children.length > 0) {
-            var len = children.length;
+        var len = children.length;
+        if (len > 0) {
             this.sortAllChildren();
             // draw children zOrder < 0
             for (i = 0; i < len; i++) {
-                if (children[i] && children[i]._zOrder < 0)
-                    children[i].visit(context);
+                child = children[i];
+                if (child._zOrder < 0)
+                    child.visit(context);
                 else
                     break;
             }
             this.draw(context);
             for (; i < len; i++) {
-                if (children[i] && children[i]._zOrder >= 0)
-                    children[i].visit(context);
+                child = children[i];
+                if (child._zOrder >= 0)
+                    child.visit(context);
             }
-
         } else
             this.draw(context);
 
@@ -3754,30 +3737,15 @@ cc.Node = cc.Browser.supportWebGL ? cc.NodeWebGL : cc.NodeCanvas;
  */
 cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     RGBAProtocol:true,
-    _displayedOpacity:0,
-    _realOpacity:0,
-    _displayedColor:null,
-    _realColor:null,
+    _displayedOpacity:255,
+    _realOpacity:255,
+    _displayedColor:cc.WHITE,
+    _realColor:cc.WHITE,
     _cascadeColorEnabled:false,
     _cascadeOpacityEnabled:false,
 
-    ctor:function(){
-        cc.Node.prototype.ctor.call(this);
-        this._displayedOpacity = 255;
-        this._realOpacity = 255;
-        this._displayedColor = cc.WHITE;
-        this._realColor = cc.WHITE;
-        this._cascadeColorEnabled = false;
-        this._cascadeOpacityEnabled = false;
-    },
-
-
     init:function(){
         if(cc.Node.prototype.init.call(this)){
-            this._displayedOpacity = this._realOpacity = 255;
-            this._displayedColor = cc.WHITE;
-            this._realColor = cc.WHITE;
-            this._cascadeOpacityEnabled = this._cascadeColorEnabled = false;
             return true;
         }
         return false;
