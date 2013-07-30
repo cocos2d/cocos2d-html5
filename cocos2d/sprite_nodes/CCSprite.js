@@ -1226,9 +1226,9 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
                 //generate color texture cache
                 var rect = cc.RECT_POINTS_TO_PIXELS(this._rect);
                 if (this._texture instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, rect, this._texture);
+                    cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._displayedColor, rect, this._texture);
                 else {
-                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, rect);
+                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._displayedColor, rect);
                     this.setTexture(colorTexture);
                 }
             }
