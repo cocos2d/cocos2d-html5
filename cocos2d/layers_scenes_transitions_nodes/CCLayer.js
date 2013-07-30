@@ -580,6 +580,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     _cascadeColorEnabled: false,
 
     ctor: function () {
+        cc.Layer.prototype.ctor.call(this);
         this.RGBAProtocol = true;
         this._displayedOpacity = 255;
         this._realOpacity = 255;
