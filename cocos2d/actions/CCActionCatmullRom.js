@@ -183,24 +183,25 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      */
     update:function (time) {
         var p, lt;
-
+        var ps = this._points;
         // eg.
         // p..p..p..p..p..p..p
         // 1..2..3..4..5..6..7
         // want p to be 1, 2, 3, 4, 5, 6
         if (time == 1) {
-            p = this._points.length - 1;
+            p = ps.length - 1;
             lt = 1;
         } else {
-            p = 0 | (time / this._deltaT);
-            lt = (time - this._deltaT * p) / this._deltaT;
+            var locDT = this._deltaT;
+            p = 0 | (time / locDT);
+            lt = (time - locDT * p) / locDT;
         }
 
         var newPos = cc.CardinalSplineAt(
-            cc.getControlPointAt(this._points, p - 1),
-            cc.getControlPointAt(this._points, p - 0),
-            cc.getControlPointAt(this._points, p + 1),
-            cc.getControlPointAt(this._points, p + 2),
+            cc.getControlPointAt(ps, p - 1),
+            cc.getControlPointAt(ps, p - 0),
+            cc.getControlPointAt(ps, p + 1),
+            cc.getControlPointAt(ps, p + 2),
             this._tension, lt);
 
         if (cc.ENABLE_STACKABLE_ACTIONS) {
@@ -208,10 +209,11 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
             tempX = this._target.getPositionX() - this._previousPosition.x;
             tempY = this._target.getPositionY() - this._previousPosition.y;
             if (tempX != 0 || tempY != 0) {
-                tempX = this._accumulatedDiff.x + tempX;
-                tempY = this._accumulatedDiff.y + tempY;
-                this._accumulatedDiff.x = tempX;
-                this._accumulatedDiff.y = tempY;
+                var locAccDiff = this._accumulatedDiff;
+                tempX = locAccDiff.x + tempX;
+                tempY = locAccDiff.y + tempY;
+                locAccDiff.x = tempX;
+                locAccDiff.y = tempY;
                 newPos.x += tempX;
                 newPos.y += tempY;
             }
@@ -347,8 +349,9 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
-        var posX = newPos.x + this._startPosition.x;
-        var posY = newPos.y + this._startPosition.y;
+        var pos = this._startPosition;
+        var posX = newPos.x + pos.x;
+        var posY = newPos.y + pos.y;
         this._target.setPosition(posX, posY);
         this._previousPosition.x = posX;
         this._previousPosition.y = posY;

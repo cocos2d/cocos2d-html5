@@ -237,8 +237,8 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
                 // XXX: Bug. this case doesn't contemplate when _last==-1, found=0 and in "reverse mode"
                 // since it will require a hack to know if an action is on reverse mode or not.
                 // "step" should be overriden, and the "reverseMode" value propagated to inner Sequences.
-                this._actions[1].update(0);
-                this._actions[1].stop();
+                locActions[1].update(0);
+                locActions[1].stop();
             }
         } else {
             // action[1]
@@ -397,14 +397,16 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
         var locInnerAction = this._innerAction;
         var locDuration = this._duration;
         var locTimes = this._times;
+        var locNextDt = this._nextDt;
 
-        if (time >= this._nextDt) {
-            while (time > this._nextDt && this._total < locTimes) {
+        if (time >= locNextDt) {
+            while (time > locNextDt && this._total < locTimes) {
                 locInnerAction.update(1);
                 this._total++;
                 locInnerAction.stop();
                 locInnerAction.startWithTarget(this._target);
-                this._nextDt += locInnerAction.getDuration() / locDuration;
+                locNextDt += locInnerAction.getDuration() / locDuration;
+                this._nextDt = locNextDt;
             }
 
             // fix for issue #1288, incorrect end value of repeat
@@ -418,7 +420,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
                     locInnerAction.stop();
                 } else {
                     // issue #390 prevent jerk, use right update
-                    locInnerAction.update(time - (this._nextDt - locInnerAction.getDuration() / locDuration));
+                    locInnerAction.update(time - (locNextDt - locInnerAction.getDuration() / locDuration));
                 }
             }
         } else {
@@ -964,20 +966,22 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
         if (this._target) {
             var x = this._positionDelta.x * time;
             var y = this._positionDelta.y * time;
-
+            var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
                 var targetX = this._target.getPositionX();
                 var targetY = this._target.getPositionY();
-                this._startPosition.x = this._startPosition.x + targetX - this._previousPosition.x;
-                this._startPosition.y = this._startPosition.y + targetY - this._previousPosition.y;
-                x = x + this._startPosition.x;
-                y = y + this._startPosition.y;
+                var locPreviousPosition = this._previousPosition;
+
+                locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
+                locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
+                x = x + locStartPosition.x;
+                y = y + locStartPosition.y;
 
                 this._target.setPosition(x, y);
-                this._previousPosition.x = x;
-                this._previousPosition.y = y;
+                locPreviousPosition.x = x;
+                locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(this._startPosition.x + x, this._startPosition.y + y);
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -1298,19 +1302,22 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
             y += this._delta.y * time;
 
             var x = this._delta.x * time;
+            var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
                 var targetX = this._target.getPositionX();
                 var targetY = this._target.getPositionY();
-                this._startPosition.x = this._startPosition.x + targetX - this._previousPosition.x;
-                this._startPosition.y = this._startPosition.y + targetY - this._previousPosition.y;
-                x = x + this._startPosition.x;
-                y = y + this._startPosition.y;
+                var locPreviousPosition = this._previousPosition;
+
+                locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
+                locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
+                x = x + locStartPosition.x;
+                y = y + locStartPosition.y;
 
                 this._target.setPosition(x, y);
-                this._previousPosition.x = x;
-                this._previousPosition.y = y;
+                locPreviousPosition.x = x;
+                locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(this._startPosition.x + x, this._startPosition.y + y);
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -1474,18 +1481,21 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             var x = cc.bezierAt(xa, xb, xc, xd, time);
             var y = cc.bezierAt(ya, yb, yc, yd, time);
 
+            var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
                 var targetX = this._target.getPositionX();
                 var targetY = this._target.getPositionY();
-                this._startPosition.x = this._startPosition.x + targetX - this._previousPosition.x;
-                this._startPosition.y = this._startPosition.y + targetY - this._previousPosition.y;
-                x = x + this._startPosition.x;
-                y = y + this._startPosition.y;
+                var locPreviousPosition = this._previousPosition;
+
+                locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
+                locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
+                x = x + locStartPosition.x;
+                y = y + locStartPosition.y;
                 this._target.setPosition(x, y);
-                this._previousPosition.x = x;
-                this._previousPosition.y = y;
+                locPreviousPosition.x = x;
+                locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(this._startPosition.x + x, this._startPosition.y + y);
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
