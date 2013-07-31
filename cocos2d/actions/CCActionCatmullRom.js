@@ -208,10 +208,12 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
             tempX = this._target.getPositionX() - this._previousPosition.x;
             tempY = this._target.getPositionY() - this._previousPosition.y;
             if (tempX != 0 || tempY != 0) {
-                this._accumulatedDiff.x += tempX;
-                this._accumulatedDiff.y += tempY;
-                newPos.x += this._accumulatedDiff.x;
-                newPos.y += this._accumulatedDiff.y;
+                tempX = this._accumulatedDiff.x + tempX;
+                tempY = this._accumulatedDiff.y + tempY;
+                this._accumulatedDiff.x = tempX;
+                this._accumulatedDiff.y = tempY;
+                newPos.x += tempX;
+                newPos.y += tempY;
             }
         }
         this.updatePosition(newPos);
