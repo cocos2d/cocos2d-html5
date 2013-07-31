@@ -329,6 +329,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             director._createStatsLabel();
             director.setGLDefaultValues();
         }
+        cc.DOM._resetEGLViewDiv();
     },
 
     /**
