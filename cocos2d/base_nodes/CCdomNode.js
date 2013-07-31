@@ -294,6 +294,40 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         }
     }
 };
+
+cc.DOM._resetEGLViewDiv = function(){
+    var eglViewDiv = cc.$("#EGLViewDiv");
+    if(eglViewDiv){
+        var eglViewer = cc.EGLView.getInstance();
+        var designSize = eglViewer.getDesignResolutionSize();
+        var viewPortRect = eglViewer.getViewPortRect();
+        var screenSize = eglViewer.getFrameSize();
+        var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
+        if((designSize.width === 0) && (designSize.height === 0)){
+            designSizeWidth = screenSize.width;
+            designSizeHeight = screenSize.height;
+        }
+
+        var viewPortWidth = viewPortRect.size.width, viewPortHeight = viewPortRect.size.height;
+        if((viewPortRect.size.width === 0) && (viewPortRect.size.height === 0)){
+            viewPortWidth = screenSize.width;
+            viewPortHeight = screenSize.height;
+        }
+
+        eglViewDiv.style.position = 'absolute';
+        eglViewDiv.style.bottom = 0;
+        //x.dom.style.display='block';
+        eglViewDiv.style.width = designSizeWidth + "px";
+        eglViewDiv.style.maxHeight = designSizeHeight + "px";
+        eglViewDiv.style.margin = 0;
+
+        eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
+        eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
+            + (screenSize.width - viewPortWidth ) / 2) + "px";
+        eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+    }
+};
+
 /**
  * @function
  * @private
@@ -349,7 +383,7 @@ cc.DOM.parentDOM = function (x) {
             eglViewDiv.style.maxHeight = designSizeHeight + "px";
             eglViewDiv.style.margin = 0;
 
-            eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleX());
+            eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
             eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
                 + (screenSize.width - viewPortWidth ) / 2) + "px";
             eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
