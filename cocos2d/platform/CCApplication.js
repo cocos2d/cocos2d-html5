@@ -94,8 +94,8 @@ cc.WEBGL = 1;
 cc.drawingUtil = null;
 
 /**
- * main Canvas 2D Context of game engine
- * @type CanvasContext
+ * main Canvas 2D/3D Context of game engine
+ * @type CanvasRenderingContext2D|WebGLRenderingContext
  */
 cc.renderContext = null;
 

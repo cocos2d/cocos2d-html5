@@ -132,6 +132,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 
     /**
      * get original size of the trimmed image
+     * @const
      * @return {cc.Size}
      */
     getOriginalSizeInPixels:function () {
@@ -148,10 +149,11 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 
     /**
      * get original size of the trimmed image
+     * @const
      * @return {cc.Size}
      */
     getOriginalSize:function () {
-        return cc.size(this._originalSize.width, this._originalSize.height);
+        return this._originalSize;          //cc.size(this._originalSize.width, this._originalSize.height);
     },
 
     /**
@@ -186,10 +188,11 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 
     /**
      * Offset getter
+     * @const
      * @return {cc.Point}
      */
     getOffset:function () {
-        return cc.p(this._offset.x, this._offset.y);
+        return this._offset;        //cc.p(this._offset.x, this._offset.y);
     },
 
     /**
@@ -197,7 +200,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Point} offsets
      */
     setOffset:function (offsets) {
-        this._offset = offsets;
+        this._offset.x = offsets.x;
+        this._offset.y = offsets.y;
     },
 
     clone: function(){
