@@ -29,14 +29,73 @@
  * @constant
  * @type Object
  */
-cc.RESOURCE_TYPE = {
-    "IMAGE": ["png", "jpg", "bmp","jpeg","gif"],
-    "SOUND": ["mp3", "ogg", "wav", "mp4", "m4a"],
-    "XML": ["plist", "xml", "fnt", "tmx", "tsx"],
-    "BINARY": ["ccbi"],
-    "FONT": "FONT",
-    "TEXT":["txt", "vsh", "fsh","json"],
-    "UNKNOW": []
+cc._LoaderHelp = {
+    TypeDefine: [
+                    {
+                        Name: "IMAGE", Ext: ["png", "jpg", "bmp", "jpeg", "gif"],
+                        AddRemove: function (resInfo, isremove) { var TextureCache = cc.TextureCache.getInstance(); if (isremove) TextureCache.removeTextureForKey(resInfo.src); else TextureCache.addImage(resInfo.src); }
+                    },
+                    {
+                        Name: "SOUND", Ext: ["mp3", "ogg", "wav", "mp4", "m4a"],
+                        AddRemove: function (resInfo, isremove) { var AudioEngine = cc.AudioEngine.getInstance(); if (isremove) AudioEngine.unloadEffect(resInfo.src); else AudioEngine.preloadSound(resInfo.src); }
+                    },
+                    {
+                        Name: "PLIST", Ext: ["plist", "fnt", "tmx", "tsx"],
+                        AddRemove: function (resInfo, isremove) { var Plist = cc.SAXParser.getInstance(); if (isremove) Plist.unloadPlist(resInfo.src); else Plist.preloadPlist(resInfo.src); }
+                    },
+                    {
+                        Name: "XML", Ext: ["xml"],
+                        AddRemove: function (resInfo, isremove) { var FileUtils = cc.FileUtils.getInstance(); if (isremove) FileUtils.unloadXML(resInfo.src); else FileUtils.preloadXML(resInfo.src); }
+                    },
+                    {
+                        Name: "BINARY", Ext: ["ccbi"],
+                        AddRemove: function (resInfo, isremove) { var FileUtils = cc.FileUtils.getInstance(); if (isremove) FileUtils.unloadBinaryFileData(resInfo.src); else FileUtils.preloadBinaryFileData(resInfo.src); }
+                    },
+                    {
+                        Name: "TEXT", Ext: ["txt", "vsh", "fsh", "json"],
+                        AddRemove: function (resInfo, isremove) { var FileUtils = cc.FileUtils.getInstance(); if (isremove) FileUtils.unloadTextFileData(resInfo.src); else FileUtils.preloadTextFileData(resInfo.src); }
+                    },
+                    {
+                        Name: "FONT", isFont: true, Ext: [],
+                        AddRemove: function (resInfo, isremove) { var Loader = cc.Loader.getInstance(); if (isremove) Loader._unregisterFaceFont(resInfo); else Loader._registerFaceFont(resInfo); }
+                    },
+                    //{ Name: UNKNOW }
+    ],
+    //init for quick seach.
+    _init: function () {
+
+        if (this.hasOwnProperty("ExtFind"))
+            return;
+        this.ExtFind = {};
+
+        var ext = this.ExtFind;
+        var types = this.TypeDefine;
+        for (var i = 0, l = types.length; i < l; i++) {
+            var type = types[i].Ext;
+            for (var ii = 0, ll = type.length; ii < ll; ii++)
+                ext[type[ii]] = i;
+        }
+    },
+    //use hash map to find the item.
+    //and using map instead of switch-case.
+    _find: function (resSrc) {
+       // this._init();
+        if (resSrc.fontName) {
+            return this.TypeDefine[this.TypeDefine.length - 1];
+        }
+        var src = resSrc.src;
+        ext = src.substring(src.lastIndexOf(".") + 1, src.length);
+        var idx = this.ExtFind[ext];
+        if (idx == undefined)
+            throw "cocos2d:unknown filename extension: " + ext;
+        return this.TypeDefine[idx];
+    },
+    execAdd: function (resInfo) {
+        return this._find(resInfo).AddRemove(resInfo);
+    },
+    execRemove: function (resInfo) {
+        return this._find(resInfo).AddRemove(resInfo, true);
+    }
 };
 
 /**
@@ -58,6 +117,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      */
     ctor: function () {
         this._resouces = [];
+        cc._LoaderHelp._init();
     },
 
     /**
@@ -138,38 +198,9 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      */
     releaseResources: function (resources) {
         if (resources && resources.length > 0) {
-            var sharedTextureCache = cc.TextureCache.getInstance();
-            var sharedEngine = cc.AudioEngine.getInstance();
-            var sharedParser = cc.SAXParser.getInstance();
-            var sharedFileUtils = cc.FileUtils.getInstance();
-
-            var resInfo;
             for (var i = 0; i < resources.length; i++) {
-                resInfo = resources[i];
-                var type = this._getResType(resInfo);
-                switch (type) {
-                    case "IMAGE":
-                        sharedTextureCache.removeTextureForKey(resInfo.src);
-                        break;
-                    case "SOUND":
-                        sharedEngine.unloadEffect(resInfo.src);
-                        break;
-                    case "XML":
-                        sharedParser.unloadPlist(resInfo.src);
-                        break;
-                    case "BINARY":
-                        sharedFileUtils.unloadBinaryFileData(resInfo.src);
-                        break;
-                    case "TEXT":
-                        sharedFileUtils.unloadTextFileData(resInfo.src);
-                        break;
-                    case "FONT":
-                        this._unregisterFaceFont(resInfo);
-                        break;
-                    default:
-                        throw "cocos2d:unknown filename extension: " + type;
-                        break;
-                }
+                cc._LoaderHelp.execRemove(resources[i]);
+
             }
         }
     },
@@ -191,36 +222,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _loadOneResource: function () {
-        var sharedTextureCache = cc.TextureCache.getInstance();
-        var sharedEngine = cc.AudioEngine.getInstance();
-        var sharedParser = cc.SAXParser.getInstance();
-        var sharedFileUtils = cc.FileUtils.getInstance();
-
-        var resInfo = this._resouces[this._curNumber];
-        var type = this._getResType(resInfo);
-        switch (type) {
-            case "IMAGE":
-                sharedTextureCache.addImage(resInfo.src);
-                break;
-            case "SOUND":
-                sharedEngine.preloadSound(resInfo.src);
-                break;
-            case "XML":
-                sharedParser.preloadPlist(resInfo.src);
-                break;
-            case "BINARY":
-                sharedFileUtils.preloadBinaryFileData(resInfo.src);
-                break;
-            case "TEXT" :
-                sharedFileUtils.preloadTextFileData(resInfo.src);
-                break;
-            case "FONT":
-                this._registerFaceFont(resInfo);
-                break;
-            default:
-                throw "cocos2d:unknown filename extension: " + type;
-                break;
-        }
+        cc._LoaderHelp.execAdd(this._resouces[this._curNumber]);
     },
 
 
@@ -233,23 +235,6 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
     _unschedulePreload: function () {
         clearInterval(this._interval);
-    },
-
-
-    _getResType: function (resInfo) {
-        var isFont = resInfo.fontName;
-        if (isFont != null) {
-            return cc.RESOURCE_TYPE["FONT"];
-        } else {
-            var src = resInfo.src;
-            var ext = src.substring(src.lastIndexOf(".") + 1, src.length);
-            for (var resType in cc.RESOURCE_TYPE) {
-                if (cc.RESOURCE_TYPE[resType].indexOf(ext) != -1) {
-                    return resType;
-                }
-            }
-            return ext;
-        }
     },
 
     _updatePercent: function () {

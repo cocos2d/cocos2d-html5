@@ -6,10 +6,12 @@ var g_resources = [
     //image
     {src:s_HelloWorld},
     {src:s_CloseNormal},
-    {src:s_CloseSelected}
+    {src:s_CloseSelected},
 
     //plist
-
+    { src: "build.xml" },
+    { src: "test.ccbi" },
+    { src: "test.txt"}
     //fnt
 
     //tmx
