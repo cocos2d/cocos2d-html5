@@ -81,7 +81,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     registerWithTouchDispatcher:function () {
         if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
-            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
+            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
         else
             cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
     },
@@ -680,17 +680,16 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     updateDisplayedColor: function (parentColor) {
-        var locDispColor = this._displayedColor, locRealColor = this._realColor;
-        locDispColor.r = locRealColor.r * parentColor.r/255.0;
-        locDispColor.g = locRealColor.g * parentColor.g/255.0;
-        locDispColor.b = locRealColor.b * parentColor.b/255.0;
+        this._displayedColor.r = this._realColor.r * parentColor.r/255.0;
+        this._displayedColor.g = this._realColor.g * parentColor.g/255.0;
+        this._displayedColor.b = this._realColor.b * parentColor.b/255.0;
 
         if (this._cascadeColorEnabled){
-            var selChildren = this._children;
-            for(var i = 0; i< selChildren.length;i++){
-                var item = selChildren[i];
-                if(item && item.RGBAProtocol)
-                    item.updateDisplayedColor(locDispColor);
+            var locChildren = this._children;
+            for(var i = 0; i < locChildren.length; i++){
+                var selItem = locChildren[i];
+                if(selItem && selItem.RGBAProtocol)
+                    selItem.updateDisplayedColor(this._displayedColor);
             }
         }
     },
