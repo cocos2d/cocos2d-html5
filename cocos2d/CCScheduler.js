@@ -170,8 +170,8 @@ cc.ArrayContainsObject = function (arr, findObj) {
 /**
  * find object from array by target
  * @param {Array} arr source array
- * @param {cc.ListEntry|cc.HashUpdateEntry|cc.HashSelectorEntry} findInt find target
- * @return {cc.ListEntry|cc.HashUpdateEntry|cc.HashSelectorEntry}
+ * @param {cc.ListEntry|cc.HashUpdateEntry} findInt find target
+ * @return {cc.ListEntry|cc.HashUpdateEntry}
  */
 cc.HASH_FIND_INT = function (arr, findInt) {
     if (arr == null) {
@@ -331,40 +331,43 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
             this._elapsed = 0;
             this._timesExecuted = 0;
         } else {
+            var locTarget = this._target, locSelector = this._selector;
+            var locElapsed = this._elapsed;
             if (this._runForever && !this._useDelay) {
                 //standard timer usage
-                this._elapsed += dt;
+                locElapsed += dt;
 
-                if (this._elapsed >= this._interval) {
-                    if (this._target && this._selector)
+                if (locElapsed >= this._interval) {
+                    if (locTarget && locSelector)
                        this._callSelector();
-                    this._elapsed = 0;
+                    locElapsed = 0;
                 }
             } else {
                 //advanced usage
-                this._elapsed += dt;
+                locElapsed += dt;
                 if (this._useDelay) {
-                    if (this._elapsed >= this._delay) {
-                        if (this._target && this._selector)
+                    if (locElapsed >= this._delay) {
+                        if (locTarget && locSelector)
                             this._callSelector();
 
-                        this._elapsed = this._elapsed - this._delay;
+                        locElapsed = locElapsed - this._delay;
                         this._timesExecuted += 1;
                         this._useDelay = false;
                     }
                 } else {
-                    if (this._elapsed >= this._interval) {
-                        if (this._target && this._selector)
+                    if (locElapsed >= this._interval) {
+                        if (locTarget && locSelector)
                             this._callSelector();
 
-                        this._elapsed = 0;
+                        locElapsed = 0;
                         this._timesExecuted += 1;
                     }
                 }
 
                 if (this._timesExecuted > this._repeat)
-                    cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget(this._target, this._selector);
+                    cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget(locTarget, locSelector);
             }
+            this._elapsed = locElapsed;
         }
     }
 });
@@ -998,5 +1001,4 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         return false;
     }
 });
-
 

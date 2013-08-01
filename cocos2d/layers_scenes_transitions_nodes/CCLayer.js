@@ -840,7 +840,7 @@ cc.LayerColorCanvas = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
 
     /**
      * renders the layer
-     * @param {CanvasContext|Null} ctx
+     * @param {CanvasRenderingContext2D|Null} ctx
      */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
@@ -855,41 +855,6 @@ cc.LayerColorCanvas = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
         cc.g_NumberOfDraws++;
     }
 });
-
-/**
- * creates a cc.LayerColorCanvas with color, width and height in Points
- * @param {cc.Color4B} color
- * @param {Number|Null} width
- * @param {Number|Null} height
- * @return {cc.LayerColor}
- * @example
- * // Example
- * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.c4b(255,255,0,255));
- * //If you didnt pass in width and height, it defaults to the same size as the canvas
- *
- * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColorCanvas.create(cc.c3b(255,255,0,255), 200, 200);
- */
-cc.LayerColorCanvas.create = function (color, width, height) {
-    var ret = new cc.LayerColorCanvas();
-    switch (arguments.length) {
-        case 0:
-            ret.init();
-            break;
-        case 1:
-            ret.init(color);
-            break;
-        case 3:
-            ret.init(color, width, height);
-            break;
-        default :
-            ret.init();
-            break;
-    }
-    return ret;
-};
-
 
 /**
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol. (WebGL implement)<br/>
@@ -1098,11 +1063,13 @@ cc.LayerColorWebGL = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
     }
 });
 
+cc.LayerColor = cc.Browser.supportWebGL ? cc.LayerColorWebGL : cc.LayerColorCanvas;
+
 /**
  * creates a cc.Layer with color, width and height in Points
  * @param {cc.Color4B} color
- * @param {Number|Null} width
- * @param {Number|Null} height
+ * @param {Number|Null} [width=]
+ * @param {Number|Null} [height=]
  * @return {cc.LayerColor}
  * @example
  * // Example
@@ -1113,8 +1080,8 @@ cc.LayerColorWebGL = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
  * //create a yellow box, 200 by 200 in size
  * var yellowBox = cc.LayerColor.create(cc.c4b(255,255,0,255), 200, 200);
  */
-cc.LayerColorWebGL.create = function (color, width, height) {
-    var ret = new cc.LayerColorWebGL();
+cc.LayerColor.create = function (color, width, height) {
+    var ret = new cc.LayerColor();
     switch (arguments.length) {
         case 0:
             ret.init();
@@ -1131,8 +1098,6 @@ cc.LayerColorWebGL.create = function (color, width, height) {
     }
     return ret;
 };
-
-cc.LayerColor = cc.Browser.supportWebGL ? cc.LayerColorWebGL : cc.LayerColorCanvas;
 
 /**
  * <p>

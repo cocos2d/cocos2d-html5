@@ -153,7 +153,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Size}
      */
     getOriginalSize:function () {
-        return this._originalSize;          //cc.size(this._originalSize.width, this._originalSize.height);
+        return cc.size(this._originalSize.width, this._originalSize.height);
     },
 
     /**
@@ -192,7 +192,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Point}
      */
     getOffset:function () {
-        return this._offset;        //cc.p(this._offset.x, this._offset.y);
+        return cc.p(this._offset.x, this._offset.y);
     },
 
     /**

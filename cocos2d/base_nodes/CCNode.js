@@ -543,7 +543,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @return {cc.Point}
      */
     getPosition:function () {
-        return this._position; //cc.p(this._position.x, this._position.y);
+        return cc.p(this._position.x, this._position.y);
     },
 
     /**
@@ -630,7 +630,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @return {cc.Point} The anchor point of node.
      */
     getAnchorPoint:function () {
-        return this._anchorPoint;       //cc.p(this._anchorPoint.x, this._anchorPoint.y);
+        return cc.p(this._anchorPoint.x, this._anchorPoint.y);
     },
 
     /**
@@ -665,7 +665,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
-        return this._anchorPointInPoints;   //cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
+        return cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
     },
 
     /**
@@ -676,7 +676,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
-        return this._contentSize;   //cc.size(this._contentSize.width, this._contentSize.height);
+        return cc.size(this._contentSize.width, this._contentSize.height);
     },
 
     /**
@@ -2388,7 +2388,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition:function () {
-        return this._position;      //cc.p(this._position.x, this._position.y);
+        return cc.p(this._position.x, this._position.y);
     },
 
     /**
@@ -2475,7 +2475,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint:function () {
-        return this._anchorPoint;       //cc.p(this._anchorPoint.x, this._anchorPoint.y);
+        return cc.p(this._anchorPoint.x, this._anchorPoint.y);
     },
 
     /**
@@ -2510,7 +2510,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
-        return this._anchorPointInPoints;   //cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
+        return cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
     },
 
     /**
@@ -2521,7 +2521,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
-        return this._contentSize;       //cc.size(this._contentSize.width, this._contentSize.height);
+        return cc.size(this._contentSize.width, this._contentSize.height);
     },
 
     /**
