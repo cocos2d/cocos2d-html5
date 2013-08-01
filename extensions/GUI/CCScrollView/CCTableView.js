@@ -505,7 +505,7 @@ cc.TableView = cc.ScrollView.extend({
                 this._tableViewDelegate.tableCellTouched(this, cell);
             }
         }
-        cc.ScrollView.prototype.call(this, touch, event);
+        cc.ScrollView.prototype.onTouchEnded.call(this, touch, event);
     }
 });
 
