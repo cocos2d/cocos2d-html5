@@ -332,34 +332,33 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
             this._timesExecuted = 0;
         } else {
             var locTarget = this._target, locSelector = this._selector;
-            var locElapsed = this._elapsed;
             if (this._runForever && !this._useDelay) {
                 //standard timer usage
-                locElapsed += dt;
+                this._elapsed += dt;
 
-                if (locElapsed >= this._interval) {
+                if (this._elapsed >= this._interval) {
                     if (locTarget && locSelector)
                        this._callSelector();
-                    locElapsed = 0;
+                    this._elapsed = 0;
                 }
             } else {
                 //advanced usage
-                locElapsed += dt;
+                this._elapsed += dt;
                 if (this._useDelay) {
-                    if (locElapsed >= this._delay) {
+                    if (this._elapsed >= this._delay) {
                         if (locTarget && locSelector)
                             this._callSelector();
 
-                        locElapsed = locElapsed - this._delay;
+                        this._elapsed = this._elapsed - this._delay;
                         this._timesExecuted += 1;
                         this._useDelay = false;
                     }
                 } else {
-                    if (locElapsed >= this._interval) {
+                    if (this._elapsed >= this._interval) {
                         if (locTarget && locSelector)
                             this._callSelector();
 
-                        locElapsed = 0;
+                        this._elapsed = 0;
                         this._timesExecuted += 1;
                     }
                 }
@@ -367,7 +366,6 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 if (this._timesExecuted > this._repeat)
                     cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget(locTarget, locSelector);
             }
-            this._elapsed = locElapsed;
         }
     }
 });
