@@ -134,13 +134,19 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
     /**
      * Returns an already created texture. Returns null if the texture doesn't exist.
      * @param {String} textureKeyName
+     * @param {Boolean} skipFullPath    (Optional)  If true, the textureKeyName will be used directly, without adding file directory
      * @return {HTMLImageElement|cc.Texture2D|Null}
      * @example
      * //example
      * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
      */
-    textureForKey:function (textureKeyName) {
-        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
+    textureForKey:function (textureKeyName, skipFullPath) {
+        var fullPath;
+        if(skipFullPath) {
+            fullPath = textureKeyName;
+        } else {
+            fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
+        }
         if (this._textures.hasOwnProperty(fullPath))
             return this._textures[fullPath];
         return null;
