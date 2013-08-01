@@ -466,6 +466,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                 rect = cc.RectMake(0, 0, textureSize.width, textureSize.height);
             } else {
                 rect = cc.RectMake(0, 0, selTexture.width, selTexture.height);
+                rect = cc.RECT_PIXELS_TO_POINTS(rect);
             }
         }
 
