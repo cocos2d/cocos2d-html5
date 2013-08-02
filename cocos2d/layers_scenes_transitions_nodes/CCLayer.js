@@ -222,15 +222,12 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     setAccelerometerInterval:function (interval) {
         if (this._isAccelerometerEnabled) {
-            if (this._running) {
-                var director = cc.Director.getInstance();
-                director.getAccelerometer().setAccelerometerInterval(interval);
-            }
+            cc.Director.getInstance().getAccelerometer().setAccelerometerInterval(interval);
         }
     },
 
     onAccelerometer:function (accelerationValue) {
-        //Layer#onAccelerometer override me
+        cc.Assert(false, "Layer#onAccelerometer override me");
     },
 
     /**
