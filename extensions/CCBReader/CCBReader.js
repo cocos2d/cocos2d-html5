@@ -974,7 +974,10 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
             callbackName = documentCallbackNames[j];
             callbackNode = documentCallbackNodes[j];
 
-            callbackNode.setCallback(controller[callbackName], controller);
+            if(callbackNode instanceof cc.ControlButton)
+                callbackNode.addTargetWithActionForControlEvents(controller, controller[callbackName], 255);        //register all type of events
+            else
+                callbackNode.setCallback(controller[callbackName], controller);
         }
 
         // Variables
