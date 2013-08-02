@@ -124,6 +124,7 @@
                 <file name="tileMap_parallax_nodes/CCTMXObjectGroup.js"/>
                 <file name="tileMap_parallax_nodes/CCTMXLayer.js"/>
                 <file name="tileMap_parallax_nodes/CCParallaxNode.js"/>
+                <file name="platform/jsloader.js"/>
             </sources>
             <sources dir="${basedir}/../CocosDenshion">
                 <file name="SimpleAudioEngine.js"/>
