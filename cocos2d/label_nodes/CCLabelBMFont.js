@@ -643,8 +643,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._configuration = newConf;
             this._fntFile = fntFile;
             texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
-        } else
-            texture = (cc.renderContextType === cc.CANVAS) ? new Image() : new cc.Texture2D();
+        } else{
+            texture = new cc.Texture2D();
+            var image = new Image();
+            texture.initWithElement(image);
+        }
 
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;

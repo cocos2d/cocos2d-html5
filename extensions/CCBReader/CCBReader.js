@@ -630,11 +630,7 @@ cc.BuilderReader = cc.Class.extend({
             if (spriteSheet == "") {
                 spriteFile = this._ccbRootPath + spriteFile;
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
-                var bounds;
-                if (cc.renderContextType == cc.CANVAS)
-                    bounds = cc.RectMake(0, 0, texture.width, texture.height);
-                else
-                    bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
+                var bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
                 value = cc.SpriteFrame.createWithTexture(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;

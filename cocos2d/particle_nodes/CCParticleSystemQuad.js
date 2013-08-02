@@ -108,13 +108,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var high = pointRect.height;
 
         if (this._texture) {
-            if ((this._texture instanceof HTMLImageElement) || (this._texture instanceof HTMLCanvasElement)) {
-                wide = this._texture.width;
-                high = this._texture.height;
-            } else {
-                wide = this._texture.getPixelsWide();
-                high = this._texture.getPixelsHigh();
-            }
+            wide = this._texture.getPixelsWide();
+            high = this._texture.getPixelsHigh();
         }
 
         if(cc.renderContextType === cc.CANVAS)
@@ -273,10 +268,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 retParticle._opacityModifyRGB = this._opacityModifyRGB;
 
                 // texture
-                if (this._texture instanceof cc.Texture2D)
-                    retParticle._texture = this._texture;
-                else
-                    retParticle._texture = this._texture;
+                retParticle._texture = this._texture;
             }
         }
         return retParticle;
@@ -358,11 +350,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             cc.ParticleSystem.prototype.setTexture.call(this, texture);
             return;
         }
-        var size = null;
-        if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
-            size = cc.size(texture.width, texture.height);
-        else
-            size = texture.getContentSize();
+
+        var  size = texture.getContentSize();
 
         this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
     },
@@ -531,10 +520,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
             if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
 
-                var drawTexture = this.getTexture();
+                var element = this._texture.getHtmlElementObj();
 
                 // Delay drawing until the texture is fully loaded by the browser
-                if (!drawTexture.width || !drawTexture.height)
+                if (!element.width || !element.height)
                     continue;
 
                 context.save();
@@ -557,21 +546,21 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
                 if (particle.isChangeColor) {
 
-                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
+                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
                     if (cacheTextureForColor) {
                         // Create another cache for the tinted version
                         // This speeds up things by a fair bit
                         if (!cacheTextureForColor.tintCache) {
                             cacheTextureForColor.tintCache = document.createElement('canvas');
-                            cacheTextureForColor.tintCache.width = drawTexture.width;
-                            cacheTextureForColor.tintCache.height = drawTexture.height;
+                            cacheTextureForColor.tintCache.width = element.width;
+                            cacheTextureForColor.tintCache.height = element.height;
                         }
-                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
-                        drawTexture = cacheTextureForColor.tintCache;
+                        cc.generateTintImage(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
+                        element = cacheTextureForColor.tintCache;
                     }
                 }
 
-                context.drawImage(drawTexture, 0, 0);
+                context.drawImage(element, 0, 0);
                 context.restore();
 
             } else {
