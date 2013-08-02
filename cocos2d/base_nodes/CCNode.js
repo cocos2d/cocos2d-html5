@@ -48,9 +48,6 @@ cc.NODE_ON_EXIT = null;
 cc.s_globalOrderOfArrival = 1;
 
 
-
-//cc.NodeBase = cc.Class.extend(/** @lends cc.Node# */{
-
 /** <p>cc.Node is the main element. Anything thats gets drawn or contains things that get drawn is a cc.Node.<br/>
  The most popular cc.Nodes are: cc.Scene, cc.Layer, cc.Sprite, cc.Menu. (WebGL implement)<br/></p>
 
@@ -160,6 +157,9 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     _componentContainer:null,
     _isTransitionFinished:false,
 
+    _rotationRadiansX: 0,
+    _rotationRadiansY: 0,
+
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
         this._anchorPointInPoints = cc.p(0, 0);
@@ -250,6 +250,14 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
                 throw "Unknown callback function";
                 break;
         }
+    },
+
+    /**
+     * set the dirty node
+     */
+    setNodeDirty:function () {
+        if(this._transformDirty === false)
+            this._transformDirty = this._inverseDirty = true;
     },
 
     /**
@@ -383,8 +391,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         return this._rotationX;
     },
 
-    _rotationRadiansX: 0,
-    _rotationRadiansY: 0,
     /**
      * <p>
      *     Sets the rotation (angle) of the node in degrees.                                             <br/>
@@ -526,27 +532,20 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *    node.setPosition( cc.p(size.width/2, size.height/2) )
      */
     setPosition:function (newPosOrxValue, yValue) {
+        var locPosition = this._position;
         if (arguments.length == 2) {
-            this._position = new cc.Point(newPosOrxValue, yValue);
+            locPosition.x = newPosOrxValue;
+            locPosition.y = yValue;
         } else if (arguments.length == 1) {
-            this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
-        }
-        this.setNodeDirty();
-    },
-
-    _setPositionByValue:function (newPosOrxValue, yValue) {
-        if (arguments.length == 2) {
-            this._position.x = newPosOrxValue;
-            this._position.y = yValue;
-        } else if (arguments.length == 1) {
-            this._position.x = newPosOrxValue.x;
-            this._position.y = newPosOrxValue.y;
+            locPosition.x = newPosOrxValue.x;
+            locPosition.y = newPosOrxValue.y;
         }
         this.setNodeDirty();
     },
 
     /**
      * <p>Position (x,y) of the node in OpenGL coordinates. (0,0) is the left-bottom corner. </p>
+     * @const
      * @return {cc.Point}
      */
     getPosition:function () {
@@ -631,6 +630,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *  The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
      *  But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
      *  The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
+     *  @const
      * @return {cc.Point} The anchor point of node.
      */
     getAnchorPoint:function () {
@@ -650,9 +650,13 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @param {cc.Point} point The anchor point of node.
      */
     setAnchorPoint:function (point) {
-        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
-            this._anchorPoint = new cc.Point(point.x, point.y);
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * point.x, this._contentSize.height * point.y);
+        var locAnchorPoint = this._anchorPoint;
+        if (!cc.pointEqualToPoint(point, locAnchorPoint)) {
+            locAnchorPoint.x =  point.x;
+            locAnchorPoint.y = point.y;
+            var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+            locAPP.x = locSize.width * point.x;
+            locAPP.y = locSize.height * point.y;
             this.setNodeDirty();
         }
     },
@@ -661,6 +665,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *  The anchorPoint in absolute pixels.  <br/>
      *  you can only read it. If you wish to modify it, use anchorPoint instead
      *  @see getAnchorPoint()
+     *  @const
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
@@ -671,6 +676,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * <p>The untransformed size of the node. <br/>
      * The contentSize remains the same no matter the node is scaled or rotated.<br/>
      * All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
+     * @const
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
@@ -687,9 +693,13 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @param {cc.Size} size The untransformed size of the node.
      */
     setContentSize:function (size) {
-        if (!cc.sizeEqualToSize(size, this._contentSize)) {
-            this._contentSize = new cc.Size(size.width, size.height);
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+        var locContentSize = this._contentSize;
+        if (!cc.sizeEqualToSize(size, locContentSize)) {
+            locContentSize.width = size.width;
+            locContentSize.height = size.height;
+            var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+            locAPP.x = locContentSize.width * locAnchorPoint.x;
+            locAPP.y = locContentSize.height * locAnchorPoint.y;
             this.setNodeDirty();
         }
     },
@@ -912,6 +922,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
      * @note This method returns a temporaty variable, so it can't returns const CCRect&
+     * @const
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
@@ -1679,7 +1690,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         if (!this._visible)
             return;
         var context = cc.renderContext, i, currentStack = cc.current_stack;
-        this._stackMatrix = this._stackMatrix || new cc.kmMat4();
+
         //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
         //optimize performance for javascript
         currentStack.stack.push(currentStack.top);
@@ -1728,12 +1739,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     transform:function () {
         //optimize performance for javascript
         var t4x4 = this._transform4x4,  topMat4 = cc.current_stack.top;
-        if(!t4x4){
-            t4x4 = new cc.kmMat4();
-            t4x4.mat[2] = t4x4.mat[3] = t4x4.mat[6] = t4x4.mat[7] = t4x4.mat[8] = t4x4.mat[9] = t4x4.mat[11] = t4x4.mat[14] = 0.0;
-            t4x4.mat[10] = t4x4.mat[15] = 1.0;
-            this._transform4x4 = t4x4;
-        }
 
         // Convert 3x3 into 4x4 matrix
         //cc.CGAffineToGL(this.nodeToParentTransform(), this._transform4x4.mat);
@@ -1831,13 +1836,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * set the dirty node
-     */
-    setNodeDirty:function () {
-        this._transformDirty = this._inverseDirty = true;
-    },
-
-    /**
      * Returns a camera object that lets you move the node using a gluLookAt
      * @return {cc.Camera} A CCCamera object that lets you move the node using a gluLookAt
      * @example
@@ -1907,25 +1905,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         this._glServerState = state;
     }
 });
-
-/**
- * cc.Node's state callback type
- * @constant
- * @type Number
- */
-cc.NodeWebGL.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6, sortAllChildren:7};
-
-/**
- * allocates and initializes a node.
- * @constructs
- * @return {cc.NodeWebGL}
- * @example
- * // example
- * var node = cc.NodeWebGL.create();
- */
-cc.NodeWebGL.create = function () {
-    return new cc.NodeWebGL();
-};
 
 /** <p>cc.Node is the main element. Anything thats gets drawn or contains things that get drawn is a cc.Node.<br/>
  The most popular cc.Nodes are: cc.Scene, cc.Layer, cc.Sprite, cc.Menu. (Canvas implement)<br/></p>
@@ -2029,6 +2008,9 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     _additionalTransform:null,
     _componentContainer:null,
     _isTransitionFinished:false,
+
+    _rotationRadiansX:0,
+    _rotationRadiansY:0,
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
@@ -2253,8 +2235,6 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         return this._rotationX;
     },
 
-    _rotationRadiansX:0,
-    _rotationRadiansY:0,
     /**
      * <p>
      *     Sets the rotation (angle) of the node in degrees.                                             <br/>
@@ -2395,27 +2375,20 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *    node.setPosition( cc.p(size.width/2, size.height/2) )
      */
     setPosition:function (newPosOrxValue, yValue) {
-        if (arguments.length === 2) {
-            this._position = new cc.Point(newPosOrxValue, yValue);
-        } else if (arguments.length === 1) {
-            this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
-        }
-        this.setNodeDirty();
-    },
-
-    _setPositionByValue:function (newPosOrxValue, yValue) {
-        if (arguments.length === 2) {
-            this._position.x = newPosOrxValue;
-            this._position.y = yValue;
-        } else if (arguments.length === 1) {
-            this._position.x = newPosOrxValue.x;
-            this._position.y = newPosOrxValue.y;
+        var locPosition = this._position;
+        if (arguments.length == 2) {
+            locPosition.x = newPosOrxValue;
+            locPosition.y = yValue;
+        } else if (arguments.length == 1) {
+            locPosition.x = newPosOrxValue.x;
+            locPosition.y = newPosOrxValue.y;
         }
         this.setNodeDirty();
     },
 
     /**
      * <p>Position (x,y) of the node in OpenGL coordinates. (0,0) is the left-bottom corner. </p>
+     * @const
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition:function () {
@@ -2500,6 +2473,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *  The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
      *  But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
      *  The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
+     *  @const
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint:function () {
@@ -2519,9 +2493,13 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {cc.Point} point The anchor point of node.
      */
     setAnchorPoint:function (point) {
-        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
-            this._anchorPoint = new cc.Point(point.x, point.y);
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * point.x, this._contentSize.height * point.y);
+        var locAnchorPoint = this._anchorPoint;
+        if (!cc.pointEqualToPoint(point, locAnchorPoint)) {
+            locAnchorPoint.x =  point.x;
+            locAnchorPoint.y = point.y;
+            var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+            locAPP.x = locSize.width * point.x;
+            locAPP.y = locSize.height * point.y;
             this.setNodeDirty();
         }
     },
@@ -2530,6 +2508,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *  The anchorPoint in absolute pixels.  <br/>
      *  you can only read it. If you wish to modify it, use anchorPoint instead
      *  @see getAnchorPoint()
+     *  @const
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
@@ -2540,6 +2519,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * <p>The untransformed size of the node. <br/>
      * The contentSize remains the same no matter the node is scaled or rotated.<br/>
      * All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
+     * @const
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
@@ -2556,9 +2536,13 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {cc.Size} size The untransformed size of the node.
      */
     setContentSize:function (size) {
-        if (!cc.sizeEqualToSize(size, this._contentSize)) {
-            this._contentSize = new cc.Size(size.width, size.height);
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+        var locContentSize = this._contentSize;
+        if (!cc.sizeEqualToSize(size, locContentSize)) {
+            locContentSize.width = size.width;
+            locContentSize.height = size.height;
+            var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+            locAPP.x = locContentSize.width * locAnchorPoint.x;
+            locAPP.y = locContentSize.height * locAnchorPoint.y;
             this.setNodeDirty();
         }
     },
@@ -3666,7 +3650,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     setNodeDirty:function () {
         this._setNodeDirtyForCache();
-        this._transformDirty = this._inverseDirty = true;
+        if(this._transformDirty === false)
+            this._transformDirty = this._inverseDirty = true;
     },
 
     _setNodeDirtyForCache:function () {
@@ -3700,26 +3685,26 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     }
 });
 
+cc.Node = cc.Browser.supportWebGL ? cc.NodeWebGL : cc.NodeCanvas;
+
+/**
+ * allocates and initializes a node.
+ * @constructs
+ * @return {cc.Node}
+ * @example
+ * // example
+ * var node = cc.Node.create();
+ */
+cc.Node.create = function () {
+    return new cc.Node();
+};
+
 /**
  * cc.Node's state callback type
  * @constant
  * @type Number
  */
-cc.NodeCanvas.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6, sortAllChildren:7};
-
-/**
- * allocates and initializes a node.
- * @constructs
- * @return {cc.NodeCanvas}
- * @example
- * // example
- * var node = cc.NodeWebGL.create();
- */
-cc.NodeCanvas.create = function () {
-    return new cc.NodeCanvas();
-};
-
-cc.Node = cc.Browser.supportWebGL ? cc.NodeWebGL : cc.NodeCanvas;
+cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6, sortAllChildren:7};
 
 /**
  * <p>
@@ -3739,10 +3724,20 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     RGBAProtocol:true,
     _displayedOpacity:255,
     _realOpacity:255,
-    _displayedColor:cc.WHITE,
-    _realColor:cc.WHITE,
+    _displayedColor:null,
+    _realColor:null,
     _cascadeColorEnabled:false,
     _cascadeOpacityEnabled:false,
+
+    ctor:function(){
+        cc.Node.prototype.ctor.call(this);
+        this._displayedOpacity = 255;
+        this._realOpacity = 255;
+        this._displayedColor = cc.WHITE;
+        this._realColor = cc.WHITE;
+        this._cascadeColorEnabled = false;
+        this._cascadeOpacityEnabled = false;
+    },
 
     init:function(){
         if(cc.Node.prototype.init.call(this)){
@@ -3799,8 +3794,13 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     setColor:function(color){
-        this._displayedColor = cc.c3b(color.r, color.g, color.b);
-        this._realColor = cc.c3b(color.r, color.g, color.b);
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r = color.r;
+        locDisplayedColor.g = color.g;
+        locDisplayedColor.b = color.b;
+        locRealColor.r = color.r;
+        locRealColor.g = color.g;
+        locRealColor.b = color.b;
 
         if (this._cascadeColorEnabled) {
             var parentColor = cc.white();

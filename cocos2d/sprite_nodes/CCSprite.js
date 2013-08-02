@@ -657,6 +657,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
      * <p>The scale factor of the node. 1.0 is the default scale factor. <br/>
      * It modifies the X and Y scale at the same time. (override cc.Node ) <p/>
      * @param {Number} scale
+     * @param {Number} [scaleY=]
      * @override
      */
     setScale:function (scale, scaleY) {
@@ -1052,22 +1053,23 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
-        if (this.isDirty()) {
+        if (this._dirty) {
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
-            if (!this._visible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
+            var locParent = this._parent;
+            if (!this._visible || ( locParent && locParent != this._batchNode && locParent._shouldBeHidden)) {
                 this._shouldBeHidden = true;
             } else {
                 this._shouldBeHidden = false;
 
-                if (!this._parent || this._parent == this._batchNode) {
+                if (!locParent || locParent == this._batchNode) {
                     this._transformToBatch = this.nodeToParentTransform();
                 } else {
                     //cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), this._parent._transformToBatch);
+                    this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), locParent._transformToBatch);
                 }
             }
             this._recursiveDirty = false;
-            this.setDirty(false);
+            this._dirty = false;
         }
 
         // recursively iterate over children
@@ -1130,7 +1132,11 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
      */
     setDisplayFrame:function (newFrame) {
         this.setNodeDirty();
-        this._unflippedOffsetPositionFromCenter = newFrame.getOffset();
+
+        var frameOffset = newFrame.getOffset();
+        this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
+        this._unflippedOffsetPositionFromCenter.y = frameOffset.y;
+
         var pNewTexture = newFrame.getTexture();
         // update texture before updating texture rect
         if (pNewTexture != this._texture)
@@ -1291,140 +1297,6 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         cc.g_NumberOfDraws++;
     }
 });
-
-/**
- * <p>
- *     Creates a sprite with an exsiting texture contained                                                         <br/>
- *     After creation, the rect will be the size of the texture, and the offset will be (0,0).
- * </p>
- * @constructs
- * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture  A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
- * @param {cc.Rect} rect Only the contents inside the rect of this texture will be applied for this sprite.
- * @param {cc.Point} offset offset of the texture
- * @return {cc.Sprite} A valid sprite object
- * @example
- * //get an image
- * var img = cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
- *
- * //create a sprite with texture
- * var sprite1 = cc.Sprite.createWithTexture(img);
- *
- * //create a sprite with texture and rect
- * var sprite2 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320));
- *
- * //create a sprite with texture and rect and offset
- * var sprite3 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320),cc.p(0,0));
- */
-cc.SpriteCanvas.createWithTexture = function (texture, rect, offset) {
-    var argnum = arguments.length;
-    var sprite = new cc.SpriteCanvas();
-    switch (argnum) {
-        case 1:
-            /** Creates an sprite with a texture.
-             The rect used will be the size of the texture.
-             The offset will be (0,0).
-             */
-            if (sprite && sprite.initWithTexture(texture)) {
-                return sprite;
-            }
-            return null;
-            break;
-
-        case 2:
-            /** Creates an sprite with a texture and a rect.
-             The offset will be (0,0).
-             */
-            if (sprite && sprite.initWithTexture(texture, rect)) {
-                return sprite;
-            }
-            return null;
-            break;
-
-        case 3:
-            /** Creates an sprite with a texture, a rect and offset. */
-                // not implement
-            cc.Assert(0, "");
-            return null;
-            break;
-
-        default:
-            throw "Sprite.createWithTexture(): Argument must be non-nil ";
-            break;
-    }
-};
-
-/**
- * Create a sprite with filename and rect
- * @constructs
- * @param {String} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
- * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
- * @return {cc.Sprite} A valid sprite object
- * @example
- * //create a sprite with filename
- * var sprite1 = cc.Sprite.create("HelloHTML5World.png");
- *
- * //create a sprite with filename and rect
- * var sprite2 = cc.Sprite.create("HelloHTML5World.png",cc.rect(0,0,480,320));
- */
-cc.SpriteCanvas.create = function (fileName, rect) {
-    var argnum = arguments.length;
-    var sprite = new cc.SpriteCanvas();
-    if (argnum === 0) {
-        if (sprite.init())
-            return sprite;
-    } else {
-        if (sprite && sprite.init(fileName, rect))
-            return sprite;
-    }
-    return null;
-};
-
-/**
- * Creates a sprite with a sprite frame name
- * @param {String} spriteFrameName name
- * @return {cc.Sprite} A valid sprite object
- * @example
- *
- * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameName('grossini_dance_01.png');
- */
-cc.SpriteCanvas.createWithSpriteFrameName = function (spriteFrameName) {
-    var spriteFrame = null;
-    if (typeof(spriteFrameName) == 'string') {
-        spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
-        if (!spriteFrame) {
-            cc.log("Invalid spriteFrameName: " + spriteFrameName);
-            return null;
-        }
-    } else {
-        cc.log("Invalid argument. Expecting string.");
-        return null;
-    }
-    var sprite = new cc.SpriteCanvas();
-    if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
-        return sprite;
-    }
-    return null;
-};
-
-/**
- * Creates a sprite with a sprite frame.
- * @param {cc.SpriteFrame} spriteFrame A sprite frame which involves a texture and a rect
- * @return {cc.Sprite} A valid sprite object
- * @example
- * //get a sprite frame
- * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
- *
- * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrame(spriteFrame);
- */
-cc.SpriteCanvas.createWithSpriteFrame = function (spriteFrame) {
-    var sprite = new cc.SpriteCanvas();
-    if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
-        return sprite;
-    }
-    return null;
-};
 
 /**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) (WebGL implement) <br/>
@@ -2691,6 +2563,8 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
     }
 });
 
+cc.Sprite = cc.Browser.supportWebGL ? cc.SpriteWebGL : cc.SpriteCanvas;
+
 /**
  * <p>
  *     Creates a sprite with an exsiting texture contained in a CCTexture2D object                           <br/>
@@ -2714,9 +2588,9 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
  * //create a sprite with texture and rect and offset
  * var sprite3 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320),cc.p(0,0));
  */
-cc.SpriteWebGL.createWithTexture = function (texture, rect, offset) {
+cc.Sprite.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
-    var sprite = new cc.SpriteWebGL();
+    var sprite = new cc.Sprite();
     switch (argnum) {
         case 1:
             /** Creates an sprite with a texture.
@@ -2765,9 +2639,9 @@ cc.SpriteWebGL.createWithTexture = function (texture, rect, offset) {
  * //create a sprite with filename and rect
  * var sprite2 = cc.Sprite.create("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
-cc.SpriteWebGL.create = function (fileName, rect) {
+cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
-    var sprite = new cc.SpriteWebGL();
+    var sprite = new cc.Sprite();
     if (argnum === 0) {
         if (sprite.init())
             return sprite;
@@ -2796,7 +2670,7 @@ cc.SpriteWebGL.create = function (fileName, rect) {
  * //create a sprite with a sprite frame
  * var sprite = cc.Sprite.createWithSpriteFrameName('grossini_dance_01.png');
  */
-cc.SpriteWebGL.createWithSpriteFrameName = function (spriteFrameName) {
+cc.Sprite.createWithSpriteFrameName = function (spriteFrameName) {
     var spriteFrame = null;
     if (typeof(spriteFrameName) == 'string') {
         spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
@@ -2808,7 +2682,7 @@ cc.SpriteWebGL.createWithSpriteFrameName = function (spriteFrameName) {
         cc.log("Invalid argument. Expecting string.");
         return null;
     }
-    var sprite = new cc.SpriteWebGL();
+    var sprite = new cc.Sprite();
     if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
         return sprite;
     }
@@ -2831,12 +2705,10 @@ cc.SpriteWebGL.createWithSpriteFrameName = function (spriteFrameName) {
  * //create a sprite with a sprite frame
  * var sprite = cc.Sprite.createWithSpriteFrame(spriteFrame);
  */
-cc.SpriteWebGL.createWithSpriteFrame = function (spriteFrame) {
-    var sprite = new cc.SpriteWebGL();
+cc.Sprite.createWithSpriteFrame = function (spriteFrame) {
+    var sprite = new cc.Sprite();
     if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
         return sprite;
     }
     return null;
 };
-
-cc.Sprite = cc.Browser.supportWebGL ? cc.SpriteWebGL : cc.SpriteCanvas;
