@@ -412,23 +412,11 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
 });
 
 /**
- * Return ths shared instance of the cache
- * @return {cc.TextureCache}
+ *  Implementation TextureCache     (WebGL implement)
+ * @class
+ * @extends cc.Class
  */
-cc.TextureCacheCanvas.getInstance = function () {
-    if (!cc.g_sharedTextureCache)
-        cc.g_sharedTextureCache = new cc.TextureCacheCanvas();
-    return cc.g_sharedTextureCache;
-};
-
-/**
- * Purges the cache. It releases the retained instance.
- */
-cc.TextureCacheCanvas.purgeSharedTextureCache = function () {
-    cc.g_sharedTextureCache = null;
-};
-
-cc.TextureCacheWebGL = cc.Class.extend({
+cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
     /// ---- common properties start ----
     _textures:null,
     _textureColorsCache:null,
@@ -827,23 +815,21 @@ cc.TextureCacheWebGL = cc.Class.extend({
     }
 });
 
+cc.TextureCache = cc.Browser.supportWebGL ? cc.TextureCacheWebGL : cc.TextureCacheCanvas;
+
 /**
  * Return ths shared instance of the cache
  * @return {cc.TextureCache}
  */
-cc.TextureCacheWebGL.getInstance = function () {
+cc.TextureCache.getInstance = function () {
     if (!cc.g_sharedTextureCache)
-        cc.g_sharedTextureCache = new cc.TextureCacheWebGL();
+        cc.g_sharedTextureCache = new cc.TextureCache();
     return cc.g_sharedTextureCache;
 };
 
 /**
  * Purges the cache. It releases the retained instance.
  */
-cc.TextureCacheWebGL.purgeSharedTextureCache = function () {
+cc.TextureCache.purgeSharedTextureCache = function () {
     cc.g_sharedTextureCache = null;
 };
-
-cc.TextureCache = cc.Browser.supportWebGL ? cc.TextureCacheWebGL : cc.TextureCacheCanvas;
-
-

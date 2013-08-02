@@ -157,6 +157,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      * @param {String} label
      */
     setString:function (label) {
+        label = String(label);
         var len = label.length;
         this._string = label;
         this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
@@ -182,27 +183,6 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
         }
     }
 });
-
-/**
- *  It accepts two groups of parameters:
- * a) string, fntFile
- * b) label, textureFilename, width, height, startChar
- * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
- * @example
- * //Example
- * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
- *
- * //creates the cc.LabelAtlas with a string, a fnt file
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
- */
-cc.LabelAtlasCanvas.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
-    var ret = new cc.LabelAtlasCanvas();
-    if (ret && cc.LabelAtlasCanvas.prototype.initWithString.apply(ret,arguments)) {
-        return ret;
-    }
-    return null;
-};
 
 /**
  * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont   (WebGL version)
@@ -370,6 +350,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      * @param {String} label
      */
     setString:function (label) {
+        label = String(label);
         var len = label.length;
         if (len > this._textureAtlas.getTotalQuads())
             this._textureAtlas.resizeCapacity(len);
@@ -387,6 +368,8 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
         }
     }
 });
+
+cc.LabelAtlas = cc.Browser.supportWebGL ? cc.LabelAtlasWebGL : cc.LabelAtlasCanvas;
 
 /**
  *  It accepts two groups of parameters:
@@ -406,13 +389,11 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
  * //creates the cc.LabelAtlas with a string, a fnt file
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
-cc.LabelAtlasWebGL.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
-    var ret = new cc.LabelAtlasWebGL();
-    if (ret && cc.LabelAtlasWebGL.prototype.initWithString.apply(ret,arguments)) {
+cc.LabelAtlas.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
+    var ret = new cc.LabelAtlas();
+    if (ret && cc.LabelAtlas.prototype.initWithString.apply(ret,arguments)) {
         return ret;
     }
     return null;
 };
-
-cc.LabelAtlas = cc.Browser.supportWebGL ? cc.LabelAtlasWebGL : cc.LabelAtlasCanvas;
 

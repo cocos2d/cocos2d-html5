@@ -111,7 +111,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     },
 
     _setColorStyleStr:function () {
-        this._colorStyleStr = "rgba(" + this._textFillColor.r + "," + this._textFillColor.g + "," + this._textFillColor.b + ", " + this._realOpacity / 255 + ")";
+        var locFillColor = this._textFillColor;
+        this._colorStyleStr = "rgba(" + locFillColor.r + "," + locFillColor.g + "," + locFillColor.b + ", " + this._realOpacity / 255 + ")";
     },
 
     /**
@@ -201,8 +202,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
-            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
+            this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
+            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
             this.setString(strInfo);
             return true;
         }
@@ -252,46 +253,32 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @param {cc.Size} shadowOffset
      * @param {Number} shadowOpacity
      * @param {Number} shadowBlur
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     enableShadow:function(shadowOffset, shadowOpacity, shadowBlur, mustUpdateTexture){
-        var valueChanged = false;
-
-        if (false === this._shadowEnabled) {
+         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
-            valueChanged = true;
+
+        var locShadowOffset = this._shadowOffset;
+        if ((locShadowOffset.width != shadowOffset.width) || (locShadowOffset.height != shadowOffset.height)) {
+            locShadowOffset.width  = shadowOffset.width;
+            locShadowOffset.height = shadowOffset.height;
         }
 
-        if ((this._shadowOffset.width != shadowOffset.width) || (this._shadowOffset.height != shadowOffset.height)) {
-            this._shadowOffset.width  = shadowOffset.width;
-            this._shadowOffset.height = shadowOffset.height;
-            valueChanged = true;
-        }
-
-        if (this._shadowOpacity != shadowOpacity ) {
+        if (this._shadowOpacity != shadowOpacity )
             this._shadowOpacity = shadowOpacity;
-            valueChanged = true;
-        }
 
-        if (this._shadowBlur != shadowBlur) {
+        if (this._shadowBlur != shadowBlur)
             this._shadowBlur = shadowBlur;
-            valueChanged = true;
-        }
-
-        if ( valueChanged && mustUpdateTexture )
-            this._updateTexture();
     },
 
     /**
      * disable shadow rendering
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     disableShadow:function(mustUpdateTexture){
         if (this._shadowEnabled) {
             this._shadowEnabled = false;
-
-            if (mustUpdateTexture)
-                this._updateTexture();
         }
     },
 
@@ -299,30 +286,20 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * enable or disable stroke
      * @param {cc.Color3B} strokeColor
      * @param {Number} strokeSize
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=]
      */
     enableStroke:function(strokeColor, strokeSize, mustUpdateTexture){
-        var valueChanged = false;
-
-        if(this._strokeEnabled === false){
+        if(this._strokeEnabled === false)
             this._strokeEnabled = true;
-            valueChanged = true;
-        }
 
         var locStrokeColor = this._strokeColor;
         if ( (locStrokeColor.r !== strokeColor.r) || (locStrokeColor.g !== strokeColor.g) || (locStrokeColor.b !== strokeColor.b) ) {
             this._strokeColor = strokeColor;
             this._strokeColorStr = "rgba("+ (0 | strokeColor.r) + "," + (0 | strokeColor.g) + "," + (0 | strokeColor.b) + ", 1)";
-            valueChanged = true;
         }
 
-        if (this._strokeSize!== strokeSize){
+        if (this._strokeSize!== strokeSize)
             this._strokeSize = strokeSize;
-            valueChanged = true;
-        }
-
-        if ( valueChanged && mustUpdateTexture )
-            this._updateTexture();
     },
 
     /**
@@ -332,8 +309,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     disableStroke:function(mustUpdateTexture){
         if (this._strokeEnabled){
             this._strokeEnabled = false;
-            if (mustUpdateTexture)
-                this._updateTexture();
         }
     },
 
@@ -347,8 +322,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b){
             this._textFillColor = tintColor;
             this._setColorStyleStr();
-            //if (mustUpdateTexture)
-            //    this._updateTexture();
         }
     },
 
@@ -372,9 +345,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
 
         // fill color
         this.setFontFillColor(textDefinition.fontFillColor, false);
-
-        if (mustUpdateTexture)
-            this._updateTexture();
     },
 
     _prepareTextDefinition:function(adjustForResolution){
@@ -424,7 +394,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @param {String} text text for the label
      */
     setString:function (text) {
-        cc.Assert(text != null, "Invalid string");
+        text = String(text);
         if (this._string != text) {
             this._string = text + "";
 
@@ -647,42 +617,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         cc.INCREMENT_GL_DRAWS(1);
     }
 });
-
-cc.LabelTTFCanvas._textAlign = ["left", "center", "right"];
-
-cc.LabelTTFCanvas._textBaseline = ["top", "middle", "bottom"];
-
-/**
- * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
- * @param {String} label
- * @param {String} fontName
- * @param {Number} fontSize
- * @param {cc.Size} dimensions
- * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
- * @return {cc.LabelTTF|Null}
- * @example
- * // Example
- * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
- */
-cc.LabelTTFCanvas.create = function (/* Multi arguments */) {
-    var ret = new cc.LabelTTFCanvas();
-    if (ret.initWithString(arguments))
-        return ret;
-    return null;
-};
-
-/**
- * Create a label with string and a font definition
- * @param {String} text
- * @param {cc.FontDefinition} textDefinition
- * @return {cc.LabelTTF|Null}
- */
-cc.LabelTTFCanvas.createWithFontDefinition = function(text, textDefinition){
-    var ret = new cc.LabelTTF();
-    if(ret && ret.initWithStringAndTextDefinition(text, textDefinition))
-        return ret;
-    return null;
-};
 
 /**
  * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels (WebGL implement)<br/>
@@ -924,48 +858,37 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {cc.Size} shadowOffset
      * @param {Number} shadowOpacity
      * @param {Number} shadowBlur
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     enableShadow:function(shadowOffset, shadowOpacity, shadowBlur, mustUpdateTexture){
-        var valueChanged = false;
-
-        if (false === this._shadowEnabled) {
+        if (false === this._shadowEnabled)
             this._shadowEnabled = true;
-            valueChanged = true;
-        }
+
 
         if(this._shadowOffset){
             if ((this._shadowOffset.width != shadowOffset.width) || (this._shadowOffset.height != shadowOffset.height)) {
                 this._shadowOffset.width  = shadowOffset.width;
                 this._shadowOffset.height = shadowOffset.height;
-                valueChanged = true;
             }
         }
 
-        if (this._shadowOpacity != shadowOpacity ) {
+        if (this._shadowOpacity != shadowOpacity )
             this._shadowOpacity = shadowOpacity;
-            valueChanged = true;
-        }
 
-        if (this._shadowBlur != shadowBlur) {
+        if (this._shadowBlur != shadowBlur)
             this._shadowBlur = shadowBlur;
-            valueChanged = true;
-        }
 
-        if ( valueChanged && mustUpdateTexture )
-            this._updateTexture();
+        this._needUpdateTexture = true;
     },
 
     /**
      * disable shadow rendering
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     disableShadow:function(mustUpdateTexture){
         if (this._shadowEnabled) {
             this._shadowEnabled = false;
-
-            if (mustUpdateTexture)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -973,56 +896,46 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * enable or disable stroke
      * @param {cc.Color3B} strokeColor
      * @param {Number} strokeSize
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     enableStroke:function(strokeColor, strokeSize, mustUpdateTexture){
-        var valueChanged = false;
-
-        if(this._strokeEnabled === false){
+        if(this._strokeEnabled === false)
             this._strokeEnabled = true;
-            valueChanged = true;
-        }
 
         var locStrokeColor = this._strokeColor;
         if ( (locStrokeColor.r !== strokeColor.r) || (locStrokeColor.g !== strokeColor.g) || (locStrokeColor.b !== strokeColor.b) ) {
             this._strokeColor = strokeColor;
             this._strokeColorStr = "rgba("+ (0 | strokeColor.r) + "," + (0 | strokeColor.g) + "," + (0 | strokeColor.b) + ", 1)";
-            valueChanged = true;
         }
 
-        if (this._strokeSize!== strokeSize){
+        if (this._strokeSize!== strokeSize)
             this._strokeSize = strokeSize || 0;
-            valueChanged = true;
-        }
 
-        if ( valueChanged && mustUpdateTexture )
-            this._updateTexture();
+            this._needUpdateTexture = true;
     },
 
     /**
      * disable stroke
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     disableStroke:function(mustUpdateTexture){
         if (this._strokeEnabled){
             this._strokeEnabled = false;
-            if (mustUpdateTexture)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
     /**
      * set text tinting
      * @param {cc.Color3B} tintColor
-     * @param {Boolean} mustUpdateTexture
+     * @param {Boolean} [mustUpdateTexture=false]
      */
     setFontFillColor:function(tintColor, mustUpdateTexture){
         var locTextFillColor = this._textFillColor;
         if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b){
             this._textFillColor = tintColor;
             this._fillColorStr = "rgba("+ (0 | tintColor.r) + "," + (0 | tintColor.g) + "," + (0 | tintColor.b) + ", 1)";
-            if (mustUpdateTexture)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -1104,7 +1017,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {String} text text for the label
      */
     setString:function (text) {
-        cc.Assert(text != null, "Invalid string");
+        text = String(text);
         if (this._string != text) {
             this._string = text + "";
 
@@ -1394,10 +1307,6 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
 
-        window._drawTTF++;
-        if(window._drawTTF == 1)
-            console.log("Draw LabelTTF :" + this._string);
-
         this._texture.handleLoadedTexture();
 
         this.setTextureRect(cc.rect(0, 0, width, height));
@@ -1470,9 +1379,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     }
 });
 
-cc.LabelTTFWebGL._textAlign = ["left", "center", "right"];
+cc.LabelTTF = (cc.Browser.supportWebGL) ? cc.LabelTTFWebGL : cc.LabelTTFCanvas;
 
-cc.LabelTTFWebGL._textBaseline = ["top", "middle", "bottom"];
+cc.LabelTTF._textAlign = ["left", "center", "right"];
+
+cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 
 /**
  * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
@@ -1486,8 +1397,8 @@ cc.LabelTTFWebGL._textBaseline = ["top", "middle", "bottom"];
  * // Example
  * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
  */
-cc.LabelTTFWebGL.create = function (/* Multi arguments */) {
-    var ret = new cc.LabelTTFWebGL();
+cc.LabelTTF.create = function (/* Multi arguments */) {
+    var ret = new cc.LabelTTF();
     if (ret.initWithString(arguments))
         return ret;
     return null;
@@ -1499,14 +1410,12 @@ cc.LabelTTFWebGL.create = function (/* Multi arguments */) {
  * @param {cc.FontDefinition} textDefinition
  * @return {cc.LabelTTF|Null}
  */
-cc.LabelTTFWebGL.createWithFontDefinition = function(text, textDefinition){
+cc.LabelTTF.createWithFontDefinition = function(text, textDefinition){
     var ret = new cc.LabelTTF();
     if(ret && ret.initWithStringAndTextDefinition(text, textDefinition))
         return ret;
     return null;
 };
-
-cc.LabelTTF = (cc.Browser.supportWebGL) ? cc.LabelTTFWebGL : cc.LabelTTFCanvas;
 
 if(cc.USE_LA88_LABELS)
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;

@@ -81,7 +81,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     registerWithTouchDispatcher:function () {
         if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
-            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
+            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
         else
             cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
     },
@@ -222,15 +222,12 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     setAccelerometerInterval:function (interval) {
         if (this._isAccelerometerEnabled) {
-            if (this._running) {
-                var director = cc.Director.getInstance();
-                director.getAccelerometer().setAccelerometerInterval(interval);
-            }
+            cc.Director.getInstance().getAccelerometer().setAccelerometerInterval(interval);
         }
     },
 
     onAccelerometer:function (accelerationValue) {
-        //Layer#onAccelerometer override me
+        cc.Assert(false, "Layer#onAccelerometer override me");
     },
 
     /**
@@ -680,17 +677,16 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     updateDisplayedColor: function (parentColor) {
-        var locDispColor = this._displayedColor, locRealColor = this._realColor;
-        locDispColor.r = locRealColor.r * parentColor.r/255.0;
-        locDispColor.g = locRealColor.g * parentColor.g/255.0;
-        locDispColor.b = locRealColor.b * parentColor.b/255.0;
+        this._displayedColor.r = this._realColor.r * parentColor.r/255.0;
+        this._displayedColor.g = this._realColor.g * parentColor.g/255.0;
+        this._displayedColor.b = this._realColor.b * parentColor.b/255.0;
 
         if (this._cascadeColorEnabled){
-            var selChildren = this._children;
-            for(var i = 0; i< selChildren.length;i++){
-                var item = selChildren[i];
-                if(item && item.RGBAProtocol)
-                    item.updateDisplayedColor(locDispColor);
+            var locChildren = this._children;
+            for(var i = 0; i < locChildren.length; i++){
+                var selItem = locChildren[i];
+                if(selItem && selItem.RGBAProtocol)
+                    selItem.updateDisplayedColor(this._displayedColor);
             }
         }
     },
@@ -840,7 +836,7 @@ cc.LayerColorCanvas = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
 
     /**
      * renders the layer
-     * @param {CanvasContext|Null} ctx
+     * @param {CanvasRenderingContext2D|Null} ctx
      */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
@@ -855,41 +851,6 @@ cc.LayerColorCanvas = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
         cc.g_NumberOfDraws++;
     }
 });
-
-/**
- * creates a cc.LayerColorCanvas with color, width and height in Points
- * @param {cc.Color4B} color
- * @param {Number|Null} width
- * @param {Number|Null} height
- * @return {cc.LayerColor}
- * @example
- * // Example
- * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.c4b(255,255,0,255));
- * //If you didnt pass in width and height, it defaults to the same size as the canvas
- *
- * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColorCanvas.create(cc.c3b(255,255,0,255), 200, 200);
- */
-cc.LayerColorCanvas.create = function (color, width, height) {
-    var ret = new cc.LayerColorCanvas();
-    switch (arguments.length) {
-        case 0:
-            ret.init();
-            break;
-        case 1:
-            ret.init(color);
-            break;
-        case 3:
-            ret.init(color, width, height);
-            break;
-        default :
-            ret.init();
-            break;
-    }
-    return ret;
-};
-
 
 /**
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol. (WebGL implement)<br/>
@@ -1098,11 +1059,13 @@ cc.LayerColorWebGL = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
     }
 });
 
+cc.LayerColor = cc.Browser.supportWebGL ? cc.LayerColorWebGL : cc.LayerColorCanvas;
+
 /**
  * creates a cc.Layer with color, width and height in Points
  * @param {cc.Color4B} color
- * @param {Number|Null} width
- * @param {Number|Null} height
+ * @param {Number|Null} [width=]
+ * @param {Number|Null} [height=]
  * @return {cc.LayerColor}
  * @example
  * // Example
@@ -1113,8 +1076,8 @@ cc.LayerColorWebGL = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
  * //create a yellow box, 200 by 200 in size
  * var yellowBox = cc.LayerColor.create(cc.c4b(255,255,0,255), 200, 200);
  */
-cc.LayerColorWebGL.create = function (color, width, height) {
-    var ret = new cc.LayerColorWebGL();
+cc.LayerColor.create = function (color, width, height) {
+    var ret = new cc.LayerColor();
     switch (arguments.length) {
         case 0:
             ret.init();
@@ -1131,8 +1094,6 @@ cc.LayerColorWebGL.create = function (color, width, height) {
     }
     return ret;
 };
-
-cc.LayerColor = cc.Browser.supportWebGL ? cc.LayerColorWebGL : cc.LayerColorCanvas;
 
 /**
  * <p>
@@ -1516,6 +1477,8 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
  * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
  */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
+    if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+        cc.log("parameters should not be ending with null in Javascript");
     var multiplexLayer = new cc.LayerMultiplex();
     if (multiplexLayer.initWithLayers(arguments)) {
         return multiplexLayer;

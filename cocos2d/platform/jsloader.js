@@ -199,6 +199,29 @@
         ]);
     }
 
+    if (c.loadPluginx != null && c.loadPluginx == true) {
+        engine = engine.concat([
+            //protocols
+            '../extensions/PluginX/protocols/Config.js',
+            '../extensions/PluginX/protocols/PluginUtils.js',
+            '../extensions/PluginX/protocols/PluginProtocol.js',
+            '../extensions/PluginX/protocols/ProtocolSocial.js',
+            //'../extensions/PluginX/protocols/ProtocolAds.js',
+            //'../extensions/PluginX/protocols/ProtocolAnalytics.js',
+            //'../extensions/PluginX/protocols/ProtocolIAP.js',
+            '../extensions/PluginX/protocols/PluginFactory.js',
+            '../extensions/PluginX/protocols/PluginManager.js',
+
+            //plugins
+            '../extensions/PluginX/plugins/SocialWeibo.js',
+            '../extensions/PluginX/plugins/SocialQQWeibo.js',
+            '../extensions/PluginX/plugins/SocialQzone.js',
+            '../extensions/PluginX/plugins/SocialTwitter.js',
+            '../extensions/PluginX/plugins/SocialFacebook.js'
+            //'../extensions/PluginX/plugins/AdsGoogle.js'
+        ]);
+    }
+
     if (!c.engineDir) {
         engine = [];
     }

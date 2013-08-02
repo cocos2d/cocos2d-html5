@@ -51,6 +51,17 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
         return false;
     },
 
+    clone:function(){
+        var action = new cc.ProgressTo();
+        action.initWithDuration(this._duration, this._to);
+        return action;
+    },
+
+    reverse: function(){
+        cc.Assert(false, "reverse() not supported in ProgressTo");
+        return null;
+    },
+
     /**
      * @param {cc.Node} target
      */
@@ -116,6 +127,12 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
             return true;
         }
         return false;
+    },
+
+    clone:function(){
+        var action = new cc.ProgressFromTo();
+        action.initWithDuration(this._duration, this._from, this._to);
+        return action;
     },
 
     /**

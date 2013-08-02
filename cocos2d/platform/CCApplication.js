@@ -94,8 +94,8 @@ cc.WEBGL = 1;
 cc.drawingUtil = null;
 
 /**
- * main Canvas 2D Context of game engine
- * @type CanvasContext
+ * main Canvas 2D/3D Context of game engine
+ * @type CanvasRenderingContext2D|WebGLRenderingContext
  */
 cc.renderContext = null;
 
@@ -341,17 +341,17 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         if (!this.applicationDidFinishLaunching())
             return 0;
 
-        var callback;
-        if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
+        var callback, director = cc.Director.getInstance(), w = window;
+        if (w.requestAnimFrame && this._animationInterval == 1 / 60) {
             callback = function () {
-                cc.Director.getInstance().mainLoop();
-                window.requestAnimFrame(callback);
+                director.mainLoop();
+                w.requestAnimFrame(callback);
             };
-            cc.log(window.requestAnimFrame);
-            window.requestAnimFrame(callback);
+            //cc.log(window.requestAnimFrame);
+            w.requestAnimFrame(callback);
         } else {
             callback = function () {
-                cc.Director.getInstance().mainLoop();
+                director.mainLoop();
             };
             setInterval(callback, this._animationInterval * 1000);
         }

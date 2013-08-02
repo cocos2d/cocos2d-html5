@@ -14,6 +14,7 @@ Core Developers:
 
     Ricardo Quesada
 
+    Xingsen Ma
 
 Contributors:
 Name                GithubID    Main contribution
@@ -73,6 +74,14 @@ Szymon Piłkowski     @ardcore      CCTexture Bug fix
 
 Tomasz Tunik         @tomasztunik   CCNode Memory leak fix
 
+Lin Xuankang(Intel)  @AndriyLin     cc.WebAudioEngine implements
+
+Kang-Hao Lu(Opera/Oupeng) @kennyluck    Optimize John Resig's inheritance pattern
+                                        cc.clone improvements
+
+Mark Henderson       @MarkEHenderson    Code review, LabelTTF and Scale9Sprite bug fix
+
+06wj                 @06wj         CCScheduler improvements
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 
