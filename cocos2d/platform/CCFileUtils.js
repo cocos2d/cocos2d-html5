@@ -128,6 +128,7 @@ cc.FileUtils = cc.Class.extend({
     ctor:function () {
         this._fileDataCache = {};
         this._textFileCache = {};
+        this._xmlFileCache = {};
 
         this._searchPathArray = [];
         this._searchPathArray.push(this._defaultResRootPath);
@@ -149,6 +150,7 @@ cc.FileUtils = cc.Class.extend({
     purgeCachedEntries:function(){
         this._searchPathArray = [];
     },
+
     /**
      * Get Byte Array from file
      * @function
@@ -163,12 +165,67 @@ cc.FileUtils = cc.Class.extend({
         return this._loadBinaryFileData(fileName);
     },
 
-    _getXMLHttpRequest:function () {
+    _getXMLHttpRequest: function (withOnload,type) {
+    	var xhr;
         if (window.XMLHttpRequest) {
-            return new window.XMLHttpRequest();
+            xhr = new window.XMLHttpRequest();
         } else {
-            return new ActiveXObject("MSXML2.XMLHTTP");
+        	xhr = new ActiveXObject("MSXML2.XMLHTTP");
         }
+        if (withOnload) {
+        	xhr.OnLoad = function (e, isie) { }
+        	if (!type)
+        		type = { IE: "x-user-defined", Other: "x-user-defined" };
+
+        	if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+        	    if (type.IE) {
+        	        try{
+        	            xhr.setRequestHeader("Accept-Charset", type.IE);
+        	        } catch (e) {
+        	            //myie is not support  x-user-defined, just follow old code.
+        	        }
+        	    }
+
+        		xhr.onreadystatechange = function (e) {
+        			if (xhr.readyState == 4)
+        				return xhr.OnLoad(e, true);
+        		};
+        	}
+        	else {
+        		if (xhr.overrideMimeType && type.Other)
+        			xhr.overrideMimeType("text\/plain; charset="+type.Other);
+
+        		xhr.onload = function (e) {
+        			return xhr.OnLoad(e, false);
+        		};
+        	}
+        }
+        else {
+        	xhr.Load = function (loaded) {
+        		var arrayInfo = null;
+        		if (!type)
+        			type = { IE: "x-user-defined", Other: "x-user-defined" };
+        		if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+        			xhr.setRequestHeader("Accept-Charset", type.IE);
+        			xhr.send(null);
+        			if (xhr.status != 200 && xhr.status != 0)
+        				return null;
+
+        			arrayInfo= loaded(xhr,true);
+        		} else {
+        			if (req.overrideMimeType &&type.Other )
+        				req.overrideMimeType('text\/plain; charset=' + type.Other);
+        			req.send(null);
+        			if (req.status != 200 && xhr.status != 0)
+        				return null;
+
+        			arrayInfo = loaded(xhr,false);
+        		}
+        		return arrayInfo;
+        	}
+
+        }
+        return xhr;
     },
 
     unloadBinaryFileData:function (fileUrl) {
@@ -176,65 +233,17 @@ cc.FileUtils = cc.Class.extend({
             delete this._fileDataCache[fileUrl];
     },
 
-    preloadBinaryFileData:function (fileUrl) {
-        fileUrl = this.fullPathFromRelativePath(fileUrl);
-        var selfPointer = this;
-
-        var xhr = this._getXMLHttpRequest();
-        xhr.open("GET", fileUrl, true);
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            // IE-specific logic here
-            xhr.setRequestHeader("Accept-Charset", "x-user-defined");
-            xhr.onreadystatechange = function (event) {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        var fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
-                        if (fileContents)
-                            selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
-                    }
-                    cc.Loader.getInstance().onResLoaded();
-                }
-            };
-        } else {
-            if (xhr.overrideMimeType)
-                xhr.overrideMimeType("text\/plain; charset=x-user-defined");
-            xhr.onload = function (e) {
-                var arrayStr = xhr.responseText;
-                if (arrayStr) {
-                    cc.Loader.getInstance().onResLoaded();
-                    selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
-                }
-            };
-        }
-        xhr.send(null);
+    preloadBinaryFileData: function (fileUrl) {
+    	this.preloadTextFileData(fileUrl, function (selfPointer,fileContents) {
+    		if (fileContents)
+    			selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
+    	});
     },
 
-    _loadBinaryFileData:function (fileUrl) {
-        var req = this._getXMLHttpRequest();
-        req.open('GET', fileUrl, false);
-        var arrayInfo = null;
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            req.setRequestHeader("Accept-Charset", "x-user-defined");
-            req.send(null);
-            if (req.status != 200)
-                return null;
-
-            var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
-            if (fileContents) {
-                arrayInfo = this._stringConvertToArray(fileContents);
-                this._fileDataCache[fileUrl] = arrayInfo;
-            }
-        } else {
-            if (req.overrideMimeType)
-                req.overrideMimeType('text\/plain; charset=x-user-defined');
-            req.send(null);
-            if (req.status != 200)
-                return null;
-
-            arrayInfo = this._stringConvertToArray(req.responseText);
-            this._fileDataCache[fileUrl] = arrayInfo;
-        }
-        return arrayInfo;
+    _loadBinaryFileData: function (fileUrl) {
+    	return this._loadTextFileData(fileUrl, function (selfPointer, fileContents) {
+   			return (selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents));
+    	});
     },
 
     _stringConvertToArray:function (strData) {
@@ -252,65 +261,110 @@ cc.FileUtils = cc.Class.extend({
         if (this._textFileCache.hasOwnProperty(fileUrl))
             delete this._textFileCache[fileUrl];
     },
-
-    preloadTextFileData:function (fileUrl) {
-        fileUrl = this.fullPathFromRelativePath(fileUrl);
-        var selfPointer = this;
-
-        var xhr = this._getXMLHttpRequest();
-        xhr.open("GET", fileUrl, true);
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            // IE-specific logic here
-            xhr.setRequestHeader("Accept-Charset", "utf-8");
-            xhr.onreadystatechange = function (event) {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        var fileContents = xhr.responseText;
-                        if (fileContents)
-                            selfPointer._textFileCache[fileUrl] = fileContents;
-                    }
-                    cc.Loader.getInstance().onResLoaded();
-                }
-            };
-        } else {
-            if (xhr.overrideMimeType)
-                xhr.overrideMimeType("text\/plain; charset=utf-8");
-            xhr.onload = function (e) {
-                if (xhr.responseText) {
-                    cc.Loader.getInstance().onResLoaded();
-                    selfPointer._fileDataCache[fileUrl] = xhr.responseText;
-                }
-            };
-        }
-        xhr.send(null);
+    unloadXML: function (fileUrl) {
+    	if (this._xmlFileCache.hasOwnProperty(fileUrl))
+    		delete this._xmlFileCache[fileUrl];
     },
 
-    _loadTextFileData:function (fileUrl) {
-        var req = this._getXMLHttpRequest();
+    preloadTextFileData: function (fileUrl, processContent,native,type) {
+
+    	fileUrl = this.fullPathForFilename(fileUrl);
+    	var selfPointer = this;
+
+    	if (!processContent) processContent = function (selfPointer,fileContents) { if (fileContents) selfPointer._textFileCache[fileUrl] = fileContents; }
+
+    	var xhr = this._getXMLHttpRequest(true, type);
+    	xhr.open("GET", fileUrl, true);
+    	xhr.OnLoad = function (e, isie) {
+    		if (xhr.status == 200 || xhr.status == 0) {
+    			if (native) {
+    				processContent(selfPointer,xhr);
+    			} else {
+    				var fileContents;
+    				if (isie)
+    					fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
+    				else
+    					fileContents = xhr.responseText;
+
+    				processContent(selfPointer,fileContents);
+    			}
+    			cc.Loader.getInstance().onResLoaded();
+    		}
+    	}
+    	xhr.send(null);
+    },
+    __XML_exec: function (obj, ret) {
+    	ret.Name = obj.nodeName;
+    	for (var i = 0,l=obj.attributes.length; i < l ; i++) {
+    		var attr = obj.attributes[i];
+    		ret.Attribute = {};
+    		ret.Attribute[attr.nodeName] = attr.nodeValue;
+    	}
+    	ret.Childs = new Array();
+    	for (var o = obj.firstChild; o; o = o.nextSibling) {
+    		if (o.nodeName[0] == '#')
+    			continue;
+    		var newitem = new Object;
+    		ret.Childs.push(newitem);
+    		this.__XML_exec(o, newitem);
+    	}
+    },
+    __XML_Parser: function (xmlStr) {
+    	if (window.DOMParser) {
+    		return (new window.DOMParser()).parseFromString(xmlStr, "text/xml");
+    	} else if (window.ActiveXObject) {
+    		var xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+    		xmlDoc.async = false;
+    		xmlDoc.loadXML(xmlStr);
+    		return xmlDoc;
+    	} else
+    		throw new Error("No XML parser found");
+    },
+    preloadXML: function (fileUrl) {
+    	this.preloadTextFileData(fileUrl, function (selfPointer, contents) {
+    		if (contents) {
+    			var doc = selfPointer.__XML_Parser(contents);
+    			if (doc) {
+    				selfPointer.__XML_exec(doc.firstChild, (selfPointer._xmlFileCache[fileUrl] = new Object));
+    			}
+    		}
+    	}, false, { Other: "text/xml" });
+    },
+
+    _loadTextFileData: function (fileUrl, processContent, native, type) {
+    	fileUrl = this.fullPathForFilename(fileUrl);
+
+    	var req = this._getXMLHttpRequest(false,type);
         req.open('GET', fileUrl, false);
-        var arrayInfo = null;
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            req.setRequestHeader("Accept-Charset", "utf-8");
-            req.send(null);
-            if (req.status != 200)
-                return null;
 
-            var fileContents = req.responseText;
-            if (fileContents) {
-                arrayInfo = fileContents;
-                this._textFileCache[fileUrl] = fileContents;
-            }
-        } else {
-            if (req.overrideMimeType)
-                req.overrideMimeType('text\/plain; charset=utf-8');
-            req.send(null);
-            if (req.status != 200)
-                return null;
 
-            arrayInfo = req.responseText;
-            this._textFileCache[fileUrl] = arrayInfo;
-        }
-        return arrayInfo;
+        var selfPointer = this;
+        if (!processContent) processContent = function (selfPointer, fileContents) { if (fileContents) selfPointer._textFileCache[fileUrl] = fileContents; return fileContents; }
+        return req.Load(function (http, isie) {
+        	if (native) {
+        		return processContent(selfPointer,req);
+        	}
+        	var fileContents;
+        	if (isie)
+        		fileContents = cc._convertResponseBodyToText(req.responseBody);
+        	else 
+        		fileContents = req.responseText;
+
+        	return processContent(selfPointer,fileContents);
+        });
+
+    },
+
+    _loadXML: function (fileUrl) {
+    	return _loadTextFileData(fileUrl, function (selfPointer, contents) {
+    		var retObject = new Object;
+    		var doc = selfPointer.__XML_Parser(contents);
+    		if (doc) {
+    			selfPointer.__XML_exec(doc.firstChild, retObject);
+    			selfPointer._xmlFileCache[fileUrl] = retObject;
+    		}
+    		return retObject;
+    	}, false, {Other:"text/xml"});
     },
 
     /**
@@ -323,7 +377,20 @@ cc.FileUtils = cc.Class.extend({
             return this._textFileCache[fileUrl];
         return this._loadTextFileData(fileUrl);
     },
-
+	/**
+	* @function
+	* @param [String] File Path
+	* @return [Object]
+	*	  ret XML format:
+	*					Node name: obj.Name
+	*					Node attributes: obj.Attribute.attr or obj.Attribute["attr"]
+	*					Sub nodes: obj.Childs[index]
+	*/
+    getXML: function (fileUrl) {
+    	if (this._xmlFileCache.hasOwnProperty(fileUrl))
+    		return this._xmlFileCache[fileUrl];
+    	return this._loadXML(fileUrl);
+    },
     /**
      * Get resource file data from zip file
      * @function
@@ -484,7 +551,8 @@ cc.FileUtils = cc.Class.extend({
     /**
      * Sets the filenameLookup dictionary.
      * @param {Object} filenameLookupDict The dictionary for replacing filename.
-     */
+	 */
+
     setFilenameLookupDictionary:function (filenameLookupDict) {
         this._filenameLookupDict = filenameLookupDict;
     },
@@ -494,7 +562,7 @@ cc.FileUtils = cc.Class.extend({
      * @param {String} filename The file name.
      * @param {String} relativeFile The path of the relative file.
      * @return {String} The full path.
-     */
+	 */
     fullPathFromRelativeFile:function (filename, relativeFile) {
         var tmpPath;
         if (filename) {
@@ -573,11 +641,10 @@ cc.FileUtils = cc.Class.extend({
      * @param fileName The file name of *.plist file
      * @return {object} The Dictionary of object generated from the file
      */
-    dictionaryWithContentsOfFile:function (fileName) {
-        cc.log("dictionaryWithContentsOfFile is deprecated. Use createDictionaryWithContentsOfFile instead");
-        return this.createDictionaryWithContentsOfFile(fileName);
+    dictionaryWithContentsOfFile: function (fileName) {
+    	cc.log("dictionaryWithContentsOfFile is deprecated. Use createDictionaryWithContentsOfFile instead");
+    	return this.createDictionaryWithContentsOfFile(fileName);
     },
-
     /**
      * Generate an Dictionary of object by file
      * @param filename The file name of *.plist file
@@ -585,6 +652,10 @@ cc.FileUtils = cc.Class.extend({
      */
     createDictionaryWithContentsOfFile: function(filename){
         return  cc.SAXParser.getInstance().parse(filename);
+
+        var parser = cc.SAXParser.getInstance();
+        this.rootDict = parser.parse(fileName);
+        return this.rootDict;
     },
 
     /**
@@ -594,7 +665,7 @@ cc.FileUtils = cc.Class.extend({
      * @return {String}
      */
     getStringFromFile:function (fileName) {
-        return this.getTextFileData(fileName); //cc.SAXParser.getInstance().getList(fileName);
+        return this.getTextFileData(fileName); //return cc.SAXParser.getInstance().getList(fileName);
     },
 
     /**
@@ -603,21 +674,23 @@ cc.FileUtils = cc.Class.extend({
      * @param {String} fileName
      * @return {object} The Dictionary of object generated from the file
      */
-    dictionaryWithContentsOfFileThreadSafe:function (fileName) {
+    dictionaryWithContentsOfFileThreadSafe: function (fileName) {
         return cc.SAXParser.getInstance().parse(fileName);
     },
 
     /**
      * Get the writeable path
-     * @return {String}  The path that can write/read file
+     * @function
+     * @return {String} The path that can write/read file
      * @deprecated
      */
-    getWritablePath:function () {
+    getWriteablePath:function () {
         return "";
     },
 
     /**
      * Set whether pop-up a message box when the image load failed
+     * @function
      * @param {Boolean} notify
      */
     setPopupNotify:function (notify) {
@@ -626,6 +699,7 @@ cc.FileUtils = cc.Class.extend({
 
     /**
      * Get whether pop-up a message box when the image load failed
+     * @function
      * @return {Boolean}
      */
     isPopupNotify:function () {
@@ -793,6 +867,7 @@ cc.FileUtils = cc.Class.extend({
 });
 
 cc.s_SharedFileUtils = null;
+
 /**
  * Gets the instance of CCFileUtils.
  * @returns {cc.FileUtils}
@@ -803,3 +878,26 @@ cc.FileUtils.getInstance = function () {
     }
     return cc.s_SharedFileUtils;
 };
+
+/**
+ * plist Dictionary Maker
+ * @class
+ * @extends cc.Class
+ * @example
+ * //create a DictMaker
+ * var tMaker = new cc.DictMaker();
+ * tMaker.dictionaryWithContentsOfFile(fileName);
+ */
+cc.DictMaker = cc.Class.extend(/** @lends cc.DictMaker# */{
+    rootDict: [],
+    /**
+     * Generate dictionary with contents of file
+     * @param {String} fileName
+     * @return {Array}
+     */
+    dictionaryWithContentsOfFile: function (fileName) {
+        var parser = cc.SAXParser.getInstance();
+        this.rootDict = parser.parse(fileName);
+        return this.rootDict;
+    }
+});
