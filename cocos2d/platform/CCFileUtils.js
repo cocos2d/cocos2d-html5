@@ -278,7 +278,7 @@ cc.FileUtils = cc.Class.extend({
             xhr.onload = function (e) {
                 if (xhr.responseText) {
                     cc.Loader.getInstance().onResLoaded();
-                    selfPointer._fileDataCache[fileUrl] = xhr.responseText;
+                    selfPointer._textFileCache[fileUrl] = xhr.responseText;
                 }
             };
         }
