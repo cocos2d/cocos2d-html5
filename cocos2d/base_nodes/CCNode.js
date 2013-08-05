@@ -3036,6 +3036,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
                     ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    tempChild =  _children[j];
                     _children[j + 1] = tempChild;
                     j = j - 1;
                 }
