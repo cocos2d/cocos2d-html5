@@ -609,18 +609,18 @@ cc.BuilderAnimationManager = cc.Class.extend({
             this._lastCompletedSequenceName = this._runningSequence.getName();
         }
 
+        var nextSeqId = this._runningSequence.getChainedSequenceId();
+        this._runningSequence = null;
+
+        if (nextSeqId != -1)
+            this.runAnimations(nextSeqId, 0);
+
         if (this._delegate)
             this._delegate.completedAnimationSequenceNamed(this._runningSequence.getName());
 
         if(this._target && this._animationCompleteCallbackFunc){
             this._animationCompleteCallbackFunc.call(this._target);
         }
-
-        var nextSeqId = this._runningSequence.getChainedSequenceId();
-        this._runningSequence = null;
-
-        if (nextSeqId != -1)
-            this.runAnimations(nextSeqId, 0);
     }
 });
 
