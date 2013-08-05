@@ -217,7 +217,7 @@ cc.Control = cc.LayerRGBA.extend({
         for (var i = 0; i < cc.CONTROL_EVENT_TOTAL_NUMBER; i++) {
             // If the given controlEvents bitmask contains the curent event
             if ((controlEvents & (1 << i))) {
-                this.addTargetWithActionForControlEvent(target, action, 1 << i);
+                this._addTargetWithActionForControlEvent(target, action, 1 << i);
             }
         }
     },
@@ -321,7 +321,7 @@ cc.Control = cc.LayerRGBA.extend({
      * @param controlEvent A control event for which the action message is sent.
      * See "CCControlEvent" for constants.
      */
-    addTargetWithActionForControlEvent:function (target, action, controlEvent) {
+    _addTargetWithActionForControlEvent:function (target, action, controlEvent) {
         // Create the invocation object
         var invocation = new cc.Invocation(target, action, controlEvent);
 
