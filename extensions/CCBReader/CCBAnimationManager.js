@@ -45,6 +45,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
     _documentOutletNodes:null,
     _documentCallbackNames:null,
     _documentCallbackNodes:null,
+    _documentCallbackControlEvents:null,
     _documentControllerName:"",
     _lastCompletedSequenceName:"",
     _keyframeCallbacks:null,
@@ -68,6 +69,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
         this._documentOutletNodes = [];
         this._documentCallbackNames = [];
         this._documentCallbackNodes = [];
+        this._documentCallbackControlEvents = [];
 
         this._keyframeCallbacks = [];
         this._keyframeCallFuncs = {};
@@ -112,6 +114,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
         this._documentCallbackNames.push(name);
     },
 
+    addDocumentCallbackControlEvents:function(controlEvents){
+        this._documentCallbackControlEvents.push(controlEvents);
+    },
+
     addDocumentOutletNode:function(node){
         this._documentOutletNodes.push(node);
     },
@@ -134,6 +140,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     getDocumentCallbackNodes:function(){
         return this._documentCallbackNodes;
+    },
+
+    getDocumentCallbackControlEvents:function(){
+        return this._documentCallbackControlEvents;
     },
 
     getDocumentOutletNames:function(){
