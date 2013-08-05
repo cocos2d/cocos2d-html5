@@ -491,9 +491,10 @@ cc.NodeLoader = cc.Class.extend({
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var bounds;
                 if(texture instanceof  cc.Texture2D){
-                    bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
+                    var locContentSize = texture.getContentSize();
+                    bounds = cc.RectMake(0, 0, locContentSize.width, locContentSize.height);
                 }else{
-                    bounds = cc.RECT_PIXELS_TO_POINTS(bounds);
+                    bounds = cc.RECT_PIXELS_TO_POINTS(cc.RectMake(0, 0, texture.width, texture.height));
                 }
                 spriteFrame = cc.SpriteFrame.createWithTexture(texture, bounds);
             } else {
