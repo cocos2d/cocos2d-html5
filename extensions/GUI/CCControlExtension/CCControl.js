@@ -176,7 +176,7 @@ cc.Control = cc.LayerRGBA.extend({
         this._super();
     },
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.MENU_HANDLER_PRIORITY, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), true);
     },
 
     /**

@@ -1889,8 +1889,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (!this._batchNode)
             this.postStep();
-
-        //cc.PROFILER_STOP_CATEGORY(kCCProfilerCategoryParticles , "cc.ParticleSystem - update");
     },
 
     updateWithNoTime:function () {

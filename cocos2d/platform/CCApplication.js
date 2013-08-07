@@ -208,11 +208,12 @@ cc.setup = function (el, width, height) {
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
-        gl = cc.renderContext; // global variable declared in CCMacro.js
+        window.gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc.TextureCache.getInstance()._initializingRenderer();
     } else {
         cc.renderContext = cc.canvas.getContext("2d");
+        cc.mainRenderContextBackup = cc.renderContext;
         cc.renderContextType = cc.CANVAS;
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
