@@ -138,7 +138,10 @@ cc.RenderTextureCanvas = cc.Node.extend(/** @lends cc.RenderTextureCanvas# */{
         this._cacheCanvas.width = width || 10;
         this._cacheCanvas.height = height || 10;
         this._cacheContext.translate(0, this._cacheCanvas.height);
-        this._sprite = cc.Sprite.createWithTexture(this._cacheCanvas);
+        var texture = new cc.Texture2D();
+        texture.initWithElement(this._cacheCanvas);
+        texture.handleLoadedTexture();
+        this._sprite = cc.Sprite.createWithTexture(texture);
         return true;
     },
 

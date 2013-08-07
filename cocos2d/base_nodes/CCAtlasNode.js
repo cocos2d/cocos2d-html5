@@ -201,13 +201,19 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
             temp.b = temp.b * this._displayedOpacity / 255;
         }
         cc.NodeRGBA.prototype.setColor.call(this, color3);
+
         if (this.getTexture()) {
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
+            var element = this._originalTexture.getHtmlElementObj();
+            if(!element)
+                return;
+            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
             if (cacheTextureForColor) {
-                var tx = this._originalTexture;
-                var textureRect = cc.rect(0, 0, tx.width, tx.height);
-                var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._realColor, textureRect);
-                this.setTexture(colorTexture);
+                var textureRect = cc.rect(0, 0, element.width, element.height);
+                element = cc.generateTintImage(element, cacheTextureForColor, this._realColor, textureRect);
+                var locTexture = new cc.Texture2D();
+                locTexture.initWithElement(element);
+                locTexture.handleLoadedTexture();
+                this.setTexture(locTexture);
             }
         }
     },
@@ -234,7 +240,7 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     /** sets a new texture. it will be retained
-     * @param {HTMLCanvasElement|HTMLImageElement} texture
+     * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
         this._textureForCanvas = texture;
@@ -242,7 +248,7 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItems:function () {
         var selTexture = this.getTexture();
-        var size = cc.size(selTexture.width, selTexture.height);
+        var size = selTexture.getContentSize();
 
         this._itemsPerColumn = 0 | (size.height / this._itemHeight);
         this._itemsPerRow = 0 | (size.width / this._itemWidth);

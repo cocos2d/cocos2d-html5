@@ -525,8 +525,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
         if (cc.renderContextType === cc.CANVAS) {
-            var textureCache = this._originalTexture;
-            this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
+            this._tileSet.imageSize = this._originalTexture.getContentSizeInPixels();
         } else {
             this._tileSet.imageSize = this._textureAtlas.getTexture().getContentSizeInPixels();
 
