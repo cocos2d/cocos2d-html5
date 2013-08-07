@@ -373,7 +373,9 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
             this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
 
         var locCanvas = cc.canvas;
-        this._renderTexture = cc.RenderTexture.create(locCanvas.width, locCanvas.height);
+        if(this._useCache) {
+            this._renderTexture = cc.RenderTexture.create(locCanvas.width, locCanvas.height);
+        }
         this.setContentSize(cc.size(locCanvas.width, locCanvas.height));
     },
 
@@ -431,7 +433,10 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
         if (!size)
             return;
         cc.Node.prototype.setContentSize.call(this, size);
-        this._renderTexture.setContentSize(size);
+        var locRenderTexture = this._renderTexture;
+        if(locRenderTexture) {
+            locRenderTexture.setContentSize(size);
+        }
     },
 
     /**

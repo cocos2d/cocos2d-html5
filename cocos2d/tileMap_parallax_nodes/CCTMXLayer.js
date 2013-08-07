@@ -73,10 +73,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      *  Constructor
      */
     ctor:function () {
+        this._useCache = true;
         cc.SpriteBatchNode.prototype.ctor.call(this);
         this._children = [];
         this._descendants = [];
-        this._useCache = true;
         this._layerSize = cc.SizeZero();
         this._mapTileSize = cc.SizeZero();
     },
