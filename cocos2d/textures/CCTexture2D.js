@@ -131,7 +131,7 @@ cc._texParams = function (minFilter, magFilter, wrapS, wrapT) {
  * @class
  * @extends cc.Class
  */
-cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
+cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
     _pVRHaveAlphaPremultiplied:null,
     _pixelFormat:null,
@@ -293,67 +293,66 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
-        if (cc.Browser.supportWebGL) {
-            var gl = cc.renderContext;
+        var gl = cc.renderContext;
 
-            var bitsPerPixel = 0;
-            //Hack: bitsPerPixelForFormat returns wrong number for RGB_888 textures. See function.
-            if (pixelFormat === cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888) {
-                bitsPerPixel = 24;
-            } else {
-                bitsPerPixel = this.bitsPerPixelForFormat(pixelFormat);
-            }
-
-            var bytesPerRow = pixelsWide * bitsPerPixel / 8;
-            if (bytesPerRow % 8 === 0) {
-                gl.pixelStorei(gl.UNPACK_ALIGNMENT, 8);
-            } else if (bytesPerRow % 4 === 0) {
-                gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
-            } else if (bytesPerRow % 2 === 0) {
-                gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
-            } else {
-                gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-            }
-
-            this._webTextureObj = gl.createTexture();
-            gl.bindTexture(gl.TEXTURE_2D, this._webTextureObj);
-
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-            // Specify OpenGL texture image
-            switch (pixelFormat) {
-                case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
-                    break;
-                case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_BYTE, data);
-                    break;
-                case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, data);
-                    break;
-                case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, data);
-                    break;
-                case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, data);
-                    break;
-                case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, pixelsWide, pixelsHigh, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, data);
-                    break;
-                case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, pixelsWide, pixelsHigh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, data);
-                    break;
-                case cc.TEXTURE_2D_PIXEL_FORMAT_I8:
-                    gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, pixelsWide, pixelsHigh, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
-                    break;
-                default:
-                    cc.Assert(0, "NSInternalInconsistencyException");
-                    break;
-            }
+        var bitsPerPixel = 0;
+        //Hack: bitsPerPixelForFormat returns wrong number for RGB_888 textures. See function.
+        if (pixelFormat === cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888) {
+            bitsPerPixel = 24;
+        } else {
+            bitsPerPixel = this.bitsPerPixelForFormat(pixelFormat);
         }
+
+        var bytesPerRow = pixelsWide * bitsPerPixel / 8;
+        if (bytesPerRow % 8 === 0) {
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 8);
+        } else if (bytesPerRow % 4 === 0) {
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+        } else if (bytesPerRow % 2 === 0) {
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 2);
+        } else {
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+        }
+
+        this._webTextureObj = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, this._webTextureObj);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        // Specify OpenGL texture image
+        switch (pixelFormat) {
+            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+                break;
+            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_BYTE, data);
+                break;
+            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, data);
+                break;
+            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, data);
+                break;
+            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, data);
+                break;
+            case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, pixelsWide, pixelsHigh, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, data);
+                break;
+            case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, pixelsWide, pixelsHigh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, data);
+                break;
+            case cc.TEXTURE_2D_PIXEL_FORMAT_I8:
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, pixelsWide, pixelsHigh, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+                break;
+            default:
+                cc.Assert(0, "NSInternalInconsistencyException");
+                break;
+        }
+
 
         this._contentSize = contentSize;
         this._pixelsWide = pixelsWide;
@@ -473,9 +472,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     initWithElement:function (element) {
         if (!element)
             return;
-        if (cc.Browser.supportWebGL) {
-            this._webTextureObj = cc.renderContext.createTexture();
-        }
+        this._webTextureObj = cc.renderContext.createTexture();
         this._htmlElementObj = element;
     },
 
@@ -494,24 +491,22 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     handleLoadedTexture:function () {
         this._isLoaded = true;
         //upload image to buffer
-        if (cc.Browser.supportWebGL) {
-            var gl = cc.renderContext;
+        var gl = cc.renderContext;
 
-            cc.glBindTexture2D(this);
+        cc.glBindTexture2D(this);
 
-            gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
 
-            // Specify OpenGL texture image
-            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._htmlElementObj);
+        // Specify OpenGL texture image
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._htmlElementObj);
 
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
-            gl.bindTexture(gl.TEXTURE_2D, null);
-        }
+        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+        gl.bindTexture(gl.TEXTURE_2D, null);
 
         var pixelsWide = this._htmlElementObj.width;
         var pixelsHigh = this._htmlElementObj.height;
@@ -648,22 +643,20 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param texParams
      */
     setTexParameters:function (texParams) {
-        if (cc.Browser.supportWebGL) {
-            var gl = cc.renderContext;
+        var gl = cc.renderContext;
 
-            cc.Assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
-                (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
-                "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
+        cc.Assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
+            (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
+            "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
-            cc.glBindTexture2D(this);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, texParams.wrapS);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, texParams.wrapT);
+        cc.glBindTexture2D(this);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, texParams.wrapS);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, texParams.wrapT);
 
-            //TODO
-            //VolatileTexture::setTexParameters(this, texParams);
-        }
+        //TODO
+        //VolatileTexture::setTexParameters(this, texParams);
     },
 
     /**
@@ -672,21 +665,19 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      *  - GL_TEXTURE_MAG_FILTER = GL_NEAREST
      */
     setAntiAliasTexParameters:function () {
-        if (cc.Browser.supportWebGL) {
-            var gl = cc.renderContext;
+        var gl = cc.renderContext;
 
-            cc.glBindTexture2D(this);
-            if (!this._hasMipmaps)
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-            else
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-            //TODO
-            /*#if CC_ENABLE_CACHE_TEXTURE_DATA
-             ccTexParams texParams = {m_bHasMipmaps?GL_LINEAR_MIPMAP_NEAREST:GL_LINEAR,GL_LINEAR,GL_NONE,GL_NONE};
-             VolatileTexture::setTexParameters(this, &texParams);
-             #endif*/
-        }
+        cc.glBindTexture2D(this);
+        if (!this._hasMipmaps)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        else
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        //TODO
+        /*#if CC_ENABLE_CACHE_TEXTURE_DATA
+         ccTexParams texParams = {m_bHasMipmaps?GL_LINEAR_MIPMAP_NEAREST:GL_LINEAR,GL_LINEAR,GL_NONE,GL_NONE};
+         VolatileTexture::setTexParameters(this, &texParams);
+         #endif*/
     },
 
     /**
@@ -695,22 +686,20 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      *   GL_TEXTURE_MAG_FILTER = GL_NEAREST
      */
     setAliasTexParameters:function () {
-        if (cc.Browser.supportWebGL) {
-            var gl = cc.renderContext;
+        var gl = cc.renderContext;
 
-            cc.glBindTexture2D(this);
-            if (!this._hasMipmaps)
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-            else
-                gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
-            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        cc.glBindTexture2D(this);
+        if (!this._hasMipmaps)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        else
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST_MIPMAP_NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-            //TODO
-            /*#if CC_ENABLE_CACHE_TEXTURE_DATA
-             ccTexParams texParams = {m_bHasMipmaps?GL_NEAREST_MIPMAP_NEAREST:GL_NEAREST,GL_NEAREST,GL_NONE,GL_NONE};
-             VolatileTexture::setTexParameters(this, &texParams);
-             #endif*/
-        }
+        //TODO
+        /*#if CC_ENABLE_CACHE_TEXTURE_DATA
+         ccTexParams texParams = {m_bHasMipmaps?GL_NEAREST_MIPMAP_NEAREST:GL_NEAREST,GL_NEAREST,GL_NONE,GL_NONE};
+         VolatileTexture::setTexParameters(this, &texParams);
+         #endif*/
     },
 
     /**
@@ -718,13 +707,11 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      *  It only works if the texture size is POT (power of 2).
      */
     generateMipmap:function () {
-        if (cc.Browser.supportWebGL) {
-            cc.Assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
+        cc.Assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
 
-            cc.glBindTexture2D(this);
-            cc.renderContext.generateMipmap(cc.renderContext.TEXTURE_2D);
-            this._hasMipmaps = true;
-        }
+        cc.glBindTexture2D(this);
+        cc.renderContext.generateMipmap(cc.renderContext.TEXTURE_2D);
+        this._hasMipmaps = true;
     },
 
     /**
@@ -918,6 +905,335 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         return true;
     }
 });
+
+/**
+ * <p>
+ * This class allows to easily create Canvas 2D textures from images, text or raw data.                                    <br/>
+ * The created cc.Texture2D object will always have power-of-two dimensions.                                                <br/>
+ * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions <br/>
+ *  i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).                                           <br/>
+ * Be aware that the content of the generated textures will be upside-down! </p>
+ * @class
+ * @extends cc.Class
+ */
+cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
+    _contentSize:null,
+    _isLoaded:false,
+    _htmlElementObj:null,
+    /*public:*/
+    ctor:function () {
+        this._contentSize = cc.size(0,0);
+        this._isLoaded = false;
+        this._htmlElementObj = null;
+    },
+
+    /**
+     * width in pixels
+     * @return {Number}
+     */
+    getPixelsWide:function () {
+        return this._contentSize.width;
+    },
+
+    /**
+     * hight in pixels
+     * @return {Number}
+     */
+    getPixelsHigh:function () {
+        return this._contentSize.height;
+    },
+
+    /**
+     * content size
+     * @return {cc.Size}
+     */
+    getContentSize:function () {
+        return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
+    },
+
+    getContentSizeInPixels:function () {
+        return this._contentSize;
+    },
+
+    initWithElement:function (element) {
+        if (!element)
+            return;
+        this._htmlElementObj = element;
+    },
+
+    /**
+     * HTMLElement Object getter
+     * @return {HTMLElement}
+     */
+    getHtmlElementObj:function(){
+        return this._htmlElementObj;
+    },
+
+    isLoaded:function () {
+        return this._isLoaded;
+    },
+
+    handleLoadedTexture:function () {
+        this._isLoaded = true;
+
+        var pixelsWide = this._htmlElementObj.width;
+        var pixelsHigh = this._htmlElementObj.height;
+
+        this._contentSize = new cc.Size(pixelsWide, pixelsHigh);
+    },
+
+    description:function () {
+        return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height+">";
+    },
+
+    /**
+     * Intializes with a texture2d with data
+     * @param {Array} data
+     * @param {Number} pixelFormat
+     * @param {Number} pixelsWide
+     * @param {Number} pixelsHigh
+     * @param {cc.Size} contentSize
+     * @return {Boolean}
+     */
+    initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
+        //support only in WebGl rendering mode
+        return false;
+    },
+
+    /**
+     Extensions to make it easy to create a CCTexture2D object from an image file.
+     Note that RGBA type textures will have their alpha premultiplied - use the blending mode (gl.ONE, gl.ONE_MINUS_SRC_ALPHA).
+     */
+    /**
+     * Initializes a texture from a UIImage object
+     * @param uiImage
+     * @return {Boolean}
+     */
+    initWithImage:function (uiImage) {
+        //support only in WebGl rendering mode
+        return false;
+    },
+
+    /**
+     Extensions to make it easy to create a cc.Texture2D object from a string of text.
+     Note that the generated textures are of type A8 - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
+     */
+    /**
+     * Initializes a texture from a string with dimensions, alignment, font name and font size (note: initWithString does not support on HTML5)
+     * @param {String} text
+     * @param {String | cc.FontDefinition} fontName or fontDefinition
+     * @param {Number} fontSize
+     * @param {cc.Size} dimensions
+     * @param {Number} hAlignment
+     * @param {Number} vAlignment
+     * @return {Boolean}
+     */
+    initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+        //support only in WebGl rendering mode
+        return false;
+    },
+
+    releaseTexture:function () {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     * get WebGLTexture Object
+     * @return {WebGLTexture}
+     */
+    getName:function () {
+        //support only in WebGl rendering mode
+        return null;
+    },
+
+    /** texture max S */
+    getMaxS:function () {
+        //support only in WebGl rendering mode
+        return 1;
+    },
+
+    setMaxS:function (maxS) {
+        //support only in WebGl rendering mode
+    },
+
+    /** texture max T */
+    getMaxT:function () {
+        return 1;
+    },
+
+    setMaxT:function (maxT) {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     * return shader program used by drawAtPoint and drawInRect
+     * @return {cc.GLProgram}
+     */
+    getShaderProgram:function () {
+        //support only in WebGl rendering mode
+        return null;
+    },
+
+    /**
+     * set shader program used by drawAtPoint and drawInRect
+     * @param {cc.GLProgram} shaderProgram
+     */
+    setShaderProgram:function (shaderProgram) {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     * whether or not the texture has their Alpha premultiplied
+     * @return {Boolean}
+     */
+    hasPremultipliedAlpha:function () {
+        //support only in WebGl rendering mode
+        return false;
+    },
+
+    hasMipmaps:function () {
+        //support only in WebGl rendering mode
+        return false;
+    },
+
+
+
+    /**
+     * These functions are needed to create mutable textures
+     * @param {Array} data
+     */
+    releaseData:function (data) {
+        //support only in WebGl rendering mode
+        data = null;
+    },
+
+    keepData:function (data, length) {
+        //support only in WebGl rendering mode
+        return data;
+    },
+
+
+
+    /**
+     Drawing extensions to make it easy to draw basic quads using a CCTexture2D object.
+     These functions require gl.TEXTURE_2D and both gl.VERTEX_ARRAY and gl.TEXTURE_COORD_ARRAY client states to be enabled.
+     */
+
+    /**
+     * draws a texture at a given point
+     * @param {cc.Point} point
+     */
+    drawAtPoint:function (point) {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     * draws a texture inside a rect
+     * @param {cc.Rect} rect
+     */
+    drawInRect:function (rect) {
+        //support only in WebGl rendering mode
+    },
+
+
+
+    /**
+     * Initializes a texture from a ETC file  (note: initWithETCFile does not support on HTML5)
+     * @note Compatible to Cocos2d-x
+     * @param {String} file
+     * @return {Boolean}
+     */
+    initWithETCFile:function (file) {
+        //support only in WebGl rendering mode
+        return false;
+    },
+
+    /**
+     * Initializes a texture from a PVR file
+     * @param {String} file
+     * @return {Boolean}
+     */
+    initWithPVRFile:function (file) {
+        //support only in WebGl rendering mode
+        return false;
+    },
+
+    /**
+     Extensions to make it easy to create a cc.Texture2D object from a PVRTC file
+     Note that the generated textures don't have their alpha premultiplied - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
+     */
+    /**
+     * Initializes a texture from a PVRTC buffer
+     * @note compatible to cocos2d-iphone interface.
+     * @param {Array} data
+     * @param {Number} level
+     * @param {Number} bpp
+     * @param {Boolean} hasAlpha
+     * @param {Number} length
+     * @param {Number} pixelFormat
+     * @return {Boolean}
+     */
+    initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
+        //support only in WebGl rendering mode
+        return true;
+    },
+
+    /**
+     * sets the min filter, mag filter, wrap s and wrap t texture parameters. <br/>
+     * If the texture size is NPOT (non power of 2), then in can only use gl.CLAMP_TO_EDGE in gl.TEXTURE_WRAP_{S,T}.
+     * @param texParams
+     */
+    setTexParameters:function (texParams) {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     * sets antialias texture parameters:              <br/>
+     *  - GL_TEXTURE_MIN_FILTER = GL_NEAREST           <br/>
+     *  - GL_TEXTURE_MAG_FILTER = GL_NEAREST
+     */
+    setAntiAliasTexParameters:function () {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     *  sets alias texture parameters:
+     *   GL_TEXTURE_MIN_FILTER = GL_NEAREST
+     *   GL_TEXTURE_MAG_FILTER = GL_NEAREST
+     */
+    setAliasTexParameters:function () {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     *  Generates mipmap images for the texture.<br/>
+     *  It only works if the texture size is POT (power of 2).
+     */
+    generateMipmap:function () {
+        //support only in WebGl rendering mode
+    },
+
+    /**
+     * returns the pixel format.
+     * @return {String}
+     */
+    stringForFormat:function () {
+        //support only in WebGl rendering mode
+        return "";
+    },
+
+    /**
+     * returns the bits-per-pixel of the in-memory OpenGL texture
+     * @return {Number}
+     */
+    bitsPerPixelForFormat:function (format) {
+        //support only in WebGl rendering mode
+          return -1;
+    }
+
+});
+
+cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
 /**
  * <p>
