@@ -67,9 +67,9 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
      * @param {object} userInfo
      */
     initWithSpriteFrame:function (spriteFrame, delayUnits, userInfo) {
-        this.setSpriteFrame(spriteFrame);
-        this.setDelayUnits(delayUnits);
-        this.setUserInfo(userInfo);
+        this._spriteFrame = spriteFrame;
+        this._delayPerUnit = delayUnits;
+        this._userInfo = userInfo;
 
         return true;
     },

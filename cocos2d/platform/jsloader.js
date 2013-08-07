@@ -217,7 +217,7 @@
             '../extensions/PluginX/plugins/SocialQQWeibo.js',
             '../extensions/PluginX/plugins/SocialQzone.js',
             '../extensions/PluginX/plugins/SocialTwitter.js',
-            '../extensions/PluginX/plugins/SocialFacebook.js',
+            '../extensions/PluginX/plugins/SocialFacebook.js'
             //'../extensions/PluginX/plugins/AdsGoogle.js'
         ]);
     }

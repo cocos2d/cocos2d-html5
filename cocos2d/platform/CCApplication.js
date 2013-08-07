@@ -94,8 +94,8 @@ cc.WEBGL = 1;
 cc.drawingUtil = null;
 
 /**
- * main Canvas 2D Context of game engine
- * @type CanvasContext
+ * main Canvas 2D/3D Context of game engine
+ * @type CanvasRenderingContext2D|WebGLRenderingContext
  */
 cc.renderContext = null;
 
@@ -208,11 +208,12 @@ cc.setup = function (el, width, height) {
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
-        gl = cc.renderContext; // global variable declared in CCMacro.js
+        window.gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc.TextureCache.getInstance()._initializingRenderer();
     } else {
         cc.renderContext = cc.canvas.getContext("2d");
+        cc.mainRenderContextBackup = cc.renderContext;
         cc.renderContextType = cc.CANVAS;
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
@@ -341,17 +342,17 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         if (!this.applicationDidFinishLaunching())
             return 0;
 
-        var callback;
-        if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
+        var callback, director = cc.Director.getInstance(), w = window;
+        if (w.requestAnimFrame && this._animationInterval == 1 / 60) {
             callback = function () {
-                cc.Director.getInstance().mainLoop();
-                window.requestAnimFrame(callback);
+                director.mainLoop();
+                w.requestAnimFrame(callback);
             };
-            cc.log(window.requestAnimFrame);
-            window.requestAnimFrame(callback);
+            //cc.log(window.requestAnimFrame);
+            w.requestAnimFrame(callback);
         } else {
             callback = function () {
-                cc.Director.getInstance().mainLoop();
+                director.mainLoop();
             };
             setInterval(callback, this._animationInterval * 1000);
         }

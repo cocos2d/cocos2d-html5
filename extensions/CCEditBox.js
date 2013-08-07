@@ -417,7 +417,7 @@ cc.EditBox = cc.ControlButton.extend({
             this.setZoomOnTouchDown(false);
             this.setPreferredSize(size);
             this.setPosition(cc.p(0, 0));
-            this.addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
+            this._addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
             return true;
         }
         return false;

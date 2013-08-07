@@ -47,10 +47,10 @@ cc.Acceleration = function (x, y, z, timestamp) {
  * @extends cc.Class
  */
 cc.Accelerometer = cc.Class.extend(/** @lends cc.Accelerometer# */{
-    setDelegate:function (delegate) {
+    setDelegate: function (delegate) {
         cc.AccelerometerDispatcher.getInstance().addDelegate(delegate);
     },
-    setAccelerometerInterval:function (interval) {
+    setAccelerometerInterval: function (interval) {
         cc.AccelerometerDispatcher.getInstance().setAccelerometerInterval(interval);
     }
 });
@@ -63,31 +63,31 @@ cc.Accelerometer = cc.Class.extend(/** @lends cc.Accelerometer# */{
  * @extends cc.Class
  */
 cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatcher# */{
-    _delegate:null,
-    _acceleration:null,
-    _deviceEvent:null,
-    //_orientation:0,
-    _interval:0.1,
-    _minus:1,
-    init:function () {
+    _delegate: null,
+    _acceleration: null,
+    _deviceEvent: null,
+    _interval: 0,
+    _minus: 1,
+    init: function () {
         this._acceleration = new cc.Acceleration();
         this._deviceEvent = window.DeviceMotionEvent || window.DeviceOrientationEvent;
         var ua = navigator.userAgent;
-        if(/Android/.test(ua)){
+        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.Browser.type == "ucbrowser")) {
             this._minus = -1;
         }
+
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
-        /*if(ua.indexOf("qqbrowser")){
+        if (cc.Browser.type == "mqqbrowser") {
             this._deviceEvent = window.DeviceOrientationEvent;
-        }*/
+        }
         return true;
     },
 
-    getDelegate:function () {
+    getDelegate: function () {
         return this._delegate;
     },
 
-    addDelegate:function (delegate) {
+    addDelegate: function (delegate) {
         this._delegate = delegate;
         var acc = this.didAccelerate.bind(this);
 
@@ -109,17 +109,19 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
         }
     },
 
-    setAccelerometerInterval:function (interval) {
-        //not available on browser
+    setAccelerometerInterval: function (interval) {
         if (this._interval !== interval) {
             this._interval = interval;
         }
     },
 
-    didAccelerate:function (eventData) {
+    didAccelerate: function (eventData) {
         if (!this._delegate) {
             return;
         }
+
+        var now = Date.now();
+         if ((now - this._acceleration.timestamp) / 1000 < this._interval) return;
 
         if (this._deviceEvent == window.DeviceMotionEvent) {
             var acceleration = eventData.accelerationIncludingGravity;
@@ -132,7 +134,6 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
             this._acceleration.y = -(eventData.beta / 90) * 0.981;
             this._acceleration.z = (eventData.alpha / 90) * 0.981;
         }
-
         this._acceleration.timestamp = Date.now();
 
         var tmp = this._acceleration.x;

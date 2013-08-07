@@ -486,6 +486,10 @@ cc.BuilderReader = cc.Class.extend({
         this._actionManager.addDocumentCallbackNode(node);
     },
 
+    addDocumentCallbackControlEvents:function(controlEvents){
+        this._actionManager.addDocumentCallbackControlEvents(controlEvents);
+    },
+
     readFileWithCleanUp:function (cleanUp) {
         if (!this._readHeader())
             return null;
@@ -918,7 +922,7 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
 
     var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
     var i;
-    var callbackName, callbackNode, outletName, outletNode;
+    var callbackName, callbackNode, callbackControlEvents, outletName, outletNode;
     // Assign owner callbacks & member variables
     if (owner) {
         // Callbacks
@@ -927,7 +931,10 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
         for (i = 0; i < ownerCallbackNames.length; i++) {
             callbackName = ownerCallbackNames[i];
             callbackNode = ownerCallbackNodes[i];
-            callbackNode.setCallback(owner[callbackName], owner);
+            if(callbackNode instanceof cc.ControlButton)
+                callbackNode.addTargetWithActionForControlEvents(owner, owner[callbackName], 255);        //register all type of events
+            else
+                callbackNode.setCallback(owner[callbackName], owner);
         }
 
         // Variables
@@ -966,11 +973,15 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
         // Callbacks
         var documentCallbackNames = animationManager.getDocumentCallbackNames();
         var documentCallbackNodes = animationManager.getDocumentCallbackNodes();
+        var documentCallbackControlEvents = animationManager.getDocumentCallbackControlEvents();
         for (j = 0; j < documentCallbackNames.length; j++) {
             callbackName = documentCallbackNames[j];
             callbackNode = documentCallbackNodes[j];
-
-            callbackNode.setCallback(controller[callbackName], controller);
+            callbackControlEvents = documentCallbackControlEvents[j];
+            if(callbackNode instanceof cc.ControlButton)
+                callbackNode.addTargetWithActionForControlEvents(controller, controller[callbackName], callbackControlEvents);        //register all type of events
+            else
+                callbackNode.setCallback(controller[callbackName], controller);
         }
 
         // Variables

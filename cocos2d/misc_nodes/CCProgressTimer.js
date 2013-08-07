@@ -165,10 +165,10 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
     },
 
     /// ---- common properties end   ----
-    _origin:cc.PointZero(),
-    _originSize:cc.SizeZero(),
-    _drawSize:cc.SizeZero(),
-    _drawPosition:cc.PointZero(),
+    _origin:null,
+    _originSize:null,
+    _drawSize:null,
+    _drawPosition:null,
     _startAngle:270,
     _endAngle:270,
     _radius:0,
@@ -365,8 +365,7 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
         var textureSize = this._sprite.getTextureRect().size;
         var locMidPoint = this._midPoint;
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
-
-            this._origin = cc.p(-(size.width * (0.5 - locMidPoint.x)), -(size.height * (0.5 - locMidPoint.y)));
+            this._origin = cc.p(-(size.width * (0.5 - locMidPoint.x)), -(size.height * (locMidPoint.y - 0.5)));
             this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
             if (this._reverseDirection) {
                 this._startAngle = 270 - 3.6 * this._percentage;

@@ -111,7 +111,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     },
 
     _setColorStyleStr:function () {
-        this._colorStyleStr = "rgba(" + this._textFillColor.r + "," + this._textFillColor.g + "," + this._textFillColor.b + ", " + this._realOpacity / 255 + ")";
+        var locFillColor = this._textFillColor;
+        this._colorStyleStr = "rgba(" + locFillColor.r + "," + locFillColor.g + "," + locFillColor.b + ", " + this._realOpacity / 255 + ")";
     },
 
     /**
@@ -201,8 +202,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
-            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
+            this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
+            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
             this.setString(strInfo);
             return true;
         }
@@ -258,9 +259,10 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
          if (false === this._shadowEnabled)
             this._shadowEnabled = true;
 
-        if ((this._shadowOffset.width != shadowOffset.width) || (this._shadowOffset.height != shadowOffset.height)) {
-            this._shadowOffset.width  = shadowOffset.width;
-            this._shadowOffset.height = shadowOffset.height;
+        var locShadowOffset = this._shadowOffset;
+        if ((locShadowOffset.width != shadowOffset.width) || (locShadowOffset.height != shadowOffset.height)) {
+            locShadowOffset.width  = shadowOffset.width;
+            locShadowOffset.height = shadowOffset.height;
         }
 
         if (this._shadowOpacity != shadowOpacity )
@@ -615,42 +617,6 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         cc.INCREMENT_GL_DRAWS(1);
     }
 });
-
-cc.LabelTTFCanvas._textAlign = ["left", "center", "right"];
-
-cc.LabelTTFCanvas._textBaseline = ["top", "middle", "bottom"];
-
-/**
- * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
- * @param {String} label
- * @param {String} fontName
- * @param {Number} fontSize
- * @param {cc.Size} dimensions
- * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
- * @return {cc.LabelTTF|Null}
- * @example
- * // Example
- * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
- */
-cc.LabelTTFCanvas.create = function (/* Multi arguments */) {
-    var ret = new cc.LabelTTFCanvas();
-    if (ret.initWithString(arguments))
-        return ret;
-    return null;
-};
-
-/**
- * Create a label with string and a font definition
- * @param {String} text
- * @param {cc.FontDefinition} textDefinition
- * @return {cc.LabelTTF|Null}
- */
-cc.LabelTTFCanvas.createWithFontDefinition = function(text, textDefinition){
-    var ret = new cc.LabelTTF();
-    if(ret && ret.initWithStringAndTextDefinition(text, textDefinition))
-        return ret;
-    return null;
-};
 
 /**
  * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels (WebGL implement)<br/>
@@ -1413,9 +1379,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     }
 });
 
-cc.LabelTTFWebGL._textAlign = ["left", "center", "right"];
+cc.LabelTTF = (cc.Browser.supportWebGL) ? cc.LabelTTFWebGL : cc.LabelTTFCanvas;
 
-cc.LabelTTFWebGL._textBaseline = ["top", "middle", "bottom"];
+cc.LabelTTF._textAlign = ["left", "center", "right"];
+
+cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 
 /**
  * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
@@ -1429,8 +1397,8 @@ cc.LabelTTFWebGL._textBaseline = ["top", "middle", "bottom"];
  * // Example
  * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
  */
-cc.LabelTTFWebGL.create = function (/* Multi arguments */) {
-    var ret = new cc.LabelTTFWebGL();
+cc.LabelTTF.create = function (/* Multi arguments */) {
+    var ret = new cc.LabelTTF();
     if (ret.initWithString(arguments))
         return ret;
     return null;
@@ -1442,14 +1410,12 @@ cc.LabelTTFWebGL.create = function (/* Multi arguments */) {
  * @param {cc.FontDefinition} textDefinition
  * @return {cc.LabelTTF|Null}
  */
-cc.LabelTTFWebGL.createWithFontDefinition = function(text, textDefinition){
+cc.LabelTTF.createWithFontDefinition = function(text, textDefinition){
     var ret = new cc.LabelTTF();
     if(ret && ret.initWithStringAndTextDefinition(text, textDefinition))
         return ret;
     return null;
 };
-
-cc.LabelTTF = (cc.Browser.supportWebGL) ? cc.LabelTTFWebGL : cc.LabelTTFCanvas;
 
 if(cc.USE_LA88_LABELS)
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;

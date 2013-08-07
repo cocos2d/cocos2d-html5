@@ -490,7 +490,7 @@ cc.ControlButton = cc.Control.extend({
      * If a property is not specified for a state, the default is to use
      * the CCButtonStateNormal value.
      *
-     * @param title The title label to use for the specified state.
+     * @param titleLabel The title label to use for the specified state.
      * @param state The state that uses the specified title. The values are described
      * in "CCControlState".
      */
