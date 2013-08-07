@@ -948,6 +948,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
                 var size = texture.getContentSize();
                 rect = cc.rect(0, 0, size.width, size.height);
             }
+            return this.initWithTexture(texture, rect);
         }
         return false;
     },
@@ -1196,7 +1197,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
      */
     setTexture:function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.Assert(!texture || texture instanceof HTMLImageElement || texture instanceof HTMLCanvasElement, "setTexture expects a CCTexture2D. Invalid argument");
+        cc.Assert(!texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
 
         if (this._texture != texture) {
             if(texture&&texture.getHtmlElementObj() instanceof  HTMLImageElement){
@@ -1208,14 +1209,15 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
 
     _changeTextureColor:function () {
         if (this.getTexture()) {
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
+            var locTexture = this._originalTexture;
+            var locElement = locTexture.getHtmlElementObj();
+            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(locElement);
             if (cacheTextureForColor) {
                 this._colorized = true;
                 //generate color texture cache
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
                     cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, this.getTextureRect(), locElement);
                 else {
-
                     locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, this.getTextureRect());
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
