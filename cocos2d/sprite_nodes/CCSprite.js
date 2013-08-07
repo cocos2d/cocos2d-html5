@@ -478,18 +478,19 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
 
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var j, tempItem, locChildren = this._children;
+            var j, tempItem, locChildren = this._children, tempChild;
             for (var i = 1; i < locChildren.length; i++) {
                 tempItem = locChildren[i];
                 j = i - 1;
+                tempChild =  locChildren[j];
 
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but orderOfArrival is smaller
-                while (j >= 0 && ( tempItem.getZOrder() < locChildren[j].getZOrder() || ( tempItem.getZOrder() === locChildren[j].getZOrder()
-                    && tempItem.getOrderOfArrival() < locChildren[j].getOrderOfArrival() ) )) {
-                    locChildren[j + 1] = locChildren[j];
+                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
+                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
+                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    tempChild =  locChildren[j];
+                    locChildren[j + 1] = tempChild;
                     j = j - 1;
                 }
-
                 locChildren[j + 1] = tempItem;
             }
 
@@ -1522,15 +1523,17 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
 
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var j, tempItem, locChildren = this._children;
+            var j, tempItem, locChildren = this._children, tempChild;
             for (var i = 1; i < locChildren.length; i++) {
                 tempItem = locChildren[i];
                 j = i - 1;
+                tempChild =  locChildren[j];
 
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but orderOfArrival is smaller
-                while (j >= 0 && ( tempItem.getZOrder() < locChildren[j].getZOrder() || ( tempItem.getZOrder() === locChildren[j].getZOrder()
-                    && tempItem.getOrderOfArrival() < locChildren[j].getOrderOfArrival() ) )) {
-                    locChildren[j + 1] = locChildren[j];
+                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
+                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
+                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    tempChild =  locChildren[j];
+                    locChildren[j + 1] = tempChild;
                     j = j - 1;
                 }
                 locChildren[j + 1] = tempItem;
