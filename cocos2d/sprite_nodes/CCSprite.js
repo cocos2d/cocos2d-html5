@@ -931,6 +931,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         var selfPointer = this;
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
+            filename = cc.FileUtils.getInstance().fullPathForFilename(filename);
             this._visible = false;
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
@@ -2002,6 +2003,7 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
 
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
+            filename = cc.FileUtils.getInstance().fullPathForFilename(filename);
             this._visible = false;
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
