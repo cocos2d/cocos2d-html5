@@ -734,16 +734,15 @@ cc.ScrollView = cc.Layer.extend({
             this._scissorRestored = false;
             var frame = this._getViewRect();
 
-            var screenPos;
-            var scaleValue = this.getScale();
+            var scaleX = this.getScaleX();
+            var scaleY = this.getScaleY();
 
             var ctx = context || cc.renderContext;
             if (cc.renderContextType === cc.CANVAS) {
-                screenPos = this.getParent().getPosition();
-                var getWidth = (this._viewSize.width * scaleValue);
-                var getHeight = (this._viewSize.height * scaleValue);
-                var startX = screenPos.x * scaleValue;
-                var startY = screenPos.y * scaleValue;// + this._anchorPointInPoints.y;
+                var getWidth = (this._viewSize.width * scaleX);
+                var getHeight = (this._viewSize.height * scaleY);
+                var startX = 0;
+                var startY = 0;
 
                 ctx.beginPath();
                 ctx.rect(startX, startY, getWidth, -getHeight);
