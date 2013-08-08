@@ -295,7 +295,9 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
                     delete that._textures[path];
             });
             texture.src = path;
-            this._textures[path] = texture;
+            var texture2d = new cc.Texture2D();
+            texture2d.initWithElement(texture);
+            this._textures[path] = texture2d;
         }
         return this._textures[path];
     },
@@ -327,6 +329,8 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
             var that = this;
             texture.addEventListener("load", function () {
                 cc.Loader.getInstance().onResLoaded();
+                if (that._textures.hasOwnProperty(path))
+                    that._textures[path].handleLoadedTexture();
             });
             texture.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
@@ -335,7 +339,9 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
                     delete that._textures[path];
             });
             texture.src = path;
-            this._textures[path] = texture;
+            var texture2d = new cc.Texture2D();
+            texture2d.initWithElement(texture);
+            this._textures[path] = texture2d;
         }
 
         return this._textures[path];
@@ -347,7 +353,14 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
      * @param {Image|HTMLImageElement|HTMLCanvasElement} texture
      */
     cacheImage:function (path, texture) {
-        this._textures[path] = texture;
+        if(texture instanceof  cc.Texture2D){
+            this._textures[path] = texture;
+            return ;
+        }
+        var texture2d = new cc.Texture2D();
+        texture2d.initWithElement(texture);
+        texture2d.handleLoadedTexture();
+        this._textures[path] = texture2d;
     },
 
     /**
@@ -363,16 +376,19 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
     addUIImage:function (image, key) {
         cc.Assert(image != null, "TextureCache: image MUST not be nulll");
 
-        if (key && this._textures.hasOwnProperty(key) && this._textures[key])
-            return this._textures[key];
+        if (key) {
+            if (this._textures.hasOwnProperty(key) && this._textures[key])
+                return this._textures[key];
+        }
 
         // prevents overloading the autorelease pool
-        if ((key != null) && (image != null))
-            this._textures[key] = image;
+        var texture = new cc.Texture2D();
+        texture.initWithImage(image);
+        if ((key != null) && (texture != null))
+            this._textures[key] = texture;
         else
             cc.log("cocos2d: Couldn't add UIImage in TextureCache");
-
-        return image;
+        return texture;
     },
 
     /**
@@ -385,19 +401,19 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
         for (var key in this._textures) {
             var selTexture = this._textures[key];
             count++;
-            if (selTexture instanceof  HTMLImageElement)
-                cc.log("cocos2d: '" + key + "' id=" + selTexture.src + " " + selTexture.width + " x " + selTexture.height);
+            if (selTexture.getHtmlElementObj() instanceof  HTMLImageElement)
+                cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
             else {
-                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.width + " x " + selTexture.height);
-                totalBytes += selTexture.width * selTexture.height * 4;
+                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
+                totalBytes += selTexture.getPixelsWide() * selTexture.getPixelsHigh() * 4;
             }
         }
 
         for (key in this._textureColorsCache) {
             var selCanvas = this._textureColorsCache[key];
             count++;
-            cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selCanvas.width + " x " + selCanvas.height);
-            totalBytes += selCanvas.width * selCanvas.height * 4;
+            cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selCanvas.getPixelsWide() + " x " + selCanvas.getPixelsHigh());
+            totalBytes += selCanvas.getPixelsWide() * selCanvas.getPixelsHigh() * 4;
         }
 
         cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, HTMLCanvasElement for "
