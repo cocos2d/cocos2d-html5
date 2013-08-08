@@ -165,10 +165,10 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
     },
 
     /// ---- common properties end   ----
-    _origin:cc.PointZero(),
-    _originSize:cc.SizeZero(),
-    _drawSize:cc.SizeZero(),
-    _drawPosition:cc.PointZero(),
+    _origin:null,
+    _originSize:null,
+    _drawSize:null,
+    _drawPosition:null,
     _startAngle:270,
     _endAngle:270,
     _radius:0,
@@ -311,21 +311,22 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
         var pos;
         var offsetPixels = locSprite._offsetPosition, locSpriteTexture = locSprite._texture, locSpriteRect = locSprite._rect;
         var locOrigin = this._origin;
+        var locElement = locSpriteTexture.getHtmlElementObj();
         if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
             pos = cc.p(( -spriteAnchorPoint.x + offsetPixels.x + this._drawPosition.x),
                 ( -spriteAnchorPoint.y + offsetPixels.y + this._drawPosition.y));
             var locOriginSize = this._originSize;
-            if (locSpriteTexture instanceof HTMLImageElement) {
+            if (locElement instanceof HTMLImageElement) {
                 if ((locOriginSize.width != 0) && (locOriginSize.height != 0)) {
-                    context.drawImage(locSpriteTexture,
+                    context.drawImage(locElement,
                         locSpriteRect.x + locOrigin.x, locSpriteRect.y + locOrigin.y,
                         locOriginSize.width, locOriginSize.height,
                         pos.x, -(pos.y + this._drawSize.height),
                         locOriginSize.width, locOriginSize.height);
                 }
-            } else if (locSpriteTexture instanceof  HTMLCanvasElement) {
+            } else if (locElement instanceof  HTMLCanvasElement) {
                 if ((locOriginSize.width != 0) && (locOriginSize.height != 0)) {
-                    context.drawImage(locSpriteTexture,
+                    context.drawImage(locElement,
                         locOrigin.x, locOrigin.y,
                         locOriginSize.width, locOriginSize.height,
                         pos.x, -(pos.y + this._drawSize.height),
@@ -342,14 +343,14 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
             pos = cc.p(0 | ( -spriteAnchorPoint.x + offsetPixels.x),
                 0 | ( -spriteAnchorPoint.y + offsetPixels.y));
 
-            if (locSpriteTexture instanceof HTMLImageElement) {
-                context.drawImage(locSpriteTexture,
+            if (locElement instanceof HTMLImageElement) {
+                context.drawImage(locElement,
                     locSpriteRect.x, locSpriteRect.y,
                     locSpriteRect.width, locSpriteRect.height,
                     pos.x, -(pos.y + locSpriteRect.height),
                     locSpriteRect.width, locSpriteRect.height);
-            } else if (locSpriteTexture instanceof  HTMLCanvasElement) {
-                context.drawImage(locSpriteTexture,
+            } else if (locElement instanceof  HTMLCanvasElement) {
+                context.drawImage(locElement,
                     0, 0,
                     locSpriteRect.width, locSpriteRect.height,
                     pos.x, -(pos.y + locSpriteRect.height),
@@ -364,8 +365,7 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
         var textureSize = this._sprite.getTextureRect().size;
         var locMidPoint = this._midPoint;
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
-
-            this._origin = cc.p(-(size.width * (0.5 - locMidPoint.x)), -(size.height * (0.5 - locMidPoint.y)));
+            this._origin = cc.p(-(size.width * (0.5 - locMidPoint.x)), -(size.height * (locMidPoint.y - 0.5)));
             this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
             if (this._reverseDirection) {
                 this._startAngle = 270 - 3.6 * this._percentage;

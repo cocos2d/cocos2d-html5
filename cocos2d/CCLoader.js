@@ -437,14 +437,11 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     },
 
     _initStage: function (centerPos) {
-        if (cc.renderContextType === cc.CANVAS) {
-            this._logo = cc.Sprite.createWithTexture(this._logoTexture);
-        } else {
-            this._texture2d = new cc.Texture2D();
-            this._texture2d.initWithElement(this._logoTexture);
-            this._texture2d.handleLoadedTexture();
-            this._logo = cc.Sprite.createWithTexture(this._texture2d);
-        }
+        this._texture2d = new cc.Texture2D();
+        this._texture2d.initWithElement(this._logoTexture);
+        this._texture2d.handleLoadedTexture();
+        this._logo = cc.Sprite.createWithTexture(this._texture2d);
+
         this._logo.setPosition(centerPos);
         this._bgLayer.addChild(this._logo, 10);
 

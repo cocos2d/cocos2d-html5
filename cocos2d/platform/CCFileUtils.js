@@ -158,6 +158,7 @@ cc.FileUtils = cc.Class.extend({
      * @warning If you get the file data succeed,you must delete it after used.
      */
     getByteArrayFromFile:function (fileName, mode, size) {
+        fileName = this.fullPathForFilename(fileName);
         if (this._fileDataCache.hasOwnProperty(fileName))
             return this._fileDataCache[fileName];
         return this._loadBinaryFileData(fileName);
@@ -177,7 +178,7 @@ cc.FileUtils = cc.Class.extend({
     },
 
     preloadBinaryFileData:function (fileUrl) {
-        fileUrl = this.fullPathFromRelativePath(fileUrl);
+        fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
         var xhr = this._getXMLHttpRequest();
@@ -254,7 +255,7 @@ cc.FileUtils = cc.Class.extend({
     },
 
     preloadTextFileData:function (fileUrl) {
-        fileUrl = this.fullPathFromRelativePath(fileUrl);
+        fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
         var xhr = this._getXMLHttpRequest();

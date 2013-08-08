@@ -59,9 +59,10 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
     _upZ:null,
 
     _dirty:null,
-    _lookupMatrix:new cc.kmMat4(),
+    _lookupMatrix:null,
 
     ctor:function () {
+        this._lookupMatrix = new cc.kmMat4();
         this.restore();
     },
 

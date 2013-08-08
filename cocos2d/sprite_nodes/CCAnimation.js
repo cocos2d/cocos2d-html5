@@ -67,9 +67,9 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
      * @param {object} userInfo
      */
     initWithSpriteFrame:function (spriteFrame, delayUnits, userInfo) {
-        this.setSpriteFrame(spriteFrame);
-        this.setDelayUnits(delayUnits);
-        this.setUserInfo(userInfo);
+        this._spriteFrame = spriteFrame;
+        this._delayPerUnit = delayUnits;
+        this._userInfo = userInfo;
 
         return true;
     },
@@ -199,11 +199,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
     addSpriteFrameWithFile:function (fileName) {
         var texture = cc.TextureCache.getInstance().addImage(fileName);
         var rect = cc.RectZero();
-        if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
-            rect.size = cc.size(texture.width, texture.height);
-        } else {
-            rect.size = texture.getContentSize();
-        }
+        rect.size = texture.getContentSize();
         var frame = cc.SpriteFrame.createWithTexture(texture, rect);
         this.addSpriteFrame(frame);
     },

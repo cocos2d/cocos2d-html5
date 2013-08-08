@@ -36,7 +36,6 @@
  * cc.AnimationCache.getInstance().addAnimation(animation,"animation1");
  */
 cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
-
     /**
      * Adds a cc.Animation with a name.
      * @param {cc.Animation} animation
