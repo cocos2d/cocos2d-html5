@@ -1008,8 +1008,6 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         if (!rect) {
             rect = cc.rect(0, 0, 0, 0);
             rect.size = texture.getContentSize();
-                rect = cc.RECT_PIXELS_TO_POINTS(rect);
-            }
         }
         this._originalTexture = texture;
 
@@ -1274,11 +1272,11 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,
-                    0, 0, locRect.width * scaleFactor, locRect.height * scaleFactor,
+                    0, 0, locRect.width , locRect.height ,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(image,
-                    locRect.x * scaleFactor, locRect.y * scaleFactor, locRect.width * scaleFactor, locRect.height * scaleFactor,
+                    locRect.x , locRect.y , locRect.width , locRect.height ,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (this._contentSize.width !== 0) {
