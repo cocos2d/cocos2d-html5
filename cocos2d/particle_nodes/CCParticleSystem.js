@@ -1454,10 +1454,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
 
-                        if (cc.renderContextType === cc.CANVAS)
-                            this.setTexture(canvasObj);
-                        else
-                            this.setTexture(addTexture);
+                        this.setTexture(addTexture);
                     }
                 }
 
