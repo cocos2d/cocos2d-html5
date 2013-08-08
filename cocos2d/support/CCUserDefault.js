@@ -69,6 +69,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @return {Boolean}
      */
     getBoolForKey:function (key, defaultValue) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.getItem instead of getBoolForKey.");
         var value = this._getValueForKey(key);
         var ret = defaultValue || false;
         if (value == "true") {
@@ -93,6 +94,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @return {Number}
      */
     getIntegerForKey:function (key, defaultValue) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.getItem instead of getIntegerForKey.");
         var value = this._getValueForKey(key);
         var ret = defaultValue || 0;
 
@@ -112,6 +114,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @return {Number}
      */
     getFloatForKey:function (key, defaultValue) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.getItem instead of getFloatForKey.");
         var value = this._getValueForKey(key);
         var ret = defaultValue || 0;
 
@@ -131,6 +134,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @return {Number}
      */
     getDoubleForKey:function (key, defaultValue) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.getItem instead of getDoubleForKey.");
         return this.getFloatForKey(key, defaultValue);
     },
 
@@ -143,6 +147,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @return {String}
      */
     getStringForKey:function (key, defaultValue) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.getItem instead of getStringForKey.");
         var value = this._getValueForKey(key);
         var ret = defaultValue || "";
 
@@ -169,6 +174,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @param {Boolean} value
      */
     setBoolForKey:function (key, value) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.setItem instead of setBoolForKey.");
         // save bool value as sring
         this.setStringForKey(key, String(value));
     },
@@ -180,6 +186,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @param {Number} value
      */
     setIntegerForKey:function (key, value) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.setItem instead of setIntegerForKey.");
         // check key
         if (!key) {
             return;
@@ -195,6 +202,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @param {Number} value
      */
     setFloatForKey:function (key, value) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.setItem instead of setFloatForKey.");
         // check key
         if (!key) {
             return;
@@ -210,6 +218,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @param {Number} value
      */
     setDoubleForKey:function (key, value) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.setItem instead of setDoubleForKey.");
         return this.setFloatForKey(key, value);
     },
 
@@ -220,6 +229,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      * @param {String} value
      */
     setStringForKey:function (key, value) {
+        cc.log("cc.UserDefault will not be supported in the future,i suggest you to use sys.localStorage.setItem instead of setStringForKey.");
         // check key
         if (!key) {
             return;
