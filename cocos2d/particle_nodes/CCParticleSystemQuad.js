@@ -559,15 +559,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
                     var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
                     if (cacheTextureForColor) {
-                        // Create another cache for the tinted version
-                        // This speeds up things by a fair bit
-                        if (!cacheTextureForColor.tintCache) {
-                            cacheTextureForColor.tintCache = document.createElement('canvas');
-                            cacheTextureForColor.tintCache.width = drawTexture.width;
-                            cacheTextureForColor.tintCache.height = drawTexture.height;
-                        }
-                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
-                        drawTexture = cacheTextureForColor.tintCache;
+                        drawTexture = cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect);
                     }
                 }
 

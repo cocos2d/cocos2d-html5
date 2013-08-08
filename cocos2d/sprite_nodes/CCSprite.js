@@ -161,7 +161,7 @@ cc.generateTintImage2 = function (texture, color, rect) {
  * @param {HTMLCanvasElement} [renderCanvas]
  * @return {HTMLCanvasElement}
  */
-cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas) {
+cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
     if (!rect)
         rect = cc.rect(0, 0, texture.width, texture.height);
 
@@ -175,19 +175,34 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
 
     var w = Math.min(rect.width, tintedImgCache[0].width);
     var h = Math.min(rect.height, tintedImgCache[0].height);
-    var buff = renderCanvas;
-    var ctx;
 
-    // Create a new buffer if required
-    if (!buff) {
-        buff = document.createElement("canvas");
-        buff.width = w;
-        buff.height = h;
-        ctx = buff.getContext("2d");
-    } else {
-        ctx = buff.getContext("2d");
-        ctx.clearRect(0, 0, w, h);
+    var originalKey = cc.TextureCache.getInstance().getKeyByTexture(texture);
+    var colorKey;
+    if(originalKey) {
+        var sliceInd = originalKey.lastIndexOf("__COLORED__");
+        if(sliceInd >= 0) {
+            originalKey = originalKey.slice(0,sliceInd);
+        }
+        colorKey = originalKey+"__COLORED__r"+color.r+
+                        "g"+color.g+
+                        "b"+color.b+
+                        "x"+rect.x+
+                        "y"+rect.y+
+                        "width"+rect.width+
+                        "height"+rect.height;
+        var cachedColorTexture = cc.TextureCache.getInstance().textureForKey(colorKey, true);
+        if(cachedColorTexture) {
+            return cachedColorTexture;
+        }
     }
+
+    // Create a new buffer
+    var buff;
+    var ctx;
+    buff = document.createElement("canvas");
+    buff.width = w;
+    buff.height = h;
+    ctx = buff.getContext("2d");
 
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
@@ -210,6 +225,10 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
     if((selColor.r === 0) && (selColor.g === 0) &&(selColor.b === 0)){
         ctx.globalAlpha = a;
         ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
+    }
+
+    if(originalKey) {
+        cc.TextureCache.getInstance().cacheImage(colorKey, buff);
     }
 
     ctx.restore();
@@ -1230,14 +1249,10 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
             if (cacheTextureForColor) {
                 this._colorized = true;
-                //generate color texture cache
                 var rect = cc.RECT_POINTS_TO_PIXELS(this._rect);
-                if (this._texture instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._displayedColor, rect, this._texture);
-                else {
-                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._displayedColor, rect);
-                    this.setTexture(colorTexture);
-                }
+                //fetch from cache or generate color texture cache
+                var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, rect);
+                this.setTexture(colorTexture);
             }
         }
     },
