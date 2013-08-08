@@ -277,26 +277,37 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
         cc.Assert(path != null, "TextureCache: path MUST not be null");
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
         var texture = this._textures[path];
-
+        var image;
         if (texture) {
-            this._addImageAsyncCallBack(target, selector);
+            if(texture.isLoaded()){
+                this._addImageAsyncCallBack(target, selector);
+            }else{
+                var that = this;
+                image = texture.getHtmlElementObj();
+                image.addEventListener("load", function () {
+                    texture.handleLoadedTexture();
+                    that._addImageAsyncCallBack(target, selector);
+                });
+            }
         } else {
-            texture = new Image();
-            texture.crossOrigin = "Anonymous";
+            image = new Image();
+            image.crossOrigin = "Anonymous";
 
             var that = this;
-            texture.addEventListener("load", function () {
+            image.addEventListener("load", function () {
+                if (that._textures.hasOwnProperty(path))
+                    that._textures[path].handleLoadedTexture();
                 that._addImageAsyncCallBack(target, selector);
             });
-            texture.addEventListener("error", function () {
+            image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
             });
-            texture.src = path;
+            image.src = path;
             var texture2d = new cc.Texture2D();
-            texture2d.initWithElement(texture);
+            texture2d.initWithElement(image);
             this._textures[path] = texture2d;
         }
         return this._textures[path];
@@ -320,27 +331,36 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
 
         var texture = this._textures[path];
+        var image;
         if (texture) {
-            cc.Loader.getInstance().onResLoaded();
+            if (texture.isLoaded()) {
+                cc.Loader.getInstance().onResLoaded();
+            } else {
+                image = texture.getHtmlElementObj();
+                image.addEventListener("load", function () {
+                    texture.handleLoadedTexture();
+                    cc.Loader.getInstance().onResLoaded();
+                });
+            }
         } else {
-            texture = new Image();
-            texture.crossOrigin = "Anonymous";
+            image = new Image();
+            image.crossOrigin = "Anonymous";
 
             var that = this;
-            texture.addEventListener("load", function () {
+            image.addEventListener("load", function () {
                 cc.Loader.getInstance().onResLoaded();
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
             });
-            texture.addEventListener("error", function () {
+            image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
             });
-            texture.src = path;
+            image.src = path;
             var texture2d = new cc.Texture2D();
-            texture2d.initWithElement(texture);
+            texture2d.initWithElement(image);
             this._textures[path] = texture2d;
         }
 
@@ -668,28 +688,37 @@ cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
         cc.Assert(path != null, "TextureCache: path MUST not be null");
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
         var texture = this._textures[path];
-
+        var image;
         if (texture) {
-            this._addImageAsyncCallBack(target, selector);
+            if(texture.isLoaded()){
+                this._addImageAsyncCallBack(target, selector);
+            }else{
+                var that = this;
+                image = texture.getHtmlElementObj();
+                image.addEventListener("load", function () {
+                    texture.handleLoadedTexture();
+                    that._addImageAsyncCallBack(target, selector);
+                });
+            }
         } else {
-            texture = new Image();
-            texture.crossOrigin = "Anonymous";
+            image = new Image();
+            image.crossOrigin = "Anonymous";
 
             var that = this;
-            texture.addEventListener("load", function () {
+            image.addEventListener("load", function () {
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
                 that._addImageAsyncCallBack(target, selector);
             });
-            texture.addEventListener("error", function () {
+            image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
             });
-            texture.src = path;
+            image.src = path;
             var texture2d = new cc.Texture2D();
-            texture2d.initWithElement(texture);
+            texture2d.initWithElement(image);
             this._textures[path] = texture2d;
         }
         return this._textures[path];
@@ -726,34 +755,43 @@ cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
      */
     addImage:function (path) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
-        if(!this._rendererInitialized)
+        if (!this._rendererInitialized)
             return this._addImageBeforeRenderer(path);
 
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
 
         var texture = this._textures[path];
+        var image;
         if (texture) {
-            cc.Loader.getInstance().onResLoaded();
+            if (texture.isLoaded()) {
+                cc.Loader.getInstance().onResLoaded();
+            } else {
+                image = texture.getHtmlElementObj();
+                image.addEventListener("load", function () {
+                    texture.handleLoadedTexture();
+                    cc.Loader.getInstance().onResLoaded();
+                });
+            }
         } else {
-            texture = new Image();
-            texture.crossOrigin = "Anonymous";
+            image = new Image();
+            image.crossOrigin = "Anonymous";
 
             var that = this;
-            texture.addEventListener("load", function () {
+            image.addEventListener("load", function () {
                 cc.Loader.getInstance().onResLoaded();
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
             });
-            texture.addEventListener("error", function () {
+            image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
             });
-            texture.src = path;
+            image.src = path;
 
             var texture2d = new cc.Texture2D();
-            texture2d.initWithElement(texture);
+            texture2d.initWithElement(image);
             this._textures[path] = texture2d;
         }
 
