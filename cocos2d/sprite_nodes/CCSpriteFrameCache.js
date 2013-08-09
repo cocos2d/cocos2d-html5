@@ -138,10 +138,16 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                 if(cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()){
                     //clip to canvas
-                    var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(), spriteFrame.getRect());
+                    var tempElement = spriteFrame.getTexture().getHtmlElementObj();
+                    tempElement = cc.cutRotateImageToCanvas(tempElement, spriteFrame.getRect());
+                    var tempTexture = new cc.Texture2D();
+                    tempTexture.initWithElement(tempElement);
+                    tempTexture.handleLoadedTexture();
+                    spriteFrame.setTexture(tempTexture);
+
                     var rect = spriteFrame.getRect();
                     spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
-                    spriteFrame.setTexture(tempTexture);
+
                 }
 
                 // add sprite frame
@@ -225,7 +231,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 }
                 break;
             case 2:
-                if ((texture instanceof cc.Texture2D) || (texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
+                //if ((texture instanceof cc.Texture2D) || (texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
+                if (texture instanceof cc.Texture2D) {
                     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames. */
                     this._addSpriteFramesWithDictionary(dict, texture);
                 } else {

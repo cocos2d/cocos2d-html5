@@ -69,6 +69,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //used for retina display
     _contentScaleFactor: null,
 
+    _cacheCanvas:null,
+    _cacheContext:null,
+
     /**
      *  Constructor
      */
@@ -76,9 +79,93 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.SpriteBatchNode.prototype.ctor.call(this);
         this._children = [];
         this._descendants = [];
-        this._useCache = true;
+
         this._layerSize = cc.SizeZero();
         this._mapTileSize = cc.SizeZero();
+
+        if(cc.renderContextType === cc.CANVAS){
+            var locCanvas = cc.canvas;
+            var tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = locCanvas.width;
+            tmpCanvas.height = locCanvas.height;
+            this._cacheCanvas = tmpCanvas;
+            this._cacheContext = this._cacheCanvas.getContext('2d');
+            this.setContentSize(cc.size(locCanvas.width, locCanvas.height));
+        }
+    },
+
+    setContentSize:function (size) {
+        if (!size)
+            return;
+        cc.Node.prototype.setContentSize.call(this, size);
+
+        if(cc.renderContextType === cc.CANVAS){
+            this._cacheCanvas.width = size.width * 1.5;
+            this._cacheCanvas.height = size.height * 1.5;
+            this._cacheContext.translate(0, this._cacheCanvas.height);
+        }
+    },
+
+    /**
+     * Return texture of cc.SpriteBatchNode
+     * @return {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}
+     */
+    getTexture:function () {
+       return this._cacheCanvas;
+    },
+
+    /**
+     * don't call visit on it's children ( override visit of cc.Node )
+     * @override
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    visit:function (ctx) {
+        if (cc.renderContextType === cc.WEBGL) {
+            cc.SpriteBatchNode.prototype.visit.call(this, ctx);
+            return;
+        }
+        var context = ctx || cc.renderContext;
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        context.save();
+        this.transform(ctx);
+        var i, locChildren = this._children;
+
+        if (this._cacheDirty) {
+            //add dirty region
+            var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
+            locCacheContext.clearRect(0, 0, locCacheCanvas.width, -locCacheCanvas.height);
+            locCacheContext.save();
+            locCacheContext.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y ));
+            if (locChildren) {
+                this.sortAllChildren();
+                for (i = 0; i < locChildren.length; i++) {
+                    if (locChildren[i])
+                        locChildren[i].visit(locCacheContext);
+                }
+            }
+            locCacheContext.restore();
+            this._cacheDirty = false;
+        }
+        // draw RenderTexture
+        this.draw(ctx);
+        context.restore();
+    },
+
+    /**
+     * draw cc.SpriteBatchNode (override draw of cc.Node)
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw:function (ctx) {
+        var context = ctx || cc.renderContext;
+        //context.globalAlpha = this._opacity / 255;
+        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
+        var locCacheCanvas = this._cacheCanvas;
+        //direct draw image by canvas drawImage
+        if (locCacheCanvas)
+            context.drawImage(locCacheCanvas, posX, -(posY + locCacheCanvas.height));
     },
 
     /**
@@ -438,8 +525,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
         if (cc.renderContextType === cc.CANVAS) {
-            var textureCache = this._originalTexture;
-            this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
+            this._tileSet.imageSize = this._originalTexture.getContentSizeInPixels();
         } else {
             this._tileSet.imageSize = this._textureAtlas.getTexture().getContentSizeInPixels();
 
