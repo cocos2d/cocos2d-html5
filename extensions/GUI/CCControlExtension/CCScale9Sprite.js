@@ -230,6 +230,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
     setCapInsets: function (capInsets) {
         var contentSize = this._contentSize;
+        contentSize = new cc.Size(contentSize.width,contentSize.height);
         this.updateWithBatchNode(this._scale9Image, this._spriteRect, this._spriteFrameRotated, capInsets);
         this.setContentSize(contentSize);
     },
