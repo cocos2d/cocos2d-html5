@@ -315,16 +315,25 @@ cc.DOM._resetEGLViewDiv = function(){
         }
 
         eglViewDiv.style.position = 'absolute';
-        eglViewDiv.style.bottom = 0;
         //x.dom.style.display='block';
         eglViewDiv.style.width = designSizeWidth + "px";
         eglViewDiv.style.maxHeight = designSizeHeight + "px";
         eglViewDiv.style.margin = 0;
 
         eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
-        eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-            + (screenSize.width - viewPortWidth ) / 2) + "px";
-        eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+
+        if (viewPortWidth < screenSize.width) {
+            eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
+                + (screenSize.width - viewPortWidth ) / 2) + "px";
+        } else {
+            eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+        }
+
+        if (viewPortHeight < screenSize.height) {
+            eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+        } else {
+            eglViewDiv.style.bottom = "0px";
+        }
     }
 };
 
@@ -377,16 +386,25 @@ cc.DOM.parentDOM = function (x) {
                 }
 
                 eglViewDiv.style.position = 'absolute';
-                eglViewDiv.style.bottom = 0;
                 //x.dom.style.display='block';
                 eglViewDiv.style.width = designSizeWidth + "px";
                 eglViewDiv.style.maxHeight = designSizeHeight + "px";
                 eglViewDiv.style.margin = 0;
 
                 eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
-                eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-                    + (screenSize.width - viewPortWidth ) / 2) + "px";
-                eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+
+                if (viewPortWidth < screenSize.width) {
+                    eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
+                        + (screenSize.width - viewPortWidth ) / 2) + "px";
+                } else {
+                    eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+                }
+
+                if (viewPortHeight < screenSize.height) {
+                    eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+                } else {
+                    eglViewDiv.style.bottom = "0px";
+                }
 
                 p.dom.appendTo(eglViewDiv);
                 eglViewDiv.appendTo(cc.container);
