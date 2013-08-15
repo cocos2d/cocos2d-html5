@@ -402,8 +402,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     setRotation: function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
+        this._rotationRadiansX = this._rotationRadiansY = newRotation * (Math.PI / 180);
 
         this.setNodeDirty();
     },
@@ -473,7 +472,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     setScale:function (scale, scaleY) {
         this._scaleX = scale;
-        this._scaleY = (scaleY || scaleY === 0) ? scaleY : scale;
+        this._scaleY = scaleY === undefined ? scale : scaleY;
         this.setNodeDirty();
     },
 
@@ -1181,24 +1180,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var _children = this._children;
-            var i, j, length = _children.length,tempChild;
-
             // insertion sort
-            for (i = 0; i < length; i++) {
-                var tempItem = _children[i];
-                j = i - 1;
-                tempChild =  _children[j];
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  _children[j];
-                    _children[j + 1] = tempChild;
-                    j = j - 1;
-                }
-                _children[j + 1] = tempItem;
-            }
+            this._children.sort(function(a, b){
+                return a._zOrder === b._zOrder ? a._orderOfArrival - b._orderOfArrival : a._zOrder - b._zOrder;
+            });
 
             //don't need to check children recursively, that's done in visit of each child
             this._reorderChildDirty = false;
@@ -2247,8 +2232,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     setRotation:function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * 0.017453292519943295; //(Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * 0.017453292519943295; //(Math.PI / 180);
+        this._rotationRadiansX = this._rotationRadiansY = newRotation * 0.017453292519943295; //(Math.PI / 180);
 
         this.setNodeDirty();
     },
@@ -2318,7 +2302,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     setScale:function (scale, scaleY) {
         this._scaleX = scale;
-        this._scaleY = scaleY || scale;
+        this._scaleY = scaleY === undefined ? scale : scaleY;
         this.setNodeDirty();
     },
 
@@ -3024,24 +3008,10 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var _children = this._children;
-            var i, j, length = _children.length,tempChild;
-
             // insertion sort
-            for (i = 0; i < length; i++) {
-                var tempItem = _children[i];
-                j = i - 1;
-                tempChild =  _children[j];
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  _children[j];
-                    _children[j + 1] = tempChild;
-                    j = j - 1;
-                }
-                _children[j + 1] = tempItem;
-            }
+            this._childre.sort(function(a, b){
+                return a._zOrder === b._zOrder ? a._orderOfArrival - b._orderOfArrival : a._zOrder - b._zOrder;
+            });
 
             //don't need to check children recursively, that's done in visit of each child
             this._reorderChildDirty = false;
