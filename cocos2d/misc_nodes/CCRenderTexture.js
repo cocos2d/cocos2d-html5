@@ -220,6 +220,10 @@ cc.RenderTextureCanvas = cc.Node.extend(/** @lends cc.RenderTextureCanvas# */{
         this.end();
     },
 
+    clearRect:function(x, y, width, height){
+        this._cacheContext.clearRect(x, y, width, -height);
+    },
+
     /**
      * clears the texture with a specified depth value
      * @param {Number} depthValue
@@ -271,9 +275,11 @@ cc.RenderTextureCanvas = cc.Node.extend(/** @lends cc.RenderTextureCanvas# */{
             //! make sure all children are drawn
             this.sortAllChildren();
             var locChildren = this._children;
-            for (var i = 0; i < locChildren.length; i++) {
+            var childrenLen = locChildren.length;
+            var selfSprite = this._sprite;
+            for (var i = 0; i < childrenLen; i++) {
                 var getChild = locChildren[i];
-                if (getChild != this._sprite)
+                if (getChild != selfSprite)
                     getChild.visit();
             }
 
