@@ -1272,7 +1272,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     },
 
     setPosition:function(posX, posY){
-        if(posY)
+        if (arguments.length == 2)
             this._originalPosition = cc.p(posX, posY);
         else
             this._originalPosition = cc.p(posX.x, posX.y);

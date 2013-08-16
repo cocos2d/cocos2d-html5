@@ -285,7 +285,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     redraw:function () {
         if (this.isSprite) {
             var tmp = this._children;
-            this._children = null;
+            this._children = [];
             cc.Sprite.prototype.visit.call(this, this.ctx);
             this._children = tmp;
         }
@@ -315,16 +315,25 @@ cc.DOM._resetEGLViewDiv = function(){
         }
 
         eglViewDiv.style.position = 'absolute';
-        eglViewDiv.style.bottom = 0;
         //x.dom.style.display='block';
         eglViewDiv.style.width = designSizeWidth + "px";
         eglViewDiv.style.maxHeight = designSizeHeight + "px";
         eglViewDiv.style.margin = 0;
 
         eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
-        eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-            + (screenSize.width - viewPortWidth ) / 2) + "px";
-        eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+
+        if (viewPortWidth < screenSize.width) {
+            eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
+                + (screenSize.width - viewPortWidth ) / 2) + "px";
+        } else {
+            eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+        }
+
+        if (viewPortHeight < screenSize.height) {
+            eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+        } else {
+            eglViewDiv.style.bottom = "0px";
+        }
     }
 };
 
@@ -351,47 +360,56 @@ cc.DOM.parentDOM = function (x) {
         cc.DOM.parentDOM(p);
     } else {
         //parent has no more parent, if its running, then add it to the container
-        //if (p.isRunning()) {
-        //find EGLView div
-        var eglViewDiv = cc.$("#EGLViewDiv");
-        if(eglViewDiv){
-            p.dom.appendTo(eglViewDiv);
-        } else {
-            eglViewDiv = cc.$new("div");
-            eglViewDiv.id = "EGLViewDiv";
+        if (p.isRunning()) {
+            //find EGLView div
+            var eglViewDiv = cc.$("#EGLViewDiv");
+            if (eglViewDiv) {
+                p.dom.appendTo(eglViewDiv);
+            } else {
+                eglViewDiv = cc.$new("div");
+                eglViewDiv.id = "EGLViewDiv";
 
-            var eglViewer = cc.EGLView.getInstance();
-            var designSize = eglViewer.getDesignResolutionSize();
-            var viewPortRect = eglViewer.getViewPortRect();
-            var screenSize = eglViewer.getFrameSize();
-            var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
-            if((designSize.width === 0) && (designSize.height === 0)){
-                designSizeWidth = screenSize.width;
-                designSizeHeight = screenSize.height;
+                var eglViewer = cc.EGLView.getInstance();
+                var designSize = eglViewer.getDesignResolutionSize();
+                var viewPortRect = eglViewer.getViewPortRect();
+                var screenSize = eglViewer.getFrameSize();
+                var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
+                if ((designSize.width === 0) && (designSize.height === 0)) {
+                    designSizeWidth = screenSize.width;
+                    designSizeHeight = screenSize.height;
+                }
+
+                var viewPortWidth = viewPortRect.size.width, viewPortHeight = viewPortRect.size.height;
+                if ((viewPortRect.size.width === 0) && (viewPortRect.size.height === 0)) {
+                    viewPortWidth = screenSize.width;
+                    viewPortHeight = screenSize.height;
+                }
+
+                eglViewDiv.style.position = 'absolute';
+                //x.dom.style.display='block';
+                eglViewDiv.style.width = designSizeWidth + "px";
+                eglViewDiv.style.maxHeight = designSizeHeight + "px";
+                eglViewDiv.style.margin = 0;
+
+                eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
+
+                if (viewPortWidth < screenSize.width) {
+                    eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
+                        + (screenSize.width - viewPortWidth ) / 2) + "px";
+                } else {
+                    eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+                }
+
+                if (viewPortHeight < screenSize.height) {
+                    eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
+                } else {
+                    eglViewDiv.style.bottom = "0px";
+                }
+
+                p.dom.appendTo(eglViewDiv);
+                eglViewDiv.appendTo(cc.container);
             }
-
-            var viewPortWidth = viewPortRect.size.width, viewPortHeight = viewPortRect.size.height;
-            if((viewPortRect.size.width === 0) && (viewPortRect.size.height === 0)){
-                viewPortWidth = screenSize.width;
-                viewPortHeight = screenSize.height;
-            }
-
-            eglViewDiv.style.position = 'absolute';
-            eglViewDiv.style.bottom = 0;
-            //x.dom.style.display='block';
-            eglViewDiv.style.width = designSizeWidth + "px";
-            eglViewDiv.style.maxHeight = designSizeHeight + "px";
-            eglViewDiv.style.margin = 0;
-
-            eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
-            eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-                + (screenSize.width - viewPortWidth ) / 2) + "px";
-            eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
-
-            p.dom.appendTo(eglViewDiv);
-            eglViewDiv.appendTo(cc.container);
         }
-        //}
     }
     return true;
 };
@@ -410,7 +428,7 @@ cc.DOM.setTransform = function (x) {
         x.ctx.translate(x.getAnchorPointInPoints().x, x.getAnchorPointInPoints().y);
         if (x.isSprite) {
             var tmp = x._children;
-            x._children = null;
+            x._children = [];
             cc.Sprite.prototype.visit.call(x, x.ctx);
             x._children = tmp;
         }
