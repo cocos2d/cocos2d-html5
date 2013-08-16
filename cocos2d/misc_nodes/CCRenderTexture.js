@@ -221,7 +221,7 @@ cc.RenderTextureCanvas = cc.Node.extend(/** @lends cc.RenderTextureCanvas# */{
     },
 
     clearRect:function(x, y, width, height){
-        this._cacheContext.clearRect(x, y, width, height);
+        this._cacheContext.clearRect(x, y, width, -height);
     },
 
     /**
