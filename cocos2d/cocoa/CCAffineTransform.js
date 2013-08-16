@@ -127,10 +127,10 @@ cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
     var bottomLeft = cc.PointApplyAffineTransform(cc.p(left, bottom), anAffineTransform);
     var bottomRight = cc.PointApplyAffineTransform(cc.p(right, bottom), anAffineTransform);
 
-    var minX = Math.min(Math.min(topLeft.x, topRight.x), Math.min(bottomLeft.x, bottomRight.x));
-    var maxX = Math.max(Math.max(topLeft.x, topRight.x), Math.max(bottomLeft.x, bottomRight.x));
-    var minY = Math.min(Math.min(topLeft.y, topRight.y), Math.min(bottomLeft.y, bottomRight.y));
-    var maxY = Math.max(Math.max(topLeft.y, topRight.y), Math.max(bottomLeft.y, bottomRight.y));
+    var minX = Math.min(topLeft.x, topRight.x, bottomLeft.x, bottomRight.x);
+    var maxX = Math.max(topLeft.x, topRight.x, bottomLeft.x, bottomRight.x);
+    var minY = Math.min(topLeft.y, topRight.y, bottomLeft.y, bottomRight.y);
+    var maxY = Math.max(topLeft.y, topRight.y, bottomLeft.y, bottomRight.y);
 
     return cc.rect(minX, minY, (maxX - minX), (maxY - minY));
 };
