@@ -2318,7 +2318,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     setScale:function (scale, scaleY) {
         this._scaleX = scale;
-        this._scaleY = scaleY || scale;
+        this._scaleY = scaleY === undefined ? scale : scaleY;
         this.setNodeDirty();
     },
 
