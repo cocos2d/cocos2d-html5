@@ -334,6 +334,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         this._fontName   = textDefinition.fontName;
         this._fontSize   = textDefinition.fontSize;
         this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+        this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
 
         // shadow
         if ( textDefinition.shadowEnabled)
@@ -537,9 +538,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     /**
      * renders the label
      * @param {CanvasRenderingContext2D|Null} ctx
-     * @param {Number} renderType
      */
-    draw:function (ctx, renderType) {
+    draw:function (ctx) {
         var context = ctx || cc.renderContext;
         if (this._flipX)
             context.scale(-1, 1);
@@ -553,8 +553,9 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
             context.font = this._fontStyleStr;
 
         //stroke style setup
-        if(this._strokeEnabled){
-            context.lineWidth = this._strokeSize;
+        var locStrokeEnabled = this._strokeEnabled;
+        if(locStrokeEnabled){
+            context.lineWidth = this._strokeSize * 2;
             context.strokeStyle = this._strokeColorStr;
         }
 
@@ -579,29 +580,34 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
             xoffset = locContentSizeWidth / 2;
         if (this._isMultiLine) {
+            var locStrings = this._strings;
             var yOffset = 0, strLen = this._strings.length;
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
                 yOffset = locFontHeight + locContentSizeHeight - locFontHeight * strLen;
             else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
                 yOffset = locFontHeight / 2 + (locContentSizeHeight - locFontHeight * strLen) / 2;
 
+            var tmpLineStr = null, tmpYOffset = null;
             for (var i = 0; i < strLen; i++) {
-                var line = this._strings[i];
-                context.fillText(line, xoffset, -locContentSizeHeight + (locFontHeight * i) + yOffset);
+                tmpLineStr = locStrings[i];
+                tmpYOffset = -locContentSizeHeight + (locFontHeight * i) + yOffset;
+                if(locStrokeEnabled)
+                    context.strokeText(tmpLineStr, xoffset, tmpYOffset);
+                context.fillText(tmpLineStr, xoffset, tmpYOffset);
             }
         } else {
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM){
-                context.fillText(this._string, xoffset, 0);
-                if(this._strokeEnabled)
+                if(locStrokeEnabled)
                     context.strokeText(this._string, xoffset, 0);
+                context.fillText(this._string, xoffset, 0);
             }else if(locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP){
-                context.fillText(this._string, xoffset, -locContentSizeHeight);
-                if(this._strokeEnabled)
+                if(locStrokeEnabled)
                     context.strokeText(this._string, xoffset, -locContentSizeHeight);
+                context.fillText(this._string, xoffset, -locContentSizeHeight);
             }else{
-                context.fillText(this._string, xoffset, -locContentSizeHeight/2);
-                if(this._strokeEnabled)
+                if(locStrokeEnabled)
                     context.strokeText(this._string, xoffset, -locContentSizeHeight/2);
+                context.fillText(this._string, xoffset, -locContentSizeHeight/2);
             }
         }
 
@@ -1107,7 +1113,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         context.fillStyle = this._fillColorStr;
 
         //stroke style setup
-        if (this._strokeEnabled) {
+        var locStrokeEnabled = this._strokeEnabled;
+        if (locStrokeEnabled) {
             context.lineWidth = this._strokeSize;
             context.strokeStyle = this._strokeColorStr;
         }
@@ -1156,26 +1163,26 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             for (var i = 0; i < locStrLen; i++) {
                 var line = this._strings[i];
                 var tmpOffsetY = -locContentSizeHeight + (locFontHeight * i) + yOffset;
-                context.fillText(line, xOffset, tmpOffsetY);
-                if (this._strokeEnabled)
+                if (locStrokeEnabled)
                     context.strokeText(line, xOffset, tmpOffsetY);
+                context.fillText(line, xOffset, tmpOffsetY);
             }
         } else {
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM) {
                 yOffset = isNegForOffsetY ? -locStrokeShadowOffsetY : 0;
-                context.fillText(this._string, xOffset, yOffset);
-                if (this._strokeEnabled)
+                if (locStrokeEnabled)
                     context.strokeText(this._string, xOffset, yOffset);
+                context.fillText(this._string, xOffset, yOffset);
             } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
                 yOffset = isNegForOffsetY ? -locStrokeShadowOffsetY/2 -locContentSizeHeight :  - locContentSizeHeight + locStrokeShadowOffsetY/2;
-                context.fillText(this._string, xOffset, yOffset);
-                if (this._strokeEnabled)
+                if (locStrokeEnabled)
                     context.strokeText(this._string, xOffset, yOffset);
+                context.fillText(this._string, xOffset, yOffset);
             } else {
                 yOffset = isNegForOffsetY ? -locStrokeShadowOffsetY -locContentSizeHeight / 2 : - locContentSizeHeight / 2;
-                context.fillText(this._string, xOffset, yOffset);
-                if (this._strokeEnabled)
+                if (locStrokeEnabled)
                     context.strokeText(this._string, xOffset, yOffset);
+                context.fillText(this._string, xOffset, yOffset);
             }
         }
     },
