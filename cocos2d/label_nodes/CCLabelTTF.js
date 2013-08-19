@@ -1439,11 +1439,17 @@ cc.LabelTTF.__labelHeightDiv.style.lineHeight = "normal";
 document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
 
 cc.LabelTTF.__getFontHeightByDiv = function(fontName, fontSize){
+    var clientHeight = cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize];
+    if (clientHeight > 0) return clientHeight;
     var labelDiv = cc.LabelTTF.__labelHeightDiv;
     labelDiv.style.fontFamily = fontName;
     labelDiv.style.fontSize = fontSize + "px";
-    return labelDiv.clientHeight ;
+    clientHeight = labelDiv.clientHeight ;
+    cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize] = clientHeight;
+    return clientHeight;
 };
+
+cc.LabelTTF.__fontHeightCache = {};
 
 
 
