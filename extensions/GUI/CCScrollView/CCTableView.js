@@ -376,6 +376,7 @@ cc.TableView = cc.ScrollView.extend({
      * reloads data from data source.  the view will be refreshed.
      */
     reloadData:function () {
+        this._oldDirection = cc.SCROLLVIEW_DIRECTION_NONE;
         var locCellsUsed = this._cellsUsed;
         for (var i = 0; i < locCellsUsed.count(); i++) {
             var cell = locCellsUsed.objectAtIndex(i);
