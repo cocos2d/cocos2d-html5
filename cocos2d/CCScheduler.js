@@ -641,7 +641,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register a schedule to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(function, this, interval, repeat, delay, !this._isRunning );
+     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(this, function, interval, repeat, delay, !this._isRunning );
      */
     scheduleCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
         cc.Assert(callback_fn, "scheduler.scheduleCallbackForTarget() Argument callback_fn must be non-NULL");
