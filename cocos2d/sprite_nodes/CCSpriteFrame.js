@@ -242,8 +242,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
          It is assumed that the frame was not trimmed.
          */
             case 2:
-                var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
-                return this.initWithTexture(texture, rectInPixels, false, cc.PointZero(), rectInPixels.size);
+                return this.initWithTexture(texture, rect, false, cc.PointZero(), rect.size);
                 break;
 
         /** Initializes a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
@@ -278,14 +277,13 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Size} originalSize
      */
     initWithTextureFilename:function (filename, rect, rotated, offset, originalSize) {
-        var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
         offset = offset || cc.size(0, 0);
-        originalSize = originalSize || rectInPixels.size;
+        originalSize = originalSize || rect.size;
 
         this._texture = null;
         this._textureFilename = filename;
-        this._rectInPixels = rectInPixels;
-        this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
+        this._rectInPixels = rect;
+        this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
         this._rotated = rotated || false;
         this._offsetInPixels = offset;
         this._offset = cc.POINT_PIXELS_TO_POINTS(offset);
