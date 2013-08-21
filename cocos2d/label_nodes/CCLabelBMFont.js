@@ -445,6 +445,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _cascadeColorEnabled:false,
     _cascadeOpacityEnabled:false,
 
+    _textureLoaded: false,
+
     _setString:function(newString, needUpdateLabel){
         if(!needUpdateLabel){
             this._string = newString;
@@ -489,10 +491,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._reusedChar = [];
     },
     /**
-     * @param {CanvasContext} ctx
+     * @param {CanvasRenderingContext2D} ctx
      */
     draw:function (ctx) {
-        this._super();
+        this._super(ctx);
 
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
@@ -510,17 +512,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        if ((this._realColor.r == color3.r) && (this._realColor.g == color3.g) && (this._realColor.b == color3.b))
+        if (((this._realColor.r == color3.r) && (this._realColor.g == color3.g) && (this._realColor.b == color3.b)))
             return;
         this._displayedColor = {r:color3.r, g:color3.g, b:color3.b};
         this._realColor = {r:color3.r, g:color3.g, b:color3.b};
 
-        if(this._cascadeColorEnabled){
-            var parentColor = cc.white();
-            var locParent = this._parent;
-            if(locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
-                parentColor = locParent.getDisplayedColor();
-            this.updateDisplayedColor(parentColor);
+        if(this._textureLoaded){
+            if(this._cascadeColorEnabled){
+                var parentColor = cc.white();
+                var locParent = this._parent;
+                if(locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+                    parentColor = locParent.getDisplayedColor();
+                this.updateDisplayedColor(parentColor);
+            }
         }
     },
 
@@ -681,10 +685,22 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._configuration = newConf;
             this._fntFile = fntFile;
             texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
+            var locIsLoaded = texture.isLoaded();
+            this._textureLoaded = locIsLoaded;
+            if(!locIsLoaded){
+                this._textureLoaded = false;
+                texture.addLoadedEventListener(function(sender){
+                    this._textureLoaded = true;
+                    //reset the LabelBMFont
+                    this.initWithTexture(texture, theString.length)
+                    this.setString(theString,true);
+                }, this);
+            }
         } else{
             texture = new cc.Texture2D();
             var image = new Image();
             texture.initWithElement(image);
+            this._textureLoaded = false;
         }
 
         if (this.initWithTexture(texture, theString.length)) {
@@ -1131,11 +1147,25 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._fntFile = fntFile;
             this._configuration = newConf;
 
-            this.setTexture(cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName()));
-            if (cc.renderContextType === cc.CANVAS) {
+            var texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
+            var locIsLoaded = texture.isLoaded();
+            this._textureLoaded = locIsLoaded;
+            this.setTexture(texture);
+            if (cc.renderContextType === cc.CANVAS)
                 this._originalTexture = this.getTexture();
-            }
             this.createFontChars();
+            if(!locIsLoaded){
+                texture.addLoadedEventListener(function(){
+                    this._textureLoaded = true;
+                    if(this._cascadeColorEnabled){
+                        var parentColor = cc.white();
+                        var locParent = this._parent;
+                        if(locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+                            parentColor = locParent.getDisplayedColor();
+                        this.updateDisplayedColor(parentColor);
+                    }
+                }, this);
+            }
         }
     },
 
