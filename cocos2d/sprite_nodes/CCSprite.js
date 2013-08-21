@@ -1280,9 +1280,9 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         }
     },
 
-    _changeTextureColor:function () {
-        var locElement, locTexture = this._texture;
-        if (locTexture) {
+    _changeTextureColor: function () {
+        var locElement, locTexture = this._texture, locRect = this.getTextureRect();
+        if (locTexture && locRect.width > 0) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;
@@ -1291,15 +1291,15 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             if (cacheTextureForColor) {
                 this._colorized = true;
                 //generate color texture cache
-                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, this.getTextureRect(), locElement);
-                else {
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, this.getTextureRect());
+                /*if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
+                else {*/
+                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
                     this.setTexture(locTexture);
-                }
+                //}
             }
         }
     },
@@ -1316,7 +1316,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         if (this._isLighterMode)
             context.globalCompositeOperation = 'lighter';
 
-        context.globalAlpha = this._realOpacity / 255;
+        context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect;
         var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.height;
         if (this._flipX) {
@@ -1327,7 +1327,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             flipYOffset = this._offsetPosition.y;
             context.scale(1, -1);
         }
-        if (this._texture) {
+        if (this._texture && locRect.width > 0 && locRect.height > 0) {
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,

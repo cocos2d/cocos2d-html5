@@ -281,24 +281,23 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * Initializes SpriteFrame with Texture, rect, rotated, offset and originalSize in pixels.
      * @param {cc.Texture2D|HTMLImageElement} texture
      * @param {cc.Rect} rect
-     * @param {Boolean} [rotated=]
-     * @param {cc.Point} [offset=]
-     * @param {cc.Size} [originalSize=]
+     * @param {Boolean} [rotated=false]
+     * @param {cc.Point} [offset=cc.size(0,0)]
+     * @param {cc.Size} [originalSize=rect.size]
      * @return {Boolean}
      */
     initWithTexture:function (texture, rect, rotated, offset, originalSize) {
-        var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
         rotated = rotated || false;
-        offset = offset || cc.PointZero();
-        originalSize = originalSize || rectInPixels.size;
+        offset = offset || cc.size(0, 0);
+        originalSize = originalSize || rect.size;
 
         this.setTexture(texture);
-        this._rectInPixels = rectInPixels;
-        this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
+        this._rectInPixels = rect;
+        this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
         this._offsetInPixels = offset;
-        this._offset = cc.POINT_PIXELS_TO_POINTS(this._offsetInPixels);
+        this._offset = cc.POINT_PIXELS_TO_POINTS(offset);
         this._originalSizeInPixels = originalSize;
-        this._originalSize = cc.SIZE_PIXELS_TO_POINTS(this._originalSizeInPixels);
+        this._originalSize = cc.SIZE_PIXELS_TO_POINTS(originalSize);
         this._rotated = rotated;
         return true;
     },
@@ -311,18 +310,17 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {string} filename
      * @param {cc.Rect} rect
      * @param {Boolean} rotated
-     * @param {cc.Point} offset
-     * @param {cc.Size} originalSize
+     * @param {cc.Point} [offset=cc.size(0,0)]
+     * @param {cc.Size} [originalSize=rect.size]
      */
     initWithTextureFilename:function (filename, rect, rotated, offset, originalSize) {
-        var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
         offset = offset || cc.size(0, 0);
-        originalSize = originalSize || rectInPixels.size;
+        originalSize = originalSize || rect.size;
 
         this._texture = null;
         this._textureFilename = filename;
-        this._rectInPixels = rectInPixels;
-        this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
+        this._rectInPixels = rect;
+        this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
         this._rotated = rotated || false;
         this._offsetInPixels = offset;
         this._offset = cc.POINT_PIXELS_TO_POINTS(offset);
