@@ -88,7 +88,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        this._super(color3);
+        cc.AtlasNode.prototype.setColor.call(this, color3);
         this.updateAtlasValues();
     },
     /**
@@ -103,7 +103,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      * draw the label
      */
     draw:function () {
-        this._super();
+        cc.AtlasNode.prototype.draw.call(this);
         if (cc.LABELATLAS_DEBUG_DRAW) {
             var s = this.getContentSize();
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
@@ -162,8 +162,9 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
         this._string = label;
         this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
         if (this._children) {
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+            var locChildren = this._children;
+            for (var i = 0, len = locChildren.length; i < len; i++) {
+                var node = locChildren[i];
                 if (node)
                     node.setVisible(false);
             }
@@ -175,10 +176,11 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
 
     setOpacity:function (opacity) {
         if (this._opacity != opacity) {
-            this._super(opacity);
-            for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i])
-                    this._children[i].setOpacity(opacity);
+            cc.AtlasNode.prototype.setOpacity.call(this, opacity);
+            var locChildren = this._children;
+            for (var i = 0, len = locChildren.length; i < len; i++) {
+                if (locChildren[i])
+                    locChildren[i].setOpacity(opacity);
             }
         }
     }
@@ -248,7 +250,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        this._super(color3);
+        cc.AtlasNode.prototype.setColor.call(this, color3);
         this.updateAtlasValues();
     },
     /**
@@ -263,7 +265,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      * draw the label
      */
     draw:function () {
-        this._super();
+        cc.AtlasNode.prototype.draw.call(this);
         if (cc.LABELATLAS_DEBUG_DRAW) {
             var s = this.getContentSize();
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
@@ -364,7 +366,7 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
 
     setOpacity:function (opacity) {
         if (this._opacity !== opacity) {
-            this._super(opacity);
+            cc.AtlasNode.prototype.setOpacity.call(this, opacity);
         }
     }
 });

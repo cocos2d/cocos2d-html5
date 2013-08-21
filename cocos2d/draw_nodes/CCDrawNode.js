@@ -102,7 +102,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
     // ----common function end ----
 
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._buffer = [];
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
@@ -224,13 +224,13 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
     // ----common function end ----
 
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._buffer = [];
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
 
     init:function () {
-        if (this._super()) {
+        if (cc.Node.prototype.init.call(this)) {
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR));
             this._ensureCapacity(512);
             this._trianglesWebBuffer = cc.renderContext.createBuffer();

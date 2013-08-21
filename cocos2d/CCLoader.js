@@ -402,7 +402,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
      * Constructor
      */
     ctor: function () {
-        this._super();
+        cc.Scene.prototype.ctor.call(this);
         this._winSize = cc.Director.getInstance().getWinSize();
     },
     init:function(){

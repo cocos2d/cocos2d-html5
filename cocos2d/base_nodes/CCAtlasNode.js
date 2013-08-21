@@ -59,7 +59,7 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
 
     ctor:function () {
-        this._super();
+        cc.NodeRGBA.prototype.ctor.call(this);
         this._colorUnmodified = cc.white();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
         this._ignoreContentScaleFactor = false;
@@ -294,7 +294,7 @@ cc.AtlasNodeWebGL = cc.NodeRGBA.extend({
     _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
 
     ctor:function () {
-        this._super();
+        cc.NodeRGBA.prototype.ctor.call(this);
         this._colorUnmodified = cc.white();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
         this._ignoreContentScaleFactor = false;

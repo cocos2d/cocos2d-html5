@@ -494,7 +494,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {CanvasRenderingContext2D} ctx
      */
     draw:function (ctx) {
-        this._super(ctx);
+        cc.SpriteBatchNode.prototype.draw.call(this, ctx);
 
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
@@ -1111,9 +1111,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     /**
      * @param {Number} scale
+     * @param {Number} [scaleY=null]
      */
     setScale:function (scale, scaleY) {
-        this._super(scale, scaleY);
+        cc.Node.prototype.setScale.call(this, scale, scaleY);
         this.updateLabel();
     },
 
@@ -1121,7 +1122,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {Number} scaleX
      */
     setScaleX:function (scaleX) {
-        this._super(scaleX);
+        cc.Node.prototype.setScaleX.call(this,scaleX);
         this.updateLabel();
     },
 
@@ -1129,7 +1130,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {Number} scaleY
      */
     setScaleY:function (scaleY) {
-        this._super(scaleY);
+        cc.Node.prototype.setScaleY.call(this,scaleY);
         this.updateLabel();
     },
 
@@ -1177,12 +1178,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * set the anchorpoint of the label
+     * set the AnchorPoint of the label
      * @param {cc.Point} point
      */
     setAnchorPoint:function (point) {
         if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
-            this._super(point);
+            cc.Node.prototype.setAnchorPoint.call(this, point);
             this.updateLabel();
         }
     },
