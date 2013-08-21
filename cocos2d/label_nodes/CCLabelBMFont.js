@@ -574,8 +574,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
         var locChildren = this._children;
         for(var i = 0; i< locChildren; i++){
-            locChildren[i].updateDisplayedOpacity(this._displayedOpacity);
+            var locChild = locChildren[i];
+            if(cc.Browser.supportWebGL){
+                locChild.updateDisplayedOpacity(this._displayedOpacity);
+            }else{
+                cc.NodeRGBA.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
+                locChild.setNodeDirty();
+            }
         }
+        this._changeTextureColor();
     },
 
     isCascadeOpacityEnabled:function(){
@@ -603,7 +610,38 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         var locChildren = this._children;
         for(var i = 0;i < locChildren.length;i++){
-            locChildren[i].updateDisplayedColor(this._displayedColor);
+            var locChild = locChildren[i];
+            if(cc.Browser.supportWebGL){
+                locChild.updateDisplayedColor(this._displayedColor);
+            }else{
+                cc.NodeRGBA.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
+                locChild.setNodeDirty();
+            }
+        }
+        this._changeTextureColor();
+    },
+
+    _changeTextureColor:function(){
+        if(cc.Browser.supportWebGL){
+            return;
+        }
+        var locElement, locTexture = this.getTexture();
+        if (locTexture) {
+            locElement = locTexture.getHtmlElementObj();
+            if (!locElement)
+                return;
+            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            if (cacheTextureForColor) {
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
+                else{
+                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor);
+                    locTexture = new cc.Texture2D();
+                    locTexture.initWithElement(locElement);
+                    locTexture.handleLoadedTexture();
+                    this.setTexture(locTexture);
+                }
+            }
         }
     },
 
@@ -744,22 +782,17 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (!fontChar) {
                 fontChar = new cc.Sprite();
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
-                    fontChar.init();
-                    fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
+                    fontChar.initWithTexture(locTexture, cc.RectZero(), false);
                 } else
                     fontChar.initWithTexture(locTexture, rect, false);
 
                 this.addChild(fontChar, 0, i);
             } else {
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
-                    fontChar.init();
-                    fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
+                    fontChar.setTextureRect(rect, false, cc.SizeZero());
                 } else {
                     // updating previous sprite
-                    if (locContextType === cc.CANVAS)
-                        fontChar.initWithTexture(locTexture, rect, false);
-                    else
-                        fontChar.setTextureRect(rect, false, rect.size);
+                    fontChar.setTextureRect(rect, false, rect.size);
                     // restore to default in case they were modified
                     fontChar.setVisible(true);
                 }
@@ -767,8 +800,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             // Apply label properties
             fontChar.setOpacityModifyRGB(this._opacityModifyRGB);
             // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
-            fontChar.updateDisplayedColor(this._displayedColor);
-            fontChar.updateDisplayedOpacity(this._displayedOpacity);
+            if(cc.Browser.supportWebGL){
+                fontChar.updateDisplayedColor(this._displayedColor);
+                fontChar.updateDisplayedOpacity(this._displayedOpacity);
+            }else{
+                cc.NodeRGBA.prototype.updateDisplayedColor.call(fontChar, this._displayedColor);
+                cc.NodeRGBA.prototype.updateDisplayedOpacity.call(fontChar, this._displayedOpacity);
+                fontChar.setNodeDirty();
+            }
 
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
