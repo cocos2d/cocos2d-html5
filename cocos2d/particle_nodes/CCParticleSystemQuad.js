@@ -55,6 +55,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     _buffersVBO:null,
     _pointRect:null,
 
+    _textureLoaded: null,
+
     /**
      * Constructor
      * @override
@@ -65,6 +67,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         this._quads = [];
         this._indices = [];
         this._pointRect = cc.RectZero();
+        this._textureLoaded = true;
 
         if (cc.renderContextType === cc.WEBGL) {
             this._quadsArrayBuffer = null;
@@ -342,18 +345,20 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     /**
      * set Texture of Particle System
      * @override
-     * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture
-     * @param {Boolean} isCallSuper is direct call super method
+     * @param {cc.Texture2D} texture
      */
-    setTexture:function (texture, isCallSuper) {
-        if (isCallSuper != null && isCallSuper === true) {
-            cc.ParticleSystem.prototype.setTexture.call(this, texture);
-            return;
+    setTexture:function (texture) {
+        if(texture.isLoaded()){
+            var  size = texture.getContentSize();
+            this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
+        } else {
+            this._textureLoaded = false;
+            texture.addLoadedEventListener(function(sender){
+                this._textureLoaded = true;
+                var  size = sender.getContentSize();
+                this.setTextureWithRect(sender, cc.rect(0, 0, size.width, size.height));
+            }, this);
         }
-
-        var  size = texture.getContentSize();
-
-        this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
     },
 
     /**
@@ -497,6 +502,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     draw:function (ctx) {
         cc.Assert(!this._batchNode, "draw should not be called when added to a particleBatchNode");
+        if(!this._textureLoaded)
+            return;
 
         if (cc.renderContextType === cc.CANVAS)
             this._drawForCanvas(ctx);

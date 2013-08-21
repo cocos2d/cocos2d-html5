@@ -540,6 +540,9 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @param {CanvasRenderingContext2D|Null} ctx
      */
     draw:function (ctx) {
+        if(!this._string || this._string == "")
+            return;
+
         var context = ctx || cc.renderContext;
         if (this._flipX)
             context.scale(-1, 1);
@@ -1334,6 +1337,9 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {WebGLRenderingContext} ctx 3d context of canvas
      */
     draw:function (ctx) {
+        if(!this._string || this._string == "")
+            return;
+
         var gl = ctx || cc.renderContext, locTexture = this._texture;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
