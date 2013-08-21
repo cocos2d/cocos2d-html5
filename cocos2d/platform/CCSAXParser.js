@@ -46,6 +46,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @return {Array} plist object array
      */
     parse:function (textxml) {
+        var path = textxml;
         textxml = this.getList(textxml);
         // get a reference to the requested corresponding xml file
         if (window.DOMParser) {
@@ -61,7 +62,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
 
         var plist = this.xmlDoc.documentElement;
         if (plist.tagName != 'plist')
-            throw "cocos2d:Not a plist file";
+            throw "cocos2d: " + path + " is not a plist file";
 
         // Get first real node
         var node = null;
