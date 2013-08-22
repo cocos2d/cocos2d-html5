@@ -828,7 +828,9 @@ cc.LayerColorCanvas = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
         this._realColor.g = color.g;
         this._realColor.b = color.b;
 
-        this._opacity = color.a;
+        this._displayedOpacity = color.a;
+        this._realOpacity = color.a;
+
         this.setContentSize(cc.size(width, height));
         this._updateColor();
         return true;
