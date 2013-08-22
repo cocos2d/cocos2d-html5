@@ -1273,7 +1273,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         // check cc.Sprite is using the same texture id
-        cc.Assert(child.getTexture()._webTextureObj == this._textureAtlas.getTexture()._webTextureObj,
+        cc.Assert(child.getTexture() == this._textureAtlas.getTexture(),
             "SpriteBatchNode.addChild():cc.Sprite is not using the same texture id");
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);

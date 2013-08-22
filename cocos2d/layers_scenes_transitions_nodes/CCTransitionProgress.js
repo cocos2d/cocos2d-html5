@@ -45,8 +45,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
      * @override
      */
     onEnter:function () {
-        this._super();
-
+        cc.TransitionScene.prototype.onEnter.call(this);
         this._setupTransition();
 
         // create a transparent color layer
@@ -59,21 +58,16 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         texture.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
         texture.setAnchorPoint(cc.p(0.5, 0.5));
 
-        if (cc.renderContextType === cc.CANVAS) {
-            // render outScene to its texturebuffer
-            texture.clear();
-            this._sceneToBeModified.visit(texture.context);
-        } else {
-            // render outScene to its texturebuffer
-            texture.clear(0, 0, 0, 1);
-            texture.begin();
-            this._sceneToBeModified.visit();
-            texture.end();
-        }
+        // render outScene to its texturebuffer
+        texture.clear(0, 0, 0, 1);
+        texture.begin();
+        this._sceneToBeModified.visit();
+        texture.end();
+
         //    Since we've passed the outScene to the texture we don't need it.
-        if (this._sceneToBeModified == this._outScene) {
+        if (this._sceneToBeModified == this._outScene)
             this.hideOutShowIn();
-        }
+
         //    We need the texture in RenderTexture.
         var pNode = this._progressTimerNodeWithRenderTexture(texture);
 
@@ -86,7 +80,6 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
         // add the layer (which contains our two rendertextures) to the scene
         this.addChild(pNode, 2, cc.SCENE_RADIAL);
-
     },
 
     /**
@@ -95,7 +88,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     onExit:function () {
         // remove our layer and release all containing objects
         this.removeChildByTag(cc.SCENE_RADIAL, true);
-        this._super();
+        cc.TransitionScene.prototype.onExit.call(this);
     },
 
     _setupTransition:function () {

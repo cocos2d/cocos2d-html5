@@ -223,7 +223,6 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-
     _schedulePreload: function () {
         var _self = this;
         this._interval = setInterval(function () {
@@ -234,7 +233,6 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     _unschedulePreload: function () {
         clearInterval(this._interval);
     },
-
 
     _getResType: function (resInfo) {
         var isFont = resInfo.fontName;
@@ -270,9 +268,9 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             this._selector(this);
         }
 
-
         this._curNumber = 0;
         this._loadedNumber = 0;
+        this._totalNumber = 0;
     },
 
     _registerFaceFont: function (fontRes) {
@@ -404,7 +402,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
      * Constructor
      */
     ctor: function () {
-        this._super();
+        cc.Scene.prototype.ctor.call(this);
         this._winSize = cc.Director.getInstance().getWinSize();
     },
     init:function(){

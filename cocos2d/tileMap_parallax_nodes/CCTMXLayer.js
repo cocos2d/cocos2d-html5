@@ -592,7 +592,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var zz = this._atlasIndexArray[atlasIndex];
         this._tiles[zz] = 0;
         cc.ArrayRemoveObjectAtIndex(this._atlasIndexArray, atlasIndex);
-        this._super(sprite, cleanup);
+        cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, cleanup);
     },
 
     /**

@@ -136,7 +136,7 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
 
         this._spacePtr.eachShape(cc.DrawShape.bind(this));
         this._spacePtr.eachConstraint(cc.DrawConstraint.bind(this));
-        this._super();
+        cc.DrawNode.prototype.draw.call(this);
         this.clear();
     }
 });

@@ -277,12 +277,12 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
         cc.Assert(path != null, "TextureCache: path MUST not be null");
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
         var texture = this._textures[path];
-        var image;
+        var image,that;
         if (texture) {
             if(texture.isLoaded()){
                 this._addImageAsyncCallBack(target, selector);
             }else{
-                var that = this;
+                that = this;
                 image = texture.getHtmlElementObj();
                 image.addEventListener("load", function () {
                     texture.handleLoadedTexture();
@@ -293,7 +293,7 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
             image = new Image();
             image.crossOrigin = "Anonymous";
 
-            var that = this;
+            that = this;
             image.addEventListener("load", function () {
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
