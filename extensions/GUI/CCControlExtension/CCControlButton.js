@@ -226,7 +226,7 @@ cc.ControlButton = cc.Control.extend({
     },
 
     setPreferredSize:function (size) {
-        if (size.width == 0 && size.height == 0) {
+        if (size.width === 0 && size.height === 0) {
             this._adjustBackgroundImage = true;
         } else {
             this._adjustBackgroundImage = false;
@@ -598,12 +598,12 @@ cc.ControlButton = cc.Control.extend({
         sprite.setAnchorPoint(cc.p(0.5, 0.5));
         this.addChild(sprite);
 
-        if (this._preferredSize.width != 0 || this._preferredSize.height != 0) {
+        if (this._preferredSize.width !== 0 || this._preferredSize.height !== 0) {
             sprite.setPreferredSize(this._preferredSize);
         }
 
         // If the current state if equal to the given state we update the layout
-        if (this.getState() == state) {
+        if (this._state === state) {
             this.needsLayout();
         }
     },
@@ -621,7 +621,7 @@ cc.ControlButton = cc.Control.extend({
     }
 });
 
-cc.ControlButton.create = function (label, backgroundSprite) {
+cc.ControlButton.create = function(label, backgroundSprite) {
     var controlButton;
     if (arguments.length == 0) {
         controlButton = new cc.ControlButton();
@@ -632,16 +632,14 @@ cc.ControlButton.create = function (label, backgroundSprite) {
     } else if (arguments.length == 1) {
         controlButton = new cc.ControlButton();
         controlButton.initWithBackgroundSprite(arguments[0]);
-        return controlButton;
     } else if (arguments.length == 2) {
         controlButton = new cc.ControlButton();
         controlButton.initWithLabelAndBackgroundSprite(label, backgroundSprite);
-        return controlButton;
     } else if (arguments.length == 3) {
         controlButton = new cc.ControlButton();
         controlButton.initWithTitleAndFontNameAndFontSize(arguments[0], arguments[1], arguments[2]);
-        return controlButton;
     }
+    return controlButton;
 };
 
 

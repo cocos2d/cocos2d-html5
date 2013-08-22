@@ -119,9 +119,8 @@
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
-                this._super(r);
-            }
-            else {
+                cc.Sprite.prototype.setRotation.call(this, r);
+            } else {
                 this._body.a = -cc.DEGREES_TO_RADIANS(r);
                 //this._syncRotation();
             }
@@ -255,7 +254,7 @@
 
     /**
      * Creates a PhysicsSprite with a sprite frame name
-     * @param {String} spriteFrame name
+     * @param {String} spriteFrameName
      * @return {cc.Sprite}
      * @example
      *
@@ -299,6 +298,4 @@
         }
         return null;
     };
-
-
 })();

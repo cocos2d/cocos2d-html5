@@ -319,7 +319,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     initWithBatchNode: function (batchNode, rect, rotated, capInsets) {
-        if (arguments.length == 3) {
+        if (arguments.length === 3) {
             capInsets = rotated;
             rotated = false;
         }
@@ -377,6 +377,16 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var selTexture = spriteFrame.getTexture();
         cc.Assert(selTexture != null, "Texture must be not nil");
 
+        if(!spriteFrame.textureLoaded()){
+            spriteFrame.addLoadedEventListener(function(sender){
+                // the texture is rotated on Canvas render mode, so isRotated always is false.
+                var preferredSize = this._preferredSize;
+                preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
+                this.setPreferredSize(preferredSize);
+                this.m_positionsAreDirty = true;
+            },this);
+        }
         var batchNode = cc.SpriteBatchNode.createWithTexture(selTexture, 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
         return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, capInsets);
@@ -471,8 +481,11 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var rectSize = rect.size;
         this._originalSize.width = rectSize.width;
         this._originalSize.height = rectSize.height;
-        this._preferredSize.width = rectSize.width;
-        this._preferredSize.height = rectSize.height;
+        var locPreferredSize = this._preferredSize;
+        if(locPreferredSize.width === 0 && locPreferredSize.height === 0){
+            locPreferredSize.width = rectSize.width;
+            locPreferredSize.height = rectSize.height;
+        }
 
         var locCapInsetsInternal = this._capInsetsInternal;
         if(!capInsets){

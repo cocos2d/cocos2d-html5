@@ -150,6 +150,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     _htmlElementObj:null,
     _webTextureObj:null,
 
+    _loadedEventListeners:null,
+
     /*public:*/
     ctor:function () {
         this._pixelsWide = 0;
@@ -158,7 +160,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._maxS = 0;
         this._maxT = 0;
         this._hasPremultipliedAlpha = false;
-        this._contentSize = null;
+        this._contentSize = cc.size(0, 0);
 
         this._hasMipmaps = false;
         this._pVRHaveAlphaPremultiplied = true;
@@ -168,6 +170,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._isLoaded = false;
         this._htmlElementObj = null;
         this._webTextureObj = null;
+        this._loadedEventListeners = [];
     },
 
     releaseTexture:function () {
@@ -521,6 +524,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._hasPremultipliedAlpha = false;
         this._hasMipmaps = false;
 
+        this._callLoadedEventCallbacks();
     },
 
     /**
@@ -903,6 +907,29 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         this._hasPremultipliedAlpha = uiImage.isPremultipliedAlpha();
         return true;
+    },
+
+    addLoadedEventListener: function (callback, target) {
+        this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
+    },
+
+    removeLoadedEventListener:function(target){
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0;  i < locListeners.length; i++){
+            var selCallback = locListeners[i];
+            if(selCallback.eventTarget == target){
+                locListeners.splice(i, 1);
+            }
+        }
+    },
+
+    _callLoadedEventCallbacks: function () {
+        var locListeners = this._loadedEventListeners;
+        for (var i = 0, len = locListeners.length; i < len; i++) {
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
     }
 });
 
@@ -920,11 +947,14 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     _contentSize:null,
     _isLoaded:false,
     _htmlElementObj:null,
+
+    _loadedEventListeners:null,
     /*public:*/
     ctor:function () {
         this._contentSize = cc.size(0,0);
         this._isLoaded = false;
         this._htmlElementObj = null;
+        this._loadedEventListeners = [];
     },
 
     /**
@@ -975,11 +1005,10 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 
     handleLoadedTexture:function () {
         this._isLoaded = true;
+        var locElement =  this._htmlElementObj;
+        this._contentSize = new cc.Size(locElement.width, locElement.height);
 
-        var pixelsWide = this._htmlElementObj.width;
-        var pixelsHigh = this._htmlElementObj.height;
-
-        this._contentSize = new cc.Size(pixelsWide, pixelsHigh);
+        this._callLoadedEventCallbacks();
     },
 
     description:function () {
@@ -1096,8 +1125,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         return false;
     },
 
-
-
     /**
      * These functions are needed to create mutable textures
      * @param {Array} data
@@ -1111,8 +1138,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         //support only in WebGl rendering mode
         return data;
     },
-
-
 
     /**
      Drawing extensions to make it easy to draw basic quads using a CCTexture2D object.
@@ -1134,8 +1159,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     drawInRect:function (rect) {
         //support only in WebGl rendering mode
     },
-
-
 
     /**
      * Initializes a texture from a ETC file  (note: initWithETCFile does not support on HTML5)
@@ -1229,8 +1252,30 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     bitsPerPixelForFormat:function (format) {
         //support only in WebGl rendering mode
           return -1;
-    }
+    },
 
+    addLoadedEventListener:function(callback, target){
+        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    removeLoadedEventListener:function(target){
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0;  i < locListeners.length; i++){
+            var selCallback = locListeners[i];
+            if(selCallback.eventTarget == target){
+                locListeners.splice(i, 1);
+            }
+        }
+    },
+
+    _callLoadedEventCallbacks:function(){
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0, len = locListeners.length;  i < len; i++){
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
+    }
 });
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;

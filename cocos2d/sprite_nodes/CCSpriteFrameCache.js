@@ -138,16 +138,18 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                 if(cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()){
                     //clip to canvas
-                    var tempElement = spriteFrame.getTexture().getHtmlElementObj();
-                    tempElement = cc.cutRotateImageToCanvas(tempElement, spriteFrame.getRect());
-                    var tempTexture = new cc.Texture2D();
-                    tempTexture.initWithElement(tempElement);
-                    tempTexture.handleLoadedTexture();
-                    spriteFrame.setTexture(tempTexture);
+                    var locTexture = spriteFrame.getTexture();
+                    if(locTexture.isLoaded()){
+                        var tempElement = spriteFrame.getTexture().getHtmlElementObj();
+                        tempElement = cc.cutRotateImageToCanvas(tempElement, spriteFrame.getRect());
+                        var tempTexture = new cc.Texture2D();
+                        tempTexture.initWithElement(tempElement);
+                        tempTexture.handleLoadedTexture();
+                        spriteFrame.setTexture(tempTexture);
 
-                    var rect = spriteFrame.getRect();
-                    spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
-
+                        var rect = spriteFrame.getRect();
+                        spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
+                    }
                 }
 
                 // add sprite frame
