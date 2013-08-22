@@ -461,10 +461,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     selNode.setVisible(false);
             }
         }
-        this.createFontChars();
+        if(this._textureLoaded){
+            this.createFontChars();
 
-        if(needUpdateLabel)
-            this.updateLabel();
+            if(needUpdateLabel)
+                this.updateLabel();
+        }
     },
     /**
      * Constructor
@@ -692,7 +694,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 texture.addLoadedEventListener(function(sender){
                     this._textureLoaded = true;
                     //reset the LabelBMFont
-                    this.initWithTexture(texture, theString.length)
+                    this.initWithTexture(sender, theString.length)
                     this.setString(theString,true);
                 }, this);
             }
@@ -794,14 +796,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             rect.y += this._imageOffset.y;
 
             var fontChar = this.getChildByTag(i);
-            var hasSprite = true;
+            //var hasSprite = true;
             if (!fontChar) {
                 fontChar = new cc.Sprite();
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
                     fontChar.initWithTexture(locTexture, cc.RectZero(), false);
                 } else
                     fontChar.initWithTexture(locTexture, rect, false);
-
+                fontChar._newTextureWhenChangeColor = true;
                 this.addChild(fontChar, 0, i);
             } else {
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
@@ -816,10 +818,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             // Apply label properties
             fontChar.setOpacityModifyRGB(this._opacityModifyRGB);
             // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
-            if(cc.Browser.supportWebGL){
+            if (cc.Browser.supportWebGL) {
                 fontChar.updateDisplayedColor(this._displayedColor);
                 fontChar.updateDisplayedOpacity(this._displayedOpacity);
-            }else{
+            } else {
                 cc.NodeRGBA.prototype.updateDisplayedColor.call(fontChar, this._displayedColor);
                 cc.NodeRGBA.prototype.updateDisplayedOpacity.call(fontChar, this._displayedOpacity);
                 fontChar.setNodeDirty();
@@ -1154,18 +1156,16 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this.setTexture(texture);
             if (cc.renderContextType === cc.CANVAS)
                 this._originalTexture = this.getTexture();
-            this.createFontChars();
             if(!locIsLoaded){
-                texture.addLoadedEventListener(function(){
+                texture.addLoadedEventListener(function(sender){
                     this._textureLoaded = true;
-                    if(this._cascadeColorEnabled){
-                        var parentColor = cc.white();
-                        var locParent = this._parent;
-                        if(locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
-                            parentColor = locParent.getDisplayedColor();
-                        this.updateDisplayedColor(parentColor);
-                    }
+                    this.setTexture(sender);
+                    this.createFontChars();
+                    this._changeTextureColor();
+                    this.updateLabel();
                 }, this);
+            } else {
+                this.createFontChars();
             }
         }
     },

@@ -166,7 +166,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         rect = cc.rect(0, 0, texture.width, texture.height);
 
     var selColor;
-    if (color instanceof cc.Color3B) {
+    if (color.a == null) {
         // Optimization for the particle system which mainly uses c4f colors
         selColor = cc.c4f(color.r / 255.0, color.g / 255.0, color.b / 255, 1);
     } else {
@@ -331,8 +331,9 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
     _flipX:false, //Whether the sprite is flipped horizontally or not.
     _flipY:false, //Whether the sprite is flipped vertically or not.
 
-    _textureLoaded:false,
-    _loadedEventListeners:null,
+    _textureLoaded: false,
+    _loadedEventListeners: null,
+    _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
 
     textureLoaded:function(){
         return this._textureLoaded;
@@ -882,6 +883,7 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
         this._textureLoaded = true;
         this._loadedEventListeners = [];
+        this._newTextureWhenChangeColor = false;
 
         if (fileName) {
             if (typeof(fileName) == "string") {
@@ -1291,15 +1293,15 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             if (cacheTextureForColor) {
                 this._colorized = true;
                 //generate color texture cache
-                /*if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
                     cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
-                else {*/
+                else {
                     locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
                     this.setTexture(locTexture);
-                //}
+                }
             }
         }
     },
@@ -1317,31 +1319,31 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             context.globalCompositeOperation = 'lighter';
 
         context.globalAlpha = this._displayedOpacity / 255;
-        var locRect = this._rect;
-        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.height;
+        var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
         if (this._flipX) {
-            flipXOffset = -this._offsetPosition.x - locRect.width;
+            flipXOffset = -locOffsetPosition.x - locRect.width;
             context.scale(-1, 1);
         }
         if (this._flipY) {
-            flipYOffset = this._offsetPosition.y;
+            flipYOffset = locOffsetPosition.y;
             context.scale(1, -1);
         }
-        if (this._texture && locRect.width > 0 && locRect.height > 0) {
+        if (this._texture && locRect.width > 0) {
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,
-                    0, 0, locRect.width , locRect.height ,
+                    0, 0, locRect.width, locRect.height,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(image,
-                    locRect.x , locRect.y , locRect.width , locRect.height ,
+                    locRect.x, locRect.y, locRect.width, locRect.height,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
-        } else if (this._contentSize.width !== 0) {
+        } else if (locContentSize.width !== 0) {
             var curColor = this.getColor();
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, this._contentSize.width, this._contentSize.height);
+            context.fillRect(flipXOffset, flipYOffset, locContentSize.width, locContentSize.height);
         }
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
@@ -2091,7 +2093,6 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
-            filename = cc.FileUtils.getInstance().fullPathForFilename(filename);
             texture = cc.TextureCache.getInstance().addImage(filename);
             return this.initWithTexture(texture, rect);
         } else {

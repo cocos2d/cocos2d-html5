@@ -160,7 +160,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._maxS = 0;
         this._maxT = 0;
         this._hasPremultipliedAlpha = false;
-        this._contentSize = null;
+        this._contentSize = cc.size(0, 0);
 
         this._hasMipmaps = false;
         this._pVRHaveAlphaPremultiplied = true;
@@ -913,6 +913,16 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
     },
 
+    removeLoadedEventListener:function(target){
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0;  i < locListeners.length; i++){
+            var selCallback = locListeners[i];
+            if(selCallback.eventTarget == target){
+                locListeners.splice(i, 1);
+            }
+        }
+    },
+
     _callLoadedEventCallbacks: function () {
         var locListeners = this._loadedEventListeners;
         for (var i = 0, len = locListeners.length; i < len; i++) {
@@ -1246,6 +1256,16 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 
     addLoadedEventListener:function(callback, target){
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    removeLoadedEventListener:function(target){
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0;  i < locListeners.length; i++){
+            var selCallback = locListeners[i];
+            if(selCallback.eventTarget == target){
+                locListeners.splice(i, 1);
+            }
+        }
     },
 
     _callLoadedEventCallbacks:function(){
