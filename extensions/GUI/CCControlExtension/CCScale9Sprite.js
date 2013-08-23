@@ -302,7 +302,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     setContentSize: function (size) {
-        this._super(size);
+        cc.Node.prototype.setContentSize.call(this, size);
         this.m_positionsAreDirty = true;
     },
 
@@ -311,7 +311,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             this._updatePositions();
             this.m_positionsAreDirty = false;
         }
-        this._super();
+        cc.Node.prototype.visit.call(this);
     },
 
     init: function () {

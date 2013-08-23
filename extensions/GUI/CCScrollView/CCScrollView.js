@@ -601,12 +601,12 @@ cc.ScrollView = cc.Layer.extend({
         if (this._container != child) {
             this._container.addChild(child, zOrder, tag);
         } else {
-            this._super(child, zOrder, tag);
+            cc.Layer.prototype.addChild.call(this, child, zOrder, tag);
         }
     },
 
     setTouchEnabled:function (e) {
-        this._super(e);
+        cc.Layer.prototype.setTouchEnabled.call(this, e);
         if (!e) {
             this._dragging = false;
             this._touchMoved = false;

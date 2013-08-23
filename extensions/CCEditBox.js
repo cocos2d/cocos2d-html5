@@ -209,7 +209,7 @@ cc.EditBox = cc.ControlButton.extend({
      * * Constructor.
      * */
     ctor: function (boxSize) {
-        this._super();
+        cc.ControlButton.prototype.ctor.call(this);
 
         this._textColor = cc.WHITE;
         this._placeholderColor = cc.GRAY;

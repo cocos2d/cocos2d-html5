@@ -120,7 +120,7 @@ cc.TableView = cc.ScrollView.extend({
     _oldDirection:null,
 
     ctor:function () {
-        this._super();
+        cc.ScrollView.prototype.ctor.call(this);
         this._oldDirection = cc.SCROLLVIEW_DIRECTION_NONE;
     },
 

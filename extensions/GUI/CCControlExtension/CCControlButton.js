@@ -48,7 +48,7 @@ cc.ControlButton = cc.Control.extend({
     _marginH:0,
 
     ctor:function () {
-        this._super();
+        cc.Control.prototype.ctor.call(this);
         this._preferredSize = new cc.Size(0, 0);
         this._labelAnchorPoint = new cc.Point(0, 0);
 
@@ -309,11 +309,11 @@ cc.ControlButton = cc.Control.extend({
     },
 
     setEnabled:function (enabled) {
-        this._super(enabled);
+        cc.Control.prototype.setEnabled.call(this, enabled);
         this.needsLayout();
     },
     setSelected:function (enabled) {
-        this._super(enabled);
+        cc.Control.prototype.setSelected.call(this, enabled);
         this.needsLayout();
     },
 
@@ -324,7 +324,7 @@ cc.ControlButton = cc.Control.extend({
         else {
             this._state = cc.CONTROL_STATE_NORMAL;
         }
-        this._super(enabled);
+        cc.Control.prototype.setHighlighted.call(this, enabled);
         var action = this.getActionByTag(cc.CONTROL_ZOOM_ACTION_TAG);
         if (action) {
             this.stopAction(action);

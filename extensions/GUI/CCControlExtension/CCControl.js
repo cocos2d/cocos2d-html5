@@ -142,13 +142,13 @@ cc.Control = cc.LayerRGBA.extend({
     },
 
     ctor:function () {
-        this._super();
+        cc.LayerRGBA.prototype.ctor.call(this);
         this._dispatchTable = {};
         this._color = cc.white();
     },
 
     init:function () {
-        if (this._super()) {
+        if (cc.LayerRGBA.prototype.init.call(this)) {
             //this.setTouchEnabled(true);
             //m_bIsTouchEnabled=true;
             // Initialise instance variables
@@ -169,12 +169,6 @@ cc.Control = cc.LayerRGBA.extend({
             return false;
     },
 
-    onEnter:function () {
-        this._super();
-    },
-    onExit:function () {
-        this._super();
-    },
     registerWithTouchDispatcher:function () {
         cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), true);
     },

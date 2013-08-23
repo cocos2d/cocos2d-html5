@@ -665,7 +665,7 @@ cc.BuilderRotateTo = cc.ActionInterval.extend({
     _diffAngle:0,
 
     initWithDuration:function (duration, angle) {
-        if (this._super(duration)) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this._dstAngle = angle;
             return true;
         } else {
@@ -677,7 +677,7 @@ cc.BuilderRotateTo = cc.ActionInterval.extend({
     },
 
     startWithTarget:function (node) {
-        this._super(node);
+        cc.ActionInterval.prototype.startWithTarget.call(this, node);
         this._startAngle = this._target.getRotation();
         this._diffAngle = this._dstAngle - this._startAngle;
     }
