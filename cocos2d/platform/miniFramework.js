@@ -59,7 +59,7 @@ cc.Browser = {};
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
     cc.Browser.type = (function () {
         var browserTypes = cc.Browser.ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baidubrowser|maxthon|ie|opera|firefox/) || cc.Browser.ua.match(/chrome|safari/);
-        if (browserTypes.length > 0) {
+        if (browserTypes && browserTypes.length > 0) {
             var el = browserTypes[0];
             if (el == 'micromessenger') {
                 return 'wechat';
