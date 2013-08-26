@@ -75,6 +75,7 @@
             loadJsImg.style.left = canvasNode.offsetLeft + (parseFloat(canvasStyle.width) - loadJsImg.width)/2 + "px";
             loadJsImg.style.top = canvasNode.offsetTop + (parseFloat(canvasStyle.height) - loadJsImg.height)/2 + "px";
             loadJsImg.style.position = "absolute";
+            loadJsImg.id = "cocos2d_loadJsImg";
         }
         else if (c.engineDir && !c.SingleEngineFile) {
             s.src = c.engineDir + 'platform/jsloader.js';
