@@ -201,6 +201,15 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
     },
 
     /**
+     * Unload the preloaded plist from xmlList
+     * @param {String} filePath
+     */
+    unloadPlist:function(filePath){
+        if (this._xmlDict.hasOwnProperty(filePath))
+            delete this._xmlDict[filePath];
+    },
+
+    /**
      * get filename from filepath
      * @param {String} filePath
      * @return {String}
