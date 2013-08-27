@@ -199,6 +199,15 @@ ClassManager.getNewID=function(){
         };
         return Class;
     };
+
+    Function.prototype.bind = Function.prototype.bind || function (bind) {
+        var self = this;
+        return function () {
+            var args = Array.prototype.slice.call(arguments);
+            return self.apply(bind || null, args);
+        };
+    };
+
 })();
 
 //
@@ -259,3 +268,4 @@ cc.concatObjectProperties = function(dstObject, srcObject){
     }
     return dstObject;
 };
+
