@@ -235,8 +235,10 @@ cc.setup = function (el, width, height) {
      }
      }, true);
      */
-    if(cc.Browser.isMobile)
+    if(cc.Browser.isMobile){
         cc._addUserSelectStatus();
+        cc._addBottomTag();
+    }
 
     var hidden, visibilityChange;
     if (typeof document.hidden !== "undefined") {
@@ -274,6 +276,14 @@ cc._addUserSelectStatus = function(){
 
     fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
         +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
+};
+
+cc._addBottomTag = function () {
+    var bottom = document.createElement("div");
+    bottom.id = "bottom";
+    bottom.style.border = bottom.style.margin = bottom.style.padding = bottom.style.height = bottom.style.lineHeight = bottom.style.fontSize = "0px";
+    document.body.appendChild(bottom);
+    window.location.href="#bottom";
 };
 
 cc._isContextMenuEnable = false;

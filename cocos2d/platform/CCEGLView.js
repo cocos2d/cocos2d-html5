@@ -88,29 +88,50 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     ctor:function () {
         this._ele = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
         this._viewName = "Cocos2dHTML5";
-        this._screenSize = cc.size(this._ele.clientWidth, this._ele.clientHeight);
+
         this._designResolutionSize = cc.SizeZero();
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
         this._contentTranslateLeftTop = {left:0, top:0};
+        this._screenSize = cc.SizeZero();
 
         this._hDC = cc.canvas;
         this._hRC = cc.renderContext;
+        this._initScreenSize();
     },
 
     /**
      * init
      */
     initialize:function () {
+        this._scrollToBottom();
         this._initialize = true;
-        this._adjustSize();
-
         var adjustSize = this._adjustSize.bind(this);
         window.addEventListener('resize', adjustSize, false);
+        if(cc.Browser.isMobile){
+            setTimeout(adjustSize,300);
+        }else{
+            this._adjustSize();
+        }
     },
 
+    _scrollToBottom:function(){
+        if(cc.Browser.isMobile){
+            cc.canvas.height = this._ele.clientHeight+500;
+            window.location.href="#bottom";
+        }
+    },
+
+    _initScreenSize:function(){
+        this._screenSize.width = this._ele.clientWidth;
+        this._screenSize.height = this._ele.clientHeight;
+        if(navigator.userAgent.match(/iPhone/i)){
+            this._screenSize.height +=(this._screenSize.width/320)*60;
+        }
+    },
     _adjustSize:function () {
-        this._screenSize = cc.size(this._ele.clientWidth, this._ele.clientHeight);
+        this._scrollToBottom();
+        this._initScreenSize();
         cc.canvas.width = this._screenSize.width;
         cc.canvas.height = this._screenSize.height;
 
@@ -269,18 +290,22 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     setDesignResolutionSize:function (width, height, resolutionPolicy) {
         cc.Assert(resolutionPolicy !== cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
 
-        if (!this._initialize) {
-            this.initialize();
-        }
-
         if (width == 0 || height == 0)
             return;
 
-        if ((width != null) && (height != null))
+        if ((width != null) && (height != null)){
             this._designResolutionSize = cc.size(width, height);
+        }
 
         if (resolutionPolicy != null)
             this._resolutionPolicy = resolutionPolicy;
+
+        if (!this._initialize) {
+            this.initialize();
+            return;
+        }
+
+
 
         this._scaleX = this._screenSize.width / this._designResolutionSize.width;
         this._scaleY = this._screenSize.height / this._designResolutionSize.height;
