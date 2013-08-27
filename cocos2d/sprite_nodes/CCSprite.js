@@ -1052,6 +1052,8 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         if (!locRect) {
             locRect = cc.rect(0, 0, 0, 0);
             locRect.size = sender.getContentSize();
+        } else if(cc._rectEqualToZero(locRect)){
+            locRect.size = sender.getContentSize();
         }
         this._originalTexture = sender;
 
@@ -2179,6 +2181,8 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         var locRect = this._rect;
         if (!locRect) {
             locRect = cc.rect(0, 0, 0, 0);
+            locRect.size = sender.getContentSize();
+        } else if(cc._rectEqualToZero(locRect)){
             locRect.size = sender.getContentSize();
         }
 

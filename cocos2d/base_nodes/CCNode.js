@@ -2758,7 +2758,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     getBoundingBox:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
+        return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
     /**

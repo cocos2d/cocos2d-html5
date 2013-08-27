@@ -412,11 +412,11 @@ cc.EditBox = cc.ControlButton.extend({
      */
     initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
         if (this.initWithBackgroundSprite(normal9SpriteBg)) {
-            this._domInputSprite.setPosition(cc.p(3, 3));
+            this._domInputSprite.setPosition(3, 3);
 
             this.setZoomOnTouchDown(false);
             this.setPreferredSize(size);
-            this.setPosition(cc.p(0, 0));
+            this.setPosition(0, 0);
             this._addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
             return true;
         }
