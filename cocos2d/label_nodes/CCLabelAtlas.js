@@ -148,7 +148,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
                     fontChar.setOpacity(this._opacity);
                 }
             }
-            fontChar.setPosition(cc.p(i * locItemWidth + locItemWidth / 2, locItemHeight / 2));
+            fontChar.setPosition(i * locItemWidth + locItemWidth / 2, locItemHeight / 2);
         }
     },
 

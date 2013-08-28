@@ -202,7 +202,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
                 var point = locParallaxArray[i];
                 var x = -pos.x + pos.x * point.getRatio().x + point.getOffset().x;
                 var y = -pos.y + pos.y * point.getRatio().y + point.getOffset().y;
-                point.getChild().setPosition(cc.p(x, y));
+                point.getChild().setPosition(x, y);
             }
             this._lastPosition = pos;
         }

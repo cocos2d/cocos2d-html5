@@ -523,9 +523,9 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
                     ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  locChildren[j];
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
+                    tempChild =  locChildren[j];
                 }
                 locChildren[j + 1] = tempItem;
             }
@@ -1051,6 +1051,8 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         var locRect = this._rect;
         if (!locRect) {
             locRect = cc.rect(0, 0, 0, 0);
+            locRect.size = sender.getContentSize();
+        } else if(cc._rectEqualToZero(locRect)){
             locRect.size = sender.getContentSize();
         }
         this._originalTexture = sender;
@@ -1629,9 +1631,9 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
                     ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  locChildren[j];
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
+                    tempChild =  locChildren[j];
                 }
                 locChildren[j + 1] = tempItem;
             }
@@ -2179,6 +2181,8 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         var locRect = this._rect;
         if (!locRect) {
             locRect = cc.rect(0, 0, 0, 0);
+            locRect.size = sender.getContentSize();
+        } else if(cc._rectEqualToZero(locRect)){
             locRect.size = sender.getContentSize();
         }
 

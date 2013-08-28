@@ -154,7 +154,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             this.ignoreAnchorPointForPosition(true);
             this.setAnchorPoint(cc.p(0.5, 0.5));
             this.setContentSize(winSize);
-            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
+            this.setPosition(winSize.width / 2, winSize.height / 2);
 
             if (arrayOfItems) {
                 for (var i = 0; i < arrayOfItems.length; i++)
@@ -204,7 +204,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var y = height / 2.0;
         if (this._children && this._children.length > 0) {
             for (i = 0; i < this._children.length; i++) {
-                this._children[i].setPosition(cc.p(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2));
+                this._children[i].setPosition(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2);
                 y -= this._children[i].getContentSize().height * this._children[i].getScaleY() + padding;
             }
         }
@@ -232,7 +232,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var x = -width / 2.0;
         if (this._children && this._children.length > 0) {
             for (i = 0; i < this._children.length; i++) {
-                this._children[i].setPosition(cc.p(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2, 0));
+                this._children[i].setPosition(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2, 0);
                 x += this._children[i].getContentSize().width * this._children[i].getScaleX() + padding;
             }
         }
@@ -258,16 +258,17 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var row = 0;
         var rowHeight = 0;
         var columnsOccupied = 0;
-        var rowColumns;
-        if (this._children && this._children.length > 0) {
-            for (i = 0; i < this._children.length; i++) {
+        var rowColumns, tmp, len;
+        var locChildren = this._children;
+        if (locChildren && locChildren.length > 0) {
+            for (i = 0, len = locChildren.length; i < len; i++) {
                 cc.Assert(row < rows.length, "");
 
                 rowColumns = rows[row];
                 // can not have zero columns on a row
                 cc.Assert(rowColumns, "");
 
-                var tmp = this._children[i].getContentSize().height;
+                tmp = locChildren[i].getContentSize().height;
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
 
                 ++columnsOccupied;
@@ -291,27 +292,24 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var x = 0.0;
         var y = (height / 2);
 
-        if (this._children && this._children.length > 0) {
-            for (i = 0; i < this._children.length; i++) {
-                var child = this._children[i];
+        if (locChildren && locChildren.length > 0) {
+            for (i = 0, len = locChildren.length; i < len; i++) {
+                var child = locChildren[i];
                 if (rowColumns == 0) {
                     rowColumns = rows[row];
                     w = winSize.width / (1 + rowColumns);
                     x = w;
                 }
 
-                var tmp = child.getContentSize().height;
+                tmp = child.getContentSize().height;
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
-
-                child.setPosition(cc.p(x - winSize.width / 2,
-                    y - child.getContentSize().height / 2));
+                child.setPosition(x - winSize.width / 2, y - tmp / 2);
 
                 x += w;
                 ++columnsOccupied;
 
                 if (columnsOccupied >= rowColumns) {
                     y -= rowHeight + 5;
-
                     columnsOccupied = 0;
                     rowColumns = 0;
                     rowHeight = 0;
@@ -331,8 +329,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     alignItemsInRows:function (/*Multiple arguments*/) {
         if((arguments.length > 0) && (arguments[arguments.length-1] == null))
             cc.log("parameters should not be ending with null in Javascript");
-        var columns = [];
-        for (var i = 0; i < arguments.length; i++) {
+        var columns = [], i;
+        for (i = 0; i < arguments.length; i++) {
             columns.push(arguments[i]);
         }
         var columnWidths = [];
@@ -343,11 +341,12 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var column = 0;
         var columnWidth = 0;
         var rowsOccupied = 0;
-        var columnRows;
+        var columnRows, child, len, tmp;
 
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                var child = this._children[i];
+        var locChildren = this._children;
+        if (locChildren && locChildren.length > 0) {
+            for (i = 0, len = locChildren.length; i < len; i++) {
+                child = locChildren[i];
                 // check if too many menu items for the amount of rows/columns
                 cc.Assert(column < columns.length, "");
 
@@ -356,7 +355,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 cc.Assert(columnRows, "");
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
-                var tmp = child.getContentSize().width;
+                tmp = child.getContentSize().width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
                 columnHeight += (child.getContentSize().height + 5);
@@ -385,20 +384,19 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var x = -width / 2;
         var y = 0.0;
 
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                var child = this._children[i];
+        if (locChildren && locChildren.length > 0) {
+            for (i = 0, len = locChildren.length; i < len; i++) {
+                child = locChildren[i];
                 if (columnRows == 0) {
                     columnRows = columns[column];
                     y = columnHeights[column];
                 }
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
-                var tmp = child.getContentSize().width;
+                tmp = child.getContentSize().width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
-                child.setPosition(cc.p(x + columnWidths[column] / 2,
-                    y - winSize.height / 2));
+                child.setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
 
                 y -= child.getContentSize().height + 10;
                 ++rowsOccupied;

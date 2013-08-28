@@ -153,7 +153,6 @@ cc.ControlUtils.RGBfromHSV = function(hsvValue){
             out.g = p;
             out.b = hsvValue.v;
             break;
-        case 5:
         default:
             out.r = hsvValue.v;
             out.g = p;

@@ -227,7 +227,7 @@ cc.BuilderReader = cc.Class.extend({
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
     },
 
-    readNodeGraphFromData:function (data, owner, parentSize, animationManager) {
+    readNodeGraphFromData:function (data, owner, parentSize) {
         this.initWithData(data, owner);
         this._actionManager.setRootContainerSize(parentSize);
         this._actionManager.setOwner(owner);
@@ -255,12 +255,6 @@ cc.BuilderReader = cc.Class.extend({
                 this._animationManagerForNodes.push(this._animationManagers.objectForKey(getAllKeys[i]));
             }
         }
-
-        // Return action manager by reference
-        //if (ppAnimationManager)
-        //{
-        //    *ppAnimationManager = mActionManager;
-        //}
 
         return nodeGraph;
     },

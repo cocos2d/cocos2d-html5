@@ -760,8 +760,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
             sprite.setAnchorPoint(cc.p(0.5, 0.5));
-            sprite.setPosition(cc.p(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
-                this.getPositionAt(pos).y + sprite.getContentSize().width / 2));
+            sprite.setPosition(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
+                this.getPositionAt(pos).y + sprite.getContentSize().width / 2);
 
             var flag = (gid & (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG) >>> 0) >>> 0;
             // handle the 4 diagonally flipped states.
