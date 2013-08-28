@@ -39,28 +39,28 @@ cc.SpriteLoader = cc.NodeLoader.extend({
         if (propertyName == PROPERTY_COLOR) {
             node.setColor(color3BValue);
         } else {
-            this._super(node, parent, propertyName, color3BValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, color3BValue, ccbReader);
         }
     },
     onHandlePropTypeByte:function (node, parent, propertyName, byteValue, ccbReader) {
         if (propertyName == PROPERTY_OPACITY) {
             node.setOpacity(byteValue);
         } else {
-            this._super(node, parent, propertyName, byteValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeByte.call(this, node, parent, propertyName, byteValue, ccbReader);
         }
     },
     onHandlePropTypeBlendFunc:function (node, parent, propertyName, ccbBlendFunc, ccbReader) {
         if (propertyName == PROPERTY_BLENDFUNC) {
             node.setBlendFunc(ccbBlendFunc);
         } else {
-            this._super(node, parent, propertyName, ccbBlendFunc, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeBlendFunc.call(this, node, parent, propertyName, ccbBlendFunc, ccbReader);
         }
     },
     onHandlePropTypeSpriteFrame:function (node, parent, propertyName, ccSpriteFrame, ccbReader) {
         if (propertyName == PROPERTY_DISPLAYFRAME) {
             node.setDisplayFrame(ccSpriteFrame);
         } else {
-            this._super(node, parent, propertyName, ccSpriteFrame, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeSpriteFrame.call(this, node, parent, propertyName, ccSpriteFrame, ccbReader);
         }
     },
     onHandlePropTypeFlip:function (node, parent, propertyName, flip, ccbReader) {
@@ -68,7 +68,7 @@ cc.SpriteLoader = cc.NodeLoader.extend({
             node.setFlipX(flip[0]);
             node.setFlipY(flip[1]);
         } else {
-            this._super(node, parent, propertyName, flip, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeFlip.call(this, node, parent, propertyName, flip, ccbReader);
         }
     }
 });
@@ -106,7 +106,7 @@ cc.LayerLoader = cc.NodeLoader.extend({
                 // This comes closest: ((CCLayer *)pNode).setKeypadEnabled(pCheck);
             }
         } else {
-            this._super(node, parent, propertyName, check, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeCheck.call(this, node, parent, propertyName, check, ccbReader);
         }
     }
 });
@@ -125,21 +125,21 @@ cc.LayerColorLoader = cc.LayerLoader.extend({
         if (propertyName == PROPERTY_COLOR) {
             node.setColor(ccColor3B);
         } else {
-            this._super(node, parent, propertyName, ccColor3B, ccbReader);
+            cc.LayerLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, ccColor3B, ccbReader);
         }
     },
     onHandlePropTypeByte:function (node, parent, propertyName, byteValue, ccbReader) {
         if (propertyName == PROPERTY_OPACITY) {
             node.setOpacity(byteValue);
         } else {
-            this._super(node, parent, propertyName, byteValue, ccbReader);
+            cc.LayerLoader.prototype.onHandlePropTypeByte.call(this, node, parent, propertyName, byteValue, ccbReader);
         }
     },
     onHandlePropTypeBlendFunc:function (node, parent, propertyName, ccBlendFunc, ccbReader) {
         if (propertyName == PROPERTY_BLENDFUNC) {
             node.setBlendFunc(ccBlendFunc);
         } else {
-            this._super(node, parent, propertyName, ccBlendFunc, ccbReader);
+            cc.LayerLoader.prototype.onHandlePropTypeBlendFunc.call(this, node, parent, propertyName, ccBlendFunc, ccbReader);
         }
     }
 });
@@ -164,7 +164,7 @@ cc.LayerGradientLoader = cc.LayerLoader.extend({
         } else if (propertyName == PROPERTY_ENDCOLOR) {
             node.setEndColor(ccColor3B);
         } else {
-            this._super(node, parent, propertyName, ccColor3B, ccbReader);
+            cc.LayerLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, ccColor3B, ccbReader);
         }
     },
     onHandlePropTypeByte:function (node, parent, propertyName, byteValue, ccbReader) {
@@ -173,7 +173,7 @@ cc.LayerGradientLoader = cc.LayerLoader.extend({
         } else if (propertyName == PROPERTY_ENDOPACITY) {
             node.setEndOpacity(byteValue);
         } else {
-            this._super(node, parent, propertyName, byteValue, ccbReader);
+            cc.LayerLoader.prototype.onHandlePropTypeByte.call(this, node, parent, propertyName, byteValue, ccbReader);
         }
     },
     onHandlePropTypePoint:function (node, parent, propertyName, point, ccbReader) {
@@ -182,14 +182,14 @@ cc.LayerGradientLoader = cc.LayerLoader.extend({
             // TODO Not passed along the ccbi file.
             // node.setCompressedInterpolation(true);
         } else {
-            this._super(node, parent, propertyName, point, ccbReader);
+            cc.LayerLoader.prototype.onHandlePropTypePoint.call(this, node, parent, propertyName, point, ccbReader);
         }
     },
     onHandlePropTypeBlendFunc:function (node, parent, propertyName, ccBlendFunc, ccbReader) {
         if (propertyName == PROPERTY_BLENDFUNC) {
             node.setBlendFunc(ccBlendFunc);
         } else {
-            this._super(node, parent, propertyName, ccBlendFunc, ccbReader);
+            cc.LayerLoader.prototype.onHandlePropTypeBlendFunc.call(this, node, parent, propertyName, ccBlendFunc, ccbReader);
         }
     }
 });
@@ -222,14 +222,14 @@ cc.MenuItemLoader = cc.NodeLoader.extend({
                 node.setTarget(blockData.selMenuHander, blockData.target);
             }
         } else {
-            this._super(node, parent, propertyName, blockData, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeBlock.call(this, node, parent, propertyName, blockData, ccbReader);
         }
     },
     onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
         if (propertyName == PROPERTY_ISENABLED) {
             node.setEnabled(check);
         } else {
-            this._super(node, parent, propertyName, check, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeCheck.call(this, node, parent, propertyName, check, ccbReader);
         }
     }
 });
@@ -257,7 +257,7 @@ cc.MenuItemImageLoader = cc.MenuItemLoader.extend({
                 node.setDisabledSpriteFrame(spriteFrame);
             }
         } else {
-            this._super(node, parent, propertyName, spriteFrame, ccbReader);
+            cc.MenuItemLoader.prototype.onHandlePropTypeSpriteFrame.call(this, node, parent, propertyName, spriteFrame, ccbReader);
         }
     }
 });
@@ -281,42 +281,42 @@ cc.LabelTTFLoader = cc.NodeLoader.extend({
         if (propertyName == PROPERTY_COLOR) {
             node.setColor(ccColor3B);
         } else {
-            this._super(node, parent, propertyName, ccColor3B, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, ccColor3B, ccbReader);
         }
     },
     onHandlePropTypeByte:function (node, parent, propertyName, byteValue, ccbReader) {
         if (propertyName == PROPERTY_OPACITY) {
             node.setOpacity(byteValue);
         } else {
-            this._super(node, parent, propertyName, byteValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeByte.call(this, node, parent, propertyName, byteValue, ccbReader);
         }
     },
     onHandlePropTypeBlendFunc:function (node, parent, propertyName, ccBlendFunc, ccbReader) {
         if (propertyName == PROPERTY_BLENDFUNC) {
             node.setBlendFunc(ccBlendFunc);
         } else {
-            this._super(pNode, pParent, propertyName, ccBlendFunc, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeBlendFunc.call(this, node, parent, propertyName, ccBlendFunc, ccbReader);
         }
     },
     onHandlePropTypeFontTTF:function (node, parent, propertyName, fontTTF, ccbReader) {
         if (propertyName == PROPERTY_FONTNAME) {
             node.setFontName(fontTTF);
         } else {
-            this._super(node, parent, propertyName, fontTTF, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeFontTTF.call(this, node, parent, propertyName, fontTTF, ccbReader);
         }
     },
     onHandlePropTypeText:function (node, parent, propertyName, textValue, ccbReader) {
         if (propertyName == PROPERTY_STRING) {
             node.setString(textValue);
         } else {
-            this._super(node, parent, propertyName, textValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeText.call(this, node, parent, propertyName, textValue, ccbReader);
         }
     },
     onHandlePropTypeFloatScale:function (node, parent, propertyName, floatScale, ccbReader) {
         if (propertyName == PROPERTY_FONTSIZE) {
             node.setFontSize(floatScale);
         } else {
-            this._super(node, parent, propertyName, floatScale, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeFloatScale.call(this, node, parent, propertyName, floatScale, ccbReader);
         }
     },
     onHandlePropTypeIntegerLabeled:function (node, parent, propertyName, integerLabeled, ccbReader) {
@@ -325,14 +325,14 @@ cc.LabelTTFLoader = cc.NodeLoader.extend({
         } else if (propertyName == PROPERTY_VERTICALALIGNMENT) {
             node.setVerticalAlignment(integerLabeled);
         } else {
-            this._super(node, parent, propertyName, integerLabeled, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeIntegerLabeled.call(this, node, parent, propertyName, integerLabeled, ccbReader);
         }
     },
     onHandlePropTypeSize:function (node, parent, propertyName, size, ccbReader) {
         if (propertyName == PROPERTY_DIMENSIONS) {
             node.setDimensions(size);
         } else {
-            this._super(node, parent, propertyName, size, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeSize.call(this, node, parent, propertyName, size, ccbReader);
         }
     }
 });
@@ -352,35 +352,35 @@ cc.LabelBMFontLoader = cc.NodeLoader.extend({
         if (propertyName == PROPERTY_COLOR) {
             node.setColor(ccColor3B);
         } else {
-            this._super(node, parent, propertyName, ccColor3B, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, ccColor3B, ccbReader);
         }
     },
     onHandlePropTypeByte:function (node, parent, propertyName, byteValue, ccbReader) {
         if (propertyName == PROPERTY_OPACITY) {
             node.setOpacity(byteValue);
         } else {
-            this._super(node, parent, propertyName, byteValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeByte.call(this, node, parent, propertyName, byteValue, ccbReader);
         }
     },
     onHandlePropTypeBlendFunc:function (node, parent, propertyName, ccBlendFunc, ccbReader) {
         if (propertyName == PROPERTY_BLENDFUNC) {
             node.setBlendFunc(ccBlendFunc);
         } else {
-            this._super(node, parent, propertyName, ccBlendFunc, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeBlendFunc.call(this, node, parent, propertyName, ccBlendFunc, ccbReader);
         }
     },
     onHandlePropTypeFntFile:function (node, parent, propertyName, fntFile, ccbReader) {
         if (propertyName == PROPERTY_FNTFILE) {
             node.setFntFile(fntFile);
         } else {
-            this._super(node, parent, propertyName, fntFile, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeFntFile.call(this, node, parent, propertyName, fntFile, ccbReader);
         }
     },
     onHandlePropTypeText:function (node, parent, propertyName, textValue, ccbReader) {
         if (propertyName == PROPERTY_STRING) {
             node.setString(textValue);
         } else {
-            this._super(node, parent, propertyName, textValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeText.call(this, node, parent, propertyName, textValue, ccbReader);
         }
     }
 });
@@ -418,7 +418,7 @@ cc.ParticleSystemQuadLoader = cc.NodeLoader.extend({
         if (propertyName == PROPERTY_EMITERMODE) {
             node.setEmitterMode(integerLabeled);
         } else {
-            this._super(node, parent, propertyName, integerLabeled, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeIntegerLabeled.call(this, node, parent, propertyName, integerLabeled, ccbReader);
         }
     },
     onHandlePropTypePoint:function (node, parent, propertyName, point, ccbReader) {
@@ -427,7 +427,7 @@ cc.ParticleSystemQuadLoader = cc.NodeLoader.extend({
         } else if (propertyName == PROPERTY_GRAVITY) {
             node.setGravity(point);
         } else {
-            this._super(node, parent, propertyName, point, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypePoint.call(this, node, parent, propertyName, point, ccbReader);
         }
     },
     onHandlePropTypeFloat:function (node, parent, propertyName, floatValue, ccbReader) {
@@ -436,14 +436,14 @@ cc.ParticleSystemQuadLoader = cc.NodeLoader.extend({
         } else if (propertyName == PROPERTY_DURATION) {
             node.setDuration(floatValue);
         } else {
-            this._super(node, parent, propertyName, floatValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeFloat.call(this, node, parent, propertyName, floatValue, ccbReader);
         }
     },
     onHandlePropTypeInteger:function (node, parent, propertyName, integerValue, ccbReader) {
         if (propertyName == PROPERTY_TOTALPARTICLES) {
             node.setTotalParticles(integerValue);
         } else {
-            this._super(node, parent, propertyName, integerValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeInteger.call(this, node, parent, propertyName, integerValue, ccbReader);
         }
     },
     onHandlePropTypeFloatVar:function (node, parent, propertyName, floatVar, ccbReader) {
@@ -484,7 +484,7 @@ cc.ParticleSystemQuadLoader = cc.NodeLoader.extend({
             node.setRotatePerSecond(floatVar[0]);
             node.setRotatePerSecondVar(floatVar[1]);
         } else {
-            this._super(node, parent, propertyName, floatVar, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeFloatVar.call(this, node, parent, propertyName, floatVar, ccbReader);
         }
     },
     onHandlePropTypeColor4FVar:function (node, parent, propertyName, ccColor4FVar, ccbReader) {
@@ -495,21 +495,21 @@ cc.ParticleSystemQuadLoader = cc.NodeLoader.extend({
             node.setEndColor(ccColor4FVar[0]);
             node.setEndColorVar(ccColor4FVar[1]);
         } else {
-            this._super(node, parent, propertyName, ccColor4FVar, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeColor4FVar.call(this, node, parent, propertyName, ccColor4FVar, ccbReader);
         }
     },
     onHandlePropTypeBlendFunc:function (node, parent, propertyName, ccBlendFunc, ccbReader) {
         if (propertyName == PROPERTY_BLENDFUNC) {
             node.setBlendFunc(ccBlendFunc);
         } else {
-            this._super(node, parent, propertyName, ccBlendFunc, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeBlendFunc.call(this, node, parent, propertyName, ccBlendFunc, ccbReader);
         }
     },
     onHandlePropTypeTexture:function (node, parent, propertyName, ccTexture2D, ccbReader) {
         if (propertyName == PROPERTY_TEXTURE) {
             node.setTexture(ccTexture2D);
         } else {
-            this._super(node, parent, propertyName, ccTexture2D, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeTexture.call(this, node, parent, propertyName, ccTexture2D, ccbReader);
         }
     }
 });

@@ -597,9 +597,9 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
                     ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  locChildren[j];
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
+                    tempChild =  locChildren[j];
                 }
                 locChildren[j + 1] = tempItem;
             }
@@ -1312,9 +1312,9 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
                     ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  childrenArr[j];
                     childrenArr[j + 1] = tempChild;
                     j = j - 1;
+                    tempChild =  childrenArr[j];
                 }
                 childrenArr[j + 1] = tempItem;
             }

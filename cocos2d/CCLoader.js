@@ -423,7 +423,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         // bg
         this._bgLayer = cc.LayerColor.create(cc.c4(32, 32, 32, 255));
-        this._bgLayer.setPosition(cc.p(0, 0));
+        this._bgLayer.setPosition(0, 0);
         this.addChild(this._bgLayer, 0);
 
         //loading percent

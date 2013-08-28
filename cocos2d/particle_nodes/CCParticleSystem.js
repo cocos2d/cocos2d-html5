@@ -1340,7 +1340,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             // position
             var x = parseFloat(locValueForKey("sourcePositionx", dictionary));
             var y = parseFloat(locValueForKey("sourcePositiony", dictionary));
-            this.setPosition(cc.p(x, y));
+            this.setPosition(x, y);
             this._posVar.x = parseFloat(locValueForKey("sourcePositionVariancex", dictionary));
             this._posVar.y = parseFloat(locValueForKey("sourcePositionVariancey", dictionary));
 

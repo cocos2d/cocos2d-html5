@@ -38,7 +38,8 @@ var INSET_RATIO = 0.2;
 var MOVE_INCH = 7.0/160.0;
 
 cc.convertDistanceFromPointToInch = function(pointDis){
-    var factor = (cc.EGLView.getInstance().getScaleX() + cc.EGLView.getInstance().getScaleY())/2;
+    var eglViewer = cc.EGLView.getInstance();
+    var factor = (eglViewer.getScaleX() + eglViewer.getScaleY())/2;
     return (pointDis * factor) / 160;               // CCDevice::getDPI() default value
 };
 
@@ -104,7 +105,7 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     /**
-     * Returns a scroll view object
+     * initialized whether success or fail
      * @param {cc.Size} size
      * @param {cc.Node} container
      * @return {Boolean}
@@ -146,24 +147,25 @@ cc.ScrollView = cc.Layer.extend({
      * @param {cc.Point} offset new offset
      * @param {Number} [animated=] If YES, the view scrolls to the new offset
      */
-    setContentOffset:function (offset, animated) {
+    setContentOffset: function (offset, animated) {
         if (animated) { //animate scrolling
             this.setContentOffsetInDuration(offset, BOUNCE_DURATION);
-        } else { //set the container position directly
-            if (!this._bounceable) {
-                var minOffset = this.minContainerOffset();
-                var maxOffset = this.maxContainerOffset();
-
-                offset.x = Math.max(minOffset.x, Math.min(maxOffset.x, offset.x));
-                offset.y = Math.max(minOffset.y, Math.min(maxOffset.y, offset.y));
-            }
-
-            this._container.setPosition(offset);
-            var locDelegate = this._delegate;
-            if (locDelegate != null && locDelegate.scrollViewDidScroll) {
-                locDelegate.scrollViewDidScroll(this);
-            }
+            return;
         }
+        if (!this._bounceable) {
+            var minOffset = this.minContainerOffset();
+            var maxOffset = this.maxContainerOffset();
+
+            offset.x = Math.max(minOffset.x, Math.min(maxOffset.x, offset.x));
+            offset.y = Math.max(minOffset.y, Math.min(maxOffset.y, offset.y));
+        }
+
+        this._container.setPosition(offset);
+        var locDelegate = this._delegate;
+        if (locDelegate != null && locDelegate.scrollViewDidScroll) {
+            locDelegate.scrollViewDidScroll(this);
+        }
+
     },
 
     getContentOffset:function () {
@@ -188,36 +190,34 @@ cc.ScrollView = cc.Layer.extend({
      * Sets a new scale and does that for a predefined duration.
      *
      * @param {Number} scale a new scale vale
-     * @param {Boolean} animated if YES, scaling is animated
+     * @param {Boolean} [animated=null] if YES, scaling is animated
      */
-    setZoomScale:function (scale, animated) {
-        if (arguments.length === 1) {
-            var locContainer = this._container;
-            if (locContainer.getScale() != scale) {
-                var oldCenter, newCenter;
-                var center;
+    setZoomScale: function (scale, animated) {
+        if (animated) {
+            this.setZoomScaleInDuration(scale, BOUNCE_DURATION);
+            return;
+        }
 
-                if (this._touchLength == 0.0) {
-                    center = cc.p(this._viewSize.width * 0.5, this._viewSize.height * 0.5);
-                    center = this.convertToWorldSpace(center);
-                } else
-                    center = this._touchPoint;
+        var locContainer = this._container;
+        if (locContainer.getScale() != scale) {
+            var oldCenter, newCenter;
+            var center;
 
-                oldCenter = locContainer.convertToNodeSpace(center);
-                locContainer.setScale(Math.max(this._minScale, Math.min(this._maxScale, scale)));
-                newCenter = locContainer.convertToWorldSpace(oldCenter);
+            if (this._touchLength == 0.0) {
+                var locViewSize = this._viewSize;
+                center = cc.p(locViewSize.width * 0.5, locViewSize.height * 0.5);
+                center = this.convertToWorldSpace(center);
+            } else
+                center = this._touchPoint;
 
-                var offset = cc.pSub(center, newCenter);
-                if (this._delegate != null) {
-                    this._delegate.scrollViewDidZoom(this);
-                }
-                this.setContentOffset(cc.pAdd(locContainer.getPosition(), offset));
-            }
-        } else if (arguments.length === 2) {
-            if (animated)
-                this.setZoomScaleInDuration(scale, BOUNCE_DURATION);
-            else
-                this.setZoomScale(scale);
+            oldCenter = locContainer.convertToNodeSpace(center);
+            locContainer.setScale(Math.max(this._minScale, Math.min(this._maxScale, scale)));
+            newCenter = locContainer.convertToWorldSpace(oldCenter);
+
+            var offset = cc.pSub(center, newCenter);
+            if (this._delegate != null)
+                this._delegate.scrollViewDidZoom(this);
+            this.setContentOffset(cc.pAdd(locContainer.getPosition(), offset));
         }
     },
 
@@ -233,8 +233,9 @@ cc.ScrollView = cc.Layer.extend({
      */
     setZoomScaleInDuration:function (s, dt) {
         if (dt > 0) {
-            if (this._container.getScale() != s) {
-                var scaleAction = cc.ActionTween.create(dt, "zoomScale", this._container.getScale(), s);
+            var locScale = this._container.getScale();
+            if (locScale != s) {
+                var scaleAction = cc.ActionTween.create(dt, "zoomScale", locScale, s);
                 this.runAction(scaleAction);
             }
         } else {
@@ -244,15 +245,18 @@ cc.ScrollView = cc.Layer.extend({
 
     /**
      * Returns the current container's minimum offset. You may want this while you animate scrolling by yourself
+     * @return {cc.Point} Returns the current container's minimum offset.
      */
     minContainerOffset:function () {
-        var locContentSize = this._container.getContentSize();
-        return cc.p(this._viewSize.width - locContentSize.width * this._container.getScaleX(),
-            this._viewSize.height - locContentSize.height * this._container.getScaleY());
+        var locContainer = this._container;
+        var locContentSize = locContainer.getContentSize(), locViewSize = this._viewSize;
+        return cc.p(locViewSize.width - locContentSize.width * locContainer.getScaleX(),
+            locViewSize.height - locContentSize.height * locContainer.getScaleY());
     },
 
     /**
      * Returns the current container's maximum offset. You may want this while you animate scrolling by yourself
+     * @return {cc.Point} Returns the current container's maximum offset.
      */
     maxContainerOffset:function () {
         return cc.p(0.0, 0.0);
@@ -289,7 +293,7 @@ cc.ScrollView = cc.Layer.extend({
      */
     resume:function (sender) {
         var selChildren = this._container.getChildren();
-        for (var i = 0; i < selChildren.length; i++) {
+        for (var i = 0, len = selChildren.length; i < len; i++) {
             selChildren[i].resumeSchedulerAndActions();
         }
 
@@ -338,10 +342,10 @@ cc.ScrollView = cc.Layer.extend({
         this.removeAllChildren(true);
 
         this._container = container;
-        this._container.ignoreAnchorPointForPosition(false);
-        this._container.setAnchorPoint(cc.p(0.0, 0.0));
+        container.ignoreAnchorPointForPosition(false);
+        container.setAnchorPoint(cc.p(0.0, 0.0));
 
-        this.addChild(this._container);
+        this.addChild(container);
         this.setViewSize(this._viewSize);
     },
 
@@ -414,10 +418,10 @@ cc.ScrollView = cc.Layer.extend({
             var newPoint = this.convertTouchToNodeSpace(touch);
             var moveDistance = cc.pSub(newPoint, this._touchPoint);
 
-            var dis = 0.0;
-            if (this._direction === cc.SCROLLVIEW_DIRECTION_VERTICAL)
+            var dis = 0.0, locDirection = this._direction;
+            if (locDirection === cc.SCROLLVIEW_DIRECTION_VERTICAL)
                 dis = moveDistance.y;
-            else if (this._direction === cc.SCROLLVIEW_DIRECTION_HORIZONTAL)
+            else if (locDirection === cc.SCROLLVIEW_DIRECTION_HORIZONTAL)
                 dis = moveDistance.x;
             else
                 dis = Math.sqrt(moveDistance.x * moveDistance.x + moveDistance.y * moveDistance.y);
@@ -436,7 +440,7 @@ cc.ScrollView = cc.Layer.extend({
             this._touchMoved = true;
 
             if (cc.rectContainsPoint(frame, this.convertToWorldSpace(newPoint))) {
-                switch (this._direction) {
+                switch (locDirection) {
                     case cc.SCROLLVIEW_DIRECTION_VERTICAL:
                         moveDistance.x = 0.0;
                         break;
@@ -601,12 +605,12 @@ cc.ScrollView = cc.Layer.extend({
         if (this._container != child) {
             this._container.addChild(child, zOrder, tag);
         } else {
-            this._super(child, zOrder, tag);
+            cc.Layer.prototype.addChild.call(this, child, zOrder, tag);
         }
     },
 
     setTouchEnabled:function (e) {
-        this._super(e);
+        cc.Layer.prototype.setTouchEnabled.call(this, e);
         if (!e) {
             this._dragging = false;
             this._touchMoved = false;
@@ -680,7 +684,8 @@ cc.ScrollView = cc.Layer.extend({
          newX = Math.max(newX, minInset.x);
          var newY = Math.min(this._container.getPosition().y, maxInset.y);
          newY = Math.max(newY, minInset.y);*/
-        oldPosition = this._container.getPosition();
+        oldPosition.x = this._container.getPositionX();
+        oldPosition.y = this._container.getPositionY();
         var newX = oldPosition.x;
         var newY = oldPosition.y;
 
@@ -767,7 +772,6 @@ cc.ScrollView = cc.Layer.extend({
                     //clip
                     EGLViewer.setScissorInPoints(frame.x, frame.y, frame.width, frame.height);
                 }
-
             }
         }
     },
