@@ -698,18 +698,18 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
-                locSize = cc.size(Math.max.apply(Math, this._lineWidths) + locStrokeShadowOffsetX, (this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY);
+                locSize = cc.size(0 | (Math.max.apply(Math, this._lineWidths) + locStrokeShadowOffsetX), 0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
             else
-                locSize = cc.size(stringWidth + locStrokeShadowOffsetX, this._fontClientHeight + locStrokeShadowOffsetY);
+                locSize = cc.size(0 | (stringWidth + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
         } else {
             if(this._dimensions.height === 0){
                 if (this._isMultiLine)
-                    locSize = cc.size(locDimensionsWidth + locStrokeShadowOffsetX, (this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY);
+                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
                 else
-                    locSize = cc.size(locDimensionsWidth + locStrokeShadowOffsetX, this._fontClientHeight + locStrokeShadowOffsetY);
+                    locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
             } else {
                 //dimension is already set, contentSize must be same as dimension
-                locSize = cc.size(locDimensionsWidth + locStrokeShadowOffsetX, this._dimensions.height + locStrokeShadowOffsetY);
+                locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
             }
         }
         this.setContentSize(locSize);
