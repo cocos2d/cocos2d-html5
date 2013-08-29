@@ -1338,13 +1338,9 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
                     0, 0, 0 | locRect.width, 0 | locRect.height,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
-                try{
                 context.drawImage(image,
                     0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
-                }catch(ex){
-                    console.log(ex);
-                }
             }
         } else if (locContentSize.width !== 0) {
             var curColor = this.getColor();
