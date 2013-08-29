@@ -157,7 +157,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
                 if (placeholder) {
                     this._placeHolder = placeholder;
                 }
-                return this.initWithString(this._placeHolder, dimensions, alignment, fontName, fontSize);
+                return this.initWithString(this._placeHolder,fontName, fontSize, dimensions, alignment);
                 break;
             case 3:
                 if (placeholder) {
@@ -230,6 +230,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         // draw placeholder
         var color = this.getColor();
         this.setColor(this._ColorSpaceHolder);
+        if(cc.renderContextType === cc.CANVAS)
+            this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
         this.setColor(color);
     },
@@ -400,7 +402,7 @@ cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName,
             ret = new cc.TextFieldTTF();
             fontName = arguments[1];
             fontSize = arguments[2];
-            if (ret && ret.initWithString(["", fontName, fontSize])) {
+            if (ret && ret.initWithString("", fontName, fontSize)) {
                 if (placeholder)
                     ret.setPlaceHolder(placeholder);
                 return ret;
