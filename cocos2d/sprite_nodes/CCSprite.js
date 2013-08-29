@@ -969,7 +969,6 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
-            filename = cc.FileUtils.getInstance().fullPathForFilename(filename);
             texture = cc.TextureCache.getInstance().addImage(filename);
             return this.initWithTexture(texture, rect);
         } else {
