@@ -241,6 +241,10 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         } else {
             var src = resInfo.src;
             var ext = src.substring(src.lastIndexOf(".") + 1, src.length);
+
+            var index = ext.indexOf("?");
+            if(index > 0) ext = ext.substring(0, index);
+
             for (var resType in cc.RESOURCE_TYPE) {
                 if (cc.RESOURCE_TYPE[resType].indexOf(ext) != -1) {
                     return resType;
