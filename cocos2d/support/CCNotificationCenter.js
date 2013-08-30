@@ -126,7 +126,6 @@ cc.NotificationCenter.getInstance = function() {
 };
 
 cc.NotificationObserver = cc.Class.extend({
-
     /**
      * @param {cc.Class} target
      * @param {String} selector

@@ -770,6 +770,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setOpenGLView:function (openGLView) {
         // set size
         this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);        //this._openGLView.getDesignResolutionSize();
+        this._openGLView = openGLView || cc.EGLView.getInstance();
 
         if (cc.renderContextType === cc.CANVAS)
             return;
@@ -785,7 +786,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         //if (this._openGLView != openGLView) {
         // because EAGLView is not kind of CCObject
-        this._openGLView = openGLView || cc.EGLView.getInstance();
 
         this._createStatsLabel();
 

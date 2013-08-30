@@ -3762,7 +3762,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     getColor:function(){
-        return this._realColor;
+        var locRealColor = this._realColor;
+        return new cc.Color3B(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
     getDisplayedColor:function(){

@@ -969,7 +969,6 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
-            filename = cc.FileUtils.getInstance().fullPathForFilename(filename);
             texture = cc.TextureCache.getInstance().addImage(filename);
             return this.initWithTexture(texture, rect);
         } else {
@@ -1335,11 +1334,11 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,
-                    0, 0, locRect.width, locRect.height,
+                    0, 0, 0 | locRect.width, 0 | locRect.height,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(image,
-                    locRect.x, locRect.y, locRect.width, locRect.height,
+                    0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (locContentSize.width !== 0) {
