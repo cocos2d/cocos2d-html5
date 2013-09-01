@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2012 cocos2d-x.org
  * http://www.cocos2d-x.org
  *
@@ -55,6 +55,7 @@ cc.ControlStepper = cc.Control.extend({
     _touchedPart:cc.CONTROL_STEPPER_PARTNONE,
     _autorepeatCount:0,
     ctor:function () {
+        cc.Control.prototype.ctor.call(this);
         this._minusSprite = null;
         this._plusSprite = null;
         this._minusLabel = null;

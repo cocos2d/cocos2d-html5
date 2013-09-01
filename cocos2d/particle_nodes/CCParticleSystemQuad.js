@@ -55,6 +55,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     _buffersVBO:null,
     _pointRect:null,
 
+    _textureLoaded: null,
+
     /**
      * Constructor
      * @override
@@ -65,6 +67,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         this._quads = [];
         this._indices = [];
         this._pointRect = cc.RectZero();
+        this._textureLoaded = true;
 
         if (cc.renderContextType === cc.WEBGL) {
             this._quadsArrayBuffer = null;
@@ -108,13 +111,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var high = pointRect.height;
 
         if (this._texture) {
-            if ((this._texture instanceof HTMLImageElement) || (this._texture instanceof HTMLCanvasElement)) {
-                wide = this._texture.width;
-                high = this._texture.height;
-            } else {
-                wide = this._texture.getPixelsWide();
-                high = this._texture.getPixelsHigh();
-            }
+            wide = this._texture.getPixelsWide();
+            high = this._texture.getPixelsHigh();
         }
 
         if(cc.renderContextType === cc.CANVAS)
@@ -273,10 +271,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 retParticle._opacityModifyRGB = this._opacityModifyRGB;
 
                 // texture
-                if (this._texture instanceof cc.Texture2D)
-                    retParticle._texture = this._texture;
-                else
-                    retParticle._texture = this._texture;
+                retParticle._texture = this._texture;
             }
         }
         return retParticle;
@@ -350,21 +345,20 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     /**
      * set Texture of Particle System
      * @override
-     * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture
-     * @param {Boolean} isCallSuper is direct call super method
+     * @param {cc.Texture2D} texture
      */
-    setTexture:function (texture, isCallSuper) {
-        if (isCallSuper != null && isCallSuper === true) {
-            cc.ParticleSystem.prototype.setTexture.call(this, texture);
-            return;
+    setTexture:function (texture) {
+        if(texture.isLoaded()){
+            var  size = texture.getContentSize();
+            this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
+        } else {
+            this._textureLoaded = false;
+            texture.addLoadedEventListener(function(sender){
+                this._textureLoaded = true;
+                var  size = sender.getContentSize();
+                this.setTextureWithRect(sender, cc.rect(0, 0, size.width, size.height));
+            }, this);
         }
-        var size = null;
-        if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
-            size = cc.size(texture.width, texture.height);
-        else
-            size = texture.getContentSize();
-
-        this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
     },
 
     /**
@@ -508,6 +502,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     draw:function (ctx) {
         cc.Assert(!this._batchNode, "draw should not be called when added to a particleBatchNode");
+        if(!this._textureLoaded)
+            return;
 
         if (cc.renderContextType === cc.CANVAS)
             this._drawForCanvas(ctx);
@@ -531,10 +527,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
             if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
 
-                var drawTexture = this.getTexture();
+                var element = this._texture.getHtmlElementObj();
 
                 // Delay drawing until the texture is fully loaded by the browser
-                if (!drawTexture.width || !drawTexture.height)
+                if (!element.width || !element.height)
                     continue;
 
                 context.save();
@@ -557,21 +553,21 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
                 if (particle.isChangeColor) {
 
-                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
+                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
                     if (cacheTextureForColor) {
                         // Create another cache for the tinted version
                         // This speeds up things by a fair bit
                         if (!cacheTextureForColor.tintCache) {
                             cacheTextureForColor.tintCache = document.createElement('canvas');
-                            cacheTextureForColor.tintCache.width = drawTexture.width;
-                            cacheTextureForColor.tintCache.height = drawTexture.height;
+                            cacheTextureForColor.tintCache.width = element.width;
+                            cacheTextureForColor.tintCache.height = element.height;
                         }
-                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
-                        drawTexture = cacheTextureForColor.tintCache;
+                        cc.generateTintImage(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
+                        element = cacheTextureForColor.tintCache;
                     }
                 }
 
-                context.drawImage(drawTexture, 0, 0);
+                context.drawImage(element, 0, 0);
                 context.restore();
 
             } else {

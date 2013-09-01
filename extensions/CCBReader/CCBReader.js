@@ -227,7 +227,7 @@ cc.BuilderReader = cc.Class.extend({
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
     },
 
-    readNodeGraphFromData:function (data, owner, parentSize, animationManager) {
+    readNodeGraphFromData:function (data, owner, parentSize) {
         this.initWithData(data, owner);
         this._actionManager.setRootContainerSize(parentSize);
         this._actionManager.setOwner(owner);
@@ -255,12 +255,6 @@ cc.BuilderReader = cc.Class.extend({
                 this._animationManagerForNodes.push(this._animationManagers.objectForKey(getAllKeys[i]));
             }
         }
-
-        // Return action manager by reference
-        //if (ppAnimationManager)
-        //{
-        //    *ppAnimationManager = mActionManager;
-        //}
 
         return nodeGraph;
     },
@@ -634,11 +628,7 @@ cc.BuilderReader = cc.Class.extend({
             if (spriteSheet == "") {
                 spriteFile = this._ccbRootPath + spriteFile;
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
-                var bounds;
-                if (cc.renderContextType == cc.CANVAS)
-                    bounds = cc.RectMake(0, 0, texture.width, texture.height);
-                else
-                    bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
+                var bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
                 value = cc.SpriteFrame.createWithTexture(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;

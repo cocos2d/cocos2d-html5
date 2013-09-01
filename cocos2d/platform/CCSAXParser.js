@@ -46,6 +46,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @return {Array} plist object array
      */
     parse:function (textxml) {
+        var path = textxml;
         textxml = this.getList(textxml);
         // get a reference to the requested corresponding xml file
         if (window.DOMParser) {
@@ -61,7 +62,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
 
         var plist = this.xmlDoc.documentElement;
         if (plist.tagName != 'plist')
-            throw "cocos2d:Not a plist file";
+            throw "cocos2d: " + path + " is not a plist file";
 
         // Get first real node
         var node = null;
@@ -197,6 +198,15 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             xmlhttp.send(null);
         } else
             cc.Assert("cocos2d:Your browser does not support XMLHTTP.");
+    },
+
+    /**
+     * Unload the preloaded plist from xmlList
+     * @param {String} filePath
+     */
+    unloadPlist:function(filePath){
+        if (this._xmlDict.hasOwnProperty(filePath))
+            delete this._xmlDict[filePath];
     },
 
     /**

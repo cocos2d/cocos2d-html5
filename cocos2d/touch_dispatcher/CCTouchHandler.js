@@ -121,10 +121,7 @@ cc.StandardTouchHandler = cc.TouchHandler.extend(/** @lends cc.StandardTouchHand
      * @return {Boolean}
      */
     initWithDelegate:function (delegate, priority) {
-        if (this._super(delegate, priority)) {
-            return true;
-        }
-        return false;
+        return cc.TouchHandler.prototype.initWithDelegate.call(this, delegate, priority);
     }
 });
 
@@ -181,7 +178,7 @@ cc.TargetedTouchHandler = cc.TouchHandler.extend(/** @lends cc.TargetedTouchHand
      * @return {Boolean}
      */
     initWithDelegate:function (delegate, priority, swallow) {
-        if (this._super(delegate, priority)) {
+        if (cc.TouchHandler.prototype.initWithDelegate.call(this, delegate, priority)) {
             this._claimedTouches = [];
             this._swallowsTouches = swallow;
             return true;

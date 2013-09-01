@@ -608,7 +608,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         if (!ctx instanceof  WebGLRenderingContext)
             throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";
 
-        this._super(ctx);
+        cc.DrawingPrimitive.prototype.ctor.call(this, ctx);
         this._color = new cc.Color4F(1.0, 1.0, 1.0, 1.0);
     },
 

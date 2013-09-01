@@ -223,7 +223,6 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-
     _schedulePreload: function () {
         var _self = this;
         this._interval = setInterval(function () {
@@ -234,7 +233,6 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     _unschedulePreload: function () {
         clearInterval(this._interval);
     },
-
 
     _getResType: function (resInfo) {
         var isFont = resInfo.fontName;
@@ -270,9 +268,9 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             this._selector(this);
         }
 
-
         this._curNumber = 0;
         this._loadedNumber = 0;
+        this._totalNumber = 0;
     },
 
     _registerFaceFont: function (fontRes) {
@@ -404,7 +402,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
      * Constructor
      */
     ctor: function () {
-        this._super();
+        cc.Scene.prototype.ctor.call(this);
         this._winSize = cc.Director.getInstance().getWinSize();
     },
     init:function(){
@@ -425,7 +423,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         // bg
         this._bgLayer = cc.LayerColor.create(cc.c4(32, 32, 32, 255));
-        this._bgLayer.setPosition(cc.p(0, 0));
+        this._bgLayer.setPosition(0, 0);
         this.addChild(this._bgLayer, 0);
 
         //loading percent
@@ -437,14 +435,11 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     },
 
     _initStage: function (centerPos) {
-        if (cc.renderContextType === cc.CANVAS) {
-            this._logo = cc.Sprite.createWithTexture(this._logoTexture);
-        } else {
-            this._texture2d = new cc.Texture2D();
-            this._texture2d.initWithElement(this._logoTexture);
-            this._texture2d.handleLoadedTexture();
-            this._logo = cc.Sprite.createWithTexture(this._texture2d);
-        }
+        this._texture2d = new cc.Texture2D();
+        this._texture2d.initWithElement(this._logoTexture);
+        this._texture2d.handleLoadedTexture();
+        this._logo = cc.Sprite.createWithTexture(this._texture2d);
+
         this._logo.setPosition(centerPos);
         this._bgLayer.addChild(this._logo, 10);
 

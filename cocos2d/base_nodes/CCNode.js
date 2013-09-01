@@ -1143,19 +1143,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     _insertChild:function (child, z) {
         this._reorderChildDirty = true;
-        var __children = this._children;
-        var a = __children[__children.length - 1];
-        if (!a || a.getZOrder() <= z)
-            __children.push(child);
-        else {
-            for (var i = 0; i < __children.length; i++) {
-                var node = __children[i];
-                if (node && (node.getZOrder() > z )) {
-                    this._children = cc.ArrayAppendObjectToIndex(__children, child, i);
-                    break;
-                }
-            }
-        }
+        this._children.push(child);
         child._setZOrder(z);
     },
 
@@ -1193,9 +1181,9 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
                     ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  _children[j];
                     _children[j + 1] = tempChild;
                     j = j - 1;
+                    tempChild =  _children[j];
                 }
                 _children[j + 1] = tempItem;
             }
@@ -2318,7 +2306,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     setScale:function (scale, scaleY) {
         this._scaleX = scale;
-        this._scaleY = scaleY || scale;
+        this._scaleY = scaleY === undefined ? scale : scaleY;
         this.setNodeDirty();
     },
 
@@ -2770,7 +2758,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     getBoundingBox:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
-        return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
+        return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
     /**
@@ -2986,19 +2974,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     _insertChild:function (child, z) {
         this._reorderChildDirty = true;
-        var __children = this._children;
-        var a = __children[__children.length - 1];
-        if (!a || a.getZOrder() <= z)
-            __children.push(child);
-        else {
-            for (var i = 0; i < __children.length; i++) {
-                var node = __children[i];
-                if (node && (node.getZOrder() > z )) {
-                    this._children = cc.ArrayAppendObjectToIndex(__children, child, i);
-                    break;
-                }
-            }
-        }
+        this._children.push(child);
         child._setZOrder(z);
     },
 
@@ -3036,9 +3012,9 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
                     ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    tempChild =  _children[j];
                     _children[j + 1] = tempChild;
                     j = j - 1;
+                    tempChild =  _children[j];
                 }
                 _children[j + 1] = tempItem;
             }
@@ -3544,9 +3520,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             }
             this.draw(context);
             for (; i < len; i++) {
-                child = children[i];
-                if (child._zOrder >= 0)
-                    child.visit(context);
+                children[i].visit(context);
             }
         } else
             this.draw(context);
@@ -3788,7 +3762,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     getColor:function(){
-        return this._realColor;
+        var locRealColor = this._realColor;
+        return new cc.Color3B(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
     getDisplayedColor:function(){

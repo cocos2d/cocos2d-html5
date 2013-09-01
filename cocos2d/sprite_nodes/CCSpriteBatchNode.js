@@ -359,7 +359,6 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
     /// ---- common properties end   ----
 
     _textureForCanvas:null,
-    _renderTexture:null,
     _useCache:false,
     _originalTexture:null,
 
@@ -371,10 +370,6 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
         cc.Node.prototype.ctor.call(this);
         if (fileImage)
             this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
-
-        var locCanvas = cc.canvas;
-        this._renderTexture = cc.RenderTexture.create(locCanvas.width, locCanvas.height);
-        this.setContentSize(cc.size(locCanvas.width, locCanvas.height));
     },
 
     /**
@@ -425,13 +420,6 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
         sprite.setDirty(true);
         sprite.updateTransform();
         this._children = cc.ArrayAppendObjectToIndex(this._children, sprite, index);
-    },
-
-    setContentSize:function (size) {
-        if (!size)
-            return;
-        cc.Node.prototype.setContentSize.call(this, size);
-        this._renderTexture.setContentSize(size);
     },
 
     /**
@@ -507,8 +495,6 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
      * @return {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}
      */
     getTexture:function () {
-        if (this._useCache)
-            return this._renderTexture.getCanvas();
         return this._textureForCanvas;
     },
 
@@ -537,34 +523,15 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
         context.save();
         this.transform(ctx);
         var i, locChildren = this._children;
-        if (this._useCache) {
-            if (this._cacheDirty) {
-                //add dirty region
-                var locRenderTexture = this._renderTexture;
-                locRenderTexture.clear();
-                locRenderTexture.context.save();
-                locRenderTexture.context.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y ));
-                if (locChildren) {
-                    this.sortAllChildren();
-                    for (i = 0; i < locChildren.length; i++) {
-                        if (locChildren[i])
-                            locChildren[i].visit(locRenderTexture.context);
-                    }
-                }
-                locRenderTexture.context.restore();
-                this._cacheDirty = false;
-            }
-            // draw RenderTexture
-            this.draw(ctx);
-        } else {
-            if (locChildren) {
-                this.sortAllChildren();
-                for (i = 0; i < locChildren.length; i++) {
-                    if (locChildren[i])
-                        locChildren[i].visit(context);
-                }
+
+        if (locChildren) {
+            this.sortAllChildren();
+            for (i = 0; i < locChildren.length; i++) {
+                if (locChildren[i])
+                    locChildren[i].visit(context);
             }
         }
+
         context.restore();
     },
 
@@ -620,17 +587,19 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
             var i, j = 0, locChildren = this._children;
-            var length = locChildren.length;
+            var length = locChildren.length, tempChild;
             //insertion sort
             for (i = 1; i < length; i++) {
                 var tempItem = locChildren[i];
                 j = i - 1;
+                tempChild =  locChildren[j];
 
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but orderOfArrival is smaller
-                while (j >= 0 && (tempItem.getZOrder() < locChildren[j].getZOrder() ||
-                    (tempItem.getZOrder() == locChildren[j].getZOrder() && tempItem.getOrderOfArrival() < locChildren[j].getOrderOfArrival()))) {
-                    locChildren[j + 1] = locChildren[j];
-                    j--;
+                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
+                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
+                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    locChildren[j + 1] = tempChild;
+                    j = j - 1;
+                    tempChild =  locChildren[j];
                 }
                 locChildren[j + 1] = tempItem;
             }
@@ -642,20 +611,6 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
             }
             this._reorderChildDirty = false;
         }
-    },
-
-    /**
-     * draw cc.SpriteBatchNode (override draw of cc.Node)
-     * @param {CanvasRenderingContext2D} ctx
-     */
-    draw:function (ctx) {
-        var context = ctx || cc.renderContext;
-        //context.globalAlpha = this._opacity / 255;
-        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
-        var locRenderTexture = this._renderTexture;
-        //direct draw image by canvas drawImage
-        if (locRenderTexture)
-            context.drawImage(locRenderTexture.getCanvas(), posX, -(posY + locRenderTexture.getCanvas().height));
     }
 });
 
@@ -1265,11 +1220,10 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
     /**
      * don't call visit on it's children ( override visit of cc.Node )
      * @override
-     * @param {CanvasContext} ctx
+     * @param {WebGLRenderingContext} ctx
      */
     visit:function (ctx) {
         var gl = ctx || cc.renderContext;
-        //cc.PROFILER_START_CATEGORY(kCCProfilerCategoryBatchSprite, "CCSpriteBatchNode - visit");
 
         // CAREFUL:
         // This visit is almost identical to CocosNode#visit
@@ -1292,7 +1246,6 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
             this._grid.afterDraw(this);
         cc.kmGLPopMatrix();
         this.setOrderOfArrival(0);
-        //cc.PROFILER_STOP_CATEGORY(kCCProfilerCategoryBatchSprite, "CCSpriteBatchNode - visit");
     },
 
     /**
@@ -1320,7 +1273,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         // check cc.Sprite is using the same texture id
-        cc.Assert(child.getTexture()._webTextureObj == this._textureAtlas.getTexture()._webTextureObj,
+        cc.Assert(child.getTexture() == this._textureAtlas.getTexture(),
             "SpriteBatchNode.addChild():cc.Sprite is not using the same texture id");
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
@@ -1349,17 +1302,19 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
             var childrenArr = this._children;
-            var i, j = 0, length = childrenArr.length;
+            var i, j = 0, length = childrenArr.length, tempChild;
             //insertion sort
             for (i = 1; i < length; i++) {
                 var tempItem = childrenArr[i];
                 j = i - 1;
+                tempChild =  childrenArr[j];
 
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but orderOfArrival is smaller
-                while (j >= 0 && (tempItem.getZOrder() < childrenArr[j].getZOrder() ||
-                    (tempItem.getZOrder() == childrenArr[j].getZOrder() && tempItem.getOrderOfArrival() < childrenArr[j].getOrderOfArrival()))) {
-                    childrenArr[j + 1] = childrenArr[j];
-                    j--;
+                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
+                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
+                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    childrenArr[j + 1] = tempChild;
+                    j = j - 1;
+                    tempChild =  childrenArr[j];
                 }
                 childrenArr[j + 1] = tempItem;
             }
