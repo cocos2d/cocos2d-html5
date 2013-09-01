@@ -177,6 +177,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                     sfxCache.audio.addEventListener('canplaythrough', function (e) {
                         cc.Loader.getInstance().onResLoaded();
                         this.removeEventListener('canplaythrough', arguments.callee, false);
+                        this.removeEventListener('error', arguments.callee, false);
                     }, false);
 
                     sfxCache.audio.addEventListener("error", function (e) {
