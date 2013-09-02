@@ -58,6 +58,7 @@
 
 
     window.addEventListener('DOMContentLoaded', function () {
+        this.removeEventListener('DOMContentLoaded', arguments.callee, false);
         //first load engine file if specified
         var s = d.createElement('script');
         /*********Delete this section if you have packed all files into one*******/
