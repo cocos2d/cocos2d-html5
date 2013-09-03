@@ -35,13 +35,13 @@ cc.SpriteLoader = cc.NodeLoader.extend({
         return cc.Sprite.create();
     },
 
-    onHandlePropTypeColor3:function (node, parent, propertyName, color3BValue, ccbReader) {
+    onHandlePropTypeColor3:function (node, parent, propertyName, ccColor3B, ccbReader) {
         if (propertyName == PROPERTY_COLOR) {
-            if(!(color3BValue.r == 255 && color3BValue.g == 255 && color3BValue.b == 255)){
-                node.setColor(color3BValue);
+            if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
+                node.setColor(ccColor3B);
             }
         } else {
-            cc.NodeLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, color3BValue, ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, ccColor3B, ccbReader);
         }
     },
     onHandlePropTypeByte:function (node, parent, propertyName, byteValue, ccbReader) {
@@ -281,7 +281,7 @@ cc.LabelTTFLoader = cc.NodeLoader.extend({
     },
     onHandlePropTypeColor3:function (node, parent, propertyName, ccColor3B, ccbReader) {
         if (propertyName == PROPERTY_COLOR) {
-            if(!(ccColor3B.r == 255 && ccColor3B.g == 255 && ccColor3B.b == 255)){
+            if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
                 node.setColor(ccColor3B);
             }
         } else {
@@ -354,7 +354,7 @@ cc.LabelBMFontLoader = cc.NodeLoader.extend({
 
     onHandlePropTypeColor3:function (node, parent, propertyName, ccColor3B, ccbReader) {
         if (propertyName == PROPERTY_COLOR) {
-            if(!(ccColor3B.r == 255 && ccColor3B.g == 255 && ccColor3B.b == 255)){
+            if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
                 node.setColor(ccColor3B);
             }
         } else {

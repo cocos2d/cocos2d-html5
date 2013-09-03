@@ -523,7 +523,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
                     node.setDisplayFrame(value);
                 } else if(propName === "color"){
                     var ccColor3B = value.getColor();
-                    if(!(ccColor3B.r == 255 && ccColor3B.g == 255 && ccColor3B.b == 255)){
+                    if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
                         node.setColor(ccColor3B);
                     }
                 } else if( propName === "visible"){

@@ -726,7 +726,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         if (this._spritesGenerated) {
             // Restore color and opacity
             this.setOpacity(opacity);
-            if(!(color.r == 255 && color.g == 255 && color.b == 255)){
+            if(color.r !== 255 || color.g !== 255 || color.b !== 255){
                 this.setColor(color);
             }
         }
