@@ -291,16 +291,14 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
         var locRect = locSprite._rect,  locOffsetPosition = locSprite._offsetPosition;
         var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
 
-        if (locSprite._flipX || locSprite._flipY) {
-            context.save();
-            if (locSprite._flipX) {
-                flipXOffset = -locOffsetPosition.x - locRect.width;
-                context.scale(-1, 1);
-            }
-            if (locSprite._flipY) {
-                flipYOffset = locOffsetPosition.y;
-                context.scale(1, -1);
-            }
+        context.save();
+        if (locSprite._flipX) {
+            flipXOffset = -locOffsetPosition.x - locRect.width;
+            context.scale(-1, 1);
+        }
+        if (locSprite._flipY) {
+            flipYOffset = locOffsetPosition.y;
+            context.scale(1, -1);
         }
 
         //clip
@@ -333,9 +331,7 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
             }
         }
 
-        if (locSprite._flipX || locSprite._flipY)
-            context.restore();
-
+        context.restore();
         cc.INCREMENT_GL_DRAWS(1);
     },
 
