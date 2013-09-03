@@ -3715,13 +3715,6 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this._cascadeOpacityEnabled = false;
     },
 
-    init:function(){
-        if(cc.Node.prototype.init.call(this)){
-            return true;
-        }
-        return false;
-    },
-
     getOpacity:function(){
         return this._realOpacity;
     },
