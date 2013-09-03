@@ -1323,14 +1323,19 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
         context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition;
         var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
-        if (this._flipX) {
-            flipXOffset = -locOffsetPosition.x - locRect.width;
-            context.scale(-1, 1);
+
+        if (this._flipX || this._flipY) {
+            context.save();
+            if (this._flipX) {
+                flipXOffset = -locOffsetPosition.x - locRect.width;
+                context.scale(-1, 1);
+            }
+            if (this._flipY) {
+                flipYOffset = locOffsetPosition.y;
+                context.scale(1, -1);
+            }
         }
-        if (this._flipY) {
-            flipYOffset = locOffsetPosition.y;
-            context.scale(1, -1);
-        }
+
         if (this._texture && locRect.width > 0) {
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
@@ -1364,6 +1369,10 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
                 cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];
             cc.drawingUtil.drawPoly(vertices2, 4, true);
         }
+
+        if (this._flipX || this._flipY)
+            context.restore();
+
         cc.g_NumberOfDraws++;
     }
 });
