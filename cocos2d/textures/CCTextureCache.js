@@ -43,9 +43,10 @@ cc.loadImage = function (imageUrl) {
     }
     var image = new Image();
     image.src = imageUrl;
-    image.onLoad = function (e) {
+    image.addEventListener('load',function(){
         cc.TextureCache.getInstance().cacheImage(imageUrl, image);
-    };
+        this.removeEventListener('load', arguments.callee, false);
+    },false);
 };
 
 /**
@@ -287,6 +288,7 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
                 image.addEventListener("load", function () {
                     texture.handleLoadedTexture();
                     that._addImageAsyncCallBack(target, selector);
+                    this.removeEventListener('load', arguments.callee, false);
                 });
             }
         } else {
@@ -298,12 +300,16 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
                 that._addImageAsyncCallBack(target, selector);
+                this.removeEventListener('load', arguments.callee, false);
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
+
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.src = path;
             var texture2d = new cc.Texture2D();
@@ -340,6 +346,7 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
                 image.addEventListener("load", function () {
                     texture.handleLoadedTexture();
                     cc.Loader.getInstance().onResLoaded();
+                    this.removeEventListener('load', arguments.callee, false);
                 });
             }
         } else {
@@ -351,12 +358,16 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
                 cc.Loader.getInstance().onResLoaded();
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
+                this.removeEventListener('load', arguments.callee, false);
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
+
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.src = path;
             var texture2d = new cc.Texture2D();
@@ -698,6 +709,8 @@ cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
                 image.addEventListener("load", function () {
                     texture.handleLoadedTexture();
                     that._addImageAsyncCallBack(target, selector);
+
+                    this.removeEventListener('load', arguments.callee, false);
                 });
             }
         } else {
@@ -709,12 +722,17 @@ cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
                 that._addImageAsyncCallBack(target, selector);
+
+                this.removeEventListener('load', arguments.callee, false);
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
+
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.src = path;
             var texture2d = new cc.Texture2D();
@@ -732,10 +750,15 @@ cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
             cc.Loader.getInstance().onResLoaded();
             that._loadedTexturesBefore[path] = texture;
             delete that._loadingTexturesBefore[path];
+
+            this.removeEventListener('load', arguments.callee, false);
+            this.removeEventListener('error', arguments.callee, false);
         });
         texture.addEventListener("error", function () {
             cc.Loader.getInstance().onResLoadingErr(path);
             delete that._loadingTexturesBefore[path];
+
+            this.removeEventListener('error', arguments.callee, false);
         });
         texture.src = path;
         this._loadingTexturesBefore[path] = texture;
@@ -770,6 +793,8 @@ cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
                 image.addEventListener("load", function () {
                     texture.handleLoadedTexture();
                     cc.Loader.getInstance().onResLoaded();
+
+                    this.removeEventListener('load', arguments.callee, false);
                 });
             }
         } else {
@@ -781,12 +806,17 @@ cc.TextureCacheWebGL = cc.Class.extend(/** @lends cc.TextureCacheWebGL# */{
                 cc.Loader.getInstance().onResLoaded();
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
+
+                this.removeEventListener('load', arguments.callee, false);
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
                 if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
+
+                this.removeEventListener('error', arguments.callee, false);
             });
             image.src = path;
 

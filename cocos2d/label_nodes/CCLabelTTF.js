@@ -349,15 +349,15 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         }
     },
 
-    visit:function(){
+    visit:function(ctx){
         if(!this._string || this._string == "")
             return;
-
         if(this._needUpdateTexture ){
             this._needUpdateTexture = false;
             this._updateTexture();
         }
-        cc.Sprite.prototype.visit.call(this);
+        var context = ctx || cc.renderContext;
+        cc.Sprite.prototype.visit.call(this,context);
     },
 
     setPosition:function(posX, posY){

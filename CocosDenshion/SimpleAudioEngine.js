@@ -177,6 +177,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                     sfxCache.audio.addEventListener('canplaythrough', function (e) {
                         cc.Loader.getInstance().onResLoaded();
                         this.removeEventListener('canplaythrough', arguments.callee, false);
+                        this.removeEventListener('error', arguments.callee, false);
                     }, false);
 
                     sfxCache.audio.addEventListener("error", function (e) {
@@ -195,8 +196,9 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                 cc.Loader.getInstance().onResLoaded();
             }
         }
-
-        //cc.Loader.getInstance().onResLoaded();
+        else {
+            cc.Loader.getInstance().onResLoaded();
+        }
     },
 
     /**
@@ -208,6 +210,9 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().playMusic(path, false);
      */
     playMusic:function (path, loop) {
+        if (!this._soundEnable)
+            return;
+
         var keyname = this._getPathWithoutExt(path);
         var extName = this._getExtFromFullPath(path);
         var au;
@@ -370,6 +375,9 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * var soundId = cc.AudioEngine.getInstance().playEffect(path);
      */
     playEffect:function (path, loop) {
+        if (!this._soundEnable)
+            return;
+
         var keyname = this._getPathWithoutExt(path), actExt;
         if (this._soundList.hasOwnProperty(keyname)) {
             actExt = this._soundList[keyname].ext;
