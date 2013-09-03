@@ -522,7 +522,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
                 } else if(propName === "displayFrame"){
                     node.setDisplayFrame(value);
                 } else if(propName === "color"){
-                    node.setColor(value.getColor());
+                    var ccColor3B = value.getColor();
+                    if(!(ccColor3B.r == 255 && ccColor3B.g == 255 && ccColor3B.b == 255)){
+                        node.setColor(ccColor3B);
+                    }
                 } else if( propName === "visible"){
                     value = value || false;
                     node.setVisible(value);
