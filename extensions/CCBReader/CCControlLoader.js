@@ -253,7 +253,9 @@ cc.Scale9SpriteLoader = cc.NodeLoader.extend({
 
     onHandlePropTypeColor3:function(node, parent, propertyName, ccColor3B,ccbReader){
         if(propertyName == PROPERTY_COLOR) {
-            node.setColor(ccColor3B);
+            if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
+                node.setColor(ccColor3B);
+            }
         } else {
             cc.NodeLoader.prototype.onHandlePropTypeColor3.call(this, node, parent, propertyName, ccColor3B,ccbReader);
         }
