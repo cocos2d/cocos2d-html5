@@ -173,7 +173,6 @@ cc.ControlButton = cc.Control.extend({
             this._backgroundSprite = backgroundSprite;
 
             // Set the default color and opacity
-            this.setColor(cc.c3(255, 255, 255));
             this.setOpacity(255);
             this.setOpacityModifyRGB(true);
 

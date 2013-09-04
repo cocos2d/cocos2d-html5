@@ -215,7 +215,6 @@ cc.EditBox = cc.ControlButton.extend({
         this._placeholderColor = cc.GRAY;
         this.setContentSize(boxSize);
         this._domInputSprite = new cc.Sprite();
-        this._domInputSprite.setColor(cc.BLUE);
         this._domInputSprite.draw = function(){ };                           //redefine draw function
         this.addChild(this._domInputSprite);
         var selfPointer = this;
