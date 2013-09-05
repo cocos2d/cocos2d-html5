@@ -163,7 +163,8 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
         this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
         if (this._children) {
             var locChildren = this._children;
-            for (var i = 0, len = locChildren.length; i < len; i++) {
+            len = locChildren.length;
+            for (var i = 0; i < len; i++) {
                 var node = locChildren[i];
                 if (node)
                     node.setVisible(false);
