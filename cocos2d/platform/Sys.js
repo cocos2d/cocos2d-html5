@@ -51,7 +51,7 @@ Object.defineProperties(sys,
             if(cc.Browser.supportWebGL)
                 capabilities["opengl"] = true;
 
-			if( 'ontouchstart' in document.documentElement )
+			if( 'ontouchstart' in document.documentElement  || window.navigator.msPointerEnabled)
 				capabilities["touches"] = true;
 
 			else if( 'onmouseup' in document.documentElement )
