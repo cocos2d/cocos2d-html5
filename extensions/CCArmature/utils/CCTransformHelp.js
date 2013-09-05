@@ -54,7 +54,7 @@ cc.TransformHelp.nodeToMatrix = function (node, matrix) {
     matrix.a = node.scaleX * Math.cos(node.skewY);
     matrix.b = node.scaleX * Math.sin(node.skewY);
     matrix.c = node.scaleY * Math.sin(node.skewX);
-    matrix.d = node.scaleY * Math.cos(node.skewX);
+    matrix.d = node.scaleY * Math.cos(node.skewY);
     matrix.tx = node.x;
     matrix.ty = node.y;
 };
@@ -102,4 +102,18 @@ cc.TransformHelp.nodeConcat = function (target, source) {
     target.skewY += source.skewY;
     target.scaleX += source.scaleX;
     target.scaleY += source.scaleY;
+};
+
+/**
+ * @function
+ * @param {cc.BaseData} target
+ * @param {cc.BaseData} source
+ */
+cc.TransformHelp.nodeSub = function (target, source) {
+    target.x -= source.x;
+    target.y -= source.y;
+    target.skewX -= source.skewX;
+    target.skewY -= source.skewY;
+    target.scaleX -= source.scaleX;
+    target.scaleY -= source.scaleY;
 };

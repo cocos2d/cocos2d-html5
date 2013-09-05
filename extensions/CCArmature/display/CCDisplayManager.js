@@ -47,18 +47,21 @@ cc.DisplayManager = cc.Class.extend({
         return true;
     },
 
-    addDisplay:function (displayData, index) {
+    addDisplay: function (displayData, index) {
         var decoDisplay = null;
-
         if (index >= 0 && index < this._decoDisplayList.length) {
-            decoDisplay = this._decoDisplayList[index];
+            decoDisplay = this._decoDisplayList[i];
         }
         else {
             decoDisplay = cc.DecotativeDisplay.create();
             this._decoDisplayList.push(decoDisplay);
         }
 
-        cc.DisplayFactory.addDisplay(this._bone, decoDisplay, displayData);
+        if(displayData instanceof cc.DisplayData){
+            cc.DisplayFactory.addDisplay(this._bone, decoDisplay, displayData);
+        }else{
+            this._addDisplayOther(decoDisplay,displayData);
+        }
 
         //! if changed display index is current display index, then change current display to the new display
         if (index == this._displayIndex) {
@@ -67,33 +70,77 @@ cc.DisplayManager = cc.Class.extend({
         }
     },
 
+    _addDisplayOther:function(decoDisplay,display){
+        var displayData = null;
+        if (display instanceof cc.Skin){
+            var skin = display;
+            skin.setBone(this._bone);
+            displayData = new cc.SpriteDisplayData();
+            cc.DisplayFactory.initSpriteDisplay(this._bone, decoDisplay, skin.getDisplayName(), skin);
+            var spriteDisplayData = decoDisplay.getDisplayData();
+            if (spriteDisplayData instanceof cc.SpriteDisplayData)
+                skin.setSkinData(spriteDisplayData.skinData);
+            else
+                skin.setSkinData(new cc.BaseData());
+        }
+        else if (display instanceof cc.ParticleSystemQuad){
+            displayData = new cc.ParticleDisplayData();
+        }
+        else if (display instanceof cc.Armature){
+            displayData = new cc.ArmatureDisplayData();
+            display.setParentBone(this._bone);
+        }
+        else  {
+            displayData = new cc.DisplayData();
+        }
+        decoDisplay.setDisplay(display);
+        decoDisplay.setDisplayData(displayData);
+    },
+
     removeDisplay:function (index) {
-        cc.ArrayRemoveObjectAtIndex(this._decoDisplayList, index);
+        //cc.ArrayRemoveObjectAtIndex(this._decoDisplayList, index);
+        this._decoDisplayList[index] = null;
         if (index == this._displayIndex) {
             this.setCurrentDecorativeDisplay(null);
         }
     },
 
+    getDecorativeDisplayList:function(){
+        return this._decoDisplayList;
+    },
+
     changeDisplayByIndex:function (index, force) {
-        if (index < -1 || index > this._decoDisplayList.length) {
+        if (index >= this._decoDisplayList.length) {
             cc.log("the index value is out of range");
             return;
         }
+
         this._forceChangeDisplay = force;
+
+        //this._displayIndex == -1, it means you want to hide you display
+        if (index < 0) {
+            this._displayIndex = index;
+            if (this._displayRenderNode) {
+                this._displayRenderNode.removeFromParent(true);
+                this.setCurrentDecorativeDisplay(null);
+                this._displayRenderNode = null;
+            }
+            return;
+        }
+
         //if index is equal to current display index,then do nothing
         if (this._displayIndex == index) {
             return;
         }
+
         this._displayIndex = index;
-        //this._displayIndex == -1, it means you want to hide you display
-        if (this._displayIndex < 0) {
-            if (this._displayRenderNode) {
-                this._displayRenderNode.removeFromParent(true);
-                this.setCurrentDecorativeDisplay(null);
-            }
+
+        var decoDisplay = this._decoDisplayList[this._displayIndex];
+
+        if(!decoDisplay){
             return;
         }
-        var decoDisplay = this._decoDisplayList[this._displayIndex];
+
         this.setCurrentDecorativeDisplay(decoDisplay);
     },
 
@@ -119,6 +166,7 @@ cc.DisplayManager = cc.Class.extend({
             }
             this._displayRenderNode.removeFromParent(true);
             this._displayRenderNode.release();
+            this._displayRenderNode = null;
         }
 
         this._displayRenderNode = displayRenderNode;
@@ -126,8 +174,16 @@ cc.DisplayManager = cc.Class.extend({
         if (this._displayRenderNode) {
             if (this._displayRenderNode instanceof cc.Armature) {
                 this._bone.setChildArmature(this._displayRenderNode);
+            }else if(this._displayRenderNode instanceof cc.ParticleSystemQuad) {
+                this._displayRenderNode.resetSystem();
+            }
+            if (this._displayRenderNode.RGBAProtocol)            {
+                this._displayRenderNode.setColor(this._bone.getColor());
+                this._displayRenderNode.setOpacity(this._bone.getOpacity());
             }
             this._displayRenderNode.retain();
+            //todo
+            //this._displayRenderNode.setVisible(this._visible);
         }
     },
 

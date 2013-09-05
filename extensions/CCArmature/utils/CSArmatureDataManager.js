@@ -31,10 +31,12 @@ cc.ArmatureDataManager = cc.Class.extend({
     _animationDatas:null,
     _armarureDatas:null,
     _textureDatas:null,
+    _autoLoadSpriteFile:false,
     ctor:function () {
         this._animationDatas = {};
         this._armarureDatas = {};
         this._textureDatas = {};
+        this._autoLoadSpriteFile = false;
     },
     init:function () {
 
@@ -52,6 +54,15 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
+     * remove armature data
+     * @param {string} id
+     */
+    removeArmatureData:function(id){
+        if (this._armarureDatas.hasOwnProperty(id))
+           delete this._armarureDatas[id];
+    },
+
+    /**
      * get armatureData by id
      * @param {String} id
      * @return {cc.ArmatureData}
@@ -65,6 +76,14 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
+     * get armatureDatas
+     * @return {Object}
+     */
+    getArmatureDatas:function () {
+        return this._armarureDatas;
+    },
+
+    /**
      * add animation data
      * @param {String} id
      * @param {cc.AnimationData} animationData
@@ -73,6 +92,15 @@ cc.ArmatureDataManager = cc.Class.extend({
         if (this._animationDatas) {
             this._animationDatas[id] = animationData;
         }
+    },
+
+    /**
+     * remove animation data
+     * @param {string} id
+     */
+    removeAnimationData:function(id){
+        if (this._animationDatas.hasOwnProperty(id))
+            delete this._animationDatas[id];
     },
 
     /**
@@ -89,6 +117,14 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
+     * get animationDatas
+     * @return {Object}
+     */
+    getAnimationDatas:function () {
+        return this._animationDatas;
+    },
+
+    /**
      * add texture data
      * @param {String} id
      * @param {cc.TextureData} textureData
@@ -100,7 +136,16 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
-     * get animationData by id
+     * remove texture data
+     * @param {string} id
+     */
+    removeTextureData:function(id){
+        if (this._textureDatas.hasOwnProperty(id))
+            delete this._textureDatas[id];
+    },
+
+    /**
+     * get textureData by id
      * @param {String} id
      * @return {cc.TextureData}
      */
@@ -110,6 +155,14 @@ cc.ArmatureDataManager = cc.Class.extend({
             textureData = this._textureDatas[id];
         }
         return textureData;
+    },
+
+    /**
+     * get textureDatas
+     * @return {Object}
+     */
+    getTextureDatas:function () {
+        return this._textureDatas;
     },
 
     /**
@@ -130,6 +183,10 @@ cc.ArmatureDataManager = cc.Class.extend({
      */
     addSpriteFrameFromFile:function (plistPath, imagePath) {
         cc.SpriteFrameCacheHelper.getInstance().addSpriteFrameFromFile(plistPath, imagePath);
+    },
+
+    isAutoLoadSpriteFile:function(){
+        return this._autoLoadSpriteFile;
     },
 
     removeAll:function () {

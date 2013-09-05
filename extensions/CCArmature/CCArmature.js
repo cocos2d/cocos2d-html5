@@ -38,6 +38,8 @@ cc.Armature = cc.NodeRGBA.extend({
     _topBoneList:[],
     _armatureIndexDic:{},
     _offsetPoint:cc.p(0, 0),
+    _version:0,
+    _armatureTransformDirty:false,
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._animation = null;
@@ -50,6 +52,8 @@ cc.Armature = cc.NodeRGBA.extend({
         this._topBoneList = [];
         this._armatureIndexDic = {};
         this._offsetPoint = cc.p(0, 0);
+        this._version = 0,
+        this._armatureTransformDirty = false;
     },
 
     /**
@@ -233,13 +237,21 @@ cc.Armature = cc.NodeRGBA.extend({
     changeBoneParent:function (bone, parentName) {
         if (!bone) {
             cc.log("bone must be added to the bone dictionary!");
+            return;
         }
-        cc.ArrayRemoveObject(bone.getParentBone().getChildrenBone(), bone);
-        bone.removeFromParent(false);
+        var parentBone = bone.getParentBone();
+        if(parentBone){
+            cc.ArrayRemoveObject(parentBone.getChildrenBone(), bone);
+            bone.setParentBone(null);
+        }
+
         if (parentName) {
             var boneParent = this._boneDic[parentName];
             if (boneParent) {
                 boneParent.addChildBone(bone);
+                cc.ArrayRemoveObject(this._topBoneList,bone);
+            }else{
+                this._topBoneList.push(bone);
             }
         }
     },
@@ -260,7 +272,9 @@ cc.Armature = cc.NodeRGBA.extend({
         var rect = this.boundingBox();
         this.setContentSize(rect.size);
         this._offsetPoint = cc.p(-rect.origin.x, -rect.origin.y);
-        this.setAnchorPoint(cc.p(this._offsetPoint.x / rect.size.width, this._offsetPoint.y / rect.size.height));
+        if (rect.width != 0 && rect.height != 0) {
+            this.setAnchorPoint(cc.p(this._offsetPoint.x / rect.size.width, this._offsetPoint.y / rect.size.height));
+        }
     },
 
     update:function (dt) {
@@ -268,6 +282,7 @@ cc.Armature = cc.NodeRGBA.extend({
         for (var i = 0; i < this._topBoneList.length; i++) {
             this._topBoneList[i].update(dt);
         }
+        this._armatureTransformDirty = false;
     },
 
     nodeToParentTransform:function () {
@@ -276,6 +291,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     nodeToParentTransformWEBGL:function () {
         if (this._transformDirty) {
+            this._armatureTransformDirty = true;
             // Translate values
             var x = this._position.x;
             var y = this._position.y;
@@ -342,6 +358,7 @@ cc.Armature = cc.NodeRGBA.extend({
         if (!this._transform)
             this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
         if (this._transformDirty) {
+            this._armatureTransformDirty = true;
             var t = this._transform;// quick reference
             // base position
             t.tx = this._position.x;
@@ -423,7 +440,36 @@ cc.Armature = cc.NodeRGBA.extend({
     },
 
     draw:function () {
-        cc.g_NumberOfDraws++;
+        //cc.g_NumberOfDraws++;
+    },
+
+    /**
+     * update blendType
+     * @param {cc.BlendType} blendType
+     */
+    updateBlendType: function (blendType) {
+        var blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        switch (blendType) {
+            case cc.BlendType.NORMAL:
+                blendFunc.src = cc.BLEND_SRC;
+                blendFunc.dst = cc.BLEND_DST;
+                break;
+            case cc.BlendType.ADD:
+                blendFunc.src = gl.SRC_ALPHA;
+                blendFunc.dst = gl.ONE;
+                break;
+            case cc.BlendType.MULTIPLY:
+                blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
+                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+                break;
+            case cc.BlendType.SCREEN:
+                blendFunc.src = gl.ONE;
+                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+                break;
+            default:
+                break;
+        }
+        this.setBlendFunc(blendFunc.src, blendFunc.dst);
     },
 
     /**
@@ -436,22 +482,24 @@ cc.Armature = cc.NodeRGBA.extend({
         var boundingBox = cc.rect(0, 0, 0, 0);
         for (var i = 0; i < this._children.length; i++) {
             var bone = this._children[i];
-            var r = bone.getDisplayManager().getBoundingBox();
-            if (first) {
-                minx = cc.rectGetMinX(r);
-                miny = cc.rectGetMinY(r);
-                maxx = cc.rectGetMaxX(r);
-                maxy = cc.rectGetMaxY(r);
+            if (bone instanceof cc.Bone) {
+                var r = bone.getDisplayManager().getBoundingBox();
+                if (first) {
+                    minx = cc.rectGetMinX(r);
+                    miny = cc.rectGetMinY(r);
+                    maxx = cc.rectGetMaxX(r);
+                    maxy = cc.rectGetMaxY(r);
 
-                first = false;
+                    first = false;
+                }
+                else {
+                    minx = cc.rectGetMinX(r) < cc.rectGetMinX(boundingBox) ? cc.rectGetMinX(r) : cc.rectGetMinX(boundingBox);
+                    miny = cc.rectGetMinY(r) < cc.rectGetMinY(boundingBox) ? cc.rectGetMinY(r) : cc.rectGetMinY(boundingBox);
+                    maxx = cc.rectGetMaxX(r) > cc.rectGetMaxX(boundingBox) ? cc.rectGetMaxX(r) : cc.rectGetMaxX(boundingBox);
+                    maxy = cc.rectGetMaxY(r) > cc.rectGetMaxY(boundingBox) ? cc.rectGetMaxY(r) : cc.rectGetMaxY(boundingBox);
+                }
+                boundingBox = cc.rect(minx, miny, maxx - minx, maxy - miny);
             }
-            else {
-                minx = cc.rectGetMinX(r) < cc.rectGetMinX(boundingBox) ? cc.rectGetMinX(r) : cc.rectGetMinX(boundingBox);
-                miny = cc.rectGetMinY(r) < cc.rectGetMinY(boundingBox) ? cc.rectGetMinY(r) : cc.rectGetMinY(boundingBox);
-                maxx = cc.rectGetMaxX(r) > cc.rectGetMaxX(boundingBox) ? cc.rectGetMaxX(r) : cc.rectGetMaxX(boundingBox);
-                maxy = cc.rectGetMaxY(r) > cc.rectGetMaxY(boundingBox) ? cc.rectGetMaxY(r) : cc.rectGetMaxY(boundingBox);
-            }
-            boundingBox = cc.rect(minx, miny, maxx - minx, maxy - miny);
         }
         return boundingBox;
     },
@@ -499,11 +547,29 @@ cc.Armature = cc.NodeRGBA.extend({
     setBatchNode:function (batchNode) {
         this._batchNode = batchNode;
     },
-    getParentBone:function () {
-        return this._parentBone;
+
+    /**
+     * version getter
+     * @returns {Number}
+     */
+    getVersion:function () {
+        return this._version;
     },
-    setParentBone:function (parentBone) {
-        this._parentBone = parentBone;
+
+    /**
+     * version setter
+     * @param {Number} version
+     */
+    setVersion:function (version) {
+        this._version = version;
+    },
+
+    /**
+     * armatureTransformDirty getter
+     * @returns {Boolean}
+     */
+    getArmatureTransformDirty:function () {
+        return this._armatureTransformDirty;
     }
 });
 

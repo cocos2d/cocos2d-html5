@@ -23,47 +23,26 @@
  ****************************************************************************/
 
 cc.SpriteFrameCacheHelper = cc.Class.extend({
-    _display2ImageMap:[],
-    _display2TextureAtlas:null,
+    _textureAtlasDic:null,
     _imagePaths:[],
-    _batchNodes:null,
     ctor:function () {
-        this._display2ImageMap = [];
-        this._display2TextureAtlas = {};
+        this._textureAtlasDic = {};
         this._imagePaths = [];
-        this._batchNodes = {};
     },
     addSpriteFrameFromFile:function (plistPath, imagePath) {
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(plistPath);
-        var framesDict = dict["frames"];
-        for (var key in framesDict) {
-            var spriteFrameName = key.toString();
-            this._display2ImageMap[spriteFrameName] = imagePath;
-        }
-        dict = null;
         cc.SpriteFrameCache.getInstance().addSpriteFrames(plistPath, imagePath);
     },
 
-    getDisplayImagePath:function (_displayName) {
-        return this._display2ImageMap[_displayName];
-    },
-    getTextureAtlas:function (displayName) {
-        var textureName = this.getDisplayImagePath(displayName);
-        var atlas = this._display2TextureAtlas[textureName];
+    getTexureAtlasWithTexture:function (texture) {
+        //todo
+        return null;
+        var textureName = texture.getName();
+        var atlas = this._textureAtlasDic[textureName];
         if (atlas == null) {
-            atlas = cc.TextureAtlas.createWithTexture(cc.TextureCache.getInstance().addImage(textureName), 20);
-            this._display2TextureAtlas[textureName] = atlas;
+            atlas = cc.TextureAtlas.createWithTexture(texture, 20);
+            this._textureAtlasDic[textureName] = atlas;
         }
         return atlas;
-    },
-    getBatchNode:function (displayName) {
-        var textureName = this.getDisplayImagePath(displayName);
-        var batchNode = this._batchNodes[textureName];
-        if (batchNode == null) {
-            var batchNode = cc.SpriteBatchNode.create(this._display2ImageMap[displayName], 40);
-            this._batchNodes[textureName] = batchNode;
-        }
-        return batchNode;
     }
 });
 cc.SpriteFrameCacheHelper.getInstance = function () {

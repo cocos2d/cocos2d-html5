@@ -32,7 +32,7 @@ CC_MovementEventType_LOOP_COMPLETE = 2;
  * @class
  * @extends cc.Class
  */
-cc.MovementEvent = cc.Class.extend({
+cc.AnimationEvent = cc.Class.extend({
     _arguments:null,
     _callFunc:null,
     _selectorTarget:null,
@@ -64,19 +64,21 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     _prevFrameIndex:0,
     _toIndex:0,
     _tweenList:[],
-    MovementEventSignal:{},
     _frameEvent:null,
-
+    _movementEvent:null,
+    _speedScale:1,
     ctor:function () {
         cc.ProcessBase.prototype.ctor.call(this);
         this._animationData = null;
-        this._currentFrameData = null;
+        this._movementData = null;
         this._movementID = "";
         this._armature = null;
         this._prevFrameIndex = 0;
         this._toIndex = 0;
-        this.MovementEventSignal = {};
-        this.FrameEventSignal = {};
+        this._tweenList = [];
+        this._frameEvent = null;
+        this._movementEvent = null;
+        this._speedScale = 1;
     },
 
     /**
@@ -112,20 +114,47 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
 
     /**
      * scale animation play speed
-     * @param {Number} animationScale
+     * @param {Number} speedScale
      */
-    setAnimationScale:function (animationScale) {
-        if (animationScale == this._animationScale) {
+    setSpeedScale:function (speedScale) {
+        if (speedScale == this._speedScale) {
             return;
         }
-        this._animationScale = animationScale;
+        this._speedScale = speedScale;
+        this._processScale = !this._movementData ? this._speedScale : this._speedScale * this._movementData.scale;
+        var dict = this._armature.getBoneDic();
+        for (var key in dict) {
+            var bone = dict[key];
+            bone.getTween().setProcessScale(this._processScale);
+            if (bone.getChildArmature()) {
+                bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
+            }
+        }
+    },
+
+    getSpeedScale:function(){
+        return this._speedScale;
+    },
+
+    getAnimationScale:function(){
+        return this.getSpeedScale();
+    },
+    setAnimationScale:function(animationScale){
+        return this.setSpeedScale(animationScale);
+    },
+
+    setAnimationInternal:function (animationInternal) {
+        if (animationInternal == this._animationInternal) {
+            return;
+        }
+        this._animationInternal = animationInternal;
 
         var dict = this._armature.getBoneDic();
         for (var key in dict) {
             var bone = dict[key];
-            bone.getTween().setAnimationScale(this._animationScale);
+            bone.getTween().setAnimationInternal(this._animationInternal);
             if (bone.getChildArmature()) {
-                bone.getChildArmature().getAnimation().setAnimationScale(this._animationScale);
+                bone.getChildArmature().getAnimation().setAnimationInternal(this._animationInternal);
             }
         }
     },
@@ -173,11 +202,12 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
             loop = -1;
         }
         if (typeof tweenEasing == "undefined") {
-            tweenEasing = 10000;
+            tweenEasing = cc.TweenType.TWEEN_EASING_MAX;
         }
         //Get key frame count
         this._rawDuration = this._movementData.duration;
         this._movementID = animationName;
+        this._processScale = this._speedScale * this._movementData.scale;
         //Further processing parameters
         durationTo = (durationTo == -1) ? this._movementData.durationTo : durationTo;
         durationTween = (durationTween == -1) ? this._movementData.durationTween : durationTween;
@@ -187,7 +217,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
 
         cc.ProcessBase.prototype.play.call(this, animationName, durationTo, durationTween, loop, tweenEasing);
 
-        if (this._rawDuration == 1) {
+        if (this._rawDuration == 0) {
             this._loopType = CC_ANIMATION_TYPE_SINGLE_FRAME;
         }
         else {
@@ -208,11 +238,14 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
             var tween = bone.getTween();
             if (movementBoneData && movementBoneData.frameList.length > 0) {
                 this._tweenList.push(tween);
+                movementBoneData.duration = this._movementData.duration;
                 tween.play(movementBoneData, durationTo, durationTween, loop, tweenEasing);
 
-                tween.setAnimationScale(this._animationScale);
+                tween.setProcessScale(this._processScale);
+                tween.setAnimationInternal(this._animationInternal);
                 if (bone.getChildArmature()) {
-                    bone.getChildArmature().getAnimation().setAnimationScale(this._animationScale);
+                    bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
+                    bone.getChildArmature().getAnimation().setAnimationInternal(this._animationInternal);
                 }
             } else {
                 if (!bone.getIgnoreMovementBoneData()) {
@@ -246,7 +279,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         }
         var moveNames = this._animationData.movementNames;
         if (animationIndex < -1 || animationIndex >= moveNames.length) {
-            return
+            return;
         }
         var animationName = moveNames[animationIndex];
         this.play(animationName, durationTo, durationTween, loop, tweenEasing);
@@ -261,9 +294,10 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     },
 
     update:function (dt) {
-        cc.ProcessBase.prototype.update.call(this, dt);
-        for (var i = 0; i < this._tweenList.length; i++) {
-            this._tweenList[i].update(dt);
+        if(cc.ProcessBase.prototype.update.call(this, dt)){
+            for (var i = 0; i < this._tweenList.length; i++) {
+                this._tweenList[i].update(dt);
+            }
         }
     },
 
@@ -279,44 +313,41 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
                     this._currentPercent = this._currentFrame / this._durationTween;
                     if (this._currentPercent < 1.0) {
                         this._nextFrameIndex = this._durationTween;
-                        this.callEvent([this, CC_MovementEventType_START, this._movementID]);
+                        this.callMovementEvent([this._armature, CC_MovementEventType_START, this._movementID]);
                         break;
                     }
                 case CC_ANIMATION_TYPE_MAX:
                 case CC_ANIMATION_TYPE_SINGLE_FRAME:
                     this._currentPercent = 1;
                     this._isComplete = true;
-                    this.callEvent([this, CC_MovementEventType_COMPLETE, this._movementID]);
+                    this._isPlaying = false;
+                    this.callMovementEvent([this._armature, CC_MovementEventType_COMPLETE, this._movementID]);
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
                     this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
                     this._currentPercent = cc.fmodf(this._currentPercent, 1);
-                    this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
+                    this._currentFrame = this._nextFrameIndex == 0 ? 0 :cc.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
-                    this.callEvent([this, CC_MovementEventType_START, this._movementID]);
+                    this.callMovementEvent([this, CC_MovementEventType_START, this._movementID]);
                     break;
                 default:
                     this._currentPercent = cc.fmodf(this._currentPercent, 1);
                     this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
-                    this.callEvent([this, CC_MovementEventType_LOOP_COMPLETE, this._movementID]);
+                    this.callMovementEvent([this._armature, CC_MovementEventType_LOOP_COMPLETE, this._movementID]);
                     break;
             }
-        }
-
-        if (this._loopType == CC_ANIMATION_TYPE_LOOP_BACK || this._loopType == CC_ANIMATION_TYPE_LOOP_FRONT) {
-            this.updateFrameData(this._currentPercent);
         }
     },
 
     /**
-     * Update current key frame, and process auto stop, pause
-     * @param {Number} currentPercent
+     * Get current movementID
+     * @returns {String}
      */
-    updateFrameData:function (currentPercent) {
-        this._prevFrameIndex = this._curFrameIndex;
-        this._curFrameIndex = this._rawDuration * currentPercent;
-        this._curFrameIndex = this._curFrameIndex % this._rawDuration;
+    getCurrentMovementID: function () {
+        if (this._isComplete)
+            return "";
+        return this._movementID;
     },
 
     /**
@@ -324,15 +355,35 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      * @param {Object} target
      * @param {function} callFunc
      */
-    connectEvent:function (target, callFunc) {
-        this._frameEvent = new cc.MovementEvent(target, callFunc);
+    setMovementEventCallFunc:function (callFunc, target) {
+        this._movementEvent = new cc.AnimationEvent(target, callFunc);
     },
 
     /**
      * call event
      * @param {Array} args
      */
-    callEvent:function (args) {
+    callMovementEvent:function (args) {
+        if (this._movementEvent) {
+            this._movementEvent.setArguments(args);
+            this._movementEvent.call();
+        }
+    },
+
+    /**
+     * connect a event
+     * @param {Object} target
+     * @param {function} callFunc
+     */
+    setFrameEventCallFunc:function (callFunc, target) {
+        this._frameEvent = new cc.AnimationEvent(target, callFunc);
+    },
+
+    /**
+     * call event
+     * @param {Array} args
+     */
+    callFrameEvent:function (args) {
         if (this._frameEvent) {
             this._frameEvent.setArguments(args);
             this._frameEvent.call();
