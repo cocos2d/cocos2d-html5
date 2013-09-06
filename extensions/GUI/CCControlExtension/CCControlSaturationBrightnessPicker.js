@@ -68,7 +68,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
     },
 
     initWithTargetAndPos:function (target, pos) {
-        if (this.init()) {
+        if (cc.Control.prototype.init.call(this)) {
             this.setTouchEnabled(true);
             // Add background and slider sprites
             this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("colourPickerBackground.png", target, pos, cc.p(0.0, 0.0));
@@ -78,10 +78,17 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
 
             this._startPos = pos; // starting position of the colour picker
             this._boxPos = 35;    // starting position of the virtual box area for picking a colour
-            this._boxSize = 150;    // the size (width and height) of the virtual box for picking a colour from
+            this._boxSize = this._background.getContentSize().width / 2;    // the size (width and height) of the virtual box for picking a colour from
             return true;
         } else
             return false;
+    },
+
+    setEnabled:function (enabled) {
+        cc.Control.prototype.setEnabled.call(this, enabled);
+        if (this._slider) {
+            this._slider.setOpacity(enabled ? 255 : 128);
+        }
     },
 
     updateWithHSV:function (hsv) {
@@ -106,8 +113,8 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         // Clamp the position of the icon within the circle
 
         // Get the center point of the bkgd image
-        var centerX = this._startPos.x + this._background.getBoundingBox().size.width * 0.5;
-        var centerY = this._startPos.y + this._background.getBoundingBox().size.height * 0.5;
+        var centerX = this._startPos.x + this._background.getBoundingBox().width * 0.5;
+        var centerY = this._startPos.y + this._background.getBoundingBox().height * 0.5;
 
         // Work out the distance difference between the location and center
         var dx = sliderPosition.x - centerX;
@@ -118,7 +125,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         var angle = Math.atan2(dy, dx);
 
         // Set the limit to the slider movement within the colour picker
-        var limit = this._background.getBoundingBox().size.width * 0.5;
+        var limit = this._background.getBoundingBox().width * 0.5;
 
         // Check distance doesn't exceed the bounds of the circle
         if (dist > limit) {
@@ -148,8 +155,8 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
     _checkSliderPosition:function (location) {
         // Clamp the position of the icon within the circle
         // get the center point of the bkgd image
-        var centerX = this._startPos.x + this._background.getBoundingBox().size.width * 0.5;
-        var centerY = this._startPos.y + this._background.getBoundingBox().size.height * 0.5;
+        var centerX = this._startPos.x + this._background.getBoundingBox().width * 0.5;
+        var centerY = this._startPos.y + this._background.getBoundingBox().height * 0.5;
 
         // work out the distance difference between the location and center
         var dx = location.x - centerX;
@@ -157,7 +164,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         var dist = Math.sqrt(dx * dx + dy * dy);
 
         // check that the touch location is within the bounding rectangle before sending updates
-        if (dist <= this._background.getBoundingBox().size.width * .5) {
+        if (dist <= this._background.getBoundingBox().width * 0.5) {
             this._updateSliderPosition(location);
             this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
             return true;
@@ -166,6 +173,9 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
     },
 
     onTouchBegan:function (touch, event) {
+        if (!this.isEnabled() || !this.isVisible())        {
+            return false;
+        }
         // Get the touch location
         var touchLocation = this.getTouchLocation(touch);
 
@@ -178,10 +188,10 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         var touchLocation = this.getTouchLocation(touch);
 
         //small modification: this allows changing of the colour, even if the touch leaves the bounding area
-        this._updateSliderPosition(touchLocation);
-        this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
+        //this._updateSliderPosition(touchLocation);
+        //this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
         // Check the touch position on the slider
-        //checkSliderPosition(touchLocation);
+        this._checkSliderPosition(touchLocation);
     }
 });
 

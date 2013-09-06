@@ -34,8 +34,18 @@ cc.RESOLUTION_POLICY = {
     // The entire application is visible in the specified area without distortion while maintaining the original
     // aspect ratio of the application. Borders can appear on two sides of the application.
     SHOW_ALL:2,
+    // The application takes the height of the design resolution size and modifies the width of the internal
+    // canvas so that it fits the aspect ratio of the device
+    // no distortion will occur however you must make sure your application works on different
+    // aspect ratios
+    HEIGHT:3,
+    // The application takes the width of the design resolution size and modifies the height of the internal
+    // canvas so that it fits the aspect ratio of the device
+    // no distortion will occur however you must make sure your application works on different
+    // aspect ratios
+    WIDTH:4,
 
-    UNKNOWN:3
+    UNKNOWN:5
 };
 
 cc.Touches = [];
@@ -48,12 +58,11 @@ cc.TouchesIntergerDict = {};
 cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _delegate:null,
     // real screen size
-    _screenSize:cc.size(0,0),
+    _screenSize:null,
     // resolution size, it is the size appropriate for the app resources.
-    _designResolutionSize:cc.size(0, 0),
+    _designResolutionSize:null,
     // the view port size
-    _viewPortRect:cc.rect(0,0,0,0),
-    _contentTranslateLeftTop : {left: 0, top: 0},
+    _viewPortRect:null,
     // the view name
     _viewName:"",
     _scaleX:1,
@@ -63,23 +72,51 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _resolutionPolicy:cc.RESOLUTION_POLICY.UNKNOWN,
     _initialize:false,
 
+    _captured:false,
+    _wnd:null,
+    _hDC:null,
+    _hRC:null,
+    _accelerometerKeyHook:null,
+    _supportTouch:false,
+    _contentTranslateLeftTop:null,
+
+    _menu:null,
+    _wndProc:null,
+    _ele:null,
+    _frameZoomFactor:1.0,
+
+    ctor:function () {
+        this._ele = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
+        this._viewName = "Cocos2dHTML5";
+        this._screenSize = cc.size(this._ele.clientWidth, this._ele.clientHeight);
+        this._designResolutionSize = cc.SizeZero();
+        this._viewPortRect = cc.RectZero();
+        this._delegate = cc.Director.getInstance().getTouchDispatcher();
+        this._contentTranslateLeftTop = {left:0, top:0};
+
+        this._hDC = cc.canvas;
+        this._hRC = cc.renderContext;
+    },
+
     /**
      * init
      */
     initialize:function () {
         this._initialize = true;
         this._adjustSize();
-        this._contentTranslateLeftTop = {left: 0, top: 0};
 
         var adjustSize = this._adjustSize.bind(this);
         window.addEventListener('resize', adjustSize, false);
     },
 
     _adjustSize:function () {
-        var ele = document.documentElement;
-        cc.canvas.width = ele.clientWidth;
-        cc.canvas.height = ele.clientHeight;
-        cc.renderContext.translate(0, cc.canvas.height);
+        this._screenSize = cc.size(this._ele.clientWidth, this._ele.clientHeight);
+        cc.canvas.width = this._screenSize.width;
+        cc.canvas.height = this._screenSize.height;
+
+        if (!("opengl" in sys.capabilities))
+            cc.renderContext.translate(0, cc.canvas.height);
+
         var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
         if (parent) {
             parent.style.width = cc.canvas.width + "px";
@@ -91,7 +128,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             body.style.border = 0 + "px";
             body.style.margin = 0 + "px";
         }
-
+        this.setDesignResolutionSize();
+    },
+    // hack
+    _adjustSizeKeepCanvasSize:function () {
+        if (!("opengl" in sys.capabilities))
+            cc.renderContext.translate(0, cc.canvas.height);
         this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
         this.setDesignResolutionSize();
     },
@@ -104,8 +146,20 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * Get whether opengl render system is ready, subclass must implement this method.
+     * @return {Boolean}
      */
     isOpenGLReady:function () {
+        return (this._hDC != null && this._hRC != null);
+    },
+
+    /*
+     * Set zoom factor for frame. This method is for debugging big resolution (e.g.new ipad) app on desktop.
+     * @param {Number} zoomFactor
+     */
+    setFrameZoomFactor:function (zoomFactor) {
+        this._frameZoomFactor = zoomFactor;
+        this.centerWindow();
+        cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
     },
 
     /**
@@ -120,47 +174,36 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     setIMEKeyboardState:function (isOpen) {
         if (isOpen) {
             // [EAGLView sharedEGLView] becomeFirstResponder
-        }
-        else {
+        } else {
             //  [EAGLView sharedEGLView] resignFirstResponder
         }
     },
 
     /**
-     * @param {Number} scaleFactor
-     * @return {Boolean}
-     */
-    setContentScaleFactor:function (scaleFactor) {
-        cc.Assert(this._resolutionPolicy == cc.RESOLUTION_POLICY.UNKNOWN); // cannot enable retina mode
-        this._scaleX = this._scaleY = scaleFactor;
-        return true;
-    },
-
-     /**
      * <p>
      *   The resolution translate on EGLView
      * </p>
-     * @param {Number} translateX
-     * @param {Number} translateY
-     */   
-    setContentTranslateLeftTop: function(offsetLeft, offsetTop){
-        this._contentTranslateLeftTop = {left : offsetLeft, top : offsetTop};
+     * @param {Number} offsetLeft
+     * @param {Number} offsetTop
+     */
+    setContentTranslateLeftTop:function (offsetLeft, offsetTop) {
+        this._contentTranslateLeftTop = {left:offsetLeft, top:offsetTop};
     },
 
-     /**
+    /**
      * <p>
      *   get the resolution translate on EGLView
      * </p>
-     * @param {Number} translateX
-     * @param {Number} translateY
-     */   
-    getContentTranslateLeftTop: function(){
+     * @return {cc.Size|Object}
+     */
+    getContentTranslateLeftTop:function () {
         return this._contentTranslateLeftTop;
     },
 
     /**
      * Get the frame size of EGL view.
      * In general, it returns the screen size since the EGL view is a fullscreen view.
+     * @return {cc.Size}
      */
     getFrameSize:function () {
         return this._screenSize;
@@ -168,38 +211,52 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * Set the frame size of EGL view.
+     * @param {Number} width
+     * @param {Number} height
      */
     setFrameSize:function (width, height) {
         this._designResolutionSize = this._screenSize = cc.size(width, height);
+        this.centerWindow();
+        cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
+    },
+
+    centerWindow:function () {
+        //do nothing
+    },
+
+    setAccelerometerKeyHook:function (accelerometerKeyHook) {
+        this._accelerometerKeyHook = accelerometerKeyHook;
     },
 
     /**
      * Get the visible area size of opengl viewport.
+     * @return {cc.Size}
      */
     getVisibleSize:function () {
-        if (this._resolutionPolicy == cc.RESOLUTION_POLICY.NOBORDER) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER) {
             return cc.size(this._screenSize.width / this._scaleX, this._screenSize.height / this._scaleY);
-        }
-        else {
+        } else {
             return this._designResolutionSize;
         }
     },
 
     /**
      * Get the visible origin povar of opengl viewport.
+     * @return {cc.Point}
      */
     getVisibleOrigin:function () {
-        if (this._resolutionPolicy == cc.RESOLUTION_POLICY.NOBORDER) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER) {
             return cc.p((this._designResolutionSize.width - this._screenSize.width / this._scaleX) / 2,
                 (this._designResolutionSize.height - this._screenSize.height / this._scaleY) / 2);
-        }
-        else {
+        } else {
             return cc.p(0, 0);
         }
     },
-    canSetContentScaleFactor:function() {
+
+    canSetContentScaleFactor:function () {
         return true;
     },
+
     /**
      * Set the design resolution size.
      * @param {Number} width Design resolution width.
@@ -210,32 +267,38 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * [3] ResolutionShowAll  Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
      */
     setDesignResolutionSize:function (width, height, resolutionPolicy) {
-        cc.Assert(resolutionPolicy != cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
+        cc.Assert(resolutionPolicy !== cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
 
-        if(!this._initialize){
-           this.initialize();
+        if (!this._initialize) {
+            this.initialize();
         }
 
-        if (width == 0 || height == 0) {
+        if (width == 0 || height == 0)
             return;
-        }
-        if ((width != null) && (height != null)) {
-            this._designResolutionSize = cc.size(width, height);
-        }
-        if (resolutionPolicy != null) {
-            this._resolutionPolicy = resolutionPolicy;
-        }
 
+        if ((width != null) && (height != null))
+            this._designResolutionSize = cc.size(width, height);
+
+        if (resolutionPolicy != null)
+            this._resolutionPolicy = resolutionPolicy;
 
         this._scaleX = this._screenSize.width / this._designResolutionSize.width;
         this._scaleY = this._screenSize.height / this._designResolutionSize.height;
 
-        if (this._resolutionPolicy == cc.RESOLUTION_POLICY.NOBORDER) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER)
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
+
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
+            this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
+
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.HEIGHT) {
+            this._scaleX = this._scaleY;
+            this._designResolutionSize.width = Math.ceil(this._screenSize.width / this._scaleX);
         }
 
-        if (this._resolutionPolicy == cc.RESOLUTION_POLICY.SHOW_ALL) {
-            this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
+        if (this._resolutionPolicy == cc.RESOLUTION_POLICY.WIDTH) {
+            this._scaleY = this._scaleX;
+            this._designResolutionSize.height = Math.ceil(this._screenSize.height / this._scaleY);
         }
 
         // calculate the rect of viewport
@@ -245,35 +308,33 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._viewPortRect = cc.rect((this._screenSize.width - viewPortW) / 2, (this._screenSize.height - viewPortH) / 2, viewPortW, viewPortH);
 
         // reset director's member variables to fit visible rect
-        var diretor = cc.Director.getInstance();
-        diretor._winSizeInPoints = this.getDesignResolutionSize();
+        var director = cc.Director.getInstance();
+        director._winSizeInPoints = this.getDesignResolutionSize();
 
-        if (cc.renderContextType == cc.CANVAS) {
-            var width = 0, height = 0;
-            switch (this._resolutionPolicy) {
-                case cc.RESOLUTION_POLICY.EXACTFIT:
-                case cc.RESOLUTION_POLICY.NOBORDER:
-                case cc.RESOLUTION_POLICY.SHOW_ALL:
-                    width = (this._screenSize.width - viewPortW) / 2;
-                    height = -(this._screenSize.height - viewPortH) / 2;
-                    var context = cc.renderContext;
-                    context.beginPath();
-                    context.rect(width, -viewPortH + height, viewPortW, viewPortH);
-                    context.clip();
-                    context.closePath();
+        if (cc.renderContextType === cc.CANVAS) {
+            var locWidth = 0, locHeight = 0;
+            if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
+                locWidth = (this._screenSize.width - viewPortW) / 2;
+                locHeight = -(this._screenSize.height - viewPortH) / 2;
+                var context = cc.renderContext;
+                context.beginPath();
+                context.rect(locWidth, -viewPortH + locHeight, viewPortW, viewPortH);
+                context.clip();
+                context.closePath();
             }
-            cc.renderContext.translate(width, height);
+            cc.renderContext.translate(locWidth, locHeight);
             cc.renderContext.scale(this._scaleX, this._scaleY);
-
-            diretor.setContentScaleFactor(this._scaleX);
-            this.setContentTranslateLeftTop(width, height);
+        } else {
+            // reset director's member variables to fit visible rect
+            director._createStatsLabel();
+            director.setGLDefaultValues();
         }
-        //diretor.setGLDefaultValues();
     },
 
     /**
      * Get design resolution size.
      * Default resolution size is the same as 'getFrameSize'.
+     * @return {cc.Size}
      */
     getDesignResolutionSize:function () {
         return this._designResolutionSize;
@@ -281,6 +342,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * set touch delegate
+     * @param {cc.TouchDispatcher} delegate
      */
     setTouchDelegate:function (delegate) {
         this._delegate = delegate;
@@ -288,25 +350,48 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * Set opengl view port rectangle with points.
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Number} w width
+     * @param {Number} h height
      */
     setViewPortInPoints:function (x, y, w, h) {
-        //todo WEBGL
-        /*glViewport((GLint)(x * this._scaleX + this._viewPortRect.origin.x),
-         (GLint)(y * this._scaleY + this._viewPortRect.origin.y),
-         (GLsizei)(w * this._scaleX),
-         (GLsizei)(h * this._scaleY));*/
-
+        cc.renderContext.viewport((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
+            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
+            (w * this._scaleX * this._frameZoomFactor),
+            (h * this._scaleY * this._frameZoomFactor));
     },
 
     /**
      * Set Scissor rectangle with points.
+     * @param {Number} x
+     * @param {Number} y
+     * @param {Number} w
+     * @param {Number} h
      */
     setScissorInPoints:function (x, y, w, h) {
-        //todo WEBGL
-        /*glScissor((GLint)(x * this._scaleX + this._viewPortRect.origin.x),
-         (GLint)(y * this._scaleY + this._viewPortRect.origin.y),
-         (GLsizei)(w * this._scaleX),
-         (GLsizei)(h * this._scaleY));*/
+        cc.renderContext.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
+            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
+            (w * this._scaleX * this._frameZoomFactor),
+            (h * this._scaleY * this._frameZoomFactor));
+    },
+
+    /**
+     * Get whether GL_SCISSOR_TEST is enable
+     */
+    isScissorEnabled:function () {
+        var gl = cc.renderContext;
+        return gl.isEnabled(gl.SCISSOR_TEST);
+    },
+
+    /**
+     * Get the current scissor rectangle
+     */
+    getScissorRect:function () {
+        var gl = cc.renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
+        var boxArr = gl.getParameter(gl.SCISSOR_BOX);
+        return cc.RectMake((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / this._scaleY,
+            boxArr[2] / scaleX, boxArr[3] / scaleY);
     },
 
     /**
@@ -319,6 +404,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
+     * get view name
      * @return {String}
      */
     getViewName:function () {
@@ -345,17 +431,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     getScaleY:function () {
         return this._scaleY;
     },
-    
+
     /**
      * Get the real location in view
      */
-    convertToLocationInView: function(tx, ty, relatedPos){
-        var pos = this.getContentTranslateLeftTop();
-
-        var x = (pos.left + tx - relatedPos.left) / cc.Director.getInstance().getContentScaleFactor();
-        var y = (pos.top + relatedPos.height - (ty - relatedPos.top)) / cc.Director.getInstance().getContentScaleFactor();
-        
-        return {x: x, y: y}; 
+    convertToLocationInView:function (tx, ty, relatedPos) {
+        return {x:tx - relatedPos.left, y:relatedPos.top + relatedPos.height - ty};
     },
 
     /**
@@ -386,8 +467,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 }
 
                 var touch = cc.Touches[unusedIndex] = new cc.Touch();
-                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
 
                 //cc.log("x ="+x+" y = "+y, touches[key].getLocation().x, touches[key].getLocation().y);
 
@@ -426,8 +507,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             //cc.log("Moving touches with id: " + id + ", x=" + x + ", y=" + y);
             var touch = cc.Touches[index];
             if (touch) {
-                touch.setTouchInfo(index, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
                 arr.push(touch);
             }
             else {
@@ -491,8 +572,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             var touch = cc.Touches[index];
             if (touch) {
                 //cc.log("Ending touches with id: " + id + ", x=" + x + ", y=" + y);
-                touch.setTouchInfo(index, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
 
                 arr.push(touch);
 
@@ -501,9 +582,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 this._removeUsedIndexBit(index);
 
                 delete cc.TouchesIntergerDict[id];
-
-            }
-            else {
+            } else {
                 //cc.log("Ending touches with id: " + id + " error");
                 return;
             }
@@ -548,24 +627,25 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
-        for (var key in touches) {
-            ids[i] = key;
-            xs[i] = touches[key].getLocation().x;
-            ys[i] = touches[key].getLocation().y;
+        for (var j = 0; j < touches.length; j++) {
+            ids[i] = j;
+            xs[i] = touches[j].getLocation().x;
+            ys[i] = touches[j].getLocation().y;
             ++i;
         }
         this.handleTouchesBegin(i, ids, xs, ys);
     },
+
     touchesMoved:function (touches, event) {
         var ids = [];
         var xs = [];
         var ys = [];
 
         var i = 0;
-        for (var key in touches) {
-            ids[i] = key;
-            xs[i] = touches[key].getLocation().x;
-            ys[i] = touches[key].getLocation().y;
+        for (var j = 0; j < touches.length; j++) {
+            ids[i] = j;
+            xs[i] = touches[j].getLocation().x;
+            ys[i] = touches[j].getLocation().y;
             ++i;
         }
         this.handleTouchesMove(i, ids, xs, ys);
@@ -577,10 +657,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
-        for (var key in touches) {
-            ids[i] = key;
-            xs[i] = touches[key].getLocation().x;
-            ys[i] = touches[key].getLocation().y;
+        for (var j = 0; j < touches.length; j++) {
+            ids[i] = j;
+            xs[i] = touches[j].getLocation().x;
+            ys[i] = touches[j].getLocation().y;
             ++i;
         }
         this.handleTouchesEnd(i, ids, xs, ys);
@@ -592,10 +672,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
-        for (var key in touches) {
-            ids[i] = key;
-            xs[i] = touches[key].getLocation().x;
-            ys[i] = touches[key].getLocation().y;
+        for (var j = 0; j < touches.length; j++) {
+            ids[i] = j;
+            xs[i] = touches[j].getLocation().x;
+            ys[i] = touches[j].getLocation().y;
             ++i;
         }
         this.handleTouchesCancel(i, ids, xs, ys);

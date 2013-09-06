@@ -55,6 +55,15 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
     from:0,
     to:0,
     delta:0,
+
+    ctor:function(){
+        cc.ActionInterval.prototype.ctor.call(this);
+        this.key = "";
+        this.from = 0;
+        this.to = 0;
+        this.delta = 0;
+    },
+
     /**
      * initializes the action with the property name (key), and the from and to parameters.
      * @param {Number} duration
@@ -64,7 +73,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, key, from, to) {
-        if (this._super(duration)) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this.key = key;
             this.to = to;
             this.from = from;
@@ -77,7 +86,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      */
     startWithTarget:function (target) {
         cc.Assert(target, "target must implement cc.ActionTweenDelegate");
-        this._super(target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this.delta = this.to - this.from;
     },
     /**
@@ -91,6 +100,12 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      */
     reverse:function () {
         return cc.ActionTween.create(this.duration, this.key, this.to, this.from);
+    },
+
+    clone:function(){
+        var action = new cc.ActionTween();
+        action.initWithDuration(this._duration, this.key, this.from, this.to);
+        return action;
     }
 });
 
@@ -104,8 +119,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
  */
 cc.ActionTween.create = function (duration, key, from, to) {
     var ret = new cc.ActionTween();
-    if (ret.initWithDuration(duration, key, from, to)) {
+    if (ret.initWithDuration(duration, key, from, to))
         return ret;
-    }
     return null;
 };

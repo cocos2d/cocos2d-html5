@@ -73,7 +73,7 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
         this._acceleration = new cc.Acceleration();
         this._deviceEvent = window.DeviceMotionEvent || window.DeviceOrientationEvent;
         var ua = navigator.userAgent;
-        if(/Andriod/.test(ua)){
+        if(/Android/.test(ua)){
             this._minus = -1;
         }
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
@@ -133,7 +133,7 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
             this._acceleration.z = (eventData.alpha / 90) * 0.981;
         }
 
-        this._acceleration.timestamp = (new Date()).getTime();
+        this._acceleration.timestamp = Date.now();
 
         var tmp = this._acceleration.x;
         switch (window.orientation) {

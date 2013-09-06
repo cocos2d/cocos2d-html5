@@ -235,9 +235,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         for (var i = 0; i < array.length; i++) {
             h = array[i];
             if (h) {
-                if (h.getPriority() < handler.getPriority()) {
+                if (h.getPriority() < handler.getPriority())
                     ++u;
-                }
                 if (h.getDelegate() == handler.getDelegate()) {
                     cc.Assert(0, "TouchDispatcher.forceAddHandler()");
                     return array;
@@ -363,7 +362,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                                 if (cc.Browser.isMobile) {
                                     if (handler.getDelegate().onTouchMoved) handler.getDelegate().onTouchMoved(touch, event);
                                 } else {
-                                    if (this._mousePressed) if (handler.getDelegate().onTouchMoved) handler.getDelegate().onTouchMoved(touch, event);
+                                    if (this._mousePressed && handler.getDelegate().onTouchMoved) handler.getDelegate().onTouchMoved(touch, event);
                                 }
                                 break;
                             case cc.TOUCH_ENDED:
@@ -411,7 +410,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                             if (cc.Browser.isMobile) {
                                 if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
                             } else {
-                                if (this._mousePressed) if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                                if (this._mousePressed && handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
                             }
                         }
                         break;
@@ -589,7 +588,6 @@ cc.getHTMLElementPosition = function (element) {
     var box = null;
     if (typeof element.getBoundingClientRect === 'function') {
         box = element.getBoundingClientRect();
-
     } else {
         if (element instanceof HTMLCanvasElement) {
             box = {
@@ -619,7 +617,7 @@ cc.ProcessMouseupEvent = function (element, event) {
     var pos = cc.getHTMLElementPosition(element);
 
     var tx, ty;
-    if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+    if (event.pageX != null) { //not avalable in <= IE8
         tx = event.pageX;
         ty = event.pageY;
     } else {
@@ -659,7 +657,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if (event.pageX != null) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
@@ -688,7 +686,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if (event.pageX != null) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
@@ -718,7 +716,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if (event.pageX != null) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {

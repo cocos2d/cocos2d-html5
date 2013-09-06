@@ -50,11 +50,23 @@ cc.DEFAULT_PADDING = 5;
  *  - You can add MenuItem objects in runtime using addChild:<br/>
  *  - But the only accecpted children are MenuItem objects</p>
  * @class
- * @extends cc.Layer
+ * @extends cc.LayerRGBA
  */
-cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
-    RGBAProtocol:true,
-    _color:new cc.Color3B(),
+cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
+    _color:null,
+    _enabled:false,
+    _opacity:0,
+    _selectedItem:null,
+    _state:-1,
+
+    ctor:function(){
+        cc.LayerRGBA.prototype.ctor.call(this);
+        this._color = cc.white();
+        this._enabled = false;
+        this._opacity = 255;
+        this._selectedItem = null;
+        this._state = -1;
+    },
 
     /**
      * @return {cc.Color3B}
@@ -68,15 +80,12 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      */
     setColor:function (color) {
         this._color = color;
-
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                this._children[i].setColor(this._color);
-            }
+        var locChildren = this._children;
+        if (locChildren && locChildren.length > 0) {
+            for (var i = 0; i < locChildren.length; i++)
+                locChildren[i].setColor(color);
         }
     },
-
-    _opacity:0,
 
     /**
      * @return {Number}
@@ -90,14 +99,12 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      */
     setOpacity:function (opa) {
         this._opacity = opa;
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                this._children[i].setOpacity(this._opacity);
-            }
+        var locChildren = this._children;
+        if (locChildren && locChildren.length > 0) {
+            for (var i = 0; i < locChildren.length; i++)
+                locChildren[i].setOpacity(opa);
         }
     },
-
-    _enabled:false,
 
     /**
      * return whether or not the menu will receive events
@@ -115,8 +122,6 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         this._enabled = enabled;
     },
 
-    _selectedItem:null,
-
     /**
      * initializes a cc.Menu with it's items
      * @param {Array} args
@@ -126,9 +131,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         var pArray = [];
         if (args) {
             for (var i = 0; i < args.length; i++) {
-                if (args[i]) {
+                if (args[i])
                     pArray.push(args[i]);
-                }
             }
         }
 
@@ -140,6 +144,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      */
     initWithArray:function (arrayOfItems) {
         if (this.init()) {
+            this.setTouchPriority(cc.MENU_HANDLER_PRIORITY);
+            this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
             this.setTouchEnabled(true);
             this._enabled = true;
 
@@ -151,13 +157,16 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
 
             if (arrayOfItems) {
-                for (var i = 0; i < arrayOfItems.length; i++) {
+                for (var i = 0; i < arrayOfItems.length; i++)
                     this.addChild(arrayOfItems[i],i);
-                }
             }
 
             this._selectedItem = null;
             this._state = cc.MENU_STATE_WAITING;
+
+            // enable cascade color and opacity on menus
+            this.setCascadeColorEnabled(true);
+            this.setCascadeOpacityEnabled(true);
             return true;
         }
         return false;
@@ -170,7 +179,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      */
     addChild:function (child, zOrder, tag) {
         cc.Assert((child instanceof cc.MenuItem), "Menu only supports MenuItem objects as children");
-        this._super(child, zOrder, tag);
+        cc.Layer.prototype.addChild.call(this, child, zOrder, tag);
     },
 
     /**
@@ -238,6 +247,9 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * menu.alignItemsInColumns(3,3)//this creates 2 columns, each have 3 items
      */
     alignItemsInColumns:function (/*Multiple Arguments*/) {
+        if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+            cc.log("parameters should not be ending with null in Javascript");
+
         var rows = [];
         for (var i = 0; i < arguments.length; i++) {
             rows.push(arguments[i]);
@@ -317,6 +329,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * menu.alignItemsInRows(4,4,4,4)//this creates 4 rows each have 4 items
      */
     alignItemsInRows:function (/*Multiple arguments*/) {
+        if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+            cc.log("parameters should not be ending with null in Javascript");
         var columns = [];
         for (var i = 0; i < arguments.length; i++) {
             columns.push(arguments[i]);
@@ -404,11 +418,26 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.MENU_HANDLER_PRIORITY, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), true);
+    },
+
+    /**
+     * @param {cc.Node} child
+     * @param {boolean} cleanup
+     */
+    removeChild:function(child, cleanup){
+        if(child== null)
+            return;
+
+        cc.Assert((child instanceof cc.MenuItem), "Menu only supports MenuItem objects as children");
+        if (this._selectedItem == child)
+            this._selectedItem = null;
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
      * @param {cc.Touch} touch
+     * @param {Object} e
      * @return {Boolean}
      */
     onTouchBegan:function (touch, e) {
@@ -417,9 +446,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
 
         for (var c = this._parent; c != null; c = c.getParent()) {
-            if (!c.isVisible()) {
+            if (!c.isVisible())
                 return false;
-            }
         }
 
         this._selectedItem = this._itemForTouch(touch);
@@ -457,6 +485,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     /**
      * touch moved
      * @param {cc.Touch} touch
+     * @param {Object} e
      */
     onTouchMoved:function (touch, e) {
         cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu onTouchMoved] -- invalid state");
@@ -477,12 +506,13 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      */
     onExit:function () {
         if (this._state == cc.MENU_STATE_TRACKING_TOUCH) {
-            this._selectedItem.unselected();
+            if(this._selectedItem){
+                this._selectedItem.unselected();
+                this._selectedItem = null;
+            }
             this._state = cc.MENU_STATE_WAITING;
-            this._selectedItem = null;
         }
-
-        this._super();
+        cc.Layer.prototype.onExit.call(this);
     },
 
     setOpacityModifyRGB:function (value) {
@@ -494,23 +524,21 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     _itemForTouch:function (touch) {
         var touchLocation = touch.getLocation();
-
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i].isVisible() && this._children[i].isEnabled()) {
-                    var local = this._children[i].convertToNodeSpace(touchLocation);
-                    var r = this._children[i].rect();
-                    r.origin = cc.p(0,0);
-                    if (cc.Rect.CCRectContainsPoint(r, local)) {
-                        return this._children[i];
-                    }
+        var itemChildren = this._children;
+        if (itemChildren && itemChildren.length > 0) {
+            for (var i = 0; i < itemChildren.length; i++) {
+                if (itemChildren[i].isVisible() && itemChildren[i].isEnabled()) {
+                    var local = itemChildren[i].convertToNodeSpace(touchLocation);
+                    var r = itemChildren[i].rect();
+                    r.x = 0;
+                    r.y = 0;
+                    if (cc.rectContainsPoint(r, local))
+                        return itemChildren[i];
                 }
             }
         }
-
         return null;
     },
-    _state:-1,
 
     /**
      * set event handler priority. By default it is: kCCMenuTouchPriority
@@ -530,6 +558,9 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
  * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu.create = function (/*Multiple Arguments*/) {
+    if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+        cc.log("parameters should not be ending with null in Javascript");
+
     var ret = new cc.Menu();
 
     if (arguments.length == 0) {

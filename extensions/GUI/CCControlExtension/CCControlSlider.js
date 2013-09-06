@@ -36,9 +36,8 @@ cc.ControlSlider = cc.Control.extend({
     _maximumValue:0,
     _minimumAllowedValue:0,
     _maximumAllowedValue:0,
-    _snappingInterval:0,
 
-    _thumbItem:null,
+    _thumbSprite:null,
     _progressSprite:null,
     _backgroundSprite:null,
 
@@ -49,25 +48,8 @@ cc.ControlSlider = cc.Control.extend({
         //clamp between the two bounds
         value = Math.max(value, this._minimumValue);
         value = Math.min(value, this._maximumValue);
-
-        //if we're snapping
-        if (this._snappingInterval >= 0) {
-            //int nTotal=(int)(ceil(this._maximumValue-this._minimumValue)/this._snappingInterval);
-            //floor (n + 0.5f) == round(n)
-            value = Math.floor(0.5 + value / this._snappingInterval) * this._snappingInterval;
-        }
         this._value = value;
-
-        // Update thumb position for new value
-        var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
-        var pos = this._thumbItem.getPosition();
-        pos.x = percent * this._backgroundSprite.getContentSize().width + cc.SLIDER_MARGIN_H;
-        this._thumbItem.setPosition(pos);
-
-        // Stretches content proportional to newLevel
-        var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.RectMake(textureRect.origin.x, textureRect.origin.y, percent * this._backgroundSprite.getContentSize().width, textureRect.size.height);
-        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
+        this.needsLayout();
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
     },
 
@@ -92,7 +74,28 @@ cc.ControlSlider = cc.Control.extend({
             this._minimumValue = this._maximumValue - 1.0;
         this.setValue(this._value);
     },
+    isTouchInside:function (touch) {
+        var touchLocation = touch.getLocation();
+        touchLocation = this.getParent().convertToNodeSpace(touchLocation);
 
+        var rect = this.getBoundingBox();
+        rect.size.width += this._thumbSprite.getContentSize().width;
+        rect.origin.x -= this._thumbSprite.getContentSize().width / 2;
+
+        return cc.rectContainsPoint(rect, touchLocation);
+    },
+    locationFromTouch:function (touch) {
+        var touchLocation = touch.getLocation();                      // Get the touch position
+        touchLocation = this.convertToNodeSpace(touchLocation);                  // Convert to the node space of this class
+
+        if (touchLocation.x < 0) {
+            touchLocation.x = 0;
+        } else if (touchLocation.x > this._backgroundSprite.getContentSize().width) {
+            touchLocation.x = this._backgroundSprite.getContentSize().width;
+        }
+
+        return touchLocation;
+    },
     getMinimumAllowedValue:function () {
         return this._minimumAllowedValue;
     },
@@ -103,19 +106,13 @@ cc.ControlSlider = cc.Control.extend({
     getMaximumAllowedValue:function () {
         return this._maximumAllowedValue;
     },
+
     setMaximumAllowedValue:function (val) {
         this._maximumAllowedValue = val;
     },
 
-    getSnappingInterval:function () {
-        return this._snappingInterval;
-    },
-    setSnappingInterval:function (val) {
-        this._snappingInterval = val;
-    },
-
-    getThumbItem:function () {
-        return this._thumbItem;
+    getThumbSprite:function () {
+        return this._thumbSprite;
     },
     getProgressSprite:function () {
         return this._progressSprite;
@@ -128,24 +125,24 @@ cc.ControlSlider = cc.Control.extend({
      * Initializes a slider with a background sprite, a progress bar and a thumb
      * item.
      *
-     * @param backgroundSprite  CCSprite, that is used as a background.
-     * @param progressSprite    CCSprite, that is used as a progress bar.
-     * @param thumbItem         CCMenuItem, that is used as a thumb.
+     * @param {cc.Sprite} backgroundSprite  CCSprite, that is used as a background.
+     * @param {cc.Sprite} progressSprite    CCSprite, that is used as a progress bar.
+     * @param {cc.Sprite} thumbSprite         CCMenuItem, that is used as a thumb.
      */
-    initWithSprites:function (backgroundSprite, progressSprite, thumbItem) {
-        if (this.init()) {
+    initWithSprites:function (backgroundSprite, progressSprite, thumbSprite) {
+        if (cc.Control.prototype.init.call(this)) {
             this.ignoreAnchorPointForPosition(false);
             this.setTouchEnabled(true);
 
             this._backgroundSprite = backgroundSprite;
             this._progressSprite = progressSprite;
-            this._thumbItem = thumbItem;
+            this._thumbSprite = thumbSprite;
 
             // Defines the content size
-            var maxRect = cc.ControlUtils.CCRectUnion(backgroundSprite.getBoundingBox(), thumbItem.getBoundingBox());
-            var size = cc.SizeMake(maxRect.size.width + 2 * cc.SLIDER_MARGIN_H, maxRect.size.height + 2 * cc.SLIDER_MARGIN_V);
+            var maxRect = cc.ControlUtils.CCRectUnion(backgroundSprite.getBoundingBox(), thumbSprite.getBoundingBox());
+            var size = cc.SizeMake(maxRect.width, maxRect.height);
             this.setContentSize(size);
-            //setContentSize(CCSizeMake(backgroundSprite.getContentSize().width, thumbItem.getContentSize().height));
+
             // Add the slider background
             this._backgroundSprite.setAnchorPoint(cc.p(0.5, 0.5));
             this._backgroundSprite.setPosition(cc.p(size.width / 2, size.height / 2));
@@ -153,35 +150,43 @@ cc.ControlSlider = cc.Control.extend({
 
             // Add the progress bar
             this._progressSprite.setAnchorPoint(cc.p(0.0, 0.5));
-            this._progressSprite.setPosition(cc.p(0.0 + cc.SLIDER_MARGIN_H, size.height / 2));
+            this._progressSprite.setPosition(cc.p(0.0, size.height / 2));
             this.addChild(this._progressSprite);
 
             // Add the slider thumb
-            this._thumbItem.setPosition(cc.p(0 + cc.SLIDER_MARGIN_H, size.height / 2));
-            this.addChild(this._thumbItem);
+            this._thumbSprite.setPosition(cc.p(0, size.height / 2));
+            this.addChild(this._thumbSprite);
 
             // Init default values
             this._minimumValue = 0.0;
             this._maximumValue = 1.0;
-            this._snappingInterval = -1.0;
             this.setValue(this._minimumValue);
             return true;
         } else
             return false;
     },
 
+    setEnabled:function (enabled) {
+        cc.Control.prototype.setEnabled.call(this, enabled);
+        if (this._thumbSprite) {
+            this._thumbSprite.setOpacity(enabled ? 255 : 128);
+        }
+    },
+
     sliderBegan:function (location) {
-        this._thumbItem.selected();
+        this.setSelected(true);
+        this.getThumbSprite().setColor(cc.GRAY);
         this.setValue(this.valueForLocation(location));
     },
     sliderMoved:function (location) {
         this.setValue(this.valueForLocation(location));
     },
     sliderEnded:function (location) {
-        if (this._thumbItem.isSelected()) {
-            this._thumbItem.unselected();
-            this.setValue(this.valueForLocation(this._thumbItem.getPosition()));
+        if (this.isSelected()) {
+            this.setValue(this.valueForLocation(this._thumbSprite.getPosition()));
         }
+        this._thumbSprite.setColor(cc.WHITE);
+        this.setSelected(false);
     },
 
     getTouchLocationInControl:function (touch) {
@@ -197,25 +202,34 @@ cc.ControlSlider = cc.Control.extend({
     },
 
     onTouchBegan:function (touch, event) {
-        if (!this.isTouchInside(touch))
+        if (!this.isTouchInside(touch)|| !this.isEnabled() || !this.isVisible())
             return false;
 
-        var location = this.getTouchLocationInControl(touch);
+        var location = this.locationFromTouch(touch);
         this.sliderBegan(location);
         return true;
     },
     onTouchMoved:function (touch, event) {
-        var location = this.getTouchLocationInControl(touch);
+        var location = this.locationFromTouch(touch);
         this.sliderMoved(location);
     },
     onTouchEnded:function (touch, event) {
-        //var location = this.getTouchLocationInControl(touch);
         this.sliderEnded(cc.PointZero());
     },
+    needsLayout:function(){
+        var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
+        var pos = this._thumbSprite.getPosition();
+        pos.x = percent * this._backgroundSprite.getContentSize().width;
+        this._thumbSprite.setPosition(pos);
 
+        // Stretches content proportional to newLevel
+        var textureRect = this._progressSprite.getTextureRect();
+        textureRect = cc.RectMake(textureRect.x, textureRect.y, pos.x, textureRect.height);
+        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
+    },
     /** Returns the value for the given location. */
     valueForLocation:function (location) {
-        var percent = (location.x - cc.SLIDER_MARGIN_H) / this._backgroundSprite.getContentSize().width;
+        var percent = location.x / this._backgroundSprite.getContentSize().width;
         return Math.max(Math.min(this._minimumValue + percent * (this._maximumValue - this._minimumValue), this._maximumAllowedValue), this._minimumAllowedValue);
     }
 });
@@ -236,11 +250,7 @@ cc.ControlSlider.create = function (bgFile, progressFile, thumbFile) {
         progressFile = cc.Sprite.create(progressFile);
 
         // Prepare thumb (menuItem) for slider
-        var thumbNormal = cc.Sprite.create(thumbFile);
-        var thumbSelected = cc.Sprite.create(thumbFile);
-        thumbSelected.setColor(cc.gray());
-
-        thumbFile = cc.MenuItemSprite.create(thumbNormal, thumbSelected);
+        thumbFile = cc.Sprite.create(thumbFile);
     }
 
     var pRet = new cc.ControlSlider();

@@ -59,7 +59,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         texture.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
         texture.setAnchorPoint(cc.p(0.5, 0.5));
 
-        if (cc.renderContextType == cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS) {
             // render outScene to its texturebuffer
             texture.clear();
             this._sceneToBeModified.visit(texture.context);
@@ -94,7 +94,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
      */
     onExit:function () {
         // remove our layer and release all containing objects
-        this.removeChildByTag(cc.SCENE_RADIAL, false);
+        this.removeChildByTag(cc.SCENE_RADIAL, true);
         this._super();
     },
 
@@ -142,7 +142,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if (cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType === cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 
@@ -184,7 +184,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if (cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType === cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 

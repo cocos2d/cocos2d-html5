@@ -32,8 +32,13 @@
 cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
     xmlDoc:null,
     parser:null,
-    xmlList:[],
-    plist:[],
+    _xmlDict:null,
+    plist:null,
+
+    ctor:function () {
+        this._xmlDict = {};
+        this.plist = {};
+    },
 
     /**
      * parse a xml from a string (xmlhttpObj.responseText)
@@ -41,31 +46,29 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @return {Array} plist object array
      */
     parse:function (textxml) {
-        var textxml = this.getList(textxml);
+        textxml = this.getList(textxml);
         // get a reference to the requested corresponding xml file
         if (window.DOMParser) {
             this.parser = new DOMParser();
             this.xmlDoc = this.parser.parseFromString(textxml, "text/xml");
-        } else // Internet Explorer (untested!)
-        {
+        } else {// Internet Explorer (untested!)
             this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
             this.xmlDoc.async = "false";
             this.xmlDoc.loadXML(textxml);
         }
-        if (this.xmlDoc == null) {
+        if (this.xmlDoc == null)
             cc.log("cocos2d:xml " + this.xmlDoc + " not found!");
-        }
+
         var plist = this.xmlDoc.documentElement;
-        if (plist.tagName != 'plist') {
-            throw "cocos2d:Not a plist file"
-        }
+        if (plist.tagName != 'plist')
+            throw "cocos2d:Not a plist file";
+
         // Get first real node
         var node = null;
         for (var i = 0, len = plist.childNodes.length; i < len; i++) {
             node = plist.childNodes[i];
-            if (node.nodeType == 1) {
+            if (node.nodeType == 1)
                 break
-            }
         }
         this.plist = this._parseNode(node);
         return this.plist;
@@ -76,21 +79,22 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param  {String} textxml  tilemap xml content
      * @return {Document} xml document
      */
-    tmxParse:function (textxml) {
-        var textxml = this.getList(textxml);
+    tmxParse:function (textxml, isXMLString) {
+        if((isXMLString == null) || (isXMLString === false))
+            textxml = this.getList(textxml);
+
         // get a reference to the requested corresponding xml file
         if (window.DOMParser) {
             this.parser = new DOMParser();
             this.xmlDoc = this.parser.parseFromString(textxml, "text/xml");
-        } else // Internet Explorer (untested!)
-        {
+        } else { // Internet Explorer (untested!)
             this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
             this.xmlDoc.async = "false";
             this.xmlDoc.loadXML(textxml);
         }
-        if (this.xmlDoc == null) {
+        if (this.xmlDoc == null)
             cc.log("cocos2d:xml " + this.xmlDoc + " not found!");
-        }
+
         return this.xmlDoc;
     },
 
@@ -104,14 +108,13 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                 data = this._parseArray(node);
                 break;
             case 'string':
-                if (node.childNodes.length == 1) {
+                if (node.childNodes.length == 1)
                     data = node.firstChild.nodeValue;
-                } else {
+                else {
                     //handle Firefox's 4KB nodeValue limit
                     data = "";
-                    for (var i = 0; i < node.childNodes.length; i++) {
+                    for (var i = 0; i < node.childNodes.length; i++)
                         data += node.childNodes[i].nodeValue;
-                    }
                 }
                 break;
             case 'false':
@@ -135,9 +138,8 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
         var data = [];
         for (var i = 0, len = node.childNodes.length; i < len; i++) {
             var child = node.childNodes[i];
-            if (child.nodeType != 1) {
+            if (child.nodeType != 1)
                 continue;
-            }
             data.push(this._parseNode(child));
         }
         return data;
@@ -149,17 +151,14 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
         var key = null;
         for (var i = 0, len = node.childNodes.length; i < len; i++) {
             var child = node.childNodes[i];
-            if (child.nodeType != 1) {
+            if (child.nodeType != 1)
                 continue;
-            }
 
             // Grab the key, next noe should be the value
-            if (child.tagName == 'key') {
+            if (child.tagName == 'key')
                 key = child.firstChild.nodeValue;
-            } else {
-                // Parse the value node
-                data[key] = this._parseNode(child);
-            }
+            else
+                data[key] = this._parseNode(child);                 // Parse the value node
         }
         return data;
     },
@@ -169,7 +168,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} filePath
      */
     preloadPlist:function (filePath) {
-        filePath = cc.FileUtils.getInstance().fullPathFromRelativePath(filePath);
+        filePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
 
         if (window.XMLHttpRequest) {
             // for IE7+, Firefox, Chrome, Opera, Safari brower
@@ -187,19 +186,17 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.responseText) {
                         cc.Loader.getInstance().onResLoaded();
-                        that.xmlList[filePath] = xmlhttp.responseText;
+                        that._xmlDict[filePath] = xmlhttp.responseText;
                         xmlhttp = null;
-                    } else {
+                    } else
                         cc.Assert("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
-                    }
                 }
             };
             // load xml
             xmlhttp.open("GET", filePath, true);
             xmlhttp.send(null);
-        } else {
+        } else
             cc.Assert("cocos2d:Your browser does not support XMLHTTP.");
-        }
     },
 
     /**
@@ -229,11 +226,10 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @return {String} xml content
      */
     getList:function (key) {
-        if (this.xmlList != null) {
-            return this.xmlList[key];
-        } else {
-            return null;
+        if (this._xmlDict != null) {
+            return this._xmlDict[key];
         }
+        return null;
     }
 });
 

@@ -179,6 +179,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      * @param {Boolean} isCallParent
      */
     setString:function (text, isCallParent) {
+        text = String(text);
         if (isCallParent && isCallParent == true) {
             this._super(text);
             return;
@@ -207,7 +208,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     setPlaceHolder:function (text) {
         this._placeHolder = text || "";
         if (!this._inputText.length) {
-            this.setString(this._placeHolder, true);
+            cc.LabelTTF.prototype.setString.call(this,this._placeHolder);
         }
     },
 
@@ -304,7 +305,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         if (strLen <= deleteLen) {
             this._inputText = "";
             this._charCount = 0;
-            this.setString(this._placeHolder, true);
+            cc.LabelTTF.prototype.setString.call(this,this._placeHolder);
             return;
         }
 

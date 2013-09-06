@@ -23,61 +23,75 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
-
 
 /**
- A CCCamera is used in every CCNode.
- Useful to look at the object from different views.
- The OpenGL gluLookAt() function is used to locate the
- camera.
-
- If the object is transformed by any of the scale, rotation or
- position attributes, then they will override the camera.
-
- IMPORTANT: Either your use the camera or the rotation/scale/position properties. You can't use both.
- World coordinates won't work if you use the camera.
-
- Limitations:
-
- - Some nodes, like CCParallaxNode, CCParticle uses world node coordinates, and they won't work properly if you move them (or any of their ancestors)
- using the camera.
-
- - It doesn't work on batched nodes like CCSprite objects when they are parented to a CCSpriteBatchNode object.
-
- - It is recommended to use it ONLY if you are going to create 3D effects. For 2D effecs, use the action CCFollow or position/scale/rotate.
-
+ * <p>
+ *     A CCCamera is used in every CCNode.                                                                                 <br/>
+ *     The OpenGL gluLookAt() function is used to locate the camera.                                                       <br/>
+ *                                                                                                                         <br/>
+ *     If the object is transformed by any of the scale, rotation or position attributes, then they will override the camera.          <br/>
+ *                                                                                                                                     <br/>
+ *     IMPORTANT: Either your use the camera or the rotation/scale/position properties. You can't use both.                            <br/>
+ *     World coordinates won't work if you use the camera.                                                                             <br/>
+ *                                                                                                                                     <br/>
+ *     Limitations:                                                                                                                    <br/>
+ *     - Some nodes, like CCParallaxNode, CCParticle uses world node coordinates, and they won't work properly if you move them (or any of their ancestors)           <br/>
+ *     using the camera.                                                                                                               <br/>
+ *                                                                                                                                     <br/>
+ *     - It doesn't work on batched nodes like CCSprite objects when they are parented to a CCSpriteBatchNode object.                  <br/>
+ *                                                                                                                                     <br/>
+ *     - It is recommended to use it ONLY if you are going to create 3D effects. For 2D effecs, use the action CCFollow or position/scale/rotate. *
+ * </p>
+ * @class
+ * @extends cc.Class
  */
-cc.Camera = cc.Class.extend({
-    /*protected:*/
+cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
     _eyeX:null,
     _eyeY:null,
     _eyeZ:null,
+
     _centerX:null,
     _centerY:null,
     _centerZ:null,
+
     _upX:null,
     _upY:null,
     _upZ:null,
-    _dirty:null,
 
-    /*public:*/
+    _dirty:null,
+    _lookupMatrix:new cc.kmMat4(),
+
     ctor:function () {
         this.restore();
     },
+
+    /**
+     * Description of cc.Camera
+     * @return {String}
+     */
     description:function () {
         return "<CCCamera | center =(" + this._centerX + "," + this._centerY + "," + this._centerZ + ")>";
     },
-    /** sets the dirty value */
+
+    /**
+     * sets the dirty value
+     * @param value
+     */
     setDirty:function (value) {
         this._dirty = value;
     },
-    /** get the dirty value */
-    getDirty:function () {
+
+    /**
+     * get the dirty value
+     * @return {Boolean}
+     */
+    isDirty:function () {
         return this._dirty;
     },
 
-    /** sets the camera in the default position */
+    /**
+     * sets the camera in the default position
+     */
     restore:function () {
         this._eyeX = this._eyeY = 0.0;
         this._eyeZ = cc.Camera.getZEye();
@@ -88,34 +102,97 @@ cc.Camera = cc.Class.extend({
         this._upY = 1.0;
         this._upZ = 0.0;
 
+        cc.kmMat4Identity( this._lookupMatrix );
+
         this._dirty = false;
     },
-    /** Sets the camera using gluLookAt using its eye, center and up_vector */
+
+    /**
+     * Sets the camera using gluLookAt using its eye, center and up_vector
+     */
     locate:function () {
         if (this._dirty) {
-            //TODO gl
-            //gluLookAt(this._eyeX, this._eyeY, this._eyeZ,this._centerX, this._centerY, this._centerZ,this._upX, this._upY, this._upZ);
+            var eye = new cc.kmVec3(), center = new cc.kmVec3(), up = new cc.kmVec3();
+
+            cc.kmVec3Fill( eye, this._eyeX, this._eyeY , this._eyeZ );
+            cc.kmVec3Fill( center, this._centerX, this._centerY, this._centerZ);
+
+            cc.kmVec3Fill( up, this._upX, this._upY, this._upZ);
+            cc.kmMat4LookAt( this._lookupMatrix, eye, center, up);
+
+            this._dirty = false;
         }
-
+        cc.kmGLMultMatrix( this._lookupMatrix);
     },
-    /** sets the eye values in points */
+
+    /**
+     * sets the eye values in points
+     * @param {Number} eyeX
+     * @param {Number} eyeY
+     * @param {Number} eyeZ
+     * @deprecated This function will be deprecated sooner or later.
+     */
     setEyeXYZ:function (eyeX, eyeY, eyeZ) {
-        this._eyeX = eyeX * cc.CONTENT_SCALE_FACTOR;
-        this._eyeY = eyeY * cc.CONTENT_SCALE_FACTOR;
-        this._eyeZ = eyeZ * cc.CONTENT_SCALE_FACTOR;
+        this.setEye(eyeX,eyeY,eyeZ);
+    },
+
+    /**
+     * sets the eye values in points
+     * @param {Number} eyeX
+     * @param {Number} eyeY
+     * @param {Number} eyeZ
+     */
+    setEye:function (eyeX, eyeY, eyeZ) {
+        this._eyeX = eyeX ;
+        this._eyeY = eyeY ;
+        this._eyeZ = eyeZ ;
 
         this._dirty = true;
     },
-    /** sets the center values in points */
-    setCenterXYZ:function (centerX, centerY, fenterZ) {
-        this._centerX = centerX * cc.CONTENT_SCALE_FACTOR;
-        this._centerY = centerY * cc.CONTENT_SCALE_FACTOR;
-        this._centerZ = fenterZ * cc.CONTENT_SCALE_FACTOR;
+
+    /**
+     * sets the center values in points
+     * @param {Number} centerX
+     * @param {Number} centerY
+     * @param {Number} centerZ
+     * @deprecated  This function will be deprecated sooner or later.
+     */
+    setCenterXYZ:function (centerX, centerY, centerZ) {
+        this.setCenter(centerX,centerY,centerZ);
+    },
+
+    /**
+     * sets the center values in points
+     * @param {Number} centerX
+     * @param {Number} centerY
+     * @param {Number} centerZ
+     */
+    setCenter:function (centerX, centerY, centerZ) {
+        this._centerX = centerX ;
+        this._centerY = centerY ;
+        this._centerZ = centerZ ;
 
         this._dirty = true;
     },
-    /** sets the up values */
+
+    /**
+     * sets the up values
+     * @param {Number} upX
+     * @param {Number} upY
+     * @param {Number} upZ
+     * @deprecated This function will be deprecated sooner or later.
+     */
     setUpXYZ:function (upX, upY, upZ) {
+        this.setUp(upX, upY, upZ);
+    },
+
+    /**
+     * sets the up values
+     * @param {Number} upX
+     * @param {Number} upY
+     * @param {Number} upZ
+     */
+    setUp:function (upX, upY, upZ) {
         this._upX = upX;
         this._upY = upY;
         this._upZ = upZ;
@@ -123,31 +200,75 @@ cc.Camera = cc.Class.extend({
         this._dirty = true;
     },
 
-    /** get the eye vector values in points */
+    /**
+     * get the eye vector values in points  (return an object like {x:1,y:1,z:1} in HTML5)
+     * @param {Number} eyeX
+     * @param {Number} eyeY
+     * @param {Number} eyeZ
+     * @return {Object}
+     * @deprecated This function will be deprecated sooner or later.
+     */
     getEyeXYZ:function (eyeX, eyeY, eyeZ) {
-        eyeX = this._eyeX / cc.CONTENT_SCALE_FACTOR;
-        eyeY = this._eyeY / cc.CONTENT_SCALE_FACTOR;
-        eyeZ = this._eyeZ / cc.CONTENT_SCALE_FACTOR;
-    },
-    /** get the center vector values int points */
-    getCenterXYZ:function (centerX, centerY, centerZ) {
-        centerX = this._centerX / cc.CONTENT_SCALE_FACTOR;
-        centerY = this._centerY / cc.CONTENT_SCALE_FACTOR;
-        centerZ = this._centerZ / cc.CONTENT_SCALE_FACTOR;
-    },
-    /** get the up vector values */
-    getUpXYZ:function (upX, upY, upZ) {
-        upX = this._upX;
-        upY = this._upY;
-        upZ = this._upZ;
+        return {x:this._eyeX , y:this._eyeY , z: this._eyeZ };
     },
 
-    /*private:*/
+    /**
+     * get the eye vector values in points  (return an object like {x:1,y:1,z:1} in HTML5)
+     * @return {Object}
+     */
+    getEye:function () {
+        return {x:this._eyeX , y:this._eyeY , z: this._eyeZ };
+    },
+
+    /**
+     * get the center vector values int points (return an object like {x:1,y:1,z:1} in HTML5)
+     * @param {Number} centerX
+     * @param {Number} centerY
+     * @param {Number} centerZ
+     * @return {Object}
+     * @deprecated This function will be deprecated sooner or later.
+     */
+    getCenterXYZ:function (centerX, centerY, centerZ) {
+        return {x:this._centerX ,y:this._centerY ,z:this._centerZ };
+    },
+
+    /**
+     * get the center vector values int points (return an object like {x:1,y:1,z:1} in HTML5)
+     * @return {Object}
+     */
+    getCenter:function () {
+        return {x:this._centerX ,y:this._centerY ,z:this._centerZ };
+    },
+
+    /**
+     * get the up vector values (return an object like {x:1,y:1,z:1} in HTML5)
+     * @param {Number} upX
+     * @param {Number} upY
+     * @param {Number} upZ
+     * @return {Object}
+     * @deprecated This function will be deprecated sooner or later.
+     */
+    getUpXYZ:function (upX, upY, upZ) {
+        return {x:this._upX,y:this._upY,z:this._upZ};
+    },
+
+    /**
+     * get the up vector values (return an object like {x:1,y:1,z:1} in HTML5)
+     * @return {Object}
+     */
+    getUp:function () {
+        return {x:this._upX,y:this._upY,z:this._upZ};
+    },
+
     _DISALLOW_COPY_AND_ASSIGN:function (CCCamera) {
 
     }
 });
-/** returns the Z eye */
+
+/**
+ * returns the Z eye
+ * @return {Number}
+ */
 cc.Camera.getZEye = function () {
     return cc.FLT_EPSILON;
 };

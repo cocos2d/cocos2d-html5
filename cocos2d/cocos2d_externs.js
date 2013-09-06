@@ -15,6 +15,13 @@
 CSSProperties.prototype._super;
 
 /**
+ * cocos2d-html5-only. We need this becuase the cc.Class.extend's new
+ * infrastructure requires it.
+ * @type {string}
+ */
+CSSProperties.prototype.ctor;
+
+/**
  * cocos2d-html5-only.
  * @type {string}
  */
@@ -25,3 +32,15 @@ CSSProperties.prototype.Inflate;
  * @type {string}
  */
 CSSProperties.prototype.decompress;
+
+/**
+ * Accelerometer api
+ * cocos2d-html5-only.
+ * @type {string}
+ */
+CSSProperties.prototype.DeviceOrientationEvent;
+CSSProperties.prototype.DeviceMotionEvent;
+CSSProperties.prototype.accelerationIncludingGravity;
+CSSProperties.prototype.gamma;
+CSSProperties.prototype.beta;
+CSSProperties.prototype.alpha;

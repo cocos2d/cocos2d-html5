@@ -42,11 +42,13 @@ cc.ControlButton = cc.Control.extend({
     _titleColorDispatchTable:null,
     _titleLabelDispatchTable:null,
     _backgroundSpriteDispatchTable:null,
+    _parentInited:false,
 
     _marginV:0,
     _marginH:0,
 
     ctor:function () {
+        this._super();
         this._preferredSize = new cc.Size(0, 0);
         this._labelAnchorPoint = new cc.Point(0, 0);
 
@@ -57,19 +59,20 @@ cc.ControlButton = cc.Control.extend({
         this._backgroundSpriteDispatchTable = {};
     },
 
-    init:function (isDirectCall) {
-        if ((isDirectCall != null) && (isDirectCall == true))
-            return this._super();
+    init:function () {
         return this.initWithLabelAndBackgroundSprite(cc.LabelTTF.create("", "Helvetica", 12), cc.Scale9Sprite.create());
     },
 
     needsLayout:function () {
+        if (!this._parentInited) {
+            return;
+        }
         // Hide the background and the label
         this._titleLabel.setVisible(false);
         this._backgroundSprite.setVisible(false);
 
         // Update anchor of all labels
-        this.setLabelAnchorPoint(this.m_labelAnchorPoint);
+        this.setLabelAnchorPoint(this._labelAnchorPoint);
 
         // Update the label to match with the current state
         //CC_SAFE_RELEASE(this._currentTitle)
@@ -114,7 +117,7 @@ cc.ControlButton = cc.Control.extend({
 
         // Set the content size
         var maxRect = cc.ControlUtils.CCRectUnion(this._titleLabel.getBoundingBox(), this._backgroundSprite.getBoundingBox());
-        this.setContentSize(cc.SizeMake(maxRect.size.width, maxRect.size.height));
+        this.setContentSize(cc.SizeMake(maxRect.width, maxRect.height));
 
         this._titleLabel.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));
         this._backgroundSprite.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));
@@ -125,12 +128,13 @@ cc.ControlButton = cc.Control.extend({
     },
 
     initWithLabelAndBackgroundSprite:function (label, backgroundSprite) {
-        if (this.init(true)) {
+        if (cc.Control.prototype.init.call(this, true)) {
             cc.Assert(label != null, "node must not be nil");
             cc.Assert(label != null || label.RGBAProtocol || backgroundSprite != null, "");
 
             this.setTouchEnabled(true);
             this._pushed = false;
+            this._parentInited = true;
             this._zoomOnTouchDown = true;
             this._state = cc.CONTROL_STATE_INITIAL;
             this._currentTitle = null;
@@ -175,7 +179,9 @@ cc.ControlButton = cc.Control.extend({
             this._marginH = 24;
             this._marginV = 12;
 
-            this.m_labelAnchorPoint = new cc.Point(0.5, 0.5);
+            this._labelAnchorPoint = new cc.Point(0.5, 0.5);
+
+            this.setPreferredSize(cc.SizeZero());
 
             // Layout update
             this.needsLayout();
@@ -218,17 +224,17 @@ cc.ControlButton = cc.Control.extend({
     getPreferredSize:function () {
         return this._preferredSize;
     },
-    setPreferredSize:function (preferredSize) {
-        if (preferredSize.width == 0 && preferredSize.height == 0) {
+
+    setPreferredSize:function (size) {
+        if (size.width == 0 && size.height == 0) {
             this._adjustBackgroundImage = true;
         } else {
             this._adjustBackgroundImage = false;
             for (var itemKey in this._backgroundSpriteDispatchTable) {
-                this._backgroundSpriteDispatchTable[itemKey].setPreferredSize(preferredSize);
+                this._backgroundSpriteDispatchTable[itemKey].setPreferredSize(size);
             }
-
-            this._preferredSize = preferredSize;
         }
+        this._preferredSize = size;
         this.needsLayout();
     },
 
@@ -236,7 +242,7 @@ cc.ControlButton = cc.Control.extend({
         return this._labelAnchorPoint;
     },
     setLabelAnchorPoint:function (labelAnchorPoint) {
-        this.m_labelAnchorPoint = labelAnchorPoint;
+        this._labelAnchorPoint = labelAnchorPoint;
 
         this._titleLabel.setAnchorPoint(labelAnchorPoint);
     },
@@ -271,6 +277,17 @@ cc.ControlButton = cc.Control.extend({
         }
     },
 
+    setColor:function(color){
+        cc.Control.prototype.setColor.call(this,color);
+        for(var key in this._backgroundSpriteDispatchTable){
+            this._backgroundSpriteDispatchTable[key].setColor(color);
+        }
+    },
+
+    getColor:function(){
+      return this._realColor;
+    },
+
     /** Flag to know if the button is currently pushed.  */
     getIsPushed:function () {
         return this._pushed;
@@ -299,7 +316,14 @@ cc.ControlButton = cc.Control.extend({
         this._super(enabled);
         this.needsLayout();
     },
+
     setHighlighted:function (enabled) {
+        if (enabled == true) {
+            this._state = cc.CONTROL_STATE_HIGHLIGHTED;
+        }
+        else {
+            this._state = cc.CONTROL_STATE_NORMAL;
+        }
         this._super(enabled);
         var action = this.getActionByTag(cc.CONTROL_ZOOM_ACTION_TAG);
         if (action) {
@@ -315,11 +339,10 @@ cc.ControlButton = cc.Control.extend({
     },
 
     onTouchBegan:function (touch, event) {
-        if (!this.isTouchInside(touch) || !this.isEnabled()) {
+        if (!this.isTouchInside(touch) || !this.isEnabled()|| !this.isVisible()||!this.hasVisibleParents()) {
             return false;
         }
 
-        this._state = cc.CONTROL_STATE_HIGHLIGHTED;
         this._pushed = true;
         this.setHighlighted(true);
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DOWN);
@@ -338,31 +361,29 @@ cc.ControlButton = cc.Control.extend({
         if (isTouchMoveInside && !this._highlighted) {
             this._state = cc.CONTROL_STATE_HIGHLIGHTED;
             this.setHighlighted(true);
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGENTER);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_ENTER);
         } else if (isTouchMoveInside && this._highlighted) {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGINSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_INSIDE);
         } else if (!isTouchMoveInside && this._highlighted) {
             this._state = cc.CONTROL_STATE_NORMAL;
             this.setHighlighted(false);
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGEXIT);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_EXIT);
         } else if (!isTouchMoveInside && !this._highlighted) {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGOUTSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_OUTSIDE);
         }
     },
     onTouchEnded:function (touch, event) {
-        this._state = cc.CONTROL_STATE_NORMAL;
         this._pushed = false;
         this.setHighlighted(false);
 
         if (this.isTouchInside(touch)) {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UPINSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
         } else {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UPOUTSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UP_OUTSIDE);
         }
     },
 
     onTouchCancelled:function (touch, event) {
-        this._state = cc.CONTROL_STATE_NORMAL;
         this._pushed = false;
         this.setHighlighted(false);
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_CANCEL);
@@ -377,11 +398,12 @@ cc.ControlButton = cc.Control.extend({
      * @return The title for the specified state.
      */
     getTitleForState:function (state) {
-        if (this._titleDispatchTable.hasOwnProperty(state)) {
+        if (this._titleDispatchTable) {
             if (this._titleDispatchTable[state])
                 return this._titleDispatchTable[state];
+            return this._titleDispatchTable[cc.CONTROL_STATE_NORMAL];
         }
-        return this._titleDispatchTable[cc.CONTROL_STATE_NORMAL];
+        return "";
     },
 
     /**
@@ -415,13 +437,22 @@ cc.ControlButton = cc.Control.extend({
      * @return The color of the title for the specified state.
      */
     getTitleColorForState:function (state) {
-        if (this._titleColorDispatchTable.hasOwnProperty(state)) {
-            if (this._titleColorDispatchTable[state]) {
-                return this._titleColorDispatchTable[state];
+        var returnColor = cc.white();
+        do {
+            var colorObject = this._titleColorDispatchTable[state];
+            if (colorObject) {
+                returnColor = colorObject;
+                break;
             }
-        }
+            colorObject = this._titleColorDispatchTable[cc.CONTROL_STATE_NORMAL];
+            if (colorObject) {
+                returnColor = colorObject;
+                break;
+            }
 
-        return this._titleColorDispatchTable[cc.CONTROL_STATE_NORMAL];
+        } while (0);
+
+        return returnColor;
     },
 
     /**

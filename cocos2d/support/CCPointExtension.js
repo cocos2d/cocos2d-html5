@@ -163,10 +163,20 @@ cc.pUnrotate = function (v1, v2) {
 /**
  * Calculates the square length of a cc.Point (not calling sqrt() )
  * @param  {cc.Point} v
- *@return {cc.pDot}
+ *@return {Number}
  */
 cc.pLengthSQ = function (v) {
     return cc.pDot(v, v);
+};
+
+/**
+ * Calculates the square distance between two points (not calling sqrt() )
+ * @param {cc.Point} point1
+ * @param {cc.Point} point2
+ * @return {Number}
+ */
+cc.pDistanceSQ = function(point1, point2){
+    return cc.pLengthSQ(cc.pSub(point1,point2));
 };
 
 /**
@@ -191,7 +201,7 @@ cc.pDistance = function (v1, v2) {
 /**
  * Returns point multiplied to a length of 1.
  * @param {cc.Point} v
- * @return {cc.pMult}
+ * @return {cc.Point}
  */
 cc.pNormalize = function (v) {
     return cc.pMult(v, 1.0 / cc.pLength(v));
@@ -233,7 +243,7 @@ cc.clampf = function (value, min_inclusive, max_inclusive) {
 
 /**
  * Clamp a point between from and to.
- * @param {Number} p
+ * @param {Point} p
  * @param {Number} min_inclusive
  * @param {Number} max_inclusive
  * @return {cc.Point}
@@ -287,9 +297,8 @@ cc.pLerp = function (a, b, alpha) {
  */
 cc.pFuzzyEqual = function (a, b, variance) {
     if (a.x - variance <= b.x && b.x <= a.x + variance) {
-        if (a.y - variance <= b.y && b.y <= a.y + variance) {
+        if (a.y - variance <= b.y && b.y <= a.y + variance)
             return true;
-        }
     }
     return false;
 };
@@ -313,9 +322,8 @@ cc.pAngleSigned = function (a, b) {
     var a2 = cc.pNormalize(a);
     var b2 = cc.pNormalize(b);
     var angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, cc.pDot(a2, b2));
-    if (Math.abs(angle) < cc.POINT_EPSILON) {
+    if (Math.abs(angle) < cc.POINT_EPSILON)
         return 0.0;
-    }
     return angle;
 };
 
@@ -437,8 +445,60 @@ cc.pIntersectPoint = function (A, B, C, D) {
  * @return {Boolean} the true if both ccp are same
  */
 cc.pSameAs = function (A, B) {
-    if (A.x && B.x) {
+    if ((A != null) && (B != null)) {
         return (A.x == B.x && A.y == B.y);
     }
     return false;
 };
+
+
+
+// High Perfomance In Place Operationrs ---------------------------------------
+
+/**
+  * sets the position of the point to 0
+  */
+cc.pZeroIn = function(v) {
+    v.x = 0;
+    v.y = 0;
+};
+
+/**
+  * copies the position of one point to another
+  */
+cc.pIn = function(v1, v2) {
+    v1.x = v2.x;
+    v1.y = v2.y;
+};
+
+/**
+  * multiplies the point with the given factor (inplace)
+  */
+cc.pMultIn = function(point, floatVar) {
+    point.x *= floatVar;
+    point.y *= floatVar;
+};
+
+/**
+  * subtracts one point from another (inplace)
+  */
+cc.pSubIn = function(v1, v2) {
+    v1.x -= v2.x;
+    v1.y -= v2.y;
+};
+
+/**
+  * adds one point to another (inplace)
+  */
+cc.pAddIn = function(v1, v2) {
+    v1.x += v2.x;
+    v1.y += v2.y;
+};
+
+/**
+  * normalizes the point (inplace)
+  */
+cc.pNormalizeIn = function(v) {
+    cc.pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));
+};
+

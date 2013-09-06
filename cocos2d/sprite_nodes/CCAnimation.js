@@ -44,13 +44,19 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
         this._delayPerUnit = 0;
     },
 
+    clone: function(){
+        var frame = new cc.AnimationFrame();
+        frame.initWithSpriteFrame(this._spriteFrame.clone(), this._delayPerUnit, this._userInfo);
+        return frame;
+    },
+
     copyWithZone:function (pZone) {
         return cc.clone(this);
     },
 
     copy:function (pZone) {
         var newFrame = new cc.AnimationFrame();
-        newFrame.initWithSpriteFrame(this._spriteFrame, this._delayPerUnit, this._userInfo);
+        newFrame.initWithSpriteFrame(this._spriteFrame.clone(), this._delayPerUnit, this._userInfo);
         return newFrame;
     },
 
@@ -234,14 +240,28 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
         return true;
     },
 
+    clone: function(){
+        var animation = new cc.Animation();
+        animation.initWithAnimationFrames(this._copyFrames(), this._delayPerUnit, this._loops);
+        animation.setRestoreOriginalFrame(this._restoreOriginalFrame);
+        return animation;
+    },
+
     /**
      * @param {cc.Animation} pZone
      */
     copyWithZone:function (pZone) {
         var pCopy = new cc.Animation();
-        pCopy.initWithAnimationFrames(this._frames, this._delayPerUnit, this._loops);
+        pCopy.initWithAnimationFrames(this._copyFrames(), this._delayPerUnit, this._loops);
         pCopy.setRestoreOriginalFrame(this._restoreOriginalFrame);
         return pCopy;
+    },
+
+    _copyFrames:function(){
+       var copyFrames = [];
+        for(var i = 0; i< this._frames.length;i++)
+            copyFrames.push(this._frames[i].clone());
+        return copyFrames;
     },
 
     copy:function (pZone) {
@@ -335,6 +355,15 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
             }
         }
         return true;
+    },
+    /**
+     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
+     * This is a hack, and should be removed once JSB fixes the retain/release bug
+     */
+    retain:function () {
+    },
+    release:function () {
     }
 });
 

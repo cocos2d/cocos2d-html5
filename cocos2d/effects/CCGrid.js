@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2010-2013 cocos2d-x.org
+ Copyright (c) 2009      On-Core
  Copyright (c) 2008-2010 Ricardo Quesada
  Copyright (c) 2011      Zynga Inc.
 
@@ -24,22 +25,49 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/** Base class for other
+/**
+ * Base class for cc.Grid
+ * @class
+ * @extends cc.Class
  */
-cc.GridBase = cc.Class.extend({
-    _active:null,
-    _reuseGrid:null,
+cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
+    _active:false,
+    _reuseGrid:0,
     _gridSize:null,
     _texture:null,
-    _step:cc.p(0, 0),
+    _step:null,
     _grabber:null,
-    _isTextureFlipped:null,
-    /** wheter or not the grid is active */
+    _isTextureFlipped:false,
+    _shaderProgram:null,
+    _directorProjection:0,
+
+    _dirty:false,
+
+    ctor:function () {
+        this._active=false;
+        this._reuseGrid=0;
+        this._gridSize=null;
+        this._texture=null;
+        this._step = cc.p(0, 0);
+        this._grabber=null;
+        this._isTextureFlipped=false;
+        this._shaderProgram=null;
+        this._directorProjection=0;
+        this._dirty=false;
+    },
+
+    /**
+     * whether or not the grid is active
+     * @return {Boolean}
+     */
     isActive:function () {
         return this._active;
     },
+
+    /**
+     * whether or not the grid is active
+     * @param {Number} active
+     */
     setActive:function (active) {
         this._active = active;
         if (!active) {
@@ -49,67 +77,104 @@ cc.GridBase = cc.Class.extend({
         }
     },
 
-    /** number of times that the grid will be reused */
+    /**
+     * get number of times that the grid will be reused
+     * @return {Number}
+     */
     getReuseGrid:function () {
         return this._reuseGrid;
     },
+    /**
+     * set number of times that the grid will be reused
+     * @param reuseGrid
+     */
     setReuseGrid:function (reuseGrid) {
         this._reuseGrid = reuseGrid;
     },
 
-    /** size of the grid */
+    /**
+     * get size of the grid
+     * @return {cc.Size}
+     */
     getGridSize:function () {
         return this._gridSize;
     },
+
+    /**
+     * set size of the grid
+     * @param {cc.Size} gridSize
+     */
     setGridSize:function (gridSize) {
-        this._gridSize.x = parseInt(gridSize.x);
-        this._gridSize.y = parseInt(gridSize.y);
+        this._gridSize.width = parseInt(gridSize.width);
+        this._gridSize.height = parseInt(gridSize.height);
     },
 
-    /** pixels between the grids */
+    /**
+     * get pixels between the grids
+     * @return {cc.Point}
+     */
     getStep:function () {
         return this._step;
     },
+
+    /**
+     * set pixels between the grids
+     * @param {cc.Point} step
+     */
     setStep:function (step) {
         this._step = step;
     },
 
-    /** is texture flipped */
+    /**
+     * get wheter or not the texture is flipped
+     * @return {Boolean}
+     */
     isTextureFlipped:function () {
         return this._isTextureFlipped;
     },
-    setIsTextureFlipped:function (flipped) {
+
+    /**
+     * set wheter or not the texture is flipped
+     * @param {Boolean} flipped
+     */
+    setTextureFlipped:function (flipped) {
         if (this._isTextureFlipped != flipped) {
             this._isTextureFlipped = flipped;
             this.calculateVertexPoints();
         }
     },
 
+    /**
+     *
+     * @param {cc.Size} gridSize
+     * @param {cc.Texture2D} [texture=]
+     * @param {Boolean} [flipped=false]
+     * @returns {boolean}
+     */
     initWithSize:function (gridSize, texture, flipped) {
-        var argnum = arguments.length;
-        if (argnum == 1) {
+        if (!texture) {
             var director = cc.Director.getInstance();
-            var s = director.getWinSizeInPixels();
+            var winSize = director.getWinSizeInPixels();
 
-            var POTWide = cc.NextPOT(s.width);
-            var POTHigh = cc.NextPOT(s.height);
+            var POTWide = cc.NextPOT(winSize.width);
+            var POTHigh = cc.NextPOT(winSize.height);
 
+            var data = new Uint8Array(POTWide * POTHigh * 4);
+            if (!data) {
+                cc.log("cocos2d: CCGrid: not enough memory.");
+                return false;
+            }
+
+            texture = new cc.Texture2D();
             // we only use rgba8888
-            var format = cc.TEXTURE_PIXELFORMAT_RGBA8888;
-
-            var pTextureTemp = new cc.Texture2D();
-            pTextureTemp.initWithData(format, POTWide, POTHigh, s);
-            if (!pTextureTemp) {
+            texture.initWithData(data, cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, POTWide, POTHigh, winSize);
+            if (!texture) {
                 cc.log("cocos2d: CCGrid: error creating texture");
                 return false;
             }
-            texture = pTextureTemp;
-
-            flipped = false;
         }
 
-
-        var ret = true;
+        flipped = flipped || false;
 
         this._active = false;
         this._reuseGrid = 0;
@@ -117,349 +182,518 @@ cc.GridBase = cc.Class.extend({
         this._texture = texture;
         this._isTextureFlipped = flipped;
 
-        var texSize = this._texture.getContentSizeInPixels();
-        this._step.x = texSize.width / this._gridSize.x;
-        this._step.y = texSize.height / this._gridSize.y;
+        var texSize = this._texture.getContentSize();
+        this._step.x = texSize.width / gridSize.width;
+        this._step.y = texSize.height / gridSize.height;
 
         this._grabber = new cc.Grabber();
-        if (this._grabber) {
-            this._grabber.grab(this._texture);
-        }
-        else {
-            ret = false;
-        }
-
-
+        if (!this._grabber)
+            return false;
+        this._grabber.grab(this._texture);
+        this._shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
         this.calculateVertexPoints();
-
-        return ret;
-
+        return true;
     },
 
     beforeDraw:function () {
+        // save projection
+        this._directorProjection = cc.Director.getInstance().getProjection();
+
+        // 2d projection
+        //    [director setProjection:kCCDirectorProjection2D];
         this.set2DProjection();
         this._grabber.beforeRender(this._texture);
     },
+
     afterDraw:function (target) {
         this._grabber.afterRender(this._texture);
 
-        this.set3DProjection();
+        // restore projection
+        cc.Director.getInstance().setProjection(this._directorProjection);
 
-        if (target.getCamera().getDirty()) {
-            var offset = target.getAnchorPointInPixels();
+        if (target.getCamera().isDirty()) {
+            var offset = target.getAnchorPointInPoints();
 
             //
             // XXX: Camera should be applied in the AnchorPoint
             //
-            //todo gl
-            //ccglTranslate(offset.x, offset.y, 0);
+            cc.kmGLTranslatef(offset.x, offset.y, 0);
             target.getCamera().locate();
-            //ccglTranslate(-offset.x, -offset.y, 0);
+            cc.kmGLTranslatef(-offset.x, -offset.y, 0);
         }
-//todo gl
-        //glBindTexture(GL_TEXTURE_2D, this._texture.getName());
+
+        cc.glBindTexture2D(this._texture);
 
         // restore projection for default FBO .fixed bug #543 #544
-        //cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
-        //cc.Director.getInstance().applyOrientation();
+        //TODO:         CCDirector::sharedDirector().setProjection(CCDirector::sharedDirector().getProjection());
+        //TODO:         CCDirector::sharedDirector().applyOrientation();
         this.blit();
     },
+
     blit:function () {
         cc.Assert(0, "");
     },
+
     reuse:function () {
         cc.Assert(0, "");
     },
+
     calculateVertexPoints:function () {
         cc.Assert(0, "");
     },
+
     set2DProjection:function () {
         var winSize = cc.Director.getInstance().getWinSizeInPixels();
 
-        //todo gl
-        /* glViewport(0, 0, (GLsizei)(size.width * CC_CONTENT_SCALE_FACTOR()), (GLsizei)(size.height * CC_CONTENT_SCALE_FACTOR()) );
-         kmGLMatrixMode(KM_GL_PROJECTION);
-         kmGLLoadIdentity();
+        var gl = cc.renderContext;
+        gl.viewport(0, 0, winSize.width , winSize.height);
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLLoadIdentity();
 
-         kmMat4 orthoMatrix;
-         kmMat4OrthographicProjection(&orthoMatrix, 0, size.width * CC_CONTENT_SCALE_FACTOR(), 0, size.height * CC_CONTENT_SCALE_FACTOR(), -1, 1);
-         kmGLMultMatrix( &orthoMatrix );
+        var orthoMatrix = new cc.kmMat4();
+        cc.kmMat4OrthographicProjection(orthoMatrix, 0, winSize.width, 0, winSize.height, -1, 1);
+        cc.kmGLMultMatrix(orthoMatrix);
 
-         kmGLMatrixMode(KM_GL_MODELVIEW);
-         kmGLLoadIdentity();
-
-
-         ccSetProjectionMatrixDirty();*/
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLLoadIdentity();
+        cc.setProjectionMatrixDirty()
     }
 });
-cc.GridBase.create = function () {
-    return new cc.GridBase();
+
+/**
+ * create one cc.GridBase Object
+ * @param {cc.Size} gridSize
+ * @param {cc.Texture2D} [texture=]
+ * @param {Boolean} [flipped=]
+ * @return {cc.GridBase}
+ */
+cc.GridBase.create = function (gridSize, texture, flipped) {
+    var gridBase = new cc.GridBase();
+    if (gridBase && gridBase.initWithSize(gridSize, texture, flipped))
+        return gridBase;
+    return null;
 };
 
 /**
- cc.Grid3D is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
+ * cc.Grid3D is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
+ * @class
+ * @extends cc.GridBase
  */
-cc.Grid3D = cc.GridBase.extend({
+cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     _texCoordinates:null,
     _vertices:null,
     _originalVertices:null,
     _indices:null,
-    /** returns the vertex at a given position */
+
+    _texCoordinateBuffer:null,
+    _verticesBuffer:null,
+    _indicesBuffer:null,
+
+    ctor:function () {
+        cc.GridBase.prototype.ctor.call(this);
+        this._texCoordinates=null;
+        this._vertices=null;
+        this._originalVertices=null;
+        this._indices=null;
+
+        this._texCoordinateBuffer=null;
+        this._verticesBuffer=null;
+        this._indicesBuffer=null;
+    },
+
+    /**
+     * returns the vertex at a given position
+     * @param {cc.Point} pos
+     * @return {cc.Vertex3F}
+     */
     vertex:function (pos) {
-        var index = (pos.x * (this._gridSize.y + 1) + pos.y) * 3;
-        var vertArray = this._vertices;
-
-        var vert = new cc.Vertex3F(vertArray[index], vertArray[index + 1], vertArray[index + 2]);
-
-        return vert;
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
+        var locVertices = this._vertices;
+        return new cc.Vertex3F(locVertices[index], locVertices[index + 1], locVertices[index + 2]);
     },
-    /** returns the original (non-transformed) vertex at a given position */
+
+    /**
+     * returns the original (non-transformed) vertex at a given position
+     * @param {cc.Point} pos
+     * @return {cc.Vertex3F}
+     */
     originalVertex:function (pos) {
-        var index = (pos.x * (this._gridSize.y + 1) + pos.y) * 3;
-        var vertArray = this._originalVertices;
-
-        var vert = new cc.Vertex3F(vertArray[index], vertArray[index + 1], vertArray[index + 2]);
-
-        return vert;
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
+        var locOriginalVertices = this._originalVertices;
+        return new cc.Vertex3F(locOriginalVertices[index], locOriginalVertices[index + 1], locOriginalVertices[index + 2]);
     },
-    /** sets a new vertex at a given position */
+
+    /**
+     * sets a new vertex at a given position
+     * @param {cc.Point} pos
+     * @param {cc.Vertex3F} vertex
+     */
     setVertex:function (pos, vertex) {
-        var index = (pos.x * (this._gridSize.y + 1) + pos.y) * 3;
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         var vertArray = this._vertices;
         vertArray[index] = vertex.x;
         vertArray[index + 1] = vertex.y;
         vertArray[index + 2] = vertex.z;
+        this._dirty = true;
     },
 
     blit:function () {
-        var n = this._gridSize.x * this._gridSize.y;
+        var n = this._gridSize.width * this._gridSize.height;
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        this._shaderProgram.use();
+        this._shaderProgram.setUniformsForBuiltins();
 
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Unneeded states: GL_COLOR_ARRAY
-        //todo gl
-        /*glDisableClientState(GL_COLOR_ARRAY);
+        var gl = cc.renderContext, locDirty = this._dirty;
+        //
+        // Attributes
+        //
+        // position
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        if (locDirty)
+            gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
 
-         glVertexPointer(3, GL_FLOAT, 0, this._vertices);
-         glTexCoordPointer(2, GL_FLOAT, 0, this._texCoordinates);
-         glDrawElements(GL_TRIANGLES, n*6, GL_UNSIGNED_SHORT, this._indices);
+        // texCoords
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        if (locDirty)
+            gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
 
-         // restore default GL state
-         glEnableClientState(GL_COLOR_ARRAY);*/
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        if (locDirty)
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
+        gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
+        if (locDirty)
+            this._dirty = false;
+        cc.INCREMENT_GL_DRAWS(1);
     },
+
     reuse:function () {
         if (this._reuseGrid > 0) {
+            var locOriginalVertices = this._originalVertices, locVertices = this._vertices;
+            for (var i = 0, len =  this._vertices.length; i < len; i++)
+                locOriginalVertices[i] = locVertices[i];
             --this._reuseGrid;
         }
     },
+
     calculateVertexPoints:function () {
+        var gl = cc.renderContext;
+
         var width = this._texture.getPixelsWide();
         var height = this._texture.getPixelsHigh();
         var imageH = this._texture.getContentSizeInPixels().height;
+        var locGridSize = this._gridSize;
 
-        var numQuads = this._gridSize.x * this._gridSize.y;
+        var numOfPoints = (locGridSize.width + 1) * (locGridSize.height + 1);
+        this._vertices = new Float32Array(numOfPoints * 3);
+        this._texCoordinates = new Float32Array(numOfPoints * 2);
+        this._indices = new Uint16Array(locGridSize.width * locGridSize.height * 6);
 
-        this._vertices = [];
-        this._originalVertices = [];
-        this._texCoordinates = [];
-        this._indices = [];
+        if(this._verticesBuffer)
+            gl.deleteBuffer(this._verticesBuffer);
+        this._verticesBuffer = gl.createBuffer();
+        if(this._texCoordinateBuffer)
+            gl.deleteBuffer(this._texCoordinateBuffer);
+        this._texCoordinateBuffer = gl.createBuffer();
+        if(this._indicesBuffer)
+            gl.deleteBuffer(this._indicesBuffer);
+        this._indicesBuffer = gl.createBuffer();
 
-        var vertArray = this._vertices;
-        var texArray = this._texCoordinates;
-        var idxArray = this._indices;
-
-        var x, y;
-
-        for (x = 0; x < this._gridSize.x; x++) {
-            for (y = 0; y < this._gridSize.y; y++) {
+        var x, y, i, locIndices = this._indices, locTexCoordinates = this._texCoordinates;
+        var locIsTextureFlipped = this._isTextureFlipped, locVertices = this._vertices;
+        for (x = 0; x < locGridSize.width; ++x) {
+            for (y = 0; y < locGridSize.height; ++y) {
+                var idx = (y * locGridSize.width) + x;
                 var x1 = x * this._step.x;
                 var x2 = x1 + this._step.x;
                 var y1 = y * this._step.y;
                 var y2 = y1 + this._step.y;
 
-                vertArray[x * y] = x1;
-                vertArray[x * y + 1] = y1;
-                vertArray[x * y + 2] = 0;
-                vertArray[x * y + 3] = x2;
-                vertArray[x * y + 4] = y1;
-                vertArray[x * y + 5] = 0;
-                vertArray[x * y + 6] = x1;
-                vertArray[x * y + 7] = y2;
-                vertArray[x * y + 8] = 0;
-                vertArray[x * y + 9] = x2;
-                vertArray[x * y + 10] = y2;
-                vertArray[x * y + 11] = 0;
+                var a = (x * (locGridSize.height + 1) + y);
+                var b = ((x + 1) * (locGridSize.height + 1) + y);
+                var c = ((x + 1) * (locGridSize.height + 1) + (y + 1));
+                var d = (x * (locGridSize.height + 1) + (y + 1));
 
-                var newY1 = y1;
-                var newY2 = y2;
+                locIndices[idx * 6] = a;
+                locIndices[idx * 6 + 1] = b;
+                locIndices[idx * 6 + 2] = d;
+                locIndices[idx * 6 + 3] = b;
+                locIndices[idx * 6 + 4] = c;
+                locIndices[idx * 6 + 5] = d;
 
-                if (this._isTextureFlipped) {
-                    newY1 = imageH - y1;
-                    newY2 = imageH - y2;
+                var l1 = [a * 3, b * 3, c * 3, d * 3];
+                var e = {x:x1, y:y1, z:0};   //new cc.Vertex3F(x1, y1, 0);
+                var f = {x:x2, y:y1, z:0};   //new cc.Vertex3F(x2, y1, 0);
+                var g = {x:x2, y:y2, z:0};   // new cc.Vertex3F(x2, y2, 0);
+                var h = {x:x1, y:y2, z:0};   //new cc.Vertex3F(x1, y2, 0);
+
+                var l2 = [e, f, g, h];
+                var tex1 = [a * 2, b * 2, c * 2, d * 2];
+                var tex2 = [cc.p(x1, y1), cc.p(x2, y1), cc.p(x2, y2), cc.p(x1, y2)];
+                for (i = 0; i < 4; ++i) {
+                    locVertices[l1[i]] = l2[i].x;
+                    locVertices[l1[i] + 1] = l2[i].y;
+                    locVertices[l1[i] + 2] = l2[i].z;
+                    locTexCoordinates[tex1[i]] = tex2[i].x / width;
+                    if (locIsTextureFlipped)
+                        locTexCoordinates[tex1[i] + 1] = (imageH - tex2[i].y) / height;
+                    else
+                        locTexCoordinates[tex1[i] + 1] = tex2[i].y / height;
                 }
-
-                texArray[x * y + 12] = x1 / width;
-                texArray[x * y + 13] = newY1 / height;
-                texArray[x * y + 14] = x2 / width;
-                texArray[x * y + 15] = newY1 / height;
-                texArray[x * y + 16] = x1 / width;
-                texArray[x * y + 17] = newY2 / height;
-                texArray[x * y + 18] = x2 / width;
-                texArray[x * y + 19] = newY2 / height;
             }
         }
+        this._originalVertices = new Float32Array(this._vertices);
 
-        for (x = 0; x < numQuads; x++) {
-            idxArray[x * 6 + 0] = x * 4 + 0;
-            idxArray[x * 6 + 1] = x * 4 + 1;
-            idxArray[x * 6 + 2] = x * 4 + 2;
-
-            idxArray[x * 6 + 3] = x * 4 + 1;
-            idxArray[x * 6 + 4] = x * 4 + 2;
-            idxArray[x * 6 + 5] = x * 4 + 3;
-        }
-
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
+        this._dirty = true;
     }
 });
 
+/**
+ * create one Grid3D object
+ * @param {cc.Size} gridSize
+ * @param {cc.Texture2D} [texture=]
+ * @param {Boolean} [flipped=]
+ * @return {cc.Grid3D}
+ */
 cc.Grid3D.create = function (gridSize, texture, flipped) {
-
+    var grid3D = new cc.Grid3D();
+    if (grid3D && grid3D.initWithSize(gridSize, texture, flipped))
+        return grid3D;
+    return null;
 };
 
 /**
- cc.TiledGrid3D is a 3D grid implementation. It differs from Grid3D in that
- the tiles can be separated from the grid.
+ * cc.TiledGrid3D is a 3D grid implementation. It differs from Grid3D in that   <br/>
+ * the tiles can be separated from the grid.
+ * @class
+ * @extends cc.GridBase
  */
-cc.TiledGrid3D = cc.GridBase.extend({
+cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
     _texCoordinates:null,
     _vertices:null,
     _originalVertices:null,
     _indices:null,
-    /** returns the tile at the given position */
+
+    _texCoordinateBuffer:null,
+    _verticesBuffer:null,
+    _indicesBuffer:null,
+
+    ctor:function () {
+        cc.GridBase.prototype.ctor.call(this);
+        this._texCoordinates=null;
+        this._vertices=null;
+        this._originalVertices=null;
+        this._indices=null;
+
+        this._texCoordinateBuffer=null;
+        this._verticesBuffer=null;
+        this._indicesBuffer=null;
+    },
+
+    /**
+     * returns the tile at the given position
+     * @param {cc.Point} pos
+     * @return {cc.Quad3}
+     */
     tile:function (pos) {
-        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
-        var vertArray = this._vertices;
-        var ret = new cc.Quad3();
-        return ret;
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+
+        var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
+        var locVertices = this._vertices;
+        return new cc.Quad3(new cc.Vertex3F(locVertices[idx], locVertices[idx + 1], locVertices[idx + 2]),
+            new cc.Vertex3F(locVertices[idx + 3], locVertices[idx + 4], locVertices[idx + 5]),
+            new cc.Vertex3F(locVertices[idx + 6 ], locVertices[idx + 7], locVertices[idx + 8]),
+            new cc.Vertex3F(locVertices[idx + 9], locVertices[idx + 10], locVertices[idx + 11]));
     },
-    /** returns the original tile (untransformed) at the given position */
+
+    /**
+     * returns the original tile (untransformed) at the given position
+     * @param {cc.Point} pos
+     * @return {cc.Quad3}
+     */
     originalTile:function (pos) {
-        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
-        var vertArray = this._originalVertices;
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
 
-        var ret = new cc.Quad3(vertArray[idx], vertArray[idx + 1], vertArray[idx + 2], vertArray[idx + 3]);
-
-        return ret;
+        var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
+        var locOriginalVertices = this._originalVertices;
+        return new cc.Quad3(new cc.Vertex3F(locOriginalVertices[idx], locOriginalVertices[idx + 1], locOriginalVertices[idx + 2]),
+            new cc.Vertex3F(locOriginalVertices[idx + 3], locOriginalVertices[idx + 4], locOriginalVertices[idx + 5]),
+            new cc.Vertex3F(locOriginalVertices[idx + 6 ], locOriginalVertices[idx + 7], locOriginalVertices[idx + 8]),
+            new cc.Vertex3F(locOriginalVertices[idx + 9], locOriginalVertices[idx + 10], locOriginalVertices[idx + 11]));
     },
-    /** sets a new tile */
+
+    /**
+     * sets a new tile
+     * @param {cc.Point} pos
+     * @param {cc.Quad3} coords
+     */
     setTile:function (pos, coords) {
-        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
-        var vertArray = this._vertices;
-        vertArray[idx] = coords;
+        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+
+        var idx = (this._gridSize.height * pos.x + pos.y) * 12;
+        var locVertices = this._vertices;
+        locVertices[idx] = coords.bl.x;
+        locVertices[idx + 1] = coords.bl.y;
+        locVertices[idx + 2] = coords.bl.z;
+        locVertices[idx + 3] = coords.br.x;
+        locVertices[idx + 4] = coords.br.y;
+        locVertices[idx + 5] = coords.br.z;
+        locVertices[idx + 6] = coords.tl.x;
+        locVertices[idx + 7] = coords.tl.y;
+        locVertices[idx + 8] = coords.tl.z;
+        locVertices[idx + 9] = coords.tr.x;
+        locVertices[idx + 10] = coords.tr.y;
+        locVertices[idx + 11] = coords.tr.z;
+        this._dirty = true;
     },
 
     blit:function () {
-        var n = this._gridSize.x * this._gridSize.y;
+        var n = this._gridSize.width * this._gridSize.height;
 
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Unneeded states: GL_COLOR_ARRAY
-        //todo gl
-        /*glDisableClientState(GL_COLOR_ARRAY);
+        this._shaderProgram.use();
+        this._shaderProgram.setUniformsForBuiltins();
 
-         glVertexPointer(3, GL_FLOAT, 0, this._vertices);
-         glTexCoordPointer(2, GL_FLOAT, 0, this._texCoordinates);
-         glDrawElements(GL_TRIANGLES, (GLsizei)n*6, GL_UNSIGNED_SHORT, this._indices);
+        //
+        // Attributes
+        //
+        var gl = cc.renderContext, locDirty = this._dirty;
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
 
-         // restore default GL state
-         glEnableClientState(GL_COLOR_ARRAY);*/
+        // position
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        if (locDirty)
+            gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, this._vertices);
+
+        // texCoords
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        if (locDirty)
+            gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        if (locDirty)
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
+        gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
+        if (locDirty)
+            this._dirty = false;
+        cc.INCREMENT_GL_DRAWS(1);
     },
+
     reuse:function () {
         if (this._reuseGrid > 0) {
-            var numQuads = this._gridSize.x * this._gridSize.y;
-            for (var i = 0, len = numQuads.length * 12; i < len; i++) {
-                this._originalVertices.push(this._vertices[i])
-            }
-            //todo fix
-            //memcpy(this._originalVertices, this._vertices, numQuads * 12 * sizeof(GLfloat));
+            var locVertices = this._vertices, locOriginalVertices = this._originalVertices;
+            for (var i = 0; i < locVertices.length; i++)
+                locOriginalVertices[i] = locVertices[i];
             --this._reuseGrid;
         }
     },
+
     calculateVertexPoints:function () {
         var width = this._texture.getPixelsWide();
         var height = this._texture.getPixelsHigh();
         var imageH = this._texture.getContentSizeInPixels().height;
+        var locGridSize = this._gridSize;
 
-        var numQuads = this._gridSize.x * this._gridSize.y;
+        var numQuads = locGridSize.width * locGridSize.height;
+        this._vertices = new Float32Array(numQuads * 12);
+        this._texCoordinates = new Float32Array(numQuads * 8);
+        this._indices = new Uint16Array(numQuads * 6);
 
-        this._vertices = [];
-        this._originalVertices = [];
-        this._texCoordinates = [];
-        this._indices = [];
+        var gl = cc.renderContext;
+        if(this._verticesBuffer)
+            gl.deleteBuffer(this._verticesBuffer);
+        this._verticesBuffer = gl.createBuffer();
+        if(this._texCoordinateBuffer)
+            gl.deleteBuffer(this._texCoordinateBuffer);
+        this._texCoordinateBuffer = gl.createBuffer();
+        if(this._indicesBuffer)
+            gl.deleteBuffer(this._indicesBuffer);
+        this._indicesBuffer = gl.createBuffer();
 
-        var vertArray = this._vertices;
-        var texArray = this._texCoordinates;
-        var idxArray = this._indices;
+        var x, y, i = 0;
+        var locStep = this._step, locVertices = this._vertices, locTexCoords = this._texCoordinates, locIsTextureFlipped = this._isTextureFlipped;
+        for (x = 0; x < locGridSize.width; x++) {
+            for (y = 0; y < locGridSize.height; y++) {
+                var x1 = x * locStep.x;
+                var x2 = x1 + locStep.x;
+                var y1 = y * locStep.y;
+                var y2 = y1 + locStep.y;
 
-        var x, y;
+                locVertices[i * 12] = x1;
+                locVertices[i * 12 + 1] = y1;
+                locVertices[i * 12 + 2] = 0;
+                locVertices[i * 12 + 3] = x2;
+                locVertices[i * 12 + 4] = y1;
+                locVertices[i * 12 + 5] = 0;
+                locVertices[i * 12 + 6] = x1;
+                locVertices[i * 12 + 7] = y2;
+                locVertices[i * 12 + 8] = 0;
+                locVertices[i * 12 + 9] = x2;
+                locVertices[i * 12 + 10] = y2;
+                locVertices[i * 12 + 11] = 0;
 
-        for (x = 0; x < this._gridSize.x; x++) {
-            for (y = 0; y < this._gridSize.y; y++) {
-                var x1 = x * this._step.x;
-                var x2 = x1 + this._step.x;
-                var y1 = y * this._step.y;
-                var y2 = y1 + this._step.y;
-
-                vertArray[x * y] = x1;
-                vertArray[x * y + 1] = y1;
-                vertArray[x * y + 2] = 0;
-                vertArray[x * y + 3] = x2;
-                vertArray[x * y + 4] = y1;
-                vertArray[x * y + 5] = 0;
-                vertArray[x * y + 6] = x1;
-                vertArray[x * y + 7] = y2;
-                vertArray[x * y + 8] = 0;
-                vertArray[x * y + 9] = x2;
-                vertArray[x * y + 10] = y2;
-                vertArray[x * y + 11] = 0;
                 var newY1 = y1;
                 var newY2 = y2;
 
-                if (this._isTextureFlipped) {
+                if (locIsTextureFlipped) {
                     newY1 = imageH - y1;
                     newY2 = imageH - y2;
                 }
 
-                texArray[x * y + 12] = x1 / width;
-                texArray[x * y + 13] = newY1 / height;
-                texArray[x * y + 14] = x2 / width;
-                texArray[x * y + 15] = newY1 / height;
-                texArray[x * y + 16] = x1 / width;
-                texArray[x * y + 17] = newY2 / height;
-                texArray[x * y + 18] = x2 / width;
-                texArray[x * y + 19] = newY2 / height;
+                locTexCoords[i * 8] = x1 / width;
+                locTexCoords[i * 8 + 1] = newY1 / height;
+                locTexCoords[i * 8 + 2] = x2 / width;
+                locTexCoords[i * 8 + 3] = newY1 / height;
+                locTexCoords[i * 8 + 4] = x1 / width;
+                locTexCoords[i * 8 + 5] = newY2 / height;
+                locTexCoords[i * 8 + 6] = x2 / width;
+                locTexCoords[i * 8 + 7] = newY2 / height;
+                i++;
             }
         }
 
+        var locIndices = this._indices;
         for (x = 0; x < numQuads; x++) {
-            idxArray[x * 6 + 0] = x * 4 + 0;
-            idxArray[x * 6 + 1] = x * 4 + 1;
-            idxArray[x * 6 + 2] = x * 4 + 2;
+            locIndices[x * 6 + 0] = (x * 4 + 0);
+            locIndices[x * 6 + 1] = (x * 4 + 1);
+            locIndices[x * 6 + 2] = (x * 4 + 2);
 
-            idxArray[x * 6 + 3] = x * 4 + 1;
-            idxArray[x * 6 + 4] = x * 4 + 2;
-            idxArray[x * 6 + 5] = x * 4 + 3;
+            locIndices[x * 6 + 3] = (x * 4 + 1);
+            locIndices[x * 6 + 4] = (x * 4 + 2);
+            locIndices[x * 6 + 5] = (x * 4 + 3);
         }
-        for (var i = 0, len = numQuads.length * 12; i < len; i++) {
-            this._originalVertices.push(this._vertices[i])
-        }
-        //todo fix
-        //memcpy(this._originalVertices, this._vertices, numQuads * 12 * sizeof(GLfloat));
+        this._originalVertices = new Float32Array(this._vertices);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.DYNAMIC_DRAW);
+        this._dirty = true;
     }
 });
 
+/**
+ * create one TiledGrid3D object
+ * @param {cc.Size} gridSize
+ * @param {cc.Texture2D} [texture=]
+ * @param {Boolean} [flipped=]
+ * @return {cc.TiledGrid3D}
+ */
 cc.TiledGrid3D.create = function (gridSize, texture, flipped) {
     var ret = new cc.TiledGrid3D();
-    ret.initWithSize(gridSize, texture, flipped)
+    ret.initWithSize(gridSize, texture, flipped);
     return ret;
 };

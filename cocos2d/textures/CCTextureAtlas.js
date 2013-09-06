@@ -24,7 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
 /**
  * <p>A class that implements a Texture Atlas. <br />
  * Supported features: <br />
@@ -38,20 +37,30 @@
  * @extends cc.Class
  */
 cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
-    _indices:[],
+    _indices:null,
     //0: vertex  1: indices
-    _buffersVBO:[0, 1],
+    _buffersVBO:null,
     //indicates whether or not the array buffer of the VBO needs to be updated
     _dirty:false,
     _capacity:0,
     _texture:null,
-    _quads:[],
+
+    _quads:null,
+    _quadsArrayBuffer:null,
+    _quadsWebBuffer:null,
+    _quadsReader:null,
+
+    ctor:function () {
+        this._buffersVBO = [];
+    },
+
     /**
      * Quantity of quads that are going to be drawn.
      * @return {Number}
      */
     getTotalQuads:function () {
-        return this._quads.length;
+        //return this._quads.length;
+        return this._totalQuads;
     },
 
     /**
@@ -78,6 +87,22 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
+     * specify if the array buffer of the VBO needs to be updated
+     * @param {Boolean} dirty
+     */
+    setDirty:function (dirty) {
+        this._dirty = dirty;
+    },
+
+    /**
+     * whether or not the array buffer of the VBO needs to be updated
+     * @returns {boolean}
+     */
+    isDirty:function () {
+        return this._dirty;
+    },
+
+    /**
      * Quads that are going to be rendered
      * @return {Array}
      */
@@ -90,6 +115,27 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     setQuads:function (quads) {
         this._quads = quads;
+        //TODO need re-binding
+    },
+
+    _copyQuadsToTextureAtlas:function(quads, index){
+        if(!quads)
+            return;
+
+        for(var i = 0; i < quads.length ; i++){
+            this._setQuadToArray(quads[i], index + i);
+        }
+    },
+
+    _setQuadToArray: function (quad, index) {
+        if (!this._quads[index]) {
+            this._quads[index] = new cc.V3F_C4B_T2F_Quad(quad.tl, quad.bl, quad.tr, quad.br, this._quadsArrayBuffer, index * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+            return;
+        }
+        this._quads[index].bl = quad.bl;
+        this._quads[index].br = quad.br;
+        this._quads[index].tl = quad.tl;
+        this._quads[index].tr = quad.tr;
     },
 
     /**
@@ -97,20 +143,54 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @return {String}
      */
     description:function () {
-        return '<CCTextureAtlas | totalQuads =' + this._totalQuads + '>';
+        return '<cc.TextureAtlas | totalQuads =' + this._totalQuads + '>';
     },
-    _initIndices:function () {
-        if (this._capacity == 0)
+
+    _setupIndices:function () {
+        if (this._capacity === 0)
             return;
 
         for (var i = 0; i < this._capacity; i++) {
-            this._indices[i * 6 + 0] = i * 4 + 0;
-            this._indices[i * 6 + 1] = i * 4 + 0;
-            this._indices[i * 6 + 2] = i * 4 + 2;
-            this._indices[i * 6 + 3] = i * 4 + 1;
-            this._indices[i * 6 + 4] = i * 4 + 3;
-            this._indices[i * 6 + 5] = i * 4 + 3;
+            if (cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP) {
+                this._indices[i * 6 + 0] = i * 4 + 0;
+                this._indices[i * 6 + 1] = i * 4 + 0;
+                this._indices[i * 6 + 2] = i * 4 + 2;
+                this._indices[i * 6 + 3] = i * 4 + 1;
+                this._indices[i * 6 + 4] = i * 4 + 3;
+                this._indices[i * 6 + 5] = i * 4 + 3;
+            } else {
+                this._indices[i * 6 + 0] = i * 4 + 0;
+                this._indices[i * 6 + 1] = i * 4 + 1;
+                this._indices[i * 6 + 2] = i * 4 + 2;
+
+                // inverted index. issue #179
+                this._indices[i * 6 + 3] = i * 4 + 3;
+                this._indices[i * 6 + 4] = i * 4 + 2;
+                this._indices[i * 6 + 5] = i * 4 + 1;
+            }
         }
+    },
+
+    _setupVBO:function () {
+        var gl = cc.renderContext;
+        //create WebGLBuffer
+        this._buffersVBO[0] = gl.createBuffer();
+        this._buffersVBO[1] = gl.createBuffer();
+
+        this._quadsWebBuffer = gl.createBuffer();
+        this._mapBuffers();
+    },
+
+    _mapBuffers:function () {
+        var gl = cc.renderContext;
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
+
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -119,7 +199,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * WARNING: Do not reinitialize the TextureAtlas because it will leak memory. </p>
      * @param {String} file
      * @param {Number} capacity
-     * @return {Boolean|Null}
+     * @return {Boolean}
      * @example
      * //example
      * var textureAtlas = new cc.TextureAtlas();
@@ -128,12 +208,11 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     initWithFile:function (file, capacity) {
         // retained in property
         var texture = cc.TextureCache.getInstance().addImage(file);
-
-        if (texture) {
+        if (texture)
             return this.initWithTexture(texture, capacity);
-        } else {
+        else {
             cc.log("cocos2d: Could not open file: " + file);
-            return null;
+            return false;
         }
     },
 
@@ -152,25 +231,33 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * textureAtlas.initWithTexture(texture, 3);
      */
     initWithTexture:function (texture, capacity) {
-        cc.Assert(texture != null, "TextureAtlas.initWithTexture():texture should not be null");
+        //cc.Assert(texture != null, "TextureAtlas.initWithTexture():texture should not be null");
+        capacity = 0 | (capacity);
         this._capacity = capacity;
+        this._totalQuads = 0;
 
         // retained in property
         this._texture = texture;
 
         // Re-initialization is not allowed
-        cc.Assert(this._quads.length == 0 && this._indices.length == 0, "TextureAtlas.initWithTexture():_quads and _indices should not be null");
+        cc.Assert(this._quads == null && this._indices == null, "TextureAtlas.initWithTexture():_quads and _indices should not be null");
 
-        //TODO init array
         this._quads = [];
-        this._indices = [];
+        this._indices = new Uint16Array(capacity * 6);
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        this._quadsArrayBuffer = new ArrayBuffer(quadSize * capacity);
+        this._quadsReader = new Uint8Array(this._quadsArrayBuffer);
 
-        if (!( this._quads && this._indices) && this._capacity > 0) {
+        if (!( this._quads && this._indices) && capacity > 0)
             return false;
-        }
 
+        var locQuads = this._quads;
+        for(var i = 0; i< capacity; i++)
+            locQuads[i] =new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, i * quadSize);
+
+        this._setupIndices();
+        this._setupVBO();
         this._dirty = true;
-        this._initIndices();
         return true;
     },
 
@@ -181,7 +268,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     updateQuad:function (quad, index) {
-        this._quads[index] = quad;
+        //cc.Assert(index >= 0 && index < this._capacity, "updateQuadWithTexture: Invalid index");
+        this._totalQuads = Math.max(index + 1, this._totalQuads);
+        this._setQuadToArray(quad, index);
         this._dirty = true;
     },
 
@@ -192,7 +281,54 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     insertQuad:function (quad, index) {
-        this._quads = cc.ArrayAppendObjectToIndex(this._quads, quad, index);
+        cc.Assert(index < this._capacity, "insertQuadWithTexture: Invalid index");
+
+        this._totalQuads++;
+        cc.Assert(this._totalQuads <= this._capacity, "invalid totalQuads");
+
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        // issue #575. index can be > totalQuads
+        var remaining = (this._totalQuads-1) - index;
+        var startOffset = index * quadSize;
+        var moveLength = remaining * quadSize;
+        this._quads[this._totalQuads -1] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, (this._totalQuads -1) * quadSize);
+        this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + quadSize);
+
+        this._setQuadToArray(quad, index);
+        this._dirty = true;
+    },
+
+    /**
+     * <p>
+     *      Inserts a c array of quads at a given index                                           <br />
+     *      index must be between 0 and the atlas capacity - 1                                    <br />
+     *      this method doesn't enlarge the array when amount + index > totalQuads                <br />
+     * </p>
+     * @param {Array} quads
+     * @param {Number} index
+     * @param {Number} amount
+     */
+    insertQuads:function (quads, index, amount) {
+        amount = amount || quads.length;
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+
+        cc.Assert(index + amount <= this._capacity, "insertQuadWithTexture: Invalid index + amount");
+        this._totalQuads += amount;
+        cc.Assert(this._totalQuads <= this._capacity, "invalid totalQuads");
+
+        // issue #575. index can be > totalQuads
+        var remaining = (this._totalQuads-1) - index - amount;
+        var startOffset = index * quadSize;
+        var moveLength = remaining * quadSize;
+        var lastIndex = (this._totalQuads-1)  - amount;
+
+        var i;
+        for(i = 0; i < amount;i++)
+            this._quads[lastIndex + i] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, (this._totalQuads -1) * quadSize);
+        this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + quadSize * amount);
+        for(i = 0; i < amount; i++)
+            this._setQuadToArray(quads[i], index + i);
+
         this._dirty = true;
     },
 
@@ -203,17 +339,25 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} newIndex
      */
     insertQuadFromIndex:function (fromIndex, newIndex) {
-        if (fromIndex == newIndex)
+        cc.Assert(newIndex >= 0 && newIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
+        cc.Assert(fromIndex >= 0 && fromIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
+        if (fromIndex === newIndex)
             return;
 
-        var quad = this._quads[fromIndex];
-        cc.ArrayRemoveObjectAtIndex(this._quads, fromIndex);
-        if (fromIndex > newIndex) {
-            this._quads = cc.ArrayAppendObjectToIndex(this._quads, quad, newIndex);
-        } else {
-            this._quads = cc.ArrayAppendObjectToIndex(this._quads, quad, newIndex - 1);
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var sourceArr = this._quadsReader.subarray(fromIndex * quadSize,quadSize);
+        var startOffset, moveLength;
+        if(fromIndex > newIndex){
+            startOffset = newIndex * quadSize;
+            moveLength = (fromIndex - newIndex) * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset + quadSize);
+            this._quadsReader.set(sourceArr,startOffset);
+        }else{
+            startOffset = (fromIndex + 1) * quadSize;
+            moveLength = (newIndex - fromIndex) * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset - quadSize);
+            this._quadsReader.set(sourceArr, newIndex * quadSize);
         }
-
         this._dirty = true;
     },
 
@@ -223,8 +367,31 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     removeQuadAtIndex:function (index) {
-        cc.ArrayRemoveObjectAtIndex(this._quads, index);
+        cc.Assert(index < this._totalQuads, "removeQuadAtIndex: Invalid index");
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        this._totalQuads--;
+        this._quads.length = this._totalQuads;
+        if(index !== this._totalQuads){
+            //move data
+            var startOffset = (index + 1) * quadSize;
+            var moveLength = (this._totalQuads - index) * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset - quadSize);
+        }
+        this._dirty = true;
+    },
 
+    removeQuadsAtIndex:function (index, amount) {
+        cc.Assert(index + amount <= this._totalQuads, "removeQuadAtIndex: index + amount out of bounds");
+        this._totalQuads -= amount;
+
+        if(index !== this._totalQuads){
+            //move data
+            var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            var srcOffset = (index + amount) * quadSize;
+            var moveLength = (this._totalQuads - index) * quadSize;
+            var dstOffset = index * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(srcOffset,srcOffset + moveLength),dstOffset);
+        }
         this._dirty = true;
     },
 
@@ -235,6 +402,11 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     removeAllQuads:function () {
         this._quads.length = 0;
+        this._totalQuads = 0;
+    },
+
+    _setDirty:function(dirty){
+        this._dirty = dirty;
     },
 
     /**
@@ -247,15 +419,132 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @return {Boolean}
      */
     resizeCapacity:function (newCapacity) {
-        if (newCapacity == this._capacity) {
+        if (newCapacity == this._capacity)
             return true;
+
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var oldCapacity = this._capacity;
+        // update capacity and totolQuads
+        this._totalQuads = Math.min(this._totalQuads, newCapacity);
+        this._capacity = 0 | newCapacity;
+        var i, capacity = this._capacity, locTotalQuads = this._totalQuads;
+
+        if (this._quads == null) {
+            this._quads = [];
+            this._quadsArrayBuffer = new ArrayBuffer(quadSize * capacity);
+            this._quadsReader = new Uint8Array(this._quadsArrayBuffer);
+            for(i = 0; i< capacity; i++)
+                this._quads = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer,i * quadSize);
+        } else {
+            var newQuads, newArrayBuffer, quads = this._quads;
+            if (capacity > oldCapacity) {
+                newQuads = [];
+                newArrayBuffer = new ArrayBuffer(quadSize * capacity);
+                for(i = 0; i < locTotalQuads;i++){
+                     newQuads[i] = new cc.V3F_C4B_T2F_Quad(quads[i].tl,quads[i].bl,quads[i].tr,quads[i].br,
+                         newArrayBuffer,i * quadSize);
+                }
+                for(;i<capacity; i ++)
+                    newQuads[i] = new cc.V3F_C4B_T2F_Quad(null,null,null,null, newArrayBuffer,i * quadSize);
+
+                this._quadsReader = new Uint8Array(newArrayBuffer);
+                this._quads = newQuads;
+                this._quadsArrayBuffer = newArrayBuffer;
+            } else {
+                var count = Math.max(locTotalQuads, capacity);
+                newQuads = [];
+                newArrayBuffer = new ArrayBuffer(quadSize * capacity);
+                for(i = 0; i < count;i++){
+                    newQuads[i] = new cc.V3F_C4B_T2F_Quad(quads[i].tl,quads[i].bl,quads[i].tr,quads[i].br,
+                        newArrayBuffer,i * quadSize);
+                }
+                this._quadsReader = new Uint8Array(newArrayBuffer);
+                this._quads = newQuads;
+                this._quadsArrayBuffer = newArrayBuffer;
+            }
         }
 
-        this._totalQuads = Math.min(this._totalQuads, newCapacity);
-        this._capacity = newCapacity;
+        if (this._indices == null) {
+            this._indices = new Uint16Array(capacity * 6);
+        } else {
+            if (capacity > oldCapacity) {
+                var tempIndices = new Uint16Array(capacity * 6);
+                tempIndices.set(this._indices, 0);
+                this._indices = tempIndices;
+            } else {
+                this._indices = this._indices.subarray(0, capacity * 6);
+            }
+        }
 
+        this._setupIndices();
+        this._mapBuffers();
+        this._dirty = true;
         return true;
     },
+
+    /**
+     * Used internally by CCParticleBatchNode                                    <br/>
+     * don't use this unless you know what you're doing
+     * @param {Number} amount
+     */
+    increaseTotalQuadsWith:function (amount) {
+        this._totalQuads += amount;
+    },
+
+    /**
+     * Moves an amount of quads from oldIndex at newIndex
+     * @param {Number} oldIndex
+     * @param {Number} amount
+     * @param {Number} newIndex
+     */
+    moveQuadsFromIndex: function (oldIndex, amount, newIndex) {
+        if (arguments.length == 2) {
+            newIndex = amount;
+            amount = this._totalQuads - oldIndex;
+            cc.Assert(newIndex + (this._totalQuads - oldIndex) <= this._capacity, "moveQuadsFromIndex move is out of bounds");
+            if(amount === 0)
+                return;
+        }else{
+            cc.Assert(newIndex + amount <= this._totalQuads, "moveQuadsFromIndex:newIndex: Invalid index");
+            cc.Assert(oldIndex < this._totalQuads, "moveQuadsFromIndex:oldIndex: Invalid index");
+
+            if (oldIndex == newIndex)
+                return;
+        }
+
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var srcOffset = oldIndex * quadSize;
+        var srcLength = amount * quadSize;
+        var sourceArr = this._quadsReader.subarray(srcOffset, srcOffset + srcLength);
+        var dstOffset = newIndex * quadSize;
+        var moveLength, moveStart;
+        if (newIndex < oldIndex) {
+            moveLength = (oldIndex - newIndex) * quadSize;
+            moveStart = newIndex * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(moveStart, moveStart + moveLength), moveStart + srcLength)
+        } else {
+            moveLength = (newIndex - oldIndex) * quadSize;
+            moveStart = (oldIndex + amount) * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(moveStart, moveStart + moveLength), srcOffset);
+        }
+        this._quadsReader.set(sourceArr, dstOffset);
+        this._dirty = true;
+    },
+
+    /**
+     * Ensures that after a realloc quads are still empty                                <br/>
+     * Used internally by CCParticleBatchNode
+     * @param {Number} index
+     * @param {Number} amount
+     */
+    fillWithEmptyQuadsFromIndex:function (index, amount) {
+        var count = amount * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var clearReader = new Uint8Array(this._quadsArrayBuffer, index * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT, count);
+        for (var i = 0; i < count; i++)
+            clearReader[i] = 0;
+    },
+
+    // TextureAtlas - Drawing
 
     /**
      * <p>Draws n quads from an index (offset). <br />
@@ -264,14 +553,60 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} start
      */
     drawNumberOfQuads:function (n, start) {
-        if (0 == n)
+        start = start || 0;
+        if (0 === n || !this._texture || !this._texture.isLoaded())
             return;
+
+        var gl = cc.renderContext;
+        cc.glBindTexture2D(this._texture);
+
+        //
+        // Using VBO without VAO
+        //
+        //vertices
+        //gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+        // XXX: update is done in draw... perhaps it should be done in a timer
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
+        if (this._dirty)
+            gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
+
+        if (this._dirty)
+            this._dirty = false;
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+
+        if (cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP)
+            gl.drawElements(gl.TRIANGLE_STRIP, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
+        else
+            gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
+
+        cc.g_NumberOfDraws++;
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
+
     /**
      * Draws all the Atlas's Quads
      */
     drawQuads:function () {
-        this.drawNumberOfQuads(this._quads.length, 0);
+        this.drawNumberOfQuads(this._totalQuads, 0);
+    },
+
+    _releaseBuffer: function () {
+        var gl = cc.renderContext;
+        if (this._buffersVBO) {
+            if (this._buffersVBO[0])
+                gl.deleteBuffer(this._buffersVBO[0]);
+            if (this._buffersVBO[1])
+                gl.deleteBuffer(this._buffersVBO[1])
+        }
+        if (this._quadsWebBuffer)
+            gl.deleteBuffer(this._quadsWebBuffer);
     }
 });
 
@@ -287,16 +622,15 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
  */
 cc.TextureAtlas.create = function (file, capacity) {
     var textureAtlas = new cc.TextureAtlas();
-    if (textureAtlas && textureAtlas.initWithFile(file, capacity)) {
+    if (textureAtlas && textureAtlas.initWithFile(file, capacity))
         return textureAtlas;
-    }
     return null;
 };
 
 /**
  * <p>Creates a TextureAtlas with a previously initialized Texture2D object, and with an initial capacity for n Quads.
  * The TextureAtlas capacity can be increased in runtime.</p>
- * @param {Image} texture
+ * @param {Image|cc.Texture2D} texture
  * @param {Number} capacity
  * @return {cc.TextureAtlas}
  * @example
@@ -306,8 +640,7 @@ cc.TextureAtlas.create = function (file, capacity) {
  */
 cc.TextureAtlas.createWithTexture = function (texture, capacity) {
     var textureAtlas = new cc.TextureAtlas();
-    if (textureAtlas && textureAtlas.initWithTexture(texture, capacity)) {
+    if (textureAtlas && textureAtlas.initWithTexture(texture, capacity))
         return textureAtlas;
-    }
     return null;
 };

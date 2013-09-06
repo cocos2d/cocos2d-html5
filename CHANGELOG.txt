@@ -1,3 +1,89 @@
+Cocos2d-html5-v2.1.5 @ July.24, 2013
+* Ported engine API to keep the same as Cocos2d-x v2.1.4 API
+* Optimized John Resig's inheritance pattern (cc.Class.extend) with advanced property initialization.
+* Implemented the rest of extensions features according to Cocos2d-x v2.1.4
+* Integrated Armature module
+* Rewrote CCGrid, CCMotionStreak , CCProgressTimer with TypeArray
+* Optimized performance for actions
+* Optimized performance for MoonWarriors and CocosDragonJS
+
+* Bug fix:
+  1. Fixed cc.EditBox Dom Element position issue when EGLView is setted
+  2. Fixed cc.EGLView adjustSize bug
+  3. Fixed the bug of cc.ParticleBatchNode that it doesn't hide particles after particle life has expired when calling stopSystem()
+  4. Fixed a bug that LabelTTF dimension behavior doesn't support height=0
+  5. Fixed line height for multiline LabelTTF and overlapping pixels in Scale9Sprite on Canvas browsers
+  6. Fixed a bug of cc.SimpleAudioEngine that unloading effect doesn't work
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. ClipNodeTest effects varies in different browsers
+
+Cocos2d-html5-v2.1.4 @ Jun.12, 2013
+* Added support for multiple resources loading. This mechanic is the same as cocos2d-x now
+* Optimised "Performance Tests -> Sprites Test", and increased its benchmark to 220%!
+* Migrated audio (CocosDenshion) API to keep the same as Cocos2d JS API
+* Added auto test for NodeTests and TilemapTests
+* Changed CCTextureCache member functions such as addImage(path), addImageAysnc(path), removeTextureForKey(key) from using relative path to absolute path
+* Added support for particle batch node
+
+* Bug fix:
+  1. Fixed preLoading issue on iOS 5.1.1
+  2. Fixed cc.Menu / cc.MenuItemImage remaining touchable issue after replaceScene
+  3. Fixed Box2d and chipmunk path error for single engine file mode
+  4. Fixed cc.EditBox Dom Element position issue when cc.EditBox skewed
+  5. Fixed cc.ScrollView position issue when it's parent node moved
+  6. Fixed cc.TouchDispatcher can't touch issue when WebPage has been scrolled on Firefox or IE
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. ClipNodeTest effects varies in different browsers
+
+Cocos2d-html5-v2.1.3 @ May.1, 2013
+* CCEditbox now implemented for WebGL and JSB
+* Updated CCBReader to latest version
+* Performance optimization on Firefox 20%
+* Added render mode flag to switch between WebGL and canvas2d
+* Added support for Tizen
+* Now able to load embedded texture file in a plist
+* EGLView now works if canvas is placed inside another DOM element
+* Added a Simulator which can be found in MoonWarriors Directory
+
+* Bug fix:
+  1. Preloading on some mobile browsers
+  2. CCLoader for WebGL
+  3. ccNode memory leak
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. Particle System has some weird behavior when load from CCBReader
+     3. RenderTextureTest RenderTextureIssue937 & Issue1464 doesn't work properly
+     4. ClipNodeTest effects varies in different browsers
+
+
+Cocos2d-html5-v2.1.2-beta @ Mar.20, 2013
+* WebGL rendering mode implemented - blazing fast on supported browsers
+* Added many WegGL test to testbed
+* cc.Loader now supports multiple stage preloading - all tests now preload by multi resource groups
+* Now warns the user if their browser does not support html5
+* cc.Node now uses transform matrix - better performance
+* Accelerometer implemented - Also works on Javascript binding (JSB) for Cocos2d-x & Cocos2d-iPhone
+* Supports MP4 and M4a Audio format now
+* Designer resolution for multi resolution support - Also works on Javascript binding for Cocos2d-x
+* Faster Particle - thanks to Ivo Wetzel
+* Bug fixes:
+    1. File utility fixed
+    2. Audio support bug fixed
+    3. Removed some trailing coma which prevents blocks closure compiler
+    4. Local storage bug fixed
+    5. cc.MenuItemImage and cc.MenuItemToggle bugs fixed
+    6. Fixed compatibility with some UIWebView
+    7. Fixed rounding errors on ease actions
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. particle system can't load texture from plist
+     3. EditBox doesn't work on WebGL mode
+     4. Particle System has some weird behavior when load from CCBReader
+     5. RenderTextureTest RenderTextureIssue937 & Issue1464 doesn't work properly
+     6. ClipNodeTest effects varies in different browsers
+
 Cocos2d-html5-v2.1.1 @ Jan.28, 2013
 * Fixed bugs
 * Added mouse button to MouseDispatcher, supports right-click

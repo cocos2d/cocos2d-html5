@@ -38,10 +38,36 @@ var cocos2dApp = cc.Application.extend({
         // initialize director
         var director = cc.Director.getInstance();
 
-        cc.EGLView.getInstance().setDesignResolutionSize(800,450,cc.RESOLUTION_POLICY.SHOW_ALL);
+        var screenSize = cc.EGLView.getInstance().getFrameSize();
+        var resourceSize = cc.size(800, 450);
+        var designSize = cc.size(800, 450);
 
-        // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
-        //director.enableRetinaDisplay(true);
+        var searchPaths = [];
+        var resDirOrders = [];
+
+        searchPaths.push("res");
+        cc.FileUtils.getInstance().setSearchPaths(searchPaths);
+
+        var platform = cc.Application.getInstance().getTargetPlatform();
+        if (platform == cc.TARGET_PLATFORM.MOBILE_BROWSER) {
+            if (screenSize.height > 450) {
+                resDirOrders.push("HD");
+            }
+            else {
+                resourceSize = cc.size(400, 225);
+                designSize = cc.size(400, 225);
+                resDirOrders.push("Normal");
+            }
+        }
+        else if (platform == cc.TARGET_PLATFORM.PC_BROWSER) {
+            resDirOrders.push("HD");
+        }
+
+        cc.FileUtils.getInstance().setSearchResolutionsOrder(resDirOrders);
+
+        director.setContentScaleFactor(resourceSize.width / designSize.width);
+
+        cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
 
         // turn on display FPS
         director.setDisplayStats(this.config['showFPS']);
@@ -50,11 +76,12 @@ var cocos2dApp = cc.Application.extend({
         director.setAnimationInterval(1.0 / this.config['frameRate']);
 
         //load resources
-        cc.Loader.preload(g_ressources, function () {
-            cc.Director.getInstance().replaceScene(new this.startScene());
+        cc.LoaderScene.preload(g_resources, function () {
+            director.replaceScene(new this.startScene());
         }, this);
 
         return true;
     }
 });
+
 var myApp = new cocos2dApp(MyScene);

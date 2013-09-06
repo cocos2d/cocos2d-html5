@@ -43,7 +43,7 @@ cc.AffineTransform = function (a, b, c, d, tx, ty) {
 };
 
 cc.__AffineTransformMake = function (a, b, c, d, tx, ty) {
-    return new cc.AffineTransform(a, b, c, d, tx, ty);
+    return {a: a, b: b, c: c, d: d, tx: tx, ty: ty};
 };
 
 /**
@@ -58,14 +58,11 @@ cc.__AffineTransformMake = function (a, b, c, d, tx, ty) {
  * Constructor
  */
 cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
-    return new cc.AffineTransform(a, b, c, d, tx, ty);
+    return {a: a, b: b, c: c, d: d, tx: tx, ty: ty};
 };
 
 cc.__PointApplyAffineTransform = function (point, t) {
-    var p = cc.p(0, 0);
-    p.x = t.a * point.x + t.c * point.y + t.tx;
-    p.y = t.b * point.x + t.d * point.y + t.ty;
-    return p;
+    return {x: t.a * point.x + t.c * point.y + t.tx, y: t.b * point.x + t.d * point.y + t.ty};
 };
 
 /**
@@ -76,14 +73,11 @@ cc.__PointApplyAffineTransform = function (point, t) {
  * Constructor
  */
 cc.PointApplyAffineTransform = function (point, t) {
-    return cc.__PointApplyAffineTransform(point, t);
+    return {x: t.a * point.x + t.c * point.y + t.tx, y: t.b * point.x + t.d * point.y + t.ty};
 };
 
 cc.__SizeApplyAffineTransform = function (size, t) {
-    var s = cc.size(0, 0);
-    s.width = t.a * size.width + t.c * size.height;
-    s.height = t.b * size.width + t.d * size.height;
-    return s;
+    return {width: t.a * size.width + t.c * size.height, height: t.b * size.width + t.d * size.height};
 };
 
 /**
@@ -94,7 +88,7 @@ cc.__SizeApplyAffineTransform = function (size, t) {
  * Constructor
  */
 cc.SizeApplyAffineTransform = function (size, t) {
-    return cc.__SizeApplyAffineTransform(size, t);
+    return {width: t.a * size.width + t.c * size.height, height: t.b * size.width + t.d * size.height};
 };
 
 /**
@@ -103,7 +97,7 @@ cc.SizeApplyAffineTransform = function (size, t) {
  * Constructor
  */
 cc.AffineTransformMakeIdentity = function () {
-    return cc.__AffineTransformMake(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+    return {a: 1.0, b: 0.0, c: 0.0, d: 1.0, tx: 0.0, ty: 0.0};
 };
 
 /**
@@ -112,7 +106,7 @@ cc.AffineTransformMakeIdentity = function () {
  * Constructor
  */
 cc.AffineTransformIdentity = function () {
-    return cc.AffineTransformMakeIdentity();
+    return {a: 1.0, b: 0.0, c: 0.0, d: 1.0, tx: 0.0, ty: 0.0};
 };
 
 /**
@@ -123,10 +117,10 @@ cc.AffineTransformIdentity = function () {
  * Constructor
  */
 cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
-    var top = cc.Rect.CCRectGetMinY(rect);
-    var left = cc.Rect.CCRectGetMinX(rect);
-    var right = cc.Rect.CCRectGetMaxX(rect);
-    var bottom = cc.Rect.CCRectGetMaxY(rect);
+    var top = cc.rectGetMinY(rect);
+    var left = cc.rectGetMinX(rect);
+    var right = cc.rectGetMaxX(rect);
+    var bottom = cc.rectGetMaxY(rect);
 
     var topLeft = cc.PointApplyAffineTransform(cc.p(left, top), anAffineTransform);
     var topRight = cc.PointApplyAffineTransform(cc.p(right, top), anAffineTransform);
@@ -150,7 +144,7 @@ cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
  * Constructor
  */
 cc.AffineTransformTranslate = function (t, tx, ty) {
-    return cc.__AffineTransformMake(t.a, t.b, t.c, t.d, t.tx + t.a * tx + t.c * ty, t.ty + t.b * tx + t.d * ty);
+    return {a: t.a, b: t.b, c: t.c, d: t.d, tx: t.tx + t.a * tx + t.c * ty, ty: t.ty + t.b * tx + t.d * ty};
 };
 
 /**
@@ -162,7 +156,7 @@ cc.AffineTransformTranslate = function (t, tx, ty) {
  * Constructor
  */
 cc.AffineTransformScale = function (t, sx, sy) {
-    return cc.__AffineTransformMake(t.a * sx, t.b * sx, t.c * sy, t.d * sy, t.tx, t.ty);
+    return {a: t.a * sx, b: t.b * sx, c: t.c * sy, d: t.d * sy, tx: t.tx, ty: t.ty};
 };
 
 /**
@@ -176,15 +170,15 @@ cc.AffineTransformRotate = function (aTransform, anAngle) {
     var fSin = Math.sin(anAngle);
     var fCos = Math.cos(anAngle);
 
-    return cc.__AffineTransformMake(aTransform.a * fCos + aTransform.c * fSin,
-        aTransform.b * fCos + aTransform.d * fSin,
-        aTransform.c * fCos - aTransform.a * fSin,
-        aTransform.d * fCos - aTransform.b * fSin,
-        aTransform.tx,
-        aTransform.ty);
+    return {a: aTransform.a * fCos + aTransform.c * fSin,
+        b: aTransform.b * fCos + aTransform.d * fSin,
+        c: aTransform.c * fCos - aTransform.a * fSin,
+        d: aTransform.d * fCos - aTransform.b * fSin,
+        tx: aTransform.tx,
+        ty: aTransform.ty};
 };
 
-/* Concatenate `t2' to `t1' and return the result:<br/>
+/** Concatenate `t2' to `t1' and return the result:<br/>
  * t' = t1 * t2
  * @param {cc.AffineTransform} t1
  * @param {cc.AffineTransform} t2
@@ -192,10 +186,12 @@ cc.AffineTransformRotate = function (aTransform, anAngle) {
  * Constructor
  */
 cc.AffineTransformConcat = function (t1, t2) {
-    return cc.__AffineTransformMake(t1.a * t2.a + t1.b * t2.c, t1.a * t2.b + t1.b * t2.d, //a,b
-        t1.c * t2.a + t1.d * t2.c, t1.c * t2.b + t1.d * t2.d, //c,d
-        t1.tx * t2.a + t1.ty * t2.c + t2.tx, //tx
-        t1.tx * t2.b + t1.ty * t2.d + t2.ty);				  //ty
+    return {a: t1.a * t2.a + t1.b * t2.c,                          //a
+        b: t1.a * t2.b + t1.b * t2.d,                               //b
+        c: t1.c * t2.a + t1.d * t2.c,                               //c
+        d: t1.c * t2.b + t1.d * t2.d,                               //d
+        tx: t1.tx * t2.a + t1.ty * t2.c + t2.tx,                    //tx
+        ty: t1.tx * t2.b + t1.ty * t2.d + t2.ty};				    //ty
 };
 
 /**
@@ -207,7 +203,7 @@ cc.AffineTransformConcat = function (t1, t2) {
  * Constructor
  */
 cc.AffineTransformEqualToTransform = function (t1, t2) {
-    return (t1.a == t2.a && t1.b == t2.b && t1.c == t2.c && t1.d == t2.d && t1.tx == t2.tx && t1.ty == t2.ty);
+    return ((t1.a === t2.a) && (t1.b === t2.b) && (t1.c === t2.c) && (t1.d === t2.d) && (t1.tx === t2.tx) && (t1.ty === t2.ty));
 };
 
 /**
@@ -218,7 +214,6 @@ cc.AffineTransformEqualToTransform = function (t1, t2) {
  */
 cc.AffineTransformInvert = function (t) {
     var determinant = 1 / (t.a * t.d - t.b * t.c);
-
-    return cc.__AffineTransformMake(determinant * t.d, -determinant * t.b, -determinant * t.c, determinant * t.a,
-        determinant * (t.c * t.ty - t.d * t.tx), determinant * (t.b * t.tx - t.a * t.ty));
+    return {a: determinant * t.d, b: -determinant * t.b, c: -determinant * t.c, d: determinant * t.a,
+        tx: determinant * (t.c * t.ty - t.d * t.tx), ty: determinant * (t.b * t.tx - t.a * t.ty)};
 };

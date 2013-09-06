@@ -127,7 +127,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     spriteFrame = new cc.SpriteFrame();
                     if (frameDict.hasOwnProperty("spriteSize")) {
                         spriteFrame.initWithTexture(texture,
-                            cc.rect(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
+                            cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height),
                             textureRotated,
                             spriteOffset,
                             spriteSourceSize);
@@ -136,11 +136,11 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
                 }
 
-                if (spriteFrame.isRotated()) {
+                if(cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()){
                     //clip to canvas
                     var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(), spriteFrame.getRect());
                     var rect = spriteFrame.getRect();
-                    spriteFrame.setRect(cc.rect(0, 0, rect.size.width, rect.size.height));
+                    spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
                     spriteFrame.setTexture(tempTexture);
                 }
 
@@ -187,7 +187,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
      */
     addSpriteFrames:function (plist, texture) {
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(plist);
+        var fileUtils = cc.FileUtils.getInstance();
+        var fullPath = fileUtils.fullPathForFilename(plist);
+        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
 
         switch (arguments.length) {
             case 1:
@@ -201,9 +203,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
                     if (texturePath != "") {
                         // build texture path relative to plist file
-                        var getIndex = plist.lastIndexOf('/'), pszPath;
-                        pszPath = getIndex ? plist.substring(0, getIndex + 1) : "";
-                        texturePath = pszPath + texturePath;
+                        texturePath = fileUtils.fullPathFromRelativeFile(texturePath, plist);
                     } else {
                         // build texture path by replacing file extension
                         texturePath = plist;
@@ -305,8 +305,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * @param {String} plist plist filename
      */
     removeSpriteFramesFromFile:function (plist) {
-        var path = cc.FileUtils.getInstance().fullPathFromRelativePath(plist);
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(path);
+        var fileUtils = cc.FileUtils.getInstance();
+        var path = fileUtils.fullPathForFilename(plist);
+        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
 
         this._removeSpriteFramesFromDictionary(dict);
 
