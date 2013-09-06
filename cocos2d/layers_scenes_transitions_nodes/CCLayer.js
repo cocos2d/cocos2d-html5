@@ -789,7 +789,7 @@ cc.LayerColorCanvas = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this._color = new cc.Color4B(0, 0, 0, 0);
-        this._opacity = 255;
+        this._displayedOpacity = 255;
     },
 
     /**
@@ -847,6 +847,7 @@ cc.LayerColorCanvas = cc.LayerRGBA.extend(/** @lends cc.LayerColorCanvas# */{
         var tHeight = this.getContentSize().height;
         var locDisplayedColor = this._displayedColor;
 
+        context.globalAlpha = this.getOpacity()/255.0;
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + "," + (0 | locDisplayedColor.b) + "," + this._displayedOpacity / 255 + ")";
         context.fillRect(0, 0, tWidth, -tHeight);
 
