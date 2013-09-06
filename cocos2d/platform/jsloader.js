@@ -267,26 +267,28 @@
         if(p>=1) {
             loadJsImg.parentNode.removeChild(loadJsImg);
         }
-    }
+    };
 
     var loaded = 0;
     var que = engine.concat(c.appFiles);
     que.push('main.js');
+
     if (navigator.userAgent.indexOf("Trident/5") > -1) {
         //ie9
-        this.serial = -1;
+        var i = -1;
         var loadNext = function () {
-            var s = this.serial + 1;
-            if (s < que.length) {
+            i++;
+            if (i < que.length) {
                 var f = d.createElement('script');
-                f.src = que[s];
-                f.serial = s;
-                f.onload = loadNext;
+                f.src = que[i];
+                f.addEventListener('load',function(){
+                    loadNext();
+                    updateLoading(loaded / que.length);
+                    this.removeEventListener('load', arguments.callee, false);
+                },false);
                 d.body.appendChild(f);
-                //TODO: code for updating progress bar
             }
-            var p = s / (que.length - 1);
-            updateLoading(p);
+            updateLoading(i / (que.length - 1));
         };
         loadNext();
     }
@@ -295,15 +297,12 @@
             var s = d.createElement('script');
             s.async = false;
             s.src = f;
-            s.onload = function () {
+            s.addEventListener('load',function(){
                 loaded++;
-                //TODO: code for updating progress bar
-                var p = loaded / que.length;
-                updateLoading(p);
-            };
+                updateLoading(loaded / que.length);
+                this.removeEventListener('load', arguments.callee, false);
+            },false);
             d.body.appendChild(s);
-            que[i] = s;
-
         });
     }
 })();
