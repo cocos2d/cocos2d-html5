@@ -137,6 +137,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _setColorStyleStr:function () {
         var locFillColor = this._textFillColor;
         this._colorStyleStr = "rgba(" + locFillColor.r + "," + locFillColor.g + "," + locFillColor.b + ", " + this._displayedOpacity / 255 + ")";
+        if(this._strokeEnabled){
+            var locStrokeColor = this._strokeColor;
+            this._strokeColorStr = "rgba(" + locStrokeColor.r + "," + locStrokeColor.g + "," + locStrokeColor.b + ", " + this._displayedOpacity / 255 + ")";
+        }
     },
 
     /**
@@ -708,21 +712,25 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     setPosition:function(posX, posY){
-        if (arguments.length == 2)
-            this._originalPosition = cc.p(posX, posY);
-        else
-            this._originalPosition = cc.p(posX.x, posX.y);
+        var locOriginalPosition = this._originalPosition;
+        if (arguments.length == 2){
+            locOriginalPosition.x = posX;
+            locOriginalPosition.y = posY;
+        }else {
+            locOriginalPosition.x = posX.x;
+            locOriginalPosition.y = posX.y;
+        }
 
         //get real position
         var locStrokeShadowOffsetX = 0, locStrokeShadowOffsetY = 0;
         if(this._strokeEnabled)
             locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize * 2;
-        if(this._shadowEnabled){
+        if (this._shadowEnabled) {
             var locOffsetSize = this._shadowOffset;
-            locStrokeShadowOffsetX += locOffsetSize.width> 0?0:locOffsetSize.width;
-            locStrokeShadowOffsetY += locOffsetSize.height>0?0:locOffsetSize.height;
+            locStrokeShadowOffsetX += locOffsetSize.width > 0 ? 0 : locOffsetSize.width;
+            locStrokeShadowOffsetY += locOffsetSize.height > 0 ? 0 : locOffsetSize.height;
         }
-        var realPosition = cc.p(this._originalPosition.x + locStrokeShadowOffsetX, this._originalPosition.y + locStrokeShadowOffsetY);
+        var realPosition = cc.p(locOriginalPosition.x + locStrokeShadowOffsetX, locOriginalPosition.y + locStrokeShadowOffsetY);
         cc.Sprite.prototype.setPosition.call(this, realPosition);
     },
 
