@@ -62,7 +62,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _textureAtlas:null,
 
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
     },
 
@@ -180,7 +180,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.ParticleSystemQuads as children");
         cc.Assert(this._children.indexOf(child) > -1, "cc.ParticleBatchNode doesn't contain the sprite. Can't remove it");
 
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
 
         // remove child helper
         this._textureAtlas.removeQuadsAtIndex(child.getAtlasIndex(), child.getTotalParticles());
@@ -253,10 +253,11 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Boolean} doCleanup
      */
     removeAllChildren:function (doCleanup) {
-        for (var i = 0; i < this._children.length; i++) {
-            this._children[i].setBatchNode(null);
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            locChildren[i].setBatchNode(null);
         }
-        this._super(doCleanup);
+        cc.Node.prototype.removeAllChildren.call(this, doCleanup);
         this._textureAtlas.removeAllQuads();
     },
 
@@ -335,10 +336,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     // override visit.
     // Don't call visit on it's children
     visit:function (ctx) {
-        if (cc.renderContextType === cc.CANVAS) {
-            this._super(ctx);
+        if (cc.renderContextType === cc.CANVAS)
             return;
-        }
 
         // CAREFUL:
         // This visit is almost identical to cc.Node#visit

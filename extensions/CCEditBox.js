@@ -209,13 +209,12 @@ cc.EditBox = cc.ControlButton.extend({
      * * Constructor.
      * */
     ctor: function (boxSize) {
-        this._super();
+        cc.ControlButton.prototype.ctor.call(this);
 
         this._textColor = cc.WHITE;
         this._placeholderColor = cc.GRAY;
         this.setContentSize(boxSize);
         this._domInputSprite = new cc.Sprite();
-        this._domInputSprite.setColor(cc.BLUE);
         this._domInputSprite.draw = function(){ };                           //redefine draw function
         this.addChild(this._domInputSprite);
         var selfPointer = this;
@@ -412,12 +411,12 @@ cc.EditBox = cc.ControlButton.extend({
      */
     initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
         if (this.initWithBackgroundSprite(normal9SpriteBg)) {
-            this._domInputSprite.setPosition(cc.p(3, 3));
+            this._domInputSprite.setPosition(3, 3);
 
             this.setZoomOnTouchDown(false);
             this.setPreferredSize(size);
-            this.setPosition(cc.p(0, 0));
-            this.addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
+            this.setPosition(0, 0);
+            this._addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
             return true;
         }
         return false;

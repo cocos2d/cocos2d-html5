@@ -69,17 +69,330 @@ cc.NextPOT = function (x) {
  * @class
  * @extends cc.Node
  */
-cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
+cc.RenderTextureCanvas = cc.Node.extend(/** @lends cc.RenderTextureCanvas# */{
     /**
      * the offscreen canvas for rendering and storing the texture
      * @type HTMLCanvasElement
      */
-    canvas:null,
+    _cacheCanvas:null,
     /**
      * stores a reference to the canvas context object
-     * @type CanvasContext
+     * @type CanvasRenderingContext2D
      */
-    context:null,
+    _cacheContext:null,
+
+    _pixelFormat:cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888,
+    _sprite:null,
+
+    //code for "auto" update
+    _clearFlags:0,
+    _clearColor:null,
+    _clearDepth:0,
+    _clearStencil:0,
+    _autoDraw:false,
+
+    _clearColorStr:null,
+
+    /**
+     * Constructor
+     */
+    ctor:function () {
+        cc.Node.prototype.ctor.call(this);
+        this._clearColor = cc.c4f(1,1,1,1);
+        this._clearColorStr = "rgba(255,255,255,1)";
+
+        this._cacheCanvas = document.createElement('canvas');
+        this._cacheContext = this._cacheCanvas.getContext('2d');
+        this.setAnchorPoint(cc.p(0, 0));
+    },
+
+    onExit:function () {
+        cc.Node.prototype.onExit.call(this);
+        this._cacheContext = null;
+        this._cacheCanvas = null;
+    },
+
+    /**
+     * The sprite
+     * @return {cc.Sprite}
+     */
+    getSprite:function () {
+        return this._sprite;
+    },
+
+    /**
+     * @param {cc.Sprite} sprite
+     */
+    setSprite:function (sprite) {
+        this._sprite = sprite;
+    },
+
+    /**
+     * @param {Number} width
+     * @param {Number} height
+     * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
+     * @param {Number} depthStencilFormat
+     * @return {Boolean}
+     */
+    initWithWidthAndHeight:function (width, height, format, depthStencilFormat) {
+        this._cacheCanvas.width = width || 10;
+        this._cacheCanvas.height = height || 10;
+        this._cacheContext.translate(0, this._cacheCanvas.height);
+        var texture = new cc.Texture2D();
+        texture.initWithElement(this._cacheCanvas);
+        texture.handleLoadedTexture();
+        this._sprite = cc.Sprite.createWithTexture(texture);
+        return true;
+    },
+
+    /**
+     * starts grabbing
+     */
+    begin:function () {
+        cc.renderContext = this._cacheContext;
+
+        /*// Save the current matrix
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPushMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();*/
+    },
+
+    /**
+     * starts rendering to the texture while clearing the texture first.<br/>
+     * This is more efficient then calling -clear first and then -begin
+     * @param {Number} r red 0-1
+     * @param {Number} g green 0-1
+     * @param {Number} b blue 0-1
+     * @param {Number} a alpha 0-1 0 is transparent
+     * @param {Number} depthValue
+     * @param {Number} stencilValue
+     */
+    beginWithClear:function (r, g, b, a, depthValue, stencilValue) {
+        var gl = cc.renderContext;
+        depthValue = depthValue || gl.COLOR_BUFFER_BIT;
+        stencilValue = stencilValue || (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+        this._beginWithClear(r, g, b, a, depthValue, stencilValue, (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT | gl.STENCIL_BUFFER_BIT));
+    },
+
+    _beginWithClear:function (r, g, b, a, depthValue, stencilValue, flags) {
+        this.begin();
+
+        r = r || 0;
+        g = g || 0;
+        b = b || 0;
+        a = a || 1;
+
+        var context = cc.renderContext;
+        var locCanvas = this._cacheCanvas;
+        context.save();
+        context.fillStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
+        context.clearRect(0,0,locCanvas.width, -locCanvas.height);
+        context.fillRect(0,0,locCanvas.width, -locCanvas.height);
+        context.restore();
+    },
+
+    /**
+     * ends grabbing
+     */
+    end:function () {
+        cc.renderContext = cc.mainRenderContextBackup;
+
+        //TODO
+        /*//restore viewport
+        director.setViewport();
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPopMatrix();*/
+    },
+
+    /**
+     * clears the texture with a color
+     * @param {Number|cc.Rect} r red 0-1
+     * @param {Number} g green 0-1
+     * @param {Number} b blue 0-1
+     * @param {Number} a alpha 0-1
+     */
+    clear:function (r, g, b, a) {
+        this.beginWithClear(r, g, b, a);
+        this.end();
+    },
+
+    clearRect:function(x, y, width, height){
+        this._cacheContext.clearRect(x, y, width, -height);
+    },
+
+    /**
+     * clears the texture with a specified depth value
+     * @param {Number} depthValue
+     */
+    clearDepth:function (depthValue) {
+        cc.log("clearDepth isn't supported on Cocos2d-Html5");
+    },
+
+    /**
+     * clears the texture with a specified stencil value
+     * @param {Number} stencilValue
+     */
+    clearStencil:function (stencilValue) {
+        cc.log("clearDepth isn't supported on Cocos2d-Html5");
+    },
+
+    visit:function (ctx) {
+        // override visit.
+        // Don't call visit on its children
+        if (!this._visible)
+            return;
+
+        ctx = ctx || cc.renderContext;
+        ctx.save();
+
+        this.draw(ctx);                                                   // update children of RenderTexture before
+        this.transform(ctx);
+        this._sprite.visit();                                             // draw the RenderTexture
+
+        ctx.restore();
+
+        this._orderOfArrival = 0;
+    },
+
+    draw:function (ctx) {
+        ctx = ctx || cc.renderContext;
+        if (this._autoDraw) {
+            this.begin();
+
+            if (this._clearFlags) {
+                var locCanvas = this._cacheCanvas;
+                ctx.save();
+                ctx.fillStyle = this._clearColorStr;
+                ctx.clearRect(0,0,locCanvas.width, -locCanvas.height);
+                ctx.fillRect(0,0,locCanvas.width, -locCanvas.height);
+                ctx.restore();
+            }
+
+            //! make sure all children are drawn
+            this.sortAllChildren();
+            var locChildren = this._children;
+            var childrenLen = locChildren.length;
+            var selfSprite = this._sprite;
+            for (var i = 0; i < childrenLen; i++) {
+                var getChild = locChildren[i];
+                if (getChild != selfSprite)
+                    getChild.visit();
+            }
+
+            this.end();
+        }
+    },
+
+    /**
+     * creates a new CCImage from with the texture's data. Caller is responsible for releasing it by calling delete.
+     * @return {cc.Image}
+     */
+    newCCImage:function (flipImage) {
+        cc.log("saveToFile isn't supported on Cocos2d-Html5");
+        return null;
+    },
+
+    _memcpy:function (destArr, destIndex, srcArr, srcIndex, size) {
+        for (var i = 0; i < size; i++) {
+            destArr[destIndex + i] = srcArr[srcIndex + i];
+        }
+    },
+
+    /**
+     * saves the texture into a file using JPEG format. The file will be saved in the Documents folder.
+     * Returns YES if the operation is successful.
+     * (doesn't support in HTML5)
+     * @param {Number} filePath
+     * @param {Number} format
+     */
+    saveToFile:function (filePath, format) {
+        cc.log("saveToFile isn't supported on Cocos2d-Html5");
+    },
+
+    /**
+     * Listen "come to background" message, and save render texture. It only has effect on Android.
+     * @param {cc.Class} obj
+     */
+    listenToBackground:function (obj) {
+        cc.log("listenToBackground isn't supported on Cocos2d-Html5");
+    },
+
+    /**
+     * Listen "come to foreground" message and restore the frame buffer object. It only has effect on Android.
+     * @param {cc.Class} obj
+     */
+    listenToForeground:function (obj) {
+        cc.log("listenToForeground isn't supported on Cocos2d-Html5");
+    },
+
+    /**
+     * Valid flags: GL_COLOR_BUFFER_BIT, GL_DEPTH_BUFFER_BIT, GL_STENCIL_BUFFER_BIT. They can be OR'ed. Valid when "autoDraw is YES.
+     * @return {Number}
+     */
+    getClearFlags:function () {
+        return this._clearFlags;
+    },
+
+    setClearFlags:function (clearFlags) {
+        this._clearFlags = clearFlags;
+    },
+
+    /**
+     * Clear color value. Valid only when "autoDraw" is true.
+     * @return {cc.Color4F}
+     */
+    getClearColor:function () {
+        return this._clearColor;
+    },
+
+    setClearColor:function (clearColor) {
+        this._clearColor = cc.c4f(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+        this._clearColorStr = "rgba(" + (0 | (clearColor.r * 255)) + "," + (0 | (clearColor.g * 255)) + "," + (0 | (clearColor.b * 255)) + "," + clearColor.a + ")";
+    },
+
+    /**
+     * Value for clearDepth. Valid only when autoDraw is true.
+     * @return {Number}
+     */
+    getClearDepth:function () {
+        return this._clearDepth;
+    },
+
+    setClearDepth:function (clearDepth) {
+        this._clearDepth = clearDepth;
+    },
+
+    /**
+     * Value for clear Stencil. Valid only when autoDraw is true
+     * @return {Number}
+     */
+    getClearStencil:function () {
+        return this._clearStencil;
+    },
+
+    setClearStencil:function (clearStencil) {
+        this._clearStencil = clearStencil;
+    },
+
+    /**
+     * When enabled, it will render its children into the texture automatically. Disabled by default for compatiblity reasons. <br/>
+     * Will be enabled in the future.
+     * @return {Boolean}
+     */
+    isAutoDraw:function () {
+        return this._autoDraw;
+    },
+
+    setAutoDraw:function (autoDraw) {
+        this._autoDraw = autoDraw;
+    }
+});
+
+cc.RenderTextureWebGL = cc.Node.extend(/** @lends cc.RenderTextureWebGL# */{
     _fBO:0,
     _depthRenderBuffer:0,
     _oldFBO:0,
@@ -101,30 +414,22 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     ctor:function () {
         cc.Node.prototype.ctor.call(this);
-
-        if (cc.renderContextType === cc.CANVAS) {
-            this.canvas = document.createElement('canvas');
-            this.context = this.canvas.getContext('2d');
-            this.setAnchorPoint(cc.p(0, 0));
-        } else {
-            this._clearColor = cc.c4f(0, 0, 0, 0);
-        }
+        this._clearColor = cc.c4f(0, 0, 0, 0);
     },
 
-    onExit:function () {
+    onExit: function () {
         cc.Node.prototype.onExit.call(this);
-        if (cc.renderContextType === cc.WEBGL) {
-            this._sprite = null;
-            this._textureCopy = null;
 
-            var gl = cc.renderContext;
-            gl.deleteFramebuffer(this._fBO);
-            if (this._depthRenderBuffer)
-                gl.deleteRenderbuffer(this._depthRenderBuffer);
-            this._uITextureImage = null;
-            if(this._texture)
-                this._texture.releaseTexture();
-        }
+        this._sprite = null;
+        this._textureCopy = null;
+
+        var gl = cc.renderContext;
+        gl.deleteFramebuffer(this._fBO);
+        if (this._depthRenderBuffer)
+            gl.deleteRenderbuffer(this._depthRenderBuffer);
+        this._uITextureImage = null;
+        if (this._texture)
+            this._texture.releaseTexture();
     },
 
     /**
@@ -143,30 +448,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
-     * @return {HTMLCanvasElement}
-     */
-    getCanvas:function () {
-        return this.canvas;
-    },
-
-    /**
-     * @param {cc.Size} size
-     */
-    setContentSize:function (size) {
-        if (!size)
-            return;
-
-        //if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
-        this._super(size);
-        if(cc.renderContextType === cc.CANVAS){
-            this.canvas.width = size.width * 1.5;
-            this.canvas.height = size.height * 1.5;
-            this.context.translate(0, this.canvas.height);
-        }
-        //}
-    },
-
-    /**
      * @param {Number} width
      * @param {Number} height
      * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
@@ -174,108 +455,95 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @return {Boolean}
      */
     initWithWidthAndHeight:function (width, height, format, depthStencilFormat) {
-        if (cc.renderContextType === cc.CANVAS) {
-            this.canvas.width = width || 10;
-            this.canvas.height = height || 10;
+        cc.Assert(format != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
 
-            this.context.translate(0, this.canvas.height);
-            this._sprite = cc.Sprite.createWithTexture(this.canvas);
+        var gl = cc.renderContext;
 
-            return true;
+        width = 0 | (width * cc.CONTENT_SCALE_FACTOR());
+        height = 0 | (height * cc.CONTENT_SCALE_FACTOR());
+
+        this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
+
+        // textures must be power of two squared
+        var powW , powH;
+
+        if (cc.Configuration.getInstance().supportsNPOT()) {
+            powW = width;
+            powH = height;
         } else {
-            cc.Assert(format != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
-
-            var gl = cc.renderContext;
-
-            width = 0 | (width * cc.CONTENT_SCALE_FACTOR());
-            height = 0 | (height * cc.CONTENT_SCALE_FACTOR());
-
-            this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
-
-            // textures must be power of two squared
-            var powW , powH;
-
-            if (cc.Configuration.getInstance().supportsNPOT()) {
-                powW = width;
-                powH = height;
-            } else {
-                powW = cc.NextPOT(width);
-                powH = cc.NextPOT(height);
-            }
-
-            //void *data = malloc(powW * powH * 4);
-            var dataLen = powW * powH * 4;
-            var data = new Uint8Array(dataLen);
-            //memset(data, 0, (int)(powW * powH * 4));
-            for (var i = 0; i < powW * powH * 4; i++)
-                data[i] = 0;
-
-            this._pixelFormat = format;
-
-            this._texture = new cc.Texture2D();
-            if (!this._texture)
-                return false;
-
-            this._texture.initWithData(data, this._pixelFormat, powW, powH, cc.size(width, height));
-            //free( data );
-
-            var oldRBO = gl.getParameter(gl.RENDERBUFFER_BINDING);
-
-            if (cc.Configuration.getInstance().checkForGLExtension("GL_QCOM")) {
-                this._textureCopy = new cc.Texture2D();
-                if (!this._textureCopy) {
-                    return false;
-                }
-                this._textureCopy.initWithData(data, this._pixelFormat, powW, powH, cc.size(width, height));
-            }
-
-            // generate FBO
-            this._fBO = gl.createFramebuffer();
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this._fBO);
-
-            // associate texture with FBO
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
-
-            if (depthStencilFormat != 0) {
-                //create and attach depth buffer
-                this._depthRenderBuffer = gl.createRenderbuffer();
-                gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
-                gl.renderbufferStorage(gl.RENDERBUFFER, depthStencilFormat, powW, powH);
-                gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
-
-                // if depth format is the one with stencil part, bind same render buffer as stencil attachment
-                //if (depthStencilFormat == gl.DEPTH24_STENCIL8)
-                //    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
-            }
-
-            // check if it worked (probably worth doing :) )
-            cc.Assert(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "Could not attach texture to framebuffer");
-
-            this._texture.setAliasTexParameters();
-
-            this._sprite = cc.Sprite.createWithTexture(this._texture);
-            this._sprite.setScaleY(-1);
-            this._sprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
-
-            gl.bindRenderbuffer(gl.RENDERBUFFER, oldRBO);
-            gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
-
-            // Diabled by default.
-            this._autoDraw = false;
-
-            // add sprite for backward compatibility
-            this.addChild(this._sprite);
-            return true;
+            powW = cc.NextPOT(width);
+            powH = cc.NextPOT(height);
         }
+
+        //void *data = malloc(powW * powH * 4);
+        var dataLen = powW * powH * 4;
+        var data = new Uint8Array(dataLen);
+        //memset(data, 0, (int)(powW * powH * 4));
+        for (var i = 0; i < powW * powH * 4; i++)
+            data[i] = 0;
+
+        this._pixelFormat = format;
+
+        this._texture = new cc.Texture2D();
+        if (!this._texture)
+            return false;
+
+        this._texture.initWithData(data, this._pixelFormat, powW, powH, cc.size(width, height));
+        //free( data );
+
+        var oldRBO = gl.getParameter(gl.RENDERBUFFER_BINDING);
+
+        if (cc.Configuration.getInstance().checkForGLExtension("GL_QCOM")) {
+            this._textureCopy = new cc.Texture2D();
+            if (!this._textureCopy) {
+                return false;
+            }
+            this._textureCopy.initWithData(data, this._pixelFormat, powW, powH, cc.size(width, height));
+        }
+
+        // generate FBO
+        this._fBO = gl.createFramebuffer();
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._fBO);
+
+        // associate texture with FBO
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
+
+        if (depthStencilFormat != 0) {
+            //create and attach depth buffer
+            this._depthRenderBuffer = gl.createRenderbuffer();
+            gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
+            gl.renderbufferStorage(gl.RENDERBUFFER, depthStencilFormat, powW, powH);
+            gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+
+            // if depth format is the one with stencil part, bind same render buffer as stencil attachment
+            //if (depthStencilFormat == gl.DEPTH24_STENCIL8)
+            //    gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, this._depthRenderBuffer);
+        }
+
+        // check if it worked (probably worth doing :) )
+        cc.Assert(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "Could not attach texture to framebuffer");
+
+        this._texture.setAliasTexParameters();
+
+        this._sprite = cc.Sprite.createWithTexture(this._texture);
+        this._sprite.setScaleY(-1);
+        this._sprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+
+        gl.bindRenderbuffer(gl.RENDERBUFFER, oldRBO);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
+
+        // Diabled by default.
+        this._autoDraw = false;
+
+        // add sprite for backward compatibility
+        this.addChild(this._sprite);
+        return true;
     },
 
     /**
      * starts grabbing
      */
     begin:function () {
-        if (cc.renderContextType === cc.CANVAS)
-            return;
-
         // Save the current matrix
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLPushMatrix();
@@ -338,9 +606,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _beginWithClear:function (r, g, b, a, depthValue, stencilValue, flags) {
-        if (cc.renderContextType === cc.CANVAS)
-            return;
-
         this.begin();
 
         var gl = cc.renderContext;
@@ -382,9 +647,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * ends grabbing
      */
     end:function () {
-        if (cc.renderContextType === cc.CANVAS)
-            return;
-
         var gl = cc.renderContext;
         var director = cc.Director.getInstance();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
@@ -398,15 +660,15 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         /* var size = director.getWinSizeInPixels();
 
-        // restore viewport
-        gl.viewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+         // restore viewport
+         gl.viewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
 
-        // special viewport for 3d projection + retina display
-        if (director.getProjection() == cc.DIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1) {
-            gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
-        }
+         // special viewport for 3d projection + retina display
+         if (director.getProjection() == cc.DIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1) {
+         gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
+         }
 
-        director.setProjection(director.getProjection());*/
+         director.setProjection(director.getProjection());*/
     },
 
     /**
@@ -417,16 +679,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} a alpha 0-1
      */
     clear:function (r, g, b, a) {
-        if (cc.renderContextType === cc.CANVAS) {
-            var rect = r;
-            if (rect)
-                this.context.clearRect(rect.x, rect.y, rect.width, rect.height);
-            else
-                this.context.clearRect(0, 0, this.canvas.width, -this.canvas.height);
-        } else {
-            this.beginWithClear(r, g, b, a);
-            this.end();
-        }
+        this.beginWithClear(r, g, b, a);
+        this.end();
     },
 
     /**
@@ -434,9 +688,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} depthValue
      */
     clearDepth:function (depthValue) {
-        if (cc.renderContextType === cc.CANVAS)
-            return;
-
         this.begin();
 
         var gl = cc.renderContext;
@@ -456,9 +707,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} stencilValue
      */
     clearStencil:function (stencilValue) {
-        if (cc.renderContextType === cc.CANVAS)
-            return;
-
         var gl = cc.renderContext;
         // save old stencil value
         var stencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
@@ -471,10 +719,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     visit:function (ctx) {
-        if (cc.renderContextType === cc.CANVAS) {
-            this._super(ctx);
-            return;
-        }
         // override visit.
         // Don't call visit on its children
         if (!this._visible)
@@ -482,8 +726,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         cc.kmGLPushMatrix();
 
-        if (this._grid && this._grid.isActive()) {
-            this._grid.beforeDraw();
+        var locGrid = this._grid;
+        if (locGrid && locGrid.isActive()) {
+            locGrid.beforeDraw();
             this.transformAncestors();
         }
 
@@ -491,8 +736,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this._sprite.visit();
         this.draw(ctx);
 
-        if (this._grid && this._grid.isActive())
-            this._grid.afterDraw(this);
+        if (locGrid && locGrid.isActive())
+            locGrid.afterDraw(this);
 
         cc.kmGLPopMatrix();
 
@@ -500,55 +745,51 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     draw:function (ctx) {
-        if (cc.renderContextType === cc.CANVAS) {
-            this._super(ctx);
-            return;
-        }
-
         var gl = cc.renderContext;
         if (this._autoDraw) {
             this.begin();
 
-            if (this._clearFlags) {
+            var locClearFlags = this._clearFlags;
+            if (locClearFlags) {
                 var oldClearColor = [0.0, 0.0, 0.0, 0.0];
                 var oldDepthClearValue = 0.0;
                 var oldStencilClearValue = 0;
 
                 // backup and set
-                if (this._clearFlags & gl.COLOR_BUFFER_BIT) {
+                if (locClearFlags & gl.COLOR_BUFFER_BIT) {
                     oldClearColor = gl.getParameter(gl.COLOR_CLEAR_VALUE);
                     gl.clearColor(this._clearColor.r, this._clearColor.g, this._clearColor.b, this._clearColor.a);
                 }
 
-                if (this._clearFlags & gl.DEPTH_BUFFER_BIT) {
+                if (locClearFlags & gl.DEPTH_BUFFER_BIT) {
                     oldDepthClearValue = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
                     gl.clearDepth(this._clearDepth);
                 }
 
-                if (this._clearFlags & gl.STENCIL_BUFFER_BIT) {
+                if (locClearFlags & gl.STENCIL_BUFFER_BIT) {
                     oldStencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
                     gl.clearStencil(this._clearStencil);
                 }
 
                 // clear
-                gl.clear(this._clearFlags);
+                gl.clear(locClearFlags);
 
                 // restore
-                if (this._clearFlags & gl.COLOR_BUFFER_BIT)
+                if (locClearFlags & gl.COLOR_BUFFER_BIT)
                     gl.clearColor(oldClearColor[0], oldClearColor[1], oldClearColor[2], oldClearColor[3]);
 
-                if (this._clearFlags & gl.DEPTH_BUFFER_BIT)
+                if (locClearFlags & gl.DEPTH_BUFFER_BIT)
                     gl.clearDepth(oldDepthClearValue);
 
-                if (this._clearFlags & gl.STENCIL_BUFFER_BIT)
+                if (locClearFlags & gl.STENCIL_BUFFER_BIT)
                     gl.clearStencil(oldStencilClearValue);
             }
 
             //! make sure all children are drawn
             this.sortAllChildren();
-
-            for (var i = 0; i < this._children.length; i++) {
-                var getChild = this._children[i];
+            var locChildren = this._children;
+            for (var i = 0; i < locChildren.length; i++) {
+                var getChild = locChildren[i];
                 if (getChild != this._sprite)
                     getChild.visit();
             }
@@ -621,7 +862,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} format
      */
     saveToFile:function (filePath, format) {
-        cc.log("saveToFile is NoSupported on Cocos2d-Html5");
+        cc.log("saveToFile isn't supported on Cocos2d-Html5");
     },
 
     /**
@@ -629,7 +870,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {cc.Class} obj
      */
     listenToBackground:function (obj) {
-        cc.log("listenToBackground is NoSupported on Cocos2d-Html5");
+        cc.log("listenToBackground isn't supported on Cocos2d-Html5");
     },
 
     /**
@@ -637,7 +878,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {cc.Class} obj
      */
     listenToForeground:function (obj) {
-        cc.log("listenToForeground is NoSupported on Cocos2d-Html5");
+        cc.log("listenToForeground isn't supported on Cocos2d-Html5");
     },
 
     /**
@@ -701,6 +942,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this._autoDraw = autoDraw;
     }
 });
+
+cc.RenderTexture = cc.Browser.supportWebGL ? cc.RenderTextureWebGL : cc.RenderTextureCanvas;
 
 /**
  * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid

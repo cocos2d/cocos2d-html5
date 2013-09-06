@@ -270,6 +270,12 @@ cc.rectEqualToRect = function (rect1, rect2) {
         (cc.sizeEqualToSize(rect1.size, rect2.size)));
 };
 
+cc._rectEqualToZero = function(rect){
+    if(!rect)
+        return false;
+    return (rect.x === 0) && (rect.y === 0) && (rect.width === 0) && (rect.height === 0);
+};
+
 /**
  * @function
  * @param {cc.Rect} rect1

@@ -48,8 +48,8 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     _tag:cc.ACTION_TAG_INVALID,
 
     //**************Public Functions***********
-    ctor:function(){
-       this._originalTarget = null;
+    ctor:function () {
+        this._originalTarget = null;
         this._target = null;
         this._tag = cc.ACTION_TAG_INVALID;
     },
@@ -73,7 +73,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      * returns a clone of action
      * @return {cc.Action}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.Action();
         action._originalTarget = null;
         action._target = null;
@@ -211,7 +211,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
     //! duration in seconds
     _duration:0,
 
-    ctor: function () {
+    ctor:function () {
         cc.Action.prototype.ctor.call(this);
         this._duration = 0;
     },
@@ -244,7 +244,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
     /**
      *
      */
-    clone:function(){
+    clone:function () {
         return new cc.FiniteTimeAction();
     }
 });
@@ -261,8 +261,8 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
     _speed:0.0,
     _innerAction:null,
 
-    ctor:function(){
-       cc.Action.prototype.ctor.call(this);
+    ctor:function () {
+        cc.Action.prototype.ctor.call(this);
         this._speed = 0;
         this._innerAction = null;
     },
@@ -297,7 +297,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      * returns a clone of action
      * @returns {cc.Speed}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.Speed();
         action.initWithAction(this._innerAction.clone(), this._speed);
         return action;
@@ -411,7 +411,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
     bottomBoundary:0.0,
     _worldRect:null,
 
-    ctor: function () {
+    ctor:function () {
         cc.Action.prototype.ctor.call(this);
         this._followedNode = null;
         this._boundarySet = false;
@@ -427,7 +427,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         this._worldRect = cc.RectZero();
     },
 
-    clone:function(){
+    clone:function () {
         var action = new cc.Follow();
         var locRect = this._worldRect;
         var rect = new cc.Rect(locRect.x, locRect.y, locRect.width, locRect.height);
@@ -462,7 +462,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         this._followedNode = followedNode;
         this._worldRect = rect;
 
-        this._boundarySet = !cc.rectEqualToRect(rect, cc.RectZero());
+        this._boundarySet = !cc._rectEqualToZero(rect);
 
         this._boundaryFullyCovered = false;
 
@@ -497,17 +497,20 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      * @param {Number} dt
      */
     step:function (dt) {
+        var tempPosX = this._followedNode.getPositionX();
+        var tempPosY = this._followedNode.getPositionY();
+        tempPosX = this._halfScreenSize.x - tempPosX;
+        tempPosY = this._halfScreenSize.y - tempPosY;
+
         if (this._boundarySet) {
             // whole map fits inside a single screen, no need to modify the position - unless map boundaries are increased
             if (this._boundaryFullyCovered)
                 return;
 
-            var tempPos = cc.pSub(this._halfScreenSize, this._followedNode.getPosition());
-
-            this._target.setPosition(cc.p(cc.clampf(tempPos.x, this.leftBoundary, this.rightBoundary),
-                cc.clampf(tempPos.y, this.bottomBoundary, this.topBoundary)));
+            this._target.setPosition(cc.clampf(tempPosX, this.leftBoundary, this.rightBoundary),
+                cc.clampf(tempPosY, this.bottomBoundary, this.topBoundary));
         } else {
-            this._target.setPosition(cc.pSub(this._halfScreenSize, this._followedNode.getPosition()));
+            this._target.setPosition(tempPosX, tempPosY);
         }
     },
 

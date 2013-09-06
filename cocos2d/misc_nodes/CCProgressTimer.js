@@ -165,14 +165,12 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
     },
 
     /// ---- common properties end   ----
-    _origin:cc.PointZero(),
-    _originSize:cc.SizeZero(),
-    _drawSize:cc.SizeZero(),
-    _drawPosition:cc.PointZero(),
+    _origin:null,
     _startAngle:270,
     _endAngle:270,
     _radius:0,
-
+    _counterClockWise:false,
+    _barRect:null,
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
 
@@ -185,12 +183,11 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
         this._sprite = null;
 
         this._origin = cc.PointZero();
-        this._originSize = cc.SizeZero();
-        this._drawSize = cc.SizeZero();
-        this._drawPosition = cc.PointZero();
         this._startAngle = 270;
         this._endAngle = 270;
         this._radius = 0;
+        this._counterClockWise = false;
+        this._barRect = cc.RectZero();
     },
 
     /**
@@ -288,127 +285,136 @@ cc.ProgressTimerCanvas = cc.NodeRGBA.extend(/** @lends cc.ProgressTimerCanvas# *
      */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
+
         var locSprite = this._sprite;
-        context.globalAlpha = locSprite._opacity / 255;
-        var centerPoint, mpX = 0, mpY = 0;
-        var spriteContentSize = locSprite._contentSize;
-        var spriteAnchorPoint = locSprite._anchorPointInPoints;
+        context.globalAlpha = locSprite._displayedOpacity / 255;
+        var locRect = locSprite._rect,  locOffsetPosition = locSprite._offsetPosition;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
+
+        context.save();
         if (locSprite._flipX) {
-            centerPoint = cc.p(spriteContentSize.width * 0.5, spriteContentSize.height * 0.5);
-            mpX = 0 | (centerPoint.x - spriteAnchorPoint.x);
-            context.translate(mpX, 0);
+            flipXOffset = -locOffsetPosition.x - locRect.width;
             context.scale(-1, 1);
         }
-
         if (locSprite._flipY) {
-            centerPoint = cc.p(spriteContentSize.width * 0.5, spriteContentSize.height * 0.5);
-            mpY = -(0 | (centerPoint.y - spriteAnchorPoint.y));
-            context.translate(0, mpY);
+            flipYOffset = locOffsetPosition.y;
             context.scale(1, -1);
         }
-        context.translate(spriteAnchorPoint.x, -spriteAnchorPoint.y);
 
-        var pos;
-        var offsetPixels = locSprite._offsetPosition, locSpriteTexture = locSprite._texture, locSpriteRect = locSprite._rect;
-        var locOrigin = this._origin;
+        //clip
         if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
-            pos = cc.p(( -spriteAnchorPoint.x + offsetPixels.x + this._drawPosition.x),
-                ( -spriteAnchorPoint.y + offsetPixels.y + this._drawPosition.y));
-            var locOriginSize = this._originSize;
-            if (locSpriteTexture instanceof HTMLImageElement) {
-                if ((locOriginSize.width != 0) && (locOriginSize.height != 0)) {
-                    context.drawImage(locSpriteTexture,
-                        locSpriteRect.x + locOrigin.x, locSpriteRect.y + locOrigin.y,
-                        locOriginSize.width, locOriginSize.height,
-                        pos.x, -(pos.y + this._drawSize.height),
-                        locOriginSize.width, locOriginSize.height);
-                }
-            } else if (locSpriteTexture instanceof  HTMLCanvasElement) {
-                if ((locOriginSize.width != 0) && (locOriginSize.height != 0)) {
-                    context.drawImage(locSpriteTexture,
-                        locOrigin.x, locOrigin.y,
-                        locOriginSize.width, locOriginSize.height,
-                        pos.x, -(pos.y + this._drawSize.height),
-                        locOriginSize.width, locOriginSize.height);
-                }
-            }
-        } else {
+            var locBarRect = this._barRect;
             context.beginPath();
-            context.arc(locOrigin.x, locOrigin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
+            context.rect(locBarRect.x,locBarRect.y,locBarRect.width,locBarRect.height);
+            context.clip();
+            context.closePath();
+        }else if(this._type == cc.PROGRESS_TIMER_TYPE_RADIAL){
+            var locOrigin = this._origin;
+            context.beginPath();
+            context.arc(locOrigin.x, locOrigin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, this._counterClockWise);
             context.lineTo(locOrigin.x, locOrigin.y);
             context.clip();
             context.closePath();
+        }
 
-            pos = cc.p(0 | ( -spriteAnchorPoint.x + offsetPixels.x),
-                0 | ( -spriteAnchorPoint.y + offsetPixels.y));
-
-            if (locSpriteTexture instanceof HTMLImageElement) {
-                context.drawImage(locSpriteTexture,
-                    locSpriteRect.x, locSpriteRect.y,
-                    locSpriteRect.width, locSpriteRect.height,
-                    pos.x, -(pos.y + locSpriteRect.height),
-                    locSpriteRect.width, locSpriteRect.height);
-            } else if (locSpriteTexture instanceof  HTMLCanvasElement) {
-                context.drawImage(locSpriteTexture,
-                    0, 0,
-                    locSpriteRect.width, locSpriteRect.height,
-                    pos.x, -(pos.y + locSpriteRect.height),
-                    locSpriteRect.width, locSpriteRect.height);
+        //draw sprite
+        if (locSprite._texture && locRect.width > 0) {
+            var image = locSprite._texture.getHtmlElementObj();
+            if (locSprite._colorized) {
+                context.drawImage(image,
+                    0, 0, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+            } else {
+                context.drawImage(image,
+                    locRect.x, locRect.y, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         }
+
+        context.restore();
         cc.INCREMENT_GL_DRAWS(1);
     },
 
     _updateProgress:function () {
-        var size = this._sprite.getContentSize();
-        var textureSize = this._sprite.getTextureRect().size;
+        var locSprite = this._sprite;
+        var spriteSize = locSprite.getContentSize();
         var locMidPoint = this._midPoint;
+
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
+            this._radius = Math.round(Math.sqrt(spriteSize.width * spriteSize.width + spriteSize.height * spriteSize.height));
+            var locStartAngle = 270;
+            var locEndAngle = 270;
+            var locCounterClockWise = false;
+            var locOrigin = this._origin;
 
-            this._origin = cc.p(-(size.width * (0.5 - locMidPoint.x)), -(size.height * (0.5 - locMidPoint.y)));
-            this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
+            locOrigin.x = spriteSize.width * locMidPoint.x;
+            locOrigin.y = -spriteSize.height * locMidPoint.y;
+
             if (this._reverseDirection) {
-                this._startAngle = 270 - 3.6 * this._percentage;
+                locStartAngle = 270 - 3.6 * this._percentage;
             } else {
-                this._endAngle = 270 + 3.6 * this._percentage;
+                locEndAngle = 270 + 3.6 * this._percentage;
             }
+
+            if (locSprite._flipX) {
+                locOrigin.x -= spriteSize.width * (this._midPoint.x * 2);
+                locStartAngle= -locStartAngle;
+                locEndAngle= -locEndAngle;
+                locStartAngle -= 180;
+                locEndAngle -= 180;
+                locCounterClockWise = !locCounterClockWise;
+            }
+            if (locSprite._flipY) {
+                locOrigin.y+=spriteSize.height*(this._midPoint.y*2);
+                locCounterClockWise = !locCounterClockWise;
+                locStartAngle= -locStartAngle;
+                locEndAngle= -locEndAngle;
+            }
+
+            this._startAngle = locStartAngle;
+            this._endAngle = locEndAngle;
+            this._counterClockWise = locCounterClockWise;
+
         } else {
-            this._origin = cc.p(0, 0);
-            this._drawPosition = cc.p(0, 0);
             var locBarChangeRate = this._barChangeRate;
-
             var percentageF = this._percentage / 100;
-            var startPoint = cc.p(size.width * locMidPoint.x, size.height * locMidPoint.y);
-            var startPointTx = cc.p(textureSize.width * locMidPoint.x, textureSize.height * locMidPoint.y);
+            var locBarRect = this._barRect;
 
-            var drawedSize = cc.size((size.width * (1 - locBarChangeRate.x)), (size.height * (1 - locBarChangeRate.y)));
-            var drawingSize = cc.size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
-            this._drawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
+            var drawedSize = cc.size((spriteSize.width * (1 - locBarChangeRate.x)), (spriteSize.height * (1 - locBarChangeRate.y)));
+            var drawingSize = cc.size((spriteSize.width - drawedSize.width) * percentageF, (spriteSize.height - drawedSize.height) * percentageF);
+            var currentDrawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
 
-            var txDrawedSize = cc.size((textureSize.width * (1 - locBarChangeRate.x)), (textureSize.height * (1 - locBarChangeRate.y)));
-            var txDrawingSize = cc.size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
-            this._originSize = cc.size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
+            var startPoint = cc.p(spriteSize.width * locMidPoint.x, spriteSize.height * locMidPoint.y);
+            var needToLeft = startPoint.x - currentDrawSize.width / 2;
+            var needToTop = startPoint.y - currentDrawSize.height / 2;
 
-            var needToLeft = startPoint.x * percentageF;
-            var needToLeftTx = startPointTx.x * percentageF;
-
-            if (size.width == this._drawSize.width) {
-                this._origin.x = 0;
-                this._drawPosition.x = 0;
-            } else {
-                this._origin.x = (startPointTx.x - needToLeftTx);
-                this._drawPosition.x = (startPoint.x - needToLeft);
+            //left pos
+            locBarRect.x = 0;
+            var flipXNeed = 1;
+            if (locSprite._flipX) {
+                locBarRect.x -= currentDrawSize.width;
+                flipXNeed = -1;
             }
 
-            var needToTop = (textureSize.height - startPointTx.y) * percentageF;
-
-            if (size.height == this._drawSize.height) {
-                this._origin.y = 0;
-                this._drawPosition.y = 0;
-            } else {
-                this._origin.y = (textureSize.height - startPointTx.y - needToTop);
-                this._drawPosition.y = (startPoint.y - (startPoint.y * percentageF));
+            if (needToLeft > 0) {
+                locBarRect.x += needToLeft * flipXNeed;
             }
+
+            //right pos
+            locBarRect.y = 0;
+            var flipYNeed = 1;
+            if (locSprite._flipY) {
+                locBarRect.y += currentDrawSize.height;
+                flipYNeed = -1;
+            }
+
+            if (needToTop > 0) {
+                locBarRect.y -= needToTop * flipYNeed;
+            }
+
+            //clip width and clip height
+            locBarRect.width = currentDrawSize.width;
+            locBarRect.height = -currentDrawSize.height;
         }
     }
 });

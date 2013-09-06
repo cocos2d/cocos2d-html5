@@ -45,6 +45,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
     _documentOutletNodes:null,
     _documentCallbackNames:null,
     _documentCallbackNodes:null,
+    _documentCallbackControlEvents:null,
     _documentControllerName:"",
     _lastCompletedSequenceName:"",
     _keyframeCallbacks:null,
@@ -68,6 +69,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
         this._documentOutletNodes = [];
         this._documentCallbackNames = [];
         this._documentCallbackNodes = [];
+        this._documentCallbackControlEvents = [];
 
         this._keyframeCallbacks = [];
         this._keyframeCallFuncs = {};
@@ -112,6 +114,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
         this._documentCallbackNames.push(name);
     },
 
+    addDocumentCallbackControlEvents:function(controlEvents){
+        this._documentCallbackControlEvents.push(controlEvents);
+    },
+
     addDocumentOutletNode:function(node){
         this._documentOutletNodes.push(node);
     },
@@ -134,6 +140,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     getDocumentCallbackNodes:function(){
         return this._documentCallbackNodes;
+    },
+
+    getDocumentCallbackControlEvents:function(){
+        return this._documentCallbackControlEvents;
     },
 
     getDocumentOutletNames:function(){
@@ -167,7 +177,9 @@ cc.BuilderAnimationManager = cc.Class.extend({
     },
 
     getRunningSequenceName:function () {
-        return this._runningSequence.getName();
+        if(this._runningSequence)
+            return this._runningSequence.getName();
+        return null;
     },
 
     getContainerSize:function (node) {
@@ -191,17 +203,19 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     moveAnimationsFromNode:function(fromNode,toNode){
         // Move base values
-        var baseValue = this._baseValues.objectForKey(fromNode);
+        var locBaseValues = this._baseValues;
+        var baseValue = locBaseValues.objectForKey(fromNode);
         if(baseValue != null) {
-            this._baseValues.setObject(baseValue, toNode);
-            this._baseValues.removeObjectForKey(fromNode);
+            locBaseValues.setObject(baseValue, toNode);
+            locBaseValues.removeObjectForKey(fromNode);
         }
 
         // Move seqs
-        var seqs = this._nodeSequences.objectForKey(fromNode);
+        var locNodeSequences = this._nodeSequences;
+        var seqs = locNodeSequences.objectForKey(fromNode);
         if(seqs != null) {
-            this._nodeSequences.setObject(seqs, toNode);
-            this._nodeSequences.removeObjectForKey(fromNode);
+            locNodeSequences.setObject(seqs, toNode);
+            locNodeSequences.removeObjectForKey(fromNode);
         }
     },
 
@@ -286,24 +300,24 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
         return cc.Sequence.create(actions);
     },
+
     runAnimationsForSequenceNamed:function(name){
-        this.runAnimations(name);
+        this.runAnimationsForSequenceIdTweenDuration(this._getSequenceId(name), 0);
     },
 
-    runAnimations:function (name, tweenDuration) {
+    runAnimationsForSequenceNamedTweenDuration:function(name, tweenDuration){
+         this.runAnimationsForSequenceIdTweenDuration(this._getSequenceId(name), tweenDuration);
+    },
+
+    runAnimationsForSequenceIdTweenDuration:function(nSeqId, tweenDuration){
         tweenDuration = tweenDuration || 0;
-        var nSeqId;
-        if(typeof(name) === "string")
-            nSeqId = this._getSequenceId(name);
-        else
-            nSeqId = name;
 
         cc.Assert(nSeqId != -1, "Sequence id couldn't be found");
 
         this._rootNode.stopAllActions();
 
         var allKeys = this._nodeSequences.allKeys();
-        for(var i  = 0 ; i< allKeys.length;i++){
+        for(var i  = 0,len = allKeys.length  ; i< len;i++){
             var node = allKeys[i];
             node.stopAllActions();
 
@@ -343,10 +357,11 @@ cc.BuilderAnimationManager = cc.Class.extend({
             cc.CallFunc.create(this._sequenceCompleted,this));
         this._rootNode.runAction(completeAction);
 
-     // Playback callbacks and sounds
+        // Playback callbacks and sounds
+        var action;
         if (seq.getCallbackChannel()) {
             // Build sound actions for channel
-            var action = this.getActionForCallbackChannel(seq.getCallbackChannel());
+            action = this.getActionForCallbackChannel(seq.getCallbackChannel());
             if (action) {
                 this._rootNode.runAction(action);
             }
@@ -354,13 +369,24 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
         if (seq.getSoundChannel()) {
             // Build sound actions for channel
-            var action = this.getActionForSoundChannel(seq.getSoundChannel());
+            action = this.getActionForSoundChannel(seq.getSoundChannel());
             if (action) {
                 this._rootNode.runAction(action);
             }
         }
-            // Set the running scene
+        // Set the running scene
         this._runningSequence = this._getSequence(nSeqId);
+    },
+
+    runAnimations:function (name, tweenDuration) {
+        tweenDuration = tweenDuration || 0;
+        var nSeqId;
+        if(typeof(name) === "string")
+            nSeqId = this._getSequenceId(name);
+        else
+            nSeqId = name;
+
+        this.runAnimationsForSequenceIdTweenDuration(nSeqId, tweenDuration);
     },
 
     setAnimationCompletedCallback:function(target,callbackFunc){
@@ -374,6 +400,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
     setCallFunc:function(callFunc, callbackNamed) {
         this._keyframeCallFuncs[callbackNamed] = callFunc;
     },
+
     debug:function () {
     },
 
@@ -386,9 +413,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     _getSequenceId:function (sequenceName) {
         var element = null;
-        for (var i = 0; i < this._sequences.length; i++) {
-            element = this._sequences[i];
-            if (element && element.getName() == sequenceName)
+        var locSequences = this._sequences;
+        for (var i = 0, len = locSequences.length; i < len; i++) {
+            element = locSequences[i];
+            if (element && element.getName() === sequenceName)
                 return element.getSequenceId();
         }
         return -1;
@@ -396,8 +424,9 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     _getSequence:function (sequenceId) {
         var element = null;
-        for (var i = 0; i < this._sequences.length; i++) {
-            element = this._sequences[i];
+        var locSequences = this._sequences;
+        for (var i = 0, len = locSequences.length; i < len; i++) {
+            element = locSequences[i];
             if (element && element.getSequenceId() === sequenceId)
                 return element;
         }
@@ -439,7 +468,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
             var containerSize = this.getContainerSize(node.getParent());
 
-            var absPos = cc.getAbsolutePosition(cc.p(x,y), type,containerSize,propName);
+            var absPos = cc._getAbsolutePosition(x,y, type,containerSize,propName);
 
             return cc.MoveTo.create(duration,absPos);
         } else if( propName === "scale"){
@@ -451,8 +480,13 @@ cc.BuilderAnimationManager = cc.Class.extend({
             x = getValueArr[0];
             y = getValueArr[1];
 
-            if(type == CCB_SCALETYPE_MULTIPLY_RESOLUTION)
-                 var resolutionScale = cc.BuilderReader.getResolutionScale();
+            if(type === CCB_SCALETYPE_MULTIPLY_RESOLUTION){
+                //TODO need to test
+                var resolutionScale = cc.BuilderReader.getResolutionScale();
+                x *= resolutionScale;
+                y *= resolutionScale;
+            }
+
             return cc.ScaleTo.create(duration,x,y);
         } else if( propName === "skew") {
             //get relative position
@@ -486,7 +520,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
                 x = value[0];
                 y = value[1];
-                node.setPosition(cc.getAbsolutePosition(cc.p(x,y),nType, this.getContainerSize(node.getParent()),propName));
+                node.setPosition(cc._getAbsolutePosition(x,y,nType, this.getContainerSize(node.getParent()),propName));
             }else if(propName === "scale"){
                 getArr = this._getBaseValue(node,propName);
                 nType = getArr[2];
@@ -496,8 +530,6 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
                 cc.setRelativeScale(node,x,y,nType,propName);
             } else if( propName === "skew") {
-                getArr = this._getBaseValue(node,propName);
-                nType = getArr[2];
                 x = value[0];
                 y = value[1];
                 node.setSkewX(x);
@@ -512,7 +544,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
                 } else if(propName === "displayFrame"){
                     node.setDisplayFrame(value);
                 } else if(propName === "color"){
-                    node.setColor(value.getColor());
+                    var ccColor3B = value.getColor();
+                    if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
+                        node.setColor(ccColor3B);
+                    }
                 } else if( propName === "visible"){
                     value = value || false;
                     node.setVisible(value);
@@ -527,7 +562,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
     _setFirstFrame:function (node, seqProp, tweenDuration) {
         var keyframes = seqProp.getKeyframes();
 
-        if (keyframes.length == 0) {
+        if (keyframes.length === 0) {
             // Use base value (no animation)
             var baseValue = this._getBaseValue(node, seqProp.getName());
             cc.Assert(baseValue, "No baseValue found for property");
@@ -605,18 +640,19 @@ cc.BuilderAnimationManager = cc.Class.extend({
     },
 
     _sequenceCompleted:function () {
-        if(this._lastCompletedSequenceName != this._runningSequence.getName()){
-            this._lastCompletedSequenceName = this._runningSequence.getName();
+        var locRunningSequence = this._runningSequence;
+        if(this._lastCompletedSequenceName != locRunningSequence.getName()){
+            this._lastCompletedSequenceName = locRunningSequence.getName();
         }
 
         if (this._delegate)
-            this._delegate.completedAnimationSequenceNamed(this._runningSequence.getName());
+            this._delegate.completedAnimationSequenceNamed(locRunningSequence.getName());
 
         if(this._target && this._animationCompleteCallbackFunc){
             this._animationCompleteCallbackFunc.call(this._target);
         }
 
-        var nextSeqId = this._runningSequence.getChainedSequenceId();
+        var nextSeqId = locRunningSequence.getChainedSequenceId();
         this._runningSequence = null;
 
         if (nextSeqId != -1)
@@ -655,7 +691,7 @@ cc.BuilderRotateTo = cc.ActionInterval.extend({
     _diffAngle:0,
 
     initWithDuration:function (duration, angle) {
-        if (this._super(duration)) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this._dstAngle = angle;
             return true;
         } else {
@@ -667,7 +703,7 @@ cc.BuilderRotateTo = cc.ActionInterval.extend({
     },
 
     startWithTarget:function (node) {
-        this._super(node);
+        cc.ActionInterval.prototype.startWithTarget.call(this, node);
         this._startAngle = this._target.getRotation();
         this._diffAngle = this._dstAngle - this._startAngle;
     }
