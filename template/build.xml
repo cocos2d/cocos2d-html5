@@ -176,7 +176,6 @@
                 <file name="CCArmature/animation/CCArmatureAnimation.js"/>
                 <file name="CCArmature/animation/CCTween.js"/>
                 <file name="CCArmature/physics/CCColliderDetector.js"/>
-                <file name="CCArmature/physics/CCPhysicsWorld.js"/>
                 <file name="CCArmature/CCArmature.js"/>
                 <file name="CCArmature/CCBone.js"/>
             </sources>

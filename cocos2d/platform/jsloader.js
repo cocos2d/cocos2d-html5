@@ -192,7 +192,6 @@
             '../extensions/CCArmature/animation/CCArmatureAnimation.js',
             '../extensions/CCArmature/animation/CCTween.js',
             '../extensions/CCArmature/physics/CCColliderDetector.js',
-            '../extensions/CCArmature/physics/CCPhysicsWorld.js',
             '../extensions/CCArmature/CCArmature.js',
             '../extensions/CCArmature/CCBone.js'
 
