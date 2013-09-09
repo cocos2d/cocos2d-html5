@@ -227,14 +227,6 @@ cc.setup = function (el, width, height) {
 
     cc.setContextMenuEnable(false);
 
-    //binding window size
-    /*
-     cc.canvas.addEventListener("resize", function () {
-     if (!cc.firstRun) {
-     cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
-     }
-     }, true);
-     */
     if(cc.Browser.isMobile){
         cc._addUserSelectStatus();
         cc._addBottomTag();
