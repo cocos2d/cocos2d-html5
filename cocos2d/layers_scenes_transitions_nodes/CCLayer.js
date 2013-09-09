@@ -795,7 +795,6 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this._color = new cc.Color4B(0, 0, 0, 0);
-        this._opacity = 255;
     },
 
     _ctorForWebGL: function () {
