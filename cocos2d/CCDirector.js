@@ -282,7 +282,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      *     converts a UIKit coordinate to an OpenGL coordinate<br/>
      *     Useful to convert (multi) touches coordinates to the current layout (portrait or landscape)
      * </p>
-     * @param {cc.Point} point
+     * @param {cc.Point} uiPoint
      * @return {cc.Point}
      */
     convertToGL:function (uiPoint) {
@@ -326,7 +326,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
-    drawScene:function () {
+    drawScene: null,
+
+    _drawSceneForCanvas: function () {
         // calculate "global" dt
         this.calculateDeltaTime();
 
@@ -334,23 +336,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused)
             this._scheduler.update(this._deltaTime);
 
-        if (cc.renderContextType === cc.CANVAS)
-            this._drawSceneForCanvas();
-        else
-            this._drawSceneForWebGL();
-
-        this._totalFrames++;
-
-        // swap buffers
-        /*        if (this._openGLView) {
-         this._openGLView.swapBuffers();
-         }*/
-
-        if (this._displayStats)
-            this._calculateMPF();
-    },
-
-    _drawSceneForCanvas:function () {
         cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
@@ -368,9 +353,21 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         if (this._displayStats)
             this._showStats();
+
+        this._totalFrames++;
+
+        if (this._displayStats)
+            this._calculateMPF();
     },
 
-    _drawSceneForWebGL:function () {
+    _drawSceneForWebGL: function () {
+        // calculate "global" dt
+        this.calculateDeltaTime();
+
+        //tick before glClear: issue #533
+        if (!this._paused)
+            this._scheduler.update(this._deltaTime);
+
         var gl = cc.renderContext;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -393,6 +390,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._showStats();
 
         cc.kmGLPopMatrix();
+
+        this._totalFrames++;
+
+        if (this._displayStats)
+            this._calculateMPF();
     },
 
     /**
@@ -1089,12 +1091,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._mouseDispatcher = mouseDispatcher;
     },
 
-    _createStatsLabel:function () {
-         if(cc.renderContextType === cc.CANVAS)
-            this._createStatsLabelForCanvas();
-        else
-            this._createStatsLabelForWebGL();
-    },
+    _createStatsLabel: null,
 
     _createStatsLabelForWebGL:function(){
         if((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
@@ -1170,6 +1167,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._secondsPerFrame = (now - this._lastUpdate) / 1000;
     }
 });
+
+if (cc.Browser.supportWebGL) {
+    cc.Director.prototype.drawScene = cc.Director.prototype._drawSceneForWebGL;
+    cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForWebGL;
+} else {
+    cc.Director.prototype.drawScene = cc.Director.prototype._drawSceneForCanvas;
+    cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForCanvas;
+}
 
 /***************************************************
  * implementation of DisplayLinkDirector
