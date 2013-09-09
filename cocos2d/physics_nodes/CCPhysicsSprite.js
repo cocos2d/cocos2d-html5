@@ -101,12 +101,23 @@
         getBody:function () {
             return this._body;
         },
+        getPositionX:function(){
+            return this._body.p.x;
+        },
+        getPositionY:function(){
+            return this._body.p.y;
+        },
         getPosition:function () {
             return {x:this._body.p.x, y:this._body.p.y};
         },
-        setPosition:function (pos) {
-            this._body.p.x = pos.x;
-            this._body.p.y = pos.y;
+        setPosition:function (newPosOrxValue, yValue) {
+            if(arguments.length==2){
+                this._body.p.x = newPosOrxValue;
+                this._body.p.y = yValue;
+            }else{
+                this._body.p.x = newPosOrxValue.x;
+                this._body.p.y = newPosOrxValue.y;
+            }
             //this._syncPosition();
         },
         _syncPosition:function () {
