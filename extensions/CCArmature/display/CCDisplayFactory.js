@@ -59,11 +59,17 @@ cc.DisplayFactory.updateDisplay = function (bone, decoDisplay, dt, dirty) {
         return;
     }
 
-    if (ENABLE_PHYSICS_DETECT) {
+    if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
         if (dirty) {
             var detector = decoDisplay.getColliderDetector();
-            if (detector) {
-                var t = cc.AffineTransformConcat(bone.nodeToArmatureTransform(), bone.getArmature().nodeToWorldTransform());
+            if (detector&&detector.getBody()) {
+                var node = decoDisplay.getDisplay();
+                var displayTransform = node.nodeToParentTransform();
+                var anchorPoint =  node.getAnchorPointInPoints();
+                anchorPoint = cc.PointApplyAffineTransform(anchorPoint, displayTransform);
+                displayTransform.tx = anchorPoint.x;
+                displayTransform.ty = anchorPoint.y;
+                var t = cc.AffineTransformConcat(displayTransform, bone.getArmature().nodeToParentTransform());
                 detector.updateTransform(t);
             }
         }
@@ -130,6 +136,13 @@ cc.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, s
     if (textureData) {
         //! Init display anchorPoint, every Texture have a anchor point
         skin.setAnchorPoint(cc.p(textureData.pivotX, textureData.pivotY));
+    }
+    if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+        if (textureData && textureData.contourDataList.length > 0)        {
+            var colliderDetector = cc.ColliderDetector.create(bone);
+            colliderDetector.addContourDataList(textureData.contourDataList);
+            decoDisplay.setColliderDetector(colliderDetector);
+        }
     }
 },
 

@@ -145,7 +145,7 @@ cc.DisplayManager = cc.Class.extend({
     },
 
     setCurrentDecorativeDisplay:function (decoDisplay) {
-        if (ENABLE_PHYSICS_DETECT) {
+        if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
             if (this._currentDecoDisplay && this._currentDecoDisplay.getColliderDetector()) {
                 this._currentDecoDisplay.getColliderDetector().setActive(false);
             }
@@ -153,7 +153,7 @@ cc.DisplayManager = cc.Class.extend({
 
         this._currentDecoDisplay = decoDisplay;
 
-        if (ENABLE_PHYSICS_DETECT) {
+        if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
             if (this._currentDecoDisplay && this._currentDecoDisplay.getColliderDetector()) {
                 this._currentDecoDisplay.getColliderDetector().setActive(true);
             }
@@ -178,8 +178,8 @@ cc.DisplayManager = cc.Class.extend({
                 this._displayRenderNode.resetSystem();
             }
             if (this._displayRenderNode.RGBAProtocol)            {
-                this._displayRenderNode.setColor(this._bone.getColor());
-                this._displayRenderNode.setOpacity(this._bone.getOpacity());
+                //this._displayRenderNode.setColor(this._bone.getColor());
+                //this._displayRenderNode.setOpacity(this._bone.getOpacity());
             }
             this._displayRenderNode.retain();
             //todo

@@ -40,6 +40,7 @@ cc.Armature = cc.NodeRGBA.extend({
     _offsetPoint:cc.p(0, 0),
     _version:0,
     _armatureTransformDirty:false,
+    _body:null,
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._animation = null;
@@ -52,8 +53,9 @@ cc.Armature = cc.NodeRGBA.extend({
         this._topBoneList = [];
         this._armatureIndexDic = {};
         this._offsetPoint = cc.p(0, 0);
-        this._version = 0,
+        this._version = 0;
         this._armatureTransformDirty = false;
+        this._body = null;
     },
 
     /**
@@ -570,7 +572,37 @@ cc.Armature = cc.NodeRGBA.extend({
      */
     getArmatureTransformDirty:function () {
         return this._armatureTransformDirty;
+    },
+    getBody:function(){
+        return this._body;
+    },
+
+    setBody:function(body){
+        if (this._body == body)
+            return;
+
+        this._body = body;
+        this._body.data = this;
+        var child,displayObject;
+        for (var i = 0; i < this._children.length; i++) {
+            child = this._children[i];
+            if (child instanceof cc.Bone) {
+                var displayList = child.getDisplayManager().getDecorativeDisplayList();
+                for (var j = 0; j < displayList.length; j++) {
+                    displayObject = displayList[j];
+                    var detector = displayObject.getColliderDetector();
+                    if (detector)
+                        detector.setBody(this._body);
+                }
+            }
+        }
+    },
+    getShapeList:function(){
+        if(this._body)
+            return this._body.shapeList;
+        return [];
     }
+
 });
 
 /**
