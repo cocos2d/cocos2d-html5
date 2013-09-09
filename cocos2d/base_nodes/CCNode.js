@@ -974,8 +974,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
      *
      * @param {cc.Node} child  A child node
-     * @param {Number} zOrder  Z order for drawing priority. Please refer to setZOrder(int)
-     * @param {Number} tag  A interger to identify the node easily. Please refer to setTag(int)
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [tag=]  A interger to identify the node easily. Please refer to setTag(int)
      */
     addChild:function (child, zOrder, tag) {
         if (child === this) {

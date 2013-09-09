@@ -523,7 +523,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     /**
      * Call back when a key is pressed down
-     * @param {Integer} keyCode
+     * @param {Number} keyCode
      * @example
      * // example
      * if(keyCode == cc.KEY.w){}
@@ -533,7 +533,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     /**
      * Call back when a key is released
-     * @param {Integer} keyCode
+     * @param {Number} keyCode
      * @example
      * // example
      * if(keyCode == cc.KEY.w){}
@@ -833,9 +833,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * @param {cc.Color4B} color
-     * @param {Number} width
-     * @param {Number} height
+     * @param {cc.Color4B} [color=]
+     * @param {Number} [width=]
+     * @param {Number} [height=]
      * @return {Boolean}
      */
     init:function (color, width, height) {
