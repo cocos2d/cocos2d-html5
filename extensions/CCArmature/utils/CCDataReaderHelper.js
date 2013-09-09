@@ -131,6 +131,8 @@ cc.DataReaderHelper._textureDatas = {};
 cc.DataReaderHelper._json = {};
 cc.DataReaderHelper._positionReadScale = 1;
 cc.DataReaderHelper._basefilePath = "";
+cc.DataReaderHelper._asyncRefCount = 0;
+cc.DataReaderHelper._asyncRefTotalCount = 0;
 
 cc.DataReaderHelper.setPositionReadScale = function (scale) {
     this._positionReadScale = scale;
@@ -144,25 +146,69 @@ cc.DataReaderHelper.clear = function () {
     this._configFileList = [];
 };
 
-cc.DataReaderHelper.addDataFromFile = function (filePath) {
+cc.DataReaderHelper.addDataFromFile = function (filePath,isLoadSpriteFrame) {
     var fileUtils = cc.FileUtils.getInstance();
-    filePath = fileUtils.fullPathForFilename(filePath);
+    var fullFilePath = fileUtils.fullPathForFilename(filePath);
 
-    if (cc.ArrayAppendObject(this._configFileList, filePath)) {
+    if (cc.ArrayAppendObject(this._configFileList, fullFilePath)) {
         return;
     }
-    this._configFileList.push(filePath);
+    this._configFileList.push(fullFilePath);
 
-    var startPos = filePath.lastIndexOf(".");
-    var str = filePath.substring(startPos, filePath.length);
+    this._initBaseFilePath(filePath);
+
+    var startPos = fullFilePath.lastIndexOf(".");
+    var str = fullFilePath.substring(startPos, fullFilePath.length);
 
     if (str == ".xml") {
-        this.addDataFromXML(filePath);
+        this.addDataFromXML(fullFilePath);
     }
     else if (str == ".json" || str == ".ExportJson") {
-        this.addDataFromJson(filePath);
+        this.addDataFromJson(fullFilePath,isLoadSpriteFrame);
     }
 };
+
+cc.DataReaderHelper.addDataFromFileAsync = function (filePath,target,selector,isLoadSpriteFrame) {
+    var fileUtils = cc.FileUtils.getInstance();
+    var fullFilePath = fileUtils.fullPathForFilename(filePath);
+
+    if (cc.ArrayAppendObject(this._configFileList, fullFilePath)) {
+        if (target && selector) {
+            if (this._asyncRefTotalCount == 0 && this._asyncRefCount == 0)
+                this._asyncCallBack(target, selector, 1);
+            else
+                this._asyncCallBack(target, selector, (this._asyncRefTotalCount - this._asyncRefCount) / this._asyncRefTotalCount);
+        }
+        return;
+    }
+    this._asyncRefTotalCount++;
+    this._asyncRefCount++;
+    var self = this;
+    var fun = function () {
+        self.addDataFromFile(filePath,isLoadSpriteFrame);
+        self._asyncRefCount--;
+        self._asyncCallBack(target, selector, (self._asyncRefTotalCount - self._asyncRefCount) / self._asyncRefTotalCount);
+    };
+    cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(this, fun, 0.1, false);
+};
+
+cc.DataReaderHelper._asyncCallBack=function (target, selector,percent) {
+    if (target && (typeof(selector) == "string")) {
+        target[selector](percent);
+    } else if (target && (typeof(selector) == "function")) {
+        selector.call(target,percent);
+    }
+};
+cc.DataReaderHelper._initBaseFilePath = function(filePath){
+    //! find the base file path
+    this._basefilePath = filePath;
+    var pos = this._basefilePath.lastIndexOf("/");
+    if(pos>-1)
+        this._basefilePath = this._basefilePath.substr(0, pos + 1);
+    else
+        this._basefilePath = "";
+};
+
 cc.DataReaderHelper.addDataFromXML = function (xml) {
     /*
      *  Need to get the full path of the xml file, or the Tiny XML can't find the xml at IOS
@@ -555,31 +601,44 @@ cc.DataReaderHelper.decodeContour = function (contourXML) {
 
 };
 
-cc.DataReaderHelper.addDataFromJson = function (filePath) {
+cc.DataReaderHelper.addDataFromJson = function (filePath,isLoadSpriteFrame) {
     var fileContent = cc.FileUtils.getInstance().getTextFileData(filePath);
-    this.addDataFromJsonCache(fileContent);
+    this.addDataFromJsonCache(fileContent,isLoadSpriteFrame);
 };
-cc.DataReaderHelper.addDataFromJsonCache = function (content) {
+cc.DataReaderHelper.addDataFromJsonCache = function (content,isLoadSpriteFrame) {
     var dic = JSON.parse(content);
-    var armatureData = dic[cc.CONST_ARMATURE_DATA] || [];
-    for (var i = 0; i < armatureData.length; i++) {
-        var armatureDic = armatureData[i];
-        var armatureData = this.decodeArmatureFromJSON(armatureDic);
+    var armatureDataArr = dic[cc.CONST_ARMATURE_DATA] || [];
+    var armatureData;
+    for (var i = 0; i < armatureDataArr.length; i++) {
+        armatureData = this.decodeArmatureFromJSON(armatureDataArr[i]);
         cc.ArmatureDataManager.getInstance().addArmatureData(armatureData.name, armatureData);
     }
 
-    var animationData = dic[cc.CONST_ANIMATION_DATA] || [];
-    for (var i = 0; i < animationData.length; i++) {
-        var animationDic = animationData[i];
-        var animationData = this.decodeAnimationFromJson(animationDic);
+    var animationDataArr = dic[cc.CONST_ANIMATION_DATA] || [];
+    var animationData;
+    for (var i = 0; i < animationDataArr.length; i++) {
+        animationData = this.decodeAnimationFromJson(animationDataArr[i]);
         cc.ArmatureDataManager.getInstance().addAnimationData(animationData.name, animationData);
     }
 
-    var textData = dic[cc.CONST_TEXTURE_DATA] || [];
-    for (var i = 0; i < textData.length; i++) {
-        var textureDic = textData[i];
-        var textureData = this.decodeTextureFromJson(textureDic);
+    var textureDataArr = dic[cc.CONST_TEXTURE_DATA] || [];
+    var textureData;
+    for (var i = 0; i < textureDataArr.length; i++) {
+        textureData = this.decodeTextureFromJson(textureDataArr[i]);
         cc.ArmatureDataManager.getInstance().addTextureData(textureData.name, textureData);
+    }
+
+    if (isLoadSpriteFrame) {
+        var configFiles = dic[cc.CONST_CONFIG_FILE_PATH] || [];
+        var locFilePath, locPos, locPlistPath, locImagePath;
+        for (var i = 0; i < configFiles.length; i++) {
+            locFilePath = configFiles[i];
+            locPos = locFilePath.lastIndexOf(".");
+            locFilePath = locFilePath.substring(0, locPos);
+            locPlistPath = this._basefilePath + locFilePath + ".plist";
+            locImagePath = this._basefilePath + locFilePath + ".png";
+            cc.ArmatureDataManager.getInstance().addSpriteFrameFromFile(locPlistPath, locImagePath);
+        }
     }
 
     armatureData = null;

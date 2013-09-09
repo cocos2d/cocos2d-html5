@@ -161,7 +161,7 @@ cc.SpriteDisplayData = cc.DisplayData.extend({
     skinData:null,
     ctor:function () {
         this.displayName = "";
-        this.skinData = null;
+        this.skinData = new cc.BaseData();
         this.displayType = CC_DISPLAY_SPRITE;
     },
     setParam:function (displayName) {
@@ -343,7 +343,6 @@ cc.MovementBoneData = cc.Class.extend({
     },
     addFrameData:function (frameData) {
         this.frameList.push(frameData);
-        this.duration += frameData.duration;
     },
     getFrameData:function (index) {
         return this.frameList[index];
