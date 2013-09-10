@@ -284,7 +284,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @param {cc.SpriteFrame} spriteFrame
      */
     setDisplayFrame:function (spriteFrame) {
-        cc.Assert(cc.pointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
+        cc.Assert(cc._rectEqualToZero(spriteFrame.getOffsetInPixels()), "QuadParticle only supports SpriteFrames with no offsets");
 
         // update texture before updating texture rect
         if (cc.renderContextType === cc.WEBGL)

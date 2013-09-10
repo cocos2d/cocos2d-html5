@@ -636,7 +636,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     (this._mapTileSize.height / 2 ) * (-pos.x - pos.y));
                 break;
             case cc.TMX_ORIENTATION_HEX:
-                cc.Assert(cc.pointEqualToPoint(pos, cc.PointZero()), "offset for hexagonal map not implemented yet");
+                cc.Assert(cc._rectEqualToZero(pos), "offset for hexagonal map not implemented yet");
                 break;
         }
         return ret;
