@@ -314,7 +314,7 @@ cc.Tween = cc.ProcessBase.extend({
         var playedTime = this._rawDuration * currentPercent;
         var from,to;
         // if play to current frame's front or back, then find current frame again
-        if (playedTime < this._totalDuration || playedTime > this._totalDuration + this._betweenDuration) {
+        if (playedTime < this._totalDuration || playedTime >= this._totalDuration + this._betweenDuration) {
             /*
              *  get frame length, if this._toIndex >= _length, then set this._toIndex to 0, start anew.
              *  this._toIndex is next index will play

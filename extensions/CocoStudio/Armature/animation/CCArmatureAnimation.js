@@ -182,7 +182,6 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      *         2  : fade in and out
      */
     play:function (animationName, durationTo, durationTween, loop, tweenEasing) {
-        this.stop();
         if (this._animationData == null) {
             cc.log("this._animationData can not be null");
             return;
@@ -230,6 +229,9 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
             }
             this._durationTween = durationTween;
         }
+
+        this._tweenList = [];
+
         var movementBoneData;
         var dict = this._armature.getBoneDic();
         for (var key in dict) {

@@ -50,7 +50,7 @@ cc.DisplayManager = cc.Class.extend({
     addDisplay: function (displayData, index) {
         var decoDisplay = null;
         if (index >= 0 && index < this._decoDisplayList.length) {
-            decoDisplay = this._decoDisplayList[i];
+            decoDisplay = this._decoDisplayList[index];
         }
         else {
             decoDisplay = cc.DecotativeDisplay.create();

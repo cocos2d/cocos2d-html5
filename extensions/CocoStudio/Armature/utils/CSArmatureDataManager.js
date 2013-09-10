@@ -240,5 +240,6 @@ cc.ArmatureDataManager.getInstance = function () {
 };
 cc.ArmatureDataManager.purge = function () {
     cc.SpriteFrameCacheHelper.purge();
+    cc.DataReaderHelper.clear();
     this._instance = null;
 };
