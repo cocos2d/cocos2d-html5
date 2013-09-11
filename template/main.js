@@ -39,8 +39,8 @@ var cocos2dApp = cc.Application.extend({
         var director = cc.Director.getInstance();
 
         var screenSize = cc.EGLView.getInstance().getFrameSize();
-        var resourceSize = cc.size(800, 450);
-        var designSize = cc.size(800, 450);
+        var resourceSize = cc.size(480, 800);
+        var designSize = cc.size(480, 800);
 
         var searchPaths = [];
         var resDirOrders = [];
@@ -50,24 +50,24 @@ var cocos2dApp = cc.Application.extend({
 
         var platform = cc.Application.getInstance().getTargetPlatform();
         if (platform == cc.TARGET_PLATFORM.MOBILE_BROWSER) {
-            if (screenSize.height > 450) {
+            resDirOrders.push("HD");
+        }
+        else if (platform == cc.TARGET_PLATFORM.PC_BROWSER) {
+            if (screenSize.height >= 800) {
                 resDirOrders.push("HD");
             }
             else {
-                resourceSize = cc.size(400, 225);
-                designSize = cc.size(400, 225);
+                resourceSize = cc.size(320, 480);
+                designSize = cc.size(320, 480);
                 resDirOrders.push("Normal");
             }
-        }
-        else if (platform == cc.TARGET_PLATFORM.PC_BROWSER) {
-            resDirOrders.push("HD");
         }
 
         cc.FileUtils.getInstance().setSearchResolutionsOrder(resDirOrders);
 
         director.setContentScaleFactor(resourceSize.width / designSize.width);
 
-        cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
+        cc.EGLView.getInstance().setDesignResolutionSize(screenSize.width, screenSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
 
         // turn on display FPS
         director.setDisplayStats(this.config['showFPS']);
