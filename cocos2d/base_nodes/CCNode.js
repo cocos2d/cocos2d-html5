@@ -1502,7 +1502,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     *  Retrusn the world affine transform matrix. The matrix is in Pixels.
+     *  Returns the world affine transform matrix. The matrix is in Pixels.
      * @return {cc.AffineTransform}
      */
     nodeToWorldTransform:function () {
@@ -1774,7 +1774,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // transform for canvas
         var context = ctx || cc.renderContext;
         var t = this.nodeToParentTransform();
-        context.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
+        context.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
     },
 
     _transformForWebGL: function () {
@@ -1837,8 +1837,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // base abcd
             t.a = t.d = Cos;
-            t.c = -Sin;
-            t.b = Sin;
+            t.b = -Sin;
+            t.c = Sin;
 
             var lScaleX = this._scaleX, lScaleY = this._scaleY;
             var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
@@ -1856,8 +1856,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 var xx = appY * skx * sx;
                 var yy = appX * sky * sy;
                 t.a = Cos + -Sin * sky;
-                t.c = Cos * skx + -Sin;
-                t.b = Sin + Cos * sky;
+                t.b = Cos * skx + -Sin;
+                t.c = Sin + Cos * sky;
                 t.d = Sin * skx + Cos;
                 t.tx += Cos * xx + -Sin * yy;
                 t.ty += Sin * xx + Cos * yy;
@@ -1866,8 +1866,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             // scale
             if (lScaleX !== 1 || lScaleY !== 1) {
                 t.a *= sx;
-                t.b *= sx;
-                t.c *= sy;
+                t.c *= sx;
+                t.b *= sy;
                 t.d *= sy;
             }
 
@@ -1877,16 +1877,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // if ignore anchorPoint
             if (this._ignoreAnchorPointForPosition) {
-                t.tx += appX
+                t.tx += appX;
                 t.ty += appY;
             }
 
             if (this._additionalTransformDirty) {
                 this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
-                //Because the cartesian coordination is inverted in html5 canvas, these needs to be inverted as well
-                this._transform.b *= -1;
-                this._transform.c *= -1;
-
                 this._additionalTransformDirty = false;
             }
 
