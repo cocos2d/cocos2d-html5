@@ -22,11 +22,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc.BlendType = {
+    NORMAL: 0,
+    LAYER: 1,
+    DARKEN: 2,
+    MULTIPLY: 3,
+    LIGHTEN: 4,
+    SCREEN: 5,
+    OVERLAY: 6,
+    HARD_LIGHT: 7,
+    ADD: 8,
+    SUBSTRACT: 9,
+    DIFFERENCE: 10,
+    INVERT: 11,
+    ALPHA: 12,
+    ERASE: 13
+};
+
 CC_DISPLAY_SPRITE = 0;
 CC_DISPLAY_ARMATURE = 1;
 CC_DISPLAY_PARTICLE = 2;
-CC_DISPLAY_SHADER = 3;
-CC_DISPLAY_MAX = 1000;
+CC_DISPLAY_MAX = 3;
 
 cc.BaseData = cc.Class.extend({
     x:0,
@@ -38,10 +54,10 @@ cc.BaseData = cc.Class.extend({
     scaleY:1,
     tweenRotate:0,
     isUseColorInfo:false,
-    r:0,
-    g:0,
-    b:0,
-    a:0,
+    r:255,
+    g:255,
+    b:255,
+    a:255,
 
     ctor:function () {
         this.x = 0;
@@ -73,6 +89,17 @@ cc.BaseData = cc.Class.extend({
         this.a = node.a;
     },
 
+    setColor:function(color){
+        this.r = color.r;
+        this.g = color.g;
+        this.b = color.b;
+        this.a = color.a;
+    },
+
+    getColor:function(){
+        return cc.c4f(this.r, this.g, this.b, this.a);
+    },
+
     subtract:function (from, to) {
         this.x = to.x - from.x;
         this.y = to.y - from.y;
@@ -81,12 +108,15 @@ cc.BaseData = cc.Class.extend({
         this.skewX = to.skewX - from.skewX;
         this.skewY = to.skewY - from.skewY;
 
-        if (from.isUseColorInfo || to.isUseColorInfo) {
+        if (this.isUseColorInfo || from.isUseColorInfo || to.isUseColorInfo) {
             this.a = to.a - from.a;
             this.r = to.r - from.r;
             this.g = to.g - from.g;
             this.b = to.b - from.b;
-            this._useColorInfo = true;
+            this.isUseColorInfo = true;
+        } else {
+            this.a = this.r = this.g = this.b = 0;
+            this.isUseColorInfo = false;
         }
 
         if (this.skewX > cc.PI) {
@@ -112,7 +142,7 @@ cc.BaseData = cc.Class.extend({
 cc.DisplayData = cc.Class.extend({
     displayType:CC_DISPLAY_SPRITE,
     ctor:function () {
-        this.displayType = CC_DISPLAY_SPRITE;
+        this.displayType = CC_DISPLAY_MAX;
     },
     changeDisplayToTexture:function (displayName) {
         // remove .xxx
@@ -128,8 +158,10 @@ cc.DisplayData = cc.Class.extend({
 
 cc.SpriteDisplayData = cc.DisplayData.extend({
     displayName:"",
+    skinData:null,
     ctor:function () {
         this.displayName = "";
+        this.skinData = new cc.BaseData();
         this.displayType = CC_DISPLAY_SPRITE;
     },
     setParam:function (displayName) {
@@ -138,6 +170,21 @@ cc.SpriteDisplayData = cc.DisplayData.extend({
     copy:function (displayData) {
         this.displayName = displayData.displayName;
         this.displayType = displayData.displayType;
+        this.skinData = displayData.skinData;
+    }
+});
+
+cc.NodeDisplayData = cc.DisplayData.extend({
+    node:null,
+    ctor:function () {
+        this.displayName = "";
+        this.displayType = CC_DISPLAY_NODE;
+        this.node = null;
+    },
+    copy:function (displayData) {
+        this.displayName = displayData.displayName;
+        this.displayType = displayData.displayType;
+        this.node = displayData.node;
     }
 });
 
@@ -194,13 +241,15 @@ cc.ShaderDisplayData = cc.DisplayData.extend({
 });
 
 cc.BoneData = cc.BaseData.extend({
-    displayDataList:[],
+    displayDataList:null,
     name:"",
     parentName:"",
+    boneDataTransform:null,
     ctor:function () {
         this.displayDataList = [];
         this.name = "";
         this.parentName = "";
+        this.boneDataTransform = null;
 
     },
     init:function () {
@@ -216,20 +265,19 @@ cc.BoneData = cc.BaseData.extend({
 });
 
 cc.ArmatureData = cc.Class.extend({
-    boneDataDic:{},
-    boneList:[],
+    boneDataDic:null,
     name:"",
+    dataVersion:0,
     ctor:function () {
         this.boneDataDic = {};
-        this.boneList = [];
         this.name = "";
+        this.dataVersion = 0;
     },
     init:function () {
-
+        return true;
     },
     addBoneData:function (boneData) {
         this.boneDataDic[boneData.name] = boneData;
-        this.boneList.push(boneData);
     },
     getBoneDataDic:function () {
         return this.boneDataDic;
@@ -240,13 +288,15 @@ cc.ArmatureData = cc.Class.extend({
 });
 
 cc.FrameData = cc.BaseData.extend({
-        duration:1,
+        duration:0,
         tweenEasing:0,
-        displayIndex:0,
+        displayIndex:-1,
         movement:"",
         event:"",
         sound:"",
         soundEffect:"",
+        blendType:0,
+        frameID:0,
 
         ctor:function () {
             cc.BaseData.prototype.ctor.call(this);
@@ -257,6 +307,8 @@ cc.FrameData = cc.BaseData.extend({
             this.event = "";
             this.sound = "";
             this.soundEffect = "";
+            this.blendType = cc.BlendType.NORMAL;
+            this.frameID = 0;
         },
 
         copy:function (frameData) {
@@ -264,6 +316,11 @@ cc.FrameData = cc.BaseData.extend({
             this.duration = frameData.duration;
             this.tweenEasing = frameData.tweenEasing;
             this.displayIndex = frameData.displayIndex;
+            this.movement = frameData.movement;
+            this.event = frameData.event;
+            this.sound = frameData.sound;
+            this.soundEffect = frameData.soundEffect;
+            this.blendType = frameData.blendType;
         }
     }
 );
@@ -272,7 +329,7 @@ cc.MovementBoneData = cc.Class.extend({
     delay:0,
     scale:1,
     duration:0,
-    frameList:[],
+    frameList:null,
     name:"",
     ctor:function () {
         this.delay = 0;
@@ -286,7 +343,6 @@ cc.MovementBoneData = cc.Class.extend({
     },
     addFrameData:function (frameData) {
         this.frameList.push(frameData);
-        this.duration += frameData.duration;
     },
     getFrameData:function (index) {
         return this.frameList[index];
@@ -294,8 +350,9 @@ cc.MovementBoneData = cc.Class.extend({
 });
 
 cc.MovementData = cc.Class.extend({
-    movBoneDataDic:{},
+    movBoneDataDic:null,
     duration:0,
+    scale:0,
     durationTo:0,
     durationTween:cc.TweenType.Linear,
     loop:true,
@@ -304,6 +361,7 @@ cc.MovementData = cc.Class.extend({
     ctor:function () {
         this.name = "";
         this.duration = 0;
+        this.scale = 1;
         this.durationTo = 0;
         this.durationTween = 0;
         this.loop = true;
@@ -320,8 +378,8 @@ cc.MovementData = cc.Class.extend({
 });
 
 cc.AnimationData = cc.Class.extend({
-    moveDataDic:{},
-    movementNames:[],
+    moveDataDic:null,
+    movementNames:null,
     name:"",
     ctor:function () {
         this.moveDataDic = {};
@@ -345,13 +403,23 @@ cc.ContourVertex2 = function (x, y) {
 };
 
 cc.ContourData = cc.Class.extend({
-    vertexList:[],
+    vertexList:null,
     ctor:function () {
         this.vertexList = [];
     },
 
     init:function () {
         this.vertexList = [];
+        return true;
+    },
+
+    /**
+     *
+     * @param {cc.p} p
+     */
+    addVertex: function (p) {
+       var v = cc.ContourVertex2(p.x, p.y);
+       this.vertexList.push(v);
     }
 });
 
@@ -361,7 +429,7 @@ cc.TextureData = cc.Class.extend({
     pivotX:0,
     pivotY:0,
     name:"",
-    contourDataList:[],
+    contourDataList:null,
     ctor:function () {
         this.height = 0;
         this.width = 0;
