@@ -734,6 +734,16 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         cc.Sprite.prototype.setPosition.call(this, realPosition);
     },
 
+    setPositionX:function(x){
+        this._originalPosition.x = x;
+        cc.Sprite.prototype.setPositionX.call(this, x);
+    },
+
+    setPositionY:function(y){
+        this._originalPosition.y = y;
+        cc.Sprite.prototype.setPositionY.call(this, y);
+    },
+
     getPosition:function(){
         return cc.p(this._originalPosition.x, this._originalPosition.y);
     },
