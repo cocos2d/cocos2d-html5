@@ -116,10 +116,14 @@
             return this._body.p.y;
         },
 
-        setPosition:function (pos) {
-            var locBody = this._body;
-            locBody.p.x = pos.x;
-            locBody.p.y = pos.y;
+        setPosition:function (newPosOrxValue, yValue) {
+            if(arguments.length==2){
+                this._body.p.x = newPosOrxValue;
+                this._body.p.y = yValue;
+            }else{
+                this._body.p.x = newPosOrxValue.x;
+                this._body.p.y = newPosOrxValue.y;
+            }
             //this._syncPosition();
         },
         _syncPosition:function () {
