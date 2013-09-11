@@ -273,9 +273,11 @@ cc.Armature = cc.NodeRGBA.extend({
         // Set contentsize and Calculate anchor point.
         var rect = this.boundingBox();
         this.setContentSize(rect.size);
-        this._offsetPoint = cc.p(-rect.origin.x, -rect.origin.y);
+        var locOffsetPoint = this._offsetPoint;
+        locOffsetPoint.x = -rect.x;
+        locOffsetPoint.y = -rect.y;
         if (rect.width != 0 && rect.height != 0) {
-            this.setAnchorPoint(cc.p(this._offsetPoint.x / rect.size.width, this._offsetPoint.y / rect.size.height));
+            this.setAnchorPoint(cc.p(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height));
         }
     },
 
