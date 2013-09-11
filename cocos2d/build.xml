@@ -171,7 +171,6 @@
                 <file name="CocoStudio/Armature/display/CCDecorativeDisplay.js"/>
                 <file name="CocoStudio/Armature/display/CCDisplayFactory.js"/>
                 <file name="CocoStudio/Armature/display/CCDisplayManager.js"/>
-                <file name="CocoStudio/Armature/display/CCShaderNode.js"/>
                 <file name="CocoStudio/Armature/display/CCSkin.js"/>
                 <file name="CocoStudio/Armature/animation/CCProcessBase.js"/>
                 <file name="CocoStudio/Armature/animation/CCArmatureAnimation.js"/>

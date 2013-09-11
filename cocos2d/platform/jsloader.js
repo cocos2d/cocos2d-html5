@@ -186,7 +186,6 @@
             '../extensions/CocoStudio/Armature/display/CCDecorativeDisplay.js',
             '../extensions/CocoStudio/Armature/display/CCDisplayFactory.js',
             '../extensions/CocoStudio/Armature/display/CCDisplayManager.js',
-            '../extensions/CocoStudio/Armature/display/CCShaderNode.js',
             '../extensions/CocoStudio/Armature/display/CCSkin.js',
             '../extensions/CocoStudio/Armature/animation/CCProcessBase.js',
             '../extensions/CocoStudio/Armature/animation/CCArmatureAnimation.js',
