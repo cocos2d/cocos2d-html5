@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 cc.DisplayManager = cc.Class.extend({
-    _decoDisplayList:[],
+    _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,
     _displayIndex:-1,
@@ -41,7 +41,6 @@ cc.DisplayManager = cc.Class.extend({
     },
 
     init:function (bone) {
-
         this._bone = bone;
         this.initDisplayList(bone.getBoneData());
         return true;
@@ -145,21 +144,22 @@ cc.DisplayManager = cc.Class.extend({
     },
 
     setCurrentDecorativeDisplay:function (decoDisplay) {
+        var locCurrentDecoDisplay = this._currentDecoDisplay;
         if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
-            if (this._currentDecoDisplay && this._currentDecoDisplay.getColliderDetector()) {
-                this._currentDecoDisplay.getColliderDetector().setActive(false);
+            if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
+                locCurrentDecoDisplay.getColliderDetector().setActive(false);
             }
         }
 
         this._currentDecoDisplay = decoDisplay;
-
+        locCurrentDecoDisplay = this._currentDecoDisplay;
         if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
-            if (this._currentDecoDisplay && this._currentDecoDisplay.getColliderDetector()) {
-                this._currentDecoDisplay.getColliderDetector().setActive(true);
+            if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
+                locCurrentDecoDisplay.getColliderDetector().setActive(true);
             }
         }
 
-        var displayRenderNode = this._currentDecoDisplay == null ? null : this._currentDecoDisplay.getDisplay();
+        var displayRenderNode = locCurrentDecoDisplay == null ? null : locCurrentDecoDisplay.getDisplay();
         if (this._displayRenderNode) {
             if (this._displayRenderNode instanceof cc.Armature) {
                 this._bone.setChildArmature(null);
@@ -171,17 +171,17 @@ cc.DisplayManager = cc.Class.extend({
 
         this._displayRenderNode = displayRenderNode;
 
-        if (this._displayRenderNode) {
-            if (this._displayRenderNode instanceof cc.Armature) {
-                this._bone.setChildArmature(this._displayRenderNode);
-            }else if(this._displayRenderNode instanceof cc.ParticleSystemQuad) {
-                this._displayRenderNode.resetSystem();
+        if (displayRenderNode) {
+            if (displayRenderNode instanceof cc.Armature) {
+                this._bone.setChildArmature(displayRenderNode);
+            }else if(displayRenderNode instanceof cc.ParticleSystemQuad) {
+                displayRenderNode.resetSystem();
             }
-            if (this._displayRenderNode.RGBAProtocol)            {
+            if (displayRenderNode.RGBAProtocol)            {
                 //this._displayRenderNode.setColor(this._bone.getColor());
                 //this._displayRenderNode.setOpacity(this._bone.getOpacity());
             }
-            this._displayRenderNode.retain();
+            displayRenderNode.retain();
             //todo
             //this._displayRenderNode.setVisible(this._visible);
         }

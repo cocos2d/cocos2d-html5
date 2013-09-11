@@ -131,7 +131,8 @@ cc.ProcessBase = cc.Class.extend({
         if (this._rawDuration <= 0 || dt > 1) {
             return false;
         }
-        if (this._nextFrameIndex <= 0) {
+        var locNextFrameIndex = this._nextFrameIndex;
+        if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
             this._currentFrame = 0;
         }else{
@@ -142,13 +143,13 @@ cc.ProcessBase = cc.Class.extend({
              */
             this._currentFrame += this._processScale * (dt / this._animationInternal);
 
-            this._currentPercent = this._currentFrame / this._nextFrameIndex;
+            this._currentPercent = this._currentFrame / locNextFrameIndex;
 
             /*
              *	if this._currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util this._currentFrame is
              *  smaller than this._nextFrameIndex
              */
-            this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
+            this._currentFrame = cc.fmodf(this._currentFrame, locNextFrameIndex);
         }
         this.updateHandler();
         return true;

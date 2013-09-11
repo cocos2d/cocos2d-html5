@@ -65,8 +65,13 @@ cc.ColliderDetector = cc.Class.extend({
         }
     },
     removeContourData: function (contourData) {
-        //todo
-        //cc.ArrayRemoveObject(this._colliderBodyList,contourData);
+        var locColliderBodyList = this._colliderBodyList;
+        for (var i = 0; i < locColliderBodyList.length; i++) {
+            if(locColliderBodyList[i].getContourData()==contourData){
+                locColliderBodyList.splice(i, 1);
+                return;
+            }
+        }
     },
     removeAll: function () {
         this._colliderBodyList = [];
@@ -79,20 +84,22 @@ cc.ColliderDetector = cc.Class.extend({
         if (this._active == active)
             return;
         this._active = active;
-        if (this._body) {
+        var locBody = this._body;
+        var locShape;
+        if (locBody) {
             var colliderBody = null;
             if (this._active) {
                 for (var i = 0; i < this._colliderBodyList.length; i++) {
                     colliderBody = this._colliderBodyList[i];
-                    var shape = colliderBody.getShape();
-                    this._body.space.addShape(shape);
+                    locShape = colliderBody.getShape();
+                    locBody.space.addShape(locShape);
                 }
             }
             else {
                 for (var i = 0; i < this._colliderBodyList.length; i++) {
                     colliderBody = this._colliderBodyList[i];
-                    var shape = colliderBody.getShape();
-                    this._body.space.removeShape(shape);
+                    locShape = colliderBody.getShape();
+                    locBody.space.removeShape(locShape);
                 }
             }
         }
@@ -109,30 +116,33 @@ cc.ColliderDetector = cc.Class.extend({
             return;
 
         var colliderBody = null;
-        if(!cc.Browser.supportWebGL){
-            t.b*=-1;
-            t.c*=-1;
+        if (!cc.Browser.supportWebGL) {
+            t.b *= -1;
+            t.c *= -1;
         }
+        var locBody = this._body;
+        var locHelpPoint = this.helpPoint;
         for (var i = 0; i < this._colliderBodyList.length; i++) {
             colliderBody = this._colliderBodyList[i];
             var contourData = colliderBody.getContourData();
             var shape = null;
-            if (this._body)
+            if (locBody) {
                 shape = colliderBody.getShape();
-            this._body.p.x = t.tx;
-            this._body.p.y = t.ty;
-            this._body.p.a = t.a;
-            var vs = contourData.vertexList;
-            for (var i = 0; i < vs.length; i++) {
-                this.helpPoint.x = vs[i].x;
-                this.helpPoint.y = vs[i].y;
-                this.helpPoint = cc.PointApplyAffineTransform(this.helpPoint, t);
-                if (shape) {
-                    var v = new cp.Vect(0, 0);
-                    v.x = this.helpPoint.x;
-                    v.y = this.helpPoint.y;
-                    shape.verts[i * 2] = this.helpPoint.x - t.tx;
-                    shape.verts[i * 2 + 1] = this.helpPoint.y - t.ty;
+                locBody.p.x = t.tx;
+                locBody.p.y = t.ty;
+                locBody.p.a = t.a;
+                var vs = contourData.vertexList;
+                for (var i = 0; i < vs.length; i++) {
+                    locHelpPoint.x = vs[i].x;
+                    locHelpPoint.y = vs[i].y;
+                    locHelpPoint = cc.PointApplyAffineTransform(locHelpPoint, t);
+                    if (shape) {
+                        var v = new cp.Vect(0, 0);
+                        v.x = locHelpPoint.x;
+                        v.y = locHelpPoint.y;
+                        shape.verts[i * 2] = locHelpPoint.x - t.tx;
+                        shape.verts[i * 2 + 1] = locHelpPoint.y - t.ty;
+                    }
                 }
             }
         }

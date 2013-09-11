@@ -35,9 +35,9 @@ cc.Armature = cc.NodeRGBA.extend({
     _textureAtlas:null,
     _parentBone:null,
     _boneDic:null,
-    _topBoneList:[],
-    _armatureIndexDic:{},
-    _offsetPoint:cc.p(0, 0),
+    _topBoneList:null,
+    _armatureIndexDic:null,
+    _offsetPoint:null,
     _version:0,
     _armatureTransformDirty:false,
     _body:null,
@@ -281,8 +281,9 @@ cc.Armature = cc.NodeRGBA.extend({
 
     update:function (dt) {
         this._animation.update(dt);
-        for (var i = 0; i < this._topBoneList.length; i++) {
-            this._topBoneList[i].update(dt);
+        var locTopBoneList = this._topBoneList;
+        for (var i = 0; i < locTopBoneList.length; i++) {
+            locTopBoneList[i].update(dt);
         }
         this._armatureTransformDirty = false;
     },

@@ -150,42 +150,44 @@ cc.Tween = cc.ProcessBase.extend({
      * update will call this handler, you can handle your logic here
      */
     updateHandler:function () {
-        if (this._currentPercent >= 1) {
-            switch (this._loopType) {
+        var locCurrentPercent = this._currentPercent;
+        var locLoopType = this._loopType;
+        if (locCurrentPercent >= 1) {
+            switch (locLoopType) {
                 case CC_ANIMATION_TYPE_SINGLE_FRAME:
-                    this._currentPercent = 1;
+                    locCurrentPercent = 1;
                     this._isComplete = true;
                     break;
                 case CC_ANIMATION_TYPE_NO_LOOP:
-                    this._loopType = CC_ANIMATION_TYPE_MAX;
+                    locLoopType = CC_ANIMATION_TYPE_MAX;
                     if (this._durationTween <= 0) {
-                        this._currentPercent = 1;
+                        locCurrentPercent = 1;
                     }
                     else {
-                        this._currentPercent = (this._currentPercent - 1) * this._nextFrameIndex / this._durationTween;
+                        locCurrentPercent = (locCurrentPercent - 1) * this._nextFrameIndex / this._durationTween;
                     }
-                    if (this._currentPercent >= 1) {
-                        this._currentPercent = 1;
+                    if (locCurrentPercent >= 1) {
+                        locCurrentPercent = 1;
                         this._isComplete = true;
                         break;
                     }
                     else {
                         this._nextFrameIndex = this._durationTween;
-                        this._currentFrame = this._currentPercent * this._nextFrameIndex;
+                        this._currentFrame = locCurrentPercent * this._nextFrameIndex;
                         this._totalDuration = 0;
                         this._betweenDuration = 0;
                         this._fromIndex = this._toIndex = 0;
                         break;
                     }
                 case CC_ANIMATION_TYPE_TO_LOOP_BACK:
-                    this._loopType = CC_ANIMATION_TYPE_LOOP_BACK;
+                    locLoopType = CC_ANIMATION_TYPE_LOOP_BACK;
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
                     if (this._movementBoneData.delay != 0) {
                         this._currentFrame = (1 - this._movementBoneData.delay) * this._nextFrameIndex;
-                        this._currentPercent = this._currentFrame / this._nextFrameIndex;
+                        locCurrentPercent = this._currentFrame / this._nextFrameIndex;
 
                     } else {
-                        this._currentPercent = 0;
+                        locCurrentPercent = 0;
                         this._currentFrame = 0;
                     }
 
@@ -194,11 +196,11 @@ cc.Tween = cc.ProcessBase.extend({
                     this._fromIndex = this._toIndex = 0;
                     break;
                 case CC_ANIMATION_TYPE_MAX:
-                    this._currentPercent = 1;
+                    locCurrentPercent = 1;
                     this._isComplete = true;
                     break;
                 default:
-                    this._currentPercent = cc.fmodf(this._currentPercent, 1);
+                    locCurrentPercent = cc.fmodf(locCurrentPercent, 1);
                     this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._totalDuration = 0;
                     this._betweenDuration = 0;
@@ -207,16 +209,18 @@ cc.Tween = cc.ProcessBase.extend({
             }
         }
 
-        if (this._currentPercent < 1 && this._loopType < CC_ANIMATION_TYPE_TO_LOOP_BACK) {
-            this._currentPercent = Math.sin(this._currentPercent * cc.PI / 2);
+        if (locCurrentPercent < 1 && locLoopType < CC_ANIMATION_TYPE_TO_LOOP_BACK) {
+            locCurrentPercent = Math.sin(locCurrentPercent * cc.PI / 2);
         }
 
-        var percent = this._currentPercent;
-        if (this._loopType > CC_ANIMATION_TYPE_TO_LOOP_BACK) {
-            percent = this.updateFrameData(percent, true);
+        this._currentPercent = locCurrentPercent;
+        this._loopType = locLoopType;
+
+        if (locLoopType > CC_ANIMATION_TYPE_TO_LOOP_BACK) {
+            locCurrentPercent = this.updateFrameData(locCurrentPercent, true);
         }
         if (this._frameTweenEasing != cc.TweenType.TWEEN_EASING_MAX) {
-            this.tweenNodeTo(percent);
+            this.tweenNodeTo(locCurrentPercent);
         }
 
     },
@@ -251,16 +255,17 @@ cc.Tween = cc.ProcessBase.extend({
      */
     arriveKeyFrame:function (keyFrameData) {
         if (keyFrameData) {
+            var locBone = this._bone;
             var displayIndex = keyFrameData.displayIndex;
-            var displayManager = this._bone.getDisplayManager();
+            var displayManager = locBone.getDisplayManager();
             if (!displayManager.getForceChangeDisplay()) {
                 displayManager.changeDisplayByIndex(displayIndex, false);
 
             }
             this._tweenData.zOrder = keyFrameData.zOrder;
-            this._bone.updateZOrder();
-            this._bone.setBlendType(keyFrameData.blendType);
-            var childAramture = this._bone.getChildArmature();
+            locBone.updateZOrder();
+            locBone.setBlendType(keyFrameData.blendType);
+            var childAramture = locBone.getChildArmature();
             if (childAramture) {
                 if (keyFrameData.movement != "") {
                     childAramture.getAnimation().play(keyFrameData.movement);
@@ -279,25 +284,29 @@ cc.Tween = cc.ProcessBase.extend({
         if (!node) {
             node = this._tweenData;
         }
-        node.x = this._from.x + percent * this._between.x;
-        node.y = this._from.y + percent * this._between.y;
-        node.scaleX = this._from.scaleX + percent * this._between.scaleX;
-        node.scaleY = this._from.scaleY + percent * this._between.scaleY;
-        node.skewX = this._from.skewX + percent * this._between.skewX;
-        node.skewY = this._from.skewY + percent * this._between.skewY;
+        var locFrom = this._from;
+        var locBetween = this._between;
+        node.x = locFrom.x + percent * locBetween.x;
+        node.y = locFrom.y + percent * locBetween.y;
+        node.scaleX = locFrom.scaleX + percent * locBetween.scaleX;
+        node.scaleY = locFrom.scaleY + percent * locBetween.scaleY;
+        node.skewX = locFrom.skewX + percent * locBetween.skewX;
+        node.skewY = locFrom.skewY + percent * locBetween.skewY;
 
         this._bone.setTransformDirty(true);
-        if (node && this._between.isUseColorInfo)
+        if (node && locBetween.isUseColorInfo)
             this.tweenColorTo(percent, node);
 
         return node;
     },
 
     tweenColorTo:function(percent,node){
-        node.a = this._from.a + percent * this._between.a;
-        node.r = this._from.r + percent * this._between.r;
-        node.g = this._from.g + percent * this._between.g;
-        node.b = this._from.b + percent * this._between.b;
+        var locFrom = this._from;
+        var locBetween = this._between;
+        node.a = locFrom.a + percent * locBetween.a;
+        node.r = locFrom.r + percent * locBetween.r;
+        node.g = locFrom.g + percent * locBetween.g;
+        node.b = locFrom.b + percent * locBetween.b;
         this._bone.updateColor();
     },
 
@@ -312,9 +321,10 @@ cc.Tween = cc.ProcessBase.extend({
             currentPercent = cc.fmodf(currentPercent,1);
         }
         var playedTime = this._rawDuration * currentPercent;
-        var from,to;
+        var from, to;
+        var locTotalDuration = this._totalDuration,locBetweenDuration = this._betweenDuration, locToIndex = this._toIndex;
         // if play to current frame's front or back, then find current frame again
-        if (playedTime < this._totalDuration || playedTime >= this._totalDuration + this._betweenDuration) {
+        if (playedTime < locTotalDuration || playedTime >= locTotalDuration + locBetweenDuration) {
             /*
              *  get frame length, if this._toIndex >= _length, then set this._toIndex to 0, start anew.
              *  this._toIndex is next index will play
@@ -334,12 +344,12 @@ cc.Tween = cc.ProcessBase.extend({
 
             do {
                 from = frames[this._fromIndex];
-                this._totalDuration = from.frameID;
-                if (++this._toIndex >= length) {
-                    this._toIndex = 0;
+                locTotalDuration = from.frameID;
+                if (++locToIndex >= length) {
+                    locToIndex = 0;
                 }
-                this._fromIndex = this._toIndex;
-                to = frames[this._toIndex];
+                this._fromIndex = locToIndex;
+                to = frames[locToIndex];
 
                 //! Guaranteed to trigger frame event
                 if(from.event){
@@ -352,19 +362,24 @@ cc.Tween = cc.ProcessBase.extend({
             }
             while  (playedTime < from.frameID || playedTime >= to.frameID);
 
-            this._betweenDuration = to.frameID - from.frameID;
+            locBetweenDuration = to.frameID - from.frameID;
             this._frameTweenEasing = from.tweenEasing;
             this.setBetween(from, to);
+            this._totalDuration = locTotalDuration;
+            this._betweenDuration = locBetweenDuration;
+            this._toIndex = locToIndex;
         }
-        currentPercent = this._betweenDuration == 0 ? 0 : (playedTime - this._totalDuration) / this._betweenDuration;
+
+        currentPercent = locBetweenDuration == 0 ? 0 : (playedTime - locTotalDuration) / locBetweenDuration;
+
         /*
          *  if frame tween easing equal to TWEEN_EASING_MAX, then it will not do tween.
          */
         var tweenType = null;
-
-        if (this._frameTweenEasing != cc.TweenType.TWEEN_EASING_MAX) {
-            tweenType = (this._tweenEasing == cc.TweenType.TWEEN_EASING_MAX) ? this._frameTweenEasing : this._tweenEasing;
-            if (tweenType != cc.TweenType.TWEEN_EASING_MAX&&tweenType != cc.TweenType.Linear) {
+        var locTWEEN_EASING_MAX = cc.TweenType.TWEEN_EASING_MAX;
+        if (this._frameTweenEasing != locTWEEN_EASING_MAX) {
+            tweenType = (this._tweenEasing == locTWEEN_EASING_MAX) ? this._frameTweenEasing : this._tweenEasing;
+            if (tweenType != locTWEEN_EASING_MAX&&tweenType != cc.TweenType.Linear) {
                 currentPercent = cc.TweenFunction.tweenTo(0, 1, currentPercent, 1, tweenType);
             }
         }

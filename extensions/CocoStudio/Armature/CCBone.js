@@ -36,7 +36,7 @@ cc.Bone = cc.NodeRGBA.extend({
     _tween:null,
     _tweenData:null,
     _name:"",
-    _childrenBone:[],
+    _childrenBone:null,
     _parentBone:null,
     _boneTransformDirty:false,
     _worldTransform:null,
@@ -138,27 +138,34 @@ cc.Bone = cc.NodeRGBA.extend({
      * @param dt
      */
     update:function (dt) {
-        if (this._parentBone) {
-            this._boneTransformDirty = this._boneTransformDirty || this._parentBone.isTransformDirty();
+        var locParentBone = this._parentBone;
+        var locArmature = this._armature;
+        var locTweenData = this._tweenData;
+        var locWorldTransform = this._worldTransform;
+
+        if (locParentBone) {
+            this._boneTransformDirty = this._boneTransformDirty || locParentBone.isTransformDirty();
         }
         if (this._boneTransformDirty) {
-            if (this._armature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED)            {
-                cc.TransformHelp.nodeConcat(this._tweenData, this._boneData);
-                this._tweenData.scaleX -= 1;
-                this._tweenData.scaleY -= 1;
+            if (locArmature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED) {
+                cc.TransformHelp.nodeConcat(locTweenData, this._boneData);
+                locTweenData.scaleX -= 1;
+                locTweenData.scaleY -= 1;
             }
 
-            cc.TransformHelp.nodeToMatrix(this._tweenData, this._worldTransform);
+            cc.TransformHelp.nodeToMatrix(locTweenData, locWorldTransform);
 
-            this._worldTransform = cc.AffineTransformConcat(this.nodeToParentTransform(), this._worldTransform);
+            this._worldTransform = cc.AffineTransformConcat(this.nodeToParentTransform(), locWorldTransform);
 
-            if (this._parentBone) {
-                this._worldTransform = cc.AffineTransformConcat(this._worldTransform, this._parentBone._worldTransform);
+            if (locParentBone) {
+                this._worldTransform = cc.AffineTransformConcat(this._worldTransform, locParentBone._worldTransform);
             }
         }
-        cc.DisplayFactory.updateDisplay(this, this._displayManager.getCurrentDecorativeDisplay(), dt, this._boneTransformDirty|| this._armature.getArmatureTransformDirty());
-        for (var i = 0; i < this._childrenBone.length; i++) {
-            this._childrenBone[i].update(dt);
+        cc.DisplayFactory.updateDisplay(this, this._displayManager.getCurrentDecorativeDisplay(), dt, this._boneTransformDirty || locArmature.getArmatureTransformDirty());
+
+        var locChildrenBone = this._childrenBone;
+        for (var i = 0; i < locChildrenBone.length; i++) {
+            locChildrenBone[i].update(dt);
         }
         this._boneTransformDirty = false;
     },

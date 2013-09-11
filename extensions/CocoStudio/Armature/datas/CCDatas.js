@@ -241,7 +241,7 @@ cc.ShaderDisplayData = cc.DisplayData.extend({
 });
 
 cc.BoneData = cc.BaseData.extend({
-    displayDataList:[],
+    displayDataList:null,
     name:"",
     parentName:"",
     boneDataTransform:null,
@@ -265,7 +265,7 @@ cc.BoneData = cc.BaseData.extend({
 });
 
 cc.ArmatureData = cc.Class.extend({
-    boneDataDic:{},
+    boneDataDic:null,
     name:"",
     dataVersion:0,
     ctor:function () {
@@ -329,7 +329,7 @@ cc.MovementBoneData = cc.Class.extend({
     delay:0,
     scale:1,
     duration:0,
-    frameList:[],
+    frameList:null,
     name:"",
     ctor:function () {
         this.delay = 0;
@@ -350,7 +350,7 @@ cc.MovementBoneData = cc.Class.extend({
 });
 
 cc.MovementData = cc.Class.extend({
-    movBoneDataDic:{},
+    movBoneDataDic:null,
     duration:0,
     scale:0,
     durationTo:0,
@@ -378,8 +378,8 @@ cc.MovementData = cc.Class.extend({
 });
 
 cc.AnimationData = cc.Class.extend({
-    moveDataDic:{},
-    movementNames:[],
+    moveDataDic:null,
+    movementNames:null,
     name:"",
     ctor:function () {
         this.moveDataDic = {};
@@ -403,7 +403,7 @@ cc.ContourVertex2 = function (x, y) {
 };
 
 cc.ContourData = cc.Class.extend({
-    vertexList:[],
+    vertexList:null,
     ctor:function () {
         this.vertexList = [];
     },
@@ -429,7 +429,7 @@ cc.TextureData = cc.Class.extend({
     pivotX:0,
     pivotY:0,
     name:"",
-    contourDataList:[],
+    contourDataList:null,
     ctor:function () {
         this.height = 0;
         this.width = 0;

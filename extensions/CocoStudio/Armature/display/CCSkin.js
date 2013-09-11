@@ -25,7 +25,7 @@
 cc.Skin = cc.Sprite.extend({
     _skinData:null,
     _bone:null,
-    _skinTransform:cc.AffineTransformIdentity(),
+    _skinTransform:null,
     _displayName:"",
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
@@ -51,10 +51,10 @@ cc.Skin = cc.Sprite.extend({
     setSkinData:function (skinData) {
         this._skinData = skinData;
 
-        this.setScaleX(this._skinData.scaleX);
-        this.setScaleY(this._skinData.scaleY);
-        this.setRotation(cc.RADIANS_TO_DEGREES(this._skinData.skewX));
-        this.setPosition(cc.p(this._skinData.x, this._skinData.y));
+        this.setScaleX(skinData.scaleX);
+        this.setScaleY(skinData.scaleY);
+        this.setRotation(cc.RADIANS_TO_DEGREES(skinData.skewX));
+        this.setPosition(skinData.x, skinData.y);
 
         this._skinTransform = this.nodeToParentTransform();
         if (cc.renderContextType === cc.CANVAS) {

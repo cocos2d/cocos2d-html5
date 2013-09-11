@@ -63,7 +63,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     _movementID:"",
     _prevFrameIndex:0,
     _toIndex:0,
-    _tweenList:[],
+    _tweenList:null,
     _frameEvent:null,
     _movementEvent:null,
     _speedScale:1,
@@ -203,16 +203,17 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         if (typeof tweenEasing == "undefined") {
             tweenEasing = cc.TweenType.TWEEN_EASING_MAX;
         }
+        var locMovementData = this._movementData;
         //Get key frame count
-        this._rawDuration = this._movementData.duration;
+        this._rawDuration = locMovementData.duration;
         this._movementID = animationName;
-        this._processScale = this._speedScale * this._movementData.scale;
+        this._processScale = this._speedScale * locMovementData.scale;
         //Further processing parameters
-        durationTo = (durationTo == -1) ? this._movementData.durationTo : durationTo;
-        durationTween = (durationTween == -1) ? this._movementData.durationTween : durationTween;
-        durationTween = (durationTween == 0) ? this._movementData.duration : durationTween;//todo
-        tweenEasing = (tweenEasing == cc.TweenType.TWEEN_EASING_MAX) ? this._movementData.tweenEasing : tweenEasing;
-        loop = (loop < 0) ? this._movementData.loop : loop;
+        durationTo = (durationTo == -1) ? locMovementData.durationTo : durationTo;
+        durationTween = (durationTween == -1) ? locMovementData.durationTween : durationTween;
+        durationTween = (durationTween == 0) ? locMovementData.duration : durationTween;//todo
+        tweenEasing = (tweenEasing == cc.TweenType.TWEEN_EASING_MAX) ? locMovementData.tweenEasing : tweenEasing;
+        loop = (loop < 0) ? locMovementData.loop : loop;
 
         cc.ProcessBase.prototype.play.call(this, animationName, durationTo, durationTween, loop, tweenEasing);
 
@@ -236,11 +237,11 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         var dict = this._armature.getBoneDic();
         for (var key in dict) {
             var bone = dict[key];
-            movementBoneData = this._movementData.getMovementBoneData(bone.getName());
+            movementBoneData = locMovementData.getMovementBoneData(bone.getName());
             var tween = bone.getTween();
             if (movementBoneData && movementBoneData.frameList.length > 0) {
                 this._tweenList.push(tween);
-                movementBoneData.duration = this._movementData.duration;
+                movementBoneData.duration = locMovementData.duration;
                 tween.play(movementBoneData, durationTo, durationTween, loop, tweenEasing);
 
                 tween.setProcessScale(this._processScale);
@@ -307,38 +308,40 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      * update will call this handler, you can handle your logic here
      */
     updateHandler:function () {
-        if (this._currentPercent >= 1) {
+        var locCurrentPercent = this._currentPercent;
+        if (locCurrentPercent >= 1) {
             switch (this._loopType) {
                 case CC_ANIMATION_TYPE_NO_LOOP:
                     this._loopType = CC_ANIMATION_TYPE_MAX;
-                    this._currentFrame = (this._currentPercent - 1) * this._nextFrameIndex;
-                    this._currentPercent = this._currentFrame / this._durationTween;
-                    if (this._currentPercent < 1.0) {
+                    this._currentFrame = (locCurrentPercent - 1) * this._nextFrameIndex;
+                    locCurrentPercent = this._currentFrame / this._durationTween;
+                    if (locCurrentPercent < 1.0) {
                         this._nextFrameIndex = this._durationTween;
                         this.callMovementEvent([this._armature, CC_MovementEventType_START, this._movementID]);
                         break;
                     }
                 case CC_ANIMATION_TYPE_MAX:
                 case CC_ANIMATION_TYPE_SINGLE_FRAME:
-                    this._currentPercent = 1;
+                    locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
                     this.callMovementEvent([this._armature, CC_MovementEventType_COMPLETE, this._movementID]);
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
                     this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
-                    this._currentPercent = cc.fmodf(this._currentPercent, 1);
-                    this._currentFrame = this._nextFrameIndex == 0 ? 0 :cc.fmodf(this._currentFrame, this._nextFrameIndex);
+                    locCurrentPercent = cc.fmodf(locCurrentPercent, 1);
+                    this._currentFrame = this._nextFrameIndex == 0 ? 0 : cc.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
                     this.callMovementEvent([this, CC_MovementEventType_START, this._movementID]);
                     break;
                 default:
-                    this._currentPercent = cc.fmodf(this._currentPercent, 1);
+                    locCurrentPercent = cc.fmodf(locCurrentPercent, 1);
                     this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
                     this.callMovementEvent([this._armature, CC_MovementEventType_LOOP_COMPLETE, this._movementID]);
                     break;
             }
+            this._currentPercent = locCurrentPercent;
         }
     },
 
