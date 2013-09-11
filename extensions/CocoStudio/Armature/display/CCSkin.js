@@ -57,10 +57,6 @@ cc.Skin = cc.Sprite.extend({
         this.setPosition(skinData.x, skinData.y);
 
         this._skinTransform = this.nodeToParentTransform();
-        if (cc.renderContextType === cc.CANVAS) {
-            this._skinTransform.b *= -1;
-            this._skinTransform.c *= -1;
-        }
     },
 
     getSkinData:function () {
@@ -77,10 +73,6 @@ cc.Skin = cc.Sprite.extend({
 
     updateArmatureTransform:function () {
         this._transform = cc.AffineTransformConcat(this._skinTransform, this._bone.nodeToArmatureTransform());
-        if (cc.renderContextType === cc.CANVAS) {
-            this._transform.b *= -1;
-            this._transform.c *= -1;
-        }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
@@ -89,9 +81,6 @@ cc.Skin = cc.Sprite.extend({
     getBoundingBox:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var transForm = this.nodeToParentTransform();
-        if (cc.renderContextType === cc.CANVAS) {
-            transForm = {a:transForm.a, b:-transForm.b, c:-transForm.c, d:transForm.d, tx:transForm.tx, ty:transForm.ty};
-        }
         return cc.RectApplyAffineTransform(rect, transForm);
     },
 

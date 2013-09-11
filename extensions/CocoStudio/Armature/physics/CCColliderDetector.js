@@ -116,10 +116,6 @@ cc.ColliderDetector = cc.Class.extend({
             return;
 
         var colliderBody = null;
-        if (!cc.Browser.supportWebGL) {
-            t.b *= -1;
-            t.c *= -1;
-        }
         var locBody = this._body;
         var locHelpPoint = this.helpPoint;
         for (var i = 0; i < this._colliderBodyList.length; i++) {

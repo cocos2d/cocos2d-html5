@@ -428,10 +428,6 @@ cc.Armature = cc.NodeRGBA.extend({
 
             if (this._additionalTransformDirty) {
                 this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
-                //Because the cartesian coordination is inverted in html5 canvas, these needs to be inverted as well
-                this._transform.b *= -1;
-                this._transform.c *= -1;
-
                 this._additionalTransformDirty = false;
             }
 
