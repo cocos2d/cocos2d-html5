@@ -818,8 +818,20 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             var currentDrawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
 
             var startPoint = cc.p(spriteSize.width * locMidPoint.x, spriteSize.height * locMidPoint.y);
+
             var needToLeft = startPoint.x - currentDrawSize.width / 2;
+            if (locMidPoint.x > 0.5) {
+                if (currentDrawSize.width / 2 >= spriteSize.width - startPoint.x) {
+                    needToLeft = spriteSize.width - currentDrawSize.width;
+                }
+            }
+
             var needToTop = startPoint.y - currentDrawSize.height / 2;
+            if (locMidPoint.y > 0.5) {
+                if (currentDrawSize.height / 2 >= spriteSize.height - startPoint.y) {
+                    needToTop = spriteSize.height - currentDrawSize.height;
+                }
+            }
 
             //left pos
             locBarRect.x = 0;
