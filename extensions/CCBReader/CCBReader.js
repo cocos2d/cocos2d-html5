@@ -643,7 +643,7 @@ cc.BuilderReader = cc.Class.extend({
                 spriteFile = this._ccbRootPath + spriteFile;
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var locContentSize = texture.getContentSize();
-                var bounds = cc.RectMake(0, 0, locContentSize.width, locContentSize.height);
+                var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
                 value = cc.SpriteFrame.createWithTexture(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;

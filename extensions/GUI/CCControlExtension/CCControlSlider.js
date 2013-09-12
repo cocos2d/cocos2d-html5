@@ -224,7 +224,7 @@ cc.ControlSlider = cc.Control.extend({
 
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.RectMake(textureRect.x, textureRect.y, pos.x, textureRect.height);
+        textureRect = cc.rect(textureRect.x, textureRect.y, pos.x, textureRect.height);
         this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
     },
     /** Returns the value for the given location. */

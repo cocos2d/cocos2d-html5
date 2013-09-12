@@ -497,7 +497,7 @@ cc.EditBox = cc.ControlButton.extend({
 
 cc.EditBox.getRect = function (node) {
     var contentSize = node.getContentSize();
-    var rect = cc.RectMake(0, 0, contentSize.width, contentSize.height);
+    var rect = cc.rect(0, 0, contentSize.width, contentSize.height);
     return cc.RectApplyAffineTransform(rect, node.nodeToWorldTransform());
 };
 
