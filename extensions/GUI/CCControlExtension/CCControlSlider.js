@@ -140,7 +140,7 @@ cc.ControlSlider = cc.Control.extend({
 
             // Defines the content size
             var maxRect = cc.ControlUtils.CCRectUnion(backgroundSprite.getBoundingBox(), thumbSprite.getBoundingBox());
-            var size = cc.SizeMake(maxRect.width, maxRect.height);
+            var size = cc.size(maxRect.width, maxRect.height);
             this.setContentSize(size);
 
             // Add the slider background

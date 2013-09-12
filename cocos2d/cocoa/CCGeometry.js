@@ -134,6 +134,7 @@ cc.Size = function (_width, _height) {
  * @return {cc.Size}
  */
 cc.SizeMake = function (width, height) {
+    cc.log("cc.SizeMake will be deprecated sooner or later. Use cc.size instead.");
     return cc.size(width, height);
 };
 

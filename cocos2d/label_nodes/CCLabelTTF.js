@@ -418,7 +418,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             texDef.fontDimensions = cc.SIZE_POINTS_TO_PIXELS(this._dimensions);
         } else {
             texDef.fontSize = this._fontSize;
-            texDef.fontDimensions = cc.SizeMake(this._dimensions.width, this._dimensions.height);
+            texDef.fontDimensions = cc.size(this._dimensions.width, this._dimensions.height);
         }
 
         texDef.fontName       =  this._fontName;

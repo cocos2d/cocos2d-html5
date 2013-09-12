@@ -97,7 +97,7 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     init:function () {
-        return this.initWithViewSize(cc.SizeMake(200, 200), null);
+        return this.initWithViewSize(cc.size(200, 200), null);
     },
 
     registerWithTouchDispatcher:function () {

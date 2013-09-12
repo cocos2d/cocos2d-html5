@@ -86,7 +86,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
             y = 16;
         }
 
-        var action = this.actionWithSize(cc.SizeMake(x, y));
+        var action = this.actionWithSize(cc.size(x, y));
 
         if (!this._back) {
             this._outScene.runAction( cc.Sequence.create(action,cc.CallFunc.create(this.finish, this),cc.StopGrid.create()));
