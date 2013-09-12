@@ -47,6 +47,7 @@ cc.Point = function (_x, _y) {
  * @return {cc.Point}
  */
 cc.PointMake = function (x, y) {
+    cc.log("cc.PointMake will be deprecated sooner or later. Use cc.p instead.");
     return new cc.Point(x, y);
 };
 
