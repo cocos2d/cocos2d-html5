@@ -81,9 +81,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     registerWithTouchDispatcher:function () {
         if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
-            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
+            cc.registerStandardDelegate(this,this._touchPriority);
         else
-            cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
+            cc.registerTargetedDelegate(this._touchPriority, true, this);
     },
 
     isMouseEnabled:function () {
@@ -140,7 +140,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
                     this.registerWithTouchDispatcher();
                 } else {
                     // have problems?
-                    cc.Director.getInstance().getTouchDispatcher().removeDelegate(this);
+                    cc.unregisterTouchDelegate(this);
                 }
             }
         }
@@ -289,7 +289,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     onExit:function () {
         var director = cc.Director.getInstance();
         if (this._isTouchEnabled)
-            director.getTouchDispatcher().removeDelegate(this);
+            cc.unregisterTouchDelegate(this);
 
         // remove this layer from the delegates who concern Accelerometer Sensor
         if (this._isAccelerometerEnabled)

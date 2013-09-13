@@ -420,7 +420,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), true);
+        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
     },
 
     /**

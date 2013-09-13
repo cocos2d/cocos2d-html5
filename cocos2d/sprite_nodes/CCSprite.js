@@ -999,7 +999,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             this._blendFunc = src;
         else
             this._blendFunc = {src: src, dst: dst};
-        this._isLighterMode = (this._blendFunc && (this._blendFunc.src === gl.SRC_ALPHA) && (this._blendFunc.dst === gl.ONE));
+        this._isLighterMode = (this._blendFunc &&
+            (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE)));
     },
 
     /**

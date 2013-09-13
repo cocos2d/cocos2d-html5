@@ -45,7 +45,7 @@ cc.NodeLoaderLibrary = cc.Class.extend({
         this.registerCCNodeLoader("CCMenu", cc.MenuLoader.loader());
         this.registerCCNodeLoader("CCMenuItemImage", cc.MenuItemImageLoader.loader());
         this.registerCCNodeLoader("CCControlButton", cc.ControlButtonLoader.loader());
-        this.registerCCNodeLoader("CCParticleSystemQuad", cc.ParticleSystemQuadLoader.loader());
+        this.registerCCNodeLoader("CCParticleSystemQuad", cc.ParticleSystemLoader.loader());
     },
 
     registerCCNodeLoader:function(className,ccNodeLoader){
