@@ -1682,18 +1682,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * Returns the current displayed frame.
      * @return {cc.SpriteFrame}
      */
-    displayFrame: null,
-
-    _displayFrameForWebGL: function () {
+    displayFrame: function () {
         return cc.SpriteFrame.createWithTexture(this._texture,
-            cc.RECT_POINTS_TO_PIXELS(this._rect),
-            this._rectRotated,
-            cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),
-            cc.SIZE_POINTS_TO_PIXELS(this._contentSize));
-    },
-
-    _displayFrameForCanvas: function () {
-        return cc.SpriteFrame._frameWithTextureForCanvas(this._texture,
             cc.RECT_POINTS_TO_PIXELS(this._rect),
             this._rectRotated,
             cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),
@@ -2064,7 +2054,6 @@ if(cc.Browser.supportWebGL){
     cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForWebGL;
     cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForWebGL;
     cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForWebGL;
-    cc.Sprite.prototype.displayFrame = cc.Sprite.prototype._displayFrameForWebGL;
     cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForWebGL;
     cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForWebGL;
     cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForWebGL;
@@ -2085,7 +2074,6 @@ if(cc.Browser.supportWebGL){
     cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForCanvas;
     cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForCanvas;
     cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForCanvas;
-    cc.Sprite.prototype.displayFrame = cc.Sprite.prototype._displayFrameForCanvas;
     cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForCanvas;
     cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForCanvas;
     cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForCanvas;
