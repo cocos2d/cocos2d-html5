@@ -479,8 +479,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // make needed room
         var locTextureAtlas = this._textureAtlas;
-        var locCapacity = locTextureAtlas.getCapacity();
-        while (index >= locCapacity || locCapacity === locTextureAtlas.getTotalQuads())
+        while (index >= locTextureAtlas.getCapacity() || locTextureAtlas.getCapacity() === locTextureAtlas.getTotalQuads())
             this.increaseAtlasCapacity();
 
         //
