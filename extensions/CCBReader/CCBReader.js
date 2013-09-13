@@ -135,7 +135,7 @@ cc.BuilderReader = cc.Class.extend({
     _loadedSpriteSheets:null,
 
     _owner:null,
-    _actionManager:null,
+    _animationManager:null,
     _animationManagers:null,
     _animatedProps:null,
 
@@ -196,7 +196,7 @@ cc.BuilderReader = cc.Class.extend({
 
     initWithData:function (data, owner) {
         //setup action manager
-        this._actionManager = new cc.BuilderAnimationManager();
+        this._animationManager = new cc.BuilderAnimationManager();
 
         //setup byte array
         //Array replace to CCData in Javascript
@@ -208,7 +208,7 @@ cc.BuilderReader = cc.Class.extend({
         this._owner = owner;
 
         //setup resolution scale and container size
-        this._actionManager.setRootContainerSize(cc.Director.getInstance().getWinSize());
+        this._animationManager.setRootContainerSize(cc.Director.getInstance().getWinSize());
 
         return true;
     },
@@ -229,9 +229,9 @@ cc.BuilderReader = cc.Class.extend({
 
     readNodeGraphFromData:function (data, owner, parentSize) {
         this.initWithData(data, owner);
-        var locActionManager = this._actionManager;
-        locActionManager.setRootContainerSize(parentSize);
-        locActionManager.setOwner(owner);
+        var locAnimationManager = this._animationManager;
+        locAnimationManager.setRootContainerSize(parentSize);
+        locAnimationManager.setOwner(owner);
 
         this._ownerOutletNames = [];
         this._ownerOutletNodes = [];
@@ -241,20 +241,20 @@ cc.BuilderReader = cc.Class.extend({
 
         var nodeGraph = this.readFileWithCleanUp(true);
 
-        if (nodeGraph && locActionManager.getAutoPlaySequenceId() != -1) {
+        if (nodeGraph && locAnimationManager.getAutoPlaySequenceId() != -1) {
             //auto play animations
-            locActionManager.runAnimations(locActionManager.getAutoPlaySequenceId(), 0);
+            locAnimationManager.runAnimations(locAnimationManager.getAutoPlaySequenceId(), 0);
         }
 
         if (this._jsControlled) {
             var locNodes = [];
             var locAnimations = [];
 
-            var locAnimationManager = this._animationManagers;
-            var getAllKeys = locAnimationManager.allKeys();
+            var locAnimationManagers = this._animationManagers;
+            var getAllKeys = locAnimationManagers.allKeys();
             for (var i = 0; i < getAllKeys.length; i++) {
                 locNodes.push(getAllKeys[i]);
-                locAnimations.push(locAnimationManager.objectForKey(getAllKeys[i]));
+                locAnimations.push(locAnimationManagers.objectForKey(getAllKeys[i]));
             }
 
             this._nodesWithAnimationManagers = locNodes;
@@ -280,11 +280,11 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     getAnimationManager:function () {
-        return this._actionManager;
+        return this._animationManager;
     },
 
     setAnimationManager:function (animationManager) {
-        this._actionManager = animationManager;
+        this._animationManager = animationManager;
     },
 
     getAnimatedProperties:function () {
@@ -478,15 +478,15 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     addDocumentCallbackName:function (name) {
-        this._actionManager.addDocumentCallbackName(name);
+        this._animationManager.addDocumentCallbackName(name);
     },
 
     addDocumentCallbackNode:function (node) {
-        this._actionManager.addDocumentCallbackNode(node);
+        this._animationManager.addDocumentCallbackNode(node);
     },
 
     addDocumentCallbackControlEvents:function(controlEvents){
-        this._actionManager.addDocumentCallbackControlEvents(controlEvents);
+        this._animationManager.addDocumentCallbackControlEvents(controlEvents);
     },
 
     readFileWithCleanUp:function (cleanUp) {
@@ -498,7 +498,7 @@ cc.BuilderReader = cc.Class.extend({
             return null;
 
         var node = this._readNodeGraph();
-        this._animationManagers.setObject(this._actionManager, node);
+        this._animationManagers.setObject(this._animationManager, node);
 
         if (cleanUp)
             this._cleanUpNodeGraph(node);
@@ -531,7 +531,7 @@ cc.BuilderReader = cc.Class.extend({
             return true;
 
         var channel = new cc.BuilderSequenceProperty();
-        var locJsControlled = this._jsControlled, locActionManager = this._actionManager, locKeyframes = channel.getKeyframes();
+        var locJsControlled = this._jsControlled, locAnimationManager = this._animationManager, locKeyframes = channel.getKeyframes();
         for (var i = 0; i < numKeyframes; i++) {
             var time = this.readFloat();
             var callbackName = this.readCachedString();
@@ -544,7 +544,7 @@ cc.BuilderReader = cc.Class.extend({
             keyframe.setValue(value);
 
             if(locJsControlled)
-                locActionManager.getKeyframeCallbacks().push(callbackType+":"+callbackName);
+                locAnimationManager.getKeyframeCallbacks().push(callbackType+":"+callbackName);
 
             locKeyframes.push(keyframe);
         }
@@ -583,7 +583,7 @@ cc.BuilderReader = cc.Class.extend({
         return true;
     },
     _readSequences:function () {
-        var sequences = this._actionManager.getSequences();
+        var sequences = this._animationManager.getSequences();
         var numSeqs = this.readInt(false);
         for (var i = 0; i < numSeqs; i++) {
             var seq = new cc.BuilderSequence();
@@ -599,7 +599,7 @@ cc.BuilderReader = cc.Class.extend({
 
             sequences.push(seq);
         }
-        this._actionManager.setAutoPlaySequenceId(this.readInt(true));
+        this._animationManager.setAutoPlaySequenceId(this.readInt(true));
         return true;
     },
 
@@ -643,7 +643,7 @@ cc.BuilderReader = cc.Class.extend({
                 spriteFile = this._ccbRootPath + spriteFile;
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var locContentSize = texture.getContentSize();
-                var bounds = cc.RectMake(0, 0, locContentSize.width, locContentSize.height);
+                var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
                 value = cc.SpriteFrame.createWithTexture(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;
@@ -682,7 +682,7 @@ cc.BuilderReader = cc.Class.extend({
         }
 
         this._jsControlled = this.readBool();
-        this._actionManager._jsControlled = this._jsControlled;
+        this._animationManager._jsControlled = this._jsControlled;
         // no need to set if it is "jscontrolled". It is obvious.
         return true;
     },
@@ -730,7 +730,7 @@ cc.BuilderReader = cc.Class.extend({
         /* Read class name. */
         var className = this.readCachedString();
 
-        var jsControlledName, locJsControlled = this._jsControlled, locActionManager = this._actionManager;
+        var jsControlledName, locJsControlled = this._jsControlled, locActionManager = this._animationManager;
         if (locJsControlled)
             jsControlledName = this.readCachedString();
 

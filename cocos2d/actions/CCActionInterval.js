@@ -181,9 +181,9 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @param {cc.FiniteTimeAction} actionTwo
      * @return {Boolean}
      */
-    initOneTwo:function (actionOne, actionTwo) {
-        cc.Assert(actionOne != null, "Sequence.initOneTwo");
-        cc.Assert(actionTwo != null, "Sequence.initOneTwo");
+    initWithTwoActions:function (actionOne, actionTwo) {
+        cc.Assert(actionOne != null, "Sequence.initWithTwoActions");
+        cc.Assert(actionTwo != null, "Sequence.initWithTwoActions");
 
         var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
@@ -199,7 +199,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     clone:function () {
         var action = new cc.Sequence();
-        action.initOneTwo(this._actions[0].clone(), this._actions[1].clone());
+        action.initWithTwoActions(this._actions[0].clone(), this._actions[1].clone());
         return action;
     },
 
@@ -317,7 +317,7 @@ cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
  */
 cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
     var sequence = new cc.Sequence();
-    sequence.initOneTwo(actionOne, actionTwo);
+    sequence.initWithTwoActions(actionOne, actionTwo);
     return sequence;
 };
 
@@ -599,7 +599,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * @param {cc.FiniteTimeAction} action2
      * @return {Boolean}
      */
-    initOneTwo:function (action1, action2) {
+    initWithTwoActions:function (action1, action2) {
         cc.Assert(action1 != null, "no action1");
         cc.Assert(action2 != null, "no action2");
 
@@ -629,7 +629,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      */
     clone:function () {
         var action = new cc.Spawn();
-        action.initOneTwo(this._one.clone(), this._two.clone());
+        action.initWithTwoActions(this._one.clone(), this._two.clone());
         return action;
     },
 
@@ -697,7 +697,7 @@ cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
  */
 cc.Spawn._actionOneTwo = function (action1, action2) {
     var pSpawn = new cc.Spawn();
-    pSpawn.initOneTwo(action1, action2);
+    pSpawn.initWithTwoActions(action1, action2);
     return pSpawn;
 };
 
