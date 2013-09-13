@@ -110,7 +110,6 @@
         'label_nodes/CCLabelTTF.js',
         'label_nodes/CCLabelBMFont.js',
         'particle_nodes/CCParticleSystem.js',
-        'particle_nodes/CCParticleSystemQuad.js',
         'particle_nodes/CCParticleExamples.js',
         'particle_nodes/CCParticleBatchNode.js',
         'touch_dispatcher/CCTouchDelegateProtocol.js',

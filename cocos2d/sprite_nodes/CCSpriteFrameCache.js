@@ -161,8 +161,10 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
     /**
      * Adds multiple Sprite Frames from a json file. A texture will be loaded automatically.
      * @param {object} jsonData
+     * @deprecated
      */
     addSpriteFramesWithJson:function (jsonData) {
+        cc.log("addSpriteFramesWithJson is deprecated, because Json format doesn't support on JSB. Use XML format instead");
         var dict = jsonData;
         var texturePath = "";
 

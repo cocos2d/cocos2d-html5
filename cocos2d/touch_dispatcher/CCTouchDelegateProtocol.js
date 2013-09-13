@@ -137,7 +137,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /**
      * Virtual function
-     * @param {cc.Touch} touch
+     * @param {Array} touches
      * @param {event} event
      */
     onTouchesBegan:function (touches, event) {
@@ -145,7 +145,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /**
      * Virtual function
-     * @param {cc.Touch} touch
+     * @param {Array} touches
      * @param {event} event
      */
     onTouchesMoved:function (touches, event) {
@@ -153,7 +153,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /**
      * Virtual function
-     * @param {cc.Touch} touch
+     * @param {Array} touches
      * @param {event} event
      */
     onTouchesEnded:function (touches, event) {
@@ -161,7 +161,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /**
      * Virtual function
-     * @param {cc.Touch} touch
+     * @param {Array} touches
      * @param {event} event
      */
     onTouchesCancelled:function (touches, event) {
@@ -169,7 +169,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /*
      * In TouchesTest, class Padle inherits from cc.Sprite and cc.TargetedTouchDelegate.
-     * When it invoke  cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true),
+     * When it invoke  cc.registerTargetedDelegate(0, true, this),
      * it will crash in cc.TouchHandler.initWithDelegate() because of dynamic_cast() on android.
      * I don't know why, so add these functions for the subclass to invoke it's own retain() and  release
      *Virtual function
