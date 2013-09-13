@@ -202,14 +202,14 @@
 
                 // base abcd
                 t.a = t.d = Cos;
-                t.c = -Sin;
-                t.b = Sin;
+                t.b = -Sin;
+                t.c = Sin;
 
                 // scale
                 if (locScaleX !== 1 || locScaleY !== 1) {
                     t.a *= locScaleX;
-                    t.b *= locScaleX;
-                    t.c *= locScaleY;
+                    t.c *= locScaleX;
+                    t.b *= locScaleY;
                     t.d *= locScaleY;
                 }
 
