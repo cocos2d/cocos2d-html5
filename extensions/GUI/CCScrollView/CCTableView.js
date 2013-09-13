@@ -231,10 +231,10 @@ cc.TableView = cc.ScrollView.extend({
 
         switch (this.getDirection()) {
             case cc.SCROLLVIEW_DIRECTION_HORIZONTAL:
-                size = cc.SizeMake(cellCount * cellSize.width, cellSize.height);
+                size = cc.size(cellCount * cellSize.width, cellSize.height);
                 break;
             default:
-                size = cc.SizeMake(cellSize.width, cellCount * cellSize.height);
+                size = cc.size(cellSize.width, cellCount * cellSize.height);
                 break;
         }
         this.setContentSize(size);

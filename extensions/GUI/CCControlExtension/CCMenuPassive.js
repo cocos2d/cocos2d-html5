@@ -27,14 +27,14 @@ cc.Spacer = cc.Layer.extend({});
 cc.Spacer.verticalSpacer = function (space) {
     var pRet = new cc.Spacer();
     pRet.init();
-    pRet.setContentSize(cc.SizeMake(0, space));
+    pRet.setContentSize(cc.size(0, space));
     return pRet;
 };
 
 cc.Spacer.horizontalSpacer = function (space) {
     var pRet = new cc.Spacer();
     pRet.init();
-    pRet.setContentSize(cc.SizeMake(space, 0));
+    pRet.setContentSize(cc.size(space, 0));
     return pRet;
 };
 
@@ -141,7 +141,7 @@ cc.MenuPassive = cc.Layer.extend({
                 }
             }
         }
-        this.setContentSize(cc.SizeMake(width, height));
+        this.setContentSize(cc.size(width, height));
     },
 
     /** align items horizontally */
@@ -174,7 +174,7 @@ cc.MenuPassive = cc.Layer.extend({
                 }
             }
         }
-        this.setContentSize(cc.SizeMake(width, height));
+        this.setContentSize(cc.size(width, height));
     },
 
     /** align items in rows of columns */
