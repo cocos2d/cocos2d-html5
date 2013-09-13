@@ -82,7 +82,7 @@ cc.DisplayManager = cc.Class.extend({
             else
                 skin.setSkinData(new cc.BaseData());
         }
-        else if (display instanceof cc.ParticleSystemQuad){
+        else if (display instanceof cc.ParticleSystem){
             displayData = new cc.ParticleDisplayData();
         }
         else if (display instanceof cc.Armature){
@@ -174,7 +174,7 @@ cc.DisplayManager = cc.Class.extend({
         if (displayRenderNode) {
             if (displayRenderNode instanceof cc.Armature) {
                 this._bone.setChildArmature(displayRenderNode);
-            }else if(displayRenderNode instanceof cc.ParticleSystemQuad) {
+            }else if(displayRenderNode instanceof cc.ParticleSystem) {
                 displayRenderNode.resetSystem();
             }
             if (displayRenderNode.RGBAProtocol)            {

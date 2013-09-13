@@ -329,7 +329,7 @@ cc.ActionManager = cc.Class.extend({
         for (var elt = 0; elt < locTargets.length; elt++) {
             this._currentTarget = locTargets[elt];
             locCurrTarget = this._currentTarget;
-            this._currentTargetSalvaged = false;
+            //this._currentTargetSalvaged = false;
             if (!locCurrTarget.paused) {
                 // The 'actions' CCMutableArray may change while inside this loop.
                 for (locCurrTarget.actionIndex = 0; locCurrTarget.actionIndex < locCurrTarget.actions.length;

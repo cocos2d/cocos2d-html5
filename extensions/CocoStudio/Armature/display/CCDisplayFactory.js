@@ -187,7 +187,7 @@ cc.DisplayFactory.addParticleDisplay = function (bone, decoDisplay, displayData)
 };
 cc.DisplayFactory.createParticleDisplay = function (bone, decoDisplay) {
     var displayData = decoDisplay.getDisplayData();
-    var system = cc.ParticleSystemQuad.create(displayData.plist);
+    var system = cc.ParticleSystem.create(displayData.plist);
     decoDisplay.setDisplay(system);
 };
 cc.DisplayFactory.updateParticleDisplay = function (bone, particleSystem, dt, dirty) {
