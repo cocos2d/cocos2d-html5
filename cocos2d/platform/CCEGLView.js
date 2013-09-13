@@ -416,7 +416,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     getScissorRect:function () {
         var gl = cc.renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
         var boxArr = gl.getParameter(gl.SCISSOR_BOX);
-        return cc.RectMake((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / this._scaleY,
+        return cc.rect((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / this._scaleY,
             boxArr[2] / scaleX, boxArr[3] / scaleY);
     },
 

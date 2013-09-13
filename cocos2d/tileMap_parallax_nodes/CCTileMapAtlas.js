@@ -97,7 +97,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * @param {cc.Point} position
      * @return {cc.Color3B}
      */
-    tileAt:function (position) {
+    getTileAt:function (position) {
         cc.Assert(this._TGAInfo != null, "tgaInfo must not be nil");
         cc.Assert(position.x < this._TGAInfo.width, "Invalid position.x");
         cc.Assert(position.y < this._TGAInfo.height, "Invalid position.y");

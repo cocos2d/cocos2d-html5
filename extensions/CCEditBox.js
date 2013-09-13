@@ -281,13 +281,32 @@ cc.EditBox = cc.ControlButton.extend({
     setFont: function (fontName, fontSize) {
         this._edFontSize = fontSize;
         this._edFontName = fontName;
-        if (this._edTxt.value == this._placeholderText)
-            this._setFontToEditBox();
+        this._setFontToEditBox();
+    },
+
+    /**
+     * set fontName
+     * @param {String} fontName
+     */
+    setFontName: function(fontName){
+        this._edFontName = fontName;
+        this._setFontToEditBox();
+    },
+
+    /**
+     * set fontSize
+     * @param {Number} fontSize
+     */
+    setFontSize: function(fontSize){
+        this._edFontSize = fontSize;
+        this._setFontToEditBox();
     },
 
     _setFontToEditBox: function () {
-        this._edTxt.style.fontFamily = this._placeholderFontName;
-        this._edTxt.style.fontSize = this._placeholderFontSize;
+        if (this._edTxt.value != this._placeholderText){
+            this._edTxt.style.fontFamily = this._edFontName;
+            this._edTxt.style.fontSize = this._edFontSize+"px";
+        }
     },
 
     /**
@@ -363,13 +382,32 @@ cc.EditBox = cc.ControlButton.extend({
     setPlaceholderFont: function (fontName, fontSize) {
         this._placeholderFontName = fontName;
         this._placeholderFontSize = fontSize;
-        if (this._edTxt.value == this._placeholderText)
-            this._setPlaceholderFontToEditText();
+        this._setPlaceholderFontToEditText();
+    },
+
+    /**
+     * Set the placeholder's fontName.
+     * @param {String} fontName
+     */
+    setPlaceholderFont: function (fontName) {
+        this._placeholderFontName = fontName;
+        this._setPlaceholderFontToEditText();
+    },
+
+    /**
+     * Set the placeholder's fontSize.
+     * @param {Number} fontSize
+     */
+    setPlaceholderFont: function (fontSize) {
+        this._placeholderFontSize = fontSize;
+        this._setPlaceholderFontToEditText();
     },
 
     _setPlaceholderFontToEditText: function () {
-        this._edTxt.style.fontFamily = this._placeholderFontName;
-        this._edTxt.style.fontSize = this._placeholderFontSize;
+        if (this._edTxt.value == this._placeholderText){
+            this._edTxt.style.fontFamily = this._placeholderFontName;
+            this._edTxt.style.fontSize = this._placeholderFontSize + "px";
+        }
     },
 
     /**
@@ -497,7 +535,7 @@ cc.EditBox = cc.ControlButton.extend({
 
 cc.EditBox.getRect = function (node) {
     var contentSize = node.getContentSize();
-    var rect = cc.RectMake(0, 0, contentSize.width, contentSize.height);
+    var rect = cc.rect(0, 0, contentSize.width, contentSize.height);
     return cc.RectApplyAffineTransform(rect, node.nodeToWorldTransform());
 };
 

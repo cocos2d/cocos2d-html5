@@ -102,7 +102,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
     },
     updateDraggerWithHSV:function (hsv) {
         // Set the position of the slider to the correct saturation and brightness
-        var pos = cc.PointMake(this._startPos.x + this._boxPos + (this._boxSize * (1 - hsv.s)),
+        var pos = cc.p(this._startPos.x + this._boxPos + (this._boxSize * (1 - hsv.s)),
             this._startPos.y + this._boxPos + (this._boxSize * hsv.v));
 
         // update

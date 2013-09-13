@@ -1704,7 +1704,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteBatchNode|null} spriteBatchNode
      * @example
      *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
-     *  var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(0, 0, 57, 57));
+     *  var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.rect(0, 0, 57, 57));
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */
