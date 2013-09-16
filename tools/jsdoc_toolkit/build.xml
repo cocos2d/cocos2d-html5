@@ -38,6 +38,8 @@
             <source file="${src.dir}/support/CCPointExtension.js"/>
             <source file="${src.dir}/support/CCPNGReader.js"/>
             <source file="${src.dir}/support/CCTIFFReader.js"/>
+            <source file="${src.dir}/support/component/CCComponent.js"/>
+            <source file="${src.dir}/support/component/CCComponentContainer.js"/>
             <source file="${src.dir}/base_nodes/CCNode.js"/>
             <source file="${src.dir}/base_nodes/CCdomNode.js"/>
             <source file="${src.dir}/base_nodes/CCAtlasNode.js"/>
