@@ -903,7 +903,6 @@ else
 
 cc.LabelTTF.__labelHeightDiv = document.createElement("div");
 cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
-cc.LabelTTF.__labelHeightDiv.innerHTML = "ajghl~!";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";
 cc.LabelTTF.__labelHeightDiv.style.left = "-100px";
 cc.LabelTTF.__labelHeightDiv.style.top = "-100px";
@@ -914,10 +913,12 @@ cc.LabelTTF.__getFontHeightByDiv = function(fontName, fontSize){
     var clientHeight = cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize];
     if (clientHeight > 0) return clientHeight;
     var labelDiv = cc.LabelTTF.__labelHeightDiv;
+    labelDiv.innerHTML = "ajghl~!";
     labelDiv.style.fontFamily = fontName;
     labelDiv.style.fontSize = fontSize + "px";
     clientHeight = labelDiv.clientHeight ;
     cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize] = clientHeight;
+    labelDiv.innerHTML = "";
     return clientHeight;
 };
 

@@ -33,4 +33,4 @@ cc.armatureVersion = function(){
     return "0.4.0.0";
 };
 
-cc.RESOURCE_TYPE.TEXT.push("ExportJson");
+cc.RESOURCE_TYPE["TEXT"].push("ExportJson");
