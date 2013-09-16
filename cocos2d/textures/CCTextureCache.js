@@ -484,7 +484,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * This will attempt to calculate the size of each texture, and the total texture memory in use. </p>
      */
     dumpCachedTextureInfo:function () {
-        var count = 0;
+         var count = 0;
         var totalBytes = 0, locTextures = this._textures;
 
         for (var key in locTextures) {
@@ -494,18 +494,22 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
                 cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
             else {
                 cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
-                totalBytes += selTexture.getPixelsWide() * selTexture.getPixelsHigh() * 4;
             }
+            totalBytes += selTexture.getPixelsWide() * selTexture.getPixelsHigh() * 4;
         }
 
         var locTextureColorsCache = this._textureColorsCache;
         for (key in locTextureColorsCache) {
-            var selCanvas = locTextureColorsCache[key];
-            count++;
-            cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selCanvas.getPixelsWide() + " x " + selCanvas.getPixelsHigh());
-            totalBytes += selCanvas.getPixelsWide() * selCanvas.getPixelsHigh() * 4;
-        }
+            var selCanvasColorsArr = locTextureColorsCache[key];
+            for (var selCanvasKey in selCanvasColorsArr){
+                var selCanvas = selCanvasColorsArr[selCanvasKey];
+                count++;
+                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selCanvas.width + " x " + selCanvas.height);
+                totalBytes += selCanvas.width * selCanvas.height * 4;
+            }
 
+        }
+//
         cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, HTMLCanvasElement for "
             + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
     }
