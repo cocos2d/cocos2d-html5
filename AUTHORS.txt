@@ -81,7 +81,18 @@ Kang-Hao Lu(Opera/Oupeng) @kennyluck    Optimize John Resig's inheritance patter
 
 Mark Henderson       @MarkEHenderson    Code review, LabelTTF and Scale9Sprite bug fix
 
-06wj                 @06wj         CCScheduler improvements
+Wang Jing            @06wj         CCScheduler improvements
+                                   Js file loading image add
+                                   cc.RectApplyAffineTransform improvements
+
+Wang Zhe             @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
+
+Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
+
+Zhen XiaoJun         @SmallAiTT    _getResType error fix
+                                   cc.ScrollView bug fix
+
+Cheng Guozhu         @bengol       cc.SimpleAudioEngine bug fix
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 
