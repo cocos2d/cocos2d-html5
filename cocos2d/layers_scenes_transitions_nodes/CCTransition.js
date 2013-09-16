@@ -547,12 +547,6 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
     },
 
     /**
-     * Constructor
-     */
-    ctor:function () {
-    },
-
-    /**
      * custom on enter
      */
     onEnter:function () {
