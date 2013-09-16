@@ -85,7 +85,7 @@ Wang Jing            @06wj         CCScheduler improvements
                                    Js file loading image add
                                    cc.RectApplyAffineTransform improvements
 
-Wang Zhe             @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
+Wang Ze              @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
 
 Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
 
