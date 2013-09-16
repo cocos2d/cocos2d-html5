@@ -1,3 +1,33 @@
+Cocos2d-html5-v2.1.6 @ Sep.19, 2013
+* Improved Sprite, Node, LabelTTF class define from separated code to combined code for maintainability, now it is clean and clear
+* cc.Sprite and its subClasses's texture has been replaced from DOM element to cc.Texture2D on Canvas mode
+* Improved cc.Texture2d for direct using without pre-loading image resources, you don't need to wait resources loading when create a new scene or layers
+* Migrated CCBReader and GUI to Cocos2d-x 2.1.4
+* Improved update function of Action, and avoid using temporary object, it is good for GC and performance
+* Modified LabelTTF's rendering from direct drawing to pre-rendering for performance, 100% faster than before on mobile browser
+* Fixed APIs of HTML5 according to JSB for compatibility, e.g. cc.ParticleSystemQuad has merged into cc.ParticleSystem, please check it on upgrade guide v2.1.5 to v2.1.6(http://www.cocos2d-x.org/wiki/Upgrade_Guide_from_Cocos2d-html5_v215_to_v216)
+* Added Hiding url address bar for mobile browser, please check the template and hello world
+* Re-writed Canvas Mode of RenderTexture to adapt WebGL interface
+* Added frame event, collider and blend type supporting for Armature. Now Armature supports two tools:1.CocoStudio(windows,http://www.cocostudio.org),2.DragonBones v2.3(flash,http://dragonbones.github.io)
+* Set auto render mode default value to canvas in mobile browsers and WebGL in desktop browsers
+
+* Bug fix:
+1. Fixed cc.Sprite's displayFrame returns wrong value on Canvas mode.
+2. Fixed cc.LabelBMFont is very slow when calling setString
+3. Fixed a bug of CCBReader that cc.ControlButton doesn't work when its controller is _jsControlled
+4. Fixed a bug of cc.TextureCache that the status of texture is wrong in callback
+5. Fixed a bug of cc.Scale9Sprite that its contentSize is wrong when call setCapInsets
+6. Fixed a bug of cc.TableView's that contentSize is wrong when change datasource
+7. Fixed a bug of cc.Sprite that its children also follow fliped when it was fliped
+8. Fixed cc.Node's nodeToWorldTransform returns wrong value on Canvas Mode
+9. Fixed a bug of cc.LayerColor that represent incorrect opacity passed into init method
+10. Stop listening and remove the event for HtmlImageElement object onload
+11. Fixed cc.ProgressTimer display wrong when its sprite was flipped
+
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. ClipNodeTest effects varies in different browsers
+
 Cocos2d-html5-v2.1.5 @ July.24, 2013
 * Ported engine API to keep the same as Cocos2d-x v2.1.4 API
 * Optimized John Resig's inheritance pattern (cc.Class.extend) with advanced property initialization.
@@ -8,7 +38,7 @@ Cocos2d-html5-v2.1.5 @ July.24, 2013
 * Optimized performance for MoonWarriors and CocosDragonJS
 
 * Bug fix:
-  1. Fixed cc.EditBox Dom Element position issue when EGLView is setted
+  1. Fixed cc.EditBox Dom Element position issue when EGLView is set
   2. Fixed cc.EGLView adjustSize bug
   3. Fixed the bug of cc.ParticleBatchNode that it doesn't hide particles after particle life has expired when calling stopSystem()
   4. Fixed a bug that LabelTTF dimension behavior doesn't support height=0
@@ -17,6 +47,7 @@ Cocos2d-html5-v2.1.5 @ July.24, 2013
 * Known Issues:
      1. Effect Advanced Lens3D doesn't work
      2. ClipNodeTest effects varies in different browsers
+     3. nodeToParentTransform in cc.Node returns wrong value on Canvas mode
 
 Cocos2d-html5-v2.1.4 @ Jun.12, 2013
 * Added support for multiple resources loading. This mechanic is the same as cocos2d-x now
