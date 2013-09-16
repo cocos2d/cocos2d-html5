@@ -159,6 +159,22 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     },
 
     /**
+     * Preload music resource.
+     * @param {String} path
+     */
+    preloadMusic:function(path){
+        this.preloadSound(path);
+    },
+
+    /**
+     * Preload effect resource.
+     * @param {String} path
+     */
+    preloadEffect:function(path){
+        this.preloadSound(path);
+    },
+
+    /**
      * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the music file with filename extension.
@@ -764,6 +780,22 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         };
         req.onerror = onError;
         req.send();
+    },
+
+    /**
+     * Preload music resource.
+     * @param {String} path
+     */
+    preloadMusic:function(path){
+        this.preloadSound(path);
+    },
+
+    /**
+     * Preload effect resource.
+     * @param {String} path
+     */
+    preloadEffect:function(path){
+        this.preloadSound(path);
     },
 
     /**

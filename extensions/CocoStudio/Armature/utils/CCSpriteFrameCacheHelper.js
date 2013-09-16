@@ -22,7 +22,35 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.MAX_VERTEXZ_VALUE = 5000000.0;
-cc.ARMATURE_MAX_CHILD = 50.0;
-cc.ARMATURE_MAX_ZORDER = 100;
-cc.ARMATURE_MAX_COUNT = ((cc.MAX_VERTEXZ_VALUE) / (cc.ARMATURE_MAX_CHILD) / cc.ARMATURE_MAX_ZORDER);
+cc.SpriteFrameCacheHelper = cc.Class.extend({
+    _textureAtlasDic:null,
+    _imagePaths:[],
+    ctor:function () {
+        this._textureAtlasDic = {};
+        this._imagePaths = [];
+    },
+    addSpriteFrameFromFile:function (plistPath, imagePath) {
+        cc.SpriteFrameCache.getInstance().addSpriteFrames(plistPath, imagePath);
+    },
+
+    getTexureAtlasWithTexture:function (texture) {
+        //todo
+        return null;
+        var textureName = texture.getName();
+        var atlas = this._textureAtlasDic[textureName];
+        if (atlas == null) {
+            atlas = cc.TextureAtlas.createWithTexture(texture, 20);
+            this._textureAtlasDic[textureName] = atlas;
+        }
+        return atlas;
+    }
+});
+cc.SpriteFrameCacheHelper.getInstance = function () {
+    if (!this._instance) {
+        this._instance = new cc.SpriteFrameCacheHelper();
+    }
+    return this._instance;
+};
+cc.SpriteFrameCacheHelper.purge = function () {
+    this._instance = null;
+};

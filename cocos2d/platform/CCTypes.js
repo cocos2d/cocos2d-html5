@@ -683,7 +683,7 @@ cc.T2F_Quad = function(bl, br, tl, tr){
 };
 
 /**
- * struct that holds the size in pixels, texture coordinates and delays for animated cc.ParticleSystemQuad
+ * struct that holds the size in pixels, texture coordinates and delays for animated cc.ParticleSystem
  * @param {cc.T2F_Quad} texCoords
  * @param delay
  * @param size

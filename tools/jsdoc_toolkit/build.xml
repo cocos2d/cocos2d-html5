@@ -38,6 +38,8 @@
             <source file="${src.dir}/support/CCPointExtension.js"/>
             <source file="${src.dir}/support/CCPNGReader.js"/>
             <source file="${src.dir}/support/CCTIFFReader.js"/>
+            <source file="${src.dir}/support/component/CCComponent.js"/>
+            <source file="${src.dir}/support/component/CCComponentContainer.js"/>
             <source file="${src.dir}/base_nodes/CCNode.js"/>
             <source file="${src.dir}/base_nodes/CCdomNode.js"/>
             <source file="${src.dir}/base_nodes/CCAtlasNode.js"/>
@@ -74,7 +76,6 @@
             <source file="${src.dir}/label_nodes/CCLabelTTF.js"/>
             <source file="${src.dir}/label_nodes/CCLabelBMFont.js"/>
             <source file="${src.dir}/particle_nodes/CCParticleSystem.js"/>
-            <source file="${src.dir}/particle_nodes/CCParticleSystemQuad.js"/>
             <source file="${src.dir}/particle_nodes/CCParticleExamples.js"/>
             <source file="${src.dir}/touch_dispatcher/CCTouchDelegateProtocol.js"/>
             <source file="${src.dir}/touch_dispatcher/CCTouchHandler.js"/>

@@ -77,7 +77,7 @@ cc.Browser = {};
     // check supportWebGL item
     cc._userRenderMode = parseInt(c["renderMode"]) || 0;
 
-    if (cc._userRenderMode === 1) {
+    if (cc._userRenderMode === 1 || (cc._userRenderMode === 0 && cc.Browser.isMobile)) {
         //canvas only
         cc.Browser.supportWebGL = false;
     } else {

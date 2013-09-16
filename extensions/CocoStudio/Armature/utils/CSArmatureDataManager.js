@@ -52,6 +52,15 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
+     * remove armature data
+     * @param {string} id
+     */
+    removeArmatureData:function(id){
+        if (this._armarureDatas.hasOwnProperty(id))
+           delete this._armarureDatas[id];
+    },
+
+    /**
      * get armatureData by id
      * @param {String} id
      * @return {cc.ArmatureData}
@@ -65,6 +74,14 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
+     * get armatureDatas
+     * @return {Object}
+     */
+    getArmatureDatas:function () {
+        return this._armarureDatas;
+    },
+
+    /**
      * add animation data
      * @param {String} id
      * @param {cc.AnimationData} animationData
@@ -73,6 +90,15 @@ cc.ArmatureDataManager = cc.Class.extend({
         if (this._animationDatas) {
             this._animationDatas[id] = animationData;
         }
+    },
+
+    /**
+     * remove animation data
+     * @param {string} id
+     */
+    removeAnimationData:function(id){
+        if (this._animationDatas.hasOwnProperty(id))
+            delete this._animationDatas[id];
     },
 
     /**
@@ -89,6 +115,14 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
+     * get animationDatas
+     * @return {Object}
+     */
+    getAnimationDatas:function () {
+        return this._animationDatas;
+    },
+
+    /**
      * add texture data
      * @param {String} id
      * @param {cc.TextureData} textureData
@@ -100,7 +134,16 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
-     * get animationData by id
+     * remove texture data
+     * @param {string} id
+     */
+    removeTextureData:function(id){
+        if (this._textureDatas.hasOwnProperty(id))
+            delete this._textureDatas[id];
+    },
+
+    /**
+     * get textureData by id
      * @param {String} id
      * @return {cc.TextureData}
      */
@@ -113,14 +156,61 @@ cc.ArmatureDataManager = cc.Class.extend({
     },
 
     /**
+     * get textureDatas
+     * @return {Object}
+     */
+    getTextureDatas:function () {
+        return this._textureDatas;
+    },
+
+    /**
      * Add ArmatureFileInfo, it is managed by CCArmatureDataManager.
      * @param {String} imagePath
      * @param {String} plistPath
      * @param {String} configFilePath
      */
-    addArmatureFileInfo:function (imagePath, plistPath, configFilePath) {
-        cc.DataReaderHelper.addDataFromFile(configFilePath);
-        this.addSpriteFrameFromFile(plistPath, imagePath);
+    addArmatureFileInfo:function (/*imagePath,plistPath,configFilePath*/) {
+        var imagePath,plistPath,configFilePath;
+        var isLoadSpriteFrame = false;
+        if (arguments.length == 1) {
+            configFilePath = arguments[0];
+            isLoadSpriteFrame = true;
+        } else if (arguments.length == 3){
+            imagePath = arguments[0];
+            plistPath = arguments[1];
+            configFilePath = arguments[2];
+            this.addSpriteFrameFromFile(plistPath, imagePath);
+        }
+        cc.DataReaderHelper.addDataFromFile(configFilePath,isLoadSpriteFrame);
+    },
+
+    /**
+     * Add ArmatureFileInfo, it is managed by CCArmatureDataManager.
+     * @param {String} imagePath
+     * @param {String} plistPath
+     * @param {String} configFilePath
+     * @param {Object} target
+     * @param {Function} configFilePath
+     */
+    addArmatureFileInfoAsync:function (/*imagePath, plistPath, configFilePath,target,selector*/) {
+        var imagePath, plistPath, configFilePath,target,selector;
+        var isLoadSpriteFrame = false;
+        if (arguments.length == 3) {
+            configFilePath = arguments[0];
+            target = arguments[1];
+            selector = arguments[2];
+            isLoadSpriteFrame = true;
+        } else if (arguments.length == 5){
+            imagePath = arguments[0];
+            plistPath = arguments[1];
+            configFilePath = arguments[2];
+            target = arguments[3];
+            selector = arguments[4];
+            this.addSpriteFrameFromFile(plistPath, imagePath);
+        }
+
+        cc.DataReaderHelper.addDataFromFileAsync(configFilePath,target,selector,isLoadSpriteFrame);
+
     },
 
     /**
@@ -150,6 +240,6 @@ cc.ArmatureDataManager.getInstance = function () {
 };
 cc.ArmatureDataManager.purge = function () {
     cc.SpriteFrameCacheHelper.purge();
-    cc.PhysicsWorld.purge();
+    cc.DataReaderHelper.clear();
     this._instance = null;
 };

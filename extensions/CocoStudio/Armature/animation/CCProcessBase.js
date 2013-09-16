@@ -38,7 +38,7 @@ CC_ANIMATION_TYPE_MAX = 2;//the animation max
  * @extends cc.Class
  */
 cc.ProcessBase = cc.Class.extend({
-    _animationScale:1,
+    _processScale:1,
     _isComplete:true,
     _isPause:true,
     _isPlaying:false,
@@ -53,7 +53,7 @@ cc.ProcessBase = cc.Class.extend({
     _curFrameIndex:null,
     _isLoopBack:false,
     ctor:function () {
-        this._animationScale = 1;
+        this._processScale = 1;
         this._isComplete = true;
         this._isPause = true;
         this._isPlaying = false;
@@ -72,15 +72,18 @@ cc.ProcessBase = cc.Class.extend({
 
     pause:function () {
         this._isPause = true;
+        this._isPlaying = false;
     },
 
 
     resume:function () {
         this._isPause = false;
+        this._isPlaying = true;
     },
 
     stop:function () {
         this._isComplete = true;
+        this._isPlaying = false;
         this._currentFrame = 0;
         this._currentPercent = 0;
     },
@@ -123,29 +126,33 @@ cc.ProcessBase = cc.Class.extend({
 
     update:function (dt) {
         if (this._isComplete || this._isPause) {
-            return;
+            return false;
         }
         if (this._rawDuration <= 0 || dt > 1) {
-            return;
+            return false;
         }
-        if (this._nextFrameIndex <= 0) {
-            this._currentFrame = this._nextFrameIndex = 1;
+        var locNextFrameIndex = this._nextFrameIndex;
+        if (locNextFrameIndex <= 0) {
+            this._currentPercent = 1;
+            this._currentFrame = 0;
+        }else{
+            /*
+             *  update this._currentFrame, every update add the frame passed.
+             *  dt/this._animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
+             *  animation speed slower or quicker.
+             */
+            this._currentFrame += this._processScale * (dt / this._animationInternal);
+
+            this._currentPercent = this._currentFrame / locNextFrameIndex;
+
+            /*
+             *	if this._currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util this._currentFrame is
+             *  smaller than this._nextFrameIndex
+             */
+            this._currentFrame = cc.fmodf(this._currentFrame, locNextFrameIndex);
         }
-        /*
-         *  update this._currentFrame, every update add the frame passed.
-         *  dt/this._animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
-         *  animation speed slower or quicker.
-         */
-        this._currentFrame += this._animationScale * (dt / this._animationInternal);
-
-        this._currentPercent = this._currentFrame / this._nextFrameIndex;
-
-        /*
-         *	if this._currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util this._currentFrame is
-         *  smaller than this._nextFrameIndex
-         */
-        this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
         this.updateHandler();
+        return true;
     },
 
     /**
@@ -156,7 +163,7 @@ cc.ProcessBase = cc.Class.extend({
     },
     gotoFrame:function (keyFrameIndex) {
         this._curFrameIndex = keyFrameIndex;
-        this.stop();
+        this.pause();
     },
 
     /**
@@ -164,6 +171,7 @@ cc.ProcessBase = cc.Class.extend({
      * @return {Number}
      */
     getCurrentFrameIndex:function () {
+        this._curFrameIndex = this._rawDuration * this._currentPercent;
         return this._curFrameIndex;
     },
 
@@ -188,11 +196,14 @@ cc.ProcessBase = cc.Class.extend({
     getAnimationInternal:function () {
         return this._animationInternal;
     },
-    getAnimationScale:function () {
-        return this._animationScale;
+    setAnimationInternal:function(animationInternal){
+        this._animationInternal = animationInternal;
     },
-    setAnimationScale:function (animationScale) {
-        this._animationScale = animationScale;
+    getProcessScale:function () {
+        return this._processScale;
+    },
+    setProcessScale:function (processScale) {
+        this._processScale = processScale;
     },
     isPlaying:function () {
         return this._isPlaying;

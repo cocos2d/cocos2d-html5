@@ -178,11 +178,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * Adds a standard touch delegate to the dispatcher's list.
      * See StandardTouchDelegate description.
      * IMPORTANT: The delegate will be retained.
-     * @param {cc.TouchDelegate} delegate
-     * @param {Number} priority
+     * @param {Object} delegate
+     * @param {Number} [priority=0]
      */
-    addStandardDelegate:function (delegate, priority) {
-        var handler = cc.StandardTouchHandler.handlerWithDelegate(delegate, priority);
+    _addStandardDelegate:function (delegate, priority) {
+        priority = priority || 0;
+        var handler = cc.StandardTouchHandler.create(delegate, priority);
 
         if (!this._locked) {
             this._standardHandlers = this.forceAddHandler(handler, this._standardHandlers);
@@ -201,12 +202,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
     },
 
     /**
-     * @param {cc.TouchDelegate} delegate
+     * @param {Object} delegate
      * @param {Number} priority
      * @param {Boolean} swallowsTouches
      */
-    addTargetedDelegate:function (delegate, priority, swallowsTouches) {
-        var handler = cc.TargetedTouchHandler.handlerWithDelegate(delegate, priority, swallowsTouches);
+    _addTargetedDelegate:function (delegate, priority, swallowsTouches) {
+        var handler = cc.TargetedTouchHandler.create(delegate, priority, swallowsTouches);
         if (!this._locked) {
             this._targetedHandlers = this.forceAddHandler(handler, this._targetedHandlers);
         } else {
@@ -259,7 +260,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * The delegate will be released
      * @param {cc.TouchDelegate} delegate
      */
-    removeDelegate:function (delegate) {
+    _removeDelegate:function (delegate) {
         if (delegate == null) {
             return;
         }
@@ -1031,3 +1032,31 @@ cc.TouchDispatcher._preTouchPool = [];
  * @type {Number}
  */
 cc.TouchDispatcher._preTouchPoolPointer = 0;
+
+/**
+ * register a targeted touch delegate to the dispatcher's list.
+ * @param {Number} priority
+ * @param {Boolean} swallowsTouches
+ * @param {Object} delegate
+ */
+cc.registerTargetedDelegate = function(priority, swallowsTouches, delegate){
+    cc.Director.getInstance().getTouchDispatcher()._addTargetedDelegate(delegate, priority, swallowsTouches);
+};
+
+/**
+ * Adds a standard touch delegate to the dispatcher's list.
+ * See StandardTouchDelegate description.
+ * @param {Object} delegate
+ * @param {Number} [priority=]
+ */
+cc.registerStandardDelegate = function(delegate, priority){
+    cc.Director.getInstance().getTouchDispatcher()._addStandardDelegate(delegate, priority);
+};
+
+/**
+ * Removes a touch delegate. from TouchDispatcher
+ * @param delegate
+ */
+cc.unregisterTouchDelegate = function(delegate){
+    cc.Director.getInstance().getTouchDispatcher()._removeDelegate(delegate);
+};

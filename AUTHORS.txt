@@ -25,7 +25,7 @@ Chris               @hannon235	added node.js api for box2d
 
 Jason Aeschliman    @jaeschliman  fixed cc.Node setposition
 
-Sun Zhuoshi(Intel)  @sunzhuoshi	engine loader fixed
+Zhuoshi Sun(Intel)  @sunzhuoshi	engine loader fixed
 
 Alejandro Reyero    @KaTXi      fixed error message
 
@@ -50,7 +50,6 @@ Ivo Wetzel(Zynga Germany) @BonsaiDen Fixes for Audio Support Detection,
                                      Texture Support in Particle System,
                                      and Performance improvements
 
-
 Mario Adrian        @many20        Code review, multi touch improvements,
                                    ccbi bugs fixed
 
@@ -58,7 +57,7 @@ keisuke hata(Square)  @Seasons7    Code review, bug fix
 
 Marat Yakupov	    @moadib        Various bug fixes
 
-Wu Liang            @akira-cn      Touch location fix for designResolution
+Liang Wu            @akira-cn      Touch location fix for designResolution
 
 Jimmy Sambuo        @jsambuo       AudioEngine improvements
 
@@ -74,14 +73,28 @@ Szymon Piłkowski     @ardcore      CCTexture Bug fix
 
 Tomasz Tunik         @tomasztunik   CCNode Memory leak fix
 
-Lin Xuankang(Intel)  @AndriyLin     cc.WebAudioEngine implements
+Xuankang Lin(Intel)  @AndriyLin     cc.WebAudioEngine implements
 
 Kang-Hao Lu(Opera/Oupeng) @kennyluck    Optimize John Resig's inheritance pattern
                                         cc.clone improvements
 
 Mark Henderson       @MarkEHenderson    Code review, LabelTTF and Scale9Sprite bug fix
 
-06wj                 @06wj         CCScheduler improvements
+Jing Wang             @06wj         CCScheduler improvements
+                                   Js file loading image add
+                                   cc.RectApplyAffineTransform improvements
+
+Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
+                                    LabelTTF improvements
+
+Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
+
+XiaoJun Zheng        @SmallAiTT    _getResType error fix
+                                   cc.ScrollView bug fix
+
+Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
+
+Jing Xiao            @xbruce       cc.SAXParser bug fix
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 

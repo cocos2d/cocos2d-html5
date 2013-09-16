@@ -97,11 +97,11 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     init:function () {
-        return this.initWithViewSize(cc.SizeMake(200, 200), null);
+        return this.initWithViewSize(cc.size(200, 200), null);
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), false);
+        cc.registerTargetedDelegate(this.getTouchPriority(), false, this);
     },
 
     /**
@@ -272,7 +272,7 @@ cc.ScrollView = cc.Layer.extend({
         var size = this.getViewSize();
         var scale = this.getZoomScale();
 
-        var viewRect = cc.RectMake(-offset.x / scale, -offset.y / scale, size.width / scale, size.height / scale);
+        var viewRect = cc.rect(-offset.x / scale, -offset.y / scale, size.width / scale, size.height / scale);
 
         return cc.rectIntersectsRect(viewRect, node.getBoundingBox());
     },
@@ -372,7 +372,7 @@ cc.ScrollView = cc.Layer.extend({
         if (!this.isVisible())
             return false;
         //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());
-        //var frame = cc.RectMake(frameOriginal.x, frameOriginal.y, this._viewSize.width, this._viewSize.height);
+        //var frame = cc.rect(frameOriginal.x, frameOriginal.y, this._viewSize.width, this._viewSize.height);
         var frame = this._getViewRect();
 
         //dispatcher does not know about clipping. reject touches outside visible bounds.
@@ -411,7 +411,7 @@ cc.ScrollView = cc.Layer.extend({
         if (this._touches.length === 1 && this._dragging) { // scrolling
             this._touchMoved = true;
             //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());
-            //var frame = cc.RectMake(frameOriginal.x, frameOriginal.y, this._viewSize.width, this._viewSize.height);
+            //var frame = cc.rect(frameOriginal.x, frameOriginal.y, this._viewSize.width, this._viewSize.height);
             var frame = this._getViewRect();
 
             //var newPoint = this.convertTouchToNodeSpace(this._touches[0]);

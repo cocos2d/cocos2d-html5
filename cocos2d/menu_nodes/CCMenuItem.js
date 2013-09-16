@@ -184,12 +184,15 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      */
     activate:function () {
         if (this._isEnabled) {
-            if (this._target && (typeof(this._callback) == "string")) {
-                this._target[this._callback](this);
-            } else if (this._target && (typeof(this._callback) == "function")) {
-                this._callback.call(this._target, this);
+            var locTarget = this._target, locCallback = this._callback;
+            if(!locCallback)
+                return ;
+            if (locTarget && (typeof(locCallback) == "string")) {
+                locTarget[locCallback](this);
+            } else if (locTarget && (typeof(locCallback) == "function")) {
+                locCallback.call(locTarget, this);
             } else
-                this._callback(this);
+                locCallback(this);
         }
     }
 });
@@ -274,11 +277,12 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      */
     setEnabled:function (enabled) {
         if (this._isEnabled != enabled) {
+            var locLabel = this._label;
             if (!enabled) {
-                this._colorBackup = this._label.getColor();
-                this._label.setColor(this._disabledColor);
+                this._colorBackup = locLabel.getColor();
+                locLabel.setColor(this._disabledColor);
             } else {
-                this._label.setColor(this._colorBackup);
+                locLabel.setColor(this._colorBackup);
             }
         }
         cc.MenuItem.prototype.setEnabled.call(this, enabled);

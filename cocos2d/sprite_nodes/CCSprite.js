@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 /**
- * cc.Sprite invalid index on the cc.SpriteBatchode
+ * cc.Sprite invalid index on the cc.SpriteBatchNode
  * @constant
  * @type Number
  */
@@ -264,7 +264,7 @@ if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
 }
 
 /**
- * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) (Canvas implement) <br/>
+ * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )  <br/>
  *
  * cc.Sprite can be created with an image, or with a sub-rectangle of an image.  <br/>
  *
@@ -292,8 +292,7 @@ if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
  * var aSprite = new cc.Sprite();
  * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
-cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
-    /// ---- common properties start ----
+cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     RGBAProtocol:true,
     //
     // Data used when the sprite is rendered using a CCSpriteSheet
@@ -325,1120 +324,6 @@ cc.SpriteCanvas = cc.NodeRGBA.extend(/** @lends cc.SpriteCanvas# */{
     _offsetPosition:null, // absolute
     _unflippedOffsetPositionFromCenter:null,
 
-    _opacityModifyRGB:false,
-
-    // image is flipped
-    _flipX:false, //Whether the sprite is flipped horizontally or not.
-    _flipY:false, //Whether the sprite is flipped vertically or not.
-
-    _textureLoaded: false,
-    _loadedEventListeners: null,
-    _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
-
-    textureLoaded:function(){
-        return this._textureLoaded;
-    },
-
-    addLoadedEventListener:function(callback, target){
-        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
-    },
-
-    _callLoadedEventCallbacks:function(){
-        var locListeners = this._loadedEventListeners;
-        for(var i = 0, len = locListeners.length;  i < len; i++){
-            var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
-        }
-        locListeners.length = 0;
-    },
-
-    /**
-     * Whether or not the Sprite needs to be updated in the Atlas
-     * @return {Boolean} true if the sprite needs to be updated in the Atlas, false otherwise.
-     */
-    isDirty:function () {
-        return this._dirty;
-    },
-
-    /**
-     * Makes the Sprite to be updated in the Atlas.
-     * @param {Boolean} bDirty
-     */
-    setDirty:function (bDirty) {
-        this._dirty = bDirty;
-    },
-
-    /**
-     * Returns the quad (tex coords, vertex coords and color) information. (Use in WebGL model only)
-     * @return {null}
-     */
-    getQuad:function () {
-        return null;
-    },
-
-    /**
-     * returns whether or not the texture rectangle is rotated
-     * @return {Boolean}
-     */
-    isTextureRectRotated:function () {
-        return this._rectRotated;
-    },
-
-    /**
-     * Returns the index used on the TextureAtlas.
-     * @return {Number}
-     */
-    getAtlasIndex:function () {
-        return this._atlasIndex;
-    },
-
-    /**
-     * Set the index used on the TextureAtlas.
-     * @warning Don't modify this value unless you know what you are doing
-     * @param {Number} atlasIndex
-     */
-    setAtlasIndex:function (atlasIndex) {
-        this._atlasIndex = atlasIndex;
-    },
-
-    /**
-     * returns the rect of the cc.Sprite in points
-     * @return {cc.Rect}
-     */
-    getTextureRect:function () {
-        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
-    },
-
-    /**
-     * Gets the weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
-     * @return {cc.TextureAtlas}
-     */
-    getTextureAtlas:function () {
-        return this._textureAtlas;
-    },
-
-    /**
-     * Sets the weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
-     * @param {cc.TextureAtlas} textureAtlas
-     */
-    setTextureAtlas:function (textureAtlas) {
-        this._textureAtlas = textureAtlas;
-    },
-
-    /**
-     * Gets the offset position of the sprite. Calculated automatically by editors like Zwoptex.
-     * @return {cc.Point}
-     */
-    getOffsetPosition:function () {
-        return cc.p(this._offsetPosition.x, this._offsetPosition.y);
-    },
-
-    /**
-     * conforms to cc.TextureProtocol protocol
-     * @return {cc.BlendFunc}
-     */
-    getBlendFunc:function () {
-        return this._blendFunc;
-    },
-
-    /**
-     * Initializes a sprite with an SpriteFrame. The texture and rect in SpriteFrame will be applied on this sprite
-     * @param {cc.SpriteFrame} spriteFrame A CCSpriteFrame object. It should includes a valid texture and a rect
-     * @return {Boolean}  true if the sprite is initialized properly, false otherwise.
-     * @example
-     * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
-     * var sprite = new cc.Sprite();
-     * sprite.initWithSpriteFrame(spriteFrame);
-     */
-    initWithSpriteFrame:function (spriteFrame) {
-        cc.Assert(spriteFrame != null, "");
-        if(!spriteFrame.textureLoaded()){
-            //add event listener
-            this._textureLoaded = false;
-            spriteFrame.addLoadedEventListener(this._spriteFrameLoadedCallback, this);
-        }
-        var ret = this.initWithTexture(spriteFrame.getTexture(), spriteFrame.getRect());
-        this.setDisplayFrame(spriteFrame);
-
-        return ret;
-    },
-
-    _spriteFrameLoadedCallback:function(spriteFrame){
-        this.setNodeDirty();
-        this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
-        var curColor = this.getColor();
-        if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
-            this._changeTextureColor();
-
-        this._callLoadedEventCallbacks();
-    },
-
-    /**
-     * Initializes a sprite with a sprite frame name. <br/>
-     * A cc.SpriteFrame will be fetched from the cc.SpriteFrameCache by name.  <br/>
-     * If the cc.SpriteFrame doesn't exist it will raise an exception. <br/>
-     * @param {String} spriteFrameName A key string that can fected a volid cc.SpriteFrame from cc.SpriteFrameCache
-     * @return {Boolean} true if the sprite is initialized properly, false otherwise.
-     * @example
-     * var sprite = new cc.Sprite();
-     * sprite.initWithSpriteFrameName("grossini_dance_01.png");
-     */
-    initWithSpriteFrameName:function (spriteFrameName) {
-        cc.Assert(spriteFrameName != null, "");
-        var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
-        return this.initWithSpriteFrame(frame);
-    },
-
-    /**
-     * tell the sprite to use batch node render.
-     * @param {cc.SpriteBatchNode} batchNode
-     */
-    useBatchNode:function (batchNode) {
-        this._textureAtlas = batchNode.getTextureAtlas(); // weak ref
-        this._batchNode = batchNode;
-    },
-
-    /**
-     * <p>
-     *    set the vertex rect.<br/>
-     *    It will be called internally by setTextureRect.                           <br/>
-     *    Useful if you want to create 2x images from SD images in Retina Display.  <br/>
-     *    Do not call it manually. Use setTextureRect instead.  <br/>
-     *    (override this method to generate "double scale" sprites)
-     * </p>
-     * @param rect
-     */
-    setVertexRect:function (rect) {
-        this._rect = rect;
-    },
-
-    sortAllChildren:function () {
-        if (this._reorderChildDirty) {
-            var j, tempItem, locChildren = this._children, tempChild;
-            for (var i = 1; i < locChildren.length; i++) {
-                tempItem = locChildren[i];
-                j = i - 1;
-                tempChild =  locChildren[j];
-
-                //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
-                    locChildren[j + 1] = tempChild;
-                    j = j - 1;
-                    tempChild =  locChildren[j];
-                }
-                locChildren[j + 1] = tempItem;
-            }
-
-            if (this._batchNode) {
-                this._arrayMakeObjectsPerformSelector(locChildren, cc.Node.StateCallbackType.sortAllChildren);
-            }
-            this._reorderChildDirty = false;
-        }
-    },
-
-    /**
-     * Reorders a child according to a new z value.  (override cc.Node )
-     * @param {cc.Node} child
-     * @param {Number} zOrder
-     * @override
-     */
-    reorderChild:function (child, zOrder) {
-        cc.Assert(child != null, "child is null");
-        cc.Assert(this._children.indexOf(child) > -1, "this child is not in children list");
-
-        if (zOrder === child.getZOrder())
-            return;
-
-        if (this._batchNode && !this._reorderChildDirty) {
-            this._setReorderChildDirtyRecursively();
-            this._batchNode.reorderBatch(true);
-        }
-        cc.Node.prototype.reorderChild.call(this, child, zOrder);
-    },
-
-    /**
-     * Removes a child from the sprite. (override cc.Node )
-     * @param child
-     * @param cleanup  whether or not cleanup all running actions
-     * @override
-     */
-    removeChild:function (child, cleanup) {
-        if (this._batchNode)
-            this._batchNode.removeSpriteFromAtlas(child);
-        cc.Node.prototype.removeChild.call(this, child, cleanup);
-    },
-
-    /**
-     * Removes all children from the container  (override cc.Node )
-     * @param cleanup whether or not cleanup all running actions
-     * @override
-     */
-    removeAllChildren:function (cleanup) {
-        var locChildren = this._children, locBatchNode = this._batchNode;
-        if (locBatchNode && locChildren != null) {
-            for (var i = 0, len = locChildren.length; i < len; i++)
-                locBatchNode.removeSpriteFromAtlas(locChildren[i]);
-        }
-
-        cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._hasChildren = false;
-    },
-
-    //
-    // cc.Node property overloads
-    //
-
-    /**
-     * set Recursively is or isn't Dirty
-     * used only when parent is cc.SpriteBatchNode
-     * @param {Boolean} value
-     */
-    setDirtyRecursively:function (value) {
-        this._recursiveDirty = value;
-        this.setDirty(value);
-        // recursively set dirty
-        var locChildren = this._children;
-        if (locChildren != null) {
-            for (var i = 0; i < locChildren.length; i++)
-                locChildren[i].setDirtyRecursively(true);
-        }
-    },
-
-    /**
-     * HACK: optimization
-     */
-    SET_DIRTY_RECURSIVELY:function () {
-        if (this._batchNode && !this._recursiveDirty) {
-            this._recursiveDirty = true;
-            this._dirty = true;
-            if (this._hasChildren)
-                this.setDirtyRecursively(true);
-        }
-    },
-
-    /**
-     * position setter (override cc.Node )
-     * @param {cc.Point} pos
-     * @override
-     */
-    setPosition:function (pos) {
-        if (arguments.length >= 2)
-            cc.Node.prototype.setPosition.call(this, pos, arguments[1]);
-        else
-            cc.Node.prototype.setPosition.call(this, pos);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * Rotation setter (override cc.Node )
-     * @param {Number} rotation
-     * @override
-     */
-    setRotation:function (rotation) {
-        cc.Node.prototype.setRotation.call(this, rotation);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    setRotationX:function (rotationX) {
-        cc.Node.prototype.setRotationX.call(this, rotationX);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    setRotationY:function (rotationY) {
-        cc.Node.prototype.setRotationY.call(this, rotationY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * SkewX setter (override cc.Node )
-     * @param {Number} sx SkewX value
-     * @override
-     */
-    setSkewX:function (sx) {
-        cc.Node.prototype.setSkewX.call(this, sx);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * SkewY setter (override cc.Node )
-     * @param {Number} sy SkewY value
-     * @override
-     */
-    setSkewY:function (sy) {
-        cc.Node.prototype.setSkewY.call(this, sy);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * ScaleX setter (override cc.Node )
-     * @param {Number} scaleX
-     * @override
-     */
-    setScaleX:function (scaleX) {
-        cc.Node.prototype.setScaleX.call(this, scaleX);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * ScaleY setter (override cc.Node )
-     * @param {Number} scaleY
-     * @override
-     */
-    setScaleY:function (scaleY) {
-        cc.Node.prototype.setScaleY.call(this, scaleY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * <p>The scale factor of the node. 1.0 is the default scale factor. <br/>
-     * It modifies the X and Y scale at the same time. (override cc.Node ) <p/>
-     * @param {Number} scale
-     * @param {Number} [scaleY=]
-     * @override
-     */
-    setScale:function (scale, scaleY) {
-        cc.Node.prototype.setScale.call(this, scale, scaleY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * VertexZ setter (override cc.Node )
-     * @param {Number} vertexZ
-     * @override
-     */
-    setVertexZ:function (vertexZ) {
-        cc.Node.prototype.setVertexZ.call(this, vertexZ);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * AnchorPoint setter  (override cc.Node )
-     * @param {cc.Point} anchor
-     * @override
-     */
-    setAnchorPoint:function (anchor) {
-        cc.Node.prototype.setAnchorPoint.call(this, anchor);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * visible setter  (override cc.Node )
-     * @param {Boolean} visible
-     * @override
-     */
-    setVisible:function (visible) {
-        cc.Node.prototype.setVisible.call(this, visible);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * IsRelativeAnchorPoint setter  (override cc.Node )
-     * @param {Boolean} relative
-     * @override
-     */
-    ignoreAnchorPointForPosition:function (relative) {
-        cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
-        cc.Node.prototype.ignoreAnchorPointForPosition.call(this, relative);
-    },
-
-    /**
-     * Sets whether the sprite should be flipped horizontally or not.
-     * @param {Boolean} flipX true if the sprite should be flipped horizaontally, false otherwise.
-     */
-    setFlipX:function (flipX) {
-        if (this._flipX != flipX) {
-            this._flipX = flipX;
-            this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty();
-        }
-    },
-
-    /**
-     * Sets whether the sprite should be flipped vertically or not.
-     * @param {Boolean} flipY true if the sprite should be flipped vertically, flase otherwise.
-     */
-    setFlipY:function (flipY) {
-        if (this._flipY != flipY) {
-            this._flipY = flipY;
-            this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty();
-        }
-    },
-
-    /**
-     * <p>
-     *     Returns the flag which indicates whether the sprite is flipped horizontally or not.                      <br/>
-     *                                                                                                              <br/>
-     * It only flips the texture of the sprite, and not the texture of the sprite's children.                       <br/>
-     * Also, flipping the texture doesn't alter the anchorPoint.                                                    <br/>
-     * If you want to flip the anchorPoint too, and/or to flip the children too use:                                <br/>
-     *      sprite->setScaleX(sprite->getScaleX() * -1);  <p/>
-     * @return {Boolean} true if the sprite is flipped horizaontally, false otherwise.
-     */
-    isFlippedX:function () {
-        return this._flipX;
-    },
-
-    /**
-     * <p>
-     *     Return the flag which indicates whether the sprite is flipped vertically or not.                         <br/>
-     *                                                                                                              <br/>
-     *      It only flips the texture of the sprite, and not the texture of the sprite's children.                  <br/>
-     *      Also, flipping the texture doesn't alter the anchorPoint.                                               <br/>
-     *      If you want to flip the anchorPoint too, and/or to flip the children too use:                           <br/>
-     *         sprite->setScaleY(sprite->getScaleY() * -1); <p/>
-     * @return {Boolean} true if the sprite is flipped vertically, flase otherwise.
-     */
-    isFlippedY:function () {
-        return this._flipY;
-    },
-
-    //
-    // RGBA protocol
-    //
-
-    // RGBAProtocol
-    /**
-     * opacity: conforms to cc.RGBAProtocol protocol
-     * @param {Boolean} modify
-     */
-    setOpacityModifyRGB:function (modify) {
-        if (this._opacityModifyRGB !== modify) {
-            this._opacityModifyRGB = modify;
-            this.setNodeDirty();
-        }
-    },
-
-    /**
-     * return IsOpacityModifyRGB value
-     * @return {Boolean}
-     */
-    isOpacityModifyRGB:function () {
-        return this._opacityModifyRGB;
-    },
-
-    updateDisplayedOpacity:function (parentOpacity) {
-        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._changeTextureColor();
-        this.setNodeDirty();
-    },
-
-    // Animation
-
-    /**
-     * changes the display frame with animation name and index.<br/>
-     * The animation name will be get from the CCAnimationCache
-     * @param animationName
-     * @param frameIndex
-     */
-    setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
-        cc.Assert(animationName, "cc.Sprite#setDisplayFrameWithAnimationName. animationName must not be null");
-        var cache = cc.AnimationCache.getInstance().getAnimation(animationName);
-        cc.Assert(cache, "cc.Sprite#setDisplayFrameWithAnimationName: Frame not found");
-        var animFrame = cache.getFrames()[frameIndex];
-        cc.Assert(animFrame, "cc.Sprite#setDisplayFrame. Invalid frame");
-        this.setDisplayFrame(animFrame.getSpriteFrame());
-    },
-
-    /**
-     * Returns the batch node object if this sprite is rendered by cc.SpriteBatchNode
-     * @returns {cc.SpriteBatchNode|null} The cc.SpriteBatchNode object if this sprite is rendered by cc.SpriteBatchNode, null if the sprite isn't used batch node.
-     */
-    getBatchNode:function () {
-        return this._batchNode;
-    },
-
-    _setReorderChildDirtyRecursively:function () {
-        //only set parents flag the first time
-        if (!this._reorderChildDirty) {
-            this._reorderChildDirty = true;
-            var pNode = this._parent;
-            while (pNode && pNode != this._batchNode) {
-                pNode._setReorderChildDirtyRecursively();
-                pNode = pNode.getParent();
-            }
-        }
-    },
-
-    // CCTextureProtocol
-    getTexture:function () {
-        return this._texture;
-    },
-    /// ---- common properties end   ----
-
-    _colorized:false,
-    _isLighterMode:false,
-    _originalTexture:null,
-
-    /**
-     * Constructor
-     * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement} fileName sprite construct parameter
-     */
-    ctor:function (fileName) {
-        cc.NodeRGBA.prototype.ctor.call(this);
-        this._shouldBeHidden = false;
-        this._offsetPosition = cc.p(0, 0);
-        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
-        this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
-        this._textureLoaded = true;
-        this._loadedEventListeners = [];
-        this._newTextureWhenChangeColor = false;
-
-        if (fileName) {
-            if (typeof(fileName) == "string") {
-                var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(fileName);
-                this.initWithSpriteFrame(frame);
-            } else if (typeof(fileName) === "object") {
-                if (fileName instanceof cc.SpriteFrame) {
-                    this.initWithSpriteFrame(fileName);
-                } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
-                    var texture2d = new cc.Texture2D();
-                    texture2d.initWithElement(fileName);
-                    texture2d.handleLoadedTexture();
-                    this.initWithTexture(texture2d)
-                } else if (fileName instanceof cc.Texture2D) {
-                    this.initWithTexture(fileName)
-                }
-            }
-        }
-    },
-
-    /**
-     * conforms to cc.TextureProtocol protocol
-     * @param {Number|cc.BlendFunc} src
-     * @param {Number} dst
-     */
-    setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
-            this._blendFunc = src;
-        else
-            this._blendFunc = {src:src, dst:dst};
-        this._isLighterMode = (this._blendFunc && (this._blendFunc.src === gl.SRC_ALPHA) && (this._blendFunc.dst === gl.ONE));
-    },
-
-    /**
-     * Initializes an empty sprite with nothing init.
-     * @return {Boolean}
-     */
-    init:function () {
-        if (arguments.length > 0)
-            return this.initWithFile(arguments[0], arguments[1]);
-
-        cc.NodeRGBA.prototype.init.call(this);
-        this._dirty = this._recursiveDirty = false;
-        this._opacityModifyRGB = true;
-
-        this._blendFunc.src = cc.BLEND_SRC;
-        this._blendFunc.dst = cc.BLEND_DST;
-
-        // update texture (calls _updateBlendFunc)
-        this.setTexture(null);
-        this._textureLoaded = true;
-        this._flipX = this._flipY = false;
-
-        // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
-
-        // zwoptex default values
-        this._offsetPosition = cc.PointZero();
-        this._hasChildren = false;
-
-        // updated in "useSelfRender"
-        // Atlas: TexCoords
-        this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
-        return true;
-    },
-
-    /**
-     * <p>
-     *     Initializes a sprite with an image filename.
-     *
-     *     This method will find pszFilename from local file system, load its content to CCTexture2D,
-     *     then use CCTexture2D to create a sprite.
-     *     After initialization, the rect used will be the size of the image. The offset will be (0,0).
-     * </p>
-     * @param {String} filename The path to an image file in local file system
-     * @param {cc.Rect} rect The rectangle assigned the content area from texture.
-     * @return {Boolean} true if the sprite is initialized properly, false otherwise.
-     * @example
-     * var mySprite = new cc.Sprite();
-     * mySprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
-     */
-    initWithFile:function (filename, rect) {
-        cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
-        var texture = cc.TextureCache.getInstance().textureForKey(filename);
-        if (!texture) {
-            texture = cc.TextureCache.getInstance().addImage(filename);
-            return this.initWithTexture(texture, rect);
-        } else {
-            if (!rect) {
-                var size = texture.getContentSize();
-                rect = cc.rect(0, 0, size.width, size.height);
-            }
-            return this.initWithTexture(texture, rect);
-        }
-    },
-
-    /**
-     * Initializes a sprite with a texture and a rect in points, optionally rotated. <br/>
-     * After initialization, the rect used will be the size of the texture, and the offset will be (0,0).
-     * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
-     * @param {cc.Rect} rect Only the contents inside rect of this texture will be applied for this sprite.
-     * @param {Boolean} rotated Whether or not the texture rectangle is rotated.
-     * @return {Boolean} true if the sprite is initialized properly, false otherwise.
-     * @example
-     * var img =cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
-     * var mySprite = new cc.Sprite();
-     * mySprite.initWithTexture(img,cc.rect(0,0,480,320));
-     */
-    initWithTexture:function (texture, rect, rotated) {
-        var argnum = arguments.length;
-        if (argnum == 0)
-            throw "Sprite.initWithTexture(): Argument must be non-nil ";
-
-        rotated = rotated || false;
-
-        if (!cc.NodeRGBA.prototype.init.call(this))
-            return false;
-
-        this._batchNode = null;
-
-        this._recursiveDirty = false;
-        this._dirty = false;
-        this._opacityModifyRGB = true;
-
-        this._blendFunc.src = cc.BLEND_SRC;
-        this._blendFunc.dst = cc.BLEND_DST;
-
-        this._flipX = this._flipY = false;
-
-        // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
-
-        // zwoptex default values
-        this._offsetPosition = cc.p(0, 0);
-        this._hasChildren = false;
-
-        var locTextureLoaded = texture.isLoaded();
-        this._textureLoaded = locTextureLoaded;
-
-        if(!locTextureLoaded){
-            this._rectRotated = rotated || false;
-            this._rect = rect;
-            texture.addLoadedEventListener(this._textureLoadedCallback, this);
-            return true;
-        }
-
-        if (!rect) {
-            rect = cc.rect(0, 0, 0, 0);
-            rect.size = texture.getContentSize();
-        }
-        this._originalTexture = texture;
-
-        this.setTexture(texture);
-        this.setTextureRect(rect, rotated, rect.size);
-
-        // by default use "Self Render".
-        // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-        this.setBatchNode(null);
-        return true;
-    },
-
-    _textureLoadedCallback:function(sender){
-        this._textureLoaded = true;
-        var locRect = this._rect;
-        if (!locRect) {
-            locRect = cc.rect(0, 0, 0, 0);
-            locRect.size = sender.getContentSize();
-        } else if(cc._rectEqualToZero(locRect)){
-            locRect.size = sender.getContentSize();
-        }
-        this._originalTexture = sender;
-
-        this.setTexture(sender);
-        this.setTextureRect(locRect, this._rectRotated, locRect.size);
-
-        // by default use "Self Render".
-        // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-        this.setBatchNode(null);
-
-        this._callLoadedEventCallbacks();
-    },
-
-    /**
-     * updates the texture rect of the CCSprite in points.
-     * @param {cc.Rect} rect a rect of texture
-     * @param {Boolean} rotated
-     * @param {cc.Size} untrimmedSize
-     */
-    setTextureRect:function (rect, rotated, untrimmedSize) {
-        this._rectRotated = rotated || false;
-        untrimmedSize = untrimmedSize || rect.size;
-
-        this.setContentSize(untrimmedSize);
-        this.setVertexRect(rect);
-
-        var relativeOffset = this._unflippedOffsetPositionFromCenter;
-        if (this._flipX)
-            relativeOffset.x = -relativeOffset.x;
-        if (this._flipY)
-            relativeOffset.y = -relativeOffset.y;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
-
-        // rendering using batch node
-        if (this._batchNode) {
-            // update dirty_, don't update recursiveDirty_
-            //this.setDirty(true);
-            this._dirty = true;
-        }
-    },
-
-    // BatchNode methods
-    /**
-     * updates the quad according the the rotation, position, scale values.
-     */
-    updateTransform:function () {
-        //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
-
-        // recaculate matrix only if it is dirty
-        if (this._dirty) {
-            // If it is not visible, or one of its ancestors is not visible, then do nothing:
-            var locParent = this._parent;
-            if (!this._visible || ( locParent && locParent != this._batchNode && locParent._shouldBeHidden)) {
-                this._shouldBeHidden = true;
-            } else {
-                this._shouldBeHidden = false;
-
-                if (!locParent || locParent == this._batchNode) {
-                    this._transformToBatch = this.nodeToParentTransform();
-                } else {
-                    //cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), locParent._transformToBatch);
-                }
-            }
-            this._recursiveDirty = false;
-            this._dirty = false;
-        }
-
-        // recursively iterate over children
-        if (this._hasChildren)
-            this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
-    },
-
-    /**
-     * Add child to sprite (override cc.Node )
-     * @param {cc.Sprite} child
-     * @param {Number} zOrder  child's zOrder
-     * @param {String} tag child's tag
-     * @override
-     */
-    addChild:function (child, zOrder, tag) {
-        cc.Assert(child != null, "Argument must be non-NULL");
-        if (zOrder == null)
-            zOrder = child._zOrder;
-        if (tag == null)
-            tag = child._tag;
-
-        //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
-        this._hasChildren = true;
-    },
-
-    /**
-     * opacity setter
-     * @param {Number} opacity
-     */
-    setOpacity:function (opacity) {
-        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
-        this.setNodeDirty();
-    },
-
-    /**
-     * color setter
-     * @param {cc.Color3B} color3
-     */
-    setColor:function (color3) {
-        var curColor = this.getColor();
-        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
-            return;
-
-        cc.NodeRGBA.prototype.setColor.call(this, color3);
-        this._changeTextureColor();
-        this.setNodeDirty();
-    },
-
-    updateDisplayedColor:function (parentColor) {
-        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
-        this._changeTextureColor();
-        this.setNodeDirty();
-    },
-
-    // Frames
-    /**
-     * Sets a new display frame to the cc.Sprite.
-     * @param {cc.SpriteFrame} newFrame
-     */
-    setDisplayFrame:function (newFrame) {
-        this.setNodeDirty();
-
-        var frameOffset = newFrame.getOffset();
-        this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
-        this._unflippedOffsetPositionFromCenter.y = frameOffset.y;
-
-        // update rect
-        this._rectRotated = newFrame.isRotated();
-
-        var pNewTexture = newFrame.getTexture();
-        var locTextureLoaded = newFrame.textureLoaded();
-        if(!locTextureLoaded){
-            this._textureLoaded = false;
-            newFrame.addLoadedEventListener(function(sender){
-                this._textureLoaded = true;
-                var locNewTexture = sender.getTexture();
-                if (locNewTexture != this._texture)
-                    this.setTexture(locNewTexture);
-                this.setTextureRect(sender.getRect(), this._rectRotated, sender.getOriginalSize());
-                this._callLoadedEventCallbacks();
-            },this);
-        }
-        // update texture before updating texture rect
-        if (pNewTexture != this._texture)
-            this.setTexture(pNewTexture);
-
-        if (this._rectRotated)
-            this._originalTexture = pNewTexture;
-
-        this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
-        this._colorized = false;
-        if (locTextureLoaded) {
-            var curColor = this.getColor();
-            if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
-                this._changeTextureColor();
-        }
-    },
-
-    /**
-     * Returns whether or not a cc.SpriteFrame is being displayed
-     * @param {cc.SpriteFrame} frame
-     * @return {Boolean}
-     */
-    isFrameDisplayed:function (frame) {
-        if (frame.getTexture() != this._texture)
-            return false;
-        return cc.rectEqualToRect(frame.getRect(), this._rect);
-    },
-
-    /**
-     * Returns the current displayed frame.
-     * @return {cc.SpriteFrame}
-     */
-    displayFrame:function () {
-        return cc.SpriteFrame._frameWithTextureForCanvas(this._texture,
-            cc.RECT_POINTS_TO_PIXELS(this._rect),
-            this._rectRotated,
-            cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),
-            cc.SIZE_POINTS_TO_PIXELS(this._contentSize));
-    },
-
-    /**
-     * Sets the batch node to sprite
-     * @param {cc.SpriteBatchNode|null} spriteBatchNode
-     * @example
-     *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
-     *  var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(0, 0, 57, 57));
-     *  batch.addChild(sprite);
-     *  layer.addChild(batch);
-     */
-    setBatchNode:function (spriteBatchNode) {
-        this._batchNode = spriteBatchNode; // weak reference
-
-        // self render
-        if (!this._batchNode) {
-            this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
-            this.setTextureAtlas(null);
-            this._recursiveDirty = false;
-            this.setDirty(false);
-        } else {
-            // using batch
-            this._transformToBatch = cc.AffineTransformIdentity();
-            this.setTextureAtlas(this._batchNode.getTextureAtlas()); // weak ref
-        }
-    },
-
-    // CCTextureProtocol
-    /**
-     * Texture of sprite setter
-     * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture
-     */
-    setTexture:function (texture) {
-        // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.Assert(!texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
-        if (this._texture != texture) {
-            if(texture && texture.getHtmlElementObj() instanceof  HTMLImageElement){
-                this._originalTexture = texture;
-            }
-            this._texture = texture;
-        }
-    },
-
-    _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this.getTextureRect();
-        if (locTexture && locRect.width > 0) {
-            locElement = locTexture.getHtmlElementObj();
-            if (!locElement)
-                return;
-
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
-            if (cacheTextureForColor) {
-                this._colorized = true;
-                //generate color texture cache
-                if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
-                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
-                else {
-                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
-                    locTexture = new cc.Texture2D();
-                    locTexture.initWithElement(locElement);
-                    locTexture.handleLoadedTexture();
-                    this.setTexture(locTexture);
-                }
-            }
-        }
-    },
-
-    /**
-     * draw sprite to canvas
-     * @param {CanvasRenderingContext2D} ctx 2d context of canvas
-     */
-    draw:function (ctx) {
-        if(!this._textureLoaded)
-            return;
-
-        var context = ctx || cc.renderContext;
-        if (this._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
-
-        context.globalAlpha = this._displayedOpacity / 255;
-        var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
-
-        if (this._flipX || this._flipY) {
-            context.save();
-            if (this._flipX) {
-                flipXOffset = -locOffsetPosition.x - locRect.width;
-                context.scale(-1, 1);
-            }
-            if (this._flipY) {
-                flipYOffset = locOffsetPosition.y;
-                context.scale(1, -1);
-            }
-        }
-
-        if (this._texture && locRect.width > 0) {
-            var image = this._texture.getHtmlElementObj();
-            if (this._colorized) {
-                context.drawImage(image,
-                    0, 0, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
-            } else {
-                context.drawImage(image,
-                    0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
-            }
-        } else if (locContentSize.width !== 0) {
-            var curColor = this.getColor();
-            context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize.width, locContentSize.height);
-        }
-
-        if (cc.SPRITE_DEBUG_DRAW === 1) {
-            // draw bounding box
-            context.strokeStyle = "rgba(0,255,0,1)";
-            flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
-                cc.p(flipXOffset, flipYOffset - locRect.height)];
-            cc.drawingUtil.drawPoly(vertices1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
-            // draw texture box
-            context.strokeStyle = "rgba(0,255,0,1)";
-            var drawSize = this._rect.size;
-            flipYOffset = -flipYOffset;
-            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawSize.width, flipYOffset),
-                cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];
-            cc.drawingUtil.drawPoly(vertices2, 4, true);
-        }
-
-        if (this._flipX || this._flipY)
-            context.restore();
-
-        cc.g_NumberOfDraws++;
-    }
-});
-
-/**
- * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) (WebGL implement) <br/>
- *
- * cc.Sprite can be created with an image, or with a sub-rectangle of an image.  <br/>
- *
- * If the parent or any of its ancestors is a cc.SpriteBatchNode then the following features/limitations are valid   <br/>
- *    - Features when the parent is a cc.BatchNode: <br/>
- *        - MUCH faster rendering, specially if the cc.SpriteBatchNode has many children. All the children will be drawn in a single batch.  <br/>
- *
- *    - Limitations   <br/>
- *        - Camera is not supported yet (eg: CCOrbitCamera action doesn't work)  <br/>
- *        - GridBase actions are not supported (eg: CCLens, CCRipple, CCTwirl) <br/>
- *        - The Alias/Antialias property belongs to CCSpriteBatchNode, so you can't individually set the aliased property.  <br/>
- *        - The Blending function property belongs to CCSpriteBatchNode, so you can't individually set the blending function property. <br/>
- *        - Parallax scroller is not supported, but can be simulated with a "proxy" sprite.        <br/>
- *
- *  If the parent is an standard cc.Node, then cc.Sprite behaves like any other cc.Node:      <br/>
- *    - It supports blending functions    <br/>
- *    - It supports aliasing / antialiasing    <br/>
- *    - But the rendering will be slower: 1 draw per children.   <br/>
- *
- * The default anchorPoint in cc.Sprite is (0.5, 0.5). </p>
- * @class
- * @extends cc.NodeRGBA
- *
- * @example
- * var aSprite = new cc.Sprite();
- * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
- */
-cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
-    /// ---- common properties start ----
-    RGBAProtocol:true,
-    //
-    // Data used when the sprite is rendered using a CCSpriteSheet
-    //
-    _textureAtlas:null, //cc.SpriteBatchNode texture atlas
-
-    _atlasIndex:0,
-    _batchNode:null,
-    _dirty:false, //Whether the sprite needs to be updated
-    _recursiveDirty:null, //Whether all of the sprite's children needs to be updated
-    _hasChildren:null, //Whether the sprite contains children
-    _shouldBeHidden:false, //should not be drawn because one of the ancestors is not visible
-    _transformToBatch:null,
-
-    //
-    // Data used when the sprite is self-rendered
-    //
-    _blendFunc:null, //It's required for CCTextureProtocol inheritance
-    _texture:null, //cc.Texture2D object that is used to render the sprite
-
-    //
-    // Shared data
-    //
-    // texture
-    _rect:cc.rect(0, 0, 0, 0), //Retangle of cc.Texture2D
-    _rectRotated:false, //Whether the texture is rotated
-
-    // Offset Position (used by Zwoptex)
-    _offsetPosition:null, // absolute
-    _unflippedOffsetPositionFromCenter:null,
-
-    // opacity and RGB protocol
     _opacityModifyRGB:false,
 
     // image is flipped
@@ -1446,6 +331,8 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
     _flipY:false, //Whether the sprite is flipped vertically or not.
 
     _textureLoaded:false,
+    _loadedEventListeners: null,
+    _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
 
     textureLoaded:function(){
         return this._textureLoaded;
@@ -1583,9 +470,21 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         return ret;
     },
 
-    _spriteFrameLoadedCallback:function(spriteFrame){
+    _spriteFrameLoadedCallback:null,
+
+    _spriteFrameLoadedCallbackForWebGL:function(spriteFrame){
         this.setNodeDirty();
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
+        this._callLoadedEventCallbacks();
+    },
+
+    _spriteFrameLoadedCallbackForCanvas:function(spriteFrame){
+        this.setNodeDirty();
+        this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
+        var curColor = this.getColor();
+        if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
+            this._changeTextureColor();
+
         this._callLoadedEventCallbacks();
     },
 
@@ -1593,7 +492,7 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * Initializes a sprite with a sprite frame name. <br/>
      * A cc.SpriteFrame will be fetched from the cc.SpriteFrameCache by name.  <br/>
      * If the cc.SpriteFrame doesn't exist it will raise an exception. <br/>
-     * @param {String} spriteFrameName A key string that can fected a volid CCSpriteFrame from CCSpriteFrameCache
+     * @param {String} spriteFrameName A key string that can fected a volid cc.SpriteFrame from cc.SpriteFrameCache
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      * @example
      * var sprite = new cc.Sprite();
@@ -1707,7 +606,7 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
 
     /**
      * set Recursively is or isn't Dirty
-     * used only when parent is CCSpriteBatchNode
+     * used only when parent is cc.SpriteBatchNode
      * @param {Boolean} value
      */
     setDirtyRecursively:function (value) {
@@ -1812,7 +711,7 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * <p>The scale factor of the node. 1.0 is the default scale factor. <br/>
      * It modifies the X and Y scale at the same time. (override cc.Node ) <p/>
      * @param {Number} scale
-     * @param {Number|null} scaleY
+     * @param {Number|null} [scaleY=]
      * @override
      */
     setScale:function (scale, scaleY) {
@@ -1873,8 +772,8 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
     },
 
     /**
-     * FlipY value setter  (override cc.Node )
-     * @param {Boolean} flipY
+     * Sets whether the sprite should be flipped vertically or not.
+     * @param {Boolean} flipY true if the sprite should be flipped vertically, flase otherwise.
      */
     setFlipY:function (flipY) {
         if (this._flipY != flipY) {
@@ -1915,16 +814,23 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
     //
     // RGBA protocol
     //
-
-    // RGBAProtocol
     /**
      * opacity: conforms to CCRGBAProtocol protocol
      * @param {Boolean} modify
      */
-    setOpacityModifyRGB:function (modify) {
+    setOpacityModifyRGB:null,
+
+    _setOpacityModifyRGBForWebGL: function (modify) {
         if (this._opacityModifyRGB !== modify) {
             this._opacityModifyRGB = modify;
             this.updateColor();
+        }
+    },
+
+    _setOpacityModifyRGBForCanvas: function (modify) {
+        if (this._opacityModifyRGB !== modify) {
+            this._opacityModifyRGB = modify;
+            this.setNodeDirty();
         }
     },
 
@@ -1936,9 +842,16 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         return this._opacityModifyRGB;
     },
 
-    updateDisplayedOpacity:function (parentOpacity) {
+    updateDisplayedOpacity: null,
+    _updateDisplayedOpacityForWebGL:function (parentOpacity) {
         cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this.updateColor();
+    },
+
+    _updateDisplayedOpacityForCanvas:function (parentOpacity) {
+        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        this._changeTextureColor();
+        this.setNodeDirty();
     },
 
     // Animation
@@ -1982,34 +895,69 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
     getTexture:function () {
         return this._texture;
     },
-    /// ---- common properties end   ----
 
     _quad:null, // vertex coords, texture coords and color info
     _quadWebBuffer:null,
     _quadDirty:false,
+    _colorized:false,
+    _isLighterMode:false,
+    _originalTexture:null,
 
     /**
      * Constructor
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
      */
-    ctor:function (fileName) {
+    ctor: null,
+
+    _ctorForWebGL: function (fileName) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
-        this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
         this._quadWebBuffer = cc.renderContext.createBuffer();
         this._quadDirty = true;
+
         this._textureLoaded = true;
         this._loadedEventListeners = [];
 
         if (fileName) {
-            if (typeof(fileName) == "string") {
+            if (typeof(fileName) === "string") {
                 var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(fileName);
                 this.initWithSpriteFrame(frame);
-            } else if (typeof(fileName) == "object") {
+            } else if (typeof(fileName) === "object") {
+                if (fileName instanceof cc.SpriteFrame) {
+                    this.initWithSpriteFrame(fileName);
+                } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
+                    var texture2d = new cc.Texture2D();
+                    texture2d.initWithElement(fileName);
+                    texture2d.handleLoadedTexture();
+                    this.initWithTexture(texture2d);
+                } else if (fileName instanceof cc.Texture2D) {
+                    this.initWithTexture(fileName);
+                }
+            }
+        }
+    },
+
+    _ctorForCanvas: function (fileName) {
+        cc.NodeRGBA.prototype.ctor.call(this);
+        this._shouldBeHidden = false;
+        this._offsetPosition = cc.p(0, 0);
+        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+
+        this._newTextureWhenChangeColor = false;
+        this._textureLoaded = true;
+        this._loadedEventListeners = [];
+
+        if (fileName) {
+            if (typeof(fileName) === "string") {
+                var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(fileName);
+                this.initWithSpriteFrame(frame);
+            } else if (typeof(fileName) === "object") {
                 if (fileName instanceof cc.SpriteFrame) {
                     this.initWithSpriteFrame(fileName);
                 } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
@@ -2037,18 +985,31 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * @param {Number|cc.BlendFunc} src
      * @param {Number} dst
      */
-    setBlendFunc:function (src, dst) {
+    setBlendFunc: null,
+
+    _setBlendFuncForWebGL: function (src, dst) {
         if (arguments.length == 1)
             this._blendFunc = src;
         else
-            this._blendFunc = {src:src, dst:dst};
+            this._blendFunc = {src: src, dst: dst};
+    },
+
+    _setBlendFuncForCanvas: function (src, dst) {
+        if (arguments.length == 1)
+            this._blendFunc = src;
+        else
+            this._blendFunc = {src: src, dst: dst};
+        this._isLighterMode = (this._blendFunc &&
+            (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE)));
     },
 
     /**
      * Initializes an empty sprite with nothing init.
      * @return {Boolean}
      */
-    init:function () {
+    init:null,
+
+    _initForWebGL: function () {
         if (arguments.length > 0)
             return this.initWithFile(arguments[0], arguments[1]);
 
@@ -2072,7 +1033,7 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         this._hasChildren = false;
 
         // Atlas: Color
-        var tempColor = {r:255, g:255, b:255, a:255};
+        var tempColor = {r: 255, g: 255, b: 255, a: 255};
         this._quad.bl.colors = tempColor;
         this._quad.br.colors = tempColor;
         this._quad.tl.colors = tempColor;
@@ -2084,6 +1045,36 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
         return true;
     },
+
+    _initForCanvas: function () {
+        if (arguments.length > 0)
+            return this.initWithFile(arguments[0], arguments[1]);
+
+        cc.NodeRGBA.prototype.init.call(this);
+        this._dirty = this._recursiveDirty = false;
+        this._opacityModifyRGB = true;
+
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
+
+        // update texture (calls _updateBlendFunc)
+        this.setTexture(null);
+        this._textureLoaded = true;
+        this._flipX = this._flipY = false;
+
+        // default transform anchor: center
+        this.setAnchorPoint(cc.p(0.5, 0.5));
+
+        // zwoptex default values
+        this._offsetPosition = cc.PointZero();
+        this._hasChildren = false;
+
+        // updated in "useSelfRender"
+        // Atlas: TexCoords
+        this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
+        return true;
+    },
+
     /**
      * <p>
      *     Initializes a sprite with an image filename.
@@ -2115,18 +1106,20 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
     },
 
     /**
-     * Initializes a sprite with a texture. <br/>
+     * Initializes a sprite with a texture and a rect in points, optionally rotated.  <br/>
      * After initialization, the rect used will be the size of the texture, and the offset will be (0,0).
      * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
      * @param {cc.Rect} rect Only the contents inside rect of this texture will be applied for this sprite.
-     * @param {Boolean} rotated Whether or not the texture rectangle is rotated.
+     * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      * @example
      * var img =cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
      * var mySprite = new cc.Sprite();
      * mySprite.initWithTexture(img,cc.rect(0,0,480,320));
      */
-    initWithTexture:function (texture, rect, rotated) {
+    initWithTexture: null,
+
+    _initWithTextureForWebGL: function (texture, rect, rotated) {
         var argnum = arguments.length;
         if (argnum == 0)
             throw "Sprite.initWithTexture(): Argument must be non-nil ";
@@ -2155,15 +1148,16 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
 
         // Atlas: Color
         var tmpColor = new cc.Color4B(255, 255, 255, 255);
-        this._quad.bl.colors = tmpColor;
-        this._quad.br.colors = tmpColor;
-        this._quad.tl.colors = tmpColor;
-        this._quad.tr.colors = tmpColor;
+        var locQuad = this._quad;
+        locQuad.bl.colors = tmpColor;
+        locQuad.br.colors = tmpColor;
+        locQuad.tl.colors = tmpColor;
+        locQuad.tr.colors = tmpColor;
 
         var locTextureLoaded = texture.isLoaded();
         this._textureLoaded = locTextureLoaded;
 
-        if(!locTextureLoaded){
+        if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
             this._rect = rect;
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
@@ -2184,13 +1178,68 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         return true;
     },
 
-    _textureLoadedCallback:function(sender){
+    _initWithTextureForCanvas: function (texture, rect, rotated) {
+        var argnum = arguments.length;
+        if (argnum == 0)
+            throw "Sprite.initWithTexture(): Argument must be non-nil ";
+
+        rotated = rotated || false;
+
+        if (!cc.NodeRGBA.prototype.init.call(this))
+            return false;
+
+        this._batchNode = null;
+
+        this._recursiveDirty = false;
+        this._dirty = false;
+        this._opacityModifyRGB = true;
+
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
+
+        this._flipX = this._flipY = false;
+
+        // default transform anchor: center
+        this.setAnchorPoint(cc.p(0.5, 0.5));
+
+        // zwoptex default values
+        this._offsetPosition = cc.p(0, 0);
+        this._hasChildren = false;
+
+        var locTextureLoaded = texture.isLoaded();
+        this._textureLoaded = locTextureLoaded;
+
+        if (!locTextureLoaded) {
+            this._rectRotated = rotated || false;
+            this._rect = rect;
+            texture.addLoadedEventListener(this._textureLoadedCallback, this);
+            return true;
+        }
+
+        if (!rect) {
+            rect = cc.rect(0, 0, 0, 0);
+            rect.size = texture.getContentSize();
+        }
+        this._originalTexture = texture;
+
+        this.setTexture(texture);
+        this.setTextureRect(rect, rotated, rect.size);
+
+        // by default use "Self Render".
+        // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
+        this.setBatchNode(null);
+        return true;
+    },
+
+    _textureLoadedCallback: null,
+
+    _textureLoadedCallbackForWebGL: function (sender) {
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
             locRect = cc.rect(0, 0, 0, 0);
             locRect.size = sender.getContentSize();
-        } else if(cc._rectEqualToZero(locRect)){
+        } else if (cc._rectEqualToZero(locRect)) {
             locRect.size = sender.getContentSize();
         }
 
@@ -2201,14 +1250,38 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         this.setBatchNode(null);
         this._quadDirty = true;
+        this._callLoadedEventCallbacks();
     },
+
+    _textureLoadedCallbackForCanvas: function (sender) {
+        this._textureLoaded = true;
+        var locRect = this._rect;
+        if (!locRect) {
+            locRect = cc.rect(0, 0, 0, 0);
+            locRect.size = sender.getContentSize();
+        } else if (cc._rectEqualToZero(locRect)) {
+            locRect.size = sender.getContentSize();
+        }
+        this._originalTexture = sender;
+
+        this.setTexture(sender);
+        this.setTextureRect(locRect, this._rectRotated, locRect.size);
+
+        // by default use "Self Render".
+        // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
+        this.setBatchNode(null);
+        this._callLoadedEventCallbacks();
+    },
+
     /**
      * updates the texture rect of the CCSprite in points.
      * @param {cc.Rect} rect a rect of texture
      * @param {Boolean} rotated
      * @param {cc.Size} untrimmedSize
      */
-    setTextureRect:function (rect, rotated, untrimmedSize) {
+    setTextureRect:null,
+
+    _setTextureRectForWebGL:function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
         untrimmedSize = untrimmedSize || rect.size;
 
@@ -2222,8 +1295,9 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         if (this._flipY)
             relativeOffset.y = -relativeOffset.y;
 
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
+        var locRect = this._rect;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - locRect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - locRect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -2235,16 +1309,40 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
             // Atlas: Vertex
             var x1 = 0 + this._offsetPosition.x;
             var y1 = 0 + this._offsetPosition.y;
-            var x2 = x1 + this._rect.width;
-            var y2 = y1 + this._rect.height;
+            var x2 = x1 + locRect.width;
+            var y2 = y1 + locRect.height;
 
             // Don't update Z.
-            this._quad.bl.vertices = {x:x1, y:y1, z:0};
-            this._quad.br.vertices = {x:x2, y:y1, z:0};
-            this._quad.tl.vertices = {x:x1, y:y2, z:0};
-            this._quad.tr.vertices = {x:x2, y:y2, z:0};
+            var locQuad = this._quad;
+            locQuad.bl.vertices = {x:x1, y:y1, z:0};
+            locQuad.br.vertices = {x:x2, y:y1, z:0};
+            locQuad.tl.vertices = {x:x1, y:y2, z:0};
+            locQuad.tr.vertices = {x:x2, y:y2, z:0};
 
             this._quadDirty = true;
+        }
+    },
+
+    _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
+        this._rectRotated = rotated || false;
+        untrimmedSize = untrimmedSize || rect.size;
+
+        this.setContentSize(untrimmedSize);
+        this.setVertexRect(rect);
+
+        var relativeOffset = this._unflippedOffsetPositionFromCenter;
+        if (this._flipX)
+            relativeOffset.x = -relativeOffset.x;
+        if (this._flipY)
+            relativeOffset.y = -relativeOffset.y;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
+
+        // rendering using batch node
+        if (this._batchNode) {
+            // update dirty_, don't update recursiveDirty_
+            //this.setDirty(true);
+            this._dirty = true;
         }
     },
 
@@ -2252,44 +1350,48 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
     /**
      * updates the quad according the the rotation, position, scale values.
      */
-    updateTransform:function () {
+    updateTransform: null,
+
+    _updateTransformForWebGL: function () {
         //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
         if (this.isDirty()) {
+            var locQuad = this._quad, locParent = this._parent;
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
-            if (!this._visible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
-                this._quad.br.vertices = {x:0, y:0, z:0};
-                this._quad.tl.vertices = {x:0, y:0, z:0};
-                this._quad.tr.vertices = {x:0, y:0, z:0};
-                this._quad.bl.vertices = {x:0, y:0, z:0};
+            if (!this._visible || ( locParent && locParent != this._batchNode && locParent._shouldBeHidden)) {
+                locQuad.br.vertices = {x: 0, y: 0, z: 0};
+                locQuad.tl.vertices = {x: 0, y: 0, z: 0};
+                locQuad.tr.vertices = {x: 0, y: 0, z: 0};
+                locQuad.bl.vertices = {x: 0, y: 0, z: 0};
                 this._shouldBeHidden = true;
             } else {
                 this._shouldBeHidden = false;
 
-                if (!this._parent || this._parent == this._batchNode) {
+                if (!locParent || locParent == this._batchNode) {
                     this._transformToBatch = this.nodeToParentTransform();
                 } else {
                     //cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
-                    this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), this._parent._transformToBatch);
+                    this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), locParent._transformToBatch);
                 }
 
                 //
                 // calculate the Quad based on the Affine Matrix
                 //
+                var locTransformToBatch = this._transformToBatch;
                 var size = this._rect.size;
                 var x1 = this._offsetPosition.x;
                 var y1 = this._offsetPosition.y;
 
                 var x2 = x1 + size.width;
                 var y2 = y1 + size.height;
-                var x = this._transformToBatch.tx;
-                var y = this._transformToBatch.ty;
+                var x = locTransformToBatch.tx;
+                var y = locTransformToBatch.ty;
 
-                var cr = this._transformToBatch.a;
-                var sr = this._transformToBatch.b;
-                var cr2 = this._transformToBatch.d;
-                var sr2 = -this._transformToBatch.c;
+                var cr = locTransformToBatch.a;
+                var sr = locTransformToBatch.b;
+                var cr2 = locTransformToBatch.d;
+                var sr2 = -locTransformToBatch.c;
                 var ax = x1 * cr - y1 * sr2 + x;
                 var ay = x1 * sr + y1 * cr2 + y;
 
@@ -2302,13 +1404,13 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
                 var dx = x1 * cr - y2 * sr2 + x;
                 var dy = x1 * sr + y2 * cr2 + y;
 
-                this._quad.bl.vertices = {x:cc.RENDER_IN_SUBPIXEL(ax), y:cc.RENDER_IN_SUBPIXEL(ay), z:this._vertexZ};
-                this._quad.br.vertices = {x:cc.RENDER_IN_SUBPIXEL(bx), y:cc.RENDER_IN_SUBPIXEL(by), z:this._vertexZ};
-                this._quad.tl.vertices = {x:cc.RENDER_IN_SUBPIXEL(dx), y:cc.RENDER_IN_SUBPIXEL(dy), z:this._vertexZ};
-                this._quad.tr.vertices = {x:cc.RENDER_IN_SUBPIXEL(cx), y:cc.RENDER_IN_SUBPIXEL(cy), z:this._vertexZ};
+                var locVertexZ = this._vertexZ;
+                locQuad.bl.vertices = {x: cc.RENDER_IN_SUBPIXEL(ax), y: cc.RENDER_IN_SUBPIXEL(ay), z: locVertexZ};
+                locQuad.br.vertices = {x: cc.RENDER_IN_SUBPIXEL(bx), y: cc.RENDER_IN_SUBPIXEL(by), z: locVertexZ};
+                locQuad.tl.vertices = {x: cc.RENDER_IN_SUBPIXEL(dx), y: cc.RENDER_IN_SUBPIXEL(dy), z: locVertexZ};
+                locQuad.tr.vertices = {x: cc.RENDER_IN_SUBPIXEL(cx), y: cc.RENDER_IN_SUBPIXEL(cy), z: locVertexZ};
             }
-            if (cc.renderContextType === cc.WEBGL)
-                this._textureAtlas.updateQuad(this._quad, this._atlasIndex);
+            this._textureAtlas.updateQuad(locQuad, this._atlasIndex);
             this._recursiveDirty = false;
             this.setDirty(false);
         }
@@ -2329,6 +1431,34 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         }
     },
 
+    _updateTransformForCanvas: function () {
+        //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
+
+        // recaculate matrix only if it is dirty
+        if (this._dirty) {
+            // If it is not visible, or one of its ancestors is not visible, then do nothing:
+            var locParent = this._parent;
+            if (!this._visible || ( locParent && locParent != this._batchNode && locParent._shouldBeHidden)) {
+                this._shouldBeHidden = true;
+            } else {
+                this._shouldBeHidden = false;
+
+                if (!locParent || locParent == this._batchNode) {
+                    this._transformToBatch = this.nodeToParentTransform();
+                } else {
+                    //cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                    this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), locParent._transformToBatch);
+                }
+            }
+            this._recursiveDirty = false;
+            this._dirty = false;
+        }
+
+        // recursively iterate over children
+        if (this._hasChildren)
+            this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
+    },
+
     /**
      * Add child to sprite (override cc.Node )
      * @param {cc.Sprite} child
@@ -2336,7 +1466,9 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * @param {String} tag child's tag
      * @override
      */
-    addChild:function (child, zOrder, tag) {
+    addChild: null,
+
+    _addChildForWebGL:function (child, zOrder, tag) {
         cc.Assert(child != null, "Argument must be non-NULL");
         if (zOrder == null)
             zOrder = child._zOrder;
@@ -2357,26 +1489,41 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this._hasChildren = true;
     },
+
+    _addChildForCanvas: function (child, zOrder, tag) {
+        cc.Assert(child != null, "Argument must be non-NULL");
+        if (zOrder == null)
+            zOrder = child._zOrder;
+        if (tag == null)
+            tag = child._tag;
+
+        //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
+        this._hasChildren = true;
+    },
+
     /**
      * Update sprite's color
      */
     updateColor:function () {
-        var color4 = {r:this._displayedColor.r, g:this._displayedColor.g, b:this._displayedColor.b, a:this._displayedOpacity};
+        var locDisplayedColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
+        var color4 = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: locDisplayedOpacity};
         // special opacity for premultiplied textures
         if (this._opacityModifyRGB) {
-            color4.r *= this._displayedOpacity / 255.0;
-            color4.g *= this._displayedOpacity / 255.0;
-            color4.b *= this._displayedOpacity / 255.0;
+            color4.r *= locDisplayedOpacity / 255.0;
+            color4.g *= locDisplayedOpacity / 255.0;
+            color4.b *= locDisplayedOpacity / 255.0;
         }
-        this._quad.bl.colors = color4;
-        this._quad.br.colors = color4;
-        this._quad.tl.colors = color4;
-        this._quad.tr.colors = color4;
+        var locQuad = this._quad;
+        locQuad.bl.colors = color4;
+        locQuad.br.colors = color4;
+        locQuad.tl.colors = color4;
+        locQuad.tr.colors = color4;
 
         // renders using Sprite Manager
         if (this._batchNode) {
             if (this._atlasIndex != cc.SPRITE_INDEX_NOT_INITIALIZED) {
-                this._textureAtlas.updateQuad(this._quad, this._atlasIndex)
+                this._textureAtlas.updateQuad(locQuad, this._atlasIndex)
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
@@ -2393,23 +1540,50 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * opacity setter
      * @param {Number} opacity
      */
-    setOpacity:function (opacity) {
+    setOpacity:null,
+
+    _setOpacityForWebGL: function (opacity) {
         cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
         this.updateColor();
+    },
+
+    _setOpacityForCanvas: function (opacity) {
+        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
+        this.setNodeDirty();
     },
 
     /**
      * color setter
      * @param {cc.Color3B} color3
      */
-    setColor:function (color3) {
+    setColor: null,
+
+    _setColorForWebGL: function (color3) {
         cc.NodeRGBA.prototype.setColor.call(this, color3);
         this.updateColor();
     },
 
-    updateDisplayedColor:function (parentColor) {
+    _setColorForCanvas: function (color3) {
+        var curColor = this.getColor();
+        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
+            return;
+
+        cc.NodeRGBA.prototype.setColor.call(this, color3);
+        this._changeTextureColor();
+        this.setNodeDirty();
+    },
+
+    updateDisplayedColor: null,
+
+    _updateDisplayedColorForWebGL: function (parentColor) {
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
         this.updateColor();
+    },
+
+    _updateDisplayedColorForCanvas: function (parentColor) {
+        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        this._changeTextureColor();
+        this.setNodeDirty();
     },
 
     // Frames
@@ -2417,7 +1591,9 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * Sets a new display frame to the cc.Sprite.
      * @param {cc.SpriteFrame} newFrame
      */
-    setDisplayFrame:function (newFrame) {
+    setDisplayFrame: null,
+
+    _setDisplayFrameForWebGL: function (newFrame) {
         this.setNodeDirty();
         var frameOffset = newFrame.getOffset();
         this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
@@ -2425,16 +1601,16 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
 
         var pNewTexture = newFrame.getTexture();
         var locTextureLoaded = newFrame.textureLoaded();
-        if(!locTextureLoaded){
+        if (!locTextureLoaded) {
             this._textureLoaded = false;
-            newFrame.addLoadedEventListener(function(sender){
+            newFrame.addLoadedEventListener(function (sender) {
                 this._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
                     this.setTexture(locNewTexture);
                 this.setTextureRect(sender.getRect(), sender._rectRotated, sender.getOriginalSize());
                 this._callLoadedEventCallbacks();
-            },this);
+            }, this);
         }
         // update texture before updating texture rect
         if (pNewTexture != this._texture)
@@ -2445,21 +1621,68 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
     },
 
+    _setDisplayFrameForCanvas: function (newFrame) {
+        this.setNodeDirty();
+
+        var frameOffset = newFrame.getOffset();
+        this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
+        this._unflippedOffsetPositionFromCenter.y = frameOffset.y;
+
+        // update rect
+        this._rectRotated = newFrame.isRotated();
+
+        var pNewTexture = newFrame.getTexture();
+        var locTextureLoaded = newFrame.textureLoaded();
+        if (!locTextureLoaded) {
+            this._textureLoaded = false;
+            newFrame.addLoadedEventListener(function (sender) {
+                this._textureLoaded = true;
+                var locNewTexture = sender.getTexture();
+                if (locNewTexture != this._texture)
+                    this.setTexture(locNewTexture);
+                this.setTextureRect(sender.getRect(), this._rectRotated, sender.getOriginalSize());
+                this._callLoadedEventCallbacks();
+            }, this);
+        }
+        // update texture before updating texture rect
+        if (pNewTexture != this._texture)
+            this.setTexture(pNewTexture);
+
+        if (this._rectRotated)
+            this._originalTexture = pNewTexture;
+
+        this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
+        this._colorized = false;
+        if (locTextureLoaded) {
+            var curColor = this.getColor();
+            if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
+                this._changeTextureColor();
+        }
+    },
+
     /**
      * Returns whether or not a cc.SpriteFrame is being displayed
      * @param {cc.SpriteFrame} frame
      * @return {Boolean}
      */
-    isFrameDisplayed:function (frame) {
+    isFrameDisplayed: null,
+
+    _isFrameDisplayedForWebGL: function (frame) {
         return (cc.rectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
             && cc.pointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
+    },
+
+    _isFrameDisplayedForCanvas: function (frame) {
+        if (frame.getTexture() != this._texture)
+            return false;
+        return cc.rectEqualToRect(frame.getRect(), this._rect);
     },
 
     /**
      * Returns the current displayed frame.
      * @return {cc.SpriteFrame}
      */
-    displayFrame:function () {
+    displayFrame: function () {
         return cc.SpriteFrame.createWithTexture(this._texture,
             cc.RECT_POINTS_TO_PIXELS(this._rect),
             this._rectRotated,
@@ -2472,11 +1695,13 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * @param {cc.SpriteBatchNode|null} spriteBatchNode
      * @example
      *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
-     *  var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(0, 0, 57, 57));
+     *  var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.rect(0, 0, 57, 57));
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */
-    setBatchNode:function (spriteBatchNode) {
+    setBatchNode:null,
+
+    _setBatchNodeForWebGL:function (spriteBatchNode) {
         this._batchNode = spriteBatchNode; // weak reference
 
         // self render
@@ -2490,12 +1715,29 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
             var y1 = this._offsetPosition.y;
             var x2 = x1 + this._rect.width;
             var y2 = y1 + this._rect.height;
-            this._quad.bl.vertices = {x:x1, y:y1, z:0};
-            this._quad.br.vertices = {x:x2, y:y1, z:0};
-            this._quad.tl.vertices = {x:x1, y:y2, z:0};
-            this._quad.tr.vertices = {x:x2, y:y2, z:0};
+            var locQuad = this._quad;
+            locQuad.bl.vertices = {x:x1, y:y1, z:0};
+            locQuad.br.vertices = {x:x2, y:y1, z:0};
+            locQuad.tl.vertices = {x:x1, y:y2, z:0};
+            locQuad.tr.vertices = {x:x2, y:y2, z:0};
 
             this._quadDirty = true;
+        } else {
+            // using batch
+            this._transformToBatch = cc.AffineTransformIdentity();
+            this.setTextureAtlas(this._batchNode.getTextureAtlas()); // weak ref
+        }
+    },
+
+    _setBatchNodeForCanvas:function (spriteBatchNode) {
+        this._batchNode = spriteBatchNode; // weak reference
+
+        // self render
+        if (!this._batchNode) {
+            this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
+            this.setTextureAtlas(null);
+            this._recursiveDirty = false;
+            this.setDirty(false);
         } else {
             // using batch
             this._transformToBatch = cc.AffineTransformIdentity();
@@ -2508,7 +1750,9 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
      * Texture of sprite setter
      * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture
      */
-    setTexture:function (texture) {
+    setTexture: null,
+
+    _setTextureForWebGL: function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
         cc.Assert(!texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
 
@@ -2523,6 +1767,17 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         if (!this._batchNode && this._texture != texture) {
             this._texture = texture;
             this._updateBlendFunc();
+        }
+    },
+
+    _setTextureForCanvas: function (texture) {
+        // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
+        cc.Assert(!texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
+        if (this._texture != texture) {
+            if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
+                this._originalTexture = texture;
+            }
+            this._texture = texture;
         }
     },
 
@@ -2541,6 +1796,30 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         }
     },
 
+    _changeTextureColor: function () {
+        var locElement, locTexture = this._texture, locRect = this.getTextureRect();
+        if (locTexture && locRect.width > 0) {
+            locElement = locTexture.getHtmlElementObj();
+            if (!locElement)
+                return;
+
+            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            if (cacheTextureForColor) {
+                this._colorized = true;
+                //generate color texture cache
+                if (locElement instanceof HTMLCanvasElement && !this._rectRotated && !this._newTextureWhenChangeColor)
+                    cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect, locElement);
+                else {
+                    locElement = cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, locRect);
+                    locTexture = new cc.Texture2D();
+                    locTexture.initWithElement(locElement);
+                    locTexture.handleLoadedTexture();
+                    this.setTexture(locTexture);
+                }
+            }
+        }
+    },
+
     _setTextureCoords:function (rect) {
         rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
@@ -2551,7 +1830,7 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
         var atlasWidth = tex.getPixelsWide();
         var atlasHeight = tex.getPixelsHigh();
 
-        var left, right, top, bottom, tempSwap;
+        var left, right, top, bottom, tempSwap, locQuad = this._quad;
         if (this._rectRotated) {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.x + 1) / (2 * atlasWidth);
@@ -2577,14 +1856,14 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
                 right = tempSwap;
             }
 
-            this._quad.bl.texCoords.u = left;
-            this._quad.bl.texCoords.v = top;
-            this._quad.br.texCoords.u = left;
-            this._quad.br.texCoords.v = bottom;
-            this._quad.tl.texCoords.u = right;
-            this._quad.tl.texCoords.v = top;
-            this._quad.tr.texCoords.u = right;
-            this._quad.tr.texCoords.v = bottom;
+            locQuad.bl.texCoords.u = left;
+            locQuad.bl.texCoords.v = top;
+            locQuad.br.texCoords.u = left;
+            locQuad.br.texCoords.v = bottom;
+            locQuad.tl.texCoords.u = right;
+            locQuad.tl.texCoords.v = top;
+            locQuad.tr.texCoords.u = right;
+            locQuad.tr.texCoords.v = bottom;
         } else {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.x + 1) / (2 * atlasWidth);
@@ -2610,22 +1889,24 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
                 bottom = tempSwap;
             }
 
-            this._quad.bl.texCoords.u = left;
-            this._quad.bl.texCoords.v = bottom;
-            this._quad.br.texCoords.u = right;
-            this._quad.br.texCoords.v = bottom;
-            this._quad.tl.texCoords.u = left;
-            this._quad.tl.texCoords.v = top;
-            this._quad.tr.texCoords.u = right;
-            this._quad.tr.texCoords.v = top;
+            locQuad.bl.texCoords.u = left;
+            locQuad.bl.texCoords.v = bottom;
+            locQuad.br.texCoords.u = right;
+            locQuad.br.texCoords.v = bottom;
+            locQuad.tl.texCoords.u = left;
+            locQuad.tl.texCoords.v = top;
+            locQuad.tr.texCoords.u = right;
+            locQuad.tr.texCoords.v = top;
         }
         this._quadDirty = true;
     },
     /**
      * draw sprite to canvas
      */
-    draw:function () {
-        if(!this._textureLoaded)
+    draw: null,
+
+    _drawForWebGL: function () {
+        if (!this._textureLoaded)
             return;
 
         var gl = cc.renderContext, locTexture = this._texture;
@@ -2676,11 +1957,12 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
+            var locQuad = this._quad;
             var verticesG1 = [
-                cc.p(this._quad.tl.vertices.x, this._quad.tl.vertices.y),
-                cc.p(this._quad.bl.vertices.x, this._quad.bl.vertices.y),
-                cc.p(this._quad.br.vertices.x, this._quad.br.vertices.y),
-                cc.p(this._quad.tr.vertices.x, this._quad.tr.vertices.y)
+                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
+                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
+                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
+                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
             ];
             cc.drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
@@ -2691,10 +1973,111 @@ cc.SpriteWebGL = cc.NodeRGBA.extend(/** @lends cc.SpriteWebGL# */{
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
+    },
+
+    _drawForCanvas: function (ctx) {
+        if (!this._textureLoaded)
+            return;
+
+        var context = ctx || cc.renderContext;
+        if (this._isLighterMode)
+            context.globalCompositeOperation = 'lighter';
+
+        context.globalAlpha = this._displayedOpacity / 255;
+        var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
+        if (this._flipX || this._flipY) {
+            context.save();
+            if (this._flipX) {
+                flipXOffset = -locOffsetPosition.x - locRect.width;
+                context.scale(-1, 1);
+            }
+            if (this._flipY) {
+                flipYOffset = locOffsetPosition.y;
+                context.scale(1, -1);
+            }
+        }
+
+        if (this._texture && locRect.width > 0) {
+            var image = this._texture.getHtmlElementObj();
+            if (this._colorized) {
+                context.drawImage(image,
+                    0, 0, 0 | locRect.width, 0 | locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+            } else {
+                context.drawImage(image,
+                    0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+            }
+        } else if (locContentSize.width !== 0) {
+            var curColor = this.getColor();
+            context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
+            context.fillRect(flipXOffset, flipYOffset, locContentSize.width, locContentSize.height);
+        }
+
+        if (cc.SPRITE_DEBUG_DRAW === 1) {
+            // draw bounding box
+            context.strokeStyle = "rgba(0,255,0,1)";
+            flipYOffset = -flipYOffset;
+            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
+                cc.p(flipXOffset, flipYOffset - locRect.height)];
+            cc.drawingUtil.drawPoly(vertices1, 4, true);
+        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
+            // draw texture box
+            context.strokeStyle = "rgba(0,255,0,1)";
+            var drawSize = this._rect.size;
+            flipYOffset = -flipYOffset;
+            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawSize.width, flipYOffset),
+                cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];
+            cc.drawingUtil.drawPoly(vertices2, 4, true);
+        }
+        if (this._flipX || this._flipY)
+            context.restore();
+        cc.g_NumberOfDraws++;
     }
 });
 
-cc.Sprite = cc.Browser.supportWebGL ? cc.SpriteWebGL : cc.SpriteCanvas;
+if(cc.Browser.supportWebGL){
+    cc.Sprite.prototype._spriteFrameLoadedCallback = cc.Sprite.prototype._spriteFrameLoadedCallbackForWebGL;
+    cc.Sprite.prototype.setOpacityModifyRGB = cc.Sprite.prototype._setOpacityModifyRGBForWebGL;
+    cc.Sprite.prototype.updateDisplayedOpacity = cc.Sprite.prototype._updateDisplayedOpacityForWebGL;
+    cc.Sprite.prototype.ctor = cc.Sprite.prototype._ctorForWebGL;
+    cc.Sprite.prototype.setBlendFunc = cc.Sprite.prototype._setBlendFuncForWebGL;
+    cc.Sprite.prototype.init = cc.Sprite.prototype._initForWebGL;
+    cc.Sprite.prototype.initWithTexture = cc.Sprite.prototype._initWithTextureForWebGL;
+    cc.Sprite.prototype._textureLoadedCallback = cc.Sprite.prototype._textureLoadedCallbackForWebGL;
+    cc.Sprite.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
+    cc.Sprite.prototype.updateTransform = cc.Sprite.prototype._updateTransformForWebGL;
+    cc.Sprite.prototype.addChild = cc.Sprite.prototype._addChildForWebGL;
+    cc.Sprite.prototype.setOpacity = cc.Sprite.prototype._setOpacityForWebGL;
+    cc.Sprite.prototype.setColor = cc.Sprite.prototype._setColorForWebGL;
+    cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForWebGL;
+    cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForWebGL;
+    cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForWebGL;
+    cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForWebGL;
+    cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForWebGL;
+    cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForWebGL;
+}else{
+    cc.Sprite.prototype._spriteFrameLoadedCallback = cc.Sprite.prototype._spriteFrameLoadedCallbackForCanvas;
+    cc.Sprite.prototype.setOpacityModifyRGB = cc.Sprite.prototype._setOpacityModifyRGBForCanvas;
+    cc.Sprite.prototype.updateDisplayedOpacity = cc.Sprite.prototype._updateDisplayedOpacityForCanvas;
+    cc.Sprite.prototype.ctor = cc.Sprite.prototype._ctorForCanvas;
+    cc.Sprite.prototype.setBlendFunc = cc.Sprite.prototype._setBlendFuncForCanvas;
+    cc.Sprite.prototype.init = cc.Sprite.prototype._initForCanvas;
+    cc.Sprite.prototype.initWithTexture = cc.Sprite.prototype._initWithTextureForCanvas;
+    cc.Sprite.prototype._textureLoadedCallback = cc.Sprite.prototype._textureLoadedCallbackForCanvas;
+    cc.Sprite.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForCanvas;
+    cc.Sprite.prototype.updateTransform = cc.Sprite.prototype._updateTransformForCanvas;
+    cc.Sprite.prototype.addChild = cc.Sprite.prototype._addChildForCanvas;
+    cc.Sprite.prototype.setOpacity = cc.Sprite.prototype._setOpacityForCanvas;
+    cc.Sprite.prototype.setColor = cc.Sprite.prototype._setColorForCanvas;
+    cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForCanvas;
+    cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForCanvas;
+    cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForCanvas;
+    cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForCanvas;
+    cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForCanvas;
+    cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForCanvas;
+}
 
 /**
  * <p>
@@ -2704,7 +2087,6 @@ cc.Sprite = cc.Browser.supportWebGL ? cc.SpriteWebGL : cc.SpriteCanvas;
  * @constructs
  * @param {cc.Texture2D} texture  A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
  * @param {cc.Rect} rect Only the contents inside the rect of this texture will be applied for this sprite.
- * @param {cc.Point} offset offset of the texture
  * @return {cc.Sprite} A valid sprite object
  * @example
  * //get an image
@@ -2716,10 +2098,8 @@ cc.Sprite = cc.Browser.supportWebGL ? cc.SpriteWebGL : cc.SpriteCanvas;
  * //create a sprite with texture and rect
  * var sprite2 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320));
  *
- * //create a sprite with texture and rect and offset
- * var sprite3 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320),cc.p(0,0));
  */
-cc.Sprite.createWithTexture = function (texture, rect, offset) {
+cc.Sprite.createWithTexture = function (texture, rect) {
     var argnum = arguments.length;
     var sprite = new cc.Sprite();
     switch (argnum) {
@@ -2728,9 +2108,8 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
              The rect used will be the size of the texture.
              The offset will be (0,0).
              */
-            if (sprite && sprite.initWithTexture(texture)) {
+            if (sprite && sprite.initWithTexture(texture))
                 return sprite;
-            }
             return null;
             break;
 
@@ -2738,16 +2117,8 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
             /** Creates an sprite with a texture and a rect.
              The offset will be (0,0).
              */
-            if (sprite && sprite.initWithTexture(texture, rect)) {
+            if (sprite && sprite.initWithTexture(texture, rect))
                 return sprite;
-            }
-            return null;
-            break;
-
-        case 3:
-            /** Creates an sprite with a texture, a rect and offset. */
-                // not implement
-            cc.Assert(0, "");
             return null;
             break;
 

@@ -164,7 +164,7 @@ cc.Control = cc.LayerRGBA.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), true);
+        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
     },
 
     /**

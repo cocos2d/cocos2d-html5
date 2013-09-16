@@ -174,8 +174,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
     /**
      * @param {cc.Node} child
-     * @param {Number|Null} zOrder
-     * @param {Number|Null} tag
+     * @param {Number|Null} [zOrder=]
+     * @param {Number|Null} [tag=]
      */
     addChild:function (child, zOrder, tag) {
         cc.Assert((child instanceof cc.MenuItem), "Menu only supports MenuItem objects as children");
@@ -194,18 +194,19 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsVerticallyWithPadding:function (padding) {
-        var height = -padding;
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                height += this._children[i].getContentSize().height * this._children[i].getScaleY() + padding;
-            }
-        }
+        var height = -padding, locChildren = this._children, len, i, locScaleY, locHeight, locChild;
+        if (locChildren && locChildren.length > 0) {
+            for (i = 0, len = locChildren.length; i < len; i++)
+                height += locChildren[i].getContentSize().height * locChildren[i].getScaleY() + padding;
 
-        var y = height / 2.0;
-        if (this._children && this._children.length > 0) {
-            for (i = 0; i < this._children.length; i++) {
-                this._children[i].setPosition(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2);
-                y -= this._children[i].getContentSize().height * this._children[i].getScaleY() + padding;
+            var y = height / 2.0;
+
+            for (i = 0, len = locChildren.length; i < len; i++) {
+                locChild = locChildren[i];
+                locHeight = locChild.getContentSize().height;
+                locScaleY = locChild.getScaleY();
+                locChild.setPosition(0, y - locHeight * locScaleY / 2);
+                y -= locHeight * locScaleY + padding;
             }
         }
     },
@@ -222,18 +223,19 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsHorizontallyWithPadding:function (padding) {
-        var width = -padding;
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                width += this._children[i].getContentSize().width * this._children[i].getScaleX() + padding;
-            }
-        }
+        var width = -padding, locChildren = this._children, i, len, locScaleX, locWidth, locChild;
+        if (locChildren && locChildren.length > 0) {
+            for (i = 0, len = locChildren.length; i < len; i++)
+                width += locChildren[i].getContentSize().width * locChildren[i].getScaleX() + padding;
 
-        var x = -width / 2.0;
-        if (this._children && this._children.length > 0) {
-            for (i = 0; i < this._children.length; i++) {
-                this._children[i].setPosition(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2, 0);
-                x += this._children[i].getContentSize().width * this._children[i].getScaleX() + padding;
+            var x = -width / 2.0;
+
+            for (i = 0, len = locChildren.length; i < len; i++) {
+                locChild = locChildren[i];
+                locScaleX = locChild.getScaleX();
+                locWidth =  locChildren[i].getContentSize().width;
+                locChild.setPosition(x + locWidth * locScaleX / 2, 0);
+                x += locWidth * locScaleX + padding;
             }
         }
     },
@@ -341,7 +343,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var column = 0;
         var columnWidth = 0;
         var rowsOccupied = 0;
-        var columnRows, child, len, tmp;
+        var columnRows, child, len, tmp, locContentSize;
 
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
@@ -355,10 +357,11 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 cc.Assert(columnRows, "");
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
-                tmp = child.getContentSize().width;
+                locContentSize = child.getContentSize();
+                tmp = locContentSize.width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
-                columnHeight += (child.getContentSize().height + 5);
+                columnHeight += (locContentSize.height + 5);
                 ++rowsOccupied;
 
                 if (rowsOccupied >= columnRows) {
@@ -393,12 +396,13 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 }
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
-                tmp = child.getContentSize().width;
+                locContentSize = child.getContentSize();
+                tmp = locContentSize.width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
                 child.setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
 
-                y -= child.getContentSize().height + 10;
+                y -= locContentSize.height + 10;
                 ++rowsOccupied;
 
                 if (rowsOccupied >= columnRows) {
@@ -416,7 +420,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), true);
+        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
     },
 
     /**
@@ -522,16 +526,17 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
     _itemForTouch:function (touch) {
         var touchLocation = touch.getLocation();
-        var itemChildren = this._children;
+        var itemChildren = this._children, locItemChild;
         if (itemChildren && itemChildren.length > 0) {
             for (var i = 0; i < itemChildren.length; i++) {
-                if (itemChildren[i].isVisible() && itemChildren[i].isEnabled()) {
-                    var local = itemChildren[i].convertToNodeSpace(touchLocation);
-                    var r = itemChildren[i].rect();
+                locItemChild = itemChildren[i];
+                if (locItemChild.isVisible() && locItemChild.isEnabled()) {
+                    var local = locItemChild.convertToNodeSpace(touchLocation);
+                    var r = locItemChild.rect();
                     r.x = 0;
                     r.y = 0;
                     if (cc.rectContainsPoint(r, local))
-                        return itemChildren[i];
+                        return locItemChild;
                 }
             }
         }

@@ -192,8 +192,12 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     getTexture:function () {
         if (this._texture)
             return this._texture;
-        if (this._textureFilename !== "")
-            return cc.TextureCache.getInstance().addImage(this._textureFilename);
+        if (this._textureFilename !== "") {
+            var locTexture = cc.TextureCache.getInstance().addImage(this._textureFilename);
+            if (locTexture)
+                this._textureLoaded = locTexture.isLoaded();
+            return locTexture;
+        }
         return null;
     },
 
