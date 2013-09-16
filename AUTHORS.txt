@@ -50,7 +50,6 @@ Ivo Wetzel(Zynga Germany) @BonsaiDen Fixes for Audio Support Detection,
                                      Texture Support in Particle System,
                                      and Performance improvements
 
-
 Mario Adrian        @many20        Code review, multi touch improvements,
                                    ccbi bugs fixed
 
@@ -86,6 +85,7 @@ Jing Wang             @06wj         CCScheduler improvements
                                    cc.RectApplyAffineTransform improvements
 
 Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
+                                    LabelTTF improvements
 
 Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
 
@@ -93,6 +93,8 @@ XiaoJun Zheng        @SmallAiTT    _getResType error fix
                                    cc.ScrollView bug fix
 
 Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
+
+Jing Xiao            @xbruce       cc.SAXParser bug fix
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 
