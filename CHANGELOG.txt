@@ -5,7 +5,7 @@ Cocos2d-html5-v2.1.6 @ Sep.19, 2013
 * Migrated CCBReader and GUI to Cocos2d-x 2.1.4
 * Improved update function of Action, and avoid using temporary object, it is good for GC and performance
 * Modified LabelTTF's rendering from direct drawing to pre-rendering for performance, 100% faster than before on mobile browser
-* Fixed APIs of HTML5 according to JSB for compatibility, e.g. cc.ParticleSystemQuad has merged into cc.ParticleSystem, please check it on upgrade guide v2.1.5 to v2.1.6(wiki link)
+* Fixed APIs of HTML5 according to JSB for compatibility, e.g. cc.ParticleSystemQuad has merged into cc.ParticleSystem, please check it on upgrade guide v2.1.5 to v2.1.6(http://www.cocos2d-x.org/wiki/Upgrade_Guide_from_Cocos2d-html5_v215_to_v216)
 * Added Hiding url address bar for mobile browser, please check the template and hello world
 * Re-writed Canvas Mode of RenderTexture to adapt WebGL interface
 * Added frame event, collider and blend type supporting for Armature. Now Armature supports two tools:1.CocoStudio(windows,http://www.cocostudio.org),2.DragonBones v2.3(flash,http://dragonbones.github.io)
