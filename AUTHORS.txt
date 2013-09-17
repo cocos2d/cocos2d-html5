@@ -86,6 +86,7 @@ Jing Wang             @06wj         CCScheduler improvements
 
 Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
                                     LabelTTF improvements
+                                    cc.TextureCache.dumpCachedTextureInfo 's bug fix
 
 Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
 
