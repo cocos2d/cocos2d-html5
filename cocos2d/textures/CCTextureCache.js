@@ -484,7 +484,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * This will attempt to calculate the size of each texture, and the total texture memory in use. </p>
      */
     dumpCachedTextureInfo:function () {
-         var count = 0;
+        var count = 0;
         var totalBytes = 0, locTextures = this._textures;
 
         for (var key in locTextures) {
@@ -509,7 +509,6 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             }
 
         }
-//
         cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, HTMLCanvasElement for "
             + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
     }
