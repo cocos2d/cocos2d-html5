@@ -70,8 +70,8 @@ cc.SpriteLoader = cc.NodeLoader.extend({
     },
     onHandlePropTypeFlip:function (node, parent, propertyName, flip, ccbReader) {
         if (propertyName === PROPERTY_FLIP) {
-            node.setFlipX(flip[0]);
-            node.setFlipY(flip[1]);
+            node.setFlippedX(flip[0]);
+            node.setFlippedY(flip[1]);
         } else {
             cc.NodeLoader.prototype.onHandlePropTypeFlip.call(this, node, parent, propertyName, flip, ccbReader);
         }
