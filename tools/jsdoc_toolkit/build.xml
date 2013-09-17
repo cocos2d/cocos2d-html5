@@ -33,7 +33,7 @@
             <source file="${src.dir}/cocoa/CCGeometry.js"/>
             <source file="${src.dir}/platform/CCConfig.js"/>
             <!--<source file="${src.dir}/cocoa/CCSet.js"/>-->
-            <source file="${src.dir}/cocoa/CCNS.js"/>
+            <source file="${src.dir}/cocoa/CCNS.js"/> 
             <source file="${src.dir}/cocoa/CCAffineTransform.js"/>
             <source file="${src.dir}/support/CCPointExtension.js"/>
             <source file="${src.dir}/support/CCPNGReader.js"/>
