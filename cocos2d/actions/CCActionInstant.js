@@ -275,7 +275,7 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
      */
     update:function (time) {
         //this._super();
-        this._target.setFlippedY(this._flipY);
+        this._target.setFlippedY(this._flippedY);
     },
 
     /**

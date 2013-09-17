@@ -54,7 +54,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
         // XXX: needed before [super init]
         this._back = backwards;
 
-        if (cc.TransitionScene.prototype.initWithDuration(this, t, scene)) {
+        if (cc.TransitionScene.prototype.initWithDuration.call(this, t, scene)) {
             // do something
         }
         return true;
