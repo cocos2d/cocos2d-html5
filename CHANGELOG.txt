@@ -23,6 +23,7 @@ Cocos2d-html5-v2.1.6 @ Sep.19, 2013
 9. Fixed a bug of cc.LayerColor that represent incorrect opacity passed into init method
 10. Stop listening and remove the event for HtmlImageElement object onload
 11. Fixed cc.ProgressTimer display wrong when its sprite was flipped
+12. Fixed some bugs for actions that set their object property through reference when initiating actions.
 
 * Known Issues:
      1. Effect Advanced Lens3D doesn't work
