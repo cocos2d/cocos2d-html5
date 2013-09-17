@@ -30,14 +30,20 @@
  * @extends cc.Class
  */
 cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
-    xmlDoc:null,
-    parser:null,
-    _xmlDict:null,
-    plist:null,
+    xmlDoc: null,
+    _parser: null,
+    _xmlDict: null,
+    _isSupportDOMParser: null,
 
-    ctor:function () {
+    ctor: function () {
         this._xmlDict = {};
-        this.plist = {};
+
+        if (window.DOMParser) {
+            this._isSupportDOMParser = true;
+            this._parser = new DOMParser();
+        } else {
+            this._isSupportDOMParser = false;
+        }
     },
 
     /**
@@ -45,23 +51,15 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} textxml plist xml contents
      * @return {Array} plist object array
      */
-    parse:function (textxml) {
+    parse: function (textxml) {
+        var path = textxml;
         textxml = this.getList(textxml);
-        // get a reference to the requested corresponding xml file
-        if (window.DOMParser) {
-            this.parser = new DOMParser();
-            this.xmlDoc = this.parser.parseFromString(textxml, "text/xml");
-        } else {// Internet Explorer (untested!)
-            this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-            this.xmlDoc.async = "false";
-            this.xmlDoc.loadXML(textxml);
-        }
-        if (this.xmlDoc == null)
-            cc.log("cocos2d:xml " + this.xmlDoc + " not found!");
 
-        var plist = this.xmlDoc.documentElement;
+        var xmlDoc = this._parserXML(textxml, path);
+
+        var plist = xmlDoc.documentElement;
         if (plist.tagName != 'plist')
-            throw "cocos2d:Not a plist file";
+            throw "cocos2d: " + path + " is not a plist file";
 
         // Get first real node
         var node = null;
@@ -70,8 +68,9 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             if (node.nodeType == 1)
                 break
         }
-        this.plist = this._parseNode(node);
-        return this.plist;
+        xmlDoc = null;
+
+        return this._parseNode(node);
     },
 
     /**
@@ -79,26 +78,32 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param  {String} textxml  tilemap xml content
      * @return {Document} xml document
      */
-    tmxParse:function (textxml, isXMLString) {
-        if((isXMLString == null) || (isXMLString === false))
+    tmxParse: function (textxml, isXMLString) {
+        if ((isXMLString == null) || (isXMLString === false))
             textxml = this.getList(textxml);
 
-        // get a reference to the requested corresponding xml file
-        if (window.DOMParser) {
-            this.parser = new DOMParser();
-            this.xmlDoc = this.parser.parseFromString(textxml, "text/xml");
-        } else { // Internet Explorer (untested!)
-            this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
-            this.xmlDoc.async = "false";
-            this.xmlDoc.loadXML(textxml);
-        }
-        if (this.xmlDoc == null)
-            cc.log("cocos2d:xml " + this.xmlDoc + " not found!");
-
-        return this.xmlDoc;
+        return this._parserXML(textxml);
     },
 
-    _parseNode:function (node) {
+    _parserXML: function (textxml, path) {
+        // get a reference to the requested corresponding xml file
+        var xmlDoc;
+        if (this._isSupportDOMParser) {
+            xmlDoc = this._parser.parseFromString(textxml, "text/xml");
+        } else {
+            // Internet Explorer (untested!)
+            xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            xmlDoc.async = "false";
+            xmlDoc.loadXML(textxml);
+        }
+
+        if (xmlDoc == null)
+            cc.log("cocos2d:xml " + path + " not found!");
+
+        return xmlDoc;
+    },
+
+    _parseNode: function (node) {
         var data = null;
         switch (node.tagName) {
             case 'dict':
@@ -134,7 +139,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
         return data;
     },
 
-    _parseArray:function (node) {
+    _parseArray: function (node) {
         var data = [];
         for (var i = 0, len = node.childNodes.length; i < len; i++) {
             var child = node.childNodes[i];
@@ -145,7 +150,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
         return data;
     },
 
-    _parseDict:function (node) {
+    _parseDict: function (node) {
         var data = {};
 
         var key = null;
@@ -167,19 +172,15 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * Preload plist file
      * @param {String} filePath
      */
-    preloadPlist:function (filePath) {
+    preloadPlist: function (filePath) {
         filePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
 
         if (window.XMLHttpRequest) {
-            // for IE7+, Firefox, Chrome, Opera, Safari brower
             var xmlhttp = new XMLHttpRequest();
-            // is xml file?
             if (xmlhttp.overrideMimeType)
                 xmlhttp.overrideMimeType('text/xml');
-        } else {
-            // for IE6, IE5 brower
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
+
         if (xmlhttp != null) {
             var that = this;
             xmlhttp.onreadystatechange = function () {
@@ -200,11 +201,20 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
     },
 
     /**
+     * Unload the preloaded plist from xmlList
+     * @param {String} filePath
+     */
+    unloadPlist: function (filePath) {
+        if (this._xmlDict.hasOwnProperty(filePath))
+            delete this._xmlDict[filePath];
+    },
+
+    /**
      * get filename from filepath
      * @param {String} filePath
      * @return {String}
      */
-    getName:function (filePath) {
+    getName: function (filePath) {
         var startPos = filePath.lastIndexOf("/", filePath.length) + 1;
         var endPos = filePath.lastIndexOf(".", filePath.length);
         return filePath.substring(startPos, endPos);
@@ -215,7 +225,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} filePath
      * @return {String}
      */
-    getExt:function (filePath) {
+    getExt: function (filePath) {
         var startPos = filePath.lastIndexOf(".", filePath.length) + 1;
         return filePath.substring(startPos, filePath.length);
     },
@@ -225,7 +235,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} key
      * @return {String} xml content
      */
-    getList:function (key) {
+    getList: function (key) {
         if (this._xmlDict != null) {
             return this._xmlDict[key];
         }

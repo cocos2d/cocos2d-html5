@@ -25,27 +25,38 @@
 cc.Skin = cc.Sprite.extend({
     _skinData:null,
     _bone:null,
-    _skinTransform:cc.AffineTransformIdentity(),
+    _skinTransform:null,
+    _displayName:"",
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
         this._bone = null;
+        this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
     },
-
+    initWithSpriteFrameName:function(spriteFrameName){
+        var ret = cc.Sprite.prototype.initWithSpriteFrameName.call(this,spriteFrameName);
+        var atlas = cc.SpriteFrameCacheHelper.getInstance().getTexureAtlasWithTexture(this._texture);
+        this.setTextureAtlas(atlas);
+        this._displayName = spriteFrameName;
+        return ret;
+    },
+    initWithFile:function(spriteFrameName){
+        var ret = cc.Sprite.prototype.initWithFile.call(this,spriteFrameName);
+        var atlas = cc.SpriteFrameCacheHelper.getInstance().getTexureAtlasWithTexture(this._texture);
+        this.setTextureAtlas(atlas);
+        this._displayName = spriteFrameName;
+        return ret;
+    },
     setSkinData:function (skinData) {
         this._skinData = skinData;
 
-        this.setScaleX(this._skinData.scaleX);
-        this.setScaleY(this._skinData.scaleY);
-        this.setRotation(cc.RADIANS_TO_DEGREES(this._skinData.skewX));
-        this.setPosition(cc.p(this._skinData.x, this._skinData.y));
+        this.setScaleX(skinData.scaleX);
+        this.setScaleY(skinData.scaleY);
+        this.setRotation(cc.RADIANS_TO_DEGREES(skinData.skewX));
+        this.setPosition(skinData.x, skinData.y);
 
         this._skinTransform = this.nodeToParentTransform();
-        if (cc.renderContextType === cc.CANVAS) {
-            this._skinTransform.b *= -1;
-            this._skinTransform.c *= -1;
-        }
     },
 
     getSkinData:function () {
@@ -60,12 +71,8 @@ cc.Skin = cc.Sprite.extend({
         return this._bone;
     },
 
-    updateSelfTransform:function () {
+    updateArmatureTransform:function () {
         this._transform = cc.AffineTransformConcat(this._skinTransform, this._bone.nodeToArmatureTransform());
-        if (cc.renderContextType === cc.CANVAS) {
-            this._transform.b *= -1;
-            this._transform.c *= -1;
-        }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
@@ -74,12 +81,59 @@ cc.Skin = cc.Sprite.extend({
     getBoundingBox:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var transForm = this.nodeToParentTransform();
-        if (cc.renderContextType === cc.CANVAS) {
-            transForm = {a:transForm.a, b:-transForm.b, c:-transForm.c, d:transForm.d, tx:transForm.tx, ty:transForm.ty};
-        }
         return cc.RectApplyAffineTransform(rect, transForm);
     },
 
+    /**
+     * display name getter
+     * @returns {String}
+     */
+    getDisplayName:function(){
+        return this._displayName;
+    },
+
+    nodeToWorldTransform: function () {
+        return cc.AffineTransformConcat(this._transform, this._bone.getArmature().nodeToWorldTransform());
+    },
+
+    nodeToWorldTransformAR: function () {
+        var displayTransform = this._transform;
+        var anchorPoint = this._anchorPointInPoints;
+
+        anchorPoint = cc.PointApplyAffineTransform(anchorPoint, displayTransform);
+        displayTransform.tx = anchorPoint.x;
+        displayTransform.ty = anchorPoint.y;
+
+        return cc.AffineTransformConcat(displayTransform, this._bone.getArmature().nodeToWorldTransform());
+    },
+    /**
+     * update blendType
+     * @param {cc.BlendType} blendType
+     */
+    updateBlendType: function (blendType) {
+        var blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        switch (blendType) {
+            case cc.BlendType.NORMAL:
+                blendFunc.src = cc.BLEND_SRC;
+                blendFunc.dst = cc.BLEND_DST;
+                break;
+            case cc.BlendType.ADD:
+                blendFunc.src = gl.SRC_ALPHA;
+                blendFunc.dst = gl.ONE;
+                break;
+            case cc.BlendType.MULTIPLY:
+                blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
+                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+                break;
+            case cc.BlendType.SCREEN:
+                blendFunc.src = gl.ONE;
+                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+                break;
+            default:
+                break;
+        }
+        this.setBlendFunc(blendFunc.src, blendFunc.dst);
+    },
     updateQuad:function () {
         return;
         // If it is not visible, or one of its ancestors is not visible, then do nothing:
@@ -131,17 +185,21 @@ cc.Skin = cc.Sprite.extend({
     }
 });
 
-cc.Skin.create = function () {
-    var skin = new cc.Skin();
-    if (skin && skin.init()) {
-        return skin;
+cc.Skin.create = function (fileName, rect) {
+    var argnum = arguments.length;
+    var sprite = new cc.Skin();
+    if (argnum === 0) {
+        if (sprite.init())
+            return sprite;
+    } else {
+        if (sprite && sprite.initWithFile(fileName, rect))
+            return sprite;
     }
     return null;
 };
 
 cc.Skin.createWithSpriteFrameName = function (pszSpriteFrameName) {
     var skin = new cc.Skin();
-    skin.testSpriteFrameName = pszSpriteFrameName;
     if (skin && skin.initWithSpriteFrameName(pszSpriteFrameName)) {
         return skin;
     }

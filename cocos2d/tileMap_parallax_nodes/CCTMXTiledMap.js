@@ -55,7 +55,7 @@ cc.TMX_ORIENTATION_ISO = 2;
  *
  * <p>Features: <br />
  * - Each tile will be treated as an cc.Sprite<br />
- * - The sprites are created on demand. They will be created only when you call "layer.tileAt(position)" <br />
+ * - The sprites are created on demand. They will be created only when you call "layer.getTileAt(position)" <br />
  * - Each tile can be rotated / moved / scaled / tinted / "opacitied", since each tile is a cc.Sprite<br />
  * - Tiles can be added/removed in runtime<br />
  * - The z-order of the tiles can be modified in runtime<br />

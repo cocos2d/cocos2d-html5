@@ -45,7 +45,7 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  *    If the cc.ParticleSystems are not added to a cc.ParticleBatchNode then an OpenGL ES draw call will be needed for each one, which is less efficient.</br>
  *
  *    Limitations:<br/>
- *    - At the moment only cc.ParticleSystemQuad is supported<br/>
+ *    - At the moment only cc.ParticleSystem is supported<br/>
  *    - All systems need to be drawn with the same parameters, blend function, aliasing, texture<br/>
  *
  *    Most efficient usage<br/>
@@ -62,7 +62,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _textureAtlas:null,
 
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
     },
 
@@ -108,13 +108,13 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     /**
      * Add a child into the cc.ParticleBatchNode
-     * @param {cc.ParticleSystemQuad} child
+     * @param {cc.ParticleSystem} child
      * @param {Number} zOrder
      * @param {Number} tag
      */
     addChild:function (child, zOrder, tag) {
         cc.Assert(child != null, "Argument must be non-NULL");
-        cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.ParticleSystemQuads as children");
+        cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.ParticleSystem as children");
         zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
         tag = (tag == null) ? child.getTag() : tag;
 
@@ -151,20 +151,21 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     insertChild:function (pSystem, index) {
         var totalParticles = pSystem.getTotalParticles();
-        var totalQuads = this._textureAtlas.getTotalQuads();
+        var locTextureAtlas = this._textureAtlas;
+        var totalQuads = locTextureAtlas.getTotalQuads();
         pSystem.setAtlasIndex(index);
-        if (totalQuads + totalParticles > this._textureAtlas.getCapacity()) {
+        if (totalQuads + totalParticles > locTextureAtlas.getCapacity()) {
             this._increaseAtlasCapacityTo(totalQuads + totalParticles);
             // after a realloc empty quads of textureAtlas can be filled with gibberish (realloc doesn't perform calloc), insert empty quads to prevent it
-            this._textureAtlas.fillWithEmptyQuadsFromIndex(this._textureAtlas.getCapacity() - totalParticles, totalParticles);
+            locTextureAtlas.fillWithEmptyQuadsFromIndex(locTextureAtlas.getCapacity() - totalParticles, totalParticles);
         }
 
         // make room for quads, not necessary for last child
         if (pSystem.getAtlasIndex() + totalParticles != totalQuads)
-            this._textureAtlas.moveQuadsFromIndex(index, index + totalParticles);
+            locTextureAtlas.moveQuadsFromIndex(index, index + totalParticles);
 
         // increase totalParticles here for new particles, update method of particlesystem will fill the quads
-        this._textureAtlas.increaseTotalQuadsWith(totalParticles);
+        locTextureAtlas.increaseTotalQuadsWith(totalParticles);
         this._updateAllAtlasIndexes();
     },
 
@@ -177,16 +178,17 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (child == null)
             return;
 
-        cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.ParticleSystemQuads as children");
+        cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.ParticleSystem as children");
         cc.Assert(this._children.indexOf(child) > -1, "cc.ParticleBatchNode doesn't contain the sprite. Can't remove it");
 
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
 
+        var locTextureAtlas = this._textureAtlas;
         // remove child helper
-        this._textureAtlas.removeQuadsAtIndex(child.getAtlasIndex(), child.getTotalParticles());
+        locTextureAtlas.removeQuadsAtIndex(child.getAtlasIndex(), child.getTotalParticles());
 
         // after memmove of data, empty the quads at the end of array
-        this._textureAtlas.fillWithEmptyQuadsFromIndex(this._textureAtlas.getTotalQuads(), child.getTotalParticles());
+        locTextureAtlas.fillWithEmptyQuadsFromIndex(locTextureAtlas.getTotalQuads(), child.getTotalParticles());
 
         // paticle could be reused for self rendering
         child.setBatchNode(null);
@@ -224,8 +226,9 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
                 // Find new AtlasIndex
                 var newAtlasIndex = 0;
-                for (var i = 0; i < this._children.length; i++) {
-                    var pNode = this._children[i];
+                var locChildren = this._children;
+                for (var i = 0; i < locChildren.length; i++) {
+                    var pNode = locChildren[i];
                     if (pNode == child) {
                         newAtlasIndex = child.getAtlasIndex();
                         break;
@@ -253,10 +256,11 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Boolean} doCleanup
      */
     removeAllChildren:function (doCleanup) {
-        for (var i = 0; i < this._children.length; i++) {
-            this._children[i].setBatchNode(null);
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            locChildren[i].setBatchNode(null);
         }
-        this._super(doCleanup);
+        cc.Node.prototype.removeAllChildren.call(this, doCleanup);
         this._textureAtlas.removeAllQuads();
     },
 
@@ -306,9 +310,10 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._textureAtlas.setTexture(texture);
 
         // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
-        if (texture && !texture.hasPremultipliedAlpha() && ( this._blendFunc.src == gl.BLEND_SRC && this._blendFunc.dst == gl.BLEND_DST )) {
-            this._blendFunc.src = gl.SRC_ALPHA;
-            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+        var locBlendFunc = this._blendFunc;
+        if (texture && !texture.hasPremultipliedAlpha() && ( locBlendFunc.src == gl.BLEND_SRC && locBlendFunc.dst == gl.BLEND_DST )) {
+            locBlendFunc.src = gl.SRC_ALPHA;
+            locBlendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
         }
     },
 
@@ -335,10 +340,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     // override visit.
     // Don't call visit on it's children
     visit:function (ctx) {
-        if (cc.renderContextType === cc.CANVAS) {
-            this._super(ctx);
+        if (cc.renderContextType === cc.CANVAS)
             return;
-        }
 
         // CAREFUL:
         // This visit is almost identical to cc.Node#visit
@@ -367,8 +370,9 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     _updateAllAtlasIndexes:function () {
         var index = 0;
-        for (var i = 0; i < this._children[0].length; i++) {
-            var child = this._children[i];
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
             child.setAtlasIndex(index);
             index += child.getTotalParticles();
         }
@@ -386,9 +390,10 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     },
 
     _searchNewPositionInChildrenForZ:function (z) {
-        var count = this._children.length;
+        var locChildren = this._children;
+        var count = locChildren.length;
         for (var i = 0; i < count; i++) {
-            if (this._children[i].getZOrder() > z)
+            if (locChildren[i].getZOrder() > z)
                 return i;
         }
         return count;
@@ -401,10 +406,10 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         var newIndex = 0;
         var oldIndex = 0;
 
-        var minusOne = 0;
-        var count = this._children.length;
+        var minusOne = 0, locChildren = this._children;
+        var count = locChildren.length;
         for (var i = 0; i < count; i++) {
-            var pNode = this._children[i];
+            var pNode = locChildren[i];
             // new index
             if (pNode.getZOrder() > z && !foundNewIdx) {
                 newIndex = i;

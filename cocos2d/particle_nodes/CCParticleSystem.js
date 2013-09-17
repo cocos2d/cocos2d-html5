@@ -232,7 +232,7 @@ cc.Particle.TemporaryPoints = [
  *     'Radius Mode' in Particle Designer uses a fixed emit rate of 30 hz. Since that can't be guarateed in cocos2d,  <br/>
  *     cocos2d uses a another approach, but the results are almost identical.<br/>
  *     cocos2d supports all the variables used by Particle Designer plus a bit more:  <br/>
- *     - spinning particles (supported when using CCParticleSystemQuad)       <br/>
+ *     - spinning particles (supported when using ParticleSystem)       <br/>
  *     - tangential acceleration (Gravity mode)                               <br/>
  *     - radial acceleration (Gravity mode)                                   <br/>
  *     - radius direction (Radius mode) (Particle Designer supports outwards to inwards direction only) <br/>
@@ -288,8 +288,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _isActive: false,
     _particleCount: 0,
     _duration: 0,
-    _sourcePosition: cc.PointZero(),
-    _posVar: cc.PointZero(),
+    _sourcePosition: null,
+    _posVar: null,
     _life: 0,
     _lifeVar: 0,
     _angle: 0,
@@ -298,10 +298,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _startSizeVar: 0,
     _endSize: 0,
     _endSizeVar: 0,
-    _startColor: new cc.Color4F(0, 0, 0, 1),
-    _startColorVar: new cc.Color4F(0, 0, 0, 1),
-    _endColor: new cc.Color4F(0, 0, 0, 1),
-    _endColorVar: new cc.Color4F(0, 0, 0, 1),
+    _startColor: null,
+    _startColorVar: null,
+    _endColor: null,
+    _endColorVar: null,
     _startSpin: 0,
     _startSpinVar: 0,
     _endSpin: 0,
@@ -314,6 +314,19 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _positionType: cc.PARTICLE_TYPE_FREE,
     _isAutoRemoveOnFinish: false,
     _emitterMode: 0,
+
+    // quads to be rendered
+    _quads:null,
+    // indices
+    _indices:null,
+
+    //_VAOname:0,
+    //0: vertex  1: indices
+    _buffersVBO:null,
+    _pointRect:null,
+
+    _textureLoaded: null,
+    _quadsArrayBuffer:null,
 
     /**
      * Constructor
@@ -370,6 +383,110 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._opacityModifyRGB = false;
         this._positionType = cc.PARTICLE_TYPE_FREE;
         this._isAutoRemoveOnFinish = false;
+
+        this._buffersVBO = [0, 0];
+        this._quads = [];
+        this._indices = [];
+        this._pointRect = cc.RectZero();
+        this._textureLoaded = true;
+
+        if (cc.renderContextType === cc.WEBGL) {
+            this._quadsArrayBuffer = null;
+        }
+    },
+
+    /**
+     * initializes the indices for the vertices
+     */
+    initIndices:function () {
+        var locIndices = this._indices;
+        for (var i = 0, len = this._totalParticles; i < len; ++i) {
+            var i6 = i * 6;
+            var i4 = i * 4;
+            locIndices[i6 + 0] = i4 + 0;
+            locIndices[i6 + 1] = i4 + 1;
+            locIndices[i6 + 2] = i4 + 2;
+
+            locIndices[i6 + 5] = i4 + 1;
+            locIndices[i6 + 4] = i4 + 2;
+            locIndices[i6 + 3] = i4 + 3;
+        }
+    },
+
+    /**
+     * <p> initializes the texture with a rectangle measured Points<br/>
+     * pointRect should be in Texture coordinates, not pixel coordinates
+     * </p>
+     * @param {cc.Rect} pointRect
+     */
+    initTexCoordsWithRect:function (pointRect) {
+        var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+        // convert to pixels coords
+        var rect = cc.rect(
+            pointRect.x * scaleFactor,
+            pointRect.y * scaleFactor,
+            pointRect.width * scaleFactor,
+            pointRect.height * scaleFactor);
+
+        var wide = pointRect.width;
+        var high = pointRect.height;
+
+        if (this._texture) {
+            wide = this._texture.getPixelsWide();
+            high = this._texture.getPixelsHigh();
+        }
+
+        if(cc.renderContextType === cc.CANVAS)
+            return;
+
+        var left, bottom, right, top;
+        if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+            left = (rect.x * 2 + 1) / (wide * 2);
+            bottom = (rect.y * 2 + 1) / (high * 2);
+            right = left + (rect.width * 2 - 2) / (wide * 2);
+            top = bottom + (rect.height * 2 - 2) / (high * 2);
+        } else {
+            left = rect.x / wide;
+            bottom = rect.y / high;
+            right = left + rect.width / wide;
+            top = bottom + rect.height / high;
+        }
+
+        // Important. Texture in cocos2d are inverted, so the Y component should be inverted
+        var temp = top;
+        top = bottom;
+        bottom = temp;
+
+        var quads;
+        var start = 0, end = 0;
+        if (this._batchNode) {
+            quads = this._batchNode.getTextureAtlas().getQuads();
+            start = this._atlasIndex;
+            end = this._atlasIndex + this._totalParticles;
+        } else {
+            quads = this._quads;
+            start = 0;
+            end = this._totalParticles;
+        }
+
+        for (var i = start; i < end; i++) {
+            if (!quads[i])
+                quads[i] = cc.V3F_C4B_T2F_QuadZero();
+
+            // bottom-left vertex:
+            var selQuad = quads[i];
+            selQuad.bl.texCoords.u = left;
+            selQuad.bl.texCoords.v = bottom;
+            // bottom-right vertex:
+            selQuad.br.texCoords.u = right;
+            selQuad.br.texCoords.v = bottom;
+            // top-left vertex:
+            selQuad.tl.texCoords.u = left;
+            selQuad.tl.texCoords.v = top;
+            // top-right vertex:
+            selQuad.tr.texCoords.u = right;
+            selQuad.tr.texCoords.v = top;
+        }
     },
 
     /**
@@ -386,11 +503,35 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setBatchNode:function (batchNode) {
         if (this._batchNode != batchNode) {
+            var oldBatch = this._batchNode;
+
             this._batchNode = batchNode; //weak reference
 
             if (batchNode) {
+                var locParticles = this._particles;
                 for (var i = 0; i < this._totalParticles; i++)
-                    this._particles[i].atlasIndex = i;
+                    locParticles[i].atlasIndex = i;
+            }
+
+            // NEW: is self render ?
+            if (!batchNode) {
+                this._allocMemory();
+                this.initIndices();
+                this.setTexture(oldBatch.getTexture());
+                //if (cc.TEXTURE_ATLAS_USE_VAO)
+                //    this._setupVBOandVAO();
+                //else
+                this._setupVBO();
+            } else if (!oldBatch) {
+                // OLD: was it self render cleanup  ?
+                // copy current state to batch
+                this._batchNode.getTextureAtlas()._copyQuadsToTextureAtlas(this._quads, this._atlasIndex);
+
+                //delete buffer
+                cc.renderContext.deleteBuffer(this._buffersVBO[1]);     //where is re-bindBuffer code?
+
+                //if (cc.TEXTURE_ATLAS_USE_VAO)
+                //    glDeleteVertexArrays(1, this._VAOname);
             }
         }
     },
@@ -1081,11 +1222,57 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * set maximum particles of the system
-     * @param {Number} totalParticles
+     * @param {Number} tp totalParticles
      */
-    setTotalParticles:function (totalParticles) {
-        cc.Assert(totalParticles <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
-        this._totalParticles = totalParticles;
+    setTotalParticles:function (tp) {
+        //cc.Assert(tp <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
+        if (cc.renderContextType === cc.CANVAS){
+            this._totalParticles = (tp < 200) ? tp : 200;
+            return;
+        }
+
+        // If we are setting the total numer of particles to a number higher
+        // than what is allocated, we need to allocate new arrays
+        if (tp > this._allocatedParticles) {
+            var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            // Allocate new memory
+            this._indices = new Uint16Array(tp * 6);
+            var locQuadsArrayBuffer = new ArrayBuffer(tp * quadSize);
+            //TODO need fix
+            // Assign pointers
+            var locParticles = [];
+            var locQuads = [];
+            for (var j = 0; j < tp; j++) {
+                locParticles[j] = new cc.Particle();
+                locQuads[j] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, locQuadsArrayBuffer, j * quadSize);
+            }
+            this._allocatedParticles = tp;
+            this._totalParticles = tp;
+
+            // Init particles
+            if (this._batchNode) {
+                for (var i = 0; i < tp; i++)
+                    locParticles[i].atlasIndex = i;
+            }
+
+            this._particles = locParticles;
+            this._quadsArrayBuffer = locQuadsArrayBuffer;
+            this._quads = locQuads;
+
+            this.initIndices();
+            //if (cc.TEXTURE_ATLAS_USE_VAO)
+            //    this._setupVBOandVAO();
+            //else
+            this._setupVBO();
+
+            //set the texture coord
+            if(this._texture){
+                var size = this._texture.getContentSize();
+                this.initTexCoordsWithRect(cc.rect(0, 0, size.width, size.height));
+            }
+        } else
+            this._totalParticles = tp;
+        this.resetSystem();
     },
 
     /**
@@ -1098,12 +1285,19 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * set Texture of Particle System
-     * @param {cc.Texture2D | HTMLImageElement | HTMLCanvasElement} texture
+     * @param {cc.Texture2D } texture
      */
     setTexture:function (texture) {
-        if (this._texture != texture) {
-            this._texture = texture;
-            this._updateBlendFunc();
+        if(texture.isLoaded()){
+            var  size = texture.getContentSize();
+            this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
+        } else {
+            this._textureLoaded = false;
+            texture.addLoadedEventListener(function(sender){
+                this._textureLoaded = true;
+                var  size = sender.getContentSize();
+                this.setTextureWithRect(sender, cc.rect(0, 0, size.width, size.height));
+            }, this);
         }
     },
 
@@ -1340,7 +1534,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             // position
             var x = parseFloat(locValueForKey("sourcePositionx", dictionary));
             var y = parseFloat(locValueForKey("sourcePositiony", dictionary));
-            this.setPosition(cc.p(x, y));
+            this.setPosition(x, y);
             this._posVar.x = parseFloat(locValueForKey("sourcePositionVariancex", dictionary));
             this._posVar.y = parseFloat(locValueForKey("sourcePositionVariancey", dictionary));
 
@@ -1454,10 +1648,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
 
-                        if (cc.renderContextType === cc.CANVAS)
-                            this.setTexture(canvasObj);
-                        else
-                            this.setTexture(addTexture);
+                        this.setTexture(addTexture);
                     }
                 }
 
@@ -1518,6 +1709,20 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         // udpate after action in run!
         this.scheduleUpdateWithPriority(1);
+
+        if(cc.renderContextType === cc.WEBGL){
+            // allocating data space
+            if (!this._allocMemory())
+                return false;
+
+            this.initIndices();
+            //if (cc.TEXTURE_ATLAS_USE_VAO)
+            //    this._setupVBOandVAO();
+            //else
+            this._setupVBO();
+
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        }
 
         return true;
     },
@@ -1681,8 +1886,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     resetSystem:function () {
         this._isActive = true;
         this._elapsed = 0;
+        var locParticles = this._particles;
         for (this._particleIdx = 0; this._particleIdx < this._particleCount; ++this._particleIdx)
-            this._particles[this._particleIdx].timeToLive = 0 ;
+            locParticles[this._particleIdx].timeToLive = 0 ;
     },
 
     /**
@@ -1699,14 +1905,129 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Point} newPosition
      */
     updateQuadWithParticle:function (particle, newPosition) {
-        // should be overriden
+        var quad = null;
+        if (this._batchNode) {
+            var batchQuads = this._batchNode.getTextureAtlas().getQuads();
+            quad = batchQuads[this._atlasIndex + particle.atlasIndex];
+            this._batchNode.getTextureAtlas()._dirty = true;
+        } else
+            quad = this._quads[this._particleIdx];
+
+        var r, g, b, a;
+        if(this._opacityModifyRGB){
+            r = 0 | (particle.color.r * particle.color.a * 255);
+            g = 0 | (particle.color.g * particle.color.a * 255);
+            b = 0 | (particle.color.b * particle.color.a * 255);
+            a = 0 | (particle.color.a * 255);
+        }else{
+            r = 0 | (particle.color.r * 255);
+            g = 0 | (particle.color.g * 255);
+            b = 0 | (particle.color.b * 255);
+            a = 0 | (particle.color.a * 255);
+        }
+
+        var locColors = quad.bl.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
+
+        locColors = quad.br.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
+
+        locColors = quad.tl.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
+
+        locColors = quad.tr.colors;
+        locColors.r = r;
+        locColors.g = g;
+        locColors.b = b;
+        locColors.a = a;
+
+        // vertices
+        var size_2 = particle.size / 2;
+        if (particle.rotation) {
+            var x1 = -size_2;
+            var y1 = -size_2;
+
+            var x2 = size_2;
+            var y2 = size_2;
+            var x = newPosition.x;
+            var y = newPosition.y;
+
+            var rad = -cc.DEGREES_TO_RADIANS(particle.rotation);
+            var cr = Math.cos(rad);
+            var sr = Math.sin(rad);
+            var ax = x1 * cr - y1 * sr + x;
+            var ay = x1 * sr + y1 * cr + y;
+            var bx = x2 * cr - y1 * sr + x;
+            var by = x2 * sr + y1 * cr + y;
+            var cx = x2 * cr - y2 * sr + x;
+            var cy = x2 * sr + y2 * cr + y;
+            var dx = x1 * cr - y2 * sr + x;
+            var dy = x1 * sr + y2 * cr + y;
+
+            // bottom-left
+            quad.bl.vertices.x = ax;
+            quad.bl.vertices.y = ay;
+
+            // bottom-right vertex:
+            quad.br.vertices.x = bx;
+            quad.br.vertices.y = by;
+
+            // top-left vertex:
+            quad.tl.vertices.x = dx;
+            quad.tl.vertices.y = dy;
+
+            // top-right vertex:
+            quad.tr.vertices.x = cx;
+            quad.tr.vertices.y = cy;
+        } else {
+            // bottom-left vertex:
+            quad.bl.vertices.x = newPosition.x - size_2;
+            quad.bl.vertices.y = newPosition.y - size_2;
+
+            // bottom-right vertex:
+            quad.br.vertices.x = newPosition.x + size_2;
+            quad.br.vertices.y = newPosition.y - size_2;
+
+            // top-left vertex:
+            quad.tl.vertices.x = newPosition.x - size_2;
+            quad.tl.vertices.y = newPosition.y + size_2;
+
+            // top-right vertex:
+            quad.tr.vertices.x = newPosition.x + size_2;
+            quad.tr.vertices.y = newPosition.y + size_2;
+        }
     },
 
     /**
      * should be overridden by subclasses
      */
     postStep:function () {
-        // should be overriden
+        if (cc.renderContextType === cc.WEBGL) {
+            var gl = cc.renderContext;
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+            gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+
+            // Option 2: Data
+            //	glBufferData(GL_ARRAY_BUFFER, sizeof(quads_[0]) * particleCount, quads_, GL_DYNAMIC_DRAW);
+
+            // Option 3: Orphaning + glMapBuffer
+            // glBufferData(GL_ARRAY_BUFFER, sizeof(m_pQuads[0])*m_uTotalParticles, NULL, GL_STREAM_DRAW);
+            // void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+            // memcpy(buf, m_pQuads, sizeof(m_pQuads[0])*m_uTotalParticles);
+            // glUnmapBuffer(GL_ARRAY_BUFFER);
+
+            //cc.CHECK_GL_ERROR_DEBUG();
+        }
     },
 
     /**
@@ -1748,6 +2069,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 tpb = cc.Particle.TemporaryPoints[2],
                 tpc = cc.Particle.TemporaryPoints[3];
 
+            var locParticles = this._particles;
             while (this._particleIdx < this._particleCount) {
 
                 // Reset the working particles
@@ -1755,7 +2077,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 cc.pZeroIn(tpb);
                 cc.pZeroIn(tpc);
 
-                var selParticle = this._particles[this._particleIdx];
+                var selParticle = locParticles[this._particleIdx];
 
                 // life
                 selParticle.timeToLive -= dt;
@@ -1770,7 +2092,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         if (selParticle.pos.x || selParticle.pos.y) {
                             cc.pIn(radial, selParticle.pos);
                             cc.pNormalizeIn(radial);
-
                         } else {
                             cc.pZeroIn(radial);
                         }
@@ -1863,20 +2184,19 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     // life < 0
                     var currentIndex = selParticle.atlasIndex;
                     if(this._particleIdx !== this._particleCount -1){
-                         var deadParticle = this._particles[this._particleIdx];
-                        this._particles[this._particleIdx] = this._particles[this._particleCount -1];
-                        this._particles[this._particleCount -1] = deadParticle;
+                         var deadParticle = locParticles[this._particleIdx];
+                        locParticles[this._particleIdx] = locParticles[this._particleCount -1];
+                        locParticles[this._particleCount -1] = deadParticle;
                     }
                     if (this._batchNode) {
                         //disable the switched particle
                         this._batchNode.disableParticle(this._atlasIndex + currentIndex);
 
                         //switch indexes
-                        this._particles[this._particleCount - 1].atlasIndex = currentIndex;
+                        locParticles[this._particleCount - 1].atlasIndex = currentIndex;
                     }
 
                     --this._particleCount;
-
                     if (this._particleCount == 0 && this._isAutoRemoveOnFinish) {
                         this.unscheduleUpdate();
                         this._parent.removeChild(this, true);
@@ -1889,8 +2209,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (!this._batchNode)
             this.postStep();
-
-        //cc.PROFILER_STOP_CATEGORY(kCCProfilerCategoryParticles , "cc.ParticleSystem - update");
     },
 
     updateWithNoTime:function () {
@@ -1915,38 +2233,403 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _updateBlendFunc:function () {
         cc.Assert(!this._batchNode, "Can't change blending functions when the particle is being batched");
 
-        if (this._texture) {
-            if (this._texture instanceof cc.Texture2D) {
-                var premultiplied = this._texture.hasPremultipliedAlpha();
-                this._opacityModifyRGB = false;
-
-                if (this._texture && ( this._blendFunc.src == cc.BLEND_SRC && this._blendFunc.dst == cc.BLEND_DST )) {
-                    if (premultiplied) {
-                        this._opacityModifyRGB = true;
-                    } else {
-                        this._blendFunc.src = gl.SRC_ALPHA;
-                        this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-                    }
+        var locTexture = this._texture;
+        if (locTexture && locTexture instanceof cc.Texture2D) {
+            this._opacityModifyRGB = false;
+            var locBlendFunc = this._blendFunc;
+            if (locBlendFunc.src == cc.BLEND_SRC && locBlendFunc.dst == cc.BLEND_DST) {
+                if (locTexture.hasPremultipliedAlpha()) {
+                    this._opacityModifyRGB = true;
+                } else {
+                    locBlendFunc.src = gl.SRC_ALPHA;
+                    locBlendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
                 }
             }
         }
+    },
+
+    clone:function () {
+        var retParticle = new cc.ParticleSystem();
+
+        // self, not super
+        if (retParticle.initWithTotalParticles(this._totalParticles)) {
+            // angle
+            retParticle._angle = this._angle;
+            retParticle._angleVar = this._angleVar;
+
+            // duration
+            retParticle._duration = this._duration;
+
+            // blend function
+            retParticle._blendFunc.src = this._blendFunc.src;
+            retParticle._blendFunc.dst = this._blendFunc.dst;
+
+            // color
+            var particleStartColor = retParticle._startColor, locStartColor = this._startColor;
+            particleStartColor.r = locStartColor.r;
+            particleStartColor.g = locStartColor.g;
+            particleStartColor.b = locStartColor.b;
+            particleStartColor.a = locStartColor.a;
+
+            var particleStartColorVar =  retParticle._startColorVar, locStartColorVar = this._startColorVar;
+            particleStartColorVar.r = locStartColorVar.r;
+            particleStartColorVar.g = locStartColorVar.g;
+            particleStartColorVar.b = locStartColorVar.b;
+            particleStartColorVar.a = locStartColorVar.a;
+
+            var particleEndColor = retParticle._endColor, locEndColor = this._endColor;
+            particleEndColor.r = locEndColor.r;
+            particleEndColor.g = locEndColor.g;
+            particleEndColor.b = locEndColor.b;
+            particleEndColor.a = locEndColor.a;
+
+            var particleEndColorVar = retParticle._endColorVar, locEndColorVar = this._endColorVar;
+            particleEndColorVar.r = locEndColorVar.r;
+            particleEndColorVar.g = locEndColorVar.g;
+            particleEndColorVar.b = locEndColorVar.b;
+            particleEndColorVar.a = locEndColorVar.a;
+
+            // particle size
+            retParticle._startSize = this._startSize;
+            retParticle._startSizeVar = this._startSizeVar;
+            retParticle._endSize = this._endSize;
+            retParticle._endSizeVar = this._endSizeVar;
+
+            // position
+            retParticle.setPosition(new cc.Point(this._position.x, this._position.y));
+            retParticle._posVar.x = this._posVar.x;
+            retParticle._posVar.y = this._posVar.y;
+
+            // Spinning
+            retParticle._startSpin = this._startSpin;
+            retParticle._startSpinVar = this._startSpinVar;
+            retParticle._endSpin = this._endSpin;
+            retParticle._endSpinVar = this._endSpinVar;
+
+            retParticle._emitterMode = this._emitterMode;
+
+            // Mode A: Gravity + tangential accel + radial accel
+            if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
+                var particleModeA = retParticle.modeA, locModeA = this.modeA;
+                // gravity
+                particleModeA.gravity.x = locModeA.gravity.x;
+                particleModeA.gravity.y = locModeA.gravity.y;
+
+                // speed
+                particleModeA.speed = locModeA.speed;
+                particleModeA.speedVar = locModeA.speedVar;
+
+                // radial acceleration
+                particleModeA.radialAccel = locModeA.radialAccel;
+
+                particleModeA.radialAccelVar = locModeA.radialAccelVar;
+
+                // tangential acceleration
+                particleModeA.tangentialAccel = locModeA.tangentialAccel;
+
+                particleModeA.tangentialAccelVar = locModeA.tangentialAccelVar;
+            } else if (this._emitterMode == cc.PARTICLE_MODE_RADIUS) {
+                var particleModeB = retParticle.modeB, locModeB = this.modeB;
+                // or Mode B: radius movement
+                particleModeB.startRadius = locModeB.startRadius;
+                particleModeB.startRadiusVar = locModeB.startRadiusVar;
+                particleModeB.endRadius = locModeB.endRadius;
+                particleModeB.endRadiusVar = locModeB.endRadiusVar;
+                particleModeB.rotatePerSecond = locModeB.rotatePerSecond;
+                particleModeB.rotatePerSecondVar = locModeB.rotatePerSecondVar;
+            }
+
+            // life span
+            retParticle._life = this._life;
+            retParticle._lifeVar = this._lifeVar;
+
+            // emission Rate
+            retParticle._emissionRate = this._emissionRate;
+
+            //don't get the internal texture if a batchNode is used
+            if (!this._batchNode) {
+                // Set a compatible default for the alpha transfer
+                retParticle._opacityModifyRGB = this._opacityModifyRGB;
+
+                // texture
+                retParticle._texture = this._texture;
+            }
+        }
+        return retParticle;
+    },
+
+    /**
+     * <p> Sets a new CCSpriteFrame as particle.</br>
+     * WARNING: this method is experimental. Use setTextureWithRect instead.
+     * </p>
+     * @param {cc.SpriteFrame} spriteFrame
+     */
+    setDisplayFrame:function (spriteFrame) {
+        cc.Assert(cc._rectEqualToZero(spriteFrame.getOffsetInPixels()), "QuadParticle only supports SpriteFrames with no offsets");
+
+        // update texture before updating texture rect
+        if (cc.renderContextType === cc.WEBGL)
+            if (!this._texture || spriteFrame.getTexture()._webTextureObj != this._texture._webTextureObj)
+                this.setTexture(spriteFrame.getTexture());
+    },
+
+    /**
+     *  Sets a new texture with a rect. The rect is in Points.
+     * @param {cc.Texture2D} texture
+     * @param {cc.Rect} rect
+     */
+    setTextureWithRect:function (texture, rect) {
+        var locTexture = this._texture;
+        if (cc.renderContextType === cc.WEBGL) {
+            // Only update the texture if is different from the current one
+            if ((!locTexture || texture._webTextureObj != locTexture._webTextureObj) && (locTexture != texture)) {
+                this._texture = texture;
+                this._updateBlendFunc();
+            }
+        } else {
+            if ((!locTexture || texture != locTexture) && (locTexture != texture)) {
+                this._texture = texture;
+                this._updateBlendFunc();
+            }
+        }
+
+        this._pointRect = rect;
+        this.initTexCoordsWithRect(rect);
+    },
+
+    /**
+     * draw particle
+     * @param {CanvasRenderingContext2D} ctx CanvasContext
+     * @override
+     */
+    draw:function (ctx) {
+        cc.Assert(!this._batchNode, "draw should not be called when added to a particleBatchNode");
+        if(!this._textureLoaded)
+            return;
+
+        if (cc.renderContextType === cc.CANVAS)
+            this._drawForCanvas(ctx);
+        else
+            this._drawForWebGL(ctx);
+
+        cc.g_NumberOfDraws++;
+    },
+
+    _drawForCanvas:function (ctx) {
+        var context = ctx || cc.renderContext;
+        context.save();
+        if (this.isBlendAdditive())
+            context.globalCompositeOperation = 'lighter';
+        else
+            context.globalCompositeOperation = 'source-over';
+
+        for (var i = 0; i < this._particleCount; i++) {
+            var particle = this._particles[i];
+            var lpx = (0 | (particle.size * 0.5));
+
+            if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
+
+                var element = this._texture.getHtmlElementObj();
+
+                // Delay drawing until the texture is fully loaded by the browser
+                if (!element.width || !element.height)
+                    continue;
+
+                context.save();
+                context.globalAlpha = particle.color.a;
+                context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
+
+                var size = Math.floor(particle.size / 4) * 4;
+                var w = this._pointRect.width;
+                var h = this._pointRect.height;
+
+                context.scale(
+                    Math.max((1 / w) * size, 0.000001),
+                    Math.max((1 / h) * size, 0.000001)
+                );
+
+
+                if (particle.rotation)
+                    context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
+
+                context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
+                if (particle.isChangeColor) {
+
+                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+                    if (cacheTextureForColor) {
+                        // Create another cache for the tinted version
+                        // This speeds up things by a fair bit
+                        if (!cacheTextureForColor.tintCache) {
+                            cacheTextureForColor.tintCache = document.createElement('canvas');
+                            cacheTextureForColor.tintCache.width = element.width;
+                            cacheTextureForColor.tintCache.height = element.height;
+                        }
+                        cc.generateTintImage(element, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
+                        element = cacheTextureForColor.tintCache;
+                    }
+                }
+
+                context.drawImage(element, 0, 0);
+                context.restore();
+
+            } else {
+                context.save();
+                context.globalAlpha = particle.color.a;
+
+                context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
+
+                if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
+                    if (particle.rotation)
+                        context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
+                    cc.drawingUtil.drawStar(context, lpx, particle.color);
+                } else
+                    cc.drawingUtil.drawColorBall(context, lpx, particle.color);
+                context.restore();
+            }
+        }
+        context.restore();
+    },
+
+    _drawForWebGL:function (ctx) {
+        if(!this._texture)
+            return;
+
+        var gl = ctx || cc.renderContext;
+
+        this._shaderProgram.use();
+        this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
+
+        cc.glBindTexture2D(this._texture);
+        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
+
+        //cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
+
+        //
+        // Using VBO without VAO
+        //
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        gl.drawElements(gl.TRIANGLES, this._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
+    },
+
+    /**
+     * listen the event that coming to foreground on Android
+     * @param {cc.Class} obj
+     */
+    listenBackToForeground:function (obj) {
+        if (cc.TEXTURE_ATLAS_USE_VAO)
+            this._setupVBOandVAO();
+        else
+            this._setupVBO();
+    },
+
+    _setupVBOandVAO:function () {
+        //Not support on WebGL
+        /*if (cc.renderContextType == cc.CANVAS) {
+         return;
+         }*/
+
+        //NOT SUPPORTED
+        /*glGenVertexArrays(1, this._VAOname);
+         glBindVertexArray(this._VAOname);
+
+         var kQuadSize = sizeof(m_pQuads[0].bl);
+
+         glGenBuffers(2, this._buffersVBO[0]);
+
+         glBindBuffer(GL_ARRAY_BUFFER, this._buffersVBO[0]);
+         glBufferData(GL_ARRAY_BUFFER, sizeof(this._quads[0]) * this._totalParticles, this._quads, GL_DYNAMIC_DRAW);
+
+         // vertices
+         glEnableVertexAttribArray(kCCVertexAttrib_Position);
+         glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, vertices));
+
+         // colors
+         glEnableVertexAttribArray(kCCVertexAttrib_Color);
+         glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, offsetof(ccV3F_C4B_T2F, colors));
+
+         // tex coords
+         glEnableVertexAttribArray(kCCVertexAttrib_TexCoords);
+         glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, texCoords));
+
+         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_pIndices[0]) * m_uTotalParticles * 6, m_pIndices, GL_STATIC_DRAW);
+
+         glBindVertexArray(0);
+         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+         CHECK_GL_ERROR_DEBUG();*/
+    },
+
+    _setupVBO:function () {
+        if (cc.renderContextType == cc.CANVAS)
+            return;
+
+        var gl = cc.renderContext;
+
+        //gl.deleteBuffer(this._buffersVBO[0]);
+        this._buffersVBO[0] = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+        gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+
+        this._buffersVBO[1] = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
+
+        //cc.CHECK_GL_ERROR_DEBUG();
+    },
+
+    _allocMemory:function () {
+        if (cc.renderContextType === cc.CANVAS)
+            return true;
+
+        //cc.Assert((!this._quads && !this._indices), "Memory already allocated");
+        cc.Assert(!this._batchNode, "Memory should not be allocated when not using batchNode");
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var totalParticles = this._totalParticles;
+        var locQuads = [];
+        this._indices = new Uint16Array(totalParticles * 6);
+        var locQuadsArrayBuffer = new ArrayBuffer(quadSize * totalParticles);
+
+        for (var i = 0; i < totalParticles; i++)
+            locQuads[i] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, locQuadsArrayBuffer, i * quadSize);
+        if (!locQuads || !this._indices) {
+            cc.log("cocos2d: Particle system: not enough memory");
+            return false;
+        }
+        this._quads = locQuads;
+        this._quadsArrayBuffer = locQuadsArrayBuffer;
+        return true;
     }
 });
 
 /**
  * <p> return the string found by key in dict. <br/>
- *    This plist files can be creted manually or with Particle Designer:<br/>
+ *    This plist files can be create manually or with Particle Designer:<br/>
  *    http://particledesigner.71squared.com/<br/>
  * </p>
  * @param {String} plistFile
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    return cc.ParticleSystemQuad.create(plistFile);
-    /*var particle = new cc.ParticleSystem();
-    if (particle && particle.initWithFile(plistFile))
-        return particle;
-    return null;*/
+    var ret = new cc.ParticleSystem();
+    if (!plistFile || typeof(plistFile) === "number") {
+        var ton = plistFile || 100;
+        ret.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
+        ret.initWithTotalParticles(ton);
+        return ret;
+    }
+
+    if (ret && ret.initWithFile(plistFile))
+        return ret;
+    return null;
 };
 
 /**
@@ -1955,12 +2638,11 @@ cc.ParticleSystem.create = function (plistFile) {
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    return cc.ParticleSystemQuad.create(number_of_particles);
-    /*//emitter.initWithTotalParticles(number_of_particles);
+    //emitter.initWithTotalParticles(number_of_particles);
     var particle = new cc.ParticleSystem();
     if (particle && particle.initWithTotalParticles(number_of_particles))
         return particle;
-    return null;*/
+    return null;
 };
 
 // Different modes

@@ -25,27 +25,29 @@
  ****************************************************************************/
 
 /**
- * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont   (Canvas version)
+ * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont
  * @class
  * @extends cc.AtlasNode
  */
-cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
-    // ---- common properties start ----
+cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     // string to render
     _string:null,
     // the first char in the charmap
     _mapStartChar:null,
 
     /**
-     * initializes the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
-     *  It accepts two groups of parameters:
-     * a) string, fntFile
-     * b) label, textureFilename, width, height, startChar
+     * <p>
+     * initializes the cc.LabelAtlas with a string, a char map file(the atlas),                     <br/>
+     * the width and height of each element and the starting char of the atlas                      <br/>
+     *  It accepts two groups of parameters:                                                        <br/>
+     * a) string, fntFile                                                                           <br/>
+     * b) label, textureFilename, width, height, startChar                                          <br/>
+     * </p>
      * @param {String} strText
      * @param {String|cc.Texture2D} charMapFile  charMapFile or fntFile or texture file
-     * @param {Number} itemWidth
-     * @param {Number} itemHeight
-     * @param {Number} startCharMap
+     * @param {Number} [itemWidth=0]
+     * @param {Number} [itemHeight=0]
+     * @param {Number} [startCharMap=""]
      * @return {Boolean} returns true on success
      */
     initWithString:function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
@@ -60,8 +62,9 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
             cc.Assert(parseInt(dict["version"], 10) == 1, "Unsupported version. Upgrade cocos2d version");
 
             textureFilename = relPathStr + dict["textureFilename"];
-            width = parseInt(dict["itemWidth"], 10) / cc.CONTENT_SCALE_FACTOR();
-            height = parseInt(dict["itemHeight"], 10) / cc.CONTENT_SCALE_FACTOR();
+            var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+            width = parseInt(dict["itemWidth"], 10) / locScaleFactor;
+            height = parseInt(dict["itemHeight"], 10) / locScaleFactor;
             startChar = String.fromCharCode(parseInt(dict["firstChar"], 10));
         } else {
             textureFilename = charMapFile;
@@ -88,7 +91,7 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        this._super(color3);
+        cc.AtlasNode.prototype.setColor.call(this, color3);
         this.updateAtlasValues();
     },
     /**
@@ -102,8 +105,8 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
     /**
      * draw the label
      */
-    draw:function () {
-        this._super();
+    draw:function (ctx) {
+        cc.AtlasNode.prototype.draw.call(this,ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
             var s = this.getContentSize();
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
@@ -111,21 +114,25 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
     },
-    // ---- common properties end   ----
 
     /**
      *  Atlas generation
      */
-    updateAtlasValues:function () {
+    updateAtlasValues: null,
+
+    _updateAtlasValuesForCanvas: function () {
+        var locString = this._string;
+        var n = locString.length;
         var texture = this.getTexture();
         var locItemWidth = this._itemWidth, locItemHeight = this._itemHeight;
-        for (var i = 0; i < this._string.length; i++) {
-            var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._itemsPerRow, 10) * cc.CONTENT_SCALE_FACTOR();
-            var col = parseInt(a / this._itemsPerRow, 10) * cc.CONTENT_SCALE_FACTOR();
+        var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        for (var i = 0; i < n; i++) {
+            var a = locString.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
+            var row = parseInt(a % this._itemsPerRow, 10) * locScaleFactor;
+            var col = parseInt(a / this._itemsPerRow, 10) * locScaleFactor;
 
             var rect = cc.rect(row * locItemWidth, col * locItemHeight, locItemWidth, locItemHeight);
-            var c = this._string.charCodeAt(i);
+            var c = locString.charCodeAt(i);
             var fontChar = this.getChildByTag(i);
             if (!fontChar) {
                 fontChar = new cc.Sprite();
@@ -145,176 +152,34 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
                     fontChar.setVisible(true);
-                    fontChar.setOpacity(this._opacity);
+                    fontChar.setOpacity(this._displayedOpacity);
                 }
             }
-            fontChar.setPosition(cc.p(i * locItemWidth + locItemWidth / 2, locItemHeight / 2));
+            fontChar.setPosition(i * locItemWidth + locItemWidth / 2, locItemHeight / 2);
         }
     },
 
-    /**
-     * set the display string
-     * @param {String} label
-     */
-    setString:function (label) {
-        label = String(label);
-        var len = label.length;
-        this._string = label;
-        this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
-        if (this._children) {
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
-                if (node)
-                    node.setVisible(false);
-            }
-        }
-
-        this.updateAtlasValues();
-        this._quadsToDraw = len;
-    },
-
-    setOpacity:function (opacity) {
-        if (this._opacity != opacity) {
-            this._super(opacity);
-            for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i])
-                    this._children[i].setOpacity(opacity);
-            }
-        }
-    }
-});
-
-/**
- *  It accepts two groups of parameters:
- * a) string, fntFile
- * b) label, textureFilename, width, height, startChar
- * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
- * @example
- * //Example
- * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
- *
- * //creates the cc.LabelAtlas with a string, a fnt file
- * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
- */
-cc.LabelAtlasCanvas.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
-    var ret = new cc.LabelAtlasCanvas();
-    if (ret && cc.LabelAtlasCanvas.prototype.initWithString.apply(ret,arguments)) {
-        return ret;
-    }
-    return null;
-};
-
-/**
- * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont   (WebGL version)
- * @class
- * @extends cc.AtlasNode
- */
-cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
-    // ---- common properties start ----
-    // string to render
-    _string:null,
-    // the first char in the charmap
-    _mapStartChar:null,
-
-    /**
-     * initializes the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
-     *  It accepts two groups of parameters:
-     * a) string, fntFile
-     * b) label, textureFilename, width, height, startChar
-     * @param {String} strText
-     * @param {String | cc.Texture2D} charMapFile  charMapFile or fntFile
-     * @param {Number} itemWidth
-     * @param {Number} itemHeight
-     * @param {Number} startCharMap
-     * @return {Boolean} returns true on success
-     */
-    initWithString:function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
-        var label = strText + "", textureFilename, width, height, startChar;
-        cc.Assert(label !== null, "Label must be non-nil");
-        if (arguments.length === 2) {
-            var fileUtils = cc.FileUtils.getInstance();
-            var pathStr = fileUtils.fullPathForFilename(charMapFile);
-            var relPathStr = pathStr.substr(0, pathStr.lastIndexOf('/')) + '/';
-
-            var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(pathStr);
-            cc.Assert(parseInt(dict["version"], 10) == 1, "Unsupported version. Upgrade cocos2d version");
-
-            textureFilename = relPathStr + dict["textureFilename"];
-            width = parseInt(dict["itemWidth"], 10) / cc.CONTENT_SCALE_FACTOR();
-            height = parseInt(dict["itemHeight"], 10) / cc.CONTENT_SCALE_FACTOR();
-            startChar = String.fromCharCode(parseInt(dict["firstChar"], 10));
-        } else {
-            textureFilename = charMapFile;
-            width = itemWidth || 0;
-            height = itemHeight || 0;
-            startChar = startCharMap || " ";
-        }
-
-        var texture = null;
-        if(textureFilename instanceof cc.Texture2D)
-            texture = textureFilename;
-        else
-            texture = cc.TextureCache.getInstance().addImage(textureFilename);
-
-        if (this.initWithTexture(texture, width, height, label.length)) {
-            this._mapStartChar = startChar;
-            this.setString(label);
-            return true;
-        }
-        return false;
-    },
-
-    /**
-     * @param {cc.Color3B} color3
-     */
-    setColor:function (color3) {
-        this._super(color3);
-        this.updateAtlasValues();
-    },
-    /**
-     * return the text of this label
-     * @return {String}
-     */
-    getString:function () {
-        return this._string;
-    },
-
-    /**
-     * draw the label
-     */
-    draw:function () {
-        this._super();
-        if (cc.LABELATLAS_DEBUG_DRAW) {
-            var s = this.getContentSize();
-            var vertices = [cc.p(0, 0), cc.p(s.width, 0),
-                cc.p(s.width, s.height), cc.p(0, s.height)];
-            cc.drawingUtil.drawPoly(vertices, 4, true);
-        }
-    },
-    // ---- common properties end   ----
-
-    /**
-     *  Atlas generation
-     */
-    updateAtlasValues:function () {
-        var n = this._string.length;
+    _updateAtlasValuesForWebGL: function () {
+        var locString = this._string;
+        var n = locString.length;
         var locTextureAtlas = this._textureAtlas;
 
         var texture = locTextureAtlas.getTexture();
         var textureWide = texture.getPixelsWide();
         var textureHigh = texture.getPixelsHigh();
-        var itemWidthInPixels = this._itemWidth ;
+        var itemWidthInPixels = this._itemWidth;
         var itemHeightInPixels = this._itemHeight;
-        if(!this._ignoreContentScaleFactor){
+        if (!this._ignoreContentScaleFactor) {
             itemWidthInPixels = this._itemWidth * cc.CONTENT_SCALE_FACTOR();
             itemHeightInPixels = this._itemHeight * cc.CONTENT_SCALE_FACTOR();
         }
-        cc.Assert( n <= locTextureAtlas.getCapacity(), "updateAtlasValues: Invalid String length");
+        cc.Assert(n <= locTextureAtlas.getCapacity(), "updateAtlasValues: Invalid String length");
         var quads = locTextureAtlas.getQuads();
-        var curColor = {r: this._displayedColor.r, g:this._displayedColor.g, b:this._displayedColor.b, a:this._displayedOpacity};
+        var locDisplayedColor = this._displayedColor;
+        var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._displayedOpacity};
+        var locItemWidth = this._itemWidth;
         for (var i = 0; i < n; i++) {
-            var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
+            var a = locString.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
             var row = a % this._itemsPerRow;
             var col = 0 | (a / this._itemsPerRow);
 
@@ -332,33 +197,34 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
                 bottom = top + itemHeightInPixels / textureHigh;
             }
             var quad = quads[i];
-            quad.tl.texCoords.u = left;
-            quad.tl.texCoords.v = top;
-            quad.tr.texCoords.u = right;
-            quad.tr.texCoords.v = top;
-            quad.bl.texCoords.u = left;
-            quad.bl.texCoords.v = bottom;
-            quad.br.texCoords.u = right;
-            quad.br.texCoords.v = bottom;
+            var locQuadTL = quad.tl, locQuadTR = quad.tr, locQuadBL = quad.bl, locQuadBR = quad.br;
+            locQuadTL.texCoords.u = left;
+            locQuadTL.texCoords.v = top;
+            locQuadTR.texCoords.u = right;
+            locQuadTR.texCoords.v = top;
+            locQuadBL.texCoords.u = left;
+            locQuadBL.texCoords.v = bottom;
+            locQuadBR.texCoords.u = right;
+            locQuadBR.texCoords.v = bottom;
 
-            quad.bl.vertices.x = (i * this._itemWidth);
-            quad.bl.vertices.y = 0;
-            quad.bl.vertices.z = 0.0;
-            quad.br.vertices.x = (i * this._itemWidth + this._itemWidth);
-            quad.br.vertices.y = 0;
-            quad.br.vertices.z = 0.0;
-            quad.tl.vertices.x = i * this._itemWidth;
-            quad.tl.vertices.y = this._itemHeight;
-            quad.tl.vertices.z = 0.0;
-            quad.tr.vertices.x = i * this._itemWidth + this._itemWidth;
-            quad.tr.vertices.y = this._itemHeight;
-            quad.tr.vertices.z = 0.0;
-            quad.tl.colors = curColor;
-            quad.tr.colors = curColor;
-            quad.bl.colors = curColor;
-            quad.br.colors = curColor;
+            locQuadBL.vertices.x = (i * locItemWidth);
+            locQuadBL.vertices.y = 0;
+            locQuadBL.vertices.z = 0.0;
+            locQuadBR.vertices.x = (i * locItemWidth + locItemWidth);
+            locQuadBR.vertices.y = 0;
+            locQuadBR.vertices.z = 0.0;
+            locQuadTL.vertices.x = i * locItemWidth;
+            locQuadTL.vertices.y = this._itemHeight;
+            locQuadTL.vertices.z = 0.0;
+            locQuadTR.vertices.x = i * locItemWidth + locItemWidth;
+            locQuadTR.vertices.y = this._itemHeight;
+            locQuadTR.vertices.z = 0.0;
+            locQuadTL.colors = curColor;
+            locQuadTR.colors = curColor;
+            locQuadBL.colors = curColor;
+            locQuadBR.colors = curColor;
         }
-        if (n > 0 ){
+        if (n > 0) {
             locTextureAtlas.setDirty(true);
             var totalQuads = locTextureAtlas.getTotalQuads();
             if (n > totalQuads)
@@ -370,7 +236,28 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      * set the display string
      * @param {String} label
      */
-    setString:function (label) {
+    setString: null,
+
+    _setStringForCanvas: function (label) {
+        label = String(label);
+        var len = label.length;
+        this._string = label;
+        this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
+        if (this._children) {
+            var locChildren = this._children;
+            len = locChildren.length;
+            for (var i = 0; i < len; i++) {
+                var node = locChildren[i];
+                if (node)
+                    node.setVisible(false);
+            }
+        }
+
+        this.updateAtlasValues();
+        this._quadsToDraw = len;
+    },
+
+    _setStringForWebGL: function (label) {
         label = String(label);
         var len = label.length;
         if (len > this._textureAtlas.getTotalQuads())
@@ -383,22 +270,46 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
         this._quadsToDraw = len;
     },
 
-    setOpacity:function (opacity) {
-        if (this._opacity !== opacity) {
-            this._super(opacity);
+    setOpacity: null,
+
+    _setOpacityForCanvas: function (opacity) {
+        if (this._displayedOpacity !== opacity) {
+            cc.AtlasNode.prototype.setOpacity.call(this, opacity);
+            var locChildren = this._children;
+            for (var i = 0, len = locChildren.length; i < len; i++) {
+                if (locChildren[i])
+                    locChildren[i].setOpacity(opacity);
+            }
         }
+    },
+
+    _setOpacityForWebGL: function (opacity) {
+        if (this._opacity !== opacity)
+            cc.AtlasNode.prototype.setOpacity.call(this, opacity);
     }
 });
 
+if(cc.Browser.supportWebGL){
+    cc.LabelAtlas.prototype.updateAtlasValues =  cc.LabelAtlas.prototype._updateAtlasValuesForWebGL;
+    cc.LabelAtlas.prototype.setString =  cc.LabelAtlas.prototype._setStringForWebGL;
+    cc.LabelAtlas.prototype.setOpacity =  cc.LabelAtlas.prototype._setOpacityForWebGL;
+} else {
+    cc.LabelAtlas.prototype.updateAtlasValues =  cc.LabelAtlas.prototype._updateAtlasValuesForCanvas;
+    cc.LabelAtlas.prototype.setString =  cc.LabelAtlas.prototype._setStringForCanvas;
+    cc.LabelAtlas.prototype.setOpacity =  cc.LabelAtlas.prototype._setOpacityForCanvas;
+}
+
 /**
- *  It accepts two groups of parameters:
- * a) string, fntFile
- * b) label, textureFilename, width, height, startChar
+ * <p>
+ *  It accepts two groups of parameters:                                                            <br/>
+ * a) string, fntFile                                                                               <br/>
+ * b) label, textureFilename, width, height, startChar                                              <br/>
+ * </p>
  * @param {String} strText
  * @param {String} charMapFile  charMapFile or fntFile
- * @param {Number} itemWidth
- * @param {Number} itemHeight
- * @param {Number} startCharMap
+ * @param {Number} [itemWidth=0]
+ * @param {Number} [itemHeight=0]
+ * @param {Number} [startCharMap=""]
  * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
  * @example
  * //Example
@@ -408,13 +319,11 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
  * //creates the cc.LabelAtlas with a string, a fnt file
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
-cc.LabelAtlasWebGL.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
-    var ret = new cc.LabelAtlasWebGL();
-    if (ret && cc.LabelAtlasWebGL.prototype.initWithString.apply(ret,arguments)) {
+cc.LabelAtlas.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
+    var ret = new cc.LabelAtlas();
+    if (ret && cc.LabelAtlas.prototype.initWithString.apply(ret,arguments)) {
         return ret;
     }
     return null;
 };
-
-cc.LabelAtlas = cc.Browser.supportWebGL ? cc.LabelAtlasWebGL : cc.LabelAtlasCanvas;
 
