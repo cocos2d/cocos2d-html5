@@ -203,17 +203,17 @@ cc.RemoveSelf.create = function(isNeedCleanUp){
  * @extends cc.ActionInstant
  */
 cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
-    _flipX:false,
+    _flippedX:false,
     ctor:function(){
         cc.FiniteTimeAction.prototype.ctor.call(this);
-        this._flipX = false;
+        this._flippedX = false;
     },
     /**
      * @param {Boolean} x
      * @return {Boolean}
      */
     initWithFlipX:function (x) {
-        this._flipX = x;
+        this._flippedX = x;
         return true;
     },
 
@@ -221,19 +221,19 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setFlipX(this._flipX);
+        this._target.setFlippedX(this._flippedX);
     },
 
     /**
      * @return {cc.FiniteTimeAction}
      */
     reverse:function () {
-        return cc.FlipX.create(!this._flipX);
+        return cc.FlipX.create(!this._flippedX);
     },
 
     clone:function(){
         var action = new cc.FlipX();
-        action.initWithFlipX(this._flipX);
+        action.initWithFlipX(this._flippedX);
         return action;
     }
 });
@@ -256,17 +256,17 @@ cc.FlipX.create = function (x) {
  * @extends cc.ActionInstant
  */
 cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
-    _flipY:false,
+    _flippedY:false,
     ctor:function(){
         cc.FiniteTimeAction.prototype.ctor.call(this);
-        this._flipY = false;
+        this._flippedY = false;
     },
     /**
      * @param {Boolean} Y
      * @return {Boolean}
      */
     initWithFlipY:function (Y) {
-        this._flipY = Y;
+        this._flippedY = Y;
         return true;
     },
 
@@ -275,19 +275,19 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
      */
     update:function (time) {
         //this._super();
-        this._target.setFlipY(this._flipY);
+        this._target.setFlippedY(this._flippedY);
     },
 
     /**
      * @return {cc.FiniteTimeAction}
      */
     reverse:function () {
-        return cc.FlipY.create(!this._flipY);
+        return cc.FlipY.create(!this._flippedY);
     },
 
     clone:function(){
         var action = new cc.FlipY();
-        action.initWithFlipY(this._flipY);
+        action.initWithFlipY(this._flippedY);
         return action;
     }
 });

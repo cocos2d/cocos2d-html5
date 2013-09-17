@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
  *
@@ -222,11 +222,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
             //this._maskLocation = cc.renderContext.getUniformLocation(this.getShaderProgram().getProgram(), "u_mask");
             //cc.CHECK_GL_ERROR_DEBUG();
 
-            if(cc.renderContextType==cc.CANVAS){
-                this.setContentSize(cc.size(this._maskTexture.width,this._maskTexture.height));
-            }else{
-                this.setContentSize(this._maskTexture.getContentSize());
-            }
+            this.setContentSize(this._maskTexture.getContentSize());
 
             this.needsLayout();
             return true;
@@ -283,17 +279,10 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
             this._offLabel.setPosition(cc.p(this._offSprite.getPosition().x + this._thumbSprite.getContentSize().width / 6,
                 this._offSprite.getContentSize().height / 2));
         }
-        var rt ;
-        if(cc.renderContextType==cc.CANVAS){
-            this._thumbSprite.setPosition(cc.p(this._onSprite.getContentSize().width + this._sliderXPosition,
-                this._maskTexture.height / 2));
-            rt = cc.RenderTexture.create(this._maskTexture.width, this._maskTexture.height);
-        }else{
-            this._thumbSprite.setPosition(cc.p(this._onSprite.getContentSize().width + this._sliderXPosition,
-                this._maskTexture.getContentSize().height / 2));
-            rt = cc.RenderTexture.create(this._maskTexture.getContentSize().width, this._maskTexture.getContentSize().height);
-        }
-
+        var locMaskSize = this._maskTexture.getContentSize();
+        this._thumbSprite.setPosition(cc.p(this._onSprite.getContentSize().width + this._sliderXPosition,
+            locMaskSize.height / 2));
+        var rt = cc.RenderTexture.create(locMaskSize.width, locMaskSize.height);
 
         rt.begin();
         this._onSprite.visit();
@@ -307,7 +296,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         rt.end();
 
         this.setTexture(rt.getSprite().getTexture());
-        this.setFlipY(true);
+        this.setFlippedY(true);
     },
 
     setSliderXPosition:function (sliderXPosition) {

@@ -458,7 +458,6 @@ cc.Quad2 = function (tl1, tr1, bl1, br1) {
  * @param {cc.Vertex3F} tr1
  */
 cc.Quad3 = function (bl1, br1, tl1, tr1) {
-    //TODO need redefine by ArrayBuffer
     this.bl = bl1 || new cc.Vertex3F(0, 0, 0);
     this.br = br1 || new cc.Vertex3F(0, 0, 0);
     this.tl = tl1 || new cc.Vertex3F(0, 0, 0);
@@ -608,7 +607,7 @@ cc.V3F_C4B_T2F_QuadZero = function () {
 cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
     if (!sourceQuad)
         return  cc.V3F_C4B_T2F_QuadZero();
-
+    var tl = sourceQuad.tl, bl = sourceQuad.bl, tr = sourceQuad.tr, br = sourceQuad.br;
     return new cc.V3F_C4B_T2F_Quad(
         new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.tl.vertices.x, sourceQuad.tl.vertices.y, sourceQuad.tl.vertices.z),
             new cc.Color4B(sourceQuad.tl.colors.r, sourceQuad.tl.colors.g, sourceQuad.tl.colors.b, sourceQuad.tl.colors.a),
@@ -684,7 +683,7 @@ cc.T2F_Quad = function(bl, br, tl, tr){
 };
 
 /**
- * struct that holds the size in pixels, texture coordinates and delays for animated cc.ParticleSystemQuad
+ * struct that holds the size in pixels, texture coordinates and delays for animated cc.ParticleSystem
  * @param {cc.T2F_Quad} texCoords
  * @param delay
  * @param size
@@ -718,10 +717,11 @@ if(cc.Browser.supportWebGL){
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Color4B.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._rU8 = new Uint8Array(this._arrayBuffer, this._offset, 1);
-        this._gU8 = new Uint8Array(this._arrayBuffer, this._offset + Uint8Array.BYTES_PER_ELEMENT, 1);
-        this._bU8 = new Uint8Array(this._arrayBuffer, this._offset + Uint8Array.BYTES_PER_ELEMENT * 2, 1);
-        this._aU8 = new Uint8Array(this._arrayBuffer, this._offset + Uint8Array.BYTES_PER_ELEMENT * 3, 1);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = Uint8Array.BYTES_PER_ELEMENT;
+        this._rU8 = new Uint8Array(locArrayBuffer, locOffset, 1);
+        this._gU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen, 1);
+        this._bU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen * 2, 1);
+        this._aU8 = new Uint8Array(locArrayBuffer, locOffset + locElementLen * 3, 1);
 
         this._rU8[0] = r || 0;
         this._gU8[0] = g || 0;
@@ -769,17 +769,18 @@ if(cc.Browser.supportWebGL){
     });
 
     //redefine cc.Color4F
-    cc.Color4F = function(r,g,b,a, arrayBuffer, offset){
+    cc.Color4F = function (r, g, b, a, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Color4F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._rF32 = new Float32Array(this._arrayBuffer,this._offset, 1);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = Float32Array.BYTES_PER_ELEMENT;
+        this._rF32 = new Float32Array(locArrayBuffer, locOffset, 1);
         this._rF32[0] = r || 0;
-        this._gF32 = new Float32Array(this._arrayBuffer,this._offset + Float32Array.BYTES_PER_ELEMENT, 1);
+        this._gF32 = new Float32Array(locArrayBuffer, locOffset + locElementLen, 1);
         this._gF32[0] = g || 0;
-        this._bF32 = new Float32Array(this._arrayBuffer,this._offset + Float32Array.BYTES_PER_ELEMENT * 2, 1);
+        this._bF32 = new Float32Array(locArrayBuffer, locOffset + locElementLen * 2, 1);
         this._bF32[0] = b || 0;
-        this._aF32 = new Float32Array(this._arrayBuffer,this._offset + Float32Array.BYTES_PER_ELEMENT * 3, 1);
+        this._aF32 = new Float32Array(locArrayBuffer, locOffset + locElementLen * 3, 1);
         this._aF32[0] = a || 0;
     };
     cc.Color4F.BYTES_PER_ELEMENT = 16;
@@ -859,11 +860,12 @@ if(cc.Browser.supportWebGL){
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Vertex3F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._xF32 = new Float32Array(this._arrayBuffer, this._offset, 1);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset;
+        this._xF32 = new Float32Array(locArrayBuffer, locOffset, 1);
         this._xF32[0] = x || 0;
-        this._yF32 = new Float32Array(this._arrayBuffer, this._offset + Float32Array.BYTES_PER_ELEMENT, 1);
+        this._yF32 = new Float32Array(locArrayBuffer, locOffset + Float32Array.BYTES_PER_ELEMENT, 1);
         this._yF32[0] = y || 0;
-        this._zF32 = new Float32Array(this._arrayBuffer, this._offset + Float32Array.BYTES_PER_ELEMENT * 2, 1);
+        this._zF32 = new Float32Array(locArrayBuffer, locOffset + Float32Array.BYTES_PER_ELEMENT * 2, 1);
         this._zF32[0] = z || 0;
     };
     cc.Vertex3F.BYTES_PER_ELEMENT = 12;
@@ -934,13 +936,11 @@ if(cc.Browser.supportWebGL){
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Quad2.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._tl = tl ? new cc.Vertex2F(tl.x, tl.y, this._arrayBuffer, 0) : new cc.Vertex2F(0, 0, this._arrayBuffer, 0);
-        this._tr = tr ? new cc.Vertex2F(tr.x, tr.y, this._arrayBuffer, cc.Vertex2F.BYTES_PER_ELEMENT) :
-            new cc.Vertex2F(0, 0, this._arrayBuffer, cc.Vertex2F.BYTES_PER_ELEMENT);
-        this._bl = bl ? new cc.Vertex2F(bl.x, bl.y, this._arrayBuffer, cc.Vertex2F.BYTES_PER_ELEMENT * 2) :
-            new cc.Vertex2F(0, 0, this._arrayBuffer, cc.Vertex2F.BYTES_PER_ELEMENT * 2);
-        this._br = br ? new cc.Vertex2F(br.x, br.y, this._arrayBuffer, cc.Vertex2F.BYTES_PER_ELEMENT * 3) :
-            new cc.Vertex2F(0, 0, this._arrayBuffer, cc.Vertex2F.BYTES_PER_ELEMENT * 3);
+        var locArrayBuffer = this._arrayBuffer, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
+        this._tl = tl ? new cc.Vertex2F(tl.x, tl.y, locArrayBuffer, 0) : new cc.Vertex2F(0, 0, locArrayBuffer, 0);
+        this._tr = tr ? new cc.Vertex2F(tr.x, tr.y, locArrayBuffer, locElementLen) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen);
+        this._bl = bl ? new cc.Vertex2F(bl.x, bl.y, locArrayBuffer, locElementLen * 2) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 2);
+        this._br = br ? new cc.Vertex2F(br.x, br.y, locArrayBuffer, locElementLen * 3) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 3);
     };
     cc.Quad2.BYTES_PER_ELEMENT = 32;
     Object.defineProperties(cc.Quad2.prototype, {
@@ -991,12 +991,13 @@ if(cc.Browser.supportWebGL){
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._vertices = vertices ? new cc.Vertex3F(vertices.x, vertices.y, vertices.z, this._arrayBuffer, this._offset) :
-            new cc.Vertex3F(0, 0, 0, this._arrayBuffer, this._offset);
-        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, this._arrayBuffer, this._offset + cc.Vertex3F.BYTES_PER_ELEMENT) :
-            new cc.Color4B(0, 0, 0, 0, this._arrayBuffer, this._offset + cc.Vertex3F.BYTES_PER_ELEMENT);
-        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, this._arrayBuffer, this._offset + cc.Vertex3F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT) :
-            new cc.Tex2F(0, 0, this._arrayBuffer, this._offset + cc.Vertex3F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex3F.BYTES_PER_ELEMENT;
+        this._vertices = vertices ? new cc.Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset) :
+            new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
+        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
+            new cc.Color4B(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
+        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT) :
+            new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT);
     };
     cc.V3F_C4B_T2F.BYTES_PER_ELEMENT = 24;
     Object.defineProperties(cc.V3F_C4B_T2F.prototype, {
@@ -1005,9 +1006,10 @@ if(cc.Browser.supportWebGL){
                 return this._vertices;
             },
             set: function (verticesValue) {
-                this._vertices.x = verticesValue.x;
-                this._vertices.y = verticesValue.y;
-                this._vertices.z = verticesValue.z;
+                var locVertices = this._vertices;
+                locVertices.x = verticesValue.x;
+                locVertices.y = verticesValue.y;
+                locVertices.z = verticesValue.z;
             },
             enumerable: true
         },
@@ -1016,10 +1018,11 @@ if(cc.Browser.supportWebGL){
                 return this._colors;
             },
             set: function (colorValue) {
-                this._colors.r = colorValue.r;
-                this._colors.g = colorValue.g;
-                this._colors.b = colorValue.b;
-                this._colors.a = colorValue.a;
+                var locColors = this._colors;
+                locColors.r = colorValue.r;
+                locColors.g = colorValue.g;
+                locColors.b = colorValue.b;
+                locColors.a = colorValue.a;
             },
             enumerable: true
         },
@@ -1040,14 +1043,15 @@ if(cc.Browser.supportWebGL){
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._tl = tl ? new cc.V3F_C4B_T2F(tl.vertices, tl.colors, tl.texCoords, this._arrayBuffer, this._offset) :
-            new cc.V3F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset);
-        this._bl = bl ? new cc.V3F_C4B_T2F(bl.vertices, bl.colors, bl.texCoords, this._arrayBuffer, this._offset + cc.V3F_C4B_T2F.BYTES_PER_ELEMENT) :
-            new cc.V3F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V3F_C4B_T2F.BYTES_PER_ELEMENT);
-        this._tr = tr ? new cc.V3F_C4B_T2F(tr.vertices, tr.colors, tr.texCoords, this._arrayBuffer, this._offset + cc.V3F_C4B_T2F.BYTES_PER_ELEMENT * 2) :
-            new cc.V3F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V3F_C4B_T2F.BYTES_PER_ELEMENT * 2);
-        this._br = br ? new cc.V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, this._arrayBuffer, this._offset + cc.V3F_C4B_T2F.BYTES_PER_ELEMENT * 3) :
-            new cc.V3F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V3F_C4B_T2F.BYTES_PER_ELEMENT * 3);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.V3F_C4B_T2F.BYTES_PER_ELEMENT;
+        this._tl = tl ? new cc.V3F_C4B_T2F(tl.vertices, tl.colors, tl.texCoords, locArrayBuffer, locOffset) :
+            new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
+        this._bl = bl ? new cc.V3F_C4B_T2F(bl.vertices, bl.colors, bl.texCoords, locArrayBuffer, locOffset + locElementLen) :
+            new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen);
+        this._tr = tr ? new cc.V3F_C4B_T2F(tr.vertices, tr.colors, tr.texCoords, locArrayBuffer, locOffset + locElementLen * 2) :
+            new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 2);
+        this._br = br ? new cc.V3F_C4B_T2F(br.vertices, br.colors, br.texCoords, locArrayBuffer, locOffset + locElementLen * 3) :
+            new cc.V3F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 3);
     };
     cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT = 96;
     Object.defineProperties(cc.V3F_C4B_T2F_Quad.prototype, {
@@ -1056,9 +1060,10 @@ if(cc.Browser.supportWebGL){
                 return this._tl;
             },
             set: function (tlValue) {
-                this._tl.vertices = tlValue.vertices;
-                this._tl.colors = tlValue.colors;
-                this._tl.texCoords = tlValue.texCoords;
+                var locTl = this._tl;
+                locTl.vertices = tlValue.vertices;
+                locTl.colors = tlValue.colors;
+                locTl.texCoords = tlValue.texCoords;
             },
             enumerable: true
         },
@@ -1067,9 +1072,10 @@ if(cc.Browser.supportWebGL){
                 return this._bl;
             },
             set: function (blValue) {
-                this._bl.vertices = blValue.vertices;
-                this._bl.colors = blValue.colors;
-                this._bl.texCoords = blValue.texCoords;
+                var locBl = this._bl;
+                locBl.vertices = blValue.vertices;
+                locBl.colors = blValue.colors;
+                locBl.texCoords = blValue.texCoords;
             },
             enumerable: true
         },
@@ -1078,9 +1084,10 @@ if(cc.Browser.supportWebGL){
                 return this._tr;
             },
             set: function (trValue) {
-                this._tr.vertices = trValue.vertices;
-                this._tr.colors = trValue.colors;
-                this._tr.texCoords = trValue.texCoords;
+                var locTr = this._tr;
+                locTr.vertices = trValue.vertices;
+                locTr.colors = trValue.colors;
+                locTr.texCoords = trValue.texCoords;
             },
             enumerable: true
         },
@@ -1089,9 +1096,10 @@ if(cc.Browser.supportWebGL){
                 return this._br;
             },
             set: function (brValue) {
-                this._br.vertices = brValue.vertices;
-                this._br.colors = brValue.colors;
-                this._br.texCoords = brValue.texCoords;
+                var locBr = this._br;
+                locBr.vertices = brValue.vertices;
+                locBr.colors = brValue.colors;
+                locBr.texCoords = brValue.texCoords;
             },
             enumerable: true
         },
@@ -1111,19 +1119,20 @@ if(cc.Browser.supportWebGL){
             return  cc.V3F_C4B_T2F_QuadZero();
 
         //return new cc.V3F_C4B_T2F_Quad(sourceQuad,tl,sourceQuad,bl,sourceQuad.tr,sourceQuad.br,null,0);
+        var srcTL = sourceQuad.tl, srcBL = sourceQuad.bl, srcTR = sourceQuad.tr, srcBR = sourceQuad.br;
         return {
-            tl: {vertices: {x: sourceQuad.tl.vertices.x, y: sourceQuad.tl.vertices.y, z: sourceQuad.tl.vertices.z},
-                colors: {r: sourceQuad.tl.colors.r, g: sourceQuad.tl.colors.g, b: sourceQuad.tl.colors.b, a: sourceQuad.tl.colors.a},
-                texCoords: {u: sourceQuad.tl.texCoords.u, v: sourceQuad.tl.texCoords.v}},
-            bl: {vertices: {x: sourceQuad.bl.vertices.x, y: sourceQuad.bl.vertices.y, z: sourceQuad.bl.vertices.z},
-                colors: {r: sourceQuad.bl.colors.r, g: sourceQuad.bl.colors.g, b: sourceQuad.bl.colors.b, a: sourceQuad.bl.colors.a},
-                texCoords: {u: sourceQuad.bl.texCoords.u, v: sourceQuad.bl.texCoords.v}},
-            tr: {vertices: {x: sourceQuad.tr.vertices.x, y: sourceQuad.tr.vertices.y, z: sourceQuad.tr.vertices.z},
-                colors: {r: sourceQuad.tr.colors.r, g: sourceQuad.tr.colors.g, b: sourceQuad.tr.colors.b, a: sourceQuad.tr.colors.a},
-                texCoords: {u: sourceQuad.tr.texCoords.u, v: sourceQuad.tr.texCoords.v}},
-            br: {vertices: {x: sourceQuad.br.vertices.x, y: sourceQuad.br.vertices.y, z: sourceQuad.br.vertices.z},
-                colors: {r: sourceQuad.br.colors.r, g: sourceQuad.br.colors.g, b: sourceQuad.br.colors.b, a: sourceQuad.br.colors.a},
-                texCoords: {u: sourceQuad.br.texCoords.u, v: sourceQuad.br.texCoords.v}}
+            tl: {vertices: {x: srcTL.vertices.x, y: srcTL.vertices.y, z: srcTL.vertices.z},
+                colors: {r: srcTL.colors.r, g: srcTL.colors.g, b: srcTL.colors.b, a: srcTL.colors.a},
+                texCoords: {u: srcTL.texCoords.u, v: srcTL.texCoords.v}},
+            bl: {vertices: {x: srcBL.vertices.x, y: srcBL.vertices.y, z: srcBL.vertices.z},
+                colors: {r: srcBL.colors.r, g: srcBL.colors.g, b: srcBL.colors.b, a: srcBL.colors.a},
+                texCoords: {u: srcBL.texCoords.u, v: srcBL.texCoords.v}},
+            tr: {vertices: {x: srcTR.vertices.x, y: srcTR.vertices.y, z: srcTR.vertices.z},
+                colors: {r: srcTR.colors.r, g: srcTR.colors.g, b: srcTR.colors.b, a: srcTR.colors.a},
+                texCoords: {u: srcTR.texCoords.u, v: srcTR.texCoords.v}},
+            br: {vertices: {x: srcBR.vertices.x, y: srcBR.vertices.y, z: srcBR.vertices.z},
+                colors: {r: srcBR.colors.r, g: srcBR.colors.g, b: srcBR.colors.b, a: srcBR.colors.a},
+                texCoords: {u: srcBR.texCoords.u, v: srcBR.texCoords.v}}
         };
     };
 
@@ -1132,12 +1141,13 @@ if(cc.Browser.supportWebGL){
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._vertices = vertices ? new cc.Vertex2F(vertices.x, vertices.y, this._arrayBuffer, this._offset) :
-            new cc.Vertex2F(0, 0, this._arrayBuffer, this._offset);
-        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT) :
-            new cc.Color4B(0, 0, 0, 0, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT);
-        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT) :
-            new cc.Tex2F(0, 0, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
+        this._vertices = vertices ? new cc.Vertex2F(vertices.x, vertices.y, locArrayBuffer, locOffset) :
+            new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
+        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
+            new cc.Color4B(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
+        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT) :
+            new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT);
     };
     cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20;
     Object.defineProperties(cc.V2F_C4B_T2F.prototype, {
@@ -1156,10 +1166,11 @@ if(cc.Browser.supportWebGL){
                 return this._colors;
             },
             set: function (colorValue) {
-                this._colors.r = colorValue.r;
-                this._colors.g = colorValue.g;
-                this._colors.b = colorValue.b;
-                this._colors.a = colorValue.a;
+                var locColors = this._colors;
+                locColors.r = colorValue.r;
+                locColors.g = colorValue.g;
+                locColors.b = colorValue.b;
+                locColors.a = colorValue.a;
             },
             enumerable: true
         },
@@ -1180,12 +1191,13 @@ if(cc.Browser.supportWebGL){
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
-        this._a = a ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, this._arrayBuffer, this._offset) :
-            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset);
-        this._b = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT) :
-            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
-        this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT * 2) :
-            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT * 2);
+        var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+        this._a = a ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, locArrayBuffer, locOffset) :
+            new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset);
+        this._b = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, locArrayBuffer, locOffset + locElementLen) :
+            new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen);
+        this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, locArrayBuffer, locOffset + locElementLen * 2) :
+            new cc.V2F_C4B_T2F(null, null, null, locArrayBuffer, locOffset + locElementLen * 2);
     };
     cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60;
     Object.defineProperties(cc.V2F_C4B_T2F_Triangle.prototype, {
@@ -1194,9 +1206,10 @@ if(cc.Browser.supportWebGL){
                 return this._a;
             },
             set: function (aValue) {
-                this._a.vertices = aValue.vertices;
-                this._a.colors = aValue.colors;
-                this._a.texCoords = aValue.texCoords;
+                var locA = this._a;
+                locA.vertices = aValue.vertices;
+                locA.colors = aValue.colors;
+                locA.texCoords = aValue.texCoords;
             },
             enumerable: true
         },
@@ -1205,9 +1218,10 @@ if(cc.Browser.supportWebGL){
                 return this._b;
             },
             set: function (bValue) {
-                this._b.vertices = bValue.vertices;
-                this._b.colors = bValue.colors;
-                this._b.texCoords = bValue.texCoords;
+                var locB = this._b;
+                locB.vertices = bValue.vertices;
+                locB.colors = bValue.colors;
+                locB.texCoords = bValue.texCoords;
             },
             enumerable: true
         },
@@ -1216,9 +1230,10 @@ if(cc.Browser.supportWebGL){
                 return this._c;
             },
             set: function (cValue) {
-                this._c.vertices = cValue.vertices;
-                this._c.colors = cValue.colors;
-                this._c.texCoords = cValue.texCoords;
+                var locC = this._c;
+                locC.vertices = cValue.vertices;
+                locC.colors = cValue.colors;
+                locC.texCoords = cValue.texCoords;
             },
             enumerable: true
         }
@@ -1311,8 +1326,9 @@ cc._Dictionary = cc.Class.extend({
         if (key == null)
             return null;
 
-        for (var keyId in this._keyMapTb) {
-            if (this._keyMapTb[keyId] === key)
+        var locKeyMapTb = this._keyMapTb;
+        for (var keyId in locKeyMapTb) {
+            if (locKeyMapTb[keyId] === key)
                 return this._valueMapTb[keyId];
         }
         return null;
@@ -1326,10 +1342,11 @@ cc._Dictionary = cc.Class.extend({
         if (key == null)
             return;
 
-        for (var keyId in this._keyMapTb) {
-            if (this._keyMapTb[keyId] === key) {
+        var locKeyMapTb = this._keyMapTb;
+        for (var keyId in locKeyMapTb) {
+            if (locKeyMapTb[keyId] === key) {
                 delete this._valueMapTb[keyId];
-                delete this._keyMapTb[keyId];
+                delete locKeyMapTb[keyId];
                 return;
             }
         }
@@ -1344,9 +1361,9 @@ cc._Dictionary = cc.Class.extend({
     },
 
     allKeys: function () {
-        var keyArr = [];
-        for (var key in this._keyMapTb)
-            keyArr.push(this._keyMapTb[key]);
+        var keyArr = [], locKeyMapTb = this._keyMapTb;
+        for (var key in locKeyMapTb)
+            keyArr.push(locKeyMapTb[key]);
         return keyArr;
     },
 

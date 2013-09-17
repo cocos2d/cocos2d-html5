@@ -1,4 +1,4 @@
-/*
+/**
  * CCControlButton.m
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
@@ -28,16 +28,16 @@ cc.CONTROL_ZOOM_ACTION_TAG = 0xCCCB0001;
 
 /** @class CCControlButton Button control for Cocos2D. */
 cc.ControlButton = cc.Control.extend({
-    _adjustBackgroundImage:false,
+    _doesAdjustBackgroundImage:false,
     _zoomOnTouchDown:false,
-    _preferredSize:new cc.Size(0, 0),
-    _labelAnchorPoint:new cc.Point(0, 0),
-    _currentTitle:"",
-    _currentTitleColor:cc.white(),
+    _preferredSize: null,
+    _labelAnchorPoint: null,
+    _currentTitle: null,
+    _currentTitleColor: null,
     _titleLabel:null,
     _backgroundSprite:null,
     _opacity:0,
-    _pushed:false,
+    _isPushed:false,
     _titleDispatchTable:null,
     _titleColorDispatchTable:null,
     _titleLabelDispatchTable:null,
@@ -48,10 +48,10 @@ cc.ControlButton = cc.Control.extend({
     _marginH:0,
 
     ctor:function () {
-        this._super();
+        cc.Control.prototype.ctor.call(this);
         this._preferredSize = new cc.Size(0, 0);
         this._labelAnchorPoint = new cc.Point(0, 0);
-
+        this._currentTitle = "";
         this._currentTitleColor = cc.white();
         this._titleDispatchTable = {};
         this._titleColorDispatchTable = {};
@@ -60,7 +60,7 @@ cc.ControlButton = cc.Control.extend({
     },
 
     init:function () {
-        return this.initWithLabelAndBackgroundSprite(cc.LabelTTF.create("", "Helvetica", 12), cc.Scale9Sprite.create());
+        return this.initWithLabelAndBackgroundSprite(cc.LabelTTF.create("", "Arial", 12), cc.Scale9Sprite.create());
     },
 
     needsLayout:function () {
@@ -68,63 +68,74 @@ cc.ControlButton = cc.Control.extend({
             return;
         }
         // Hide the background and the label
-        this._titleLabel.setVisible(false);
-        this._backgroundSprite.setVisible(false);
+        if(this._titleLabel)
+            this._titleLabel.setVisible(false);
+        if(this._backgroundSprite)
+            this._backgroundSprite.setVisible(false);
 
         // Update anchor of all labels
         this.setLabelAnchorPoint(this._labelAnchorPoint);
 
         // Update the label to match with the current state
         //CC_SAFE_RELEASE(this._currentTitle)
+        var locState = this._state;
 
-        this._currentTitle = this.getTitleForState(this._state);
-        this._currentTitleColor = this.getTitleColorForState(this._state);
-
-        this._titleLabel = this.getTitleLabelForState(this._state);
+        this._currentTitle = this.getTitleForState(locState);
+        this._currentTitleColor = this.getTitleColorForState(locState);
+        this._titleLabel = this.getTitleLabelForState(locState);
 
         var label = this._titleLabel;
         if (label && label.setString)
             label.setString(this._currentTitle);
+        if (label && label.RGBAProtocol)
+            label.setColor(this._currentTitleColor);
 
-        if (this._titleLabel && this._titleLabel.RGBAProtocol)
-            this._titleLabel.setColor(this._currentTitleColor);
-        this._titleLabel.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));
-
+        var locContentSize = this.getContentSize();
+        if(label)
+            label.setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Update the background sprite
-        this._backgroundSprite = this.getBackgroundSpriteForState(this._state);
-        this._backgroundSprite.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));
+        this._backgroundSprite = this.getBackgroundSpriteForState(locState);
+        var locBackgroundSprite = this._backgroundSprite;
+        if(locBackgroundSprite)
+            locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Get the title label size
-        var titleLabelSize = this._titleLabel.getBoundingBox().size;
+        var titleLabelSize = label ? label.getBoundingBox().size : cc.size(0, 0);
 
         // Adjust the background image if necessary
-        if (this._adjustBackgroundImage) {
+        if (this._doesAdjustBackgroundImage) {
             // Add the margins
-            this._backgroundSprite.setContentSize(cc.SizeMake(titleLabelSize.width + this._marginH * 2, titleLabelSize.height + this._marginV * 2));
+            if(locBackgroundSprite)
+                locBackgroundSprite.setContentSize(cc.size(titleLabelSize.width + this._marginH * 2, titleLabelSize.height + this._marginV * 2));
         } else {
             //TODO: should this also have margins if one of the preferred sizes is relaxed?
-            var preferredSize = this._backgroundSprite.getPreferredSize();
-            if (preferredSize.width <= 0) {
-                preferredSize.width = titleLabelSize.width;
-            }
-            if (preferredSize.height <= 0) {
-                preferredSize.height = titleLabelSize.height;
-            }
+            if(locBackgroundSprite){
+                var preferredSize = locBackgroundSprite.getPreferredSize();
+                preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                if (preferredSize.width <= 0)
+                    preferredSize.width = titleLabelSize.width;
+                if (preferredSize.height <= 0)
+                    preferredSize.height = titleLabelSize.height;
 
-            this._backgroundSprite.setContentSize(preferredSize);
+                locBackgroundSprite.setContentSize(preferredSize);
+            }
         }
 
         // Set the content size
-        var maxRect = cc.ControlUtils.CCRectUnion(this._titleLabel.getBoundingBox(), this._backgroundSprite.getBoundingBox());
-        this.setContentSize(cc.SizeMake(maxRect.width, maxRect.height));
-
-        this._titleLabel.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));
-        this._backgroundSprite.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));
-
-        // Make visible the background and the label
-        this._titleLabel.setVisible(true);
-        this._backgroundSprite.setVisible(true);
+        var rectTitle = label? label.getBoundingBox():cc.rect(0,0,0,0);
+        var rectBackground = locBackgroundSprite? locBackgroundSprite.getBoundingBox():cc.rect(0,0,0,0);
+        var maxRect = cc.rectUnion(rectTitle, rectBackground);
+        this.setContentSize(cc.size(maxRect.width, maxRect.height));
+        locContentSize = this.getContentSize();
+        if(label){
+            label.setPosition(locContentSize.width / 2, locContentSize.height / 2);
+            label.setVisible(true);
+        }
+        if(locBackgroundSprite){
+            locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
+            locBackgroundSprite.setVisible(true);
+        }
     },
 
     initWithLabelAndBackgroundSprite:function (label, backgroundSprite) {
@@ -132,15 +143,23 @@ cc.ControlButton = cc.Control.extend({
             cc.Assert(label != null, "node must not be nil");
             cc.Assert(label != null || label.RGBAProtocol || backgroundSprite != null, "");
 
-            this.setTouchEnabled(true);
-            this._pushed = false;
             this._parentInited = true;
+
+            // Initialize the button state tables
+            this._titleDispatchTable = {};
+            this._titleColorDispatchTable = {};
+            this._titleLabelDispatchTable = {};
+            this._backgroundSpriteDispatchTable = {};
+
+            this.setTouchEnabled(true);
+            this._isPushed = false;
             this._zoomOnTouchDown = true;
-            this._state = cc.CONTROL_STATE_INITIAL;
+
             this._currentTitle = null;
 
             // Adjust the background image by default
-            this._adjustBackgroundImage = true;
+            this.setAdjustBackgroundImage(true);
+            this.setPreferredSize(cc.size(0,0));
 
             // Zooming button by default
             this._zoomOnTouchDown = true;
@@ -153,15 +172,7 @@ cc.ControlButton = cc.Control.extend({
             this._titleLabel = label;
             this._backgroundSprite = backgroundSprite;
 
-
-            // Initialize the button state tables
-            this._titleDispatchTable = {};
-            this._titleColorDispatchTable = {};
-            this._titleLabelDispatchTable = {};
-            this._backgroundSpriteDispatchTable = {};
-
             // Set the default color and opacity
-            this.setColor(cc.c3(255, 255, 255));
             this.setOpacity(255);
             this.setOpacityModifyRGB(true);
 
@@ -185,7 +196,6 @@ cc.ControlButton = cc.Control.extend({
 
             // Layout update
             this.needsLayout();
-
             return true;
         }//couldn't init the CCControl
         else
@@ -202,13 +212,16 @@ cc.ControlButton = cc.Control.extend({
         return this.initWithLabelAndBackgroundSprite(label, sprite);
     },
 
-    /** Adjust the background image. YES by default. If the property is set to NO, the
-     background will use the prefered size of the background image. */
-    getAdjustBackgroundImage:function () {
-        return this._adjustBackgroundImage;
+    /**
+     * Adjust the background image. YES by default. If the property is set to NO, the background will use the prefered size of the background image.
+     * @return {Boolean}
+     */
+    doesAdjustBackgroundImage:function () {
+        return this._doesAdjustBackgroundImage;
     },
+
     setAdjustBackgroundImage:function (adjustBackgroundImage) {
-        this._adjustBackgroundImage = adjustBackgroundImage;
+        this._doesAdjustBackgroundImage = adjustBackgroundImage;
         this.needsLayout();
     },
 
@@ -216,6 +229,7 @@ cc.ControlButton = cc.Control.extend({
     getZoomOnTouchDown:function () {
         return this._zoomOnTouchDown;
     },
+
     setZoomOnTouchDown:function (zoomOnTouchDown) {
         return this._zoomOnTouchDown = zoomOnTouchDown;
     },
@@ -226,13 +240,13 @@ cc.ControlButton = cc.Control.extend({
     },
 
     setPreferredSize:function (size) {
-        if (size.width == 0 && size.height == 0) {
-            this._adjustBackgroundImage = true;
+        if (size.width === 0 && size.height === 0) {
+            this._doesAdjustBackgroundImage = true;
         } else {
-            this._adjustBackgroundImage = false;
-            for (var itemKey in this._backgroundSpriteDispatchTable) {
-                this._backgroundSpriteDispatchTable[itemKey].setPreferredSize(size);
-            }
+            this._doesAdjustBackgroundImage = false;
+            var locTable = this._backgroundSpriteDispatchTable;
+            for (var itemKey in locTable)
+                locTable[itemKey].setPreferredSize(size);
         }
         this._preferredSize = size;
         this.needsLayout();
@@ -243,17 +257,20 @@ cc.ControlButton = cc.Control.extend({
     },
     setLabelAnchorPoint:function (labelAnchorPoint) {
         this._labelAnchorPoint = labelAnchorPoint;
-
-        this._titleLabel.setAnchorPoint(labelAnchorPoint);
+        if(this._titleLabel)
+            this._titleLabel.setAnchorPoint(labelAnchorPoint);
     },
 
-    /** The current title that is displayed on the button. */
-    getCurrentTitle:function () {
+    /**
+     * The current title that is displayed on the button.
+     * @return {string}
+     */
+    _getCurrentTitle:function () {
         return this._currentTitle;
     },
 
     /** The current color used to display the title. */
-    getCurrentTitleColor:function () {
+    _getCurrentTitleColor:function () {
         return this._currentTitleColor;
     },
 
@@ -263,45 +280,51 @@ cc.ControlButton = cc.Control.extend({
     },
 
     setOpacity:function (opacity) {
-        this._opacity = opacity;
-
+        // XXX fixed me if not correct
+        cc.Control.prototype.setOpacity.call(opacity);
+        /*this._opacity = opacity;
         var controlChildren = this.getChildren();
-
         for (var i = 0; i < controlChildren.length; i++) {
-            if (controlChildren[i] && controlChildren[i].RGBAProtocol) {
-                controlChildren[i].setOpacity(opacity);
-            }
-        }
-        for (var itemKey in this._backgroundSpriteDispatchTable) {
-            this._backgroundSpriteDispatchTable[itemKey].setOpacity(opacity);
-        }
+            var selChild = controlChildren[i];
+            if (selChild && selChild.RGBAProtocol)
+                selChild.setOpacity(opacity);
+        }*/
+        var locTable = this._backgroundSpriteDispatchTable;
+        for (var itemKey in locTable)
+            locTable[itemKey].setOpacity(opacity);
     },
 
     setColor:function(color){
         cc.Control.prototype.setColor.call(this,color);
-        for(var key in this._backgroundSpriteDispatchTable){
-            this._backgroundSpriteDispatchTable[key].setColor(color);
-        }
+        var locTable = this._backgroundSpriteDispatchTable;
+        for(var key in locTable)
+            locTable[key].setColor(color);
     },
 
     getColor:function(){
       return this._realColor;
     },
 
+
     /** Flag to know if the button is currently pushed.  */
-    getIsPushed:function () {
-        return this._pushed;
+    isPushed:function () {
+        return this._isPushed;
     },
 
     /* Define the button margin for Top/Bottom edge */
-    getVerticalMargin:function () {
+    _getVerticalMargin:function () {
         return this._marginV;
     },
     /* Define the button margin for Left/Right edge */
-    getHorizontalOrigin:function () {
+    _getHorizontalOrigin:function () {
         return this._marginH;
     },
-    //set the margins at once (so we only have to do one call of needsLayout)
+
+    /**
+     * set the margins at once (so we only have to do one call of needsLayout)
+     * @param {Number} marginH
+     * @param {Number} marginV
+     */
     setMargins:function (marginH, marginV) {
         this._marginV = marginV;
         this._marginH = marginH;
@@ -309,26 +332,22 @@ cc.ControlButton = cc.Control.extend({
     },
 
     setEnabled:function (enabled) {
-        this._super(enabled);
+        cc.Control.prototype.setEnabled.call(this, enabled);
         this.needsLayout();
     },
     setSelected:function (enabled) {
-        this._super(enabled);
+        cc.Control.prototype.setSelected.call(this, enabled);
         this.needsLayout();
     },
 
     setHighlighted:function (enabled) {
-        if (enabled == true) {
-            this._state = cc.CONTROL_STATE_HIGHLIGHTED;
-        }
-        else {
-            this._state = cc.CONTROL_STATE_NORMAL;
-        }
-        this._super(enabled);
+        this._state = enabled?cc.CONTROL_STATE_HIGHLIGHTED:cc.CONTROL_STATE_NORMAL;
+
+        cc.Control.prototype.setHighlighted.call(this, enabled);
         var action = this.getActionByTag(cc.CONTROL_ZOOM_ACTION_TAG);
-        if (action) {
+        if (action)
             this.stopAction(action);
-        }
+
         this.needsLayout();
         if (this._zoomOnTouchDown) {
             var scaleValue = (this.isHighlighted() && this.isEnabled() && !this.isSelected()) ? 1.1 : 1.0;
@@ -339,33 +358,29 @@ cc.ControlButton = cc.Control.extend({
     },
 
     onTouchBegan:function (touch, event) {
-        if (!this.isTouchInside(touch) || !this.isEnabled()|| !this.isVisible()||!this.hasVisibleParents()) {
+        if (!this.isTouchInside(touch) || !this.isEnabled()|| !this.isVisible()||!this.hasVisibleParents())
             return false;
-        }
 
-        this._pushed = true;
+        this._isPushed = true;
         this.setHighlighted(true);
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DOWN);
         return true;
     },
 
     onTouchMoved:function (touch, event) {
-        if (!this._enabled || !this._pushed || this._selected) {
-            if (this._highlighted) {
+        if (!this._enabled || !this._isPushed || this._selected) {
+            if (this._highlighted)
                 this.setHighlighted(false);
-            }
             return;
         }
 
         var isTouchMoveInside = this.isTouchInside(touch);
         if (isTouchMoveInside && !this._highlighted) {
-            this._state = cc.CONTROL_STATE_HIGHLIGHTED;
             this.setHighlighted(true);
             this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_ENTER);
         } else if (isTouchMoveInside && this._highlighted) {
             this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_INSIDE);
         } else if (!isTouchMoveInside && this._highlighted) {
-            this._state = cc.CONTROL_STATE_NORMAL;
             this.setHighlighted(false);
             this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_EXIT);
         } else if (!isTouchMoveInside && !this._highlighted) {
@@ -373,7 +388,7 @@ cc.ControlButton = cc.Control.extend({
         }
     },
     onTouchEnded:function (touch, event) {
-        this._pushed = false;
+        this._isPushed = false;
         this.setHighlighted(false);
 
         if (this.isTouchInside(touch)) {
@@ -384,7 +399,7 @@ cc.ControlButton = cc.Control.extend({
     },
 
     onTouchCancelled:function (touch, event) {
-        this._pushed = false;
+        this._isPushed = false;
         this.setHighlighted(false);
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_CANCEL);
     },
@@ -392,127 +407,110 @@ cc.ControlButton = cc.Control.extend({
     /**
      * Returns the title used for a state.
      *
-     * @param state The state that uses the title. Possible values are described in
-     * "CCControlState".
-     *
-     * @return The title for the specified state.
+     * @param {Number} state The state that uses the title. Possible values are described in "CCControlState".
+     * @return {string} The title for the specified state.
      */
     getTitleForState:function (state) {
-        if (this._titleDispatchTable) {
-            if (this._titleDispatchTable[state])
-                return this._titleDispatchTable[state];
-            return this._titleDispatchTable[cc.CONTROL_STATE_NORMAL];
+        var locTable = this._titleDispatchTable;
+        if (locTable) {
+            if (locTable[state])
+                return locTable[state];
+            return locTable[cc.CONTROL_STATE_NORMAL];
         }
         return "";
     },
 
     /**
-     * Sets the title string to use for the specified state.
-     * If a property is not specified for a state, the default is to use
-     * the CCButtonStateNormal value.
-     *
-     * @param title The title string to use for the specified state.
-     * @param state The state that uses the specified title. The values are described
-     * in "CCControlState".
+     * <p>
+     * Sets the title string to use for the specified state.                                                  <br/>
+     * If a property is not specified for a state, the default is to use the CCButtonStateNormal value.
+     * </p>
+     * @param {string} title The title string to use for the specified state.
+     * @param {Number} state The state that uses the specified title. The values are described in "CCControlState".
      */
     setTitleForState:function (title, state) {
-        if (title) {
-            this._titleDispatchTable[state] = title;
-        } else {
-            this._titleDispatchTable[state] = "";
-        }
+        this._titleDispatchTable[state] = title || "";
 
         // If the current state if equal to the given state we update the layout
-        if (this.getState() == state) {
+        if (this.getState() == state)
             this.needsLayout();
-        }
     },
 
     /**
      * Returns the title color used for a state.
      *
-     * @param state The state that uses the specified color. The values are described
-     * in "CCControlState".
-     *
-     * @return The color of the title for the specified state.
+     * @param {Number} state The state that uses the specified color. The values are described in "CCControlState".
+     * @return {cc.Color3B} The color of the title for the specified state.
      */
-    getTitleColorForState:function (state) {
-        var returnColor = cc.white();
-        do {
-            var colorObject = this._titleColorDispatchTable[state];
-            if (colorObject) {
-                returnColor = colorObject;
-                break;
-            }
-            colorObject = this._titleColorDispatchTable[cc.CONTROL_STATE_NORMAL];
-            if (colorObject) {
-                returnColor = colorObject;
-                break;
-            }
-
-        } while (0);
-
-        return returnColor;
+    getTitleColorForState: function (state) {
+        var colorObject = this._titleColorDispatchTable[state];
+        if (colorObject)
+            return colorObject;
+        colorObject = this._titleColorDispatchTable[cc.CONTROL_STATE_NORMAL];
+        if (colorObject)
+            return colorObject;
+        return cc.white();
     },
 
     /**
      * Sets the color of the title to use for the specified state.
      *
-     * @param color The color of the title to use for the specified state.
-     * @param state The state that uses the specified color. The values are described
-     * in "CCControlState".
+     * @param {cc.Color3B} color The color of the title to use for the specified state.
+     * @param {Number} state The state that uses the specified color. The values are described in "CCControlState".
      */
     setTitleColorForState:function (color, state) {
         //ccColor3B* colorValue=&color;
         this._titleColorDispatchTable[state] = color;
 
         // If the current state if equal to the given state we update the layout
-        if (this.getState() == state) {
+        if (this.getState() == state)
             this.needsLayout();
-        }
     },
 
     /**
      * Returns the title label used for a state.
      *
-     * @param state The state that uses the title label. Possible values are described
-     * in "CCControlState".
+     * @param state The state that uses the title label. Possible values are described in "CCControlState".
+     * @return {cc.Node} the title label used for a state.
      */
     getTitleLabelForState:function (state) {
-        if (this._titleLabelDispatchTable.hasOwnProperty(state) && this._titleLabelDispatchTable[state]) {
-            return this._titleLabelDispatchTable[state];
-        }
-        return this._titleLabelDispatchTable[cc.CONTROL_STATE_NORMAL];
+        var locTable = this._titleLabelDispatchTable;
+        if (locTable.hasOwnProperty(state) && locTable[state])
+            return locTable[state];
+
+        return locTable[cc.CONTROL_STATE_NORMAL];
     },
 
     /**
-     * Sets the title label to use for the specified state.
-     * If a property is not specified for a state, the default is to use
-     * the CCButtonStateNormal value.
+     * <p>Sets the title label to use for the specified state.                                          <br/>
+     * If a property is not specified for a state, the default is to use the CCButtonStateNormal value. </p>
      *
-     * @param title The title label to use for the specified state.
-     * @param state The state that uses the specified title. The values are described
-     * in "CCControlState".
+     * @param {cc.Node} titleLabel The title label to use for the specified state.
+     * @param {Number} state The state that uses the specified title. The values are described in "CCControlState".
      */
     setTitleLabelForState:function (titleLabel, state) {
-        if (this._titleLabelDispatchTable.hasOwnProperty(state)) {
-            var previousLabel = this._titleLabelDispatchTable[state];
-            if (previousLabel) {
+        var locTable = this._titleLabelDispatchTable;
+        if (locTable.hasOwnProperty(state)) {
+            var previousLabel = locTable[state];
+            if (previousLabel)
                 this.removeChild(previousLabel, true);
-            }
         }
 
-        this._titleLabelDispatchTable[state] = titleLabel;
+        locTable[state] = titleLabel;
         titleLabel.setVisible(false);
         titleLabel.setAnchorPoint(cc.p(0.5, 0.5));
         this.addChild(titleLabel, 1);
 
         // If the current state if equal to the given state we update the layout
-        if (this.getState() == state) {
+        if (this.getState() == state)
             this.needsLayout();
-        }
     },
 
+    /**
+     * Sets the title TTF filename to use for the specified state.
+     * @param {string} fntFile
+     * @param {Number} state
+     */
     setTitleTTFForState:function (fntFile, state) {
         var title = this.getTitleForState(state);
         if (!title)
@@ -520,6 +518,11 @@ cc.ControlButton = cc.Control.extend({
         this.setTitleLabelForState(cc.LabelTTF.create(title, fntFile, 12), state);
     },
 
+    /**
+     * return the title TTF filename to use for the specified state.
+     * @param {Number} state
+     * @returns {string}
+     */
     getTitleTTFForState:function (state) {
         var labelTTF = this.getTitleLabelForState(state);
         if ((labelTTF != null) && (labelTTF instanceof  cc.LabelTTF)) {
@@ -529,6 +532,10 @@ cc.ControlButton = cc.Control.extend({
         }
     },
 
+    /**
+     * @param {Number} size
+     * @param {Number} state
+     */
     setTitleTTFSizeForState:function (size, state) {
         var labelTTF = this.getTitleLabelForState(state);
         if ((labelTTF != null) && (labelTTF instanceof  cc.LabelTTF)) {
@@ -536,6 +543,11 @@ cc.ControlButton = cc.Control.extend({
         }
     },
 
+    /**
+     * return the font size of LabelTTF to use for the specified state
+     * @param {Number} state
+     * @returns {Number}
+     */
     getTitleTTFSizeForState:function (state) {
         var labelTTF = this.getTitleLabelForState(state);
         if ((labelTTF != null) && (labelTTF instanceof  cc.LabelTTF)) {
@@ -545,10 +557,9 @@ cc.ControlButton = cc.Control.extend({
     },
 
     /**
-     * Sets the font of the label, changes the label to a CCLabelBMFont if neccessary.
-     * @param fntFile The name of the font to change to
-     * @param state The state that uses the specified fntFile. The values are described
-     * in "CCControlState".
+     * Sets the font of the label, changes the label to a CCLabelBMFont if necessary.
+     * @param {string} fntFile The name of the font to change to
+     * @param {Number} state The state that uses the specified fntFile. The values are described in "CCControlState".
      */
     setTitleBMFontForState:function (fntFile, state) {
         var title = this.getTitleForState(state);
@@ -568,52 +579,50 @@ cc.ControlButton = cc.Control.extend({
     /**
      * Returns the background sprite used for a state.
      *
-     * @param state The state that uses the background sprite. Possible values are
-     * described in "CCControlState".
+     * @param {Number} state The state that uses the background sprite. Possible values are described in "CCControlState".
      */
     getBackgroundSpriteForState:function (state) {
-        if (this._backgroundSpriteDispatchTable.hasOwnProperty(state) && this._backgroundSpriteDispatchTable[state]) {
-            return this._backgroundSpriteDispatchTable[state];
+        var locTable = this._backgroundSpriteDispatchTable;
+        if (locTable.hasOwnProperty(state) && locTable[state]) {
+            return locTable[state];
         }
-        return this._backgroundSpriteDispatchTable[cc.CONTROL_STATE_NORMAL];
+        return locTable[cc.CONTROL_STATE_NORMAL];
     },
 
     /**
      * Sets the background sprite to use for the specified button state.
      *
-     * @param sprite The background sprite to use for the specified state.
-     * @param state The state that uses the specified image. The values are described
-     * in "CCControlState".
+     * @param {Scale9Sprite} sprite The background sprite to use for the specified state.
+     * @param {Number} state The state that uses the specified image. The values are described in "CCControlState".
      */
     setBackgroundSpriteForState:function (sprite, state) {
-        if (this._backgroundSpriteDispatchTable.hasOwnProperty(state)) {
-            var previousSprite = this._backgroundSpriteDispatchTable[state];
-            if (previousSprite) {
+        var locTable = this._backgroundSpriteDispatchTable;
+        if (locTable.hasOwnProperty(state)) {
+            var previousSprite = locTable[state];
+            if (previousSprite)
                 this.removeChild(previousSprite, true);
-            }
         }
 
-        this._backgroundSpriteDispatchTable[state] = sprite;
+        locTable[state] = sprite;
         sprite.setVisible(false);
         sprite.setAnchorPoint(cc.p(0.5, 0.5));
         this.addChild(sprite);
 
-        if (this._preferredSize.width != 0 || this._preferredSize.height != 0) {
-            sprite.setPreferredSize(this._preferredSize);
+        var locPreferredSize = this._preferredSize;
+        if (locPreferredSize.width !== 0 || locPreferredSize.height !== 0) {
+            sprite.setPreferredSize(locPreferredSize);
         }
 
         // If the current state if equal to the given state we update the layout
-        if (this.getState() == state) {
+        if (this._state === state)
             this.needsLayout();
-        }
     },
 
     /**
      * Sets the background spriteFrame to use for the specified button state.
      *
-     * @param spriteFrame The background spriteFrame to use for the specified state.
-     * @param state The state that uses the specified image. The values are described
-     * in "CCControlState".
+     * @param {SpriteFrame} spriteFrame The background spriteFrame to use for the specified state.
+     * @param {Number} state The state that uses the specified image. The values are described in "CCControlState".
      */
     setBackgroundSpriteFrameForState:function (spriteFrame, state) {
         var sprite = cc.Scale9Sprite.createWithSpriteFrame(spriteFrame);
@@ -621,7 +630,7 @@ cc.ControlButton = cc.Control.extend({
     }
 });
 
-cc.ControlButton.create = function (label, backgroundSprite) {
+cc.ControlButton.create = function(label, backgroundSprite) {
     var controlButton;
     if (arguments.length == 0) {
         controlButton = new cc.ControlButton();
@@ -632,16 +641,14 @@ cc.ControlButton.create = function (label, backgroundSprite) {
     } else if (arguments.length == 1) {
         controlButton = new cc.ControlButton();
         controlButton.initWithBackgroundSprite(arguments[0]);
-        return controlButton;
     } else if (arguments.length == 2) {
         controlButton = new cc.ControlButton();
         controlButton.initWithLabelAndBackgroundSprite(label, backgroundSprite);
-        return controlButton;
     } else if (arguments.length == 3) {
         controlButton = new cc.ControlButton();
         controlButton.initWithTitleAndFontNameAndFontSize(arguments[0], arguments[1], arguments[2]);
-        return controlButton;
     }
+    return controlButton;
 };
 
 

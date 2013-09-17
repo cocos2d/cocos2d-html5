@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
  *
@@ -140,7 +140,7 @@ cc.ControlSlider = cc.Control.extend({
 
             // Defines the content size
             var maxRect = cc.ControlUtils.CCRectUnion(backgroundSprite.getBoundingBox(), thumbSprite.getBoundingBox());
-            var size = cc.SizeMake(maxRect.width, maxRect.height);
+            var size = cc.size(maxRect.width, maxRect.height);
             this.setContentSize(size);
 
             // Add the slider background
@@ -224,7 +224,7 @@ cc.ControlSlider = cc.Control.extend({
 
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.RectMake(textureRect.x, textureRect.y, pos.x, textureRect.height);
+        textureRect = cc.rect(textureRect.x, textureRect.y, pos.x, textureRect.height);
         this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
     },
     /** Returns the value for the given location. */

@@ -34,12 +34,9 @@ cc.DecotativeDisplay = cc.Class.extend({
     },
 
     init:function () {
-
         return true;
     },
-    anchorPointChanged:function (pointX, pointY) {
 
-    },
     setDisplay:function (display) {
         this._display = display;
     },

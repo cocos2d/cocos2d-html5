@@ -69,6 +69,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //used for retina display
     _contentScaleFactor: null,
 
+    _cacheCanvas:null,
+    _cacheContext:null,
+    _cacheTexture:null,
+
     /**
      *  Constructor
      */
@@ -76,9 +80,106 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.SpriteBatchNode.prototype.ctor.call(this);
         this._children = [];
         this._descendants = [];
-        this._useCache = true;
+
         this._layerSize = cc.SizeZero();
         this._mapTileSize = cc.SizeZero();
+
+        if(cc.renderContextType === cc.CANVAS){
+            var locCanvas = cc.canvas;
+            var tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = locCanvas.width;
+            tmpCanvas.height = locCanvas.height;
+            this._cacheCanvas = tmpCanvas;
+            this._cacheContext = this._cacheCanvas.getContext('2d');
+            var tempTexture = new cc.Texture2D();
+            tempTexture.initWithElement(tmpCanvas);
+            tempTexture.handleLoadedTexture();
+            this._cacheTexture = tempTexture;
+            this.setContentSize(cc.size(locCanvas.width, locCanvas.height));
+        }
+    },
+
+    setContentSize:function (size) {
+        if (!size)
+            return;
+        cc.Node.prototype.setContentSize.call(this, size);
+
+        if(cc.renderContextType === cc.CANVAS){
+            var locCanvas = this._cacheCanvas;
+            locCanvas.width = 0|(size.width * 1.5);
+            locCanvas.height = 0|(size.height * 1.5);
+            this._cacheContext.translate(0, locCanvas.height);
+            var locContentSize = this._cacheTexture._contentSize;
+            locContentSize.width = locCanvas.width;
+            locContentSize.height = locCanvas.height;
+        }
+    },
+
+    /**
+     * Return texture of cc.SpriteBatchNode
+     * @return {cc.Texture2D}
+     */
+    getTexture:function () {
+        if(cc.renderContextType === cc.CANVAS)
+            return this._cacheTexture;
+        else
+            return cc.SpriteBatchNode.prototype.getTexture.call(this);
+    },
+
+    /**
+     * don't call visit on it's children ( override visit of cc.Node )
+     * @override
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    visit:function (ctx) {
+        if (cc.renderContextType === cc.WEBGL) {
+            cc.SpriteBatchNode.prototype.visit.call(this, ctx);
+            return;
+        }
+        var context = ctx || cc.renderContext;
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
+        context.save();
+        this.transform(ctx);
+        var i, locChildren = this._children;
+
+        if (this._cacheDirty) {
+            //add dirty region
+            var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
+            locCacheContext.clearRect(0, 0, locCacheCanvas.width, -locCacheCanvas.height);
+            locCacheContext.save();
+            locCacheContext.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y ));
+            if (locChildren) {
+                this.sortAllChildren();
+                for (i = 0; i < locChildren.length; i++) {
+                    if (locChildren[i])
+                        locChildren[i].visit(locCacheContext);
+                }
+            }
+            locCacheContext.restore();
+            this._cacheDirty = false;
+        }
+        // draw RenderTexture
+        this.draw(ctx);
+        context.restore();
+    },
+
+    /**
+     * draw cc.SpriteBatchNode (override draw of cc.Node)
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    draw:null,
+
+    _drawForCanvas:function (ctx) {
+        var context = ctx || cc.renderContext;
+        //context.globalAlpha = this._opacity / 255;
+        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
+        var locCacheCanvas = this._cacheCanvas;
+        //direct draw image by canvas drawImage
+        if (locCacheCanvas)
+            context.drawImage(locCacheCanvas, posX, -(posY + locCacheCanvas.height));
     },
 
     /**
@@ -379,7 +480,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             var sprite = this.getChildByTag(z);
 
             if (sprite)
-                cc.SpriteBatchNode.prototype.removeChild.call(this,sprite,true);           //this.removeChild(sprite, true);
+                cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, true);           //this.removeChild(sprite, true);
             else {
                 if(cc.renderContextType === cc.WEBGL)
                     this._textureAtlas.removeQuadAtIndex(atlasIndex);
@@ -438,8 +539,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
         if (cc.renderContextType === cc.CANVAS) {
-            var textureCache = this._originalTexture;
-            this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
+            this._tileSet.imageSize = this._originalTexture.getContentSizeInPixels();
         } else {
             this._tileSet.imageSize = this._textureAtlas.getTexture().getContentSizeInPixels();
 
@@ -506,7 +606,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var zz = this._atlasIndexArray[atlasIndex];
         this._tiles[zz] = 0;
         cc.ArrayRemoveObjectAtIndex(this._atlasIndexArray, atlasIndex);
-        this._super(sprite, cleanup);
+        cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, cleanup);
     },
 
     /**
@@ -550,7 +650,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     (this._mapTileSize.height / 2 ) * (-pos.x - pos.y));
                 break;
             case cc.TMX_ORIENTATION_HEX:
-                cc.Assert(cc.pointEqualToPoint(pos, cc.PointZero()), "offset for hexagonal map not implemented yet");
+                cc.Assert((pos.x == 0 && pos.y == 0), "offset for hexagonal map not implemented yet");
                 break;
         }
         return ret;
@@ -667,15 +767,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             sprite.setRotation(0.0);
         }
 
-        sprite.setFlipX(false);
-        sprite.setFlipY(false);
+        sprite.setFlippedX(false);
+        sprite.setFlippedY(false);
 
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
             sprite.setAnchorPoint(cc.p(0.5, 0.5));
-            sprite.setPosition(cc.p(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
-                this.getPositionAt(pos).y + sprite.getContentSize().width / 2));
+            sprite.setPosition(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
+                this.getPositionAt(pos).y + sprite.getContentSize().width / 2);
 
             var flag = (gid & (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG) >>> 0) >>> 0;
             // handle the 4 diagonally flipped states.
@@ -685,17 +785,17 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 sprite.setRotation(270);
             else if (flag == (cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
                 sprite.setRotation(90);
-                sprite.setFlipX(true);
+                sprite.setFlippedX(true);
             } else {
                 sprite.setRotation(270);
-                sprite.setFlipX(true);
+                sprite.setFlippedX(true);
             }
         } else {
             if ((gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0)
-                sprite.setFlipX(true);
+                sprite.setFlippedX(true);
 
             if ((gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0)
-                sprite.setFlipY(true);
+                sprite.setFlippedY(true);
         }
     },
 
@@ -721,8 +821,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
             this._reusedTile.setBatchNode(this);
             this._reusedTile.setParent(this);
-
-            return this._reusedTile;
         }
         return this._reusedTile;
     },
@@ -775,6 +873,12 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         return i;
     }
 });
+
+if(cc.Browser.supportWebGL){
+    cc.TMXLayer.prototype.draw = cc.SpriteBatchNode.prototype.draw;
+}else{
+    cc.TMXLayer.prototype.draw = cc.TMXLayer.prototype._drawForCanvas;
+}
 
 /**
  * Creates a cc.TMXLayer with an tile set info, a layer info and a map info

@@ -52,10 +52,13 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
         var cosTheta = Math.cos(theta);
 
         var locGridSize = this._gridSize;
+        var locVer = cc.p(0, 0);
         for (var i = 0; i <= locGridSize.width; ++i) {
             for (var j = 0; j <= locGridSize.height; ++j) {
+                locVer.x = i;
+                locVer.y = j;
                 // Get original vertex
-                var p = this.originalVertex(cc.p(i, j));
+                var p = this.originalVertex(locVer);
 
                 var R = Math.sqrt((p.x * p.x) + ((p.y - ay) * (p.y - ay)));
                 var r = R * sinTheta;
@@ -82,7 +85,7 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
                     p.z = 0.5;
 
                 // Set new coords
-                this.setVertex(cc.p(i, j), p);
+                this.setVertex(locVer, p);
             }
         }
     }

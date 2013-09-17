@@ -158,6 +158,7 @@ cc.FileUtils = cc.Class.extend({
      * @warning If you get the file data succeed,you must delete it after used.
      */
     getByteArrayFromFile:function (fileName, mode, size) {
+        fileName = this.fullPathForFilename(fileName);
         if (this._fileDataCache.hasOwnProperty(fileName))
             return this._fileDataCache[fileName];
         return this._loadBinaryFileData(fileName);
@@ -177,7 +178,7 @@ cc.FileUtils = cc.Class.extend({
     },
 
     preloadBinaryFileData:function (fileUrl) {
-        fileUrl = this.fullPathFromRelativePath(fileUrl);
+        fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
         var xhr = this._getXMLHttpRequest();
@@ -191,6 +192,8 @@ cc.FileUtils = cc.Class.extend({
                         var fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
                         if (fileContents)
                             selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
+                    } else {
+                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
                     }
                     cc.Loader.getInstance().onResLoaded();
                 }
@@ -198,11 +201,17 @@ cc.FileUtils = cc.Class.extend({
         } else {
             if (xhr.overrideMimeType)
                 xhr.overrideMimeType("text\/plain; charset=x-user-defined");
-            xhr.onload = function (e) {
-                var arrayStr = xhr.responseText;
-                if (arrayStr) {
+
+            xhr.onreadystatechange = function (event) {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        var fileContents = xhr.responseText;
+                        if (fileContents)
+                            selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
+                    } else {
+                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                    }
                     cc.Loader.getInstance().onResLoaded();
-                    selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
                 }
             };
         }
@@ -254,7 +263,7 @@ cc.FileUtils = cc.Class.extend({
     },
 
     preloadTextFileData:function (fileUrl) {
-        fileUrl = this.fullPathFromRelativePath(fileUrl);
+        fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
         var xhr = this._getXMLHttpRequest();
@@ -262,55 +271,44 @@ cc.FileUtils = cc.Class.extend({
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             // IE-specific logic here
             xhr.setRequestHeader("Accept-Charset", "utf-8");
-            xhr.onreadystatechange = function (event) {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        var fileContents = xhr.responseText;
-                        if (fileContents)
-                            selfPointer._textFileCache[fileUrl] = fileContents;
-                    }
-                    cc.Loader.getInstance().onResLoaded();
-                }
-            };
         } else {
             if (xhr.overrideMimeType)
                 xhr.overrideMimeType("text\/plain; charset=utf-8");
-            xhr.onload = function (e) {
-                if (xhr.responseText) {
-                    cc.Loader.getInstance().onResLoaded();
-                    selfPointer._fileDataCache[fileUrl] = xhr.responseText;
-                }
-            };
         }
+        xhr.onreadystatechange = function (event) {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    var fileContents = xhr.responseText;
+                    if (fileContents)
+                        selfPointer._textFileCache[fileUrl] = fileContents;
+                } else {
+                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                }
+                cc.Loader.getInstance().onResLoaded();
+            }
+        };
         xhr.send(null);
     },
 
     _loadTextFileData:function (fileUrl) {
         var req = this._getXMLHttpRequest();
         req.open('GET', fileUrl, false);
-        var arrayInfo = null;
+        var fileContents = null;
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             req.setRequestHeader("Accept-Charset", "utf-8");
-            req.send(null);
-            if (req.status != 200)
-                return null;
-
-            var fileContents = req.responseText;
-            if (fileContents) {
-                arrayInfo = fileContents;
-                this._textFileCache[fileUrl] = fileContents;
-            }
         } else {
             if (req.overrideMimeType)
                 req.overrideMimeType('text\/plain; charset=utf-8');
-            req.send(null);
-            if (req.status != 200)
-                return null;
-
-            arrayInfo = req.responseText;
-            this._textFileCache[fileUrl] = arrayInfo;
         }
-        return arrayInfo;
+        req.send(null);
+        if (req.status != 200)
+            return null;
+
+        fileContents = req.responseText;
+        if (fileContents) {
+            this._textFileCache[fileUrl] = fileContents;
+        }
+        return fileContents;
     },
 
     /**

@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
  * Copyright 2011 Yannick Loriot.
@@ -69,11 +69,10 @@ cc.Control = cc.LayerRGBA.extend({
         this._isOpacityModifyRGB = opacityModifyRGB;
 
         var children = this.getChildren();
-        for (var i = 0; i < children.length; i++) {
+        for (var i = 0, len = children.length; i < len; i++) {
             var selNode = children[i];
-            if (selNode && selNode.RGBAProtocol) {
+            if (selNode && selNode.RGBAProtocol)
                 selNode.setOpacityModifyRGB(opacityModifyRGB);
-            }
         }
     },
 
@@ -87,7 +86,7 @@ cc.Control = cc.LayerRGBA.extend({
     _selected:false,
     _highlighted:false,
 
-    _dispatchTable:{},
+    _dispatchTable:null,
 
     /**
      * Tells whether the control is enabled
@@ -95,11 +94,7 @@ cc.Control = cc.LayerRGBA.extend({
      */
     setEnabled:function (enabled) {
         this._enabled = enabled;
-        if (this._enabled) {
-            this._state = cc.CONTROL_STATE_NORMAL;
-        } else {
-            this._state = cc.CONTROL_STATE_DISABLED;
-        }
+        this._state = enabled ? cc.CONTROL_STATE_NORMAL:cc.CONTROL_STATE_DISABLED;
 
         this.needsLayout();
     },
@@ -134,21 +129,20 @@ cc.Control = cc.LayerRGBA.extend({
     hasVisibleParents:function () {
         var parent = this.getParent();
         for (var c = parent; c != null; c = c.getParent()) {
-            if (!c.isVisible()) {
+            if (!c.isVisible())
                 return false;
-            }
         }
         return true;
     },
 
     ctor:function () {
-        this._super();
+        cc.LayerRGBA.prototype.ctor.call(this);
         this._dispatchTable = {};
         this._color = cc.white();
     },
 
     init:function () {
-        if (this._super()) {
+        if (cc.LayerRGBA.prototype.init.call(this)) {
             //this.setTouchEnabled(true);
             //m_bIsTouchEnabled=true;
             // Initialise instance variables
@@ -161,7 +155,7 @@ cc.Control = cc.LayerRGBA.extend({
             this._defaultTouchPriority = 1;
             this.setTouchPriority(1);
             // Initialise the tables
-            this._dispatchTable = {};
+            //this._dispatchTable = {};
             //dispatchTable.autorelease();
             //   dispatchTable_ = [[NSMutableDictionary alloc] initWithCapacity:1];
             return true;
@@ -169,30 +163,24 @@ cc.Control = cc.LayerRGBA.extend({
             return false;
     },
 
-    onEnter:function () {
-        this._super();
-    },
-    onExit:function () {
-        this._super();
-    },
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.MENU_HANDLER_PRIORITY, true);
+        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
     },
 
     /**
      * Sends action messages for the given control events.
      * which action messages are sent. See "CCControlEvent" for bitmask constants.
-     * @param controlEvents A bitmask whose set flags specify the control events for
+     * @param {Number} controlEvents A bitmask whose set flags specify the control events for
      */
     sendActionsForControlEvents:function (controlEvents) {
         // For each control events
-        for (var i = 0; i < cc.CONTROL_EVENT_TOTAL_NUMBER; i++) {
+        for (var i = 0, len = cc.CONTROL_EVENT_TOTAL_NUMBER; i < len; i++) {
             // If the given controlEvents bitmask contains the curent event
             if ((controlEvents & (1 << i))) {
                 // Call invocations
                 // <CCInvocation*>
                 var invocationList = this._dispatchListforControlEvent(1 << i);
-                for (var j = 0; j < invocationList.length; j++) {
+                for (var j = 0, inLen = invocationList.length; j < inLen; j++) {
                     invocationList[j].invoke(this);
                 }
             }
@@ -200,69 +188,57 @@ cc.Control = cc.LayerRGBA.extend({
     },
 
     /**
-     * Adds a target and action for a particular event (or events) to an internal
-     * dispatch table.
-     * The action message may optionnaly include the sender and the event as
-     * parameters, in that order.
+     * <p>
+     * Adds a target and action for a particular event (or events) to an internal                         <br/>
+     * dispatch table.                                                                                    <br/>
+     * The action message may optionally include the sender and the event as                              <br/>
+     * parameters, in that order.                                                                         <br/>
      * When you call this method, target is not retained.
-     *
-     * @param target The target object梩hat is, the object to which the action
-     * message is sent. It cannot be nil. The target is not retained.
-     * @param action A selector identifying an action message. It cannot be NULL.
-     * @param controlEvents A bitmask specifying the control events for which the
-     * action message is sent. See "CCControlEvent" for bitmask constants.
+     * </p>
+     * @param {Object} target The target object that is, the object to which the action message is sent. It cannot be nil. The target is not retained.
+     * @param {function} action A selector identifying an action message. It cannot be NULL.
+     * @param {Number} controlEvents A bitmask specifying the control events for which the action message is sent. See "CCControlEvent" for bitmask constants.
      */
     addTargetWithActionForControlEvents:function (target, action, controlEvents) {
         // For each control events
-        for (var i = 0; i < cc.CONTROL_EVENT_TOTAL_NUMBER; i++) {
-            // If the given controlEvents bitmask contains the curent event
-            if ((controlEvents & (1 << i))) {
-                this.addTargetWithActionForControlEvent(target, action, 1 << i);
-            }
+        for (var i = 0, len = cc.CONTROL_EVENT_TOTAL_NUMBER; i < len; i++) {
+            // If the given controlEvents bit mask contains the current event
+            if ((controlEvents & (1 << i)))
+                this._addTargetWithActionForControlEvent(target, action, 1 << i);
         }
     },
 
     /**
-     * Removes a target and action for a particular event (or events) from an
-     * internal dispatch table.
+     * Removes a target and action for a particular event (or events) from an internal dispatch table.
      *
-     * @param target The target object梩hat is, the object to which the action
-     * message is sent. Pass nil to remove all targets paired with action and the
-     * specified control events.
-     * @param action A selector identifying an action message. Pass NULL to remove
-     * all action messages paired with target.
-     * @param controlEvents A bitmask specifying the control events associated with
-     * target and action. See "CCControlEvent" for bitmask constants.
+     * @param {Object} target The target object that is, the object to which the action message is sent. Pass nil to remove all targets paired with action and the specified control events.
+     * @param {function} action A selector identifying an action message. Pass NULL to remove all action messages paired with target.
+     * @param {Number} controlEvents A bitmask specifying the control events associated with target and action. See "CCControlEvent" for bitmask constants.
      */
     removeTargetWithActionForControlEvents:function (target, action, controlEvents) {
         // For each control events
-        for (var i = 0; i < cc.CONTROL_EVENT_TOTAL_NUMBER; i++) {
-            // If the given controlEvents bitmask contains the curent event
-            if ((controlEvents & (1 << i))) {
+        for (var i = 0, len = cc.CONTROL_EVENT_TOTAL_NUMBER; i < len; i++) {
+            // If the given controlEvents bitmask contains the current event
+            if ((controlEvents & (1 << i)))
                 this.removeTargetWithActionForControlEvent(target, action, 1 << i);
-            }
         }
     },
 
     /**
      * Returns a point corresponding to the touh location converted into the
      * control space coordinates.
-     * @param touch A CCTouch object that represents a touch.
+     * @param {cc.Touch} touch A CCTouch object that represents a touch.
      */
     getTouchLocation:function (touch) {
         var touchLocation = touch.getLocation();                      // Get the touch position
-        touchLocation = this.convertToNodeSpace(touchLocation);  // Convert to the node space of this class
-
-        return touchLocation;
+        return this.convertToNodeSpace(touchLocation);  // Convert to the node space of this class
     },
 
     /**
-     * Returns a boolean value that indicates whether a touch is inside the bounds
-     * of the receiver. The given touch must be relative to the world.
+     * Returns a boolean value that indicates whether a touch is inside the bounds of the receiver. The given touch must be relative to the world.
      *
-     * @param touch A CCTouch object that represents a touch.
-     *
-     * @return YES whether a touch is inside the receiver抯 rect.
+     * @param {cc.Touch} touch A cc.Touch object that represents a touch.
+     * @return {Boolean} YES whether a touch is inside the receiver's rect.
      */
     isTouchInside:function (touch) {
         var touchLocation = touch.getLocation(); // Get the touch position
@@ -271,57 +247,49 @@ cc.Control = cc.LayerRGBA.extend({
     },
 
     /**
-     * Returns an CCInvocation object able to construct messages using a given
-     * target-action pair. (The invocation may optionnaly include the sender and
+     * <p>
+     * Returns an cc.Invocation object able to construct messages using a given                             <br/>
+     * target-action pair. (The invocation may optionally include the sender and                            <br/>
      * the event as parameters, in that order)
+     * </p>
+     * @param {Object} target The target object.
+     * @param {function} action A selector identifying an action message.
+     * @param {Number} controlEvent A control events for which the action message is sent. See "CCControlEvent" for constants.
      *
-     * @param target The target object.
-     * @param action A selector identifying an action message.
-     * @param controlEvent A control events for which the action message is sent.
-     * See "CCControlEvent" for constants.
-     *
-     * @return an CCInvocation object able to construct messages using a given
-     * target-action pair.
+     * @return {cc.Invocation} an CCInvocation object able to construct messages using a given target-action pair.
      */
     _invocationWithTargetAndActionForControlEvent:function (target, action, controlEvent) {
+        return null;
     },
 
     /**
-     * Returns the CCInvocation list for the given control event. If the list does
-     * not exist, it'll create an empty array before returning it.
+     * Returns the cc.Invocation list for the given control event. If the list does not exist, it'll create an empty array before returning it.
      *
-     * @param controlEvent A control events for which the action message is sent.
-     * See "CCControlEvent" for constants.
-     *
-     * @return the CCInvocation list for the given control event.
+     * @param {Number} controlEvent A control events for which the action message is sent. See "CCControlEvent" for constants.
+     * @return {cc.Invocation} the cc.Invocation list for the given control event.
      */
     _dispatchListforControlEvent:function (controlEvent) {
         controlEvent = controlEvent.toString();
-        if (this._dispatchTable.hasOwnProperty(controlEvent))
-            return this._dispatchTable[controlEvent];
-
         // If the invocation list does not exist for the  dispatch table, we create it
-
-        var invocationList = [];
-        this._dispatchTable[controlEvent] = invocationList;
-
-        return invocationList;
+        if (!this._dispatchTable.hasOwnProperty(controlEvent))
+            this._dispatchTable[controlEvent] = [];
+        return this._dispatchTable[controlEvent];
     },
 
     /**
      * Adds a target and action for a particular event to an internal dispatch
      * table.
-     * The action message may optionnaly include the sender and the event as
+     * The action message may optionally include the sender and the event as
      * parameters, in that order.
      * When you call this method, target is not retained.
      *
-     * @param target The target object梩hat is, the object to which the action
+     * @param target The target object that is, the object to which the action
      * message is sent. It cannot be nil. The target is not retained.
      * @param action A selector identifying an action message. It cannot be NULL.
      * @param controlEvent A control event for which the action message is sent.
      * See "CCControlEvent" for constants.
      */
-    addTargetWithActionForControlEvent:function (target, action, controlEvent) {
+    _addTargetWithActionForControlEvent:function (target, action, controlEvent) {
         // Create the invocation object
         var invocation = new cc.Invocation(target, action, controlEvent);
 
@@ -331,16 +299,11 @@ cc.Control = cc.LayerRGBA.extend({
     },
 
     /**
-     * Removes a target and action for a particular event from an internal dispatch
-     * table.
+     * Removes a target and action for a particular event from an internal dispatch table.
      *
-     * @param target The target object梩hat is, the object to which the action
-     * message is sent. Pass nil to remove all targets paired with action and the
-     * specified control events.
-     * @param action A selector identifying an action message. Pass NULL to remove
-     * all action messages paired with target.
-     * @param controlEvent A control event for which the action message is sent.
-     * See "CCControlEvent" for constants.
+     * @param {Object} target The target object that is, the object to which the action message is sent. Pass nil to remove all targets paired with action and the specified control events.
+     * @param {function} action A selector identifying an action message. Pass NULL to remove all action messages paired with target.
+     * @param {Number} controlEvent A control event for which the action message is sent. See "CCControlEvent" for constants.
      */
     removeTargetWithActionForControlEvent:function (target, action, controlEvent) {
         // Retrieve all invocations for the given control event
@@ -373,7 +336,6 @@ cc.Control = cc.LayerRGBA.extend({
      * Updates the control layout using its current internal state.
      */
     needsLayout:function () {
-
     }
 });
 
