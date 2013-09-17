@@ -468,7 +468,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time.
      * @param {Number} scale or scaleX value
-     * @param {Number} scaleY
+     * @param {Number} [scaleY=]
      */
     setScale:function (scale, scaleY) {
         this._scaleX = scale;
