@@ -278,12 +278,6 @@ cc.TransitionSceneOriented.create = function (t, scene, orientation) {
  */
 cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZoom# */{
     /**
-     * Constructor
-     */
-    ctor:function () {
-    },
-
-    /**
      * Custom On Enter callback
      * @override
      */
