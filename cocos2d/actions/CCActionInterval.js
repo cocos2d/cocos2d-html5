@@ -930,7 +930,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     initWithDuration:function (duration, position) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._positionDelta = position;
+            this._positionDelta.x = position.x;
+            this._positionDelta.y = position.y;
             return true;
         }
         return false;
@@ -1030,7 +1031,8 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     initWithDuration:function (duration, position) {
         if (cc.MoveBy.prototype.initWithDuration.call(this, duration, position)) {
-            this._endPosition = position;
+            this._endPosition.x = position.x;
+            this._endPosition.y = position.y;
             return true;
         }
         return false;
@@ -1261,7 +1263,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     initWithDuration:function (duration, position, height, jumps) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._delta = position;
+            this._delta.x = position.x;
+            this._delta.y = position.y;
             this._height = height;
             this._jumps = jumps;
             return true;

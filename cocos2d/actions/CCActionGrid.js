@@ -75,7 +75,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
      */
     initWithDuration:function (duration, gridSize) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._gridSize = gridSize;
+            this._gridSize.width = gridSize.width;
+            this._gridSize.height = gridSize.height;
             return true;
         }
         return false;
