@@ -1,5 +1,6 @@
 Cocos2d-html5-v2.1.6 @ Sep.19, 2013
 * Improved Sprite, Node, LabelTTF class define from separated code to combined code for maintainability, now it is clean and clear
+* added a new sample game "Fruit attack" which works great on PC browsers, mobile browsers, and can even be run natively as an android and iOS app with JSB
 * cc.Sprite and its subClasses's texture has been replaced from DOM element to cc.Texture2D on Canvas mode
 * Improved cc.Texture2d for direct using without pre-loading image resources, you don't need to wait resources loading when create a new scene or layers
 * Migrated CCBReader and GUI to Cocos2d-x 2.1.4
