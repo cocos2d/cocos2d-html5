@@ -1228,7 +1228,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      */
     ctor:function () {
         cc.TransitionScene.prototype.ctor.call(this);
-        this._color = new cc.Color3B()
+        this._color = new cc.Color4B()
     },
 
     /**
