@@ -9,7 +9,7 @@ Cocos2d-html5-v2.1.6 @ Sep.19, 2013
 * Fixed APIs of HTML5 according to JSB for compatibility, e.g. cc.ParticleSystemQuad has merged into cc.ParticleSystem, please check it on upgrade guide v2.1.5 to v2.1.6(http://www.cocos2d-x.org/wiki/Upgrade_Guide_from_Cocos2d-html5_v215_to_v216)
 * Added Hiding url address bar for mobile browser, please check the template and hello world
 * Re-writed Canvas Mode of RenderTexture to adapt WebGL interface
-* Added frame event, collider and blend type supporting for Armature. Now Armature supports two tools:1.CocoStudio(windows,http://www.cocostudio.org),2.DragonBones v2.3(flash,http://dragonbones.github.io)
+* Added frame event, collider and blend type supporting for Armature. Now Armature supports two tools:1.CocoStudio(windows,http://www.cocostudio.org),2.DragonBones(flash, https://github.com/2youyouo2/SkeletonAnimationDesignPanel)
 * Set auto render mode default value to canvas in mobile browsers and WebGL in desktop browsers
 
 * Bug fix:
