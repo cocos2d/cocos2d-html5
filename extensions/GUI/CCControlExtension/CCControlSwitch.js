@@ -296,7 +296,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         rt.end();
 
         this.setTexture(rt.getSprite().getTexture());
-        this.setFlipY(true);
+        this.setFlippedY(true);
     },
 
     setSliderXPosition:function (sliderXPosition) {

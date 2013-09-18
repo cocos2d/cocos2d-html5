@@ -327,8 +327,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _opacityModifyRGB:false,
 
     // image is flipped
-    _flipX:false, //Whether the sprite is flipped horizontally or not.
-    _flipY:false, //Whether the sprite is flipped vertically or not.
+    _flippedX:false, //Whether the sprite is flipped horizontally or not.
+    _flippedY:false, //Whether the sprite is flipped vertically or not.
 
     _textureLoaded:false,
     _loadedEventListeners: null,
@@ -761,11 +761,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Sets whether the sprite should be flipped horizontally or not.
-     * @param {Boolean} flipX true if the sprite should be flipped horizaontally, false otherwise.
+     * @param {Boolean} flippedX true if the sprite should be flipped horizontally, false otherwise.
      */
-    setFlipX:function (flipX) {
-        if (this._flipX != flipX) {
-            this._flipX = flipX;
+    setFlippedX:function (flippedX) {
+        if (this._flippedX != flippedX) {
+            this._flippedX = flippedX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
             this.setNodeDirty();
         }
@@ -773,11 +773,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Sets whether the sprite should be flipped vertically or not.
-     * @param {Boolean} flipY true if the sprite should be flipped vertically, flase otherwise.
+     * @param {Boolean} flippedY true if the sprite should be flipped vertically, false otherwise.
      */
-    setFlipY:function (flipY) {
-        if (this._flipY != flipY) {
-            this._flipY = flipY;
+    setFlippedY:function (flippedY) {
+        if (this._flippedY != flippedY) {
+            this._flippedY = flippedY;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
             this.setNodeDirty();
         }
@@ -794,7 +794,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {Boolean} true if the sprite is flipped horizaontally, false otherwise.
      */
     isFlippedX:function () {
-        return this._flipX;
+        return this._flippedX;
     },
 
     /**
@@ -808,7 +808,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {Boolean} true if the sprite is flipped vertically, flase otherwise.
      */
     isFlippedY:function () {
-        return this._flipY;
+        return this._flippedY;
     },
 
     //
@@ -1023,7 +1023,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         // update texture (calls _updateBlendFunc)
         this.setTexture(null);
         this._textureLoaded = true;
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1060,7 +1060,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         // update texture (calls _updateBlendFunc)
         this.setTexture(null);
         this._textureLoaded = true;
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1137,7 +1137,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1197,7 +1197,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1290,9 +1290,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._setTextureCoords(rect);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
-        if (this._flipX)
+        if (this._flippedX)
             relativeOffset.x = -relativeOffset.x;
-        if (this._flipY)
+        if (this._flippedY)
             relativeOffset.y = -relativeOffset.y;
 
         var locRect = this._rect;
@@ -1331,9 +1331,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this.setVertexRect(rect);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
-        if (this._flipX)
+        if (this._flippedX)
             relativeOffset.x = -relativeOffset.x;
-        if (this._flipY)
+        if (this._flippedY)
             relativeOffset.y = -relativeOffset.y;
         this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
         this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
@@ -1844,13 +1844,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 bottom = (rect.y + rect.width) / atlasHeight;
             }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
-            if (this._flipX) {
+            if (this._flippedX) {
                 tempSwap = top;
                 top = bottom;
                 bottom = tempSwap;
             }
 
-            if (this._flipY) {
+            if (this._flippedY) {
                 tempSwap = left;
                 left = right;
                 right = tempSwap;
@@ -1877,13 +1877,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 bottom = (rect.y + rect.height) / atlasHeight;
             } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
-            if (this._flipX) {
+            if (this._flippedX) {
                 tempSwap = left;
                 left = right;
                 right = tempSwap;
             }
 
-            if (this._flipY) {
+            if (this._flippedY) {
                 tempSwap = top;
                 top = bottom;
                 bottom = tempSwap;
@@ -1986,13 +1986,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition;
         var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
-        if (this._flipX || this._flipY) {
+        if (this._flippedX || this._flippedY) {
             context.save();
-            if (this._flipX) {
+            if (this._flippedX) {
                 flipXOffset = -locOffsetPosition.x - locRect.width;
                 context.scale(-1, 1);
             }
-            if (this._flipY) {
+            if (this._flippedY) {
                 flipYOffset = locOffsetPosition.y;
                 context.scale(1, -1);
             }
@@ -2003,11 +2003,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             if (this._colorized) {
                 context.drawImage(image,
                     0, 0, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+                    flipXOffset, flipYOffset, 0 | locRect.width, 0 | locRect.height);
             } else {
                 context.drawImage(image,
                     0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+                    flipXOffset, flipYOffset, 0 | locRect.width, 0 | locRect.height);
             }
         } else if (locContentSize.width !== 0) {
             var curColor = this.getColor();
@@ -2031,7 +2031,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];
             cc.drawingUtil.drawPoly(vertices2, 4, true);
         }
-        if (this._flipX || this._flipY)
+        if (this._flippedX || this._flippedY)
             context.restore();
         cc.g_NumberOfDraws++;
     }

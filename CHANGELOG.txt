@@ -1,5 +1,6 @@
 Cocos2d-html5-v2.1.6 @ Sep.19, 2013
 * Improved Sprite, Node, LabelTTF class define from separated code to combined code for maintainability, now it is clean and clear
+* added a new sample game "Fruit attack" which works great on PC browsers, mobile browsers, and can even be run natively as an android and iOS app with JSB
 * cc.Sprite and its subClasses's texture has been replaced from DOM element to cc.Texture2D on Canvas mode
 * Improved cc.Texture2d for direct using without pre-loading image resources, you don't need to wait resources loading when create a new scene or layers
 * Migrated CCBReader and GUI to Cocos2d-x 2.1.4
@@ -8,7 +9,7 @@ Cocos2d-html5-v2.1.6 @ Sep.19, 2013
 * Fixed APIs of HTML5 according to JSB for compatibility, e.g. cc.ParticleSystemQuad has merged into cc.ParticleSystem, please check it on upgrade guide v2.1.5 to v2.1.6(http://www.cocos2d-x.org/wiki/Upgrade_Guide_from_Cocos2d-html5_v215_to_v216)
 * Added Hiding url address bar for mobile browser, please check the template and hello world
 * Re-writed Canvas Mode of RenderTexture to adapt WebGL interface
-* Added frame event, collider and blend type supporting for Armature. Now Armature supports two tools:1.CocoStudio(windows,http://www.cocostudio.org),2.DragonBones v2.3(flash,http://dragonbones.github.io)
+* Added frame event, collider and blend type supporting for Armature. Now Armature supports two tools:1.CocoStudio(windows,http://www.cocostudio.org),2.DragonBones(flash, https://github.com/2youyouo2/SkeletonAnimationDesignPanel)
 * Set auto render mode default value to canvas in mobile browsers and WebGL in desktop browsers
 
 * Bug fix:
@@ -23,6 +24,7 @@ Cocos2d-html5-v2.1.6 @ Sep.19, 2013
 9. Fixed a bug of cc.LayerColor that represent incorrect opacity passed into init method
 10. Stop listening and remove the event for HtmlImageElement object onload
 11. Fixed cc.ProgressTimer display wrong when its sprite was flipped
+12. Fixed some bugs for actions that set their object property through reference when initiating actions.
 
 * Known Issues:
      1. Effect Advanced Lens3D doesn't work
