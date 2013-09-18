@@ -653,10 +653,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesBegin(i, ids, xs, ys);
@@ -668,10 +670,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesMove(i, ids, xs, ys);
@@ -683,10 +687,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesEnd(i, ids, xs, ys);
@@ -698,10 +704,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesCancel(i, ids, xs, ys);
