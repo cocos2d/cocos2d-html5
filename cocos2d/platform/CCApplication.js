@@ -179,6 +179,7 @@ cc.setup = function (el, width, height) {
         cc.container.style.width = (width || 480) + "px";
         cc.container.style.height = (height || 320) + "px";
         cc.container.setAttribute('id', 'Cocos2dGameContainer');
+        cc.container.style.margin = "0 auto";
         cc.canvas.setAttribute("width", width || 480);
         cc.canvas.setAttribute("height", height || 320);
     } else {//we must make a new canvas and place into this element
