@@ -183,7 +183,7 @@ cc.TableView = cc.ScrollView.extend({
 
         var locCellsPositions = this._cellsPositions;
         while (high >= low){
-            var index = low + (high - low) / 2;
+            var index = 0|(low + (high - low) / 2);
             var cellStart = locCellsPositions[index];
             var cellEnd = locCellsPositions[index + 1];
 
@@ -202,13 +202,14 @@ cc.TableView = cc.ScrollView.extend({
     },
 
     _indexFromOffset:function (offset) {
+        var locOffset = {x: offset.x, y: offset.y};
         var locDataSource = this._dataSource;
         var maxIdx = locDataSource.numberOfCellsInTableView(this) - 1;
 
-        if (this._vOrdering == cc.TABLEVIEW_FILL_TOPDOWN) {
-            offset.y = this.getContainer().getContentSize().height - offset.y;
-        }
-        var index = this.__indexFromOffset(offset);
+        if (this._vOrdering === cc.TABLEVIEW_FILL_TOPDOWN)
+            locOffset.y = this.getContainer().getContentSize().height - locOffset.y;
+
+        var index = this.__indexFromOffset(locOffset);
         if (index != -1) {
             index = Math.max(0, index);
             if (index > maxIdx)
@@ -455,7 +456,7 @@ cc.TableView = cc.ScrollView.extend({
     reloadData:function () {
         this._oldDirection = cc.SCROLLVIEW_DIRECTION_NONE;
         var locCellsUsed = this._cellsUsed, locCellsFreed = this._cellsFreed, locContainer = this.getContainer();
-        for (var i = 0; i < locCellsUsed.count(); i++) {
+        for (var i = 0, len = locCellsUsed.count(); i < len; i++) {
             var cell = locCellsUsed.objectAtIndex(i);
 
             if(this._tableViewDelegate && this._tableViewDelegate.tableCellWillRecycle)
@@ -500,10 +501,8 @@ cc.TableView = cc.ScrollView.extend({
     cellAtIndex:function (idx) {
         var found = null;
 
-//     if ([this._indices containsIndex:cellIndex])
         if (this._indices.containsObject(idx))
             found = this._cellsUsed.objectWithObjectID(idx);
-
 
         return found;
     },
@@ -514,7 +513,7 @@ cc.TableView = cc.ScrollView.extend({
         if (0 === countOfItems)
             return;
 
-        if (this._tableViewDelegate != null)
+        if (this._tableViewDelegate != null && this._tableViewDelegate.scrollViewDidScroll)
             this._tableViewDelegate.scrollViewDidScroll(this);
 
         var  idx = 0, locViewSize = this._viewSize, locContainer = this.getContainer();
@@ -527,10 +526,10 @@ cc.TableView = cc.ScrollView.extend({
         if (this._vOrdering === cc.TABLEVIEW_FILL_TOPDOWN)
             offset.y = offset.y + locViewSize.height/locContainer.getScaleY();
         var startIdx = this._indexFromOffset(offset);
-        if (startIdx == cc.INVALID_INDEX)
+        if (startIdx === cc.INVALID_INDEX)
             startIdx = countOfItems - 1;
 
-        if (this._vOrdering == cc.TABLEVIEW_FILL_TOPDOWN)
+        if (this._vOrdering === cc.TABLEVIEW_FILL_TOPDOWN)
             offset.y -= locViewSize.height/locContainer.getScaleY();
         else
             offset.y += locViewSize.height/locContainer.getScaleY();
@@ -583,7 +582,7 @@ cc.TableView = cc.ScrollView.extend({
             return;
 
         if (this._touchedCell){
-            var bb = this.boundingBox();
+            var bb = this.getBoundingBox();
             bb.origin = this._parent.convertToWorldSpace(bb.origin);
             var locTableViewDelegate = this._tableViewDelegate;
             if (cc.rectContainsPoint(bb, touch.getLocation()) && locTableViewDelegate != null){
@@ -612,12 +611,11 @@ cc.TableView = cc.ScrollView.extend({
             else
                 this._touchedCell  = this.cellAtIndex(index);
 
-            if (this._touchedCell && this._tableViewDelegate != null)
+            if (this._touchedCell && this._tableViewDelegate != null && this._tableViewDelegate.tableCellHighlight)
                 this._tableViewDelegate.tableCellHighlight(this, this._touchedCell);
         } else if(this._touchedCell) {
-            if(this._tableViewDelegate != null)
+            if(this._tableViewDelegate != null && this._tableViewDelegate.tableCellUnhighlight)
                 this._tableViewDelegate.tableCellUnhighlight(this, this._touchedCell);
-
             this._touchedCell = null;
         }
 
@@ -630,7 +628,6 @@ cc.TableView = cc.ScrollView.extend({
         if (this._touchedCell && this.isTouchMoved()) {
             if(this._tableViewDelegate != null && this._tableViewDelegate.tableCellUnhighlight)
                 this._tableViewDelegate.tableCellUnhighlight(this, this._touchedCell);
-
             this._touchedCell = null;
         }
     },
@@ -641,7 +638,6 @@ cc.TableView = cc.ScrollView.extend({
         if (this._touchedCell) {
             if(this._tableViewDelegate != null && this._tableViewDelegate.tableCellUnhighlight)
                 this._tableViewDelegate.tableCellUnhighlight(this, this._touchedCell);
-
             this._touchedCell = null;
         }
     }
