@@ -337,17 +337,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         director._winSizeInPoints = this.getDesignResolutionSize();
 
         if (cc.renderContextType === cc.CANVAS) {
-            var locWidth = 0, locHeight = 0;
             if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-                locWidth = (this._screenSize.width - viewPortW) / 2;
-                locHeight = -(this._screenSize.height - viewPortH) / 2;
-                var context = cc.renderContext;
-                context.beginPath();
-                context.rect(locWidth, -viewPortH + locHeight, viewPortW, viewPortH);
-                context.clip();
-                context.closePath();
+                var locHeight = Math.abs(this._screenSize.height - viewPortH) / 2;
+                cc.canvas.width = viewPortW;
+                cc.canvas.height = viewPortH;
+                cc.container.style.width = viewPortW + "px";
+                cc.container.style.height = viewPortH + "px";
+                cc.renderContext.translate(0, viewPortH);
+                this._ele.style.paddingTop = locHeight + "px";
+                this._ele.style.paddingBottom = locHeight + "px";
+                this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
             }
-            cc.renderContext.translate(locWidth, locHeight);
             cc.renderContext.scale(this._scaleX, this._scaleY);
         } else {
             // reset director's member variables to fit visible rect
