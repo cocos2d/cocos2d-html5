@@ -445,13 +445,6 @@ cc.DOM.setTransform = function (x) {
         if (x.setAnchorPoint)
             x.setAnchorPoint(x.getAnchorPoint());
         x.dom.transforms();
-        x.dom.position.y = -x.getPosition().y;
-        x.dom.rotation = x.getRotation();
-        x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
-        x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
-        if (x.setAnchorPoint)
-            x.setAnchorPoint(x.getAnchorPoint());
-        x.dom.transforms();
     }
 
 };
