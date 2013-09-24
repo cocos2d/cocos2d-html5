@@ -257,7 +257,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER) {
             return cc.size(this._screenSize.width / this._scaleX, this._screenSize.height / this._scaleY);
         } else {
-            return this._designResolutionSize;
+            return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
         }
     },
 

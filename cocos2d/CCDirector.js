@@ -435,7 +435,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Size}
      */
     getWinSize:function () {
-        return this._winSizeInPoints;
+        return cc.size(this._winSizeInPoints.width, this._winSizeInPoints.height);
     },
 
     /**
@@ -453,8 +453,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     getVisibleSize:function () {
         if (this._openGLView) {
             return this._openGLView.getVisibleSize();
-        }
-        else {
+        } else {
             return cc.size(0,0);
         }
     },
@@ -462,8 +461,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     getVisibleOrigin:function () {
         if (this._openGLView) {
             return this._openGLView.getVisibleOrigin();
-        }
-        else {
+        } else {
             return cc.p(0, 0);
         }
     },
@@ -939,6 +937,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     /**
      * seconds per frame
+     * @return {Number}
      */
     getSecondsPerFrame:function () {
         return this._secondsPerFrame;

@@ -487,7 +487,7 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
      * @return {cc.Point}
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position.x, this._position.y);
     },
 
     /**
@@ -899,7 +899,7 @@ cc.Twirl = cc.Grid3DAction.extend({
      * @return {cc.Point}
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position.x, this._position.y);
     },
 
     /**
