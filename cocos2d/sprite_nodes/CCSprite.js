@@ -2002,12 +2002,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,
-                    0, 0, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, 0 | locRect.width, 0 | locRect.height);
+                    0, 0, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(image,
-                    0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, 0 | locRect.width, 0 | locRect.height);
+                    locRect.x, locRect.y, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (locContentSize.width !== 0) {
             var curColor = this.getColor();
