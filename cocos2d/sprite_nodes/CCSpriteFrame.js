@@ -126,7 +126,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Rect}
      */
     getRect:function () {
-        return this._rect;
+        var locRect = this._rect;
+        return cc.rect(locRect.x, locRect.y, locRect.width, locRect.height);
     },
 
     /**
