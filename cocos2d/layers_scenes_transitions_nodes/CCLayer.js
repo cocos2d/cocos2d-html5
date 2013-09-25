@@ -793,15 +793,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _squareVerticesAB:null,
     _squareColorsAB:null,
 
-    /**
-     * Constructor
-     */
-    ctor: null,
-
     _ctorForCanvas: function () {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        this._color = new cc.Color4B(0, 0, 0, 0);
     },
 
     _ctorForWebGL: function () {
@@ -1045,7 +1039,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor:function () {
         cc.LayerColor.prototype.ctor.call(this);
 
-        this._color = new cc.Color3B(0, 0, 0);
         this._startColor = new cc.Color3B(0, 0, 0);
         this._endColor = new cc.Color3B(0, 0, 0);
         this._alongVector = cc.p(0, -1);
@@ -1060,7 +1053,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {cc.Color3B}
      */
     getStartColor:function () {
-        return this._color;
+        return this._realColor;
     },
 
     /**
@@ -1135,7 +1128,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Point} Var
      */
     setVector:function (Var) {
-        this._alongVector = Var;
+        this._alongVector.x = Var.x;
+        this._alongVector.y = Var.y;
         this._updateColor();
     },
 
@@ -1143,7 +1137,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {cc.Point}
      */
     getVector:function () {
-        return this._alongVector;
+        return cc.p(this._alongVector.x, this._alongVector.y);
     },
 
     /** is Compressed Interpolation

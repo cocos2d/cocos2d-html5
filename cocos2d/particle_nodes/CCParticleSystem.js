@@ -727,7 +727,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     getGravity:function () {
         cc.Assert(this._emitterMode == cc.PARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
-        return this.modeA.gravity;
+        var locGravity = this.modeA.gravity;
+        return cc.p(locGravity.x, locGravity.y);
     },
 
     /**

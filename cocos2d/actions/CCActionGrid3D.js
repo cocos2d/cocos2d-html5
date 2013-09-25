@@ -366,7 +366,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
      * @return {cc.Point}
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position.x,this._position.y);
     },
 
     /**

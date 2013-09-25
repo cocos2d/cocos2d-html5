@@ -77,7 +77,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      *  @return {cc.Point}
      */
     getMidpoint:function () {
-        return this._midPoint;
+        return cc.p(this._midPoint.x, this._midPoint);
     },
 
     /**
@@ -96,7 +96,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      *  @return {cc.Point}
      */
     getBarChangeRate:function () {
-        return this._barChangeRate;
+        return cc.p(this._barChangeRate.x, this._barChangeRate.y);
     },
 
     /**

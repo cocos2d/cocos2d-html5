@@ -227,7 +227,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Size}
      */
     getFrameSize:function () {
-        return this._screenSize;
+        return cc.size(this._screenSize.width, this._screenSize.height);
     },
 
     /**
@@ -363,7 +363,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Size}
      */
     getDesignResolutionSize:function () {
-        return this._designResolutionSize;
+        return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
     },
 
     /**
