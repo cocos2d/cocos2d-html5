@@ -317,7 +317,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // Shared data
     //
     // texture
-    _rect:cc.rect(0, 0, 0, 0), //Retangle of cc.Texture2D
+    _rect:null, //Retangle of cc.Texture2D
     _rectRotated:false, //Whether the texture is rotated
 
     // Offset Position (used by Zwoptex)
@@ -524,7 +524,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect = rect;
+        this._rect.x = rect.x;
+        this._rect.y = rect.y;
+        this._rect.width = rect.width;
+        this._rect.height = rect.height;
     },
 
     sortAllChildren:function () {
@@ -915,6 +918,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        this._rect = cc.rect(0,0,0,0);
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
         this._quadWebBuffer = cc.renderContext.createBuffer();
@@ -948,6 +952,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        this._rect = cc.rect(0,0,0,0);
 
         this._newTextureWhenChangeColor = false;
         this._textureLoaded = true;
@@ -1159,7 +1164,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            this._rect = rect;
+            if (!rect) {
+                this._rect.x = rect.x;
+                this._rect.y = rect.y;
+                this._rect.width = rect.width;
+                this._rect.height = rect.height;
+            }
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
             return true;
         }
@@ -1211,7 +1221,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            this._rect = rect;
+            if (!rect) {
+                this._rect.x = rect.x;
+                this._rect.y = rect.y;
+                this._rect.width = rect.width;
+                this._rect.height = rect.height;
+            }
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
             return true;
         }
