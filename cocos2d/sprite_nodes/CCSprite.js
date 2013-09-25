@@ -2006,7 +2006,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(image,
-                    locRect.x, locRect.y, locRect.width, locRect.height,
+                    locRect.x, locRect.y, locRect.width,  locRect.height,
                     flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (locContentSize.width !== 0) {

@@ -336,7 +336,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused)
             this._scheduler.update(this._deltaTime);
 
-        cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
+        cc.renderContext.clearRect(0, 0, cc.originalCanvasSize.width, -cc.originalCanvasSize.height);
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
