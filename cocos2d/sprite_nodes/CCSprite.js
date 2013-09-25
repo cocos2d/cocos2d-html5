@@ -521,10 +521,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      *    Do not call it manually. Use setTextureRect instead.  <br/>
      *    (override this method to generate "double scale" sprites)
      * </p>
-     * @param rect
+     * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect = rect;
+        this._rect.x = rect.x;
+        this._rect.y = rect.y;
+        this._rect.width = rect.width;
+        this._rect.height = rect.height;
     },
 
     sortAllChildren:function () {

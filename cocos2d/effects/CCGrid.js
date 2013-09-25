@@ -97,7 +97,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      * @return {cc.Size}
      */
     getGridSize:function () {
-        return this._gridSize;
+        return cc.size(this._gridSize.width, this._gridSize.height);
     },
 
     /**
@@ -114,7 +114,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      * @return {cc.Point}
      */
     getStep:function () {
-        return this._step;
+        return cc.p(this._step.x, this._step.y);
     },
 
     /**
@@ -122,7 +122,8 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      * @param {cc.Point} step
      */
     setStep:function (step) {
-        this._step = step;
+        this._step.x = step.x;
+        this._step.y = step.y;
     },
 
     /**

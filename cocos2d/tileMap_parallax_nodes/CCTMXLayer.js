@@ -186,14 +186,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Size}
      */
     getLayerSize:function () {
-        return this._layerSize;
+        return cc.size(this._layerSize.width, this._layerSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setLayerSize:function (Var) {
-        this._layerSize = Var;
+        this._layerSize.width = Var.width;
+        this._layerSize.height = Var.height;
     },
 
     /**
@@ -201,14 +202,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Size}
      */
     getMapTileSize:function () {
-        return this._mapTileSize;
+        return cc.size(this._mapTileSize.width,this._mapTileSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setMapTileSize:function (Var) {
-        this._mapTileSize = Var;
+        this._mapTileSize.width = Var.width;
+        this._mapTileSize.height = Var.height;
     },
 
     /**
