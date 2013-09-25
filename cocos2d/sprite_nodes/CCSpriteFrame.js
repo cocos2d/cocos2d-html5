@@ -88,14 +88,18 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Rect}
      */
     getRectInPixels:function () {
-        return this._rectInPixels;
+        var locRectInPixels = this._rectInPixels;
+        return cc.rect(locRectInPixels.x, locRectInPixels.y, locRectInPixels.width, locRectInPixels.height);
     },
 
     /**
      * @param {cc.Rect} rectInPixels
      */
     setRectInPixels:function (rectInPixels) {
-        this._rectInPixels = rectInPixels;
+        this._rectInPixels.x = rectInPixels.x;
+        this._rectInPixels.y = rectInPixels.y;
+        this._rectInPixels.width = rectInPixels.width;
+        this._rectInPixels.height = rectInPixels.height;
         this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
     },
 
@@ -122,7 +126,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Rect}
      */
     getRect:function () {
-        return this._rect;
+        var locRect = this._rect;
+        return cc.rect(locRect.x, locRect.y, locRect.width, locRect.height);
     },
 
     /**
@@ -130,7 +135,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Rect} rect
      */
     setRect:function (rect) {
-        this._rect = rect;
+        this._rect.x = rect.x;
+        this._rect.y = rect.y;
+        this._rect.width = rect.width;
+        this._rect.height = rect.height;
         this._rectInPixels = cc.RECT_POINTS_TO_PIXELS(this._rect);
     },
 
@@ -147,7 +155,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Point} offsetInPixels
      */
     setOffsetInPixels:function (offsetInPixels) {
-        this._offsetInPixels = offsetInPixels;
+        this._offsetInPixels.x = offsetInPixels.x;
+        this._offsetInPixels.y = offsetInPixels.y;
         this._offset = cc.POINT_PIXELS_TO_POINTS(this._offsetInPixels);
     },
 
@@ -157,7 +166,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Size}
      */
     getOriginalSizeInPixels:function () {
-        return this._originalSizeInPixels;
+        return cc.size(this._originalSizeInPixels.width, this._originalSizeInPixels.height);
     },
 
     /**
@@ -165,7 +174,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Size} sizeInPixels
      */
     setOriginalSizeInPixels:function (sizeInPixels) {
-        this._originalSizeInPixels = sizeInPixels;
+        this._originalSizeInPixels.width = sizeInPixels.width;
+        this._originalSizeInPixels.height = sizeInPixels.height;
     },
 
     /**
@@ -182,7 +192,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Size} sizeInPixels
      */
     setOriginalSize:function (sizeInPixels) {
-        this._originalSize = sizeInPixels;
+        this._originalSize.width = sizeInPixels.width;
+        this._originalSize.height = sizeInPixels.height;
     },
 
     /**

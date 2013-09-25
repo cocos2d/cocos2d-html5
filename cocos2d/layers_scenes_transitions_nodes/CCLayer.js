@@ -635,7 +635,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
-        this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
+        this._displayedOpacity = 0|(this._realOpacity * parentOpacity/255.0);
 
         if (this._cascadeOpacityEnabled){
             var locChildren = this._children;
@@ -656,37 +656,44 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     getColor: function () {
-        return this._realColor;
+        var locRealColor = this._realColor;
+        return cc.c3b(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
     getDisplayedColor: function () {
-        return this._displayedColor;
+        var locDisplayedColor = this._displayedColor;
+        return cc.c3b(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
     },
 
     setColor: function (color) {
-        this._displayedColor = cc.c3b(color.r, color.g, color.b);
-        this._realColor = cc.c3b(color.r,color.g, color.b);
+        var locDisplayed = this._displayedColor, locRealColor = this._realColor;
+        locDisplayed.r = locRealColor.r = color.r;
+        locDisplayed.g = locRealColor.g = color.g;
+        locDisplayed.b = locRealColor.b = color.b;
 
         if (this._cascadeColorEnabled){
-            var parentColor = cc.white();
+            var parentColor;
             var locParent = this._parent;
             if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
                 parentColor = locParent.getDisplayedColor();
+            else
+                parentColor = cc.white();
             this.updateDisplayedColor(parentColor);
         }
     },
 
     updateDisplayedColor: function (parentColor) {
-        this._displayedColor.r = this._realColor.r * parentColor.r/255.0;
-        this._displayedColor.g = this._realColor.g * parentColor.g/255.0;
-        this._displayedColor.b = this._realColor.b * parentColor.b/255.0;
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r = 0|(locRealColor.r * parentColor.r/255.0);
+        locDisplayedColor.g = 0|(locRealColor.g * parentColor.g/255.0);
+        locDisplayedColor.b = 0|(locRealColor.b * parentColor.b/255.0);
 
         if (this._cascadeColorEnabled){
             var locChildren = this._children;
             for(var i = 0; i < locChildren.length; i++){
                 var selItem = locChildren[i];
                 if(selItem && selItem.RGBAProtocol)
-                    selItem.updateDisplayedColor(this._displayedColor);
+                    selItem.updateDisplayedColor(locDisplayedColor);
             }
         }
     },
@@ -786,15 +793,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _squareVerticesAB:null,
     _squareColorsAB:null,
 
-    /**
-     * Constructor
-     */
-    ctor: null,
-
     _ctorForCanvas: function () {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        this._color = new cc.Color4B(0, 0, 0, 0);
     },
 
     _ctorForWebGL: function () {
@@ -1038,7 +1039,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor:function () {
         cc.LayerColor.prototype.ctor.call(this);
 
-        this._color = new cc.Color3B(0, 0, 0);
         this._startColor = new cc.Color3B(0, 0, 0);
         this._endColor = new cc.Color3B(0, 0, 0);
         this._alongVector = cc.p(0, -1);
@@ -1053,7 +1053,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {cc.Color3B}
      */
     getStartColor:function () {
-        return this._color;
+        return this._realColor;
     },
 
     /**
@@ -1128,7 +1128,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Point} Var
      */
     setVector:function (Var) {
-        this._alongVector = Var;
+        this._alongVector.x = Var.x;
+        this._alongVector.y = Var.y;
         this._updateColor();
     },
 
@@ -1136,7 +1137,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {cc.Point}
      */
     getVector:function () {
-        return this._alongVector;
+        return cc.p(this._alongVector.x, this._alongVector.y);
     },
 
     /** is Compressed Interpolation

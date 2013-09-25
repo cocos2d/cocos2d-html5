@@ -172,7 +172,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @return {cc.Size}
      */
     getDimensions:function () {
-        return this._dimensions;
+        return cc.size(this._dimensions.width, this._dimensions.height);
     },
 
     /**
