@@ -524,10 +524,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect.x = rect.x;
-        this._rect.y = rect.y;
-        this._rect.width = rect.width;
-        this._rect.height = rect.height;
+        this._rect = rect;
     },
 
     sortAllChildren:function () {
