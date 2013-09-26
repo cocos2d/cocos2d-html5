@@ -317,7 +317,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // Shared data
     //
     // texture
-    _rect:cc.rect(0, 0, 0, 0), //Retangle of cc.Texture2D
+    _rect:null, //Retangle of cc.Texture2D
     _rectRotated:false, //Whether the texture is rotated
 
     // Offset Position (used by Zwoptex)
@@ -521,10 +521,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      *    Do not call it manually. Use setTextureRect instead.  <br/>
      *    (override this method to generate "double scale" sprites)
      * </p>
-     * @param rect
+     * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect = rect;
+        this._rect.x = rect.x;
+        this._rect.y = rect.y;
+        this._rect.width = rect.width;
+        this._rect.height = rect.height;
     },
 
     sortAllChildren:function () {
@@ -915,6 +918,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        this._rect = cc.rect(0,0,0,0);
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
         this._quadWebBuffer = cc.renderContext.createBuffer();
@@ -948,6 +952,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        this._rect = cc.rect(0,0,0,0);
 
         this._newTextureWhenChangeColor = false;
         this._textureLoaded = true;
@@ -1159,7 +1164,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            this._rect = rect;
+            if (!rect) {
+                this._rect.x = rect.x;
+                this._rect.y = rect.y;
+                this._rect.width = rect.width;
+                this._rect.height = rect.height;
+            }
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
             return true;
         }
@@ -1211,7 +1221,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            this._rect = rect;
+            if (!rect) {
+                this._rect.x = rect.x;
+                this._rect.y = rect.y;
+                this._rect.width = rect.width;
+                this._rect.height = rect.height;
+            }
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
             return true;
         }
@@ -2002,12 +2017,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,
-                    0, 0, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, 0 | locRect.width, 0 | locRect.height);
+                    0, 0, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(image,
-                    0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, 0 | locRect.width, 0 | locRect.height);
+                    locRect.x, locRect.y, locRect.width,  locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (locContentSize.width !== 0) {
             var curColor = this.getColor();
