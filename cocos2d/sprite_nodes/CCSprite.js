@@ -1164,7 +1164,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            if (!rect) {
+            if (rect) {
                 this._rect.x = rect.x;
                 this._rect.y = rect.y;
                 this._rect.width = rect.width;
@@ -1221,7 +1221,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            if (!rect) {
+            if (rect) {
                 this._rect.x = rect.x;
                 this._rect.y = rect.y;
                 this._rect.width = rect.width;
