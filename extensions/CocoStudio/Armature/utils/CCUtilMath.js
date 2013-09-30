@@ -24,7 +24,7 @@
 
 var ENABLE_PHYSICS_DETECT = false;
 cc.fmodf = function (x, y) {
-    while (x >= y) {
+    while (x > y) {
         x -= y;
     }
     return x;

@@ -125,9 +125,21 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _initScreenSize:function(){
         this._screenSize.width = this._ele.clientWidth;
         this._screenSize.height = this._ele.clientHeight;
-        if(navigator.userAgent.match(/iPhone/i)){
-            this._screenSize.height +=(this._screenSize.width/320)*60;
+        //add url address height on iPhone
+        var locAgent = navigator.userAgent;
+        if (locAgent.match(/Iphone/i)&&
+            (locAgent.match(/Version\/5/i)||locAgent.match(/Version\/6/i))) {
+            var locHeight = 0;
+            if (this._screenSize.width > this._screenSize.height) {
+                //landscape
+                locHeight = (this._screenSize.width / window.screen.height) * 60;
+            } else {
+                //portrait
+                locHeight = (this._screenSize.width / window.screen.width) * 60;
+            }
+            this._screenSize.height += locHeight;
         }
+
     },
     _adjustSize:function () {
         this._scrollToBottom();
@@ -345,7 +357,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 cc.container.style.height = viewPortH + "px";
                 cc.renderContext.translate(0, viewPortH);
                 this._ele.style.paddingTop = locHeight + "px";
-                this._ele.style.paddingBottom = locHeight + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
             }
             cc.renderContext.scale(this._scaleX, this._scaleY);
