@@ -794,7 +794,7 @@ cc.BuilderReader = cc.Class.extend({
             embeddedNode.setScale(node.getScale());
             embeddedNode.setTag(node.getTag());
             embeddedNode.setVisible(true);
-            embeddedNode.ignoreAnchorPointForPosition(node.isIgnoreAnchorPointForPosition());
+//            embeddedNode.ignoreAnchorPointForPosition(node.isIgnoreAnchorPointForPosition());
 
             node.setCCBFileNode(null);
             node = embeddedNode;
