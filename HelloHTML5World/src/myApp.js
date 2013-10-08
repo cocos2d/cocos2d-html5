@@ -83,6 +83,7 @@ var Helloworld = cc.Layer.extend({
         this.helloLabel.setPosition(cc.p(size.width / 2, 0));
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
+        window.myLabel = this.helloLabel;
 
         var lazyLayer = cc.Layer.create();
         this.addChild(lazyLayer);
