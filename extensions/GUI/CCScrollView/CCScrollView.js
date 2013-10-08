@@ -739,15 +739,15 @@ cc.ScrollView = cc.Layer.extend({
     _beforeDraw:function (context) {
         if (this._clippingToBounds) {
             this._scissorRestored = false;
-            var frame = this._getViewRect();
+            var frame = this._getViewRect(), locEGLViewer = cc.EGLView.getInstance();
 
             var scaleX = this.getScaleX();
             var scaleY = this.getScaleY();
 
             var ctx = context || cc.renderContext;
             if (cc.renderContextType === cc.CANVAS) {
-                var getWidth = (this._viewSize.width * scaleX);
-                var getHeight = (this._viewSize.height * scaleY);
+                var getWidth = (this._viewSize.width * scaleX) * locEGLViewer.getScaleX();
+                var getHeight = (this._viewSize.height * scaleY) * locEGLViewer.getScaleY();
                 var startX = 0;
                 var startY = 0;
 
