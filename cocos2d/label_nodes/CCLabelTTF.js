@@ -216,7 +216,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontName = fontName || "Arial";
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
-            this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
+
+            //this._fontSize = (cc.renderContextType === cc.CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
+            this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
             this.setString(strInfo);
@@ -414,7 +416,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var texDef = new cc.FontDefinition();
 
         if (adjustForResolution){
-            texDef.fontSize = this._fontSize * cc.CONTENT_SCALE_FACTOR();
+            //texDef.fontSize = (cc.renderContextType === cc.CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
+            texDef.fontSize = this._fontSize;
             texDef.fontDimensions = cc.SIZE_POINTS_TO_PIXELS(this._dimensions);
         } else {
             texDef.fontSize = this._fontSize;
@@ -430,7 +433,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             texDef.strokeEnabled = true;
             var locStrokeColor = this._strokeColor;
             texDef.strokeColor   = new cc.Color3B(locStrokeColor.r, locStrokeColor.g, locStrokeColor.b);
-            texDef.strokeSize = adjustForResolution ? this._strokeSize * cc.CONTENT_SCALE_FACTOR() : this._strokeSize;
+            //texDef.strokeSize = (adjustForResolution && ((cc.renderContextType === cc.WEBGL))) ? this._strokeSize * cc.CONTENT_SCALE_FACTOR() : this._strokeSize;
+            texDef.strokeSize = this._strokeSize;
+            texDef.strokeSize = this._strokeSize;
         }else
             texDef.strokeEnabled = false;
 
@@ -849,13 +854,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
 
-        //this._setTextureCoords(rect);
         var locTextureCoordRect = this._textureRect_Canvas;
         locTextureCoordRect.x = rect.x;
         locTextureCoordRect.y = rect.y;
         locTextureCoordRect.width = rect.width;
         locTextureCoordRect.height = rect.height;
-
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
@@ -867,10 +870,87 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         // rendering using batch node
         if (this._batchNode) {
-            // update dirty_, don't update recursiveDirty_
-            //this.setDirty(true);
             this._dirty = true;
         }
+    },
+
+    _setTextureCoords:function (rect) {
+        var tex = this._batchNode ? this._textureAtlas.getTexture() : this._texture;
+        if (!tex)
+            return;
+
+        var atlasWidth = tex.getPixelsWide();
+        var atlasHeight = tex.getPixelsHigh();
+
+        var left, right, top, bottom, tempSwap, locQuad = this._quad;
+        if (this._rectRotated) {
+            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+                left = (2 * rect.x + 1) / (2 * atlasWidth);
+                right = left + (rect.height * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.width * 2 - 2) / (2 * atlasHeight);
+            } else {
+                left = rect.x / atlasWidth;
+                right = (rect.x + rect.height) / atlasWidth;
+                top = rect.y / atlasHeight;
+                bottom = (rect.y + rect.width) / atlasHeight;
+            }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+
+            if (this._flippedX) {
+                tempSwap = top;
+                top = bottom;
+                bottom = tempSwap;
+            }
+
+            if (this._flippedY) {
+                tempSwap = left;
+                left = right;
+                right = tempSwap;
+            }
+
+            locQuad.bl.texCoords.u = left;
+            locQuad.bl.texCoords.v = top;
+            locQuad.br.texCoords.u = left;
+            locQuad.br.texCoords.v = bottom;
+            locQuad.tl.texCoords.u = right;
+            locQuad.tl.texCoords.v = top;
+            locQuad.tr.texCoords.u = right;
+            locQuad.tr.texCoords.v = bottom;
+        } else {
+            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+                left = (2 * rect.x + 1) / (2 * atlasWidth);
+                right = left + (rect.width * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.height * 2 - 2) / (2 * atlasHeight);
+            } else {
+                left = rect.x / atlasWidth;
+                right = (rect.x + rect.width) / atlasWidth;
+                top = rect.y / atlasHeight;
+                bottom = (rect.y + rect.height) / atlasHeight;
+            } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+
+            if (this._flippedX) {
+                tempSwap = left;
+                left = right;
+                right = tempSwap;
+            }
+
+            if (this._flippedY) {
+                tempSwap = top;
+                top = bottom;
+                bottom = tempSwap;
+            }
+
+            locQuad.bl.texCoords.u = left;
+            locQuad.bl.texCoords.v = bottom;
+            locQuad.br.texCoords.u = right;
+            locQuad.br.texCoords.v = bottom;
+            locQuad.tl.texCoords.u = left;
+            locQuad.tl.texCoords.v = top;
+            locQuad.tr.texCoords.u = right;
+            locQuad.tr.texCoords.v = top;
+        }
+        this._quadDirty = true;
     }
 });
 
