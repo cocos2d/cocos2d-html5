@@ -840,7 +840,38 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.g_NumberOfDraws++;
-    }
+    },
+
+    _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
+        this._rectRotated = rotated || false;
+        untrimmedSize = untrimmedSize || rect.size;
+
+        this.setContentSize(untrimmedSize);
+        this.setVertexRect(rect);
+
+        //this._setTextureCoords(rect);
+        var locTextureCoordRect = this._textureRect_Canvas;
+        locTextureCoordRect.x = rect.x;
+        locTextureCoordRect.y = rect.y;
+        locTextureCoordRect.width = rect.width;
+        locTextureCoordRect.height = rect.height;
+
+
+        var relativeOffset = this._unflippedOffsetPositionFromCenter;
+        if (this._flippedX)
+            relativeOffset.x = -relativeOffset.x;
+        if (this._flippedY)
+            relativeOffset.y = -relativeOffset.y;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
+
+        // rendering using batch node
+        if (this._batchNode) {
+            // update dirty_, don't update recursiveDirty_
+            //this.setDirty(true);
+            this._dirty = true;
+        }
+    },
 });
 
 if(cc.Browser.supportWebGL){
@@ -850,6 +881,7 @@ if(cc.Browser.supportWebGL){
     cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForWebGL;
     cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForWebGL;
     cc.LabelTTF.prototype.draw = cc.LabelTTF.prototype._drawForWebGL;
+    cc.LabelTTF.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
 } else {
     cc.LabelTTF.prototype.setColor = cc.LabelTTF.prototype._setColorForCanvas;
     cc.LabelTTF.prototype.getColor = cc.LabelTTF.prototype._getColorForCanvas;
@@ -857,6 +889,7 @@ if(cc.Browser.supportWebGL){
     cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForCanvas;
     cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForCanvas;
     cc.LabelTTF.prototype.draw = cc.Sprite.prototype.draw;
+    cc.LabelTTF.prototype.setTextureRect = cc.LabelTTF.prototype._setTextureRectForCanvas;
 }
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
