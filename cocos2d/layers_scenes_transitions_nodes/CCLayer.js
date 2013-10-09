@@ -923,12 +923,13 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        var locContentSize = this.getContentSize();
+        var locContentSize = this.getContentSize(), locEGLViewer = cc.EGLView.getInstance();
+
         var locDisplayedColor = this._displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
             + (0 | locDisplayedColor.b) + "," + this._displayedOpacity / 255 + ")";
-        context.fillRect(0, 0, locContentSize.width, -locContentSize.height);
+        context.fillRect(0, 0, locContentSize.width * locEGLViewer.getScaleX(), -locContentSize.height * locEGLViewer.getScaleY());
 
         cc.g_NumberOfDraws++;
     },
@@ -1196,8 +1197,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var tWidth = this.getContentSize().width;
-        var tHeight = this.getContentSize().height;
+        var locEGLViewer = cc.EGLView.getInstance();
+        var tWidth = this.getContentSize().width * locEGLViewer.getScaleX();
+        var tHeight = this.getContentSize().height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
             this._gradientEndPoint.x, this._gradientEndPoint.y);
         var locDisplayedColor = this._displayedColor;

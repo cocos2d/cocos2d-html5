@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Scott Lembcke and Howling Moon Software
+/** Copyright (c) 2012 Scott Lembcke and Howling Moon Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -183,8 +183,6 @@
         },
 
         _nodeToParentTransformForCanvas: function () {
-            if (!this._transform)
-                this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
             if (this.isDirty()) {
                 var t = this._transform;// quick reference
                 // base position

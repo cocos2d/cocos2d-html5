@@ -124,7 +124,7 @@ cc.TransitionProgress.create = function (t, scene) {
 
 /**
  *  cc.TransitionRadialCCW transition.<br/>
- *  A counter colock-wise radial transition to the next scene
+ *  A counter clock-wise radial transition to the next scene
  * @class
  * @extends cc.TransitionProgress
  */

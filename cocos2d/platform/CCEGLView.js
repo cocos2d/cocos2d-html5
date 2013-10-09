@@ -66,7 +66,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     // the view name
     _viewName:"",
     _scaleX:1,
+    _originalScaleX:1,
     _scaleY:1,
+    _originalScaleY:1,
     _indexBitsUsed:0,
     _maxTouches:5,
     _resolutionPolicy:cc.RESOLUTION_POLICY.UNKNOWN,
@@ -305,9 +307,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         if (width == 0 || height == 0)
             return;
 
-        if ((width != null) && (height != null)){
+        if ((width != null) && (height != null))
             this._designResolutionSize = cc.size(width, height);
-        }
 
         if (resolutionPolicy != null)
             this._resolutionPolicy = resolutionPolicy;
@@ -317,10 +318,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             return;
         }
 
+        var locScreenSize = this._screenSize, locDesignResolutionSize = this._designResolutionSize;
 
-
-        this._scaleX = this._screenSize.width / this._designResolutionSize.width;
-        this._scaleY = this._screenSize.height / this._designResolutionSize.height;
+        this._scaleX = locScreenSize.width / locDesignResolutionSize.width;
+        this._scaleY = locScreenSize.height / locDesignResolutionSize.height;
 
         if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER)
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
@@ -330,19 +331,19 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         if (this._resolutionPolicy === cc.RESOLUTION_POLICY.HEIGHT) {
             this._scaleX = this._scaleY;
-            this._designResolutionSize.width = Math.ceil(this._screenSize.width / this._scaleX);
+            locDesignResolutionSize.width = Math.ceil(locScreenSize.width / this._scaleX);
         }
 
         if (this._resolutionPolicy == cc.RESOLUTION_POLICY.WIDTH) {
             this._scaleY = this._scaleX;
-            this._designResolutionSize.height = Math.ceil(this._screenSize.height / this._scaleY);
+            locDesignResolutionSize.height = Math.ceil(locScreenSize.height / this._scaleY);
         }
 
         // calculate the rect of viewport
-        var viewPortW = this._designResolutionSize.width * this._scaleX;
-        var viewPortH = this._designResolutionSize.height * this._scaleY;
+        var viewPortW = locDesignResolutionSize.width * this._scaleX;
+        var viewPortH = locDesignResolutionSize.height * this._scaleY;
 
-        this._viewPortRect = cc.rect((this._screenSize.width - viewPortW) / 2, (this._screenSize.height - viewPortH) / 2, viewPortW, viewPortH);
+        this._viewPortRect = cc.rect((locScreenSize.width - viewPortW) / 2, (locScreenSize.height - viewPortH) / 2, viewPortW, viewPortH);
 
         // reset director's member variables to fit visible rect
         var director = cc.Director.getInstance();
@@ -350,7 +351,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         if (cc.renderContextType === cc.CANVAS) {
             if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-                var locHeight = Math.abs(this._screenSize.height - viewPortH) / 2;
+                var locHeight = Math.abs(locScreenSize.height - viewPortH) / 2;
                 cc.canvas.width = viewPortW;
                 cc.canvas.height = viewPortH;
                 cc.container.style.width = viewPortW + "px";
@@ -359,15 +360,26 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 this._ele.style.paddingTop = locHeight + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
             }
-            cc.renderContext.scale(this._scaleX, this._scaleY);
+            //cc.renderContext.scale(this._scaleX, this._scaleY);
         } else {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
         }
+        this._originalScaleX = this._scaleX;
+        this._originalScaleY = this._scaleY;
         cc.DOM._resetEGLViewDiv();
     },
 
+    _setScaleToOne:function(){
+        this._scaleX = 1;
+        this._scaleY = 1;
+    },
+
+    _resetScale:function(){
+        this._scaleX = this._originalScaleX;
+        this._scaleY = this._originalScaleY;
+    },
     /**
      * Get design resolution size.
      * Default resolution size is the same as 'getFrameSize'.
@@ -423,6 +435,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * Get the current scissor rectangle
+     * @return {cc.Rect}
      */
     getScissorRect:function () {
         var gl = cc.renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
@@ -484,7 +497,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} ys
      */
     handleTouchesBegin:function (num, ids, xs, ys) {
-        var arr = [];
+        var arr = [], locViewPortRect = this._viewPortRect, locScaleX = this._scaleX, locScaleY = this._scaleY;
         for (var i = 0; i < num; ++i) {
             var id = ids[i];
             var x = xs[i];
@@ -504,10 +517,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 }
 
                 var touch = cc.Touches[unusedIndex] = new cc.Touch();
-                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.x) / this._scaleX,
-                    (y - this._viewPortRect.y) / this._scaleY);
+                touch.setTouchInfo(unusedIndex, (x - locViewPortRect.x) / locScaleX,
+                    (y - locViewPortRect.y) / locScaleY);
 
-                //cc.log("x ="+x+" y = "+y, touches[key].getLocation().x, touches[key].getLocation().y);
+                //console.log("x ="+x+" y = "+y, touch.getLocation());
 
                 var interObj = 0 | unusedIndex;
                 cc.TouchesIntergerDict[id] = interObj;
