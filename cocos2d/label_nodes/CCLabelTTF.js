@@ -871,7 +871,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             //this.setDirty(true);
             this._dirty = true;
         }
-    },
+    }
 });
 
 if(cc.Browser.supportWebGL){
