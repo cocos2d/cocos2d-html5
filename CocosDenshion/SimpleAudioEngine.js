@@ -52,14 +52,14 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 return result != "no" && result != "";
             };
 
-            capabilities.mp3 = _check("audio/mpeg");
-            capabilities.mp4 = _check("audio/mp4");
-            capabilities.m4a = _check("audio/x-m4a") || _check("audio/aac");
-            capabilities.ogg = _check('audio/ogg; codecs="vorbis"');
-            capabilities.wav = _check('audio/wav; codecs="1"');
+            capabilities["mp3"] = _check("audio/mpeg");
+            capabilities["mp4"] = _check("audio/mp4");
+            capabilities["m4a"] = _check("audio/x-m4a") || _check("audio/aac");
+            capabilities["ogg"] = _check('audio/ogg; codecs="vorbis"');
+            capabilities["wav"] = _check('audio/wav; codecs="1"');
         } else {
             // <audio> tag is not supported, nothing is supported
-            var formats = ['mp3', 'mp4', 'm4a', 'ogg', 'wav'];
+            var formats = ["mp3", "mp4", "m4a", "ogg", "wav"];
             for (var idx in formats) {
                 capabilities[formats[idx]] = false;
             }
@@ -133,14 +133,14 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         this._effectList = {};
         this._soundList = {};
 
-        this._capabilities = { mp3: false, ogg: false, wav: false, mp4: false, m4a: false};
+        this._capabilities = {"mp3": false, "ogg": false, "wav": false, "mp4": false, "m4a": false};
         var locCapabilities = this._capabilities;
         this._checkCanPlay(locCapabilities);
 
         // enable sound if any of the audio format is supported
-        this._soundSupported = locCapabilities.mp3 || locCapabilities.mp4
-            || locCapabilities.m4a || locCapabilities.ogg
-            || locCapabilities.wav;
+        this._soundSupported = locCapabilities["mp3"] || locCapabilities["mp4"]
+            || locCapabilities["m4a"] || locCapabilities["ogg"]
+            || locCapabilities["wav"];
 
         var ua = navigator.userAgent;
         if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
@@ -635,7 +635,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             return;
         }
 
-        var formats = ['ogg', 'mp3', 'wav', 'mp4', 'm4a'];
+        var formats = ["ogg", "mp3", "wav", "mp4", "m4a"];
         for (var idx in formats) {
             var name = formats[idx];
             if (this._capabilities[name]) {
@@ -735,7 +735,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var capabilities = {};
         this._checkCanPlay(capabilities);
 
-        var formats = ['ogg', 'mp3', 'wav', 'mp4', 'm4a'], locSupportedFormat = this._supportedFormat;
+        var formats = ["ogg", "mp3", "wav", "mp4", "m4a"], locSupportedFormat = this._supportedFormat;
         for (var idx in formats) {
             var name = formats[idx];
             if (capabilities[name])
