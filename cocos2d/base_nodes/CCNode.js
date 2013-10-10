@@ -158,6 +158,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
         this._children = [];
+        this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
@@ -1665,6 +1666,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _ctorForCanvas: function () {
         this._initNode();
+
+        //Canvas
     },
 
     _ctorForWebGL: function () {
@@ -1772,9 +1775,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _transformForCanvas: function (ctx) {
         // transform for canvas
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc.renderContext, eglViewer = cc.EGLView.getInstance();
+
         var t = this.nodeToParentTransform();
-        context.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
+        context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
     },
 
     _transformForWebGL: function () {
@@ -1824,6 +1828,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
         if (this._transformDirty) {
             var t = this._transform;// quick reference
+
             // base position
             t.tx = this._position.x;
             t.ty = this._position.y;
