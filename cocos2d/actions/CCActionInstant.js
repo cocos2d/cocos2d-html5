@@ -322,7 +322,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
      * @return {Boolean}
      */
     initWithPosition:function (pos) {
-        this._position = pos;
+        this._position = cc.p(pos.x, pos.y);
         return true;
     },
 
