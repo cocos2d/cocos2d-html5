@@ -277,7 +277,7 @@ cc.Scale9SpriteLoader = cc.NodeLoader.extend({
     },
     onHandlePropTypeSpriteFrame:function(node, parent, propertyName, spriteFrame,ccbReader){
         if(propertyName == PROPERTY_SPRITEFRAME) {
-            node.initWithSpriteFrame(spriteFrame);
+            node.setSpriteFrame(spriteFrame);
         } else {
             cc.NodeLoader.prototype.onHandlePropTypeSpriteFrame.call(this, node, parent, propertyName, spriteFrame,ccbReader);
         }

@@ -1169,10 +1169,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
             if (rect) {
-                this._rect.x = rect.x;
-                this._rect.y = rect.y;
-                this._rect.width = rect.width;
-                this._rect.height = rect.height;
+                var locRect = this._rect;
+                locRect.x = rect.x;
+                locRect.y = rect.y;
+                locRect.width = rect.width;
+                locRect.height = rect.height;
             }
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
             return true;
@@ -1348,7 +1349,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
-        this._textureRect_Canvas = cc.RECT_POINTS_TO_PIXELS(rect);                      //this._setTextureCoords(rect);
+        //this._textureRect_Canvas = cc.RECT_POINTS_TO_PIXELS(rect);                      //this._setTextureCoords(rect);
+        var locTextureRect = this._textureRect_Canvas;
+        var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+        locTextureRect.x = 0|(rect.x * scaleFactor);
+        locTextureRect.y = 0|(rect.y * scaleFactor);
+        locTextureRect.width = 0|(rect.width * scaleFactor);
+        locTextureRect.height = 0|(rect.height * scaleFactor);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
@@ -1817,7 +1824,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this.getTextureRect();
+        var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
         if (locTexture && locRect.width > 0) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
