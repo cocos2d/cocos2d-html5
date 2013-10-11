@@ -294,15 +294,17 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 
     /**
      * Initializes SpriteFrame with Texture, rect, rotated, offset and originalSize in pixels.
-     * @param {cc.Texture2D|HTMLImageElement} texture
-     * @param {cc.Rect} rect
+     * @param {cc.Texture2D} texture
+     * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
      * @param {Boolean} [rotated=false]
      * @param {cc.Point} [offset=cc.size(0,0)]
      * @param {cc.Size} [originalSize=rect.size]
      * @return {Boolean}
      */
     initWithTexture:function (texture, rect, rotated, offset, originalSize) {
-        rotated = rotated || false;
+        if(arguments.length === 2)
+            rect = cc.RECT_POINTS_TO_PIXELS(rect);
+
         offset = offset || cc.size(0, 0);
         originalSize = originalSize || rect.size;
 
@@ -313,7 +315,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offset = cc.POINT_PIXELS_TO_POINTS(offset);
         this._originalSizeInPixels = originalSize;
         this._originalSize = cc.SIZE_PIXELS_TO_POINTS(originalSize);
-        this._rotated = rotated;
+        this._rotated = rotated || false;
         return true;
     },
 
@@ -323,12 +325,15 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      *    The originalSize is the size in pixels of the frame before being trimmed.
      * </p>
      * @param {string} filename
-     * @param {cc.Rect} rect
+     * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
      * @param {Boolean} rotated
      * @param {cc.Point} [offset=cc.size(0,0)]
      * @param {cc.Size} [originalSize=rect.size]
      */
     initWithTextureFilename:function (filename, rect, rotated, offset, originalSize) {
+        if(arguments.length === 2)
+            rect = cc.RECT_POINTS_TO_PIXELS(rect);
+
         offset = offset || cc.size(0, 0);
         originalSize = originalSize || rect.size;
 
@@ -352,7 +357,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
  *    The originalSize is the size in pixels of the frame before being trimmed.
  * </p>
  * @param {string} filename
- * @param {cc.Rect} rect
+ * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
  * @param {Boolean} rotated
  * @param {cc.Point} offset
  * @param {cc.Size} originalSize
@@ -377,7 +382,7 @@ cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize)
 /**
  * Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
  * @param {cc.Texture2D} texture
- * @param {cc.Rect} rect
+ * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
  * @param {Boolean} [rotated=]
  * @param {cc.Point} [offset=]
  * @param {cc.Size} [originalSize=]
@@ -391,7 +396,17 @@ cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize)
  */
 cc.SpriteFrame.createWithTexture = function (texture, rect, rotated, offset, originalSize) {
     var spriteFrame = new cc.SpriteFrame();
-    spriteFrame.initWithTexture(texture, rect, rotated, offset, originalSize);
+    switch (arguments.length) {
+        case 2:
+            spriteFrame.initWithTexture(texture, rect);
+            break;
+        case 5:
+            spriteFrame.initWithTexture(texture, rect, rotated, offset, originalSize);
+            break;
+        default:
+            throw "Argument must be non-nil ";
+            break;
+    }
     return spriteFrame;
 };
 
