@@ -248,10 +248,10 @@ cc.TableView = cc.ScrollView.extend({
 
         if (cellsCount > 0){
             var currentPos = 0;
-            var cellSize;
+            var cellSize, locDataSource = this._dataSource;
             for (var i=0; i < cellsCount; i++) {
                 locCellsPositions[i] = currentPos;
-                cellSize = this._dataSource.tableCellSizeForIndex(this, i);
+                cellSize = locDataSource.tableCellSizeForIndex(this, i);
                 switch (this.getDirection()) {
                     case cc.SCROLLVIEW_DIRECTION_HORIZONTAL:
                         currentPos += cellSize.width;
@@ -586,8 +586,10 @@ cc.TableView = cc.ScrollView.extend({
             bb.origin = this._parent.convertToWorldSpace(bb.origin);
             var locTableViewDelegate = this._tableViewDelegate;
             if (cc.rectContainsPoint(bb, touch.getLocation()) && locTableViewDelegate != null){
-                locTableViewDelegate.tableCellUnhighlight(this, this._touchedCell);
-                locTableViewDelegate.tableCellTouched(this, this._touchedCell);
+                if(locTableViewDelegate.tableCellUnhighlight)
+                    locTableViewDelegate.tableCellUnhighlight(this, this._touchedCell);
+                if(locTableViewDelegate.tableCellTouched)
+                    locTableViewDelegate.tableCellTouched(this, this._touchedCell);
             }
             this._touchedCell = null;
         }
