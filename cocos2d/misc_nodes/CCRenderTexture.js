@@ -62,7 +62,7 @@ cc.NextPOT = function (x) {
 /**
  * cc.RenderTexture is a generic rendering target. To render things into it,<br/>
  * simply construct a render target, call begin on it, call visit on any cocos<br/>
- * scenes or objects to render them, and call end. For convienience, render texture<br/>
+ * scenes or objects to render them, and call end. For convenience, render texture<br/>
  * adds a sprite as it's display child with the results, so you can simply add<br/>
  * the render texture to your scene and treat it like any other CocosNode.<br/>
  * There are also functions for saving the render texture to disk in PNG or JPG format.
@@ -71,7 +71,7 @@ cc.NextPOT = function (x) {
  */
 cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     /**
-     * the offscreen canvas for rendering and storing the texture
+     * the off-screen canvas for rendering and storing the texture
      * @type HTMLCanvasElement
      */
     _cacheCanvas:null,
@@ -168,9 +168,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     initWithWidthAndHeight: null,
 
     _initWithWidthAndHeightForCanvas: function (width, height, format, depthStencilFormat) {
-        var locCacheCanvas = this._cacheCanvas;
-        locCacheCanvas.width = width || 10;
-        locCacheCanvas.height = height || 10;
+        var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        locCacheCanvas.width = 0 | (width * locScaleFactor);
+        locCacheCanvas.height = 0 | (height * locScaleFactor);
         this._cacheContext.translate(0, locCacheCanvas.height);
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);
@@ -182,10 +182,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _initWithWidthAndHeightForWebGL: function (width, height, format, depthStencilFormat) {
         cc.Assert(format != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
 
-        var gl = cc.renderContext;
+        var gl = cc.renderContext, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
 
-        width = 0 | (width * cc.CONTENT_SCALE_FACTOR());
-        height = 0 | (height * cc.CONTENT_SCALE_FACTOR());
+        width = 0 | (width * locScaleFactor);
+        height = 0 | (height * locScaleFactor);
 
         this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
@@ -274,7 +274,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _beginForCanvas: function () {
         cc.renderContext = this._cacheContext;
-        cc.EGLView.getInstance()._setScaleToOne();
+
+        var locCacheCanvas = this._cacheCanvas;
+        // Calculate the adjustment ratios based on the old and new projections
+        var size = cc.Director.getInstance().getWinSize();
+        var widthRatio = locCacheCanvas.width / size.width;
+        var heightRatio = locCacheCanvas.height / size.height;
+        cc.EGLView.getInstance()._setScaleXY(widthRatio, heightRatio);
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);

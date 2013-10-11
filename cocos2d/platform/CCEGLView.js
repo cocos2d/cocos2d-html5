@@ -360,9 +360,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         cc.DOM._resetEGLViewDiv();
     },
 
-    _setScaleToOne:function(){
-        this._scaleX = 1;
-        this._scaleY = 1;
+    _setScaleXY:function(scaleX, scaleY){
+        //hack for RenderTexture on canvas mode
+        this._scaleX = scaleX;
+        this._scaleY = scaleY;
     },
 
     _resetScale:function(){
