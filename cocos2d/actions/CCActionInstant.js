@@ -314,7 +314,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
     _position:null,
     ctor:function(){
         cc.FiniteTimeAction.prototype.ctor.call(this);
-        this._position = null;
+        this._position = cc.p(0, 0);
     },
 
     /** Initializes a Place action with a position
@@ -322,7 +322,8 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
      * @return {Boolean}
      */
     initWithPosition:function (pos) {
-        this._position = pos;
+        this._position.x = pos.x;
+        this._position.y = pos.y;
         return true;
     },
 
@@ -335,8 +336,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
 
     clone:function(){
         var action = new cc.Place();
-        var locPos = this._position;
-        action.initWithPosition(cc.p(locPos.x, locPos.y));
+        action.initWithPosition(this._position);
         return action;
     }
 });
