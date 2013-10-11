@@ -363,8 +363,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _setScaleXYForRenderTexture:function(){
         //hack for RenderTexture on canvas mode when multiple resolution resources
         var scaleFactor = cc.CONTENT_SCALE_FACTOR();
-        this._scaleX *= scaleFactor;
-        this._scaleY *= scaleFactor;
+        this._scaleX = scaleFactor;
+        this._scaleY = scaleFactor;
     },
 
     _resetScale:function(){
