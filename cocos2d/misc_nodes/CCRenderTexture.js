@@ -274,13 +274,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _beginForCanvas: function () {
         cc.renderContext = this._cacheContext;
-
-        var locCacheCanvas = this._cacheCanvas;
-        // Calculate the adjustment ratios based on the old and new projections
-        var size = cc.Director.getInstance().getWinSize();
-        var widthRatio = locCacheCanvas.width / size.width;
-        var heightRatio = locCacheCanvas.height / size.height;
-        cc.EGLView.getInstance()._setScaleXY(widthRatio, heightRatio);
+        cc.EGLView.getInstance()._setScaleXYForRenderTexture();
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
