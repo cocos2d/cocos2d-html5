@@ -1161,8 +1161,6 @@ if (cc.Browser.supportWebGL) {
     cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForWebGL;
 } else {
     cc.Director.prototype._clear = cc.Director.prototype._clearCanvas;
-    cc.Director.prototype._beforeVisitScene = null;
-    cc.Director.prototype._afterVisitScene = null;
     cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForCanvas;
 }
 
