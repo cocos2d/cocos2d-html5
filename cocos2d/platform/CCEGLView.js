@@ -371,9 +371,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         cc.DOM._resetEGLViewDiv();
     },
 
-    _setScaleToOne:function(){
-        this._scaleX = 1;
-        this._scaleY = 1;
+    _setScaleXYForRenderTexture:function(){
+        //hack for RenderTexture on canvas mode when multiple resolution resources
+        var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+        this._scaleX = scaleFactor;
+        this._scaleY = scaleFactor;
     },
 
     _resetScale:function(){

@@ -302,13 +302,13 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
     setContentSize: function (size) {
         cc.Node.prototype.setContentSize.call(this, size);
-        this.m_positionsAreDirty = true;
+        this._positionsAreDirty = true;
     },
 
     visit: function () {
-        if (this.m_positionsAreDirty) {
+        if (this._positionsAreDirty) {
             this._updatePositions();
-            this.m_positionsAreDirty = false;
+            this._positionsAreDirty = false;
         }
         cc.Node.prototype.visit.call(this);
     },
@@ -327,7 +327,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             this.updateWithBatchNode(batchNode, rect, rotated, capInsets);
         }
         this.setAnchorPoint(cc.p(0.5, 0.5));
-        this.m_positionsAreDirty = true;
+        this._positionsAreDirty = true;
         return true;
     },
 
@@ -335,7 +335,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      * Initializes a 9-slice sprite with a texture file, a delimitation zone and
      * with the specified cap insets.
      * Once the sprite is created, you can then call its "setContentSize:" method
-     * to resize the sprite will all it's 9-slice goodness intract.
+     * to resize the sprite will all it's 9-slice goodness intact.
      * It respects the anchorPoint too.
      *
      * @param file The name of the texture file.
@@ -383,7 +383,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
                 preferredSize = cc.size(preferredSize.width, preferredSize.height);
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
                 this.setPreferredSize(preferredSize);
-                this.m_positionsAreDirty = true;
+                this._positionsAreDirty = true;
             },this);
         }
         var batchNode = cc.SpriteBatchNode.createWithTexture(selTexture, 9);
@@ -457,8 +457,15 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         // Release old sprites
         this.removeAllChildren(true);
 
-        if (this._scale9Image != batchNode)
+        if (this._scale9Image != batchNode){
             this._scale9Image = batchNode;
+            var tmpTexture = batchNode.getTexture();
+            if(!tmpTexture.isLoaded()){
+                tmpTexture.addLoadedEventListener(function(sender){
+                    this._positionsAreDirty = true;
+                },this);
+            }
+        }
 
         var locScale9Image = this._scale9Image;
         locScale9Image.removeAllChildren(true);
@@ -737,6 +744,16 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     setSpriteFrame: function (spriteFrame) {
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
+        if(!spriteFrame.textureLoaded()){
+            spriteFrame.addLoadedEventListener(function(sender){
+                // the texture is rotated on Canvas render mode, so isRotated always is false.
+                var preferredSize = this._preferredSize;
+                preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
+                this.setPreferredSize(preferredSize);
+                this._positionsAreDirty = true;
+            },this);
+        }
         this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, cc.RectZero());
 
         // Reset insets

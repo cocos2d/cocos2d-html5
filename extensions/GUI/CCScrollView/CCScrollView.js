@@ -215,7 +215,7 @@ cc.ScrollView = cc.Layer.extend({
             newCenter = locContainer.convertToWorldSpace(oldCenter);
 
             var offset = cc.pSub(center, newCenter);
-            if (this._delegate != null)
+            if (this._delegate && this._delegate.scrollViewDidZoom)
                 this._delegate.scrollViewDidZoom(this);
             this.setContentOffset(cc.pAdd(locContainer.getPosition(), offset));
         }
@@ -719,7 +719,7 @@ cc.ScrollView = cc.Layer.extend({
             return;
         }
 
-        if (this._delegate != null)
+        if (this._delegate && this._delegate.scrollViewDidScroll)
             this._delegate.scrollViewDidScroll(this);
     },
     /**
@@ -728,7 +728,7 @@ cc.ScrollView = cc.Layer.extend({
     _stoppedAnimatedScroll:function (node) {
         this.unschedule(this._performedAnimatedScroll);
         // After the animation stopped, "scrollViewDidScroll" should be invoked, this could fix the bug of lack of tableview cells.
-        if (this._delegate != null) {
+        if (this._delegate && this._delegate.scrollViewDidScroll) {
             this._delegate.scrollViewDidScroll(this);
         }
     },
