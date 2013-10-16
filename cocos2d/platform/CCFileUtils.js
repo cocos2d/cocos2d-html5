@@ -417,8 +417,8 @@ cc.FileUtils = cc.Class.extend({
         var newFileName = this._getNewFilename(filename);
         var fullPath;
 
-        if (newFileName && newFileName.length > 1 && (newFileName.indexOf(":") == 1))
-            return newFileName;
+        //if (newFileName && newFileName.length > 1)
+        //    return newFileName;
 
         for (var i = 0; i < this._searchPathArray.length; i++) {
             var searchPath = this._searchPathArray[i];
