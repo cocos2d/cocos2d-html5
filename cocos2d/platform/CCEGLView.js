@@ -87,6 +87,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _ele:null,
     _frameZoomFactor:1.0,
     __resizeWithBrowserSize:false,
+    __isAdjustSizeToBrowser:false,
 
     ctor:function () {
         this._ele = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
@@ -145,27 +146,53 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
     },
 
+    _setupViewport:function(isWidth, wohValue){
+        var viewportMeta, locHeadElement = document.head;
+        var locMetaElements = locHeadElement.getElementsByTagName("meta");
+        for(var i = 0; i < locMetaElements.length; i++){
+            var selElement = locMetaElements[i];
+            if(selElement.name.toLowerCase() == "viewport"){
+                viewportMeta = selElement;
+                break;
+            }
+        }
+        if(!viewportMeta){
+            viewportMeta = document.createElement("meta");
+            viewportMeta.name = "viewport";
+            locHeadElement.appendChild(viewportMeta);
+        }
+
+        if(isWidth)
+            viewportMeta.content = "width=" + wohValue + ",user-scalable=no";
+        else
+            viewportMeta.content = "height=" + wohValue + ",user-scalable=no";
+    },
+
     _adjustSizeToBrowser:function () {
+        this.__isAdjustSizeToBrowser = true;
+
         this._scrollToBottom();
         this._initScreenSize();
 
-        var locCanvasElement = cc.canvas;
-        locCanvasElement.width = this._screenSize.width;
-        locCanvasElement.height = this._screenSize.height;
+        if (!cc.Browser.isMobile) {
+            var locCanvasElement = cc.canvas;
+            locCanvasElement.width = this._screenSize.width;
+            locCanvasElement.height = this._screenSize.height;
 
-        if (!("opengl" in sys.capabilities))
-            cc.renderContext.translate(0, locCanvasElement.height);
+            if (!("opengl" in sys.capabilities))
+                cc.renderContext.translate(0, locCanvasElement.height);
 
-        var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
-        if (parent) {
-            parent.style.width = locCanvasElement.width + "px";
-            parent.style.height = locCanvasElement.height + "px";
-        }
-        var body = document.body;
-        if (body) {
-            body.style.padding = 0 + "px";
-            body.style.border = 0 + "px";
-            body.style.margin = 0 + "px";
+            var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
+            if (parent) {
+                parent.style.width = locCanvasElement.width + "px";
+                parent.style.height = locCanvasElement.height + "px";
+            }
+            var body = document.body;
+            if (body) {
+                body.style.padding = 0 + "px";
+                body.style.border = 0 + "px";
+                body.style.margin = 0 + "px";
+            }
         }
         this.setDesignResolutionSize();
     },
@@ -321,7 +348,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         if (!this._initialize) {
             this.initialize();
-            //return;
         }
 
         var locScreenSize = this._screenSize, locDesignResolutionSize = this._designResolutionSize;
@@ -367,9 +393,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 this._ele.style.paddingTop = locHeight + "px";
                 this._ele.style.paddingBottom = locHeight + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
-            } else if((locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH)
-                || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT)){
-                cc.canvas.width = cc.canvas.width ;
+            } else if ((locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH)
+                || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT)) {
+                cc.canvas.width = cc.canvas.width;
                 cc.canvas.height = cc.canvas.height;
                 cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + this._viewPortRect.height);
             }
@@ -381,6 +407,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._originalScaleX = this._scaleX;
         this._originalScaleY = this._scaleY;
         cc.DOM._resetEGLViewDiv();
+
+        //set the viewport for mobile
+        if (cc.Browser.isMobile && this.__isAdjustSizeToBrowser)
+            this._calculateViewPortByPolicy();
+    },
+
+    _calculateViewPortByPolicy:function(){
+
     },
 
     _setScaleXYForRenderTexture:function(){
