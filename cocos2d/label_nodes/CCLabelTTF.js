@@ -433,8 +433,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             texDef.strokeEnabled = true;
             var locStrokeColor = this._strokeColor;
             texDef.strokeColor   = new cc.Color3B(locStrokeColor.r, locStrokeColor.g, locStrokeColor.b);
-            //texDef.strokeSize = (adjustForResolution && ((cc.renderContextType === cc.WEBGL))) ? this._strokeSize * cc.CONTENT_SCALE_FACTOR() : this._strokeSize;
-            texDef.strokeSize = this._strokeSize;
             texDef.strokeSize = this._strokeSize;
         }else
             texDef.strokeEnabled = false;
@@ -681,7 +679,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         var locSize, locStrokeShadowOffsetX = 0, locStrokeShadowOffsetY = 0;
         if(this._strokeEnabled)
-            locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize * 2;
+            locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize;
         if(this._shadowEnabled){
             var locOffsetSize = this._shadowOffset;
             locStrokeShadowOffsetX += Math.abs(locOffsetSize.width);
@@ -750,7 +748,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     getPosition:function(){
+        if(this._needUpdateTexture)
+            this._updateTTF();
         return cc.p(this._originalPosition.x, this._originalPosition.y);
+    },
+
+    getContentSize:function(){
+        if(this._needUpdateTexture)
+            this._updateTTF();
+        return cc.Sprite.prototype.getContentSize.call(this);
     },
 
     _updateTexture:function () {
