@@ -122,20 +122,20 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if(!quads)
             return;
 
-        for(var i = 0; i < quads.length ; i++){
+        for(var i = 0; i < quads.length ; i++)
             this._setQuadToArray(quads[i], index + i);
-        }
     },
 
     _setQuadToArray: function (quad, index) {
-        if (!this._quads[index]) {
-            this._quads[index] = new cc.V3F_C4B_T2F_Quad(quad.tl, quad.bl, quad.tr, quad.br, this._quadsArrayBuffer, index * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+        var locQuads = this._quads;
+        if (!locQuads[index]) {
+            locQuads[index] = new cc.V3F_C4B_T2F_Quad(quad.tl, quad.bl, quad.tr, quad.br, this._quadsArrayBuffer, index * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
             return;
         }
-        this._quads[index].bl = quad.bl;
-        this._quads[index].br = quad.br;
-        this._quads[index].tl = quad.tl;
-        this._quads[index].tr = quad.tr;
+        locQuads[index].bl = quad.bl;
+        locQuads[index].br = quad.br;
+        locQuads[index].tl = quad.tl;
+        locQuads[index].tr = quad.tr;
     },
 
     /**
@@ -149,24 +149,24 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     _setupIndices:function () {
         if (this._capacity === 0)
             return;
-
-        for (var i = 0; i < this._capacity; i++) {
+        var locIndices = this._indices, locCapacity = this._capacity;
+        for (var i = 0; i < locCapacity; i++) {
             if (cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP) {
-                this._indices[i * 6 + 0] = i * 4 + 0;
-                this._indices[i * 6 + 1] = i * 4 + 0;
-                this._indices[i * 6 + 2] = i * 4 + 2;
-                this._indices[i * 6 + 3] = i * 4 + 1;
-                this._indices[i * 6 + 4] = i * 4 + 3;
-                this._indices[i * 6 + 5] = i * 4 + 3;
+                locIndices[i * 6 + 0] = i * 4 + 0;
+                locIndices[i * 6 + 1] = i * 4 + 0;
+                locIndices[i * 6 + 2] = i * 4 + 2;
+                locIndices[i * 6 + 3] = i * 4 + 1;
+                locIndices[i * 6 + 4] = i * 4 + 3;
+                locIndices[i * 6 + 5] = i * 4 + 3;
             } else {
-                this._indices[i * 6 + 0] = i * 4 + 0;
-                this._indices[i * 6 + 1] = i * 4 + 1;
-                this._indices[i * 6 + 2] = i * 4 + 2;
+                locIndices[i * 6 + 0] = i * 4 + 0;
+                locIndices[i * 6 + 1] = i * 4 + 1;
+                locIndices[i * 6 + 2] = i * 4 + 2;
 
                 // inverted index. issue #179
-                this._indices[i * 6 + 3] = i * 4 + 3;
-                this._indices[i * 6 + 4] = i * 4 + 2;
-                this._indices[i * 6 + 5] = i * 4 + 1;
+                locIndices[i * 6 + 3] = i * 4 + 3;
+                locIndices[i * 6 + 4] = i * 4 + 2;
+                locIndices[i * 6 + 5] = i * 4 + 1;
             }
         }
     },
@@ -345,18 +345,19 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             return;
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-        var sourceArr = this._quadsReader.subarray(fromIndex * quadSize,quadSize);
+        var locQuadsReader = this._quadsReader;
+        var sourceArr = locQuadsReader.subarray(fromIndex * quadSize,quadSize);
         var startOffset, moveLength;
         if(fromIndex > newIndex){
             startOffset = newIndex * quadSize;
             moveLength = (fromIndex - newIndex) * quadSize;
-            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset + quadSize);
-            this._quadsReader.set(sourceArr,startOffset);
+            locQuadsReader.set(locQuadsReader.subarray(startOffset, startOffset + moveLength),startOffset + quadSize);
+            locQuadsReader.set(sourceArr,startOffset);
         }else{
             startOffset = (fromIndex + 1) * quadSize;
             moveLength = (newIndex - fromIndex) * quadSize;
-            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset - quadSize);
-            this._quadsReader.set(sourceArr, newIndex * quadSize);
+            locQuadsReader.set(locQuadsReader.subarray(startOffset, startOffset + moveLength),startOffset - quadSize);
+            locQuadsReader.set(sourceArr, newIndex * quadSize);
         }
         this._dirty = true;
     },
@@ -515,19 +516,20 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         var srcOffset = oldIndex * quadSize;
         var srcLength = amount * quadSize;
-        var sourceArr = this._quadsReader.subarray(srcOffset, srcOffset + srcLength);
+        var locQuadsReader = this._quadsReader;
+        var sourceArr = locQuadsReader.subarray(srcOffset, srcOffset + srcLength);
         var dstOffset = newIndex * quadSize;
         var moveLength, moveStart;
         if (newIndex < oldIndex) {
             moveLength = (oldIndex - newIndex) * quadSize;
             moveStart = newIndex * quadSize;
-            this._quadsReader.set(this._quadsReader.subarray(moveStart, moveStart + moveLength), moveStart + srcLength)
+            locQuadsReader.set(locQuadsReader.subarray(moveStart, moveStart + moveLength), moveStart + srcLength)
         } else {
             moveLength = (newIndex - oldIndex) * quadSize;
             moveStart = (oldIndex + amount) * quadSize;
-            this._quadsReader.set(this._quadsReader.subarray(moveStart, moveStart + moveLength), srcOffset);
+            locQuadsReader.set(locQuadsReader.subarray(moveStart, moveStart + moveLength), srcOffset);
         }
-        this._quadsReader.set(sourceArr, dstOffset);
+        locQuadsReader.set(sourceArr, dstOffset);
         this._dirty = true;
     },
 

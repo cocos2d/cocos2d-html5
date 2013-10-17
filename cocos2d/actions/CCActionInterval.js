@@ -47,7 +47,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
     _firstTick:false,
 
-    ctor:function(){
+    ctor:function () {
         cc.FiniteTimeAction.prototype.ctor.call(this);
         this._elapsed = 0;
         this._firstTick = false;
@@ -85,7 +85,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * returns a new clone of the action
      * @returns {cc.ActionInterval}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.ActionInterval();
         action.initWithDuration(this._duration);
         return action;
@@ -181,9 +181,9 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @param {cc.FiniteTimeAction} actionTwo
      * @return {Boolean}
      */
-    initOneTwo:function (actionOne, actionTwo) {
-        cc.Assert(actionOne != null, "Sequence.initOneTwo");
-        cc.Assert(actionTwo != null, "Sequence.initOneTwo");
+    initWithTwoActions:function (actionOne, actionTwo) {
+        cc.Assert(actionOne != null, "Sequence.initWithTwoActions");
+        cc.Assert(actionTwo != null, "Sequence.initWithTwoActions");
 
         var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
@@ -197,9 +197,9 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * returns a new clone of the action
      * @returns {cc.Sequence}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.Sequence();
-        action.initOneTwo(this._actions[0].clone(), this._actions[1].clone());
+        action.initWithTwoActions(this._actions[0].clone(), this._actions[1].clone());
         return action;
     },
 
@@ -232,13 +232,13 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
             // action[0]
             new_t = (locSplit) ? time / locSplit : 1;
 
-            if(found === 0 && locLast === 1){
+            if (found === 0 && locLast === 1) {
                 // Reverse mode ?
                 // XXX: Bug. this case doesn't contemplate when _last==-1, found=0 and in "reverse mode"
                 // since it will require a hack to know if an action is on reverse mode or not.
                 // "step" should be overriden, and the "reverseMode" value propagated to inner Sequences.
-                this._actions[1].update(0);
-                this._actions[1].stop();
+                locActions[1].update(0);
+                locActions[1].stop();
             }
         } else {
             // action[1]
@@ -259,7 +259,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         }
 
         // Last action found and it is done.
-        if(locLast === found && locActions[found].isDone())
+        if (locLast === found && locActions[found].isDone())
             return;
 
         // Last action found and it is done
@@ -298,7 +298,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
  */
 cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
     var paraArray = (tempArray instanceof Array) ? tempArray : arguments;
-    if((paraArray.length > 0) && (paraArray[paraArray.length-1] == null))
+    if ((paraArray.length > 0) && (paraArray[paraArray.length - 1] == null))
         cc.log("parameters should not be ending with null in Javascript");
 
     var prev = paraArray[0];
@@ -317,7 +317,7 @@ cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
  */
 cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
     var sequence = new cc.Sequence();
-    sequence.initOneTwo(actionOne, actionTwo);
+    sequence.initWithTwoActions(actionOne, actionTwo);
     return sequence;
 };
 
@@ -334,7 +334,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     _actionInstant:false,
     _innerAction:null, //CCFiniteTimeAction
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._times = 0;
         this._total = 0;
@@ -366,7 +366,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * returns a new clone of the action
      * @returns {cc.Repeat}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.Repeat();
         action.initWithAction(this._innerAction.clone(), this._times);
         return action;
@@ -397,14 +397,16 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
         var locInnerAction = this._innerAction;
         var locDuration = this._duration;
         var locTimes = this._times;
+        var locNextDt = this._nextDt;
 
-        if (time >= this._nextDt) {
-            while (time > this._nextDt && this._total < locTimes) {
+        if (time >= locNextDt) {
+            while (time > locNextDt && this._total < locTimes) {
                 locInnerAction.update(1);
                 this._total++;
                 locInnerAction.stop();
                 locInnerAction.startWithTarget(this._target);
-                this._nextDt += locInnerAction.getDuration() / locDuration;
+                locNextDt += locInnerAction.getDuration() / locDuration;
+                this._nextDt = locNextDt;
             }
 
             // fix for issue #1288, incorrect end value of repeat
@@ -418,7 +420,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
                     locInnerAction.stop();
                 } else {
                     // issue #390 prevent jerk, use right update
-                    locInnerAction.update(time - (this._nextDt - locInnerAction.getDuration() / locDuration));
+                    locInnerAction.update(time - (locNextDt - locInnerAction.getDuration() / locDuration));
                 }
             }
         } else {
@@ -481,7 +483,7 @@ cc.Repeat.create = function (action, times) {
 cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     _innerAction:null, //CCActionInterval
 
-    ctor:function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._innerAction = null;
     },
@@ -501,7 +503,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      * returns a new clone of the action
      * @returns {cc.RepeatForever}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.RepeatForever();
         action.initWithAction(this._innerAction.clone());
         return action;
@@ -586,7 +588,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
     _one:null,
     _two:null,
 
-    ctor: function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._one = null;
         this._two = null;
@@ -597,7 +599,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * @param {cc.FiniteTimeAction} action2
      * @return {Boolean}
      */
-    initOneTwo:function (action1, action2) {
+    initWithTwoActions:function (action1, action2) {
         cc.Assert(action1 != null, "no action1");
         cc.Assert(action2 != null, "no action2");
 
@@ -625,9 +627,9 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * returns a new clone of the action
      * @returns {cc.Spawn}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.Spawn();
-        action.initOneTwo(this._one.clone(), this._two.clone());
+        action.initWithTwoActions(this._one.clone(), this._two.clone());
         return action;
     },
 
@@ -676,7 +678,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
  */
 cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
     var paramArray = (tempArray instanceof Array) ? tempArray : arguments;
-    if((paramArray.length > 0) && (paramArray[paramArray.length-1] == null))
+    if ((paramArray.length > 0) && (paramArray[paramArray.length - 1] == null))
         cc.log("parameters should not be ending with null in Javascript");
 
     var prev = paramArray[0];
@@ -695,7 +697,7 @@ cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
  */
 cc.Spawn._actionOneTwo = function (action1, action2) {
     var pSpawn = new cc.Spawn();
-    pSpawn.initOneTwo(action1, action2);
+    pSpawn.initWithTwoActions(action1, action2);
     return pSpawn;
 };
 
@@ -715,7 +717,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     _startAngleY:0,
     _diffAngleY:0,
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._dstAngleX = 0;
         this._startAngleX = 0;
@@ -745,7 +747,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * returns a new clone of the action
      * @returns {cc.RotateTo}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.RotateTo();
         action.initWithDuration(this._duration, this._dstAngleX, this._dstAngleY);
         return action;
@@ -760,9 +762,9 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
         // Calculate X
         var locStartAngleX = target.getRotationX() % 360.0;
         var locDiffAngleX = this._dstAngleX - locStartAngleX;
-        if(locDiffAngleX > 180)
+        if (locDiffAngleX > 180)
             locDiffAngleX -= 360;
-        if(locDiffAngleX < -180)
+        if (locDiffAngleX < -180)
             locDiffAngleX += 360;
         this._startAngleX = locStartAngleX;
         this._diffAngleX = locDiffAngleX;
@@ -770,11 +772,11 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
         // Calculate Y  It's duplicated from calculating X since the rotation wrap should be the same
         this._startAngleY = target.getRotationY() % 360.0;
         var locDiffAngleY = this._dstAngleY - this._startAngleY;
-        if(locDiffAngleY > 180)
+        if (locDiffAngleY > 180)
             locDiffAngleY -= 360;
-        if(locDiffAngleY < -180)
+        if (locDiffAngleY < -180)
             locDiffAngleY += 360;
-        this._diffAngleY =  locDiffAngleY
+        this._diffAngleY = locDiffAngleY
     },
 
     /**
@@ -788,7 +790,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this._target){
+        if (this._target) {
             this._target.setRotationX(this._startAngleX + this._diffAngleX * time);
             this._target.setRotationY(this._startAngleY + this._diffAngleY * time);
         }
@@ -807,7 +809,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
  */
 cc.RotateTo.create = function (duration, deltaAngleX, deltaAngleY) {
     var rotateTo = new cc.RotateTo();
-    rotateTo.initWithDuration(duration, deltaAngleX,deltaAngleY);
+    rotateTo.initWithDuration(duration, deltaAngleX, deltaAngleY);
     return rotateTo;
 };
 
@@ -822,7 +824,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     _angleY:0,
     _startAngleY:0,
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._angleX = 0;
         this._startAngleX = 0;
@@ -849,7 +851,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      * returns a new clone of the action
      * @returns {cc.RotateBy}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.RotateBy();
         action.initWithDuration(this._duration, this._angleX, this._angleY);
         return action;
@@ -913,7 +915,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     _startPosition:null,
     _previousPosition:null,
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
 
         this._positionDelta = cc.p(0, 0);
@@ -928,7 +930,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     initWithDuration:function (duration, position) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._positionDelta = position;
+            this._positionDelta.x = position.x;
+            this._positionDelta.y = position.y;
             return true;
         }
         return false;
@@ -938,7 +941,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      * returns a new clone of the action
      * @returns {cc.MoveBy}
      */
-    clone: function () {
+    clone:function () {
         var action = new cc.MoveBy();
         action.initWithDuration(this._duration, this._positionDelta)
         return action;
@@ -949,9 +952,12 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPos = target.getPosition();
-        this._previousPosition = cc.p(locPos.x, locPos.y);
-        this._startPosition = cc.p(locPos.x, locPos.y);
+        var locPosX = target.getPositionX();
+        var locPosY = target.getPositionY();
+        this._previousPosition.x = locPosX;
+        this._previousPosition.y = locPosY;
+        this._startPosition.x = locPosX;
+        this._startPosition.y = locPosY;
     },
 
     /**
@@ -959,16 +965,24 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     update:function (time) {
         if (this._target) {
-            if(cc.ENABLE_STACKABLE_ACTIONS){
-                var currentPos = this._target.getPosition();
-                var diff = cc.pSub(currentPos, this._previousPosition);
-                this._startPosition = cc.pAdd(this._startPosition, diff);
-                var newPos = cc.p(this._startPosition.x + this._positionDelta.x * time,
-                    this._startPosition.y + this._positionDelta.y * time);
-                this._target.setPosition(newPos);
-                this._previousPosition = newPos;
-            } else{
-                this._target.setPosition(cc.pAdd(this._startPosition, cc.pMult(this._positionDelta, t)));
+            var x = this._positionDelta.x * time;
+            var y = this._positionDelta.y * time;
+            var locStartPosition = this._startPosition;
+            if (cc.ENABLE_STACKABLE_ACTIONS) {
+                var targetX = this._target.getPositionX();
+                var targetY = this._target.getPositionY();
+                var locPreviousPosition = this._previousPosition;
+
+                locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
+                locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
+                x = x + locStartPosition.x;
+                y = y + locStartPosition.y;
+
+                this._target.setPosition(x, y);
+                locPreviousPosition.x = x;
+                locPreviousPosition.y = y;
+            } else {
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -977,7 +991,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      * MoveTo reverse is not implemented
      */
     reverse:function () {
-        return cc.MoveBy.create(this._duration, cc.p( -this._positionDelta.x, -this._positionDelta.y));
+        return cc.MoveBy.create(this._duration, cc.p(-this._positionDelta.x, -this._positionDelta.y));
     }
 });
 
@@ -1005,7 +1019,7 @@ cc.MoveBy.create = function (duration, deltaPosition) {
  */
 cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     _endPosition:null,
-    ctor: function () {
+    ctor:function () {
         cc.MoveBy.prototype.ctor.call(this);
         this._endPosition = cc.p(0, 0);
     },
@@ -1017,7 +1031,8 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     initWithDuration:function (duration, position) {
         if (cc.MoveBy.prototype.initWithDuration.call(this, duration, position)) {
-            this._endPosition = position;
+            this._endPosition.x = position.x;
+            this._endPosition.y = position.y;
             return true;
         }
         return false;
@@ -1027,7 +1042,7 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      * returns a new clone of the action
      * @returns {cc.MoveTo}
      */
-    clone: function () {
+    clone:function () {
         var action = new cc.MoveTo();
         action.initWithDuration(this._duration, this._endPosition);
         return action;
@@ -1038,7 +1053,8 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     startWithTarget:function (target) {
         cc.MoveBy.prototype.startWithTarget.call(this, target);
-        this._positionDelta = cc.pSub(this._endPosition, target.getPosition());
+        this._positionDelta.x = this._endPosition.x - target.getPositionX();
+        this._positionDelta.y = this._endPosition.y - target.getPositionY();
     }
 });
 /**
@@ -1070,7 +1086,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     _deltaX:0,
     _deltaY:0,
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._skewX = 0;
         this._skewY = 0;
@@ -1102,7 +1118,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
      * returns a new clone of the action
      * @returns {cc.SkewTo}
      */
-    clone: function () {
+    clone:function () {
         var action = new cc.SkewTo();
         action.initWithDuration(this._duration, this._endSkewX, this._endSkewY);
         return action;
@@ -1178,7 +1194,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
      * returns a new clone of the action
      * @returns {cc.SkewBy}
      */
-    clone: function () {
+    clone:function () {
         var action = new cc.SkewBy();
         action.initWithDuration(this._duration, this._skewX, this._skewY);
         return action;
@@ -1230,7 +1246,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     _jumps:0,
     _previousPosition:null,
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._startPosition = cc.p(0, 0);
         this._previousPosition = cc.p(0, 0);
@@ -1247,7 +1263,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     initWithDuration:function (duration, position, height, jumps) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._delta = position;
+            this._delta.x = position.x;
+            this._delta.y = position.y;
             this._height = height;
             this._jumps = jumps;
             return true;
@@ -1259,7 +1276,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      * returns a new clone of the action
      * @returns {cc.JumpBy}
      */
-    clone: function () {
+    clone:function () {
         var action = new cc.JumpBy();
         action.initWithDuration(this._duration, this._delta, this._height, this._jumps);
         return action;
@@ -1270,9 +1287,12 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPos = target.getPosition();
-        this._previousPosition = cc.p(locPos.x, locPos.y);
-        this._startPosition = cc.p(locPos.x, locPos.y);
+        var locPosX = target.getPositionX();
+        var locPosY = target.getPositionY();
+        this._previousPosition.x = locPosX;
+        this._previousPosition.y = locPosY;
+        this._startPosition.x = locPosX;
+        this._startPosition.y = locPosY;
     },
 
     /**
@@ -1285,16 +1305,22 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
             y += this._delta.y * time;
 
             var x = this._delta.x * time;
-            if(cc.ENABLE_STACKABLE_ACTIONS){
-                var currentPos = this._target.getPosition();
+            var locStartPosition = this._startPosition;
+            if (cc.ENABLE_STACKABLE_ACTIONS) {
+                var targetX = this._target.getPositionX();
+                var targetY = this._target.getPositionY();
+                var locPreviousPosition = this._previousPosition;
 
-                var diff = cc.pSub(currentPos, this._previousPosition);
-                this._startPosition = cc.pAdd(diff, this._startPosition);
-                var newPos = cc.pAdd(this._startPosition, cc.p(x, y));
-                this._target.setPosition(newPos);
-                this._previousPosition = newPos;
+                locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
+                locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
+                x = x + locStartPosition.x;
+                y = y + locStartPosition.y;
+
+                this._target.setPosition(x, y);
+                locPreviousPosition.x = x;
+                locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(cc.pAdd(this._startPosition, cc.p(x,y)));
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -1333,14 +1359,15 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
      */
     startWithTarget:function (target) {
         cc.JumpBy.prototype.startWithTarget.call(this, target);
-        this._delta = cc.p(this._delta.x - this._startPosition.x, this._delta.y - this._startPosition.y);
+        this._delta.x = this._delta.x - this._startPosition.x;
+        this._delta.y = this._delta.y - this._startPosition.y;
     },
 
     /**
      * returns a new clone of the action
      * @returns {cc.JumpTo}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.JumpTo();
         action.initWithDuration(this._duration, this._delta, this._height, this._jumps);
         return action;
@@ -1384,14 +1411,14 @@ cc.bezierAt = function (a, b, c, d, t) {
  * @extends cc.ActionInterval
  */
 cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
-    _config: null,
-    _startPosition: null,
-    _previousPosition: null,
+    _config:null,
+    _startPosition:null,
+    _previousPosition:null,
 
     /**
      * Constructor
      */
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._config = [];
         this._startPosition = cc.p(0, 0);
@@ -1414,10 +1441,10 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      * returns a new clone of the action
      * @returns {cc.BezierBy}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.BezierBy();
         var newConfigs = [];
-        for(var i = 0; i < this._config.length; i++){
+        for (var i = 0; i < this._config.length; i++) {
             var selConf = this._config[i];
             newConfigs.push(cc.p(selConf.x, selConf.y));
         }
@@ -1430,9 +1457,12 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPos = target.getPosition();
-        this._previousPosition = cc.p(locPos.x, locPos.y);
-        this._startPosition = cc.p(locPos.x, locPos.y);
+        var locPosX = target.getPositionX();
+        var locPosY = target.getPositionY();
+        this._previousPosition.x = locPosX;
+        this._previousPosition.y = locPosY;
+        this._startPosition.x = locPosX;
+        this._startPosition.y = locPosY;
     },
 
     /**
@@ -1454,16 +1484,21 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             var x = cc.bezierAt(xa, xb, xc, xd, time);
             var y = cc.bezierAt(ya, yb, yc, yd, time);
 
-            if(cc.ENABLE_STACKABLE_ACTIONS){
-                var currentPos = this._target.getPosition();
-                var diff = cc.pSub(currentPos, this._previousPosition);
-                this._startPosition = cc.pAdd(this._startPosition, diff);
-                var newPos = cc.pAdd(this._startPosition, cc.p(x, y));
+            var locStartPosition = this._startPosition;
+            if (cc.ENABLE_STACKABLE_ACTIONS) {
+                var targetX = this._target.getPositionX();
+                var targetY = this._target.getPositionY();
+                var locPreviousPosition = this._previousPosition;
 
-                this._target.setPosition(newPos);
-                this._previousPosition = newPos;
+                locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
+                locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
+                x = x + locStartPosition.x;
+                y = y + locStartPosition.y;
+                this._target.setPosition(x, y);
+                locPreviousPosition.x = x;
+                locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(cc.pAdd(this._startPosition, cc.p(x,y)));
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -1474,8 +1509,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     reverse:function () {
         var locConfig = this._config;
         var r = [
-            cc.pAdd(locConfig[1], cc.pNeg(locConfig[2]) ),
-            cc.pAdd(locConfig[0], cc.pNeg(locConfig[2]) ),
+            cc.pAdd(locConfig[1], cc.pNeg(locConfig[2])),
+            cc.pAdd(locConfig[0], cc.pNeg(locConfig[2])),
             cc.pNeg(locConfig[2]) ];
         return cc.BezierBy.create(this._duration, r);
     }
@@ -1505,7 +1540,7 @@ cc.BezierBy.create = function (t, c) {
 cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     _toConfig:null,
 
-    ctor: function () {
+    ctor:function () {
         cc.BezierBy.prototype.ctor.call(this);
         this._toConfig = [];
     },
@@ -1516,7 +1551,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      * @return {Boolean}
      */
     initWithDuration:function (t, c) {
-        if(cc.ActionInterval.prototype.initWithDuration.call(this, t)){
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, t)) {
             this._toConfig = c;
             return true;
         }
@@ -1527,7 +1562,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      * returns a new clone of the action
      * @returns {cc.BezierTo}
      */
-    clone: function () {
+    clone:function () {
         var action = new cc.BezierTo();
         action.initWithDuration(this._duration, this._toConfig);
         return action;
@@ -1541,6 +1576,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
         var locStartPos = this._startPosition;
         var locToConfig = this._toConfig;
         var locConfig = this._config;
+
         locConfig[0] = cc.pSub(locToConfig[0], locStartPos);
         locConfig[1] = cc.pSub(locToConfig[1], locStartPos);
         locConfig[2] = cc.pSub(locToConfig[2], locStartPos);
@@ -1577,7 +1613,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     _deltaX:0,
     _deltaY:0,
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._scaleX = 1;
         this._scaleY = 1;
@@ -1608,7 +1644,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      * returns a new clone of the action
      * @returns {cc.ScaleTo}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.ScaleTo();
         action.initWithDuration(this._duration, this._endScaleX, this._endScaleY);
         return action;
@@ -1646,7 +1682,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
  * // It scales to 0.5 in x and 2 in Y
  * var actionTo = cc.ScaleTo.create(2, 0.5, 2);
  */
-cc.ScaleTo.create = function (duration, sx, sy){ //function overload
+cc.ScaleTo.create = function (duration, sx, sy) { //function overload
     var scaleTo = new cc.ScaleTo();
     scaleTo.initWithDuration(duration, sx, sy);
     return scaleTo;
@@ -1678,7 +1714,7 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
      * returns a new clone of the action
      * @returns {cc.ScaleBy}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.ScaleBy();
         action.initWithDuration(this._duration, this._endScaleX, this._endScaleY);
         return action;
@@ -1710,7 +1746,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     _times:0,
     _originalState:false,
 
-    ctor: function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._times = 0;
         this._originalState = false;
@@ -1733,7 +1769,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
      * returns a new clone of the action
      * @returns {cc.Blink}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.Blink();
         action.initWithDuration(this._duration, this._times);
         return action;
@@ -1750,12 +1786,12 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
         }
     },
 
-    startWithTarget:function(target){
+    startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._originalState = target.isVisible();
     },
 
-    stop:function(){
+    stop:function () {
         this._target.setVisible(this._originalState);
         cc.ActionInterval.prototype.stop.call(this);
     },
@@ -1805,7 +1841,7 @@ cc.FadeIn = cc.ActionInterval.extend(/** @lends cc.FadeIn# */{
      * returns a new clone of the action
      * @returns {cc.FadeIn}
      */
-    clone: function () {
+    clone:function () {
         var action = new cc.FadeIn();
         action.initWithDuration(this._duration);
         return action;
@@ -1850,7 +1886,7 @@ cc.FadeOut = cc.ActionInterval.extend(/** @lends cc.FadeOut# */{
      * returns a new clone of the action
      * @returns {cc.FadeOut}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.FadeOut();
         action.initWithDuration(this._duration);
         return action;
@@ -1876,10 +1912,10 @@ cc.FadeOut.create = function (d) {
  * @extends cc.ActionInterval
  */
 cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
-    _toOpacity: null,
-    _fromOpacity: null,
+    _toOpacity:null,
+    _fromOpacity:null,
 
-    ctor: function () {
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._toOpacity = 0;
         this._fromOpacity = 0;
@@ -1902,7 +1938,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      * returns a new clone of the action
      * @returns {cc.FadeTo}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.FadeTo();
         action.initWithDuration(this._duration, this._toOpacity);
         return action;
@@ -1947,7 +1983,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     _to:null,
     _from:null,
 
-    ctor: function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._to = cc.c3b(0, 0, 0);
         this._from = cc.c3b(0, 0, 0);
@@ -1972,7 +2008,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      * returns a new clone of the action
      * @returns {cc.TintTo}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.TintTo();
         var locTo = this._to;
         action.initWithDuration(this._duration, locTo.r, locTo.g, locTo.b);
@@ -1993,7 +2029,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     update:function (time) {
         var locFrom = this._from, locTo = this._to;
         this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
-            (locFrom.g + (locTo.g - locFrom.g) * time),(locFrom.b + (locTo.b - locFrom.b) * time)));
+            (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
     }
 });
 
@@ -2027,14 +2063,14 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     _fromG:0,
     _fromB:0,
 
-    ctor:function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._deltaR=0;
-        this._deltaG=0;
-        this._deltaB=0;
-        this._fromR=0;
-        this._fromG=0;
-        this._fromB=0;
+        this._deltaR = 0;
+        this._deltaG = 0;
+        this._deltaB = 0;
+        this._fromR = 0;
+        this._fromG = 0;
+        this._fromB = 0;
     },
 
     /**
@@ -2058,7 +2094,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      * returns a new clone of the action
      * @returns {cc.TintBy}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.TintBy();
         action.initWithDuration(this._duration, this._deltaR, this._deltaG, this._deltaB);
         return action;
@@ -2134,8 +2170,8 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
      * returns a new clone of the action
      * @returns {cc.DelayTime}
      */
-    clone: function(){
-        var action =  new cc.DelayTime();
+    clone:function () {
+        var action = new cc.DelayTime();
         action.initWithDuration(this._duration);
         return action;
     }
@@ -2166,7 +2202,7 @@ cc.DelayTime.create = function (d) {
 cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
     _other:null,
 
-    ctor:function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._other = null;
     },
@@ -2191,7 +2227,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      * returns a new clone of the action
      * @returns {cc.ReverseTime}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.ReverseTime();
         action.initWithAction(this._other.clone());
         return action;
@@ -2254,13 +2290,13 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     _executedLoops:0,
     _splitTimes:null,
 
-    ctor:function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._animation=null;
-        this._nextFrame=0;
-        this._origFrame=null;
-        this._executedLoops=0;
-        this._splitTimes=null;
+        this._animation = null;
+        this._nextFrame = 0;
+        this._origFrame = null;
+        this._executedLoops = 0;
+        this._splitTimes = null;
     },
 
     /**
@@ -2314,7 +2350,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      * returns a new clone of the action
      * @returns {cc.Animate}
      */
-    clone: function(){
+    clone:function () {
         var action = new cc.Animate();
         action.initWithAnimation(this._animation.clone());
         return action;
@@ -2356,7 +2392,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
             if (locSplitTimes[i] <= time) {
                 this._target.setDisplayFrame(frames[i].getSpriteFrame());
                 this._nextFrame = i + 1;
-            }else{
+            } else {
                 // Issue 1438. Could be more than one frame per tick, due to low frame rate or frame delta < 1/FPS
                 break;
             }
@@ -2421,7 +2457,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
     _action:null,
     _forcedTarget:null,
 
-    ctor: function(){
+    ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
         this._action = null;
         this._forcedTarget = null;
@@ -2446,7 +2482,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
      * returns a new clone of the action
      * @returns {cc.TargetedAction}
      */
-    clone:function(){
+    clone:function () {
         var action = new cc.TargetedAction();
         action.initWithTarget(this._forcedTarget, this._action.clone());
         return action;

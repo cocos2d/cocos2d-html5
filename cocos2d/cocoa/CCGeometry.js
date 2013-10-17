@@ -47,6 +47,7 @@ cc.Point = function (_x, _y) {
  * @return {cc.Point}
  */
 cc.PointMake = function (x, y) {
+    cc.log("cc.PointMake will be deprecated sooner or later. Use cc.p instead.");
     return new cc.Point(x, y);
 };
 
@@ -134,6 +135,7 @@ cc.Size = function (_width, _height) {
  * @return {cc.Size}
  */
 cc.SizeMake = function (width, height) {
+    cc.log("cc.SizeMake will be deprecated sooner or later. Use cc.size instead.");
     return cc.size(width, height);
 };
 
@@ -237,6 +239,7 @@ cc.Rect = function (x1, y1, width1, height1) {
  * @return {cc.Rect}
  */
 cc.RectMake = function (x, y, width, height) {
+    cc.log("cc.RectMake will be deprecated sooner or later. Use cc.rect instead.");
     return cc.rect(x, y, width, height);
 };
 
@@ -268,6 +271,12 @@ cc.rectEqualToRect = function (rect1, rect2) {
         return false;
     return ((cc.pointEqualToPoint(rect1.origin, rect2.origin)) &&
         (cc.sizeEqualToSize(rect1.size, rect2.size)));
+};
+
+cc._rectEqualToZero = function(rect){
+    if(!rect)
+        return false;
+    return (rect.x === 0) && (rect.y === 0) && (rect.width === 0) && (rect.height === 0);
 };
 
 /**

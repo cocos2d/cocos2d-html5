@@ -94,8 +94,8 @@ cc.WEBGL = 1;
 cc.drawingUtil = null;
 
 /**
- * main Canvas 2D Context of game engine
- * @type CanvasContext
+ * main Canvas 2D/3D Context of game engine
+ * @type CanvasRenderingContext2D|WebGLRenderingContext
  */
 cc.renderContext = null;
 
@@ -179,6 +179,7 @@ cc.setup = function (el, width, height) {
         cc.container.style.width = (width || 480) + "px";
         cc.container.style.height = (height || 320) + "px";
         cc.container.setAttribute('id', 'Cocos2dGameContainer');
+        cc.container.style.margin = "0 auto";
         cc.canvas.setAttribute("width", width || 480);
         cc.canvas.setAttribute("height", height || 320);
     } else {//we must make a new canvas and place into this element
@@ -208,11 +209,12 @@ cc.setup = function (el, width, height) {
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
-        gl = cc.renderContext; // global variable declared in CCMacro.js
+        window.gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc.TextureCache.getInstance()._initializingRenderer();
     } else {
         cc.renderContext = cc.canvas.getContext("2d");
+        cc.mainRenderContextBackup = cc.renderContext;
         cc.renderContextType = cc.CANVAS;
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
@@ -226,16 +228,10 @@ cc.setup = function (el, width, height) {
 
     cc.setContextMenuEnable(false);
 
-    //binding window size
-    /*
-     cc.canvas.addEventListener("resize", function () {
-     if (!cc.firstRun) {
-     cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
-     }
-     }, true);
-     */
-    if(cc.Browser.isMobile)
+    if(cc.Browser.isMobile){
         cc._addUserSelectStatus();
+        cc._addBottomTag();
+    }
 
     var hidden, visibilityChange;
     if (typeof document.hidden !== "undefined") {
@@ -273,6 +269,14 @@ cc._addUserSelectStatus = function(){
 
     fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
         +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
+};
+
+cc._addBottomTag = function () {
+    var bottom = document.createElement("div");
+    bottom.id = "bottom";
+    bottom.style.border = bottom.style.margin = bottom.style.padding = bottom.style.height = bottom.style.lineHeight = bottom.style.fontSize = "0px";
+    document.body.appendChild(bottom);
+    window.location.href="#bottom";
 };
 
 cc._isContextMenuEnable = false;
@@ -341,17 +345,17 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         if (!this.applicationDidFinishLaunching())
             return 0;
 
-        var callback;
-        if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
+        var callback, director = cc.Director.getInstance(), w = window;
+        if (w.requestAnimFrame && this._animationInterval == 1 / 60) {
             callback = function () {
-                cc.Director.getInstance().mainLoop();
-                window.requestAnimFrame(callback);
+                director.mainLoop();
+                w.requestAnimFrame(callback);
             };
-            cc.log(window.requestAnimFrame);
-            window.requestAnimFrame(callback);
+            //cc.log(window.requestAnimFrame);
+            w.requestAnimFrame(callback);
         } else {
             callback = function () {
-                cc.Director.getInstance().mainLoop();
+                director.mainLoop();
             };
             setInterval(callback, this._animationInterval * 1000);
         }

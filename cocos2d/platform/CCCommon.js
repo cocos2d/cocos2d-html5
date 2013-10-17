@@ -48,9 +48,9 @@ cc.clone = function (obj) {
     // derived class forgets to set "constructor" on the prototype. We ignore
     // these possibities for and the ultimate solution is a standardized
     // Object.clone(<object>).
-    var newObj = new obj.constructor;
+    var newObj = (obj.constructor) ? new obj.constructor : {};
 
-    // Assuming that the constuctor above initialized all properies on obj, the
+        // Assuming that the constuctor above initialized all properies on obj, the
     // following keyed assignments won't turn newObj into dictionary mode
     // becasue they're not *appending new properties* but *assigning existing
     // ones* (note that appending indexed properties is another story). See
@@ -71,10 +71,10 @@ cc.clone = function (obj) {
 /**
  * Function added for JS bindings compatibility. Not needed in cocos2d-html5.
  * @function
- * @param {object} jsobj subclass
- * @param {object} klass superclass
+ * @param {object} jsObj subclass
+ * @param {object} superclass
  */
-cc.associateWithNative = function (jsobj, superclass) {
+cc.associateWithNative = function (jsObj, superclass) {
 };
 
 /**

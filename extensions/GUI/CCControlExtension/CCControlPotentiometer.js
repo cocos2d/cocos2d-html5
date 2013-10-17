@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2012 cocos2d-x.org
  * http://www.cocos2d-x.org
  *

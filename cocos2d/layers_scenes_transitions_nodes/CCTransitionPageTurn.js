@@ -54,7 +54,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
         // XXX: needed before [super init]
         this._back = backwards;
 
-        if (this._super(t, scene)) {
+        if (cc.TransitionScene.prototype.initWithDuration.call(this, t, scene)) {
             // do something
         }
         return true;
@@ -75,7 +75,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      * custom on enter
      */
     onEnter:function () {
-        this._super();
+        cc.TransitionScene.prototype.onEnter.call(this);
         var winSize = cc.Director.getInstance().getWinSize();
         var x, y;
         if (winSize.width > winSize.height) {
@@ -86,7 +86,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
             y = 16;
         }
 
-        var action = this.actionWithSize(cc.SizeMake(x, y));
+        var action = this.actionWithSize(cc.size(x, y));
 
         if (!this._back) {
             this._outScene.runAction( cc.Sequence.create(action,cc.CallFunc.create(this.finish, this),cc.StopGrid.create()));

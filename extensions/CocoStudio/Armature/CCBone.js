@@ -36,10 +36,11 @@ cc.Bone = cc.NodeRGBA.extend({
     _tween:null,
     _tweenData:null,
     _name:"",
-    _childrenBone:[],
+    _childrenBone:null,
     _parentBone:null,
-    _selfTransformDirty:false,
-    _worldTransform:cc.AffineTransformMake(1, 0, 0, 1, 0, 0),
+    _boneTransformDirty:false,
+    _worldTransform:null,
+    _blendType:0,
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._boneData = null;
@@ -52,8 +53,9 @@ cc.Bone = cc.NodeRGBA.extend({
         this._name = "";
         this._childrenBone = [];
         this._parentBone = null;
-        this._selfTransformDirty = true;
+        this._boneTransformDirty = true;
         this._worldTransform = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
+        this._blendType=cc.BlendType.NORMAL;
     },
 
     /**
@@ -118,7 +120,9 @@ cc.Bone = cc.NodeRGBA.extend({
      */
     setArmature:function (armature) {
         this._armature = armature;
-        this._tween.setAnimation(this._armature.getAnimation());
+        if(armature){
+            this._tween.setAnimation(this._armature.getAnimation());
+        }
     },
 
     /**
@@ -134,47 +138,46 @@ cc.Bone = cc.NodeRGBA.extend({
      * @param dt
      */
     update:function (dt) {
-        if (this._parentBone) {
-            this._selfTransformDirty = this._selfTransformDirty || this._parentBone.isTransformDirty();
+        var locParentBone = this._parentBone;
+        var locArmature = this._armature;
+        var locTweenData = this._tweenData;
+        var locWorldTransform = this._worldTransform;
+
+        if (locParentBone) {
+            this._boneTransformDirty = this._boneTransformDirty || locParentBone.isTransformDirty();
         }
-        if (this._selfTransformDirty) {
-            var cosX = Math.cos(this._tweenData.skewX);
-            var sinX = Math.sin(this._tweenData.skewX);
-            var cosY = Math.cos(this._tweenData.skewY);
-            var sinY = Math.sin(this._tweenData.skewY);
+        if (this._boneTransformDirty) {
+            if (locArmature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED) {
+                cc.TransformHelp.nodeConcat(locTweenData, this._boneData);
+                locTweenData.scaleX -= 1;
+                locTweenData.scaleY -= 1;
+            }
 
-            this._worldTransform.a = this._tweenData.scaleX * cosY;
-            this._worldTransform.b = this._tweenData.scaleX * sinY;
-            this._worldTransform.c = this._tweenData.scaleY * sinX;
-            this._worldTransform.d = this._tweenData.scaleY * cosX;
-            this._worldTransform.tx = this._tweenData.x;
-            this._worldTransform.ty = this._tweenData.y;
+            cc.TransformHelp.nodeToMatrix(locTweenData, locWorldTransform);
 
-            this._worldTransform = cc.AffineTransformConcat(this.nodeToParentTransform(), this._worldTransform);
+            this._worldTransform = cc.AffineTransformConcat(this.nodeToParentTransform(), locWorldTransform);
 
-            if (this._parentBone) {
-                this._worldTransform = cc.AffineTransformConcat(this._worldTransform, this._parentBone._worldTransform);
+            if (locParentBone) {
+                this._worldTransform = cc.AffineTransformConcat(this._worldTransform, locParentBone._worldTransform);
             }
         }
-        cc.DisplayFactory.updateDisplay(this, this._displayManager.getCurrentDecorativeDisplay(), dt, this._selfTransformDirty);
-        for (var i = 0; i < this._childrenBone.length; i++) {
-            this._childrenBone[i].update(dt);
-        }
+        cc.DisplayFactory.updateDisplay(this, this._displayManager.getCurrentDecorativeDisplay(), dt, this._boneTransformDirty || locArmature.getArmatureTransformDirty());
 
-        this._selfTransformDirty = false;
+        var locChildrenBone = this._childrenBone;
+        for (var i = 0; i < locChildrenBone.length; i++) {
+            locChildrenBone[i].update(dt);
+        }
+        this._boneTransformDirty = false;
     },
 
-    old_NumberOfDraws:0,
     /**
      * Rewrite visit ,when node draw, g_NumberOfDraws is changeless
      */
-    visit:function () {
-        this.old_NumberOfDraws = cc.g_NumberOfDraws++;
+    visit:function (ctx) {
         var node = this.getDisplayManager().getDisplayRenderNode();
         if (node) {
             node.visit(ctx);
         }
-        cc.g_NumberOfDraws = this.old_NumberOfDraws;
     },
 
     /**
@@ -182,6 +185,7 @@ cc.Bone = cc.NodeRGBA.extend({
      * @param {cc.c3b} color
      */
     updateDisplayedColor:function (color) {
+        this._realColor = cc.c3b(255,255,255);
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, color);
         this.updateColor();
     },
@@ -191,6 +195,7 @@ cc.Bone = cc.NodeRGBA.extend({
      * @param {Number} opacity
      */
     updateDisplayedOpacity:function (opacity) {
+        this._realOpacity = 255;
         cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, opacity);
         this.updateColor();
     },
@@ -200,9 +205,27 @@ cc.Bone = cc.NodeRGBA.extend({
      */
     updateColor:function () {
         var display = this._displayManager.getDisplayRenderNode();
-        if (display) {
-            display.setColor(cc.c3b(this._displayedColor.r * this._tweenData.r / 255, this._displayedColor.g * this._tweenData.g / 255, this._displayedColor.b * this._tweenData.b / 255));
-            display.setOpacity(this._displayedOpacity * this._tweenData.a / 255);
+        if (display&&display instanceof cc.Skin) {
+            //display.setColor(cc.c3b(this._displayedColor.r * this._tweenData.r / 255, this._displayedColor.g * this._tweenData.g / 255, this._displayedColor.b * this._tweenData.b / 255));
+            if(cc.Browser.supportWebGL){
+                display.setOpacity(this._displayedOpacity * this._tweenData.a / 255);
+            }else{
+                cc.NodeRGBA.prototype.setOpacity.call(display, this._displayedOpacity * this._tweenData.a / 255);
+            }
+
+        }
+    },
+
+    /**
+     * update display zOrder
+     */
+    updateZOrder: function () {
+        if (this._armature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED) {
+            var zorder = this._tweenData.zOrder + this._boneData.zOrder;
+            this.setZOrder(zorder);
+        }
+        else {
+            this.setZOrder(this._tweenData.zOrder);
         }
     },
 
@@ -218,9 +241,6 @@ cc.Bone = cc.NodeRGBA.extend({
         if (child._parentBone) {
             cc.log("child already added. It can't be added again");
             return;
-        }
-        if (!this._childrenBone) {
-            this.childrenAlloc();
         }
         if (cc.ArrayGetIndexOfObject(this._childrenBone, child) < 0) {
             this._childrenBone.push(child);
@@ -277,10 +297,6 @@ cc.Bone = cc.NodeRGBA.extend({
         return this._parentBone;
     },
 
-    childrenAlloc:function () {
-        this._childrenBone = [];
-    },
-
     /**
      * child armature setter
      * @param {cc.Armature} armature
@@ -329,7 +345,7 @@ cc.Bone = cc.NodeRGBA.extend({
      * @param {Boolean}
         */
     setTransformDirty:function (dirty) {
-        this._selfTransformDirty = dirty;
+        this._boneTransformDirty = dirty;
     },
 
     /**
@@ -337,7 +353,7 @@ cc.Bone = cc.NodeRGBA.extend({
      * @return {Boolean}
      */
     isTransformDirty:function () {
-        return this._selfTransformDirty;
+        return this._boneTransformDirty;
     },
 
     /**
@@ -346,6 +362,22 @@ cc.Bone = cc.NodeRGBA.extend({
      */
     nodeToArmatureTransform:function () {
         return this._worldTransform;
+    },
+
+    /**
+     * Returns the world affine transform matrix. The matrix is in Pixels.
+     * @returns {cc.AffineTransform}
+     */
+    nodeToWorldTransform: function () {
+        return cc.AffineTransformConcat(this._worldTransform, this._armature.nodeToWorldTransform());
+    },
+
+    /**
+     * get render node
+     * @returns {cc.Node}
+     */
+    getDisplayRenderNode: function () {
+        return this._displayManager.getDisplayRenderNode();
     },
 
     /**
@@ -358,7 +390,13 @@ cc.Bone = cc.NodeRGBA.extend({
      *          -1 : append display from back
      */
     addDisplay:function (displayData, index) {
-        this._displayManager.addDisplay(displayData, index);
+        index = index || 0;
+        return this._displayManager.addDisplay(displayData, index);
+    },
+
+    addSkin:function (skin, index) {
+        index = index||0;
+        return this._displayManager.addSkin(skin, index);
     },
 
     /**
@@ -425,6 +463,22 @@ cc.Bone = cc.NodeRGBA.extend({
      */
     getName:function () {
         return this._name;
+    },
+
+    /**
+     * blendType  setter
+     * @param {cc.BlendType} blendType
+     */
+    setBlendType:function (blendType) {
+        this._blendType = blendType;
+    },
+
+    /**
+     * blendType  getter
+     * @return {cc.BlendType}
+     */
+    getBlendType:function () {
+        return this._blendType;
     }
 });
 
