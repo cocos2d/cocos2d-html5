@@ -41,7 +41,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _string:"",
     _isMultiLine:false,
     _fontStyleStr:null,
-    _colorStyleStr:null,
 
     // font shadow
     _shadowEnabled:false,
@@ -77,7 +76,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
-        this._colorStyleStr = "";
         this._fontName = "Arial";
         this._isMultiLine = false;
 
@@ -136,7 +134,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _setColorStyleStr:function () {
         var locFillColor = this._textFillColor;
-        this._colorStyleStr = "rgba(" + locFillColor.r + "," + locFillColor.g + "," + locFillColor.b + ", " + this._displayedOpacity / 255 + ")";
+        this._fillColorStr = "rgba(" + locFillColor.r + "," + locFillColor.g + "," + locFillColor.b + ", " + this._displayedOpacity / 255 + ")";
         if(this._strokeEnabled){
             var locStrokeColor = this._strokeColor;
             this._strokeColorStr = "rgba(" + locStrokeColor.r + "," + locStrokeColor.g + "," + locStrokeColor.b + ", " + this._displayedOpacity / 255 + ")";
@@ -542,21 +540,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return;
 
         var locContentSizeHeight = this._contentSize.height, locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
-            locFontHeight = this._fontClientHeight;
+            locFontHeight = this._fontClientHeight, locStrokeSize = this._strokeSize;
 
         context.setTransform(1, 0, 0, 1, 0, locContentSizeHeight);
         //this is fillText for canvas
         if (context.font != this._fontStyleStr)
             context.font = this._fontStyleStr;
-        if(cc.renderContextType === cc.CANVAS)
-            context.fillStyle = this._colorStyleStr;
-        else
-            context.fillStyle = "rgba(255,255,255,1)";
+        context.fillStyle = this._fillColorStr;
 
         //stroke style setup
         var locStrokeEnabled = this._strokeEnabled;
         if (locStrokeEnabled) {
-            context.lineWidth = this._strokeSize;
+            context.lineWidth = locStrokeSize * 2;
             context.strokeStyle = this._strokeColorStr;
         }
 
@@ -579,26 +574,26 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var yOffset = 0;
         var locContentWidth = this._contentSize.width - locStrokeShadowOffsetX;
         if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
-            xOffset = isNegForOffsetX ? locContentWidth + locStrokeShadowOffsetX : locContentWidth;
+            xOffset += isNegForOffsetX ? locContentWidth + locStrokeShadowOffsetX : locContentWidth;
         else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
-            xOffset = isNegForOffsetX ? locContentWidth / 2 + locStrokeShadowOffsetX : locContentWidth / 2;
+            xOffset += isNegForOffsetX ? locContentWidth / 2 + locStrokeShadowOffsetX : locContentWidth / 2;
         else
-            xOffset = isNegForOffsetX ? locStrokeShadowOffsetX : 0;
+            xOffset += isNegForOffsetX ? locStrokeShadowOffsetX : 0;
         if (this._isMultiLine) {
             var locStrLen = this._strings.length;
-            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM){
+            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM) {
                 yOffset = locFontHeight + locContentSizeHeight - locFontHeight * locStrLen;
-                if(isNegForOffsetY)
+                if (isNegForOffsetY)
                     yOffset -= locStrokeShadowOffsetY;
-            } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER){
+            } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER) {
                 yOffset = locFontHeight / 2 + (locContentSizeHeight - locFontHeight * locStrLen) / 2;
-                if(isNegForOffsetY)
+                if (isNegForOffsetY)
                     yOffset -= locStrokeShadowOffsetY;
-            } else{
-                if(isNegForOffsetY)
-                    yOffset -= locStrokeShadowOffsetY/2;
+            } else {
+                if (isNegForOffsetY)
+                    yOffset -= locStrokeShadowOffsetY / 2;
                 else
-                    yOffset += locStrokeShadowOffsetY/2;
+                    yOffset += locStrokeShadowOffsetY / 2;
             }
 
             for (var i = 0; i < locStrLen; i++) {
@@ -610,17 +605,17 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             }
         } else {
             if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM) {
-                yOffset = isNegForOffsetY ? -locStrokeShadowOffsetY : 0;
+                yOffset += isNegForOffsetY ? -locStrokeShadowOffsetY : 0;
                 if (locStrokeEnabled)
                     context.strokeText(this._string, xOffset, yOffset);
                 context.fillText(this._string, xOffset, yOffset);
             } else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP) {
-                yOffset = isNegForOffsetY ? -locStrokeShadowOffsetY/2 -locContentSizeHeight :  - locContentSizeHeight + locStrokeShadowOffsetY/2;
+                yOffset += isNegForOffsetY ? -locStrokeShadowOffsetY / 2 - locContentSizeHeight : -locContentSizeHeight + locStrokeShadowOffsetY / 2;
                 if (locStrokeEnabled)
                     context.strokeText(this._string, xOffset, yOffset);
                 context.fillText(this._string, xOffset, yOffset);
             } else {
-                yOffset = isNegForOffsetY ? -locStrokeShadowOffsetY -locContentSizeHeight / 2 : - locContentSizeHeight / 2;
+                yOffset += isNegForOffsetY ? -locStrokeShadowOffsetY - locContentSizeHeight / 2 : -locContentSizeHeight / 2;
                 if (locStrokeEnabled)
                     context.strokeText(this._string, xOffset, yOffset);
                 context.fillText(this._string, xOffset, yOffset);
@@ -679,7 +674,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         var locSize, locStrokeShadowOffsetX = 0, locStrokeShadowOffsetY = 0;
         if(this._strokeEnabled)
-            locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize;
+            locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize * 2;
         if(this._shadowEnabled){
             var locOffsetSize = this._shadowOffset;
             locStrokeShadowOffsetX += Math.abs(locOffsetSize.width);
@@ -727,7 +722,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         //get real position
         var locStrokeShadowOffsetX = 0, locStrokeShadowOffsetY = 0;
         if(this._strokeEnabled)
-            locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize * 2;
+            locStrokeShadowOffsetX += this._strokeSize;
         if (this._shadowEnabled) {
             var locOffsetSize = this._shadowOffset;
             locStrokeShadowOffsetX += locOffsetSize.width > 0 ? 0 : locOffsetSize.width;
