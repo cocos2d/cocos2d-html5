@@ -289,9 +289,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.Size} shadowOffset
      * @param {Number} shadowOpacity
      * @param {Number} shadowBlur
-     * @param {Boolean} [mustUpdateTexture=false]
      */
-    enableShadow:function(shadowOffset, shadowOpacity, shadowBlur, mustUpdateTexture){
+    enableShadow:function(shadowOffset, shadowOpacity, shadowBlur){
         if (false === this._shadowEnabled)
             this._shadowEnabled = true;
 
@@ -312,9 +311,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * disable shadow rendering
-     * @param {Boolean} [mustUpdateTexture=false]
      */
-    disableShadow:function(mustUpdateTexture){
+    disableShadow:function(){
         if (this._shadowEnabled) {
             this._shadowEnabled = false;
             this._needUpdateTexture = true;
@@ -325,9 +323,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * enable or disable stroke
      * @param {cc.Color3B} strokeColor
      * @param {Number} strokeSize
-     * @param {Boolean} [mustUpdateTexture=false]
      */
-    enableStroke:function(strokeColor, strokeSize, mustUpdateTexture){
+    enableStroke:function(strokeColor, strokeSize){
         if(this._strokeEnabled === false)
             this._strokeEnabled = true;
 
@@ -345,9 +342,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * disable stroke
-     * @param {Boolean} [mustUpdateTexture=false]
      */
-    disableStroke:function(mustUpdateTexture){
+    disableStroke:function(){
         if (this._strokeEnabled){
             this._strokeEnabled = false;
             this._needUpdateTexture = true;
@@ -357,11 +353,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     /**
      * set text tinting
      * @param {cc.Color3B} tintColor
-     * @param {Boolean} [mustUpdateTexture=false]
      */
     setFontFillColor:null,
 
-    _setFontFillColorForCanvas: function (tintColor, mustUpdateTexture) {
+    _setFontFillColorForCanvas: function (tintColor) {
         var locTextFillColor = this._textFillColor;
         if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
             this._textFillColor = tintColor;
@@ -370,7 +365,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
-    _setFontFillColorForWebGL: function (tintColor, mustUpdateTexture) {
+    _setFontFillColorForWebGL: function (tintColor) {
         var locTextFillColor = this._textFillColor;
         if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
             this._textFillColor = tintColor;
