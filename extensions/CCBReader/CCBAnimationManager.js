@@ -641,15 +641,11 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     _sequenceCompleted:function () {
         var locRunningSequence = this._runningSequence;
+
+        var locRunningName = locRunningSequence.getName();
+
         if(this._lastCompletedSequenceName != locRunningSequence.getName()){
             this._lastCompletedSequenceName = locRunningSequence.getName();
-        }
-
-        if (this._delegate)
-            this._delegate.completedAnimationSequenceNamed(locRunningSequence.getName());
-
-        if(this._target && this._animationCompleteCallbackFunc){
-            this._animationCompleteCallbackFunc.call(this._target);
         }
 
         var nextSeqId = locRunningSequence.getChainedSequenceId();
@@ -657,6 +653,13 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
         if (nextSeqId != -1)
             this.runAnimations(nextSeqId, 0);
+
+        if (this._delegate)
+            this._delegate.completedAnimationSequenceNamed(locRunningName);
+
+        if(this._target && this._animationCompleteCallbackFunc){
+            this._animationCompleteCallbackFunc.call(this._target);
+        }
     }
 });
 
