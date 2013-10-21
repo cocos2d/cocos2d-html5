@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UIButton
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UILabel = cc.UIWidget.extend({
     _touchScaleChangeEnabled: false,
     _normalScaleValue: 0,
@@ -52,6 +57,10 @@ cc.UILabel = cc.UIWidget.extend({
         this._renderer.addChild(this._labelRenderer);
     },
 
+    /**
+     *  Changes the string value of label.
+     * @param {String} text
+     */
     setText: function (text) {
         if (!text) {
             return;
@@ -60,45 +69,97 @@ cc.UILabel = cc.UIWidget.extend({
         this.labelScaleChangedWithSize();
     },
 
+    /**
+     * Gets the string value of label.
+     * @returns {String}
+     */
     getStringValue: function () {
         return this._labelRenderer.getString();
     },
 
+    /**
+     * Gets the string length of label.
+     * @returns {Number}
+     */
     getStringLength: function () {
         var str = this._labelRenderer.getString();
         return str.length;
     },
 
+    /**
+     * set fontSize
+     * @param {cc.Size} size
+     */
     setFontSize: function (size) {
         this._labelRenderer.setFontSize(size);
         this.labelScaleChangedWithSize();
     },
 
+    /**
+     * set fontName
+     * @param {String} name
+     */
     setFontName: function (name) {
         this._labelRenderer.setFontName(name);
         this.labelScaleChangedWithSize();
     },
 
+    /**
+     * set textAreaSize
+     * @param {cc.Size} size
+     */
     setTextAreaSize: function (size) {
         this._labelRenderer.setDimensions(size);
         this.labelScaleChangedWithSize();
     },
 
+    /**
+     * set Horizontal Alignment of cc.LabelTTF
+     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
+     */
     setTextHorizontalAlignment: function (alignment) {
         this._labelRenderer.setHorizontalAlignment(alignment);
         this.labelScaleChangedWithSize();
     },
 
+    /**
+     * set Vertical Alignment of cc.LabelTTF
+     * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
+     */
     setTextVerticalAlignment: function (alignment) {
         this._labelRenderer.setVerticalAlignment(alignment);
         this.labelScaleChangedWithSize();
     },
 
+    /**
+     * Sets the touch scale enabled of label.
+     * @param {Boolean} enable
+     */
+    setTouchScaleChangeAble: function (enable) {
+        this.setTouchScaleChangeEnabled(enable);
+    },
+
+    /**
+     * Gets the touch scale enabled of label.
+     * @returns {Boolean}
+     */
+    getTouchScaleChangeAble: function () {
+        return this.isTouchScaleChangeEnabled();
+    },
+
+    /**
+     * Sets the touch scale enabled of label.
+     * @param {Boolean} enable
+     */
     setTouchScaleChangeEnabled: function (enable) {
         this._touchScaleChangeEnabled = enable;
         this._normalScaleValue = this.getScale();
     },
 
+    /**
+     * Gets the touch scale enabled of label.
+     * @returns {Boolean}
+     */
     isTouchScaleChangeEnabled: function () {
         return this._touchScaleChangeEnabled;
     },
@@ -125,22 +186,42 @@ cc.UILabel = cc.UIWidget.extend({
         this._renderer.setScale(scale);
     },
 
-    setFlipX: function (flipX) {
-        this._labelRenderer.setFlipX(flipX);
+    /**
+     * override "setFlippedX" of widget.
+     * @param {Boolean} flipX
+     */
+    setFlippedX: function (flipX) {
+        this._labelRenderer.setFlippedX(flipX);
     },
 
-    setFlipY: function (flipY) {
-        this._labelRenderer.setFlipY(flipY);
+    /**
+     * override "setFlippedY" of widget.
+     * @param {Boolean} flipY
+     */
+    setFlippedY: function (flipY) {
+        this._labelRenderer.setFlippedY(flipY);
     },
 
-    isFlipX: function () {
-        return this._labelRenderer.isFlipX();
+    /**
+     * override "isFlippedX" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedX: function () {
+        return this._labelRenderer.isFlippedX();
     },
 
-    isFlipY: function () {
-        return this._labelRenderer.isFlipY();
+    /**
+     * override "isFlippedY" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedY: function () {
+        return this._labelRenderer.isFlippedY();
     },
 
+    /**
+     * override "setAnchorPoint" of widget.
+     * @param {cc.Point} pt
+     */
     setAnchorPoint: function (pt) {
         cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._labelRenderer.setAnchorPoint(pt);
@@ -150,10 +231,18 @@ cc.UILabel = cc.UIWidget.extend({
         this.labelScaleChangedWithSize();
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._labelRenderer.getContentSize();
     },
 
+    /**
+     * override "getVirtualRenderer" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         return this._labelRenderer;
     },

@@ -22,11 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UILabelBMFont
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UILabelBMFont = cc.UIWidget.extend({
     _labelBMFontRenderer: null,
     _fileHasInit: false,
     ctor: function () {
-        cc.UIWidget.prototype.call(this);
+        cc.UIWidget.prototype.ctor.call(this);
         this._labelBMFontRenderer = null;
         this._fileHasInit = false;
     },
@@ -36,6 +41,10 @@ cc.UILabelBMFont = cc.UIWidget.extend({
         this._renderer.addChild(this._labelBMFontRenderer);
     },
 
+    /**
+     * init a bitmap font atlas with an initial string and the FNT file
+     * @param {String} fileName
+     */
     setFntFile: function (fileName) {
         if (!fileName) {
             return;
@@ -46,6 +55,10 @@ cc.UILabelBMFont = cc.UIWidget.extend({
         this._fileHasInit = true;
     },
 
+    /**
+     * set string value for labelbmfont
+     * @param {String} value
+     */
     setText: function (value) {
         if (!value || !this._fileHasInit) {
             return;
@@ -54,10 +67,18 @@ cc.UILabelBMFont = cc.UIWidget.extend({
         this.labelBMFontScaleChangedWithSize();
     },
 
+    /**
+     * get string value for labelbmfont.
+     * @returns {String}
+     */
     getStringValue: function () {
         return this._labelBMFontRenderer.getString();
     },
 
+    /**
+     * override "setAnchorPoint" of widget.
+     * @param {cc.Point} pt
+     */
     setAnchorPoint: function (pt) {
         cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._labelBMFontRenderer.setAnchorPoint(pt);
@@ -67,10 +88,18 @@ cc.UILabelBMFont = cc.UIWidget.extend({
         this.labelBMFontScaleChangedWithSize();
     },
 
+    /**
+     * get content size
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._labelBMFontRenderer.getContentSize();
     },
 
+    /**
+     * override "getVirtualRenderer" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         return this._labelBMFontRenderer;
     },

@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UIHelper
+ * @class
+ * @extends cc.Class
+ */
 cc.UIInputManager = cc.Class.extend({
     _manageredWidget: null,
     _selectedWidgets: [],
@@ -38,7 +43,7 @@ cc.UIInputManager = cc.Class.extend({
     ctor: function () {
         this._manageredWidget = null;
         this._selectedWidgets = [];
-        this._touchBeganedPoint = null;
+        this._touchBeganedPoint = cc.p(0, 0);
         this._touchMovedPoint = cc.p(0, 0);
         this._touchEndedPoint = cc.p(0, 0);
         this._touchCanceledPoint = cc.p(0, 0);
@@ -49,6 +54,11 @@ cc.UIInputManager = cc.Class.extend({
         this._checkedDoubleClickWidget = [];
         this._rootWidget = null;
     },
+
+    /**
+     * Regist a widget to input manager.
+     * @param {cc.UIWidget} widget
+     */
     registWidget: function (widget) {
         if (!widget) {
             return;
@@ -59,10 +69,20 @@ cc.UIInputManager = cc.Class.extend({
         this._manageredWidget.push(widget);
     },
 
+    /**
+     * A call back function called when widget tree struct has changed.
+     * If widget tree struct has changed, uiinputmanager will resort registed widgets.
+     */
     uiSceneHasChanged: function () {
         this._widgetBeSorted = false;
     },
 
+    /**
+     * Check touch event
+     * @param {cc.UIWidget} root
+     * @param {cc.Point} touchPoint
+     * @returns {boolean}
+     */
     checkTouchEvent: function (root, touchPoint) {
         var arrayRootChildren = root.getChildren();
         var length = arrayRootChildren.length;
@@ -72,6 +92,9 @@ cc.UIInputManager = cc.Class.extend({
                 return true;
             }
         }
+        if(root instanceof cc.UIScrollView){
+            var a = 0;
+        }
         if (root.isEnabled() && root.isTouchEnabled() && root.hitTest(touchPoint) && root.clippingParentAreaContainPoint(touchPoint)) {
             this._selectedWidgets.push(root);
             root.onTouchBegan(touchPoint);
@@ -80,6 +103,10 @@ cc.UIInputManager = cc.Class.extend({
         return false;
     },
 
+    /**
+     * Remove a registed widget from input manager.
+     * @param {cc.UIWidget} widget
+     */
     removeManageredWidget: function (widget) {
         if (!widget) {
             return;
@@ -90,11 +117,20 @@ cc.UIInputManager = cc.Class.extend({
         cc.ArrayRemoveObject(this._manageredWidget, widget);
     },
 
+    /**
+     * Finds a widget which is selected and call it's "onTouchBegan" method.
+     * @param {cc.Point} touchPoint
+     * @returns {boolean}
+     */
     checkEventWidget: function (touchPoint) {
         this.checkTouchEvent(this._rootWidget, touchPoint);
         return (this._selectedWidgets.length > 0);
     },
 
+    /**
+     * Add doubleClick widget
+     * @param {UIWidget} widget
+     */
     addCheckedDoubleClickWidget: function (widget) {
         if (cc.ArrayContainsObject(this._checkedDoubleClickWidget, widget)) {
             return;
@@ -142,7 +178,7 @@ cc.UIInputManager = cc.Class.extend({
         }
     },
 
-    onTouchEnd: function (touch) {
+    onTouchEnded: function (touch) {
         this._touchDown = false;
         this._touchEndedPoint.x = touch.getLocation().x;
         this._touchEndedPoint.y = touch.getLocation().y;

@@ -81,32 +81,31 @@ cc.DragPanelEventType = {
     BOUNCE_BOTTOM: 15
 };
 
+/**
+ * Base class for cc.UIDragPanel
+ * @class
+ * @extends cc.Layout
+ */
 cc.UIDragPanel = cc.Layout.extend({
     _innerContainer: null,
     _touchPressed: false,
     _touchMoved: false,
     _touchReleased: false,
-    _touchCanceld: false, // check touch out of drag panel boundary
+    _touchCanceld: false,
     _touchStartNodeSpace: null,
     _touchStartWorldSpace: null,
     _touchEndWorldSpace: null,
     _slidTime: 0,
-// move type
     _moveType: null,
-// auto move
     _autoMoveDuration: 0,
     _autoMoveEaseRate: 0,
-// berth
     _berthDirection: null,
-// bounce
     _bounceEnable: 0,
     _bounceDirection: null,
     _bounceDuration: 0,
     _bounceEaseRate: 0,
-// event
     _eventLister: null,
     _eventSelector: null,
-
     _runningAction: 0,
     _actionType: null,
     _actionWidget: null,
@@ -117,45 +116,7 @@ cc.UIDragPanel = cc.Layout.extend({
     _startPosition: null,
     _previousPosition: null,
     _endPosition: null,
-    /*compatible*/
-// berth event
-    _berthToLeftListener: null,
-    _berthToLeftSelector: null,
-    _berthToRightListener: null,
-    _berthToRightSelector: null,
-    _berthToTopListener: null,
-    _berthToTopSelector: null,
-    _berthToBottomListener: null,
-    _berthToBottomSelector: null,
-    _berthToLeftBottomListener: null,
-    _berthToLeftBottomSelector: null,
-    _berthToLeftTopListener: null,
-    _berthToLeftTopSelector: null,
-    _berthToRightBottomListener: null,
-    _berthToRightBottomSelector: null,
-    _berthToRightTopListener: null,
-    _berthToRightTopSelector: null,
-    /********/
-    /*compatible*/
-// bounce event
-    _bounceOverListener: null,
-    _bounceOverSelector: null,
-    _bounceToLeftBottomListener: null,
-    _bounceToLeftBottomSelector: null,
-    _bounceToLeftTopListener: null,
-    _bounceToLeftTopSelector: null,
-    _bounceToRightBottomListener: null,
-    _bounceToRightBottomSelector: null,
-    _bounceToRightTopListener: null,
-    _bounceToRightTopSelector: null,
-    _bounceToLeftListener: null,
-    _bounceToLeftSelector: null,
-    _bounceToTopListener: null,
-    _bounceToTopSelector: null,
-    _bounceToRightListener: null,
-    _bounceToRightSelector: null,
-    _bounceToBottomListener: null,
-    _bounceToBottomSelector: null,
+
     ctor: function () {
         cc.Layout.prototype.ctor.call(this);
         this._innerContainer = null;
@@ -167,19 +128,13 @@ cc.UIDragPanel = cc.Layout.extend({
         this._touchStartWorldSpace = cc.p(0, 0);
         this._touchEndWorldSpace = cc.p(0, 0);
         this._slidTime = 0;
-// move type
         this._moveType = cc.DRAGPANEL_MOVE_TYPE.AUTOMOVE;
-// auto move
         this._autoMoveDuration = 0.5;
         this._autoMoveEaseRate = 2.0;
-// berth
         this._berthDirection = cc.DRAGPANEL_BERTH_DIR.NONE;
-// bounce
         this._bounceEnable = 0;
         this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.NONE;
         this._bounceDuration = 0;
-        this._bounceEaseRate = 0;
-        // event
         this._eventLister = null;
         this._eventSelector = null;
         this._runningAction = 0;
@@ -192,41 +147,6 @@ cc.UIDragPanel = cc.Layout.extend({
         this._startPosition = cc.p(0, 0);
         this._previousPosition = cc.p(0, 0);
         this._endPosition = cc.p(0, 0);
-        /*compatible*/
-        this._berthToLeftListener = null;
-        this._berthToLeftSelector = null;
-        this._berthToRightListener = null;
-        this._berthToRightSelector = null;
-        this._berthToTopListener = null;
-        this._berthToTopSelector = null;
-        this._berthToBottomListener = null;
-        this._berthToBottomSelector = null;
-        this._berthToLeftBottomListener = null;
-        this._berthToLeftBottomSelector = null;
-        this._berthToLeftTopListener = null;
-        this._berthToLeftTopSelector = null;
-        this._berthToRightBottomListener = null;
-        this._berthToRightBottomSelector = null;
-        this._berthToRightTopListener = null;
-        this._berthToRightTopSelector = null;
-        this._bounceOverListener = null;
-        this._bounceOverSelector = null;
-        this._bounceToLeftBottomListener = null;
-        this._bounceToLeftBottomSelector = null;
-        this._bounceToLeftTopListener = null;
-        this._bounceToLeftTopSelector = null;
-        this._bounceToRightBottomListener = null;
-        this._bounceToRightBottomSelector = null;
-        this._bounceToRightTopListener = null;
-        this._bounceToRightTopSelector = null;
-        this._bounceToLeftListener = null;
-        this._bounceToLeftSelector = null;
-        this._bounceToTopListener = null;
-        this._bounceToTopSelector = null;
-        this._bounceToRightListener = null;
-        this._bounceToRightSelector = null;
-        this._bounceToBottomListener = null;
-        this._bounceToBottomSelector = null;
     },
 
     init: function () {
@@ -241,28 +161,17 @@ cc.UIDragPanel = cc.Layout.extend({
 
     initRenderer: function () {
         cc.Layout.prototype.initRenderer.call(this);
-
         this._innerContainer = cc.Layout.create();
         cc.Layout.prototype.addChild.call(this, this._innerContainer);
 
     },
 
     releaseResoures: function () {
-        this._pushListener = null;
-        this._pushSelector = null;
-        this._moveListener = null;
-        this._moveSelector = null;
-        this._releaseListener = null;
-        this._releaseSelector = null;
-        this._cancelListener = null;
-        this._cancelSelector = null;
         this.setUpdateEnabled(false);
         this.removeAllChildren();
         this._renderer.removeAllChildren(true);
         this._renderer.removeFromParent(true);
-
         cc.Layout.prototype.removeChild.call(this, this._innerContainer);
-
         this._children = [];
     },
 
@@ -273,17 +182,17 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     onTouchMoved: function (touchPoint) {
-        cc.Layout.prototype.onTouchMoved(touchPoint);
+        cc.Layout.prototype.onTouchMoved.call(this,touchPoint);
         this.handleMoveLogic(touchPoint);
     },
 
     onTouchEnded: function (touchPoint) {
-        cc.Layout.prototype.onTouchEnded(touchPoint);
+        cc.Layout.prototype.onTouchEnded.call(this,touchPoint);
         this.handleReleaseLogic(touchPoint);
     },
 
     onTouchCancelled: function (touchPoint) {
-        cc.Layout.prototype.onTouchCancelled(touchPoint);
+        cc.Layout.prototype.onTouchCancelled.call(this,touchPoint);
     },
 
     onTouchLongClicked: function (touchPoint) {
@@ -305,11 +214,21 @@ cc.UIDragPanel = cc.Layout.extend({
         this.recordSlidTime(dt);
     },
 
+    /**
+     * add widget child override
+     * @param {cc.UIWidget} widget
+     * @returns {boolean}
+     */
     addChild: function (widget) {
         this._innerContainer.addChild(widget);
         return true;
     },
 
+    /**
+     * remove widget child override
+     * @param {cc.UIWidget} child
+     * @returns {boolean}
+     */
     removeChild: function (child) {
         var value = false;
         if (this._innerContainer.removeChild(child)) {
@@ -319,10 +238,17 @@ cc.UIDragPanel = cc.Layout.extend({
         return value;
     },
 
+    /**
+     * remove all widget children override
+     */
     removeAllChildren: function () {
         this._innerContainer.removeAllChildren();
     },
 
+    /**
+     * get widget children of inner container
+     * @returns {Array}
+     */
     getChildren: function () {
         return this._innerContainer.getChildren();
     },
@@ -337,10 +263,18 @@ cc.UIDragPanel = cc.Layout.extend({
         this._innerContainer.setSize(cc.size(innerSizeWidth, innerSizeHeight));
     },
 
+    /**
+     * get and set inner container size
+     * @returns {cc.Size}
+     */
     getInnerContainerSize: function () {
         return this._innerContainer.getContentSize();
     },
 
+    /**
+     * set inner container size
+     * @returns {cc.Size}
+     */
     setInnerContainerSize: function (size) {
         var innerSizeWidth = this._size.width;
         var innerSizeHeight = this._size.height;
@@ -369,6 +303,11 @@ cc.UIDragPanel = cc.Layout.extend({
         this.setInnerContainerOffset(delta, animated);
     },
 
+    /**
+     * Set inner container offset
+     * @param {cc.Point} offset
+     * @param {Boolean} animated
+     */
     setInnerContainerOffset: function (offset, animated) {
         if (animated) {
             var delta = offset;
@@ -380,22 +319,17 @@ cc.UIDragPanel = cc.Layout.extend({
             this.moveByWithDuration(this._autoMoveDuration, delta);
         }
         else {
-            this.setInnerContainerOffset(offset);
+            var delta = offset;
+
+            if (this.checkToBoundaryWithDeltaPosition(delta)) {
+                delta = this.calculateToBoundaryDeltaPosition(delta);
+            }
+            this.moveWithDelta(delta);
+            if (this.checkBerth()) {
+                this.berthEvent();
+            }
         }
     },
-
-    setInnerContainerOffset: function (offset) {
-        var delta = offset;
-
-        if (this.checkToBoundaryWithDeltaPosition(delta)) {
-            delta = this.calculateToBoundaryDeltaPosition(delta);
-        }
-        this.moveWithDelta(delta);
-        if (this.checkBerth()) {
-            this.berthEvent();
-        }
-    },
-
 
     handlePressLogic: function (touchPoint) {
         // check inner rect < drag panel rect
@@ -501,10 +435,22 @@ cc.UIDragPanel = cc.Layout.extend({
         }
     },
 
+    /**
+     *
+     * @param {number} handleState
+     * @param {cc.UIWidget} sender
+     * @param {cc.Point} touchPoint
+     */
     checkChildInfo: function (handleState, sender, touchPoint) {
         this.interceptTouchEvent(handleState, sender, touchPoint);
     },
 
+    /**
+     *
+     * @param {number} handleState
+     * @param {cc.UIWidget} sender
+     * @param {cc.Point} touchPoint
+     */
     interceptTouchEvent: function (handleState, sender, touchPoint) {
         switch (handleState) {
             case 0:
@@ -531,7 +477,10 @@ cc.UIDragPanel = cc.Layout.extend({
         }
     },
 
-// check if dragpanel rect contain inner rect
+    /**
+     * check if dragpanel rect contain inner rect
+     * @returns {boolean}
+     */
     checkContainInnerRect: function () {
         var width = this._size.width;
         var height = this._size.height;
@@ -544,13 +493,18 @@ cc.UIDragPanel = cc.Layout.extend({
         return false;
     },
 
-// move
+    /**
+     * move
+     * @param delta
+     */
     moveWithDelta: function (delta) {
         var newPos = cc.pAdd(this._innerContainer.getPosition(), delta);
         this._innerContainer.setPosition(newPos);
     },
 
-// auto move
+    /**
+     * auto move
+     */
     autoMove: function () {
         if (this._bounceEnable) {
             if (this.checkNeedBounce()) {
@@ -593,18 +547,27 @@ cc.UIDragPanel = cc.Layout.extend({
         this._moveType = cc.DRAGPANEL_MOVE_TYPE.NONE;
     },
 
+    /**
+     * Set auto move duration
+     * @param {Number} duration
+     */
     setAutoMoveDuration: function (duration) {
         this._autoMoveDuration = duration;
     },
 
+    /**
+     * Set auto move ease rate
+     * @param {Number} rate
+     */
     setAutoMoveEaseRate: function (rate) {
         this._autoMoveEaseRate = rate;
     },
 
-// berth
-
-// check if move to boundary
-
+    /**
+     * check if move to boundary with update
+     * @param {number} delta
+     * @returns {boolean}
+     */
     checkToBoundaryWithDeltaPosition: function (delta) {
         var innerLeft = this._innerContainer.getLeftInParent();
         var innerTop = this._innerContainer.getTopInParent();
@@ -666,6 +629,11 @@ cc.UIDragPanel = cc.Layout.extend({
         return false;
     },
 
+    /**
+     * calculate to boundary delta
+     * @param {cc.Point} paramDelta
+     * @returns {cc.Point}
+     */
     calculateToBoundaryDeltaPosition: function (paramDelta) {
         var innerLeft = this._innerContainer.getLeftInParent();
         var innerTop = this._innerContainer.getTopInParent();
@@ -719,11 +687,18 @@ cc.UIDragPanel = cc.Layout.extend({
         return delta;
     },
 
+    /**
+     * get berth or not
+     * @returns {boolean}
+     */
     isBerth: function () {
         return this._berthDirection != cc.DRAGPANEL_BERTH_DIR.NONE;
     },
 
-// check berth
+    /**
+     * Check berth
+     * @returns {boolean}
+     */
     checkBerth: function () {
         var innerLeft = this._innerContainer.getLeftInParent();
         var innerTop = this._innerContainer.getTopInParent();
@@ -775,6 +750,9 @@ cc.UIDragPanel = cc.Layout.extend({
         return false;
     },
 
+    /**
+     * Berth event
+     */
     berthEvent: function () {
         switch (this._berthDirection) {
             case cc.DRAGPANEL_BERTH_DIR.LEFTBOTTOM:
@@ -815,149 +793,83 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     berthToLeftBottomEvent: function () {
-        /*Compatible*/
-        if (this._berthToLeftBottomListener && this._berthToLeftBottomSelector) {
-            this._berthToLeftBottomSelector.call(this._berthToLeftBottomListener, this);
-        }
-        /************/
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LEFTBOTTOM);
         }
     },
 
     berthToLeftTopEvent: function () {
-        /*Compatible*/
-        if (this._berthToLeftTopListener && this._berthToLeftTopSelector) {
-            this._berthToLeftTopSelector.call(this._berthToLeftTopListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LFETTOP);
         }
     },
 
     berthToRightBottomEvent: function () {
-        /*Compatible*/
-        if (this._berthToRightBottomListener && this._berthToRightBottomSelector) {
-            this._berthToRightBottomSelector.call(this._berthToRightBottomListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_RIGHTBOTTOM);
         }
     },
 
     berthToRightTopEvent: function () {
-        /*Compatible*/
-        if (this._berthToRightTopListener && this._berthToRightTopSelector) {
-            this._berthToRightTopSelector.call(this._berthToRightTopListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_RIGHTTOP);
         }
     },
 
     berthToLeftEvent: function () {
-        /*Compatible*/
-        if (this._berthToLeftListener && this._berthToLeftSelector) {
-            this._berthToLeftSelector.call(this._berthToLeftListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LEFT);
         }
     },
 
     berthToTopEvent: function () {
-        /*Compatible*/
-        if (this._berthToTopListener && this._berthToTopSelector) {
-            this._berthToTopSelector.call(this._berthToTopListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_TOP);
         }
     },
 
     berthToRightEvent: function () {
-        /*Compatible*/
-        if (this._berthToRightListener && this._berthToRightSelector) {
-            this._berthToRightSelector.call(this._berthToRightListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_RIGHT);
         }
     },
 
     berthToBottomEvent: function () {
-        /*Compatible*/
-        if (this._berthToBottomListener && this._berthToBottomSelector) {
-            this._berthToBottomSelector.call(this._berthToBottomListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_BOTTOM)
         }
     },
 
+    /**
+     *
+     * @param {Object} target
+     * @param {Function} selector
+     */
     addEventListener: function (target, selector) {
         this._eventLister = target;
         this._eventSelector = selector;
     },
 
-    /*******Compatible*******/
-    addBerthToLeftBottomEvent: function (target, selector) {
-        this._berthToLeftBottomListener = target;
-        this._berthToLeftBottomSelector = selector;
-    },
-
-    addBerthToLeftTopEvent: function (target, selector) {
-        this._berthToLeftTopListener = target;
-        this._berthToLeftTopSelector = selector;
-    },
-
-    addBerthToRightBottomEvent: function (target, selector) {
-        this._berthToRightBottomListener = target;
-        this._berthToRightBottomSelector = selector;
-    },
-
-    addBerthToRightTopEvent: function (target, selector) {
-        this._berthToRightTopListener = target;
-        this._berthToRightTopSelector = selector;
-    },
-
-    addBerthToLeftEvent: function (target, selector) {
-        this._berthToLeftListener = target;
-        this._berthToLeftSelector = selector;
-    },
-
-    addBerthToTopEvent: function (target, selector) {
-        this._berthToTopListener = target;
-        this._berthToTopSelector = selector;
-    },
-
-    addBerthToRightEvent: function (target, selector) {
-        this._berthToRightListener = target;
-        this._berthToRightSelector = selector;
-    },
-
-    addBerthToBottomEvent: function (target, selector) {
-        this._berthToBottomListener = target;
-        this._berthToBottomSelector = selector;
-    },
-    /**************/
-
-// bounce
+    /**
+     * Get and set bounce enable
+     * @returns {number}
+     */
     isBounceEnabled: function () {
         return this._bounceEnable;
     },
 
+    /**
+     * Set and set bounce enable
+     * @param {Boolean} bounce
+     */
     setBounceEnabled: function (bounce) {
         this._bounceEnable = bounce;
     },
 
+    /**
+     * Check is need bounce
+     * @returns {boolean}
+     */
     checkNeedBounce: function () {
         var innerLeft = this._innerContainer.getLeftInParent();
         var innerTop = this._innerContainer.getTopInParent();
@@ -1088,7 +1000,7 @@ cc.UIDragPanel = cc.Layout.extend({
         delta = cc.pSub(cc.p(to_x, to_y), cc.p(from_x, from_y));
 
         this.actionStartWithWidget(this._innerContainer);
-        this.moveByWithDuration(m_fBounceDuration, delta);
+        this.moveByWithDuration(this._bounceDuration, delta);
     },
 
     bounceOver: function () {
@@ -1135,11 +1047,6 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     bounceToLeftBottomEvent: function () {
-        /*Compatible*/
-        if (this._bounceToLeftBottomListener && this._bounceToLeftBottomSelector) {
-            this._bounceToLeftBottomSelector.call(this._bounceToLeftBottomListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_LEFTBOTTOM);
         }
@@ -1147,55 +1054,30 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     bounceToLeftTopEvent: function () {
-        /*Compatible*/
-        if (this._bounceToLeftTopListener && this._bounceToLeftTopSelector) {
-            this._bounceToLeftTopSelector.call(this._bounceToLeftTopListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_LEFTTOP);
         }
     },
 
     bounceToRightBottomEvent: function () {
-        /*Compatible*/
-        if (this._bounceToRightBottomListener && this._bounceToRightBottomSelector) {
-            this._bounceToRightBottomSelector.call(this._bounceToRightBottomListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_RIGHTBOTTOM);
         }
     },
 
     bounceToRightTopEvent: function () {
-        /*Compatible*/
-        if (this._bounceToRightTopListener && this._bounceToRightTopSelector) {
-            this._bounceToRightTopSelector.call(this._bounceToRightTopListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_RIGHTTOP);
         }
     },
 
     bounceToLeftEvent: function () {
-        /*Compatible*/
-        if (this._bounceToLeftListener && this._bounceToLeftSelector) {
-            this._bounceToLeftSelector.call(this._bounceToLeftListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_LEFT);
         }
     },
 
     bounceToTopEvent: function () {
-        /*Compatible*/
-        if (this._bounceToTopListener && this._bounceToTopSelector) {
-            this._bounceToTopSelector.call(this._bounceToTopListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_TOP);
         }
@@ -1203,11 +1085,6 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     bounceToRightEvent: function () {
-        /*Compatible*/
-        if (this._bounceToRightListener && this._bounceToRightSelector) {
-            this._bounceToRightSelector.call(this._bounceToRightListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_RIGHT);
         }
@@ -1215,59 +1092,15 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     bounceToBottomEvent: function () {
-        /*Compatible*/
-        if (this._bounceToBottomListener && this._bounceToBottomSelector) {
-            this._bounceToBottomSelector.call(this._bounceToBottomListener, this);
-        }
-
         if (this._eventLister && this._eventSelector) {
             this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_BOTTOM);
         }
     },
 
-    /*******Compatible*******/
-    addBounceToLeftBottomEvent: function (target, selector) {
-        this._bounceToLeftBottomListener = target;
-        this._bounceToLeftBottomSelector = selector;
-    },
-
-    addBounceToLeftTopEvent: function (target, selector) {
-        this._bounceToLeftTopListener = target;
-        this._bounceToLeftTopSelector = selector;
-    },
-
-    addBounceToRightBottomEvent: function (target, selector) {
-        this._bounceToRightBottomListener = target;
-        this._bounceToRightBottomSelector = selector;
-    },
-
-    addBounceToRightTopEvent: function (target, selector) {
-        this._bounceToRightTopListener = target;
-        this._bounceToRightTopSelector = selector;
-    },
-
-    addBounceToLeftEvent: function (target, selector) {
-        this._bounceToLeftListener = target;
-        this._bounceToLeftSelector = selector;
-    },
-
-    addBounceToTopEvent: function (target, selector) {
-        this._bounceToTopListener = target;
-        this._bounceToTopSelector = selector;
-    },
-
-    addBounceToRightEvent: function (target, selector) {
-        this._bounceToRightListener = target;
-        this._bounceToRightSelector = selector;
-    },
-
-    addBounceToBottomEvent: function (target, selector) {
-        this._bounceToBottomListener = target;
-        this._bounceToBottomSelector = selector;
-    },
-    /**************/
-
-// widget action
+    /**
+     * Set duration
+     * @param {number} duration
+     */
     actionWithDuration: function (duration) {
         this._duration = duration;
 
@@ -1335,7 +1168,6 @@ cc.UIDragPanel = cc.Layout.extend({
         }
     },
 
-// move by
     moveByWithDuration: function (duration, deltaPosition) {
         this.actionWithDuration(duration);
         this._positionDelta = deltaPosition;
@@ -1381,7 +1213,6 @@ cc.UIDragPanel = cc.Layout.extend({
         }
     },
 
-// move to
     moveToWithDuration: function (duration, position) {
         this.actionWithDuration(duration);
         this._endPosition = position;

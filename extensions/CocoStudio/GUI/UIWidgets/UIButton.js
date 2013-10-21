@@ -27,6 +27,11 @@ var PRESSEDRENDERERZ = 0;
 var DISABLEDRENDERERZ = 0;
 var TITLERENDERERZ = 1;
 
+/**
+ * Base class for cc.UIButton
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UIButton = cc.UIWidget.extend({
     _buttonNormalRenderer: null,
     _buttonClickedRenderer: null,
@@ -84,20 +89,23 @@ cc.UIButton = cc.UIWidget.extend({
         this._buttonNormalRenderer = cc.Sprite.create();
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
-        this._titleRenderer = cc.LabelTTF.create();
+        this._titleRenderer = cc.LabelTTF.create("");
         this._renderer.addChild(this._buttonNormalRenderer, NORMALRENDERERZ);
         this._renderer.addChild(this._buttonClickedRenderer, PRESSEDRENDERERZ);
         this._renderer.addChild(this._buttonDisableRenderer, DISABLEDRENDERERZ);
         this._renderer.addChild(this._titleRenderer, TITLERENDERERZ);
     },
 
+    /**
+     * Sets if button is using scale9 renderer.
+     * @param {Boolean} able
+     */
     setScale9Enabled: function (able) {
         if (this._scale9Enabled == able) {
             return;
         }
         this._brightStyle = cc.BrightStyle.NONE;
         this._scale9Enabled = able;
-
 
         this._renderer.removeChild(this._buttonNormalRenderer, true);
         this._renderer.removeChild(this._buttonClickedRenderer, true);
@@ -137,6 +145,10 @@ cc.UIButton = cc.UIWidget.extend({
         this.setBright(this._bright);
     },
 
+    /**
+     * ignoreContentAdaptWithSize
+     * @param {Boolean} ignore
+     */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
             cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
@@ -144,16 +156,29 @@ cc.UIButton = cc.UIWidget.extend({
         }
     },
 
+    /**
+     * Load textures for button.
+     * @param {String} normal
+     * @param {String} selected
+     * @param {String} disabled
+     * @param {cc.TextureResType} texType
+     */
     loadTextures: function (normal, selected, disabled, texType) {
         this.loadTextureNormal(normal, texType);
         this.loadTexturePressed(selected, texType);
         this.loadTextureDisabled(disabled, texType);
     },
 
+    /**
+     * Load normal state texture for button.
+     * @param {String} normal
+     * @param {cc.TextureResType} texType
+     */
     loadTextureNormal: function (normal, texType) {
-        if (!normal || strcmp(normal, "") == 0) {
+        if (!normal) {
             return;
         }
+        texType = texType||cc.TextureResType.LOCAL;
         this._normalFileName = normal;
         this._normalTexType = texType;
         if (this._scale9Enabled) {
@@ -189,10 +214,16 @@ cc.UIButton = cc.UIWidget.extend({
         this.normalTextureScaleChangedWithSize();
     },
 
+    /**
+     * Load selected state texture for button.
+     * @param {String} selected
+     * @param {cc.TextureResType} texType
+     */
     loadTexturePressed: function (selected, texType) {
         if (!selected) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
         if (this._scale9Enabled) {
@@ -228,10 +259,16 @@ cc.UIButton = cc.UIWidget.extend({
         this.pressedTextureScaleChangedWithSize();
     },
 
+    /**
+     * Load dark state texture for button.
+     * @param {String} disabled
+     * @param {cc.TextureResType} texType
+     */
     loadTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
         if (this._scale9Enabled) {
@@ -267,12 +304,20 @@ cc.UIButton = cc.UIWidget.extend({
         this.disabledTextureScaleChangedWithSize();
     },
 
+    /**
+     * Sets capinsets for button, if button is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsets: function (capInsets) {
         this.setCapInsetsNormalRenderer(capInsets);
         this.setCapInsetsPressedRenderer(capInsets);
         this.setCapInsetsDisabledRenderer(capInsets);
     },
 
+    /**
+     * Sets capinsets for button, if button is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsetsNormalRenderer: function (capInsets) {
         this._capInsetsNormal = capInsets;
         if (!this._scale9Enabled) {
@@ -281,6 +326,10 @@ cc.UIButton = cc.UIWidget.extend({
         this._buttonNormalRenderer.setCapInsets(capInsets);
     },
 
+    /**
+     * Sets capinsets for button, if button is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsetsPressedRenderer: function (capInsets) {
         this._capInsetsPressed = capInsets;
         if (!this._scale9Enabled) {
@@ -289,6 +338,10 @@ cc.UIButton = cc.UIWidget.extend({
         this._buttonClickedRenderer.setCapInsets(capInsets);
     },
 
+    /**
+     * Sets capinsets for button, if button is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsetsDisabledRenderer: function (capInsets) {
         this._capInsetsDisabled = capInsets;
         if (!this._scale9Enabled) {
@@ -337,42 +390,62 @@ cc.UIButton = cc.UIWidget.extend({
         this._buttonDisableRenderer.setVisible(true);
     },
 
-    setFlipX: function (flipX) {
-        this._titleRenderer.setFlipX(flipX);
+    /**
+     * override "setFlippedX" of widget.
+     * @param {Boolean} flipX
+     */
+    setFlippedX: function (flipX) {
+        this._titleRenderer.setFlippedX(flipX);
         if (this._scale9Enabled) {
             return;
         }
-        this._buttonNormalRenderer.setFlipX(flipX);
-        this._buttonClickedRenderer.setFlipX(flipX);
-        this._buttonDisableRenderer.setFlipX(flipX);
+        this._buttonNormalRenderer.setFlippedX(flipX);
+        this._buttonClickedRenderer.setFlippedX(flipX);
+        this._buttonDisableRenderer.setFlippedX(flipX);
     },
 
-    setFlipY: function (flipY) {
-        this._titleRenderer.setFlipY(flipY);
+    /**
+     * override "setFlippedY" of widget.
+     * @param {Boolean} flipY
+     */
+    setFlippedY: function (flipY) {
+        this._titleRenderer.setFlippedY(flipY);
         if (this._scale9Enabled) {
             return;
         }
-        this._buttonNormalRenderer.setFlipY(flipY);
-        this._buttonClickedRenderer.setFlipY(flipY);
-        this._buttonDisableRenderer.setFlipY(flipY);
+        this._buttonNormalRenderer.setFlippedY(flipY);
+        this._buttonClickedRenderer.setFlippedY(flipY);
+        this._buttonDisableRenderer.setFlippedY(flipY);
     },
 
-    isFlipX: function () {
+    /**
+     * override "isFlippedX" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedX: function () {
         if (this._scale9Enabled) {
             return false;
         }
-        return this._buttonNormalRenderer.isFlipX();
+        return this._buttonNormalRenderer.isFlippedX();
     },
 
-    isFlipY: function () {
+    /**
+     * override "isFlippedY" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedY: function () {
         if (this._scale9Enabled) {
             return false;
         }
-        return this._buttonNormalRenderer.isFlipY();
+        return this._buttonNormalRenderer.isFlippedY();
     },
 
+    /**
+     * override "setAnchorPoint" of widget.
+     * @param {cc.Point} pt
+     */
     setAnchorPoint: function (pt) {
-        cc.UIWidget.prototype.setAnchorPoint.call(pt);
+        cc.UIWidget.prototype.setAnchorPoint.call(this,pt);
         this._buttonNormalRenderer.setAnchorPoint(pt);
         this._buttonClickedRenderer.setAnchorPoint(pt);
         this._buttonDisableRenderer.setAnchorPoint(pt);
@@ -385,10 +458,18 @@ cc.UIButton = cc.UIWidget.extend({
         this.disabledTextureScaleChangedWithSize();
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._normalTextureSize;
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         if (this._bright) {
             switch (this._brightStyle) {
@@ -478,45 +559,86 @@ cc.UIButton = cc.UIWidget.extend({
         }
     },
 
+    /**
+     * Changes if button can be clicked zoom effect.
+     * @param {Boolean} enabled
+     */
     setPressedActionEnabled: function (enabled) {
         this._pressedActionEnabled = enabled;
     },
 
+    /**
+     * set title text
+     * @param {String} text
+     */
     setTitleText: function (text) {
         this._titleRenderer.setString(text);
     },
 
+    /**
+     * get title text
+     * @returns {String} text
+     */
     getTitleText: function () {
         return this._titleRenderer.getString();
     },
 
+    /**
+     * set title color
+     * @param {cc.c3b} color
+     */
     setTitleColor: function (color) {
         this._titleColor = color;
         this._titleRenderer.setColor(color);
     },
 
+    /**
+     * get title color
+     * @returns {cc.c3b}
+     */
     getTitleColor: function () {
         return this._titleRenderer.getColor();
     },
 
+    /**
+     * set title fontSize
+     * @param {cc.Size} size
+     */
     setTitleFontSize: function (size) {
         this._titleRenderer.setFontSize(size);
     },
 
+    /**
+     * get title fontSize
+     * @returns {cc.Size}
+     */
     getTitleFontSize: function () {
         return this._titleRenderer.getFontSize();
     },
 
+    /**
+     * set title fontName
+     * @param {String} fontName
+     */
     setTitleFontName: function (fontName) {
         this._titleRenderer.setFontName(fontName);
     },
 
+    /**
+     * get title fontName
+     * @returns {String}
+     */
     getTitleFontName: function () {
         return this._titleRenderer.getFontName();
     },
 
+    /**
+     * Sets color to widget
+     * It default change the color of widget's children.
+     * @param color
+     */
     setColor: function (color) {
-        cc.UIWidget.prototype.setColor(color);
+        cc.UIWidget.prototype.setColor.call(this,color);
         this.setTitleColor(this._titleColor);
     },
 

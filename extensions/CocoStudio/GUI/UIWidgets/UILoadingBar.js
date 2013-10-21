@@ -24,6 +24,11 @@
 
 cc.LoadingBarType = { Left: 0, Right: 1};
 
+/**
+ * Base class for cc.UILoadingBar
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UILoadingBar = cc.UIWidget.extend({
     _barType: null,
     _percent: 100,
@@ -56,6 +61,11 @@ cc.UILoadingBar = cc.UIWidget.extend({
         this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
     },
 
+    /**
+     * Changes the progress direction of loadingbar.
+     * LoadingBarTypeLeft means progress left to right, LoadingBarTypeRight otherwise.
+     * @param {cc.LoadingBarType} dir
+     */
     setDirection: function (dir) {
         if (this._barType == dir) {
             return;
@@ -67,27 +77,38 @@ cc.UILoadingBar = cc.UIWidget.extend({
                 this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
-                    this._barRenderer.setFlipX(false);
+                    this._barRenderer.setFlippedX(false);
                 }
                 break;
             case cc.LoadingBarType.Right:
                 this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
-                    this._barRenderer.setFlipX(true);
+                    this._barRenderer.setFlippedX(true);
                 }
                 break;
         }
     },
 
+    /**
+     * Gets the progress direction of loadingbar.
+     * LoadingBarTypeLeft means progress left to right, LoadingBarTypeRight otherwise.
+     * @returns {cc.LoadingBarType}
+     */
     getDirection: function () {
         return this._barType;
     },
 
+    /**
+     * Load texture for loadingbar.
+     * @param {String} texture
+     * @param {cc.TextureResType} texType
+     */
     loadTexture: function (texture, texType) {
         if (!texture) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._renderBarTexType = texType;
         this._textureFile = texture;
         switch (this._renderBarTexType) {
@@ -121,19 +142,23 @@ cc.UILoadingBar = cc.UIWidget.extend({
             case cc.LoadingBarType.Left:
                 this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
                 if (!this._scale9Enabled) {
-                    this._barRenderer.setFlipX(false);
+                    this._barRenderer.setFlippedX(false);
                 }
                 break;
             case cc.LoadingBarType.Right:
                 this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
                 if (!this._scale9Enabled) {
-                    this._barRenderer.setFlipX(true);
+                    this._barRenderer.setFlippedX(true);
                 }
                 break;
         }
         this.barRendererScaleChangedWithSize();
     },
 
+    /**
+     * Sets if loadingbar is using scale9 renderer.
+     * @param {Boolean} enabled
+     */
     setScale9Enabled: function (enabled) {
         if (this._scale9Enabled == enabled) {
             return;
@@ -160,6 +185,10 @@ cc.UILoadingBar = cc.UIWidget.extend({
         this.setCapInsets(this._capInsets);
     },
 
+    /**
+     * Sets capinsets for loadingbar, if loadingbar is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsets: function (capInsets) {
         this._capInsets = capInsets;
         if (!this._scale9Enabled) {
@@ -168,6 +197,10 @@ cc.UILoadingBar = cc.UIWidget.extend({
         this._barRenderer.setCapInsets(capInsets);
     },
 
+    /**
+     * Changes the progress direction of loadingbar.
+     * @param {number} percent
+     */
     setPercent: function (percent) {
         if (percent < 0 || percent > 100) {
             return;
@@ -197,6 +230,10 @@ cc.UILoadingBar = cc.UIWidget.extend({
             this._barRenderer.setTextureRect(cc.rect(x, y, this._barRendererTextureSize.width * res, this._barRendererTextureSize.height));
     },
 
+    /**
+     * Gets the progress direction of loadingbar.
+     * @returns {number}
+     */
     getPercent: function () {
         return this._percent;
     },
@@ -205,6 +242,10 @@ cc.UILoadingBar = cc.UIWidget.extend({
         this.barRendererScaleChangedWithSize();
     },
 
+    /**
+     * override "ignoreContentAdaptWithSize" method of widget.
+     * @param {Boolean}ignore
+     */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
             cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
@@ -212,10 +253,18 @@ cc.UILoadingBar = cc.UIWidget.extend({
         }
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._barRendererTextureSize;
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         return this._barRenderer;
     },

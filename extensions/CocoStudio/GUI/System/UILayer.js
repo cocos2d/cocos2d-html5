@@ -22,13 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UILayer
+ * @class
+ * @extends cc.Layer
+ */
 cc.UILayer = cc.Layer.extend({
     _rootWidget: null,
     _inputManager: null,
     init: function () {
         if (cc.Layer.prototype.init.call(this)) {
             this._rootWidget = cc.UIRootWidget.create();
-            this._rootWidget.retain();
             this._rootWidget.onEnter();
             this.addChild(this._rootWidget.getRenderer());
             this._inputManager = new cc.UIInputManager();
@@ -47,7 +51,7 @@ cc.UILayer = cc.Layer.extend({
 
     onExit: function () {
         this.setTouchEnabled(false);
-        cc.Layer.onExit();
+        cc.Layer.prototype.onExit.call(this);
     },
 
     onEnterTransitionDidFinish: function () {
@@ -63,7 +67,7 @@ cc.UILayer = cc.Layer.extend({
     },
 
     setVisible: function (visible) {
-        cc.Layer.prototype.setVisible.call(visible);
+        cc.Layer.prototype.setVisible.call(this,visible);
         this._rootWidget.setVisible(visible);
     },
 

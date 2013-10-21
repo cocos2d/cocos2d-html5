@@ -24,6 +24,11 @@
 
 cc.SliderEventType = {PERCENTCHANGED: 0};
 
+/**
+ * Base class for cc.UISlider
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UISlider = cc.UIWidget.extend({
     _barRenderer: null,
     _progressBarRenderer: null,
@@ -50,9 +55,6 @@ cc.UISlider = cc.UIWidget.extend({
     _ballNTexType: null,
     _ballPTexType: null,
     _ballDTexType: null,
-    /*Compatible*/
-    _percentListener: null,
-    _percentSelector: null,
     ctor: function () {
         cc.UIWidget.prototype.ctor.call(this);
         this._barRenderer = null;
@@ -80,9 +82,6 @@ cc.UISlider = cc.UIWidget.extend({
         this._ballNTexType = cc.TextureResType.LOCAL;
         this._ballPTexType = cc.TextureResType.LOCAL;
         this._ballDTexType = cc.TextureResType.LOCAL;
-        /*Compatible*/
-        this._percentListener = null;
-        this._percentSelector = null;
     },
 
     initRenderer: function () {
@@ -104,10 +103,16 @@ cc.UISlider = cc.UIWidget.extend({
         this._renderer.addChild(this._slidBallRenderer);
     },
 
+    /**
+     * Load texture for slider bar.
+     * @param {String} fileName
+     * @param {cc.TextureResType} texType
+     */
     loadBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._textureFile = fileName;
         this._barTexType = texType;
         switch (this._barTexType) {
@@ -131,10 +136,16 @@ cc.UISlider = cc.UIWidget.extend({
         this.barRendererScaleChangedWithSize();
     },
 
+    /**
+     * Load dark state texture for slider progress bar.
+     * @param {String} fileName
+     * @param {cc.TextureResType} texType
+     */
     loadProgressBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._progressBarTextureFile = fileName;
         this._progressBarTexType = texType;
         switch (this._progressBarTexType) {
@@ -160,6 +171,10 @@ cc.UISlider = cc.UIWidget.extend({
         this.progressBarRendererScaleChangedWithSize();
     },
 
+    /**
+     * Sets if slider is using scale9 renderer.
+     * @param {Boolean} able
+     */
     setScale9Enabled: function (able) {
         if (this._scale9Enabled == able) {
             return;
@@ -194,6 +209,10 @@ cc.UISlider = cc.UIWidget.extend({
         this.setCapInsetProgressBarRebderer(this._capInsetsProgressBarRenderer);
     },
 
+    /**
+     * override "ignoreContentAdaptWithSize" method of widget.
+     * @param {Boolean} ignore
+     */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
             cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
@@ -201,11 +220,19 @@ cc.UISlider = cc.UIWidget.extend({
         }
     },
 
+    /**
+     * Sets capinsets for slider, if slider is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsets: function (capInsets) {
         this.setCapInsetsBarRenderer(capInsets);
         this.setCapInsetProgressBarRebderer(capInsets);
     },
 
+    /**
+     * Sets capinsets for slider, if slider is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsetsBarRenderer: function (capInsets) {
         this._capInsetsBarRenderer = capInsets;
         if (!this._scale9Enabled) {
@@ -214,6 +241,10 @@ cc.UISlider = cc.UIWidget.extend({
         this._barRenderer.setCapInsets(capInsets);
     },
 
+    /**
+     * Sets capinsets for slider, if slider is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsetProgressBarRebderer: function (capInsets) {
         this._capInsetsProgressBarRenderer = capInsets;
         if (!this._scale9Enabled) {
@@ -222,16 +253,29 @@ cc.UISlider = cc.UIWidget.extend({
         this._progressBarRenderer.setCapInsets(capInsets);
     },
 
+    /**
+     * Load textures for slider ball.
+     * @param {String} normal
+     * @param {String} pressed
+     * @param {String} disabled
+     * @param {cc.TextureResType} texType
+     */
     loadSlidBallTextures: function (normal, pressed, disabled, texType) {
         this.loadSlidBallTextureNormal(normal, texType);
         this.loadSlidBallTexturePressed(pressed, texType);
         this.loadSlidBallTextureDisabled(disabled, texType);
     },
 
+    /**
+     * Load normal state texture for slider ball.
+     * @param {String} normal
+     * @param {cc.TextureResType} texType
+     */
     loadSlidBallTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._slidBallNormalTextureFile = normal;
         this._ballNTexType = texType;
         switch (this._ballNTexType) {
@@ -248,10 +292,16 @@ cc.UISlider = cc.UIWidget.extend({
         this._slidBallNormalRenderer.setOpacity(this.getOpacity());
     },
 
+    /**
+     * Load selected state texture for slider ball.
+     * @param {String} pressed
+     * @param {cc.TextureResType} texType
+     */
     loadSlidBallTexturePressed: function (pressed, texType) {
         if (!pressed) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._slidBallPressedTextureFile = pressed;
         this._ballPTexType = texType;
         switch (this._ballPTexType) {
@@ -268,10 +318,16 @@ cc.UISlider = cc.UIWidget.extend({
         this._slidBallPressedRenderer.setOpacity(this.getOpacity());
     },
 
+    /**
+     * Load dark state texture for slider ball.
+     * @param {String} disabled
+     * @param {cc.TextureResType} texType
+     */
     loadSlidBallTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._slidBallDisabledTextureFile = disabled;
         this._ballDTexType = texType;
         switch (this._ballDTexType) {
@@ -288,6 +344,10 @@ cc.UISlider = cc.UIWidget.extend({
         this._slidBallDisabledRenderer.setOpacity(this.getOpacity());
     },
 
+    /**
+     * Changes the progress direction of slider.
+     * @param {number} percent
+     */
     setPercent: function (percent) {
         if (percent > 100) {
             percent = 100;
@@ -297,7 +357,7 @@ cc.UISlider = cc.UIWidget.extend({
         }
         this._percent = percent;
         var dis = this._barLength * (percent / 100.0);
-        this._slidBallRenderer.setPosition(ccp(-this._barLength / 2.0 + dis, 0.0));
+        this._slidBallRenderer.setPosition(cc.p(-this._barLength / 2.0 + dis, 0.0));
         if (this._scale9Enabled) {
             this._progressBarRenderer.setPreferredSize(cc.size(dis, this._progressBarTextureSize.height));
         }
@@ -315,12 +375,12 @@ cc.UISlider = cc.UIWidget.extend({
                 default:
                     break;
             }
-            this._progressBarRenderer.setTextureRect(CCRectMake(x, y, this._progressBarTextureSize.width * (percent / 100.0), this._progressBarTextureSize.height));
+            this._progressBarRenderer.setTextureRect(cc.rect(x, y, this._progressBarTextureSize.width * (percent / 100.0), this._progressBarTextureSize.height));
         }
     },
 
     onTouchBegan: function (touchPoint) {
-        var pass = cc.UIWidget.prototype.onTouchBegan(touchPoint);
+        var pass = cc.UIWidget.prototype.onTouchBegan.call(this,touchPoint);
         var nsp = this._renderer.convertToNodeSpace(touchPoint);
         this.setPercent(this.getPercentWithBallPos(nsp.x));
         this.percentChangedEvent();
@@ -342,26 +402,35 @@ cc.UISlider = cc.UIWidget.extend({
         cc.UIWidget.prototype.onTouchCancelled.call(this, touchPoint);
     },
 
+    /**
+     * get percent with ballPos
+     * @param {cc.Point} px
+     * @returns {number}
+     */
     getPercentWithBallPos: function (px) {
         return (((px - (-this._barLength / 2.0)) / this._barLength) * 100.0);
     },
 
+    /**
+     * add event listener
+     * @param {Object} target
+     * @param {Function} selector
+     */
     addEventListener: function (target, selector) {
         this._slidPercentListener = target;
         this._slidPercentSelector = selector;
     },
 
     percentChangedEvent: function () {
-        /*Compatible*/
-        if (this._percentListener && this._percentSelector) {
-            this._percentSelector.call(this._percentListener, this);
-        }
-        /************/
         if (this._slidPercentListener && this._slidPercentSelector) {
             this._slidPercentSelector.call(this._slidPercentListener, this, cc.SliderEventType.PERCENTCHANGED);
         }
     },
 
+    /**
+     * Gets the progress direction of slider.
+     * @returns {number}
+     */
     getPercent: function () {
         return this._percent;
     },
@@ -371,10 +440,18 @@ cc.UISlider = cc.UIWidget.extend({
         this.progressBarRendererScaleChangedWithSize();
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._barRenderer.getContentSize();
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         return this._barRenderer;
     },
@@ -458,3 +535,10 @@ cc.UISlider = cc.UIWidget.extend({
         return "Slider";
     }
 });
+cc.UISlider.create = function () {
+    var uiSlider = new cc.UISlider();
+    if (uiSlider && uiSlider.init()) {
+        return uiSlider;
+    }
+    return null;
+};

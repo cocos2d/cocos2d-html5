@@ -31,12 +31,13 @@ cc.UINodeContainer=cc.UIWidget;
 cc.PanelColorType=cc.LayoutBackGroundColorType;
 
 /**
- *   @js NA
- *   @lua NA
+ * Base class for cc.UIZoomButton
+ * @class
+ * @extends cc.UITextButton
  */
 cc.UIZoomButton = cc.UITextButton.extend({
     init: function () {
-        if (cc.UITextButton.prototype.init()) {
+        if (cc.UITextButton.prototype.init.call(this)) {
             this.setScale9Enabled(true);
             this.setPressedActionEnabled(true);
             return true;

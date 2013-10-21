@@ -47,6 +47,11 @@ cc.ListViewEventType = {
     UPDATE_CHILD: 1
 };
 
+/**
+ * Base class for cc.UIListView
+ * @class
+ * @extends cc.Layout
+ */
 cc.UIListView = cc.Layout.extend({
     _direction: null,
     _moveDirection: null,
@@ -64,10 +69,8 @@ cc.UIListView = cc.Layout.extend({
     _slidTime: 0,
     _moveChildPoint: null,
     _childFocusCancelOffset: 0,
-
     _childPool: [],
     _updatePool: [],
-
     _dataLength: 0,
     _begin: 0,
     _end: 0,
@@ -83,14 +86,8 @@ cc.UIListView = cc.Layout.extend({
 
     _eventListener: null,
     _eventSelector: null,
-
-    /*compatible*/
-    _initChildListener: null,
-    _initChildSelector: null,
-    _updateChildListener: null,
-    _updateChildSelector: null,
     ctor: function () {
-        cc.Layout.ctor.prototype.call(this);
+        cc.Layout.prototype.ctor.call(this);
 
         this._direction = cc.ListViewDirection.VERTICAL;
         this._moveDirection = cc.ListViewMoveDirection.NONE;
@@ -124,11 +121,6 @@ cc.UIListView = cc.Layout.extend({
         this._disBetweenChild = 0;
         this._eventListener = null;
         this._eventSelector = null;
-        /*compatible*/
-        this._initChildListener = null;
-        this._initChildSelector = null;
-        this._updateChildListener = null;
-        this._updateChildSelector = null;
     },
     init: function () {
         if (cc.Layout.prototype.init.call(this)) {
@@ -152,22 +144,35 @@ cc.UIListView = cc.Layout.extend({
         this._rightBoundary = this._size.width;
     },
 
+    /**
+     * Add widget child override
+     * @param {cc.UIWidget} widget
+     * @returns {boolean}
+     */
     addChild: function (widget) {
-        cc.Layout.prototype.addChild.call(widget);
+        cc.Layout.prototype.addChild.call(this,widget);
         this.resetProperty();
         return true;
     },
 
+    /**
+     * remove all widget children override
+     */
     removeAllChildren: function () {
         this._updatePool = [];
         this._childPool = [];
         cc.Layout.prototype.removeAllChildren.call(this);
     },
 
+    /**
+     *  remove widget child override
+     * @param {cc.UIWidget} child
+     * @returns {boolean}
+     */
     removeChild: function (child) {
         var value = false;
 
-        if (cc.Layout.prototype.removeChild.call(child)) {
+        if (cc.Layout.prototype.removeChild.call(this,child)) {
             value = true;
             this.resetProperty();
         }
@@ -176,23 +181,23 @@ cc.UIListView = cc.Layout.extend({
     },
 
     onTouchBegan: function (touchPoint) {
-        var pass = cc.Layout.prototype.onTouchBegan.call(touchPoint);
+        var pass = cc.Layout.prototype.onTouchBegan.call(this,touchPoint);
         this.handlePressLogic(touchPoint);
         return pass;
     },
 
     onTouchMoved: function (touchPoint) {
-        cc.Layout.prototype.onTouchMoved.call(touchPoint);
+        cc.Layout.prototype.onTouchMoved.call(this,touchPoint);
         this.handleMoveLogic(touchPoint);
     },
 
     onTouchEnded: function (touchPoint) {
-        cc.Layout.prototype.onTouchEnded.call(this.touchPoint);
+        cc.Layout.prototype.onTouchEnded.call(this,touchPoint);
         this.handleReleaseLogic(touchPoint);
     },
 
     onTouchCancelled: function (touchPoint) {
-        cc.Layout.prototype.onTouchCancelled.call(touchPoint);
+        cc.Layout.prototype.onTouchCancelled.call(this,touchPoint);
     },
 
     onTouchLongClicked: function (touchPoint) {
@@ -206,10 +211,18 @@ cc.UIListView = cc.Layout.extend({
         this.recordSlidTime(dt);
     },
 
+    /**
+     * direction setter
+     * @param {cc.ListViewDirection} dir
+     */
     setDirection: function (dir) {
         this._direction = dir;
     },
 
+    /**
+     * direction getter
+     * @param {cc.ListViewDirection} dir
+     */
     getDirection: function () {
         return this._direction;
     },
@@ -377,24 +390,26 @@ cc.UIListView = cc.Layout.extend({
         this.endRecordSlidAction();
     },
 
+    /**
+     * Intercept touch event
+     * @param {number} handleState
+     * @param {cc.UIWidget} sender
+     * @param {cc.Point} touchPoint
+     */
     interceptTouchEvent: function (handleState, sender, touchPoint) {
         switch (handleState) {
             case 0:
                 this.handlePressLogic(touchPoint);
                 break;
-
             case 1:
-            {
                 var offset = 0;
                 switch (this._direction) {
                     case cc.ListViewDirection.VERTICAL: // vertical
                         offset = Math.abs(sender.getTouchStartPos().y - touchPoint.y);
                         break;
-
                     case cc.ListViewDirection.HORIZONTAL: // horizontal
                         offset = Math.abs(sender.getTouchStartPos().x - touchPoint.x);
                         break;
-
                     default:
                         break;
                 }
@@ -402,9 +417,7 @@ cc.UIListView = cc.Layout.extend({
                     sender.setFocused(false);
                     this.handleMoveLogic(touchPoint);
                 }
-            }
                 break;
-
             case 2:
                 this.handleReleaseLogic(touchPoint);
                 break;
@@ -414,6 +427,12 @@ cc.UIListView = cc.Layout.extend({
         }
     },
 
+    /**
+     *
+     * @param {number} handleState
+     * @param {cc.UIWidget} sender
+     * @param {cc.Point} touchPoint
+     */
     checkChildInfo: function (handleState, sender, touchPoint) {
         this.interceptTouchEvent(handleState, sender, touchPoint);
     },
@@ -421,32 +440,128 @@ cc.UIListView = cc.Layout.extend({
     moveChildren: function (offset) {
         switch (this._direction) {
             case cc.ListViewDirection.VERTICAL: // vertical
-            {
                 var arrayChildren = this._children;
                 for (var i = 0; i < arrayChildren.length; i++) {
                     var child = arrayChildren[i];
                     var pos = child.getPosition();
-                    child.setPosition(pos.x, pos.y + offset);
+                    child.setPosition(cc.p(pos.x, pos.y + offset));
                 }
                 break;
-            }
-
             case cc.ListViewDirection.HORIZONTAL: // horizontal
-            {
                 var arrayChildren = this._children;
                 for (var i = 0; i < arrayChildren.length; i++) {
                     var child = arrayChildren[i];
                     var pos = child.getPosition();
-                    child.setPosition(pos.x + offset, pos.y);
+                    child.setPosition(cc.p(pos.x + offset, pos.y));
                 }
                 break;
-            }
-
             default:
                 break;
         }
     },
 
+    scroll_VERTICAL_UP:function(realOffset){
+        realOffset = Math.min(realOffset, this._disBetweenChild);
+
+        var child_last = this._childPool[this._childPool.length - 1];
+        var child_last_bottom = child_last.getBottomInParent();
+        var scroll_bottom = this._bottomBoundary;
+
+        if (this._end == this._dataLength - 1) {
+            if (realOffset > scroll_bottom + this._disBoundaryToChild_0 - child_last_bottom) {
+                realOffset = scroll_bottom + this._disBoundaryToChild_0 - child_last_bottom;
+            }
+            this.moveChildren(realOffset);
+            return false;
+        }
+        this.moveChildren(realOffset);
+
+        if (this._end < this._dataLength - 1) {
+            this.collectOverTopChild();
+            var count = this._overTopArray.length;
+            if (count > 0) {
+                this.updateChild();
+                this.setLoopPosition();
+                this._overTopArray = [];
+            }
+        }
+    },
+    scroll_VERTICAL_DOWN:function(realOffset){
+        realOffset = Math.max(realOffset, -this._disBetweenChild);
+
+        var child_0 = this._childPool[0];
+        var child_0_top = child_0.getTopInParent();
+        var scroll_top = this._topBoundary;
+
+        if (this._begin == 0) {
+            if (realOffset < scroll_top - this._disBoundaryToChild_0 - child_0_top) {
+                realOffset = scroll_top - this._disBoundaryToChild_0 - child_0_top;
+            }
+            this.moveChildren(realOffset);
+            return false;
+        }
+        this.moveChildren(realOffset);
+
+        if (this._begin > 0) {
+            this.collectOverBottomChild();
+            var count = this._overBottomArray.length;
+            if (count > 0) {
+                this.updateChild();
+                this.setLoopPosition();
+                this._overBottomArray = [];
+            }
+        }
+    },
+    scroll_HORIZONTAL_LEFT:function(realOffset){
+        realOffset = Math.max(realOffset, -this._disBetweenChild);
+
+        var child_last = this._childPool[this._childPool.length - 1];
+        var child_last_right = child_last.getRightInParent();
+        var scroll_right = this._rightBoundary;
+
+        if (this._end == this._dataLength - 1) {
+            if (realOffset < scroll_right - this._disBoundaryToChild_0 - child_last_right) {
+                realOffset = scroll_right - this._disBoundaryToChild_0 - child_last_right;
+            }
+            this.moveChildren(realOffset);
+            return false;
+        }
+        this.moveChildren(realOffset);
+
+        if (this._end < this._dataLength - 1) {
+            this.collectOverLeftChild();
+            var count = this._overLeftArray.length;
+            if (count > 0) {
+                this.updateChild();
+                this.setLoopPosition();
+                this._overLeftArray = [];
+            }
+        }
+    },
+    scroll_HORIZONTAL_RIGHT:function(realOffset){
+        realOffset = Math.min(realOffset, this._disBetweenChild);
+
+        var child_0 = this._childPool[0];
+        var child_0_left = child_0.getLeftInParent();
+        var scroll_left = this._leftBoundary;
+
+        if (this._begin == 0) {
+            if (realOffset > scroll_left + this._disBoundaryToChild_0 - child_0_left) {
+                realOffset = scroll_left + this._disBoundaryToChild_0 - child_0_left;
+            }
+            this.moveChildren(realOffset);
+            return false;
+        }
+        this.moveChildren(realOffset);
+
+        this.collectOverRightChild();
+        var count = this._overRightArray.length;
+        if (count > 0) {
+            this.updateChild();
+            this.setLoopPosition();
+            this._overRightArray = [];
+        }
+    },
     scrollChildren: function (touchOffset) {
         var realOffset = touchOffset;
 
@@ -454,63 +569,11 @@ cc.UIListView = cc.Layout.extend({
             case cc.ListViewDirection.VERTICAL: // vertical
                 switch (this._moveDirection) {
                     case cc.ListViewMoveDirection.UP: // up
-                    {
-                        realOffset = Math.min(realOffset, this._disBetweenChild);
-
-                        var child_last = this._childPool[this._childPool.length - 1];
-                        var child_last_bottom = child_last.getBottomInParent();
-                        var scroll_bottom = this._bottomBoundary;
-
-                        if (this._end == this._dataLength - 1) {
-                            if (realOffset > scroll_bottom + this._disBoundaryToChild_0 - child_last_bottom) {
-                                realOffset = scroll_bottom + this._disBoundaryToChild_0 - child_last_bottom;
-                            }
-                            this.moveChildren(realOffset);
-                            return false;
-                        }
-                        this.moveChildren(realOffset);
-
-                        if (this._end < this._dataLength - 1) {
-                            this.collectOverTopChild();
-                            var count = this._overTopArray.length;
-                            if (count > 0) {
-                                this.updateChild();
-                                this.setLoopPosition();
-                                this._overTopArray = [];
-                            }
-                        }
-                    }
+                        this.scroll_VERTICAL_UP(realOffset);
                         break;
-
                     case cc.ListViewMoveDirection.DOWN: // down
-                    {
-                        realOffset = Math.max(realOffset, -this._disBetweenChild);
-
-                        var child_0 = this._childPool[0];
-                        var child_0_top = child_0.getTopInParent();
-                        var scroll_top = this._topBoundary;
-
-                        if (this._begin == 0) {
-                            if (realOffset < scroll_top - this._disBoundaryToChild_0 - child_0_top) {
-                                realOffset = scroll_top - this._disBoundaryToChild_0 - child_0_top;
-                            }
-                            this.moveChildren(realOffset);
-                            return false;
-                        }
-                        this.moveChildren(realOffset);
-
-                        if (this._begin > 0) {
-                            this.collectOverBottomChild();
-                            var count = this._overBottomArray.length;
-                            if (count > 0) {
-                                this.updateChild();
-                                this.setLoopPosition();
-                                this._overBottomArray = [];
-                            }
-                        }
-                    }
+                        this.scroll_VERTICAL_DOWN(realOffset);
                         break;
-
                     default:
                         break;
                 }
@@ -520,71 +583,19 @@ cc.UIListView = cc.Layout.extend({
             case cc.ListViewDirection.HORIZONTAL: // horizontal
                 switch (this._moveDirection) {
                     case cc.ListViewMoveDirection.LEFT: // left
-                    {
-                        realOffset = Math.max(realOffset, -this._disBetweenChild);
-
-                        var child_last = this._childPool[this._childPool.length - 1];
-                        var child_last_right = child_last.getRightInParent();
-                        var scroll_right = this._rightBoundary;
-
-                        if (this._end == this._dataLength - 1) {
-                            if (realOffset < scroll_right - this._disBoundaryToChild_0 - child_last_right) {
-                                realOffset = scroll_right - this._disBoundaryToChild_0 - child_last_right;
-                            }
-                            this.moveChildren(realOffset);
-                            return false;
-                        }
-                        this.moveChildren(realOffset);
-
-                        if (this._end < this._dataLength - 1) {
-                            this.collectOverLeftChild();
-                            var count = this._overLeftArray.length;
-                            if (count > 0) {
-                                this.updateChild();
-                                this.setLoopPosition();
-                                this._overLeftArray = [];
-                            }
-                        }
-                    }
+                        this.scroll_HORIZONTAL_LEFT(realOffset);
                         break;
-
                     case cc.ListViewMoveDirection.RIGHT: // right
-                    {
-                        realOffset = Math.min(realOffset, this._disBetweenChild);
-
-                        var child_0 = this._childPool[0];
-                        var child_0_left = child_0.getLeftInParent();
-                        var scroll_left = this._leftBoundary;
-
-                        if (this._begin == 0) {
-                            if (realOffset > scroll_left + this._disBoundaryToChild_0 - child_0_left) {
-                                realOffset = scroll_left + this._disBoundaryToChild_0 - child_0_left;
-                            }
-                            this.moveChildren(realOffset);
-                            return false;
-                        }
-                        this.moveChildren(realOffset);
-
-                        this.collectOverRightChild();
-                        var count = this._overRightArray.length;
-                        if (count > 0) {
-                            this.updateChild();
-                            this.setLoopPosition();
-                            this._overRightArray = [];
-                        }
-                    }
+                        this.scroll_HORIZONTAL_RIGHT(realOffset);
                         break;
-
                     default:
                         break;
                 }
                 return true;
                 break;
-
             default:
                 break;
         }
-
         return false;
     },
 
@@ -593,7 +604,6 @@ cc.UIListView = cc.Layout.extend({
             case cc.ListViewDirection.VERTICAL: // vertical
                 switch (this._moveDirection) {
                     case cc.ListViewMoveDirection.UP: // up
-                    {
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -602,11 +612,9 @@ cc.UIListView = cc.Layout.extend({
                         if (!this.scrollChildren(curDis)) {
                             this.stopAutoScrollChildren();
                         }
-                    }
                         break;
 
                     case cc.ListViewMoveDirection.DOWN: // down
-                    {
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -615,7 +623,6 @@ cc.UIListView = cc.Layout.extend({
                         if (!this.scrollChildren(-curDis)) {
                             this.stopAutoScrollChildren();
                         }
-                    }
                         break;
 
                     default:
@@ -626,7 +633,6 @@ cc.UIListView = cc.Layout.extend({
             case cc.ListViewDirection.HORIZONTAL: // horizontal
                 switch (this._moveDirection) {
                     case cc.ListViewMoveDirection.LEFT: // left
-                    {
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -635,11 +641,9 @@ cc.UIListView = cc.Layout.extend({
                         if (!this.scrollChildren(-curDis)) {
                             this.stopAutoScrollChildren();
                         }
-                    }
                         break;
 
                     case cc.ListViewMoveDirection.RIGHT: // right
-                    {
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -648,7 +652,6 @@ cc.UIListView = cc.Layout.extend({
                         if (!this.scrollChildren(curDis)) {
                             this.stopAutoScrollChildren();
                         }
-                    }
                         break;
 
                     default:
@@ -661,8 +664,7 @@ cc.UIListView = cc.Layout.extend({
         }
     },
 
-    getCurAutoScrollDistance: function (time) {
-        var dt = time;
+    getCurAutoScrollDistance: function (dt) {
         this._autoScrollOriginalSpeed -= this._autoScrollAcceleration * dt;
         return this._autoScrollOriginalSpeed * dt;
     },
@@ -779,11 +781,11 @@ cc.UIListView = cc.Layout.extend({
                 switch (this._moveDirection) {
                     case cc.ListViewMoveDirection.UP: // up
                         var child = this._childPool.shift();
-                        this._updatePool[0] = child;
+                        cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
                     case cc.ListViewMoveDirection.DOWN: // down
                         var child = this._childPool.pop();
-                        this._updatePool.push(child, 0);
+                        cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
                     default:
                         break;
@@ -794,12 +796,12 @@ cc.UIListView = cc.Layout.extend({
                 switch (this._moveDirection) {
                     case cc.ListViewMoveDirection.LEFT: // left
                         var child = this._childPool.shift();
-                        this._updatePool[0] = child;
+                        cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
 
                     case cc.ListViewMoveDirection.RIGHT: // right
                         var child = this._childPool.pop();
-                        this._updatePool.push(child, 0);
+                        cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
 
                     default:
@@ -1147,7 +1149,6 @@ cc.UIListView = cc.Layout.extend({
                         break;
 
                     case cc.ListViewMoveDirection.RIGHT: // right
-                    {
                         var arrayChildren = this._children;
                         var childrenCount = arrayChildren.length;
 
@@ -1182,7 +1183,6 @@ cc.UIListView = cc.Layout.extend({
                                 }
                             }
                         }
-                    }
                         break;
 
                     default:
@@ -1228,17 +1228,13 @@ cc.UIListView = cc.Layout.extend({
                             this.getAndCallback();
                         }
                         break;
-
                     case cc.ListViewMoveDirection.RIGHT: // right
-                    {
                         var count = this._overRightArray.length;
                         for (var i = 0; i < count; ++i) {
                             this.pushChildToPool();
                             this.getAndCallback();
                         }
-                    }
                         break;
-
                     default:
                         break;
                 }
@@ -1249,22 +1245,12 @@ cc.UIListView = cc.Layout.extend({
     },
 
     initChildEvent: function () {
-        /*Compatible*/
-        if (this._initChildListener && this._initChildSelector) {
-            this._initChildSelector.call(this._initChildListener, this);
-        }
-        /************/
         if (this._eventListener && this._eventSelector) {
             this._eventSelector.call(this._eventListener, this, cc.ListViewEventType.INIT_CHILD);
         }
     },
 
     updateChildEvent: function () {
-        /*Compatible*/
-        if (this._updateChildListener && this._updateChildSelector) {
-            this._updateChildSelector.call(this._updateChildListener, this);
-        }
-        /************/
         if (this._eventListener && this._eventSelector) {
             this._eventSelector.call(this._eventListener, this, cc.ListViewEventType.UPDATE_CHILD);
         }
@@ -1275,18 +1261,6 @@ cc.UIListView = cc.Layout.extend({
         this._eventSelector = selector;
     },
 
-    /*Compatible*/
-    addInitChildEvent: function (target, seletor) {
-        this._initChildListener = target;
-        this._initChildSelector = seletor;
-    },
-
-    addUpdateChildEvent: function (target, selector) {
-        this._updateChildListener = target;
-        this._updateChildSelector = selector;
-    },
-
-    /************/
     getDescription: function () {
         return "ListView";
     }

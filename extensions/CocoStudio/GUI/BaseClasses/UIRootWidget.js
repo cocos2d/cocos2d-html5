@@ -22,7 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UIRootWidget
+ * @class
+ * @extends cc.Layout
+ */
 cc.UIRootWidget = cc.Layout.extend({
+    /**
+     * initializes state of widget.
+     * @returns {boolean}
+     */
     init: function () {
         if (cc.Layout.prototype.init.call(this)) {
             this.setSize(cc.Director.getInstance().getWinSize());
@@ -31,6 +40,10 @@ cc.UIRootWidget = cc.Layout.extend({
         return false;
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "RootWidget";
     }

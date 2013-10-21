@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Get CocoStudio version
+ * @returns {string}
+ * @constructor
+ */
 cc.CocosGUIVersion = function(){
     return "CocosGUI v1.0.0.0";
 };

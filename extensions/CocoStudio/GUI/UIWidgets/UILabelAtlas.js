@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UICCLabelAtlas
+ * @class
+ * @extends cc.LabelAtlas
+ */
 cc.UICCLabelAtlas = cc.LabelAtlas.extend({
 
     setProperty: function (string, charMapFile, itemWidth, itemHeight, startCharMap) {
@@ -52,6 +57,11 @@ cc.UICCLabelAtlas.create = function () {
     return null;
 };
 
+/**
+ * Base class for cc.UILabelAtlas
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UILabelAtlas = cc.UIWidget.extend({
     _labelAtlasRenderer: null,
     ctor: function () {
@@ -65,21 +75,42 @@ cc.UILabelAtlas = cc.UIWidget.extend({
         this._renderer.addChild(this._laberAtlasRenderer);
     },
 
+    /**
+     * initializes the UILabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
+     * @param {String} stringValue
+     * @param {String} charMapFile
+     * @param {number} itemWidth
+     * @param {number} itemHeight
+     * @param {String} startCharMap
+     * @param {Boolean} useSpriteFrame
+     */
     setProperty: function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap, useSpriteFrame) {
         this._laberAtlasRenderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
         this.updateAnchorPoint();
         this.labelAtlasScaleChangedWithSize();
     },
 
+    /**
+     * set string value for labelatlas.
+     * @param {String} value
+     */
     setStringValue: function (value) {
         this._laberAtlasRenderer.setString(value);
         this.labelAtlasScaleChangedWithSize();
     },
 
+    /**
+     * get string value for labelatlas.
+     * @returns {String}
+     */
     getStringValue: function () {
         return this._laberAtlasRenderer.getString();
     },
 
+    /**
+     * override "setAnchorPoint" of widget.
+     * @param {cc.Point} pt
+     */
     setAnchorPoint: function (pt) {
         cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._laberAtlasRenderer.setAnchorPoint(cc.p(pt.x, pt.y));
@@ -89,10 +120,18 @@ cc.UILabelAtlas = cc.UIWidget.extend({
         this.labelAtlasScaleChangedWithSize();
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._laberAtlasRenderer.getContentSize();
     },
 
+    /**
+     * override "getVirtualRenderer" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         return this._laberAtlasRenderer;
     },

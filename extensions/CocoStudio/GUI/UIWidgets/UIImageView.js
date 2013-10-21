@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UIButton
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UIImageView = cc.UIWidget.extend({
     _clickCount: 0,
     _clickTimeInterval: 0,
@@ -57,10 +62,16 @@ cc.UIImageView = cc.UIWidget.extend({
         this._renderer.addChild(this._imageRenderer);
     },
 
+    /**
+     * Load textures for button.
+     * @param {String} fileName
+     * @param {cc.TextureResType} texType
+     */
     loadTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._textureFile = fileName;
         this._imageTexType = texType;
         switch (this._imageTexType) {
@@ -96,6 +107,10 @@ cc.UIImageView = cc.UIWidget.extend({
         this.imageTextureScaleChangedWithSize();
     },
 
+    /**
+     * set texture rect
+     * @param {cc.Rect} rect
+     */
     setTextureRect: function (rect) {
         if (this._scale9Enabled) {
         }
@@ -168,32 +183,52 @@ cc.UIImageView = cc.UIWidget.extend({
         this._doubleClickEnabled = bool;
     },
 
-    setFlipX: function (flipX) {
+    /**
+     * Sets whether the widget should be flipped horizontally or not.
+     * @param {Boolean} flipX
+     */
+    setFlippedX: function (flipX) {
         if (!this._scale9Enabled) {
-            this._imageRenderer.setFlipX(flipX);
+            this._imageRenderer.setFlippedX(flipX);
         }
     },
 
-    setFlipY: function (flipY) {
+    /**
+     * override "setFlippedY" of widget.
+     * @param {Boolean} flipY
+     */
+    setFlippedY: function (flipY) {
         if (!this._scale9Enabled) {
-            this._imageRenderer.setFlipY(flipY);
+            this._imageRenderer.setFlippedY(flipY);
         }
     },
 
-    isFlipX: function () {
+    /**
+     * override "isFlippedX" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedX: function () {
         if (this._scale9Enabled)
             return false;
         else
-            return this._imageRenderer.isFlipX();
+            return this._imageRenderer.isFlippedX();
     },
 
-    isFlipY: function () {
+    /**
+     * override "isFlippedY" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedY: function () {
         if (this._scale9Enabled)
             return false;
         else
-            return this._imageRenderer.isFlipY();
+            return this._imageRenderer.isFlippedY();
     },
 
+    /**
+     * Sets if button is using scale9 renderer.
+     * @param {Boolean} able
+     */
     setScale9Enabled: function (able) {
         if (this._scale9Enabled == able) {
             return;
@@ -222,6 +257,10 @@ cc.UIImageView = cc.UIWidget.extend({
         this.setCapInsets(this._capInsets);
     },
 
+    /**
+     * ignoreContentAdaptWithSize
+     * @param {Boolean} ignore
+     */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
             cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
@@ -229,6 +268,10 @@ cc.UIImageView = cc.UIWidget.extend({
         }
     },
 
+    /**
+     * Sets capinsets for button, if button is using scale9 renderer.
+     * @param {cc.Rect} capInsets
+     */
     setCapInsets: function (capInsets) {
         this._capInsets = capInsets;
         if (!this._scale9Enabled) {
@@ -237,6 +280,10 @@ cc.UIImageView = cc.UIWidget.extend({
         this._imageRenderer.setCapInsets(capInsets);
     },
 
+    /**
+     * override "setAnchorPoint" of widget.
+     * @param {cc.Point} pt
+     */
     setAnchorPoint: function (pt) {
         cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._imageRenderer.setAnchorPoint(pt);
@@ -246,10 +293,18 @@ cc.UIImageView = cc.UIWidget.extend({
         this.imageTextureScaleChangedWithSize();
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._imageTextureSize;
     },
 
+    /**
+     * override "getVirtualRenderer" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         return this._imageRenderer;
     },

@@ -31,6 +31,11 @@ cc.PVTouchDir = {
     TOUCHRIGHT: 1
 };
 
+/**
+ * Base class for cc.UIPageView
+ * @class
+ * @extends cc.Layout
+ */
 cc.UIPageView = cc.Layout.extend({
     _curPageIdx: 0,
     _pages: [],
@@ -50,9 +55,6 @@ cc.UIPageView = cc.Layout.extend({
     _childFocusCancelOffset: 0,
     _eventListener: null,
     _eventSelector: null,
-    /*compatible*/
-    _pageTurningListener: null,
-    _pageTurningSelector: null,
     ctor: function () {
         cc.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;
@@ -73,9 +75,6 @@ cc.UIPageView = cc.Layout.extend({
         this._childFocusCancelOffset = 5;
         this._eventListener = null;
         this._eventSelector = null;
-        /*compatible*/
-        this._pageTurningListener = null;
-        this._pageTurningSelector = null;
     },
 
     init: function () {
@@ -88,6 +87,12 @@ cc.UIPageView = cc.Layout.extend({
         return false;
     },
 
+    /**
+     * Add a widget to a page of pageview.
+     * @param {cc.UIWidget} widget
+     * @param {number} pageIdx
+     * @param {Boolean} forceCreate
+     */
     addWidgetToPage: function (widget, pageIdx, forceCreate) {
         if (!widget) {
             return;
@@ -111,12 +116,20 @@ cc.UIPageView = cc.Layout.extend({
         }
     },
 
+    /**
+     * create page
+     * @returns {cc.Layout}
+     */
     createPage: function () {
         var newPage = cc.Layout.create();
         newPage.setSize(this.getSize());
         return newPage;
     },
 
+    /**
+     * Push back a page to pageview.
+     * @param {cc.Layout} page
+     */
     addPage: function (page) {
         if (!page) {
             return;
@@ -129,16 +142,21 @@ cc.UIPageView = cc.Layout.extend({
         }
         var pSize = page.getSize();
         var pvSize = this.getSize();
-        if (!pSize.equals(pvSize)) {
+        if (!(pSize.width==pvSize.width&&pSize.height==pvSize.height)) {
             cc.log("page size does not match pageview size, it will be force sized!");
             page.setSize(pvSize);
         }
         page.setPosition(cc.p(this.getPositionXByIndex(this._pages.length), 0));
-        this._pages.addObject(page);
+        this._pages.push(page);
         this.addChild(page);
         this.updateBoundaryPages();
     },
 
+    /**
+     * Inert a page to pageview.
+     * @param {cc.Layout} page
+     * @param {Number} idx
+     */
     insertPage: function (page, idx) {
         if (idx < 0) {
             return;
@@ -178,6 +196,10 @@ cc.UIPageView = cc.Layout.extend({
         }
     },
 
+    /**
+     * Remove a page of pageview.
+     * @param {cc.Layout} page
+     */
     removePage: function (page) {
         if (!page) {
             return;
@@ -187,6 +209,10 @@ cc.UIPageView = cc.Layout.extend({
         this.updateBoundaryPages();
     },
 
+    /**
+     * Remove a page at index of pageview.
+     * @param {number} index
+     */
     removePageAtIndex: function (index) {
         if (index < 0 || index >= this._pages.length) {
             return;
@@ -201,19 +227,35 @@ cc.UIPageView = cc.Layout.extend({
         if (this._pages.length <= 0) {
             this._leftChild = null;
             this._rightChild = null;
+            return;
         }
         this._leftChild = this._pages[0];
-        this._rightChild = this._pages[this._pages];
+        this._rightChild = this._pages[this._pages.length-1];
     },
 
+    /**
+     * Get x position by index
+     * @param {number} idx
+     * @returns {number}
+     */
     getPositionXByIndex: function (idx) {
         return (this.getSize().width * (idx - this._curPageIdx));
     },
 
+    /**
+     * Add widget
+     * @param {cc.UIWidget} widget
+     * @returns {boolean}
+     */
     addChild: function (widget) {
         return cc.Layout.prototype.addChild.call(this, widget);
     },
 
+    /**
+     *  remove widget child override
+     * @param {cc.UIWidget} child
+     * @returns {boolean}
+     */
     removeChild: function (widget) {
         if (cc.ArrayContainsObject(this._pages, widget)) {
             cc.ArrayRemoveObject(this._pages, widget);
@@ -267,6 +309,10 @@ cc.UIPageView = cc.Layout.extend({
         cc.Layout.prototype.removeAllChildren.call(this);
     },
 
+    /**
+     * scroll pageview to index.
+     * @param {number} idx
+     */
     scrollToPage: function (idx) {
         if (idx < 0 || idx >= this._pages.length) {
             return;
@@ -346,7 +392,7 @@ cc.UIPageView = cc.Layout.extend({
         for (var i = 0; i < length; i++) {
             var child = arrayPages[i];
             var pos = child.getPosition();
-            child.setPosition(pos.x + offset, pos.y);
+            child.setPosition(cc.p(pos.x + offset, pos.y));
         }
     },
 
@@ -463,11 +509,6 @@ cc.UIPageView = cc.Layout.extend({
     },
 
     pageTurningEvent: function () {
-        /*Compatible*/
-        if (this._pageTurningListener && this._pageTurningSelector) {
-            this._pageTurningSelector.call(this._pageTurningListener, this);
-        }
-        /************/
         if (this._eventListener && this._eventSelector) {
             this._eventSelector.call(this._eventListener, this, cc.PageViewEventType.TURNING);
         }
@@ -477,13 +518,6 @@ cc.UIPageView = cc.Layout.extend({
         this._eventListener = target;
         this._eventSelector = selector;
     },
-
-    /*Compatible*/
-    addPageTurningEvent: function (target, selector) {
-        this._pageTurningListener = target;
-        this._pageTurningSelector = selector;
-    },
-    /************/
 
     getCurPageIndex: function () {
         return this._curPageIdx;

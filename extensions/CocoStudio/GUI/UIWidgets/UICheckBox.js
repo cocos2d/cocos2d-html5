@@ -26,6 +26,11 @@ cc.CheckBoxEventType = {
     UNSELECTED: 1
 };
 
+/**
+ * Base class for cc.UICheckBox
+ * @class
+ * @extends cc.UIWidget
+ */
 cc.UICheckBox = cc.UIWidget.extend({
     _backGroundBoxRenderer: null,
     _backGroundSelectedBoxRenderer: null,
@@ -40,11 +45,6 @@ cc.UICheckBox = cc.UIWidget.extend({
     _frontCrossTexType: null,
     _backGroundDisabledTexType: null,
     _frontCrossDisabledTexType: null,
-    /*Compatible*/
-    _selectListener: null,
-    _selectSelector: null,
-    _unSelectListener: null,
-    _unSelectSelector: null,
     ctor: function () {
         cc.UIWidget.prototype.ctor.call(this);
         this._backGroundBoxRenderer = null;
@@ -60,11 +60,6 @@ cc.UICheckBox = cc.UIWidget.extend({
         this._frontCrossTexType = cc.TextureResType.LOCAL;
         this._backGroundDisabledTexType = cc.TextureResType.LOCAL;
         this._frontCrossDisabledTexType = cc.TextureResType.LOCAL;
-        /*Compatible*/
-        this._selectListener = null;
-        this._selectSelector = null;
-        this._unSelectListener = null;
-        this._unSelectSelector = null;
     },
     init: function () {
         if (cc.UIWidget.prototype.init.call(this)) {
@@ -88,6 +83,15 @@ cc.UICheckBox = cc.UIWidget.extend({
         this._renderer.addChild(this._frontCrossDisabledRenderer);
     },
 
+    /**
+     * Load textures for checkbox.
+     * @param {String} backGround
+     * @param {String} backGroundSelected
+     * @param {String} cross
+     * @param {String} backGroundDisabled
+     * @param {String} frontCrossDisabled
+     * @param {cc.TextureResType} texType
+     */
     loadTextures: function (backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType) {
         this.loadTextureBackGround(backGround, texType);
         this.loadTextureBackGroundSelected(backGroundSelected, texType);
@@ -96,10 +100,16 @@ cc.UICheckBox = cc.UIWidget.extend({
         this.loadTextureFrontCrossDisabled(frontCrossDisabled, texType);
     },
 
+    /**
+     * Load backGround texture for checkbox.
+     * @param {String} backGround
+     * @param {cc.TextureResType} texType
+     */
     loadTextureBackGround: function (backGround, texType) {
         if (!backGround) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._backGroundTexType = texType;
         switch (this._backGroundTexType) {
             case cc.TextureResType.LOCAL:
@@ -116,10 +126,16 @@ cc.UICheckBox = cc.UIWidget.extend({
         this.backGroundTextureScaleChangedWithSize();
     },
 
+    /**
+     * Load backGroundSelected texture for checkbox.
+     * @param {String} backGroundSelected
+     * @param {cc.TextureResType} texType
+     */
     loadTextureBackGroundSelected: function (backGroundSelected, texType) {
-        if (!backGroundSelected || strcmp(backGroundSelected, "") == 0) {
+        if (!backGroundSelected) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._backGroundSelectedTexType = texType;
         switch (this._backGroundSelectedTexType) {
             case cc.TextureResType.LOCAL:
@@ -136,10 +152,16 @@ cc.UICheckBox = cc.UIWidget.extend({
         this.backGroundSelectedTextureScaleChangedWithSize();
     },
 
+    /**
+     * Load cross texture for checkbox.
+     * @param {String} cross
+     * @param {cc.TextureResType} texType
+     */
     loadTextureFrontCross: function (cross, texType) {
         if (!cross) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._frontCrossTexType = texType;
         switch (this._frontCrossTexType) {
             case cc.TextureResType.LOCAL:
@@ -156,10 +178,16 @@ cc.UICheckBox = cc.UIWidget.extend({
         this.frontCrossTextureScaleChangedWithSize();
     },
 
+    /**
+     * Load backGroundDisabled texture for checkbox.
+     * @param {String} backGroundDisabled
+     * @param {cc.TextureResType} texType
+     */
     loadTextureBackGroundDisabled: function (backGroundDisabled, texType) {
         if (!backGroundDisabled) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._backGroundDisabledTexType = texType;
         switch (this._backGroundDisabledTexType) {
             case cc.TextureResType.LOCAL:
@@ -176,10 +204,16 @@ cc.UICheckBox = cc.UIWidget.extend({
         this.backGroundDisabledTextureScaleChangedWithSize();
     },
 
+    /**
+     * Load frontCrossDisabled texture for checkbox.
+     * @param {String} frontCrossDisabled
+     * @param {cc.TextureResType} texType
+     */
     loadTextureFrontCrossDisabled: function (frontCrossDisabled, texType) {
         if (!frontCrossDisabled) {
             return;
         }
+        texType = texType || cc.TextureResType.LOCAL;
         this._frontCrossDisabledTexType = texType;
         switch (this._frontCrossDisabledTexType) {
             case cc.TextureResType.LOCAL:
@@ -249,56 +283,71 @@ cc.UICheckBox = cc.UIWidget.extend({
     },
 
     selectedEvent: function () {
-        /*Compatible*/
-        if (this._selectListener && this._selectSelector) {
-            this._selectSelector.call(this._selectListener, this);
-        }
-        /************/
         if (this._selectedStateEventListener && this._selectedStateEventSelector) {
             this._selectedStateEventSelector.call(this._selectedStateEventListener, this, cc.CheckBoxEventType.SELECTED);
         }
     },
 
     unSelectedEvent: function () {
-        /*Compatible*/
-        if (this._unSelectListener && this._unSelectSelector) {
-            this._unSelectSelector.call(this._unSelectListener, this);
-        }
-        /************/
         if (this._selectedStateEventListener && this._selectedStateEventSelector) {
             this._selectedStateEventSelector.call(this._selectedStateEventListener, this, cc.CheckBoxEventType.UNSELECTED);
         }
     },
 
+    /**
+     * add event listener
+     * @param {Object} target
+     * @param {Function} selector
+     */
     addEventListener: function (target, selector) {
         this._selectedStateEventListener = target;
         this._selectedStateEventSelector = selector;
     },
 
-    setFlipX: function (flipX) {
-        this._backGroundBoxRenderer.setFlipX(flipX);
-        this._backGroundSelectedBoxRenderer.setFlipX(flipX);
-        this._frontCrossRenderer.setFlipX(flipX);
-        this._backGroundBoxDisabledRenderer.setFlipX(flipX);
-        this._frontCrossDisabledRenderer.setFlipX(flipX);
+    /**
+     * Sets whether the widget should be flipped horizontally or not.
+     * @param {Boolean} flipX
+     */
+    setFlippedX: function (flipX) {
+        this._backGroundBoxRenderer.setFlippedX(flipX);
+        this._backGroundSelectedBoxRenderer.setFlippedX(flipX);
+        this._frontCrossRenderer.setFlippedX(flipX);
+        this._backGroundBoxDisabledRenderer.setFlippedX(flipX);
+        this._frontCrossDisabledRenderer.setFlippedX(flipX);
     },
 
-    setFlipY: function (flipY) {
-        this._backGroundBoxRenderer.setFlipX(flipY);
-        this._backGroundSelectedBoxRenderer.setFlipY(flipY);
-        this._frontCrossRenderer.setFlipY(flipY);
-        this._backGroundBoxDisabledRenderer.setFlipY(flipY);
-        this._frontCrossDisabledRenderer.setFlipY(flipY);
+    /**
+     * override "setFlippedY" of widget.
+     * @param {Boolean} flipY
+     */
+    setFlippedY: function (flipY) {
+        this._backGroundBoxRenderer.setFlippedY(flipY);
+        this._backGroundSelectedBoxRenderer.setFlippedY(flipY);
+        this._frontCrossRenderer.setFlippedY(flipY);
+        this._backGroundBoxDisabledRenderer.setFlippedY(flipY);
+        this._frontCrossDisabledRenderer.setFlippedY(flipY);
     },
 
-    isFlipX: function () {
-        return this._backGroundBoxRenderer.isFlipX();
+    /**
+     * override "isFlippedX" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedX: function () {
+        return this._backGroundBoxRenderer.isFlippedX();
     },
 
-    isFlipY: function () {
-        return this._backGroundBoxRenderer.isFlipY();
+    /**
+     * override "isFlippedY" of widget.
+     * @returns {Boolean}
+     */
+    isFlippedY: function () {
+        return this._backGroundBoxRenderer.isFlippedY();
     },
 
+    /**
+     * override "setAnchorPoint" of widget.
+     * @param {cc.Point} pt
+     */
     setAnchorPoint: function (pt) {
         cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._backGroundBoxRenderer.setAnchorPoint(pt);
@@ -316,10 +365,18 @@ cc.UICheckBox = cc.UIWidget.extend({
         this.frontCrossDisabledTextureScaleChangedWithSize();
     },
 
+    /**
+     * override "getContentSize" method of widget.
+     * @returns {cc.Size}
+     */
     getContentSize: function () {
         return this._backGroundBoxRenderer.getContentSize();
     },
 
+    /**
+     * override "getVirtualRenderer" method of widget.
+     * @returns {cc.Node}
+     */
     getVirtualRenderer: function () {
         return this._backGroundBoxRenderer;
     },

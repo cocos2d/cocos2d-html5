@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.UIHelper
+ * @class
+ * @extends cc.Class
+ */
 cc.UIHelper = cc.Class.extend({
     _fileDesignWidth: 0,
     _fileDesignHeight: 0,
@@ -37,10 +42,19 @@ cc.UIHelper = cc.Class.extend({
         this._textureFiles = [];
     },
 
+    /**
+     * Load a widget with json file.
+     * @param {String} fileName
+     * @returns {String}
+     */
     createWidgetFromJsonFile: function (fileName) {
         return cc.CCSGUIReader.getInstance().widgetFromJsonFile(fileName);
     },
 
+    /**
+     * add a plist file for loading widget's texture.
+     * @param {String} fileName
+     */
     addSpriteFrame: function (fileName) {
         if (!fileName) {
             return;
@@ -57,6 +71,10 @@ cc.UIHelper = cc.Class.extend({
         cc.SpriteFrameCache.getInstance().addSpriteFrames(fileName);
     },
 
+    /**
+     * remove a plist file for loading widget's texture.
+     * @param fileName
+     */
     removeSpriteFrame: function (fileName) {
         if (!fileName) {
             return;
@@ -73,6 +91,9 @@ cc.UIHelper = cc.Class.extend({
         }
     },
 
+    /**
+     * remove all plist files for loading widget's texture.
+     */
     removeAllSpriteFrame: function () {
         var arrayTextures = this._textureFiles;
         var length = arrayTextures.length;
@@ -83,6 +104,12 @@ cc.UIHelper = cc.Class.extend({
         this._textureFiles = [];
     },
 
+    /**
+     * Finds a widget whose tag equals to param tag from root widget.
+     * @param {cc.UIWidget} root
+     * @param {number} tag
+     * @returns {cc.UIWidget}
+     */
     seekWidgetByTag: function (root, tag) {
         if (!root) {
             return null;
@@ -102,6 +129,12 @@ cc.UIHelper = cc.Class.extend({
         return null;
     },
 
+    /**
+     * Finds a widget whose name equals to param name from root widget.
+     * @param {cc.UIWidget} root
+     * @param {String} name
+     * @returns {cc.UIWidget}
+     */
     seekWidgetByName: function (root, name) {
         if (!root) {
             return null;
@@ -121,6 +154,13 @@ cc.UIHelper = cc.Class.extend({
         return null;
     },
 
+    /**
+     * Finds a widget whose name equals to param name from root widget.
+     * RelativeLayout will call this method to find the widget witch is needed.
+     * @param {cc.UIWidget} root
+     * @param {String} name
+     * @returns {cc.UIWidget}
+     */
     seekWidgetByRelativeName: function (root, name) {
         if (!root) {
             return null;
@@ -129,7 +169,7 @@ cc.UIHelper = cc.Class.extend({
         var length = arrayRootChildren.length;
         for (var i = 0; i < length; i++) {
             var child = arrayRootChildren[i];
-            var layoutParameter = child.getLayoutParameter();
+            var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
             if (layoutParameter && layoutParameter.getRelativeName() == name) {
                 return child;
             }
@@ -137,40 +177,36 @@ cc.UIHelper = cc.Class.extend({
         return null;
     },
 
+    /**
+     * Set file design width
+     * @param {number} width
+     */
     setFileDesignWidth: function (width) {
         this._fileDesignWidth = width;
     },
 
+    /**
+     * Get file design width
+     * @returns {number}
+     */
     getFileDesignWidth: function () {
         return this._fileDesignWidth;
     },
 
+    /**
+     * Set file design height
+     * @param {number} height
+     */
     setFileDesignHeight: function (height) {
         this._fileDesignHeight = height;
     },
 
+    /**
+     * Get file design height
+     * @returns {number}
+     */
     getFileDesignHeight: function () {
         return this._fileDesignHeight;
-    },
-
-    /*temp action*/
-    seekActionWidgetByActionTag: function (root, tag) {
-        if (!root) {
-            return null;
-        }
-        if (root.getActionTag() == tag) {
-            return root;
-        }
-        var arrayRootChildren = root.getChildren();
-        var length = arrayRootChildren.length;
-        for (var i = 0; i < length; i++) {
-            var child = arrayRootChildren[i];
-            var res = this.seekActionWidgetByActionTag(child, tag);
-            if (res != null) {
-                return res;
-            }
-        }
-        return null;
     }
 });
 cc.UIHelper._instance = null;
@@ -179,4 +215,7 @@ cc.UIHelper.getInstance = function () {
         this._instance = new cc.UIHelper();
     }
     return this._instance;
+};
+cc.UIHelper.purge = function(){
+    this._instance=null;
 };
