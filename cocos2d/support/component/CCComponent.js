@@ -65,6 +65,10 @@ cc.Component = cc.Class.extend({
         return this._name;
     } ,
 
+    setName:function(name){
+         this._name = name;
+    } ,
+
     setOwner:function(owner){
         this._owner = owner;
     },
