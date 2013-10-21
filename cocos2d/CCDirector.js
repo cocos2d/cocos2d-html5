@@ -441,7 +441,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._openGLView) {
             return this._openGLView.getVisibleSize();
         } else {
-            return cc.size(0,0);
+            return this.getWinSize();
         }
     },
 
