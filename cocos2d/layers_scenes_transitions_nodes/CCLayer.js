@@ -1050,6 +1050,15 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
+     * override contentSize
+     * @param {cc.Size} size
+     */
+    setContentSize:function(size){
+        cc.LayerColor.prototype.setContentSize.call(this,size);
+        this._updateColor();
+    },
+
+    /**
      * get the starting color
      * @return {cc.Color3B}
      */
