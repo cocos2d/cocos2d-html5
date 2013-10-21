@@ -443,13 +443,13 @@ cc.DataReaderHelper.decodeMovementBone = function (movBoneXml, parentXml, boneDa
         totalDuration += frameData.duration;
         movBoneData.duration = totalDuration;
     }
-    //todo
-    /*if(movBoneData.frameList.length>0){
+
+    if(movBoneData.frameList.length>0){
         var frameData = new cc.FrameData();
         frameData.copy(movBoneData.frameList[movBoneData.frameList.length-1]);
         frameData.frameID = movBoneData.duration;
         movBoneData.addFrameData(frameData);
-    }*/
+    }
     return movBoneData;
 };
 
