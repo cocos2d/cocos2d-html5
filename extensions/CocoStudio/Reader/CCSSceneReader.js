@@ -199,7 +199,7 @@ cc.CCSSceneReader = cc.Class.extend({
                         var plistpath = "";
                         plistpath += file_path;
                         plistpath += plist;
-                        var root = cc.FileUtils.getInstance().dictionaryWithContentsOfFile(plistpath);
+                        var root = cc.FileUtils.getInstance().createDictionaryWithContentsOfFile(plistpath);
                         var metadata = root["metadata"];
                         var textureFileName = metadata["textureFileName"];
 
