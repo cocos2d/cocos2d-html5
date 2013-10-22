@@ -46,7 +46,7 @@ cc.ActionNode = cc.Class.extend({
         this._actionSpawn = null;
         this._action = null;
         this._frameArray = [];
-        this._frameArrayNum = cc.FrameType.kKeyframeMax;
+        this._frameArrayNum = cc.FrameType.Max;
         for (var i = 0; i < this._frameArrayNum; i++) {
             this._frameArray.push([]);
         }
@@ -70,7 +70,7 @@ cc.ActionNode = cc.Class.extend({
                 var actionFrame = new cc.ActionMoveFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setPosition(cc.p(positionX, positionY));
-                var actionArray = this._frameArray[cc.FrameType.kKeyframeMove];
+                var actionArray = this._frameArray[cc.FrameType.Move];
                 actionArray.push(actionFrame);
             }
 
@@ -82,7 +82,7 @@ cc.ActionNode = cc.Class.extend({
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setScaleX(scaleX);
                 actionFrame.setScaleY(scaleY);
-                var actionArray = this._frameArray[cc.FrameType.kKeyframeScale];
+                var actionArray = this._frameArray[cc.FrameType.Scale];
                 actionArray.push(actionFrame);
             }
 
@@ -92,7 +92,7 @@ cc.ActionNode = cc.Class.extend({
                 var actionFrame = new cc.ActionRotationFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setRotation(rotation);
-                var actionArray = this._frameArray[cc.FrameType.kKeyframeRotate];
+                var actionArray = this._frameArray[cc.FrameType.Rotate];
                 actionArray.push(actionFrame);
             }
 
@@ -102,7 +102,7 @@ cc.ActionNode = cc.Class.extend({
                 var actionFrame = new cc.ActionFadeFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setOpacity(opacity);
-                var actionArray = this._frameArray[cc.FrameType.kKeyframeFade];
+                var actionArray = this._frameArray[cc.FrameType.Fade];
                 actionArray.push(actionFrame);
             }
 
@@ -114,7 +114,7 @@ cc.ActionNode = cc.Class.extend({
                 var actionFrame = new cc.ActionTintFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setColor(cc.c3b(colorR, colorG, colorB));
-                var actionArray = this._frameArray[cc.FrameType.kKeyframeTint];
+                var actionArray = this._frameArray[cc.FrameType.Tint];
                 actionArray.push(actionFrame);
             }
             actionFrameDic = null;

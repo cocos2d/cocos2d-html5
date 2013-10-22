@@ -24,12 +24,12 @@
 
 
 cc.FrameType = {
-    kKeyframeMove: 0,
-    kKeyframeScale: 1,
-    kKeyframeRotate: 2,
-    kKeyframeTint: 3,
-    kKeyframeFade: 4,
-    kKeyframeMax: 5
+    Move: 0,
+    Scale: 1,
+    Rotate: 2,
+    Tint: 3,
+    Fade: 4,
+    Max: 5
 };
 
 /**
@@ -133,7 +133,7 @@ cc.ActionMoveFrame = cc.ActionFrame.extend({
     ctor: function () {
         cc.ActionFrame.prototype.ctor.call(this);
         this._position = cc.p(0, 0);
-        this._frameType = cc.FrameType.kKeyframeMove;
+        this._frameType = cc.FrameType.Move;
     },
 
     /**
@@ -174,7 +174,7 @@ cc.ActionScaleFrame = cc.ActionFrame.extend({
         cc.ActionFrame.prototype.ctor.call(this);
         this._scaleX = 1;
         this._scaleY = 1;
-        this._frameType = cc.FrameType.kKeyframeScale;
+        this._frameType = cc.FrameType.Scale;
     },
 
     /**
@@ -229,7 +229,7 @@ cc.ActionRotationFrame = cc.ActionFrame.extend({
     ctor: function () {
         cc.ActionFrame.prototype.ctor.call(this);
         this._rotation = 0;
-        this._frameType = cc.FrameType.kKeyframeRotate;
+        this._frameType = cc.FrameType.Rotate;
     },
 
     /**
@@ -268,7 +268,7 @@ cc.ActionFadeFrame = cc.ActionFrame.extend({
     ctor: function () {
         cc.ActionFrame.prototype.ctor.call(this);
         this._opacity = 255;
-        this._frameType = cc.FrameType.kKeyframeFade;
+        this._frameType = cc.FrameType.Fade;
     },
 
     /**
@@ -307,7 +307,7 @@ cc.ActionTintFrame = cc.ActionFrame.extend({
     ctor: function () {
         cc.ActionFrame.prototype.ctor.call(this);
         this._color = 255;
-        this._frameType = cc.FrameType.kKeyframeTint;
+        this._frameType = cc.FrameType.Tint;
     },
 
     /**
