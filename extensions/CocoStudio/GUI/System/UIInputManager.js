@@ -29,7 +29,7 @@
  */
 cc.UIInputManager = cc.Class.extend({
     _manageredWidget: null,
-    _selectedWidgets: [],
+    _selectedWidgets: null,
     _touchBeganedPoint: null,
     _touchMovedPoint: null,
     _touchEndedPoint: null,
@@ -38,7 +38,7 @@ cc.UIInputManager = cc.Class.extend({
     _touchDown: false,
     _longClickTime: 0,
     _longClickRecordTime: 0,
-    _checkedDoubleClickWidget: [],
+    _checkedDoubleClickWidget: null,
     _rootWidget: null,
     ctor: function () {
         this._manageredWidget = null;
@@ -92,9 +92,6 @@ cc.UIInputManager = cc.Class.extend({
                 return true;
             }
         }
-        if(root instanceof cc.UIScrollView){
-            var a = 0;
-        }
         if (root.isEnabled() && root.isTouchEnabled() && root.hitTest(touchPoint) && root.clippingParentAreaContainPoint(touchPoint)) {
             this._selectedWidgets.push(root);
             root.onTouchBegan(touchPoint);
@@ -147,8 +144,7 @@ cc.UIInputManager = cc.Class.extend({
             }
         }
         var arrayWidget = this._checkedDoubleClickWidget;
-        var widgetCount = arrayWidget.length;
-        for (var i = 0; i < widgetCount; i++) {
+        for (var i = 0; i < arrayWidget.length; i++) {
             var widget = arrayWidget[i];
             if (!widget.isVisible()) {
                 continue;
@@ -167,8 +163,7 @@ cc.UIInputManager = cc.Class.extend({
         this._touchMovedPoint.x = touch.getLocation().x;
         this._touchMovedPoint.y = touch.getLocation().y;
         var selectedWidgetArray = this._selectedWidgets;
-        var length = selectedWidgetArray.length;
-        for (var i = 0; i < length; ++i) {
+        for (var i = 0; i < selectedWidgetArray.length; ++i) {
             var hitWidget = selectedWidgetArray[i];
             hitWidget.onTouchMoved(this._touchMovedPoint);
         }
@@ -183,8 +178,7 @@ cc.UIInputManager = cc.Class.extend({
         this._touchEndedPoint.x = touch.getLocation().x;
         this._touchEndedPoint.y = touch.getLocation().y;
         var selectedWidgetArray = this._selectedWidgets;
-        var length = selectedWidgetArray.length;
-        for (var i = 0; i < length; ++i) {
+        for (var i = 0; i < selectedWidgetArray.length; ++i) {
             var hitWidget = selectedWidgetArray[i];
             hitWidget.onTouchEnded(this._touchEndedPoint);
         }
@@ -196,8 +190,7 @@ cc.UIInputManager = cc.Class.extend({
         this._touchEndedPoint.x = touch.getLocation().x;
         this._touchEndedPoint.y = touch.getLocation().y;
         var selectedWidgetArray = this._selectedWidgets;
-        var length = selectedWidgetArray.length;
-        for (var i = 0; i < length; ++i) {
+        for (var i = 0; i < selectedWidgetArray.length; ++i) {
             var hitWidget = selectedWidgetArray[i];
             hitWidget.onTouchCancelled(this._touchEndedPoint);
         }

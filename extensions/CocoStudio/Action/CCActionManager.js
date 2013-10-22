@@ -46,10 +46,10 @@ cc.CCSActionManager = cc.Class.extend({
         var actionList = dic["actionlist"];
         var locActionList = [];
         for (var i = 0; i < actionList.length; i++) {
-            var action = new cc.ActionObject();
-            var actionDic = actionList[i];
-            action.initWithDictionary(actionDic, root);
-            locActionList.push(action);
+            var locAction = new cc.ActionObject();
+            var locActionDic = actionList[i];
+            locAction.initWithDictionary(locActionDic, root);
+            locActionList.push(locAction);
         }
         this._actionDic[fileName] = locActionList;
     },
@@ -66,9 +66,9 @@ cc.CCSActionManager = cc.Class.extend({
             return null;
         }
         for (var i = 0; i < actionList.length; i++) {
-            var action = actionList[i];
-            if (actionName == action.getName()) {
-                return action;
+            var locAction = actionList[i];
+            if (actionName == locAction.getName()) {
+                return locAction;
             }
         }
         return null;

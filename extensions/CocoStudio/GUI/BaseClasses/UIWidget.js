@@ -89,7 +89,7 @@ cc.UIWidget = cc.Class.extend({
     _customSize: null,
     _layoutParameterDictionary: null,
     _ignoreSize: false,
-    _children: [],
+    _children: null,
     _affectByClipping: false,
 
     _scheduler: null,
@@ -163,8 +163,8 @@ cc.UIWidget = cc.Class.extend({
         this.setUpdateEnabled(false);
         this.removeAllChildren();
         this._children.release();
-        this._renderer.removeAllChildrenWithCleanup(true);
-        this._renderer.removeFromParentAndCleanup(true);
+        this._renderer.removeAllChildren(true);
+        this._renderer.removeFromParent(true);
         this._renderer.release();
     },
 
@@ -388,7 +388,8 @@ cc.UIWidget = cc.Class.extend({
             this._size = this.getContentSize();
         }
         else {
-            this._size = size;
+            this._size.width = size.width;
+            this._size.height = size.height;
         }
         if (this._isRunning) {
             this._sizePercent = (this._widgetParent == null) ? cc.PointZero() : cc.p(this._customSize.width / this._widgetParent.getSize().width, this._customSize.height / this._widgetParent.getSize().height);
@@ -410,7 +411,8 @@ cc.UIWidget = cc.Class.extend({
             this._size = this.getContentSize();
         }
         else {
-            this._size = size;
+            this._size.width = size.width;
+            this._size.height = size.height;
         }
         this._customSize = size;
         this.onSizeChanged();

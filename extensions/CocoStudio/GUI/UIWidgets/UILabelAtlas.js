@@ -71,8 +71,8 @@ cc.UILabelAtlas = cc.UIWidget.extend({
 
     initRenderer: function () {
         cc.UIWidget.prototype.initRenderer.call(this);
-        this._laberAtlasRenderer = cc.UICCLabelAtlas.create();
-        this._renderer.addChild(this._laberAtlasRenderer);
+        this._labelAtlasRenderer = cc.UICCLabelAtlas.create();
+        this._renderer.addChild(this._labelAtlasRenderer);
     },
 
     /**
@@ -85,7 +85,7 @@ cc.UILabelAtlas = cc.UIWidget.extend({
      * @param {Boolean} useSpriteFrame
      */
     setProperty: function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap, useSpriteFrame) {
-        this._laberAtlasRenderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
+        this._labelAtlasRenderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
         this.updateAnchorPoint();
         this.labelAtlasScaleChangedWithSize();
     },
@@ -95,7 +95,7 @@ cc.UILabelAtlas = cc.UIWidget.extend({
      * @param {String} value
      */
     setStringValue: function (value) {
-        this._laberAtlasRenderer.setString(value);
+        this._labelAtlasRenderer.setString(value);
         this.labelAtlasScaleChangedWithSize();
     },
 
@@ -104,7 +104,7 @@ cc.UILabelAtlas = cc.UIWidget.extend({
      * @returns {String}
      */
     getStringValue: function () {
-        return this._laberAtlasRenderer.getString();
+        return this._labelAtlasRenderer.getString();
     },
 
     /**
@@ -113,7 +113,7 @@ cc.UILabelAtlas = cc.UIWidget.extend({
      */
     setAnchorPoint: function (pt) {
         cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._laberAtlasRenderer.setAnchorPoint(cc.p(pt.x, pt.y));
+        this._labelAtlasRenderer.setAnchorPoint(cc.p(pt.x, pt.y));
     },
 
     onSizeChanged: function () {
@@ -125,7 +125,7 @@ cc.UILabelAtlas = cc.UIWidget.extend({
      * @returns {cc.Size}
      */
     getContentSize: function () {
-        return this._laberAtlasRenderer.getContentSize();
+        return this._labelAtlasRenderer.getContentSize();
     },
 
     /**
@@ -133,24 +133,24 @@ cc.UILabelAtlas = cc.UIWidget.extend({
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {
-        return this._laberAtlasRenderer;
+        return this._labelAtlasRenderer;
     },
 
     labelAtlasScaleChangedWithSize: function () {
         if (this._ignoreSize) {
-            this._laberAtlasRenderer.setScale(1.0);
-            this._size = this._laberAtlasRenderer.getContentSize();
+            this._labelAtlasRenderer.setScale(1.0);
+            this._size = this._labelAtlasRenderer.getContentSize();
         }
         else {
-            var textureSize = this._laberAtlasRenderer.getContentSize();
+            var textureSize = this._labelAtlasRenderer.getContentSize();
             if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
-                this._laberAtlasRenderer.setScale(1.0);
+                this._labelAtlasRenderer.setScale(1.0);
                 return;
             }
             var scaleX = this._size.width / textureSize.width;
             var scaleY = this._size.height / textureSize.height;
-            this._laberAtlasRenderer.setScaleX(scaleX);
-            this._laberAtlasRenderer.setScaleY(scaleY);
+            this._labelAtlasRenderer.setScaleX(scaleX);
+            this._labelAtlasRenderer.setScaleY(scaleY);
         }
     },
 

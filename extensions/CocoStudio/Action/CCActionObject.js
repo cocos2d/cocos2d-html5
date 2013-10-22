@@ -85,8 +85,8 @@ cc.ActionObject = cc.Class.extend({
         this._unitTime = time;
         var frameNum = this._actionNodeList.length;
         for (var i = 0; i < frameNum; i++) {
-            var actionNode = this._actionNodeList[i];
-            actionNode.setUnitTime(this._unitTime);
+            var locActionNode = this._actionNodeList[i];
+            locActionNode.setUnitTime(this._unitTime);
         }
     },
 
@@ -133,12 +133,12 @@ cc.ActionObject = cc.Class.extend({
         this.setUnitTime(dic["unittime"]);
         var actionNodeList = dic["actionnodelist"];
         for (var i = 0; i < actionNodeList.length; i++) {
-            var actionNode = new cc.ActionNode();
-            var actionNodeDic = actionNodeList[i];
-            actionNode.initWithDictionary(actionNodeDic, root);
-            actionNode.setUnitTime(this.getUnitTime());
-            this._actionNodeList.push(actionNode);
-            actionNodeDic = null;
+            var locActionNode = new cc.ActionNode();
+            var locActionNodeDic = actionNodeList[i];
+            locActionNode.initWithDictionary(locActionNodeDic, root);
+            locActionNode.setUnitTime(this.getUnitTime());
+            this._actionNodeList.push(locActionNode);
+            locActionNodeDic = null;
         }
     },
 
@@ -172,8 +172,8 @@ cc.ActionObject = cc.Class.extend({
         this.stop();
         var frameNum = this._actionNodeList.length;
         for (var i = 0; i < frameNum; i++) {
-            var actionNode = this._actionNodeList[i];
-            actionNode.playAction(this.getLoop());
+            var locActionNode = this._actionNodeList[i];
+            locActionNode.playAction(this.getLoop());
         }
     },
 
@@ -188,10 +188,9 @@ cc.ActionObject = cc.Class.extend({
      * stop the action.
      */
     stop: function () {
-        var frameNum = this._actionNodeList.length;
-        for (var i = 0; i < frameNum; i++) {
-            var actionNode = this._actionNodeList[i];
-            actionNode.stopAction();
+        for (var i = 0; i < this._actionNodeList.length; i++) {
+            var locActionNode = this._actionNodeList[i];
+            locActionNode.stopAction();
         }
         this._pause = false;
     },
@@ -201,10 +200,9 @@ cc.ActionObject = cc.Class.extend({
      */
     updateToFrameByTime: function (time) {
         this._currentTime = time;
-        var nodeNum = this._actionNodeList.length;
-        for (var i = 0; i < nodeNum; i++) {
-            var actionNode = this._actionNodeList[i];
-            actionNode.updateActionToTimeLine(time);
+        for (var i = 0; i < this._actionNodeList.length; i++) {
+            var locActionNode = this._actionNodeList[i];
+            locActionNode.updateActionToTimeLine(time);
         }
     }
 });

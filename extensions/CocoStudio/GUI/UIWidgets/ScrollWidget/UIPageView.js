@@ -38,7 +38,7 @@ cc.PVTouchDir = {
  */
 cc.UIPageView = cc.Layout.extend({
     _curPageIdx: 0,
-    _pages: [],
+    _pages: null,
     _touchMoveDir: null,
     _touchStartLocation: 0,
     _touchEndLocation: 0,

@@ -35,7 +35,7 @@ cc.ActionNode = cc.Class.extend({
     _bject: null,
     _actionSpawn: null,
     _action: null,
-    _frameArray: [],
+    _frameArray: null,
     _frameArrayNum: 0,
     ctor: function () {
         this._currentFrameIndex = 0;
@@ -63,8 +63,7 @@ cc.ActionNode = cc.Class.extend({
         for (var i = 0; i < actionframelist.length; i++) {
             var actionFrameDic = actionframelist[i];
             var frameInex = actionFrameDic["frameid"];
-            var existPosition = actionFrameDic["positionx"];
-            if (existPosition) {
+            if (actionFrameDic.hasOwnProperty("positionx")) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
                 var actionFrame = new cc.ActionMoveFrame();
@@ -74,8 +73,7 @@ cc.ActionNode = cc.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            var existScale = actionFrameDic["scalex"];
-            if (existScale) {
+            if (actionFrameDic.hasOwnProperty("scalex")) {
                 var scaleX = actionFrameDic["scalex"];
                 var scaleY = actionFrameDic["scaley"];
                 var actionFrame = new cc.ActionScaleFrame();
@@ -86,8 +84,7 @@ cc.ActionNode = cc.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            var existRotation = actionFrameDic["rotation"];
-            if (existRotation) {
+            if (actionFrameDic.hasOwnProperty("rotation")) {
                 var rotation = actionFrameDic["rotation"];
                 var actionFrame = new cc.ActionRotationFrame();
                 actionFrame.setFrameIndex(frameInex);
@@ -96,8 +93,7 @@ cc.ActionNode = cc.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            var existOpacity = actionFrameDic["opacity"];
-            if (existOpacity) {
+            if (actionFrameDic.hasOwnProperty("opacity")) {
                 var opacity = actionFrameDic["opacity"];
                 var actionFrame = new cc.ActionFadeFrame();
                 actionFrame.setFrameIndex(frameInex);
@@ -106,8 +102,7 @@ cc.ActionNode = cc.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            var existColor = actionFrameDic["colorr"];
-            if (existColor) {
+            if (actionFrameDic.hasOwnProperty("colorr")) {
                 var colorR = actionFrameDic["colorr"];
                 var colorG = actionFrameDic["colorg"];
                 var colorB = actionFrameDic["colorb"];
@@ -241,37 +236,30 @@ cc.ActionNode = cc.Class.extend({
         if (this._object == null) {
             return null;
         }
-        var spawnArray = [];
-        for (var n = 0; n < this._frameArrayNum; n++) {
-            var array = this._frameArray[n];
-            if (array.length <= 0) {
+        var locSpawnArray = [];
+        for (var i = 0; i < this._frameArrayNum; i++) {
+            var locArray = this._frameArray[i];
+            if (locArray.length <= 0) {
                 continue;
             }
-            var sequenceArray = [];
-            var frameCount = array.length;
-            for (var i = 0; i < frameCount; i++) {
-                var frame = array[i];
-                if (i != 0) {
-                    var srcFrame = array[i - 1];
-                    var duration = (frame.getFrameIndex() - srcFrame.getFrameIndex()) * this.getUnitTime();
-                    var action = frame.getAction(duration);
-                    sequenceArray.push(action);
+            var locSequenceArray = [];
+            for (var j = 0; j < locArray.length; j++) {
+                var locFrame = locArray[j];
+                if (j != 0) {
+                    var locSrcFrame = locArray[j - 1];
+                    var locDuration = (locFrame.getFrameIndex() - locSrcFrame.getFrameIndex()) * this.getUnitTime();
+                    var locAction = locFrame.getAction(locDuration);
+                    locSequenceArray.push(locAction);
                 }
             }
-            var sequence = cc.Sequence.create(sequenceArray);
-            if (sequence != null) {
-                spawnArray.push(sequence);
+            var locSequence = cc.Sequence.create(locSequenceArray);
+            if (locSequence != null) {
+                locSpawnArray.push(locSequence);
             }
         }
 
-        if (this._action == null) {
-            this._actionSpawn = null;
-        }
-        else {
-            this._action = null;
-        }
-
-        this._actionSpawn = cc.Spawn.create(spawnArray);
+        this._action = null;
+        this._actionSpawn = cc.Spawn.create(locSpawnArray);
         return this._actionSpawn;
     },
 
@@ -318,22 +306,22 @@ cc.ActionNode = cc.Class.extend({
      * @returns {number}
      */
     getFirstFrameIndex: function () {
-        var frameindex = 99999;
-        var isFindFrame = false;
+        var locFrameindex = 99999;
+        var locIsFindFrame = false;
         for (var i = 0; i < this._frameArrayNum; i++) {
-            var array = this._frameArray[i];
-            if (array.length <= 0) {
+            var locArray = this._frameArray[i];
+            if (locArray.length <= 0) {
                 continue;
             }
-            isFindFrame = true;
-            var frame = array[0];
-            var locFrameIndex = frame.getFrameIndex();
-            frameindex = frameindex > locFrameIndex ? locFrameIndex : frameindex;
+            locIsFindFrame = true;
+            var locFrame = locArray[0];
+            var locFrameIndex = locFrame.getFrameIndex();
+            locFrameindex = locFrameindex > locFrameIndex ? locFrameIndex : locFrameindex;
         }
-        if (!isFindFrame) {
-            frameindex = 0;
+        if (!locIsFindFrame) {
+            locFrameindex = 0;
         }
-        return frameindex;
+        return locFrameindex;
     },
 
     /**
@@ -341,22 +329,22 @@ cc.ActionNode = cc.Class.extend({
      * @returns {number}
      */
     getLastFrameIndex: function () {
-        var frameindex = -1;
-        var isFindFrame = false;
-        for (var n = 0; n < this._frameArrayNum; n++) {
-            var array = this._frameArray[n];
-            if (array.length <= 0) {
+        var locFrameindex = -1;
+        var locIsFindFrame = false;
+        for (var i = 0; i < this._frameArrayNum; i++) {
+            var locArray = this._frameArray[i];
+            if (locArray.length <= 0) {
                 continue;
             }
-            isFindFrame = true;
-            var frame = array[array.length - 1];
-            var locFrameIndex = frame.getFrameIndex();
-            frameindex = frameindex < locFrameIndex ? locFrameIndex : frameindex;
+            locIsFindFrame = true;
+            var locFrame = locArray[locArray.length - 1];
+            var locFrameIndex = locFrame.getFrameIndex();
+            locFrameindex = locFrameindex < locFrameIndex ? locFrameIndex : locFrameindex;
         }
-        if (!isFindFrame) {
-            frameindex = 0;
+        if (!locIsFindFrame) {
+            locFrameindex = 0;
         }
-        return frameindex;
+        return locFrameindex;
     },
 
     /**
@@ -365,41 +353,39 @@ cc.ActionNode = cc.Class.extend({
      * @returns {boolean}
      */
     updateActionToTimeLine: function (time) {
-        var isFindFrame = false;
-        var srcFrame = null;
-
-        for (var n = 0; n < this._frameArrayNum; n++) {
-            var array = this._frameArray[n];
-            if (array == null) {
+        var locIsFindFrame = false;
+        var locUnitTime = this.getUnitTime();
+        for (var i = 0; i < this._frameArrayNum; i++) {
+            var locArray = this._frameArray[i];
+            if (locArray == null) {
                 continue;
             }
-            var frameCount = array.length;
-            for (var i = 0; i < frameCount; i++) {
-                var frame = array[i];
 
-                if (frame.getFrameIndex() * this.getUnitTime() == time) {
-                    this.easingToFrame(1.0, 1.0, frame);
-                    isFindFrame = true;
+            for (var i = 0; i < locArray.length; i++) {
+                var locFrame = locArray[i];
+                if (locFrame.getFrameIndex() * locUnitTime == time) {
+                    this.easingToFrame(1.0, 1.0, locFrame);
+                    locIsFindFrame = true;
                     break;
                 }
-                else if (frame.getFrameIndex() * this.getUnitTime() > time) {
+                else if (locFrame.getFrameIndex() * locUnitTime > time) {
                     if (i == 0) {
-                        this.easingToFrame(1.0, 1.0, frame);
-                        isFindFrame = false;
+                        this.easingToFrame(1.0, 1.0, locFrame);
+                        locIsFindFrame = false;
                     }
                     else {
-                        srcFrame = array[i - 1];
-                        var duration = (frame.getFrameIndex() - srcFrame.getFrameIndex()) * this.getUnitTime();
-                        var delaytime = time - srcFrame.getFrameIndex() * this.getUnitTime();
-                        this.easingToFrame(duration, 1.0, srcFrame);
-                        this.easingToFrame(duration, delaytime / duration, frame);
-                        isFindFrame = true;
+                        var locSrcFrame = locArray[i - 1];
+                        var locDuration = (locFrame.getFrameIndex() - locSrcFrame.getFrameIndex()) * locUnitTime;
+                        var locDelaytime = time - locSrcFrame.getFrameIndex() * locUnitTime;
+                        this.easingToFrame(locDuration, 1.0, locSrcFrame);
+                        this.easingToFrame(locDuration, locDelaytime / locDuration, locFrame);
+                        locIsFindFrame = true;
                     }
                     break;
                 }
             }
         }
-        return isFindFrame;
+        return locIsFindFrame;
     },
 
     /**

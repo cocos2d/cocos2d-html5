@@ -71,9 +71,10 @@ cc.UIButton = cc.UIWidget.extend({
         this._normalTexType = cc.TextureResType.LOCAL;
         this._pressedTexType = cc.TextureResType.LOCAL;
         this._disabledTexType = cc.TextureResType.LOCAL;
-        this._normalTextureSize = this._size;
-        this._pressedTextureSize = this._size;
-        this._disabledTextureSize = this._size;
+        var locSize = this._size;
+        this._normalTextureSize = cc.size(locSize.width, locSize.height);
+        this._pressedTextureSize = cc.size(locSize.width, locSize.height);
+        this._disabledTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedActionEnabled = false;
         this._titleColor = cc.white();
     },

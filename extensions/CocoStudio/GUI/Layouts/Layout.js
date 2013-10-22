@@ -98,13 +98,13 @@ cc.Layout = cc.UIWidget.extend({
     },
 
     /**
-     * Adds a child to the container.
-     * @param {cc.UIWidget} child
+     * Adds a locChild to the container.
+     * @param {cc.UIWidget} locChild
      * @returns {boolean}
      */
-    addChild: function (child) {
-        this.supplyTheLayoutParameterLackToChild(child);
-        return cc.UIWidget.prototype.addChild.call(this, child);
+    addChild: function (locChild) {
+        this.supplyTheLayoutParameterLackToChild(locChild);
+        return cc.UIWidget.prototype.addChild.call(this, locChild);
     },
 
     /**
@@ -125,7 +125,7 @@ cc.Layout = cc.UIWidget.extend({
     },
 
     /**
-     * Changes if layout can clip it's content and child.
+     * Changes if layout can clip it's content and locChild.
      * @param {Boolean} able
      */
     setClippingEnabled: function (able) {
@@ -167,12 +167,11 @@ cc.Layout = cc.UIWidget.extend({
         this._backGroundScale9Enable = able;
         if (this._backGroundScale9Enable) {
             this._backGroundImage = cc.Scale9Sprite.create();
-            this._renderer.addChild(this._backGroundImage);
         }
         else {
             this._backGroundImage = cc.Sprite.create();
-            this._renderer.addChild(this._backGroundImage);
         }
+        this._renderer.addChild(this._backGroundImage);
         this._backGroundImage.setZOrder(-1);
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
@@ -241,8 +240,8 @@ cc.Layout = cc.UIWidget.extend({
         }
     },
 
-    supplyTheLayoutParameterLackToChild: function (child) {
-        if (!child) {
+    supplyTheLayoutParameterLackToChild: function (locChild) {
+        if (!locChild) {
             return;
         }
         switch (this._layoutType) {
@@ -250,15 +249,15 @@ cc.Layout = cc.UIWidget.extend({
                 break;
             case cc.LayoutType.LINEAR_HORIZONTAL:
             case cc.LayoutType.LINEAR_VERTICAL:
-                var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.LINEAR);
+                var layoutParameter = locChild.getLayoutParameter(cc.LayoutParameterType.LINEAR);
                 if (!layoutParameter) {
-                    child.setLayoutParameter(cc.LinearLayoutParameter.create());
+                    locChild.setLayoutParameter(cc.LinearLayoutParameter.create());
                 }
                 break;
             case cc.LayoutType.RELATIVE:
-                var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
+                var layoutParameter = locChild.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
                 if (!layoutParameter) {
-                    child.setLayoutParameter(cc.RelativeLayoutParameter.create());
+                    locChild.setLayoutParameter(cc.RelativeLayoutParameter.create());
                 }
                 break;
             default:
@@ -459,10 +458,10 @@ cc.Layout = cc.UIWidget.extend({
     setLayoutType: function (type) {
         this._layoutType = type;
         var layoutChildrenArray = this.getChildren();
-        var child = null;
+        var locChild = null;
         for (var i = 0; i < layoutChildrenArray.length; i++) {
-            child = layoutChildrenArray[i];
-            this.supplyTheLayoutParameterLackToChild(child);
+            locChild = layoutChildrenArray[i];
+            this.supplyTheLayoutParameterLackToChild(locChild);
         }
     },
 
@@ -476,73 +475,71 @@ cc.Layout = cc.UIWidget.extend({
 
     doLayout_LINEAR_VERTICAL: function () {
         var layoutChildrenArray = this.getChildren();
-        var length = layoutChildrenArray.length;
         var layoutSize = this.getSize();
         var topBoundary = layoutSize.height;
-        for (var i = 0; i < length; ++i) {
-            var child = layoutChildrenArray[i];
-            var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.LINEAR);
+        for (var i = 0; i < layoutChildrenArray.length; ++i) {
+            var locChild = layoutChildrenArray[i];
+            var locLayoutParameter = locChild.getLayoutParameter(cc.LayoutParameterType.LINEAR);
 
-            if (layoutParameter) {
-                var childGravity = layoutParameter.getGravity();
-                var ap = child.getAnchorPoint();
-                var cs = child.getSize();
-                var finalPosX = ap.x * cs.width;
-                var finalPosY = topBoundary - ((1 - ap.y) * cs.height);
-                switch (childGravity) {
+            if (locLayoutParameter) {
+                var locChildGravity = locLayoutParameter.getGravity();
+                var locAP = locChild.getAnchorPoint();
+                var locSize = locChild.getSize();
+                var locFinalPosX = locAP.x * locSize.width;
+                var locFinalPosY = topBoundary - ((1 - locAP.y) * locSize.height);
+                switch (locChildGravity) {
                     case cc.UILinearGravity.NONE:
                     case cc.UILinearGravity.LEFT:
                         break;
                     case cc.UILinearGravity.RIGHT:
-                        finalPosX = layoutSize.width - ((1 - ap.x) * cs.width);
+                        locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                         break;
                     case cc.UILinearGravity.CENTER_HORIZONTAL:
-                        finalPosX = layoutSize.width / 2 - cs.width * (0.5 - ap.x);
+                        locFinalPosX = layoutSize.width / 2 - locSize.width * (0.5 - locAP.x);
                         break;
                     default:
                         break;
                 }
-                var mg = layoutParameter.getMargin();
-                finalPosX += mg.left;
-                finalPosY -= mg.top;
-                child.setPosition(cc.p(finalPosX, finalPosY));
-                topBoundary = child.getBottomInParent() - mg.bottom;
+                var locMargin = locLayoutParameter.getMargin();
+                locFinalPosX += locMargin.left;
+                locFinalPosY -= locMargin.top;
+                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                topBoundary = locChild.getBottomInParent() - locMargin.bottom;
             }
         }
     },
     doLayout_LINEAR_HORIZONTAL: function () {
         var layoutChildrenArray = this.getChildren();
-        var length = layoutChildrenArray.length;
         var layoutSize = this.getSize();
         var leftBoundary = 0;
-        for (var i = 0; i < length; ++i) {
-            var child = layoutChildrenArray[i];
-            var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.LINEAR);
+        for (var i = 0; i < layoutChildrenArray.length; ++i) {
+            var locChild = layoutChildrenArray[i];
+            var locLayoutParameter = locChild.getLayoutParameter(cc.LayoutParameterType.LINEAR);
 
-            if (layoutParameter) {
-                var childGravity = layoutParameter.getGravity();
-                var ap = child.getAnchorPoint();
-                var cs = child.getSize();
-                var finalPosX = leftBoundary + (ap.x * cs.width);
-                var finalPosY = layoutSize.height - (1 - ap.y) * cs.height;
-                switch (childGravity) {
+            if (locLayoutParameter) {
+                var locChildGravity = locLayoutParameter.getGravity();
+                var locAP = locChild.getAnchorPoint();
+                var locSize = locChild.getSize();
+                var locFinalPosX = leftBoundary + (locAP.x * locSize.width);
+                var locFinalPosY = layoutSize.height - (1 - locAP.y) * locSize.height;
+                switch (locChildGravity) {
                     case cc.UILinearGravity.NONE:
                     case cc.UILinearGravity.TOP:
                         break;
                     case cc.UILinearGravity.BOTTOM:
-                        finalPosY = ap.y * cs.height;
+                        locFinalPosY = locAP.y * locSize.height;
                         break;
                     case cc.UILinearGravity.CENTER_VERTICAL:
-                        finalPosY = layoutSize.height / 2 - cs.height * (0.5 - ap.y);
+                        locFinalPosY = layoutSize.height / 2 - locSize.height * (0.5 - locAP.y);
                         break;
                     default:
                         break;
                 }
-                var mg = layoutParameter.getMargin();
-                finalPosX += mg.left;
-                finalPosY -= mg.top;
-                child.setPosition(cc.p(finalPosX, finalPosY));
-                leftBoundary = child.getRightInParent() + mg.right;
+                var locMargin = locLayoutParameter.getMargin();
+                locFinalPosX += locMargin.left;
+                locFinalPosY -= locMargin.top;
+                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                leftBoundary = locChild.getRightInParent() + locMargin.right;
             }
         }
     },
@@ -553,280 +550,280 @@ cc.Layout = cc.UIWidget.extend({
         var layoutSize = this.getSize();
 
         for (var i = 0; i < length; i++) {
-            var child = layoutChildrenArray[i];
-            var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
-            layoutParameter._put = false;
+            var locChild = layoutChildrenArray[i];
+            var locLayoutParameter = locChild.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
+            locLayoutParameter._put = false;
         }
 
         while (unlayoutChildCount > 0) {
             for (var i = 0; i < length; i++) {
-                var child = layoutChildrenArray[i];
-                var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
+                var locChild = layoutChildrenArray[i];
+                var locLayoutParameter = locChild.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
 
-                if (layoutParameter) {
-                    if (layoutParameter._put) {
+                if (locLayoutParameter) {
+                    if (locLayoutParameter._put) {
                         continue;
                     }
-                    var ap = child.getAnchorPoint();
-                    var cs = child.getSize();
-                    var align = layoutParameter.getAlign();
-                    var relativeName = layoutParameter.getRelativeToWidgetName();
-                    var relativeWidget = null;
-                    var relativeWidgetLP = null;
-                    var finalPosX = 0;
-                    var finalPosY = 0;
-                    if (relativeName) {
-                        relativeWidget = cc.UIHelper.getInstance().seekWidgetByRelativeName(this, relativeName);
-                        if (relativeWidget) {
-                            relativeWidgetLP = relativeWidget.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
+                    var locAP = locChild.getAnchorPoint();
+                    var locSize = locChild.getSize();
+                    var locAlign = locLayoutParameter.getAlign();
+                    var locRelativeName = locLayoutParameter.getRelativeToWidgetName();
+                    var locRelativeWidget = null;
+                    var locRelativeWidgetLP = null;
+                    var locFinalPosX = 0;
+                    var locFinalPosY = 0;
+                    if (locRelativeName) {
+                        locRelativeWidget = cc.UIHelper.getInstance().seekWidgetByRelativeName(this, locRelativeName);
+                        if (locRelativeWidget) {
+                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
                         }
                     }
-                    switch (align) {
+                    switch (locAlign) {
                         case cc.UIRelativeAlign.ALIGN_NONE:
                         case cc.UIRelativeAlign.ALIGN_PARENT_TOP_LEFT:
-                            finalPosX = ap.x * cs.width;
-                            finalPosY = layoutSize.height - ((1 - ap.y) * cs.height);
+                            locFinalPosX = locAP.x * locSize.width;
+                            locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
-                            finalPosX = layoutSize.width * 0.5 - cs.width * (0.5 - ap.x);
-                            finalPosY = layoutSize.height - ((1 - ap.y) * cs.height);
+                            locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
+                            locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_TOP_RIGHT:
-                            finalPosX = layoutSize.width - ((1 - ap.x) * cs.width);
-                            finalPosY = layoutSize.height - ((1 - ap.y) * cs.height);
+                            locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
+                            locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_LEFT_CENTER_VERTICAL:
-                            finalPosX = ap.x * cs.width;
-                            finalPosY = layoutSize.height * 0.5 - cs.height * (0.5 - ap.y);
+                            locFinalPosX = locAP.x * locSize.width;
+                            locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
                         case cc.UIRelativeAlign.CENTER_IN_PARENT:
-                            finalPosX = layoutSize.width * 0.5 - cs.width * (0.5 - ap.x);
-                            finalPosY = layoutSize.height * 0.5 - cs.height * (0.5 - ap.y);
+                            locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
+                            locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
-                            finalPosX = layoutSize.width - ((1 - ap.x) * cs.width);
-                            finalPosY = layoutSize.height * 0.5 - cs.height * (0.5 - ap.y);
+                            locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
+                            locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_LEFT_BOTTOM:
-                            finalPosX = ap.x * cs.width;
-                            finalPosY = ap.y * cs.height;
+                            locFinalPosX = locAP.x * locSize.width;
+                            locFinalPosY = locAP.y * locSize.height;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
-                            finalPosX = layoutSize.width * 0.5 - cs.width * (0.5 - ap.x);
-                            finalPosY = ap.y * cs.height;
+                            locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
+                            locFinalPosY = locAP.y * locSize.height;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_RIGHT_BOTTOM:
-                            finalPosX = layoutSize.width - ((1 - ap.x) * cs.width);
-                            finalPosY = ap.y * cs.height;
+                            locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
+                            locFinalPosY = locAP.y * locSize.height;
                             break;
 
                         case cc.UIRelativeAlign.LOCATION_ABOVE_LEFTALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = relativeWidget.getTopInParent();
-                                var locationLeft = relativeWidget.getLeftInParent();
-                                finalPosY = locationBottom + ap.y * cs.height;
-                                finalPosX = locationLeft + ap.x * cs.width;
+                                var locationBottom = locRelativeWidget.getTopInParent();
+                                var locationLeft = locRelativeWidget.getLeftInParent();
+                                locFinalPosY = locationBottom + locAP.y * locSize.height;
+                                locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_ABOVE_CENTER:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var rbs = relativeWidget.getSize();
-                                var locationBottom = relativeWidget.getTopInParent();
+                                var rbs = locRelativeWidget.getSize();
+                                var locationBottom = locRelativeWidget.getTopInParent();
 
-                                finalPosY = locationBottom + ap.y * cs.height;
-                                finalPosX = relativeWidget.getLeftInParent() + rbs.width * 0.5 + ap.x * cs.width - cs.width * 0.5;
+                                locFinalPosY = locationBottom + locAP.y * locSize.height;
+                                locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_ABOVE_RIGHTALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = relativeWidget.getTopInParent();
-                                var locationRight = relativeWidget.getRightInParent();
-                                finalPosY = locationBottom + ap.y * cs.height;
-                                finalPosX = locationRight - (1 - ap.x) * cs.width;
+                                var locationBottom = locRelativeWidget.getTopInParent();
+                                var locationRight = locRelativeWidget.getRightInParent();
+                                locFinalPosY = locationBottom + locAP.y * locSize.height;
+                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_LEFT_OF_TOPALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = relativeWidget.getTopInParent();
-                                var locationRight = relativeWidget.getLeftInParent();
-                                finalPosY = locationTop - (1 - ap.y) * cs.height;
-                                finalPosX = locationRight - (1 - ap.x) * cs.width;
+                                var locationTop = locRelativeWidget.getTopInParent();
+                                var locationRight = locRelativeWidget.getLeftInParent();
+                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
+                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_LEFT_OF_CENTER:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var rbs = relativeWidget.getSize();
-                                var locationRight = relativeWidget.getLeftInParent();
-                                finalPosX = locationRight - (1 - ap.x) * cs.width;
+                                var rbs = locRelativeWidget.getSize();
+                                var locationRight = locRelativeWidget.getLeftInParent();
+                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
 
-                                finalPosY = relativeWidget.getBottomInParent() + rbs.height * 0.5 + ap.y * cs.height - cs.height * 0.5;
+                                locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_LEFT_OF_BOTTOMALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = relativeWidget.getBottomInParent();
-                                var locationRight = relativeWidget.getLeftInParent();
-                                finalPosY = locationBottom + ap.y * cs.height;
-                                finalPosX = locationRight - (1 - ap.x) * cs.width;
+                                var locationBottom = locRelativeWidget.getBottomInParent();
+                                var locationRight = locRelativeWidget.getLeftInParent();
+                                locFinalPosY = locationBottom + locAP.y * locSize.height;
+                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_RIGHT_OF_TOPALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = relativeWidget.getTopInParent();
-                                var locationLeft = relativeWidget.getRightInParent();
-                                finalPosY = locationTop - (1 - ap.y) * cs.height;
-                                finalPosX = locationLeft + ap.x * cs.width;
+                                var locationTop = locRelativeWidget.getTopInParent();
+                                var locationLeft = locRelativeWidget.getRightInParent();
+                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
+                                locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_RIGHT_OF_CENTER:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var rbs = relativeWidget.getSize();
-                                var locationLeft = relativeWidget.getRightInParent();
-                                finalPosX = finalPosX = locationLeft + ap.x * cs.width;
+                                var rbs = locRelativeWidget.getSize();
+                                var locationLeft = locRelativeWidget.getRightInParent();
+                                locFinalPosX = locFinalPosX = locationLeft + locAP.x * locSize.width;
 
-                                finalPosY = relativeWidget.getBottomInParent() + rbs.height * 0.5 + ap.y * cs.height - cs.height * 0.5;
+                                locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_RIGHT_OF_BOTTOMALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationBottom = relativeWidget.getBottomInParent();
-                                var locationLeft = relativeWidget.getRightInParent();
-                                finalPosY = locationBottom + ap.y * cs.height;
-                                finalPosX = locationLeft + ap.x * cs.width;
+                                var locationBottom = locRelativeWidget.getBottomInParent();
+                                var locationLeft = locRelativeWidget.getRightInParent();
+                                locFinalPosY = locationBottom + locAP.y * locSize.height;
+                                locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_BELOW_LEFTALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = relativeWidget.getBottomInParent();
-                                var locationLeft = relativeWidget.getLeftInParent();
-                                finalPosY = locationTop - (1 - ap.y) * cs.height;
-                                finalPosX = locationLeft + ap.x * cs.width;
+                                var locationTop = locRelativeWidget.getBottomInParent();
+                                var locationLeft = locRelativeWidget.getLeftInParent();
+                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
+                                locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_BELOW_CENTER:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var rbs = relativeWidget.getSize();
-                                var locationTop = relativeWidget.getBottomInParent();
+                                var rbs = locRelativeWidget.getSize();
+                                var locationTop = locRelativeWidget.getBottomInParent();
 
-                                finalPosY = locationTop - (1 - ap.y) * cs.height;
-                                finalPosX = relativeWidget.getLeftInParent() + rbs.width * 0.5 + ap.x * cs.width - cs.width * 0.5;
+                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
+                                locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
                         case cc.UIRelativeAlign.LOCATION_BELOW_RIGHTALIGN:
-                            if (relativeWidget) {
-                                if (relativeWidgetLP && !relativeWidgetLP._put) {
+                            if (locRelativeWidget) {
+                                if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
                                 }
-                                var locationTop = relativeWidget.getBottomInParent();
-                                var locationRight = relativeWidget.getRightInParent();
-                                finalPosY = locationTop - (1 - ap.y) * cs.height;
-                                finalPosX = locationRight - (1 - ap.x) * cs.width;
+                                var locationTop = locRelativeWidget.getBottomInParent();
+                                var locationRight = locRelativeWidget.getRightInParent();
+                                locFinalPosY = locationTop - (1 - locAP.y) * locSize.height;
+                                locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
                         default:
                             break;
                     }
-                    var relativeWidgetMargin;
-                    var mg = layoutParameter.getMargin();
-                    if (relativeWidget) {
-                        relativeWidgetMargin = relativeWidget.getLayoutParameter(cc.LayoutParameterType.RELATIVE).getMargin();
+                    var locRelativeWidgetMargin;
+                    var locMargin = locLayoutParameter.getMargin();
+                    if (locRelativeWidget) {
+                        locRelativeWidgetMargin = locRelativeWidget.getLayoutParameter(cc.LayoutParameterType.RELATIVE).getMargin();
                     }
                     //handle margin
-                    switch (align) {
+                    switch (locAlign) {
                         case cc.UIRelativeAlign.ALIGN_NONE:
                         case cc.UIRelativeAlign.ALIGN_PARENT_TOP_LEFT:
-                            finalPosX += mg.left;
-                            finalPosY -= mg.top;
+                            locFinalPosX += locMargin.left;
+                            locFinalPosY -= locMargin.top;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
-                            finalPosY -= mg.top;
+                            locFinalPosY -= locMargin.top;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_TOP_RIGHT:
-                            finalPosX -= mg.right;
-                            finalPosY -= mg.top;
+                            locFinalPosX -= locMargin.right;
+                            locFinalPosY -= locMargin.top;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_LEFT_CENTER_VERTICAL:
-                            finalPosX += mg.left;
+                            locFinalPosX += locMargin.left;
                             break;
                         case cc.UIRelativeAlign.CENTER_IN_PARENT:
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
-                            finalPosX -= mg.right;
+                            locFinalPosX -= locMargin.right;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_LEFT_BOTTOM:
-                            finalPosX += mg.left;
-                            finalPosY += mg.bottom;
+                            locFinalPosX += locMargin.left;
+                            locFinalPosY += locMargin.bottom;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
-                            finalPosY += mg.bottom;
+                            locFinalPosY += locMargin.bottom;
                             break;
                         case cc.UIRelativeAlign.ALIGN_PARENT_RIGHT_BOTTOM:
-                            finalPosX -= mg.right;
-                            finalPosY += mg.bottom;
+                            locFinalPosX -= locMargin.right;
+                            locFinalPosY += locMargin.bottom;
                             break;
 
                         case cc.UIRelativeAlign.LOCATION_ABOVE_LEFTALIGN:
                         case cc.UIRelativeAlign.LOCATION_ABOVE_CENTER:
                         case cc.UIRelativeAlign.LOCATION_ABOVE_RIGHTALIGN:
-                            finalPosY += mg.bottom;
-                            finalPosY += relativeWidgetMargin.top;
+                            locFinalPosY += locMargin.bottom;
+                            locFinalPosY += locRelativeWidgetMargin.top;
                             break;
                         case cc.UIRelativeAlign.LOCATION_LEFT_OF_TOPALIGN:
                         case cc.UIRelativeAlign.LOCATION_LEFT_OF_CENTER:
                         case cc.UIRelativeAlign.LOCATION_LEFT_OF_BOTTOMALIGN:
-                            finalPosX -= mg.right;
-                            finalPosX -= relativeWidgetMargin.left;
+                            locFinalPosX -= locMargin.right;
+                            locFinalPosX -= locRelativeWidgetMargin.left;
                             break;
                         case cc.UIRelativeAlign.LOCATION_RIGHT_OF_TOPALIGN:
                         case cc.UIRelativeAlign.LOCATION_RIGHT_OF_CENTER:
                         case cc.UIRelativeAlign.LOCATION_RIGHT_OF_BOTTOMALIGN:
-                            finalPosX += mg.left;
-                            finalPosX += relativeWidgetMargin.right;
+                            locFinalPosX += locMargin.left;
+                            locFinalPosX += locRelativeWidgetMargin.right;
                             break;
                         case cc.UIRelativeAlign.LOCATION_BELOW_LEFTALIGN:
                         case cc.UIRelativeAlign.LOCATION_BELOW_CENTER:
                         case cc.UIRelativeAlign.LOCATION_BELOW_RIGHTALIGN:
-                            finalPosY -= mg.top;
-                            finalPosY -= relativeWidgetMargin.bottom;
+                            locFinalPosY -= locMargin.top;
+                            locFinalPosY -= locRelativeWidgetMargin.bottom;
                             break;
                         default:
                             break;
                     }
-                    child.setPosition(ccp(finalPosX, finalPosY));
-                    layoutParameter._put = true;
+                    locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                    locLayoutParameter._put = true;
                     unlayoutChildCount--;
                 }
             }
@@ -907,7 +904,7 @@ cc.RectClippingNode = cc.ClippingNode.extend({
 
     setClippingSize: function (size) {
         this.setContentSize(size);
-        this._clippingSize = size;
+        this._clippingSize = cc.size(size.width, size.height);
         this._arrRect[0] = cc.p(0, 0);
         this._arrRect[1] = cc.p(this._clippingSize.width, 0);
         this._arrRect[2] = cc.p(this._clippingSize.width, this._clippingSize.height);
@@ -944,7 +941,7 @@ cc.RectClippingNode = cc.ClippingNode.extend({
 
         //visit for canvas
         var context = ctx || cc.renderContext, i;
-        var children = this._children, child;
+        var children = this._children, locChild;
         context.save();
         this.transform(context);
         context.beginPath();
@@ -960,9 +957,9 @@ cc.RectClippingNode = cc.ClippingNode.extend({
             this.sortAllChildren();
             // draw children zOrder < 0
             for (i = 0; i < len; i++) {
-                child = children[i];
-                if (child._zOrder < 0)
-                    child.visit(context);
+                locChild = children[i];
+                if (locChild._zOrder < 0)
+                    locChild.visit(context);
                 else
                     break;
             }

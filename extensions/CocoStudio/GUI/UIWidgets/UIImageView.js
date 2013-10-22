@@ -112,9 +112,7 @@ cc.UIImageView = cc.UIWidget.extend({
      * @param {cc.Rect} rect
      */
     setTextureRect: function (rect) {
-        if (this._scale9Enabled) {
-        }
-        else {
+        if (!this._scale9Enabled){
             this._imageRenderer.setTextureRect(rect);
         }
     },

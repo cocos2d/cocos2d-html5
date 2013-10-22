@@ -59,10 +59,8 @@ cc.UIHelper = cc.Class.extend({
         if (!fileName) {
             return;
         }
-        var arrayTextures = this._textureFiles;
-        var length = arrayTextures.length;
-        for (var i = 0; i < length; i++) {
-            var file = arrayTextures[i];
+        for (var i = 0; i < this._textureFiles.length; i++) {
+            var file = this._textureFiles[i];
             if (file == fileName) {
                 return;
             }
@@ -79,10 +77,8 @@ cc.UIHelper = cc.Class.extend({
         if (!fileName) {
             return;
         }
-        var arrayTextures = this._textureFiles;
-        var length = arrayTextures.length;
-        for (var i = 0; i < length; i++) {
-            var file = arrayTextures[i];
+        for (var i = 0; i < this._textureFiles.length; i++) {
+            var file = this._textureFiles[i];
             if (file == fileName) {
                 cc.SpriteFrameCache.getInstance().removeSpriteFrameByName(fileName);
                 cc.ArrayRemoveObject(this._textureFiles, file);
@@ -95,10 +91,8 @@ cc.UIHelper = cc.Class.extend({
      * remove all plist files for loading widget's texture.
      */
     removeAllSpriteFrame: function () {
-        var arrayTextures = this._textureFiles;
-        var length = arrayTextures.length;
-        for (var i = 0; i < length; i++) {
-            var file = arrayTextures[i];
+        for (var i = 0; i < this._textureFiles.length; i++) {
+            var file = this._textureFiles[i];
             cc.SpriteFrameCache.getInstance().removeSpriteFrameByName(file);
         }
         this._textureFiles = [];

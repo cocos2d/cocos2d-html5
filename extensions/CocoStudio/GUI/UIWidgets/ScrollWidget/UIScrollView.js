@@ -99,14 +99,6 @@ cc.UIScrollView = cc.Layout.extend({
         this._eventSelector = null;
     },
     releaseResoures: function () {
-        this._pushListener = null;
-        this._pushSelector = null;
-        this._moveListener = null;
-        this._moveSelector = null;
-        this._releaseListener = null;
-        this._releaseSelector = null;
-        this._cancelListener = null;
-        this._cancelSelector = null;
         this.setUpdateEnabled(false);
         this.removeAllChildren();
         this._renderer.removeAllChildren(true);
