@@ -220,7 +220,7 @@ cc.Control = cc.LayerRGBA.extend({
         for (var i = 0, len = cc.CONTROL_EVENT_TOTAL_NUMBER; i < len; i++) {
             // If the given controlEvents bitmask contains the current event
             if ((controlEvents & (1 << i)))
-                this.removeTargetWithActionForControlEvent(target, action, 1 << i);
+                this._removeTargetWithActionForControlEvent(target, action, 1 << i);
         }
     },
 
@@ -305,7 +305,7 @@ cc.Control = cc.LayerRGBA.extend({
      * @param {function} action A selector identifying an action message. Pass NULL to remove all action messages paired with target.
      * @param {Number} controlEvent A control event for which the action message is sent. See "CCControlEvent" for constants.
      */
-    removeTargetWithActionForControlEvent:function (target, action, controlEvent) {
+    _removeTargetWithActionForControlEvent:function (target, action, controlEvent) {
         // Retrieve all invocations for the given control event
         //<CCInvocation*>
         var eventInvocationList = this._dispatchListforControlEvent(controlEvent);

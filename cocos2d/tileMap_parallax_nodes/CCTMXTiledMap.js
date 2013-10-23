@@ -126,28 +126,30 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @return {cc.Size}
      */
     getMapSize:function () {
-        return this._mapSize;
+        return cc.size(this._mapSize.width, this._mapSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setMapSize:function (Var) {
-        this._mapSize = Var;
+        this._mapSize.width = Var.width;
+        this._mapSize.height = Var.height;
     },
 
     /**
      * @return {cc.Size}
      */
     getTileSize:function () {
-        return this._tileSize;
+        return cc.size(this._tileSize.width, this._tileSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setTileSize:function (Var) {
-        this._tileSize = Var;
+        this._tileSize.width = Var.width;
+        this._tileSize.height = Var.height;
     },
 
     /**

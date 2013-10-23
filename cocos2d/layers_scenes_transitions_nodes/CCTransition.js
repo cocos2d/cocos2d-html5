@@ -278,12 +278,6 @@ cc.TransitionSceneOriented.create = function (t, scene, orientation) {
  */
 cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZoom# */{
     /**
-     * Constructor
-     */
-    ctor:function () {
-    },
-
-    /**
      * Custom On Enter callback
      * @override
      */
@@ -1228,7 +1222,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      */
     ctor:function () {
         cc.TransitionScene.prototype.ctor.call(this);
-        this._color = new cc.Color3B()
+        this._color = new cc.Color4B()
     },
 
     /**

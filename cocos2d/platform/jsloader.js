@@ -173,6 +173,7 @@
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
             '../extensions/CCEditBox.js',
+            // CocoStudio Armature
             '../extensions/CocoStudio/Armature/utils/CCArmatureDefine.js',
             '../extensions/CocoStudio/Armature/utils/CCDataReaderHelper.js',
             '../extensions/CocoStudio/Armature/utils/CCSpriteFrameCacheHelper.js',
@@ -191,7 +192,45 @@
             '../extensions/CocoStudio/Armature/animation/CCTween.js',
             '../extensions/CocoStudio/Armature/physics/CCColliderDetector.js',
             '../extensions/CocoStudio/Armature/CCArmature.js',
-            '../extensions/CocoStudio/Armature/CCBone.js'
+            '../extensions/CocoStudio/Armature/CCBone.js',
+            // CocoStudio Action
+            '../extensions/CocoStudio/Action/CCActionFrame.js',
+            '../extensions/CocoStudio/Action/CCActionManager.js',
+            '../extensions/CocoStudio/Action/CCActionNode.js',
+            '../extensions/CocoStudio/Action/CCActionObject.js',
+            // CocoStudio Components
+            '../extensions/CocoStudio/Components/CCComAttribute.js',
+            '../extensions/CocoStudio/Components/CCComAudio.js',
+            '../extensions/CocoStudio/Components/CCComController.js',
+            '../extensions/CocoStudio/Components/CCComRender.js',
+            // CocoStudio GUI
+            '../extensions/CocoStudio/GUI/BaseClasses/UIWidget.js',
+            '../extensions/CocoStudio/GUI/Layouts/Layout.js',
+            '../extensions/CocoStudio/GUI/BaseClasses/UIRootWidget.js',
+            '../extensions/CocoStudio/GUI/Layouts/LayoutParameter.js',
+            '../extensions/CocoStudio/GUI/Layouts/UILayoutDefine.js',
+            '../extensions/CocoStudio/GUI/System/CocosGUI.js',
+            '../extensions/CocoStudio/GUI/System/UIHelper.js',
+            '../extensions/CocoStudio/GUI/System/UIInputManager.js',
+            '../extensions/CocoStudio/GUI/System/UILayer.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UIButton.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UICheckBox.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UIImageView.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILabel.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILabelAtlas.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILabelBMFont.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILoadingBar.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UISlider.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UISwitch.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UITextField.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/Compatible/CompatibleClasses.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIDragPanel.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollInterface.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js',
+            '../extensions/CocoStudio/Reader/CCSGUIReader.js',
+            '../extensions/CocoStudio/Reader/CCSSceneReader.js'
 
         ]);
     }
@@ -247,7 +286,7 @@
 
     var loadJsImg = document.getElementById("cocos2d_loadJsImg");
     if(!loadJsImg){
-        loadJsImg = new Image();
+        loadJsImg = document.createElement('img');
         loadJsImg.src = "data:image/gif;base64,R0lGODlhEAAQALMNAD8/P7+/vyoqKlVVVX9/fxUVFUBAQGBgYMDAwC8vL5CQkP///wAAAP///wAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAANACwAAAAAEAAQAAAEO5DJSau9OOvNex0IMnDIsiCkiW6g6BmKYlBFkhSUEgQKlQCARG6nEBwOgl+QApMdCIRD7YZ5RjlGpCUCACH5BAUAAA0ALAAAAgAOAA4AAAQ6kLGB0JA4M7QW0hrngRllkYyhKAYqKUGguAws0ypLS8JxCLQDgXAIDg+FRKIA6v0SAECCBpXSkstMBAAh+QQFAAANACwAAAAACgAQAAAEOJDJORAac6K1kDSKYmydpASBUl0mqmRfaGTCcQgwcxDEke+9XO2WkxQSiUIuAQAkls0n7JgsWq8RACH5BAUAAA0ALAAAAAAOAA4AAAQ6kMlplDIzTxWC0oxwHALnDQgySAdBHNWFLAvCukc215JIZihVIZEogDIJACBxnCSXTcmwGK1ar1hrBAAh+QQFAAANACwAAAAAEAAKAAAEN5DJKc4RM+tDyNFTkSQF5xmKYmQJACTVpQSBwrpJNteZSGYoFWjIGCAQA2IGsVgglBOmEyoxIiMAIfkEBQAADQAsAgAAAA4ADgAABDmQSVZSKjPPBEDSGucJxyGA1XUQxAFma/tOpDlnhqIYN6MEAUXvF+zldrMBAjHoIRYLhBMqvSmZkggAIfkEBQAADQAsBgAAAAoAEAAABDeQyUmrnSWlYhMASfeFVbZdjHAcgnUQxOHCcqWylKEohqUEAYVkgEAMfkEJYrFA6HhKJsJCNFoiACH5BAUAAA0ALAIAAgAOAA4AAAQ3kMlJq704611SKloCAEk4lln3DQgyUMJxCBKyLAh1EMRR3wiDQmHY9SQslyIQUMRmlmVTIyRaIgA7";
 
         var canvasNode = document.getElementById(c.tag);

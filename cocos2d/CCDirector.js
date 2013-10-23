@@ -49,7 +49,7 @@ cc.DIRECTOR_PROJECTION_3D = 1;
 cc.DIRECTOR_PROJECTION_CUSTOM = 3;
 
 /**
- * Detault projection is 3D projection
+ * Default projection is 3D projection
  * @constant
  * @type Number
  */
@@ -326,9 +326,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
-    drawScene: null,
-
-    _drawSceneForCanvas: function () {
+    drawScene: function() {
         // calculate "global" dt
         this.calculateDeltaTime();
 
@@ -336,13 +334,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused)
             this._scheduler.update(this._deltaTime);
 
-        cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
+        this._clear();
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
         if (this._nextScene) {
             this.setNextScene();
         }
+
+        if (this._beforeVisitScene) this._beforeVisitScene();
+
         // draw the scene
         if (this._runningScene)
             this._runningScene.visit();
@@ -353,6 +354,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         if (this._displayStats)
             this._showStats();
+
+        if (this._afterVisitScene) this._afterVisitScene();
 
         this._totalFrames++;
 
@@ -360,41 +363,25 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._calculateMPF();
     },
 
-    _drawSceneForWebGL: function () {
-        // calculate "global" dt
-        this.calculateDeltaTime();
+    _clearCanvas: function() {
+        //cc.renderContext.clearRect(0, 0, cc.originalCanvasSize.width, -cc.originalCanvasSize.height);
+        cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
+    },
 
-        //tick before glClear: issue #533
-        if (!this._paused)
-            this._scheduler.update(this._deltaTime);
-
+    _clearWebGL: function() {
         var gl = cc.renderContext;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    },
 
-        /* to avoid flickr, nextScene MUST be here: after tick and before draw.
-         XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
-        if (this._nextScene)
-            this.setNextScene();
+    _beforeVisitScene: null,
+    _afterVisitScene: null,
 
+    _beforeVisitSceneWebGL: function() {
         cc.kmGLPushMatrix();
+    },
 
-        // draw the scene
-        if (this._runningScene)
-            this._runningScene.visit();
-
-        // draw the notifications node
-        if (this._notificationNode)
-            this._notificationNode.visit();
-
-        if (this._displayStats)
-            this._showStats();
-
+    _afterVisitSceneWebGL: function() {
         cc.kmGLPopMatrix();
-
-        this._totalFrames++;
-
-        if (this._displayStats)
-            this._calculateMPF();
     },
 
     /**
@@ -435,7 +422,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Size}
      */
     getWinSize:function () {
-        return this._winSizeInPoints;
+        return cc.size(this._winSizeInPoints.width, this._winSizeInPoints.height);
     },
 
     /**
@@ -453,17 +440,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     getVisibleSize:function () {
         if (this._openGLView) {
             return this._openGLView.getVisibleSize();
-        }
-        else {
-            return cc.size(0,0);
+        } else {
+            return this.getWinSize();
         }
     },
 
     getVisibleOrigin:function () {
         if (this._openGLView) {
             return this._openGLView.getVisibleOrigin();
-        }
-        else {
+        } else {
             return cc.p(0, 0);
         }
     },
@@ -939,6 +924,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     /**
      * seconds per frame
+     * @return {Number}
      */
     getSecondsPerFrame:function () {
         return this._secondsPerFrame;
@@ -1169,10 +1155,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 });
 
 if (cc.Browser.supportWebGL) {
-    cc.Director.prototype.drawScene = cc.Director.prototype._drawSceneForWebGL;
+    cc.Director.prototype._clear = cc.Director.prototype._clearWebGL;
+    cc.Director.prototype._beforeVisitScene = cc.Director.prototype._beforeVisitSceneWebGL;
+    cc.Director.prototype._afterVisitScene = cc.Director.prototype._afterVisitSceneWebGL;
     cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForWebGL;
 } else {
-    cc.Director.prototype.drawScene = cc.Director.prototype._drawSceneForCanvas;
+    cc.Director.prototype._clear = cc.Director.prototype._clearCanvas;
     cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForCanvas;
 }
 

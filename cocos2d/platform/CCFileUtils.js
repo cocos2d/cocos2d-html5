@@ -202,17 +202,14 @@ cc.FileUtils = cc.Class.extend({
             if (xhr.overrideMimeType)
                 xhr.overrideMimeType("text\/plain; charset=x-user-defined");
 
-            xhr.onreadystatechange = function (event) {
-                if (xhr.readyState == 4) {
-                    if (xhr.status == 200) {
-                        var fileContents = xhr.responseText;
-                        if (fileContents)
-                            selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
-                    } else {
-                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
-                    }
-                    cc.Loader.getInstance().onResLoaded();
+            xhr.onload = function (e) {
+                var fileContents = xhr.responseText;
+                if (fileContents) {
+                    selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
+                } else {
+                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
                 }
+                cc.Loader.getInstance().onResLoaded();
             };
         }
         xhr.send(null);
@@ -271,22 +268,30 @@ cc.FileUtils = cc.Class.extend({
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             // IE-specific logic here
             xhr.setRequestHeader("Accept-Charset", "utf-8");
+            xhr.onreadystatechange = function (event) {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        var fileContents = xhr.responseText;
+                        if (fileContents)
+                            selfPointer._textFileCache[fileUrl] = fileContents;
+                    } else {
+                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                    }
+                    cc.Loader.getInstance().onResLoaded();
+                }
+            };
         } else {
             if (xhr.overrideMimeType)
                 xhr.overrideMimeType("text\/plain; charset=utf-8");
-        }
-        xhr.onreadystatechange = function (event) {
-            if (xhr.readyState == 4) {
-                if (xhr.status == 200) {
-                    var fileContents = xhr.responseText;
-                    if (fileContents)
-                        selfPointer._textFileCache[fileUrl] = fileContents;
+            xhr.onload = function (e) {
+                if (xhr.responseText) {
+                    selfPointer._textFileCache[fileUrl] = xhr.responseText;
                 } else {
                     cc.Loader.getInstance().onResLoadingErr(fileUrl);
                 }
                 cc.Loader.getInstance().onResLoaded();
-            }
-        };
+            };
+        }
         xhr.send(null);
     },
 
@@ -417,8 +422,8 @@ cc.FileUtils = cc.Class.extend({
         var newFileName = this._getNewFilename(filename);
         var fullPath;
 
-        if (newFileName && newFileName.length > 1 && (newFileName.indexOf(":") == 1))
-            return newFileName;
+        //if (newFileName && newFileName.length > 1)
+        //    return newFileName;
 
         for (var i = 0; i < this._searchPathArray.length; i++) {
             var searchPath = this._searchPathArray[i];

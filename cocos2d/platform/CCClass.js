@@ -145,31 +145,6 @@ ClassManager.getNewID=function(){
             }
         }
 
-        // The dummy Class constructor. The properties are initialized in
-        // the constructor in advance so that the hidden class an instance
-        // of this belongs is stable. We need to create this constructor on
-        // the fly with "new Function" intead of doing
-        //
-        //     function Class () {
-        //       for (var p in this)
-        //         this[p] = this[p];
-        //     }
-        //
-        // because using keyed assignment (this[x] = y instead of this.x = y)
-        // to append new proeprties is almost certainly going to make an object
-        // turn into dictionary mode in V8.
-        //
-        // See https://github.com/oupengsoftware/v8/wiki/Dictionary-mode-%28English%29#wiki-append-property
-        //
-        // for principles under the hood.
-        /*var functionBody = releaseMode? "": "this._super=null;";
-        for (var p in prototype) {
-            functionBody += "this." + p + "=this." + p + ";";
-        }
-        if (prototype.ctor)
-            functionBody += "this.ctor.apply(this,arguments)";
-        var Class = new Function(functionBody);*/
-
         // The dummy Class constructor
         function Class() {
             // All construction is actually done in the init method

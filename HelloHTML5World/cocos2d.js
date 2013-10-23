@@ -51,7 +51,7 @@
         var p = d.getElementById(c.tag).parentNode;
         p.style.background = 'none';
         p.style.border = 'none';
-        p.insertBefore(s);
+        p.insertBefore(s,d.getElementById(c.tag));
 
         d.body.style.background = '#ffffff';
         return;

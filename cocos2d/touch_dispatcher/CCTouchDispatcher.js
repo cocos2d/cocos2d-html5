@@ -239,7 +239,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                 if (h.getPriority() < handler.getPriority())
                     ++u;
                 if (h.getDelegate() == handler.getDelegate()) {
-                    cc.Assert(0, "TouchDispatcher.forceAddHandler()");
+                    cc.Assert(0, "The handler has been added.");
                     return array;
                 }
             }

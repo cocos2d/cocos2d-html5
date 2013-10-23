@@ -186,14 +186,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Size}
      */
     getLayerSize:function () {
-        return this._layerSize;
+        return cc.size(this._layerSize.width, this._layerSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setLayerSize:function (Var) {
-        this._layerSize = Var;
+        this._layerSize.width = Var.width;
+        this._layerSize.height = Var.height;
     },
 
     /**
@@ -201,14 +202,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Size}
      */
     getMapTileSize:function () {
-        return this._mapTileSize;
+        return cc.size(this._mapTileSize.width,this._mapTileSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setMapTileSize:function (Var) {
-        this._mapTileSize = Var;
+        this._mapTileSize.width = Var.width;
+        this._mapTileSize.height = Var.height;
     },
 
     /**
@@ -767,8 +769,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             sprite.setRotation(0.0);
         }
 
-        sprite.setFlipX(false);
-        sprite.setFlipY(false);
+        sprite.setFlippedX(false);
+        sprite.setFlippedY(false);
 
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
@@ -785,17 +787,17 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 sprite.setRotation(270);
             else if (flag == (cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
                 sprite.setRotation(90);
-                sprite.setFlipX(true);
+                sprite.setFlippedX(true);
             } else {
                 sprite.setRotation(270);
-                sprite.setFlipX(true);
+                sprite.setFlippedX(true);
             }
         } else {
             if ((gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0)
-                sprite.setFlipX(true);
+                sprite.setFlippedX(true);
 
             if ((gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0)
-                sprite.setFlipY(true);
+                sprite.setFlippedY(true);
         }
     },
 

@@ -30,7 +30,7 @@ cc.AUTO_ADD_SPRITE_FRAME_NAME_PREFIX = false;
 cc.ENABLE_PHYSICS_CHIPMUNK_DETECT = true;
 
 cc.armatureVersion = function(){
-    return "0.4.0.0";
+    return "v1.0.0.0";
 };
 
 cc.RESOURCE_TYPE["TEXT"].push("ExportJson");

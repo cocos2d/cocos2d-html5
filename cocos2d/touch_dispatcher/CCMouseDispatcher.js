@@ -541,9 +541,10 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 
         var tx = event.pageX;
         var ty = event.pageY;
+        var eglViewer = cc.EGLView.getInstance();
 
-        var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
-        var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
+        var mouseX = (tx - pos.left) / eglViewer.getScaleX();
+        var mouseY = (pos.height - (ty - pos.top)) / eglViewer.getScaleY();
 
         var mouse = new cc.Mouse(mouseX, mouseY);
         mouse._setPrevPoint(cc.MouseDispatcher._preMousePoint.x, cc.MouseDispatcher._preMousePoint.y);

@@ -245,6 +245,7 @@ cc.EditBox = cc.ControlButton.extend({
         this._edTxt.addEventListener("focus", function () {
             if (this.value == selfPointer._placeholderText) {
                 this.value = "";
+                this.style.fontSize = selfPointer._edFontSize + "px" ;
                 this.style.color = cc.convertColor3BtoHexString(selfPointer._textColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
@@ -253,6 +254,7 @@ cc.EditBox = cc.ControlButton.extend({
         this._edTxt.addEventListener("blur", function () {
             if (this.value == "") {
                 this.value = selfPointer._placeholderText;
+                this.style.fontSize = selfPointer._placeholderFontSize + "px" ;
                 this.style.color = cc.convertColor3BtoHexString(selfPointer._placeholderColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidEnd)
@@ -389,7 +391,7 @@ cc.EditBox = cc.ControlButton.extend({
      * Set the placeholder's fontName.
      * @param {String} fontName
      */
-    setPlaceholderFont: function (fontName) {
+    setPlaceholderFontName: function (fontName) {
         this._placeholderFontName = fontName;
         this._setPlaceholderFontToEditText();
     },
@@ -398,7 +400,7 @@ cc.EditBox = cc.ControlButton.extend({
      * Set the placeholder's fontSize.
      * @param {Number} fontSize
      */
-    setPlaceholderFont: function (fontSize) {
+    setPlaceholderFontSize: function (fontSize) {
         this._placeholderFontSize = fontSize;
         this._setPlaceholderFontToEditText();
     },

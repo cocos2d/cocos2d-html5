@@ -27,10 +27,10 @@
 cc.RESOLUTION_POLICY = {
     // The entire application is visible in the specified area without trying to preserve the original aspect ratio.
     // Distortion can occur, and the application may appear stretched or compressed.
-    EXACTFIT:0,
+    EXACT_FIT:0,
     // The entire application fills the specified area, without distortion but possibly with some cropping,
     // while maintaining the original aspect ratio of the application.
-    NOBORDER:1,
+    NO_BORDER:1,
     // The entire application is visible in the specified area without distortion while maintaining the original
     // aspect ratio of the application. Borders can appear on two sides of the application.
     SHOW_ALL:2,
@@ -38,12 +38,12 @@ cc.RESOLUTION_POLICY = {
     // canvas so that it fits the aspect ratio of the device
     // no distortion will occur however you must make sure your application works on different
     // aspect ratios
-    HEIGHT:3,
+    FIXED_HEIGHT:3,
     // The application takes the width of the design resolution size and modifies the height of the internal
     // canvas so that it fits the aspect ratio of the device
     // no distortion will occur however you must make sure your application works on different
     // aspect ratios
-    WIDTH:4,
+    FIXED_WIDTH:4,
 
     UNKNOWN:5
 };
@@ -66,7 +66,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     // the view name
     _viewName:"",
     _scaleX:1,
+    _originalScaleX:1,
     _scaleY:1,
+    _originalScaleY:1,
     _indexBitsUsed:0,
     _maxTouches:5,
     _resolutionPolicy:cc.RESOLUTION_POLICY.UNKNOWN,
@@ -84,6 +86,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _wndProc:null,
     _ele:null,
     _frameZoomFactor:1.0,
+    __resizeWithBrowserSize:false,
+    __isAdjustSizeToBrowser:false,
 
     ctor:function () {
         this._ele = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
@@ -93,11 +97,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
         this._contentTranslateLeftTop = {left:0, top:0};
-        this._screenSize = cc.SizeZero();
+        this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
 
         this._hDC = cc.canvas;
         this._hRC = cc.renderContext;
-        this._initScreenSize();
     },
 
     /**
@@ -106,51 +109,94 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     initialize:function () {
         this._scrollToBottom();
         this._initialize = true;
-        var adjustSize = this._adjustSize.bind(this);
-        window.addEventListener('resize', adjustSize, false);
-        if(cc.Browser.isMobile){
-            setTimeout(adjustSize,300);
+    },
+
+    _resizeWithBrowserSize:function(enabled){
+        var adjustSize;
+        if(enabled){
+           //enable
+            if(!this.__resizeWithBrowserSize){
+                this.__resizeWithBrowserSize = true;
+                adjustSize = this._adjustSizeToBrowser.bind(this);
+                window.addEventListener('resize', adjustSize, false);
+            }
         }else{
-            this._adjustSize();
+           //disable
+            if(this.__resizeWithBrowserSize){
+                this.__resizeWithBrowserSize = true;
+                adjustSize = this._adjustSizeToBrowser.bind(this);
+                window.removeEventListener('resize', adjustSize, false);
+            }
         }
     },
 
     _scrollToBottom:function(){
         if(cc.Browser.isMobile){
-            cc.canvas.height = this._ele.clientHeight+500;
+            cc.canvas.height = this._ele.clientHeight + 500;
             window.location.href="#bottom";
         }
     },
 
     _initScreenSize:function(){
-        this._screenSize.width = this._ele.clientWidth;
-        this._screenSize.height = this._ele.clientHeight;
+        var locScreenSize = this._screenSize;
+        locScreenSize.width = this._ele.clientWidth;
+        locScreenSize.height = this._ele.clientHeight;
         if(navigator.userAgent.match(/iPhone/i)){
-            this._screenSize.height +=(this._screenSize.width/320)*60;
+            locScreenSize.height +=(locScreenSize.width/320)*60;       //TODO
         }
     },
-    _adjustSize:function () {
+
+    _setupViewport:function(isWidth, wohValue){
+        var viewportMeta, locHeadElement = document.head;
+        var locMetaElements = locHeadElement.getElementsByTagName("meta");
+        for(var i = 0; i < locMetaElements.length; i++){
+            var selElement = locMetaElements[i];
+            if(selElement.name.toLowerCase() == "viewport"){
+                viewportMeta = selElement;
+                break;
+            }
+        }
+        if(!viewportMeta){
+            viewportMeta = document.createElement("meta");
+            viewportMeta.name = "viewport";
+            locHeadElement.appendChild(viewportMeta);
+        }
+
+        if(isWidth)
+            viewportMeta.content = "width=" + wohValue + ",user-scalable=no";
+        else
+            viewportMeta.content = "height=" + wohValue + ",user-scalable=no";
+    },
+
+    _adjustSizeToBrowser:function () {
+        this.__isAdjustSizeToBrowser = true;
+
         this._scrollToBottom();
         this._initScreenSize();
-        cc.canvas.width = this._screenSize.width;
-        cc.canvas.height = this._screenSize.height;
 
-        if (!("opengl" in sys.capabilities))
-            cc.renderContext.translate(0, cc.canvas.height);
+        if (!cc.Browser.isMobile) {
+            var locCanvasElement = cc.canvas;
+            locCanvasElement.width = this._screenSize.width;
+            locCanvasElement.height = this._screenSize.height;
 
-        var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
-        if (parent) {
-            parent.style.width = cc.canvas.width + "px";
-            parent.style.height = cc.canvas.height + "px";
-        }
-        var body = document.body;
-        if (body) {
-            body.style.padding = 0 + "px";
-            body.style.border = 0 + "px";
-            body.style.margin = 0 + "px";
+            if (!("opengl" in sys.capabilities))
+                cc.renderContext.translate(0, locCanvasElement.height);
+
+            var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
+            if (parent) {
+                parent.style.width = locCanvasElement.width + "px";
+                parent.style.height = locCanvasElement.height + "px";
+            }
+            var body = document.body;
+            if (body) {
+                body.style.padding = 0 + "px";
+                body.style.border = 0 + "px";
+                body.style.margin = 0 + "px";
+            }
         }
         this.setDesignResolutionSize();
     },
+
     // hack
     _adjustSizeKeepCanvasSize:function () {
         if (!("opengl" in sys.capabilities))
@@ -227,7 +273,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Size}
      */
     getFrameSize:function () {
-        return this._screenSize;
+        return cc.size(this._screenSize.width, this._screenSize.height);
     },
 
     /**
@@ -236,7 +282,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} height
      */
     setFrameSize:function (width, height) {
-        this._designResolutionSize = this._screenSize = cc.size(width, height);
+        this._designResolutionSize.width = this._screenSize.width = width;
+        this._designResolutionSize.height = this._screenSize.height = height;
         this.centerWindow();
         cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
     },
@@ -254,10 +301,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Size}
      */
     getVisibleSize:function () {
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) {
             return cc.size(this._screenSize.width / this._scaleX, this._screenSize.height / this._scaleY);
         } else {
-            return this._designResolutionSize;
+            return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
         }
     },
 
@@ -266,7 +313,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Point}
      */
     getVisibleOrigin:function () {
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) {
             return cc.p((this._designResolutionSize.width - this._screenSize.width / this._scaleX) / 2,
                 (this._designResolutionSize.height - this._screenSize.height / this._scaleY) / 2);
         } else {
@@ -293,77 +340,101 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         if (width == 0 || height == 0)
             return;
 
-        if ((width != null) && (height != null)){
+        if ((width != null) && (height != null))
             this._designResolutionSize = cc.size(width, height);
-        }
 
         if (resolutionPolicy != null)
             this._resolutionPolicy = resolutionPolicy;
 
         if (!this._initialize) {
             this.initialize();
-            return;
         }
 
+        var locScreenSize = this._screenSize, locDesignResolutionSize = this._designResolutionSize;
+        var locResolutionPolicy = this._resolutionPolicy;
 
+        this._scaleX = locScreenSize.width / locDesignResolutionSize.width;
+        this._scaleY = locScreenSize.height / locDesignResolutionSize.height;
 
-        this._scaleX = this._screenSize.width / this._designResolutionSize.width;
-        this._scaleY = this._screenSize.height / this._designResolutionSize.height;
-
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER)
+        if (locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER)
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
 
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
+        if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
             this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
 
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.HEIGHT) {
+        if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) {
             this._scaleX = this._scaleY;
-            this._designResolutionSize.width = Math.ceil(this._screenSize.width / this._scaleX);
+            locDesignResolutionSize.width = Math.ceil(locScreenSize.width / this._scaleX);
         }
 
-        if (this._resolutionPolicy == cc.RESOLUTION_POLICY.WIDTH) {
+        if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH) {
             this._scaleY = this._scaleX;
-            this._designResolutionSize.height = Math.ceil(this._screenSize.height / this._scaleY);
+            locDesignResolutionSize.height = Math.ceil(locScreenSize.height / this._scaleY);
         }
 
         // calculate the rect of viewport
-        var viewPortW = this._designResolutionSize.width * this._scaleX;
-        var viewPortH = this._designResolutionSize.height * this._scaleY;
+        var viewPortW = locDesignResolutionSize.width * this._scaleX;
+        var viewPortH = locDesignResolutionSize.height * this._scaleY;
 
-        this._viewPortRect = cc.rect((this._screenSize.width - viewPortW) / 2, (this._screenSize.height - viewPortH) / 2, viewPortW, viewPortH);
+        this._viewPortRect = cc.rect((locScreenSize.width - viewPortW) / 2, (locScreenSize.height - viewPortH) / 2, viewPortW, viewPortH);
 
         // reset director's member variables to fit visible rect
         var director = cc.Director.getInstance();
         director._winSizeInPoints = this.getDesignResolutionSize();
 
         if (cc.renderContextType === cc.CANVAS) {
-            if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-                var locHeight = Math.abs(this._screenSize.height - viewPortH) / 2;
+            if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
+                var locHeight = Math.abs(locScreenSize.height - viewPortH) / 2;
                 cc.canvas.width = viewPortW;
                 cc.canvas.height = viewPortH;
-                cc.container.style.width = viewPortW + "px";
-                cc.container.style.height = viewPortH + "px";
+                cc.container.style.textAlign = "center";
+                cc.container.style.verticalAlign = "middle";
                 cc.renderContext.translate(0, viewPortH);
                 this._ele.style.paddingTop = locHeight + "px";
                 this._ele.style.paddingBottom = locHeight + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
+            } else if ((locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH)
+                || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT)) {
+                cc.canvas.width = cc.canvas.width;
+                cc.canvas.height = cc.canvas.height;
+                cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + this._viewPortRect.height);
             }
-            cc.renderContext.scale(this._scaleX, this._scaleY);
         } else {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
         }
+        this._originalScaleX = this._scaleX;
+        this._originalScaleY = this._scaleY;
         cc.DOM._resetEGLViewDiv();
+
+        //set the viewport for mobile
+        if (cc.Browser.isMobile && this.__isAdjustSizeToBrowser)
+            this._calculateViewPortByPolicy();
     },
 
+    _calculateViewPortByPolicy:function(){
+
+    },
+
+    _setScaleXYForRenderTexture:function(){
+        //hack for RenderTexture on canvas mode when adapting multiple resolution resources
+        var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+        this._scaleX = scaleFactor;
+        this._scaleY = scaleFactor;
+    },
+
+    _resetScale:function(){
+        this._scaleX = this._originalScaleX;
+        this._scaleY = this._originalScaleY;
+    },
     /**
      * Get design resolution size.
      * Default resolution size is the same as 'getFrameSize'.
      * @return {cc.Size}
      */
     getDesignResolutionSize:function () {
-        return this._designResolutionSize;
+        return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
     },
 
     /**
@@ -382,10 +453,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} h height
      */
     setViewPortInPoints:function (x, y, w, h) {
-        cc.renderContext.viewport((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
-            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
-            (w * this._scaleX * this._frameZoomFactor),
-            (h * this._scaleY * this._frameZoomFactor));
+        var locFrameZoomFactor = this._frameZoomFactor, locScaleX = this._scaleX, locScaleY = this._scaleY;
+        cc.renderContext.viewport((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
+            (y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor),
+            (w * locScaleX * locFrameZoomFactor),
+            (h * locScaleY * locFrameZoomFactor));
     },
 
     /**
@@ -396,10 +468,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} h
      */
     setScissorInPoints:function (x, y, w, h) {
-        cc.renderContext.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
-            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
-            (w * this._scaleX * this._frameZoomFactor),
-            (h * this._scaleY * this._frameZoomFactor));
+        var locFrameZoomFactor = this._frameZoomFactor, locScaleX = this._scaleX, locScaleY = this._scaleY;
+        cc.renderContext.scissor((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
+            (y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor),
+            (w * locScaleX * locFrameZoomFactor),
+            (h * locScaleY * locFrameZoomFactor));
     },
 
     /**
@@ -412,11 +485,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * Get the current scissor rectangle
+     * @return {cc.Rect}
      */
     getScissorRect:function () {
         var gl = cc.renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
         var boxArr = gl.getParameter(gl.SCISSOR_BOX);
-        return cc.rect((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / this._scaleY,
+        return cc.rect((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / scaleY,
             boxArr[2] / scaleX, boxArr[3] / scaleY);
     },
 
@@ -473,7 +547,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} ys
      */
     handleTouchesBegin:function (num, ids, xs, ys) {
-        var arr = [];
+        var arr = [], locViewPortRect = this._viewPortRect, locScaleX = this._scaleX, locScaleY = this._scaleY;
         for (var i = 0; i < num; ++i) {
             var id = ids[i];
             var x = xs[i];
@@ -493,10 +567,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 }
 
                 var touch = cc.Touches[unusedIndex] = new cc.Touch();
-                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.x) / this._scaleX,
-                    (y - this._viewPortRect.y) / this._scaleY);
+                touch.setTouchInfo(unusedIndex, (x - locViewPortRect.x) / locScaleX,
+                    (y - locViewPortRect.y) / locScaleY);
 
-                //cc.log("x ="+x+" y = "+y, touches[key].getLocation().x, touches[key].getLocation().y);
+                //console.log("x ="+x+" y = "+y, touch.getLocation());
 
                 var interObj = 0 | unusedIndex;
                 cc.TouchesIntergerDict[id] = interObj;
@@ -519,6 +593,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      */
     handleTouchesMove:function (num, ids, xs, ys) {
         var arr = [];
+        var locScaleX = this._scaleX, locScaleY = this._scaleY, locViewPortX = this._viewPortRect.x, locViewPortY = this._viewPortRect.y;
         for (var i = 0; i < num; ++i) {
             var id = ids[i];
             var x = xs[i];
@@ -530,11 +605,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 continue;
             }
 
-            //cc.log("Moving touches with id: " + id + ", x=" + x + ", y=" + y);
             var touch = cc.Touches[index];
             if (touch) {
-                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
-                    (y - this._viewPortRect.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - locViewPortX) / locScaleX,
+                    (y - locViewPortY) / locScaleY);
                 arr.push(touch);
             }
             else {
@@ -584,6 +658,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} ys
      */
     getSetOfTouchesEndOrCancel:function (arr, num, ids, xs, ys) {
+        var locScaleX = this._scaleX, locScaleY = this._scaleY, locViewPortRect = this._viewPortRect;
         for (var i = 0; i < num; ++i) {
             var id = ids[i];
             var x = xs[i];
@@ -598,8 +673,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             var touch = cc.Touches[index];
             if (touch) {
                 //cc.log("Ending touches with id: " + id + ", x=" + x + ", y=" + y);
-                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
-                    (y - this._viewPortRect.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - locViewPortRect.x) / locScaleX,
+                    (y - locViewPortRect.y) / locScaleY);
 
                 arr.push(touch);
 
@@ -653,10 +728,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesBegin(i, ids, xs, ys);
@@ -668,10 +745,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesMove(i, ids, xs, ys);
@@ -683,10 +762,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesEnd(i, ids, xs, ys);
@@ -698,10 +779,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var ys = [];
 
         var i = 0;
+        var touch;
         for (var j = 0; j < touches.length; j++) {
-            ids[i] = j;
-            xs[i] = touches[j].getLocation().x;
-            ys[i] = touches[j].getLocation().y;
+        	touch = touches[j];
+            ids[i] = touch.getId() || j;
+            xs[i] = touch.getLocation().x;
+            ys[i] = touch.getLocation().y;
             ++i;
         }
         this.handleTouchesCancel(i, ids, xs, ys);

@@ -317,7 +317,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // Shared data
     //
     // texture
-    _rect:cc.rect(0, 0, 0, 0), //Retangle of cc.Texture2D
+    _rect:null, //Retangle of cc.Texture2D
     _rectRotated:false, //Whether the texture is rotated
 
     // Offset Position (used by Zwoptex)
@@ -327,8 +327,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _opacityModifyRGB:false,
 
     // image is flipped
-    _flipX:false, //Whether the sprite is flipped horizontally or not.
-    _flipY:false, //Whether the sprite is flipped vertically or not.
+    _flippedX:false, //Whether the sprite is flipped horizontally or not.
+    _flippedY:false, //Whether the sprite is flipped vertically or not.
 
     _textureLoaded:false,
     _loadedEventListeners: null,
@@ -521,10 +521,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      *    Do not call it manually. Use setTextureRect instead.  <br/>
      *    (override this method to generate "double scale" sprites)
      * </p>
-     * @param rect
+     * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect = rect;
+        this._rect.x = rect.x;
+        this._rect.y = rect.y;
+        this._rect.width = rect.width;
+        this._rect.height = rect.height;
     },
 
     sortAllChildren:function () {
@@ -761,11 +764,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Sets whether the sprite should be flipped horizontally or not.
-     * @param {Boolean} flipX true if the sprite should be flipped horizaontally, false otherwise.
+     * @param {Boolean} flippedX true if the sprite should be flipped horizontally, false otherwise.
      */
-    setFlipX:function (flipX) {
-        if (this._flipX != flipX) {
-            this._flipX = flipX;
+    setFlippedX:function (flippedX) {
+        if (this._flippedX != flippedX) {
+            this._flippedX = flippedX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
             this.setNodeDirty();
         }
@@ -773,11 +776,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Sets whether the sprite should be flipped vertically or not.
-     * @param {Boolean} flipY true if the sprite should be flipped vertically, flase otherwise.
+     * @param {Boolean} flippedY true if the sprite should be flipped vertically, false otherwise.
      */
-    setFlipY:function (flipY) {
-        if (this._flipY != flipY) {
-            this._flipY = flipY;
+    setFlippedY:function (flippedY) {
+        if (this._flippedY != flippedY) {
+            this._flippedY = flippedY;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
             this.setNodeDirty();
         }
@@ -794,7 +797,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {Boolean} true if the sprite is flipped horizaontally, false otherwise.
      */
     isFlippedX:function () {
-        return this._flipX;
+        return this._flippedX;
     },
 
     /**
@@ -808,7 +811,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {Boolean} true if the sprite is flipped vertically, flase otherwise.
      */
     isFlippedY:function () {
-        return this._flipY;
+        return this._flippedY;
     },
 
     //
@@ -902,6 +905,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _colorized:false,
     _isLighterMode:false,
     _originalTexture:null,
+    _textureRect_Canvas:null,
+    _drawSize_Canvas:null,
 
     /**
      * Constructor
@@ -915,6 +920,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        this._rect = cc.rect(0,0,0,0);
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
         this._quadWebBuffer = cc.renderContext.createBuffer();
@@ -948,10 +954,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+        this._rect = cc.rect(0, 0, 0, 0);
 
         this._newTextureWhenChangeColor = false;
         this._textureLoaded = true;
         this._loadedEventListeners = [];
+        this._textureRect_Canvas = cc.rect(0, 0, 0, 0);
+        this._drawSize_Canvas = cc.size(0, 0);
 
         if (fileName) {
             if (typeof(fileName) === "string") {
@@ -1023,7 +1032,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         // update texture (calls _updateBlendFunc)
         this.setTexture(null);
         this._textureLoaded = true;
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1060,7 +1069,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         // update texture (calls _updateBlendFunc)
         this.setTexture(null);
         this._textureLoaded = true;
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1137,7 +1146,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1159,7 +1168,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            this._rect = rect;
+            if (rect) {
+                var locRect = this._rect;
+                locRect.x = rect.x;
+                locRect.y = rect.y;
+                locRect.width = rect.width;
+                locRect.height = rect.height;
+            }
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
             return true;
         }
@@ -1197,7 +1212,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        this._flipX = this._flipY = false;
+        this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
         this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -1211,7 +1226,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (!locTextureLoaded) {
             this._rectRotated = rotated || false;
-            this._rect = rect;
+            if (rect) {
+                this._rect.x = rect.x;
+                this._rect.y = rect.y;
+                this._rect.width = rect.width;
+                this._rect.height = rect.height;
+            }
             texture.addLoadedEventListener(this._textureLoadedCallback, this);
             return true;
         }
@@ -1290,9 +1310,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._setTextureCoords(rect);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
-        if (this._flipX)
+        if (this._flippedX)
             relativeOffset.x = -relativeOffset.x;
-        if (this._flipY)
+        if (this._flippedY)
             relativeOffset.y = -relativeOffset.y;
 
         var locRect = this._rect;
@@ -1329,11 +1349,18 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
+        //this._textureRect_Canvas = cc.RECT_POINTS_TO_PIXELS(rect);                      //this._setTextureCoords(rect);
+        var locTextureRect = this._textureRect_Canvas;
+        var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+        locTextureRect.x = 0|(rect.x * scaleFactor);
+        locTextureRect.y = 0|(rect.y * scaleFactor);
+        locTextureRect.width = 0|(rect.width * scaleFactor);
+        locTextureRect.height = 0|(rect.height * scaleFactor);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
-        if (this._flipX)
+        if (this._flippedX)
             relativeOffset.x = -relativeOffset.x;
-        if (this._flipY)
+        if (this._flippedY)
             relativeOffset.y = -relativeOffset.y;
         this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
         this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
@@ -1797,8 +1824,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _changeTextureColor: function () {
-        var locElement, locTexture = this._texture, locRect = this.getTextureRect();
-        if (locTexture && locRect.width > 0) {
+        var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
+        if (locTexture && locRect.width > 0 && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;
@@ -1844,13 +1871,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 bottom = (rect.y + rect.width) / atlasHeight;
             }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
-            if (this._flipX) {
+            if (this._flippedX) {
                 tempSwap = top;
                 top = bottom;
                 bottom = tempSwap;
             }
 
-            if (this._flipY) {
+            if (this._flippedY) {
                 tempSwap = left;
                 left = right;
                 right = tempSwap;
@@ -1877,13 +1904,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 bottom = (rect.y + rect.height) / atlasHeight;
             } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
-            if (this._flipX) {
+            if (this._flippedX) {
                 tempSwap = left;
                 left = right;
                 right = tempSwap;
             }
 
-            if (this._flipY) {
+            if (this._flippedY) {
                 tempSwap = top;
                 top = bottom;
                 bottom = tempSwap;
@@ -1983,43 +2010,55 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (this._isLighterMode)
             context.globalCompositeOperation = 'lighter';
 
+        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+
         context.globalAlpha = this._displayedOpacity / 255;
-        var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
-        if (this._flipX || this._flipY) {
+        var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition, locDrawSizeCanvas = this._drawSize_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = this._textureRect_Canvas;
+        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
+        locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
+
+        if (this._flippedX || this._flippedY) {
             context.save();
-            if (this._flipX) {
+            if (this._flippedX) {
                 flipXOffset = -locOffsetPosition.x - locRect.width;
                 context.scale(-1, 1);
             }
-            if (this._flipY) {
+            if (this._flippedY) {
                 flipYOffset = locOffsetPosition.y;
                 context.scale(1, -1);
             }
         }
 
+        flipXOffset *= locEGL_ScaleX;
+        flipYOffset *= locEGL_ScaleY;
+
         if (this._texture && locRect.width > 0) {
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,
-                    0, 0, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+                    0, 0, locTextureCoord.width, locTextureCoord.height,
+                    flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
             } else {
                 context.drawImage(image,
-                    0 | locRect.x, 0 | locRect.y, 0 | locRect.width, 0 | locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
+                    flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
         } else if (locContentSize.width !== 0) {
             var curColor = this.getColor();
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize.width, locContentSize.height);
+            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
             context.strokeStyle = "rgba(0,255,0,1)";
+            flipXOffset /= locEGL_ScaleX;
+            flipYOffset /= locEGL_ScaleY;
             flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
+            var vertices1 = [cc.p(flipXOffset, flipYOffset),
+                cc.p(flipXOffset + locRect.width, flipYOffset),
+                cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
                 cc.p(flipXOffset, flipYOffset - locRect.height)];
             cc.drawingUtil.drawPoly(vertices1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
@@ -2031,7 +2070,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];
             cc.drawingUtil.drawPoly(vertices2, 4, true);
         }
-        if (this._flipX || this._flipY)
+        if (this._flippedX || this._flippedY)
             context.restore();
         cc.g_NumberOfDraws++;
     }
