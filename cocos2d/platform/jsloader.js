@@ -173,6 +173,7 @@
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
             '../extensions/CCEditBox.js',
+            // CocoStudio Armature
             '../extensions/CocoStudio/Armature/utils/CCArmatureDefine.js',
             '../extensions/CocoStudio/Armature/utils/CCDataReaderHelper.js',
             '../extensions/CocoStudio/Armature/utils/CCSpriteFrameCacheHelper.js',
@@ -191,7 +192,45 @@
             '../extensions/CocoStudio/Armature/animation/CCTween.js',
             '../extensions/CocoStudio/Armature/physics/CCColliderDetector.js',
             '../extensions/CocoStudio/Armature/CCArmature.js',
-            '../extensions/CocoStudio/Armature/CCBone.js'
+            '../extensions/CocoStudio/Armature/CCBone.js',
+            // CocoStudio Action
+            '../extensions/CocoStudio/Action/CCActionFrame.js',
+            '../extensions/CocoStudio/Action/CCActionManager.js',
+            '../extensions/CocoStudio/Action/CCActionNode.js',
+            '../extensions/CocoStudio/Action/CCActionObject.js',
+            // CocoStudio Components
+            '../extensions/CocoStudio/Components/CCComAttribute.js',
+            '../extensions/CocoStudio/Components/CCComAudio.js',
+            '../extensions/CocoStudio/Components/CCComController.js',
+            '../extensions/CocoStudio/Components/CCComRender.js',
+            // CocoStudio GUI
+            '../extensions/CocoStudio/GUI/BaseClasses/UIWidget.js',
+            '../extensions/CocoStudio/GUI/Layouts/Layout.js',
+            '../extensions/CocoStudio/GUI/BaseClasses/UIRootWidget.js',
+            '../extensions/CocoStudio/GUI/Layouts/LayoutParameter.js',
+            '../extensions/CocoStudio/GUI/Layouts/UILayoutDefine.js',
+            '../extensions/CocoStudio/GUI/System/CocosGUI.js',
+            '../extensions/CocoStudio/GUI/System/UIHelper.js',
+            '../extensions/CocoStudio/GUI/System/UIInputManager.js',
+            '../extensions/CocoStudio/GUI/System/UILayer.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UIButton.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UICheckBox.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UIImageView.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILabel.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILabelAtlas.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILabelBMFont.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UILoadingBar.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UISlider.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UISwitch.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UITextField.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/Compatible/CompatibleClasses.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIDragPanel.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollInterface.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js',
+            '../extensions/CocoStudio/Reader/CCSGUIReader.js',
+            '../extensions/CocoStudio/Reader/CCSSceneReader.js'
 
         ]);
     }
