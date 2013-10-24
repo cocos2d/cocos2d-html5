@@ -1607,9 +1607,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // texture
                 // Try to get the texture from the cache
                 var textureName = locValueForKey("textureFileName", dictionary);
-                var fullpath = cc.FileUtils.getInstance().fullPathFromRelativeFile(textureName, this._plistFile);
-
-                var tex = cc.TextureCache.getInstance().textureForKey(fullpath);
+                var fileUtils = cc.FileUtils.getInstance();
+                var imgPath = fileUtils.fullPathFromRelativeFile(textureName, this._plistFile);
+                var tex = cc.TextureCache.getInstance().textureForKey(imgPath);
 
                 if (tex) {
                     this.setTexture(tex);
@@ -1618,7 +1618,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                     if (textureData && textureData.length == 0) {
                         cc.Assert(textureData, "cc.ParticleSystem.initWithDictory:textureImageData is null");
-                        tex = cc.TextureCache.getInstance().addImage(fullpath);
+                        tex = cc.TextureCache.getInstance().addImage(imgPath);
                         if (!tex)
                             return false;
                         this.setTexture(tex);
@@ -1646,12 +1646,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
 
-                        var fileUtils = cc.FileUtils.getInstance();
-                        fullpath = fileUtils.fullPathForFilename(this._plistFile);
+                        var imgFullPath = fileUtils.fullPathForFilename(imgPath);
+                        cc.TextureCache.getInstance().cacheImage(imgFullPath, canvasObj);
 
-                        cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
-
-                        var addTexture = cc.TextureCache.getInstance().textureForKey(this._plistFile);
+                        var addTexture = cc.TextureCache.getInstance().textureForKey(imgPath);
 
                         cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
 
