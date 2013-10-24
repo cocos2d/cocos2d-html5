@@ -1459,7 +1459,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     initWithFile:function (plistFile) {
         this._plistFile = plistFile;
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(this._plistFile);
+        var fileUtils = cc.FileUtils.getInstance();
+        var fullPath = fileUtils.fullPathForFilename(plistFile);
+
+        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(fullPath);
 
         cc.Assert(dict != null, "Particles: file not found");
 
@@ -1643,9 +1646,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
 
+                        var fileUtils = cc.FileUtils.getInstance();
+                        fullpath = fileUtils.fullPathForFilename(this._plistFile);
+
                         cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
 
-                        var addTexture = cc.TextureCache.getInstance().textureForKey(fullpath);
+                        var addTexture = cc.TextureCache.getInstance().textureForKey(this._plistFile);
 
                         cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
 
