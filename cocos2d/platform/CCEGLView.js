@@ -394,9 +394,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 this._ele.style.paddingBottom = locHeight + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
             } else if ((locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH)
-                || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT)) {
-                cc.canvas.width = cc.canvas.width;
-                cc.canvas.height = cc.canvas.height;
+                || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) || (locResolutionPolicy === cc.RESOLUTION_POLICY.EXACT_FIT)) {
+                cc.canvas.width = viewPortW;
+                cc.canvas.height = viewPortH;
                 cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + this._viewPortRect.height);
             }
         } else {
