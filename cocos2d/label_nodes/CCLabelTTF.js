@@ -774,8 +774,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         locContext.font = this._fontStyleStr;
         this._updateTTF();
         var width = locContentSize.width, height = locContentSize.height;
+        var flag = locLabelCanvas.width == width && locLabelCanvas.height == height;
         locLabelCanvas.width = width;
         locLabelCanvas.height = height;
+        if(flag) locContext.clearRect(0, 0, width, height);
 
         //draw text to labelCanvas
         this._drawTTFInCanvas(locContext);
