@@ -570,8 +570,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 touch.setTouchInfo(unusedIndex, (x - locViewPortRect.x) / locScaleX,
                     (y - locViewPortRect.y) / locScaleY);
 
-                //console.log("x ="+x+" y = "+y, touch.getLocation());
-
                 var interObj = 0 | unusedIndex;
                 cc.TouchesIntergerDict[id] = interObj;
                 arr.push(touch);
