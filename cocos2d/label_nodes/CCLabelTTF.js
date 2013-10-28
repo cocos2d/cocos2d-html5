@@ -681,8 +681,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize * 2;
         if(this._shadowEnabled){
             var locOffsetSize = this._shadowOffset;
-            locStrokeShadowOffsetX = Math.max(Math.abs(locOffsetSize.width) * 2, locStrokeShadowOffsetX);
-            locStrokeShadowOffsetY = Math.max(Math.abs(locOffsetSize.height) * 2, locStrokeShadowOffsetY);
+            locStrokeShadowOffsetX += Math.abs(locOffsetSize.width) * 2;
+            locStrokeShadowOffsetY += Math.abs(locOffsetSize.height) * 2;
         }
 
         //get offset for stroke and shadow
