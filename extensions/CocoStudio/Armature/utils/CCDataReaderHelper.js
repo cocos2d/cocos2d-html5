@@ -347,8 +347,8 @@ cc.DataReaderHelper.decodeMovement = function (movementXML, _armatureData) {
     durationTween = parseFloat(movementXML.getAttribute(cc.CONST_A_DURATION_TWEEN)) || 0;
     movementData.durationTween = durationTween;
 
-    loop = parseFloat(movementXML.getAttribute(cc.CONST_A_LOOP)) || 1;
-    movementData.loop = Boolean(loop);
+    loop = movementXML.getAttribute(cc.CONST_A_LOOP);
+    movementData.loop = loop ? Boolean(parseFloat(loop)):true;
 
     var easing = movementXML.getAttribute(cc.CONST_A_TWEEN_EASING);
     if (easing) {
@@ -443,13 +443,13 @@ cc.DataReaderHelper.decodeMovementBone = function (movBoneXml, parentXml, boneDa
         totalDuration += frameData.duration;
         movBoneData.duration = totalDuration;
     }
-    //todo
-    /*if(movBoneData.frameList.length>0){
+
+    if(movBoneData.frameList.length>0){
         var frameData = new cc.FrameData();
         frameData.copy(movBoneData.frameList[movBoneData.frameList.length-1]);
         frameData.frameID = movBoneData.duration;
         movBoneData.addFrameData(frameData);
-    }*/
+    }
     return movBoneData;
 };
 
@@ -764,13 +764,13 @@ cc.DataReaderHelper.decodeMovementBoneFromJson = function (json) {
 cc.DataReaderHelper.decodeFrameFromJson = function (json) {
     var frameData = new cc.FrameData();
     this.decodeNodeFromJson(frameData, json);
-    frameData.duration = json[cc.CONST_A_DURATION] || 1;
+    frameData.duration = json[cc.CONST_A_DURATION] || 0;
     frameData.tweenEasing = json[cc.CONST_A_TWEEN_EASING] || cc.TweenType.Linear;
     frameData.displayIndex = json[cc.CONST_A_DISPLAY_INDEX] || 0;
     frameData.blendType = json[cc.CONST_A_BLEND_TYPE] || 0;
     frameData.event = json[cc.CONST_A_EVENT] || null;
     if (this._cocoStudioVersion < cc.CONST_VERSION_COMBINED)
-        frameData.duration = json[cc.CONST_A_DURATION] || 1;
+        frameData.duration = json[cc.CONST_A_DURATION] || 0;
     else
         frameData.frameID = json[cc.CONST_A_FRAME_INDEX] || 0;
     return frameData;

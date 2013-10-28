@@ -200,6 +200,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         return this._opacity;
     },
     setOpacity: function (opacity) {
+        if(!this._scale9Image){
+            return;
+        }
         this._opacity = opacity;
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
@@ -214,6 +217,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         return this._color;
     },
     setColor: function (color) {
+        if(!this._scale9Image){
+            return;
+        }
         this._color = color;
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
@@ -228,6 +234,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     setCapInsets: function (capInsets) {
+        if(!this._scale9Image){
+            return;
+        }
         var contentSize = this._contentSize;
         contentSize = new cc.Size(contentSize.width,contentSize.height);
         this.updateWithBatchNode(this._scale9Image, this._spriteRect, this._spriteFrameRotated, capInsets);
@@ -435,6 +444,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
      @since v0.8
      */
     setOpacityModifyRGB: function (value) {
+        if(!this._scale9Image){
+            return;
+        }
         this._opacityModifyRGB = value;
         var scaleChildren = this._scale9Image.getChildren();
         if (scaleChildren) {

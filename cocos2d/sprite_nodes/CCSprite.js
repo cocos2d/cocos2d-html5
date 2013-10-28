@@ -1825,7 +1825,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _changeTextureColor: function () {
         var locElement, locTexture = this._texture, locRect = this._textureRect_Canvas; //this.getTextureRect();
-        if (locTexture && locRect.width > 0) {
+        if (locTexture && locRect.width > 0 && this._originalTexture) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;

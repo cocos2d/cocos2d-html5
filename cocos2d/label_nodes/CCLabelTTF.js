@@ -294,7 +294,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.Size} shadowOffset
      * @param {Number} shadowOpacity (0 to 1)
      * @param {Number} shadowBlur
-     * @param {Boolean} [mustUpdateTexture=false]
+     * @param {Boolean} [mustUpdateTexture=false] This parameter is not used. It's kept for cocos2d-x JSB compatibility
      */
     enableShadow:function(shadowOffset, shadowOpacity, shadowBlur, mustUpdateTexture){
         shadowOpacity = shadowOpacity || 0.5;
@@ -322,7 +322,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * disable shadow rendering
-     * @param {Boolean} [mustUpdateTexture=false]
+     * @param {Boolean} [mustUpdateTexture=false] This parameter is not used. It's kept for cocos2d-x JSB compatibility
      */
     disableShadow:function(mustUpdateTexture){
         if (this._shadowEnabled) {
@@ -335,7 +335,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * enable or disable stroke
      * @param {cc.Color3B} strokeColor
      * @param {Number} strokeSize
-     * @param {Boolean} [mustUpdateTexture=false]
+     * @param {Boolean} [mustUpdateTexture=false]  This parameter is not used. It's kept for cocos2d-x JSB compatibility
      */
     enableStroke:function(strokeColor, strokeSize, mustUpdateTexture){
         if(this._strokeEnabled === false)
@@ -355,7 +355,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * disable stroke
-     * @param {Boolean} [mustUpdateTexture=false]
+     * @param {Boolean} [mustUpdateTexture=false] This parameter is not used. It's kept for cocos2d-x JSB compatibility
      */
     disableStroke:function(mustUpdateTexture){
         if (this._strokeEnabled){
@@ -367,7 +367,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     /**
      * set text tinting
      * @param {cc.Color3B} tintColor
-     * @param {Boolean} [mustUpdateTexture=false]
+     * @param {Boolean} [mustUpdateTexture=false]  This parameter is not used. It's kept for cocos2d-x JSB compatibility
      */
     setFontFillColor:null,
 
@@ -743,8 +743,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         locContext.font = this._fontStyleStr;
         this._updateTTF();
         var width = locContentSize.width, height = locContentSize.height;
+        var flag = locLabelCanvas.width == width && locLabelCanvas.height == height;
         locLabelCanvas.width = width;
         locLabelCanvas.height = height;
+        if(flag) locContext.clearRect(0, 0, width, height);
 
         //draw text to labelCanvas
         this._drawTTFInCanvas(locContext);

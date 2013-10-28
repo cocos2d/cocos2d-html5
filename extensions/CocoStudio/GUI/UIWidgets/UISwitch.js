@@ -22,15 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.MAX_VERTEXZ_VALUE = 5000000.0;
-cc.ARMATURE_MAX_CHILD = 50.0;
-cc.ARMATURE_MAX_ZORDER = 100;
-cc.ARMATURE_MAX_COUNT = ((cc.MAX_VERTEXZ_VALUE) / (cc.ARMATURE_MAX_CHILD) / cc.ARMATURE_MAX_ZORDER);
-cc.AUTO_ADD_SPRITE_FRAME_NAME_PREFIX = false;
-cc.ENABLE_PHYSICS_CHIPMUNK_DETECT = true;
+cc.UISwitch = cc.UIWidget.extend({
 
-cc.armatureVersion = function(){
-    return "v1.0.0.0";
-};
-
-cc.RESOURCE_TYPE["TEXT"].push("ExportJson");
+});
