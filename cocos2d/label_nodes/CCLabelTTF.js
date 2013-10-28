@@ -86,7 +86,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._shadowOpacity = 0;
         this._shadowBlur = 0;
         this._shadowColorValue = cc.c3b(128, 128, 128);
-        this._shadowColorStr = "rgba(128, 128, 128, 1)";
+        this._shadowColorStr = "rgba(128, 128, 128, 0.5)";
 
         this._strokeEnabled = false;
         this._strokeColor = cc.white();
