@@ -36,12 +36,12 @@ cc.CCSSceneReader = cc.Class.extend({
             if (!pszFileName)
                 break;
 
-            var strFileName = pszFileName;
-            var pos = strFileName.lastIndexOf("/");
+            var strFullFileName = cc.FileUtils.getInstance().fullPathForFilename(pszFileName);
+            var pos = pszFileName.lastIndexOf("/");
             if(pos>-1){
-                this._baseBath =strFileName.substr(0,pos+1);
+                this._baseBath =pszFileName.substr(0,pos+1);
             }
-            data = cc.FileUtils.getInstance().getTextFileData(pszFileName, "r", size);
+            data = cc.FileUtils.getInstance().getTextFileData(strFullFileName);
 
             if (!data)
                 break;
@@ -77,22 +77,22 @@ cc.CCSSceneReader = cc.Class.extend({
                 var comName = subDict["name"];
 
                 var fileData = subDict["fileData"];
-                var path = "";
-                var plistFile = "";
+                var path = "",fullPath = "",plistFile = "",fullPlistFile = "";
                 var resType = 0;
                 path +=this._baseBath;
                 if (fileData != null) {
-                    var file = fileData["path"];
-                    resType = fileData["resourceType"]
-                    resType = (resType || resType == 0) ? resType : -1;
-                    var plistFile = fileData["plistFile"];
-                    if (file != null) {
-                        path += cc.FileUtils.getInstance().fullPathForFilename(file);
+                    if(fileData.hasOwnProperty("resourceType")){
+                        resType = fileData["resourceType"]
+                    }else{
+                        resType =-1;
                     }
 
-                    if (plistFile != null) {
-                        plistFile += cc.FileUtils.getInstance().fullPathForFilename(plistFile);
-                    }
+                    path += fileData["path"];
+                    plistFile += fileData["plistFile"];
+
+                    fullPath = cc.FileUtils.getInstance().fullPathForFilename(path);
+                    fullPlistFile = cc.FileUtils.getInstance().fullPathForFilename(plistFile);
+
                     fileData = null;
                 }
 
@@ -180,8 +180,7 @@ cc.CCSSceneReader = cc.Class.extend({
                     if (pos != -1) {
                         file_path = reDir.substr(0, pos + 1);
                     }
-                    var size = 0;
-                    var des = cc.FileUtils.getInstance().getTextFileData(path, "r", size);
+                    var des = cc.FileUtils.getInstance().getTextFileData(fullPath);
                     if (!des) {
                         cc.log("read json file[%s] error!\n", path);
                         continue;
@@ -199,7 +198,8 @@ cc.CCSSceneReader = cc.Class.extend({
                         var plistpath = "";
                         plistpath += file_path;
                         plistpath += plist;
-                        var root = cc.FileUtils.getInstance().createDictionaryWithContentsOfFile(plistpath);
+                        var locFullPlistPath = cc.FileUtils.getInstance().fullPathForFilename(plistpath);
+                        var root = cc.FileUtils.getInstance().createDictionaryWithContentsOfFile(locFullPlistPath);
                         var metadata = root["metadata"];
                         var textureFileName = metadata["textureFileName"];
 
@@ -241,7 +241,7 @@ cc.CCSSceneReader = cc.Class.extend({
                         attribute = cc.ComAttribute.create();
                         var size = 0;
                         var data = 0;
-                        data = cc.FileUtils.getInstance().getTextFileData(path, "r", size);
+                        data = cc.FileUtils.getInstance().getTextFileData(path);
                         if (data) {
                             attribute.setDict(JSON.parse(data));
                         }
@@ -270,7 +270,7 @@ cc.CCSSceneReader = cc.Class.extend({
                 else if (className == "GUIComponent") {
                     var pLayer = cc.UILayer.create();
                     pLayer.scheduleUpdate();
-                    var widget = cc.UIHelper.getInstance().createWidgetFromJsonFile(path);
+                    var widget = cc.CCSGUIReader.getInstance().widgetFromJsonFile(path);
                     pLayer.addWidget(widget);
                     var render = cc.ComRender.create(pLayer, "GUIComponent");
                     if (comName != null) {

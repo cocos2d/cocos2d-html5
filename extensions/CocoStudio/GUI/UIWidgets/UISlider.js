@@ -167,7 +167,9 @@ cc.UISlider = cc.UIWidget.extend({
             this._progressBarRenderer.setOpacity(this.getOpacity());
         }
         this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
-        this._progressBarTextureSize = this._progressBarRenderer.getContentSize();
+        var locSize = this._progressBarRenderer.getContentSize();
+        this._progressBarTextureSize.width = locSize.width;
+        this._progressBarTextureSize.height = locSize.height;
         this.progressBarRendererScaleChangedWithSize();
     },
 
@@ -445,7 +447,8 @@ cc.UISlider = cc.UIWidget.extend({
      * @returns {cc.Size}
      */
     getContentSize: function () {
-        return this._barRenderer.getContentSize();
+        var locContentSize = this._barRenderer.getContentSize();
+        return cc.size(locContentSize.width,locContentSize.height);
     },
 
     /**
@@ -458,15 +461,16 @@ cc.UISlider = cc.UIWidget.extend({
 
     barRendererScaleChangedWithSize: function () {
         if (this._ignoreSize) {
-
             this._barRenderer.setScale(1.0);
-            this._size = this._barRenderer.getContentSize();
-            this._barLength = this._size.width;
+            var locSize = this._barRenderer.getContentSize();
+            this._size.width = locSize.width;
+            this._size.height = locSize.height;
+            this._barLength = locSize.width;
         }
         else {
             this._barLength = this._size.width;
             if (this._scale9Enabled) {
-                this._barRenderer.setPreferredSize(this._size);
+                this._barRenderer.setPreferredSize(cc.size(this._size.width,this._size.height));
             }
             else {
                 var btextureSize = this._barRenderer.getContentSize();
@@ -495,7 +499,7 @@ cc.UISlider = cc.UIWidget.extend({
         }
         else {
             if (this._scale9Enabled) {
-                this._progressBarRenderer.setPreferredSize(this._size);
+                this._progressBarRenderer.setPreferredSize(cc.size(this._size.width,this._size.height));
             }
             else {
                 var ptextureSize = this._progressBarTextureSize;
