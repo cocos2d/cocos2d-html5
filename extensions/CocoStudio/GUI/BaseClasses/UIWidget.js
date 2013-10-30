@@ -162,7 +162,7 @@ cc.UIWidget = cc.Class.extend({
     releaseResoures: function () {
         this.setUpdateEnabled(false);
         this.removeAllChildren();
-        this._children.release();
+        this._children=[];
         this._renderer.removeAllChildren(true);
         this._renderer.removeFromParent(true);
         this._renderer.release();
@@ -821,12 +821,12 @@ cc.UIWidget = cc.Class.extend({
 
     /**
      * Sets the touch event target/selector of the menu item
-     * @param {Object} target
      * @param {Function} selector
+     * @param {Object} target
      */
-    addTouchEventListener: function (target, selector) {
-        this._touchEventListener = target;
+    addTouchEventListener: function (selector, target) {
         this._touchEventSelector = selector;
+        this._touchEventListener = target;
     },
 
     /**
@@ -949,7 +949,8 @@ cc.UIWidget = cc.Class.extend({
      * @param {cc.Point} pt
      */
     setAnchorPoint: function (pt) {
-        this._anchorPoint = pt;
+        this._anchorPoint.x = pt.x;
+        this._anchorPoint.y = pt.y;
         this._renderer.setAnchorPoint(pt);
     },
 
@@ -1494,7 +1495,7 @@ cc.UIWidget = cc.Class.extend({
         this.addRenderer(node, 0);
     },
     removeCCNode: function (cleanup) {
-        this.removeCCNode(cleanup);
+        this.removeRenderer(cleanup);
     }
 });
 

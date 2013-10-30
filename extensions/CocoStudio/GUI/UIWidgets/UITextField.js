@@ -490,12 +490,12 @@ cc.UITextField = cc.UIWidget.extend({
 
     /**
      * add event listener
-     * @param {Object} target
      * @param {Function} selector
+     * @param {Object} target
      */
-    addEventListener: function (target, selector) {
-        this._eventListener = target;
+    addEventListener: function (selector, target) {
         this._eventSelector = selector;
+        this._eventListener = target;
     },
 
     hitTest: function (pt) {

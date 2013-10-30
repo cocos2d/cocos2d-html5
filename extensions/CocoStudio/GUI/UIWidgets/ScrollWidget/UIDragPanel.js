@@ -841,13 +841,12 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     /**
-     *
-     * @param {Object} target
      * @param {Function} selector
+     * @param {Object} target
      */
-    addEventListener: function (target, selector) {
-        this._eventLister = target;
+    addEventListener: function (selector, target) {
         this._eventSelector = selector;
+        this._eventLister = target;
     },
 
     /**

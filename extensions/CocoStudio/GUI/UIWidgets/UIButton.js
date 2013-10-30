@@ -112,9 +112,6 @@ cc.UIButton = cc.UIWidget.extend({
         this._renderer.removeChild(this._buttonClickedRenderer, true);
         this._renderer.removeChild(this._buttonDisableRenderer, true);
 
-        this._buttonNormalRenderer = null;
-        this._buttonClickedRenderer = null;
-        this._buttonDisableRenderer = null;
         if (this._scale9Enabled) {
             this._buttonNormalRenderer = cc.Scale9Sprite.create();
             this._buttonClickedRenderer = cc.Scale9Sprite.create();

@@ -296,12 +296,12 @@ cc.UICheckBox = cc.UIWidget.extend({
 
     /**
      * add event listener
-     * @param {Object} target
      * @param {Function} selector
+     * @param {Object} target
      */
-    addEventListener: function (target, selector) {
-        this._selectedStateEventListener = target;
+    addEventListener: function (selector, target) {
         this._selectedStateEventSelector = selector;
+        this._selectedStateEventListener = target;
     },
 
     /**

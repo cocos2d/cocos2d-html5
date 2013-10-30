@@ -415,12 +415,12 @@ cc.UISlider = cc.UIWidget.extend({
 
     /**
      * add event listener
-     * @param {Object} target
      * @param {Function} selector
+     * @param {Object} target
      */
-    addEventListener: function (target, selector) {
-        this._slidPercentListener = target;
+    addEventListener: function (selector, target) {
         this._slidPercentSelector = selector;
+        this._slidPercentListener = target;
     },
 
     percentChangedEvent: function () {
