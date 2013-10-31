@@ -190,44 +190,35 @@ cc.sizeEqualToSize = function (size1, size2) {
 
 /**
  * @class
- * @param {Number} x1
- * @param {Number} y1
- * @param {Number} width1
- * @param {Number} height1
+ * @param {Number|cc.Point|cc.Rect} [x1] a Number value as x or a cc.Point object as origin or a cc.Rect clone object
+ * @param {Number|cc.Size} [y1] x1 a Number value as y or a cc.Size object as size
+ * @param {Number} [width1]
+ * @param {Number} [height1]
  * Constructor
  */
 cc.Rect = function (x1, y1, width1, height1) {
-    switch (arguments.length) {
-        case 0:
-            this.origin = cc.p(0, 0);
-            this.size = cc.size(0, 0);
-            break;
-        case 1:
-            var oldRect = x1;
-            if (!oldRect) {
-                this.origin = cc.p(0, 0);
-                this.size = cc.size(0, 0);
-            } else {
-                if (oldRect instanceof cc.Rect) {
-                    this.origin = cc.p(oldRect.origin.x, oldRect.origin.y);
-                    this.size = cc.size(oldRect.size.width, oldRect.size.height);
-                } else {
-                    throw "unknown argument type";
-                }
-            }
-            break;
-        case 2:
-            this.origin = x1 ? cc.p(x1.x, x1.y) : cc.p(0, 0);
-            this.size = y1 ? cc.size(y1.width, y1.height) : cc.size(0, 0);
-            break;
-        case 4:
-            this.origin = cc.p(x1 || 0, y1 || 0);
-            this.size = cc.size(width1 || 0, height1 || 0);
-            break;
-        default:
-            throw "unknown argument type";
-            break;
+    var argLen =arguments.length;
+    if(argLen === 4){
+        this.origin = new cc.Point(x1 || 0, y1 || 0);
+        this.size = new cc.Size(width1 || 0, height1 || 0);
+        return;
     }
+    if(argLen === 1) {
+        this.origin = new cc.Point(x1.origin.x, x1.origin.y);
+        this.size = new cc.Size(x1.size.width, x1.size.height);
+        return;
+    }
+    if(argLen === 0) {
+        this.origin = new cc.Point(0, 0);
+        this.size = new cc.Size(0,0);
+        return;
+    }
+    if(argLen === 2) {
+        this.origin = new cc.Point(x1.x, x1.y);
+        this.size = new cc.Size(y1.width,y1.height);
+        return;
+    }
+    throw "unknown argument type";
 };
 
 /**
@@ -245,7 +236,19 @@ cc.RectMake = function (x, y, width, height) {
 
 // backward compatible
 cc.rect = function (x, y, w, h) {
-    return new cc.Rect(x,y,w,h);
+    if(arguments.length === 0)
+        return new cc.Rect(0,0,0,0);
+
+    if(arguments.length === 1)
+        return new cc.Rect(x.x, x.y, x.width, x.height);
+
+    if(arguments.length === 2)
+        return new cc.Rect(x.x, x.y, y.width, y.height);
+
+    if(arguments.length === 4)
+        return new cc.Rect(x,y,w,h);
+
+    throw "unknown argument type";
 };
 
 // JSB compatbility: in JSB, cc._rect reuses objects instead of creating new ones
