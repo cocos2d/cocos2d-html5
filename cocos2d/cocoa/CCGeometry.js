@@ -236,16 +236,17 @@ cc.RectMake = function (x, y, width, height) {
 
 // backward compatible
 cc.rect = function (x, y, w, h) {
-    if(arguments.length === 0)
+    var argLen =arguments.length;
+    if(argLen === 0)
         return new cc.Rect(0,0,0,0);
 
-    if(arguments.length === 1)
+    if(argLen === 1)
         return new cc.Rect(x.x, x.y, x.width, x.height);
 
-    if(arguments.length === 2)
+    if(argLen === 2)
         return new cc.Rect(x.x, x.y, y.width, y.height);
 
-    if(arguments.length === 4)
+    if(argLen === 4)
         return new cc.Rect(x,y,w,h);
 
     throw "unknown argument type";
