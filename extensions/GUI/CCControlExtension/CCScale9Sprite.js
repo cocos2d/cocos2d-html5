@@ -47,7 +47,7 @@ cc.POSITIONS_BOTTOMLEFT = 8;
  * @class
  * @extends cc.Sprite
  */
-cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
+cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     RGBAProtocol: true,
 
     _spriteRect: null,
@@ -169,7 +169,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     ctor: function () {
-        cc.Node.prototype.ctor.call(this);
+        cc.NodeRGBA.prototype.ctor.call(this);
         this._spriteRect = cc.RectZero();
         this._capInsetsInternal = cc.RectZero();
 
@@ -504,7 +504,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         var locCapInsetsInternal = this._capInsetsInternal;
-        if(!capInsets){
+        if(capInsets){
             locCapInsetsInternal.x = capInsets.x;
             locCapInsetsInternal.y = capInsets.y;
             locCapInsetsInternal.width = capInsets.width;
