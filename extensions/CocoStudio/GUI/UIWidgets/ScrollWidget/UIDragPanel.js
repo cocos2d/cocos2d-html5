@@ -64,7 +64,7 @@ cc.DRAGPANEL_BOUNCE_DIR = {
 
 cc.DragPanelEventType = {
     BERTH_LEFTBOTTOM: 0,
-    BERTH_LFETTOP: 1,
+    BERTH_LEFTTOP: 1,
     BERTH_RIGHTBOTTOM: 2,
     BERTH_RIGHTTOP: 3,
     BERTH_LEFT: 4,
@@ -134,7 +134,8 @@ cc.UIDragPanel = cc.Layout.extend({
         this._berthDirection = cc.DRAGPANEL_BERTH_DIR.NONE;
         this._bounceEnable = 0;
         this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.NONE;
-        this._bounceDuration = 0;
+        this._bounceDuration = 0.5;
+        this._bounceEaseRate = 2.0;
         this._eventLister = null;
         this._eventSelector = null;
         this._runningAction = 0;
@@ -800,7 +801,7 @@ cc.UIDragPanel = cc.Layout.extend({
 
     berthToLeftTopEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LFETTOP);
+            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LEFTTOP);
         }
     },
 
