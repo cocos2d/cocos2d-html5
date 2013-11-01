@@ -1256,9 +1256,13 @@ cc.UIListView = cc.Layout.extend({
         }
     },
 
-    addEventListenter: function (target, selector) {
-        this._eventListener = target;
+    /**
+     * @param {Function} selector
+     * @param {Object} target
+     */
+    addEventListener: function (selector, target) {
         this._eventSelector = selector;
+        this._eventListener = target;
     },
 
     getDescription: function () {

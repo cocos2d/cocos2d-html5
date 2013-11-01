@@ -220,7 +220,15 @@ cc.DisplayManager = cc.Class.extend({
         }
     },
 
-    containPoint:function (point) {
+    containPoint:function (/*point|x,y*/) {
+        var p = cc.p(0, 0);
+        if (arguments.length == 1) {
+            p.x = arguments[0].x;
+            p.y = arguments[0].y;
+        } else if (arguments.length == 2) {
+            p.x = arguments[0];
+            p.y = arguments[1];
+        }
         if (!this._visible || this._displayIndex < 0) {
             return false;
         }
@@ -236,19 +244,13 @@ cc.DisplayManager = cc.Class.extend({
                 var outPoint = cc.p(0, 0);
                 var sprite = this._currentDecoDisplay.getDisplay();
                 sprite = sprite.getChildByTag(0);
-                ret = cc.SPRITE_CONTAIN_POINT_WITH_RETURN(sprite, point, outPoint);
+                ret = cc.SPRITE_CONTAIN_POINT_WITH_RETURN(sprite, p, outPoint);
                 break;
             default:
                 break;
         }
         return ret;
     },
-
-    containPoint:function (x, y) {
-        var p = cc.p(x, y);
-        return this.containPoint(p);
-    },
-
 
     setVisible:function (visible) {
         if (!this._displayRenderNode) {

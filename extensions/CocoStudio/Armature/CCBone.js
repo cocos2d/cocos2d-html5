@@ -148,12 +148,25 @@ cc.Bone = cc.NodeRGBA.extend({
         }
         if (this._boneTransformDirty) {
             if (locArmature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED) {
-                cc.TransformHelp.nodeConcat(locTweenData, this._boneData);
+                var locBoneData = this._boneData;
+                locTweenData.x += locBoneData.x;
+                locTweenData.y += locBoneData.y;
+                locTweenData.skewX += locBoneData.skewX;
+                locTweenData.skewY += locBoneData.skewY;
+                locTweenData.scaleX += locBoneData.scaleX;
+                locTweenData.scaleY += locBoneData.scaleY;
+                
                 locTweenData.scaleX -= 1;
                 locTweenData.scaleY -= 1;
             }
 
-            cc.TransformHelp.nodeToMatrix(locTweenData, locWorldTransform);
+            locWorldTransform.a = locTweenData.scaleX * Math.cos(locTweenData.skewY);
+            locWorldTransform.b = locTweenData.scaleX * Math.sin(locTweenData.skewY);
+            locWorldTransform.c = locTweenData.scaleY * Math.sin(locTweenData.skewX);
+            locWorldTransform.d = locTweenData.scaleY * Math.cos(locTweenData.skewY);
+            locWorldTransform.tx = locTweenData.x;
+            locWorldTransform.ty = locTweenData.y;
+
 
             this._worldTransform = cc.AffineTransformConcat(this.nodeToParentTransform(), locWorldTransform);
 
@@ -205,14 +218,18 @@ cc.Bone = cc.NodeRGBA.extend({
      */
     updateColor:function () {
         var display = this._displayManager.getDisplayRenderNode();
-        if (display&&display instanceof cc.Skin) {
-            //display.setColor(cc.c3b(this._displayedColor.r * this._tweenData.r / 255, this._displayedColor.g * this._tweenData.g / 255, this._displayedColor.b * this._tweenData.b / 255));
-            if(cc.Browser.supportWebGL){
-                display.setOpacity(this._displayedOpacity * this._tweenData.a / 255);
-            }else{
-                cc.NodeRGBA.prototype.setOpacity.call(display, this._displayedOpacity * this._tweenData.a / 255);
+        if (display && display.RGBAProtocol) {
+            var locDisplayedColor = this._displayedColor;
+            var locTweenData = this._tweenData;
+            var locOpacity = this._displayedOpacity * locTweenData.a / 255;
+            var locColor = cc.c3b(locDisplayedColor.r * locTweenData.r / 255, locDisplayedColor.g * locTweenData.g / 255, locDisplayedColor.b * locTweenData.b / 255);
+            if (cc.Browser.supportWebGL) {
+                display.setOpacity(locOpacity);
+                display.setColor(locColor);
+            } else {
+                cc.NodeRGBA.prototype.setOpacity.call(display, this._displayedOpacity * locTweenData.a / 255);
+                cc.NodeRGBA.prototype.setColor.call(display, locColor);
             }
-
         }
     },
 
