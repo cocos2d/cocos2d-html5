@@ -419,7 +419,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var backGroundFileName = backGroundDic["path"];
-                    checkBox.loadTextureBackGround(backGroundFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureBackGround(backGroundFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -436,7 +436,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var backGroundSelectedFileName = backGroundSelectedDic["path"];
-                    checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -453,7 +453,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var frontCrossFileName = frontCrossDic["path"];
-                    checkBox.loadTextureFrontCross(frontCrossFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureFrontCross(frontCrossFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -470,7 +470,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var backGroundDisabledFileName = backGroundDisabledDic["path"];
-                    checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -487,7 +487,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var frontCrossDisabledFileName = options["path"];
-                    checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -516,7 +516,7 @@ cc.CCSGUIReader = cc.Class.extend({
             var useMergedTexture = options["useMergedTexture"];
             if (scale9Enable) {
                 if (useMergedTexture) {
-                    imageView.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    imageView.loadTexture(imageFileName, cc.TextureResType.PLIST);
                 }
                 else {
                     imageView.loadTexture(imageFileName_tp);
@@ -537,7 +537,7 @@ cc.CCSGUIReader = cc.Class.extend({
             }
             else {
                 if (useMergedTexture) {
-                    imageView.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    imageView.loadTexture(imageFileName, cc.TextureResType.PLIST);
                 }
                 else {
                     imageView.loadTexture(imageFileName_tp);
@@ -564,7 +564,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var imageFileName = imageFileNameDic["path"];
-                    imageView.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    imageView.loadTexture(imageFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -667,7 +667,7 @@ cc.CCSGUIReader = cc.Class.extend({
         if (containerWidget instanceof cc.UIScrollView ||
             containerWidget instanceof cc.UIListView ||
             containerWidget instanceof cc.UIDragPanel) {
-            containerWidget.setClippingEnable(options["clipAble"]);
+            containerWidget.setClippingEnabled(options["clipAble"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -711,7 +711,7 @@ cc.CCSGUIReader = cc.Class.extend({
                 var cw = options["capInsetsWidth"];
                 var ch = options["capInsetsHeight"];
                 if (useMergedTexture) {
-                    panel.setBackGroundImage(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    panel.setBackGroundImage(imageFileName, cc.TextureResType.PLIST);
                 }
                 else {
                     panel.setBackGroundImage(imageFileName_tp);
@@ -721,7 +721,7 @@ cc.CCSGUIReader = cc.Class.extend({
             else {
 
                 if (useMergedTexture) {
-                    panel.setBackGroundImage(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    panel.setBackGroundImage(imageFileName, cc.TextureResType.PLIST);
                 }
                 else {
                     panel.setBackGroundImage(imageFileName_tp);
@@ -769,7 +769,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var imageFileName = imageFileNameDic["path"];
-                    panel.setBackGroundImage(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    panel.setBackGroundImage(imageFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -815,7 +815,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     var imageFileName = options["barFileName"];
                     var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                     if (useMergedTexture) {
-                        slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                        slider.loadBarTexture(imageFileName, cc.TextureResType.PLIST);
                     }
                     else {
                         slider.loadBarTexture(imageFileName_tp);
@@ -826,7 +826,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     var imageFileName = options["barFileName"];
                     var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                     if (useMergedTexture) {
-                        slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                        slider.loadBarTexture(imageFileName, cc.TextureResType.PLIST);
                     }
                     else {
                         slider.loadBarTexture(imageFileName_tp);
@@ -842,7 +842,7 @@ cc.CCSGUIReader = cc.Class.extend({
             var pressedFileName_tp = pressedFileName ? this._filePath + pressedFileName : null;
             var disabledFileName_tp = disabledFileName ? this._filePath + disabledFileName : null;
             if (useMergedTexture) {
-                slider.loadSlidBallTextures(normalFileName, pressedFileName, disabledFileName, cc.RESOURCE_TYPE.PLIST);
+                slider.loadSlidBallTextures(normalFileName, pressedFileName, disabledFileName, cc.TextureResType.PLIST);
             }
             else {
                 slider.loadSlidBallTextures(normalFileName_tp, pressedFileName_tp, disabledFileName_tp);
@@ -852,7 +852,7 @@ cc.CCSGUIReader = cc.Class.extend({
             var imageFileName = options["progressBarFileName"];
             var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
             if (useMergedTexture) {
-                slider.loadProgressBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                slider.loadProgressBarTexture(imageFileName, cc.TextureResType.PLIST);
             }
             else {
                 slider.loadProgressBarTexture(imageFileName_tp);
@@ -879,7 +879,7 @@ cc.CCSGUIReader = cc.Class.extend({
                             break;
                         case 1:
                             var imageFileName = imageFileNameDic["path"];
-                            slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                            slider.loadBarTexture(imageFileName, cc.TextureResType.PLIST);
                             break;
                         default:
                             break;
@@ -899,7 +899,7 @@ cc.CCSGUIReader = cc.Class.extend({
                             break;
                         case 1:
                             var imageFileName = imageFileNameDic["path"];
-                            slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                            slider.loadBarTexture(imageFileName, cc.TextureResType.PLIST);
                             break;
                         default:
                             break;
@@ -918,7 +918,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var normalFileName = normalDic["path"];
-                    slider.loadSlidBallTextureNormal(normalFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadSlidBallTextureNormal(normalFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -935,7 +935,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var pressedFileName = pressedDic["path"];
-                    slider.loadSlidBallTexturePressed(pressedFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadSlidBallTexturePressed(pressedFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -952,7 +952,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var disabledFileName = disabledDic["path"];
-                    slider.loadSlidBallTextureDisabled(disabledFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadSlidBallTextureDisabled(disabledFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -969,7 +969,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var imageFileName = progressBarDic["path"];
-                    slider.loadProgressBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadProgressBarTexture(imageFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
@@ -1046,14 +1046,14 @@ cc.CCSGUIReader = cc.Class.extend({
             //textField.setSize(CCSizeMake(dw, dh));
         }
         var maxLengthEnable = options["maxLengthEnable"];
-        textField.setMaxLengthEnable(maxLengthEnable);
+        textField.setMaxLengthEnabled(maxLengthEnable);
 
         if (maxLengthEnable) {
             var maxLength = options["maxLength"];
             textField.setMaxLength(maxLength);
         }
         var passwordEnable = options["passwordEnable"];
-        textField.setPasswordEnable(passwordEnable);
+        textField.setPasswordEnabled(passwordEnable);
         if (passwordEnable) {
             textField.setPasswordStyleText(options["passwordStyleText"]);
         }
@@ -1068,7 +1068,7 @@ cc.CCSGUIReader = cc.Class.extend({
             var imageFileName = options["texture"];
             var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
             if (useMergedTexture) {
-                loadingBar.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                loadingBar.loadTexture(imageFileName, cc.TextureResType.PLIST);
             }
             else {
                 loadingBar.loadTexture(imageFileName_tp);
@@ -1095,7 +1095,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var imageFileName = imageFileNameDic["path"];
-                    loadingBar.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    loadingBar.loadTexture(imageFileName, cc.TextureResType.PLIST);
                     break;
                 default:
                     break;
