@@ -92,8 +92,6 @@ cc.CCSSceneReader = cc.Class.extend({
 
                     fullPath = cc.FileUtils.getInstance().fullPathForFilename(path);
                     fullPlistFile = cc.FileUtils.getInstance().fullPathForFilename(plistFile);
-
-                    fileData = null;
                 }
 
                 if (className == "CCSprite") {
@@ -115,9 +113,10 @@ cc.CCSSceneReader = cc.Class.extend({
                         var pngFile = plistFile.substr(0, startPos);
                         pngFile = pngFile + ".png";
 
-                        pngFile.replace(pos, pngFile.length(), ".png");
+                        plistFile = this._baseBath + plistFile;
+                        pngFile = this._baseBath + pngFile;
                         cc.SpriteFrameCache.getInstance().addSpriteFrames(plistFile, pngFile);
-                        sprite = cc.Sprite.createWithSpriteFrameName(path);
+                        sprite = cc.Sprite.createWithSpriteFrameName(fileData["path"]);
                     }
                     else {
                         continue;
