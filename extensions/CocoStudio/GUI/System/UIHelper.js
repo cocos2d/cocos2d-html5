@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.UIHelper
+ * Base class for ccs.UIHelper
  * @class
  * @extends cc.Class
  */
-cc.UIHelper = cc.Class.extend({
+ccs.UIHelper = cc.Class.extend({
     _fileDesignWidth: 0,
     _fileDesignHeight: 0,
 //texture
@@ -48,7 +48,7 @@ cc.UIHelper = cc.Class.extend({
      * @returns {String}
      */
     createWidgetFromJsonFile: function (fileName) {
-        return cc.CCSGUIReader.getInstance().widgetFromJsonFile(fileName);
+        return ccs.GUIReader.getInstance().widgetFromJsonFile(fileName);
     },
 
     /**
@@ -100,9 +100,9 @@ cc.UIHelper = cc.Class.extend({
 
     /**
      * Finds a widget whose tag equals to param tag from root widget.
-     * @param {cc.UIWidget} root
+     * @param {ccs.UIWidget} root
      * @param {number} tag
-     * @returns {cc.UIWidget}
+     * @returns {ccs.UIWidget}
      */
     seekWidgetByTag: function (root, tag) {
         if (!root) {
@@ -125,9 +125,9 @@ cc.UIHelper = cc.Class.extend({
 
     /**
      * Finds a widget whose name equals to param name from root widget.
-     * @param {cc.UIWidget} root
+     * @param {ccs.UIWidget} root
      * @param {String} name
-     * @returns {cc.UIWidget}
+     * @returns {ccs.UIWidget}
      */
     seekWidgetByName: function (root, name) {
         if (!root) {
@@ -151,9 +151,9 @@ cc.UIHelper = cc.Class.extend({
     /**
      * Finds a widget whose name equals to param name from root widget.
      * RelativeLayout will call this method to find the widget witch is needed.
-     * @param {cc.UIWidget} root
+     * @param {ccs.UIWidget} root
      * @param {String} name
-     * @returns {cc.UIWidget}
+     * @returns {ccs.UIWidget}
      */
     seekWidgetByRelativeName: function (root, name) {
         if (!root) {
@@ -163,7 +163,7 @@ cc.UIHelper = cc.Class.extend({
         var length = arrayRootChildren.length;
         for (var i = 0; i < length; i++) {
             var child = arrayRootChildren[i];
-            var layoutParameter = child.getLayoutParameter(cc.LayoutParameterType.RELATIVE);
+            var layoutParameter = child.getLayoutParameter(ccs.UILayoutParameterType.RELATIVE);
             if (layoutParameter && layoutParameter.getRelativeName() == name) {
                 return child;
             }
@@ -203,13 +203,13 @@ cc.UIHelper = cc.Class.extend({
         return this._fileDesignHeight;
     }
 });
-cc.UIHelper._instance = null;
-cc.UIHelper.getInstance = function () {
+ccs.UIHelper._instance = null;
+ccs.UIHelper.getInstance = function () {
     if (!this._instance) {
-        this._instance = new cc.UIHelper();
+        this._instance = new ccs.UIHelper();
     }
     return this._instance;
 };
-cc.UIHelper.purge = function(){
+ccs.UIHelper.purge = function(){
     this._instance=null;
 };

@@ -22,14 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.LoadingBarType = { Left: 0, Right: 1};
+ccs.LoadingBarType = { Left: 0, Right: 1};
 
 /**
- * Base class for cc.UILoadingBar
+ * Base class for ccs.UILoadingBar
  * @class
- * @extends cc.UIWidget
+ * @extends ccs.UIWidget
  */
-cc.UILoadingBar = cc.UIWidget.extend({
+ccs.UILoadingBar = ccs.UIWidget.extend({
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -41,12 +41,12 @@ cc.UILoadingBar = cc.UIWidget.extend({
     _capInsets: null,
     _textureFile: "",
     ctor: function () {
-        cc.UIWidget.prototype.ctor.call(this);
-        this._barType = cc.LoadingBarType.Left;
+        ccs.UIWidget.prototype.ctor.call(this);
+        this._barType = ccs.LoadingBarType.Left;
         this._percent = 100;
         this._totalLength = 0;
         this._barRenderer = null;
-        this._renderBarTexType = cc.TextureResType.LOCAL;
+        this._renderBarTexType = ccs.TextureResType.LOCAL;
         this._barRendererTextureSize = cc.size(0, 0);
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
@@ -55,7 +55,7 @@ cc.UILoadingBar = cc.UIWidget.extend({
     },
 
     initRenderer: function () {
-        cc.UIWidget.prototype.initRenderer.call(this);
+        ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._renderer.addChild(this._barRenderer);
         this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
@@ -64,7 +64,7 @@ cc.UILoadingBar = cc.UIWidget.extend({
     /**
      * Changes the progress direction of loadingbar.
      * LoadingBarTypeLeft means progress left to right, LoadingBarTypeRight otherwise.
-     * @param {cc.LoadingBarType} dir
+     * @param {ccs.LoadingBarType} dir
      */
     setDirection: function (dir) {
         if (this._barType == dir) {
@@ -73,14 +73,14 @@ cc.UILoadingBar = cc.UIWidget.extend({
         this._barType = dir;
 
         switch (this._barType) {
-            case cc.LoadingBarType.Left:
+            case ccs.LoadingBarType.Left:
                 this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
-            case cc.LoadingBarType.Right:
+            case ccs.LoadingBarType.Right:
                 this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
@@ -93,7 +93,7 @@ cc.UILoadingBar = cc.UIWidget.extend({
     /**
      * Gets the progress direction of loadingbar.
      * LoadingBarTypeLeft means progress left to right, LoadingBarTypeRight otherwise.
-     * @returns {cc.LoadingBarType}
+     * @returns {ccs.LoadingBarType}
      */
     getDirection: function () {
         return this._barType;
@@ -102,23 +102,23 @@ cc.UILoadingBar = cc.UIWidget.extend({
     /**
      * Load texture for loadingbar.
      * @param {String} texture
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadTexture: function (texture, texType) {
         if (!texture) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.LOCAL;
         this._renderBarTexType = texType;
         this._textureFile = texture;
         switch (this._renderBarTexType) {
-            case cc.TextureResType.LOCAL:
+            case ccs.TextureResType.LOCAL:
                 if (this._scale9Enabled)
                     this._barRenderer.initWithFile(texture);
                 else
                     this._barRenderer.initWithFile(texture);
                 break;
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.PLIST:
                 if (this._scale9Enabled)
                     this._barRenderer.initWithSpriteFrameName(texture);
                 else
@@ -139,13 +139,13 @@ cc.UILoadingBar = cc.UIWidget.extend({
         this._barRendererTextureSize.height = this._barRenderer.getContentSize().height;
 
         switch (this._barType) {
-            case cc.LoadingBarType.Left:
+            case ccs.LoadingBarType.Left:
                 this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
-            case cc.LoadingBarType.Right:
+            case ccs.LoadingBarType.Right:
                 this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
@@ -213,7 +213,7 @@ cc.UILoadingBar = cc.UIWidget.extend({
 
         var x = 0, y = 0;
         switch (this._renderBarTexType) {
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.PLIST:
                 var barNode = this._barRenderer;
                 if (barNode) {
                     var to = barNode.getTextureRect().origin;
@@ -248,7 +248,7 @@ cc.UILoadingBar = cc.UIWidget.extend({
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -296,10 +296,10 @@ cc.UILoadingBar = cc.UIWidget.extend({
             }
         }
         switch (this._barType) {
-            case cc.LoadingBarType.Left:
+            case ccs.LoadingBarType.Left:
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 break;
-            case cc.LoadingBarType.Right:
+            case ccs.LoadingBarType.Right:
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 break;
             default:
@@ -317,8 +317,8 @@ cc.UILoadingBar = cc.UIWidget.extend({
     }
 });
 
-cc.UILoadingBar.create = function () {
-    var uiLoadingBar = new cc.UILoadingBar();
+ccs.UILoadingBar.create = function () {
+    var uiLoadingBar = new ccs.UILoadingBar();
     if (uiLoadingBar && uiLoadingBar.init()) {
         return uiLoadingBar;
     }

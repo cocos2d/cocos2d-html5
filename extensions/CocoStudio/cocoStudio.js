@@ -22,26 +22,4 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//class type define
-ccs.UIPanel =ccs.UILayout ;
-ccs.UITextArea=ccs.UILabel;
-ccs.UIContainerWidget=ccs.UILayout;
-ccs.UITextButton=ccs.UIButton;
-ccs.UINodeContainer=ccs.UIWidget;
-ccs.PanelColorType=ccs.LayoutBackGroundColorType;
-
-/**
- * Base class for ccs.UIZoomButton
- * @class
- * @extends ccs.UITextButton
- */
-ccs.UIZoomButton = ccs.UITextButton.extend({
-    init: function () {
-        if (ccs.UITextButton.prototype.init.call(this)) {
-            this.setScale9Enabled(true);
-            this.setPressedActionEnabled(true);
-            return true;
-        }
-        return false;
-    }
-});
+var ccs = ccs ||{};

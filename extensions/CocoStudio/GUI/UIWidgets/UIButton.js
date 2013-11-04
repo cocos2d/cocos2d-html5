@@ -28,11 +28,11 @@ var DISABLEDRENDERERZ = 0;
 var TITLERENDERERZ = 1;
 
 /**
- * Base class for cc.UIButton
+ * Base class for ccs.UIButton
  * @class
- * @extends cc.UIWidget
+ * @extends ccs.UIWidget
  */
-cc.UIButton = cc.UIWidget.extend({
+ccs.UIButton = ccs.UIWidget.extend({
     _buttonNormalRenderer: null,
     _buttonClickedRenderer: null,
     _buttonDisableRenderer: null,
@@ -55,7 +55,7 @@ cc.UIButton = cc.UIWidget.extend({
     _pressedActionEnabled: false,
     _titleColor: null,
     ctor: function () {
-        cc.UIWidget.prototype.ctor.call(this);
+        ccs.UIWidget.prototype.ctor.call(this);
         this._buttonNormalRenderer = null;
         this._buttonClickedRenderer = null;
         this._buttonDisableRenderer = null;
@@ -68,9 +68,9 @@ cc.UIButton = cc.UIWidget.extend({
         this._capInsetsNormal = cc.RectZero();
         this._capInsetsPressed = cc.RectZero();
         this._capInsetsDisabled = cc.RectZero();
-        this._normalTexType = cc.TextureResType.LOCAL;
-        this._pressedTexType = cc.TextureResType.LOCAL;
-        this._disabledTexType = cc.TextureResType.LOCAL;
+        this._normalTexType = ccs.TextureResType.LOCAL;
+        this._pressedTexType = ccs.TextureResType.LOCAL;
+        this._disabledTexType = ccs.TextureResType.LOCAL;
         var locSize = this._size;
         this._normalTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
@@ -80,13 +80,13 @@ cc.UIButton = cc.UIWidget.extend({
     },
 
     init: function () {
-        if (cc.UIWidget.prototype.init.call(this))
+        if (ccs.UIWidget.prototype.init.call(this))
             return true;
         return false;
     },
 
     initRenderer: function () {
-        cc.UIWidget.prototype.initRenderer.call(this);
+        ccs.UIWidget.prototype.initRenderer.call(this);
         this._buttonNormalRenderer = cc.Sprite.create();
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
@@ -105,7 +105,7 @@ cc.UIButton = cc.UIWidget.extend({
         if (this._scale9Enabled == able) {
             return;
         }
-        this._brightStyle = cc.BrightStyle.NONE;
+        this._brightStyle = ccs.BrightStyle.NONE;
         this._scale9Enabled = able;
 
         this._renderer.removeChild(this._buttonNormalRenderer, true);
@@ -149,7 +149,7 @@ cc.UIButton = cc.UIWidget.extend({
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -159,7 +159,7 @@ cc.UIButton = cc.UIWidget.extend({
      * @param {String} normal
      * @param {String} selected
      * @param {String} disabled
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadTextures: function (normal, selected, disabled, texType) {
         this.loadTextureNormal(normal, texType);
@@ -170,21 +170,21 @@ cc.UIButton = cc.UIWidget.extend({
     /**
      * Load normal state texture for button.
      * @param {String} normal
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
-        texType = texType||cc.TextureResType.LOCAL;
+        texType = texType||ccs.TextureResType.LOCAL;
         this._normalFileName = normal;
         this._normalTexType = texType;
         if (this._scale9Enabled) {
             switch (this._normalTexType) {
-                case cc.TextureResType.LOCAL:
+                case ccs.TextureResType.LOCAL:
                     this._buttonNormalRenderer.initWithFile(normal);
                     break;
-                case cc.TextureResType.PLIST:
+                case ccs.TextureResType.PLIST:
                     this._buttonNormalRenderer.initWithSpriteFrameName(normal);
                     break;
                 default:
@@ -195,10 +195,10 @@ cc.UIButton = cc.UIWidget.extend({
         }
         else {
             switch (this._normalTexType) {
-                case cc.TextureResType.LOCAL:
+                case ccs.TextureResType.LOCAL:
                     this._buttonNormalRenderer.initWithFile(normal);
                     break;
-                case cc.TextureResType.PLIST:
+                case ccs.TextureResType.PLIST:
                     this._buttonNormalRenderer.initWithSpriteFrameName(normal);
                     break;
                 default:
@@ -215,21 +215,21 @@ cc.UIButton = cc.UIWidget.extend({
     /**
      * Load selected state texture for button.
      * @param {String} selected
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadTexturePressed: function (selected, texType) {
         if (!selected) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.LOCAL;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
         if (this._scale9Enabled) {
             switch (this._pressedTexType) {
-                case cc.TextureResType.LOCAL:
+                case ccs.TextureResType.LOCAL:
                     this._buttonClickedRenderer.initWithFile(selected);
                     break;
-                case cc.TextureResType.PLIST:
+                case ccs.TextureResType.PLIST:
                     this._buttonClickedRenderer.initWithSpriteFrameName(selected);
                     break;
                 default:
@@ -240,10 +240,10 @@ cc.UIButton = cc.UIWidget.extend({
         }
         else {
             switch (this._pressedTexType) {
-                case cc.TextureResType.LOCAL:
+                case ccs.TextureResType.LOCAL:
                     this._buttonClickedRenderer.initWithFile(selected);
                     break;
-                case cc.TextureResType.PLIST:
+                case ccs.TextureResType.PLIST:
                     this._buttonClickedRenderer.initWithSpriteFrameName(selected);
                     break;
                 default:
@@ -260,21 +260,21 @@ cc.UIButton = cc.UIWidget.extend({
     /**
      * Load dark state texture for button.
      * @param {String} disabled
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.LOCAL;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
         if (this._scale9Enabled) {
             switch (this._disabledTexType) {
-                case cc.TextureResType.LOCAL:
+                case ccs.TextureResType.LOCAL:
                     this._buttonDisableRenderer.initWithFile(disabled);
                     break;
-                case cc.TextureResType.PLIST:
+                case ccs.TextureResType.PLIST:
                     this._buttonDisableRenderer.initWithSpriteFrameName(disabled);
                     break;
                 default:
@@ -285,10 +285,10 @@ cc.UIButton = cc.UIWidget.extend({
         }
         else {
             switch (this._disabledTexType) {
-                case cc.TextureResType.LOCAL:
+                case ccs.TextureResType.LOCAL:
                     this._buttonDisableRenderer.initWithFile(disabled);
                     break;
-                case cc.TextureResType.PLIST:
+                case ccs.TextureResType.PLIST:
                     this._buttonDisableRenderer.initWithSpriteFrameName(disabled);
                     break;
                 default:
@@ -443,7 +443,7 @@ cc.UIButton = cc.UIWidget.extend({
      * @param {cc.Point} pt
      */
     setAnchorPoint: function (pt) {
-        cc.UIWidget.prototype.setAnchorPoint.call(this,pt);
+        ccs.UIWidget.prototype.setAnchorPoint.call(this,pt);
         this._buttonNormalRenderer.setAnchorPoint(pt);
         this._buttonClickedRenderer.setAnchorPoint(pt);
         this._buttonDisableRenderer.setAnchorPoint(pt);
@@ -471,9 +471,9 @@ cc.UIButton = cc.UIWidget.extend({
     getVirtualRenderer: function () {
         if (this._bright) {
             switch (this._brightStyle) {
-                case cc.BrightStyle.NORMAL:
+                case ccs.BrightStyle.NORMAL:
                     return this._buttonNormalRenderer;
-                case cc.BrightStyle.HIGHLIGHT:
+                case ccs.BrightStyle.HIGHLIGHT:
                     return this._buttonClickedRenderer;
                 default:
                     return null;
@@ -636,7 +636,7 @@ cc.UIButton = cc.UIWidget.extend({
      * @param color
      */
     setColor: function (color) {
-        cc.UIWidget.prototype.setColor.call(this,color);
+        ccs.UIWidget.prototype.setColor.call(this,color);
         this.setTitleColor(this._titleColor);
     },
 
@@ -645,8 +645,8 @@ cc.UIButton = cc.UIWidget.extend({
     }
 
 });
-cc.UIButton.create = function () {
-    var uiButton = new cc.UIButton();
+ccs.UIButton.create = function () {
+    var uiButton = new ccs.UIButton();
     if (uiButton && uiButton.init()) {
         return uiButton;
     }

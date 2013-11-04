@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.ComController
+ * Base class for ccs.ComController
  * @class
  * @extends cc.Component
  */
-cc.ComController = cc.Component.extend({
+ccs.ComController = cc.Component.extend({
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._name = "ComAttribute";
@@ -471,8 +471,8 @@ cc.ComController = cc.Component.extend({
     onKeyUp:function (keyCode) {
     }
 });
-cc.ComController.create = function () {
-    var com = new cc.ComController();
+ccs.ComController.create = function () {
+    var com = new ccs.ComController();
     if (com && com.init()) {
         return com;
     }

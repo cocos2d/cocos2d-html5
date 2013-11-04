@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 
-cc.FrameType = {
+ccs.FrameType = {
     Move: 0,
     Scale: 1,
     Rotate: 2,
@@ -33,11 +33,11 @@ cc.FrameType = {
 };
 
 /**
- * Base class for cc.ActionFrame
+ * Base class for ccs.ActionFrame
  * @class
  * @extends cc.Class
  */
-cc.ActionFrame = cc.Class.extend({
+ccs.ActionFrame = cc.Class.extend({
     _frameType: 0,
     _easingType: 0,
     _frameIndex: 0,
@@ -124,16 +124,16 @@ cc.ActionFrame = cc.Class.extend({
 });
 
 /**
- * Base class for cc.ActionMoveFrame
+ * Base class for ccs.ActionMoveFrame
  * @class
- * @extends cc.ActionFrame
+ * @extends ccs.ActionFrame
  */
-cc.ActionMoveFrame = cc.ActionFrame.extend({
+ccs.ActionMoveFrame = ccs.ActionFrame.extend({
     _position: null,
     ctor: function () {
-        cc.ActionFrame.prototype.ctor.call(this);
+        ccs.ActionFrame.prototype.ctor.call(this);
         this._position = cc.p(0, 0);
-        this._frameType = cc.FrameType.Move;
+        this._frameType = ccs.FrameType.Move;
     },
 
     /**
@@ -163,18 +163,18 @@ cc.ActionMoveFrame = cc.ActionFrame.extend({
 });
 
 /**
- * Base class for cc.ActionScaleFrame
+ * Base class for ccs.ActionScaleFrame
  * @class
- * @extends cc.ActionFrame
+ * @extends ccs.ActionFrame
  */
-cc.ActionScaleFrame = cc.ActionFrame.extend({
+ccs.ActionScaleFrame = ccs.ActionFrame.extend({
     _scaleX: 1,
     _scaleY: 1,
     ctor: function () {
-        cc.ActionFrame.prototype.ctor.call(this);
+        ccs.ActionFrame.prototype.ctor.call(this);
         this._scaleX = 1;
         this._scaleY = 1;
-        this._frameType = cc.FrameType.Scale;
+        this._frameType = ccs.FrameType.Scale;
     },
 
     /**
@@ -220,16 +220,16 @@ cc.ActionScaleFrame = cc.ActionFrame.extend({
 });
 
 /**
- * Base class for cc.ActionRotationFrame
+ * Base class for ccs.ActionRotationFrame
  * @class
- * @extends cc.ActionFrame
+ * @extends ccs.ActionFrame
  */
-cc.ActionRotationFrame = cc.ActionFrame.extend({
+ccs.ActionRotationFrame = ccs.ActionFrame.extend({
     _rotation: 0,
     ctor: function () {
-        cc.ActionFrame.prototype.ctor.call(this);
+        ccs.ActionFrame.prototype.ctor.call(this);
         this._rotation = 0;
-        this._frameType = cc.FrameType.Rotate;
+        this._frameType = ccs.FrameType.Rotate;
     },
 
     /**
@@ -259,16 +259,16 @@ cc.ActionRotationFrame = cc.ActionFrame.extend({
 });
 
 /**
- * Base class for cc.ActionFadeFrame
+ * Base class for ccs.ActionFadeFrame
  * @class
- * @extends cc.ActionFrame
+ * @extends ccs.ActionFrame
  */
-cc.ActionFadeFrame = cc.ActionFrame.extend({
+ccs.ActionFadeFrame = ccs.ActionFrame.extend({
     _opacity: 255,
     ctor: function () {
-        cc.ActionFrame.prototype.ctor.call(this);
+        ccs.ActionFrame.prototype.ctor.call(this);
         this._opacity = 255;
-        this._frameType = cc.FrameType.Fade;
+        this._frameType = ccs.FrameType.Fade;
     },
 
     /**
@@ -298,16 +298,16 @@ cc.ActionFadeFrame = cc.ActionFrame.extend({
 });
 
 /**
- * Base class for cc.ActionTintFrame
+ * Base class for ccs.ActionTintFrame
  * @class
- * @extends cc.ActionFrame
+ * @extends ccs.ActionFrame
  */
-cc.ActionTintFrame = cc.ActionFrame.extend({
+ccs.ActionTintFrame = ccs.ActionFrame.extend({
     _color: 255,
     ctor: function () {
-        cc.ActionFrame.prototype.ctor.call(this);
+        ccs.ActionFrame.prototype.ctor.call(this);
         this._color = 255;
-        this._frameType = cc.FrameType.Tint;
+        this._frameType = ccs.FrameType.Tint;
     },
 
     /**

@@ -22,8 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.DisplayFactory = cc.DisplayFactory || {};
-cc.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
+ccs.DisplayFactory = ccs.DisplayFactory || {};
+ccs.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
     switch (displayData.displayType) {
         case CC_DISPLAY_SPRITE:
             this.addSpriteDisplay(bone, decoDisplay, displayData);
@@ -38,7 +38,7 @@ cc.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
             break;
     }
 };
-cc.DisplayFactory.createDisplay = function (bone, decoDisplay) {
+ccs.DisplayFactory.createDisplay = function (bone, decoDisplay) {
     switch (decoDisplay.getDisplayData().displayType) {
         case CC_DISPLAY_SPRITE:
             this.createSpriteDisplay(bone, decoDisplay);
@@ -54,12 +54,12 @@ cc.DisplayFactory.createDisplay = function (bone, decoDisplay) {
     }
 };
 
-cc.DisplayFactory.updateDisplay = function (bone, decoDisplay, dt, dirty) {
+ccs.DisplayFactory.updateDisplay = function (bone, decoDisplay, dt, dirty) {
     if (!decoDisplay) {
         return;
     }
 
-    if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
         if (dirty) {
             var detector = decoDisplay.getColliderDetector();
             if (detector&&detector.getBody()) {
@@ -90,14 +90,14 @@ cc.DisplayFactory.updateDisplay = function (bone, decoDisplay, dt, dirty) {
             break;
     }
 };
-cc.DisplayFactory.addSpriteDisplay = function (bone, decoDisplay, displayData) {
-    var sdp = new cc.SpriteDisplayData();
+ccs.DisplayFactory.addSpriteDisplay = function (bone, decoDisplay, displayData) {
+    var sdp = new ccs.SpriteDisplayData();
     sdp.copy(displayData);
     decoDisplay.setDisplayData(sdp);
     this.createSpriteDisplay(bone, decoDisplay);
 };
 
-cc.DisplayFactory.createSpriteDisplay = function (bone, decoDisplay) {
+ccs.DisplayFactory.createSpriteDisplay = function (bone, decoDisplay) {
     var skin = null;
     var displayData = decoDisplay.getDisplayData();
     //! remove .xxx
@@ -108,16 +108,16 @@ cc.DisplayFactory.createSpriteDisplay = function (bone, decoDisplay) {
     }
     //! create display
     if (textureName == "") {
-        skin = cc.Skin.create();
+        skin = ccs.Skin.create();
     }
     else {
-        skin = cc.Skin.createWithSpriteFrameName(textureName + ".png");
+        skin = ccs.Skin.createWithSpriteFrameName(textureName + ".png");
     }
     this.initSpriteDisplay(bone, decoDisplay, displayData.displayName, skin);
     skin.setBone(bone);
     var armature = bone.getArmature();
     if (armature) {
-        if (armature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED)
+        if (armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED)
             skin.setSkinData(displayData.skinData);
         else
             skin.setSkinData(bone.getBoneData());
@@ -126,43 +126,43 @@ cc.DisplayFactory.createSpriteDisplay = function (bone, decoDisplay) {
     decoDisplay.setDisplay(skin);
 };
 
-cc.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, skin){
+ccs.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, skin){
     var textureName = displayName;
     var startPos = textureName.lastIndexOf(".");
     if (startPos != -1) {
         textureName = textureName.substring(0, startPos);
     }
-    var textureData = cc.ArmatureDataManager.getInstance().getTextureData(textureName);
+    var textureData = ccs.ArmatureDataManager.getInstance().getTextureData(textureName);
     if (textureData) {
         //! Init display anchorPoint, every Texture have a anchor point
         skin.setAnchorPoint(cc.p(textureData.pivotX, textureData.pivotY));
     }
-    if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
         if (textureData && textureData.contourDataList.length > 0)        {
-            var colliderDetector = cc.ColliderDetector.create(bone);
+            var colliderDetector = ccs.ColliderDetector.create(bone);
             colliderDetector.addContourDataList(textureData.contourDataList);
             decoDisplay.setColliderDetector(colliderDetector);
         }
     }
 },
 
-cc.DisplayFactory.updateSpriteDisplay = function (bone, skin, dt, dirty) {
+ccs.DisplayFactory.updateSpriteDisplay = function (bone, skin, dt, dirty) {
     if(!dirty)
         return;
     skin.updateBlendType(bone.getBlendType());
     skin.updateArmatureTransform();
 };
 
-cc.DisplayFactory.addArmatureDisplay = function (bone, decoDisplay, displayData) {
-    var adp = new cc.ArmatureDisplayData();
+ccs.DisplayFactory.addArmatureDisplay = function (bone, decoDisplay, displayData) {
+    var adp = new ccs.ArmatureDisplayData();
     adp.copy(displayData);
     decoDisplay.setDisplayData(adp);
 
     this.createArmatureDisplay(bone, decoDisplay);
 };
-cc.DisplayFactory.createArmatureDisplay = function (bone, decoDisplay) {
+ccs.DisplayFactory.createArmatureDisplay = function (bone, decoDisplay) {
     var displayData = decoDisplay.getDisplayData();
-    var armature = cc.Armature.create(displayData.displayName, bone);
+    var armature = ccs.Armature.create(displayData.displayName, bone);
     /*
      *  because this bone have called this name, so armature should change it's name, or it can't add to
      *  CCArmature's bone children.
@@ -170,7 +170,7 @@ cc.DisplayFactory.createArmatureDisplay = function (bone, decoDisplay) {
     armature.setName(bone.getName() + "_armatureChild");
     decoDisplay.setDisplay(armature);
 };
-cc.DisplayFactory.updateArmatureDisplay = function (bone, armature, dt, dirty) {
+ccs.DisplayFactory.updateArmatureDisplay = function (bone, armature, dt, dirty) {
     if (!dirty)
         return;
     if (armature) {
@@ -179,20 +179,20 @@ cc.DisplayFactory.updateArmatureDisplay = function (bone, armature, dt, dirty) {
     }
 };
 
-cc.DisplayFactory.addParticleDisplay = function (bone, decoDisplay, displayData) {
-    var adp = new cc.ParticleDisplayData();
+ccs.DisplayFactory.addParticleDisplay = function (bone, decoDisplay, displayData) {
+    var adp = new ccs.ParticleDisplayData();
     adp.copy(displayData);
     decoDisplay.setDisplayData(adp);
     this.createParticleDisplay(bone, decoDisplay);
 };
-cc.DisplayFactory.createParticleDisplay = function (bone, decoDisplay) {
+ccs.DisplayFactory.createParticleDisplay = function (bone, decoDisplay) {
     var displayData = decoDisplay.getDisplayData();
     var system = cc.ParticleSystem.create(displayData.plist);
     decoDisplay.setDisplay(system);
 };
-cc.DisplayFactory.updateParticleDisplay = function (bone, particleSystem, dt, dirty) {
-    var node = new cc.BaseData();
-    cc.TransformHelp.matrixToNode(bone.nodeToArmatureTransform(), node);
+ccs.DisplayFactory.updateParticleDisplay = function (bone, particleSystem, dt, dirty) {
+    var node = new ccs.BaseData();
+    ccs.TransformHelp.matrixToNode(bone.nodeToArmatureTransform(), node);
     particleSystem.setPosition(cc.p(node.x, node.y));
     particleSystem.setScaleX(node.scaleX);
     particleSystem.setScaleY(node.scaleY);

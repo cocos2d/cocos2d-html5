@@ -173,6 +173,8 @@
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
             '../extensions/CCEditBox.js',
+
+            '../extensions/CocoStudio/CocoStudio.js',
             // CocoStudio Armature
             '../extensions/CocoStudio/Armature/utils/CCArmatureDefine.js',
             '../extensions/CocoStudio/Armature/utils/CCDataReaderHelper.js',
@@ -180,9 +182,8 @@
             '../extensions/CocoStudio/Armature/utils/CCTransformHelp.js',
             '../extensions/CocoStudio/Armature/utils/CCTweenFunction.js',
             '../extensions/CocoStudio/Armature/utils/CCUtilMath.js',
-            '../extensions/CocoStudio/Armature/utils/CSArmatureDataManager.js',
+            '../extensions/CocoStudio/Armature/utils/CCArmatureDataManager.js',
             '../extensions/CocoStudio/Armature/datas/CCDatas.js',
-            '../extensions/CocoStudio/Armature/display/CCBatchNode.js',
             '../extensions/CocoStudio/Armature/display/CCDecorativeDisplay.js',
             '../extensions/CocoStudio/Armature/display/CCDisplayFactory.js',
             '../extensions/CocoStudio/Armature/display/CCDisplayManager.js',
@@ -229,8 +230,8 @@
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollInterface.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js',
-            '../extensions/CocoStudio/Reader/CCSGUIReader.js',
-            '../extensions/CocoStudio/Reader/CCSSceneReader.js'
+            '../extensions/CocoStudio/Reader/GUIReader.js',
+            '../extensions/CocoStudio/Reader/SceneReader.js'
 
         ]);
     }

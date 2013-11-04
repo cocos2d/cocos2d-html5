@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.ActionNode
+ * Base class for ccs.ActionNode
  * @class
  * @extends cc.Class
  */
-cc.ActionNode = cc.Class.extend({
+ccs.ActionNode = cc.Class.extend({
     _currentFrameIndex: 0,
     _destFrameIndex: 0,
     _unitTime: 0,
@@ -46,7 +46,7 @@ cc.ActionNode = cc.Class.extend({
         this._actionSpawn = null;
         this._action = null;
         this._frameArray = [];
-        this._frameArrayNum = cc.FrameType.Max;
+        this._frameArrayNum = ccs.FrameType.Max;
         for (var i = 0; i < this._frameArrayNum; i++) {
             this._frameArray.push([]);
         }
@@ -66,39 +66,39 @@ cc.ActionNode = cc.Class.extend({
             if (actionFrameDic.hasOwnProperty("positionx")) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
-                var actionFrame = new cc.ActionMoveFrame();
+                var actionFrame = new ccs.ActionMoveFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setPosition(cc.p(positionX, positionY));
-                var actionArray = this._frameArray[cc.FrameType.Move];
+                var actionArray = this._frameArray[ccs.FrameType.Move];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic.hasOwnProperty("scalex")) {
                 var scaleX = actionFrameDic["scalex"];
                 var scaleY = actionFrameDic["scaley"];
-                var actionFrame = new cc.ActionScaleFrame();
+                var actionFrame = new ccs.ActionScaleFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setScaleX(scaleX);
                 actionFrame.setScaleY(scaleY);
-                var actionArray = this._frameArray[cc.FrameType.Scale];
+                var actionArray = this._frameArray[ccs.FrameType.Scale];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic.hasOwnProperty("rotation")) {
                 var rotation = actionFrameDic["rotation"];
-                var actionFrame = new cc.ActionRotationFrame();
+                var actionFrame = new ccs.ActionRotationFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setRotation(rotation);
-                var actionArray = this._frameArray[cc.FrameType.Rotate];
+                var actionArray = this._frameArray[ccs.FrameType.Rotate];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic.hasOwnProperty("opacity")) {
                 var opacity = actionFrameDic["opacity"];
-                var actionFrame = new cc.ActionFadeFrame();
+                var actionFrame = new ccs.ActionFadeFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setOpacity(opacity);
-                var actionArray = this._frameArray[cc.FrameType.Fade];
+                var actionArray = this._frameArray[ccs.FrameType.Fade];
                 actionArray.push(actionFrame);
             }
 
@@ -106,10 +106,10 @@ cc.ActionNode = cc.Class.extend({
                 var colorR = actionFrameDic["colorr"];
                 var colorG = actionFrameDic["colorg"];
                 var colorB = actionFrameDic["colorb"];
-                var actionFrame = new cc.ActionTintFrame();
+                var actionFrame = new ccs.ActionTintFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setColor(cc.c3b(colorR, colorG, colorB));
-                var actionArray = this._frameArray[cc.FrameType.Tint];
+                var actionArray = this._frameArray[ccs.FrameType.Tint];
                 actionArray.push(actionFrame);
             }
             actionFrameDic = null;
@@ -173,7 +173,7 @@ cc.ActionNode = cc.Class.extend({
         if (this._object instanceof cc.Node) {
             return this._object;
         }
-        else if (this._object instanceof cc.UIWidget) {
+        else if (this._object instanceof ccs.UIWidget) {
             return this._object.getRenderer();
         }
         return null;
@@ -182,7 +182,7 @@ cc.ActionNode = cc.Class.extend({
     /**
      * Insets a ActionFrame to ActionNode.
      * @param {number} index
-     * @param {cc.ActionFrame} frame
+     * @param {ccs.ActionFrame} frame
      */
     insertFrame: function (index, frame) {
         if (frame == null) {
@@ -195,7 +195,7 @@ cc.ActionNode = cc.Class.extend({
 
     /**
      * Pushs back a ActionFrame to ActionNode.
-     * @param {cc.ActionFrame} frame
+     * @param {ccs.ActionFrame} frame
      */
     addFrame: function (frame) {
         if (!frame) {
@@ -208,7 +208,7 @@ cc.ActionNode = cc.Class.extend({
 
     /**
      * Remove a ActionFrame from ActionNode.
-     * @param {cc.ActionFrame} frame
+     * @param {ccs.ActionFrame} frame
      */
     deleteFrame: function (frame) {
         if (frame == null) {
@@ -392,7 +392,7 @@ cc.ActionNode = cc.Class.extend({
      * Easing to frame
      * @param {number} duration
      * @param {number} delayTime
-     * @param {cc.ActionFrame} destFrame
+     * @param {ccs.ActionFrame} destFrame
      */
     easingToFrame: function (duration, delayTime, destFrame) {
         var action = destFrame.getAction(duration);

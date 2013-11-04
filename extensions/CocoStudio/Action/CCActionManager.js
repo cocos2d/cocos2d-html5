@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.CCSActionManager
+ * Base class for ccs.ActionManager
  * @class
  * @extends cc.Class
  */
-cc.CCSActionManager = cc.Class.extend({
+ccs.ActionManager = cc.Class.extend({
     _actionDic: null,
     ctor: function () {
         this._actionDic = {};
@@ -46,7 +46,7 @@ cc.CCSActionManager = cc.Class.extend({
         var actionList = dic["actionlist"];
         var locActionList = [];
         for (var i = 0; i < actionList.length; i++) {
-            var locAction = new cc.ActionObject();
+            var locAction = new ccs.ActionObject();
             var locActionDic = actionList[i];
             locAction.initWithDictionary(locActionDic, root);
             locActionList.push(locAction);
@@ -58,7 +58,7 @@ cc.CCSActionManager = cc.Class.extend({
      * Gets an actionObject with a name.
      * @param {String} jsonName
      * @param {String} actionName
-     * @returns {cc.ActionObject}
+     * @returns {ccs.ActionObject}
      */
     getActionByName: function (jsonName, actionName) {
         var actionList = this._actionDic[jsonName];
@@ -94,16 +94,16 @@ cc.CCSActionManager = cc.Class.extend({
 
     }
 });
-cc.CCSActionManager._instance = null;
+ccs.ActionManager._instance = null;
 
 /**
  * returns a shared instance of the CCSActionManager
  * @function
- * @return {cc.CCSActionManager}
+ * @return {ccs.ActionManager}
  */
-cc.CCSActionManager.getInstance = function () {
+ccs.ActionManager.getInstance = function () {
     if (!this._instance) {
-        this._instance = new cc.CCSActionManager();
+        this._instance = new ccs.ActionManager();
     }
     return this._instance;
 };
@@ -111,6 +111,6 @@ cc.CCSActionManager.getInstance = function () {
 /**
  * Purges ActionManager point.
  */
-cc.CCSActionManager.purge = function(){
+ccs.ActionManager.purge = function(){
     this._instance = null;
 };

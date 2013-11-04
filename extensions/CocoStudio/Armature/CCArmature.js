@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.Armature objects.
+ * Base class for ccs.Armature objects.
  * @class
  * @extends cc.NodeRGBA
  */
-cc.Armature = cc.NodeRGBA.extend({
+ccs.Armature = cc.NodeRGBA.extend({
     _animation:null,
     _armatureData:null,
     _batchNode:null,
@@ -61,7 +61,7 @@ cc.Armature = cc.NodeRGBA.extend({
     /**
      * Initializes a CCArmature with the specified name and CCBone
      * @param {String} name
-     * @param {cc.Bone} parentBone
+     * @param {ccs.Bone} parentBone
      * @return {Boolean}
      */
     init:function (name, parentBone) {
@@ -70,13 +70,13 @@ cc.Armature = cc.NodeRGBA.extend({
             this._parentBone = parentBone;
         }
         this.removeAllChildren();
-        this._animation = new cc.ArmatureAnimation();
+        this._animation = new ccs.ArmatureAnimation();
         this._animation.init(this);
         this._boneDic = {};
         this._boneList = [];
 
         this._name = (!name) ? "" : name;
-        var armatureDataManager = cc.ArmatureDataManager.getInstance();
+        var armatureDataManager = ccs.ArmatureDataManager.getInstance();
         if (name != "") {
             //animationData
             var animationData = armatureDataManager.getAnimationData(name);
@@ -116,10 +116,10 @@ cc.Armature = cc.NodeRGBA.extend({
             this.updateOffsetPoint();
         } else {
             this._name = "new_armature";
-            this._armatureData = new cc.ArmatureData();
+            this._armatureData = new ccs.ArmatureData();
             this._armatureData.name = this._name;
 
-            var animationData = new cc.AnimationData();
+            var animationData = new ccs.AnimationData();
             animationData.name = this._name;
 
             armatureDataManager.addArmatureData(this._name, this._armatureData);
@@ -142,7 +142,7 @@ cc.Armature = cc.NodeRGBA.extend({
     /**
      * create a bone
      * @param {String} boneName
-     * @return {cc.Bone}
+     * @return {ccs.Bone}
      */
     createBone:function (boneName) {
         var existedBone = this.getBone(boneName);
@@ -154,10 +154,10 @@ cc.Armature = cc.NodeRGBA.extend({
         var bone = null;
         if (parentName != "") {
             this.createBone(parentName);
-            bone = cc.Bone.create(boneName);
+            bone = ccs.Bone.create(boneName);
             this.addBone(bone, parentName);
         } else {
-            bone = cc.Bone.create(boneName);
+            bone = ccs.Bone.create(boneName);
             this.addBone(bone, "");
         }
 
@@ -168,7 +168,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * add a bone
-     * @param {cc.Bone} bone
+     * @param {ccs.Bone} bone
      * @param {String} parentName
      */
     addBone:function (bone, parentName) {
@@ -206,7 +206,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * remove a bone
-     * @param {cc.Bone} bone
+     * @param {ccs.Bone} bone
      * @param {Boolean} recursion
      */
     removeBone:function (bone, recursion) {
@@ -225,7 +225,7 @@ cc.Armature = cc.NodeRGBA.extend({
     /**
      * get a bone by name
      * @param {String} name
-     * @return {cc.Bone}
+     * @return {ccs.Bone}
      */
     getBone:function (name) {
         return this._boneDic[name];
@@ -233,7 +233,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * Change a bone's parent with the specified parent name.
-     * @param {cc.Bone} bone
+     * @param {ccs.Bone} bone
      * @param {String} parentName
      */
     changeBoneParent:function (bone, parentName) {
@@ -446,24 +446,24 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * update blendType
-     * @param {cc.BlendType} blendType
+     * @param {ccs.BlendType} blendType
      */
     updateBlendType: function (blendType) {
         var blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         switch (blendType) {
-            case cc.BlendType.NORMAL:
+            case ccs.BlendType.NORMAL:
                 blendFunc.src = cc.BLEND_SRC;
                 blendFunc.dst = cc.BLEND_DST;
                 break;
-            case cc.BlendType.ADD:
+            case ccs.BlendType.ADD:
                 blendFunc.src = gl.SRC_ALPHA;
                 blendFunc.dst = gl.ONE;
                 break;
-            case cc.BlendType.MULTIPLY:
+            case ccs.BlendType.MULTIPLY:
                 blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
                 blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
                 break;
-            case cc.BlendType.SCREEN:
+            case ccs.BlendType.SCREEN:
                 blendFunc.src = gl.ONE;
                 blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
                 break;
@@ -483,7 +483,7 @@ cc.Armature = cc.NodeRGBA.extend({
         var boundingBox = cc.rect(0, 0, 0, 0);
         for (var i = 0; i < this._children.length; i++) {
             var bone = this._children[i];
-            if (bone instanceof cc.Bone) {
+            if (bone instanceof ccs.Bone) {
                 var r = bone.getDisplayManager().getBoundingBox();
                 if (first) {
                     minx = cc.rectGetMinX(r);
@@ -507,7 +507,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * armatureAnimation getter
-     * @return {cc.ArmatureAnimation}
+     * @return {ccs.ArmatureAnimation}
      */
     getAnimation:function () {
         return this._animation;
@@ -515,7 +515,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * armatureAnimation setter
-     * @param {cc.ArmatureAnimation} animation
+     * @param {ccs.ArmatureAnimation} animation
      */
     setAnimation:function (animation) {
         this._animation = animation;
@@ -523,7 +523,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * armatureData getter
-     * @return {cc.ArmatureData}
+     * @return {ccs.ArmatureData}
      */
     getArmatureData:function () {
         return this._armatureData;
@@ -531,7 +531,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
     /**
      * armatureData setter
-     * @param {cc.ArmatureData} armatureData
+     * @param {ccs.ArmatureData} armatureData
      */
     setArmatureData:function (armatureData) {
         this._armatureData = armatureData;
@@ -585,7 +585,7 @@ cc.Armature = cc.NodeRGBA.extend({
         var child,displayObject;
         for (var i = 0; i < this._children.length; i++) {
             child = this._children[i];
-            if (child instanceof cc.Bone) {
+            if (child instanceof ccs.Bone) {
                 var displayList = child.getDisplayManager().getDecorativeDisplayList();
                 for (var j = 0; j < displayList.length; j++) {
                     displayObject = displayList[j];
@@ -607,13 +607,13 @@ cc.Armature = cc.NodeRGBA.extend({
 /**
  * allocates and initializes a armature.
  * @constructs
- * @return {cc.Armature}
+ * @return {ccs.Armature}
  * @example
  * // example
- * var armature = cc.Armature.create();
+ * var armature = ccs.Armature.create();
  */
-cc.Armature.create = function (name, parentBone) {
-    var armature = new cc.Armature();
+ccs.Armature.create = function (name, parentBone) {
+    var armature = new ccs.Armature();
     if (armature && armature.init(name, parentBone)) {
         return armature;
     }

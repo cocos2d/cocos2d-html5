@@ -33,11 +33,11 @@ CC_ANIMATION_TYPE_LOOP_BACK = 1;//the animation loop from back
 CC_ANIMATION_TYPE_MAX = 2;//the animation max
 
 /**
- * Base class for cc.ProcessBase objects.
+ * Base class for ccs.ProcessBase objects.
  * @class
  * @extends cc.Class
  */
-cc.ProcessBase = cc.Class.extend({
+ccs.ProcessBase = cc.Class.extend({
     _processScale:1,
     _isComplete:true,
     _isPause:true,
@@ -62,7 +62,7 @@ cc.ProcessBase = cc.Class.extend({
         this._durationTween = 0;
         this._rawDuration = 0;
         this._loopType = CC_ANIMATION_TYPE_LOOP_BACK;
-        this._tweenEasing = cc.TweenType.Linear;
+        this._tweenEasing = ccs.TweenType.Linear;
         this._animationInternal = cc.Director.getInstance().getAnimationInterval();
         this._curFrameIndex = 0;
         this._durationTween = 0;
@@ -150,7 +150,7 @@ cc.ProcessBase = cc.Class.extend({
              *	if currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util currentFrame is
              *  smaller than this._nextFrameIndex
              */
-            locCurrentFrame = cc.fmodf(locCurrentFrame, locNextFrameIndex);
+            locCurrentFrame = ccs.fmodf(locCurrentFrame, locNextFrameIndex);
         }
         this._currentFrame = locCurrentFrame
         this.updateHandler();

@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.UIButton
+ * Base class for ccs.UIButton
  * @class
- * @extends cc.UIWidget
+ * @extends ccs.UIWidget
  */
-cc.UIImageView = cc.UIWidget.extend({
+ccs.UIImageView = ccs.UIWidget.extend({
     _clickCount: 0,
     _clickTimeInterval: 0,
     _startCheckDoubleClick: false,
@@ -41,7 +41,7 @@ cc.UIImageView = cc.UIWidget.extend({
     _imageTexType: null,
     _imageTextureSize: null,
     ctor: function () {
-        cc.UIWidget.prototype.ctor.call(this);
+        ccs.UIWidget.prototype.ctor.call(this);
         this._clickCount = 0;
         this._clickTimeInterval = 0;
         this._startCheckDoubleClick = false;
@@ -52,12 +52,12 @@ cc.UIImageView = cc.UIWidget.extend({
         this._capInsets = null;
         this._imageRenderer = null;
         this._textureFile = "";
-        this._imageTexType = cc.TextureResType.LOCAL;
+        this._imageTexType = ccs.TextureResType.LOCAL;
         this._imageTextureSize = this._size;
     },
 
     initRenderer: function () {
-        cc.UIWidget.prototype.initRenderer.call(this);
+        ccs.UIWidget.prototype.initRenderer.call(this);
         this._imageRenderer = cc.Sprite.create();
         this._renderer.addChild(this._imageRenderer);
     },
@@ -65,17 +65,17 @@ cc.UIImageView = cc.UIWidget.extend({
     /**
      * Load textures for button.
      * @param {String} fileName
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.LOCAL;
         this._textureFile = fileName;
         this._imageTexType = texType;
         switch (this._imageTexType) {
-            case cc.TextureResType.LOCAL:
+            case ccs.TextureResType.LOCAL:
                 if (this._scale9Enabled) {
                     this._imageRenderer.initWithFile(fileName);
                     this._imageRenderer.setColor(this.getColor());
@@ -87,7 +87,7 @@ cc.UIImageView = cc.UIWidget.extend({
                     this._imageRenderer.setOpacity(this.getOpacity());
                 }
                 break;
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.PLIST:
                 if (this._scale9Enabled) {
                     this._imageRenderer.initWithSpriteFrameName(fileName);
                     this._imageRenderer.setColor(this.getColor());
@@ -145,7 +145,7 @@ cc.UIImageView = cc.UIWidget.extend({
             }
         }
         else {
-            cc.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
+            ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
         }
     },
 
@@ -261,7 +261,7 @@ cc.UIImageView = cc.UIWidget.extend({
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -283,7 +283,7 @@ cc.UIImageView = cc.UIWidget.extend({
      * @param {cc.Point} pt
      */
     setAnchorPoint: function (pt) {
-        cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
+        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._imageRenderer.setAnchorPoint(pt);
     },
 
@@ -337,8 +337,8 @@ cc.UIImageView = cc.UIWidget.extend({
 
 });
 
-cc.UIImageView.create = function () {
-    var uiImageView = new cc.UIImageView();
+ccs.UIImageView.create = function () {
+    var uiImageView = new ccs.UIImageView();
     if (uiImageView && uiImageView.init()) {
         return uiImageView;
     }

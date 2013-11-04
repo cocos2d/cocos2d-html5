@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-cc.TextFiledEventType = {
+ccs.TextFiledEventType = {
     ATTACH_WITH_IME: 0,
     DETACH_WITH_IME: 1,
     INDERT_TEXT: 2,
@@ -31,9 +31,9 @@ cc.TextFiledEventType = {
 /**
  * Base class for cc.UISlider
  * @class
- * @extends cc.UIWidget
+ * @extends ccs.UIWidget
  */
-cc.UICCTextField = cc.TextFieldTTF.extend({
+ccs.UICCTextField = cc.TextFieldTTF.extend({
     _maxLengthEnabled: false,
     _maxLength: 0,
     _passwordEnabled: false,
@@ -219,8 +219,8 @@ cc.UICCTextField = cc.TextFieldTTF.extend({
     }
 });
 
-cc.UICCTextField.create = function (placeholder, fontName, fontSize) {
-    var ret = new cc.UICCTextField();
+ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
+    var ret = new ccs.UICCTextField();
     if (ret && ret.initWithString("", fontName, fontSize)) {
         if (placeholder) {
             ret.setPlaceHolder(placeholder);
@@ -231,11 +231,11 @@ cc.UICCTextField.create = function (placeholder, fontName, fontSize) {
 };
 
 /**
- * Base class for cc.UITextField
+ * Base class for ccs.UITextField
  * @class
- * @extends cc.UIWidget
+ * @extends ccs.UIWidget
  */
-cc.UITextField = cc.UIWidget.extend({
+ccs.UITextField = ccs.UIWidget.extend({
     _textFieldRenderer: null,
     _touchWidth: 0,
     _touchHeight: 0,
@@ -251,7 +251,7 @@ cc.UITextField = cc.UIWidget.extend({
     _insertTextSelector: null,
     _deleteBackwardSelector: null,
     ctor: function () {
-        cc.UIWidget.prototype.ctor.call(this);
+        ccs.UIWidget.prototype.ctor.call(this);
         this._textFieldRenderer = null;
         this._touchWidth = 0;
         this._touchHeight = 0;
@@ -270,7 +270,7 @@ cc.UITextField = cc.UIWidget.extend({
     },
 
     init: function () {
-        if (cc.UIWidget.prototype.init.call(this)) {
+        if (ccs.UIWidget.prototype.init.call(this)) {
             this.setUpdateEnabled(true);
             return true;
         }
@@ -278,8 +278,8 @@ cc.UITextField = cc.UIWidget.extend({
     },
 
     initRenderer: function () {
-        cc.UIWidget.prototype.initRenderer.call(this);
-        this._textFieldRenderer = cc.UICCTextField.create("input words here", "Thonburi", 20);
+        ccs.UIWidget.prototype.initRenderer.call(this);
+        this._textFieldRenderer = ccs.UICCTextField.create("input words here", "Thonburi", 20);
         this._renderer.addChild(this._textFieldRenderer);
 
     },
@@ -339,12 +339,12 @@ cc.UITextField = cc.UIWidget.extend({
     },
 
     onTouchBegan: function (touchPoint) {
-        var pass = cc.UIWidget.prototype.onTouchBegan.call(this, touchPoint);
+        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this, touchPoint);
         return pass;
     },
 
     onTouchEnded: function (touchPoint) {
-        cc.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
+        ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
         this._textFieldRenderer.attachWithIME();
     },
 
@@ -466,25 +466,25 @@ cc.UITextField = cc.UIWidget.extend({
 
     attachWithIMEEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, cc.TextFiledEventType.ATTACH_WITH_IME);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.ATTACH_WITH_IME);
         }
     },
 
     detachWithIMEEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, cc.TextFiledEventType.DETACH_WITH_IME);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.DETACH_WITH_IME);
         }
     },
 
     insertTextEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, cc.TextFiledEventType.INDERT_TEXT);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.INDERT_TEXT);
         }
     },
 
     deleteBackwardEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, cc.TextFiledEventType.DELETE_BACKWARD);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.DELETE_BACKWARD);
         }
     },
 
@@ -513,7 +513,7 @@ cc.UITextField = cc.UIWidget.extend({
      * @param {cc.Point} pt
      */
     setAnchorPoint: function (pt) {
-        cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
+        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._textFieldRenderer.setAnchorPoint(pt);
     },
 
@@ -521,7 +521,7 @@ cc.UITextField = cc.UIWidget.extend({
      * @param {cc.c3b} color
      */
     setColor: function (color) {
-        cc.UIWidget.prototype.setColor.call(this, color);
+        ccs.UIWidget.prototype.setColor.call(this, color);
         this._textFieldRenderer.setColor(color);
     },
 
@@ -529,7 +529,7 @@ cc.UITextField = cc.UIWidget.extend({
      * @param {number} opacity
      */
     setOpacity: function (opacity) {
-        cc.UIWidget.prototype.setOpacity.call(this, opacity);
+        ccs.UIWidget.prototype.setOpacity.call(this, opacity);
         this._textFieldRenderer.setOpacity(opacity);
     },
 
@@ -575,8 +575,8 @@ cc.UITextField = cc.UIWidget.extend({
         return "TextField";
     }
 });
-cc.UITextField.create = function () {
-    var uiTextField = new cc.UITextField();
+ccs.UITextField.create = function () {
+    var uiTextField = new ccs.UITextField();
     if (uiTextField && uiTextField.init()) {
         return uiTextField;
     }

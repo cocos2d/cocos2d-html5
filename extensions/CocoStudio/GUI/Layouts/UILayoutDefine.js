@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.UILinearGravity = {
+ccs.UILinearGravity = {
     NONE: 0,
     LEFT: 1,
     TOP: 2,
@@ -32,7 +32,7 @@ cc.UILinearGravity = {
     CENTER_HORIZONTAL: 6
 };
 
-cc.UIRelativeAlign = {
+ccs.UIRelativeAlign = {
     ALIGN_NONE: 0,
     ALIGN_PARENT_TOP_LEFT: 1,
     ALIGN_PARENT_TOP_CENTER_HORIZONTAL: 2,
@@ -58,11 +58,11 @@ cc.UIRelativeAlign = {
 };
 
 /**
- * Base class for cc.UIMargin
+ * Base class for ccs.UIMargin
  * @class
  * @extends cc.Class
  */
-cc.UIMargin = cc.Class.extend({
+ccs.UIMargin = cc.Class.extend({
     left: 0,
     top: 0,
     right: 0,

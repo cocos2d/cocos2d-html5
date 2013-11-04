@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.UIButton
+ * Base class for ccs.UIButton
  * @class
- * @extends cc.UIWidget
+ * @extends ccs.UIWidget
  */
-cc.UILabel = cc.UIWidget.extend({
+ccs.UILabel = ccs.UIWidget.extend({
     _touchScaleChangeEnabled: false,
     _normalScaleValue: 0,
     _fontName: "",
@@ -35,7 +35,7 @@ cc.UILabel = cc.UIWidget.extend({
     _onSelectedScaleOffset: 0,
     _labelRenderer: "",
     ctor: function () {
-        cc.UIWidget.prototype.ctor.call(this);
+        ccs.UIWidget.prototype.ctor.call(this);
         this._touchScaleChangeEnabled = false;
         this._normalScaleValue = 0;
         this._fontName = "Thonburi";
@@ -45,14 +45,14 @@ cc.UILabel = cc.UIWidget.extend({
     },
 
     init: function () {
-        if (cc.UIWidget.prototype.init.call(this)) {
+        if (ccs.UIWidget.prototype.init.call(this)) {
             return true;
         }
         return false;
     },
 
     initRenderer: function () {
-        cc.UIWidget.prototype.initRenderer.call(this);
+        ccs.UIWidget.prototype.initRenderer.call(this);
         this._labelRenderer = cc.LabelTTF.create();
         this._renderer.addChild(this._labelRenderer);
     },
@@ -220,7 +220,7 @@ cc.UILabel = cc.UIWidget.extend({
      * @param {cc.Point} pt
      */
     setAnchorPoint: function (pt) {
-        cc.UIWidget.prototype.setAnchorPoint.call(this, pt);
+        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
         this._labelRenderer.setAnchorPoint(pt);
     },
 
@@ -268,8 +268,8 @@ cc.UILabel = cc.UIWidget.extend({
     }
 });
 
-cc.UILabel.create = function () {
-    var uiLabel = new cc.UILabel();
+ccs.UILabel.create = function () {
+    var uiLabel = new ccs.UILabel();
     if (uiLabel && uiLabel.init()) {
         return uiLabel;
     }
