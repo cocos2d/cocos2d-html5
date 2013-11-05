@@ -47,7 +47,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _shadowOffset:null,
     _shadowOpacity:0,
     _shadowBlur:0,
-    _shadowColorValue:null,
     _shadowColorStr:null,
 
     // font stroke
@@ -85,7 +84,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._shadowOffset = cc.SizeZero();
         this._shadowOpacity = 0;
         this._shadowBlur = 0;
-        this._shadowColorValue = cc.c3b(128, 128, 128);
         this._shadowColorStr = "rgba(128, 128, 128, 0.5)";
 
         this._strokeEnabled = false;
@@ -100,7 +98,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._originalPosition = cc.PointZero();
         this._needUpdateTexture = false;
 
-        this._setColorStyleStr();
+        this._setColorsString();
     },
 
     init:function () {
@@ -117,14 +115,38 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setColor: null,
 
     _setColorForCanvas: function (color3) {
-        this.setFontFillColor(color3, true);
+        cc.NodeRGBA.prototype.setColor.call(this, color3);
+
+        this._setColorsStringForCanvas();
     },
 
-    getColor: null,
+    _setColorsString: null,
 
-    _getColorForCanvas: function () {
-        var locFillColor = this._textFillColor;
-        return cc.c3b(locFillColor.r, locFillColor.g, locFillColor.b);
+    _setColorsStringForCanvas: function () {
+        this._needUpdateTexture = true;
+
+        var locDisplayColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
+        var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
+
+        this._shadowColorStr = "rgba(" + (0 | (locDisplayColor.r * 0.5)) + "," + (0 | (locDisplayColor.g * 0.5)) + "," + (0 | (locDisplayColor.b * 0.5)) + "," + this._shadowOpacity + ")";
+        this._fillColorStr = "rgba(" + (0 | (locDisplayColor.r /255 * locFontFillColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locFontFillColor.g)) + ","
+            + (0 | (locDisplayColor.b / 255 * locFontFillColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
+        this._strokeColorStr = "rgba(" + (0 | (locDisplayColor.r / 255 * locStrokeColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locStrokeColor.g)) + ","
+            + (0 | (locDisplayColor.b / 255 * locStrokeColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
+    },
+
+    _setColorsStringForWebGL:function(){
+        this._needUpdateTexture = true;
+        var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
+        this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
+        this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
+        this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
+    },
+
+    updateDisplayedColor:null,
+    _updateDisplayedColorForCanvas:function(parentColor){
+        cc.NodeRGBA.prototype.updateDisplayedColor.call(this,parentColor);
+        this._setColorsString();
     },
 
     setOpacity: null,
@@ -133,19 +155,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._opacity === opacity)
             return;
         cc.Sprite.prototype.setOpacity.call(this, opacity);
-        this._setColorStyleStr();
+        this._setColorsString();
         this._needUpdateTexture = true;
     },
 
-    _setColorStyleStr:function (mustUpdateTexture) {
-        var locFillColor = this._textFillColor, locShadowColor = this._shadowColorValue;
-        this._fillColorStr = "rgba(" + locFillColor.r + "," + locFillColor.g + "," + locFillColor.b + ", " + this._displayedOpacity / 255 + ")";
-        if(mustUpdateTexture)
-            this._shadowColorStr = "rgba(" + locShadowColor.r + ","  + locShadowColor.g + "," + locShadowColor.b + "," + this._shadowOpacity + ")";
-        if(this._strokeEnabled){
-            var locStrokeColor = this._strokeColor;
-            this._strokeColorStr = "rgba(" + locStrokeColor.r + "," + locStrokeColor.g + "," + locStrokeColor.b + ", " + this._displayedOpacity / 255 + ")";
-        }
+    updateDisplayedOpacity: null,
+    updateDisplayedOpacityForCanvas: function(parentOpacity){
+        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        this._setColorsString();
     },
 
     /**
@@ -227,7 +244,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
             this.setString(strInfo);
-            this._setColorStyleStr();
+            this._setColorsString();
             this._updateTexture();
             this._needUpdateTexture = false;
             return true;
@@ -310,9 +327,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowOpacity != shadowOpacity ){
             this._shadowOpacity = shadowOpacity;
         }
-        this._shadowColorValue = cc.c3b(128, 128, 128);
-        var locShadowColor = this._shadowColorValue;
-        this._shadowColorStr = "rgba(" + locShadowColor.r + ","  + locShadowColor.g + "," + locShadowColor.b + "," + this._shadowOpacity + ")";
+        this._setColorsString();
 
         if (this._shadowBlur != shadowBlur)
             this._shadowBlur = shadowBlur;
@@ -343,8 +358,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         var locStrokeColor = this._strokeColor;
         if ( (locStrokeColor.r !== strokeColor.r) || (locStrokeColor.g !== strokeColor.g) || (locStrokeColor.b !== strokeColor.b) ) {
-            this._strokeColor = strokeColor;
-            this._strokeColorStr = "rgba("+ (0 | strokeColor.r) + "," + (0 | strokeColor.g) + "," + (0 | strokeColor.b) + ", 1)";
+            locStrokeColor.r = strokeColor.r;
+            locStrokeColor.g = strokeColor.g;
+            locStrokeColor.b = strokeColor.b;
+            this._setColorsString();
         }
 
         if (this._strokeSize!== strokeSize)
@@ -372,15 +389,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setFontFillColor:null,
 
     _setFontFillColorForCanvas: function (tintColor, mustUpdateTexture) {
-        mustUpdateTexture = (mustUpdateTexture == null) ? true : mustUpdateTexture;
+        //mustUpdateTexture = (mustUpdateTexture == null) ? true : mustUpdateTexture;
         var locTextFillColor = this._textFillColor;
         if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
-            var locShadowColor = this._shadowColorValue;
-            locShadowColor.r = locTextFillColor.r = tintColor.r;
-            locShadowColor.g = locTextFillColor.g = tintColor.g;
-            locShadowColor.b = locTextFillColor.b = tintColor.b;
+            locTextFillColor.r = tintColor.r;
+            locTextFillColor.g = tintColor.g;
+            locTextFillColor.b = tintColor.b;
 
-            this._setColorStyleStr(mustUpdateTexture);
+            this._setColorsString();
             this._needUpdateTexture = true;
         }
     },
@@ -391,7 +407,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             locTextFillColor.r = tintColor.r;
             locTextFillColor.g = tintColor.g;
             locTextFillColor.b = tintColor.b;
-            this._fillColorStr = "rgba(" + (0 | tintColor.r) + "," + (0 | tintColor.g) + "," + (0 | tintColor.b) + ", 1)";
+            this._setColorsString();
             this._needUpdateTexture = true;
         }
     },
@@ -933,16 +949,20 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
 if(cc.Browser.supportWebGL){
     cc.LabelTTF.prototype.setColor = cc.Sprite.prototype.setColor;
-    cc.LabelTTF.prototype.getColor = cc.Sprite.prototype.getColor;
+    cc.LabelTTF.prototype._setColorsString = cc.LabelTTF.prototype._setColorsStringForWebGL;
+    cc.LabelTTF.prototype.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
     cc.LabelTTF.prototype.setOpacity = cc.Sprite.prototype.setOpacity;
+    cc.LabelTTF.prototype.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
     cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForWebGL;
     cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForWebGL;
     cc.LabelTTF.prototype.draw = cc.LabelTTF.prototype._drawForWebGL;
     cc.LabelTTF.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
 } else {
     cc.LabelTTF.prototype.setColor = cc.LabelTTF.prototype._setColorForCanvas;
-    cc.LabelTTF.prototype.getColor = cc.LabelTTF.prototype._getColorForCanvas;
+    cc.LabelTTF.prototype._setColorsString = cc.LabelTTF.prototype._setColorsStringForCanvas;
+    cc.LabelTTF.prototype.updateDisplayedColor = cc.LabelTTF.prototype._updateDisplayedColorForCanvas;
     cc.LabelTTF.prototype.setOpacity = cc.LabelTTF.prototype._setOpacityForCanvas;
+    cc.LabelTTF.prototype.updateDisplayedOpacity = cc.LabelTTF.prototype._updateDisplayedOpacityForCanvas;
     cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForCanvas;
     cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForCanvas;
     cc.LabelTTF.prototype.draw = cc.Sprite.prototype.draw;
