@@ -98,7 +98,7 @@ cc.TMX_ORIENTATION_ISO = 2;
  * @class
  * @extends cc.Node
  */
-cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
+cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     //the map's size property measured in tiles
     _mapSize:null,
     _tileSize:null,

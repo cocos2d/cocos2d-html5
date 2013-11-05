@@ -853,7 +853,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _updateDisplayedOpacityForCanvas:function (parentOpacity) {
         cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._changeTextureColor();
         this.setNodeDirty();
     },
 
@@ -1608,7 +1607,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _updateDisplayedColorForCanvas: function (parentColor) {
+        var oldColor = this.getColor();
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        var newColor = this._displayedColor;
+        if ((oldColor.r === newColor.r) && (oldColor.g === newColor.g) && (oldColor.b === newColor.b))
+            return;
         this._changeTextureColor();
         this.setNodeDirty();
     },

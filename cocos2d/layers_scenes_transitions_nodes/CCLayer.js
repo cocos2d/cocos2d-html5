@@ -591,7 +591,6 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         if(cc.Layer.prototype.init.call(this)){
             this.setCascadeOpacityEnabled(false);
             this.setCascadeColorEnabled(false);
-
             return true;
         }
         return false;
@@ -620,14 +619,10 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     setOpacity: function (opacity) {
         this._displayedOpacity = this._realOpacity = opacity;
 
-        if( this._cascadeOpacityEnabled ) {
-            var parentOpacity = 255;
-            var locParent = this._parent;
-            if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
-                parentOpacity = locParent.getDisplayedOpacity();
-
-            this.updateDisplayedOpacity(parentOpacity);
-        }
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
     },
 
     /**
@@ -635,13 +630,13 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
-        this._displayedOpacity = 0|(this._realOpacity * parentOpacity/255.0);
+        this._displayedOpacity = 0 | (this._realOpacity * parentOpacity / 255.0);
 
-        if (this._cascadeOpacityEnabled){
+        if (this._cascadeOpacityEnabled) {
             var locChildren = this._children;
-            for(var i = 0; i< locChildren.length; i++){
+            for (var i = 0; i < locChildren.length; i++) {
                 var selItem = locChildren[i];
-                if(selItem && selItem.RGBAProtocol)
+                if (selItem && selItem.RGBAProtocol)
                     selItem.updateDisplayedOpacity(this._displayedOpacity);
             }
         }
@@ -652,7 +647,31 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
+        if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
+            return;
+
         this._cascadeOpacityEnabled = cascadeOpacityEnabled;
+        if(cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
+        else
+            this._disableCascadeOpacity();
+    },
+
+    _enableCascadeOpacity:function(){
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
+    },
+
+    _disableCascadeOpacity:function(){
+        this._displayedOpacity = this._realOpacity;
+        var selChildren = this._children;
+        for(var i = 0; i< selChildren.length;i++){
+            var item = selChildren[i];
+            if(item && item.RGBAProtocol && item._disableCascadeOpacity)
+                item._disableCascadeOpacity();
+        }
     },
 
     getColor: function () {
@@ -671,28 +690,25 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayed.g = locRealColor.g = color.g;
         locDisplayed.b = locRealColor.b = color.b;
 
-        if (this._cascadeColorEnabled){
-            var parentColor;
-            var locParent = this._parent;
-            if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
-                parentColor = locParent.getDisplayedColor();
-            else
-                parentColor = cc.white();
-            this.updateDisplayedColor(parentColor);
-        }
+        var parentColor, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.white();
+        this.updateDisplayedColor(parentColor);
     },
 
     updateDisplayedColor: function (parentColor) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = 0|(locRealColor.r * parentColor.r/255.0);
-        locDisplayedColor.g = 0|(locRealColor.g * parentColor.g/255.0);
-        locDisplayedColor.b = 0|(locRealColor.b * parentColor.b/255.0);
+        locDisplayedColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+        locDisplayedColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+        locDisplayedColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
 
-        if (this._cascadeColorEnabled){
+        if (this._cascadeColorEnabled) {
             var locChildren = this._children;
-            for(var i = 0; i < locChildren.length; i++){
+            for (var i = 0; i < locChildren.length; i++) {
                 var selItem = locChildren[i];
-                if(selItem && selItem.RGBAProtocol)
+                if (selItem && selItem.RGBAProtocol)
                     selItem.updateDisplayedColor(locDisplayedColor);
             }
         }
@@ -703,7 +719,45 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     setCascadeColorEnabled: function (cascadeColorEnabled) {
+        if(this._cascadeColorEnabled === cascadeColorEnabled)
+            return;
         this._cascadeColorEnabled = cascadeColorEnabled;
+        if(this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        else
+            this._disableCascadeColor();
+    },
+
+    _enableCascadeColor: function(){
+        var parentColor , locParent =  this._parent;
+        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.white();
+        this.updateDisplayedColor(parentColor);
+    },
+
+    _disableCascadeColor: function(){
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r = locRealColor.r;
+        locDisplayedColor.g = locRealColor.g;
+        locDisplayedColor.b = locRealColor.b;
+
+        var selChildren = this._children;
+        for(var i = 0; i< selChildren.length;i++){
+            var item = selChildren[i];
+            if(item && item.RGBAProtocol && item._disableCascadeColor)
+                item._disableCascadeColor();
+        }
+    },
+
+    addChild:function(child, zOrder, tag){
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
+
+        if(this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        if(this._cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
     },
 
     setOpacityModifyRGB: function (bValue) {
@@ -900,6 +954,16 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             locSquareColors[i].a = locDisplayedOpacity / 255;
         }
         this._bindLayerColorsBufferData();
+    },
+
+    updateDisplayedColor:function(parentColor){
+        cc.LayerRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        this._updateColor();
+    },
+
+    updateDisplayedOpacity: function(parentOpacity){
+        cc.LayerRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        this._updateColor();
     },
 
     _bindLayerVerticesBufferData:function () {
@@ -1206,7 +1270,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var locEGLViewer = cc.EGLView.getInstance();
+        var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
         var tWidth = this.getContentSize().width * locEGLViewer.getScaleX();
         var tHeight = this.getContentSize().height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
@@ -1214,9 +1278,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var locDisplayedColor = this._displayedColor;
         var locEndColor = this._endColor;
         tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
-            + Math.round(locDisplayedColor.b) + "," + (this._startOpacity / 255).toFixed(4) + ")");
+            + Math.round(locDisplayedColor.b) + "," + (opacityf * (this._startOpacity / 255)).toFixed(4) + ")");
         tGradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
+            + Math.round(locEndColor.b) + "," + (opacityf * (this._endOpacity / 255)).toFixed(4) + ")");
         context.fillStyle = tGradient;
         context.fillRect(0, 0, tWidth, -tHeight);
 

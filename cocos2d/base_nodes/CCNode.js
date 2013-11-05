@@ -2135,21 +2135,19 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     setOpacity:function(opacity){
         this._displayedOpacity = this._realOpacity = opacity;
 
-        if (this._cascadeOpacityEnabled) {
-            var parentOpacity = 255, locParent = this._parent;
-            if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
-                parentOpacity = locParent.getDisplayedOpacity();
-            this.updateDisplayedOpacity(parentOpacity);
-        }
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
     },
 
-    updateDisplayedOpacity:function(parentOpacity){
-        this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
+    updateDisplayedOpacity: function (parentOpacity) {
+        this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
         if (this._cascadeOpacityEnabled) {
             var selChildren = this._children;
-            for(var i = 0; i< selChildren.length;i++){
+            for (var i = 0; i < selChildren.length; i++) {
                 var item = selChildren[i];
-                if(item && item.RGBAProtocol)
+                if (item && item.RGBAProtocol)
                     item.updateDisplayedOpacity(this._displayedOpacity);
             }
         }
@@ -2160,7 +2158,32 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     setCascadeOpacityEnabled:function(cascadeOpacityEnabled){
+        if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
+            return;
+
         this._cascadeOpacityEnabled = cascadeOpacityEnabled;
+        if(cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
+        else
+            this._disableCascadeOpacity();
+    },
+
+    _enableCascadeOpacity:function(){
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
+    },
+
+    _disableCascadeOpacity:function(){
+        this._displayedOpacity = this._realOpacity;
+
+        var selChildren = this._children;
+        for(var i = 0; i< selChildren.length;i++){
+            var item = selChildren[i];
+            if(item && item.RGBAProtocol && item._disableCascadeOpacity)
+                item._disableCascadeOpacity();
+        }
     },
 
     getColor:function(){
@@ -2174,33 +2197,29 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     setColor:function(color){
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = color.r;
-        locDisplayedColor.g = color.g;
-        locDisplayedColor.b = color.b;
-        locRealColor.r = color.r;
-        locRealColor.g = color.g;
-        locRealColor.b = color.b;
+        locDisplayedColor.r = locRealColor.r = color.r;
+        locDisplayedColor.g = locRealColor.g = color.g;
+        locDisplayedColor.b = locRealColor.b = color.b;
 
-        if (this._cascadeColorEnabled) {
-            var parentColor = cc.white();
-            var locParent =  this._parent;
-            if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
-                parentColor = locParent.getDisplayedColor();
-            this.updateDisplayedColor(parentColor);
-        }
+        var parentColor, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.white();
+        this.updateDisplayedColor(parentColor);
     },
 
-    updateDisplayedColor:function(parentColor){
+    updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor, locRealColor = this._realColor;
-        locDispColor.r = locRealColor.r * parentColor.r/255.0;
-        locDispColor.g = locRealColor.g * parentColor.g/255.0;
-        locDispColor.b = locRealColor.b * parentColor.b/255.0;
+        locDispColor.r = 0|(locRealColor.r * parentColor.r / 255.0);
+        locDispColor.g = 0|(locRealColor.g * parentColor.g / 255.0);
+        locDispColor.b = 0|(locRealColor.b * parentColor.b / 255.0);
 
-        if (this._cascadeColorEnabled){
+        if (this._cascadeColorEnabled) {
             var selChildren = this._children;
-            for(var i = 0; i< selChildren.length;i++){
+            for (var i = 0; i < selChildren.length; i++) {
                 var item = selChildren[i];
-                if(item && item.RGBAProtocol)
+                if (item && item.RGBAProtocol)
                     item.updateDisplayedColor(locDispColor);
             }
         }
@@ -2211,7 +2230,45 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     setCascadeColorEnabled:function(cascadeColorEnabled){
+        if(this._cascadeColorEnabled === cascadeColorEnabled)
+            return;
         this._cascadeColorEnabled = cascadeColorEnabled;
+        if(this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        else
+            this._disableCascadeColor();
+    },
+
+    _enableCascadeColor: function(){
+        var parentColor , locParent =  this._parent;
+        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.white();
+        this.updateDisplayedColor(parentColor);
+    },
+
+    _disableCascadeColor: function(){
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r = locRealColor.r;
+        locDisplayedColor.g = locRealColor.g;
+        locDisplayedColor.b = locRealColor.b;
+
+        var selChildren = this._children;
+        for(var i = 0; i< selChildren.length;i++){
+            var item = selChildren[i];
+            if(item && item.RGBAProtocol && item._disableCascadeColor)
+                item._disableCascadeColor();
+        }
+    },
+
+    addChild:function(child, zOrder, tag){
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
+
+        if(this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        if(this._cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
     },
 
     setOpacityModifyRGB:function(opacityValue){},
