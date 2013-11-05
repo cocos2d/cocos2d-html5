@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.ActionObject
+ * Base class for ccs.ActionObject
  * @class
  * @extends cc.Class
  */
-cc.ActionObject = cc.Class.extend({
+ccs.ActionObject = cc.Class.extend({
     _actionNodeList: null,
     _name: "",
     _loop: false,
@@ -133,7 +133,7 @@ cc.ActionObject = cc.Class.extend({
         this.setUnitTime(dic["unittime"]);
         var actionNodeList = dic["actionnodelist"];
         for (var i = 0; i < actionNodeList.length; i++) {
-            var locActionNode = new cc.ActionNode();
+            var locActionNode = new ccs.ActionNode();
             var locActionNodeDic = actionNodeList[i];
             locActionNode.initWithDictionary(locActionNodeDic, root);
             locActionNode.setUnitTime(this.getUnitTime());
@@ -144,7 +144,7 @@ cc.ActionObject = cc.Class.extend({
 
     /**
      * Adds a ActionNode to play the action.
-     * @param {cc.ActionNode} node
+     * @param {ccs.ActionNode} node
      */
     addActionNode: function (node) {
         if (!node) {
@@ -156,7 +156,7 @@ cc.ActionObject = cc.Class.extend({
 
     /**
      * Removes a ActionNode which play the action.
-     * @param {cc.ActionNode} node
+     * @param {ccs.ActionNode} node
      */
     removeActionNode: function (node) {
         if (node == null) {

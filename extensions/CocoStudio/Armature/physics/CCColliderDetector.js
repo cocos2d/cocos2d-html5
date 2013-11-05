@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.ColliderBody = cc.Class.extend({
+ccs.ColliderBody = cc.Class.extend({
     _shape: null,
     _contourData: null,
     ctor: function (contourData) {
@@ -41,7 +41,7 @@ cc.ColliderBody = cc.Class.extend({
         this._shape = shage;
     }
 });
-cc.ColliderDetector = cc.Class.extend({
+ccs.ColliderDetector = cc.Class.extend({
     _colliderBodyList: null,
     _bone: null,
     _body: null,
@@ -56,7 +56,7 @@ cc.ColliderDetector = cc.Class.extend({
         return true;
     },
     addContourData: function (contourData) {
-        var colliderBody = new cc.ColliderBody(contourData);
+        var colliderBody = new ccs.ColliderBody(contourData);
         this._colliderBodyList.push(colliderBody);
     },
     addContourDataList: function (contourDataList) {
@@ -167,8 +167,8 @@ cc.ColliderDetector = cc.Class.extend({
         }
     }
 });
-cc.ColliderDetector.create = function (bone) {
-    var colliderDetector = new cc.ColliderDetector();
+ccs.ColliderDetector.create = function (bone) {
+    var colliderDetector = new ccs.ColliderDetector();
     if (colliderDetector && colliderDetector.init(bone)) {
         return colliderDetector;
     }

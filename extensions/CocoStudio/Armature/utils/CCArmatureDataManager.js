@@ -27,7 +27,7 @@
  * @class
  * @extends cc.Class
  */
-cc.ArmatureDataManager = cc.Class.extend({
+ccs.ArmatureDataManager = cc.Class.extend({
     _animationDatas:null,
     _armarureDatas:null,
     _textureDatas:null,
@@ -43,7 +43,7 @@ cc.ArmatureDataManager = cc.Class.extend({
     /**
      * Add armature data
      * @param {string} id The id of the armature data
-     * @param {cc.ArmatureData} armatureData
+     * @param {ccs.ArmatureData} armatureData
      */
     addArmatureData:function (id, armatureData) {
         if (this._armarureDatas) {
@@ -63,7 +63,7 @@ cc.ArmatureDataManager = cc.Class.extend({
     /**
      * get armatureData by id
      * @param {String} id
-     * @return {cc.ArmatureData}
+     * @return {ccs.ArmatureData}
      */
     getArmatureData:function (id) {
         var armatureData = null;
@@ -84,7 +84,7 @@ cc.ArmatureDataManager = cc.Class.extend({
     /**
      * add animation data
      * @param {String} id
-     * @param {cc.AnimationData} animationData
+     * @param {ccs.AnimationData} animationData
      */
     addAnimationData:function (id, animationData) {
         if (this._animationDatas) {
@@ -104,7 +104,7 @@ cc.ArmatureDataManager = cc.Class.extend({
     /**
      * get animationData by id
      * @param {String} id
-     * @return {cc.AnimationData}
+     * @return {ccs.AnimationData}
      */
     getAnimationData:function (id) {
         var animationData = null;
@@ -125,7 +125,7 @@ cc.ArmatureDataManager = cc.Class.extend({
     /**
      * add texture data
      * @param {String} id
-     * @param {cc.TextureData} textureData
+     * @param {ccs.TextureData} textureData
      */
     addTextureData:function (id, textureData) {
         if (this._textureDatas) {
@@ -145,7 +145,7 @@ cc.ArmatureDataManager = cc.Class.extend({
     /**
      * get textureData by id
      * @param {String} id
-     * @return {cc.TextureData}
+     * @return {ccs.TextureData}
      */
     getTextureData:function (id) {
         var textureData = null;
@@ -181,7 +181,7 @@ cc.ArmatureDataManager = cc.Class.extend({
             configFilePath = arguments[2];
             this.addSpriteFrameFromFile(plistPath, imagePath);
         }
-        cc.DataReaderHelper.addDataFromFile(configFilePath,isLoadSpriteFrame);
+        ccs.DataReaderHelper.addDataFromFile(configFilePath,isLoadSpriteFrame);
     },
 
     /**
@@ -209,7 +209,7 @@ cc.ArmatureDataManager = cc.Class.extend({
             this.addSpriteFrameFromFile(plistPath, imagePath);
         }
 
-        cc.DataReaderHelper.addDataFromFileAsync(configFilePath,target,selector,isLoadSpriteFrame);
+        ccs.DataReaderHelper.addDataFromFileAsync(configFilePath,target,selector,isLoadSpriteFrame);
 
     },
 
@@ -219,27 +219,27 @@ cc.ArmatureDataManager = cc.Class.extend({
      * @param {String} imagePath
      */
     addSpriteFrameFromFile:function (plistPath, imagePath) {
-        cc.SpriteFrameCacheHelper.getInstance().addSpriteFrameFromFile(plistPath, imagePath);
+        ccs.SpriteFrameCacheHelper.getInstance().addSpriteFrameFromFile(plistPath, imagePath);
     },
 
     removeAll:function () {
         this._animationDatas = null;
         this._armarureDatas = null;
         this._textureDatas = null;
-        cc.DataReaderHelper.clear();
+        ccs.DataReaderHelper.clear();
     }
 });
 
-cc.ArmatureDataManager._instance = null;
-cc.ArmatureDataManager.getInstance = function () {
+ccs.ArmatureDataManager._instance = null;
+ccs.ArmatureDataManager.getInstance = function () {
     if (!this._instance) {
-        this._instance = new cc.ArmatureDataManager();
+        this._instance = new ccs.ArmatureDataManager();
         this._instance.init();
     }
     return this._instance;
 };
-cc.ArmatureDataManager.purge = function () {
-    cc.SpriteFrameCacheHelper.purge();
-    cc.DataReaderHelper.clear();
+ccs.ArmatureDataManager.purge = function () {
+    ccs.SpriteFrameCacheHelper.purge();
+    ccs.DataReaderHelper.clear();
     this._instance = null;
 };

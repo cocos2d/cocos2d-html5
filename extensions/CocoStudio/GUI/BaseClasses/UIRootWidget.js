@@ -23,17 +23,17 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.UIRootWidget
+ * Base class for ccs.UIRootWidget
  * @class
- * @extends cc.Layout
+ * @extends ccs.UILayout
  */
-cc.UIRootWidget = cc.Layout.extend({
+ccs.UIRootWidget = ccs.UILayout.extend({
     /**
      * initializes state of widget.
      * @returns {boolean}
      */
     init: function () {
-        if (cc.Layout.prototype.init.call(this)) {
+        if (ccs.UILayout.prototype.init.call(this)) {
             this.setSize(cc.Director.getInstance().getWinSize());
             return true;
         }
@@ -49,8 +49,8 @@ cc.UIRootWidget = cc.Layout.extend({
     }
 });
 
-cc.UIRootWidget.create = function () {
-    var widget = new cc.UIRootWidget();
+ccs.UIRootWidget.create = function () {
+    var widget = new ccs.UIRootWidget();
     if (widget && widget.init()) {
         return widget;
     }
