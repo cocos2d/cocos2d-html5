@@ -62,9 +62,6 @@ cc.UILabel = cc.UIWidget.extend({
      * @param {String} text
      */
     setText: function (text) {
-        if (!text) {
-            return;
-        }
         this._labelRenderer.setString(text);
         this.labelScaleChangedWithSize();
     },

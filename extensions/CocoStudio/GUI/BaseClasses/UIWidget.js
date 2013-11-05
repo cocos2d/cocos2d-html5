@@ -162,7 +162,7 @@ cc.UIWidget = cc.Class.extend({
     releaseResoures: function () {
         this.setUpdateEnabled(false);
         this.removeAllChildren();
-        this._children.release();
+        this._children=[];
         this._renderer.removeAllChildren(true);
         this._renderer.removeFromParent(true);
         this._renderer.release();
@@ -383,14 +383,18 @@ cc.UIWidget = cc.Class.extend({
      * @param {cc.Size} size
      */
     setSize: function (size) {
-        this._customSize = size;
+        this._customSize.width = size.width;
+        this._customSize.height = size.height;
+        var locSize;
         if (this._ignoreSize) {
-            this._size = this.getContentSize();
+             locSize = this.getContentSize();
         }
         else {
-            this._size.width = size.width;
-            this._size.height = size.height;
+            locSize = size;
         }
+        this._size.width = locSize.width;
+        this._size.height = locSize.height;
+
         if (this._isRunning) {
             this._sizePercent = (this._widgetParent == null) ? cc.PointZero() : cc.p(this._customSize.width / this._widgetParent.getSize().width, this._customSize.height / this._widgetParent.getSize().height);
         }
@@ -407,14 +411,17 @@ cc.UIWidget = cc.Class.extend({
             return;
         }
         var size = (this._widgetParent == null) ? cc.SizeZero() : cc.size(this._widgetParent.getSize().width * percent.x, this._widgetParent.getSize().height * percent.y);
+        var locSize;
         if (this._ignoreSize) {
-            this._size = this.getContentSize();
+            locSize = this.getContentSize();
         }
         else {
-            this._size.width = size.width;
-            this._size.height = size.height;
+            locSize = size;
         }
-        this._customSize = size;
+        this._size.width = locSize.width;
+        this._size.height = locSize.height;
+        this._customSize.width = size.width;
+        this._customSize.height = size.height;
         this.onSizeChanged();
     },
 
@@ -424,23 +431,30 @@ cc.UIWidget = cc.Class.extend({
     updateSizeAndPosition: function () {
         switch (this._sizeType) {
             case cc.SizeType.ABSOLUTE:
+                var locSize;
                 if (this._ignoreSize) {
-                    this._size = this.getContentSize();
+                    locSize = this.getContentSize();
                 }
                 else {
-                    this._size = this._customSize;
+                    locSize = this._customSize;
                 }
+                this._size.width = locSize.width;
+                this._size.height = locSize.height;
                 this._sizePercent = (this._widgetParent == null) ? cc.PointZero() : cc.p(this._customSize.width / this._widgetParent.getSize().width, this._customSize.height / this._widgetParent.getSize().height);
                 break;
             case cc.SizeType.PERCENT:
                 var cSize = (this._widgetParent == null) ? cc.SizeZero() : cc.size(this._widgetParent.getSize().width * this._sizePercent.x, this._widgetParent.getSize().height * this._sizePercent.y);
+                var locSize;
                 if (this._ignoreSize) {
-                    this._size = this.getContentSize();
+                    locSize = this.getContentSize();
                 }
                 else {
-                    this._size = cSize;
+                    locSize = cSize;
                 }
-                this._customSize = cSize;
+                this._size.width = locSize.width;
+                this._size.height = locSize.height;
+                this._customSize.width = cSize.width;
+                this._customSize.height = cSize.height;
                 break;
             default:
                 break;
@@ -483,13 +497,15 @@ cc.UIWidget = cc.Class.extend({
      */
     ignoreContentAdaptWithSize: function (ignore) {
         this._ignoreSize = ignore;
+        var locSize = this.getContentSize();
         if (this._ignoreSize) {
-            var s = this.getContentSize();
-            this._size = s;
+            locSize = this.getContentSize();
         }
         else {
-            this._size = this._customSize;
+            locSize = this._customSize;
         }
+        this._size.width = locSize.width;
+        this._size.height = locSize.height;
         this.onSizeChanged();
     },
 
@@ -805,12 +821,12 @@ cc.UIWidget = cc.Class.extend({
 
     /**
      * Sets the touch event target/selector of the menu item
-     * @param {Object} target
      * @param {Function} selector
+     * @param {Object} target
      */
-    addTouchEventListener: function (target, selector) {
-        this._touchEventListener = target;
+    addTouchEventListener: function (selector, target) {
         this._touchEventSelector = selector;
+        this._touchEventListener = target;
     },
 
     /**
@@ -933,7 +949,8 @@ cc.UIWidget = cc.Class.extend({
      * @param {cc.Point} pt
      */
     setAnchorPoint: function (pt) {
-        this._anchorPoint = pt;
+        this._anchorPoint.x = pt.x;
+        this._anchorPoint.y = pt.y;
         this._renderer.setAnchorPoint(pt);
     },
 
@@ -1478,7 +1495,7 @@ cc.UIWidget = cc.Class.extend({
         this.addRenderer(node, 0);
     },
     removeCCNode: function (cleanup) {
-        this.removeCCNode(cleanup);
+        this.removeRenderer(cleanup);
     }
 });
 

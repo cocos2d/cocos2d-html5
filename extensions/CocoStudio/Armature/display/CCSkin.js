@@ -27,12 +27,14 @@ cc.Skin = cc.Sprite.extend({
     _bone:null,
     _skinTransform:null,
     _displayName:"",
+    _blend:null,
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
         this._bone = null;
         this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
+        this._blend = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
     initWithSpriteFrameName:function(spriteFrameName){
         var ret = cc.Sprite.prototype.initWithSpriteFrameName.call(this,spriteFrameName);
@@ -111,7 +113,7 @@ cc.Skin = cc.Sprite.extend({
      * @param {cc.BlendType} blendType
      */
     updateBlendType: function (blendType) {
-        var blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        var blendFunc = this._blend;
         switch (blendType) {
             case cc.BlendType.NORMAL:
                 blendFunc.src = cc.BLEND_SRC;
@@ -133,55 +135,6 @@ cc.Skin = cc.Sprite.extend({
                 break;
         }
         this.setBlendFunc(blendFunc.src, blendFunc.dst);
-    },
-    updateQuad:function () {
-        return;
-        // If it is not visible, or one of its ancestors is not visible, then do nothing:
-        if (!this._visible) {
-            this._quad.br.vertices = {x:0, y:0, z:0};
-            this._quad.tl.vertices = {x:0, y:0, z:0};
-            this._quad.tr.vertices = {x:0, y:0, z:0};
-            this._quad.bl.vertices = {x:0, y:0, z:0};
-        } else {
-            // calculate the Quad based on the Affine Matrix
-            var size = this._rect.size;
-
-            var x1 = this._offsetPosition.x;
-            var y1 = this._offsetPosition.y;
-
-            var x2 = x1 + size.width;
-            var y2 = y1 + size.height;
-
-            var x = this._transform.tx;
-            var y = this._transform.ty;
-
-            var cr = this._transform.a;
-            var sr = this._transform.b;
-            var cr2 = this._transform.d;
-            var sr2 = -this._transform.c;
-            var ax = x1 * cr - y1 * sr2 + x;
-            var ay = x1 * sr + y1 * cr2 + y;
-
-            var bx = x2 * cr - y1 * sr2 + x;
-            var by = x2 * sr + y1 * cr2 + y;
-
-            var cx = x2 * cr - y2 * sr2 + x;
-            var cy = x2 * sr + y2 * cr2 + y;
-
-            var dx = x1 * cr - y2 * sr2 + x;
-            var dy = x1 * sr + y2 * cr2 + y;
-
-            this._quad.bl.vertices = {x:cc.RENDER_IN_SUBPIXEL(ax), y:cc.RENDER_IN_SUBPIXEL(ay), z:this._vertexZ};
-            this._quad.br.vertices = {x:cc.RENDER_IN_SUBPIXEL(bx), y:cc.RENDER_IN_SUBPIXEL(by), z:this._vertexZ};
-            this._quad.tl.vertices = {x:cc.RENDER_IN_SUBPIXEL(dx), y:cc.RENDER_IN_SUBPIXEL(dy), z:this._vertexZ};
-            this._quad.tr.vertices = {x:cc.RENDER_IN_SUBPIXEL(cx), y:cc.RENDER_IN_SUBPIXEL(cy), z:this._vertexZ};
-
-        }
-
-        // MARMALADE CHANGE: ADDED CHECK FOR NULL, TO PERMIT SPRITES WITH NO BATCH NODE / TEXTURE ATLAS
-        if (this._textureAtlas) {
-            this._textureAtlas.updateQuad(this._quad, this._textureAtlas.getTotalQuads());
-        }
     }
 });
 

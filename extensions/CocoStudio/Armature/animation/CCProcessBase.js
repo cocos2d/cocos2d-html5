@@ -128,29 +128,31 @@ cc.ProcessBase = cc.Class.extend({
         if (this._isComplete || this._isPause) {
             return false;
         }
-        if (this._rawDuration <= 0 || dt > 1) {
+        if (this._rawDuration <= 0) {
             return false;
         }
         var locNextFrameIndex = this._nextFrameIndex;
+        var locCurrentFrame = this._currentFrame;
         if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
-            this._currentFrame = 0;
+            locCurrentFrame = 0;
         }else{
             /*
-             *  update this._currentFrame, every update add the frame passed.
+             *  update currentFrame, every update add the frame passed.
              *  dt/this._animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
              *  animation speed slower or quicker.
              */
-            this._currentFrame += this._processScale * (dt / this._animationInternal);
+            locCurrentFrame += this._processScale * (dt / this._animationInternal);
 
-            this._currentPercent = this._currentFrame / locNextFrameIndex;
+            this._currentPercent = locCurrentFrame / locNextFrameIndex;
 
             /*
-             *	if this._currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util this._currentFrame is
+             *	if currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util currentFrame is
              *  smaller than this._nextFrameIndex
              */
-            this._currentFrame = cc.fmodf(this._currentFrame, locNextFrameIndex);
+            locCurrentFrame = cc.fmodf(locCurrentFrame, locNextFrameIndex);
         }
+        this._currentFrame = locCurrentFrame
         this.updateHandler();
         return true;
     },

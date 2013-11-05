@@ -572,9 +572,13 @@ cc.UIScrollView = cc.Layout.extend({
         }
     },
 
-    addEventListener: function (target, selector) {
-        this._eventListener = target;
+    /**
+     * @param {Function} selector
+     * @param {Object} target
+     */
+    addEventListener: function (selector , target) {
         this._eventSelector = selector;
+        this._eventListener = target;
     },
 
     setDirection: function (dir) {
