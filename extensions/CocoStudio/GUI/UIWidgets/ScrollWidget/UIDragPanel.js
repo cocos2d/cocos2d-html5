@@ -26,67 +26,67 @@
 /**
  *  drag panel move type
  */
-cc.DRAGPANEL_MOVE_TYPE = {
-    NONE: 0,
-    AUTOMOVE: 1,
-    BOUNCE: 2
+ccs.DragPanelMoveType = {
+    none: 0,
+    autoMove: 1,
+    bounce: 2
 };
 
 /**
  *  dragpanel berth direction
  */
-cc.DRAGPANEL_BERTH_DIR = {
-    NONE: 0,
-    LEFTBOTTOM: 1,
-    LFETTOP: 2,
-    RIGHTBOTTOM: 3,
-    RIGHTTOP: 4,
-    LEFT: 5,
-    TOP: 6,
-    RIGHT: 7,
-    BOTTOM: 8
+ccs.DragPanelBerthDir = {
+    none: 0,
+    leftBottom: 1,
+    leftTop: 2,
+    rightBottom: 3,
+    rightTop: 4,
+    left: 5,
+    top: 6,
+    right: 7,
+    bottom: 8
 };
 
 /**
  *  dragpanel bounce direction
  */
-cc.DRAGPANEL_BOUNCE_DIR = {
-    NONE: 0,
-    LEFTBOTTOM: 1,
-    LEFTTOP: 2,
-    RIGHTBOTTOM: 3,
-    RIGHTTOP: 4,
-    LEFT: 5,
-    TOP: 6,
-    RIGHT: 7,
-    BOTTOM: 8
+ccs.DragPanelBounceDir = {
+    none: 0,
+    leftBottom: 1,
+    leftTop: 2,
+    rightBottom: 3,
+    rightTop: 4,
+    left: 5,
+    top: 6,
+    right: 7,
+    bottom: 8
 };
 
-cc.DragPanelEventType = {
-    BERTH_LEFTBOTTOM: 0,
-    BERTH_LEFTTOP: 1,
-    BERTH_RIGHTBOTTOM: 2,
-    BERTH_RIGHTTOP: 3,
-    BERTH_LEFT: 4,
-    BERTH_TOP: 5,
-    BERTH_RIGHT: 6,
-    BERTH_BOTTOM: 7,
-    BOUNCE_LEFTBOTTOM: 8,
-    BOUNCE_LEFTTOP: 9,
-    BOUNCE_RIGHTBOTTOM: 10,
-    BOUNCE_RIGHTTOP: 11,
-    BOUNCE_LEFT: 12,
-    BOUNCE_TOP: 13,
-    BOUNCE_RIGHT: 14,
-    BOUNCE_BOTTOM: 15
+ccs.DragPanelEventType = {
+    berthLeftBottom: 0,
+    berthLeftTop: 1,
+    berthRightBottom: 2,
+    berthRightTop: 3,
+    berthLeft: 4,
+    berthTop: 5,
+    berthRight: 6,
+    berthBottom: 7,
+    bounceLeftBottom: 8,
+    bounceLeftTop: 9,
+    bounceRightBottom: 10,
+    bounceRightTop: 11,
+    bounceLeft: 12,
+    bounceTop: 13,
+    bounceRight: 14,
+    bounceBottom: 15
 };
 
 /**
- * Base class for cc.UIDragPanel
+ * Base class for ccs.UIDragPanel
  * @class
- * @extends cc.Layout
+ * @extends ccs.UILayout
  */
-cc.UIDragPanel = cc.Layout.extend({
+ccs.UIDragPanel = ccs.UILayout.extend({
     _innerContainer: null,
     _touchPressed: false,
     _touchMoved: false,
@@ -118,7 +118,7 @@ cc.UIDragPanel = cc.Layout.extend({
     _endPosition: null,
 
     ctor: function () {
-        cc.Layout.prototype.ctor.call(this);
+        ccs.UILayout.prototype.ctor.call(this);
         this._innerContainer = null;
         this._touchPressed = false;
         this._touchMoved = false;
@@ -128,12 +128,12 @@ cc.UIDragPanel = cc.Layout.extend({
         this._touchStartWorldSpace = cc.p(0, 0);
         this._touchEndWorldSpace = cc.p(0, 0);
         this._slidTime = 0;
-        this._moveType = cc.DRAGPANEL_MOVE_TYPE.AUTOMOVE;
+        this._moveType = ccs.DragPanelMoveType.autoMove;
         this._autoMoveDuration = 0.5;
         this._autoMoveEaseRate = 2.0;
-        this._berthDirection = cc.DRAGPANEL_BERTH_DIR.NONE;
+        this._berthDirection = ccs.DragPanelBerthDir.none;
         this._bounceEnable = 0;
-        this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.NONE;
+        this._bounceDirection = ccs.DragPanelBounceDir.none;
         this._bounceDuration = 0.5;
         this._bounceEaseRate = 2.0;
         this._eventLister = null;
@@ -151,7 +151,7 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     init: function () {
-        if (cc.Layout.prototype.init.call(this)) {
+        if (ccs.UILayout.prototype.init.call(this)) {
             this.setUpdateEnabled(true);
             this.setTouchEnabled(true);
             this.setClippingEnabled(true);
@@ -161,9 +161,9 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     initRenderer: function () {
-        cc.Layout.prototype.initRenderer.call(this);
-        this._innerContainer = cc.Layout.create();
-        cc.Layout.prototype.addChild.call(this, this._innerContainer);
+        ccs.UILayout.prototype.initRenderer.call(this);
+        this._innerContainer = ccs.UILayout.create();
+        ccs.UILayout.prototype.addChild.call(this, this._innerContainer);
 
     },
 
@@ -172,28 +172,28 @@ cc.UIDragPanel = cc.Layout.extend({
         this.removeAllChildren();
         this._renderer.removeAllChildren(true);
         this._renderer.removeFromParent(true);
-        cc.Layout.prototype.removeChild.call(this, this._innerContainer);
+        ccs.UILayout.prototype.removeChild.call(this, this._innerContainer);
         this._children = [];
     },
 
     onTouchBegan: function (touchPoint) {
-        var pass = cc.Layout.prototype.onTouchBegan.call(this, touchPoint);
+        var pass = ccs.UILayout.prototype.onTouchBegan.call(this, touchPoint);
         this.handlePressLogic(touchPoint);
         return pass;
     },
 
     onTouchMoved: function (touchPoint) {
-        cc.Layout.prototype.onTouchMoved.call(this,touchPoint);
+        ccs.UILayout.prototype.onTouchMoved.call(this,touchPoint);
         this.handleMoveLogic(touchPoint);
     },
 
     onTouchEnded: function (touchPoint) {
-        cc.Layout.prototype.onTouchEnded.call(this,touchPoint);
+        ccs.UILayout.prototype.onTouchEnded.call(this,touchPoint);
         this.handleReleaseLogic(touchPoint);
     },
 
     onTouchCancelled: function (touchPoint) {
-        cc.Layout.prototype.onTouchCancelled.call(this,touchPoint);
+        ccs.UILayout.prototype.onTouchCancelled.call(this,touchPoint);
     },
 
     onTouchLongClicked: function (touchPoint) {
@@ -217,7 +217,7 @@ cc.UIDragPanel = cc.Layout.extend({
 
     /**
      * add widget child override
-     * @param {cc.UIWidget} widget
+     * @param {ccs.UIWidget} widget
      * @returns {boolean}
      */
     addChild: function (widget) {
@@ -227,7 +227,7 @@ cc.UIDragPanel = cc.Layout.extend({
 
     /**
      * remove widget child override
-     * @param {cc.UIWidget} child
+     * @param {ccs.UIWidget} child
      * @returns {boolean}
      */
     removeChild: function (child) {
@@ -255,7 +255,7 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     onSizeChanged: function () {
-        cc.Layout.prototype.onSizeChanged.call(this);
+        ccs.UILayout.prototype.onSizeChanged.call(this);
         var innerSize = this._innerContainer.getSize();
         var orginInnerSizeWidth = innerSize.width;
         var orginInnerSizeHeight = innerSize.height;
@@ -346,12 +346,12 @@ cc.UIDragPanel = cc.Layout.extend({
 
         if (this._runningAction) {
             switch (this._moveType) {
-                case cc.DRAGPANEL_MOVE_TYPE.AUTOMOVE:
+                case ccs.DragPanelMoveType.autoMove:
                     this.stopAutoMove();
                     this.actionStop();
                     break;
 
-                case cc.DRAGPANEL_MOVE_TYPE.BOUNCE:
+                case ccs.DragPanelMoveType.bounce:
                     this._touchPressed = false;
                     break;
 
@@ -384,7 +384,7 @@ cc.UIDragPanel = cc.Layout.extend({
 
         // reset berth dir to none
         if (!this._bounceEnable) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.NONE;
+            this._berthDirection = ccs.DragPanelBerthDir.none;
         }
 
         // check will berth (bounce disable)
@@ -439,7 +439,7 @@ cc.UIDragPanel = cc.Layout.extend({
     /**
      *
      * @param {number} handleState
-     * @param {cc.UIWidget} sender
+     * @param {ccs.UIWidget} sender
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
@@ -449,7 +449,7 @@ cc.UIDragPanel = cc.Layout.extend({
     /**
      *
      * @param {number} handleState
-     * @param {cc.UIWidget} sender
+     * @param {ccs.UIWidget} sender
      * @param {cc.Point} touchPoint
      */
     interceptTouchEvent: function (handleState, sender, touchPoint) {
@@ -520,12 +520,12 @@ cc.UIDragPanel = cc.Layout.extend({
 
         if (this.checkBerth()) {
             this.berthEvent();
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.NONE;
+            this._berthDirection = ccs.DragPanelBerthDir.none;
         }
     },
 
     startAutoMove: function () {
-        this._moveType = cc.DRAGPANEL_MOVE_TYPE.AUTOMOVE;
+        this._moveType = ccs.DragPanelMoveType.autoMove;
 
         this.actionStop();
 
@@ -545,7 +545,7 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     stopAutoMove: function () {
-        this._moveType = cc.DRAGPANEL_MOVE_TYPE.NONE;
+        this._moveType = ccs.DragPanelMoveType.none;
     },
 
     /**
@@ -693,7 +693,7 @@ cc.UIDragPanel = cc.Layout.extend({
      * @returns {boolean}
      */
     isBerth: function () {
-        return this._berthDirection != cc.DRAGPANEL_BERTH_DIR.NONE;
+        return this._berthDirection != ccs.DragPanelBerthDir.none;
     },
 
     /**
@@ -713,38 +713,38 @@ cc.UIDragPanel = cc.Layout.extend({
 
         // left bottom
         if (innerLeft == left && innerBottom == bottom) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.LEFTBOTTOM;
+            this._berthDirection = ccs.DragPanelBerthDir.leftBottom;
         }
         // left top
         else if (innerLeft == left && innerTop == top) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.LFETTOP;
+            this._berthDirection = ccs.DragPanelBerthDir.leftTop;
         }
         // right bottom
         else if (innerRight == right && innerBottom == bottom) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.RIGHTBOTTOM;
+            this._berthDirection = ccs.DragPanelBerthDir.rightBottom;
         }
         // right top
         else if (innerRight == right && innerTop == top) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.RIGHTTOP;
+            this._berthDirection = ccs.DragPanelBerthDir.rightTop;
         }
         // left
         else if (innerLeft == left) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.LEFT;
+            this._berthDirection = ccs.DragPanelBerthDir.left;
         }
         // right
         else if (innerRight == right) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.RIGHT;
+            this._berthDirection = ccs.DragPanelBerthDir.right;
         }
         // top
         else if (innerTop == top) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.TOP;
+            this._berthDirection = ccs.DragPanelBerthDir.top;
         }
         // bottom
         else if (innerBottom == bottom) {
-            this._berthDirection = cc.DRAGPANEL_BERTH_DIR.BOTTOM;
+            this._berthDirection = ccs.DragPanelBerthDir.bottom;
         }
 
-        if (this._berthDirection != cc.DRAGPANEL_BERTH_DIR.NONE) {
+        if (this._berthDirection != ccs.DragPanelBerthDir.none) {
             return true;
         }
 
@@ -756,35 +756,35 @@ cc.UIDragPanel = cc.Layout.extend({
      */
     berthEvent: function () {
         switch (this._berthDirection) {
-            case cc.DRAGPANEL_BERTH_DIR.LEFTBOTTOM:
+            case ccs.DragPanelBerthDir.leftBottom:
                 this.berthToLeftBottomEvent();
                 break;
 
-            case cc.DRAGPANEL_BERTH_DIR.LFETTOP:
+            case ccs.DragPanelBerthDir.leftTop:
                 this.berthToLeftTopEvent();
                 break;
 
-            case cc.DRAGPANEL_BERTH_DIR.RIGHTBOTTOM:
+            case ccs.DragPanelBerthDir.rightBottom:
                 this.berthToRightBottomEvent();
                 break;
 
-            case cc.DRAGPANEL_BERTH_DIR.RIGHTTOP:
+            case ccs.DragPanelBerthDir.rightTop:
                 this.berthToRightTopEvent();
                 break;
 
-            case cc.DRAGPANEL_BERTH_DIR.LEFT:
+            case ccs.DragPanelBerthDir.left:
                 this.berthToLeftEvent();
                 break;
 
-            case cc.DRAGPANEL_BERTH_DIR.TOP:
+            case ccs.DragPanelBerthDir.top:
                 this.berthToTopEvent();
                 break;
 
-            case cc.DRAGPANEL_BERTH_DIR.RIGHT:
+            case ccs.DragPanelBerthDir.right:
                 this.berthToRightEvent();
                 break;
 
-            case cc.DRAGPANEL_BERTH_DIR.BOTTOM:
+            case ccs.DragPanelBerthDir.bottom:
                 this.berthToBottomEvent();
                 break;
 
@@ -795,49 +795,49 @@ cc.UIDragPanel = cc.Layout.extend({
 
     berthToLeftBottomEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LEFTBOTTOM);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthLeftBottom);
         }
     },
 
     berthToLeftTopEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LEFTTOP);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthLeftTop);
         }
     },
 
     berthToRightBottomEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_RIGHTBOTTOM);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthRightBottom);
         }
     },
 
     berthToRightTopEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_RIGHTTOP);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthRightTop);
         }
     },
 
     berthToLeftEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_LEFT);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthLeft);
         }
     },
 
     berthToTopEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_TOP);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthTop);
         }
     },
 
     berthToRightEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_RIGHT);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthRight);
         }
     },
 
     berthToBottomEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BERTH_BOTTOM)
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.berthBottom)
         }
     },
 
@@ -893,17 +893,17 @@ cc.UIDragPanel = cc.Layout.extend({
     },
 
     startBounce: function () {
-        if (this._moveType == cc.DRAGPANEL_MOVE_TYPE.BOUNCE) {
+        if (this._moveType == ccs.DragPanelMoveType.bounce) {
             return;
         }
 
         this.actionStop();
-        this._moveType = cc.DRAGPANEL_MOVE_TYPE.BOUNCE;
+        this._moveType = ccs.DragPanelMoveType.bounce;
         this.bounceToCorner();
     },
 
     stopBounce: function () {
-        this._moveType = cc.DRAGPANEL_MOVE_TYPE.NONE;
+        this._moveType = ccs.DragPanelMoveType.none;
     },
 
     bounceToCorner: function () {
@@ -932,7 +932,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = left;
             to_y = bottom;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.LEFTBOTTOM;
+            this._bounceDirection = ccs.DragPanelBounceDir.leftBottom;
         }
         // left top
         else if (innerLeft > left && innerTop < top) {
@@ -941,7 +941,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = left;
             to_y = top;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.LEFTTOP;
+            this._bounceDirection = ccs.DragPanelBounceDir.leftTop;
         }
         // right bottom
         else if (innerRight < right && innerBottom > bottom) {
@@ -950,7 +950,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = right;
             to_y = bottom;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.RIGHTBOTTOM;
+            this._bounceDirection = ccs.DragPanelBounceDir.rightBottom;
         }
         // right top
         else if (innerRight < right && innerTop < top) {
@@ -959,7 +959,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = right;
             to_y = top;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.RIGHTTOP;
+            this._bounceDirection = ccs.DragPanelBounceDir.rightTop;
         }
         // left
         else if (innerLeft > left) {
@@ -968,7 +968,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = left;
             to_y = from_y;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.LEFT;
+            this._bounceDirection = ccs.DragPanelBounceDir.left;
         }
         // top
         else if (innerTop < top) {
@@ -977,7 +977,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = from_x;
             to_y = top;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.TOP;
+            this._bounceDirection = ccs.DragPanelBounceDir.top;
         }
         // right
         else if (innerRight < right) {
@@ -986,7 +986,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = right;
             to_y = from_y;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.RIGHT;
+            this._bounceDirection = ccs.DragPanelBounceDir.right;
         }
         // bottom
         else if (innerBottom > bottom) {
@@ -995,7 +995,7 @@ cc.UIDragPanel = cc.Layout.extend({
             to_x = from_x;
             to_y = bottom;
 
-            this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.BOTTOM;
+            this._bounceDirection = ccs.DragPanelBounceDir.bottom;
         }
         delta = cc.pSub(cc.p(to_x, to_y), cc.p(from_x, from_y));
 
@@ -1007,35 +1007,35 @@ cc.UIDragPanel = cc.Layout.extend({
         this.stopBounce();
 
         switch (this._bounceDirection) {
-            case cc.DRAGPANEL_BOUNCE_DIR.LEFTBOTTOM:
+            case ccs.DragPanelBounceDir.leftBottom:
                 this.bounceToLeftBottomEvent();
                 break;
 
-            case cc.DRAGPANEL_BOUNCE_DIR.LEFTTOP:
+            case ccs.DragPanelBounceDir.leftTop:
                 this.bounceToLeftTopEvent();
                 break;
 
-            case cc.DRAGPANEL_BOUNCE_DIR.RIGHTBOTTOM:
+            case ccs.DragPanelBounceDir.rightBottom:
                 this.bounceToRightBottomEvent();
                 break;
 
-            case cc.DRAGPANEL_BOUNCE_DIR.RIGHTTOP:
+            case ccs.DragPanelBounceDir.rightTop:
                 this.bounceToRightTopEvent();
                 break;
 
-            case cc.DRAGPANEL_BOUNCE_DIR.LEFT:
+            case ccs.DragPanelBounceDir.left:
                 this.bounceToLeftEvent();
                 break;
 
-            case cc.DRAGPANEL_BOUNCE_DIR.TOP:
+            case ccs.DragPanelBounceDir.top:
                 this.bounceToTopEvent();
                 break;
 
-            case cc.DRAGPANEL_BOUNCE_DIR.RIGHT:
+            case ccs.DragPanelBounceDir.right:
                 this.bounceToRightEvent();
                 break;
 
-            case cc.DRAGPANEL_BOUNCE_DIR.BOTTOM:
+            case ccs.DragPanelBounceDir.bottom:
                 this.bounceToBottomEvent();
                 break;
 
@@ -1043,57 +1043,57 @@ cc.UIDragPanel = cc.Layout.extend({
                 break;
         }
 
-        this._bounceDirection = cc.DRAGPANEL_BOUNCE_DIR.NONE;
+        this._bounceDirection = ccs.DragPanelBounceDir.none;
     },
 
     bounceToLeftBottomEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_LEFTBOTTOM);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceLeftBottom);
         }
 
     },
 
     bounceToLeftTopEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_LEFTTOP);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceLeftTop);
         }
     },
 
     bounceToRightBottomEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_RIGHTBOTTOM);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceRightBottom);
         }
     },
 
     bounceToRightTopEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_RIGHTTOP);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceRightTop);
         }
     },
 
     bounceToLeftEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_LEFT);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceLeft);
         }
     },
 
     bounceToTopEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_TOP);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceTop);
         }
 
     },
 
     bounceToRightEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_RIGHT);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceRight);
         }
 
     },
 
     bounceToBottomEvent: function () {
         if (this._eventLister && this._eventSelector) {
-            this._eventSelector.call(this._eventLister, this, cc.DragPanelEventType.BOUNCE_BOTTOM);
+            this._eventSelector.call(this._eventLister, this, ccs.DragPanelEventType.bounceBottom);
         }
     },
 
@@ -1155,11 +1155,11 @@ cc.UIDragPanel = cc.Layout.extend({
 
     actionDone: function () {
         switch (this._moveType) {
-            case cc.DRAGPANEL_MOVE_TYPE.AUTOMOVE:
+            case ccs.DragPanelMoveType.autoMove:
                 this.autoMoveOver();
                 break;
 
-            case cc.DRAGPANEL_MOVE_TYPE.BOUNCE:
+            case ccs.DragPanelMoveType.bounce:
                 this.bounceOver();
                 break;
 
@@ -1182,11 +1182,11 @@ cc.UIDragPanel = cc.Layout.extend({
     moveByUpdate: function (t) {
         var easeRate = 0.0;
         switch (this._moveType) {
-            case cc.DRAGPANEL_MOVE_TYPE.AUTOMOVE:
+            case ccs.DragPanelMoveType.autoMove:
                 easeRate = this._autoMoveEaseRate;
                 break;
 
-            case cc.DRAGPANEL_MOVE_TYPE.BOUNCE:
+            case ccs.DragPanelMoveType.bounce:
                 easeRate = this._bounceEaseRate;
                 break;
 
@@ -1204,7 +1204,7 @@ cc.UIDragPanel = cc.Layout.extend({
         this._previousPosition = newPos;
 
         switch (this._moveType) {
-            case cc.DRAGPANEL_MOVE_TYPE.AUTOMOVE:
+            case ccs.DragPanelMoveType.autoMove:
                 this.autoMove();
                 break;
 
@@ -1249,8 +1249,8 @@ cc.UIDragPanel = cc.Layout.extend({
         return "DragPanel";
     }
 });
-cc.UIDragPanel.create = function () {
-    var uiDragPanel = new cc.UIDragPanel();
+ccs.UIDragPanel.create = function () {
+    var uiDragPanel = new ccs.UIDragPanel();
     if (uiDragPanel && uiDragPanel.init()) {
         return uiDragPanel;
     }

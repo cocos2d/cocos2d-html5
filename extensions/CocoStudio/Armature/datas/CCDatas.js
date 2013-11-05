@@ -22,21 +22,21 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.BlendType = {
-    NORMAL: 0,
-    LAYER: 1,
-    DARKEN: 2,
-    MULTIPLY: 3,
-    LIGHTEN: 4,
-    SCREEN: 5,
-    OVERLAY: 6,
-    HARD_LIGHT: 7,
-    ADD: 8,
-    SUBSTRACT: 9,
-    DIFFERENCE: 10,
-    INVERT: 11,
-    ALPHA: 12,
-    ERASE: 13
+ccs.BlendType = {
+    normal: 0,
+    layer: 1,
+    darken: 2,
+    multiply: 3,
+    lighten: 4,
+    screen: 5,
+    overlay: 6,
+    highlight: 7,
+    add: 8,
+    subtract: 9,
+    difference: 10,
+    invert: 11,
+    alpha: 12,
+    erase: 13
 };
 
 CC_DISPLAY_SPRITE = 0;
@@ -44,7 +44,7 @@ CC_DISPLAY_ARMATURE = 1;
 CC_DISPLAY_PARTICLE = 2;
 CC_DISPLAY_MAX = 3;
 
-cc.BaseData = cc.Class.extend({
+ccs.BaseData = cc.Class.extend({
     x:0,
     y:0,
     zOrder:0,
@@ -139,7 +139,7 @@ cc.BaseData = cc.Class.extend({
     }
 });
 
-cc.DisplayData = cc.Class.extend({
+ccs.DisplayData = cc.Class.extend({
     displayType:CC_DISPLAY_SPRITE,
     ctor:function () {
         this.displayType = CC_DISPLAY_MAX;
@@ -156,12 +156,12 @@ cc.DisplayData = cc.Class.extend({
     }
 });
 
-cc.SpriteDisplayData = cc.DisplayData.extend({
+ccs.SpriteDisplayData = ccs.DisplayData.extend({
     displayName:"",
     skinData:null,
     ctor:function () {
         this.displayName = "";
-        this.skinData = new cc.BaseData();
+        this.skinData = new ccs.BaseData();
         this.displayType = CC_DISPLAY_SPRITE;
     },
     setParam:function (displayName) {
@@ -174,7 +174,7 @@ cc.SpriteDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.NodeDisplayData = cc.DisplayData.extend({
+ccs.NodeDisplayData = ccs.DisplayData.extend({
     node:null,
     ctor:function () {
         this.displayName = "";
@@ -188,7 +188,7 @@ cc.NodeDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.ArmatureDisplayData = cc.DisplayData.extend({
+ccs.ArmatureDisplayData = ccs.DisplayData.extend({
     displayName:"",
     ctor:function () {
         this.displayName = "";
@@ -204,7 +204,7 @@ cc.ArmatureDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.ParticleDisplayData = cc.DisplayData.extend({
+ccs.ParticleDisplayData = ccs.DisplayData.extend({
     plist:"",
     ctor:function () {
         this.plist = "";
@@ -220,7 +220,7 @@ cc.ParticleDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.ShaderDisplayData = cc.DisplayData.extend({
+ccs.ShaderDisplayData = ccs.DisplayData.extend({
     vert:"",
     frag:"",
     ctor:function () {
@@ -240,7 +240,7 @@ cc.ShaderDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.BoneData = cc.BaseData.extend({
+ccs.BoneData = ccs.BaseData.extend({
     displayDataList:null,
     name:"",
     parentName:"",
@@ -264,7 +264,7 @@ cc.BoneData = cc.BaseData.extend({
     }
 });
 
-cc.ArmatureData = cc.Class.extend({
+ccs.ArmatureData = cc.Class.extend({
     boneDataDic:null,
     name:"",
     dataVersion:0,
@@ -287,7 +287,7 @@ cc.ArmatureData = cc.Class.extend({
     }
 });
 
-cc.FrameData = cc.BaseData.extend({
+ccs.FrameData = ccs.BaseData.extend({
         duration:0,
         tweenEasing:0,
         displayIndex:-1,
@@ -299,20 +299,20 @@ cc.FrameData = cc.BaseData.extend({
         frameID:0,
 
         ctor:function () {
-            cc.BaseData.prototype.ctor.call(this);
+            ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
-            this.tweenEasing = cc.TweenType.Linear;
+            this.tweenEasing = ccs.TweenType.linear;
             this.displayIndex = 0;
             this.movement = "";
             this.event = "";
             this.sound = "";
             this.soundEffect = "";
-            this.blendType = cc.BlendType.NORMAL;
+            this.blendType = ccs.BlendType.normal;
             this.frameID = 0;
         },
 
         copy:function (frameData) {
-            cc.BaseData.prototype.copy.call(this, frameData);
+            ccs.BaseData.prototype.copy.call(this, frameData);
             this.duration = frameData.duration;
             this.tweenEasing = frameData.tweenEasing;
             this.displayIndex = frameData.displayIndex;
@@ -325,7 +325,7 @@ cc.FrameData = cc.BaseData.extend({
     }
 );
 
-cc.MovementBoneData = cc.Class.extend({
+ccs.MovementBoneData = cc.Class.extend({
     delay:0,
     scale:1,
     duration:0,
@@ -349,12 +349,12 @@ cc.MovementBoneData = cc.Class.extend({
     }
 });
 
-cc.MovementData = cc.Class.extend({
+ccs.MovementData = cc.Class.extend({
     movBoneDataDic:null,
     duration:0,
     scale:0,
     durationTo:0,
-    durationTween:cc.TweenType.Linear,
+    durationTween:ccs.TweenType.linear,
     loop:true,
     tweenEasing:2,
     name:"",
@@ -365,7 +365,7 @@ cc.MovementData = cc.Class.extend({
         this.durationTo = 0;
         this.durationTween = 0;
         this.loop = true;
-        this.tweenEasing = cc.TweenType.Linear;
+        this.tweenEasing = ccs.TweenType.linear;
         this.movBoneDataDic = {};
     },
 
@@ -377,7 +377,7 @@ cc.MovementData = cc.Class.extend({
     }
 });
 
-cc.AnimationData = cc.Class.extend({
+ccs.AnimationData = cc.Class.extend({
     moveDataDic:null,
     movementNames:null,
     name:"",
@@ -397,12 +397,12 @@ cc.AnimationData = cc.Class.extend({
     }
 });
 
-cc.ContourVertex2 = function (x, y) {
+ccs.ContourVertex2 = function (x, y) {
     this.x = x || 0;
     this.y = y || 0;
 };
 
-cc.ContourData = cc.Class.extend({
+ccs.ContourData = cc.Class.extend({
     vertexList:null,
     ctor:function () {
         this.vertexList = [];
@@ -418,12 +418,12 @@ cc.ContourData = cc.Class.extend({
      * @param {cc.p} p
      */
     addVertex: function (p) {
-       var v = cc.ContourVertex2(p.x, p.y);
+       var v = ccs.ContourVertex2(p.x, p.y);
        this.vertexList.push(v);
     }
 });
 
-cc.TextureData = cc.Class.extend({
+ccs.TextureData = cc.Class.extend({
     height:0,
     width:0,
     pivotX:0,

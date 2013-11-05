@@ -23,21 +23,21 @@
  ****************************************************************************/
 
 //class type define
-cc.UIPanel =cc.Layout ;
-cc.UITextArea=cc.UILabel;
-cc.UIContainerWidget=cc.Layout;
-cc.UITextButton=cc.UIButton;
-cc.UINodeContainer=cc.UIWidget;
-cc.PanelColorType=cc.LayoutBackGroundColorType;
+ccs.UIPanel = ccs.UILayout;
+ccs.UITextArea = ccs.UILabel;
+ccs.UIContainerWidget = ccs.UILayout;
+ccs.UITextButton = ccs.UIButton;
+ccs.UINodeContainer = ccs.UIWidget;
+ccs.PanelColorType = ccs.LayoutBackGroundColorType;
 
 /**
- * Base class for cc.UIZoomButton
+ * Base class for ccs.UIZoomButton
  * @class
- * @extends cc.UITextButton
+ * @extends ccs.UITextButton
  */
-cc.UIZoomButton = cc.UITextButton.extend({
+ccs.UIZoomButton = ccs.UITextButton.extend({
     init: function () {
-        if (cc.UITextButton.prototype.init.call(this)) {
+        if (ccs.UITextButton.prototype.init.call(this)) {
             this.setScale9Enabled(true);
             this.setPressedActionEnabled(true);
             return true;
