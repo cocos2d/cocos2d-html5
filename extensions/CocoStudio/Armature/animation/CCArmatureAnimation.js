@@ -23,10 +23,11 @@
  ****************************************************************************/
 
 //movement event type
-CC_MovementEventType_START = 0;
-CC_MovementEventType_COMPLETE = 1;
-CC_MovementEventType_LOOP_COMPLETE = 2;
-
+cc.MovementEventType = {
+    start: 0,
+    complete: 1,
+    loopComplete: 2
+};
 /**
  * Base class for cc.MovementEvent objects.
  * @class
@@ -201,7 +202,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend({
             loop = -1;
         }
         if (typeof tweenEasing == "undefined") {
-            tweenEasing = ccs.TweenType.TWEEN_EASING_MAX;
+            tweenEasing = ccs.TweenType.tweenEasingMax;
         }
         var locMovementData = this._movementData;
         //Get key frame count
@@ -212,7 +213,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend({
         durationTo = (durationTo == -1) ? locMovementData.durationTo : durationTo;
         durationTween = (durationTween == -1) ? locMovementData.durationTween : durationTween;
         durationTween = (durationTween == 0) ? locMovementData.duration : durationTween;//todo
-        tweenEasing = (tweenEasing == ccs.TweenType.TWEEN_EASING_MAX) ? locMovementData.tweenEasing : tweenEasing;
+        tweenEasing = (tweenEasing == ccs.TweenType.tweenEasingMax) ? locMovementData.tweenEasing : tweenEasing;
         loop = (loop < 0) ? locMovementData.loop : loop;
 
         ccs.ProcessBase.prototype.play.call(this, animationName, durationTo, durationTween, loop, tweenEasing);
@@ -317,7 +318,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend({
                     locCurrentPercent = this._currentFrame / this._durationTween;
                     if (locCurrentPercent < 1.0) {
                         this._nextFrameIndex = this._durationTween;
-                        this.callMovementEvent([this._armature, CC_MovementEventType_START, this._movementID]);
+                        this.callMovementEvent([this._armature, cc.MovementEventType.start, this._movementID]);
                         break;
                     }
                 case CC_ANIMATION_TYPE_MAX:
@@ -325,20 +326,20 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend({
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
-                    this.callMovementEvent([this._armature, CC_MovementEventType_COMPLETE, this._movementID]);
+                    this.callMovementEvent([this._armature, cc.MovementEventType.complete, this._movementID]);
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
                     this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
                     locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = this._nextFrameIndex == 0 ? 0 : ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
-                    this.callMovementEvent([this, CC_MovementEventType_START, this._movementID]);
+                    this.callMovementEvent([this, cc.MovementEventType.start, this._movementID]);
                     break;
                 default:
                     locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
-                    this.callMovementEvent([this._armature, CC_MovementEventType_LOOP_COMPLETE, this._movementID]);
+                    this.callMovementEvent([this._armature, cc.MovementEventType.loopComplete, this._movementID]);
                     break;
             }
             this._currentPercent = locCurrentPercent;

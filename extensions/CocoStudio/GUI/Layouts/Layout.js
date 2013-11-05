@@ -22,16 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 ccs.LayoutBackGroundColorType = {
-    NONE: 0,
-    SOLID: 1,
-    GRADIENT: 2
+    none: 0,
+    solid: 1,
+    gradient: 2
 };
 
 ccs.LayoutType = {
-    ABSOLUTE: 0,
-    LINEAR_VERTICAL: 1,
-    LINEAR_HORIZONTAL: 2,
-    RELATIVE: 3
+    absolute: 0,
+    linearVertical: 1,
+    linearHorizontal: 2,
+    relative: 3
 };
 
 /**
@@ -63,8 +63,8 @@ ccs.UILayout = ccs.UIWidget.extend({
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageCapInsets = cc.RectZero();
-        this._colorType = ccs.LayoutBackGroundColorType.NONE;
-        this._bgImageTexType = ccs.TextureResType.LOCAL;
+        this._colorType = ccs.LayoutBackGroundColorType.none;
+        this._bgImageTexType = ccs.TextureResType.local;
         this._colorRender = null;
         this._gradientRender = null;
         this._color = cc.WHITE;
@@ -73,8 +73,8 @@ ccs.UILayout = ccs.UIWidget.extend({
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.SizeZero();
-        this._layoutType = ccs.LayoutType.ABSOLUTE;
-        this._widgetType = ccs.WidgetType.Container;
+        this._layoutType = ccs.LayoutType.absolute;
+        this._widgetType = ccs.WidgetType.container;
     },
     init: function () {
         this._layoutParameterDictionary = {};
@@ -186,7 +186,7 @@ ccs.UILayout = ccs.UIWidget.extend({
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         if (this._backGroundImage == null) {
             this.addBackGroundImage();
         }
@@ -194,10 +194,10 @@ ccs.UILayout = ccs.UIWidget.extend({
         this._bgImageTexType = texType;
         if (this._backGroundScale9Enable) {
             switch (this._bgImageTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._backGroundImage.initWithFile(fileName);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._backGroundImage.initWithSpriteFrameName(fileName);
                     break;
                 default:
@@ -207,10 +207,10 @@ ccs.UILayout = ccs.UIWidget.extend({
         }
         else {
             switch (this._bgImageTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._backGroundImage.initWithFile(fileName);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._backGroundImage.initWithSpriteFrameName(fileName);
                     break;
                 default:
@@ -245,17 +245,17 @@ ccs.UILayout = ccs.UIWidget.extend({
             return;
         }
         switch (this._layoutType) {
-            case ccs.LayoutType.ABSOLUTE:
+            case ccs.LayoutType.absolute:
                 break;
-            case ccs.LayoutType.LINEAR_HORIZONTAL:
-            case ccs.LayoutType.LINEAR_VERTICAL:
-                var layoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.LINEAR);
+            case ccs.LayoutType.linearHorizontal:
+            case ccs.LayoutType.linearVertical:
+                var layoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.linear);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.UILinearLayoutParameter.create());
                 }
                 break;
-            case ccs.LayoutType.RELATIVE:
-                var layoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.RELATIVE);
+            case ccs.LayoutType.relative:
+                var layoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.relative);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.UIRelativeLayoutParameter.create());
                 }
@@ -305,7 +305,7 @@ ccs.UILayout = ccs.UIWidget.extend({
             return;
         }
         switch (this._colorType) {
-            case ccs.LayoutBackGroundColorType.NONE:
+            case ccs.LayoutBackGroundColorType.none:
                 if (this._colorRender) {
                     this._renderer.removeChild(this._colorRender, true);
                     this._colorRender = null;
@@ -315,13 +315,13 @@ ccs.UILayout = ccs.UIWidget.extend({
                     this._gradientRender = null;
                 }
                 break;
-            case ccs.LayoutBackGroundColorType.SOLID:
+            case ccs.LayoutBackGroundColorType.solid:
                 if (this._colorRender) {
                     this._renderer.removeChild(this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
-            case ccs.LayoutBackGroundColorType.GRADIENT:
+            case ccs.LayoutBackGroundColorType.gradient:
                 if (this._gradientRender) {
                     this._renderer.removeChild(this._gradientRender, true);
                     this._gradientRender = null;
@@ -332,16 +332,16 @@ ccs.UILayout = ccs.UIWidget.extend({
         }
         this._colorType = type;
         switch (this._colorType) {
-            case ccs.LayoutBackGroundColorType.NONE:
+            case ccs.LayoutBackGroundColorType.none:
                 break;
-            case ccs.LayoutBackGroundColorType.SOLID:
+            case ccs.LayoutBackGroundColorType.solid:
                 this._colorRender = cc.LayerColor.create();
                 this._colorRender.setContentSize(this._size);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
                 this._renderer.addChild(this._colorRender, -2);
                 break;
-            case ccs.LayoutBackGroundColorType.GRADIENT:
+            case ccs.LayoutBackGroundColorType.gradient:
                 this._gradientRender = cc.LayerGradient.create(cc.c4b(255, 0, 0, 255), cc.c4b(0, 255, 0, 255));
                 this._gradientRender.setContentSize(this._size);
                 this._gradientRender.setOpacity(this._opacity);
@@ -385,12 +385,12 @@ ccs.UILayout = ccs.UIWidget.extend({
     setBackGroundColorOpacity: function (opacity) {
         this._opacity = opacity;
         switch (this._colorType) {
-            case ccs.LayoutBackGroundColorType.NONE:
+            case ccs.LayoutBackGroundColorType.none:
                 break;
-            case ccs.LayoutBackGroundColorType.SOLID:
+            case ccs.LayoutBackGroundColorType.solid:
                 this._colorRender.setOpacity(opacity);
                 break;
-            case ccs.LayoutBackGroundColorType.GRADIENT:
+            case ccs.LayoutBackGroundColorType.gradient:
                 this._gradientRender.setOpacity(opacity);
                 break;
             default:
@@ -479,7 +479,7 @@ ccs.UILayout = ccs.UIWidget.extend({
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.LINEAR);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.linear);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -488,13 +488,13 @@ ccs.UILayout = ccs.UIWidget.extend({
                 var locFinalPosX = locAP.x * locSize.width;
                 var locFinalPosY = topBoundary - ((1 - locAP.y) * locSize.height);
                 switch (locChildGravity) {
-                    case ccs.UILinearGravity.NONE:
-                    case ccs.UILinearGravity.LEFT:
+                    case ccs.UILinearGravity.none:
+                    case ccs.UILinearGravity.left:
                         break;
-                    case ccs.UILinearGravity.RIGHT:
+                    case ccs.UILinearGravity.right:
                         locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                         break;
-                    case ccs.UILinearGravity.CENTER_HORIZONTAL:
+                    case ccs.UILinearGravity.centerHorizontal:
                         locFinalPosX = layoutSize.width / 2 - locSize.width * (0.5 - locAP.x);
                         break;
                     default:
@@ -514,7 +514,7 @@ ccs.UILayout = ccs.UIWidget.extend({
         var leftBoundary = 0;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.LINEAR);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.linear);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -523,13 +523,13 @@ ccs.UILayout = ccs.UIWidget.extend({
                 var locFinalPosX = leftBoundary + (locAP.x * locSize.width);
                 var locFinalPosY = layoutSize.height - (1 - locAP.y) * locSize.height;
                 switch (locChildGravity) {
-                    case ccs.UILinearGravity.NONE:
-                    case ccs.UILinearGravity.TOP:
+                    case ccs.UILinearGravity.none:
+                    case ccs.UILinearGravity.top:
                         break;
-                    case ccs.UILinearGravity.BOTTOM:
+                    case ccs.UILinearGravity.bottom:
                         locFinalPosY = locAP.y * locSize.height;
                         break;
-                    case ccs.UILinearGravity.CENTER_VERTICAL:
+                    case ccs.UILinearGravity.centerVertical:
                         locFinalPosY = layoutSize.height / 2 - locSize.height * (0.5 - locAP.y);
                         break;
                     default:
@@ -551,14 +551,14 @@ ccs.UILayout = ccs.UIWidget.extend({
 
         for (var i = 0; i < length; i++) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.RELATIVE);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.relative);
             locLayoutParameter._put = false;
         }
 
         while (unlayoutChildCount > 0) {
             for (var i = 0; i < length; i++) {
                 var locChild = layoutChildrenArray[i];
-                var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.RELATIVE);
+                var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.relative);
 
                 if (locLayoutParameter) {
                     if (locLayoutParameter._put) {
@@ -575,49 +575,49 @@ ccs.UILayout = ccs.UIWidget.extend({
                     if (locRelativeName) {
                         locRelativeWidget = ccs.UIHelper.getInstance().seekWidgetByRelativeName(this, locRelativeName);
                         if (locRelativeWidget) {
-                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccs.UILayoutParameterType.RELATIVE);
+                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccs.UILayoutParameterType.relative);
                         }
                     }
                     switch (locAlign) {
-                        case ccs.UIRelativeAlign.ALIGN_NONE:
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_TOP_LEFT:
+                        case ccs.UIRelativeAlign.alignNone:
+                        case ccs.UIRelativeAlign.alignParentTopLeft:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
+                        case ccs.UIRelativeAlign.alignParentTopCenterHorizontal:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_TOP_RIGHT:
+                        case ccs.UIRelativeAlign.alignParentTopRight:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_LEFT_CENTER_VERTICAL:
+                        case ccs.UIRelativeAlign.alignParentLeftCenterVertical:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.UIRelativeAlign.CENTER_IN_PARENT:
+                        case ccs.UIRelativeAlign.centerInParent:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
+                        case ccs.UIRelativeAlign.alignParentRightCenterVertical:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_LEFT_BOTTOM:
+                        case ccs.UIRelativeAlign.alignParentLeftBottom:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = locAP.y * locSize.height;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
+                        case ccs.UIRelativeAlign.alignParentBottomCenterHorizontal:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = locAP.y * locSize.height;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_RIGHT_BOTTOM:
+                        case ccs.UIRelativeAlign.alignParentRightBottom:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = locAP.y * locSize.height;
                             break;
 
-                        case ccs.UIRelativeAlign.LOCATION_ABOVE_LEFTALIGN:
+                        case ccs.UIRelativeAlign.locationAboveLeftAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -628,7 +628,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_ABOVE_CENTER:
+                        case ccs.UIRelativeAlign.locationAboveCenter:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -640,7 +640,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_ABOVE_RIGHTALIGN:
+                        case ccs.UIRelativeAlign.locationAboveRightAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -651,7 +651,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_LEFT_OF_TOPALIGN:
+                        case ccs.UIRelativeAlign.locationLeftOfTopAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -662,7 +662,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_LEFT_OF_CENTER:
+                        case ccs.UIRelativeAlign.locationLeftOfCenter:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -674,7 +674,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_LEFT_OF_BOTTOMALIGN:
+                        case ccs.UIRelativeAlign.locationLeftOfBottomAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -685,7 +685,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_RIGHT_OF_TOPALIGN:
+                        case ccs.UIRelativeAlign.locationRightOfTopAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -696,7 +696,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_RIGHT_OF_CENTER:
+                        case ccs.UIRelativeAlign.locationRightOfCenter:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -708,7 +708,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_RIGHT_OF_BOTTOMALIGN:
+                        case ccs.UIRelativeAlign.locationRightOfBottomAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -719,7 +719,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_BELOW_LEFTALIGN:
+                        case ccs.UIRelativeAlign.locationBelowLeftAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -730,7 +730,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_BELOW_CENTER:
+                        case ccs.UIRelativeAlign.locationBelowCenter:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -742,7 +742,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_BELOW_RIGHTALIGN:
+                        case ccs.UIRelativeAlign.locationBelowRightAlign:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -759,63 +759,63 @@ ccs.UILayout = ccs.UIWidget.extend({
                     var locRelativeWidgetMargin;
                     var locMargin = locLayoutParameter.getMargin();
                     if (locRelativeWidget) {
-                        locRelativeWidgetMargin = locRelativeWidget.getLayoutParameter(ccs.UILayoutParameterType.RELATIVE).getMargin();
+                        locRelativeWidgetMargin = locRelativeWidget.getLayoutParameter(ccs.UILayoutParameterType.relative).getMargin();
                     }
                     //handle margin
                     switch (locAlign) {
-                        case ccs.UIRelativeAlign.ALIGN_NONE:
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_TOP_LEFT:
+                        case ccs.UIRelativeAlign.alignNone:
+                        case ccs.UIRelativeAlign.alignParentTopLeft:
                             locFinalPosX += locMargin.left;
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
+                        case ccs.UIRelativeAlign.alignParentTopCenterHorizontal:
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_TOP_RIGHT:
+                        case ccs.UIRelativeAlign.alignParentTopRight:
                             locFinalPosX -= locMargin.right;
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_LEFT_CENTER_VERTICAL:
+                        case ccs.UIRelativeAlign.alignParentLeftCenterVertical:
                             locFinalPosX += locMargin.left;
                             break;
-                        case ccs.UIRelativeAlign.CENTER_IN_PARENT:
+                        case ccs.UIRelativeAlign.centerInParent:
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
+                        case ccs.UIRelativeAlign.alignParentRightCenterVertical:
                             locFinalPosX -= locMargin.right;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_LEFT_BOTTOM:
+                        case ccs.UIRelativeAlign.alignParentLeftBottom:
                             locFinalPosX += locMargin.left;
                             locFinalPosY += locMargin.bottom;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
+                        case ccs.UIRelativeAlign.alignParentBottomCenterHorizontal:
                             locFinalPosY += locMargin.bottom;
                             break;
-                        case ccs.UIRelativeAlign.ALIGN_PARENT_RIGHT_BOTTOM:
+                        case ccs.UIRelativeAlign.alignParentRightBottom:
                             locFinalPosX -= locMargin.right;
                             locFinalPosY += locMargin.bottom;
                             break;
 
-                        case ccs.UIRelativeAlign.LOCATION_ABOVE_LEFTALIGN:
-                        case ccs.UIRelativeAlign.LOCATION_ABOVE_CENTER:
-                        case ccs.UIRelativeAlign.LOCATION_ABOVE_RIGHTALIGN:
+                        case ccs.UIRelativeAlign.locationAboveLeftAlign:
+                        case ccs.UIRelativeAlign.locationAboveCenter:
+                        case ccs.UIRelativeAlign.locationAboveRightAlign:
                             locFinalPosY += locMargin.bottom;
                             locFinalPosY += locRelativeWidgetMargin.top;
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_LEFT_OF_TOPALIGN:
-                        case ccs.UIRelativeAlign.LOCATION_LEFT_OF_CENTER:
-                        case ccs.UIRelativeAlign.LOCATION_LEFT_OF_BOTTOMALIGN:
+                        case ccs.UIRelativeAlign.locationLeftOfTopAlign:
+                        case ccs.UIRelativeAlign.locationLeftOfCenter:
+                        case ccs.UIRelativeAlign.locationLeftOfBottomAlign:
                             locFinalPosX -= locMargin.right;
                             locFinalPosX -= locRelativeWidgetMargin.left;
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_RIGHT_OF_TOPALIGN:
-                        case ccs.UIRelativeAlign.LOCATION_RIGHT_OF_CENTER:
-                        case ccs.UIRelativeAlign.LOCATION_RIGHT_OF_BOTTOMALIGN:
+                        case ccs.UIRelativeAlign.locationRightOfTopAlign:
+                        case ccs.UIRelativeAlign.locationRightOfCenter:
+                        case ccs.UIRelativeAlign.locationRightOfBottomAlign:
                             locFinalPosX += locMargin.left;
                             locFinalPosX += locRelativeWidgetMargin.right;
                             break;
-                        case ccs.UIRelativeAlign.LOCATION_BELOW_LEFTALIGN:
-                        case ccs.UIRelativeAlign.LOCATION_BELOW_CENTER:
-                        case ccs.UIRelativeAlign.LOCATION_BELOW_RIGHTALIGN:
+                        case ccs.UIRelativeAlign.locationBelowLeftAlign:
+                        case ccs.UIRelativeAlign.locationBelowCenter:
+                        case ccs.UIRelativeAlign.locationBelowRightAlign:
                             locFinalPosY -= locMargin.top;
                             locFinalPosY -= locRelativeWidgetMargin.bottom;
                             break;
@@ -831,15 +831,15 @@ ccs.UILayout = ccs.UIWidget.extend({
     },
     doLayout: function () {
         switch (this._layoutType) {
-            case ccs.LayoutType.ABSOLUTE:
+            case ccs.LayoutType.absolute:
                 break;
-            case ccs.LayoutType.LINEAR_VERTICAL:
+            case ccs.LayoutType.linearVertical:
                 this.doLayout_LINEAR_VERTICAL();
                 break;
-            case ccs.LayoutType.LINEAR_HORIZONTAL:
+            case ccs.LayoutType.linearHorizontal:
                 this.doLayout_LINEAR_HORIZONTAL();
                 break;
-            case ccs.LayoutType.RELATIVE:
+            case ccs.LayoutType.relative:
                 this.doLayout_RELATIVE();
                 break;
             default:

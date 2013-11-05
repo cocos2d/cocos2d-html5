@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LoadingBarType = { Left: 0, Right: 1};
+ccs.LoadingBarType = { left: 0, right: 1};
 
 /**
  * Base class for ccs.UILoadingBar
@@ -42,11 +42,11 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
     _textureFile: "",
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
-        this._barType = ccs.LoadingBarType.Left;
+        this._barType = ccs.LoadingBarType.left;
         this._percent = 100;
         this._totalLength = 0;
         this._barRenderer = null;
-        this._renderBarTexType = ccs.TextureResType.LOCAL;
+        this._renderBarTexType = ccs.TextureResType.local;
         this._barRendererTextureSize = cc.size(0, 0);
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
@@ -73,14 +73,14 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this._barType = dir;
 
         switch (this._barType) {
-            case ccs.LoadingBarType.Left:
+            case ccs.LoadingBarType.left:
                 this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
-            case ccs.LoadingBarType.Right:
+            case ccs.LoadingBarType.right:
                 this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
@@ -108,17 +108,17 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         if (!texture) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._renderBarTexType = texType;
         this._textureFile = texture;
         switch (this._renderBarTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 if (this._scale9Enabled)
                     this._barRenderer.initWithFile(texture);
                 else
                     this._barRenderer.initWithFile(texture);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 if (this._scale9Enabled)
                     this._barRenderer.initWithSpriteFrameName(texture);
                 else
@@ -139,13 +139,13 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this._barRendererTextureSize.height = this._barRenderer.getContentSize().height;
 
         switch (this._barType) {
-            case ccs.LoadingBarType.Left:
+            case ccs.LoadingBarType.left:
                 this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
-            case ccs.LoadingBarType.Right:
+            case ccs.LoadingBarType.right:
                 this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
@@ -213,7 +213,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
 
         var x = 0, y = 0;
         switch (this._renderBarTexType) {
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 var barNode = this._barRenderer;
                 if (barNode) {
                     var to = barNode.getTextureRect().origin;
@@ -296,10 +296,10 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
             }
         }
         switch (this._barType) {
-            case ccs.LoadingBarType.Left:
+            case ccs.LoadingBarType.left:
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 break;
-            case ccs.LoadingBarType.Right:
+            case ccs.LoadingBarType.right:
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 break;
             default:

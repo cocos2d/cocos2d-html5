@@ -451,19 +451,19 @@ ccs.Armature = cc.NodeRGBA.extend({
     updateBlendType: function (blendType) {
         var blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         switch (blendType) {
-            case ccs.BlendType.NORMAL:
+            case ccs.BlendType.normal:
                 blendFunc.src = cc.BLEND_SRC;
                 blendFunc.dst = cc.BLEND_DST;
                 break;
-            case ccs.BlendType.ADD:
+            case ccs.BlendType.add:
                 blendFunc.src = gl.SRC_ALPHA;
                 blendFunc.dst = gl.ONE;
                 break;
-            case ccs.BlendType.MULTIPLY:
+            case ccs.BlendType.multiply:
                 blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
                 blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
                 break;
-            case ccs.BlendType.SCREEN:
+            case ccs.BlendType.screen:
                 blendFunc.src = gl.ONE;
                 blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
                 break;

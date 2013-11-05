@@ -48,7 +48,7 @@ ccs.Tween = ccs.ProcessBase.extend({
         this._between = null;
         this._bone = null;
         this._movementBoneData = null;
-        this._frameTweenEasing = ccs.TweenType.Linear;
+        this._frameTweenEasing = ccs.TweenType.linear;
         this._toIndex = 0;
         this._fromIndex = 0;
         this._animation = null;
@@ -122,7 +122,7 @@ ccs.Tween = ccs.ProcessBase.extend({
             } else {
                 this.setBetween(this._tweenData, nextKeyFrame);
             }
-            this._frameTweenEasing = ccs.TweenType.Linear;
+            this._frameTweenEasing = ccs.TweenType.linear;
         }
         else if (this._movementBoneData.frameList.length > 1) {
             if (loop) {
@@ -219,7 +219,7 @@ ccs.Tween = ccs.ProcessBase.extend({
         if (locLoopType > CC_ANIMATION_TYPE_TO_LOOP_BACK) {
             locCurrentPercent = this.updateFrameData(locCurrentPercent, true);
         }
-        if (this._frameTweenEasing != ccs.TweenType.TWEEN_EASING_MAX) {
+        if (this._frameTweenEasing != ccs.TweenType.tweenEasingMax) {
             this.tweenNodeTo(locCurrentPercent);
         }
 
@@ -376,10 +376,10 @@ ccs.Tween = ccs.ProcessBase.extend({
          *  if frame tween easing equal to TWEEN_EASING_MAX, then it will not do tween.
          */
         var tweenType = null;
-        var locTWEEN_EASING_MAX = ccs.TweenType.TWEEN_EASING_MAX;
+        var locTWEEN_EASING_MAX = ccs.TweenType.tweenEasingMax;
         if (this._frameTweenEasing != locTWEEN_EASING_MAX) {
             tweenType = (this._tweenEasing == locTWEEN_EASING_MAX) ? this._frameTweenEasing : this._tweenEasing;
-            if (tweenType != locTWEEN_EASING_MAX&&tweenType != ccs.TweenType.Linear) {
+            if (tweenType != locTWEEN_EASING_MAX&&tweenType != ccs.TweenType.linear) {
                 currentPercent = ccs.TweenFunction.tweenTo(0, 1, currentPercent, 1, tweenType);
             }
         }

@@ -23,20 +23,20 @@
  ****************************************************************************/
 
 ccs.BlendType = {
-    NORMAL: 0,
-    LAYER: 1,
-    DARKEN: 2,
-    MULTIPLY: 3,
-    LIGHTEN: 4,
-    SCREEN: 5,
-    OVERLAY: 6,
-    HARD_LIGHT: 7,
-    ADD: 8,
-    SUBSTRACT: 9,
-    DIFFERENCE: 10,
-    INVERT: 11,
-    ALPHA: 12,
-    ERASE: 13
+    normal: 0,
+    layer: 1,
+    darken: 2,
+    multiply: 3,
+    lighten: 4,
+    screen: 5,
+    overlay: 6,
+    highlight: 7,
+    add: 8,
+    subtract: 9,
+    difference: 10,
+    invert: 11,
+    alpha: 12,
+    erase: 13
 };
 
 CC_DISPLAY_SPRITE = 0;
@@ -301,13 +301,13 @@ ccs.FrameData = ccs.BaseData.extend({
         ctor:function () {
             ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
-            this.tweenEasing = ccs.TweenType.Linear;
+            this.tweenEasing = ccs.TweenType.linear;
             this.displayIndex = 0;
             this.movement = "";
             this.event = "";
             this.sound = "";
             this.soundEffect = "";
-            this.blendType = ccs.BlendType.NORMAL;
+            this.blendType = ccs.BlendType.normal;
             this.frameID = 0;
         },
 
@@ -354,7 +354,7 @@ ccs.MovementData = cc.Class.extend({
     duration:0,
     scale:0,
     durationTo:0,
-    durationTween:ccs.TweenType.Linear,
+    durationTween:ccs.TweenType.linear,
     loop:true,
     tweenEasing:2,
     name:"",
@@ -365,7 +365,7 @@ ccs.MovementData = cc.Class.extend({
         this.durationTo = 0;
         this.durationTween = 0;
         this.loop = true;
-        this.tweenEasing = ccs.TweenType.Linear;
+        this.tweenEasing = ccs.TweenType.linear;
         this.movBoneDataDic = {};
     },
 

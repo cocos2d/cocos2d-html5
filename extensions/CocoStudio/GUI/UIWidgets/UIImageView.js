@@ -52,7 +52,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
         this._capInsets = null;
         this._imageRenderer = null;
         this._textureFile = "";
-        this._imageTexType = ccs.TextureResType.LOCAL;
+        this._imageTexType = ccs.TextureResType.local;
         this._imageTextureSize = this._size;
     },
 
@@ -71,11 +71,11 @@ ccs.UIImageView = ccs.UIWidget.extend({
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._textureFile = fileName;
         this._imageTexType = texType;
         switch (this._imageTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 if (this._scale9Enabled) {
                     this._imageRenderer.initWithFile(fileName);
                     this._imageRenderer.setColor(this.getColor());
@@ -87,7 +87,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
                     this._imageRenderer.setOpacity(this.getOpacity());
                 }
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 if (this._scale9Enabled) {
                     this._imageRenderer.initWithSpriteFrameName(fileName);
                     this._imageRenderer.setColor(this.getColor());

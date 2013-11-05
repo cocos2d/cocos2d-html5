@@ -163,7 +163,7 @@ ccs.UIHelper = cc.Class.extend({
         var length = arrayRootChildren.length;
         for (var i = 0; i < length; i++) {
             var child = arrayRootChildren[i];
-            var layoutParameter = child.getLayoutParameter(ccs.UILayoutParameterType.RELATIVE);
+            var layoutParameter = child.getLayoutParameter(ccs.UILayoutParameterType.relative);
             if (layoutParameter && layoutParameter.getRelativeName() == name) {
                 return child;
             }

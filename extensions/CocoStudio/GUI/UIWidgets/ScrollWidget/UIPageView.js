@@ -23,12 +23,12 @@
  ****************************************************************************/
 
 ccs.PageViewEventType = {
-    TURNING: 0
+    turning: 0
 };
 
 ccs.PVTouchDir = {
-    TOUCHLEFT: 0,
-    TOUCHRIGHT: 1
+    touchLeft: 0,
+    touchRight: 1
 };
 
 /**
@@ -59,7 +59,7 @@ ccs.UIPageView = ccs.UILayout.extend({
         ccs.UILayout.prototype.ctor.call(this);
         this._curPageIdx = 0;
         this._pages = [];
-        this._touchMoveDir = ccs.PVTouchDir.TOUCHLEFT;
+        this._touchMoveDir = ccs.PVTouchDir.touchLeft;
         this._touchStartLocation = 0;
         this._touchEndLocation = 0;
         this._touchMoveStartLocation = 0;
@@ -134,7 +134,7 @@ ccs.UIPageView = ccs.UILayout.extend({
         if (!page) {
             return;
         }
-        if (page.getWidgetType() != ccs.WidgetType.Container) {
+        if (page.getWidgetType() != ccs.WidgetType.container) {
             return;
         }
         if (cc.ArrayContainsObject(this._pages, page)) {
@@ -164,7 +164,7 @@ ccs.UIPageView = ccs.UILayout.extend({
         if (!page) {
             return;
         }
-        if (page.getWidgetType() != ccs.WidgetType.Container) {
+        if (page.getWidgetType() != ccs.WidgetType.container) {
             return;
         }
         if (cc.ArrayContainsObject(this._pages, page)) {
@@ -408,7 +408,7 @@ ccs.UIPageView = ccs.UILayout.extend({
         var realOffset = touchOffset;
 
         switch (this._touchMoveDir) {
-            case ccs.PVTouchDir.TOUCHLEFT: // left
+            case ccs.PVTouchDir.touchLeft: // left
                 if (this._rightChild.getRightInParent() + touchOffset <= this._rightBoundary) {
                     realOffset = this._rightBoundary - this._rightChild.getRightInParent();
                     this.movePages(realOffset);
@@ -416,7 +416,7 @@ ccs.UIPageView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.PVTouchDir.TOUCHRIGHT: // right
+            case ccs.PVTouchDir.touchRight: // right
                 if (this._leftChild.getLeftInParent() + touchOffset >= this._leftBoundary) {
                     realOffset = this._leftBoundary - this._leftChild.getLeftInParent();
                     this.movePages(realOffset);
@@ -448,10 +448,10 @@ ccs.UIPageView = ccs.UILayout.extend({
         offset = moveX - this._touchMoveStartLocation;
         this._touchMoveStartLocation = moveX;
         if (offset < 0) {
-            this._touchMoveDir = ccs.PVTouchDir.TOUCHLEFT;
+            this._touchMoveDir = ccs.PVTouchDir.touchLeft;
         }
         else if (offset > 0) {
-            this._touchMoveDir = ccs.PVTouchDir.TOUCHRIGHT;
+            this._touchMoveDir = ccs.PVTouchDir.touchRight;
         }
         this.scrollPages(offset);
     },
@@ -510,7 +510,7 @@ ccs.UIPageView = ccs.UILayout.extend({
 
     pageTurningEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.PageViewEventType.TURNING);
+            this._eventSelector.call(this._eventListener, this, ccs.PageViewEventType.turning);
         }
     },
 

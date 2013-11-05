@@ -22,8 +22,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 ccs.CheckBoxEventType = {
-    SELECTED: 0,
-    UNSELECTED: 1
+    selected: 0,
+    unselected: 1
 };
 
 /**
@@ -55,11 +55,11 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         this._isSelected = true;
         this._selectedStateEventListener = null;
         this._selectedStateEventSelector = null;
-        this._backGroundTexType = ccs.TextureResType.LOCAL;
-        this._backGroundSelectedTexType = ccs.TextureResType.LOCAL;
-        this._frontCrossTexType = ccs.TextureResType.LOCAL;
-        this._backGroundDisabledTexType = ccs.TextureResType.LOCAL;
-        this._frontCrossDisabledTexType = ccs.TextureResType.LOCAL;
+        this._backGroundTexType = ccs.TextureResType.local;
+        this._backGroundSelectedTexType = ccs.TextureResType.local;
+        this._frontCrossTexType = ccs.TextureResType.local;
+        this._backGroundDisabledTexType = ccs.TextureResType.local;
+        this._frontCrossDisabledTexType = ccs.TextureResType.local;
     },
     init: function () {
         if (ccs.UIWidget.prototype.init.call(this)) {
@@ -109,13 +109,13 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         if (!backGround) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._backGroundTexType = texType;
         switch (this._backGroundTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._backGroundBoxRenderer.initWithFile(backGround);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._backGroundBoxRenderer.initWithSpriteFrameName(backGround);
                 break;
             default:
@@ -135,13 +135,13 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         if (!backGroundSelected) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._backGroundSelectedTexType = texType;
         switch (this._backGroundSelectedTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._backGroundSelectedBoxRenderer.initWithFile(backGroundSelected);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._backGroundSelectedBoxRenderer.initWithSpriteFrameName(backGroundSelected);
                 break;
             default:
@@ -161,13 +161,13 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         if (!cross) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._frontCrossTexType = texType;
         switch (this._frontCrossTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._frontCrossRenderer.initWithFile(cross);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._frontCrossRenderer.initWithSpriteFrameName(cross);
                 break;
             default:
@@ -187,13 +187,13 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         if (!backGroundDisabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._backGroundDisabledTexType = texType;
         switch (this._backGroundDisabledTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._backGroundBoxDisabledRenderer.initWithFile(backGroundDisabled);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._backGroundBoxDisabledRenderer.initWithSpriteFrameName(backGroundDisabled);
                 break;
             default:
@@ -213,13 +213,13 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         if (!frontCrossDisabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._frontCrossDisabledTexType = texType;
         switch (this._frontCrossDisabledTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._frontCrossDisabledRenderer.initWithFile(frontCrossDisabled);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._frontCrossDisabledRenderer.initWithSpriteFrameName(frontCrossDisabled);
                 break;
             default:
@@ -284,13 +284,13 @@ ccs.UICheckBox = ccs.UIWidget.extend({
 
     selectedEvent: function () {
         if (this._selectedStateEventListener && this._selectedStateEventSelector) {
-            this._selectedStateEventSelector.call(this._selectedStateEventListener, this, ccs.CheckBoxEventType.SELECTED);
+            this._selectedStateEventSelector.call(this._selectedStateEventListener, this, ccs.CheckBoxEventType.selected);
         }
     },
 
     unSelectedEvent: function () {
         if (this._selectedStateEventListener && this._selectedStateEventSelector) {
-            this._selectedStateEventSelector.call(this._selectedStateEventListener, this, ccs.CheckBoxEventType.UNSELECTED);
+            this._selectedStateEventSelector.call(this._selectedStateEventListener, this, ccs.CheckBoxEventType.unselected);
         }
     },
 

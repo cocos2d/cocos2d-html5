@@ -23,12 +23,12 @@
  ****************************************************************************/
 
 //class type define
-ccs.UIPanel =ccs.UILayout ;
-ccs.UITextArea=ccs.UILabel;
-ccs.UIContainerWidget=ccs.UILayout;
-ccs.UITextButton=ccs.UIButton;
-ccs.UINodeContainer=ccs.UIWidget;
-ccs.PanelColorType=ccs.LayoutBackGroundColorType;
+ccs.UIPanel = ccs.UILayout;
+ccs.UITextArea = ccs.UILabel;
+ccs.UIContainerWidget = ccs.UILayout;
+ccs.UITextButton = ccs.UIButton;
+ccs.UINodeContainer = ccs.UIWidget;
+ccs.PanelColorType = ccs.LayoutBackGroundColorType;
 
 /**
  * Base class for ccs.UIZoomButton

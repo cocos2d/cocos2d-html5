@@ -23,9 +23,9 @@
  ****************************************************************************/
 
 ccs.UILayoutParameterType = {
-    NONE: 0,
-    LINEAR: 1,
-    RELATIVE: 2
+    none: 0,
+    linear: 1,
+    relative: 2
 };
 
 /**
@@ -38,7 +38,7 @@ ccs.LayoutParameter = cc.Class.extend({
     _layoutParameterType: null,
     ctor: function () {
         this._margin = new ccs.UIMargin();
-        this._layoutParameterType = ccs.UILayoutParameterType.NONE;
+        this._layoutParameterType = ccs.UILayoutParameterType.none;
     },
 
     /**
@@ -81,8 +81,8 @@ ccs.UILinearLayoutParameter = ccs.LayoutParameter.extend({
     _linearGravity: null,
     ctor: function () {
         ccs.LayoutParameter.prototype.ctor.call(this);
-        this._linearGravity = ccs.UILinearGravity.NONE;
-        this._layoutParameterType = ccs.UILayoutParameterType.LINEAR;
+        this._linearGravity = ccs.UILinearGravity.none;
+        this._layoutParameterType = ccs.UILayoutParameterType.linear;
     },
 
     /**
@@ -119,7 +119,7 @@ ccs.UIRelativeLayoutParameter = ccs.LayoutParameter.extend({
     _put:false,
     ctor: function () {
         ccs.LayoutParameter.prototype.ctor.call(this);
-        this._relativeAlign = ccs.UIRelativeAlign.ALIGN_NONE;
+        this._relativeAlign = ccs.UIRelativeAlign.alignNone;
         this._relativeWidgetName = "";
         this._relativeLayoutName = "";
         this._put = false;

@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SliderEventType = {PERCENTCHANGED: 0};
+ccs.SliderEventType = {percent_changed: 0};
 
 /**
  * Base class for cc.UISlider
@@ -77,11 +77,11 @@ cc.UISlider = ccs.UIWidget.extend({
         this._capInsetsProgressBarRenderer = cc.RectZero();
         this._slidPercentListener = null;
         this._slidPercentSelector = null;
-        this._barTexType = ccs.TextureResType.LOCAL;
-        this._progressBarTexType = ccs.TextureResType.LOCAL;
-        this._ballNTexType = ccs.TextureResType.LOCAL;
-        this._ballPTexType = ccs.TextureResType.LOCAL;
-        this._ballDTexType = ccs.TextureResType.LOCAL;
+        this._barTexType = ccs.TextureResType.local;
+        this._progressBarTexType = ccs.TextureResType.local;
+        this._ballNTexType = ccs.TextureResType.local;
+        this._ballPTexType = ccs.TextureResType.local;
+        this._ballDTexType = ccs.TextureResType.local;
     },
 
     initRenderer: function () {
@@ -112,14 +112,14 @@ cc.UISlider = ccs.UIWidget.extend({
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._textureFile = fileName;
         this._barTexType = texType;
         switch (this._barTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._barRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._barRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -145,14 +145,14 @@ cc.UISlider = ccs.UIWidget.extend({
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._progressBarTextureFile = fileName;
         this._progressBarTexType = texType;
         switch (this._progressBarTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._progressBarRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._progressBarRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -277,14 +277,14 @@ cc.UISlider = ccs.UIWidget.extend({
         if (!normal) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._slidBallNormalTextureFile = normal;
         this._ballNTexType = texType;
         switch (this._ballNTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._slidBallNormalRenderer.initWithFile(normal);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._slidBallNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
@@ -303,14 +303,14 @@ cc.UISlider = ccs.UIWidget.extend({
         if (!pressed) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._slidBallPressedTextureFile = pressed;
         this._ballPTexType = texType;
         switch (this._ballPTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._slidBallPressedRenderer.initWithFile(pressed);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._slidBallPressedRenderer.initWithSpriteFrameName(pressed);
                 break;
             default:
@@ -329,14 +329,14 @@ cc.UISlider = ccs.UIWidget.extend({
         if (!disabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._slidBallDisabledTextureFile = disabled;
         this._ballDTexType = texType;
         switch (this._ballDTexType) {
-            case ccs.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._slidBallDisabledRenderer.initWithFile(disabled);
                 break;
-            case ccs.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._slidBallDisabledRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
@@ -366,7 +366,7 @@ cc.UISlider = ccs.UIWidget.extend({
         else {
             var x = 0, y = 0;
             switch (this._progressBarTexType) {
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     var barNode = this._progressBarRenderer;
                     if (barNode) {
                         var to = barNode.getTextureRect().origin;
@@ -425,7 +425,7 @@ cc.UISlider = ccs.UIWidget.extend({
 
     percentChangedEvent: function () {
         if (this._slidPercentListener && this._slidPercentSelector) {
-            this._slidPercentSelector.call(this._slidPercentListener, this, ccs.SliderEventType.PERCENTCHANGED);
+            this._slidPercentSelector.call(this._slidPercentListener, this, ccs.SliderEventType.percent_changed);
         }
     },
 

@@ -354,7 +354,7 @@ ccs.DataReaderHelper.decodeMovement = function (movementXML, armatureData) {
             tweenEasing = parseFloat(easing) || 0;
             movementData.tweenEasing = tweenEasing;
         } else {
-            movementData.tweenEasing = ccs.TweenType.TWEEN_EASING_MAX;
+            movementData.tweenEasing = ccs.TweenType.tweenEasingMax;
         }
     }
 
@@ -454,7 +454,7 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     var frameData = new ccs.FrameData();
     frameData.movement = frameXML.getAttribute(ccs.CONST_A_MOVEMENT) || "";
     frameData.event = frameXML.getAttribute(ccs.CONST_A_EVENT) || "";
-    frameData.blendType = parseInt(frameXML.getAttribute(ccs.CONST_A_BLEND_TYPE)) || ccs.BlendType.NORMAL;
+    frameData.blendType = parseInt(frameXML.getAttribute(ccs.CONST_A_BLEND_TYPE)) || ccs.BlendType.normal;
     frameData.sound = frameXML.getAttribute(ccs.CONST_A_SOUND) || "";
     frameData.soundEffect = frameXML.getAttribute(ccs.CONST_A_SOUND_EFFECT) || "";
 
@@ -520,7 +520,7 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
         if (easing != ccs.CONST_FL_NAN) {
             frameData.tweenEasing = parseFloat(easing) || 0;
         } else {
-            frameData.tweenEasing = ccs.TweenType.TWEEN_EASING_MAX;
+            frameData.tweenEasing = ccs.TweenType.tweenEasingMax;
         }
     }
 
@@ -727,7 +727,7 @@ ccs.DataReaderHelper.decodeMovementFromJson = function (json) {
     if(json.hasOwnProperty(ccs.CONST_A_MOVEMENT_SCALE)){
         movementData.scale = json[ccs.CONST_A_MOVEMENT_SCALE]
     }
-    movementData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.Linear;
+    movementData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
     movementData.name = json[ccs.CONST_A_NAME] || "";
 
     var movementBoneList = json[ccs.CONST_MOVEMENT_BONE_DATA] || [];
@@ -769,7 +769,7 @@ ccs.DataReaderHelper.decodeFrameFromJson = function (json) {
     var frameData = new ccs.FrameData();
     this.decodeNodeFromJson(frameData, json);
     frameData.duration = json[ccs.CONST_A_DURATION] || 0;
-    frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.Linear;
+    frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
     frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX] || 0;
     frameData.blendType = json[ccs.CONST_A_BLEND_TYPE] || 0;
     frameData.event = json[ccs.CONST_A_EVENT] || null;

@@ -55,7 +55,7 @@ ccs.Bone = cc.NodeRGBA.extend({
         this._parentBone = null;
         this._boneTransformDirty = true;
         this._worldTransform = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
-        this._blendType=ccs.BlendType.NORMAL;
+        this._blendType=ccs.BlendType.normal;
     },
 
     /**

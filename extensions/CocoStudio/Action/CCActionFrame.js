@@ -24,12 +24,12 @@
 
 
 ccs.FrameType = {
-    Move: 0,
-    Scale: 1,
-    Rotate: 2,
-    Tint: 3,
-    Fade: 4,
-    Max: 5
+    move: 0,
+    scale: 1,
+    rotate: 2,
+    tint: 3,
+    fade: 4,
+    max: 5
 };
 
 /**
@@ -133,7 +133,7 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._position = cc.p(0, 0);
-        this._frameType = ccs.FrameType.Move;
+        this._frameType = ccs.FrameType.move;
     },
 
     /**
@@ -174,7 +174,7 @@ ccs.ActionScaleFrame = ccs.ActionFrame.extend({
         ccs.ActionFrame.prototype.ctor.call(this);
         this._scaleX = 1;
         this._scaleY = 1;
-        this._frameType = ccs.FrameType.Scale;
+        this._frameType = ccs.FrameType.scale;
     },
 
     /**
@@ -229,7 +229,7 @@ ccs.ActionRotationFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._rotation = 0;
-        this._frameType = ccs.FrameType.Rotate;
+        this._frameType = ccs.FrameType.rotate;
     },
 
     /**
@@ -268,7 +268,7 @@ ccs.ActionFadeFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._opacity = 255;
-        this._frameType = ccs.FrameType.Fade;
+        this._frameType = ccs.FrameType.fade;
     },
 
     /**
@@ -307,7 +307,7 @@ ccs.ActionTintFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._color = 255;
-        this._frameType = ccs.FrameType.Tint;
+        this._frameType = ccs.FrameType.tint;
     },
 
     /**

@@ -26,25 +26,25 @@
  *  list view direction
  */
 ccs.ListViewDirection = {
-    NONE: 0,
-    VERTICAL: 1,
-    HORIZONTAL: 2
+    none: 0,
+    vertical: 1,
+    horizontal: 2
 };
 
 /**
  *  list view scroll direction
  */
 ccs.ListViewMoveDirection = {
-    NONE: 0,
-    UP: 1,
-    DOWN: 2,
-    LEFT: 3,
-    RIGHT: 4
+    none: 0,
+    up: 1,
+    down: 2,
+    left: 3,
+    right: 4
 };
 
 ccs.ListViewEventType = {
-    INIT_CHILD: 0,
-    UPDATE_CHILD: 1
+    init_child: 0,
+    update_child: 1
 };
 
 /**
@@ -89,8 +89,8 @@ ccs.UIListView = ccs.UILayout.extend({
     ctor: function () {
         ccs.UILayout.prototype.ctor.call(this);
 
-        this._direction = ccs.ListViewDirection.VERTICAL;
-        this._moveDirection = ccs.ListViewMoveDirection.NONE;
+        this._direction = ccs.ListViewDirection.vertical;
+        this._moveDirection = ccs.ListViewMoveDirection.none;
         this._touchStartLocation = 0;
         this._touchEndLocation = 0;
         this._touchMoveStartLocation = 0;
@@ -235,13 +235,13 @@ ccs.UIListView = ccs.UILayout.extend({
         }
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 if (this._topBoundary == 0) {
                     return;
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 if (this._rightBoundary == 0) {
                     return;
                 }
@@ -260,14 +260,14 @@ ccs.UIListView = ccs.UILayout.extend({
                 var child_0 = arrayChildren[0];
 
                 switch (this._direction) {
-                    case ccs.ListViewDirection.VERTICAL: // vertical
+                    case ccs.ListViewDirection.vertical: // vertical
                     {
                         var child_0_top = child_0.getTopInParent();
                         this._disBoundaryToChild_0 = scroll_top - child_0_top;
                     }
                         break;
 
-                    case ccs.ListViewDirection.HORIZONTAL: // horizontal
+                    case ccs.ListViewDirection.horizontal: // horizontal
                     {
                         var child_0_left = child_0.getLeftInParent();
                         this._disBoundaryToChild_0 = child_0_left - scroll_left;
@@ -286,7 +286,7 @@ ccs.UIListView = ccs.UILayout.extend({
                 var child_1 = arrayChildren[1];
 
                 switch (this._direction) {
-                    case ccs.ListViewDirection.VERTICAL: // vertical
+                    case ccs.ListViewDirection.vertical: // vertical
                     {
                         var child_0_top = child_0.getTopInParent();
                         this._disBoundaryToChild_0 = scroll_top - child_0_top;
@@ -294,7 +294,7 @@ ccs.UIListView = ccs.UILayout.extend({
                     }
                         break;
 
-                    case ccs.ListViewDirection.HORIZONTAL: // horizontal
+                    case ccs.ListViewDirection.horizontal: // horizontal
                     {
                         var child_0_left = child_0.getLeftInParent();
                         this._disBoundaryToChild_0 = child_0_left - scroll_left;
@@ -314,12 +314,12 @@ ccs.UIListView = ccs.UILayout.extend({
         var nsp = this._renderer.convertToNodeSpace(touchPoint);
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 this._touchMoveStartLocation = nsp.y;
                 this._touchStartLocation = nsp.y;
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 this._touchMoveStartLocation = nsp.x;
                 this._touchStartLocation = nsp.x;
                 break;
@@ -336,32 +336,32 @@ ccs.UIListView = ccs.UILayout.extend({
         var offset = 0;
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
             {
                 var moveY = nsp.y;
                 offset = moveY - this._touchMoveStartLocation;
                 this._touchMoveStartLocation = moveY;
 
                 if (offset < 0) {
-                    this._moveDirection = ccs.ListViewMoveDirection.DOWN; // down
+                    this._moveDirection = ccs.ListViewMoveDirection.down; // down
                 }
                 else if (offset > 0) {
-                    this._moveDirection = ccs.ListViewMoveDirection.UP; // up
+                    this._moveDirection = ccs.ListViewMoveDirection.up; // up
                 }
             }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
             {
                 var moveX = nsp.x;
                 offset = moveX - this._touchMoveStartLocation;
                 this._touchMoveStartLocation = moveX;
 
                 if (offset < 0) {
-                    this._moveDirection = ccs.ListViewMoveDirection.LEFT; // left
+                    this._moveDirection = ccs.ListViewMoveDirection.left; // left
                 }
                 else if (offset > 0) {
-                    this._moveDirection = ccs.ListViewMoveDirection.RIGHT; // right
+                    this._moveDirection = ccs.ListViewMoveDirection.right; // right
                 }
             }
                 break;
@@ -376,11 +376,11 @@ ccs.UIListView = ccs.UILayout.extend({
         var nsp = this._renderer.convertToNodeSpace(touchPoint);
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 this._touchEndLocation = nsp.y;
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 this._touchEndLocation = nsp.x;
                 break;
 
@@ -404,10 +404,10 @@ ccs.UIListView = ccs.UILayout.extend({
             case 1:
                 var offset = 0;
                 switch (this._direction) {
-                    case ccs.ListViewDirection.VERTICAL: // vertical
+                    case ccs.ListViewDirection.vertical: // vertical
                         offset = Math.abs(sender.getTouchStartPos().y - touchPoint.y);
                         break;
-                    case ccs.ListViewDirection.HORIZONTAL: // horizontal
+                    case ccs.ListViewDirection.horizontal: // horizontal
                         offset = Math.abs(sender.getTouchStartPos().x - touchPoint.x);
                         break;
                     default:
@@ -439,7 +439,7 @@ ccs.UIListView = ccs.UILayout.extend({
 
     moveChildren: function (offset) {
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 var arrayChildren = this._children;
                 for (var i = 0; i < arrayChildren.length; i++) {
                     var child = arrayChildren[i];
@@ -447,7 +447,7 @@ ccs.UIListView = ccs.UILayout.extend({
                     child.setPosition(cc.p(pos.x, pos.y + offset));
                 }
                 break;
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 var arrayChildren = this._children;
                 for (var i = 0; i < arrayChildren.length; i++) {
                     var child = arrayChildren[i];
@@ -566,12 +566,12 @@ ccs.UIListView = ccs.UILayout.extend({
         var realOffset = touchOffset;
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         this.scroll_VERTICAL_UP(realOffset);
                         break;
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         this.scroll_VERTICAL_DOWN(realOffset);
                         break;
                     default:
@@ -580,12 +580,12 @@ ccs.UIListView = ccs.UILayout.extend({
                 return true;
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         this.scroll_HORIZONTAL_LEFT(realOffset);
                         break;
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         this.scroll_HORIZONTAL_RIGHT(realOffset);
                         break;
                     default:
@@ -601,9 +601,9 @@ ccs.UIListView = ccs.UILayout.extend({
 
     autoScrollChildren: function (dt) {
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -614,7 +614,7 @@ ccs.UIListView = ccs.UILayout.extend({
                         }
                         break;
 
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -630,9 +630,9 @@ ccs.UIListView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -643,7 +643,7 @@ ccs.UIListView = ccs.UILayout.extend({
                         }
                         break;
 
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         var curDis = this.getCurAutoScrollDistance(dt);
                         if (curDis <= 0) {
                             curDis = 0;
@@ -716,13 +716,13 @@ ccs.UIListView = ccs.UILayout.extend({
         var child = null;
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         child = this._childPool[this._childPool.length];
                         break;
 
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         child = this._childPool[0];
                         break;
 
@@ -731,13 +731,13 @@ ccs.UIListView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         child = this._childPool[this._childPool.length];
                         break;
 
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         child = this._childPool[0];
                         break;
 
@@ -777,13 +777,13 @@ ccs.UIListView = ccs.UILayout.extend({
 
     pushChildToPool: function () {
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         var child = this._childPool.shift();
                         cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         var child = this._childPool.pop();
                         cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
@@ -792,14 +792,14 @@ ccs.UIListView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         var child = this._childPool.shift();
                         cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
 
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         var child = this._childPool.pop();
                         cc.ArrayAppendObjectToIndex(this._updatePool,child,0);
                         break;
@@ -822,9 +822,9 @@ ccs.UIListView = ccs.UILayout.extend({
         }
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         ++this._end;
                         this.setUpdateChild(child);
                         this.setUpdateDataIndex(this._end);
@@ -838,7 +838,7 @@ ccs.UIListView = ccs.UILayout.extend({
                         ++this._begin;
                         break;
 
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         --this._begin;
                         this.setUpdateChild(child);
                         this.setUpdateDataIndex(this._begin);
@@ -857,9 +857,9 @@ ccs.UIListView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         ++this._end;
                         this.setUpdateChild(child);
                         this.setUpdateDataIndex(this._end);
@@ -873,7 +873,7 @@ ccs.UIListView = ccs.UILayout.extend({
                         ++this._begin;
                         break;
 
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         --this._begin;
                         this.setUpdateChild(child);
                         this.setUpdateDataIndex(this._begin);
@@ -897,13 +897,13 @@ ccs.UIListView = ccs.UILayout.extend({
         }
 
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         this._childPool.push(child);
                         break;
 
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         cc.ArrayAppendObjectToIndex(this._childPool, child, 0);
                         break;
 
@@ -912,12 +912,12 @@ ccs.UIListView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         this._childPool.push(child);
                         break;
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         cc.ArrayAppendObjectToIndex(this._childPool, child, 0);
                         break;
 
@@ -961,12 +961,12 @@ ccs.UIListView = ccs.UILayout.extend({
 
     clearCollectOverArray: function () {
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL:
+            case ccs.ListViewDirection.vertical:
                 this._overTopArray = [];
                 this._overBottomArray = [];
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL:
+            case ccs.ListViewDirection.horizontal:
                 this._overLeftArray = [];
                 this._overRightArray = [];
                 break;
@@ -1028,9 +1028,9 @@ ccs.UIListView = ccs.UILayout.extend({
 
     setLoopPosition: function () {
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         var arrayChildren = this._children;
                         if (this._overTopArray.length == arrayChildren.length) {
                             var count = arrayChildren.length;
@@ -1039,7 +1039,7 @@ ccs.UIListView = ccs.UILayout.extend({
 
                                 if (i == 0) {
                                     var height = child.getSize().height;
-                                    var offset = (child.getWidgetType() == ccs.WidgetType.Widget) ? height / 2 : height;
+                                    var offset = (child.getWidgetType() == ccs.WidgetType.widget) ? height / 2 : height;
                                     var y = this._topBoundary - this._disBoundaryToChild_0 - offset;
                                     child.setPosition(cc.p(child.getPosition().x, y));
                                 }
@@ -1066,7 +1066,7 @@ ccs.UIListView = ccs.UILayout.extend({
                         }
                         break;
 
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         var arrayChildren = this._children;
                         var childrenCount = arrayChildren.length;
                         if (this._overBottomArray.length == childrenCount) {
@@ -1107,9 +1107,9 @@ ccs.UIListView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         var arrayChildren = this._children;
                         var childrenCount = arrayChildren.length;
 
@@ -1120,7 +1120,7 @@ ccs.UIListView = ccs.UILayout.extend({
 
                                 if (i == 0) {
                                     var width = child.getSize().width;
-                                    var offset = (child.getWidgetType() == ccs.WidgetType.Widget) ? (width / 2) : 0;
+                                    var offset = (child.getWidgetType() == ccs.WidgetType.widget) ? (width / 2) : 0;
                                     var x = this._leftBoundary + this._disBoundaryToChild_0 + width + offset;
                                     child.setPosition(cc.p(x, child.getPosition().y));
                                 }
@@ -1148,7 +1148,7 @@ ccs.UIListView = ccs.UILayout.extend({
                         }
                         break;
 
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         var arrayChildren = this._children;
                         var childrenCount = arrayChildren.length;
 
@@ -1197,9 +1197,9 @@ ccs.UIListView = ccs.UILayout.extend({
 
     updateChild: function () {
         switch (this._direction) {
-            case ccs.ListViewDirection.VERTICAL: // vertical
+            case ccs.ListViewDirection.vertical: // vertical
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.UP: // up
+                    case ccs.ListViewMoveDirection.up: // up
                         var count = this._overTopArray.length;
                         for (var i = 0; i < count; ++i) {
                             this.pushChildToPool();
@@ -1207,7 +1207,7 @@ ccs.UIListView = ccs.UILayout.extend({
                         }
                         break;
 
-                    case ccs.ListViewMoveDirection.DOWN: // down
+                    case ccs.ListViewMoveDirection.down: // down
                         var count = this._overBottomArray.length;
                         for (var i = 0; i < count; ++i) {
                             this.pushChildToPool();
@@ -1219,16 +1219,16 @@ ccs.UIListView = ccs.UILayout.extend({
                 }
                 break;
 
-            case ccs.ListViewDirection.HORIZONTAL: // horizontal
+            case ccs.ListViewDirection.horizontal: // horizontal
                 switch (this._moveDirection) {
-                    case ccs.ListViewMoveDirection.LEFT: // left
+                    case ccs.ListViewMoveDirection.left: // left
                         var count = this._overLeftArray.length;
                         for (var i = 0; i < count; ++i) {
                             this.pushChildToPool();
                             this.getAndCallback();
                         }
                         break;
-                    case ccs.ListViewMoveDirection.RIGHT: // right
+                    case ccs.ListViewMoveDirection.right: // right
                         var count = this._overRightArray.length;
                         for (var i = 0; i < count; ++i) {
                             this.pushChildToPool();
@@ -1246,13 +1246,13 @@ ccs.UIListView = ccs.UILayout.extend({
 
     initChildEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.ListViewEventType.INIT_CHILD);
+            this._eventSelector.call(this._eventListener, this, ccs.ListViewEventType.init_child);
         }
     },
 
     updateChildEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.ListViewEventType.UPDATE_CHILD);
+            this._eventSelector.call(this._eventListener, this, ccs.ListViewEventType.update_child);
         }
     },
 

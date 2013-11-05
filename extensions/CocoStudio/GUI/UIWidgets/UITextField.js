@@ -22,10 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 ccs.TextFiledEventType = {
-    ATTACH_WITH_IME: 0,
-    DETACH_WITH_IME: 1,
-    INDERT_TEXT: 2,
-    DELETE_BACKWARD: 3
+    attach_with_me: 0,
+    detach_with_ime: 1,
+    insert_text: 2,
+    delete_backward: 3
 };
 
 /**
@@ -466,25 +466,25 @@ ccs.UITextField = ccs.UIWidget.extend({
 
     attachWithIMEEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.ATTACH_WITH_IME);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.attach_with_me);
         }
     },
 
     detachWithIMEEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.DETACH_WITH_IME);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.detach_with_ime);
         }
     },
 
     insertTextEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.INDERT_TEXT);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.insert_text);
         }
     },
 
     deleteBackwardEvent: function () {
         if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.DELETE_BACKWARD);
+            this._eventSelector.call(this._eventListener, this, ccs.TextFiledEventType.delete_backward);
         }
     },
 

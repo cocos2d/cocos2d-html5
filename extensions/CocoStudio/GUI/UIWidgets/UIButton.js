@@ -22,10 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var NORMALRENDERERZ = 0;
-var PRESSEDRENDERERZ = 0;
-var DISABLEDRENDERERZ = 0;
-var TITLERENDERERZ = 1;
+var NORMAL_RENDERER_ZORDER = 0;
+var PRESSED_RENDERER_ZORDER = 0;
+var DISABLED_RENDERER_ZORDER = 0;
+var TITLE_RENDERER_ZORDER = 1;
 
 /**
  * Base class for ccs.UIButton
@@ -68,9 +68,9 @@ ccs.UIButton = ccs.UIWidget.extend({
         this._capInsetsNormal = cc.RectZero();
         this._capInsetsPressed = cc.RectZero();
         this._capInsetsDisabled = cc.RectZero();
-        this._normalTexType = ccs.TextureResType.LOCAL;
-        this._pressedTexType = ccs.TextureResType.LOCAL;
-        this._disabledTexType = ccs.TextureResType.LOCAL;
+        this._normalTexType = ccs.TextureResType.local;
+        this._pressedTexType = ccs.TextureResType.local;
+        this._disabledTexType = ccs.TextureResType.local;
         var locSize = this._size;
         this._normalTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
@@ -91,10 +91,10 @@ ccs.UIButton = ccs.UIWidget.extend({
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        this._renderer.addChild(this._buttonNormalRenderer, NORMALRENDERERZ);
-        this._renderer.addChild(this._buttonClickedRenderer, PRESSEDRENDERERZ);
-        this._renderer.addChild(this._buttonDisableRenderer, DISABLEDRENDERERZ);
-        this._renderer.addChild(this._titleRenderer, TITLERENDERERZ);
+        this._renderer.addChild(this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        this._renderer.addChild(this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        this._renderer.addChild(this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        this._renderer.addChild(this._titleRenderer, TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -105,7 +105,7 @@ ccs.UIButton = ccs.UIWidget.extend({
         if (this._scale9Enabled == able) {
             return;
         }
-        this._brightStyle = ccs.BrightStyle.NONE;
+        this._brightStyle = ccs.BrightStyle.none;
         this._scale9Enabled = able;
 
         this._renderer.removeChild(this._buttonNormalRenderer, true);
@@ -126,9 +126,9 @@ ccs.UIButton = ccs.UIWidget.extend({
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        this._renderer.addChild(this._buttonNormalRenderer, NORMALRENDERERZ);
-        this._renderer.addChild(this._buttonClickedRenderer, PRESSEDRENDERERZ);
-        this._renderer.addChild(this._buttonDisableRenderer, DISABLEDRENDERERZ);
+        this._renderer.addChild(this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        this._renderer.addChild(this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        this._renderer.addChild(this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -176,15 +176,15 @@ ccs.UIButton = ccs.UIWidget.extend({
         if (!normal) {
             return;
         }
-        texType = texType||ccs.TextureResType.LOCAL;
+        texType = texType||ccs.TextureResType.local;
         this._normalFileName = normal;
         this._normalTexType = texType;
         if (this._scale9Enabled) {
             switch (this._normalTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._buttonNormalRenderer.initWithFile(normal);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._buttonNormalRenderer.initWithSpriteFrameName(normal);
                     break;
                 default:
@@ -195,10 +195,10 @@ ccs.UIButton = ccs.UIWidget.extend({
         }
         else {
             switch (this._normalTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._buttonNormalRenderer.initWithFile(normal);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._buttonNormalRenderer.initWithSpriteFrameName(normal);
                     break;
                 default:
@@ -221,15 +221,15 @@ ccs.UIButton = ccs.UIWidget.extend({
         if (!selected) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
         if (this._scale9Enabled) {
             switch (this._pressedTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._buttonClickedRenderer.initWithFile(selected);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._buttonClickedRenderer.initWithSpriteFrameName(selected);
                     break;
                 default:
@@ -240,10 +240,10 @@ ccs.UIButton = ccs.UIWidget.extend({
         }
         else {
             switch (this._pressedTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._buttonClickedRenderer.initWithFile(selected);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._buttonClickedRenderer.initWithSpriteFrameName(selected);
                     break;
                 default:
@@ -266,15 +266,15 @@ ccs.UIButton = ccs.UIWidget.extend({
         if (!disabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
         if (this._scale9Enabled) {
             switch (this._disabledTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._buttonDisableRenderer.initWithFile(disabled);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._buttonDisableRenderer.initWithSpriteFrameName(disabled);
                     break;
                 default:
@@ -285,10 +285,10 @@ ccs.UIButton = ccs.UIWidget.extend({
         }
         else {
             switch (this._disabledTexType) {
-                case ccs.TextureResType.LOCAL:
+                case ccs.TextureResType.local:
                     this._buttonDisableRenderer.initWithFile(disabled);
                     break;
-                case ccs.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     this._buttonDisableRenderer.initWithSpriteFrameName(disabled);
                     break;
                 default:
@@ -471,9 +471,9 @@ ccs.UIButton = ccs.UIWidget.extend({
     getVirtualRenderer: function () {
         if (this._bright) {
             switch (this._brightStyle) {
-                case ccs.BrightStyle.NORMAL:
+                case ccs.BrightStyle.normal:
                     return this._buttonNormalRenderer;
-                case ccs.BrightStyle.HIGHLIGHT:
+                case ccs.BrightStyle.highlight:
                     return this._buttonClickedRenderer;
                 default:
                     return null;

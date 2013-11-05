@@ -23,36 +23,36 @@
  ****************************************************************************/
 
 ccs.BrightStyle = {
-    NONE: -1,
-    NORMAL: 0,
-    HIGHLIGHT: 1
+    none: -1,
+    normal: 0,
+    highlight: 1
 };
 
 ccs.WidgetType = {
-    Widget: 0, //control
-    Container: 1 //container
+    widget: 0, //control
+    container: 1 //container
 };
 
 ccs.TextureResType = {
-    LOCAL: 0,
-    PLIST: 1
+    local: 0,
+    plist: 1
 };
 
 ccs.TouchEventType = {
-    BEGAN: 0,
-    MOVED: 1,
-    ENDED: 2,
-    CANCELED: 3
+    began: 0,
+    moved: 1,
+    ended: 2,
+    canceled: 3
 };
 
 ccs.SizeType = {
-    ABSOLUTE: 0,
-    PERCENT: 1
+    absolute: 0,
+    percent: 1
 };
 
 ccs.PositionType = {
-    ABSOLUTE: 0,
-    PERCENT: 1
+    absolute: 0,
+    percent: 1
 };
 
 /**
@@ -110,7 +110,7 @@ ccs.UIWidget = cc.Class.extend({
         this._widgetZOrder = 0;
         this._anchorPoint = cc.p(0.5, 0.5);
         this._widgetParent = null;
-        this._brightStyle = ccs.BrightStyle.NONE;
+        this._brightStyle = ccs.BrightStyle.none;
         this._updateEnabled = false;
         this._renderer = null;
         this._touchStartPos = cc.PointZero();
@@ -120,7 +120,7 @@ ccs.UIWidget = cc.Class.extend({
         this._touchEventSelector = null;
         this._widgetTag = -1;
         this._name = "default";
-        this._widgetType = ccs.WidgetType.Widget;
+        this._widgetType = ccs.WidgetType.widget;
         this._actionTag = 0;
         this._size = cc.SizeZero();
         this._customSize = cc.SizeZero();
@@ -129,9 +129,9 @@ ccs.UIWidget = cc.Class.extend({
         this._children = [];
         this._affectByClipping = false;
         this._scheduler = null;
-        this._sizeType = ccs.SizeType.ABSOLUTE;
+        this._sizeType = ccs.SizeType.absolute;
         this._sizePercent = cc.PointZero();
-        this._positionType = ccs.PositionType.ABSOLUTE;
+        this._positionType = ccs.PositionType.absolute;
         this._positionPercent = cc.PointZero();
         this._isRunning = false;
     },
@@ -430,7 +430,7 @@ ccs.UIWidget = cc.Class.extend({
      */
     updateSizeAndPosition: function () {
         switch (this._sizeType) {
-            case ccs.SizeType.ABSOLUTE:
+            case ccs.SizeType.absolute:
                 var locSize;
                 if (this._ignoreSize) {
                     locSize = this.getContentSize();
@@ -442,7 +442,7 @@ ccs.UIWidget = cc.Class.extend({
                 this._size.height = locSize.height;
                 this._sizePercent = (this._widgetParent == null) ? cc.PointZero() : cc.p(this._customSize.width / this._widgetParent.getSize().width, this._customSize.height / this._widgetParent.getSize().height);
                 break;
-            case ccs.SizeType.PERCENT:
+            case ccs.SizeType.percent:
                 var cSize = (this._widgetParent == null) ? cc.SizeZero() : cc.size(this._widgetParent.getSize().width * this._sizePercent.x, this._widgetParent.getSize().height * this._sizePercent.y);
                 var locSize;
                 if (this._ignoreSize) {
@@ -462,10 +462,10 @@ ccs.UIWidget = cc.Class.extend({
         this.onSizeChanged();
         var absPos = this.getPosition();
         switch (this._positionType) {
-            case ccs.PositionType.ABSOLUTE:
+            case ccs.PositionType.absolute:
                 this._positionPercent = (this._widgetParent == null) ? cc.PointZero() : cc.p(absPos.x / this._widgetParent.getSize().width, absPos.y / this._widgetParent.getSize().height);
                 break;
-            case ccs.PositionType.PERCENT:
+            case ccs.PositionType.percent:
                 var parentSize = this._widgetParent.getSize();
                 absPos = cc.p(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y);
                 break;
@@ -655,10 +655,10 @@ ccs.UIWidget = cc.Class.extend({
         this._focus = fucos;
         if (this._bright) {
             if (this._focus) {
-                this.setBrightStyle(ccs.BrightStyle.HIGHLIGHT);
+                this.setBrightStyle(ccs.BrightStyle.highlight);
             }
             else {
-                this.setBrightStyle(ccs.BrightStyle.NORMAL);
+                this.setBrightStyle(ccs.BrightStyle.normal);
             }
         }
         else {
@@ -674,13 +674,13 @@ ccs.UIWidget = cc.Class.extend({
         if (this._brightStyle == style) {
             return;
         }
-        style = style|| ccs.BrightStyle.NORMAL;
+        style = style|| ccs.BrightStyle.normal;
         this._brightStyle = style;
         switch (this._brightStyle) {
-            case ccs.BrightStyle.NORMAL:
+            case ccs.BrightStyle.normal:
                 this.onPressStateChangedToNormal();
                 break;
-            case ccs.BrightStyle.HIGHLIGHT:
+            case ccs.BrightStyle.highlight:
                 this.onPressStateChangedToPressed();
                 break;
             default:
@@ -788,7 +788,7 @@ ccs.UIWidget = cc.Class.extend({
     pushDownEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.BEGAN);
+                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.began);
             }
         }
     },
@@ -796,7 +796,7 @@ ccs.UIWidget = cc.Class.extend({
     moveEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.MOVED);
+                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.moved);
             }
         }
     },
@@ -804,14 +804,14 @@ ccs.UIWidget = cc.Class.extend({
     releaseUpEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.ENDED);
+                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.ended);
             }
         }
     },
 
     cancelUpEvent: function () {
         if (this._touchEventSelector) {
-            this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.CANCELED);
+            this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.canceled);
         }
     },
 
@@ -1429,8 +1429,8 @@ ccs.UIWidget = cc.Class.extend({
     setBright: function (bright, containChild) {
         this._bright = bright;
         if (this._bright) {
-            this._brightStyle = ccs.BrightStyle.NONE;
-            this.setBrightStyle(ccs.BrightStyle.NORMAL);
+            this._brightStyle = ccs.BrightStyle.none;
+            this.setBrightStyle(ccs.BrightStyle.normal);
         }
         else {
             this.onPressStateChangedToDisabled();

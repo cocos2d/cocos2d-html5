@@ -46,7 +46,7 @@ ccs.ActionNode = cc.Class.extend({
         this._actionSpawn = null;
         this._action = null;
         this._frameArray = [];
-        this._frameArrayNum = ccs.FrameType.Max;
+        this._frameArrayNum = ccs.FrameType.max;
         for (var i = 0; i < this._frameArrayNum; i++) {
             this._frameArray.push([]);
         }
@@ -69,7 +69,7 @@ ccs.ActionNode = cc.Class.extend({
                 var actionFrame = new ccs.ActionMoveFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setPosition(cc.p(positionX, positionY));
-                var actionArray = this._frameArray[ccs.FrameType.Move];
+                var actionArray = this._frameArray[ccs.FrameType.move];
                 actionArray.push(actionFrame);
             }
 
@@ -80,7 +80,7 @@ ccs.ActionNode = cc.Class.extend({
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setScaleX(scaleX);
                 actionFrame.setScaleY(scaleY);
-                var actionArray = this._frameArray[ccs.FrameType.Scale];
+                var actionArray = this._frameArray[ccs.FrameType.scale];
                 actionArray.push(actionFrame);
             }
 
@@ -89,7 +89,7 @@ ccs.ActionNode = cc.Class.extend({
                 var actionFrame = new ccs.ActionRotationFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setRotation(rotation);
-                var actionArray = this._frameArray[ccs.FrameType.Rotate];
+                var actionArray = this._frameArray[ccs.FrameType.rotate];
                 actionArray.push(actionFrame);
             }
 
@@ -98,7 +98,7 @@ ccs.ActionNode = cc.Class.extend({
                 var actionFrame = new ccs.ActionFadeFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setOpacity(opacity);
-                var actionArray = this._frameArray[ccs.FrameType.Fade];
+                var actionArray = this._frameArray[ccs.FrameType.fade];
                 actionArray.push(actionFrame);
             }
 
@@ -109,7 +109,7 @@ ccs.ActionNode = cc.Class.extend({
                 var actionFrame = new ccs.ActionTintFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setColor(cc.c3b(colorR, colorG, colorB));
-                var actionArray = this._frameArray[ccs.FrameType.Tint];
+                var actionArray = this._frameArray[ccs.FrameType.tint];
                 actionArray.push(actionFrame);
             }
             actionFrameDic = null;
