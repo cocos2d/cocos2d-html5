@@ -2037,8 +2037,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getBoundingBoxToWorld:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
-        rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
+        //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
+
         //query child's BoundingBox
         if (!this._children)
             return rect;
@@ -2047,7 +2049,28 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         for (var i = 0; i < locChildren.length; i++) {
             var child = locChildren[i];
             if (child && child._visible) {
-                var childRect = child.getBoundingBoxToWorld();
+                var childRect = child._getBoundingBoxToCurrentNode(trans);
+                if (childRect)
+                    rect = cc.rectUnion(rect, childRect);
+            }
+        }
+        return rect;
+    },
+
+    _getBoundingBoxToCurrentNode: function (parentTransform) {
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
+        rect = cc.RectApplyAffineTransform(rect, trans);
+
+        //query child's BoundingBox
+        if (!this._children)
+            return rect;
+
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
+            if (child && child._visible) {
+                var childRect = child._getBoundingBoxToCurrentNode(trans);
                 if (childRect)
                     rect = cc.rectUnion(rect, childRect);
             }
