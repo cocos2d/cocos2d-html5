@@ -47,7 +47,7 @@ cc.POSITIONS_BOTTOMLEFT = 8;
  * @class
  * @extends cc.Sprite
  */
-cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
+cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     RGBAProtocol: true,
 
     _spriteRect: null,
@@ -169,7 +169,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     ctor: function () {
-        cc.Node.prototype.ctor.call(this);
+        cc.NodeRGBA.prototype.ctor.call(this);
         this._spriteRect = cc.RectZero();
         this._capInsetsInternal = cc.RectZero();
 
@@ -237,9 +237,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         if(!this._scale9Image){
             return;
         }
+        //backup the contentSize
         var contentSize = this._contentSize;
         contentSize = new cc.Size(contentSize.width,contentSize.height);
+
         this.updateWithBatchNode(this._scale9Image, this._spriteRect, this._spriteFrameRotated, capInsets);
+        //restore the contentSize
         this.setContentSize(contentSize);
     },
 
@@ -319,7 +322,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             this._updatePositions();
             this._positionsAreDirty = false;
         }
-        cc.Node.prototype.visit.call(this);
+        cc.NodeRGBA.prototype.visit.call(this);
     },
 
     init: function () {
@@ -462,9 +465,10 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         return this._opacityModifyRGB;
     },
 
-    updateWithBatchNode: function (batchNode, rect, rotated, capInsets) {
+    updateWithBatchNode: function (batchNode, originalRect, rotated, capInsets) {
         var opacity = this.getOpacity();
         var color = this.getColor();
+        var rect = cc.rect(originalRect.x, originalRect.y, originalRect.width, originalRect.height);
 
         // Release old sprites
         this.removeAllChildren(true);
@@ -482,7 +486,14 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var locScale9Image = this._scale9Image;
         locScale9Image.removeAllChildren(true);
 
-        this._capInsets = capInsets;
+        //this._capInsets = capInsets;
+        var locCapInsets = this._capInsets;
+        locCapInsets.x = capInsets.x;
+        locCapInsets.y = capInsets.y;
+        locCapInsets.width = capInsets.width;
+        locCapInsets.height = capInsets.height;
+        this._spriteFrameRotated = rotated;
+
         var selTexture = locScale9Image.getTexture();
 
         // If there is no given rect
@@ -494,9 +505,16 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         // Set the given rect's size as original size
         this._spriteRect = rect;
+        var locSpriteRect = this._spriteRect;
+        locSpriteRect.x = rect.x;
+        locSpriteRect.y = rect.y;
+        locSpriteRect.width = rect.width;
+        locSpriteRect.height = rect.height;
+
         var rectSize = rect.size;
         this._originalSize.width = rectSize.width;
         this._originalSize.height = rectSize.height;
+
         var locPreferredSize = this._preferredSize;
         if(locPreferredSize.width === 0 && locPreferredSize.height === 0){
             locPreferredSize.width = rectSize.width;
@@ -504,7 +522,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         var locCapInsetsInternal = this._capInsetsInternal;
-        if(!capInsets){
+        if(capInsets){
             locCapInsetsInternal.x = capInsets.x;
             locCapInsetsInternal.y = capInsets.y;
             locCapInsetsInternal.width = capInsets.width;
@@ -550,8 +568,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         x = 0.0;
         y = 0.0;
 
-        // center left
         y += top_h;
+        // center left
         var leftcenterbounds = cc.rect(x, y, left_w, center_h);
 
         // center center

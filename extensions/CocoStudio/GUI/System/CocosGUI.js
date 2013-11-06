@@ -27,6 +27,6 @@
  * @returns {string}
  * @constructor
  */
-cc.CocosGUIVersion = function(){
+ccs.CocosGUIVersion = function(){
     return "CocosGUI v1.0.0.0";
 };

@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.UIHelper
+ * Base class for ccs.UIHelper
  * @class
  * @extends cc.Class
  */
-cc.UIInputManager = cc.Class.extend({
+ccs.UIInputManager = cc.Class.extend({
     _manageredWidget: null,
     _selectedWidgets: null,
     _touchBeganedPoint: null,
@@ -57,7 +57,7 @@ cc.UIInputManager = cc.Class.extend({
 
     /**
      * Regist a widget to input manager.
-     * @param {cc.UIWidget} widget
+     * @param {ccs.UIWidget} widget
      */
     registWidget: function (widget) {
         if (!widget) {
@@ -79,7 +79,7 @@ cc.UIInputManager = cc.Class.extend({
 
     /**
      * Check touch event
-     * @param {cc.UIWidget} root
+     * @param {ccs.UIWidget} root
      * @param {cc.Point} touchPoint
      * @returns {boolean}
      */
@@ -102,7 +102,7 @@ cc.UIInputManager = cc.Class.extend({
 
     /**
      * Remove a registed widget from input manager.
-     * @param {cc.UIWidget} widget
+     * @param {ccs.UIWidget} widget
      */
     removeManageredWidget: function (widget) {
         if (!widget) {

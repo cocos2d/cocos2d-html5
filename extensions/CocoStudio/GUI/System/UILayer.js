@@ -23,19 +23,19 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.UILayer
+ * Base class for ccs.UILayer
  * @class
  * @extends cc.Layer
  */
-cc.UILayer = cc.Layer.extend({
+ccs.UILayer = cc.Layer.extend({
     _rootWidget: null,
     _inputManager: null,
     init: function () {
         if (cc.Layer.prototype.init.call(this)) {
-            this._rootWidget = cc.UIRootWidget.create();
+            this._rootWidget = ccs.UIRootWidget.create();
             this._rootWidget.onEnter();
             this.addChild(this._rootWidget.getRenderer());
-            this._inputManager = new cc.UIInputManager();
+            this._inputManager = new ccs.UIInputManager();
             this._inputManager.setRootWidget(this._rootWidget);
             return true;
         }
@@ -75,14 +75,14 @@ cc.UILayer = cc.Layer.extend({
         if (!this._rootWidget) {
             return null;
         }
-        return cc.UIHelper.getInstance().seekWidgetByTag(this._rootWidget, tag);
+        return ccs.UIHelper.getInstance().seekWidgetByTag(this._rootWidget, tag);
     },
 
     getWidgetByName: function (name) {
         if (!this._rootWidget) {
             return null;
         }
-        return cc.UIHelper.getInstance().seekWidgetByName(this._rootWidget, name);
+        return ccs.UIHelper.getInstance().seekWidgetByName(this._rootWidget, name);
     },
 
     getRootWidget: function () {
@@ -124,8 +124,8 @@ cc.UILayer = cc.Layer.extend({
         this.removeWidget(widget);
     }
 });
-cc.UILayer.create = function () {
-    var uiLayer = new cc.UILayer();
+ccs.UILayer.create = function () {
+    var uiLayer = new ccs.UILayer();
     if (uiLayer && uiLayer.init()) {
         return uiLayer;
     }

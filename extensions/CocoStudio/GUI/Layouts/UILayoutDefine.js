@@ -22,47 +22,47 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.UILinearGravity = {
-    NONE: 0,
-    LEFT: 1,
-    TOP: 2,
-    RIGHT: 3,
-    BOTTOM: 4,
-    CENTER_VERTICAL: 5,
-    CENTER_HORIZONTAL: 6
+ccs.UILinearGravity = {
+    none: 0,
+    left: 1,
+    top: 2,
+    right: 3,
+    bottom: 4,
+    centerVertical: 5,
+    centerHorizontal: 6
 };
 
-cc.UIRelativeAlign = {
-    ALIGN_NONE: 0,
-    ALIGN_PARENT_TOP_LEFT: 1,
-    ALIGN_PARENT_TOP_CENTER_HORIZONTAL: 2,
-    ALIGN_PARENT_TOP_RIGHT: 3,
-    ALIGN_PARENT_LEFT_CENTER_VERTICAL: 4,
-    CENTER_IN_PARENT: 5,
-    ALIGN_PARENT_RIGHT_CENTER_VERTICAL: 6,
-    ALIGN_PARENT_LEFT_BOTTOM: 7,
-    ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL: 8,
-    ALIGN_PARENT_RIGHT_BOTTOM: 9,
-    LOCATION_ABOVE_LEFTALIGN: 10,
-    LOCATION_ABOVE_CENTER: 11,
-    LOCATION_ABOVE_RIGHTALIGN: 12,
-    LOCATION_LEFT_OF_TOPALIGN: 13,
-    LOCATION_LEFT_OF_CENTER: 14,
-    LOCATION_LEFT_OF_BOTTOMALIGN: 15,
-    LOCATION_RIGHT_OF_TOPALIGN: 16,
-    LOCATION_RIGHT_OF_CENTER: 17,
-    LOCATION_RIGHT_OF_BOTTOMALIGN: 18,
-    LOCATION_BELOW_LEFTALIGN: 19,
-    LOCATION_BELOW_CENTER: 20,
-    LOCATION_BELOW_RIGHTALIGN: 21
+ccs.UIRelativeAlign = {
+    alignNone: 0,
+    alignParentTopLeft: 1,
+    alignParentTopCenterHorizontal: 2,
+    alignParentTopRight: 3,
+    alignParentLeftCenterVertical: 4,
+    centerInParent: 5,
+    alignParentRightCenterVertical: 6,
+    alignParentLeftBottom: 7,
+    alignParentBottomCenterHorizontal: 8,
+    alignParentRightBottom: 9,
+    locationAboveLeftAlign: 10,
+    locationAboveCenter: 11,
+    locationAboveRightAlign: 12,
+    locationLeftOfTopAlign: 13,
+    locationLeftOfCenter: 14,
+    locationLeftOfBottomAlign: 15,
+    locationRightOfTopAlign: 16,
+    locationRightOfCenter: 17,
+    locationRightOfBottomAlign: 18,
+    locationBelowLeftAlign: 19,
+    locationBelowCenter: 20,
+    locationBelowRightAlign: 21
 };
 
 /**
- * Base class for cc.UIMargin
+ * Base class for ccs.UIMargin
  * @class
  * @extends cc.Class
  */
-cc.UIMargin = cc.Class.extend({
+ccs.UIMargin = cc.Class.extend({
     left: 0,
     top: 0,
     right: 0,

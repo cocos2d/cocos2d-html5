@@ -33,11 +33,11 @@ CC_ANIMATION_TYPE_LOOP_BACK = 1;//the animation loop from back
 CC_ANIMATION_TYPE_MAX = 2;//the animation max
 
 /**
- * Base class for cc.ProcessBase objects.
+ * Base class for ccs.ProcessBase objects.
  * @class
  * @extends cc.Class
  */
-cc.ProcessBase = cc.Class.extend({
+ccs.ProcessBase = cc.Class.extend({
     _processScale:1,
     _isComplete:true,
     _isPause:true,
@@ -62,7 +62,7 @@ cc.ProcessBase = cc.Class.extend({
         this._durationTween = 0;
         this._rawDuration = 0;
         this._loopType = CC_ANIMATION_TYPE_LOOP_BACK;
-        this._tweenEasing = cc.TweenType.Linear;
+        this._tweenEasing = ccs.TweenType.linear;
         this._animationInternal = cc.Director.getInstance().getAnimationInterval();
         this._curFrameIndex = 0;
         this._durationTween = 0;
@@ -128,29 +128,31 @@ cc.ProcessBase = cc.Class.extend({
         if (this._isComplete || this._isPause) {
             return false;
         }
-        if (this._rawDuration <= 0 || dt > 1) {
+        if (this._rawDuration <= 0) {
             return false;
         }
         var locNextFrameIndex = this._nextFrameIndex;
+        var locCurrentFrame = this._currentFrame;
         if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
-            this._currentFrame = 0;
+            locCurrentFrame = 0;
         }else{
             /*
-             *  update this._currentFrame, every update add the frame passed.
+             *  update currentFrame, every update add the frame passed.
              *  dt/this._animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
              *  animation speed slower or quicker.
              */
-            this._currentFrame += this._processScale * (dt / this._animationInternal);
+            locCurrentFrame += this._processScale * (dt / this._animationInternal);
 
-            this._currentPercent = this._currentFrame / locNextFrameIndex;
+            this._currentPercent = locCurrentFrame / locNextFrameIndex;
 
             /*
-             *	if this._currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util this._currentFrame is
+             *	if currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util currentFrame is
              *  smaller than this._nextFrameIndex
              */
-            this._currentFrame = cc.fmodf(this._currentFrame, locNextFrameIndex);
+            locCurrentFrame = ccs.fmodf(locCurrentFrame, locNextFrameIndex);
         }
+        this._currentFrame = locCurrentFrame
         this.updateHandler();
         return true;
     },

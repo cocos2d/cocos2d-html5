@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.DecotativeDisplay = cc.Class.extend({
+ccs.DecotativeDisplay = cc.Class.extend({
     _display:null,
     _colliderDetector:null,
     _displayData:null,
@@ -70,8 +70,8 @@ cc.DecotativeDisplay = cc.Class.extend({
 
 });
 
-cc.DecotativeDisplay.create = function () {
-    var decotativeDisplay = new cc.DecotativeDisplay();
+ccs.DecotativeDisplay.create = function () {
+    var decotativeDisplay = new ccs.DecotativeDisplay();
     if (decotativeDisplay && decotativeDisplay.init()) {
         return decotativeDisplay;
     }

@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.ComRender
+ * Base class for ccs.ComRender
  * @class
  * @extends cc.Component
  */
-cc.ComRender = cc.Component.extend({
+ccs.ComRender = cc.Component.extend({
     _render: null,
     ctor: function (node, comName) {
         cc.Component.prototype.ctor.call(this);
@@ -53,8 +53,8 @@ cc.ComRender = cc.Component.extend({
         this._render = node;
     }
 });
-cc.ComRender.create = function (node, comName) {
-    var com = new cc.ComRender(node, comName);
+ccs.ComRender.create = function (node, comName) {
+    var com = new ccs.ComRender(node, comName);
     if (com && com.init()) {
         return com;
     }

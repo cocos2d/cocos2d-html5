@@ -22,35 +22,5 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SpriteFrameCacheHelper = cc.Class.extend({
-    _textureAtlasDic:null,
-    _imagePaths:[],
-    ctor:function () {
-        this._textureAtlasDic = {};
-        this._imagePaths = [];
-    },
-    addSpriteFrameFromFile:function (plistPath, imagePath) {
-        cc.SpriteFrameCache.getInstance().addSpriteFrames(plistPath, imagePath);
-    },
-
-    getTexureAtlasWithTexture:function (texture) {
-        //todo
-        return null;
-        var textureName = texture.getName();
-        var atlas = this._textureAtlasDic[textureName];
-        if (atlas == null) {
-            atlas = cc.TextureAtlas.createWithTexture(texture, 20);
-            this._textureAtlasDic[textureName] = atlas;
-        }
-        return atlas;
-    }
-});
-ccs.SpriteFrameCacheHelper.getInstance = function () {
-    if (!this._instance) {
-        this._instance = new ccs.SpriteFrameCacheHelper();
-    }
-    return this._instance;
-};
-ccs.SpriteFrameCacheHelper.purge = function () {
-    this._instance = null;
-};
+var ccs = ccs || {};
+var CocoStudioVersion = "1.0";
