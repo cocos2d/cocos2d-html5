@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 //movement event type
-cc.MovementEventType = {
+ccs.MovementEventType = {
     start: 0,
     complete: 1,
     loopComplete: 2
@@ -318,7 +318,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend({
                     locCurrentPercent = this._currentFrame / this._durationTween;
                     if (locCurrentPercent < 1.0) {
                         this._nextFrameIndex = this._durationTween;
-                        this.callMovementEvent([this._armature, cc.MovementEventType.start, this._movementID]);
+                        this.callMovementEvent([this._armature, ccs.MovementEventType.start, this._movementID]);
                         break;
                     }
                 case CC_ANIMATION_TYPE_MAX:
@@ -326,20 +326,20 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend({
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
-                    this.callMovementEvent([this._armature, cc.MovementEventType.complete, this._movementID]);
+                    this.callMovementEvent([this._armature, ccs.MovementEventType.complete, this._movementID]);
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
                     this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
                     locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = this._nextFrameIndex == 0 ? 0 : ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
-                    this.callMovementEvent([this, cc.MovementEventType.start, this._movementID]);
+                    this.callMovementEvent([this, ccs.MovementEventType.start, this._movementID]);
                     break;
                 default:
                     locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
-                    this.callMovementEvent([this._armature, cc.MovementEventType.loopComplete, this._movementID]);
+                    this.callMovementEvent([this._armature, ccs.MovementEventType.loopComplete, this._movementID]);
                     break;
             }
             this._currentPercent = locCurrentPercent;

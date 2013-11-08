@@ -25,11 +25,11 @@
 ccs.SliderEventType = {percent_changed: 0};
 
 /**
- * Base class for cc.UISlider
+ * Base class for ccs.UISlider
  * @class
  * @extends ccs.UIWidget
  */
-cc.UISlider = ccs.UIWidget.extend({
+ccs.UISlider = ccs.UIWidget.extend({
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -539,8 +539,8 @@ cc.UISlider = ccs.UIWidget.extend({
         return "Slider";
     }
 });
-cc.UISlider.create = function () {
-    var uiSlider = new cc.UISlider();
+ccs.UISlider.create = function () {
+    var uiSlider = new ccs.UISlider();
     if (uiSlider && uiSlider.init()) {
         return uiSlider;
     }

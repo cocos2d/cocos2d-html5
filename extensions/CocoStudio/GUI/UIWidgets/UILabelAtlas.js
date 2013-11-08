@@ -45,7 +45,7 @@ ccs.UICCLabelAtlas = cc.LabelAtlas.extend({
         cc.AtlasNode.prototype.draw.call(this);
     },
     updateDisplayedOpacity: function (opacity) {
-        cc.AtlasNode.prototype.setOpacity.call(this, opacity);
+        cc.AtlasNode.prototype.updateDisplayedOpacity.call(this, opacity);
     }
 });
 

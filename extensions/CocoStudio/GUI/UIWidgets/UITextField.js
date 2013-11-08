@@ -29,9 +29,9 @@ ccs.TextFiledEventType = {
 };
 
 /**
- * Base class for cc.UISlider
+ * Base class for ccs.UICCTextField
  * @class
- * @extends ccs.UIWidget
+ * @extends cc.TextFieldTTF
  */
 ccs.UICCTextField = cc.TextFieldTTF.extend({
     _maxLengthEnabled: false,

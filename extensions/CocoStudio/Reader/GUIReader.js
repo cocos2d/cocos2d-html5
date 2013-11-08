@@ -118,7 +118,7 @@ ccs.GUIReader = cc.Class.extend({
             this.setPropsForPanelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Slider") {
-            widget = cc.UISlider.create();
+            widget = ccs.UISlider.create();
             this.setPropsForSliderFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ListView") {
@@ -132,10 +132,6 @@ ccs.GUIReader = cc.Class.extend({
         else if (classname == "LabelBMFont") {
             widget = ccs.UILabelBMFont.create();
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
-        }
-        else if (classname == "DragPanel") {
-            widget = ccs.UIDragPanel.create();
-            this.setPropsForDragPanelFromJsonDictionary(widget, uiOptions);
         }
 
         var children = data["children"];
@@ -665,8 +661,7 @@ ccs.GUIReader = cc.Class.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
         if (containerWidget instanceof ccs.UIScrollView ||
-            containerWidget instanceof ccs.UIListView ||
-            containerWidget instanceof ccs.UIDragPanel) {
+            containerWidget instanceof ccs.UIListView) {
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -1177,21 +1172,6 @@ ccs.GUIReader = cc.Class.extend({
 
             this.setColorPropsForWidgetFromJsonDictionary(widget, options);
         }
-    },
-
-    setPropsForDragPanelFromJsonDictionary: function (widget, options) {
-        this.setPropsForPanelFromJsonDictionary(widget, options);
-
-        var dragPanel = widget;
-
-        var bounceEnable = options["bounceEnable"];
-        dragPanel.setBounceEnabled(bounceEnable);
-
-        var innerWidth = options["innerWidth"];
-        var innerHeight = options["innerHeight"];
-        dragPanel.setInnerContainerSize(cc.size(innerWidth, innerHeight));
-
-        this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     }
 });
 ccs.GUIReader._instance = null;

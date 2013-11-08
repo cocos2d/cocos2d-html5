@@ -223,13 +223,8 @@ ccs.Bone = cc.NodeRGBA.extend({
             var locTweenData = this._tweenData;
             var locOpacity = this._displayedOpacity * locTweenData.a / 255;
             var locColor = cc.c3b(locDisplayedColor.r * locTweenData.r / 255, locDisplayedColor.g * locTweenData.g / 255, locDisplayedColor.b * locTweenData.b / 255);
-            if (cc.Browser.supportWebGL) {
-                display.setOpacity(locOpacity);
-                display.setColor(locColor);
-            } else {
-                cc.NodeRGBA.prototype.setOpacity.call(display, this._displayedOpacity * locTweenData.a / 255);
-                cc.NodeRGBA.prototype.setColor.call(display, locColor);
-            }
+            display.setOpacity(locOpacity);
+            display.setColor(locColor);
         }
     },
 
