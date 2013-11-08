@@ -227,7 +227,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     onAccelerometer:function (accelerationValue) {
-        cc.Assert(false, "Layer#onAccelerometer override me");
+        cc.log("onAccelerometer event should be handled.")
     },
 
     /**
@@ -325,7 +325,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @return {Boolean}
      */
     onTouchBegan:function (touch, event) {
-        cc.Assert(false, "Layer#onTouchBegan override me");
+        cc.log("onTouchBegan event should be handled.");
         return true;
     },
 
@@ -1417,12 +1417,11 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @param {Number} n the layer index to switch to
      */
     switchTo:function (n) {
-        cc.Assert(n < this._layers.length, "Invalid index in MultiplexLayer switchTo message");
+        if(n >= this._layers.length)
+            throw "cc.LayerMultiplex.switchTo():Invalid index in MultiplexLayer switchTo message";
 
         this.removeChild(this._layers[this._enabledLayer], true);
-
         this._enabledLayer = n;
-
         this.addChild(this._layers[n]);
     },
 
@@ -1431,15 +1430,14 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @param {Number} n the layer index to switch to
      */
     switchToAndReleaseMe:function (n) {
-        cc.Assert(n < this._layers.count(), "Invalid index in MultiplexLayer switchTo message");
+        if(n >= this._layers.length)
+            throw "cc.LayerMultiplex.switchToAndReleaseMe():Invalid index in MultiplexLayer switchTo message";
 
         this.removeChild(this._layers[this._enabledLayer], true);
 
         //[layers replaceObjectAtIndex:_enabledLayer withObject:[NSNull null]];
         this._layers[this._enabledLayer] = null;
-
         this._enabledLayer = n;
-
         this.addChild(this._layers[n]);
     },
 
@@ -1447,7 +1445,10 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @param {cc.Layer} layer
      */
     addLayer:function (layer) {
-        cc.Assert(this._layers, "cc.Layer addLayer");
+        if(!layer){
+            cc.log("cc.Layer.addLayer(): layer should be non-null");
+            return;
+        }
         this._layers.push(layer);
     }
 });

@@ -352,7 +352,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                 gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, pixelsWide, pixelsHigh, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
                 break;
             default:
-                cc.Assert(0, "NSInternalInconsistencyException");
+                throw "NSInternalInconsistencyException";
                 break;
         }
 
@@ -568,7 +568,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_BOTTOM
                 : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_BOTTOM_LEFT : cc.ALIGN_BOTTOM_RIGHT;
         } else {
-            cc.Assert(false, "Not supported alignment format!");
+            throw "Not supported alignment format!";
         }
 
         if (!image.initWithString(text, dimensions.width, dimensions.height, eAlign, fontName, fontSize))
@@ -755,8 +755,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                 return  "PVRTC2";
 
             default:
-                cc.Assert(false, "unrecognized pixel format");
-                cc.log("stringForFormat: " + this._pixelFormat + ", cannot give useful result");
+                cc.log("stringForFormat: " + this._pixelFormat + ", cannot give useful result, it's a unrecognized pixel format");
                 break;
         }
         return "";
@@ -800,8 +799,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                 return 16;
 
             default:
-                cc.Assert(false, "illegal pixel format");
-                cc.log("bitsPerPixelForFormat: " + this._pixelFormat + ", cannot give useful result");
+                cc.log("bitsPerPixelForFormat: " + this._pixelFormat + ", cannot give useful result, it's a illegal pixel format");
                 return -1;
         }
     },

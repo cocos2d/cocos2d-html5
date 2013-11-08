@@ -105,7 +105,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                 this._parseVersion2(animations);
                 break;
             default :
-                cc.Assert(false, "Invalid animation format");
+                cc.log("cc.AnimationCache. Invalid animation format");
                 break;
         }
     },
@@ -118,13 +118,17 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @param {String} plist
      */
     addAnimations:function (plist) {
-        cc.Assert(plist, "Invalid texture file name")
+        if(!plist)
+            throw "cc.AnimationCache.addAnimations(): Invalid texture file name";
         var fileUtils = cc.FileUtils.getInstance();
 
         var path = fileUtils.fullPathForFilename(plist);
         var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
 
-        cc.Assert(dict, "cc.AnimationCache: File could not be found");
+        if(!dict){
+            cc.log("cc.AnimationCache.addAnimations(): File could not be found");
+            return;
+        }
 
         this.addAnimationsWithDictionary(dict);
     },

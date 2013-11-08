@@ -92,8 +92,11 @@ cc.ActionManager = cc.Class.extend({
      * @param {Boolean} paused
      */
     addAction:function (action, target, paused) {
-        cc.Assert(action != null, "no action");
-        cc.Assert(target != null, "");
+        if(!action)
+            throw "cc.ActionManager.addAction(): action must be non-null";
+        if(!target)
+            throw "cc.ActionManager.addAction(): action must be non-null";
+
         //check if the action target already exists
         var element = this._searchElementByTarget(this._targets, target);
         //if doesnt exists, create a hashelement and push in mpTargets
@@ -174,8 +177,10 @@ cc.ActionManager = cc.Class.extend({
      * @param {object} target
      */
     removeActionByTag:function (tag, target) {
-        cc.Assert(tag != cc.ACTION_TAG_INVALID, "");
-        cc.Assert(target != null, "");
+        if(tag == cc.ACTION_TAG_INVALID)
+            cc.log("cc.ActionManager.removeActionByTag(): an invalid tag");
+        if(!target)
+            throw "cc.ActionManager.removeActionByTag(): target must be non-null";
 
         var element = this._searchElementByTarget(this._targets, target);
 
@@ -199,7 +204,9 @@ cc.ActionManager = cc.Class.extend({
      * @return {cc.Action|Null}  return the Action with the given tag on success
      */
     getActionByTag:function (tag, target) {
-        cc.Assert(tag != cc.ACTION_TAG_INVALID, "");
+        if(tag == cc.ACTION_TAG_INVALID)
+            cc.log("cc.ActionManager.getActionByTag(): an invalid tag");
+
         var element = this._searchElementByTarget(this._targets, target);
         if (element) {
             if (element.actions != null) {

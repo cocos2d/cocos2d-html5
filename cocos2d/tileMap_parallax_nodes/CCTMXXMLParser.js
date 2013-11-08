@@ -620,7 +620,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 // Unpack the tilemap data
                 var compression = data.getAttribute('compression');
                 var encoding = data.getAttribute('encoding');
-                cc.Assert(compression == null || compression === "gzip" || compression === "zlib", "TMX: unsupported compression method");
+                if(compression && compression !== "gzip" && compression !== "zlib")
+                    throw "cc.TMXMapInfo.parseXMLFile(): unsupported compression method";
                 switch (compression) {
                     case 'gzip':
                         layer._tiles = cc.unzipBase64AsArray(nodeValue, 4);
@@ -648,7 +649,9 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         }
                         break;
                     default:
-                        cc.Assert(this.getLayerAttribs() != cc.TMX_LAYER_ATTRIB_NONE, "TMX tile map: Only base64 and/or gzip/zlib maps are supported");
+                        if(this.getLayerAttribs() == cc.TMX_LAYER_ATTRIB_NONE)
+                            cc.log("cc.TMXMapInfo.parseXMLFile(): Only base64 and/or gzip/zlib maps are supported");
+                        break;
                 }
 
                 // The parent element is the last layer

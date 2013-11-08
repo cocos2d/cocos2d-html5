@@ -335,7 +335,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * [3] ResolutionShowAll  Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
      */
     setDesignResolutionSize:function (width, height, resolutionPolicy) {
-        cc.Assert(resolutionPolicy !== cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
+        if(resolutionPolicy === cc.RESOLUTION_POLICY.UNKNOWN){
+            cc.log("cc.EGLView.setDesignResolutionSize(): should set resolutionPolicy");
+            return;
+        }
 
         if (width == 0 || height == 0)
             return;

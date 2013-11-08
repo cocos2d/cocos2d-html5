@@ -388,7 +388,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number} The rotation of the node in degrees.
      */
     getRotation:function () {
-        cc.Assert(this._rotationX == this._rotationY, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
+        if(this._rotationX !== this._rotationY)
+            cc.log("cc.Node.rotation(): RotationX != RotationY. Don't know which one to return");
         return this._rotationX;
     },
 
@@ -462,7 +463,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getScale:function () {
-        cc.Assert(this._scaleX == this._scaleY, "cc.Node#scale. ScaleX != ScaleY. Don't know which one to return");
+        if(this._scaleX !== this._scaleY)
+            cc.log("cc.Node.getScale(): ScaleX != ScaleY. Don't know which one to return");
         return this._scaleX;
     },
 
@@ -956,7 +958,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Node} a CCNode object whose tag equals to the input parameter
      */
     getChildByTag:function (aTag) {
-        //cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
         var __children = this._children;
         if (__children != null) {
             for (var i = 0; i < __children.length; i++) {
@@ -976,17 +977,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *
      * @param {cc.Node} child  A child node
      * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
-     * @param {Number} [tag=]  A interger to identify the node easily. Please refer to setTag(int)
+     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild:function (child, zOrder, tag) {
+        if(!child)
+            throw "cc.Node.addChild(): child must be non-null";
         if (child === this) {
-            console.warn('cc.Node.addChild: An Node can\'t be added as a child of itself.');
+            cc.log('cc.Node.addChild: An Node can\'t be added as a child of itself.');
             return;
         }
 
-        cc.Assert(child != null, "Argument must be non-nil");
         if (child._parent !== null) {
-            cc.Assert(child._parent === null, "child already added. It can't be added again");
+            cc.log("child already added. It can't be added again");
             return;
         }
 
@@ -1060,7 +1062,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @see removeChildByTag(int, bool)
      */
     removeChildByTag:function (tag, cleanup) {
-        cc.Assert(tag != cc.NODE_TAG_INVALID, "Invalid tag");
+        if(tag === cc.NODE_TAG_INVALID)
+            cc.log("cc.Node.removeChildByTag(): argument tag is an invalid tag");
 
         var child = this.getChildByTag(tag);
         if (child == null)
@@ -1152,7 +1155,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} zOrder Z order for drawing priority. Please refer to setZOrder(int)
      */
     reorderChild:function (child, zOrder) {
-        cc.Assert(child != null, "Child must be non-nil");
+        if(!child)
+            throw "cc.Node.reorderChild(): child must be non-null";
         this._reorderChildDirty = true;
         child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
         child._setZOrder(zOrder);
@@ -1206,7 +1210,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
-        //cc.Assert(0);
         // override me
         // Only use- this function to draw your staff.
         // DON'T draw your stuff outside this method
@@ -1283,7 +1286,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} An Action pointer
      */
     runAction:function (action) {
-        cc.Assert(action != null, "Argument must be non-nil");
+        if(!action)
+            throw "cc.Node.runAction(): action must be non-null";
         this.getActionManager().addAction(action, this, !this._running);
         return action;
     },
@@ -1308,7 +1312,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} tag A tag that indicates the action to be removed.
      */
     stopActionByTag:function (tag) {
-        cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
+        if(tag === cc.ACTION_TAG_INVALID){
+            cc.log("cc.Node.stopActionBy(): argument tag an invalid tag");
+            return;
+        }
         this.getActionManager().removeActionByTag(tag, this);
     },
 
@@ -1319,7 +1326,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} The action object with the given tag.
      */
     getActionByTag:function (tag) {
-        cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
+        if(tag === cc.ACTION_TAG_INVALID){
+            cc.log("cc.Node.getActionByTag(): argument tag is an invalid tag");
+            return null;
+        }
         return this.getActionManager().getActionByTag(tag, this);
     },
 
@@ -1372,14 +1382,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *
      * @param {function} callback_fn A function wrapped as a selector
      * @param {Number} interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
-     * @param {Number} repeat    The selector will be excuted (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
+     * @param {Number} repeat    The selector will be executed (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
      * @param {Number} delay     The amount of time that the first tick will wait before execution.
      */
     schedule:function (callback_fn, interval, repeat, delay) {
         interval = interval || 0;
 
-        cc.Assert(callback_fn, "Argument must be non-nil");
-        cc.Assert(interval >= 0, "Argument must be positive");
+        if(!callback_fn)
+            throw "cc.Node.schedule(): callback function must be non-null";
+        if(interval < 0)
+            throw "cc.Node.schedule(): interval must be positive";
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;

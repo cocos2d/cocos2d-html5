@@ -626,7 +626,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 locData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
 
             this._vertexData = locData;
-            cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
+            if(!this._vertexData)
+                throw "cc.ProgressTimer._updateRadial() : Not enough memory";
         }
 
         var locVertexData = this._vertexData;
@@ -701,10 +702,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 var vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, locCount = 4;
                 this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
                 this._vertexData = [];
-                for (i = 0; i < locCount; i++) {
+                for (i = 0; i < locCount; i++)
                     this._vertexData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
-                }
-                cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
             }
 
             locVertexData = this._vertexData;
@@ -731,8 +730,6 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 var rTempData = [];
                 for (i = 0; i < rLocCount; i++)
                     rTempData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * rVertexDataLen);
-
-                cc.Assert(rTempData, "cc.ProgressTimer. Not enough memory");
                 //    TOPLEFT 1
                 rTempData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 1));
                 rTempData[0].vertices = this._vertexFromAlphaPoint(cc.p(0, 1));

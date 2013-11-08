@@ -70,8 +70,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {cc.SpriteBatchNode}
      */
     addSpriteWithoutQuad:function (child, z, aTag) {
-        cc.Assert(child != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
-        cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+        if(!child)
+            throw "cc.SpriteBatchNode.addQuadFromSprite(): child should be non-null";
+        if(!(child instanceof cc.Sprite))
+            throw "cc.SpriteBatchNode.addQuadFromSprite(): SpriteBatchNode only supports cc.Sprites as children";
 
         // quad index is Z
         child.setAtlasIndex(z);
@@ -175,7 +177,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (!this._textureAtlas.resizeCapacity(quantity)) {
             // serious problems
             cc.log("cocos2d: WARNING: Not enough memory to resize the atlas");
-            cc.Assert(false, "Not enough memory to resize the atla");
         }
     },
 
@@ -329,8 +330,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} zOrder
      */
     reorderChild:function (child, zOrder) {
-        cc.Assert(child != null, "SpriteBatchNode.addChild():the child should not be null");
-        cc.Assert(this._children.indexOf(child) > -1, "SpriteBatchNode.addChild():Child doesn't belong to Sprite");
+        if(!child)
+            throw "cc.SpriteBatchNode.addChild():child should be non-null";
+        if(this._children.indexOf(child) === -1) {
+            cc.log("cc.SpriteBatchNode.addChild(): Child doesn't belong to Sprite");
+            return;
+        }
 
         if (zOrder === child.getZOrder())
             return;
@@ -349,8 +354,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // explicit null handling
         if (child == null)
             return;
-
-        cc.Assert(this._children.indexOf(child) > -1, "SpriteBatchNode.addChild():sprite batch node should contain the child");
+        if(this._children.indexOf(child) === -1){
+            cc.log("cc.SpriteBatchNode.addChild(): sprite batch node should contain the child");
+            return;
+        }
 
         // cleanup before removing
         this.removeSpriteFromAtlas(child);
@@ -394,8 +401,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     updateQuadFromSprite:null,
 
     _updateQuadFromSpriteForCanvas:function (sprite, index) {
-        cc.Assert(sprite != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
-        cc.Assert((sprite instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+        if(!sprite)
+            throw "cc.SpriteBatchNode.updateQuadFromSprite(): sprite should be non-null";
+        if(!(sprite instanceof cc.Sprite)){
+            cc.log("cc.SpriteBatchNode.updateQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            return;
+        }
 
         //
         // update the quad directly. Don't add the sprite to the scene graph
@@ -409,8 +420,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _updateQuadFromSpriteForWebGL:function (sprite, index) {
-        cc.Assert(sprite != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
-        cc.Assert((sprite instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+        if(!sprite)
+            throw "cc.SpriteBatchNode.updateQuadFromSprite(): sprite should be non-null";
+        if(!(sprite instanceof cc.Sprite)){
+            cc.log("cc.SpriteBatchNode.updateQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            return;
+        }
 
         // make needed room
         var locCapacity = this._textureAtlas.getCapacity();
@@ -457,8 +472,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     insertQuadFromSprite:null,
 
     _insertQuadFromSpriteForCanvas:function (sprite, index) {
-        cc.Assert(sprite != null, "Argument must be non-NULL");
-        cc.Assert(sprite instanceof cc.Sprite, "cc.SpriteBatchNode only supports cc.Sprites as children");
+        if(!sprite)
+            throw "cc.SpriteBatchNode.insertQuadFromSprite(): sprite should be non-null";
+        if(!(sprite instanceof cc.Sprite)){
+            cc.log("cc.SpriteBatchNode.insertQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            return;
+        }
 
         //
         // update the quad directly. Don't add the sprite to the scene graph
@@ -474,8 +493,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _insertQuadFromSpriteForWebGL:function (sprite, index) {
-        cc.Assert(sprite != null, "Argument must be non-NULL");
-        cc.Assert(sprite instanceof cc.Sprite, "cc.SpriteBatchNode only supports cc.Sprites as children");
+        if(!sprite)
+            throw "cc.SpriteBatchNode.insertQuadFromSprite(): sprite should be non-null";
+        if(!(sprite instanceof cc.Sprite)){
+            cc.log("cc.SpriteBatchNode.insertQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            return;
+        }
 
         // make needed room
         var locTextureAtlas = this._textureAtlas;
@@ -828,13 +851,14 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _addChildForCanvas: function (child, zOrder, tag) {
         if (child == null)
+            throw "cc.SpriteBatchNode.addChild(): child should be non-null";
+        if(!(child instanceof cc.Sprite)){
+           cc.log( "cc.SpriteBatchNode.addChild(): cc.SpriteBatchNode only supports cc.Sprites as children");
             return;
+        }
 
         zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
         tag = (tag == null) ? child.getTag() : tag;
-
-        cc.Assert(child != null, "SpriteBatchNode.addChild():child should not be null");
-        cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
@@ -843,17 +867,19 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _addChildForWebGL: function (child, zOrder, tag) {
         if (child == null)
+            throw "cc.SpriteBatchNode.addChild(): child should be non-null";
+        if(!(child instanceof cc.Sprite)){
+            cc.log( "cc.SpriteBatchNode.addChild(): cc.SpriteBatchNode only supports cc.Sprites as children");
             return;
+        }
+        if(child.getTexture() != this._textureAtlas.getTexture()){                    // check cc.Sprite is using the same texture id
+            cc.log( "cc.SpriteBatchNode.addChild(): cc.Sprite is not using the same texture");
+            return;
+        }
 
         zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
         tag = (tag == null) ? child.getTag() : tag;
 
-        cc.Assert(child != null, "SpriteBatchNode.addChild():child should not be null");
-        cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
-
-        // check cc.Sprite is using the same texture id
-        cc.Assert(child.getTexture() == this._textureAtlas.getTexture(),
-            "SpriteBatchNode.addChild():cc.Sprite is not using the same texture id");
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
         this.setNodeDirty();
