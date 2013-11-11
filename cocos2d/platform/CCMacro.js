@@ -80,7 +80,7 @@ cc.SWAP = function (x, y, ref) {
         ref[x] = ref[y];
         ref[y] = tmp;
     } else
-        throw "CC_SWAP is being modified from original macro, please check usage";
+        cc.log("cc.SWAP is being modified from original macro, please check usage");
 };
 
 /**

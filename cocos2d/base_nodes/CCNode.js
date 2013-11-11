@@ -983,12 +983,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if(!child)
             throw "cc.Node.addChild(): child must be non-null";
         if (child === this) {
-            cc.log('cc.Node.addChild: An Node can\'t be added as a child of itself.');
+            cc.log('cc.Node.addChild(): An Node can\'t be added as a child of itself.');
             return;
         }
 
         if (child._parent !== null) {
-            cc.log("child already added. It can't be added again");
+            cc.log("cc.Node.addChild(): child already added. It can't be added again");
             return;
         }
 

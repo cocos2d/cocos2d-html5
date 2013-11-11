@@ -626,8 +626,10 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 locData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
 
             this._vertexData = locData;
-            if(!this._vertexData)
-                throw "cc.ProgressTimer._updateRadial() : Not enough memory";
+            if(!this._vertexData){
+                cc.log( "cc.ProgressTimer._updateRadial() : Not enough memory");
+                return;
+            }
         }
 
         var locVertexData = this._vertexData;

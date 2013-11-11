@@ -128,8 +128,10 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (this._children.length === 0)
             this.setBlendFunc(childBlendFunc);
         else{
-            if((childBlendFunc.src != this._blendFunc.src) || (childBlendFunc.dst != this._blendFunc.dst))
-                 throw "cc.ParticleSystem.addChild() : Can't add a ParticleSystem that uses a different blending function";
+            if((childBlendFunc.src != this._blendFunc.src) || (childBlendFunc.dst != this._blendFunc.dst)){
+                cc.log("cc.ParticleSystem.addChild() : Can't add a ParticleSystem that uses a different blending function");
+                return;
+            }
         }
 
         //no lazy sorting, so don't call super addChild, call helper instead
@@ -468,8 +470,11 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _addChildHelper:function (child, z, aTag) {
         if(!child)
             throw "cc.ParticleBatchNode._addChildHelper(): child should be non-null";
-        if(child.getParent())
-            throw "cc.ParticleBatchNode._addChildHelper(): child already added. It can't be added again";
+        if(child.getParent()){
+            cc.log("cc.ParticleBatchNode._addChildHelper(): child already added. It can't be added again");
+            return null;
+        }
+
 
         if (!this._children)
             this._children = [];

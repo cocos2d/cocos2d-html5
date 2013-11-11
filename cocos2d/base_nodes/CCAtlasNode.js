@@ -68,7 +68,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * Shall be overridden in subclasses
      */
     updateAtlasValues:function () {
-        throw "Shall be overridden in subclasses" ;
+        cc.log("cc.AtlasNode.updateAtlasValues(): Shall be overridden in subclasses") ;
     },
 
     /** cc.AtlasNode - RGBA protocol

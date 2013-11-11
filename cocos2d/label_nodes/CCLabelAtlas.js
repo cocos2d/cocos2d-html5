@@ -58,8 +58,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             var relPathStr = pathStr.substr(0, pathStr.lastIndexOf('/')) + '/';
 
             var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(pathStr);
-            if(parseInt(dict["version"], 10) !== 1)
-                throw "cc.LabelAtlas.initWithString(): Unsupported version. Upgrade cocos2d version";
+            if(parseInt(dict["version"], 10) !== 1) {
+                cc.log("cc.LabelAtlas.initWithString(): Unsupported version. Upgrade cocos2d version");
+                return false;
+            }
 
             textureFilename = relPathStr + dict["textureFilename"];
             var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
@@ -174,7 +176,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             itemHeightInPixels = this._itemHeight * cc.CONTENT_SCALE_FACTOR();
         }
         if(n > locTextureAtlas.getCapacity())
-            throw "cc.LabelAtlas._updateAtlasValues(): Invalid String length";
+            cc.log("cc.LabelAtlas._updateAtlasValues(): Invalid String length");
         var quads = locTextureAtlas.getQuads();
         var locDisplayedColor = this._displayedColor;
         var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._displayedOpacity};

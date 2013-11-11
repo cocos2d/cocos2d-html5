@@ -1417,8 +1417,10 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @param {Number} n the layer index to switch to
      */
     switchTo:function (n) {
-        if(n >= this._layers.length)
-            throw "cc.LayerMultiplex.switchTo():Invalid index in MultiplexLayer switchTo message";
+        if(n >= this._layers.length){
+            cc.log("cc.LayerMultiplex.switchTo():Invalid index in MultiplexLayer switchTo message");
+            return;
+        }
 
         this.removeChild(this._layers[this._enabledLayer], true);
         this._enabledLayer = n;
@@ -1430,8 +1432,10 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @param {Number} n the layer index to switch to
      */
     switchToAndReleaseMe:function (n) {
-        if(n >= this._layers.length)
-            throw "cc.LayerMultiplex.switchToAndReleaseMe():Invalid index in MultiplexLayer switchTo message";
+        if(n >= this._layers.length){
+            cc.log("cc.LayerMultiplex.switchToAndReleaseMe():Invalid index in MultiplexLayer switchTo message");
+            return;
+        }
 
         this.removeChild(this._layers[this._enabledLayer], true);
 

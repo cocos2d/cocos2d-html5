@@ -61,6 +61,6 @@ cc.kmAABBAssign = function (pOut, pIn) {
  * Scales pIn by s, stores the resulting AABB in pOut. Returns pOut
  */
 cc.kmAABBScale = function (pOut, pIn, s) {
-    throw "Not implemented";
+    cc.log("cc.kmAABBScale hasn't been supported.");
 };
 

@@ -644,14 +644,11 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(this, function, interval, repeat, delay, !this._isRunning );
      */
     scheduleCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
-        if(!callback_fn){
-            cc.log("scheduler.scheduleCallbackForTarget() Argument callback_fn must be non-NULL");
-            return;
-        }
-        if(!target){
-            cc.log("scheduler.scheduleCallbackForTarget() Argument target must be non-NULL");
-            return;
-        }
+        if(!callback_fn)
+            throw "cc.scheduler.scheduleCallbackForTarget(): callback_fn should be non-null.";
+
+        if(!target)
+            throw "cc.scheduler.scheduleCallbackForTarget(): target should be non-null.";
 
         // default arguments
         interval = interval || 0;
@@ -943,22 +940,18 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      */
     pauseTarget:function (target) {
-        if(!target){
-            cc.log("Scheduler.pauseTarget():target must be non nil");
-            return;
-        }
+        if(!target)
+            throw "cc.Scheduler.pauseTarget():target should be non-null";
 
         //customer selectors
         var element = cc.HASH_FIND_INT(this._hashForTimers, target);
-        if (element) {
+        if (element)
             element.paused = true;
-        }
 
         //update selector
         var elementUpdate = cc.HASH_FIND_INT(this._hashForUpdates, target);
-        if (elementUpdate && elementUpdate.entry) {
+        if (elementUpdate && elementUpdate.entry)
             elementUpdate.entry.paused = true;
-        }
     },
 
     /**
@@ -968,21 +961,17 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      */
     resumeTarget:function (target) {
-        if(!target){
-            cc.log("Scheduler.resumeTarget():target must be non nil");
-            return;
-        }
+        if(!target)
+            throw "cc.Scheduler.resumeTarget():target should be non-null";
 
         // custom selectors
         var element = cc.HASH_FIND_INT(this._hashForTimers, target);
 
-        if (element) {
+        if (element)
             element.paused = false;
-        }
 
         //update selector
         var elementUpdate = cc.HASH_FIND_INT(this._hashForUpdates, target);
-
         if (elementUpdate && elementUpdate.entry)
             elementUpdate.entry.paused = false;
     },
@@ -993,10 +982,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @return {Boolean}
      */
     isTargetPaused:function (target) {
-        if(!target){
-            cc.log("Scheduler.isTargetPaused():target must be non nil");
-            return false;
-        }
+        if(!target)
+            throw "cc.Scheduler.isTargetPaused():target should be non-null";
 
         // Custom selectors
         var element = cc.HASH_FIND_INT(this._hashForTimers, target);

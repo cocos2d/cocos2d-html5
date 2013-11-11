@@ -1,4 +1,4 @@
-/*
+/**
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
  All rights reserved.
@@ -771,7 +771,8 @@ cc.kmMat4ExtractPlane = function (pOut, pIn, plane) {
             pOut.d = pIn.mat[15] + pIn.mat[14];
             break;
         default:
-            throw  "Invalid plane index";
+            cc.log("cc.kmMat4ExtractPlane(): Invalid plane index");
+            break;
     }
 
     var t = Math.sqrt(pOut.a * pOut.a +

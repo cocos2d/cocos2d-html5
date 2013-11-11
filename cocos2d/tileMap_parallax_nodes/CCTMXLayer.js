@@ -620,7 +620,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @param {number} tag
      */
     addChild:function (child, zOrder, tag) {
-        throw "addChild: is not supported on cc.TMXLayer. Instead use setTileGID or tileAt.";
+        cc.log("addChild: is not supported on cc.TMXLayer. Instead use setTileGID or tileAt.");
     },
 
     /**
@@ -633,7 +633,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (!sprite)
             return;
 
-        if(!cc.ArrayContainsObject(this._children, sprite)){
+        if(this._children.indexOf(sprite) === -1){
             cc.log("cc.TMXLayer.removeChild(): Tile does not belong to TMXLayer");
             return;
         }

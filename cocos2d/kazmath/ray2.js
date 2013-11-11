@@ -157,5 +157,5 @@ cc.kmRay2IntersectTriangle = function(ray, p1, p2, p3, intersection, normal_out)
 };
 
 cc.kmRay2IntersectCircle = function(ray, centre, radius, intersection) {
-    throw "cc.kmRay2IntersectCircle() has not been implemented.";
+    cc.log("cc.kmRay2IntersectCircle() has not been implemented.");
 };

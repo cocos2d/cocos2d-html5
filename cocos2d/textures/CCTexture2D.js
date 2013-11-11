@@ -568,7 +568,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_BOTTOM
                 : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_BOTTOM_LEFT : cc.ALIGN_BOTTOM_RIGHT;
         } else {
-            throw "Not supported alignment format!";
+            cc.log("Not supported alignment format!");
+            return false;
         }
 
         if (!image.initWithString(text, dimensions.width, dimensions.height, eAlign, fontName, fontSize))

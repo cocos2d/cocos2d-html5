@@ -1812,8 +1812,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             throw "cc.Sprite.setTexture(): setTexture expects a CCTexture2D. Invalid argument";
 
         // If batchnode, then texture id should be the same
-        if(this._batchNode && this._batchNode.getTexture() != texture)
-            throw "cc.Sprite.setTexture(): Batched sprites should use the same texture as the batchnode";
+        if(this._batchNode && this._batchNode.getTexture() != texture) {
+            cc.log("cc.Sprite.setTexture(): Batched sprites should use the same texture as the batchnode");
+            return;
+        }
 
         if (texture)
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));

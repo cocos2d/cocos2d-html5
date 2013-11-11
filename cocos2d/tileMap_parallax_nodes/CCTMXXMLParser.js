@@ -620,8 +620,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 // Unpack the tilemap data
                 var compression = data.getAttribute('compression');
                 var encoding = data.getAttribute('encoding');
-                if(compression && compression !== "gzip" && compression !== "zlib")
-                    throw "cc.TMXMapInfo.parseXMLFile(): unsupported compression method";
+                if(compression && compression !== "gzip" && compression !== "zlib"){
+                    cc.log("cc.TMXMapInfo.parseXMLFile(): unsupported compression method");
+                    return null;
+                }
                 switch (compression) {
                     case 'gzip':
                         layer._tiles = cc.unzipBase64AsArray(nodeValue, 4);

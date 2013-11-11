@@ -86,7 +86,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
      */
     getGrid:function () {
         // Abstract class needs implementation
-        throw "needs override me.";
+        cc.log("cc.GridAction.getGrid(): it should be overridden in subclass.");
     }
 });
 

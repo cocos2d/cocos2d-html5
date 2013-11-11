@@ -1491,9 +1491,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var fullPath = fileUtils.fullPathForFilename(plistFile);
 
         var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
-
-        if(!dict)
-            throw "cc.ParticleSystem.initWithFile(): Particles: file not found";
+        if(!dict){
+            cc.log("cc.ParticleSystem.initWithFile(): Particles: file not found");
+            return false;
+        }
 
         // XXX compute path from a path, should define a function somewhere to do it
         return this.initWithDictionary(dict, "");

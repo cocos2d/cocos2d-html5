@@ -69,7 +69,8 @@ cc.DrawShape = function (shape, renderer) {
             this.drawPoly(cc.__convertVerts(shape.tVerts), color, 1.0, line);
             break;
         default:
-            throw "Bad assertion in DrawShape()";
+            cc.log("cc.DrawShape(): Bad assertion in DrawShape()");
+            break;
     }
 };
 

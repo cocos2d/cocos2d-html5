@@ -232,15 +232,15 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     },
 
     blit:function () {
-        throw "Shall be overridden in subclass."
+        cc.log("cc.GridBase.blit(): Shall be overridden in subclass.");
     },
 
     reuse:function () {
-        throw "Shall be overridden in subclass."
+        cc.log("cc.GridBase.reuse(): Shall be overridden in subclass.");
     },
 
     calculateVertexPoints:function () {
-        throw "Shall be overridden in subclass."
+        cc.log("cc.GridBase.calculateVertexPoints(): Shall be overridden in subclass.");
     },
 
     set2DProjection:function () {

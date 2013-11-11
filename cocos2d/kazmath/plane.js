@@ -156,7 +156,7 @@ cc.kmPlaneNormalize = function(pOut, pP){
 };
 
 cc.kmPlaneScale = function(pOut, pP, s){
-    throw "cc.kmPlaneScale() has not been implemented.";
+    cc.log("cc.kmPlaneScale() has not been implemented.");
 };
 
 /**

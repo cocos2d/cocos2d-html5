@@ -605,7 +605,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
      * @return {Null}
      */
     reverse:function () {
-        throw "Override me";
+        cc.log("cc.EaseElastic.reverse(): it should be overridden in subclass.");
     },
 
     clone:function(){

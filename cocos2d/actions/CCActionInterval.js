@@ -130,7 +130,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     setAmplitudeRate:function (amp) {
         // Abstract class needs implementation
-        throw "needs override me";
+        cc.log("cc.ActionInterval.setAmplitudeRate(): it should be overridden in subclass.");
     },
 
     /**
@@ -138,7 +138,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     getAmplitudeRate:function () {
         // Abstract class needs implementation
-        throw "needs override me";
+        cc.log("cc.ActionInterval.getAmplitudeRate(): it should be overridden in subclass.");
     }
 });
 
@@ -783,7 +783,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * RotateTo reverse not implemented
      */
     reverse:function () {
-        throw "Needs override me";
+        cc.log("cc.RotateTo.reverse(): it should be overridden in subclass.");
     },
 
     /**

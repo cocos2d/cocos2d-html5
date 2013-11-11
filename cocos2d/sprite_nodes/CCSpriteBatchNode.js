@@ -72,8 +72,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     addSpriteWithoutQuad:function (child, z, aTag) {
         if(!child)
             throw "cc.SpriteBatchNode.addQuadFromSprite(): child should be non-null";
-        if(!(child instanceof cc.Sprite))
-            throw "cc.SpriteBatchNode.addQuadFromSprite(): SpriteBatchNode only supports cc.Sprites as children";
+        if(!(child instanceof cc.Sprite)){
+            cc.log("cc.SpriteBatchNode.addQuadFromSprite(): SpriteBatchNode only supports cc.Sprites as children");
+            return null;
+        }
 
         // quad index is Z
         child.setAtlasIndex(z);
