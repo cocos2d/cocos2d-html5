@@ -310,9 +310,9 @@ cc.BuilderAnimationManager = cc.Class.extend({
     },
 
     runAnimationsForSequenceIdTweenDuration:function(nSeqId, tweenDuration){
+        if(nSeqId === -1)
+            throw "cc.BuilderAnimationManager.runAnimationsForSequenceIdTweenDuration(): Sequence id should not be -1";
         tweenDuration = tweenDuration || 0;
-
-        cc.Assert(nSeqId != -1, "Sequence id couldn't be found");
 
         this._rootNode.stopAllActions();
 
@@ -553,7 +553,6 @@ cc.BuilderAnimationManager = cc.Class.extend({
                     node.setVisible(value);
                 } else {
                     cc.log("unsupported property name is "+ propName);
-                    cc.Assert(false, "unsupported property now");
                 }
             }
         }
@@ -565,7 +564,8 @@ cc.BuilderAnimationManager = cc.Class.extend({
         if (keyframes.length === 0) {
             // Use base value (no animation)
             var baseValue = this._getBaseValue(node, seqProp.getName());
-            cc.Assert(baseValue, "No baseValue found for property");
+            if(!baseValue)
+                cc.log("cc.BuilderAnimationManager._setFirstFrame(): No baseValue found for property");
             this._setAnimatedProperty(seqProp.getName(), node, baseValue, tweenDuration);
         } else {
             // Use first keyframe
@@ -729,8 +729,7 @@ cc.BuilderRotateXTo = cc.ActionInterval.extend({
 });
 
 cc.BuilderRotateXTo.create = function (duration, angle) {
-    cc.Assert(false, "rotationX not implemented in cocos2d-html5");
-    return null;
+    throw "rotationX has not been implemented in cocos2d-html5";
 };
 
 //
@@ -741,8 +740,7 @@ cc.BuilderRotateYTo = cc.ActionInterval.extend({
 });
 
 cc.BuilderRotateYTo.create = function (duration, angle) {
-    cc.Assert(false, "rotationY not implemented in cocos2d-html5");
-    return null;
+    throw "rotationY has not been implemented in cocos2d-html5";
 };
 
 //

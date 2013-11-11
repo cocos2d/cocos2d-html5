@@ -114,15 +114,15 @@ cc.kmPlaneFromPoints = function(pOut, p1, p2, p3){
 };
 
 cc.kmPlaneIntersectLine = function(pOut, pP, pV1, pV2){
+    throw "cc.kmPlaneIntersectLine() hasn't been implemented.";
     /*
      n = (Planea, Planeb, Planec)
      d = V − U
      Out = U − d⋅(Pd + n⋅U)⁄(d⋅n) [iff d⋅n ≠ 0]
      */
-    var d = new cc.kmVec3();
-    cc.Assert(0 , "Not implemented");
+    //var d = new cc.kmVec3();
 
-    cc.kmVec3Subtract(d, pV2, pV1); //Get the direction vector
+    //cc.kmVec3Subtract(d, pV2, pV1); //Get the direction vector
 
     //TODO: Continue here!
     /*if (fabs(kmVec3Dot(&pP.m_N, &d)) > kmEpsilon)
@@ -133,7 +133,7 @@ cc.kmPlaneIntersectLine = function(pOut, pP, pV1, pV2){
      return pOut;
      } */
 
-    return null;
+    //return null;
 };
 
 cc.kmPlaneNormalize = function(pOut, pP){
@@ -156,8 +156,7 @@ cc.kmPlaneNormalize = function(pOut, pP){
 };
 
 cc.kmPlaneScale = function(pOut, pP, s){
-    cc.Assert(0 , "Not implemented");
-    return null;
+    cc.log("cc.kmPlaneScale() has not been implemented.");
 };
 
 /**

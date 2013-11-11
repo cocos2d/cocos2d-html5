@@ -98,7 +98,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     },
 
     _progressTimerNodeWithRenderTexture:function (texture) {
-        cc.Assert(false, "override me - abstract class");
+        cc.log("cc.TransitionProgress._progressTimerNodeWithRenderTexture(): should be overridden in subclass");
         return null;
     },
 

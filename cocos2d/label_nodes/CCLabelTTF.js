@@ -224,8 +224,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @return {Boolean} return false on error
      */
     initWithString:function (label, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-        var strInfo = label + "";
-        cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
+        var strInfo;
+        if(label)
+            strInfo = label + "";
+        else
+            strInfo = "";
 
         fontSize = fontSize || 16;
         dimensions = dimensions || cc.size(0, fontSize);
@@ -794,7 +797,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return;
 
         var gl = ctx || cc.renderContext, locTexture = this._texture;
-        //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (locTexture && locTexture._isLoaded) {
             this._shaderProgram.use();

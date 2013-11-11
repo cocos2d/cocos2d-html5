@@ -146,10 +146,11 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      */
     addChild:function (child, z, ratio, offset) {
         if (arguments.length === 3) {
-            cc.Assert(0, "ParallaxNode: use addChild:z:parallaxRatio:positionOffset instead");
+            cc.log("ParallaxNode: use addChild(child, z, ratio, offset) instead")
             return;
         }
-        cc.Assert(child != null, "Argument must be non-nil");
+        if(!child)
+            throw "cc.ParallaxNode.addChild(): child should be non-null";
         var obj = cc.PointObject.create(ratio, offset);
         obj.setChild(child);
         this._parallaxArray.push(obj);

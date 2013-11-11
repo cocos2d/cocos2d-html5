@@ -57,7 +57,7 @@ cc.ArrayForObjectSorting = cc.Class.extend({
     ctor:function () {
         this._saveObjectArr = [];
     },
-    /*!
+    /**
      * Inserts a given object into array.
      *
      * Inserts a given object into array with key and value that are used in
@@ -66,10 +66,11 @@ cc.ArrayForObjectSorting = cc.Class.extend({
      * If the compare message does not result NSComparisonResult, sorting behavior
      * is not defined. It ignores duplicate entries and inserts next to it.
      *
-     * @param object to insert
+     * @param {object} addObject
      */
     insertSortedObject:function (addObject) {
-        cc.Assert(addObject instanceof cc.Class, "Invalid parameter.");
+        if(!addObject)
+            throw "cc.ArrayForObjectSorting.insertSortedObject(): addObject should be non-null.";
         var idx = this.indexOfSortedObject(addObject);
         this.insertObject(addObject, idx);
     },

@@ -84,7 +84,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * Constructor
      */
     ctor: function () {
-        cc.Assert(cc.g_sharedTextureCache == null, "Attempted to allocate a second instance of a singleton.");
+        if(cc.g_sharedTextureCache)
+            throw "Attempted to allocate a second instance of a singleton.";
         this._textureKeySeq += (0 | Math.random() * 1000);
         this._textures = {};
         this._textureColorsCache = {};
@@ -130,7 +131,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {cc.Texture2D}
      */
     addPVRTCImage:function (filename) {
-        cc.Assert(0, "TextureCache:addPVRTCImage does not support on HTML5");
+        cc.log("TextureCache:addPVRTCImage does not support on HTML5");
     },
 
 
@@ -145,7 +146,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {cc.Texture2D}
      */
     addETCImage:function (filename) {
-        cc.Assert(0, "TextureCache:addPVRTCImage does not support on HTML5");
+        cc.log("TextureCache:addPVRTCImage does not support on HTML5");
     },
 
     /**
@@ -221,15 +222,15 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {cc.Texture2D}
      */
     addPVRImage:function (path) {
-        cc.Assert(path != null, "TextureCache: file image MUST not be null");
+        if(!path)
+            throw "cc.TextureCache.addPVRImage(): path should be non-null";
 
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
 
         var key = path;
 
-        if (this._textures[key] != null) {
+        if (this._textures[key] != null)
             return this._textures[key];
-        }
 
         // Split up directory and filename
         var tex = new cc.Texture2D();
@@ -306,7 +307,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * cc.TextureCache.getInstance().addImageAsync("hello.png", this, this.loadingCallBack);
      */
     addImageAsync:function (path, target, selector) {
-        cc.Assert(path != null, "TextureCache: path MUST not be null");
+        if(!path)
+            throw "cc.TextureCache.addImageAsync(): path should be non-null";
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
         var texture = this._textures[path];
         var image,that;
@@ -385,7 +387,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * cc.TextureCache.getInstance().addImage("hello.png");
      */
     addImage:function (path) {
-        cc.Assert(path != null, "TextureCache: path MUST not be null");
+        if(!path)
+            throw "cc.Texture.addImage(): path should be non-null";
         if(cc.renderContextType === cc.WEBGL){
             if (!this._rendererInitialized)
                 return this._addImageBeforeRenderer(path);
@@ -462,7 +465,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {cc.Texture2D}
      */
     addUIImage:function (image, key) {
-        cc.Assert(image != null, "TextureCache: image MUST not be nulll");
+        if(!image)
+            throw "cc.Texture.addUIImage(): image should be non-null";
 
         if (key) {
             if (this._textures.hasOwnProperty(key) && this._textures[key])
