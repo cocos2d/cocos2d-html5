@@ -360,8 +360,8 @@ cc.GLProgram = cc.Class.extend({
      */
     initWithVertexShaderFilename: function (vShaderFilename, fShaderFileName) {
         var fileUtils = cc.FileUtils.getInstance();
-        var vertexSource = fileUtils.getTextFileData(fileUtils.fullPathForFilename(vShaderFilename));
-        var fragmentSource = fileUtils.getTextFileData(fileUtils.fullPathForFilename(fShaderFileName));
+        var vertexSource = fileUtils.getTextFileData(vShaderFilename);
+        var fragmentSource = fileUtils.getTextFileData(fShaderFileName);
         return this.initWithVertexShaderByteArray(vertexSource, fragmentSource);
     },
 
