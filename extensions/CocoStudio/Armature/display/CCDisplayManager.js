@@ -142,6 +142,28 @@ ccs.DisplayManager = cc.Class.extend({
 
         this.setCurrentDecorativeDisplay(decoDisplay);
     },
+    changeDisplayByName:function (name, force){
+        var decoDisplay;
+        this._forceChangeDisplay = force;
+
+        for(var index = 0; index < this._decoDisplayList.length;index++){
+            var display = this._decoDisplayList[index].getDisplay();
+            if( (typeof(display.getDisplayName) != "undefined") && name == this._decoDisplayList[index].getDisplay().getDisplayName()){
+               decoDisplay = this._decoDisplayList[index];
+               this._displayIndex = index;
+               break;
+            }
+        }
+
+
+        if(!decoDisplay){
+            return;
+        }
+
+
+        this.setCurrentDecorativeDisplay(decoDisplay);
+
+    },
 
     setCurrentDecorativeDisplay:function (decoDisplay) {
         var locCurrentDecoDisplay = this._currentDecoDisplay;

@@ -426,6 +426,15 @@ ccs.Bone = cc.NodeRGBA.extend({
     },
 
     /**
+     * change display by name
+     * @param {Number} name
+     * @param {Boolean} force
+     */
+    changeDisplayByName:function (name, force) {
+        this._displayManager.changeDisplayByName(name, force);
+    },
+
+    /**
      * displayManager setter
      * @param {ccs.DisplayManager}
         */
