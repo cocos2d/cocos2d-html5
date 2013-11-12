@@ -24,23 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CircleSprite = cc.Sprite.extend({
-    _degree:0,
-    ctor:function () {
-        this._super();
-    },
-    draw:function () {
-        cc.drawingUtil.setDrawColor4B(255,255,255,255);
-
-        if (this._degree < 0)
-            this._degree = 360;
-        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._degree), 60, true);
-    },
-    myUpdate:function (dt) {
-        this._degree -= 6;
-    }
-});
-
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,
     helloImg:null,
@@ -99,12 +82,6 @@ var Helloworld = cc.Layer.extend({
         var scaleToA = cc.ScaleTo.create(2, 1, 1);
 
         this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
-
-        this.circle = new CircleSprite();
-        this.circle.setPosition(cc.p(40, size.height - 60));
-        this.addChild(this.circle, 2);
-        this.circle.schedule(this.circle.myUpdate, 1 / 60);
-
         this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
         this.setTouchEnabled(true);

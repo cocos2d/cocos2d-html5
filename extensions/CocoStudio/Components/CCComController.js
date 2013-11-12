@@ -215,7 +215,7 @@ ccs.ComController = cc.Component.extend({
     },
 
     onAccelerometer:function (accelerationValue) {
-        cc.Assert(false, "Layer#onAccelerometer override me");
+        cc.log("ccs.ComController.onAccelerometer(): should override me.");
     },
 
     /**

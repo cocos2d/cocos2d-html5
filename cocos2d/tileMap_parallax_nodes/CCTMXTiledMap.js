@@ -199,6 +199,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
     /**
      * @param {String} tmxFile
+     * @param {String} [resourcePath=]
      * @return {Boolean}
      * @example
      * //example
@@ -206,13 +207,15 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
      * map.initWithTMXFile("hello.tmx");
      */
     initWithTMXFile:function (tmxFile,resourcePath) {
-        cc.Assert(tmxFile != null && tmxFile.length > 0, "TMXTiledMap: tmx file should not be nil");
+        if(!tmxFile || tmxFile.length == 0)
+            throw "cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.";
         this.setContentSize(cc.SizeZero());
         var mapInfo = cc.TMXMapInfo.create(tmxFile,resourcePath);
         if (!mapInfo)
             return false;
 
-        cc.Assert(mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
+        if(mapInfo.getTilesets().length != 0)
+            cc.log("cc.TMXTiledMap.initWithTMXFile(): Map not found. Please check the filename.");
         this._buildWithMapInfo(mapInfo);
         return true;
     },
@@ -222,7 +225,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
         var mapInfo = cc.TMXMapInfo.createWithXML(tmxString, resourcePath);
 
-        cc.Assert( mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
+        if(mapInfo.getTilesets().length != 0)
+            cc.log("cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.");
         this._buildWithMapInfo(mapInfo);
         return true;
     },
@@ -261,15 +265,13 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
      * @return {cc.TMXLayer}
      */
     getLayer:function (layerName) {
-        cc.Assert(layerName != null && layerName.length > 0, "Invalid layer name!");
+        if(!layerName || layerName.length === 0)
+            throw "cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.";
 
         for (var i = 0; i < this._children.length; i++) {
             var layer = this._children[i];
-            if (layer) {
-                if (layer.getLayerName() == layerName) {
-                    return layer;
-                }
-            }
+            if (layer && layer.getLayerName() == layerName)
+                return layer;
         }
 
         // layer not found
@@ -282,7 +284,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
      * @return {cc.TMXObjectGroup}
      */
     getObjectGroup:function (groupName) {
-        cc.Assert(groupName != null && groupName.length > 0, "Invalid group name!");
+        if(!groupName || groupName.length === 0)
+            throw "cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.";
         if (this._objectGroups) {
             for (var i = 0; i < this._objectGroups.length; i++) {
                 var objectGroup = this._objectGroups[i];

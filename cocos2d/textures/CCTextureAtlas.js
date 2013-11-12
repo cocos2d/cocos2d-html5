@@ -231,7 +231,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * textureAtlas.initWithTexture(texture, 3);
      */
     initWithTexture:function (texture, capacity) {
-        //cc.Assert(texture != null, "TextureAtlas.initWithTexture():texture should not be null");
+        if(!texture)
+            throw "cc.TextureAtlas.initWithTexture():texture should be non-null";
+
         capacity = 0 | (capacity);
         this._capacity = capacity;
         this._totalQuads = 0;
@@ -240,8 +242,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._texture = texture;
 
         // Re-initialization is not allowed
-        cc.Assert(this._quads == null && this._indices == null, "TextureAtlas.initWithTexture():_quads and _indices should not be null");
-
         this._quads = [];
         this._indices = new Uint16Array(capacity * 6);
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
@@ -268,7 +268,10 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     updateQuad:function (quad, index) {
-        //cc.Assert(index >= 0 && index < this._capacity, "updateQuadWithTexture: Invalid index");
+        if(!quad)
+            throw "cc.TextureAtlas.updateQuad(): quad should be non-null";
+        if((index < 0) || (index >= this._capacity))
+            throw "cc.TextureAtlas.updateQuad(): Invalid index";
         this._totalQuads = Math.max(index + 1, this._totalQuads);
         this._setQuadToArray(quad, index);
         this._dirty = true;
@@ -281,11 +284,14 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     insertQuad:function (quad, index) {
-        cc.Assert(index < this._capacity, "insertQuadWithTexture: Invalid index");
+        if(index >= this._capacity)
+            throw "cc.TextureAtlas.insertQuad(): Invalid index";
 
         this._totalQuads++;
-        cc.Assert(this._totalQuads <= this._capacity, "invalid totalQuads");
-
+        if(this._totalQuads > this._capacity) {
+            cc.log("cc.TextureAtlas.insertQuad(): invalid totalQuads");
+            return;
+        }
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         // issue #575. index can be > totalQuads
         var remaining = (this._totalQuads-1) - index;
@@ -310,11 +316,15 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     insertQuads:function (quads, index, amount) {
         amount = amount || quads.length;
-        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        if((index + amount) > this._capacity)
+            throw "cc.TextureAtlas.insertQuad(): Invalid index + amount";
 
-        cc.Assert(index + amount <= this._capacity, "insertQuadWithTexture: Invalid index + amount");
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         this._totalQuads += amount;
-        cc.Assert(this._totalQuads <= this._capacity, "invalid totalQuads");
+        if(this._totalQuads > this._capacity) {
+            cc.log("cc.TextureAtlas.insertQuad(): invalid totalQuads");
+            return;
+        }
 
         // issue #575. index can be > totalQuads
         var remaining = (this._totalQuads-1) - index - amount;
@@ -339,10 +349,13 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} newIndex
      */
     insertQuadFromIndex:function (fromIndex, newIndex) {
-        cc.Assert(newIndex >= 0 && newIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
-        cc.Assert(fromIndex >= 0 && fromIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
         if (fromIndex === newIndex)
             return;
+
+        if(newIndex < 0 && newIndex >= this._totalQuads)
+            throw "cc.TextureAtlas.insertQuadFromIndex(): Invalid newIndex";
+        if(fromIndex < 0 && fromIndex >= this._totalQuads)
+            throw "cc.TextureAtlas.insertQuadFromIndex(): Invalid fromIndex";
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         var locQuadsReader = this._quadsReader;
@@ -368,7 +381,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     removeQuadAtIndex:function (index) {
-        cc.Assert(index < this._totalQuads, "removeQuadAtIndex: Invalid index");
+        if(index >= this._totalQuads)
+            throw "cc.TextureAtlas.removeQuadAtIndex(): Invalid index";
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         this._totalQuads--;
         this._quads.length = this._totalQuads;
@@ -382,7 +396,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     removeQuadsAtIndex:function (index, amount) {
-        cc.Assert(index + amount <= this._totalQuads, "removeQuadAtIndex: index + amount out of bounds");
+        if(index + amount > this._totalQuads)
+            throw "cc.TextureAtlas.removeQuadsAtIndex(): index + amount out of bounds";
         this._totalQuads -= amount;
 
         if(index !== this._totalQuads){
@@ -502,12 +517,15 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (arguments.length == 2) {
             newIndex = amount;
             amount = this._totalQuads - oldIndex;
-            cc.Assert(newIndex + (this._totalQuads - oldIndex) <= this._capacity, "moveQuadsFromIndex move is out of bounds");
+            if((newIndex + (this._totalQuads - oldIndex)) > this._capacity)
+                throw "cc.TextureAtlas.moveQuadsFromIndex(): move is out of bounds";
             if(amount === 0)
                 return;
         }else{
-            cc.Assert(newIndex + amount <= this._totalQuads, "moveQuadsFromIndex:newIndex: Invalid index");
-            cc.Assert(oldIndex < this._totalQuads, "moveQuadsFromIndex:oldIndex: Invalid index");
+            if((newIndex + amount) > this._totalQuads)
+                throw "cc.TextureAtlas.moveQuadsFromIndex(): Invalid newIndex";
+            if(oldIndex >= this._totalQuads)
+                throw "cc.TextureAtlas.moveQuadsFromIndex(): Invalid oldIndex";
 
             if (oldIndex == newIndex)
                 return;

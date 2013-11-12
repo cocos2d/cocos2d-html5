@@ -287,7 +287,9 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      * @return {Boolean}
      */
     initWithAction:function (action, speed) {
-        cc.Assert(action != null, "");
+        if(!action)
+            throw "cc.Speed.initWithAction(): action must be non nil";
+
         this._innerAction = action;
         this._speed = speed;
         return true;
@@ -456,7 +458,8 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      * @return {Boolean}
      */
     initWithTarget:function (followedNode, rect) {
-        cc.Assert(followedNode != null, "");
+        if(!followedNode)
+            throw "cc.Follow.initWithAction(): followedNode must be non nil";
 
         rect = rect || cc.RectZero();
         this._followedNode = followedNode;

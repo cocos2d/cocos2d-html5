@@ -366,7 +366,8 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             capInsets = capInsets || cc.RectZero();
         }
 
-        cc.Assert(file != null, "Invalid file for sprite");
+        if(!file)
+            throw "cc.Scale9Sprite.initWithFile(): file should be non-null";
         var batchnode = cc.SpriteBatchNode.create(file, 9);
         return this.initWithBatchNode(batchnode, rect, false, capInsets);
     },
@@ -382,11 +383,10 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
      * @param capInsets The values to use for the cap insets.
      */
     initWithSpriteFrame: function (spriteFrame, capInsets) {
-        capInsets = capInsets || cc.RectZero();
+        if(!spriteFrame || !spriteFrame.getTexture())
+            throw "cc.Scale9Sprite.initWithSpriteFrame(): spriteFrame should be non-null and its texture should be non-null";
 
-        cc.Assert(spriteFrame != null, "Sprite frame must not be nil");
-        var selTexture = spriteFrame.getTexture();
-        cc.Assert(selTexture != null, "Texture must be not nil");
+        capInsets = capInsets || cc.RectZero();
 
         if(!spriteFrame.textureLoaded()){
             spriteFrame.addLoadedEventListener(function(sender){
@@ -398,7 +398,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 this._positionsAreDirty = true;
             },this);
         }
-        var batchNode = cc.SpriteBatchNode.createWithTexture(selTexture, 9);
+        var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
         return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, capInsets);
     },
@@ -414,13 +414,16 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
      * @param capInsets The values to use for the cap insets.
      */
     initWithSpriteFrameName: function (spriteFrameName, capInsets) {
+        if(!spriteFrameName)
+            throw "cc.Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
         capInsets = capInsets || cc.RectZero();
 
-        cc.Assert(spriteFrameName != null, "Invalid spriteFrameName for sprite");
         var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
-        cc.Assert(frame != null, "cc.SpriteFrame must be non-NULL");
-        if (frame == null)
+        if (frame == null) {
+            cc.log("cc.Scale9Sprite.initWithSpriteFrameName(): can't find the sprite frame by spriteFrameName");
             return false;
+        }
+
         return this.initWithSpriteFrame(frame, capInsets);
     },
 
@@ -842,10 +845,10 @@ cc.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
 };
 
 cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets) {
-    cc.Assert(spriteFrameName != null, "spriteFrameName must be non-NULL");
+    if(!spriteFrameName)
+        throw "cc.Scale9Sprite.createWithSpriteFrameName(): spriteFrameName should be non-null";
     var pReturn = new cc.Scale9Sprite();
-    if (pReturn && pReturn.initWithSpriteFrameName(spriteFrameName, capInsets)) {
+    if (pReturn && pReturn.initWithSpriteFrameName(spriteFrameName, capInsets))
         return pReturn;
-    }
     return null;
 };
