@@ -121,7 +121,7 @@ cc.MOUSE_MIDDLEBUTTON = 1;
 cc.MOUSE_RIGHTBUTTON = 2;
 
 /**
- *     CCMouseEventDelegate protocol.
+ * CCMouseEventDelegate protocol.
  * Implement it in your node to receive any of mouse events
  */
 cc.MouseEventDelegate = cc.Class.extend({

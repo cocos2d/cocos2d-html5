@@ -300,9 +300,7 @@ cc.TableView = cc.ScrollView.extend({
 
         this._cellsFreed.addObject(cell);
         this._cellsUsed.removeSortedObject(cell);
-        //cc.ArrayRemoveObjectAtIndex(this._indices,cell.getIdx());
-        //this._indices.erase(cell.getIdx());
-        this._indices.removeObject(cell.getIdx());
+        cc.ArrayRemoveObject(this._indices, cell.getIdx());
 
         cell.reset();
         if (cell.getParent() == this.getContainer()) {
@@ -321,7 +319,12 @@ cc.TableView = cc.ScrollView.extend({
             this.getContainer().addChild(cell);
         }
         this._cellsUsed.insertSortedObject(cell);
-        this._indices.addObject(cell.getIdx());
+        var locIndices = this._indices, addIdx = cell.getIdx();
+        if(locIndices.indexOf(addIdx) == -1){
+            locIndices.push(addIdx);
+            //sort
+            locIndices.sort(function(a,b){return a-b;});
+        }
     },
 
     /**
@@ -364,7 +367,7 @@ cc.TableView = cc.ScrollView.extend({
         if (cc.ScrollView.prototype.initWithViewSize.call(this, size, container)) {
             this._cellsUsed = new cc.ArrayForObjectSorting();
             this._cellsFreed = new cc.ArrayForObjectSorting();
-            this._indices = new cc.Set();
+            this._indices = [];
             this._tableViewDelegate = null;
             this._vOrdering = cc.TABLEVIEW_FILL_BOTTOMUP;
             this.setDirection(cc.SCROLLVIEW_DIRECTION_VERTICAL);
@@ -439,10 +442,8 @@ cc.TableView = cc.ScrollView.extend({
 
         //remove first
         this._moveCellOutOfSight(cell);
-
-        this._indices.removeObject(idx);
+        cc.ArrayRemoveObject(this._indices, idx);
         this._updateCellPositions();
-        //cc.ArrayRemoveObjectAtIndex(this._indices,idx);
 
         for (var i = locCellsUsed.count() - 1; i > newIdx; i--) {
             cell = locCellsUsed.objectAtIndex(i);
@@ -468,7 +469,7 @@ cc.TableView = cc.ScrollView.extend({
                 locContainer.removeChild(cell, true);
         }
 
-        this._indices = new cc.Set();
+        this._indices = [];
         this._cellsUsed = new cc.ArrayForObjectSorting();
 
         this._updateCellPositions();
@@ -499,12 +500,10 @@ cc.TableView = cc.ScrollView.extend({
      * @return {cc.TableViewCell} a cell at a given index
      */
     cellAtIndex:function (idx) {
-        var found = null;
-
-        if (this._indices.containsObject(idx))
-            found = this._cellsUsed.objectWithObjectID(idx);
-
-        return found;
+        var i = this._indices.indexOf(idx);
+        if (i == -1)
+            return null;
+        return this._cellsUsed[i];
     },
 
     scrollViewDidScroll:function (view) {
@@ -568,7 +567,7 @@ cc.TableView = cc.ScrollView.extend({
 
         var locIndices = this._indices;
         for (var i = startIdx; i <= endIdx; i++) {
-            if (locIndices.containsObject(i))
+            if (locIndices.indexOf(i) != -1)
                 continue;
             this.updateCellAtIndex(i);
         }

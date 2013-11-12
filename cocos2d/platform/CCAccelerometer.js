@@ -92,20 +92,15 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
         var acc = this.didAccelerate.bind(this);
 
         if (this._delegate) {
-            if (this._deviceEvent == window.DeviceMotionEvent) {
+            if (this._deviceEvent == window.DeviceMotionEvent)
                 window.addEventListener('devicemotion', acc, false);
-            }
-            else {
+            else
                 window.addEventListener('deviceorientation', acc, false);
-            }
-        }
-        else {
-            if (this._deviceEvent == window.DeviceMotionEvent) {
+        } else {
+            if (this._deviceEvent == window.DeviceMotionEvent)
                 window.removeEventListener('devicemotion', acc);
-            }
-            else {
+            else
                 window.removeEventListener('deviceorientation', acc);
-            }
         }
     },
 

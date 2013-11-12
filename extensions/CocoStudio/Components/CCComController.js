@@ -46,14 +46,14 @@ ccs.ComController = cc.Component.extend({
             cc.unregisterTouchDelegate(this);
 
         // remove this layer from the delegates who concern Accelerometer Sensor
-        if (this._isAccelerometerEnabled)
+        if (this._isAccelerometerEnabled && cc.Accelerometer)
             director.getAccelerometer().setDelegate(null);
 
         // remove this layer from the delegates who concern the kaypad msg
-        if (this._isKeyboardEnabled)
+        if (this._isKeyboardEnabled && cc.KeyboardDispatcher)
             director.getKeyboardDispatcher().removeDelegate(this);
 
-        if (this._isMouseEnabled)
+        if (this._isMouseEnabled && cc.MouseDispatcher)
             director.getMouseDispatcher().removeMouseDelegate(this);
     },
 
@@ -82,6 +82,9 @@ ccs.ComController = cc.Component.extend({
     },
 
     setMouseEnabled:function (enabled) {
+        if(!cc.MouseDispatcher)
+            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
+
         if (this._isMouseEnabled != enabled) {
             this._isMouseEnabled = enabled;
             if (this._running) {
@@ -94,6 +97,9 @@ ccs.ComController = cc.Component.extend({
     },
 
     setMousePriority:function (priority) {
+        if(!cc.MouseDispatcher)
+            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
+
         if (this._mousePriority !== priority) {
             this._mousePriority = priority;
             // Update touch priority with handler
@@ -190,16 +196,16 @@ ccs.ComController = cc.Component.extend({
      * @param {Boolean} enabled
      */
     setAccelerometerEnabled:function (enabled) {
+        if(!cc.Accelerometer)
+            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
         if (enabled !== this._isAccelerometerEnabled) {
             this._isAccelerometerEnabled = enabled;
-
             if (this._running) {
                 var director = cc.Director.getInstance();
-                if (enabled) {
+                if (enabled)
                     director.getAccelerometer().setDelegate(this);
-                } else {
+                else
                     director.getAccelerometer().setDelegate(null);
-                }
             }
         }
     },
@@ -209,9 +215,8 @@ ccs.ComController = cc.Component.extend({
      * @param {Number} interval
      */
     setAccelerometerInterval:function (interval) {
-        if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled && cc.Accelerometer)
             cc.Director.getInstance().getAccelerometer().setAccelerometerInterval(interval);
-        }
     },
 
     onAccelerometer:function (accelerationValue) {
@@ -233,6 +238,9 @@ ccs.ComController = cc.Component.extend({
      * @param {Boolean} enabled
      */
     setKeyboardEnabled:function (enabled) {
+        if(!cc.KeyboardDispatcher)
+            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
+
         if (enabled !== this._isKeyboardEnabled) {
             this._isKeyboardEnabled = enabled;
             if (this._running) {
