@@ -159,7 +159,8 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      * @return {Boolean}
      */
     initWithFNTfile:function (FNTfile) {
-        cc.Assert(FNTfile != null && FNTfile.length != 0, "");
+        if(!FNTfile || FNTfile.length == 0)
+            throw "cc.BMFontConfiguration.initWithFNTfile(): FNTfile must be non-null and must not be a empty string";
         this.characterSet = this._parseConfigFile(FNTfile);
         return this.characterSet != null;
     },
@@ -167,10 +168,9 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     _parseConfigFile:function (controlFile) {
         var fullpath = cc.FileUtils.getInstance().fullPathForFilename(controlFile);
         var data = cc.SAXParser.getInstance().getList(fullpath);
-        cc.Assert(data, "cc.BMFontConfiguration._parseConfigFile | Open file error.");
 
         if (!data) {
-            cc.log("cocos2d: Error parsing FNTfile " + controlFile);
+            cc.log("cc.BMFontConfiguration._parseConfigFile)(: Error parsing FNTfile " + controlFile);
             return null;
         }
 
@@ -302,15 +302,18 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
 
         if (cc.renderContextType === cc.WEBGL) {
             var scaleW = parseInt(/scaleW=(\d+)/gi.exec(line)[1]);
-            cc.Assert(scaleW <= cc.Configuration.getInstance().getMaxTextureSize(), "cc.LabelBMFont: page can't be larger than supported");
+            if(scaleW > cc.Configuration.getInstance().getMaxTextureSize())
+                cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");
 
             var scaleH = parseInt(/scaleH=(\d+)/gi.exec(line)[1]);
-            cc.Assert(scaleH <= cc.Configuration.getInstance().getMaxTextureSize(), "cc.LabelBMFont: page can't be larger than supported");
+            if(scaleH > cc.Configuration.getInstance().getMaxTextureSize())
+                cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");
         }
 
         // pages. sanity check
         value = /pages=(\d+)/gi.exec(line)[1];
-        cc.Assert(parseInt(value) == 1, "cc.BitfontAtlas: only supports 1 page");
+        if(parseInt(value) !== 1)
+            cc.log("cc.LabelBMFont._parseCommonArguments(): only supports 1 page");
 
         // packed (ignore) What does this mean ??
     },
@@ -323,7 +326,8 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         var value;
         // page ID. Sanity check
         value = /id=(\d+)/gi.exec(line)[1];
-        cc.Assert(parseInt(value) == 0, "LabelBMFont file could not be found");
+        if(parseInt(value) !== 0)
+            cc.log("cc.LabelBMFont._parseImageFileName() : file could not be found");
 
         // file
         value = /file="([a-zA-Z0-9\-\._]+)/gi.exec(line)[1];
@@ -678,12 +682,17 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     initWithString:function (str, fntFile, width, alignment, imageOffset) {
         var theString = str || "";
 
-        cc.Assert(!this._configuration, "re-init is no longer supported");
+        if(this._configuration)
+            cc.log("cc.LabelBMFont.initWithString(): re-init is no longer supported");
 
         var texture;
         if (fntFile) {
             var newConf = cc.FNTConfigLoadFile(fntFile);
-            cc.Assert(newConf, "cc.LabelBMFont: Impossible to create font. Please check file");
+            if(!newConf){
+                cc.log("cc.LabelBMFont.initWithString(): Impossible to create font. Please check file");
+                return false;
+            }
+
             this._configuration = newConf;
             this._fntFile = fntFile;
             texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
@@ -694,7 +703,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 texture.addLoadedEventListener(function(sender){
                     this._textureLoaded = true;
                     //reset the LabelBMFont
-                    this.initWithTexture(sender, theString.length)
+                    this.initWithTexture(sender, theString.length);
                     this.setString(theString,true);
                 }, this);
             }
@@ -1145,7 +1154,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (fntFile != null && fntFile != this._fntFile) {
             var newConf = cc.FNTConfigLoadFile(fntFile);
 
-            cc.Assert(newConf, "cc.LabelBMFont: Impossible to create font. Please check file");
+            if(!newConf){
+                cc.log("cc.LabelBMFont.setFntFile() : Impossible to create font. Please check file");
+                return;
+            }
 
             this._fntFile = fntFile;
             this._configuration = newConf;

@@ -21,8 +21,8 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kCCSVersion = 1.0;
-cc.CCSGUIReader = cc.Class.extend({
+
+ccs.GUIReader = cc.Class.extend({
     _filePath: "",
     _olderVersion: false,
     ctor: function () {
@@ -75,46 +75,46 @@ cc.CCSGUIReader = cc.Class.extend({
         var classname = data["classname"];
         var uiOptions = data["options"];
         if (classname == "Button") {
-            widget = cc.UIButton.create();
+            widget = ccs.UIButton.create();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "CheckBox") {
-            widget = cc.UICheckBox.create();
+            widget = ccs.UICheckBox.create();
             this.setPropsForCheckBoxFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Label") {
-            widget = cc.UILabel.create();
+            widget = ccs.UILabel.create();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelAtlas") {
-            widget = cc.UILabelAtlas.create();
+            widget = ccs.UILabelAtlas.create();
             this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LoadingBar") {
-            widget = cc.UILoadingBar.create();
+            widget = ccs.UILoadingBar.create();
             this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ScrollView") {
-            widget = cc.UIScrollView.create();
+            widget = ccs.UIScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextArea") {
-            widget = cc.UITextArea.create();
+            widget = ccs.UITextArea.create();
             this.setPropsForTextAreaFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextButton") {
-            widget = cc.UITextButton.create();
+            widget = ccs.UITextButton.create();
             this.setPropsForTextButtonFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextField") {
-            widget = cc.UITextField.create();
+            widget = ccs.UITextField.create();
             this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ImageView") {
-            widget = cc.UIImageView.create();
+            widget = ccs.UIImageView.create();
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Panel") {
-            widget = cc.UIPanel.create();
+            widget = ccs.UIPanel.create();
             this.setPropsForPanelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Slider") {
@@ -126,15 +126,15 @@ cc.CCSGUIReader = cc.Class.extend({
 //        setPropsForListViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "PageView") {
-            widget = cc.UIPageView.create();
+            widget = ccs.UIPageView.create();
             this.setPropsForPageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelBMFont") {
-            widget = cc.UILabelBMFont.create();
+            widget = ccs.UILabelBMFont.create();
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "DragPanel") {
-            widget = cc.UIDragPanel.create();
+            widget = ccs.UIDragPanel.create();
             this.setPropsForDragPanelFromJsonDictionary(widget, uiOptions);
         }
 
@@ -155,19 +155,14 @@ cc.CCSGUIReader = cc.Class.extend({
 
     widgetFromJsonFile: function (fileName) {
         this._olderVersion = false;
-        var des = null;
-        var jsonpath = "";
-        var jsonDict = null;
-        jsonpath = cc.FileUtils.getInstance().fullPathForFilename(fileName);
-
-        var size = 0;
-        des = cc.FileUtils.getInstance().getTextFileData(jsonpath, "r", size);
+        var jsonPath = fileName || "";
+        var fullJsonPath = cc.FileUtils.getInstance().fullPathForFilename(fileName);
+        var des = cc.FileUtils.getInstance().getTextFileData(fullJsonPath);
         if (!des) {
             cc.log("read json file[" + fileName + "] error!");
             return null;
         }
-        var strDes = des;
-        jsonDict = JSON.parse(strDes);
+        var jsonDict = JSON.parse(des);
 
         var fileVersion = jsonDict["version"];
         if (!fileVersion || this.getVersionInteger(fileVersion) < 250) {
@@ -175,25 +170,25 @@ cc.CCSGUIReader = cc.Class.extend({
         }
 
         var textures = jsonDict["textures"];
-        var pos = jsonpath.lastIndexOf('/');
-        this._filePath = jsonpath.substr(0, pos + 1);
+        var pos = jsonPath.lastIndexOf('/');
+        this._filePath = jsonPath.substr(0, pos + 1);
         for (var i = 0; i < textures.length; i++) {
             var file = textures[i];
             var tp = this._filePath;
-            tp+=file;
-            cc.UIHelper.getInstance().addSpriteFrame(tp);
+            tp += file;
+            ccs.UIHelper.getInstance().addSpriteFrame(tp);
         }
         var fileDesignWidth = jsonDict["designWidth"];
         var fileDesignHeight = jsonDict["designHeight"];
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0) {
             cc.log("Read design size error!");
             var winSize = cc.Director.getInstance().getWinSize();
-            cc.UIHelper.getInstance().setFileDesignWidth(winSize.width);
-            cc.UIHelper.getInstance().setFileDesignHeight(winSize.height);
+            ccs.UIHelper.getInstance().setFileDesignWidth(winSize.width);
+            ccs.UIHelper.getInstance().setFileDesignHeight(winSize.height);
         }
         else {
-            cc.UIHelper.getInstance().setFileDesignWidth(fileDesignWidth);
-            cc.UIHelper.getInstance().setFileDesignHeight(fileDesignHeight);
+            ccs.UIHelper.getInstance().setFileDesignWidth(fileDesignWidth);
+            ccs.UIHelper.getInstance().setFileDesignHeight(fileDesignHeight);
         }
         var widgetTree = jsonDict["widgetTree"];
         var widget = this.widgetFromJsonDictionary(widgetTree);
@@ -206,7 +201,7 @@ cc.CCSGUIReader = cc.Class.extend({
         var actions = jsonDict["animation"];
 
         var rootWidget = widget;
-        cc.CCSActionManager.getInstance().initWithDictionary(fileName, actions, rootWidget);
+        ccs.ActionManager.getInstance().initWithDictionary(fileName, actions, rootWidget);
 
         widgetTree = null;
         actions = null;
@@ -216,8 +211,7 @@ cc.CCSGUIReader = cc.Class.extend({
     },
 
     setPropsForWidgetFromJsonDictionary: function (widget, options) {
-        var ignoreSizeExsit = options["ignoreSize"];
-        if (ignoreSizeExsit) {
+        if (options.hasOwnProperty("ignoreSize")) {
             widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
         }
 
@@ -233,44 +227,34 @@ cc.CCSGUIReader = cc.Class.extend({
         widget.setName(widgetName);
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(cc.p(x, y));
-        var sx = options["scaleX"];
-        if (sx) {
+        widget.setPosition(cc.p(x, y));;
+        if (options.hasOwnProperty("scaleX")) {
             widget.setScaleX(options["scaleX"]);
         }
-        var sy = options["scaleY"];
-        if (sy) {
+        if (options.hasOwnProperty("scaleY")) {
             widget.setScaleY(options["scaleY"]);
         }
-        var rt = options["rotation"];
-        if (rt) {
+        if (options.hasOwnProperty("rotation")) {
             widget.setRotation(options["rotation"]);
         }
-        var vb = options["visible"];
-        if (vb) {
+        if (options.hasOwnProperty("visible")) {
             widget.setVisible(options["visible"]);
         }
-//    widget.setUseMergedTexture(options["useMergedTexture"));
+
         var z = options["ZOrder"];
         widget.setZOrder(z);
     },
 
     setColorPropsForWidgetFromJsonDictionary: function (widget, options) {
-        var op = options["opacity"];
-        if (op) {
+        if (options.hasOwnProperty("opacity")) {
             widget.setOpacity(options["opacity"]);
         }
-        var colorR = options["colorR"];
-        var colorG = options["colorG"];
-        var colorB = options["colorB"];
-        colorR = (colorR || colorR == 0) ? options["colorR"] : 255;
-        colorG = (colorG || colorG == 0) ? options["colorG"] : 255;
-        colorB = (colorB || colorB == 0) ? options["colorB"] : 255;
+        var colorR = options.hasOwnProperty("colorR") ? options["colorR"] : 255;
+        var colorG = options.hasOwnProperty("colorG") ? options["colorG"] : 255;
+        var colorB = options.hasOwnProperty("colorB") ? options["colorB"] : 255;
         widget.setColor(cc.c3b(colorR, colorG, colorB));
-        var apx = options["anchorPointX"];
-        apx = (apx || apx == 0) ? apx : ((widget.getWidgetType() == cc.WidgetType.Widget) ? 0.5 : 0);
-        var apy = options["anchorPointY"];
-        apy = (apy || apy == 0) ? apy : ((widget.getWidgetType() == cc.WidgetType.Widget) ? 0.5 : 0);
+        var apx = options.hasOwnProperty("anchorPointX") ? options["anchorPointX"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
+        var apy = options.hasOwnProperty("anchorPointY") ? options["anchorPointY"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
         widget.setAnchorPoint(cc.p(apx, apy));
         var flipX = options["flipX"];
         var flipY = options["flipY"];
@@ -285,17 +269,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var scale9Enable = options["scale9Enable"];
             button.setScale9Enabled(scale9Enable);
 
-            var tp_n = this._filePath;
-            var tp_p = this._filePath;
-            var tp_d = this._filePath;
-
             var normalFileName = options["normal"];
             var pressedFileName = options["pressed"];
             var disabledFileName = options["disabled"];
 
-            var normalFileName_tp = normalFileName ? tp_n + normalFileName : null;
-            var pressedFileName_tp = pressedFileName ? tp_p + pressedFileName : null;
-            var disabledFileName_tp = disabledFileName ? tp_d + disabledFileName : null;
+            var normalFileName_tp = normalFileName ? this._filePath + normalFileName : null;
+            var pressedFileName_tp = pressedFileName ? this._filePath + pressedFileName : null;
+            var disabledFileName_tp = disabledFileName ? this._filePath + disabledFileName : null;
             var useMergedTexture = options["useMergedTexture"];
             if (scale9Enable) {
                 var cx = options["capInsetsX"];
@@ -304,15 +284,13 @@ cc.CCSGUIReader = cc.Class.extend({
                 var ch = options["capInsetsHeight"];
 
                 if (useMergedTexture) {
-                    button.loadTextures(normalFileName, pressedFileName, disabledFileName, cc.TextureResType.PLIST);
+                    button.loadTextures(normalFileName, pressedFileName, disabledFileName, ccs.TextureResType.plist);
                 }
                 else {
                     button.loadTextures(normalFileName_tp, pressedFileName_tp, disabledFileName_tp);
                 }
                 button.setCapInsets(cc.rect(cx, cy, cw, ch));
-                var sw = options["scale9Width"];
-                var sh = options["scale9Height"];
-                if (sw && sh) {
+                if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
                     var swf = options["scale9Width"];
                     var shf = options["scale9Height"];
                     button.setSize(cc.size(swf, shf));
@@ -320,7 +298,7 @@ cc.CCSGUIReader = cc.Class.extend({
             }
             else {
                 if (useMergedTexture) {
-                    button.loadTextures(normalFileName, pressedFileName, disabledFileName, cc.TextureResType.PLIST);
+                    button.loadTextures(normalFileName, pressedFileName, disabledFileName, ccs.TextureResType.plist);
                 }
                 else {
                     button.loadTextures(normalFileName_tp, pressedFileName_tp, disabledFileName_tp);
@@ -338,14 +316,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var normalType = normalDic["resourceType"];
             switch (normalType) {
                 case 0:
-                    var tp_n = this._filePath;
                     var normalFileName = normalDic["path"];
-                    var normalFileName_tp = normalFileName ? tp_n + normalFileName : null;
+                    var normalFileName_tp = normalFileName ? this._filePath + normalFileName : null;
                     button.loadTextureNormal(normalFileName_tp);
                     break;
                 case 1:
                     var normalFileName = normalDic["path"];
-                    button.loadTextureNormal(normalFileName, cc.TextureResType.PLIST);
+                    button.loadTextureNormal(normalFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -355,19 +332,14 @@ cc.CCSGUIReader = cc.Class.extend({
             var pressedType = pressedDic["resourceType"];
             switch (pressedType) {
                 case 0:
-                {
-                    var tp_p = this._filePath;
                     var pressedFileName = pressedDic["path"];
-                    var pressedFileName_tp = pressedFileName ? tp_p + pressedFileName : null;
+                    var pressedFileName_tp = pressedFileName ? this._filePath + pressedFileName : null;
                     button.loadTexturePressed(pressedFileName_tp);
                     break;
-                }
                 case 1:
-                {
                     var pressedFileName = pressedDic["path"];
-                    button.loadTexturePressed(pressedFileName, cc.TextureResType.PLIST);
+                    button.loadTexturePressed(pressedFileName, ccs.TextureResType.plist);
                     break;
-                }
                 default:
                     break;
             }
@@ -376,14 +348,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var disabledType = disabledDic["resourceType"];
             switch (disabledType) {
                 case 0:
-                    var tp_d = this._filePath;
                     var disabledFileName = disabledDic["path"];
-                    var disabledFileName_tp = disabledFileName ? tp_d + disabledFileName : null;
+                    var disabledFileName_tp = disabledFileName ? this._filePath + disabledFileName : null;
                     button.loadTextureDisabled(disabledFileName_tp);
                     break;
                 case 1:
                     var disabledFileName = disabledDic["path"];
-                    button.loadTextureDisabled(disabledFileName, cc.TextureResType.PLIST);
+                    button.loadTextureDisabled(disabledFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -396,9 +367,7 @@ cc.CCSGUIReader = cc.Class.extend({
                 var ch = options["capInsetsHeight"];
 
                 button.setCapInsets(cc.rect(cx, cy, cw, ch));
-                var sw = options["scale9Width"];
-                var sh = options["scale9Height"];
-                if (sw && sh) {
+                if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
                     var swf = options["scale9Width"];
                     var shf = options["scale9Height"];
                     button.setSize(cc.size(swf, shf));
@@ -418,22 +387,17 @@ cc.CCSGUIReader = cc.Class.extend({
             var backGroundDisabledFileName = options["backGroundBoxDisabled"];
             var frontCrossDisabledFileName = options["frontCrossDisabled"];
 
+            var locFilePath = this._filePath;
 
-            var tp_b = this._filePath;
-            var tp_bs = this._filePath;
-            var tp_c = this._filePath;
-            var tp_bd = this._filePath;
-            var tp_cd = this._filePath;
-
-            var backGroundFileName_tp = backGroundFileName ? tp_b + backGroundFileName : null;
-            var backGroundSelectedFileName_tp = backGroundSelectedFileName ? tp_bs + backGroundSelectedFileName : null;
-            var frontCrossFileName_tp = frontCrossFileName ? tp_c + frontCrossFileName : null;
-            var backGroundDisabledFileName_tp = backGroundDisabledFileName ? tp_bd + backGroundDisabledFileName : null;
-            var frontCrossDisabledFileName_tp = frontCrossDisabledFileName ? tp_cd + frontCrossDisabledFileName : null;
+            var backGroundFileName_tp = backGroundFileName ? locFilePath + backGroundFileName : null;
+            var backGroundSelectedFileName_tp = backGroundSelectedFileName ? locFilePath + backGroundSelectedFileName : null;
+            var frontCrossFileName_tp = frontCrossFileName ? locFilePath + frontCrossFileName : null;
+            var backGroundDisabledFileName_tp = backGroundDisabledFileName ? locFilePath + backGroundDisabledFileName : null;
+            var frontCrossDisabledFileName_tp = frontCrossDisabledFileName ? locFilePath + frontCrossDisabledFileName : null;
             var useMergedTexture = options["useMergedTexture"];
 
             if (useMergedTexture) {
-                checkBox.loadTextures(backGroundFileName, backGroundSelectedFileName, frontCrossFileName, backGroundDisabledFileName, frontCrossDisabledFileName, cc.TextureResType.PLIST);
+                checkBox.loadTextures(backGroundFileName, backGroundSelectedFileName, frontCrossFileName, backGroundDisabledFileName, frontCrossDisabledFileName, ccs.TextureResType.plist);
             }
             else {
                 checkBox.loadTextures(backGroundFileName_tp, backGroundSelectedFileName_tp, frontCrossFileName_tp, backGroundDisabledFileName_tp, frontCrossDisabledFileName_tp);
@@ -449,14 +413,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var backGroundType = backGroundDic["resourceType"];
             switch (backGroundType) {
                 case 0:
-                    var tp_b = this._filePath;
                     var backGroundFileName = backGroundDic["path"];
-                    var backGroundFileName_tp = backGroundFileName ? tp_b + backGroundFileName : null;
+                    var backGroundFileName_tp = backGroundFileName ? this._filePath + backGroundFileName : null;
                     checkBox.loadTextureBackGround(backGroundFileName_tp);
                     break;
                 case 1:
                     var backGroundFileName = backGroundDic["path"];
-                    checkBox.loadTextureBackGround(backGroundFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureBackGround(backGroundFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -467,14 +430,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var backGroundSelectedType = backGroundSelectedDic["resourceType"];
             switch (backGroundSelectedType) {
                 case 0:
-                    var tp_bs = this._filePath;
                     var backGroundSelectedFileName = backGroundSelectedDic["path"];
-                    var backGroundSelectedFileName_tp = backGroundSelectedFileName ? tp_bs + backGroundSelectedFileName : null;
+                    var backGroundSelectedFileName_tp = backGroundSelectedFileName ? this._filePath + backGroundSelectedFileName : null;
                     checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName_tp);
                     break;
                 case 1:
                     var backGroundSelectedFileName = backGroundSelectedDic["path"];
-                    checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureBackGroundSelected(backGroundSelectedFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -485,14 +447,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var frontCrossType = frontCrossDic["resourceType"];
             switch (frontCrossType) {
                 case 0:
-                    var tp_c = this._filePath;
                     var frontCrossFileName = frontCrossDic["path"];
-                    var frontCrossFileName_tp = frontCrossFileName ? tp_c + frontCrossFileName : null;
+                    var frontCrossFileName_tp = frontCrossFileName ? this._filePath + frontCrossFileName : null;
                     checkBox.loadTextureFrontCross(frontCrossFileName_tp);
                     break;
                 case 1:
                     var frontCrossFileName = frontCrossDic["path"];
-                    checkBox.loadTextureFrontCross(frontCrossFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureFrontCross(frontCrossFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -503,14 +464,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var backGroundDisabledType = backGroundDisabledDic["resourceType"];
             switch (backGroundDisabledType) {
                 case 0:
-                    var tp_bd = this._filePath;
                     var backGroundDisabledFileName = backGroundDisabledDic["path"];
-                    var backGroundDisabledFileName_tp = backGroundDisabledFileName ? tp_bd + backGroundDisabledFileName : null;
+                    var backGroundDisabledFileName_tp = backGroundDisabledFileName ? this._filePath + backGroundDisabledFileName : null;
                     checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName_tp);
                     break;
                 case 1:
                     var backGroundDisabledFileName = backGroundDisabledDic["path"];
-                    checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureBackGroundDisabled(backGroundDisabledFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -521,14 +481,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var frontCrossDisabledType = frontCrossDisabledDic["resourceType"];
             switch (frontCrossDisabledType) {
                 case 0:
-                    var tp_cd = this._filePath;
                     var frontCrossDisabledFileName = options["path"];
-                    var frontCrossDisabledFileName_tp = frontCrossDisabledFileName ? tp_cd + frontCrossDisabledFileName : null;
+                    var frontCrossDisabledFileName_tp = frontCrossDisabledFileName ? this._filePath + frontCrossDisabledFileName : null;
                     checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName_tp);
                     break;
                 case 1:
                     var frontCrossDisabledFileName = options["path"];
-                    checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, cc.RESOURCE_TYPE.PLIST);
+                    checkBox.loadTextureFrontCrossDisabled(frontCrossDisabledFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -545,11 +504,7 @@ cc.CCSGUIReader = cc.Class.extend({
 
             var imageView = widget;
             var imageFileName = options["fileName"];
-            var scale9EnableExist = options["scale9Enable"];
-            var scale9Enable = false;
-            if (scale9EnableExist) {
-                scale9Enable = options["scale9Enable"];
-            }
+            var scale9Enable = options["scale9Enable"]||false;
             imageView.setScale9Enabled(scale9Enable);
 
             var tp_i = this._filePath;
@@ -561,15 +516,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var useMergedTexture = options["useMergedTexture"];
             if (scale9Enable) {
                 if (useMergedTexture) {
-                    imageView.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    imageView.loadTexture(imageFileName, ccs.TextureResType.plist);
                 }
                 else {
                     imageView.loadTexture(imageFileName_tp);
                 }
 
-                var sw = options["scale9Width"];
-                var sh = options["scale9Height"];
-                if (sw && sh) {
+                if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
                     var swf = options["scale9Width"];
                     var shf = options["scale9Height"];
                     imageView.setSize(cc.size(swf, shf));
@@ -584,7 +537,7 @@ cc.CCSGUIReader = cc.Class.extend({
             }
             else {
                 if (useMergedTexture) {
-                    imageView.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    imageView.loadTexture(imageFileName, ccs.TextureResType.plist);
                 }
                 else {
                     imageView.loadTexture(imageFileName_tp);
@@ -611,25 +564,18 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var imageFileName = imageFileNameDic["path"];
-                    imageView.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    imageView.loadTexture(imageFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
             }
             imageFileNameDic = null;
 
-            var scale9EnableExist = options["scale9Enable"];
-            var scale9Enable = false;
-            if (scale9EnableExist) {
-                scale9Enable = options["scale9Enable"];
-            }
+            var scale9Enable =  options["scale9Enable"]||false;
             imageView.setScale9Enabled(scale9Enable);
 
-
             if (scale9Enable) {
-                var sw = options["scale9Width"];
-                var sh = options["scale9Height"];
-                if (sw && sh) {
+                if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
                     var swf = options["scale9Width"];
                     var shf = options["scale9Height"];
                     imageView.setSize(cc.size(swf, shf));
@@ -654,20 +600,15 @@ cc.CCSGUIReader = cc.Class.extend({
         label.setTouchScaleChangeAble(touchScaleChangeAble);
         var text = options["text"];
         label.setText(text);
-        var fs = options["fontSize"];
-        if (fs) {
+        if (options.hasOwnProperty("fontSize")) {
             label.setFontSize(options["fontSize"]);
         }
-        var fn = options["fontName"];
-        if (fn) {
+        if (options.hasOwnProperty("fontName")) {
             label.setFontName(options["fontName"]);
         }
-        var cro = options["colorR"];
-        var cgo = options["colorG"];
-        var cbo = options["colorB"];
-        var cr = cro ? options["colorR"] : 255;
-        var cg = cgo ? options["colorG"] : 255;
-        var cb = cbo ? options["colorB"] : 255;
+        var cr = options.hasOwnProperty("colorR") ? options["colorR"] : 255;
+        var cg = options.hasOwnProperty("colorG") ? options["colorG"] : 255;
+        var cb = options.hasOwnProperty("colorB") ? options["colorB"] : 255;
         var tc = cc.c3b(cr, cg, cb);
         label.setColor(tc);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -683,10 +624,8 @@ cc.CCSGUIReader = cc.Class.extend({
             var ih = options.hasOwnProperty("itemHeight");
             var scm = options.hasOwnProperty("startCharMap");
             if (sv && cmf && iw && ih && scm && options["charMapFile"]) {
-                var tp_c = this._filePath;
-                var cmf_tp = null;
                 var cmft = options["charMapFile"];
-                cmf_tp = tp_c + cmft;
+                var cmf_tp = this._filePath + cmft;
 
                 labelAtlas.setProperty(options["stringValue"], cmf_tp, options["itemWidth"], options["itemHeight"], options["startCharMap"]);
             }
@@ -706,9 +645,8 @@ cc.CCSGUIReader = cc.Class.extend({
                 var cmfType = cmftDic["resourceType"];
                 switch (cmfType) {
                     case 0:
-                        var tp_c = this._filePath;
                         var cmfPath = cmftDic["path"];
-                        var cmf_tp = tp_c+cmfPath;
+                        var cmf_tp = this._filePath + cmfPath;
                         labelAtlas.setProperty(options["stringValue"], cmf_tp, options["itemWidth"], options["itemHeight"], options["startCharMap"]);
                         break;
                     case 1:
@@ -726,10 +664,10 @@ cc.CCSGUIReader = cc.Class.extend({
     setPropsForContainerWidgetFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
-        if (containerWidget instanceof cc.UIScrollView ||
-            containerWidget instanceof cc.UIListView ||
-            containerWidget instanceof cc.UIDragPanel) {
-            containerWidget.setClippingEnable(options["clipAble"]);
+        if (containerWidget instanceof ccs.UIScrollView ||
+            containerWidget instanceof ccs.UIListView ||
+            containerWidget instanceof ccs.UIDragPanel) {
+            containerWidget.setClippingEnabled(options["clipAble"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -764,9 +702,8 @@ cc.CCSGUIReader = cc.Class.extend({
             panel.setBackGroundColor(cc.c3b(cr, cg, cb));
             panel.setBackGroundColorOpacity(co);
 
-            var tp_b = this._filePath;
             var imageFileName = options["backGroundImage"];
-            var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+            var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
             var useMergedTexture = options["useMergedTexture"];
             if (backGroundScale9Enable) {
                 var cx = options["capInsetsX"];
@@ -774,7 +711,7 @@ cc.CCSGUIReader = cc.Class.extend({
                 var cw = options["capInsetsWidth"];
                 var ch = options["capInsetsHeight"];
                 if (useMergedTexture) {
-                    panel.setBackGroundImage(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
                 }
                 else {
                     panel.setBackGroundImage(imageFileName_tp);
@@ -784,7 +721,7 @@ cc.CCSGUIReader = cc.Class.extend({
             else {
 
                 if (useMergedTexture) {
-                    panel.setBackGroundImage(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
                 }
                 else {
                     panel.setBackGroundImage(imageFileName_tp);
@@ -826,14 +763,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var imageFileNameType = imageFileNameDic["resourceType"];
             switch (imageFileNameType) {
                 case 0:
-                    var tp_b = this._filePath;
                     var imageFileName = imageFileNameDic["path"];
-                    var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+                    var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                     panel.setBackGroundImage(imageFileName_tp);
                     break;
                 case 1:
                     var imageFileName = imageFileNameDic["path"];
-                    panel.setBackGroundImage(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -869,18 +805,17 @@ cc.CCSGUIReader = cc.Class.extend({
             this.setPropsForWidgetFromJsonDictionary(widget, options);
             var slider = widget;
 
-            var barTextureScale9Enable = options["barTextureScale9Enable"];
+            var barTextureScale9Enable = options["barTextureScale9Enable"] || false;
             slider.setScale9Enabled(barTextureScale9Enable);
-            var bt = options["barFileName"];
             var barLength = options["length"];
             var useMergedTexture = options["useMergedTexture"];
+            var bt = options.hasOwnProperty("barFileName");
             if (bt) {
                 if (barTextureScale9Enable) {
-                    var tp_b = this._filePath;
                     var imageFileName = options["barFileName"];
-                    var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+                    var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                     if (useMergedTexture) {
-                        slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                        slider.loadBarTexture(imageFileName, ccs.TextureResType.plist);
                     }
                     else {
                         slider.loadBarTexture(imageFileName_tp);
@@ -888,41 +823,36 @@ cc.CCSGUIReader = cc.Class.extend({
                     slider.setSize(cc.size(barLength, slider.getContentSize().height));
                 }
                 else {
-                    var tp_b = this._filePath;
                     var imageFileName = options["barFileName"];
-                    var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+                    var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                     if (useMergedTexture) {
-                        slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                        slider.loadBarTexture(imageFileName, ccs.TextureResType.plist);
                     }
                     else {
                         slider.loadBarTexture(imageFileName_tp);
                     }
                 }
             }
-            var tp_n = this._filePath;
-            var tp_p = this._filePath;
-            var tp_d = this._filePath;
 
             var normalFileName = options["ballNormal"];
             var pressedFileName = options["ballPressed"];
             var disabledFileName = options["ballDisabled"];
 
-            var normalFileName_tp = normalFileName ? tp_n + normalFileName : null;
-            var pressedFileName_tp = pressedFileName ? tp_p + pressedFileName : null;
-            var disabledFileName_tp = disabledFileName ? tp_d + disabledFileName : null;
+            var normalFileName_tp = normalFileName ? this._filePath + normalFileName : null;
+            var pressedFileName_tp = pressedFileName ? this._filePath + pressedFileName : null;
+            var disabledFileName_tp = disabledFileName ? this._filePath + disabledFileName : null;
             if (useMergedTexture) {
-                slider.loadSlidBallTextures(normalFileName, pressedFileName, disabledFileName, cc.RESOURCE_TYPE.PLIST);
+                slider.loadSlidBallTextures(normalFileName, pressedFileName, disabledFileName, ccs.TextureResType.plist);
             }
             else {
                 slider.loadSlidBallTextures(normalFileName_tp, pressedFileName_tp, disabledFileName_tp);
             }
             slider.setPercent(options["percent"]);
 
-            var tp_b = this._filePath;
             var imageFileName = options["progressBarFileName"];
-            var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+            var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
             if (useMergedTexture) {
-                slider.loadProgressBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                slider.loadProgressBarTexture(imageFileName, ccs.TextureResType.plist);
             }
             else {
                 slider.loadProgressBarTexture(imageFileName_tp);
@@ -933,25 +863,23 @@ cc.CCSGUIReader = cc.Class.extend({
             this.setPropsForWidgetFromJsonDictionary(widget, options);
             var slider = widget;
 
-            var barTextureScale9Enable = options["barTextureScale9Enable"];
+            var barTextureScale9Enable = options["barTextureScale9Enable"] || false;
             slider.setScale9Enabled(barTextureScale9Enable);
-            var bt = options["barFileName"];
             var barLength = options["length"];
+            var bt = options.hasOwnProperty("barFileName");
             if (bt) {
                 if (barTextureScale9Enable) {
-
                     var imageFileNameDic = options["barFileNameData"];
                     var imageFileType = imageFileNameDic["resourceType"];
                     switch (imageFileType) {
                         case 0:
-                            var tp_b = this._filePath;
                             var imageFileName = imageFileNameDic["path"];
-                            var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+                            var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                             slider.loadBarTexture(imageFileName_tp);
                             break;
                         case 1:
                             var imageFileName = imageFileNameDic["path"];
-                            slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                            slider.loadBarTexture(imageFileName, ccs.TextureResType.plist);
                             break;
                         default:
                             break;
@@ -965,14 +893,13 @@ cc.CCSGUIReader = cc.Class.extend({
                     var imageFileType = imageFileNameDic["resourceType"];
                     switch (imageFileType) {
                         case 0:
-                            var tp_b = this._filePath;
                             var imageFileName = imageFileNameDic["path"];
-                            var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+                            var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                             slider.loadBarTexture(imageFileName_tp);
                             break;
                         case 1:
                             var imageFileName = imageFileNameDic["path"];
-                            slider.loadBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                            slider.loadBarTexture(imageFileName, ccs.TextureResType.plist);
                             break;
                         default:
                             break;
@@ -985,14 +912,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var normalType = normalDic["resourceType"];
             switch (normalType) {
                 case 0:
-                    var tp_n = this._filePath;
                     var normalFileName = normalDic["path"];
-                    var normalFileName_tp = normalFileName ? tp_n + normalFileName : null;
+                    var normalFileName_tp = normalFileName ? this._filePath + normalFileName : null;
                     slider.loadSlidBallTextureNormal(normalFileName_tp);
                     break;
                 case 1:
                     var normalFileName = normalDic["path"];
-                    slider.loadSlidBallTextureNormal(normalFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadSlidBallTextureNormal(normalFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -1003,14 +929,13 @@ cc.CCSGUIReader = cc.Class.extend({
             var pressedType = pressedDic["resourceType"];
             switch (pressedType) {
                 case 0:
-                    var tp_p = this._filePath;
                     var pressedFileName = pressedDic["path"];
-                    var pressedFileName_tp = pressedFileName ? tp_p + pressedFileName : null;
+                    var pressedFileName_tp = pressedFileName ? this._filePath + pressedFileName : null;
                     slider.loadSlidBallTexturePressed(pressedFileName_tp);
                     break;
                 case 1:
                     var pressedFileName = pressedDic["path"];
-                    slider.loadSlidBallTexturePressed(pressedFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadSlidBallTexturePressed(pressedFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -1021,39 +946,37 @@ cc.CCSGUIReader = cc.Class.extend({
             var disabledType = disabledDic["resourceType"];
             switch (disabledType) {
                 case 0:
-                    var tp_d = this._filePath;
                     var disabledFileName = disabledDic["path"];
-                    var disabledFileName_tp = disabledFileName ? tp_d + disabledFileName : null;
+                    var disabledFileName_tp = disabledFileName ? this._filePath + disabledFileName : null;
                     slider.loadSlidBallTextureDisabled(disabledFileName_tp);
                     break;
                 case 1:
                     var disabledFileName = disabledDic["path"];
-                    slider.loadSlidBallTextureDisabled(disabledFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadSlidBallTextureDisabled(disabledFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
             }
             disabledDic = null;
 
-            slider.setPercent(options["percent"]);
-
             var progressBarDic = options["progressBarData"];
             var progressBarType = progressBarDic["resourceType"];
             switch (progressBarType) {
                 case 0:
-                    var tp_b = this._filePath;
                     var imageFileName = progressBarDic["path"];
-                    var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+                    var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
                     slider.loadProgressBarTexture(imageFileName_tp);
                     break;
                 case 1:
                     var imageFileName = progressBarDic["path"];
-                    slider.loadProgressBarTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    slider.loadProgressBarTexture(imageFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
             }
             this.setColorPropsForWidgetFromJsonDictionary(widget, options);
+
+            slider.setPercent(options["percent"]);
         }
     },
 
@@ -1061,8 +984,7 @@ cc.CCSGUIReader = cc.Class.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textArea = widget;
         textArea.setText(options["text"]);
-        var fs = options["fontSize"];
-        if (fs) {
+        if (options.hasOwnProperty("fontSize")) {
             textArea.setFontSize(options["fontSize"]);
         }
         var cr = options["colorR"]
@@ -1070,18 +992,14 @@ cc.CCSGUIReader = cc.Class.extend({
         var cb = options["colorB"];
         textArea.setColor(cc.c3b(cr, cg, cb));
         textArea.setFontName(options["fontName"]);
-        var aw = options["areaWidth"];
-        var ah = options["areaHeight"];
-        if (aw && ah) {
+        if (options.hasOwnProperty("areaWidth") && options.hasOwnProperty("areaHeight")) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
             textArea.setTextAreaSize(size);
         }
-        var ha = options["hAlignment"];
-        if (ha) {
+        if (options.hasOwnProperty("hAlignment")) {
             textArea.setTextHorizontalAlignment(options["hAlignment"]);
         }
-        var va = options["vAlignment"];
-        if (va) {
+        if (options.hasOwnProperty("vAlignment")) {
             textArea.setTextVerticalAlignment(options["vAlignment"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -1092,19 +1010,14 @@ cc.CCSGUIReader = cc.Class.extend({
 
         var textButton = widget;
         textButton.setTitleText(options["text"]||"");
-        var cr = options["textColorR"];
-        var cg = options["textColorG"];
-        var cb = options["textColorB"];
-        var cri = cr ? options["textColorR"] : 255;
-        var cgi = cg ? options["textColorG"] : 255;
-        var cbi = cb ? options["textColorB"] : 255;
+        var cri = options.hasOwnProperty("textColorR") ? options["textColorR"] : 255;
+        var cgi = options.hasOwnProperty("textColorG") ? options["textColorG"] : 255;
+        var cbi = options.hasOwnProperty("textColorB") ? options["textColorB"] : 255;
         textButton.setTitleColor(cc.c3b(cri, cgi, cbi));
-        var fs = options["fontSize"];
-        if (fs) {
+        if (options.hasOwnProperty("fontSize")) {
             textButton.setTitleFontSize(options["fontSize"]);
         }
-        var fn = options["fontName"];
-        if (fn) {
+        if (options.hasOwnProperty("fontName")) {
             textButton.setTitleFontName(options["fontName"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -1113,22 +1026,17 @@ cc.CCSGUIReader = cc.Class.extend({
     setPropsForTextFieldFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textField = widget;
-        var ph = options["placeHolder"];
-        if (ph) {
+        if (options.hasOwnProperty("placeHolder")) {
             textField.setPlaceHolder(options["placeHolder"]);
         }
         textField.setText(options["text"]);
-        var fs = options["fontSize"];
-        if (fs) {
+        if (options.hasOwnProperty("fontSize")) {
             textField.setFontSize(options["fontSize"]);
         }
-        var fn = options["fontName"];
-        if (fn) {
+        if (options.hasOwnProperty("fontName")) {
             textField.setFontName(options["fontName"]);
         }
-        var tsw = options["touchSizeWidth"];
-        var tsh = options["touchSizeHeight"];
-        if (tsw && tsh) {
+        if (options.hasOwnProperty("touchSizeWidth") && options.hasOwnProperty("touchSizeHeight")) {
             textField.setTouchSize(cc.size(options["touchSizeWidth"], options["touchSizeHeight"]));
         }
 
@@ -1138,14 +1046,14 @@ cc.CCSGUIReader = cc.Class.extend({
             //textField.setSize(CCSizeMake(dw, dh));
         }
         var maxLengthEnable = options["maxLengthEnable"];
-        textField.setMaxLengthEnable(maxLengthEnable);
+        textField.setMaxLengthEnabled(maxLengthEnable);
 
         if (maxLengthEnable) {
             var maxLength = options["maxLength"];
             textField.setMaxLength(maxLength);
         }
         var passwordEnable = options["passwordEnable"];
-        textField.setPasswordEnable(passwordEnable);
+        textField.setPasswordEnabled(passwordEnable);
         if (passwordEnable) {
             textField.setPasswordStyleText(options["passwordStyleText"]);
         }
@@ -1157,11 +1065,10 @@ cc.CCSGUIReader = cc.Class.extend({
             this.setPropsForWidgetFromJsonDictionary(widget, options);
             var loadingBar = widget;
             var useMergedTexture = options["useMergedTexture"];
-            var tp_b = this._filePath;
             var imageFileName = options["texture"];
-            var imageFileName_tp = imageFileName ? tp_b + imageFileName : null;
+            var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
             if (useMergedTexture) {
-                loadingBar.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                loadingBar.loadTexture(imageFileName, ccs.TextureResType.plist);
             }
             else {
                 loadingBar.loadTexture(imageFileName_tp);
@@ -1188,7 +1095,7 @@ cc.CCSGUIReader = cc.Class.extend({
                     break;
                 case 1:
                     var imageFileName = imageFileNameDic["path"];
-                    loadingBar.loadTexture(imageFileName, cc.RESOURCE_TYPE.PLIST);
+                    loadingBar.loadTexture(imageFileName, ccs.TextureResType.plist);
                     break;
                 default:
                     break;
@@ -1234,10 +1141,8 @@ cc.CCSGUIReader = cc.Class.extend({
 
             var labelBMFont = widget;
 
-            var tp_c = this._filePath;
-            var cmf_tp = null;
             var cmft = options["fileName"];
-            cmf_tp = tp_c + cmft;
+            var cmf_tp = this._filePath + cmft;
 
             labelBMFont.setFntFile(cmf_tp);
 
@@ -1255,9 +1160,8 @@ cc.CCSGUIReader = cc.Class.extend({
             var cmfType = cmftDic["resourceType"];
             switch (cmfType) {
                 case 0:
-                    var tp_c = this._filePath;
                     var cmfPath = cmftDic["path"];
-                    var cmf_tp = tp_c + cmfPath;
+                    var cmf_tp = this._filePath + cmfPath;
                     labelBMFont.setFntFile(cmf_tp);
                     break;
                 case 1:
@@ -1290,10 +1194,10 @@ cc.CCSGUIReader = cc.Class.extend({
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     }
 });
-cc.CCSGUIReader._instance = null;
-cc.CCSGUIReader.getInstance = function () {
+ccs.GUIReader._instance = null;
+ccs.GUIReader.getInstance = function () {
     if (!this._instance) {
-        this._instance = new cc.CCSGUIReader();
+        this._instance = new ccs.GUIReader();
     }
     return this._instance;
 };

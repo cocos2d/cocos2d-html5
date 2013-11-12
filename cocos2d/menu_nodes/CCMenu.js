@@ -178,7 +178,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Number|Null} [tag=]
      */
     addChild:function (child, zOrder, tag) {
-        cc.Assert((child instanceof cc.MenuItem), "Menu only supports MenuItem objects as children");
+        if(!(child instanceof cc.MenuItem))
+            throw "cc.Menu.addChild() : Menu only supports MenuItem objects as children";
         cc.Layer.prototype.addChild.call(this, child, zOrder, tag);
     },
 
@@ -264,11 +265,13 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++) {
-                cc.Assert(row < rows.length, "");
+                if(row >= rows.length)
+                    continue;
 
                 rowColumns = rows[row];
                 // can not have zero columns on a row
-                cc.Assert(rowColumns, "");
+                if(!rowColumns)
+                    continue;
 
                 tmp = locChildren[i].getContentSize().height;
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
@@ -284,7 +287,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             }
         }
         // check if too many rows/columns for available menu items
-        cc.Assert(!columnsOccupied, "");
+        //cc.Assert(!columnsOccupied, "");    //?
         var winSize = cc.Director.getInstance().getWinSize();
 
         row = 0;
@@ -350,11 +353,13 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             for (i = 0, len = locChildren.length; i < len; i++) {
                 child = locChildren[i];
                 // check if too many menu items for the amount of rows/columns
-                cc.Assert(column < columns.length, "");
+                if(column >= columns.length)
+                    continue;
 
                 columnRows = columns[column];
                 // can't have zero rows on a column
-                cc.Assert(columnRows, "");
+                if(!columnRows)
+                    continue;
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
                 locContentSize = child.getContentSize();
@@ -377,8 +382,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             }
         }
         // check if too many rows/columns for available menu items.
-        cc.Assert(!rowsOccupied, "");
-
+        //cc.Assert(!rowsOccupied, "");
         var winSize = cc.Director.getInstance().getWinSize();
 
         column = 0;
@@ -428,10 +432,13 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {boolean} cleanup
      */
     removeChild:function(child, cleanup){
-        if(child== null)
+        if(child == null)
             return;
+        if(!(child instanceof cc.MenuItem)){
+            cc.log("cc.Menu.removeChild():Menu only supports MenuItem objects as children");
+            return;
+        }
 
-        cc.Assert((child instanceof cc.MenuItem), "Menu only supports MenuItem objects as children");
         if (this._selectedItem == child)
             this._selectedItem = null;
         cc.Node.prototype.removeChild.call(this, child, cleanup);
@@ -443,9 +450,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     onTouchBegan:function (touch, e) {
-        if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this._enabled) {
+        if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this._enabled)
             return false;
-        }
 
         for (var c = this._parent; c != null; c = c.getParent()) {
             if (!c.isVisible())
@@ -465,7 +471,10 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * when a touch ended
      */
     onTouchEnded:function (touch, e) {
-        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu onTouchEnded] -- invalid state");
+        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+            cc.log("cc.Menu.onTouchEnded(): invalid state");
+            return;
+        }
         if (this._selectedItem) {
             this._selectedItem.unselected();
             this._selectedItem.activate();
@@ -477,10 +486,12 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * touch cancelled
      */
     onTouchCancelled:function (touch, e) {
-        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu onTouchCancelled] -- invalid state");
-        if (this._selectedItem) {
-            this._selectedItem.unselected();
+        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+            cc.log("cc.Menu.onTouchCancelled(): invalid state");
+            return;
         }
+        if (this._selectedItem)
+            this._selectedItem.unselected();
         this._state = cc.MENU_STATE_WAITING;
     },
 
@@ -490,16 +501,17 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Object} e
      */
     onTouchMoved:function (touch, e) {
-        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu onTouchMoved] -- invalid state");
+        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+            cc.log("cc.Menu.onTouchMoved(): invalid state");
+            return;
+        }
         var currentItem = this._itemForTouch(touch);
         if (currentItem != this._selectedItem) {
-            if (this._selectedItem) {
+            if (this._selectedItem)
                 this._selectedItem.unselected();
-            }
             this._selectedItem = currentItem;
-            if (this._selectedItem) {
+            if (this._selectedItem)
                 this._selectedItem.selected();
-            }
         }
     },
 

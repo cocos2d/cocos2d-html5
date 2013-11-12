@@ -458,7 +458,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * sprite.initWithSpriteFrame(spriteFrame);
      */
     initWithSpriteFrame:function (spriteFrame) {
-        cc.Assert(spriteFrame != null, "");
+        if(!spriteFrame)
+           throw "cc.Sprite.initWithSpriteFrame(): spriteFrame should be non-null";
         if(!spriteFrame.textureLoaded()){
             //add event listener
             this._textureLoaded = false;
@@ -499,7 +500,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * sprite.initWithSpriteFrameName("grossini_dance_01.png");
      */
     initWithSpriteFrameName:function (spriteFrameName) {
-        cc.Assert(spriteFrameName != null, "");
+        if(!spriteFrameName)
+            throw "cc.Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
         var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
         return this.initWithSpriteFrame(frame);
     },
@@ -562,8 +564,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @override
      */
     reorderChild:function (child, zOrder) {
-        cc.Assert(child != null, "child is null");
-        cc.Assert(this._children.indexOf(child) > -1, "this child is not in children list");
+        if(!child)
+            throw "cc.Sprite.reorderChild(): child should be non-null";
+        if(this._children.indexOf(child) === -1){
+            cc.log("cc.Sprite.reorderChild(): this child is not in children list");
+            return;
+        }
 
         if (zOrder === child.getZOrder())
             return;
@@ -758,7 +764,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @override
      */
     ignoreAnchorPointForPosition:function (relative) {
-        cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
+        if(this._batchNode){
+            cc.log("cc.Sprite.ignoreAnchorPointForPosition(): it is invalid in cc.Sprite when using SpriteBatchNode");
+            return;
+        }
         cc.Node.prototype.ignoreAnchorPointForPosition.call(this, relative);
     },
 
@@ -853,8 +862,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _updateDisplayedOpacityForCanvas:function (parentOpacity) {
         cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
-        this._changeTextureColor();
-        this.setNodeDirty();
+        this._setNodeDirtyForCache();
     },
 
     // Animation
@@ -866,11 +874,18 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param frameIndex
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
-        cc.Assert(animationName, "cc.Sprite#setDisplayFrameWithAnimationName. animationName must not be null");
+        if(!animationName)
+            throw "cc.Sprite.setDisplayFrameWithAnimationName(): animationName must be non-null";
         var cache = cc.AnimationCache.getInstance().getAnimation(animationName);
-        cc.Assert(cache, "cc.Sprite#setDisplayFrameWithAnimationName: Frame not found");
+        if(!cache){
+            cc.log("cc.Sprite.setDisplayFrameWithAnimationName(): Frame not found");
+            return;
+        }
         var animFrame = cache.getFrames()[frameIndex];
-        cc.Assert(animFrame, "cc.Sprite#setDisplayFrame. Invalid frame");
+        if(!animFrame){
+            cc.log("cc.Sprite.setDisplayFrameWithAnimationName(): Invalid frame index");
+            return;
+        }
         this.setDisplayFrame(animFrame.getSpriteFrame());
     },
 
@@ -1100,7 +1115,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * mySprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
-        cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
+        if(!filename)
+            throw "cc.Sprite.initWithFile(): filename should be non-null";
+
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             texture = cc.TextureCache.getInstance().addImage(filename);
@@ -1496,15 +1513,20 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     addChild: null,
 
     _addChildForWebGL:function (child, zOrder, tag) {
-        cc.Assert(child != null, "Argument must be non-NULL");
+        if(!child)
+            throw "cc.Sprite.addChild(): child should be non-null";
         if (zOrder == null)
             zOrder = child._zOrder;
         if (tag == null)
             tag = child._tag;
 
         if (this._batchNode) {
-            cc.Assert((child instanceof cc.Sprite), "cc.Sprite only supports cc.Sprites as children when using cc.SpriteBatchNode");
-            cc.Assert(child.getTexture()._webTextureObj === this._textureAtlas.getTexture()._webTextureObj, "");
+            if(!(child instanceof cc.Sprite)){
+                cc.log("cc.Sprite.addChild(): cc.Sprite only supports cc.Sprites as children when using cc.SpriteBatchNode");
+                return;
+            }
+            if(child.getTexture()._webTextureObj !== this._textureAtlas.getTexture()._webTextureObj)
+                cc.log("cc.Sprite.addChild(): cc.Sprite only supports a sprite using same texture as children when using cc.SpriteBatchNode");
 
             //put it in descendants array of batch node
             this._batchNode.appendChild(child);
@@ -1518,7 +1540,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _addChildForCanvas: function (child, zOrder, tag) {
-        cc.Assert(child != null, "Argument must be non-NULL");
+        if(!child)
+            throw "cc.Sprite.addChild(): child should be non-null";
         if (zOrder == null)
             zOrder = child._zOrder;
         if (tag == null)
@@ -1576,7 +1599,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setOpacityForCanvas: function (opacity) {
         cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
-        this.setNodeDirty();
+        this._setNodeDirtyForCache();
     },
 
     /**
@@ -1597,7 +1620,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         cc.NodeRGBA.prototype.setColor.call(this, color3);
         this._changeTextureColor();
-        this.setNodeDirty();
+        this._setNodeDirtyForCache();
     },
 
     updateDisplayedColor: null,
@@ -1608,9 +1631,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _updateDisplayedColorForCanvas: function (parentColor) {
+        var oldColor = this.getColor();
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        var newColor = this._displayedColor;
+        if ((oldColor.r === newColor.r) && (oldColor.g === newColor.g) && (oldColor.b === newColor.b))
+            return;
         this._changeTextureColor();
-        this.setNodeDirty();
+        this._setNodeDirtyForCache();
     },
 
     // Frames
@@ -1775,16 +1802,20 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // CCTextureProtocol
     /**
      * Texture of sprite setter
-     * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture
+     * @param {cc.Texture2D} texture
      */
     setTexture: null,
 
     _setTextureForWebGL: function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.Assert(!texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
+        if(texture && !(texture instanceof cc.Texture2D))
+            throw "cc.Sprite.setTexture(): setTexture expects a CCTexture2D. Invalid argument";
 
         // If batchnode, then texture id should be the same
-        cc.Assert(!this._batchNode, "cc.Sprite: Batched sprites should use the same texture as the batchnode");
+        if(this._batchNode && this._batchNode.getTexture() != texture) {
+            cc.log("cc.Sprite.setTexture(): Batched sprites should use the same texture as the batchnode");
+            return;
+        }
 
         if (texture)
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
@@ -1799,7 +1830,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureForCanvas: function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.Assert(!texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
+        if(texture && !(texture instanceof cc.Texture2D))
+            throw "cc.Sprite.setTexture(): setTexture expects a CCTexture2D. Invalid argument";
+
         if (this._texture != texture) {
             if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
                 this._originalTexture = texture;
@@ -1810,7 +1843,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     // Texture protocol
     _updateBlendFunc:function () {
-        cc.Assert(!this._batchNode, "cc.Sprite: _updateBlendFunc doesn't work when the sprite is rendered using a cc.CCSpriteBatchNode");
+        if(this._batchNode){
+            cc.log("cc.Sprite._updateBlendFunc(): _updateBlendFunc doesn't work when the sprite is rendered using a cc.CCSpriteBatchNode");
+            return;
+        }
+
         // it's possible to have an untextured sprite
         if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
             this._blendFunc.src = gl.SRC_ALPHA;

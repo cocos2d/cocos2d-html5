@@ -105,7 +105,7 @@ cc.PointObject.create = function (ratio, offset) {
  * @class
  * @extends cc.Node
  */
-cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
+cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
     _lastPosition:null,
     _parallaxArray:null,
 
@@ -128,7 +128,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      * Constructor
      */
     ctor:function () {
-        cc.Node.prototype.ctor.call(this);
+        cc.NodeRGBA.prototype.ctor.call(this);
         this._parallaxArray = [];
         this._lastPosition = cc.p(-100, -100);
     },
@@ -146,10 +146,11 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      */
     addChild:function (child, z, ratio, offset) {
         if (arguments.length === 3) {
-            cc.Assert(0, "ParallaxNode: use addChild:z:parallaxRatio:positionOffset instead");
+            cc.log("ParallaxNode: use addChild(child, z, ratio, offset) instead")
             return;
         }
-        cc.Assert(child != null, "Argument must be non-nil");
+        if(!child)
+            throw "cc.ParallaxNode.addChild(): child should be non-null";
         var obj = cc.PointObject.create(ratio, offset);
         obj.setChild(child);
         this._parallaxArray.push(obj);
@@ -159,7 +160,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         pos.y = pos.y * ratio.y + offset.y;
         child.setPosition(pos);
 
-        cc.Node.prototype.addChild.call(this, child, z, child.getTag());
+        cc.NodeRGBA.prototype.addChild.call(this, child, z, child.getTag());
     },
 
     /**
@@ -179,7 +180,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
                 break;
             }
         }
-        cc.Node.prototype.removeChild.call(this, child, cleanup);
+        cc.NodeRGBA.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -188,7 +189,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      */
     removeAllChildren:function (cleanup) {
         this._parallaxArray = [];
-        cc.Node.prototype.removeAllChildren.call(this, cleanup);
+        cc.NodeRGBA.prototype.removeAllChildren.call(this, cleanup);
     },
 
     /**
@@ -206,7 +207,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
             }
             this._lastPosition = pos;
         }
-        cc.Node.prototype.visit.call(this);
+        cc.NodeRGBA.prototype.visit.call(this);
     },
 
     _absolutePosition:function () {

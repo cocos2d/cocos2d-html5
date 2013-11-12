@@ -335,7 +335,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * [3] ResolutionShowAll  Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
      */
     setDesignResolutionSize:function (width, height, resolutionPolicy) {
-        cc.Assert(resolutionPolicy !== cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
+        if(resolutionPolicy === cc.RESOLUTION_POLICY.UNKNOWN){
+            cc.log("cc.EGLView.setDesignResolutionSize(): should set resolutionPolicy");
+            return;
+        }
 
         if (width == 0 || height == 0)
             return;
@@ -394,9 +397,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 this._ele.style.paddingBottom = locHeight + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
             } else if ((locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH)
-                || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT)) {
-                cc.canvas.width = cc.canvas.width;
-                cc.canvas.height = cc.canvas.height;
+                || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) || (locResolutionPolicy === cc.RESOLUTION_POLICY.EXACT_FIT)) {
+                cc.canvas.width = viewPortW;
+                cc.canvas.height = viewPortH;
                 cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + this._viewPortRect.height);
             }
         } else {
@@ -569,8 +572,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 var touch = cc.Touches[unusedIndex] = new cc.Touch();
                 touch.setTouchInfo(unusedIndex, (x - locViewPortRect.x) / locScaleX,
                     (y - locViewPortRect.y) / locScaleY);
-
-                //console.log("x ="+x+" y = "+y, touch.getLocation());
 
                 var interObj = 0 | unusedIndex;
                 cc.TouchesIntergerDict[id] = interObj;

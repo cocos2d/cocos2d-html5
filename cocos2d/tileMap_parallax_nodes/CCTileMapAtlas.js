@@ -98,9 +98,12 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * @return {cc.Color3B}
      */
     getTileAt:function (position) {
-        cc.Assert(this._TGAInfo != null, "tgaInfo must not be nil");
-        cc.Assert(position.x < this._TGAInfo.width, "Invalid position.x");
-        cc.Assert(position.y < this._TGAInfo.height, "Invalid position.y");
+        if(!this._TGAInfo){
+            cc.log("cc.TileMapAtlas.getTileAt(): tgaInfo must not be null");
+            return null;
+        }
+        if(position.x >= this._TGAInfo.width || position.y >= this._TGAInfo.height)
+            throw "cc.TileMapAtlas.getTileAt(): Invalid position";
 
         var colorPos = 0|(position.x * 3 + position.y * this._TGAInfo.width * 3);
         var locTGAImageData = this._TGAInfo.imageData;
@@ -114,11 +117,18 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * @param {cc.Point} position
      */
     setTile:function (tile, position) {
-        cc.Assert(this._TGAInfo != null, "tgaInfo must not be nil");
-        cc.Assert(this._posToAtlasIndex != null, "posToAtlasIndex must not be nil");
-        cc.Assert(position.x < this._TGAInfo.width, "Invalid position.x");
-        cc.Assert(position.y < this._TGAInfo.height, "Invalid position.x");
-        cc.Assert(tile.r != 0, "R component must be non 0");
+        if(!this._TGAInfo){
+            cc.log("cc.TileMapAtlas.setTile(): tgaInfo must not be null");
+            return;
+        }
+        if(!this._posToAtlasIndex){
+            cc.log("cc.TileMapAtlas.setTile(): posToAtlasIndex must not be null");
+            return;
+        }
+        if(position.x >= this._TGAInfo.width || position.y >= this._TGAInfo.height)
+            throw "cc.TileMapAtlas.setTile(): Invalid position";
+        if(!tile || tile.r == 0)
+            throw "cc.TileMapAtlas.setTile(): tile should be non-null and tile.r should be non-nil";
 
         var colorPos = 0 | (position.x * 3 + position.y * this._TGAInfo.width * 3);
         if (this._TGAInfo.imageData[colorPos] == 0)
@@ -144,7 +154,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     },
 
     _loadTGAfile:function (file) {
-        cc.Assert(file != null, "file must be non-nil");
+        if(!file)
+            throw "cc.TileMapAtlas._loadTGAfile(): file should be non-null";
 
         //	//Find the path of the file
         //	NSBundle *mainBndl = [cc.Director sharedDirector].loadingBundle;
@@ -153,12 +164,15 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
         this._TGAInfo = cc.tgaLoad(cc.FileUtils.getInstance().fullPathForFilename(file));
         if (this._TGAInfo.status != cc.TGA_OK) {
-            cc.Assert(0, "TileMapAtlasLoadTGA : TileMapAtas cannot load TGA file");
+            cc.log("TileMapAtlasLoadTGA : TileMapAtlas cannot load TGA file");
         }
     },
 
     _calculateItemsToRender:function () {
-        cc.Assert(this._TGAInfo != null, "tgaInfo must be non-nil");
+        if(!this._TGAInfo){
+            cc.log("cc.TileMapAtlas._calculateItemsToRender(): tgaInfo must not be null");
+            return;
+        }
 
         this._itemsToRender = 0;
         var locWidth = this._TGAInfo.width, locHeight = this._TGAInfo.height, locImageData = this._TGAInfo.imageData;
@@ -178,7 +192,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      */
     _updateAtlasValueAt:function (pos, value, index) {
         var locTextureAtlas = this._textureAtlas;
-        cc.Assert( index >= 0 && index < locTextureAtlas.getCapacity(), "updateAtlasValueAt: Invalid index");
+        if(index < 0 && index >= locTextureAtlas.getCapacity())
+            throw "cc.TileMapAtlas._updateAtlasValueAt(): Invalid index";
         var quad = locTextureAtlas.getQuads()[index];
 
         var x = pos.x;
@@ -243,7 +258,10 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     },
 
     _updateAtlasValues:function () {
-        cc.Assert(this._TGAInfo != null, "tgaInfo must be non-nil");
+        if(!this._TGAInfo){
+            cc.log("cc.TileMapAtlas._updateAtlasValues(): tgaInfo must not be null");
+            return;
+        }
 
         var total = 0;
         var locTGAInfo = this._TGAInfo;

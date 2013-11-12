@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.ComAttribute
+ * Base class for ccs.ComAttribute
  * @class
  * @extends cc.Component
  */
-cc.ComAttribute = cc.Component.extend({
+ccs.ComAttribute = cc.Component.extend({
     _attributes: null,
     _jsonDict: null,
     ctor: function () {
@@ -196,8 +196,8 @@ cc.ComAttribute = cc.Component.extend({
     }
 });
 
-cc.ComAttribute.create = function () {
-    var com = new cc.ComAttribute();
+ccs.ComAttribute.create = function () {
+    var com = new ccs.ComAttribute();
     if (com && com.init()) {
         return com;
     }

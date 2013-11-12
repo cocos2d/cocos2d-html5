@@ -22,14 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.SliderEventType = {PERCENTCHANGED: 0};
+ccs.SliderEventType = {percent_changed: 0};
 
 /**
  * Base class for cc.UISlider
  * @class
- * @extends cc.UIWidget
+ * @extends ccs.UIWidget
  */
-cc.UISlider = cc.UIWidget.extend({
+cc.UISlider = ccs.UIWidget.extend({
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -56,7 +56,7 @@ cc.UISlider = cc.UIWidget.extend({
     _ballPTexType: null,
     _ballDTexType: null,
     ctor: function () {
-        cc.UIWidget.prototype.ctor.call(this);
+        ccs.UIWidget.prototype.ctor.call(this);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         this._progressBarTextureSize = cc.size(0, 0);
@@ -77,15 +77,15 @@ cc.UISlider = cc.UIWidget.extend({
         this._capInsetsProgressBarRenderer = cc.RectZero();
         this._slidPercentListener = null;
         this._slidPercentSelector = null;
-        this._barTexType = cc.TextureResType.LOCAL;
-        this._progressBarTexType = cc.TextureResType.LOCAL;
-        this._ballNTexType = cc.TextureResType.LOCAL;
-        this._ballPTexType = cc.TextureResType.LOCAL;
-        this._ballDTexType = cc.TextureResType.LOCAL;
+        this._barTexType = ccs.TextureResType.local;
+        this._progressBarTexType = ccs.TextureResType.local;
+        this._ballNTexType = ccs.TextureResType.local;
+        this._ballPTexType = ccs.TextureResType.local;
+        this._ballDTexType = ccs.TextureResType.local;
     },
 
     initRenderer: function () {
-        cc.UIWidget.prototype.initRenderer.call(this);
+        ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
         this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
@@ -106,20 +106,20 @@ cc.UISlider = cc.UIWidget.extend({
     /**
      * Load texture for slider bar.
      * @param {String} fileName
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._textureFile = fileName;
         this._barTexType = texType;
         switch (this._barTexType) {
-            case cc.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._barRenderer.initWithFile(fileName);
                 break;
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._barRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -139,20 +139,20 @@ cc.UISlider = cc.UIWidget.extend({
     /**
      * Load dark state texture for slider progress bar.
      * @param {String} fileName
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadProgressBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._progressBarTextureFile = fileName;
         this._progressBarTexType = texType;
         switch (this._progressBarTexType) {
-            case cc.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._progressBarRenderer.initWithFile(fileName);
                 break;
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._progressBarRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -167,7 +167,9 @@ cc.UISlider = cc.UIWidget.extend({
             this._progressBarRenderer.setOpacity(this.getOpacity());
         }
         this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
-        this._progressBarTextureSize = this._progressBarRenderer.getContentSize();
+        var locSize = this._progressBarRenderer.getContentSize();
+        this._progressBarTextureSize.width = locSize.width;
+        this._progressBarTextureSize.height = locSize.height;
         this.progressBarRendererScaleChangedWithSize();
     },
 
@@ -215,7 +217,7 @@ cc.UISlider = cc.UIWidget.extend({
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            cc.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -258,7 +260,7 @@ cc.UISlider = cc.UIWidget.extend({
      * @param {String} normal
      * @param {String} pressed
      * @param {String} disabled
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadSlidBallTextures: function (normal, pressed, disabled, texType) {
         this.loadSlidBallTextureNormal(normal, texType);
@@ -269,20 +271,20 @@ cc.UISlider = cc.UIWidget.extend({
     /**
      * Load normal state texture for slider ball.
      * @param {String} normal
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadSlidBallTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._slidBallNormalTextureFile = normal;
         this._ballNTexType = texType;
         switch (this._ballNTexType) {
-            case cc.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._slidBallNormalRenderer.initWithFile(normal);
                 break;
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._slidBallNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
@@ -295,20 +297,20 @@ cc.UISlider = cc.UIWidget.extend({
     /**
      * Load selected state texture for slider ball.
      * @param {String} pressed
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadSlidBallTexturePressed: function (pressed, texType) {
         if (!pressed) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._slidBallPressedTextureFile = pressed;
         this._ballPTexType = texType;
         switch (this._ballPTexType) {
-            case cc.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._slidBallPressedRenderer.initWithFile(pressed);
                 break;
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._slidBallPressedRenderer.initWithSpriteFrameName(pressed);
                 break;
             default:
@@ -321,20 +323,20 @@ cc.UISlider = cc.UIWidget.extend({
     /**
      * Load dark state texture for slider ball.
      * @param {String} disabled
-     * @param {cc.TextureResType} texType
+     * @param {ccs.TextureResType} texType
      */
     loadSlidBallTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
-        texType = texType || cc.TextureResType.LOCAL;
+        texType = texType || ccs.TextureResType.local;
         this._slidBallDisabledTextureFile = disabled;
         this._ballDTexType = texType;
         switch (this._ballDTexType) {
-            case cc.TextureResType.LOCAL:
+            case ccs.TextureResType.local:
                 this._slidBallDisabledRenderer.initWithFile(disabled);
                 break;
-            case cc.TextureResType.PLIST:
+            case ccs.TextureResType.plist:
                 this._slidBallDisabledRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
@@ -364,7 +366,7 @@ cc.UISlider = cc.UIWidget.extend({
         else {
             var x = 0, y = 0;
             switch (this._progressBarTexType) {
-                case cc.TextureResType.PLIST:
+                case ccs.TextureResType.plist:
                     var barNode = this._progressBarRenderer;
                     if (barNode) {
                         var to = barNode.getTextureRect().origin;
@@ -380,7 +382,7 @@ cc.UISlider = cc.UIWidget.extend({
     },
 
     onTouchBegan: function (touchPoint) {
-        var pass = cc.UIWidget.prototype.onTouchBegan.call(this,touchPoint);
+        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this,touchPoint);
         var nsp = this._renderer.convertToNodeSpace(touchPoint);
         this.setPercent(this.getPercentWithBallPos(nsp.x));
         this.percentChangedEvent();
@@ -395,11 +397,11 @@ cc.UISlider = cc.UIWidget.extend({
     },
 
     onTouchEnded: function (touchPoint) {
-        cc.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
+        ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
     },
 
     onTouchCancelled: function (touchPoint) {
-        cc.UIWidget.prototype.onTouchCancelled.call(this, touchPoint);
+        ccs.UIWidget.prototype.onTouchCancelled.call(this, touchPoint);
     },
 
     /**
@@ -413,17 +415,17 @@ cc.UISlider = cc.UIWidget.extend({
 
     /**
      * add event listener
-     * @param {Object} target
      * @param {Function} selector
+     * @param {Object} target
      */
-    addEventListener: function (target, selector) {
-        this._slidPercentListener = target;
+    addEventListener: function (selector, target) {
         this._slidPercentSelector = selector;
+        this._slidPercentListener = target;
     },
 
     percentChangedEvent: function () {
         if (this._slidPercentListener && this._slidPercentSelector) {
-            this._slidPercentSelector.call(this._slidPercentListener, this, cc.SliderEventType.PERCENTCHANGED);
+            this._slidPercentSelector.call(this._slidPercentListener, this, ccs.SliderEventType.percent_changed);
         }
     },
 
@@ -445,7 +447,8 @@ cc.UISlider = cc.UIWidget.extend({
      * @returns {cc.Size}
      */
     getContentSize: function () {
-        return this._barRenderer.getContentSize();
+        var locContentSize = this._barRenderer.getContentSize();
+        return cc.size(locContentSize.width,locContentSize.height);
     },
 
     /**
@@ -458,15 +461,16 @@ cc.UISlider = cc.UIWidget.extend({
 
     barRendererScaleChangedWithSize: function () {
         if (this._ignoreSize) {
-
             this._barRenderer.setScale(1.0);
-            this._size = this._barRenderer.getContentSize();
-            this._barLength = this._size.width;
+            var locSize = this._barRenderer.getContentSize();
+            this._size.width = locSize.width;
+            this._size.height = locSize.height;
+            this._barLength = locSize.width;
         }
         else {
             this._barLength = this._size.width;
             if (this._scale9Enabled) {
-                this._barRenderer.setPreferredSize(this._size);
+                this._barRenderer.setPreferredSize(cc.size(this._size.width,this._size.height));
             }
             else {
                 var btextureSize = this._barRenderer.getContentSize();
@@ -495,7 +499,7 @@ cc.UISlider = cc.UIWidget.extend({
         }
         else {
             if (this._scale9Enabled) {
-                this._progressBarRenderer.setPreferredSize(this._size);
+                this._progressBarRenderer.setPreferredSize(cc.size(this._size.width,this._size.height));
             }
             else {
                 var ptextureSize = this._progressBarTextureSize;

@@ -138,12 +138,12 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     },
 
     getOpacity:function () {
-        cc.Assert(false, "Opacity no supported");
+        cc.log("cc.MotionStreak.getOpacity has not been supported.");
         return 0;
     },
 
     setOpacity:function (opacity) {
-        cc.Assert(false, "Set opacity no supported");
+        cc.log("cc.MotionStreak.setOpacity has not been supported.");
     },
 
     setOpacityModifyRGB:function (value) {
@@ -193,7 +193,8 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @return {Boolean}
      */
     initWithFade:function (fade, minSeg, stroke, color, texture) {
-        cc.Assert(texture != null, "Invalid filename or texture");
+        if(!texture)
+            throw "cc.MotionStreak.initWithFade(): Invalid filename or texture";
 
         if (typeof(texture) === "string")
             texture = cc.TextureCache.getInstance().addImage(texture);

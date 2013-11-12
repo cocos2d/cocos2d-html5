@@ -189,15 +189,17 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                         cc.Loader.getInstance().onResLoaded();
                         that._xmlDict[filePath] = xmlhttp.responseText;
                         xmlhttp = null;
-                    } else
-                        cc.Assert("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
+                    } else {
+                        cc.Loader.getInstance().onResLoaded();
+                        cc.log("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
+                    }
                 }
             };
             // load xml
             xmlhttp.open("GET", filePath, true);
             xmlhttp.send(null);
         } else
-            cc.Assert("cocos2d:Your browser does not support XMLHTTP.");
+            throw "cocos2d:Your browser does not support XMLHTTP.";
     },
 
     /**

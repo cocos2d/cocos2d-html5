@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.DisplayManager = cc.Class.extend({
+ccs.DisplayManager = cc.Class.extend({
     _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,
@@ -52,12 +52,12 @@ cc.DisplayManager = cc.Class.extend({
             decoDisplay = this._decoDisplayList[index];
         }
         else {
-            decoDisplay = cc.DecotativeDisplay.create();
+            decoDisplay = ccs.DecotativeDisplay.create();
             this._decoDisplayList.push(decoDisplay);
         }
 
-        if(displayData instanceof cc.DisplayData){
-            cc.DisplayFactory.addDisplay(this._bone, decoDisplay, displayData);
+        if(displayData instanceof ccs.DisplayData){
+            ccs.DisplayFactory.addDisplay(this._bone, decoDisplay, displayData);
         }else{
             this._addDisplayOther(decoDisplay,displayData);
         }
@@ -71,26 +71,26 @@ cc.DisplayManager = cc.Class.extend({
 
     _addDisplayOther:function(decoDisplay,display){
         var displayData = null;
-        if (display instanceof cc.Skin){
+        if (display instanceof ccs.Skin){
             var skin = display;
             skin.setBone(this._bone);
-            displayData = new cc.SpriteDisplayData();
-            cc.DisplayFactory.initSpriteDisplay(this._bone, decoDisplay, skin.getDisplayName(), skin);
+            displayData = new ccs.SpriteDisplayData();
+            ccs.DisplayFactory.initSpriteDisplay(this._bone, decoDisplay, skin.getDisplayName(), skin);
             var spriteDisplayData = decoDisplay.getDisplayData();
-            if (spriteDisplayData instanceof cc.SpriteDisplayData)
+            if (spriteDisplayData instanceof ccs.SpriteDisplayData)
                 skin.setSkinData(spriteDisplayData.skinData);
             else
-                skin.setSkinData(new cc.BaseData());
+                skin.setSkinData(new ccs.BaseData());
         }
         else if (display instanceof cc.ParticleSystem){
-            displayData = new cc.ParticleDisplayData();
+            displayData = new ccs.ParticleDisplayData();
         }
-        else if (display instanceof cc.Armature){
-            displayData = new cc.ArmatureDisplayData();
+        else if (display instanceof ccs.Armature){
+            displayData = new ccs.ArmatureDisplayData();
             display.setParentBone(this._bone);
         }
         else  {
-            displayData = new cc.DisplayData();
+            displayData = new ccs.DisplayData();
         }
         decoDisplay.setDisplay(display);
         decoDisplay.setDisplayData(displayData);
@@ -145,7 +145,7 @@ cc.DisplayManager = cc.Class.extend({
 
     setCurrentDecorativeDisplay:function (decoDisplay) {
         var locCurrentDecoDisplay = this._currentDecoDisplay;
-        if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
             if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
                 locCurrentDecoDisplay.getColliderDetector().setActive(false);
             }
@@ -153,7 +153,7 @@ cc.DisplayManager = cc.Class.extend({
 
         this._currentDecoDisplay = decoDisplay;
         locCurrentDecoDisplay = this._currentDecoDisplay;
-        if (cc.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
             if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
                 locCurrentDecoDisplay.getColliderDetector().setActive(true);
             }
@@ -161,7 +161,7 @@ cc.DisplayManager = cc.Class.extend({
 
         var displayRenderNode = locCurrentDecoDisplay == null ? null : locCurrentDecoDisplay.getDisplay();
         if (this._displayRenderNode) {
-            if (this._displayRenderNode instanceof cc.Armature) {
+            if (this._displayRenderNode instanceof ccs.Armature) {
                 this._bone.setChildArmature(null);
             }
             this._displayRenderNode.removeFromParent(true);
@@ -172,7 +172,7 @@ cc.DisplayManager = cc.Class.extend({
         this._displayRenderNode = displayRenderNode;
 
         if (displayRenderNode) {
-            if (displayRenderNode instanceof cc.Armature) {
+            if (displayRenderNode instanceof ccs.Armature) {
                 this._bone.setChildArmature(displayRenderNode);
             }else if(displayRenderNode instanceof cc.ParticleSystem) {
                 displayRenderNode.resetSystem();
@@ -211,16 +211,24 @@ cc.DisplayManager = cc.Class.extend({
         var displayList = boneData.displayDataList;
         for (var i = 0; i < displayList.length; i++) {
             var displayData = displayList[i];
-            var decoDisplay = cc.DecotativeDisplay.create();
+            var decoDisplay = ccs.DecotativeDisplay.create();
             decoDisplay.setDisplayData(displayData);
 
-            cc.DisplayFactory.createDisplay(this._bone, decoDisplay);
+            ccs.DisplayFactory.createDisplay(this._bone, decoDisplay);
 
             this._decoDisplayList.push(decoDisplay);
         }
     },
 
-    containPoint:function (point) {
+    containPoint:function (/*point|x,y*/) {
+        var p = cc.p(0, 0);
+        if (arguments.length == 1) {
+            p.x = arguments[0].x;
+            p.y = arguments[0].y;
+        } else if (arguments.length == 2) {
+            p.x = arguments[0];
+            p.y = arguments[1];
+        }
         if (!this._visible || this._displayIndex < 0) {
             return false;
         }
@@ -236,19 +244,13 @@ cc.DisplayManager = cc.Class.extend({
                 var outPoint = cc.p(0, 0);
                 var sprite = this._currentDecoDisplay.getDisplay();
                 sprite = sprite.getChildByTag(0);
-                ret = cc.SPRITE_CONTAIN_POINT_WITH_RETURN(sprite, point, outPoint);
+                ret = ccs.SPRITE_CONTAIN_POINT_WITH_RETURN(sprite, p, outPoint);
                 break;
             default:
                 break;
         }
         return ret;
     },
-
-    containPoint:function (x, y) {
-        var p = cc.p(x, y);
-        return this.containPoint(p);
-    },
-
 
     setVisible:function (visible) {
         if (!this._displayRenderNode) {
@@ -304,8 +306,8 @@ cc.DisplayManager = cc.Class.extend({
 
 });
 
-cc.DisplayManager.create = function (bone) {
-    var displayManager = new cc.DisplayManager();
+ccs.DisplayManager.create = function (bone) {
+    var displayManager = new ccs.DisplayManager();
     if (displayManager && displayManager.init(bone)) {
         return displayManager;
     }

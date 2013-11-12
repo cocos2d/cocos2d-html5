@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.ComAudio
+ * Base class for ccs.ComAudio
  * @class
  * @extends cc.Component
  */
-cc.ComAudio = cc.Component.extend({
+ccs.ComAudio = cc.Component.extend({
     _filePath: "",
     _loop: false,
     ctor: function () {
@@ -158,8 +158,8 @@ cc.ComAudio = cc.Component.extend({
         return this._loop;
     }
 });
-cc.ComAudio.create = function () {
-    var com = new cc.ComAudio();
+ccs.ComAudio.create = function () {
+    var com = new ccs.ComAudio();
     if (com && com.init()) {
         return com;
     }
