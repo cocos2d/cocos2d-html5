@@ -101,7 +101,8 @@ cc.AppController.shareAppController = function () {
     if (cc.sharedAppController == null) {
         cc.sharedAppController = new cc.AppController();
     }
-    cc.Assert(cc.sharedAppController, "shareAppController");
+    if(!cc.sharedAppController)
+        throw "Application initialize failure";
     return cc.sharedAppController;
 };
 

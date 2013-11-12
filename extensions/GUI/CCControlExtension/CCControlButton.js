@@ -139,10 +139,11 @@ cc.ControlButton = cc.Control.extend({
     },
 
     initWithLabelAndBackgroundSprite:function (label, backgroundSprite) {
+        if(!label || !label.RGBAProtocol)
+            throw "cc.ControlButton.initWithLabelAndBackgroundSprite(): label should be non-null";
+        if(!backgroundSprite)
+            throw "cc.ControlButton.initWithLabelAndBackgroundSprite(): backgroundSprite should be non-null";
         if (cc.Control.prototype.init.call(this, true)) {
-            cc.Assert(label != null, "node must not be nil");
-            cc.Assert(label != null || label.RGBAProtocol || backgroundSprite != null, "");
-
             this._parentInited = true;
 
             // Initialize the button state tables
@@ -281,7 +282,7 @@ cc.ControlButton = cc.Control.extend({
 
     setOpacity:function (opacity) {
         // XXX fixed me if not correct
-        cc.Control.prototype.setOpacity.call(opacity);
+        cc.Control.prototype.setOpacity.call(this, opacity);
         /*this._opacity = opacity;
         var controlChildren = this.getChildren();
         for (var i = 0; i < controlChildren.length; i++) {

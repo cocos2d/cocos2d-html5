@@ -129,7 +129,10 @@ cc.kmVec4AreEqual = function(vec1,vec2){
 };
 
 cc.kmVec4Assign = function(destVec, srcVec){
-    cc.Assert(destVec != srcVec, "same object!");
+    if(destVec == srcVec){
+        cc.log("destVec and srcVec are same object");
+        return destVec;
+    }
 
     destVec.x = srcVec.x;
     destVec.y = srcVec.y;

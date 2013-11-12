@@ -49,7 +49,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
     /**
      * Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      * @param {object} dictionary
-     * @param {HTMLImageElement|cc.Texture2D} texture
+     * @param {cc.Texture2D} texture
      */
     _addSpriteFramesWithDictionary:function (dictionary, texture) {
         var metadataDict = dictionary["metadata"];
@@ -61,7 +61,10 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         }
 
         // check the format
-        cc.Assert(format >= 0 && format <= 3, "format is not supported for cc.SpriteFrameCache addSpriteFramesWithDictionary:textureFilename:");
+        if(format < 0 || format > 3) {
+            cc.log("format is not supported for cc.SpriteFrameCache.addSpriteFramesWithDictionary");
+            return;
+        }
 
         for (var key in framesDict) {
             var frameDict = framesDict[key];
@@ -191,19 +194,21 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      *   If you want to use another texture, you should use the addSpriteFrames:texture method.<br/>
      * </p>
      * @param {String} plist plist filename
-     * @param {HTMLImageElement|cc.Texture2D} texture
+     * @param {HTMLImageElement|cc.Texture2D|string} texture
      * @example
      * // add SpriteFrames to SpriteFrameCache With File
      * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
      */
     addSpriteFrames:function (plist, texture) {
+        if(!plist)
+            throw "cc.SpriteFrameCache.addSpriteFrames(): plist should be non-null";
         var fileUtils = cc.FileUtils.getInstance();
         var fullPath = fileUtils.fullPathForFilename(plist);
         var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
 
         switch (arguments.length) {
             case 1:
-                cc.Assert(plist, "plist filename should not be NULL");
+
                 if (!cc.ArrayContainsObject(this._loadedFileNames, plist)) {
                     var texturePath = "";
                     var metadataDict = dict["metadata"];
@@ -227,15 +232,13 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
 
                     var getTexture = cc.TextureCache.getInstance().addImage(texturePath);
-                    if (getTexture) {
+                    if (getTexture)
                         this._addSpriteFramesWithDictionary(dict, getTexture);
-                    } else {
+                    else
                         cc.log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
-                    }
                 }
                 break;
             case 2:
-                //if ((texture instanceof cc.Texture2D) || (texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
                 if (texture instanceof cc.Texture2D) {
                     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames. */
                     this._addSpriteFramesWithDictionary(dict, texture);
@@ -244,7 +247,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                      @since v0.99.5
                      */
                     var textureFileName = texture;
-                    cc.Assert(textureFileName, "texture name should not be null");
+                    if(!textureFileName)
+                        throw "cc.SpriteFrameCache.addSpriteFrames(): texture name should not be null";
                     var gTexture = cc.TextureCache.getInstance().addImage(textureFileName);
 
                     if (gTexture) {

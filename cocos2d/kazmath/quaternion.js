@@ -129,7 +129,8 @@ cc.kmQuaternionMultiply = function (pOut, q1, q2) {
 ///< Normalizes a quaternion
 cc.kmQuaternionNormalize = function (pOut, pIn) {
     var length = cc.kmQuaternionLength(pIn);
-    cc.Assert(Math.abs(length) > cc.kmEpsilon, "");
+    if(Math.abs(length) <= cc.kmEpsilon)
+        throw "cc.kmQuaternionNormalize(): pIn is an invalid value";
     cc.kmQuaternionScale(pOut, pIn, 1.0 / length);
 
     return pOut;

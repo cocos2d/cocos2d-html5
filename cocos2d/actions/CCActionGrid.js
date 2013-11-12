@@ -53,8 +53,6 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
             var locGridSize = targetGrid.getGridSize();
             if (targetGrid.isActive() && (locGridSize.width == this._gridSize.width) && (locGridSize.height == this._gridSize.height))
                 targetGrid.reuse();
-            else
-                cc.Assert(0, "");
         } else {
             if (targetGrid && targetGrid.isActive())
                 targetGrid.setActive(false);
@@ -88,8 +86,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
      */
     getGrid:function () {
         // Abstract class needs implementation
-        cc.Assert(0, "");
-        return null;
+        cc.log("cc.GridAction.getGrid(): it should be overridden in subclass.");
     }
 });
 
