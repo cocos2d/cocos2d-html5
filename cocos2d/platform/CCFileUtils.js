@@ -255,6 +255,7 @@ cc.FileUtils = cc.Class.extend({
     },
 
     unloadTextFileData:function (fileUrl) {
+        fileUrl = this.fullPathForFilename(fileUrl);
         if (this._textFileCache.hasOwnProperty(fileUrl))
             delete this._textFileCache[fileUrl];
     },
@@ -322,6 +323,7 @@ cc.FileUtils = cc.Class.extend({
      * @returns {String}
      */
     getTextFileData:function (fileUrl) {
+        fileUrl = this.fullPathForFilename(fileUrl);
         if (this._textFileCache.hasOwnProperty(fileUrl))
             return this._textFileCache[fileUrl];
         return this._loadTextFileData(fileUrl);
