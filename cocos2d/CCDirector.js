@@ -245,14 +245,18 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._touchDispatcher.init();
 
         //KeyboardDispatcher
-        this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
+        if(cc.KeyboardDispatcher)
+            this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
 
         //accelerometer
-        this._accelerometer = new cc.Accelerometer();
+        if(cc.Accelerometer)
+            this._accelerometer = new cc.Accelerometer();
 
         //MouseDispatcher
-        this._mouseDispatcher = new cc.MouseDispatcher();
-        this._mouseDispatcher.init();
+        if(cc.MouseDispatcher){
+            this._mouseDispatcher = new cc.MouseDispatcher();
+            this._mouseDispatcher.init();
+        }
 
         return true;
     },
@@ -1057,19 +1061,26 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     getKeyboardDispatcher:function () {
+        if(!cc.KeyboardDispatcher)
+            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
         return this._keyboardDispatcher;
     },
     setKeyboardDispatcher:function (keyboardDispatcher) {
+        if(!cc.KeyboardDispatcher)
+            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
         this._keyboardDispatcher = keyboardDispatcher;
     },
 
     getAccelerometer:function () {
+        if(!cc.Accelerometer)
+            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
         return this._accelerometer;
     },
     setAccelerometer:function (accelerometer) {
-        if (this._accelerometer != accelerometer) {
+        if(!cc.Accelerometer)
+            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
+        if (this._accelerometer != accelerometer)
             this._accelerometer = accelerometer;
-        }
     },
 
     getDeltaTime:function(){
@@ -1077,10 +1088,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     getMouseDispatcher:function () {
+        if(!cc.MouseDispatcher)
+            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
         return this._mouseDispatcher;
     },
 
     setMouseDispatcher:function (mouseDispatcher) {
+        if(!cc.MouseDispatcher)
+            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
         if (this._mouseDispatcher != mouseDispatcher)
             this._mouseDispatcher = mouseDispatcher;
     },

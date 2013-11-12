@@ -91,6 +91,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     setMouseEnabled:function (enabled) {
+        if(!cc.MouseDispatcher)
+            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
+
         if (this._isMouseEnabled != enabled) {
             this._isMouseEnabled = enabled;
             if (this._running) {
@@ -103,6 +106,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     setMousePriority:function (priority) {
+        if(!cc.MouseDispatcher)
+            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
+
         if (this._mousePriority !== priority) {
             this._mousePriority = priority;
             // Update touch priority with handler
@@ -202,16 +208,16 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {Boolean} enabled
      */
     setAccelerometerEnabled:function (enabled) {
+        if(!cc.Accelerometer)
+            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
         if (enabled !== this._isAccelerometerEnabled) {
             this._isAccelerometerEnabled = enabled;
-
             if (this._running) {
                 var director = cc.Director.getInstance();
-                if (enabled) {
+                if (enabled)
                     director.getAccelerometer().setDelegate(this);
-                } else {
+                else
                     director.getAccelerometer().setDelegate(null);
-                }
             }
         }
     },
@@ -221,9 +227,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {Number} interval
      */
     setAccelerometerInterval:function (interval) {
-        if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled && cc.Accelerometer)
             cc.Director.getInstance().getAccelerometer().setAccelerometerInterval(interval);
-        }
     },
 
     onAccelerometer:function (accelerationValue) {
@@ -245,6 +250,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {Boolean} enabled
      */
     setKeyboardEnabled:function (enabled) {
+        if(!cc.KeyboardDispatcher)
+            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
+
         if (enabled !== this._isKeyboardEnabled) {
             this._isKeyboardEnabled = enabled;
             if (this._running) {
@@ -272,14 +280,14 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         cc.Node.prototype.onEnter.call(this);
 
         // add this layer to concern the Accelerometer Sensor
-        if (this._isAccelerometerEnabled)
+        if (this._isAccelerometerEnabled && cc.Accelerometer)
             director.getAccelerometer().setDelegate(this);
 
         // add this layer to concern the kaypad msg
-        if (this._isKeyboardEnabled)
+        if (this._isKeyboardEnabled && cc.KeyboardDispatcher)
             director.getKeyboardDispatcher().addDelegate(this);
 
-        if (this._isMouseEnabled)
+        if (this._isMouseEnabled && cc.MouseDispatcher)
             director.getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
     },
 
@@ -292,14 +300,14 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             cc.unregisterTouchDelegate(this);
 
         // remove this layer from the delegates who concern Accelerometer Sensor
-        if (this._isAccelerometerEnabled)
+        if (this._isAccelerometerEnabled && cc.Accelerometer)
             director.getAccelerometer().setDelegate(null);
 
         // remove this layer from the delegates who concern the kaypad msg
-        if (this._isKeyboardEnabled)
+        if (this._isKeyboardEnabled && cc.KeyboardDispatcher)
             director.getKeyboardDispatcher().removeDelegate(this);
 
-        if (this._isMouseEnabled)
+        if (this._isMouseEnabled && cc.MouseDispatcher)
             director.getMouseDispatcher().removeMouseDelegate(this);
 
         cc.Node.prototype.onExit.call(this);
@@ -309,9 +317,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * this is called when ever a layer is a child of a scene that just finished a transition
      */
     onEnterTransitionDidFinish:function () {
-        if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled && cc.Accelerometer)
             cc.Director.getInstance().getAccelerometer().setDelegate(this);
-        }
         cc.Node.prototype.onEnterTransitionDidFinish.call(this);
     },
 

@@ -54,7 +54,6 @@
         'kazmath/aabb.js',
         'kazmath/GL/mat4stack.js',
         'kazmath/GL/matrix.js',
-        'cocoa/CCSet.js',
         'cocoa/CCNS.js',
         'cocoa/CCAffineTransform.js',
         'support/CCPointExtension.js',
