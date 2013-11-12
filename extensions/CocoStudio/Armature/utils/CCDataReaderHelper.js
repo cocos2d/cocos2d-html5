@@ -162,7 +162,7 @@ ccs.DataReaderHelper.addDataFromFile = function (filePath,isLoadSpriteFrame) {
         this.addDataFromXML(fullFilePath);
     }
     else if (str == ".json" || str == ".ExportJson") {
-        this.addDataFromJson(fullFilePath,isLoadSpriteFrame);
+        this.addDataFromJson(filePath,isLoadSpriteFrame);
     }
 };
 

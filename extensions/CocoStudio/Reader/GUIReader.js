@@ -153,7 +153,7 @@ ccs.GUIReader = cc.Class.extend({
         this._olderVersion = false;
         var jsonPath = fileName || "";
         var fullJsonPath = cc.FileUtils.getInstance().fullPathForFilename(fileName);
-        var des = cc.FileUtils.getInstance().getTextFileData(fullJsonPath);
+        var des = cc.FileUtils.getInstance().getTextFileData(jsonPath);
         if (!des) {
             cc.log("read json file[" + fileName + "] error!");
             return null;
