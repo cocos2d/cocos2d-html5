@@ -26,7 +26,6 @@
 
 var cc = cc || {};
 
-
 /**
  * A simple Audio Engine engine API.
  * @class
@@ -35,8 +34,11 @@ var cc = cc || {};
 cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _audioID:0,
     _audioIDList:null,
+    _supportedFormat:null,
+
     ctor:function(){
         this._audioIDList = {};
+        this._supportedFormat = [];
     },
     /**
      * Check each type to see if it can be played by current browser
@@ -93,69 +95,14 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             return fullpath.substring(startPos + 1, fullpath.length);
         }
         return -1;
-    }
-});
-
-
-
-/**
- * the entity stored in soundList and effectList, containing the audio element and the extension name.
- * used in cc.SimpleAudioEngine
- */
-cc.SimpleSFX = function (audio, ext) {
-    this.audio = audio;
-    this.ext = ext || ".ogg";
-};
-
-/**
- * The Audio Engine implementation via <audio> tag in HTML5.
- * @class
- * @extends   cc.AudioEngine
- */
-cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */{
-    _supportedFormat:null,
-    _effectList:{},
-    _soundList:{},
-    _playingMusic:null,
-    _effectsVolume:1,
-    _maxAudioInstance:10,
-    _capabilities:null,
-    _soundSupported:false,
-    _canPlay:true,
-
-    /**
-     * Constructor
-     */
-    ctor:function () {
-        cc.AudioEngine.prototype.ctor.call(this);
-
-        this._supportedFormat = [];
-        this._effectList = {};
-        this._soundList = {};
-
-        this._capabilities = {"mp3": false, "ogg": false, "wav": false, "mp4": false, "m4a": false};
-        var locCapabilities = this._capabilities;
-        this._checkCanPlay(locCapabilities);
-
-        // enable sound if any of the audio format is supported
-        this._soundSupported = locCapabilities["mp3"] || locCapabilities["mp4"]
-            || locCapabilities["m4a"] || locCapabilities["ogg"]
-            || locCapabilities["wav"];
-
-        var ua = navigator.userAgent;
-        if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
-            this._canPlay = false;
-        }
     },
 
     /**
-     * Initialize sound type
-     * @return {Boolean}
+     * Indicates whether any background music can be played or not.
+     * @returns {boolean} <i>true</i> if the background music is playing, otherwise <i>false</i>
      */
-    init:function () {
-        // detect the prefered audio format
-        this._getSupportedAudioFormat();
-        return this._soundSupported;
+    willPlayMusic: function() {
+        return false;
     },
 
     /**
@@ -175,6 +122,78 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     },
 
     /**
+     * search in this._supportedFormat if ext is there
+     * @param {String} ext
+     * @returns {Boolean}
+     */
+    isFormatSupported: function (ext) {
+        var locSupportedFormat = this._supportedFormat;
+        for (var i = 0, len = locSupportedFormat.length; i < len; i++) {
+            if (locSupportedFormat[i] == ext)
+                return true;
+        }
+        return false;
+    }
+});
+
+/**
+ * the entity stored in soundList and effectList, containing the audio element and the extension name.
+ * used in cc.SimpleAudioEngine
+ */
+cc.SimpleSFX = function (audio, ext) {
+    this.audio = audio;
+    this.ext = ext || ".ogg";
+};
+
+/**
+ * The Audio Engine implementation via <audio> tag in HTML5.
+ * @class
+ * @extends   cc.AudioEngine
+ */
+cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */{
+    _effectList:null,
+    _soundList:null,
+    _playingMusic:null,
+    _effectsVolume:1,
+    _maxAudioInstance:10,
+    _capabilities:null,
+    _soundSupported:false,
+    _canPlay:true,
+
+    /**
+     * Constructor
+     */
+    ctor:function () {
+        cc.AudioEngine.prototype.ctor.call(this);
+
+        this._effectList = {};
+        this._soundList = {};
+
+        this._capabilities = {"mp3": false, "ogg": false, "wav": false, "mp4": false, "m4a": false};
+        var locCapabilities = this._capabilities;
+        this._checkCanPlay(locCapabilities);
+
+        // enable sound if any of the audio format is supported
+        this._soundSupported = locCapabilities["mp3"] || locCapabilities["mp4"]
+            || locCapabilities["m4a"] || locCapabilities["ogg"] || locCapabilities["wav"];
+
+        var ua = navigator.userAgent;
+        if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
+            this._canPlay = false;
+        }
+    },
+
+    /**
+     * Initialize sound type
+     * @return {Boolean}
+     */
+    init:function () {
+        // detect the prefered audio format
+        this._getSupportedAudioFormat();
+        return this._soundSupported;
+    },
+
+    /**
      * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the music file with filename extension.
@@ -189,7 +208,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                     sfxCache.ext = extName;
                     sfxCache.audio = new Audio(path);
                     sfxCache.audio.preload = 'auto';
-                    var soundPreloadCanplayHandler = function (e) {
+                    var soundPreloadCanplayHandler = function () {
                         cc.Loader.getInstance().onResLoaded();
                         this.removeEventListener('canplaythrough', soundPreloadCanplayHandler, false);
                         this.removeEventListener('error', soundPreloadErrorHandler, false);
@@ -321,10 +340,6 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         }
     },
 
-    willPlayMusic:function () {
-        return false;
-    },
-
     /**
      * The volume of the music max value is 1.0,the min value is 0.0 .
      * @return {Number}
@@ -439,7 +454,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     },
 
     /**
-     * Set the volume of sound effecs.
+     * Set the volume of sound effects.
      * @param {Number} volume Volume must be in 0.0~1.0 .
      * @example
      * //example
@@ -614,26 +629,10 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         }
     },
 
-    /**
-     * search in this._supportedFormat if ext is there
-     * @param {String} ext
-     * @returns {Boolean}
-     */
-    isFormatSupported: function (ext) {
-        var tmpExt, locSupportedFormat = this._supportedFormat;
-        for (var i = 0; i < locSupportedFormat.length; i++) {
-            tmpExt = locSupportedFormat[i];
-            if (tmpExt == ext)
-                return true;
-        }
-        return false;
-    },
-
     _getSupportedAudioFormat:function () {
         // check for sound support by the browser
-        if (!this._soundSupported) {
+        if (!this._soundSupported)
             return;
-        }
 
         var formats = ["ogg", "mp3", "wav", "mp4", "m4a"];
         for (var idx in formats) {
@@ -675,8 +674,6 @@ cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
 cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     // the Web Audio Context
     _ctx: null,
-    // may be: mp3, ogg, wav, mp4, m4a
-    _supportedFormat: null,
     // if sound is not enabled, this engine's init() will return false
     _soundSupported: false,
     // containing all binary buffers of loaded audio resources
@@ -708,13 +705,11 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     // _maxAudioInstance: 10,
 
-
     /**
      * Constructor
      */
     ctor: function() {
         cc.AudioEngine.prototype.ctor.call(this);
-        this._supportedFormat = [];
         this._audioData = {};
         this._audiosLoading = {};
         this._effects = {};
@@ -746,20 +741,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     * search in this._supportedFormat if ext is there
-     * @param {String} ext
-     * @returns {Boolean}
-     */
-    isFormatSupported: function(ext) {
-        var locSupportedFormat = this._supportedFormat;
-        for (var idx in locSupportedFormat) {
-            if (ext === locSupportedFormat[idx])
-                return true;
-        }
-        return false;
-    },
-
-    /**
      * Using XMLHttpRequest to retrieve the resource data from server.
      * Not using cc.FileUtils.getByteArrayFromFile() because it is synchronous,
      * so doing the retrieving here is more handful.
@@ -783,30 +764,13 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     * Preload music resource.
-     * @param {String} path
-     */
-    preloadMusic:function(path){
-        this.preloadSound(path);
-    },
-
-    /**
-     * Preload effect resource.
-     * @param {String} path
-     */
-    preloadEffect:function(path){
-        this.preloadSound(path);
-    },
-
-    /**
      * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the music file with filename extension.
      */
     preloadSound: function(path) {
-        if (!this._soundSupported) {
+        if (!this._soundSupported)
             return;
-        }
 
         var extName = this._getExtFromFullPath(path);
         var keyName = this._getPathWithoutExt(path);
@@ -1044,7 +1008,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (!this.isMusicPlaying()) {
             return;
         }
-
         this._pauseSound(this._music);
     },
 
@@ -1099,11 +1062,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         this._music = this._beginSound(key, loop, volume);
     },
 
-    willPlayMusic: function() {
-        // TODO what is the purpose of this method? This is just a copy from cc.SimpleAudioEngine
-        return false;
-    },
-
     /**
      * The volume of the music max value is 1.0,the min value is 0.0 .
      * @return {Number}
@@ -1133,21 +1091,17 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().setMusicVolume(0.5);
      */
     setMusicVolume: function(volume) {
-        if (volume > 1) {
+        if (volume > 1)
             volume = 1;
-        } else if (volume < 0) {
+         else if (volume < 0)
             volume = 0;
-        }
 
-        if (this.getMusicVolume() == volume) {
-            // it is the same, no need to update
+        if (this.getMusicVolume() == volume)                   // it is the same, no need to update
             return;
-        }
 
         this._musicVolume = volume;
-        if (this._music) {
+        if (this._music)
             this._setSoundVolume(this._music, volume);
-        }
     },
 
     /**
@@ -1268,9 +1222,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().pauseEffect(audioID);
      */
     pauseEffect: function(audioID) {
-        if (audioID == null) {
+        if (audioID == null)
             return;
-        }
 
         if (this._audioIDList.hasOwnProperty(audioID)) {
             this._pauseSoundList(this._audioIDList[audioID]);
