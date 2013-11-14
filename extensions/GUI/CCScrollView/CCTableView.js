@@ -503,7 +503,7 @@ cc.TableView = cc.ScrollView.extend({
         var i = this._indices.indexOf(idx);
         if (i == -1)
             return null;
-        return this._cellsUsed.objectAtIndex(i);
+        return this._cellsUsed.objectAtIndex(idx);
     },
 
     scrollViewDidScroll:function (view) {
