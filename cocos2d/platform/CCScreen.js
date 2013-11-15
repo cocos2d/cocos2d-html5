@@ -26,7 +26,7 @@
 
 /**
  * The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
- * It's invalid on QQbrowser and
+ * It's invalid on safari,QQbrowser and android browser
  * @class
  * @extends cc.Class
  */
