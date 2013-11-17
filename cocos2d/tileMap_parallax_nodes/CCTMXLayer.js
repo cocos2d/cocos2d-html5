@@ -442,15 +442,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setTileGID:function (gid, pos, flags) {
         if(!pos)
-            throw "cc.TMXLayer.getTileFlagsAt(): pos should be non-null";
+            throw "cc.TMXLayer.setTileGID(): pos should be non-null";
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
-            throw "cc.TMXLayer.getTileFlagsAt(): invalid position";
+            throw "cc.TMXLayer.setTileGID(): invalid position";
         if(!this._tiles || !this._atlasIndexArray){
-            cc.log("cc.TMXLayer.getTileFlagsAt(): TMXLayer: the tiles map has been released");
+            cc.log("cc.TMXLayer.setTileGID(): TMXLayer: the tiles map has been released");
             return null;
         }
-        if(gid ===0 || gid >= this._tileSet.firstGid){
-            cc.log( "cc.TMXLayer.getTileFlagsAt(): invalid gid:" + gid);
+        if(gid !== 0 && gid < this._tileSet.firstGid){
+            cc.log( "cc.TMXLayer.setTileGID(): invalid gid:" + gid);
             return null;
         }
 

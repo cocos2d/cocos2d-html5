@@ -2070,7 +2070,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         flipXOffset *= locEGL_ScaleX;
         flipYOffset *= locEGL_ScaleY;
 
-        if (this._texture && locRect.width > 0) {
+        if (this._texture && locTextureCoord.width > 0) {
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,

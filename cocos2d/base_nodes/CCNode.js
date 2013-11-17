@@ -790,7 +790,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Changes the tag that is used to identify the node easily. <br/>
      * Please refer to getTag for the sample code.
-     * @param {Number} Var A interger that indentifies the node.
+     * @param {Number} Var A integer that identifies the node.
      */
     setTag:function (Var) {
         this._tag = Var;

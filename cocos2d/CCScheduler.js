@@ -164,7 +164,7 @@ cc.ArrayGetIndexOfObject = function (arr, findObj) {
  * @return {Boolean}
  */
 cc.ArrayContainsObject = function (arr, findObj) {
-    return cc.ArrayGetIndexOfObject(arr, findObj) != -1;
+    return arr.indexOf(findObj) != -1;
 };
 
 /**
