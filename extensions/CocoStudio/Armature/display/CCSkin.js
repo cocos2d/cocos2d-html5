@@ -28,6 +28,7 @@ ccs.Skin = cc.Sprite.extend({
     _skinTransform:null,
     _displayName:"",
     _blend:null,
+    _armature:null,
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
@@ -35,19 +36,16 @@ ccs.Skin = cc.Sprite.extend({
         this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
         this._blend = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._armature = null;
     },
     initWithSpriteFrameName:function(spriteFrameName){
         var ret = cc.Sprite.prototype.initWithSpriteFrameName.call(this,spriteFrameName);
-        var atlas = ccs.SpriteFrameCacheHelper.getInstance().getTexureAtlasWithTexture(this._texture);
-        this.setTextureAtlas(atlas);
         this._displayName = spriteFrameName;
         return ret;
     },
-    initWithFile:function(spriteFrameName){
+    initWithFile:function(fileName){
         var ret = cc.Sprite.prototype.initWithFile.call(this,spriteFrameName);
-        var atlas = ccs.SpriteFrameCacheHelper.getInstance().getTexureAtlasWithTexture(this._texture);
-        this.setTextureAtlas(atlas);
-        this._displayName = spriteFrameName;
+        this._displayName = fileName;
         return ret;
     },
     setSkinData:function (skinData) {
@@ -55,10 +53,12 @@ ccs.Skin = cc.Sprite.extend({
 
         this.setScaleX(skinData.scaleX);
         this.setScaleY(skinData.scaleY);
-        this.setRotation(cc.RADIANS_TO_DEGREES(skinData.skewX));
+        this.setRotationX(cc.RADIANS_TO_DEGREES(skinData.skewX));
+        this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
         this._skinTransform = this.nodeToParentTransform();
+        this.updateArmatureTransform();
     },
 
     getSkinData:function () {
@@ -75,6 +75,11 @@ ccs.Skin = cc.Sprite.extend({
 
     updateArmatureTransform:function () {
         this._transform = cc.AffineTransformConcat(this._skinTransform, this._bone.nodeToArmatureTransform());
+        var locTransform = this._transform;
+        var locArmature = this._armature;
+        if (locArmature && locArmature.getBatchNode()) {
+            this._transform = cc.AffineTransformConcat(locTransform, locTransform.nodeToParentTransform());
+        }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.

@@ -51,10 +51,19 @@ ccs.TransformHelp.transformFromParent = function (bone, parentBone) {
  * @param {cc.AffineTransform} matrix
  */
 ccs.TransformHelp.nodeToMatrix = function (node, matrix) {
-    matrix.a = node.scaleX * Math.cos(node.skewY);
-    matrix.b = node.scaleX * Math.sin(node.skewY);
-    matrix.c = node.scaleY * Math.sin(node.skewX);
-    matrix.d = node.scaleY * Math.cos(node.skewY);
+    if (node.skewX == -node.skewY) {
+        var sine = Math.sin(node.skewX);
+        var cosine = Math.cos(node.skewX);
+        matrix.a = node.scaleX * cosine;
+        matrix.b = node.scaleX * -sine;
+        matrix.c = node.scaleY * sine;
+        matrix.d = node.scaleY * cosine;
+    } else {
+        matrix.a = node.scaleX * Math.cos(node.skewY);
+        matrix.b = node.scaleX * Math.sin(node.skewY);
+        matrix.c = node.scaleY * Math.sin(node.skewX);
+        matrix.d = node.scaleY * Math.cos(node.skewY);
+    }
     matrix.tx = node.x;
     matrix.ty = node.y;
 };
