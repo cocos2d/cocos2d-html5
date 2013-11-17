@@ -61,6 +61,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _screenSize:null,
     // resolution size, it is the size appropriate for the app resources.
     _designResolutionSize:null,
+    _originalDesignResolutionSize:null,
     // the view port size
     _viewPortRect:null,
     // the view name
@@ -94,6 +95,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._viewName = "Cocos2dHTML5";
 
         this._designResolutionSize = cc.SizeZero();
+        this._originalDesignResolutionSize = cc.SizeZero();
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
         this._contentTranslateLeftTop = {left:0, top:0};
@@ -113,20 +115,32 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._initialize = true;
     },
 
+    _isAdjustViewPort:false,
+    adjustViewPort:function(enabled){
+        this._isAdjustViewPort = enabled;
+    },
+
+    _resizeEvent:function(){
+        var width = this._originalDesignResolutionSize.width;
+        var height = this._originalDesignResolutionSize.height;
+        if(width>0)
+            this.setDesignResolutionSize(width,height,this._resolutionPolicy);
+    },
+
     _resizeWithBrowserSize:function(enabled){
         var adjustSize;
         if(enabled){
            //enable
             if(!this.__resizeWithBrowserSize){
                 this.__resizeWithBrowserSize = true;
-                adjustSize = this._adjustSizeToBrowser.bind(this);
+                adjustSize = this._resizeEvent.bind(this);
                 window.addEventListener('resize', adjustSize, false);
             }
         }else{
            //disable
             if(this.__resizeWithBrowserSize){
                 this.__resizeWithBrowserSize = true;
-                adjustSize = this._adjustSizeToBrowser.bind(this);
+                adjustSize = this._resizeEvent.bind(this);
                 window.removeEventListener('resize', adjustSize, false);
             }
         }
@@ -134,9 +148,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     _scrollToBottom:function(){
         if(cc.Browser.isMobile){
-            cc.canvas.height = this._ele.clientHeight + 500;
+            cc.canvas.height = this._ele.clientHeight + 100;
             window.location.href="#bottom";
         }
+
     },
 
     _initScreenSize:function(){
@@ -197,7 +212,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 body.style.margin = 0 + "px";
             }
         }
-        this.setDesignResolutionSize();
+        //this.setDesignResolutionSize();
     },
 
     // hack
@@ -328,26 +343,16 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         return true;
     },
 
-    /**
-     * Set the design resolution size.
-     * @param {Number} width Design resolution width.
-     * @param {Number} height Design resolution height.
-     * @param {Number} resolutionPolicy The resolution policy desired, you may choose:
-     * [1] ResolutionExactFit Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.
-     * [2] ResolutionNoBorder Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.
-     * [3] ResolutionShowAll  Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
-     */
-    setDesignResolutionSize:function (width, height, resolutionPolicy) {
-        if(resolutionPolicy === cc.RESOLUTION_POLICY.UNKNOWN){
-            cc.log("cc.EGLView.setDesignResolutionSize(): should set resolutionPolicy");
-            return;
-        }
-
+    __setDesignResolutionSize:function(width, height, resolutionPolicy){
+        this._adjustSizeToBrowser();
+        cc.Assert(resolutionPolicy !== cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
         if (width == 0 || height == 0)
             return;
 
-        if ((width != null) && (height != null))
+        if ((width != null) && (height != null)){
             this._designResolutionSize = cc.size(width, height);
+            this._originalDesignResolutionSize = cc.size(width, height);
+        }
 
         if (resolutionPolicy != null)
             this._resolutionPolicy = resolutionPolicy;
@@ -393,6 +398,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 var locHeight = Math.abs(locScreenSize.height - viewPortH) / 2;
                 cc.canvas.width = viewPortW;
                 cc.canvas.height = viewPortH;
+                cc.container.style.width = viewPortW +"px";
+                cc.container.style.height = viewPortH +"px";
                 cc.container.style.textAlign = "center";
                 cc.container.style.verticalAlign = "middle";
                 cc.renderContext.translate(0, viewPortH);
@@ -403,6 +410,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) || (locResolutionPolicy === cc.RESOLUTION_POLICY.EXACT_FIT)) {
                 cc.canvas.width = viewPortW;
                 cc.canvas.height = viewPortH;
+                cc.container.style.width = viewPortW +"px";
+                cc.container.style.height = viewPortH +"px";
                 cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + this._viewPortRect.height);
             }
         } else {
@@ -417,6 +426,49 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         //set the viewport for mobile
         if (cc.Browser.isMobile && this.__isAdjustSizeToBrowser)
             this._calculateViewPortByPolicy();
+    },
+
+    _adjustMobileViewPort:function(width,height){
+        if(this._isAdjustViewPort){
+            if(width<=320){
+                width = 321;
+                cc.canvas.witdh = width;
+                cc.container.style.width = width+"px";
+            }
+            var vp = document.getElementById("viewport");
+            var content = "user-scalable=no,target-densitydpi=device-dpi";
+
+           /* if(height){
+                content ="height="+height+","+content;
+            }*/
+            if(width){
+                content ="width="+width+","+content;
+            }
+            vp.content = content;
+        }
+    },
+
+    /**
+     * Set the design resolution size.
+     * @param {Number} width Design resolution width.
+     * @param {Number} height Design resolution height.
+     * @param {Number} resolutionPolicy The resolution policy desired, you may choose:
+     * [1] ResolutionExactFit Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.
+     * [2] ResolutionNoBorder Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.
+     * [3] ResolutionShowAll  Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
+     */
+    setDesignResolutionSize:function (width, height, resolutionPolicy) {
+        if(cc.Browser.isMobile){
+            this._scrollToBottom();
+            //this._adjustMobileViewPort(cc.originalCanvasSize.width,cc.originalCanvasSize.height);
+            var self = this;
+            var fun = function(){
+                self.__setDesignResolutionSize(width, height, resolutionPolicy);
+            };
+            setTimeout(fun,1);
+        }else{
+            this.__setDesignResolutionSize(width, height, resolutionPolicy);
+        }
     },
 
     _calculateViewPortByPolicy:function(){

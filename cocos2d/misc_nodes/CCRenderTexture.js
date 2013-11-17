@@ -120,15 +120,15 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this._clearColor = cc.c4f(0, 0, 0, 0);
     },
 
-    onExit:null,
+    cleanup:null,
 
-    _onExitForCanvas:function () {
+    _cleanupForCanvas:function () {
         cc.Node.prototype.onExit.call(this);
         this._cacheContext = null;
         this._cacheCanvas = null;
     },
 
-    _onExitForWebGL: function () {
+    _cleanupForWebGL: function () {
         cc.Node.prototype.onExit.call(this);
 
         this._sprite = null;
@@ -820,7 +820,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
 if(cc.Browser.supportWebGL){
     cc.RenderTexture.prototype.ctor = cc.RenderTexture.prototype._ctorForWebGL;
-    cc.RenderTexture.prototype.onExit = cc.RenderTexture.prototype._onExitForWebGL;
+    cc.RenderTexture.prototype.cleanup = cc.RenderTexture.prototype._cleanupForWebGL;
     cc.RenderTexture.prototype.initWithWidthAndHeight = cc.RenderTexture.prototype._initWithWidthAndHeightForWebGL;
     cc.RenderTexture.prototype.begin = cc.RenderTexture.prototype._beginForWebGL;
     cc.RenderTexture.prototype._beginWithClear = cc.RenderTexture.prototype._beginWithClearForWebGL;
@@ -834,7 +834,7 @@ if(cc.Browser.supportWebGL){
     cc.RenderTexture.prototype.setClearColor = cc.RenderTexture.prototype._setClearColorForWebGL;
 } else {
     cc.RenderTexture.prototype.ctor = cc.RenderTexture.prototype._ctorForCanvas;
-    cc.RenderTexture.prototype.onExit = cc.RenderTexture.prototype._onExitForCanvas;
+    cc.RenderTexture.prototype.cleanup = cc.RenderTexture.prototype._cleanupForCanvas;
     cc.RenderTexture.prototype.initWithWidthAndHeight = cc.RenderTexture.prototype._initWithWidthAndHeightForCanvas;
     cc.RenderTexture.prototype.begin = cc.RenderTexture.prototype._beginForCanvas;
     cc.RenderTexture.prototype._beginWithClear = cc.RenderTexture.prototype._beginWithClearForCanvas;

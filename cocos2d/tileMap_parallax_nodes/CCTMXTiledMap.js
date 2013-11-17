@@ -214,7 +214,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         if (!mapInfo)
             return false;
 
-        if(mapInfo.getTilesets().length != 0)
+        var locTilesets = mapInfo.getTilesets();
+        if(!locTilesets || locTilesets.length === 0)
             cc.log("cc.TMXTiledMap.initWithTMXFile(): Map not found. Please check the filename.");
         this._buildWithMapInfo(mapInfo);
         return true;
@@ -224,8 +225,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         this.setContentSize(cc.SizeZero());
 
         var mapInfo = cc.TMXMapInfo.createWithXML(tmxString, resourcePath);
-
-        if(mapInfo.getTilesets().length != 0)
+        var locTilesets = mapInfo.getTilesets();
+        if(!locTilesets || locTilesets.length === 0)
             cc.log("cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.");
         this._buildWithMapInfo(mapInfo);
         return true;
