@@ -26,6 +26,8 @@
                 <file name="platform/CCAccelerometer.js"/>
                 <file name="platform/CCEGLView.js"/>
                 <file name="platform/CCImage.js"/>
+                <file name="platform/CCScreen.js"/>
+                <file name="platform/CCVisibleRect.js"/>
                 <file name="platform/zlib.min.js"/>
                 <file name="cocoa/CCNS.js"/>
                 <file name="kazmath/vec2.js"/>

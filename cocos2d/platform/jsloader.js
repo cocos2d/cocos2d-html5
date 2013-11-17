@@ -42,6 +42,8 @@
         'platform/zlib.min.js',
         'platform/CCEGLView.js',
         'platform/CCImage.js',
+        'platform/CCScreen.js',
+        'platform/CCVisibleRect.js',
         'kazmath/utility.js',
         'kazmath/vec2.js',
         'kazmath/vec3.js',
