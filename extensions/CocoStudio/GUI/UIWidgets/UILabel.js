@@ -29,7 +29,8 @@
  */
 ccs.UILabel = ccs.UIWidget.extend({
     _touchScaleChangeEnabled: false,
-    _normalScaleValue: 0,
+    _normalScaleValueX: 0,
+    _normalScaleValueY: 0,
     _fontName: "",
     _fontSize: 0,
     _onSelectedScaleOffset: 0,
@@ -37,7 +38,8 @@ ccs.UILabel = ccs.UIWidget.extend({
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
         this._touchScaleChangeEnabled = false;
-        this._normalScaleValue = 0;
+        this._normalScaleValueX = 0;
+        this._normalScaleValueY = 0;
         this._fontName = "Thonburi";
         this._fontSize = 10;
         this._onSelectedScaleOffset = 0.5;
@@ -85,9 +87,10 @@ ccs.UILabel = ccs.UIWidget.extend({
 
     /**
      * set fontSize
-     * @param {cc.Size} size
+     * @param {Number} size
      */
     setFontSize: function (size) {
+        this._fontSize = size;
         this._labelRenderer.setFontSize(size);
         this.labelScaleChangedWithSize();
     },
@@ -97,6 +100,7 @@ ccs.UILabel = ccs.UIWidget.extend({
      * @param {String} name
      */
     setFontName: function (name) {
+        this._fontName = name;
         this._labelRenderer.setFontName(name);
         this.labelScaleChangedWithSize();
     },
@@ -150,7 +154,8 @@ ccs.UILabel = ccs.UIWidget.extend({
      */
     setTouchScaleChangeEnabled: function (enable) {
         this._touchScaleChangeEnabled = enable;
-        this._normalScaleValue = this.getScale();
+        this._normalScaleValueX = this.getScaleX();
+        this._normalScaleValueY = this.getScaleY();
     },
 
     /**
@@ -165,22 +170,37 @@ ccs.UILabel = ccs.UIWidget.extend({
         if (!this._touchScaleChangeEnabled) {
             return;
         }
-        this.clickScale(this._normalScaleValue);
+        this.clickScale(this._normalScaleValueX,this._normalScaleValueY);
     },
 
     onPressStateChangedToPressed: function () {
         if (!this._touchScaleChangeEnabled) {
             return;
         }
-        this.clickScale(this._normalScaleValue + this._onSelectedScaleOffset);
+        this.clickScale(this._normalScaleValueX + this._onSelectedScaleOffset,this._normalScaleValueY + this._onSelectedScaleOffset);
     },
 
     onPressStateChangedToDisabled: function () {
 
     },
 
-    clickScale: function (scale) {
-        this._renderer.setScale(scale);
+    setScale: function (scale) {
+        ccs.UIWidget.prototype.setScale.call(this, scale);
+        this._normalScaleValueX = this._normalScaleValueY = scale;
+    },
+
+    setScaleX: function (scaleX) {
+        ccs.UIWidget.prototype.setScaleX.call(this, scaleX);
+        this._normalScaleValueX = scaleX;
+    },
+
+    setScaleY: function (scaleY) {
+        ccs.UIWidget.prototype.setScaleY.call(this, scaleY);
+        this._normalScaleValueY = scaleY;
+    },
+
+    clickScale: function (scale, scaleY) {
+        this._renderer.setScale(scale, scaleY);
     },
 
     /**
@@ -265,6 +285,17 @@ ccs.UILabel = ccs.UIWidget.extend({
 
     getDescription: function () {
         return "Label";
+    },
+
+    createCloneInstance: function () {
+        return ccs.UILabel.create();
+    },
+
+    copySpecialProperties: function (uiLabel) {
+        this.setFontName(uiLabel._fontName);
+        this.setFontSize(uiLabel._labelRenderer.getFontSize());
+        this.setText(uiLabel.getStringValue());
+        this.setTouchScaleChangeEnabled(uiLabel._touchScaleChangeEnabled);
     }
 });
 

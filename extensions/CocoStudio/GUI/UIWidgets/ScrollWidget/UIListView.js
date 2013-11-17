@@ -1260,7 +1260,7 @@ ccs.UIListView = ccs.UILayout.extend({
      * @param {Function} selector
      * @param {Object} target
      */
-    addEventListener: function (selector, target) {
+    addEventListenerListView: function (selector, target) {
         this._eventSelector = selector;
         this._eventListener = target;
     },

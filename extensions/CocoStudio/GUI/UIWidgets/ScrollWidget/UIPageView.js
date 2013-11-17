@@ -53,8 +53,8 @@ ccs.UIPageView = ccs.UILayout.extend({
     _autoScrollSpeed: 0,
     _autoScrollDir: 0,
     _childFocusCancelOffset: 0,
-    _eventListener: null,
-    _eventSelector: null,
+    _pageViewEventListener: null,
+    _pageViewEventSelector: null,
     ctor: function () {
         ccs.UILayout.prototype.ctor.call(this);
         this._curPageIdx = 0;
@@ -73,8 +73,8 @@ ccs.UIPageView = ccs.UILayout.extend({
         this._autoScrollSpeed = 0;
         this._autoScrollDir = 0;
         this._childFocusCancelOffset = 5;
-        this._eventListener = null;
-        this._eventSelector = null;
+        this._pageViewEventListener = null;
+        this._pageViewEventSelector = null;
     },
 
     init: function () {
@@ -82,6 +82,7 @@ ccs.UIPageView = ccs.UILayout.extend({
             this._pages = [];
             this.setClippingEnabled(true);
             this.setUpdateEnabled(true);
+            this.setTouchEnabled(true);
             return true;
         }
         return false;
@@ -97,8 +98,11 @@ ccs.UIPageView = ccs.UILayout.extend({
         if (!widget) {
             return;
         }
+        if(pageIdx<0){
+            return;
+        }
         var pageCount = this._pages.length;
-        if (pageIdx < 0 || pageIdx >= pageCount) {
+        if (pageIdx >= pageCount) {
             if (forceCreate) {
                 if (pageIdx > pageCount) {
                     cc.log("pageIdx is %d, it will be added as page id [%d]", pageIdx, pageCount);
@@ -334,12 +338,14 @@ ccs.UIPageView = ccs.UILayout.extend({
                         step = -this._autoScrollDistance;
                         this._autoScrollDistance = 0.0;
                         this._isAutoScrolling = false;
-                        this.pageTurningEvent();
                     }
                     else {
                         this._autoScrollDistance += step;
                     }
                     this.scrollPages(-step);
+                    if(!this._isAutoScrolling){
+                        this.pageTurningEvent();
+                    }
                     break;
                     break;
                 case 1:
@@ -348,12 +354,14 @@ ccs.UIPageView = ccs.UILayout.extend({
                         step = this._autoScrollDistance;
                         this._autoScrollDistance = 0.0;
                         this._isAutoScrolling = false;
-                        this.pageTurningEvent();
                     }
                     else {
                         this._autoScrollDistance -= step;
                     }
                     this.scrollPages(step);
+                    if(!this._isAutoScrolling){
+                        this.pageTurningEvent();
+                    }
                     break;
                 default:
                     break;
@@ -457,6 +465,9 @@ ccs.UIPageView = ccs.UILayout.extend({
     },
 
     handleReleaseLogic: function (touchPoint) {
+        if (this._pages.length <= 0) {
+            return;
+        }
         var curPage = this._pages[this._curPageIdx];
         if (curPage) {
             var curPagePos = curPage.getPosition();
@@ -509,8 +520,8 @@ ccs.UIPageView = ccs.UILayout.extend({
     },
 
     pageTurningEvent: function () {
-        if (this._eventListener && this._eventSelector) {
-            this._eventSelector.call(this._eventListener, this, ccs.PageViewEventType.turning);
+        if (this._pageViewEventListener && this._pageViewEventSelector) {
+            this._pageViewEventSelector.call(this._pageViewEventListener, this, ccs.PageViewEventType.turning);
         }
     },
 
@@ -518,9 +529,13 @@ ccs.UIPageView = ccs.UILayout.extend({
      * @param {Function} selector
      * @param {Object} target
      */
-    addEventListener: function (selector, target) {
-        this._eventSelector = selector;
-        this._eventListener = target;
+    addEventListenerPageView: function (selector, target) {
+        this._pageViewEventSelector = selector;
+        this._pageViewEventListener = target;
+    },
+
+    getPages:function(){
+        return this._pages;
     },
 
     getCurPageIndex: function () {
@@ -529,6 +544,22 @@ ccs.UIPageView = ccs.UILayout.extend({
 
     getDescription: function () {
         return "PageView";
+    },
+
+    createCloneInstance: function () {
+        return ccs.UIPageView.create();
+    },
+
+    copyClonedWidgetChildren: function (model) {
+        var arrayPages = model.getPages();
+        for (var i = 0; i < arrayPages.length; i++) {
+            var page = arrayPages[i];
+            this.addPage(page.clone());
+        }
+    },
+
+    copySpecialProperties: function (pageView) {
+        ccs.UILayout.prototype.copySpecialProperties.call(this, pageView);
     }
 });
 

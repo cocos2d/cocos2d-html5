@@ -192,6 +192,7 @@ ccs.UIButton = ccs.UIWidget.extend({
             }
             this._buttonNormalRenderer.setColor(this.getColor());
             this._buttonNormalRenderer.setOpacity(this.getOpacity());
+            this._buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
         else {
             switch (this._normalTexType) {
@@ -237,6 +238,7 @@ ccs.UIButton = ccs.UIWidget.extend({
             }
             this._buttonClickedRenderer.setColor(this.getColor());
             this._buttonClickedRenderer.setOpacity(this.getOpacity());
+            this._buttonClickedRenderer.setCapInsets(this._capInsetsNormal);
         }
         else {
             switch (this._pressedTexType) {
@@ -282,6 +284,7 @@ ccs.UIButton = ccs.UIWidget.extend({
             }
             this._buttonDisableRenderer.setColor(this.getColor());
             this._buttonDisableRenderer.setOpacity(this.getOpacity());
+            this._buttonDisableRenderer.setCapInsets(this._capInsetsNormal);
         }
         else {
             switch (this._disabledTexType) {
@@ -642,6 +645,26 @@ ccs.UIButton = ccs.UIWidget.extend({
 
     getDescription: function () {
         return "Button";
+    },
+
+    createCloneInstance:function(){
+        return ccs.UIButton.create();
+    },
+
+    copySpecialProperties:function(uiButton){
+        this._prevIgnoreSize = uiButton._prevIgnoreSize;
+        this.setScale9Enabled(uiButton._scale9Enabled);
+        this.loadTextureNormal(uiButton._normalFileName, uiButton._normalTexType);
+        this.loadTexturePressed(uiButton._clickedFileName, uiButton._pressedTexType);
+        this.loadTextureDisabled(uiButton._disabledFileName, uiButton._disabledTexType);
+        this.setCapInsetsNormalRenderer(uiButton._capInsetsNormal);
+        this.setCapInsetsPressedRenderer(uiButton._capInsetsPressed);
+        this.setCapInsetsDisabledRenderer(uiButton._capInsetsDisabled);
+        this.setTitleText(uiButton.getTitleText());
+        this.setTitleFontName(uiButton.getTitleFontName());
+        this.setTitleFontSize(uiButton.getTitleFontSize());
+        this.setTitleColor(uiButton.getTitleColor());
+        this.setPressedActionEnabled(uiButton._pressedActionEnabled);
     }
 
 });

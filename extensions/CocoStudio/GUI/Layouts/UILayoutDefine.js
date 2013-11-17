@@ -92,3 +92,7 @@ ccs.UIMargin = cc.Class.extend({
         return (this.left == target.left && this.top == target.top && this.right == target.right && this.bottom == target.bottom);
     }
 });
+
+ccs.UIMarginZero = function(){
+   return ccs.UIMargin(0,0,0,0);
+};

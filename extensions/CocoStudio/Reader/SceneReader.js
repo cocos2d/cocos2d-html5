@@ -318,7 +318,7 @@ ccs.SceneReader = cc.Class.extend({
         node.setRotation(fRotationZ);
     },
 
-    purgeSceneReader: function () {
+    purge: function () {
         this._instance = null;
     }
 });
