@@ -33,10 +33,6 @@ ccs.UICCLabelAtlas = cc.LabelAtlas.extend({
         this.initWithString(string, charMapFile, itemWidth, itemHeight, startCharMap);
     },
 
-    setProperty: function (string, texture, itemWidth, itemHeight, startCharMap) {
-        this.initWithString(string, texture, itemWidth, itemHeight, startCharMap);
-    },
-
     draw: function () {
         if (!this._textureAtlas) {
             return;
@@ -45,7 +41,7 @@ ccs.UICCLabelAtlas = cc.LabelAtlas.extend({
         cc.AtlasNode.prototype.draw.call(this);
     },
     updateDisplayedOpacity: function (opacity) {
-        cc.AtlasNode.prototype.setOpacity.call(this, opacity);
+        cc.AtlasNode.prototype.updateDisplayedOpacity.call(this, opacity);
     }
 });
 
@@ -64,6 +60,11 @@ ccs.UICCLabelAtlas.create = function () {
  */
 ccs.UILabelAtlas = ccs.UIWidget.extend({
     _labelAtlasRenderer: null,
+    _stringValue: "",
+    _charMapFileName: "",
+    _itemWidth: 0,
+    _itemHeight: 0,
+    _startCharMap: "",
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
         this._labelAtlasRenderer = null;
@@ -82,9 +83,13 @@ ccs.UILabelAtlas = ccs.UIWidget.extend({
      * @param {number} itemWidth
      * @param {number} itemHeight
      * @param {String} startCharMap
-     * @param {Boolean} useSpriteFrame
      */
-    setProperty: function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap, useSpriteFrame) {
+    setProperty: function (stringValue, charMapFile, itemWidth, itemHeight, startCharMap) {
+        this._stringValue = stringValue;
+        this._charMapFileName = charMapFile;
+        this._itemWidth = itemWidth;
+        this._itemHeight = itemHeight;
+        this._startCharMap = startCharMap;
         this._labelAtlasRenderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
         this.updateAnchorPoint();
         this.labelAtlasScaleChangedWithSize();
@@ -95,6 +100,7 @@ ccs.UILabelAtlas = ccs.UIWidget.extend({
      * @param {String} value
      */
     setStringValue: function (value) {
+        this._stringValue = value;
         this._labelAtlasRenderer.setString(value);
         this.labelAtlasScaleChangedWithSize();
     },
@@ -156,6 +162,14 @@ ccs.UILabelAtlas = ccs.UIWidget.extend({
 
     getDescription: function () {
         return "LabelAtlase";
+    },
+
+    createCloneInstance: function () {
+        return ccs.UILabelAtlas.create();
+    },
+
+    copySpecialProperties: function (labelAtlas) {
+        this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap);
     }
 });
 

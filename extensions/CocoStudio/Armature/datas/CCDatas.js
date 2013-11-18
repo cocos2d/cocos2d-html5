@@ -38,11 +38,12 @@ ccs.BlendType = {
     alpha: 12,
     erase: 13
 };
-
-CC_DISPLAY_SPRITE = 0;
-CC_DISPLAY_ARMATURE = 1;
-CC_DISPLAY_PARTICLE = 2;
-CC_DISPLAY_MAX = 3;
+ccs.DisplayType = {
+    sprite: 0,
+    armature: 1,
+    particle: 2,
+    max: 3
+};
 
 ccs.BaseData = cc.Class.extend({
     x:0,
@@ -100,7 +101,7 @@ ccs.BaseData = cc.Class.extend({
         return cc.c4f(this.r, this.g, this.b, this.a);
     },
 
-    subtract:function (from, to) {
+    subtract:function (from, to, limit) {
         this.x = to.x - from.x;
         this.y = to.y - from.y;
         this.scaleX = to.scaleX - from.scaleX;
@@ -119,17 +120,19 @@ ccs.BaseData = cc.Class.extend({
             this.isUseColorInfo = false;
         }
 
-        if (this.skewX > cc.PI) {
-            this.skewX -= 2 * cc.PI;
-        }
-        if (this.skewX < -cc.PI) {
-            this.skewX += 2 * cc.PI;
-        }
-        if (this.skewY > cc.PI) {
-            this.skewY -= 2 * cc.PI;
-        }
-        if (this.skewY < -cc.PI) {
-            this.skewY += 2 * cc.PI;
+        if (limit){
+            if (this.skewX > cc.PI) {
+                this.skewX -= 2 * cc.PI;
+            }
+            if (this.skewX < -cc.PI) {
+                this.skewX += 2 * cc.PI;
+            }
+            if (this.skewY > cc.PI) {
+                this.skewY -= 2 * cc.PI;
+            }
+            if (this.skewY < -cc.PI) {
+                this.skewY += 2 * cc.PI;
+            }
         }
 
         if (to.tweenRotate) {
@@ -140,9 +143,9 @@ ccs.BaseData = cc.Class.extend({
 });
 
 ccs.DisplayData = cc.Class.extend({
-    displayType:CC_DISPLAY_SPRITE,
+    displayType:ccs.DisplayType.max,
     ctor:function () {
-        this.displayType = CC_DISPLAY_MAX;
+        this.displayType = ccs.DisplayType.max;
     },
     changeDisplayToTexture:function (displayName) {
         // remove .xxx
@@ -162,7 +165,7 @@ ccs.SpriteDisplayData = ccs.DisplayData.extend({
     ctor:function () {
         this.displayName = "";
         this.skinData = new ccs.BaseData();
-        this.displayType = CC_DISPLAY_SPRITE;
+        this.displayType = ccs.DisplayType.sprite;
     },
     setParam:function (displayName) {
         this.displayName = displayName;
@@ -192,7 +195,7 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend({
     displayName:"",
     ctor:function () {
         this.displayName = "";
-        this.displayType = CC_DISPLAY_ARMATURE;
+        this.displayType = ccs.DisplayType.armature;
 
     },
     setParam:function (displayName) {
@@ -208,7 +211,7 @@ ccs.ParticleDisplayData = ccs.DisplayData.extend({
     plist:"",
     ctor:function () {
         this.plist = "";
-        this.displayType = CC_DISPLAY_PARTICLE;
+        this.displayType = ccs.DisplayType.particle;
 
     },
     setParam:function (plist) {
@@ -267,11 +270,11 @@ ccs.BoneData = ccs.BaseData.extend({
 ccs.ArmatureData = cc.Class.extend({
     boneDataDic:null,
     name:"",
-    dataVersion:0,
+    dataVersion:0.1,
     ctor:function () {
         this.boneDataDic = {};
         this.name = "";
-        this.dataVersion = 0;
+        this.dataVersion = 0.1;
     },
     init:function () {
         return true;
@@ -297,7 +300,7 @@ ccs.FrameData = ccs.BaseData.extend({
         soundEffect:"",
         blendType:0,
         frameID:0,
-
+        isTween:true,
         ctor:function () {
             ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
@@ -309,6 +312,7 @@ ccs.FrameData = ccs.BaseData.extend({
             this.soundEffect = "";
             this.blendType = ccs.BlendType.normal;
             this.frameID = 0;
+            this.isTween = true;
         },
 
         copy:function (frameData) {
@@ -321,6 +325,7 @@ ccs.FrameData = ccs.BaseData.extend({
             this.sound = frameData.sound;
             this.soundEffect = frameData.soundEffect;
             this.blendType = frameData.blendType;
+            this.isTween = frameData.isTween;
         }
     }
 );
@@ -352,7 +357,7 @@ ccs.MovementBoneData = cc.Class.extend({
 ccs.MovementData = cc.Class.extend({
     movBoneDataDic:null,
     duration:0,
-    scale:0,
+    scale:1,
     durationTo:0,
     durationTween:ccs.TweenType.linear,
     loop:true,

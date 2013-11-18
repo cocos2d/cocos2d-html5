@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.UILayoutParameterType = {
+ccs.LayoutParameterType = {
     none: 0,
     linear: 1,
     relative: 2
@@ -33,12 +33,12 @@ ccs.UILayoutParameterType = {
  * @class
  * @extends cc.Class
  */
-ccs.LayoutParameter = cc.Class.extend({
+ccs.UILayoutParameter = cc.Class.extend({
     _margin: null,
     _layoutParameterType: null,
     ctor: function () {
         this._margin = new ccs.UIMargin();
-        this._layoutParameterType = ccs.UILayoutParameterType.none;
+        this._layoutParameterType = ccs.LayoutParameterType.none;
     },
 
     /**
@@ -67,8 +67,8 @@ ccs.LayoutParameter = cc.Class.extend({
 });
 
 
-ccs.LayoutParameter.create = function () {
-    var parameter = new ccs.LayoutParameter();
+ccs.UILayoutParameter.create = function () {
+    var parameter = new ccs.UILayoutParameter();
     return parameter;
 };
 
@@ -77,12 +77,12 @@ ccs.LayoutParameter.create = function () {
  * @class
  * @extends ccs.LayoutParameter
  */
-ccs.UILinearLayoutParameter = ccs.LayoutParameter.extend({
+ccs.UILinearLayoutParameter = ccs.UILayoutParameter.extend({
     _linearGravity: null,
     ctor: function () {
-        ccs.LayoutParameter.prototype.ctor.call(this);
+        ccs.UILayoutParameter.prototype.ctor.call(this);
         this._linearGravity = ccs.UILinearGravity.none;
-        this._layoutParameterType = ccs.UILayoutParameterType.linear;
+        this._layoutParameterType = ccs.LayoutParameterType.linear;
     },
 
     /**
@@ -112,13 +112,13 @@ ccs.UILinearLayoutParameter.create = function () {
  * @class
  * @extends ccs.LayoutParameter
  */
-ccs.UIRelativeLayoutParameter = ccs.LayoutParameter.extend({
+ccs.UIRelativeLayoutParameter = ccs.UILayoutParameter.extend({
     _relativeAlign: null,
     _relativeWidgetName: "",
     _relativeLayoutName: "",
     _put:false,
     ctor: function () {
-        ccs.LayoutParameter.prototype.ctor.call(this);
+        ccs.UILayoutParameter.prototype.ctor.call(this);
         this._relativeAlign = ccs.UIRelativeAlign.alignNone;
         this._relativeWidgetName = "";
         this._relativeLayoutName = "";

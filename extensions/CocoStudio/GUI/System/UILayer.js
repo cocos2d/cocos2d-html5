@@ -75,14 +75,14 @@ ccs.UILayer = cc.Layer.extend({
         if (!this._rootWidget) {
             return null;
         }
-        return ccs.UIHelper.getInstance().seekWidgetByTag(this._rootWidget, tag);
+        return ccs.UIHelper.seekWidgetByTag(this._rootWidget, tag);
     },
 
     getWidgetByName: function (name) {
         if (!this._rootWidget) {
             return null;
         }
-        return ccs.UIHelper.getInstance().seekWidgetByName(this._rootWidget, name);
+        return ccs.UIHelper.seekWidgetByName(this._rootWidget, name);
     },
 
     getRootWidget: function () {

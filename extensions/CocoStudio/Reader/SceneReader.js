@@ -36,12 +36,11 @@ ccs.SceneReader = cc.Class.extend({
             if (!pszFileName)
                 break;
 
-            var strFullFileName = cc.FileUtils.getInstance().fullPathForFilename(pszFileName);
             var pos = pszFileName.lastIndexOf("/");
             if(pos>-1){
                 this._baseBath =pszFileName.substr(0,pos+1);
             }
-            data = cc.FileUtils.getInstance().getTextFileData(strFullFileName);
+            data = cc.FileUtils.getInstance().getTextFileData(pszFileName);
 
             if (!data)
                 break;
@@ -179,7 +178,7 @@ ccs.SceneReader = cc.Class.extend({
                     if (pos != -1) {
                         file_path = reDir.substr(0, pos + 1);
                     }
-                    var des = cc.FileUtils.getInstance().getTextFileData(fullPath);
+                    var des = cc.FileUtils.getInstance().getTextFileData(path);
                     if (!des) {
                         cc.log("read json file[%s] error!\n", path);
                         continue;
@@ -319,7 +318,7 @@ ccs.SceneReader = cc.Class.extend({
         node.setRotation(fRotationZ);
     },
 
-    purgeSceneReader: function () {
+    purge: function () {
         this._instance = null;
     }
 });

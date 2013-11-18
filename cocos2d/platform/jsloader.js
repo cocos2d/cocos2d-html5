@@ -207,9 +207,9 @@
             '../extensions/CocoStudio/Components/CCComRender.js',
             // CocoStudio GUI
             '../extensions/CocoStudio/GUI/BaseClasses/UIWidget.js',
-            '../extensions/CocoStudio/GUI/Layouts/Layout.js',
+            '../extensions/CocoStudio/GUI/Layouts/UILayout.js',
             '../extensions/CocoStudio/GUI/BaseClasses/UIRootWidget.js',
-            '../extensions/CocoStudio/GUI/Layouts/LayoutParameter.js',
+            '../extensions/CocoStudio/GUI/Layouts/UILayoutParameter.js',
             '../extensions/CocoStudio/GUI/Layouts/UILayoutDefine.js',
             '../extensions/CocoStudio/GUI/System/CocosGUI.js',
             '../extensions/CocoStudio/GUI/System/UIHelper.js',
@@ -226,11 +226,10 @@
             '../extensions/CocoStudio/GUI/UIWidgets/UISwitch.js',
             '../extensions/CocoStudio/GUI/UIWidgets/UITextField.js',
             '../extensions/CocoStudio/GUI/UIWidgets/Compatible/CompatibleClasses.js',
-            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIDragPanel.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollInterface.js',
-            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js',
             '../extensions/CocoStudio/Reader/GUIReader.js',
             '../extensions/CocoStudio/Reader/SceneReader.js'
 

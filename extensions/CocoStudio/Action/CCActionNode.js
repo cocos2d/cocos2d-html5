@@ -114,6 +114,19 @@ ccs.ActionNode = cc.Class.extend({
             }
             actionFrameDic = null;
         }
+        this.initActionNodeFromRoot(root);
+    },
+
+    initActionNodeFromRoot: function (root) {
+        if (root instanceof cc.Node) {
+            cc.log("Need a definition of <initActionNodeFromRoot> for gameObject");
+        }
+        else if (root instanceof ccs.UIWidget) {
+            var widget = ccs.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
+            if (widget) {
+                this.setObject(widget);
+            }
+        }
     },
 
     /**
@@ -267,16 +280,11 @@ ccs.ActionNode = cc.Class.extend({
      * Play the action.
      * @param {Boolean} loop
      */
-    playAction: function (loop) {
+    playAction: function () {
         if (this._object == null || this._actionSpawn == null) {
             return;
         }
-        if (loop) {
-            this._action = cc.RepeatForever.create(this._actionSpawn);
-        }
-        else {
-            this._action = cc.Sequence.create(this._actionSpawn, null);
-        }
+         this._action = cc.Sequence.create(this._actionSpawn, null);
         this._action.retain();
         this.runAction();
     },
@@ -361,20 +369,20 @@ ccs.ActionNode = cc.Class.extend({
                 continue;
             }
 
-            for (var i = 0; i < locArray.length; i++) {
-                var locFrame = locArray[i];
+            for (var j = 0; j < locArray.length; j++) {
+                var locFrame = locArray[j];
                 if (locFrame.getFrameIndex() * locUnitTime == time) {
                     this.easingToFrame(1.0, 1.0, locFrame);
                     locIsFindFrame = true;
                     break;
                 }
                 else if (locFrame.getFrameIndex() * locUnitTime > time) {
-                    if (i == 0) {
+                    if (j == 0) {
                         this.easingToFrame(1.0, 1.0, locFrame);
                         locIsFindFrame = false;
                     }
                     else {
-                        var locSrcFrame = locArray[i - 1];
+                        var locSrcFrame = locArray[j - 1];
                         var locDuration = (locFrame.getFrameIndex() - locSrcFrame.getFrameIndex()) * locUnitTime;
                         var locDelaytime = time - locSrcFrame.getFrameIndex() * locUnitTime;
                         this.easingToFrame(locDuration, 1.0, locSrcFrame);
@@ -402,5 +410,12 @@ ccs.ActionNode = cc.Class.extend({
         }
         action.startWithTarget(node);
         action.update(delayTime);
+    },
+
+    isActionDoneOnce: function () {
+        if (this._action == null) {
+            return true;
+        }
+        return this._action.isDone();
     }
 });

@@ -35,6 +35,7 @@ ccs.ActionObject = cc.Class.extend({
     _playing: false,
     _unitTime: 0,
     _currentTime: 0,
+    _scheduler:null,
     ctor: function () {
         this._actionNodeList = [];
         this._name = "";
@@ -43,6 +44,8 @@ ccs.ActionObject = cc.Class.extend({
         this._playing = false;
         this._unitTime = 0.1;
         this._currentTime = 0;
+        this._scheduler = new cc.Scheduler();
+        cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this._scheduler, 0, false);
     },
 
     /**
@@ -170,10 +173,14 @@ ccs.ActionObject = cc.Class.extend({
      */
     play: function () {
         this.stop();
+        this.updateToFrameByTime(0);
         var frameNum = this._actionNodeList.length;
         for (var i = 0; i < frameNum; i++) {
             var locActionNode = this._actionNodeList[i];
             locActionNode.playAction(this.getLoop());
+        }
+        if (this._loop) {
+            this._scheduler.scheduleCallbackForTarget(this, this.simulationActionUpdate, this, 0., cc.REPEAT_FOREVER, 0, false);
         }
     },
 
@@ -192,6 +199,7 @@ ccs.ActionObject = cc.Class.extend({
             var locActionNode = this._actionNodeList[i];
             locActionNode.stopAction();
         }
+        this._scheduler.unscheduleCallbackForTarget(this, this.simulationActionUpdate);
         this._pause = false;
     },
 
@@ -203,6 +211,22 @@ ccs.ActionObject = cc.Class.extend({
         for (var i = 0; i < this._actionNodeList.length; i++) {
             var locActionNode = this._actionNodeList[i];
             locActionNode.updateActionToTimeLine(time);
+        }
+    },
+    simulationActionUpdate: function (dt) {
+        if (this._loop) {
+            var isEnd = true;
+            var actionNodeList = this._actionNodeList;
+            for (var i = 0; i < actionNodeList.length; i++) {
+                var actionNode = actionNodeList[i];
+                if (actionNode.isActionDoneOnce() == false) {
+                    isEnd = false;
+                    break;
+                }
+            }
+            if (isEnd) {
+                this.play();
+            }
         }
     }
 });

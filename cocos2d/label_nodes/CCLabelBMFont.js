@@ -636,7 +636,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             return;
         }
         var locElement, locTexture = this.getTexture();
-        if (locTexture) {
+        if (locTexture && locTexture.getContentSize().width>0) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;

@@ -25,11 +25,11 @@
 ccs.SliderEventType = {percent_changed: 0};
 
 /**
- * Base class for cc.UISlider
+ * Base class for ccs.UISlider
  * @class
  * @extends ccs.UIWidget
  */
-cc.UISlider = ccs.UIWidget.extend({
+ccs.UISlider = ccs.UIWidget.extend({
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -48,8 +48,8 @@ cc.UISlider = ccs.UIWidget.extend({
     _slidBallDisabledTextureFile: "",
     _capInsetsBarRenderer: null,
     _capInsetsProgressBarRenderer: null,
-    _slidPercentListener: null,
-    _slidPercentSelector: null,
+    _sliderEventListener: null,
+    _sliderEventSelector: null,
     _barTexType: null,
     _progressBarTexType: null,
     _ballNTexType: null,
@@ -75,8 +75,8 @@ cc.UISlider = ccs.UIWidget.extend({
         this._slidBallDisabledTextureFile = "";
         this._capInsetsBarRenderer = cc.RectZero();
         this._capInsetsProgressBarRenderer = cc.RectZero();
-        this._slidPercentListener = null;
-        this._slidPercentSelector = null;
+        this._sliderEventListener = null;
+        this._sliderEventSelector = null;
         this._barTexType = ccs.TextureResType.local;
         this._progressBarTexType = ccs.TextureResType.local;
         this._ballNTexType = ccs.TextureResType.local;
@@ -418,14 +418,14 @@ cc.UISlider = ccs.UIWidget.extend({
      * @param {Function} selector
      * @param {Object} target
      */
-    addEventListener: function (selector, target) {
-        this._slidPercentSelector = selector;
-        this._slidPercentListener = target;
+    addEventListenerSlider: function (selector, target) {
+        this._sliderEventSelector = selector;
+        this._sliderEventListener = target;
     },
 
     percentChangedEvent: function () {
-        if (this._slidPercentListener && this._slidPercentSelector) {
-            this._slidPercentSelector.call(this._slidPercentListener, this, ccs.SliderEventType.percent_changed);
+        if (this._sliderEventListener && this._sliderEventSelector) {
+            this._sliderEventSelector.call(this._sliderEventListener, this, ccs.SliderEventType.percent_changed);
         }
     },
 
@@ -537,10 +537,25 @@ cc.UISlider = ccs.UIWidget.extend({
 
     getDescription: function () {
         return "Slider";
+    },
+
+    createCloneInstance: function () {
+        return ccs.UISlider.create();
+    },
+
+    copySpecialProperties: function (slider) {
+        this._prevIgnoreSize = slider._prevIgnoreSize;
+        this.setScale9Enabled(slider._scale9Enabled);
+        this.loadBarTexture(slider._textureFile, slider._barTexType);
+        this.loadProgressBarTexture(slider._progressBarTextureFile, slider._progressBarTexType);
+        this.loadSlidBallTextureNormal(slider._slidBallNormalTextureFile, slider._ballNTexType);
+        this.loadSlidBallTexturePressed(slider._slidBallPressedTextureFile, slider._ballPTexType);
+        this.loadSlidBallTextureDisabled(slider._slidBallDisabledTextureFile, slider._ballDTexType);
+        this.setPercent(slider.getPercent());
     }
 });
-cc.UISlider.create = function () {
-    var uiSlider = new cc.UISlider();
+ccs.UISlider.create = function () {
+    var uiSlider = new ccs.UISlider();
     if (uiSlider && uiSlider.init()) {
         return uiSlider;
     }
