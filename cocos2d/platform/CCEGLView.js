@@ -399,8 +399,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 var locHeight = Math.abs(locScreenSize.height - viewPortH) / 2;
                 cc.canvas.width = viewPortW;
                 cc.canvas.height = viewPortH;
-                cc.container.style.width = viewPortW +"px";
-                cc.container.style.height = viewPortH +"px";
+                if(cc.Browser.isMobile){
+                    cc.container.style.width = viewPortW +"px";
+                    cc.container.style.height = viewPortH +"px";
+                }
                 cc.container.style.textAlign = "center";
                 cc.container.style.verticalAlign = "middle";
                 cc.renderContext.translate(0, viewPortH);
