@@ -1,30 +1,30 @@
 Cocos2d-html5-v2.2.1 @ Nov.19, 2013
-* CocoStudio is now supported on Cocos2d-html5. The GUI, scene and component modules have added to it.
-* cc.EGLView and most render classes have been re-written to adapte multiple resolution resources in-order to optimze performance on mobile browser.
-* Refactored cc.LabelTTF, now it's contentSize and position is correct for labels that has defined stroke and shadow.
-* corrected the behavior of "CascadeColorEnabled" and "CascadeOpacityEnabled" for cc.NodeRGBA and cc.LayerRGBA.
-* all cc.Assert has being replaced,  and more arguments checking and log information have added to engine's funciton.
+* CocoStudio is now supported on Cocos2d-html5. The GUI, scene and component modules have been added to it.
+* cc.EGLView and most render classes have been re-written to adapt multiple resolution resources in-order to optimize performance on mobile browsers.
+* Refactored cc.LabelTTF, now it's contentSize and position is correct for labels which has defined stroke and shadow.
+* Corrected the behavior of "CascadeColorEnabled" and "CascadeOpacityEnabled" for cc.NodeRGBA and cc.LayerRGBA.
+* All cc.Assert has being replaced,  and more arguments checking and log information have added to engine's function.
 * Add cc.Screen to engine, it uses to enter/exit fullscreen mode.
 * Add cc.VisibleRect to engine, it provides nine points of game view for positioning.
 * cc.WebAudioEngine now works perfectly on chrome.
-* cocostudio's namespace uses ccs now, and the other module's namespace will be renamed in next version.
-* cc.rect now accepts more types of paramaters on JSB and HTML5 now, for example: cc.rect(1,1,1,1) and cc.rect(aRect), and cc.rect(cc.p(1,1),cc.size(10,10));
-* optimized cc.Node's getBoundingBoxToWorld for better Performance.
+* CocoStudio's namespace changes to CCS now, and the other module's namespace will be renamed in next version.
+* cc.rect now accepts more types of parameters on JSB and HTML5 now, for example: cc.rect(1,1,1,1) and cc.rect(aRect), and cc.rect(cc.p(1,1),cc.size(10,10));
+* Optimized cc.Node's getBoundingBoxToWorld for better Performance.
 * Modified the _sequenceCompleted method in CCBAnimation, it can set the next sequence in callback now.
 * Improved the maintainability for _drawSceneForWebGL and _drawSceneForCanvas.
-* ParticleExamples has been refactored for jsb.
+* ParticleExamples has been refactored for JSB.
 * HelloHTML5World's CircleSprite has been removed, because it doesn't work on JSB.
 
 * Bugs fix:
   1. Fixed a Scale9Sprite's bug that setCapInsets is invalid.
-  2. Fixed bug that prevents the game to run on Chrome 31 WebGL mode.
-  3. Fixed a bug of LabelTTF that doesn't work on baidu browser.
+  2. Fixed a bug that prevents the game to run on Chrome 31 WebGL mode.
+  3. Fixed a bug of LabelTTF that doesn't work on Baidu browser.
   4. Fixed a bug of Sprite that it shouldn't to set transform dirty when setting color or opacity.
-  5. cc.EditBox's setFontSize is invalid has been fixed.
-  6. Particles doesn't work when search path in FileUtils was set.
+  5. Fixed a bug that cc.EditBox's setFontSize is invalid.
+  6. Fixed a bug that Particles doesn't work when search path in FileUtils was set.
   7. Fixed a bug of Scale9Sprite that it throws an error when _scale9Image is null.
   8. Fixed a bug of LayerGradient that it shows wrong size when setting content size.
-  9. It should listen to the method "onload" in cc.FileUtils when the browser isn't IE.
+  9. It should listen to the method "onLoad" in cc.FileUtils when the browser isn't IE.
 
 * Known Issues:
      1. Effect Advanced Lens3D doesn't work
