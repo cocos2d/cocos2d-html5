@@ -94,14 +94,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._ele = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
         this._viewName = "Cocos2dHTML5";
 
-        this._designResolutionSize = cc.SizeZero();
-        this._originalDesignResolutionSize = cc.SizeZero();
+        this._designResolutionSize = cc.size(cc.canvas.width, cc.canvas.height);
+        this._originalDesignResolutionSize = cc.size(cc.canvas.width, cc.canvas.height);
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
         this._contentTranslateLeftTop = {left:0, top:0};
         this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
 
-        cc.VisibleRect.init(this._screenSize);
+        cc.VisibleRect.init(this.getVisibleSize());
 
         this._hDC = cc.canvas;
         this._hRC = cc.renderContext;
@@ -151,7 +151,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             cc.canvas.height = this._ele.clientHeight + 100;
             window.location.href="#bottom";
         }
-
     },
 
     _initScreenSize:function(){
@@ -162,7 +161,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         if (userAgent.indexOf("iphone") > -1 && userAgent.indexOf("version/7.0") < 0) {
             locScreenSize.height +=(locScreenSize.width/320)*60;       //TODO
         }
-        cc.VisibleRect.init(this._screenSize);
     },
 
     _setupViewport:function(isWidth, wohValue){
@@ -217,11 +215,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     // hack
-    _adjustSizeKeepCanvasSize:function () {
-        if (!("opengl" in sys.capabilities))
-            cc.renderContext.translate(0, cc.canvas.height);
-        this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
-        this.setDesignResolutionSize();
+    _adjustSizeKeepCanvasSize:function (width, height) {
+        this._screenSize.width = width;
+        this._screenSize.height = height;
+
+        var designWidth = this._originalDesignResolutionSize.width;
+        var designHeight = this._originalDesignResolutionSize.height;
+        if(designWidth>0)
+            this.__setDesignResolutionSize(designWidth,designHeight,this._resolutionPolicy);
     },
 
     /**
@@ -345,7 +346,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     __setDesignResolutionSize:function(width, height, resolutionPolicy){
-        this._adjustSizeToBrowser();
         cc.Assert(resolutionPolicy !== cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
         if (width == 0 || height == 0)
             return;
@@ -429,6 +429,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         //set the viewport for mobile
         if (cc.Browser.isMobile && this.__isAdjustSizeToBrowser)
             this._calculateViewPortByPolicy();
+
+        cc.VisibleRect.init(this.getVisibleSize());
     },
 
     _adjustMobileViewPort:function(width,height){
@@ -466,10 +468,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             //this._adjustMobileViewPort(cc.originalCanvasSize.width,cc.originalCanvasSize.height);
             var self = this;
             var fun = function(){
+                self._adjustSizeToBrowser();
                 self.__setDesignResolutionSize(width, height, resolutionPolicy);
             };
             setTimeout(fun,1);
         }else{
+            this._adjustSizeToBrowser();
             this.__setDesignResolutionSize(width, height, resolutionPolicy);
         }
     },
