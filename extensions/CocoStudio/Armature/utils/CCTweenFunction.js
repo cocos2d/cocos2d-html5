@@ -69,7 +69,7 @@ ccs.TweenType = {
     tweenEasingMax:10000
 };
 
-ccs.TweenFunction = ccs.TweenFunction || {};
+ccs.TweenFunction = ccs.TweenFunction || cc.Class.extend({});
 
 ccs.TweenFunction.tweenTo = function (from, change, time, duration, tweenType) {
     var delta = 0;

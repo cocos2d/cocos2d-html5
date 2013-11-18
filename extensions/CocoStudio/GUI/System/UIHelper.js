@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 
-ccs.UIHelper = {};
+ccs.UIHelper = ccs.UIHelper || cc.Class.extend({});
 
 /**
  * Finds a widget whose tag equals to param tag from root widget.

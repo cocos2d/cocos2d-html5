@@ -274,15 +274,12 @@
         engine.forEach(function (e, i) {
             engine[i] = c.engineDir + e;
         });
-        if(typeof c.box2d === "string")
-        {
-            engine.push(c.box2d);
-        }
-        if(typeof c.chipmunk === "string")
-        {
-            engine.push(c.chipmunk);
-        }
-
+    }
+    if (typeof c.box2d === "string") {
+        engine.push(c.box2d);
+    }
+    if (typeof c.chipmunk === "string") {
+        engine.push(c.chipmunk);
     }
 
     var loadJsImg = document.getElementById("cocos2d_loadJsImg");
