@@ -44,3 +44,7 @@ CSSProperties.prototype.accelerationIncludingGravity;
 CSSProperties.prototype.gamma;
 CSSProperties.prototype.beta;
 CSSProperties.prototype.alpha;
+
+
+var gl = gl || {};
+CSSProperties.prototype.gl;

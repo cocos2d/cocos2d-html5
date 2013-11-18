@@ -122,7 +122,7 @@ ccs.CONST_COLOR_INFO = "color";
 ccs.CONST_CONFIG_FILE_PATH = "config_file_path";
 ccs.CONST_CONTENT_SCALE = "content_scale";
 
-ccs.DataReaderHelper = ccs.DataReaderHelper || {};
+ccs.DataReaderHelper = ccs.DataReaderHelper || cc.Class.extend({});
 ccs.DataReaderHelper._configFileList = [];
 ccs.DataReaderHelper._flashToolVersion = ccs.CONST_VERSION_2_0;
 ccs.DataReaderHelper._cocoStudioVersion = ccs.CONST_VERSION_COMBINED;
@@ -150,8 +150,8 @@ ccs.DataReaderHelper.getPositionReadScale = function () {
 
 ccs.DataReaderHelper.purge = function () {
     this._configFileList = [];
-    ccs.DataReaderHelper._asyncRefCount = 0;
-    ccs.DataReaderHelper._asyncRefTotalCount = 0;
+    this._asyncRefCount = 0;
+    this._asyncRefTotalCount = 0;
 };
 
 ccs.DataReaderHelper.addDataFromFile = function (filePath,isLoadSpriteFrame) {
