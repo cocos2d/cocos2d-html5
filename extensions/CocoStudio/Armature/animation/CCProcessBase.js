@@ -90,7 +90,6 @@ ccs.ProcessBase = cc.Class.extend({
 
     /**
      * play animation by animation name.
-     * @param {Number} animationName The animation name you want to play
      * @param {Number} durationTo
      *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
      *         -1 : use the value from CCMovementData get from flash design panel
@@ -110,7 +109,7 @@ ccs.ProcessBase = cc.Class.extend({
      *         1  : fade in
      *         2  : fade in and out
      */
-    play:function (animationName, durationTo, durationTween, loop, tweenEasing) {
+    play:function (durationTo, durationTween, loop, tweenEasing) {
         this._isComplete = false;
         this._isPause = false;
         this._isPlaying = true;
