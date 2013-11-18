@@ -426,6 +426,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         //set the viewport for mobile
         if (cc.Browser.isMobile && this.__isAdjustSizeToBrowser)
             this._calculateViewPortByPolicy();
+
+        cc.VisibleRect.init(this.getVisibleSize());
     },
 
     _adjustMobileViewPort:function(width,height){
