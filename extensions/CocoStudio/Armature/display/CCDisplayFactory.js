@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.DisplayFactory = ccs.DisplayFactory || {};
+ccs.DisplayFactory = ccs.DisplayFactory || cc.Class.extend({});
 ccs.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
     switch (displayData.displayType) {
         case ccs.DisplayType.sprite:
