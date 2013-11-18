@@ -1,13 +1,13 @@
 Cocos2d-html5-v2.2.1 @ Nov.19, 2013
 * CocoStudio is now supported on Cocos2d-html5. The GUI, scene and component modules have been added to it.
 * cc.EGLView and most render classes have been re-written to adapt multiple resolution resources in-order to optimize performance on mobile browsers.
-* Refactored cc.LabelTTF, now it's contentSize and position is correct for labels which has defined stroke and shadow.
+* Refactored cc.LabelTTF, now its contentSize and position is correct for labels which has defined stroke and shadow.
 * Corrected the behavior of "CascadeColorEnabled" and "CascadeOpacityEnabled" for cc.NodeRGBA and cc.LayerRGBA.
 * All cc.Assert has being replaced,  and more arguments checking and log information have added to engine's function.
-* Add cc.Screen to engine, it uses to enter/exit fullscreen mode.
-* Add cc.VisibleRect to engine, it provides nine points of game view for positioning.
+* Added cc.Screen to engine, it uses to enter/exit FullScreen mode.
+* Added cc.VisibleRect to engine, it provides nine points of game view for positioning.
 * cc.WebAudioEngine now works perfectly on chrome.
-* CocoStudio's namespace changes to CCS now, and the other module's namespace will be renamed in next version.
+* CocoStudio's namespace changes to 'ccs' now, and the other module's namespace will be renamed and support NPM in next version.
 * cc.rect now accepts more types of parameters on JSB and HTML5 now, for example: cc.rect(1,1,1,1) and cc.rect(aRect), and cc.rect(cc.p(1,1),cc.size(10,10));
 * Optimized cc.Node's getBoundingBoxToWorld for better Performance.
 * Modified the _sequenceCompleted method in CCBAnimation, it can set the next sequence in callback now.
