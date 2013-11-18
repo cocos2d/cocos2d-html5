@@ -1015,7 +1015,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     /**
-     * Intializes with a texture2d with data
+     * Initializes with a texture2d with data
      * @param {Array} data
      * @param {Number} pixelFormat
      * @param {Number} pixelsWide

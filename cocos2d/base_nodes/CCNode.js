@@ -331,8 +331,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *                                                                                                             <br/>
      *     This is an internal method. Don't call it outside the framework.                                        <br/>
      *     The difference between setZOrder(int) and _setOrder(int) is:                                            <br/>
-     *        - _setZOrder(int) is a pure setter for m_nZOrder memeber variable                                    <br/>
-     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's chilren array.
+     *        - _setZOrder(int) is a pure setter for m_nZOrder member variable                                    <br/>
+     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's children array.
      * </p>
      * @param {Number} z
      * @private
@@ -596,7 +596,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Composing a "tree" structure is a very important feature of CCNode
      * @return {Array} An array of children
      * @example
-     *  //This sample code traverses all children nodes, and set theie position to (0,0)
+     *  //This sample code traverses all children nodes, and set their position to (0,0)
      *  var allChildren = parent.getChildren();
      * for(var i = 0; i< allChildren.length; i++) {
      *     allChildren[i].setPosition(0,0);
@@ -718,7 +718,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a pointer to the parent node
-     * @return {cc.Node} A pointer to the parnet node
+     * @return {cc.Node} A pointer to the parent node
      */
     getParent:function () {
         return this._parent;
@@ -726,7 +726,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Sets the parent node
-     * @param {cc.Node} Var A pointer to the parnet node
+     * @param {cc.Node} Var A pointer to the parent node
      */
     setParent:function (Var) {
         this._parent = Var;
@@ -760,7 +760,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns a tag that is used to identify the node easily.
      *
-     * @return {Number} A interger that identifies the node.
+     * @return {Number} An integer that identifies the node.
      * @example
      *  //You can set tags to node then identify them easily.
      * // set tags
@@ -812,7 +812,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *    Sets a custom user data pointer                                                                   <br/>
      *    You can set everything in UserData pointer, a data block, a structure or an object, etc.
      * </p>
-     * @warning Don't forget to relfease the memroy manually,especially before you change this data pointer, and before this node is autoreleased.
+     * @warning Don't forget to release the memory manually,especially before you change this data pointer, and before this node is autoreleased.
      * @param {object} Var A custom user data
      */
     setUserData:function (Var) {
@@ -832,8 +832,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>
      *      Returns a user assigned CCObject                                                                                       <br/>
      *      Similar to UserData, but instead of holding a void* it holds an object.                                               <br/>
-     *      The UserObject will be retained once in this method, and the previous UserObject (if existed) will be relese.         <br/>
-     *      The UserObject will be released in CCNode's destructure.
+     *      The UserObject will be retained once in this method, and the previous UserObject (if existed) will be release.         <br/>
+     *      The UserObject will be released in CCNode's destruction.
      * </p>
      * @param {object} newValue A user assigned CCObject
      */
@@ -845,7 +845,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
 
     /**
-     * Returns the arrival order, indecates which children is added previously.
+     * Returns the arrival order, indicates which children is added previously.
      * @return {Number} The arrival order.
      */
     getOrderOfArrival:function () {
@@ -910,7 +910,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *   Sets a CCScheduler object that is used to schedule all "updates" and timers.           <br/>
      * </p>
      * @warning If you set a new CCScheduler, then previously created timers/update are going to be removed.
-     * @param scheduler A cc.Shdeduler object that is used to schedule all "update" and timers.
+     * @param scheduler A cc.Scheduler object that is used to schedule all "update" and timers.
      */
     setScheduler:function (scheduler) {
         if (this._scheduler != scheduler) {
@@ -922,7 +922,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
-     * @note This method returns a temporaty variable, so it can't returns const CCRect&
+     * @note This method returns a temporary variable, so it can't returns const CCRect&
      * @const
      * @return {cc.Rect}
      */
@@ -1085,7 +1085,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false oterwise.
+     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
      */
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
@@ -1166,7 +1166,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * <p>
      *     Sorts the children array once before drawing, instead of every time when a child is added or reordered.    <br/>
-     *     This appraoch can improves the performance massively.
+     *     This approach can improves the performance massively.
      * </p>
      * @note Don't call this manually unless a child added needs to be removed in the same frame
      */
@@ -1474,7 +1474,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * // Gets the spriteA's transform.
      * var t = spriteA.nodeToParentTransform();
      *
-     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA.
+     * // Sets the additional transform to spriteB, spriteB's position will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
      *
      * //scale
@@ -1624,7 +1624,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
      * This is a hack, and should be removed once JSB fixes the retain/release bug
      */
