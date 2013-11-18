@@ -157,7 +157,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var locScreenSize = this._screenSize;
         locScreenSize.width = this._ele.clientWidth;
         locScreenSize.height = this._ele.clientHeight;
-        if(navigator.userAgent.match(/iPhone/i)){
+        var userAgent = navigator.userAgent.toLowerCase();
+        if (userAgent.indexOf("iphone") > -1 && userAgent.indexOf("version/7.0") < 0) {
             locScreenSize.height +=(locScreenSize.width/320)*60;       //TODO
         }
     },
@@ -398,8 +399,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 var locHeight = Math.abs(locScreenSize.height - viewPortH) / 2;
                 cc.canvas.width = viewPortW;
                 cc.canvas.height = viewPortH;
-                //cc.container.style.width = viewPortW +"px";
-                //cc.container.style.height = viewPortH +"px";
+                if(cc.Browser.isMobile){
+                    cc.container.style.width = viewPortW +"px";
+                    cc.container.style.height = viewPortH +"px";
+                }
                 cc.container.style.textAlign = "center";
                 cc.container.style.verticalAlign = "middle";
                 cc.renderContext.translate(0, viewPortH);
