@@ -158,7 +158,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var locScreenSize = this._screenSize;
         locScreenSize.width = this._ele.clientWidth;
         locScreenSize.height = this._ele.clientHeight;
-        if(navigator.userAgent.match(/iPhone/i)){
+        var userAgent = navigator.userAgent.toLowerCase();
+        if (userAgent.indexOf("iphone") > -1 && userAgent.indexOf("version/7.0") < 0) {
             locScreenSize.height +=(locScreenSize.width/320)*60;       //TODO
         }
         cc.VisibleRect.init(this._screenSize);
