@@ -197,6 +197,7 @@ cc.setup = function (el, width, height) {
         element.appendChild(cc.canvas);
         cc.container.style.width = (width || 480) + "px";
         cc.container.style.height = (height || 320) + "px";
+        cc.container.style.margin = "0 auto";
     }
     cc.container.style.position = 'relative';
     cc.container.style.overflow = 'hidden';
