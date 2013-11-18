@@ -101,7 +101,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._contentTranslateLeftTop = {left:0, top:0};
         this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
 
-        cc.VisibleRect.init(this._screenSize);
+        cc.VisibleRect.init(this.getVisibleSize());
 
         this._hDC = cc.canvas;
         this._hRC = cc.renderContext;
@@ -160,7 +160,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         if(navigator.userAgent.match(/iPhone/i)){
             locScreenSize.height +=(locScreenSize.width/320)*60;       //TODO
         }
-        cc.VisibleRect.init(this._screenSize);
     },
 
     _setupViewport:function(isWidth, wohValue){
