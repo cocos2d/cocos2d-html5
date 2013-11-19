@@ -147,7 +147,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     _scrollToBottom:function(){
-        if(cc.Browser.isMobile){
+        if (cc.Browser.isMobile && cc.Browser.type != "baidubrowser") {
             cc.canvas.height = this._ele.clientHeight + 100;
             window.location.href="#bottom";
         }
