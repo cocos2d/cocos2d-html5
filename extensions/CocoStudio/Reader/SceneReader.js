@@ -237,11 +237,11 @@ ccs.SceneReader = cc.Class.extend({
                     var attribute = null;
                     if (resType == 0) {
                         attribute = ccs.ComAttribute.create();
-                        var size = 0;
-                        var data = 0;
-                        data = cc.FileUtils.getInstance().getTextFileData(path);
-                        if (data) {
-                            attribute.setDict(JSON.parse(data));
+                        if(this._baseBath!=path){
+                            var data = cc.FileUtils.getInstance().getTextFileData(path);
+                            if (data) {
+                                attribute.setDict(JSON.parse(data));
+                            }
                         }
                     }
                     else {
