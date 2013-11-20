@@ -320,7 +320,7 @@ cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
     sequence.initWithTwoActions(actionOne, actionTwo);
     return sequence;
 };
-
+cc.Sequence.actionOneTwo = cc.Sequence._actionOneTwo;
 
 /** Repeats an action a number of times.
  * To repeat an action forever use the CCRepeatForever action.
@@ -700,7 +700,7 @@ cc.Spawn._actionOneTwo = function (action1, action2) {
     pSpawn.initWithTwoActions(action1, action2);
     return pSpawn;
 };
-
+cc.Spawn.actionOneTwo = cc.Spawn._actionOneTwo;
 
 /** Rotates a cc.Node object to a certain angle by modifying it's
  * rotation attribute. <br/>
