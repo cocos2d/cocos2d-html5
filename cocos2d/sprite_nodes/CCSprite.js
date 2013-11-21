@@ -1271,6 +1271,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _textureLoadedCallback: null,
 
     _textureLoadedCallbackForWebGL: function (sender) {
+        if(this._textureLoaded)
+            return;
+
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
@@ -1291,6 +1294,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _textureLoadedCallbackForCanvas: function (sender) {
+        if(this._textureLoaded)
+            return;
+
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
@@ -1662,7 +1668,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
                     this.setTexture(locNewTexture);
-                this.setTextureRect(sender.getRect(), sender._rectRotated, sender.getOriginalSize());
+                this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
+
                 this._callLoadedEventCallbacks();
             }, this);
         }
