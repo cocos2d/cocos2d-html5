@@ -1827,7 +1827,9 @@ cc.FadeIn = cc.ActionInterval.extend(/** @lends cc.FadeIn# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        this._target.setOpacity(255 * time);
+        if (this._target.RGBAProtocol) {
+            this._target.setOpacity(255 * time);
+        }
     },
 
     /**
@@ -1872,7 +1874,9 @@ cc.FadeOut = cc.ActionInterval.extend(/** @lends cc.FadeOut# */{
      * @param {Number} time  time in seconds
      */
     update:function (time) {
-        this._target.setOpacity(255 * (1 - time));
+        if (this._target.RGBAProtocol) {
+            this._target.setOpacity(255 * (1 - time));
+        }
     },
 
     /**
@@ -1948,7 +1952,9 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        this._target.setOpacity((this._fromOpacity + (this._toOpacity - this._fromOpacity) * time));
+        if (this._target.RGBAProtocol) {
+            this._target.setOpacity((this._fromOpacity + (this._toOpacity - this._fromOpacity) * time));
+        }
     },
 
     /**
@@ -1956,7 +1962,9 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._fromOpacity = target.getOpacity();
+        if(this._target.RGBAProtocol){
+            this._fromOpacity = target.getOpacity();
+        }
     }
 });
 
@@ -2020,7 +2028,9 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._from = this._target.getColor();
+        if (this._target.RGBAProtocol) {
+            this._from = this._target.getColor();
+        }
     },
 
     /**
@@ -2028,8 +2038,10 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     update:function (time) {
         var locFrom = this._from, locTo = this._to;
-        this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
-            (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+        if (this._target.RGBAProtocol) {
+            this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
+                (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+        }
     }
 });
 

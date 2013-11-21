@@ -715,16 +715,20 @@ ccs.DataReaderHelper.decodeBoneDisplayFromJson = function (json, dataInfo) {
             var dicArray = json[ccs.CONST_SKIN_DATA]|| [];
             var dic = dicArray[0];
             if(dic){
-                displayData.skinData.x = (dic[ccs.CONST_A_X]|| 0) * this._positionReadScale;
-                displayData.skinData.y = (dic[ccs.CONST_A_Y]||0) * this._positionReadScale;
+                var skinData = displayData.skinData;
+                skinData.x = (dic[ccs.CONST_A_X]|| 0) * this._positionReadScale;
+                skinData.y = (dic[ccs.CONST_A_Y]||0) * this._positionReadScale;
                 if(dic.hasOwnProperty(ccs.CONST_A_SCALE_X)){
-                    displayData.skinData.scaleX = dic[ccs.CONST_A_SCALE_X];
+                    skinData.scaleX = dic[ccs.CONST_A_SCALE_X];
                 }
                 if(dic.hasOwnProperty(ccs.CONST_A_SCALE_Y)){
-                    displayData.skinData.scaleY = dic[ccs.CONST_A_SCALE_Y];
+                    skinData.scaleY = dic[ccs.CONST_A_SCALE_Y];
                 }
-                displayData.skinData.skewX = dic[ccs.CONST_A_SKEW_X]|| 0;
-                displayData.skinData.skewY = dic[ccs.CONST_A_SKEW_Y]||0;
+                skinData.skewX = dic[ccs.CONST_A_SKEW_X]|| 0;
+                skinData.skewY = dic[ccs.CONST_A_SKEW_Y]||0;
+
+                skinData.x *= dataInfo.contentScale;
+                skinData.y *= dataInfo.contentScale;
                 dic = null;
             }
             break;
