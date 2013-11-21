@@ -792,7 +792,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         sfxCache.sourceNode = this._ctx.createBufferSource();
         sfxCache.sourceNode.buffer = this._audioData[key];
         sfxCache.sourceNode.loop = loop;
-        sfxCache.volumeNode = this._ctx.createGainNode();
+        sfxCache.volumeNode = this._ctx.createGain();
         sfxCache.volumeNode.gain.value = volume;
 
         sfxCache.sourceNode.connect(sfxCache.volumeNode);
@@ -1123,19 +1123,24 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;
+
+            audioID = this._audioID++;
+            this._audioIDList[audioID] = null;
             this._fetchData(path, function(buffer) {
                 // resource fetched, save it and call playEffect() again, this time it should be alright
                 engine._audioData[keyName] = buffer;
                 delete engine._audiosLoading[keyName];
-                engine.playEffect(path, loop);
+                engine._audioIDList[audioID] = engine._beginSound(keyName, loop, engine.getEffectsVolume());
             }, function() {
                 // resource fetching failed, doing nothing here
                 delete engine._audiosLoading[keyName];
+                delete engine._audioIDList[audioID];
                 /*
                  * Potential Bug: if fetching data fails every time, loading will be tried again and again.
                  * Preloading would prevent this issue: if it fails to fetch, preloading procedure will not achieve 100%.
                  */
             });
+            return audioID;
         }
         return null;
     },
@@ -1175,7 +1180,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _pauseSoundList: function(effectList) {
         for (var idx = 0, len = effectList.length; idx < len; idx++) {
             var sfxCache = effectList[idx];
-            if (this._isSoundPlaying(sfxCache))
+            if (sfxCache && this._isSoundPlaying(sfxCache))
                 this._pauseSound(sfxCache);
         }
     },
@@ -1193,7 +1198,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         if (this._audioIDList.hasOwnProperty(audioID)){
             var sfxCache = this._audioIDList[audioID];
-            if (this._isSoundPlaying(sfxCache))
+            if (sfxCache && this._isSoundPlaying(sfxCache))
                 this._pauseSound(sfxCache);
         }
     },
@@ -1239,7 +1244,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         if (this._audioIDList.hasOwnProperty(audioID)){
             var sfxCache = this._audioIDList[audioID];
-            if (this._isSoundPaused(sfxCache)){
+            if (sfxCache && this._isSoundPaused(sfxCache)){
                 this._audioIDList[audioID] = this._resumeSound(sfxCache, this.getEffectsVolume());
                 this._updateEffectsList(sfxCache, this._audioIDList[audioID]);
             }
