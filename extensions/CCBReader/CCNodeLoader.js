@@ -654,6 +654,7 @@ cc.NodeLoader = cc.Class.extend({
                 } else {
                     ccbReader.addOwnerCallbackNode(node);
                     ccbReader.addOwnerCallbackName(selectorName);
+                    ccbReader.addOwnerCallbackControlEvents(0);
                 }
             }
         }
@@ -707,6 +708,7 @@ cc.NodeLoader = cc.Class.extend({
                 } else {
                     ccbReader.addOwnerCallbackNode(node);
                     ccbReader.addOwnerCallbackName(selectorName);
+                    ccbReader.addOwnerCallbackControlEvents(controlEvents);
                 }
             }
         }
