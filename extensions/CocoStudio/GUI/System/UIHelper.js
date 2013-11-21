@@ -107,7 +107,6 @@ ccs.UIHelper.seekActionWidgetByActionTag = function (root, tag) {
         return root;
     }
     var arrayRootChildren = root.getChildren();
-    var length = arrayRootChildren.num;
     for (var i = 0; i < arrayRootChildren.length; i++) {
         var child = arrayRootChildren[i];
         var res = this.seekActionWidgetByActionTag(child, tag);
