@@ -55,7 +55,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         var metadataDict = dictionary["metadata"] || dictionary["meta"];
         var framesDict = dictionary["frames"];
 
-        var format;
+        var format = 0;
         // get the format
         if (metadataDict) {
             var tmpFormat = metadataDict["format"];
@@ -68,6 +68,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
             return;
         }
 
+        console.log(format);
 
         for (var key in framesDict) {
             var frameDict = framesDict[key];
