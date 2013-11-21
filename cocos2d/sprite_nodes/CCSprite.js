@@ -1701,7 +1701,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
                     this.setTexture(locNewTexture);
-                this.setTextureRect(sender.getRect(), this._rectRotated, sender.getOriginalSize());
+                this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 this._callLoadedEventCallbacks();
             }, this);
         }
