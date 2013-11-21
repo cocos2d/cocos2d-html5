@@ -223,7 +223,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {cc.Size}
      */
     contentSize:function () {
-        return this.contentSize();
+        return this.getContentSize();
     },
     
     getContentSizeInPixels:function () {
