@@ -79,8 +79,9 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      *     Make sure that the frames were previously loaded in the cc.SpriteFrameCache.
      * </p>
      * @param {object} dictionary
+     * @param {String} plist
      */
-    addAnimationsWithDictionary:function (dictionary) {
+    _addAnimationsWithDictionary:function (dictionary,plist) {
         var animations = dictionary["animations"];
         if (!animations) {
             cc.log("cocos2d: cc.AnimationCache: No animations were found in provided dictionary.");
@@ -92,8 +93,11 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         if (properties) {
             version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
+            var spriteFrameCache = cc.SpriteFrameCache.getInstance();
+            var fileUtils = cc.FileUtils.getInstance(), path;
             for (var i = 0; i < spritesheets.length; i++) {
-                cc.SpriteFrameCache.getInstance().addSpriteFrames(spritesheets[i]);
+                path = fileUtils.fullPathFromRelativeFile(spritesheets[i], plist);
+                spriteFrameCache.addSpriteFrames(path);
             }
         }
 
@@ -121,7 +125,6 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         if(!plist)
             throw "cc.AnimationCache.addAnimations(): Invalid texture file name";
         var fileUtils = cc.FileUtils.getInstance();
-
         var path = fileUtils.fullPathForFilename(plist);
         var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
 
@@ -130,7 +133,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             return;
         }
 
-        this.addAnimationsWithDictionary(dict);
+        this._addAnimationsWithDictionary(dict,plist);
     },
 
     _parseVersion1:function (animations) {
