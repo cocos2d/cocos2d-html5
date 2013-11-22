@@ -682,6 +682,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                                 break;
                             }
                         } while (tempLineWidth > locDimensionsWidth);
+                        if (cutoff === -1) {
+                            break;
+                        }
                         var newline = strings[i].substr(cutoff + 1);
                         strings.splice(i + 1, 0, newline);
                         strings[i] = str;
