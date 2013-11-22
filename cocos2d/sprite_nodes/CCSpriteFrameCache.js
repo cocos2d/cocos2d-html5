@@ -102,7 +102,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                     // rotation
                     if (format == 2) {
-                        rotated = frameDict["rotated"];// == "true";
+                        rotated = Boolean(frameDict["rotated"]);
                     }
                     var offset = cc.PointFromString(frameDict["offset"]);
                     var sourceSize = cc.SizeFromString(frameDict["sourceSize"]);
@@ -117,7 +117,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     spriteOffset = cc.PointFromString(frameDict["spriteOffset"]);
                     spriteSourceSize = cc.SizeFromString(frameDict["spriteSourceSize"]);
                     textureRect = cc.RectFromString(frameDict["textureRect"]);
-                    textureRotated = frameDict["textureRotated"]; // == "true";
+                    textureRotated = Boolean(frameDict["textureRotated"]);
 
                     // get aliases
                     var aliases = frameDict["aliases"];
@@ -170,9 +170,12 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
                 }
 
+
                 // add sprite frame
                 var keyName = (filename != null) ? filename : key;
                 this._spriteFrames[keyName] = spriteFrame;
+
+
             }
         }
     },
