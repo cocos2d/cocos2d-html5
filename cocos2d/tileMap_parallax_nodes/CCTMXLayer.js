@@ -105,9 +105,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Node.prototype.setContentSize.call(this, size);
 
         if(cc.renderContextType === cc.CANVAS){
+            var eglViewer = cc.EGLView.getInstance();
             var locCanvas = this._cacheCanvas;
-            locCanvas.width = 0|(size.width * 1.5);
-            locCanvas.height = 0|(size.height * 1.5);
+            locCanvas.width = 0|(size.width * 1.5 * eglViewer._scaleX);
+            locCanvas.height = 0|(size.height * 1.5 * eglViewer._scaleY);
             this._cacheContext.translate(0, locCanvas.height);
             var locContentSize = this._cacheTexture._contentSize;
             locContentSize.width = locCanvas.width;

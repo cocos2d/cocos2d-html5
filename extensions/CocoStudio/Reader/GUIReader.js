@@ -370,26 +370,6 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         }
 
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
-
-        this.setPropsForWidgetFromJsonDictionary(widget, options);
-        var checkBox = widget;
-
-        var backGroundDic = options["backGroundBoxData"];
-        var backGroundType = backGroundDic["resourceType"];
-        switch (backGroundType) {
-            case 0:
-                var backGroundFileName = backGroundDic["path"];
-                var backGroundFileName_tp = backGroundFileName ? this._filePath + backGroundFileName : null;
-                checkBox.loadTextureBackGround(backGroundFileName_tp);
-                break;
-            case 1:
-                var backGroundFileName = backGroundDic["path"];
-                checkBox.loadTextureBackGround(backGroundFileName, ccs.TextureResType.plist);
-                break;
-            default:
-                break;
-        }
-        backGroundDic = null;
     },
 
     setPropsForImageViewFromJsonDictionary: function (widget, options) {
@@ -545,7 +525,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
 
     setPropsForScrollViewFromJsonDictionary: function (widget, options) {
-        this.setPropsForPanelFromJsonDictionary(widget, options);
+        this.setPropsForLayoutFromJsonDictionary(widget, options);
         var scrollView = widget;
         var innerWidth = options["innerWidth"];
         var innerHeight = options["innerHeight"];
@@ -564,121 +544,6 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
-    },
-
-    setPropsForPanelFromJsonDictionary: function (widget, options) {
-        if (this._olderVersion) {
-            this.setPropsForContainerWidgetFromJsonDictionary(widget, options);
-            var panel = widget;
-            var backGroundScale9Enable = options["backGroundScale9Enable"];
-            panel.setBackGroundImageScale9Enabled(backGroundScale9Enable);
-            var cr = options["bgColorR"];
-            var cg = options["bgColorG"];
-            var cb = options["bgColorB"];
-
-            var scr = options["bgStartColorR"];
-            var scg = options["bgStartColorG"];
-            var scb = options["bgStartColorB"];
-
-            var ecr = options["bgEndColorR"];
-            var ecg = options["bgEndColorG"];
-            var ecb = options["bgEndColorB"];
-
-            var bgcv1 = options["vectorX"];
-            var bgcv2 = options["vectorY"];
-            panel.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
-
-            var co = options["bgColorOpacity"];
-
-            var colorType = options["colorType"];
-            panel.setBackGroundColorType(colorType);
-            panel.setBackGroundColor(cc.c3b(scr, scg, scb), cc.c3b(ecr, ecg, ecb));
-            panel.setBackGroundColor(cc.c3b(cr, cg, cb));
-            panel.setBackGroundColorOpacity(co);
-
-            var imageFileName = options["backGroundImage"];
-            var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
-            var useMergedTexture = options["useMergedTexture"];
-            if (backGroundScale9Enable) {
-                var cx = options["capInsetsX"];
-                var cy = options["capInsetsY"];
-                var cw = options["capInsetsWidth"];
-                var ch = options["capInsetsHeight"];
-                if (useMergedTexture) {
-                    panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
-                }
-                else {
-                    panel.setBackGroundImage(imageFileName_tp);
-                }
-                panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
-            }
-            else {
-
-                if (useMergedTexture) {
-                    panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
-                }
-                else {
-                    panel.setBackGroundImage(imageFileName_tp);
-                }
-            }
-            this.setColorPropsForWidgetFromJsonDictionary(widget, options);
-        }
-        else {
-            this.setPropsForContainerWidgetFromJsonDictionary(widget, options);
-            var panel = widget;
-            var backGroundScale9Enable = options["backGroundScale9Enable"];
-            panel.setBackGroundImageScale9Enabled(backGroundScale9Enable);
-            var cr = options["bgColorR"];
-            var cg = options["bgColorG"]
-            var cb = options["bgColorB"];
-
-            var scr = options["bgStartColorR"];
-            var scg = options["bgStartColorG"]
-            var scb = options["bgStartColorB"];
-
-            var ecr = options["bgEndColorR"];
-            var ecg = options["bgEndColorG"];
-            var ecb = options["bgEndColorB"];
-
-            var bgcv1 = options["vectorX"];
-            var bgcv2 = options["vectorY"];
-            panel.setBackGroundColorVector(cc.p(bgcv1, bgcv2));
-
-            var co = options["bgColorOpacity"];
-
-            var colorType = options["colorType"];
-            panel.setBackGroundColorType(colorType);
-            panel.setBackGroundColor(cc.c3b(scr, scg, scb), cc.c3b(ecr, ecg, ecb));
-            panel.setBackGroundColor(cc.c3b(cr, cg, cb));
-            panel.setBackGroundColorOpacity(co);
-
-
-            var imageFileNameDic = options["backGroundImageData"] || {};
-            var imageFileNameType = imageFileNameDic["resourceType"];
-            switch (imageFileNameType) {
-                case 0:
-                    var imageFileName = imageFileNameDic["path"];
-                    var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
-                    panel.setBackGroundImage(imageFileName_tp);
-                    break;
-                case 1:
-                    var imageFileName = imageFileNameDic["path"];
-                    panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
-                    break;
-                default:
-                    break;
-            }
-            imageFileNameDic = null;
-
-            if (backGroundScale9Enable) {
-                var cx = options["capInsetsX"];
-                var cy = options["capInsetsY"];
-                var cw = options["capInsetsWidth"];
-                var ch = options["capInsetsHeight"];
-                panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
-            }
-            this.setColorPropsForWidgetFromJsonDictionary(widget, options);
-        }
     },
 
     setPropsForSliderFromJsonDictionary: function (widget, options) {
@@ -844,8 +709,8 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     },
 
     setPropsForPageViewFromJsonDictionary: function (widget, options) {
-        this.setPropsForPanelFromJsonDictionary(widget, options);
-        this.setColorPropsForWidgetFromJsonDictionary(widget, options);
+       /* this.setPropsForPanelFromJsonDictionary(widget, options);
+        this.setColorPropsForWidgetFromJsonDictionary(widget, options);*/
     },
 
     setPropsForLabelBMFontFromJsonDictionary: function (widget, options) {
@@ -1156,7 +1021,24 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     },
 
     setPropsForCheckBoxFromJsonDictionary: function (widget, options) {
+        this.setPropsForWidgetFromJsonDictionary(widget, options);
         var checkBox = widget;
+        var backGroundDic = options["backGroundBoxData"];
+        var backGroundType = backGroundDic["resourceType"];
+        switch (backGroundType) {
+            case 0:
+                var backGroundFileName = backGroundDic["path"];
+                var backGroundFileName_tp = backGroundFileName ? this._filePath + backGroundFileName : null;
+                checkBox.loadTextureBackGround(backGroundFileName_tp);
+                break;
+            case 1:
+                var backGroundFileName = backGroundDic["path"];
+                checkBox.loadTextureBackGround(backGroundFileName, ccs.TextureResType.plist);
+                break;
+            default:
+                break;
+        }
+        backGroundDic = null;
         var backGroundSelectedDic = options["backGroundBoxSelectedData"];
         var backGroundSelectedType = backGroundSelectedDic["resourceType"];
         switch (backGroundSelectedType) {
@@ -1393,7 +1275,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
 
     setPropsForScrollViewFromJsonDictionary: function (widget, options) {
-        this.setPropsForPanelFromJsonDictionary(widget, options);
+        this.setPropsForLayoutFromJsonDictionary(widget, options);
         var scrollView = widget;
         var innerWidth = options["innerWidth"];
         var innerHeight = options["innerHeight"];
@@ -1656,8 +1538,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     },
 
     setPropsForPageViewFromJsonDictionary: function (widget, options) {
-        this.setPropsForPanelFromJsonDictionary(widget, options);
-        this.setColorPropsForWidgetFromJsonDictionary(widget, options);
+        /*this.setPropsForPanelFromJsonDictionary(widget, options);
+        this.setColorPropsForWidgetFromJsonDictionary(widget, options);*/
     },
 
     setPropsForLabelBMFontFromJsonDictionary: function (widget, options) {
