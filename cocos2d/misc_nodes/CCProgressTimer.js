@@ -220,6 +220,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setColor:function (color) {
         this._sprite.setColor(color);
+        this._updateColor();
     },
 
     /**
@@ -228,6 +229,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setOpacity:function (opacity) {
         this._sprite.setOpacity(opacity);
+        this._updateColor();
     },
 
     /**
