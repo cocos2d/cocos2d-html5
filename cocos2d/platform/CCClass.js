@@ -39,6 +39,7 @@ function ClassManager(){
     return arguments.callee.name || (arguments.callee.toString()).match(/^function ([^(]+)/)[1];
 }
 ClassManager.id=(0|(Math.random()*998));
+ClassManager.instanceId=(0|(Math.random()*998));
 ClassManager.compileSuper=function(func, name, id){
     //make the func to a string
     var str = func.toString();
@@ -79,7 +80,9 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 ClassManager.getNewID=function(){
     return this.id++;
 };
-
+ClassManager.getNewInstanceId=function(){
+    return this.instanceId++;
+};
 
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
@@ -171,6 +174,7 @@ ClassManager.getNewID=function(){
         for (var p in prototype) {
             functionBody += "this." + p + "=this." + p + ";";
         }
+        functionBody += "this[__instanceId] = ClassManager.getNewInstanceId();";
         if (prototype.ctor)
             functionBody += "this.ctor.apply(this,arguments)";
         var Class = new Function(functionBody);
