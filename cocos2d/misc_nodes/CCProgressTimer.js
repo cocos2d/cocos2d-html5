@@ -883,7 +883,6 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             this._updateRadial();
         else if(locType === cc.PROGRESS_TIMER_TYPE_BAR)
             this._updateBar();
-        this._updateColor();
         this._vertexDataDirty = true;
     }
 });
