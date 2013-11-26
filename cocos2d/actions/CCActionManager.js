@@ -62,7 +62,8 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
  * @extends cc.Class
  */
 cc.ActionManager = cc.Class.extend({
-    _targets:null,
+    _hashTargets:null,
+    _arrayTargets:null,
     _currentTarget:null,
     _currentTargetSalvaged:false,
 
@@ -78,7 +79,8 @@ cc.ActionManager = cc.Class.extend({
      * Constructor
      */
     ctor:function () {
-        this._targets = [];
+        this._hashTargets = {};
+        this._arrayTargets = [];
         this._currentTarget = null;
         this._currentTargetSalvaged = false;
     },
@@ -95,13 +97,14 @@ cc.ActionManager = cc.Class.extend({
         cc.Assert(action != null, "no action");
         cc.Assert(target != null, "");
         //check if the action target already exists
-        var element = this._searchElementByTarget(this._targets, target);
+        var element = this._hashTargets[target.__instanceId];
         //if doesnt exists, create a hashelement and push in mpTargets
         if (!element) {
             element = new cc.HashElement();
             element.paused = paused;
             element.target = target;
-            this._targets.push(element);
+            this._hashTargets[target.__instanceId] = element;
+            this._arrayTargets.push(element);
         }
         //creates a array for that eleemnt to hold the actions
         this._actionAllocWithHashElement(element);
@@ -114,7 +117,7 @@ cc.ActionManager = cc.Class.extend({
      * Removes all actions from all the targets.
      */
     removeAllActions:function () {
-        var locTargets = this._targets;
+        var locTargets = this._arrayTargets;
         for (var i = 0; i < locTargets.length; i++) {
             var element = locTargets[i];
             if (element)
@@ -130,9 +133,7 @@ cc.ActionManager = cc.Class.extend({
         // explicit null handling
         if (target == null)
             return;
-        var element = this._searchElementByTarget(this._targets, target);
-
-        //var element = (target in this._targets)? this._targets[ptarget]: null;
+        var element = this._hashTargets[target.__instanceId];
         if (element) {
             if (element.actions.indexOf(element.currentAction) !== -1 && !(element.currentActionSalvaged))
                 element.currentActionSalvaged = true;
@@ -143,9 +144,7 @@ cc.ActionManager = cc.Class.extend({
             } else {
                 this._deleteHashElement(element);
             }
-        } //else {
-            //cc.log("cocos2d: removeAllActionsFromTarget: Target not found");
-        //}
+        }
     },
     /** Removes an action given an action reference.
      * @param {cc.Action} action
@@ -155,7 +154,7 @@ cc.ActionManager = cc.Class.extend({
         if (action == null)
             return;
         var target = action.getOriginalTarget();
-        var element = this._searchElementByTarget(this._targets, target);
+        var element = this._hashTargets[target.__instanceId];
 
         if (element) {
             for (var i = 0; i < element.actions.length; i++) {
@@ -177,7 +176,7 @@ cc.ActionManager = cc.Class.extend({
         cc.Assert(tag != cc.ACTION_TAG_INVALID, "");
         cc.Assert(target != null, "");
 
-        var element = this._searchElementByTarget(this._targets, target);
+        var element = this._hashTargets[target.__instanceId];
 
         if (element) {
             var limit = element.actions.length;
@@ -200,7 +199,7 @@ cc.ActionManager = cc.Class.extend({
      */
     getActionByTag:function (tag, target) {
         cc.Assert(tag != cc.ACTION_TAG_INVALID, "");
-        var element = this._searchElementByTarget(this._targets, target);
+        var element = this._hashTargets[target.__instanceId];
         if (element) {
             if (element.actions != null) {
                 for (var i = 0; i < element.actions.length; ++i) {
@@ -224,7 +223,7 @@ cc.ActionManager = cc.Class.extend({
      * @return {Number}
      */
     numberOfRunningActionsInTarget:function (target) {
-        var element = this._searchElementByTarget(this._targets, target);
+        var element = this._hashTargets[target.__instanceId];
         if (element)
             return (element.actions) ? element.actions.length : 0;
 
@@ -234,7 +233,7 @@ cc.ActionManager = cc.Class.extend({
      * @param {object} target
      */
     pauseTarget:function (target) {
-        var element = this._searchElementByTarget(this._targets, target);
+        var element = this._hashTargets[target.__instanceId];
         if (element)
             element.paused = true;
     },
@@ -242,7 +241,7 @@ cc.ActionManager = cc.Class.extend({
      * @param {object} target
      */
     resumeTarget:function (target) {
-        var element = this._searchElementByTarget(this._targets, target);
+        var element = this._hashTargets[target.__instanceId];
         if (element)
             element.paused = false;
     },
@@ -252,7 +251,7 @@ cc.ActionManager = cc.Class.extend({
      */
     pauseAllRunningActions:function(){
         var idsWithActions = [];
-        var locTargets = this._targets;
+        var locTargets = this._arrayTargets;
         for(var i = 0; i< locTargets.length; i++){
             var element = locTargets[i];
             if(element && !element.paused){
@@ -307,8 +306,9 @@ cc.ActionManager = cc.Class.extend({
     },
 
     _deleteHashElement:function (element) {
-        cc.ArrayRemoveObject(this._targets, element);
         if (element) {
+            delete this._hashTargets[element.target.__instanceId];
+            cc.ArrayRemoveObject(this._arrayTargets, element);
             element.actions = null;
             element.target = null;
         }
@@ -325,11 +325,11 @@ cc.ActionManager = cc.Class.extend({
      * @param {Number} dt delta time in seconds
      */
     update:function (dt) {
-        var locTargets = this._targets , locCurrTarget;
+        var locTargets = this._arrayTargets , locCurrTarget;
         for (var elt = 0; elt < locTargets.length; elt++) {
             this._currentTarget = locTargets[elt];
             locCurrTarget = this._currentTarget;
-            this._currentTargetSalvaged = false;
+            //this._currentTargetSalvaged = false;
             if (!locCurrTarget.paused) {
                 // The 'actions' CCMutableArray may change while inside this loop.
                 for (locCurrTarget.actionIndex = 0; locCurrTarget.actionIndex < locCurrTarget.actions.length;
