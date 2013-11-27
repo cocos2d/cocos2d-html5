@@ -318,7 +318,7 @@ cc.Control = cc.LayerRGBA.extend({
             eventInvocationList.length = 0;
         } else {
             //normally we would use a predicate, but this won't work here. Have to do it manually
-            for (var i = 0; i < eventInvocationList.length; i++) {
+            for (var i = 0; i < eventInvocationList.length; ) {
                 var invocation = eventInvocationList[i];
                 var shouldBeRemoved = true;
                 if (target)
@@ -328,6 +328,8 @@ cc.Control = cc.LayerRGBA.extend({
                 // Remove the corresponding invocation object
                 if (shouldBeRemoved)
                     cc.ArrayRemoveObject(eventInvocationList, invocation);
+                else
+                    i ++;
             }
         }
     },
