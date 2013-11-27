@@ -217,10 +217,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {String} label string
      * @param {String} fontName
      * @param {Number} fontSize
-     * @param {cc.Size} [dimensions=]
-     * @param {Number} [hAlignment=]
-     * @param {Number} [vAlignment=]
-     * @param {Number} [lineBreakMode=]
+     * @param {cc.Size} [dimensions=cc.size(0, fontSize)]
+     * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
+     * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
+     * @param {Number} [lineBreakMode=cc.LINE_BREAK_MODE_WORD_WRAP]
      * @return {Boolean} return false on error
      */
     initWithString:function (label, fontName, fontSize, dimensions, hAlignment, vAlignment, lineBreakMode) {
@@ -673,7 +673,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var tooWide = locDimensionsWidth !== 0 && stringWidth > locDimensionsWidth;
         var isWrapMode = (this._lineBreakMode === cc.LINE_BREAK_MODE_WORD_WRAP ||
                           this._lineBreakMode === cc.LINE_BREAK_MODE_CHARACTER_WRAP);
-        console.log("string=%s, isWrapMode=%s", this._string, isWrapMode);
+
         if (isWrapMode && (hasNewLine || (tooWide && hasSpace))) {
             var strings = this._strings = this._string.split('\n');
             var lineWidths = this._lineWidths = [];
@@ -986,8 +986,8 @@ cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
  * @param {String} label
  * @param {String} fontName
  * @param {Number} fontSize
- * @param {cc.Size} [dimensions=cc.SIZE_ZERO]
- * @param {Number} [hAlignment]
+ * @param {cc.Size} [dimensions=cc.size(0, fontSize)]
+ * @param {Number} [hAlignmentcc.TEXT_ALIGNMENT_LEFT]
  * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
  * @param {Number} [lineBreakMode=cc.LINE_BREAK_MODE_WORD_WRAP
  * @return {cc.LabelTTF|Null}
