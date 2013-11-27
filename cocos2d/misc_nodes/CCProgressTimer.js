@@ -220,6 +220,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setColor:function (color) {
         this._sprite.setColor(color);
+        this._updateColor();
     },
 
     /**
@@ -228,6 +229,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setOpacity:function (opacity) {
         this._sprite.setOpacity(opacity);
+        this._updateColor();
     },
 
     /**
@@ -881,7 +883,6 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             this._updateRadial();
         else if(locType === cc.PROGRESS_TIMER_TYPE_BAR)
             this._updateBar();
-        this._updateColor();
         this._vertexDataDirty = true;
     }
 });
