@@ -36,6 +36,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _dimensions:null,
     _hAlignment:cc.TEXT_ALIGNMENT_CENTER,
     _vAlignment:cc.VERTICAL_TEXT_ALIGNMENT_TOP,
+    _lineBreakMode:cc.LINE_BREAK_MODE_WORD_WRAP,
     _fontName: null,
     _fontSize:0.0,
     _string:"",
@@ -219,9 +220,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.Size} [dimensions=]
      * @param {Number} [hAlignment=]
      * @param {Number} [vAlignment=]
+     * @param {Number} [lineBreakMode=]
      * @return {Boolean} return false on error
      */
-    initWithString:function (label, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+    initWithString:function (label, fontName, fontSize, dimensions, hAlignment, vAlignment, lineBreakMode) {
         var strInfo;
         if(label)
             strInfo = label + "";
@@ -232,6 +234,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         dimensions = dimensions || cc.size(0, fontSize);
         hAlignment = hAlignment || cc.TEXT_ALIGNMENT_LEFT;
         vAlignment = vAlignment || cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+        lineBreakMode = lineBreakMode || cc.LINE_BREAK_MODE_WORD_WRAP;
 
         if (cc.Sprite.prototype.init.call(this)) {
             this._opacityModifyRGB = false;
@@ -239,6 +242,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontName = fontName || "Arial";
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
+            this._lineBreakMode = lineBreakMode;
 
             //this._fontSize = (cc.renderContextType === cc.CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontSize = fontSize;
@@ -663,7 +667,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _updateTTF:function () {
         var locDimensionsWidth = this._dimensions.width, locLabelContext = this._labelContext;
         var stringWidth = locLabelContext.measureText(this._string).width;
-        if(this._string.indexOf('\n') !== -1 || (locDimensionsWidth !== 0 && stringWidth > locDimensionsWidth && this._string.indexOf(" ") !== -1)) {
+
+        var hasNewLine = this._string.indexOf('\n') !== -1;
+        var hasSpace = this._string.indexOf(' ') !== -1;
+        var tooWide = locDimensionsWidth !== 0 && stringWidth > locDimensionsWidth;
+        var isWrapMode = (this._lineBreakMode === cc.LINE_BREAK_MODE_WORD_WRAP ||
+                          this._lineBreakMode === cc.LINE_BREAK_MODE_CHARACTER_WRAP);
+        console.log("string=%s, isWrapMode=%s", this._string, isWrapMode);
+        if (isWrapMode && (hasNewLine || (tooWide && hasSpace))) {
             var strings = this._strings = this._string.split('\n');
             var lineWidths = this._lineWidths = [];
             for (var i = 0; i < strings.length; i++) {
@@ -978,14 +989,15 @@ cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
  * @param {cc.Size} [dimensions=cc.SIZE_ZERO]
  * @param {Number} [hAlignment]
  * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
+ * @param {Number} [lineBreakMode=cc.LINE_BREAK_MODE_WORD_WRAP
  * @return {cc.LabelTTF|Null}
  * @example
  * // Example
  * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
  */
-cc.LabelTTF.create = function (label, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+cc.LabelTTF.create = function (label, fontName, fontSize, dimensions, hAlignment, vAlignment, lineBreakMode) {
     var ret = new cc.LabelTTF();
-    if (ret.initWithString(label, fontName, fontSize, dimensions, hAlignment, vAlignment))
+    if (ret.initWithString(label, fontName, fontSize, dimensions, hAlignment, vAlignment, lineBreakMode))
         return ret;
     return null;
 };

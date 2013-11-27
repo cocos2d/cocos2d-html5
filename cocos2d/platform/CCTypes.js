@@ -1297,6 +1297,48 @@ cc.VERTICAL_TEXT_ALIGNMENT_CENTER = 1;
  */
 cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM = 2;
 
+/**
+ * line break mode : wrap on word boundaries
+ * @constant
+ * @type Number
+ */
+cc.LINE_BREAK_MODE_WORD_WRAP = 0;
+
+/**
+ * line break mode : wrap on characters (not supported yet)
+ * @constant
+ * @type Number
+ */
+cc.LINE_BREAK_MODE_CHARACTER_WRAP = 1;
+
+/**
+ * line break mode : clip
+ * @constant
+ * @type Number
+ */
+cc.LINE_BREAK_MODE_CLIP = 2;
+
+/**
+ * line break mode : TooLongLine --> ...LongLine (not supported yet)
+ * @constant
+ * @type Number
+ */
+cc.LINE_BREAK_MODE_HEAD_TRUNCATION = 3;
+
+/**
+ * line break mode : TooLongLine --> TooLong... (not supported yet)
+ * @constant
+ * @type Number
+ */
+cc.LINE_BREAK_MODE_TAIL_TRUNCATION = 4;
+
+/**
+ * line break mode : TooLongLine --> Too...Line (not supported yet)
+ * @constant
+ * @type Number
+ */
+cc.LINE_BREAK_MODE_MIDDLE_TRUNCATION = 5;
+
 cc._Dictionary = cc.Class.extend({
     _keyMapTb: null,
     _valueMapTb: null,
