@@ -1012,9 +1012,9 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         if (options.hasOwnProperty("fontName")) {
             button.setTitleFontName(options["fontName"]);
         }
-        var cr = options.hasOwnProperty("colorR") ? options["colorR"] : 255;
-        var cg = options.hasOwnProperty("colorG") ? options["colorG"] : 255;
-        var cb = options.hasOwnProperty("colorB") ? options["colorB"] : 255;
+        var cr = options.hasOwnProperty("textColorR") ? options["textColorR"] : 255;
+        var cg = options.hasOwnProperty("textColorG") ? options["textColorG"] : 255;
+        var cb = options.hasOwnProperty("textColorB") ? options["textColorB"] : 255;
         var tc = cc.c3b(cr, cg, cb);
         button.setTitleColor(tc);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
