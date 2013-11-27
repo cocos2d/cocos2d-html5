@@ -62,7 +62,7 @@ cc.NextPOT = function (x) {
 /**
  * cc.RenderTexture is a generic rendering target. To render things into it,<br/>
  * simply construct a render target, call begin on it, call visit on any cocos<br/>
- * scenes or objects to render them, and call end. For convienience, render texture<br/>
+ * scenes or objects to render them, and call end. For convenience, render texture<br/>
  * adds a sprite as it's display child with the results, so you can simply add<br/>
  * the render texture to your scene and treat it like any other CocosNode.<br/>
  * There are also functions for saving the render texture to disk in PNG or JPG format.
@@ -71,7 +71,7 @@ cc.NextPOT = function (x) {
  */
 cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     /**
-     * the offscreen canvas for rendering and storing the texture
+     * the off-screen canvas for rendering and storing the texture
      * @type HTMLCanvasElement
      */
     _cacheCanvas:null,
@@ -120,15 +120,15 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this._clearColor = cc.c4f(0, 0, 0, 0);
     },
 
-    onExit:null,
+    cleanup:null,
 
-    _onExitForCanvas:function () {
+    _cleanupForCanvas:function () {
         cc.Node.prototype.onExit.call(this);
         this._cacheContext = null;
         this._cacheCanvas = null;
     },
 
-    _onExitForWebGL: function () {
+    _cleanupForWebGL: function () {
         cc.Node.prototype.onExit.call(this);
 
         this._sprite = null;
@@ -168,9 +168,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     initWithWidthAndHeight: null,
 
     _initWithWidthAndHeightForCanvas: function (width, height, format, depthStencilFormat) {
-        var locCacheCanvas = this._cacheCanvas;
-        locCacheCanvas.width = width || 10;
-        locCacheCanvas.height = height || 10;
+        var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        locCacheCanvas.width = 0 | (width * locScaleFactor);
+        locCacheCanvas.height = 0 | (height * locScaleFactor);
         this._cacheContext.translate(0, locCacheCanvas.height);
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);
@@ -180,12 +180,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _initWithWidthAndHeightForWebGL: function (width, height, format, depthStencilFormat) {
-        cc.Assert(format != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
+        if(format == cc.TEXTURE_2D_PIXEL_FORMAT_A8)
+            cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
-        var gl = cc.renderContext;
+        var gl = cc.renderContext, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
 
-        width = 0 | (width * cc.CONTENT_SCALE_FACTOR());
-        height = 0 | (height * cc.CONTENT_SCALE_FACTOR());
+        width = 0 | (width * locScaleFactor);
+        height = 0 | (height * locScaleFactor);
 
         this._oldFBO = gl.getParameter(gl.FRAMEBUFFER_BINDING);
 
@@ -247,7 +248,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         }
 
         // check if it worked (probably worth doing :) )
-        cc.Assert(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "Could not attach texture to framebuffer");
+        if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE)
+            cc.log("Could not attach texture to the framebuffer");
 
         locTexture.setAliasTexParameters();
 
@@ -274,6 +276,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _beginForCanvas: function () {
         cc.renderContext = this._cacheContext;
+        cc.EGLView.getInstance()._setScaleXYForRenderTexture();
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -409,6 +412,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _endForCanvas: function () {
         cc.renderContext = cc.mainRenderContextBackup;
+        cc.EGLView.getInstance()._resetScale();
 
         //TODO
         /*//restore viewport
@@ -656,6 +660,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _newCCImageForWebGL:function (flipImage) {
+        cc.log("saveToFile isn't supported on Cocos2d-Html5");
+
         if(flipImage === null)
             flipImage = true;
         cc.Assert(this._pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
@@ -814,7 +820,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
 if(cc.Browser.supportWebGL){
     cc.RenderTexture.prototype.ctor = cc.RenderTexture.prototype._ctorForWebGL;
-    cc.RenderTexture.prototype.onExit = cc.RenderTexture.prototype._onExitForWebGL;
+    cc.RenderTexture.prototype.cleanup = cc.RenderTexture.prototype._cleanupForWebGL;
     cc.RenderTexture.prototype.initWithWidthAndHeight = cc.RenderTexture.prototype._initWithWidthAndHeightForWebGL;
     cc.RenderTexture.prototype.begin = cc.RenderTexture.prototype._beginForWebGL;
     cc.RenderTexture.prototype._beginWithClear = cc.RenderTexture.prototype._beginWithClearForWebGL;
@@ -828,7 +834,7 @@ if(cc.Browser.supportWebGL){
     cc.RenderTexture.prototype.setClearColor = cc.RenderTexture.prototype._setClearColorForWebGL;
 } else {
     cc.RenderTexture.prototype.ctor = cc.RenderTexture.prototype._ctorForCanvas;
-    cc.RenderTexture.prototype.onExit = cc.RenderTexture.prototype._onExitForCanvas;
+    cc.RenderTexture.prototype.cleanup = cc.RenderTexture.prototype._cleanupForCanvas;
     cc.RenderTexture.prototype.initWithWidthAndHeight = cc.RenderTexture.prototype._initWithWidthAndHeightForCanvas;
     cc.RenderTexture.prototype.begin = cc.RenderTexture.prototype._beginForCanvas;
     cc.RenderTexture.prototype._beginWithClear = cc.RenderTexture.prototype._beginWithClearForCanvas;

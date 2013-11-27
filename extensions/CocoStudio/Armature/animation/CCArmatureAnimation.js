@@ -23,16 +23,17 @@
  ****************************************************************************/
 
 //movement event type
-CC_MovementEventType_START = 0;
-CC_MovementEventType_COMPLETE = 1;
-CC_MovementEventType_LOOP_COMPLETE = 2;
-
+ccs.MovementEventType = {
+    start: 0,
+    complete: 1,
+    loopComplete: 2
+};
 /**
  * Base class for cc.MovementEvent objects.
  * @class
  * @extends cc.Class
  */
-cc.AnimationEvent = cc.Class.extend({
+ccs.AnimationEvent = cc.Class.extend({
     _arguments:null,
     _callFunc:null,
     _selectorTarget:null,
@@ -50,13 +51,18 @@ cc.AnimationEvent = cc.Class.extend({
         this._arguments = args;
     }
 });
-
+ccs.FrameEvent = function () {
+    this.bone = null;
+    this.frameEventName = "";
+    this.originFrameIndex = 0;
+    this.currentFrameIndex = 0;
+};
 /**
- * Base class for cc.ArmatureAnimation objects.
+ * Base class for ccs.ArmatureAnimation objects.
  * @class
- * @extends cc.ProcessBase
+ * @extends ccs.ProcessBase
  */
-cc.ArmatureAnimation = cc.ProcessBase.extend({
+ccs.ArmatureAnimation = ccs.ProcessBase.extend({
     _animationData:null,
     _movementData:null,
     _armature:null,
@@ -67,8 +73,11 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     _frameEvent:null,
     _movementEvent:null,
     _speedScale:1,
+    _ignoreFrameEvent:false,
+    _frameEventQueue:[],
+    _userObject:null,
     ctor:function () {
-        cc.ProcessBase.prototype.ctor.call(this);
+        ccs.ProcessBase.prototype.ctor.call(this);
         this._animationData = null;
         this._movementData = null;
         this._movementID = "";
@@ -79,11 +88,14 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         this._frameEvent = null;
         this._movementEvent = null;
         this._speedScale = 1;
+        this._ignoreFrameEvent = false;
+        this._frameEventQueue = [];
+        this._userObject = null;
     },
 
     /**
      * init with a CCArmature
-     * @param {cc.Armature} armature
+     * @param {ccs.Armature} armature
      * @return {Boolean}
      */
     init:function (armature) {
@@ -95,13 +107,13 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         for (var i = 0; i < this._tweenList.length; i++) {
             this._tweenList[i].pause();
         }
-        cc.ProcessBase.prototype.pause.call(this);
+        ccs.ProcessBase.prototype.pause.call(this);
     },
     resume:function () {
         for (var i = 0; i < this._tweenList.length; i++) {
             this._tweenList[i].resume();
         }
-        cc.ProcessBase.prototype.resume.call(this);
+        ccs.ProcessBase.prototype.resume.call(this);
     },
 
     stop:function () {
@@ -109,7 +121,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
             this._tweenList[i].stop();
         }
         this._tweenList = [];
-        cc.ProcessBase.prototype.stop.call(this);
+        ccs.ProcessBase.prototype.stop.call(this);
     },
 
     /**
@@ -201,7 +213,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
             loop = -1;
         }
         if (typeof tweenEasing == "undefined") {
-            tweenEasing = cc.TweenType.TWEEN_EASING_MAX;
+            tweenEasing = ccs.TweenType.tweenEasingMax;
         }
         var locMovementData = this._movementData;
         //Get key frame count
@@ -212,10 +224,10 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         durationTo = (durationTo == -1) ? locMovementData.durationTo : durationTo;
         durationTween = (durationTween == -1) ? locMovementData.durationTween : durationTween;
         durationTween = (durationTween == 0) ? locMovementData.duration : durationTween;//todo
-        tweenEasing = (tweenEasing == cc.TweenType.TWEEN_EASING_MAX) ? locMovementData.tweenEasing : tweenEasing;
+        tweenEasing = (tweenEasing == ccs.TweenType.tweenEasingMax) ? locMovementData.tweenEasing : tweenEasing;
         loop = (loop < 0) ? locMovementData.loop : loop;
 
-        cc.ProcessBase.prototype.play.call(this, animationName, durationTo, durationTween, loop, tweenEasing);
+        ccs.ProcessBase.prototype.play.call(this, durationTo, durationTween, loop, tweenEasing);
 
         if (this._rawDuration == 0) {
             this._loopType = CC_ANIMATION_TYPE_SINGLE_FRAME;
@@ -257,6 +269,50 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
                 }
             }
         }
+        this._armature.update(0);
+    },
+
+    /**
+     * Go to specified frame and play current movement.
+     * You need first switch to the movement you want to play, then call this function.
+     *
+     * example : playByIndex(0);
+     *           gotoAndPlay(0);
+     *           playByIndex(1);
+     *           gotoAndPlay(0);
+     *           gotoAndPlay(15);
+     * @param {Number} frameIndex
+     */
+    gotoAndPlay: function (frameIndex) {
+        if (!this._movementData || frameIndex < 0 || frameIndex >= this._movementData.duration) {
+            cc.log("Please ensure you have played a movement, and the frameIndex is in the range.");
+            return;
+        }
+
+        var ignoreFrameEvent = this._ignoreFrameEvent;
+        this._ignoreFrameEvent = true;
+        this._isPlaying = true;
+        this._isComplete = this._isPause = false;
+
+        ccs.ProcessBase.prototype.gotoFrame.call(this, frameIndex);
+        this._currentPercent = this._curFrameIndex / this._movementData.duration;
+        this._currentFrame = this._nextFrameIndex * this._currentPercent;
+
+        for (var i = 0; i < this._tweenList.length; i++) {
+            var tween = this._tweenList[i];
+            tween.gotoAndPlay(frameIndex);
+        }
+        this._armature.update(0);
+        this._ignoreFrameEvent = ignoreFrameEvent;
+    },
+
+    /**
+     * Go to specified frame and pause current movement.
+     * @param {Number} frameIndex
+     */
+    gotoAndPause: function (frameIndex) {
+        this.gotoAndPlay(frameIndex);
+        this.pause();
     },
 
     /**
@@ -297,10 +353,19 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     },
 
     update:function (dt) {
-        if(cc.ProcessBase.prototype.update.call(this, dt)){
+        if(ccs.ProcessBase.prototype.update.call(this, dt)){
             for (var i = 0; i < this._tweenList.length; i++) {
                 this._tweenList[i].update(dt);
             }
+        }
+        if (this._frameEventQueue.length > 0) {
+            for (var i = 0; i < this._frameEventQueue.length; i++) {
+                var frameEvent = this._frameEventQueue[i];
+                this._ignoreFrameEvent = true;
+                this.callFrameEvent([frameEvent.bone, frameEvent.frameEventName, frameEvent.originFrameIndex, frameEvent.currentFrameIndex]);
+                this._ignoreFrameEvent = false;
+            }
+            this._frameEventQueue = [];
         }
     },
 
@@ -317,7 +382,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
                     locCurrentPercent = this._currentFrame / this._durationTween;
                     if (locCurrentPercent < 1.0) {
                         this._nextFrameIndex = this._durationTween;
-                        this.callMovementEvent([this._armature, CC_MovementEventType_START, this._movementID]);
+                        this.callMovementEvent([this._armature, ccs.MovementEventType.start, this._movementID]);
                         break;
                     }
                 case CC_ANIMATION_TYPE_MAX:
@@ -325,20 +390,20 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
-                    this.callMovementEvent([this._armature, CC_MovementEventType_COMPLETE, this._movementID]);
+                    this.callMovementEvent([this._armature, ccs.MovementEventType.complete, this._movementID]);
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
                     this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
-                    locCurrentPercent = cc.fmodf(locCurrentPercent, 1);
-                    this._currentFrame = this._nextFrameIndex == 0 ? 0 : cc.fmodf(this._currentFrame, this._nextFrameIndex);
+                    locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
+                    this._currentFrame = this._nextFrameIndex == 0 ? 0 : ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
-                    this.callMovementEvent([this, CC_MovementEventType_START, this._movementID]);
+                    this.callMovementEvent([this, ccs.MovementEventType.start, this._movementID]);
                     break;
                 default:
-                    locCurrentPercent = cc.fmodf(locCurrentPercent, 1);
-                    this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
+                    //locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
+                    this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
-                    this.callMovementEvent([this._armature, CC_MovementEventType_LOOP_COMPLETE, this._movementID]);
+                    this.callMovementEvent([this._armature, ccs.MovementEventType.loopComplete, this._movementID]);
                     break;
             }
             this._currentPercent = locCurrentPercent;
@@ -361,7 +426,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      * @param {function} callFunc
      */
     setMovementEventCallFunc:function (callFunc, target) {
-        this._movementEvent = new cc.AnimationEvent(target, callFunc);
+        this._movementEvent = new ccs.AnimationEvent(target, callFunc);
     },
 
     /**
@@ -381,7 +446,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      * @param {function} callFunc
      */
     setFrameEventCallFunc:function (callFunc, target) {
-        this._frameEvent = new cc.AnimationEvent(target, callFunc);
+        this._frameEvent = new ccs.AnimationEvent(target, callFunc);
     },
 
     /**
@@ -396,8 +461,25 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     },
 
     /**
+     * @param {ccs.Bone} bone
+     * @param {String} frameEventName
+     * @param {Number} originFrameIndex
+     * @param {Number} currentFrameIndex
+     */
+    frameEvent:function(bone, frameEventName,  originFrameIndex,  currentFrameIndex){
+        if (this._frameEvent)    {
+            var frameEvent = new ccs.FrameEvent();
+            frameEvent.bone = bone;
+            frameEvent.frameEventName = frameEventName;
+            frameEvent.originFrameIndex = originFrameIndex;
+            frameEvent.currentFrameIndex = currentFrameIndex;
+            this._frameEventQueue.push(frameEvent);
+        }
+    },
+    
+    /**
      * animationData setter
-     * @param {cc.AnimationData} aniData
+     * @param {ccs.AnimationData} aniData
      */
     setAnimationData:function (aniData) {
         this._animationData = aniData;
@@ -405,23 +487,46 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
 
     /**
      * animationData getter
-     * @return {cc.AnimationData}
+     * @return {ccs.AnimationData}
      */
     getAnimationData:function () {
         return this._animationData;
+    },
+    /**
+     * userObject setter
+     * @param {Object} aniData
+     */
+    setUserObject:function (userObject) {
+        this._userObject = userObject;
+    },
+
+    /**
+     * userObject getter
+     * @return {Object}
+     */
+    getUserObject:function () {
+        return this._userObject;
+    },
+
+    isIgnoreFrameEvent:function(){
+        return this._ignoreFrameEvent;
+    },
+
+    setIgnoreFrameEvent:function(bool){
+        this._ignoreFrameEvent = bool;
     }
 });
 
 /**
  * allocates and initializes a ArmatureAnimation.
  * @constructs
- * @return {cc.ArmatureAnimation}
+ * @return {ccs.ArmatureAnimation}
  * @example
  * // example
- * var animation = cc.ArmatureAnimation.create();
+ * var animation = ccs.ArmatureAnimation.create();
  */
-cc.ArmatureAnimation.create = function (armature) {
-    var animation = new cc.ArmatureAnimation();
+ccs.ArmatureAnimation.create = function (armature) {
+    var animation = new ccs.ArmatureAnimation();
     if (animation && animation.init(armature)) {
         return animation;
     }

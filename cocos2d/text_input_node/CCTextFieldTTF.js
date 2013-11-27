@@ -60,7 +60,7 @@ cc.TextFieldDelegate = cc.Class.extend(/** @lends cc.TextFieldDelegate# */{
     },
 
     /**
-     * f the sender doesn't want to delete the delText, return true;
+     * If the sender doesn't want to delete the delText, return true;
      * @param {cc.TextFieldTTF} sender
      * @param {String} delText
      * @param {Number} len

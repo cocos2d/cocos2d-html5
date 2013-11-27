@@ -67,7 +67,10 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * @param {Object} target
      */
     initWithResources: function (resources, selector, target) {
-        cc.Assert(resources != null, "resources should not null");
+        if(!resources){
+            console.log("resources should not null");
+            return;
+        }
 
         if (selector) {
             this._selector = selector;

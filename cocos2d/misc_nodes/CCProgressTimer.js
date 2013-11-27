@@ -77,7 +77,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      *  @return {cc.Point}
      */
     getMidpoint:function () {
-        return this._midPoint;
+        return cc.p(this._midPoint.x, this._midPoint);
     },
 
     /**
@@ -96,7 +96,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      *  @return {cc.Point}
      */
     getBarChangeRate:function () {
-        return this._barChangeRate;
+        return cc.p(this._barChangeRate.x, this._barChangeRate.y);
     },
 
     /**
@@ -220,6 +220,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setColor:function (color) {
         this._sprite.setColor(color);
+        this._updateColor();
     },
 
     /**
@@ -228,6 +229,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setOpacity:function (opacity) {
         this._sprite.setOpacity(opacity);
+        this._updateColor();
     },
 
     /**
@@ -418,32 +420,43 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         var context = ctx || cc.renderContext;
 
         var locSprite = this._sprite;
+        if (locSprite._isLighterMode)
+            context.globalCompositeOperation = 'lighter';
+
+        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+
         context.globalAlpha = locSprite._displayedOpacity / 255;
-        var locRect = locSprite._rect,  locOffsetPosition = locSprite._offsetPosition;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
+        var locRect = locSprite._rect, locContentSize = locSprite._contentSize, locOffsetPosition = locSprite._offsetPosition, locDrawSizeCanvas = locSprite._drawSize_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = locSprite._textureRect_Canvas;
+        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
+        locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
         context.save();
-        if (locSprite._flipX) {
+        if (locSprite._flippedX) {
             flipXOffset = -locOffsetPosition.x - locRect.width;
             context.scale(-1, 1);
         }
-        if (locSprite._flipY) {
+        if (locSprite._flippedY) {
             flipYOffset = locOffsetPosition.y;
             context.scale(1, -1);
         }
+
+        flipXOffset *= locEGL_ScaleX;
+        flipYOffset *= locEGL_ScaleY;
 
         //clip
         if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
             var locBarRect = this._barRect;
             context.beginPath();
-            context.rect(locBarRect.x,locBarRect.y,locBarRect.width,locBarRect.height);
+            context.rect(locBarRect.x * locEGL_ScaleX, locBarRect.y * locEGL_ScaleY, locBarRect.width * locEGL_ScaleX, locBarRect.height * locEGL_ScaleY);
             context.clip();
             context.closePath();
-        }else if(this._type == cc.PROGRESS_TIMER_TYPE_RADIAL){
-            var locOrigin = this._origin;
+        } else if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
+            var locOriginX = this._origin.x * locEGL_ScaleX;
+            var locOriginY = this._origin.y * locEGL_ScaleY;
             context.beginPath();
-            context.arc(locOrigin.x, locOrigin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, this._counterClockWise);
-            context.lineTo(locOrigin.x, locOrigin.y);
+            context.arc(locOriginX, locOriginY, this._radius * locEGL_ScaleY, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, this._counterClockWise);
+            context.lineTo(locOriginX, locOriginY);
             context.clip();
             context.closePath();
         }
@@ -451,15 +464,19 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         //draw sprite
         if (locSprite._texture && locRect.width > 0) {
             var image = locSprite._texture.getHtmlElementObj();
-            if (locSprite._colorized) {
+            if (this._colorized) {
                 context.drawImage(image,
-                    0, 0, locRect.width, locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+                    0, 0, locTextureCoord.width, locTextureCoord.height,
+                    flipXOffset, flipYOffset, locDrawSizeCanvas.width, locDrawSizeCanvas.height);
             } else {
                 context.drawImage(image,
-                    locRect.x, locRect.y, locRect.width, locRect.height,
-                    flipXOffset, flipYOffset, locRect.width, locRect.height);
+                    locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
+                    flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
+        } else if (locContentSize.width !== 0) {
+            var curColor = this.getColor();
+            context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
+            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }
 
         context.restore();
@@ -611,7 +628,10 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 locData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
 
             this._vertexData = locData;
-            cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
+            if(!this._vertexData){
+                cc.log( "cc.ProgressTimer._updateRadial() : Not enough memory");
+                return;
+            }
         }
 
         var locVertexData = this._vertexData;
@@ -686,10 +706,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 var vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, locCount = 4;
                 this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
                 this._vertexData = [];
-                for (i = 0; i < locCount; i++) {
+                for (i = 0; i < locCount; i++)
                     this._vertexData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
-                }
-                cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
             }
 
             locVertexData = this._vertexData;
@@ -716,8 +734,6 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 var rTempData = [];
                 for (i = 0; i < rLocCount; i++)
                     rTempData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * rVertexDataLen);
-
-                cc.Assert(rTempData, "cc.ProgressTimer. Not enough memory");
                 //    TOPLEFT 1
                 rTempData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 1));
                 rTempData[0].vertices = this._vertexFromAlphaPoint(cc.p(0, 1));
@@ -790,7 +806,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 locEndAngle = 270 + 3.6 * this._percentage;
             }
 
-            if (locSprite._flipX) {
+            if (locSprite._flippedX) {
                 locOrigin.x -= spriteSize.width * (this._midPoint.x * 2);
                 locStartAngle= -locStartAngle;
                 locEndAngle= -locEndAngle;
@@ -798,7 +814,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 locEndAngle -= 180;
                 locCounterClockWise = !locCounterClockWise;
             }
-            if (locSprite._flipY) {
+            if (locSprite._flippedY) {
                 locOrigin.y+=spriteSize.height*(this._midPoint.y*2);
                 locCounterClockWise = !locCounterClockWise;
                 locStartAngle= -locStartAngle;
@@ -836,7 +852,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             //left pos
             locBarRect.x = 0;
             var flipXNeed = 1;
-            if (locSprite._flipX) {
+            if (locSprite._flippedX) {
                 locBarRect.x -= currentDrawSize.width;
                 flipXNeed = -1;
             }
@@ -847,7 +863,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             //right pos
             locBarRect.y = 0;
             var flipYNeed = 1;
-            if (locSprite._flipY) {
+            if (locSprite._flippedY) {
                 locBarRect.y += currentDrawSize.height;
                 flipYNeed = -1;
             }
@@ -867,7 +883,6 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             this._updateRadial();
         else if(locType === cc.PROGRESS_TIMER_TYPE_BAR)
             this._updateBar();
-        this._updateColor();
         this._vertexDataDirty = true;
     }
 });

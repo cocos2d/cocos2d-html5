@@ -109,6 +109,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
 
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
+        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX();
 
         if ((this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE)))
             context.globalCompositeOperation = 'lighter';
@@ -122,7 +123,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
 
             if (element.type === cc.DrawNode.TYPE_SEGMENT) {
                 context.strokeStyle = "rgba(" + (0 | (element.color.r * 255)) + "," + (0 | (element.color.g * 255)) + "," + (0 | (element.color.b * 255)) + "," + element.color.a + ")";
-                context.lineWidth = element.radius * 2;
+                context.lineWidth = element.radius * 2 * locEGL_ScaleX;
                 context.lineCap = "round";
                 cc.drawingUtil.drawLine(element.from, element.to);
             }
@@ -131,7 +132,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
                 context.fillStyle = "rgba(" + (0 | (element.fillColor.r * 255)) + "," + (0 | (element.fillColor.g * 255)) + ","
                     + (0 | (element.fillColor.b * 255)) + "," + element.fillColor.a + ")";
                 cc.drawingUtil.drawPoly(element.verts, element.count, false, true);
-                context.lineWidth = element.borderWidth * 2;
+                context.lineWidth = element.borderWidth * 2 * locEGL_ScaleX;
                 context.lineCap = "round";
                 context.strokeStyle = "rgba(" + (0 | (element.borderColor.r * 255)) + "," + (0 | (element.borderColor.g * 255)) + ","
                     + (0 | (element.borderColor.b * 255)) + "," + element.borderColor.a + ")";
@@ -390,7 +391,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
             var offset = cc.v2fmult(cc.v2fadd(n1, n2), 1.0 / (cc.v2fdot(n1, n2) + 1.0));
             extrude[i] = {offset: offset, n: n2};
         }
-        var outline = (borderColor.a > 0.0 && borderWidth > 0.0);
+        var outline = (borderWidth > 0.0);
 
         var triangleCount = 3 * count -2;
         var vertexCount = 3 * triangleCount;

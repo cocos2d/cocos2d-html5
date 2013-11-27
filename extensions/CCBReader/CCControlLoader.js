@@ -248,7 +248,11 @@ var PROPERTY_INSETBOTTOM = "insetBottom";
 
 cc.Scale9SpriteLoader = cc.NodeLoader.extend({
     _createCCNode:function(parent,ccbReader){
-        return cc.Scale9Sprite.create();
+        var sprite = cc.Scale9Sprite.create();
+
+        sprite.setAnchorPoint(cc.p(0, 0));
+
+        return sprite;
     },
 
     onHandlePropTypeColor3:function(node, parent, propertyName, ccColor3B,ccbReader){
@@ -277,7 +281,7 @@ cc.Scale9SpriteLoader = cc.NodeLoader.extend({
     },
     onHandlePropTypeSpriteFrame:function(node, parent, propertyName, spriteFrame,ccbReader){
         if(propertyName == PROPERTY_SPRITEFRAME) {
-            node.initWithSpriteFrame(spriteFrame);
+            node.setSpriteFrame(spriteFrame);
         } else {
             cc.NodeLoader.prototype.onHandlePropTypeSpriteFrame.call(this, node, parent, propertyName, spriteFrame,ccbReader);
         }

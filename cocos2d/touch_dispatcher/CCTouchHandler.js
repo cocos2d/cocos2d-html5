@@ -85,7 +85,8 @@ cc.TouchHandler = cc.Class.extend(/** @lends cc.TouchHandler# */{
      * @return {Boolean}
      */
     initWithDelegate:function (delegate, priority) {
-        cc.Assert(delegate != null, "TouchHandler.initWithDelegate():touch delegate should not be null");
+        if(!delegate)
+             throw "cc.TouchHandler.initWithDelegate(): touch delegate should not be null";
         this._delegate = delegate;
         this._priority = priority;
         this._enabledSelectors = 0;

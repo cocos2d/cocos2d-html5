@@ -121,7 +121,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @return {Null}
      */
     reverse:function () {
-        cc.Assert(false, "cc.IntervalAction: reverse not implemented.");
+        cc.log("cc.IntervalAction: reverse not implemented.");
         return null;
     },
 
@@ -130,7 +130,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     setAmplitudeRate:function (amp) {
         // Abstract class needs implementation
-        cc.Assert(0, 'Actioninterval setAmplitudeRate');
+        cc.log("cc.ActionInterval.setAmplitudeRate(): it should be overridden in subclass.");
     },
 
     /**
@@ -138,8 +138,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     getAmplitudeRate:function () {
         // Abstract class needs implementation
-        cc.Assert(0, 'Actioninterval getAmplitudeRate');
-        return 0;
+        cc.log("cc.ActionInterval.getAmplitudeRate(): it should be overridden in subclass.");
     }
 });
 
@@ -182,8 +181,8 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @return {Boolean}
      */
     initWithTwoActions:function (actionOne, actionTwo) {
-        cc.Assert(actionOne != null, "Sequence.initWithTwoActions");
-        cc.Assert(actionTwo != null, "Sequence.initWithTwoActions");
+        if(!actionOne || !actionTwo)
+            throw "cc.Sequence.initWithTwoActions(): arguments must all be non nil";
 
         var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
@@ -475,7 +474,7 @@ cc.Repeat.create = function (action, times) {
 
 /**  Repeats an action for ever.  <br/>
  * To repeat the an action for a limited number of times use the Repeat action. <br/>
- * @warning This action can't be Sequenceable because it is not an IntervalAction
+ * @warning This action can't be Sequencable because it is not an IntervalAction
  * @class
  * @extends cc.ActionInterval
  */
@@ -493,7 +492,8 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      * @return {Boolean}
      */
     initWithAction:function (action) {
-        cc.Assert(action != null, "");
+        if(!action)
+            throw "cc.RepeatForever.initWithAction(): action must be non null";
 
         this._innerAction = action;
         return true;
@@ -600,8 +600,8 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * @return {Boolean}
      */
     initWithTwoActions:function (action1, action2) {
-        cc.Assert(action1 != null, "no action1");
-        cc.Assert(action2 != null, "no action2");
+        if(!action1 || !action2)
+            throw "cc.Spawn.initWithTwoActions(): arguments must all be non null" ;
 
         var ret = false;
 
@@ -783,7 +783,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * RotateTo reverse not implemented
      */
     reverse:function () {
-        cc.Assert(0, "RotateTo reverse not implemented");
+        cc.log("cc.RotateTo.reverse(): it should be overridden in subclass.");
     },
 
     /**
@@ -930,7 +930,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     initWithDuration:function (duration, position) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._positionDelta = position;
+            this._positionDelta.x = position.x;
+            this._positionDelta.y = position.y;
             return true;
         }
         return false;
@@ -1030,7 +1031,8 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     initWithDuration:function (duration, position) {
         if (cc.MoveBy.prototype.initWithDuration.call(this, duration, position)) {
-            this._endPosition = position;
+            this._endPosition.x = position.x;
+            this._endPosition.y = position.y;
             return true;
         }
         return false;
@@ -1261,7 +1263,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     initWithDuration:function (duration, position, height, jumps) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._delta = position;
+            this._delta.x = position.x;
+            this._delta.y = position.y;
             this._height = height;
             this._jumps = jumps;
             return true;
@@ -1824,7 +1827,9 @@ cc.FadeIn = cc.ActionInterval.extend(/** @lends cc.FadeIn# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        this._target.setOpacity(255 * time);
+        if (this._target.RGBAProtocol) {
+            this._target.setOpacity(255 * time);
+        }
     },
 
     /**
@@ -1869,7 +1874,9 @@ cc.FadeOut = cc.ActionInterval.extend(/** @lends cc.FadeOut# */{
      * @param {Number} time  time in seconds
      */
     update:function (time) {
-        this._target.setOpacity(255 * (1 - time));
+        if (this._target.RGBAProtocol) {
+            this._target.setOpacity(255 * (1 - time));
+        }
     },
 
     /**
@@ -1945,7 +1952,9 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        this._target.setOpacity((this._fromOpacity + (this._toOpacity - this._fromOpacity) * time));
+        if (this._target.RGBAProtocol) {
+            this._target.setOpacity((this._fromOpacity + (this._toOpacity - this._fromOpacity) * time));
+        }
     },
 
     /**
@@ -1953,7 +1962,9 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._fromOpacity = target.getOpacity();
+        if(this._target.RGBAProtocol){
+            this._fromOpacity = target.getOpacity();
+        }
     }
 });
 
@@ -2017,7 +2028,9 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._from = this._target.getColor();
+        if (this._target.RGBAProtocol) {
+            this._from = this._target.getColor();
+        }
     },
 
     /**
@@ -2025,8 +2038,10 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     update:function (time) {
         var locFrom = this._from, locTo = this._to;
-        this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
-            (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+        if (this._target.RGBAProtocol) {
+            this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
+                (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+        }
     }
 });
 
@@ -2209,8 +2224,10 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      * @return {Boolean}
      */
     initWithAction:function (action) {
-        cc.Assert(action != null, "");
-        cc.Assert(action != this._other, "");
+        if(!action)
+            throw "cc.ReverseTime.initWithAction(): action must be non null";
+        if(action == this._other)
+            throw "cc.ReverseTime.initWithAction(): the action was already passed in.";
 
         if (cc.ActionInterval.prototype.initWithDuration.call(this, action.getDuration())) {
             // Don't leak if action is reused
@@ -2315,7 +2332,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      * @return {Boolean}
      */
     initWithAnimation:function (animation) {
-        cc.Assert(animation != null, "Animate: argument Animation must be non-NULL");
+        if(!animation)
+            throw "cc.Animate.initWithAnimation(): animation must be non-NULL";
         var singleDuration = animation.getDuration();
         if (this.initWithDuration(singleDuration * animation.getLoops())) {
             this._nextFrame = 0;

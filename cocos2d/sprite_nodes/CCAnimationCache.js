@@ -79,8 +79,9 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      *     Make sure that the frames were previously loaded in the cc.SpriteFrameCache.
      * </p>
      * @param {object} dictionary
+     * @param {String} plist
      */
-    addAnimationsWithDictionary:function (dictionary) {
+    _addAnimationsWithDictionary:function (dictionary,plist) {
         var animations = dictionary["animations"];
         if (!animations) {
             cc.log("cocos2d: cc.AnimationCache: No animations were found in provided dictionary.");
@@ -92,8 +93,11 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         if (properties) {
             version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
+            var spriteFrameCache = cc.SpriteFrameCache.getInstance();
+            var fileUtils = cc.FileUtils.getInstance(), path;
             for (var i = 0; i < spritesheets.length; i++) {
-                cc.SpriteFrameCache.getInstance().addSpriteFrames(spritesheets[i]);
+                path = fileUtils.fullPathFromRelativeFile(spritesheets[i], plist);
+                spriteFrameCache.addSpriteFrames(path);
             }
         }
 
@@ -105,7 +109,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                 this._parseVersion2(animations);
                 break;
             default :
-                cc.Assert(false, "Invalid animation format");
+                cc.log("cc.AnimationCache. Invalid animation format");
                 break;
         }
     },
@@ -118,15 +122,18 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @param {String} plist
      */
     addAnimations:function (plist) {
-        cc.Assert(plist, "Invalid texture file name")
+        if(!plist)
+            throw "cc.AnimationCache.addAnimations(): Invalid texture file name";
         var fileUtils = cc.FileUtils.getInstance();
-
         var path = fileUtils.fullPathForFilename(plist);
         var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
 
-        cc.Assert(dict, "cc.AnimationCache: File could not be found");
+        if(!dict){
+            cc.log("cc.AnimationCache.addAnimations(): File could not be found");
+            return;
+        }
 
-        this.addAnimationsWithDictionary(dict);
+        this._addAnimationsWithDictionary(dict,plist);
     },
 
     _parseVersion1:function (animations) {
@@ -174,8 +181,9 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         for (var key in animations) {
             var animationDict = animations[key];
 
+            var isLoop = animationDict["loop"];
             var loopsTemp = parseInt(animationDict["loops"]);
-            var loops = (isNaN(loopsTemp)) ? 1 : loopsTemp;
+            var loops = isLoop ? cc.REPEAT_FOREVER : ((isNaN(loopsTemp)) ? 1 : loopsTemp);
             var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == true) ? true : false;
             var frameArray = animationDict["frames"];
 

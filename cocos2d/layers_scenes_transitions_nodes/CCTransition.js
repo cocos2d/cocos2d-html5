@@ -160,7 +160,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * @return {Boolean} return false if error
      */
     initWithDuration:function (t, scene) {
-        cc.Assert(scene != null, "CCTransitionScene.initWithDuration() Argument scene must be non-nil");
+        if(!scene)
+            throw "cc.TransitionScene.initWithDuration(): Argument scene must be non-nil";
 
         if (this.init()) {
             this._duration = t;
@@ -174,10 +175,10 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
                 this._outScene.init();
             }
 
-            cc.Assert(this._inScene != this._outScene, "CCTransitionScene.initWithDuration() Incoming scene must be different from the outgoing scene");
+            if(this._inScene == this._outScene)
+                throw "cc.TransitionScene.initWithDuration(): Incoming scene must be different from the outgoing scene";
 
             this._sceneOrder();
-
             return true;
         } else {
             return false;
@@ -277,12 +278,6 @@ cc.TransitionSceneOriented.create = function (t, scene, orientation) {
  * @extends cc.TransitionScene
  */
 cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZoom# */{
-    /**
-     * Constructor
-     */
-    ctor:function () {
-    },
-
     /**
      * Custom On Enter callback
      * @override
@@ -1228,7 +1223,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      */
     ctor:function () {
         cc.TransitionScene.prototype.ctor.call(this);
-        this._color = new cc.Color3B()
+        this._color = new cc.Color4B()
     },
 
     /**

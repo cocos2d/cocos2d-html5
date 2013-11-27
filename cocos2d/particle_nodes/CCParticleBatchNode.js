@@ -113,18 +113,26 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} tag
      */
     addChild:function (child, zOrder, tag) {
-        cc.Assert(child != null, "Argument must be non-NULL");
-        cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.ParticleSystem as children");
+        if(!child)
+            throw "cc.ParticleBatchNode.addChild() : child should be non-null";
+        if(!(child instanceof cc.ParticleSystem))
+            throw "cc.ParticleBatchNode.addChild() : only supports cc.ParticleSystem as children";
         zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
         tag = (tag == null) ? child.getTag() : tag;
 
-        cc.Assert(child.getTexture() == this._textureAtlas.getTexture(), "cc.ParticleSystem is not using the same texture id");
-        // If this is the 1st children, then copy blending function
-        if (this._children.length === 0)
-            this.setBlendFunc(child.getBlendFunc());
+        if(child.getTexture() != this._textureAtlas.getTexture())
+            throw "cc.ParticleSystem.addChild() : the child is not using the same texture id";
 
-        cc.Assert(this._blendFunc.src == child.getBlendFunc().src && this._blendFunc.dst == child.getBlendFunc().dst,
-            "Can't add a ParticleSystem that uses a different blending function");
+        // If this is the 1st children, then copy blending function
+        var childBlendFunc = child.getBlendFunc();
+        if (this._children.length === 0)
+            this.setBlendFunc(childBlendFunc);
+        else{
+            if((childBlendFunc.src != this._blendFunc.src) || (childBlendFunc.dst != this._blendFunc.dst)){
+                cc.log("cc.ParticleSystem.addChild() : Can't add a ParticleSystem that uses a different blending function");
+                return;
+            }
+        }
 
         //no lazy sorting, so don't call super addChild, call helper instead
         var pos = this._addChildHelper(child, zOrder, tag);
@@ -178,8 +186,12 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (child == null)
             return;
 
-        cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.ParticleSystem as children");
-        cc.Assert(this._children.indexOf(child) > -1, "cc.ParticleBatchNode doesn't contain the sprite. Can't remove it");
+        if(!(child instanceof cc.ParticleSystem))
+            throw "cc.ParticleBatchNode.removeChild(): only supports cc.ParticleSystem as children";
+        if(this._children.indexOf(child) == -1){
+            cc.log("cc.ParticleBatchNode.removeChild(): doesn't contain the sprite. Can't remove it");
+            return;
+        }
 
         cc.Node.prototype.removeChild.call(this, child, cleanup);
 
@@ -202,9 +214,14 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} zOrder
      */
     reorderChild:function (child, zOrder) {
-        cc.Assert(child != null, "Child must be non-NULL");
-        cc.Assert(child instanceof cc.ParticleSystem, "cc.ParticleBatchNode only supports cc.QuadParticleSystems as children");
-        cc.Assert( this._children.indexOf(child) === -1, "Child doesn't belong to batch" );
+        if(!child)
+            throw "cc.ParticleBatchNode.reorderChild(): child should be non-null";
+        if(!(child instanceof cc.ParticleSystem))
+            throw "cc.ParticleBatchNode.reorderChild(): only supports cc.QuadParticleSystems as children";
+        if(this._children.indexOf(child) === -1){
+            cc.log("cc.ParticleBatchNode.reorderChild(): Child doesn't belong to batch");
+            return;
+        }
 
         if (zOrder == child.getZOrder())
             return;
@@ -288,7 +305,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             return;
 
         cc.NODE_DRAW_SETUP(this);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
         this._textureAtlas.drawQuads();
 
         //cc.PROFILER_STOP("CCParticleBatchNode - draw");
@@ -323,10 +340,14 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
-            this._blendFunc = src;
-        else
-            this._blendFunc = {src:src, dst:dst};
+        if (arguments.length == 1){
+            this._blendFunc.src = src.src;
+            this._blendFunc.dst = src.dst;
+        } else{
+            this._blendFunc.src = src;
+            this._blendFunc.src = dst;
+        }
+
     },
 
     /**
@@ -334,7 +355,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {cc.BlendFunc}
      */
     getBlendFunc:function () {
-        return this._blendFunc;
+        return {src:this._blendFunc.src, dst:this._blendFunc.dst};
     },
 
     // override visit.
@@ -384,8 +405,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
         if (!this._textureAtlas.resizeCapacity(quantity)) {
             // serious problems
-            cc.log("cocos2d: WARNING: Not enough memory to resize the atlas");
-            cc.Assert(false, "XXX: cc.ParticleBatchNode #increaseAtlasCapacity SHALL handle this assert");
+            cc.log("cc.ParticleBatchNode._increaseAtlasCapacityTo() : WARNING: Not enough memory to resize the atlas");
         }
     },
 
@@ -448,8 +468,13 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @private
      */
     _addChildHelper:function (child, z, aTag) {
-        cc.Assert(child != null, "Argument must be non-nil");
-        cc.Assert(child.getParent() == null, "child already added. It can't be added again");
+        if(!child)
+            throw "cc.ParticleBatchNode._addChildHelper(): child should be non-null";
+        if(child.getParent()){
+            cc.log("cc.ParticleBatchNode._addChildHelper(): child already added. It can't be added again");
+            return null;
+        }
+
 
         if (!this._children)
             this._children = [];

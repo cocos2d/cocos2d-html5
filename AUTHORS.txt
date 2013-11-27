@@ -86,15 +86,28 @@ Jing Wang             @06wj         CCScheduler improvements
 
 Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
                                     LabelTTF improvements
+                                    cc.TextureCache.dumpCachedTextureInfo 's bug fix
 
 Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
 
 XiaoJun Zheng        @SmallAiTT    _getResType error fix
                                    cc.ScrollView bug fix
+                                   cc.LabelTTF bug fix
 
 Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
 
 Jing Xiao            @xbruce       cc.SAXParser bug fix
+
+JiaHui He            @garfield_ho   cc.FileUtils bug fix
+                                    cc.Builder and SpriteLoader bug fix
+                                    CCBAnimation bug fix
+
+Luis Parravicini     @luisparravicini      cc.Director refactoring
+                                           cc.LabelTTF documentation
+
+Jose Antonio         @jandujar      cc.ParticleSystem bug fix for CocoStudio animations
+
+BoHao Tang           @btspoony      cc.TableView bug fix
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 

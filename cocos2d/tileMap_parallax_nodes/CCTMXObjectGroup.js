@@ -51,14 +51,15 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      * @return {cc.Point}
      */
     getPositionOffset:function () {
-        return this._positionOffset;
+        return cc.p(this._positionOffset.x,this._positionOffset.y);
     },
 
     /**
      * @param {cc.Point} Var
      */
     setPositionOffset:function (Var) {
-        this._positionOffset = Var;
+        this._positionOffset.x = Var.x;
+        this._positionOffset.y = Var.y;
     },
 
     /**

@@ -296,14 +296,15 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {cc.Size}
      */
     getMapSize:function () {
-        return this._mapSize;
+        return cc.size(this._mapSize.width,this._mapSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setMapSize:function (Var) {
-        this._mapSize = Var;
+        this._mapSize.width = Var.width;
+        this._mapSize.height = Var.height;
     },
 
     /**
@@ -311,14 +312,15 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {cc.Size}
      */
     getTileSize:function () {
-        return this._tileSize;
+        return cc.size(this._tileSize.width, this._tileSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setTileSize:function (Var) {
-        this._tileSize = Var;
+        this._tileSize.width = Var.width;
+        this._tileSize.height = Var.height;
     },
 
     /**
@@ -618,7 +620,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 // Unpack the tilemap data
                 var compression = data.getAttribute('compression');
                 var encoding = data.getAttribute('encoding');
-                cc.Assert(compression == null || compression === "gzip" || compression === "zlib", "TMX: unsupported compression method");
+                if(compression && compression !== "gzip" && compression !== "zlib"){
+                    cc.log("cc.TMXMapInfo.parseXMLFile(): unsupported compression method");
+                    return null;
+                }
                 switch (compression) {
                     case 'gzip':
                         layer._tiles = cc.unzipBase64AsArray(nodeValue, 4);
@@ -646,7 +651,9 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         }
                         break;
                     default:
-                        cc.Assert(this.getLayerAttribs() != cc.TMX_LAYER_ATTRIB_NONE, "TMX tile map: Only base64 and/or gzip/zlib maps are supported");
+                        if(this.getLayerAttribs() == cc.TMX_LAYER_ATTRIB_NONE)
+                            cc.log("cc.TMXMapInfo.parseXMLFile(): Only base64 and/or gzip/zlib maps are supported");
+                        break;
                 }
 
                 // The parent element is the last layer
