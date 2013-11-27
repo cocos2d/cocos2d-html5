@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2012 cocos2d-x.org
  * http://www.cocos2d-x.org
  *
@@ -55,6 +55,7 @@ cc.ControlStepper = cc.Control.extend({
     _touchedPart:cc.CONTROL_STEPPER_PARTNONE,
     _autorepeatCount:0,
     ctor:function () {
+        cc.Control.prototype.ctor.call(this);
         this._minusSprite = null;
         this._plusSprite = null;
         this._minusLabel = null;
@@ -72,10 +73,12 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     initWithMinusSpriteAndPlusSprite:function (minusSprite, plusSprite) {
-        if (this.init()) {
-            cc.Assert(minusSprite, "Minus sprite must be not nil");
-            cc.Assert(plusSprite, "Plus sprite must be not nil");
+        if(!minusSprite)
+            throw "cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Minus sprite should be non-null.";
+        if(!plusSprite)
+            throw "cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Plus sprite should be non-null.";
 
+        if (this.init()) {
             this.setTouchEnabled(true);
 
             // Set the default values
@@ -131,18 +134,16 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     setMinimumValue:function (minimumValue) {
-        if (minimumValue >= this._maximumValue) {
-            cc.Assert(0, "Must be numerically less than maximumValue.");
-        }
+        if (minimumValue >= this._maximumValue)
+            throw "cc.ControlStepper.setMinimumValue(): minimumValue should be numerically less than maximumValue.";
 
         this._minimumValue = minimumValue;
         this.setValue(this._value);
     },
 
     setMaximumValue:function (maximumValue) {
-        if (maximumValue <= this._minimumValue) {
-            cc.Assert(0, "Must be numerically greater than minimumValue.");
-        }
+        if (maximumValue <= this._minimumValue)
+            throw "cc.ControlStepper.setMaximumValue(): maximumValue should be numerically less than maximumValue.";
 
         this._maximumValue = maximumValue;
         this.setValue(this._value);
@@ -157,10 +158,8 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     setStepValue:function (stepValue) {
-        if (stepValue <= 0) {
-            cc.Assert(0, "Must be numerically greater than 0.");
-        }
-
+        if (stepValue <= 0)
+            throw "cc.ControlStepper.setMaximumValue(): stepValue should be numerically greater than 0.";
         this._stepValue = stepValue;
     },
 

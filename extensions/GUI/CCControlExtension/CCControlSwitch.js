@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
  *
@@ -40,12 +40,15 @@ cc.ControlSwitch = cc.Control.extend({
 
     /** Creates a switch with a mask sprite, on/off sprites for on/off states, a thumb sprite and an on/off labels. */
     initWithMaskSprite:function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
+        if(!maskSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): maskSprite should be non-null.";
+        if(!onSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): onSprite should be non-null.";
+        if(!offSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): offSprite should be non-null.";
+        if(!thumbSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): thumbSprite should be non-null.";
         if (this.init()) {
-            cc.Assert(maskSprite, "Mask must not be nil.");
-            cc.Assert(onSprite, "onSprite must not be nil.");
-            cc.Assert(offSprite, "offSprite must not be nil.");
-            cc.Assert(thumbSprite, "thumbSprite must not be nil.");
-
             this.setTouchEnabled(true);
             this._on = true;
 
@@ -296,7 +299,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         rt.end();
 
         this.setTexture(rt.getSprite().getTexture());
-        this.setFlipY(true);
+        this.setFlippedY(true);
     },
 
     setSliderXPosition:function (sliderXPosition) {

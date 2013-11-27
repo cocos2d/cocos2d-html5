@@ -27,14 +27,14 @@ cc.Spacer = cc.Layer.extend({});
 cc.Spacer.verticalSpacer = function (space) {
     var pRet = new cc.Spacer();
     pRet.init();
-    pRet.setContentSize(cc.SizeMake(0, space));
+    pRet.setContentSize(cc.size(0, space));
     return pRet;
 };
 
 cc.Spacer.horizontalSpacer = function (space) {
     var pRet = new cc.Spacer();
     pRet.init();
-    pRet.setContentSize(cc.SizeMake(space, 0));
+    pRet.setContentSize(cc.size(space, 0));
     return pRet;
 };
 
@@ -141,7 +141,7 @@ cc.MenuPassive = cc.Layer.extend({
                 }
             }
         }
-        this.setContentSize(cc.SizeMake(width, height));
+        this.setContentSize(cc.size(width, height));
     },
 
     /** align items horizontally */
@@ -174,7 +174,7 @@ cc.MenuPassive = cc.Layer.extend({
                 }
             }
         }
-        this.setContentSize(cc.SizeMake(width, height));
+        this.setContentSize(cc.size(width, height));
     },
 
     /** align items in rows of columns */
@@ -195,11 +195,17 @@ cc.MenuPassive = cc.Layer.extend({
         if (this._children && this._children.length > 0) {
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
-                    cc.Assert(row < rows.size(), "");
+                    if(row >= rows.length){
+                        cc.log("cc.MenuPassive.alignItemsInColumns(): invalid row index");
+                        continue;
+                    }
 
                     rowColumns = rows[row];
                     // can not have zero columns on a row
-                    cc.Assert(rowColumns, "");
+                    if(!rowColumns) {
+                        cc.log("cc.MenuPassive.alignItemsInColumns(): can not have zero columns on a row");
+                        continue;
+                    }
 
                     tmp = this._children[i].getContentSize().height;
                     rowHeight = 0 | ((rowHeight >= tmp || (tmp == null)) ? rowHeight : tmp);
@@ -217,7 +223,7 @@ cc.MenuPassive = cc.Layer.extend({
         }
 
         // check if too many rows/columns for available menu items
-        cc.Assert(!columnsOccupied, "");
+        //cc.Assert(!columnsOccupied, "");            //?
 
         var winSize = cc.Director.getInstance().getWinSize();
 
@@ -281,11 +287,17 @@ cc.MenuPassive = cc.Layer.extend({
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
                     // check if too many menu items for the amount of rows/columns
-                    cc.Assert(column < columns.size(), "");
+                    if(column >= columns.length){
+                        cc.log("cc.MenuPassive.alignItemsInRows(): invalid row index");
+                        continue;
+                    }
 
                     columnRows = columns[column];
                     // can't have zero rows on a column
-                    cc.Assert(columnRows, "");
+                    if(!columnRows) {
+                        cc.log("cc.MenuPassive.alignItemsInColumns(): can't have zero rows on a column");
+                        continue;
+                    }
 
                     // columnWidth = fmaxf(columnWidth, [item contentSize].width);
                     tmp = this._children[i].getContentSize().width;
@@ -309,7 +321,7 @@ cc.MenuPassive = cc.Layer.extend({
         }
 
         // check if too many rows/columns for available menu items.
-        cc.Assert(!rowsOccupied, "");
+        //cc.Assert(!rowsOccupied, "");      //?
 
         var winSize = cc.Director.getInstance().getWinSize();
 

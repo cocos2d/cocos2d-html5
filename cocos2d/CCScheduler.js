@@ -164,7 +164,7 @@ cc.ArrayGetIndexOfObject = function (arr, findObj) {
  * @return {Boolean}
  */
 cc.ArrayContainsObject = function (arr, findObj) {
-    return cc.ArrayGetIndexOfObject(arr, findObj) != -1;
+    return arr.indexOf(findObj) != -1;
 };
 
 /**
@@ -641,11 +641,14 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register a schedule to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(function, this, interval, repeat, delay, !this._isRunning );
+     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(this, function, interval, repeat, delay, !this._isRunning );
      */
     scheduleCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
-        cc.Assert(callback_fn, "scheduler.scheduleCallbackForTarget() Argument callback_fn must be non-NULL");
-        cc.Assert(target, "scheduler.scheduleCallbackForTarget() Argument target must be non-NULL");
+        if(!callback_fn)
+            throw "cc.scheduler.scheduleCallbackForTarget(): callback_fn should be non-null.";
+
+        if(!target)
+            throw "cc.scheduler.scheduleCallbackForTarget(): target should be non-null.";
 
         // default arguments
         interval = interval || 0;
@@ -659,8 +662,6 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             // Is this the 1st element ? Then set the pause level to all the callback_fns of this target
             element = new cc.HashTimerEntry(null, target, 0, null, null, paused, null);
             this._hashForTimers.push(element);
-        } else {
-            cc.Assert(element.paused == paused, "Sheduler.scheduleCallbackForTarget()");
         }
 
         var timer;
@@ -700,9 +701,6 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);
 
         if (hashElement) {
-            if (cc.COCOS2D_DEBUG >= 1) {
-                cc.Assert(hashElement.entry.markedForDeletion, "");
-            }
             // TODO: check if priority has changed!
             hashElement.entry.markedForDeletion = false;
             return;
@@ -942,20 +940,18 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      */
     pauseTarget:function (target) {
-        cc.Assert(target != null, "Scheduler.pauseTarget():entry must be non nil");
+        if(!target)
+            throw "cc.Scheduler.pauseTarget():target should be non-null";
 
         //customer selectors
         var element = cc.HASH_FIND_INT(this._hashForTimers, target);
-        if (element) {
+        if (element)
             element.paused = true;
-        }
 
         //update selector
         var elementUpdate = cc.HASH_FIND_INT(this._hashForUpdates, target);
-        if (elementUpdate) {
-            cc.Assert(elementUpdate.entry != null, "Scheduler.pauseTarget():entry must be non nil");
+        if (elementUpdate && elementUpdate.entry)
             elementUpdate.entry.paused = true;
-        }
     },
 
     /**
@@ -965,22 +961,19 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      */
     resumeTarget:function (target) {
-        cc.Assert(target != null, "");
+        if(!target)
+            throw "cc.Scheduler.resumeTarget():target should be non-null";
 
         // custom selectors
         var element = cc.HASH_FIND_INT(this._hashForTimers, target);
 
-        if (element) {
+        if (element)
             element.paused = false;
-        }
 
         //update selector
         var elementUpdate = cc.HASH_FIND_INT(this._hashForUpdates, target);
-
-        if (elementUpdate) {
-            cc.Assert(elementUpdate.entry != null, "Scheduler.resumeTarget():entry must be non nil");
+        if (elementUpdate && elementUpdate.entry)
             elementUpdate.entry.paused = false;
-        }
     },
 
     /**
@@ -989,13 +982,13 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @return {Boolean}
      */
     isTargetPaused:function (target) {
-        cc.Assert(target != null, "Scheduler.isTargetPaused():target must be non nil");
+        if(!target)
+            throw "cc.Scheduler.isTargetPaused():target should be non-null";
 
         // Custom selectors
         var element = cc.HASH_FIND_INT(this._hashForTimers, target);
-        if (element) {
+        if (element)
             return element.paused;
-        }
         return false;
     }
 });

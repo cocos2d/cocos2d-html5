@@ -260,7 +260,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     getDelta:function (pos) {
         var locGridSize = this._gridSize;
         var idx = pos.width * locGridSize.height + pos.height;
-        return cc.SizeMake(((this._tilesOrder[idx] / locGridSize.height) - pos.width),
+        return cc.size(((this._tilesOrder[idx] / locGridSize.height) - pos.width),
             ((this._tilesOrder[idx] % locGridSize.height) - pos.height));
     },
 
@@ -316,7 +316,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
                 locTiles[tileIndex] = new cc.Tile();
                 locTiles[tileIndex].position = cc.p(i, j);
                 locTiles[tileIndex].startPosition = cc.p(i, j);
-                locTiles[tileIndex].delta = this.getDelta(cc.SizeMake(i, j));
+                locTiles[tileIndex].delta = this.getDelta(cc.size(i, j));
                 ++tileIndex;
             }
         }
@@ -891,7 +891,7 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
      */
     initWithDuration:function (duration, rows) {
         this._rows = rows;
-        return cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, cc.SizeMake(1, rows));
+        return cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, cc.size(1, rows));
     },
 
     update:function (time) {
@@ -954,7 +954,7 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
      */
     initWithDuration:function (duration, cols) {
         this._cols = cols;
-        return cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, cc.SizeMake(cols, 1));
+        return cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, cc.size(cols, 1));
     },
 
     update:function (time) {

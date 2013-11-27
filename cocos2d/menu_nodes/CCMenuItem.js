@@ -184,12 +184,15 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      */
     activate:function () {
         if (this._isEnabled) {
-            if (this._target && (typeof(this._callback) == "string")) {
-                this._target[this._callback](this);
-            } else if (this._target && (typeof(this._callback) == "function")) {
-                this._callback.call(this._target, this);
+            var locTarget = this._target, locCallback = this._callback;
+            if(!locCallback)
+                return ;
+            if (locTarget && (typeof(locCallback) == "string")) {
+                locTarget[locCallback](this);
+            } else if (locTarget && (typeof(locCallback) == "function")) {
+                locCallback.call(locTarget, this);
             } else
-                this._callback(this);
+                locCallback(this);
         }
     }
 });
@@ -274,11 +277,12 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      */
     setEnabled:function (enabled) {
         if (this._isEnabled != enabled) {
+            var locLabel = this._label;
             if (!enabled) {
-                this._colorBackup = this._label.getColor();
-                this._label.setColor(this._disabledColor);
+                this._colorBackup = locLabel.getColor();
+                locLabel.setColor(this._disabledColor);
             } else {
-                this._label.setColor(this._colorBackup);
+                locLabel.setColor(this._colorBackup);
             }
         }
         cc.MenuItem.prototype.setEnabled.call(this, enabled);
@@ -412,7 +416,9 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
      * @return {Boolean}
      */
     initWithString:function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
-        cc.Assert(value != null && value.length != 0, "value length must be greater than 0");
+        if(!value || value.length == 0)
+            throw "cc.MenuItemAtlasFont.initWithString(): value should be non-null and its length should be greater than 0";
+
         var label = new cc.LabelAtlas();
         label.initWithString(value, charMapFile, itemWidth, itemHeight, startCharMap);
         if (this.initWithLabel(label,  callback, target)) {
@@ -467,7 +473,8 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
      * @return {Boolean}
      */
     initWithString:function (value, callback, target) {
-        cc.Assert(value != null && value.length != 0, "Value length must be greater than 0");
+        if(!value || value.length == 0)
+            throw "Value should be non-null and its length should be greater than 0";
 
         this._fontName = cc._globalFontName;
         this._fontSize = cc._globalFontSize;
@@ -601,14 +608,14 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     },
 
     /**
-     * @return {cc.Node}
+     * @return {cc.Sprite}
      */
     getNormalImage:function () {
         return this._normalImage;
     },
 
     /**
-     * @param {cc.Node} normalImage
+     * @param {cc.Sprite} normalImage
      */
     setNormalImage:function (normalImage) {
         if (this._normalImage == normalImage) {
@@ -623,19 +630,26 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
 
         this._normalImage = normalImage;
-        this.setContentSize(this._normalImage.getContentSize());
-        this._updateImagesVisibility();
+        if(normalImage.textureLoaded()){
+            this.setContentSize(this._normalImage.getContentSize());
+            this._updateImagesVisibility();
+        } else {
+            normalImage.addLoadedEventListener(function(sender){
+                this.setContentSize(sender.getContentSize());
+                this._updateImagesVisibility();
+            }, this);
+        }
     },
 
     /**
-     * @return {cc.Node}
+     * @return {cc.Sprite}
      */
     getSelectedImage:function () {
         return this._selectedImage;
     },
 
     /**
-     * @param {cc.Node} selectedImage
+     * @param {cc.Sprite} selectedImage
      */
     setSelectedImage:function (selectedImage) {
         if (this._selectedImage == selectedImage)
@@ -651,7 +665,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
 
         this._selectedImage = selectedImage;
-        this._updateImagesVisibility();
+        if(selectedImage.textureLoaded()){
+            this._updateImagesVisibility();
+        } else {
+            selectedImage.addLoadedEventListener(function(sender){
+                this._updateImagesVisibility();
+            }, this);
+        }
     },
 
     /**
@@ -662,7 +682,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     },
 
     /**
-     * @param {cc.Node} disabledImage
+     * @param {cc.Sprite} disabledImage
      */
     setDisabledImage:function (disabledImage) {
         if (this._disabledImage == disabledImage)
@@ -677,7 +697,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             this.removeChild(this._disabledImage, true);
 
         this._disabledImage = disabledImage;
-        this._updateImagesVisibility();
+        if(disabledImage.textureLoaded()){
+            this._updateImagesVisibility();
+        } else {
+            disabledImage.addLoadedEventListener(function(sender){
+                this._updateImagesVisibility();
+            }, this);
+        }
     },
 
     /**
@@ -693,11 +719,22 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this.setNormalImage(normalSprite);
         this.setSelectedImage(selectedSprite);
         this.setDisabledImage(disabledSprite);
-        if (this._normalImage)
-            this.setContentSize(this._normalImage.getContentSize());
+        var locNormalImage = this._normalImage;
+        if (locNormalImage){
+            if(locNormalImage.textureLoaded()){
+                this.setContentSize(locNormalImage.getContentSize());
+                this.setCascadeColorEnabled(true);
+                this.setCascadeOpacityEnabled(true);
+            } else{
+                locNormalImage.addLoadedEventListener(function(sender){
+                    this.setContentSize(sender.getContentSize());
+                    this.setCascadeColorEnabled(true);
+                    this.setCascadeOpacityEnabled(true);
+                }, this);
+            }
+        }
 
-        this.setCascadeColorEnabled(true);
-        this.setCascadeOpacityEnabled(true);
+
         return true;
     },
 
@@ -1030,7 +1067,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this.addChild(item, 0, cc.CURRENT_ITEM);
             var s = item.getContentSize();
             this.setContentSize(s);
-            item.setPosition(cc.p(s.width / 2, s.height / 2));
+            item.setPosition(s.width / 2, s.height / 2);
         }
     },
 

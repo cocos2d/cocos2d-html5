@@ -55,7 +55,7 @@ cc.TMX_ORIENTATION_ISO = 2;
  *
  * <p>Features: <br />
  * - Each tile will be treated as an cc.Sprite<br />
- * - The sprites are created on demand. They will be created only when you call "layer.tileAt(position)" <br />
+ * - The sprites are created on demand. They will be created only when you call "layer.getTileAt(position)" <br />
  * - Each tile can be rotated / moved / scaled / tinted / "opacitied", since each tile is a cc.Sprite<br />
  * - Tiles can be added/removed in runtime<br />
  * - The z-order of the tiles can be modified in runtime<br />
@@ -98,7 +98,7 @@ cc.TMX_ORIENTATION_ISO = 2;
  * @class
  * @extends cc.Node
  */
-cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
+cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     //the map's size property measured in tiles
     _mapSize:null,
     _tileSize:null,
@@ -126,28 +126,30 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @return {cc.Size}
      */
     getMapSize:function () {
-        return this._mapSize;
+        return cc.size(this._mapSize.width, this._mapSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setMapSize:function (Var) {
-        this._mapSize = Var;
+        this._mapSize.width = Var.width;
+        this._mapSize.height = Var.height;
     },
 
     /**
      * @return {cc.Size}
      */
     getTileSize:function () {
-        return this._tileSize;
+        return cc.size(this._tileSize.width, this._tileSize.height);
     },
 
     /**
      * @param {cc.Size} Var
      */
     setTileSize:function (Var) {
-        this._tileSize = Var;
+        this._tileSize.width = Var.width;
+        this._tileSize.height = Var.height;
     },
 
     /**
@@ -197,6 +199,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
 
     /**
      * @param {String} tmxFile
+     * @param {String} [resourcePath=]
      * @return {Boolean}
      * @example
      * //example
@@ -204,13 +207,16 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * map.initWithTMXFile("hello.tmx");
      */
     initWithTMXFile:function (tmxFile,resourcePath) {
-        cc.Assert(tmxFile != null && tmxFile.length > 0, "TMXTiledMap: tmx file should not be nil");
+        if(!tmxFile || tmxFile.length == 0)
+            throw "cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.";
         this.setContentSize(cc.SizeZero());
         var mapInfo = cc.TMXMapInfo.create(tmxFile,resourcePath);
         if (!mapInfo)
             return false;
 
-        cc.Assert(mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
+        var locTilesets = mapInfo.getTilesets();
+        if(!locTilesets || locTilesets.length === 0)
+            cc.log("cc.TMXTiledMap.initWithTMXFile(): Map not found. Please check the filename.");
         this._buildWithMapInfo(mapInfo);
         return true;
     },
@@ -219,8 +225,9 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         this.setContentSize(cc.SizeZero());
 
         var mapInfo = cc.TMXMapInfo.createWithXML(tmxString, resourcePath);
-
-        cc.Assert( mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
+        var locTilesets = mapInfo.getTilesets();
+        if(!locTilesets || locTilesets.length === 0)
+            cc.log("cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.");
         this._buildWithMapInfo(mapInfo);
         return true;
     },
@@ -259,15 +266,13 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @return {cc.TMXLayer}
      */
     getLayer:function (layerName) {
-        cc.Assert(layerName != null && layerName.length > 0, "Invalid layer name!");
+        if(!layerName || layerName.length === 0)
+            throw "cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.";
 
         for (var i = 0; i < this._children.length; i++) {
             var layer = this._children[i];
-            if (layer) {
-                if (layer.getLayerName() == layerName) {
-                    return layer;
-                }
-            }
+            if (layer && layer.getLayerName() == layerName)
+                return layer;
         }
 
         // layer not found
@@ -280,7 +285,8 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @return {cc.TMXObjectGroup}
      */
     getObjectGroup:function (groupName) {
-        cc.Assert(groupName != null && groupName.length > 0, "Invalid group name!");
+        if(!groupName || groupName.length === 0)
+            throw "cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.";
         if (this._objectGroups) {
             for (var i = 0; i < this._objectGroups.length; i++) {
                 var objectGroup = this._objectGroups[i];

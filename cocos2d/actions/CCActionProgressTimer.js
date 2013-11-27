@@ -58,7 +58,7 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     },
 
     reverse: function(){
-        cc.Assert(false, "reverse() not supported in ProgressTo");
+        cc.log("cc.ProgressTo.reverse(): reverse hasn't been supported.");
         return null;
     },
 

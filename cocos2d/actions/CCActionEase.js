@@ -43,7 +43,8 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
      * @return {Boolean}
      */
     initWithAction:function (action) {
-        cc.Assert(action != null, "");
+        if(!action)
+            throw "cc.ActionEase.initWithAction(): action must be non nil";
 
         if (this.initWithDuration(action.getDuration())) {
             this._inner = action;
@@ -604,8 +605,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
      * @return {Null}
      */
     reverse:function () {
-        cc.Assert(0, "Override me");
-        return null;
+        cc.log("cc.EaseElastic.reverse(): it should be overridden in subclass.");
     },
 
     clone:function(){

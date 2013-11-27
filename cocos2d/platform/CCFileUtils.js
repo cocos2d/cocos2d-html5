@@ -192,6 +192,8 @@ cc.FileUtils = cc.Class.extend({
                         var fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
                         if (fileContents)
                             selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
+                    } else {
+                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
                     }
                     cc.Loader.getInstance().onResLoaded();
                 }
@@ -199,12 +201,15 @@ cc.FileUtils = cc.Class.extend({
         } else {
             if (xhr.overrideMimeType)
                 xhr.overrideMimeType("text\/plain; charset=x-user-defined");
+
             xhr.onload = function (e) {
-                var arrayStr = xhr.responseText;
-                if (arrayStr) {
-                    cc.Loader.getInstance().onResLoaded();
-                    selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
+                var fileContents = xhr.responseText;
+                if (fileContents) {
+                    selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
+                } else {
+                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
                 }
+                cc.Loader.getInstance().onResLoaded();
             };
         }
         xhr.send(null);
@@ -250,6 +255,7 @@ cc.FileUtils = cc.Class.extend({
     },
 
     unloadTextFileData:function (fileUrl) {
+        fileUrl = this.fullPathForFilename(fileUrl);
         if (this._textFileCache.hasOwnProperty(fileUrl))
             delete this._textFileCache[fileUrl];
     },
@@ -269,6 +275,8 @@ cc.FileUtils = cc.Class.extend({
                         var fileContents = xhr.responseText;
                         if (fileContents)
                             selfPointer._textFileCache[fileUrl] = fileContents;
+                    } else {
+                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
                     }
                     cc.Loader.getInstance().onResLoaded();
                 }
@@ -278,9 +286,11 @@ cc.FileUtils = cc.Class.extend({
                 xhr.overrideMimeType("text\/plain; charset=utf-8");
             xhr.onload = function (e) {
                 if (xhr.responseText) {
-                    cc.Loader.getInstance().onResLoaded();
                     selfPointer._textFileCache[fileUrl] = xhr.responseText;
+                } else {
+                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
                 }
+                cc.Loader.getInstance().onResLoaded();
             };
         }
         xhr.send(null);
@@ -289,29 +299,22 @@ cc.FileUtils = cc.Class.extend({
     _loadTextFileData:function (fileUrl) {
         var req = this._getXMLHttpRequest();
         req.open('GET', fileUrl, false);
-        var arrayInfo = null;
+        var fileContents = null;
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             req.setRequestHeader("Accept-Charset", "utf-8");
-            req.send(null);
-            if (req.status != 200)
-                return null;
-
-            var fileContents = req.responseText;
-            if (fileContents) {
-                arrayInfo = fileContents;
-                this._textFileCache[fileUrl] = fileContents;
-            }
         } else {
             if (req.overrideMimeType)
                 req.overrideMimeType('text\/plain; charset=utf-8');
-            req.send(null);
-            if (req.status != 200)
-                return null;
-
-            arrayInfo = req.responseText;
-            this._textFileCache[fileUrl] = arrayInfo;
         }
-        return arrayInfo;
+        req.send(null);
+        if (req.status != 200)
+            return null;
+
+        fileContents = req.responseText;
+        if (fileContents) {
+            this._textFileCache[fileUrl] = fileContents;
+        }
+        return fileContents;
     },
 
     /**
@@ -320,6 +323,7 @@ cc.FileUtils = cc.Class.extend({
      * @returns {String}
      */
     getTextFileData:function (fileUrl) {
+        fileUrl = this.fullPathForFilename(fileUrl);
         if (this._textFileCache.hasOwnProperty(fileUrl))
             return this._textFileCache[fileUrl];
         return this._loadTextFileData(fileUrl);
@@ -420,8 +424,8 @@ cc.FileUtils = cc.Class.extend({
         var newFileName = this._getNewFilename(filename);
         var fullPath;
 
-        if (newFileName && newFileName.length > 1 && (newFileName.indexOf(":") == 1))
-            return newFileName;
+        //if (newFileName && newFileName.length > 1)
+        //    return newFileName;
 
         for (var i = 0; i < this._searchPathArray.length; i++) {
             var searchPath = this._searchPathArray[i];

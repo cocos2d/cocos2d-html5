@@ -179,6 +179,7 @@ cc.setup = function (el, width, height) {
         cc.container.style.width = (width || 480) + "px";
         cc.container.style.height = (height || 320) + "px";
         cc.container.setAttribute('id', 'Cocos2dGameContainer');
+        cc.container.style.margin = "0 auto";
         cc.canvas.setAttribute("width", width || 480);
         cc.canvas.setAttribute("height", height || 320);
     } else {//we must make a new canvas and place into this element
@@ -196,6 +197,7 @@ cc.setup = function (el, width, height) {
         element.appendChild(cc.canvas);
         cc.container.style.width = (width || 480) + "px";
         cc.container.style.height = (height || 320) + "px";
+        cc.container.style.margin = "0 auto";
     }
     cc.container.style.position = 'relative';
     cc.container.style.overflow = 'hidden';
@@ -227,16 +229,10 @@ cc.setup = function (el, width, height) {
 
     cc.setContextMenuEnable(false);
 
-    //binding window size
-    /*
-     cc.canvas.addEventListener("resize", function () {
-     if (!cc.firstRun) {
-     cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
-     }
-     }, true);
-     */
-    if(cc.Browser.isMobile)
+    if(cc.Browser.isMobile){
         cc._addUserSelectStatus();
+        cc._addBottomTag();
+    }
 
     var hidden, visibilityChange;
     if (typeof document.hidden !== "undefined") {
@@ -276,6 +272,14 @@ cc._addUserSelectStatus = function(){
         +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
 };
 
+cc._addBottomTag = function () {
+    var bottom = document.createElement("div");
+    bottom.id = "bottom";
+    bottom.style.border = bottom.style.margin = bottom.style.padding = bottom.style.height = bottom.style.lineHeight = bottom.style.fontSize = "0px";
+    document.body.appendChild(bottom);
+    window.location.href="#bottom";
+};
+
 cc._isContextMenuEnable = false;
 /**
  * enable/disable contextMenu for Canvas
@@ -305,7 +309,8 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
      */
     ctor:function () {
         this._animationInterval = 0;
-        cc.Assert(!cc._sharedApplication, "CCApplication ctor");
+        if(cc._sharedApplication)
+            throw "Application has been initialized";
         cc._sharedApplication = this;
     },
 
@@ -361,11 +366,10 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
 });
 
 /**
- * Get current applicaiton instance.
+ * Get current application instance.
  * @return {cc.Application}  Current application instance pointer.
  */
 cc.Application.getInstance = function () {
-    cc.Assert(cc._sharedApplication, "sharedApplication");
     return cc._sharedApplication;
 };
 

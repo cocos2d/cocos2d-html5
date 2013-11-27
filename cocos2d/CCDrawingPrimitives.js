@@ -55,7 +55,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
 
     /**
      * returns render context of drawing primitive
-     * @return {CanvasContext}
+     * @return {CanvasRenderingContext2D}
      */
     getRenderContext:function () {
         return this._renderContext;
@@ -63,7 +63,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
 
     /**
      * Constructor
-     * @param {CanvasContext} renderContext
+     * @param {CanvasRenderingContext2D} renderContext
      */
     ctor:function (renderContext) {
         this._renderContext = renderContext;
@@ -172,7 +172,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
 
     /**
      * draw a catmull rom line
-     * @param {cc.PointArray} points
+     * @param {Array} points
      * @param {Number} segments
      */
     drawCatmullRom:function (points, segments) {
@@ -181,7 +181,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
 
     /**
      * draw a cardinal spline path
-     * @param {cc.PointArray} config
+     * @param {Array} config
      * @param {Number} tension
      * @param {Number} segments
      */
@@ -200,14 +200,16 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draws a point given x and y coordinate measured in points
      * @override
      * @param {cc.Point} point
+     * @param {Number} size
      */
     drawPoint:function (point, size) {
         if (!size) {
             size = 1;
         }
-        var newPoint = cc.p(point.x * cc.CONTENT_SCALE_FACTOR(), point.y * cc.CONTENT_SCALE_FACTOR());
+        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var newPoint = cc.p(point.x  * locScaleX, point.y * locScaleY);
         this._renderContext.beginPath();
-        this._renderContext.arc(newPoint.x, -newPoint.y, size * cc.CONTENT_SCALE_FACTOR(), 0, Math.PI * 2, false);
+        this._renderContext.arc(newPoint.x, -newPoint.y, size * locScaleX, 0, Math.PI * 2, false);
         this._renderContext.closePath();
         this._renderContext.fill();
     },
@@ -217,6 +219,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @override
      * @param {Array} points point of array
      * @param {Number} numberOfPoints
+     * @param {Number} size
      */
     drawPoints:function (points, numberOfPoints, size) {
         if (points == null) {
@@ -225,14 +228,13 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         if (!size) {
             size = 1;
         }
+        var locContext = this._renderContext,locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
 
-        this._renderContext.beginPath();
-        for (var i = 0; i < points.length; i++) {
-            this._renderContext.arc(points[i].x * cc.CONTENT_SCALE_FACTOR(), -points[i].y * cc.CONTENT_SCALE_FACTOR(),
-                size * cc.CONTENT_SCALE_FACTOR(), 0, Math.PI * 2, false);
-        }
-        this._renderContext.closePath();
-        this._renderContext.fill();
+        locContext.beginPath();
+        for (var i = 0, len = points.length; i < len; i++)
+            locContext.arc(points[i].x * locScaleX, -points[i].y * locScaleY, size * locScaleX, 0, Math.PI * 2, false);
+        locContext.closePath();
+        locContext.fill();
     },
 
     /**
@@ -242,11 +244,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {cc.Point} destination
      */
     drawLine:function (origin, destination) {
-        this._renderContext.beginPath();
-        this._renderContext.moveTo(origin.x * cc.CONTENT_SCALE_FACTOR(), -origin.y * cc.CONTENT_SCALE_FACTOR());
-        this._renderContext.lineTo(destination.x * cc.CONTENT_SCALE_FACTOR(), -destination.y * cc.CONTENT_SCALE_FACTOR());
-        this._renderContext.closePath();
-        this._renderContext.stroke();
+        var locContext = this._renderContext, locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        locContext.beginPath();
+        locContext.moveTo(origin.x * locScaleX, -origin.y * locScaleY);
+        locContext.lineTo(destination.x * locScaleX, -destination.y * locScaleY);
+        locContext.closePath();
+        locContext.stroke();
     },
 
     /**
@@ -279,40 +282,36 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     },
 
     /**
-     * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
+     * draws a polygon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
      * @override
      * @param {Array} vertices a pointer to cc.Point coordiantes
      * @param {Number} numOfVertices the number of vertices measured in points
      * @param {Boolean} closePolygon The polygon can be closed or open
-     * @param {Boolean} fill The polygon can be closed or open and optionally filled with current color
+     * @param {Boolean} [fill=] The polygon can be closed or open and optionally filled with current color
      */
     drawPoly:function (vertices, numOfVertices, closePolygon, fill) {
-        if (fill == 'undefined') {
-            fill = false;
-        }
+        fill = fill || false;
 
-        if (vertices == null) {
+        if (vertices == null)
             return;
-        }
-        if (vertices.length < 3) {
+
+        if (vertices.length < 3)
             throw new Error("Polygon's point must greater than 2");
-        }
 
-        var firstPoint = vertices[0];
-        this._renderContext.beginPath();
-        this._renderContext.moveTo(firstPoint.x * cc.CONTENT_SCALE_FACTOR(), -firstPoint.y * cc.CONTENT_SCALE_FACTOR());
-        for (var i = 1; i < vertices.length; i++) {
-            this._renderContext.lineTo(vertices[i].x * cc.CONTENT_SCALE_FACTOR(), -vertices[i].y * cc.CONTENT_SCALE_FACTOR());
-        }
-        if (closePolygon) {
-            this._renderContext.closePath();
-        }
+        var firstPoint = vertices[0], locContext = this._renderContext;
+        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        locContext.beginPath();
+        locContext.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
+        for (var i = 1, len = vertices.length; i < len; i++)
+            locContext.lineTo(vertices[i].x * locScaleX, -vertices[i].y * locScaleY);
 
-        if (fill) {
-            this._renderContext.fill();
-        } else {
-            this._renderContext.stroke();
-        }
+        if (closePolygon)
+            locContext.closePath();
+
+        if (fill)
+            locContext.fill();
+        else
+            locContext.stroke();
     },
 
     /**
@@ -333,16 +332,19 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {Number} radius
      * @param {Number} angle angle in radians
      * @param {Number} segments
-     * @param {Boolean} drawLineToCenter
+     * @param {Boolean} [drawLineToCenter=]
      */
-    drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
-        this._renderContext.beginPath();
+    drawCircle: function (center, radius, angle, segments, drawLineToCenter) {
+        drawLineToCenter = drawLineToCenter || false;
+        var locContext = this._renderContext;
+        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        locContext.beginPath();
         var endAngle = angle - Math.PI * 2;
-        this._renderContext.arc(0 | center.x, 0 | -(center.y), radius, -angle, -endAngle, false);
+        locContext.arc(0 | (center.x * locScaleX), 0 | -(center.y * locScaleY), radius * locScaleX, -angle, -endAngle, false);
         if (drawLineToCenter) {
-            this._renderContext.lineTo(0 | center.x, 0 | -(center.y));
+            locContext.lineTo(0 | (center.x * locScaleX), 0 | -(center.y * locScaleY));
         }
-        this._renderContext.stroke();
+        locContext.stroke();
     },
 
     /**
@@ -361,10 +363,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 2) * origin.x + 2.0 * (1 - t) * t * control.x + t * t * destination.x;
             var y = Math.pow(1 - t, 2) * origin.y + 2.0 * (1 - t) * t * control.y + t * t * destination.y;
-            vertices.push(cc.p(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
+            vertices.push(cc.p(x, y));
             t += 1.0 / segments;
         }
-        vertices.push(cc.p(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
+        vertices.push(cc.p(destination.x, destination.y));
 
         this.drawPoly(vertices, segments + 1, false, false);
     },
@@ -386,10 +388,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 3) * origin.x + 3.0 * Math.pow(1 - t, 2) * t * control1.x + 3.0 * (1 - t) * t * t * control2.x + t * t * t * destination.x;
             var y = Math.pow(1 - t, 3) * origin.y + 3.0 * Math.pow(1 - t, 2) * t * control1.y + 3.0 * (1 - t) * t * t * control2.y + t * t * t * destination.y;
-            vertices.push(cc.p(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
+            vertices.push(cc.p(x , y ));
             t += 1.0 / segments;
         }
-        vertices.push(cc.p(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
+        vertices.push(cc.p(destination.x , destination.y));
 
         this.drawPoly(vertices, segments + 1, false, false);
     },
@@ -397,7 +399,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     /**
      * draw a CatmullRom curve
      * @override
-     * @param {cc.PointArray} points
+     * @param {Array} points
      * @param {Number} segments
      */
     drawCatmullRom:function (points, segments) {
@@ -407,7 +409,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     /**
      * draw a cardinal spline path
      * @override
-     * @param {cc.PointArray} config
+     * @param {Array} config
      * @param {Number} tension
      * @param {Number} segments
      */
@@ -473,12 +475,13 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
 
     /**
      * draw a star
-     * @param {CanvasContext} ctx canvas context
+     * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
      * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
      */
     drawStar:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
+        radius *= cc.EGLView.getInstance().getScaleX();
         if (color instanceof cc.Color4F)
             color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
         var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
@@ -513,12 +516,13 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
 
     /**
      * draw a color ball
-     * @param {CanvasContext} ctx canvas context
+     * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
      * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
      */
     drawColorBall:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
+        radius *= cc.EGLView.getInstance().getScaleX();
         if (color instanceof cc.Color4F)
             color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
         var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
@@ -551,8 +555,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     /**
      * set the drawing color with 4 unsigned bytes
      * @param {Number} r red value (0 to 255)
-     * @param {Number} r green value (0 to 255)
-     * @param {Number} r blue value (0 to 255)
+     * @param {Number} g green value (0 to 255)
+     * @param {Number} b blue value (0 to 255)
      * @param {Number} a Alpha value (0 to 255)
      */
     setDrawColor4B:function (r, g, b, a) {
@@ -563,8 +567,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     /**
      * set the drawing color with 4 floats
      * @param {Number} r red value (0 to 1)
-     * @param {Number} r green value (0 to 1)
-     * @param {Number} r blue value (0 to 1)
+     * @param {Number} g green value (0 to 1)
+     * @param {Number} b blue value (0 to 1)
      * @param {Number} a Alpha value (0 to 1)
      */
     setDrawColor4F:function (r, g, b, a) {
@@ -584,7 +588,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {Number} width
      */
     setLineWidth:function (width) {
-        this._renderContext.lineWidth = width;
+        this._renderContext.lineWidth = width * cc.EGLView.getInstance().getScaleX();
     }
 });
 
@@ -608,7 +612,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         if (!ctx instanceof  WebGLRenderingContext)
             throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";
 
-        this._super(ctx);
+        cc.DrawingPrimitive.prototype.ctor.call(this, ctx);
         this._color = new cc.Color4F(1.0, 1.0, 1.0, 1.0);
     },
 
@@ -751,7 +755,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     },
 
     /**
-     * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
+     * draws a polygon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
      * @param {Array} vertices a pointer to cc.Point coordiantes
      * @param {Number} numOfVertices the number of vertices measured in points
      * @param {Boolean} closePolygon The polygon can be closed or open
@@ -994,8 +998,8 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     /**
      * set the drawing color with 4 unsigned bytes
      * @param {Number} r red value (0 to 255)
-     * @param {Number} r green value (0 to 255)
-     * @param {Number} r blue value (0 to 255)
+     * @param {Number} g green value (0 to 255)
+     * @param {Number} b blue value (0 to 255)
      * @param {Number} a Alpha value (0 to 255)
      */
     setDrawColor4B:function (r, g, b, a) {
@@ -1008,8 +1012,8 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     /**
      * set the drawing color with 4 floats
      * @param {Number} r red value (0 to 1)
-     * @param {Number} r green value (0 to 1)
-     * @param {Number} r blue value (0 to 1)
+     * @param {Number} g green value (0 to 1)
+     * @param {Number} b blue value (0 to 1)
      * @param {Number} a Alpha value (0 to 1)
      */
     setDrawColor4F:function (r, g, b, a) {

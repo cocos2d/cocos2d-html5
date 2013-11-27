@@ -32,21 +32,27 @@ cc.ComponentContainer = cc.Class.extend({
     },
 
     getComponent:function(name){
-        cc.Assert(name != null, "Argument must be non-nil");
+        if(!name)
+            throw "cc.ComponentContainer.getComponent(): name should be non-null";
         name = name.trim();
         return this._components[name];
     },
 
     add:function(component){
-        cc.Assert(component != null, "Argument must be non-nil");
-        cc.Assert(component.getOwner() == null, "Component already added. It can't be added again");
+        if(!component)
+             throw "cc.ComponentContainer.add(): component should be non-null";
+        if(component.getOwner()){
+            cc.log("cc.ComponentContainer.add(): Component already added. It can't be added again");
+            return false;
+        }
+
         if(this._components == null){
             this._components = {};
             this._owner.scheduleUpdate();
         }
         var oldComponent = this._components[component.getName()];
         if(oldComponent){
-            cc.Assert(oldComponent == null, "Component already added. It can't be added again");
+            cc.log("cc.ComponentContainer.add(): Component already added. It can't be added again");
             return false;
         }
         component.setOwner(this._owner);
@@ -56,7 +62,8 @@ cc.ComponentContainer = cc.Class.extend({
     },
 
     remove:function(name){
-        cc.Assert(name != null, "Argument must be non-nil");
+        if(!name)
+            throw "cc.ComponentContainer.remove(): name should be non-null";
         if(!this._components)
             return false;
         var locComponents = this._components;

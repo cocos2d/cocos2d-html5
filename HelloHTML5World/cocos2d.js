@@ -51,13 +51,14 @@
         var p = d.getElementById(c.tag).parentNode;
         p.style.background = 'none';
         p.style.border = 'none';
-        p.insertBefore(s);
+        p.insertBefore(s,d.getElementById(c.tag));
 
         d.body.style.background = '#ffffff';
         return;
     }
 
     window.addEventListener('DOMContentLoaded', function () {
+        this.removeEventListener('DOMContentLoaded', arguments.callee, false);
         //first load engine file if specified
         var s = d.createElement('script');
         /*********Delete this section if you have packed all files into one*******/
