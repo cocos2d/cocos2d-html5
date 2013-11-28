@@ -147,6 +147,7 @@ ClassManager.getNewInstanceId=function(){
                 prototype[name] = prop[name];
             }
         }
+        prototype.__instanceId = null;
 
         // The dummy Class constructor
         function Class() {
