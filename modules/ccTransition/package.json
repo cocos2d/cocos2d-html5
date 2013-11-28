@@ -1,0 +1,31 @@
+{
+    "name": "cctransition",
+    "description": "transition for cocos2d-html5",
+    "version": "0.0.1",
+    "author": {
+        "name": "cocos2d-html5",
+        "email": "linshun@cocos2d-x.org"
+    },
+    "dependencies": {
+        "cocos2d-html5" : "*"
+    },
+    "devDependencies": {
+    },
+    "keywords": [
+        "cctransition",
+        "transition",
+        "animation",
+        "cocos",
+        "utils",
+        "web",
+        "game",
+        "html5",
+        "app",
+        "api"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cocos2d/cocos2d-html5.git"
+    },
+    "main": "index"
+}

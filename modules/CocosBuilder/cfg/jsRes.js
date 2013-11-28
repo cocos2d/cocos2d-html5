@@ -1,0 +1,27 @@
+var js = js || {};
+js.cocosbuilder = {
+    CCControl_js : '[%cocosbuilder%]src/Components/CCControl.js',
+    CCControlButton_js : '[%cocosbuilder%]src/Components/CCControlButton.js',
+    CCControlColourPicker_js : '[%cocosbuilder%]src/Components/CCControlColourPicker.js',
+    CCControlHuePicker_js : '[%cocosbuilder%]src/Components/CCControlHuePicker.js',
+    CCControlPotentiometer_js : '[%cocosbuilder%]src/Components/CCControlPotentiometer.js',
+    CCControlSaturationBrightnessPicker_js : '[%cocosbuilder%]src/Components/CCControlSaturationBrightnessPicker.js',
+    CCControlSlider_js : '[%cocosbuilder%]src/Components/CCControlSlider.js',
+    CCControlStepper_js : '[%cocosbuilder%]src/Components/CCControlStepper.js',
+    CCControlSwitch_js : '[%cocosbuilder%]src/Components/CCControlSwitch.js',
+    CCControlUtils_js : '[%cocosbuilder%]src/Components/CCControlUtils.js',
+    CCInvocation_js : '[%cocosbuilder%]src/Components/CCInvocation.js',
+    CCMenuPassive_js : '[%cocosbuilder%]src/Components/CCMenuPassive.js',
+    CCScale9Sprite_js : '[%cocosbuilder%]src/Components/CCScale9Sprite.js',
+    CCBAnimationManager_js : '[%cocosbuilder%]src/Reader/CCBAnimationManager.js',
+    CCBKeyframe_js : '[%cocosbuilder%]src/Reader/CCBKeyframe.js',
+    CCBReader_js : '[%cocosbuilder%]src/Reader/CCBReader.js',
+    CCBReaderUtil_js : '[%cocosbuilder%]src/Reader/CCBReaderUtil.js',
+    CCBRelativePositioning_js : '[%cocosbuilder%]src/Reader/CCBRelativePositioning.js',
+    CCBSequence_js : '[%cocosbuilder%]src/Reader/CCBSequence.js',
+    CCBValue_js : '[%cocosbuilder%]src/Reader/CCBValue.js',
+    CCControlLoader_js : '[%cocosbuilder%]src/Reader/CCControlLoader.js',
+    CCNodeLoader_js : '[%cocosbuilder%]src/Reader/CCNodeLoader.js',
+    CCNodeLoaderLibrary_js : '[%cocosbuilder%]src/Reader/CCNodeLoaderLibrary.js',
+    CCSpriteLoader_js : '[%cocosbuilder%]src/Reader/CCSpriteLoader.js'
+};
