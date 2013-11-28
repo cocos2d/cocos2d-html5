@@ -2312,3 +2312,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         return false;
     }
 });
+cc.NodeRGBA.create = function () {
+    var res = new cc.NodeRGBA();
+    res.init();
+    return res;
+};
