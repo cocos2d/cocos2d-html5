@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.UIHelper
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.UIInputManager = cc.Class.extend({
+ccs.UIInputManager = ccs.Class.extend({
     _manageredWidget: null,
     _selectedWidgets: null,
     _touchBeganedPoint: null,

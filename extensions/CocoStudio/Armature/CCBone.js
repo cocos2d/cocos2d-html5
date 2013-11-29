@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.Bone objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends ccs.NodeRGBA
  */
-ccs.Bone = cc.NodeRGBA.extend({
+ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     _boneData:null,
     _armature:null,
     _childArmature:null,

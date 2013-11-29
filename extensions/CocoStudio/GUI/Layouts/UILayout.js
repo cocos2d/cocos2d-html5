@@ -21,12 +21,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+/**
+ * layoutBackGround color type
+ * @type {Object}
+ */
 ccs.LayoutBackGroundColorType = {
     none: 0,
     solid: 1,
     gradient: 2
 };
 
+/**
+ * Layout type
+ * @type {Object}
+ */
 ccs.LayoutType = {
     absolute: 0,
     linearVertical: 1,
@@ -39,7 +47,7 @@ ccs.LayoutType = {
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILayout = ccs.UIWidget.extend({
+ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     _clippingEnabled: null,
     _backGroundScale9Enabled: null,
     _backGroundImage: null,
@@ -883,7 +891,14 @@ ccs.UILayout = ccs.UIWidget.extend({
         this.setClippingEnabled(layout._clippingEnabled);
     }
 });
-
+/**
+ * allocates and initializes a UILayout.
+ * @constructs
+ * @return {ccs.UILayout}
+ * @example
+ * // example
+ * var uiLayout = ccs.UILayout.create();
+ */
 ccs.UILayout.create = function () {
     var layout = new ccs.UILayout();
     if (layout && layout.init()) {

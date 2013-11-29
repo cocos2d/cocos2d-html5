@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UIImageView = ccs.UIWidget.extend({
+ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     _clickCount: 0,
     _clickTimeInterval: 0,
     _startCheckDoubleClick: false,
@@ -333,6 +333,11 @@ ccs.UIImageView = ccs.UIWidget.extend({
             }
         }
     },
+
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "ImageView";
     },
@@ -349,7 +354,14 @@ ccs.UIImageView = ccs.UIWidget.extend({
     }
 
 });
-
+/**
+ * allocates and initializes a UIImageView.
+ * @constructs
+ * @return {ccs.UIImageView}
+ * @example
+ * // example
+ * var uiImageView = ccs.UIImageView.create();
+ */
 ccs.UIImageView.create = function () {
     var uiImageView = new ccs.UIImageView();
     if (uiImageView && uiImageView.init()) {

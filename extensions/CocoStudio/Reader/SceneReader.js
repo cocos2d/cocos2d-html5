@@ -22,14 +22,23 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SceneReader = cc.Class.extend({
+/**
+ * Base class for ccs.SceneReader
+ * @class
+ * @extends ccs.Class
+ */
+ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
     _baseBath:"",
     ctor: function () {
         this._instance = null;
         this._baseBath = "";
     },
+    /**
+     * create node with json file that exported by cocostudio scene editor
+     * @param pszFileName
+     * @returns {cc.Node}
+     */
     createNodeWithSceneFile: function (pszFileName) {
-        var size = 0;
         var data = 0;
         var node = null;
         do {
@@ -52,6 +61,12 @@ ccs.SceneReader = cc.Class.extend({
         return node;
     },
 
+    /**
+     *  create object from data
+     * @param {Object} inputFiles
+     * @param {cc.Node} parenet
+     * @returns {cc.Node}
+     */
     createObject: function (inputFiles, parenet) {
         var className = inputFiles["classname"];
         if (className == "CCNode") {
@@ -294,7 +309,11 @@ ccs.SceneReader = cc.Class.extend({
         return null;
     },
 
-
+    /**
+     * set property
+     * @param {cc.Node} node
+     * @param {Object} dict
+     */
     setPropertyFromJsonDict: function (node, dict) {
         var x = dict["x"] || 0;
         var y = dict["y"] || 0;
@@ -318,11 +337,19 @@ ccs.SceneReader = cc.Class.extend({
         node.setRotation(fRotationZ);
     },
 
+    /**
+     * purge instance
+     */
     purge: function () {
         this._instance = null;
     }
 });
 ccs.SceneReader._instance = null;
+/**
+ * get a singleton SceneReader
+ * @function
+ * @return {ccs.SceneReader}
+ */
 ccs.SceneReader.getInstance = function () {
     if (!this._instance) {
         this._instance = new ccs.SceneReader();

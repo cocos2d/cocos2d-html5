@@ -21,6 +21,45 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+/**
+ * base namespace of cocostuidio
+ * @namespace
+ */
 var ccs = ccs || {};
-var CocoStudioVersion = "1.0";
+
+/**
+ * that same as cc.Class
+ * @class
+ */
+ccs.Class = ccs.Class || cc.Class;
+ccs.Class.extend = ccs.Class.extend || cc.Class.extend;
+
+/**
+ * that same as cc.NodeRGBA
+ * @class
+ * @extends ccs.Class
+ */
+ccs.NodeRGBA = ccs.NodeRGBA || cc.NodeRGBA;
+ccs.NodeRGBA.extend = ccs.NodeRGBA.extend || cc.NodeRGBA.extend;
+
+/**
+ * that same as cc.Sprite
+ * @class
+ * @extends ccs.Class
+ */
+ccs.Sprite = ccs.Sprite || cc.Sprite;
+ccs.Sprite.extend = ccs.Sprite.extend || cc.Sprite.extend;
+
+/**
+ * that same as cc.Component
+ * @class
+ * @extends ccs.Class
+ */
+ccs.Component = ccs.Component || cc.Component;
+ccs.Component.extend = ccs.Component.extend || cc.Component.extend;
+
+/**
+ * cocostudio version
+ * @type {string}
+ */
+ccs.CocoStudioVersion = "1.0";

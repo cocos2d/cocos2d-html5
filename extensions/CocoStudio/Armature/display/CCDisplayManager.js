@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.DisplayManager = cc.Class.extend({
+ccs.DisplayManager = ccs.Class.extend({
     _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,

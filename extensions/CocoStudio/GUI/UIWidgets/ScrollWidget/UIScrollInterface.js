@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.UIScrollInterface = cc.Class.extend({
+ccs.UIScrollInterface = ccs.Class.extend({
     handlePressLogic:function(touchPoint){
 
     },
