@@ -22,22 +22,38 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * bright style
+ * @type {Object}
+ */
 ccs.BrightStyle = {
     none: -1,
     normal: 0,
     highlight: 1
 };
 
+/**
+ * widget type
+ * @type {Object}
+ */
 ccs.WidgetType = {
     widget: 0, //control
     container: 1 //container
 };
 
+/**
+ * texture resource type
+ * @type {Object}
+ */
 ccs.TextureResType = {
     local: 0,
     plist: 1
 };
 
+/**
+ * touch event type
+ * @type {Object}
+ */
 ccs.TouchEventType = {
     began: 0,
     moved: 1,
@@ -45,11 +61,19 @@ ccs.TouchEventType = {
     canceled: 3
 };
 
+/**
+ * size type
+ * @type {Object}
+ */
 ccs.SizeType = {
     absolute: 0,
     percent: 1
 };
 
+/**
+ * position type
+ * @type {Object}
+ */
 ccs.PositionType = {
     absolute: 0,
     percent: 1
@@ -57,10 +81,14 @@ ccs.PositionType = {
 
 /**
  * Base class for ccs.UIWidget
+ * @sample
+ * var uiWidget = ccs.UIWidget.create();
+ * var uiLayer = ccs.UILayer.create();
+ * uiLayer.addWidget(uiWidget);
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.UIWidget = cc.Class.extend({
+ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
     _enabled: true,            ///< Highest control of widget
     _visible: true,            ///< is this widget visible
     _bright: true,             ///< is this widget bright
@@ -99,7 +127,7 @@ ccs.UIWidget = cc.Class.extend({
     _positionType: null,
     _positionPercent: null,
     _isRunning: false,
-
+    _userObject: null,
     ctor: function () {
         this._enabled = true;
         this._visible = true;
@@ -248,7 +276,7 @@ ccs.UIWidget = cc.Class.extend({
             if (this._isRunning) {
                 child.onExit();
             }
-            child.disableUpdate();
+            child.setUpdateEnabled(false);
             child.setParent(null);
             this._renderer.removeChild(child.getRenderer());
             cc.ArrayRemoveObject(this._children, child);
@@ -316,21 +344,6 @@ ccs.UIWidget = cc.Class.extend({
     },
 
     /**
-     * Unschedules the "update" method.
-     */
-    disableUpdate: function () {
-        if (this._scheduler) {
-            this._scheduler.unscheduleUpdateForTarget(this);
-        }
-        var childrenCount = this._children.length;
-        var arrayChildren = this._children;
-        for (var i = 0; i < childrenCount; i++) {
-            var child = arrayChildren[i];
-            child.disableUpdate();
-        }
-    },
-
-    /**
      * Set enabled renderer
      * @param {Boolean} enabled
      */
@@ -351,7 +364,7 @@ ccs.UIWidget = cc.Class.extend({
      * @returns {ccs.UIWidget}
      */
     getChildByName: function (name) {
-        return ccs.UIHelper.getInstance().seekWidgetByName(this, name);
+        return ccs.UIHelper.seekWidgetByName(this, name);
     },
 
     /**
@@ -360,7 +373,7 @@ ccs.UIWidget = cc.Class.extend({
      * @returns {ccs.UIWidget}
      */
     getChildByTag: function (tag) {
-        return ccs.UIHelper.getInstance().seekWidgetByTag(this, tag);
+        return ccs.UIHelper.seekWidgetByTag(this, tag);
     },
 
     /**
@@ -614,6 +627,9 @@ ccs.UIWidget = cc.Class.extend({
      * @param enable
      */
     setUpdateEnabled: function (enable) {
+        if(this._updateEnabled == enable){
+            return;
+        }
         this._updateEnabled = enable;
         if (enable) {
             if (this._scheduler) {
@@ -1316,6 +1332,10 @@ ccs.UIWidget = cc.Class.extend({
         return 255;
     },
 
+    /**
+     * Gets whether  cascadeOpacity is enabled
+     * @returns {Boolean}
+     */
     isCascadeOpacityEnabled: function () {
         if (this._renderer.RGBAProtocol) {
             return this._renderer.isCascadeOpacityEnabled();
@@ -1323,12 +1343,20 @@ ccs.UIWidget = cc.Class.extend({
         return false;
     },
 
+    /**
+     * Sets cascade opacity enabled
+     * @param {Boolean} cascadeOpacityEnabled
+     */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
         if (this._renderer.RGBAProtocol) {
             this._renderer.setCascadeOpacityEnabled(cascadeOpacityEnabled);
         }
     },
 
+    /**
+     * Gets whether cascadeColor is enabled
+     * @returns {Boolean}
+     */
     isCascadeColorEnabled: function () {
         if (this._renderer.RGBAProtocol) {
             return this._renderer.isCascadeColorEnabled();
@@ -1336,62 +1364,173 @@ ccs.UIWidget = cc.Class.extend({
         return false;
     },
 
+    /**
+     *  Sets cascade color enabled
+     * @param {Boolean} cascadeColorEnabled
+     */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
         if (this._renderer.RGBAProtocol) {
             this._renderer.setCascadeColorEnabled(cascadeColorEnabled);
         }
     },
 
+    /**
+     * Sets blendFunc
+     * @param {cc.BlendFunc} blendFunc
+     */
     setBlendFunc: function (blendFunc) {
         if (this._renderer.setBlendFunc) {
             this._renderer.setBlendFunc(blendFunc);
         }
     },
 
+    /**
+     * Gets touch start position
+     * @returns {cc.Point}
+     */
     getTouchStartPos: function () {
         return this._touchStartPos;
     },
 
+    /**
+     * Gets touch move position
+     * @returns {cc.Point}
+     */
     getTouchMovePos: function () {
         return this._touchMovePos;
     },
 
+    /**
+     * Gets touch end position
+     * @returns {cc.Point}
+     */
     getTouchEndPos: function () {
         return this._touchEndPos;
     },
 
+    /**
+     * Sets widget tag
+     * @param {Number} tag
+     */
     setTag: function (tag) {
         this._widgetTag = tag;
     },
 
+    /**
+     * Gets widget tag
+     * @returns {Number}
+     */
     getTag: function () {
         return this._widgetTag;
     },
 
+    /**
+     * Sets the name of widget
+     * @param {String} name
+     */
     setName: function (name) {
         this._name = name;
     },
 
+    /**
+     * Gets the name of widget
+     * @returns {string}
+     */
     getName: function () {
         return this._name;
     },
 
+    /**
+     * get widget type
+     * @returns {ccs.WidgetType}
+     */
     getWidgetType: function () {
         return this._widgetType;
     },
 
+    /**
+     * Sets layout parameter
+     * @param {ccs.UILayoutParameter} parameter
+     */
     setLayoutParameter: function (parameter) {
         this._layoutParameterDictionary[parameter.getLayoutType()] = parameter;
     },
 
+    /**
+     * Gets layout parameter
+     * @param {ccs.LayoutParameterType} type
+     * @returns {ccs.UILayoutParameter}
+     */
     getLayoutParameter: function (type) {
         return this._layoutParameterDictionary[type];
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "Widget";
     },
 
+    clone: function () {
+        var clonedWidget = this.createCloneInstance();
+        clonedWidget.copyProperties(this);
+        clonedWidget.copyClonedWidgetChildren(this);
+        return clonedWidget;
+    },
+
+    createCloneInstance: function () {
+        return ccs.UIWidget.create();
+    },
+
+    copyClonedWidgetChildren: function (model) {
+        var widgetChildren = model.getChildren();
+        for (var i = 0; i < widgetChildren.length; i++) {
+            var locChild = widgetChildren[i];
+            this.addChild(locChild.clone());
+        }
+    },
+
+    copySpecialProperties: function (model) {
+
+    },
+
+    copyProperties: function (widget) {
+        this.setEnabled(widget.isEnabled());
+        this.setVisible(widget.isVisible());
+        this.setBright(widget.isBright());
+        this.setTouchEnabled(widget.isTouchEnabled());
+        this._touchPassedEnabled = false;
+        this.setZOrder(widget.getZOrder());
+        this.setUpdateEnabled(widget.isUpdateEnabled());
+        this.setTag(widget.getTag());
+        this.setName(widget.getName());
+        this.setActionTag(widget.getActionTag());
+        this._ignoreSize = widget._ignoreSize;
+        this._size = widget._size;
+        this._customSize = widget._customSize;
+        this.copySpecialProperties(widget);
+        this._sizeType = widget.getSizeType();
+        this._sizePercent = widget._sizePercent;
+        this._positionType = widget._positionType;
+        this._positionPercent = widget._positionPercent;
+        this.setPosition(widget.getPosition());
+        this.setAnchorPoint(widget.getAnchorPoint());
+        this.setScaleX(widget.getScaleX());
+        this.setScaleY(widget.getScaleY());
+        this.setRotation(widget.getRotation());
+        this.setRotationX(widget.getRotationX());
+        this.setRotationY(widget.getRotationY());
+        this.setFlippedX(widget.isFlippedX());
+        this.setFlippedY(widget.isFlippedY());
+        this.setColor(widget.getColor());
+        this.setOpacity(widget.getOpacity());
+        this.setCascadeOpacityEnabled(widget.isCascadeOpacityEnabled());
+        this.setCascadeColorEnabled(widget.isCascadeColorEnabled());
+        this.onSizeChanged();
+    },
+    
     /*temp action*/
     setActionTag: function (tag) {
         this._actionTag = tag;
@@ -1496,9 +1635,22 @@ ccs.UIWidget = cc.Class.extend({
     },
     removeCCNode: function (cleanup) {
         this.removeRenderer(cleanup);
+    },
+    setUserObject:function(userObject){
+        this._userObject = userObject;
+    },
+    getUserObject:function(){
+        return this._userObject;
     }
 });
-
+/**
+ * allocates and initializes a UIWidget.
+ * @constructs
+ * @return {ccs.UIWidget}
+ * @example
+ * // example
+ * var uiWidget = ccs.UIWidget.create();
+ */
 ccs.UIWidget.create = function () {
     var widget = new ccs.UIWidget();
     if (widget && widget.init()) {
@@ -1507,7 +1659,12 @@ ccs.UIWidget.create = function () {
     return null;
 };
 
-ccs.GUIRenderer = cc.NodeRGBA.extend({
+/**
+ * Base class for ccs.GUIRenderer
+ * @class
+ * @extends ccs.NodeRGBA
+ */
+ccs.GUIRenderer = ccs.NodeRGBA.extend({
     _enabled: true,
     setEnabled: function (enabled) {
         this._enabled = enabled;
@@ -1524,7 +1681,14 @@ ccs.GUIRenderer = cc.NodeRGBA.extend({
         cc.NodeRGBA.prototype.visit.call(this, ctx);
     }
 });
-
+/**
+ * allocates and initializes a GUIRenderer.
+ * @constructs
+ * @return {ccs.GUIRenderer}
+ * @example
+ * // example
+ * var guiRenderer = ccs.GUIRenderer.create();
+ */
 ccs.GUIRenderer.create = function () {
     var widget = new ccs.GUIRenderer();
     if (widget && widget.init()) {

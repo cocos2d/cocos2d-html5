@@ -151,6 +151,7 @@ cc.BuilderReader = cc.Class.extend({
 
     _ownerCallbackNames:null,
     _ownerCallbackNodes:null,
+    _ownerCallbackEvents:null,
 
     _readNodeGraphFromData:false,
 
@@ -174,6 +175,7 @@ cc.BuilderReader = cc.Class.extend({
 
                 this._ownerCallbackNames = ccbReader._ownerCallbackNames;
                 this._ownerCallbackNodes = ccbReader._ownerCallbackNodes;
+                this._ownerCallbackEvents = ccbReader._ownerCallbackEvents;
                 this._ownerOutletNames = ccbReader._ownerOutletNames;
                 this._ownerOutletNodes = ccbReader._ownerOutletNodes;
                 this._ccbRootPath = ccbReader._ccbRootPath;
@@ -237,6 +239,7 @@ cc.BuilderReader = cc.Class.extend({
         this._ownerOutletNodes = [];
         this._ownerCallbackNames = [];
         this._ownerCallbackNodes = [];
+        this._ownerCallbackEvents = [];
         this._animationManagers = new cc._Dictionary();
 
         var nodeGraph = this.readFileWithCleanUp(true);
@@ -445,6 +448,10 @@ cc.BuilderReader = cc.Class.extend({
         return this._ownerCallbackNodes;
     },
 
+    getOwnerCallbackControlEvents:function(){
+        return this._ownerCallbackEvents;
+    },
+
     getOwnerOutletNames:function () {
         return this._ownerOutletNames;
     },
@@ -475,6 +482,10 @@ cc.BuilderReader = cc.Class.extend({
 
     addOwnerCallbackNode:function (node) {
         this._ownerCallbackNodes.push(node);
+    },
+
+    addOwnerCallbackControlEvents:function(event){
+        this._ownerCallbackEvents.push(event);
     },
 
     addDocumentCallbackName:function (name) {
@@ -938,11 +949,13 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
         // Callbacks
         var ownerCallbackNames = reader.getOwnerCallbackNames();
         var ownerCallbackNodes = reader.getOwnerCallbackNodes();
+        var ownerCallbackControlEvents = reader.getOwnerCallbackControlEvents();
         for (i = 0; i < ownerCallbackNames.length; i++) {
             callbackName = ownerCallbackNames[i];
             callbackNode = ownerCallbackNodes[i];
+            callbackControlEvents = ownerCallbackControlEvents[i];
             if(callbackNode instanceof cc.ControlButton)
-                callbackNode.addTargetWithActionForControlEvents(owner, owner[callbackName], 255);        //register all type of events
+                callbackNode.addTargetWithActionForControlEvents(owner, owner[callbackName], callbackControlEvents);        //register all type of events
             else
                 callbackNode.setCallback(owner[callbackName], owner);
         }

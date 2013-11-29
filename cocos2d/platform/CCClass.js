@@ -39,6 +39,7 @@ function ClassManager(){
     return arguments.callee.name || (arguments.callee.toString()).match(/^function ([^(]+)/)[1];
 }
 ClassManager.id=(0|(Math.random()*998));
+ClassManager.instanceId=(0|(Math.random()*998));
 ClassManager.compileSuper=function(func, name, id){
     //make the func to a string
     var str = func.toString();
@@ -79,7 +80,9 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 ClassManager.getNewID=function(){
     return this.id++;
 };
-
+ClassManager.getNewInstanceId=function(){
+    return this.instanceId++;
+};
 
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
@@ -144,12 +147,14 @@ ClassManager.getNewID=function(){
                 prototype[name] = prop[name];
             }
         }
+        prototype.__instanceId = null;
 
         // The dummy Class constructor
         function Class() {
             // All construction is actually done in the init method
             if (this.ctor)
                 this.ctor.apply(this, arguments);
+            this.__instanceId = ClassManager.getNewInstanceId();
         }
 
         Class.id = classId;

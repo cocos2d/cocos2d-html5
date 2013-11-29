@@ -224,7 +224,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             if(!locLoaded){
                 texture.addLoadedEventListener(function(sender){
                     this._textureLoaded = true;
-                    if(this._rotated){
+                    if(this._rotated && cc.renderContextType === cc.CANVAS){
                         var tempElement = sender.getHtmlElementObj();
                         tempElement = cc.cutRotateImageToCanvas(tempElement, this.getRect());
                         var tempTexture = new cc.Texture2D();
@@ -297,7 +297,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Texture2D} texture
      * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
      * @param {Boolean} [rotated=false]
-     * @param {cc.Point} [offset=cc.size(0,0)]
+     * @param {cc.Point} [offset=cc.p(0,0)]
      * @param {cc.Size} [originalSize=rect.size]
      * @return {Boolean}
      */
@@ -305,7 +305,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         if(arguments.length === 2)
             rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
-        offset = offset || cc.size(0, 0);
+        offset = offset || cc.p(0, 0);
         originalSize = originalSize || rect.size;
 
         this.setTexture(texture);
@@ -327,14 +327,14 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {string} filename
      * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
      * @param {Boolean} rotated
-     * @param {cc.Point} [offset=cc.size(0,0)]
+     * @param {cc.Point} [offset=cc.p(0,0)]
      * @param {cc.Size} [originalSize=rect.size]
      */
     initWithTextureFilename:function (filename, rect, rotated, offset, originalSize) {
         if(arguments.length === 2)
             rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
-        offset = offset || cc.size(0, 0);
+        offset = offset || cc.p(0, 0);
         originalSize = originalSize || rect.size;
 
         this._texture = null;

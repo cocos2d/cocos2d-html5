@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.DisplayManager = cc.Class.extend({
+ccs.DisplayManager = ccs.Class.extend({
     _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,
@@ -30,6 +30,7 @@ ccs.DisplayManager = cc.Class.extend({
     _forceChangeDisplay:false,
     _bone:null,
     _visible:true,
+    _displayType: null,
     ctor:function () {
         this._decoDisplayList = [];
         this._currentDecoDisplay = null;
@@ -38,6 +39,7 @@ ccs.DisplayManager = cc.Class.extend({
         this._forceChangeDisplay = false;
         this._bone = null;
         this._visible = true;
+        this._displayType = ccs.DisplayType.max;
     },
 
     init:function (bone) {
@@ -97,8 +99,7 @@ ccs.DisplayManager = cc.Class.extend({
     },
 
     removeDisplay:function (index) {
-        //cc.ArrayRemoveObjectAtIndex(this._decoDisplayList, index);
-        this._decoDisplayList[index] = null;
+        cc.ArrayRemoveObjectAtIndex(this._decoDisplayList, index);
         if (index == this._displayIndex) {
             this.setCurrentDecorativeDisplay(null);
         }
@@ -131,15 +132,12 @@ ccs.DisplayManager = cc.Class.extend({
         if (this._displayIndex == index) {
             return;
         }
-
         this._displayIndex = index;
 
         var decoDisplay = this._decoDisplayList[this._displayIndex];
-
         if(!decoDisplay){
             return;
         }
-
         this.setCurrentDecorativeDisplay(decoDisplay);
     },
     changeDisplayByName:function (name, force){
@@ -187,7 +185,6 @@ ccs.DisplayManager = cc.Class.extend({
                 this._bone.setChildArmature(null);
             }
             this._displayRenderNode.removeFromParent(true);
-            this._displayRenderNode.release();
             this._displayRenderNode = null;
         }
 
@@ -200,17 +197,24 @@ ccs.DisplayManager = cc.Class.extend({
                 displayRenderNode.resetSystem();
             }
             if (displayRenderNode.RGBAProtocol)            {
-                //this._displayRenderNode.setColor(this._bone.getColor());
-                //this._displayRenderNode.setOpacity(this._bone.getOpacity());
+                displayRenderNode.setColor(this._bone.getDisplayedColor());
+                displayRenderNode.setOpacity(this._bone.getDisplayedOpacity());
             }
             displayRenderNode.retain();
+            this._displayType = this._currentDecoDisplay.getDisplayData().displayType;
             //todo
             //this._displayRenderNode.setVisible(this._visible);
+        }else{
+            this._displayType = ccs.DisplayType.max;
         }
     },
 
     getDisplayRenderNode:function () {
         return this._displayRenderNode;
+    },
+
+    getDisplayRenderNodeType:function(){
+        return this._displayType;
     },
 
     getCurrentDisplayIndex:function () {
@@ -257,7 +261,7 @@ ccs.DisplayManager = cc.Class.extend({
 
         var ret = false;
         switch (this._currentDecoDisplay.getDisplayData().displayType) {
-            case CC_DISPLAY_SPRITE:
+            case ccs.DisplayType.sprite:
                 /*
                  *  First we first check if the point is in the sprite content rect. If false, then we continue to check
                  *  the contour point. If this step is also false, then we can say the bone not contain this point.

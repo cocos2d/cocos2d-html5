@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ComController
  * @class
- * @extends cc.Component
+ * @extends ccs.Component
  */
-ccs.ComController = cc.Component.extend({
+ccs.ComController = ccs.Component.extend(/** @lends ccs.ComController# */{
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._name = "ComAttribute";
@@ -60,10 +60,18 @@ ccs.ComController = cc.Component.extend({
     update: function (dt) {
     },
 
+    /**
+     * Enabled getter
+     * @returns {Boolean}
+     */
     isEnabled: function () {
         return this._enabled;
     },
 
+    /**
+     * Enabled setter
+     * @param {Boolean} bool
+     */
     setEnabled: function (bool) {
         this._enabled = b;
     },
@@ -76,11 +84,18 @@ ccs.ComController = cc.Component.extend({
         else
             cc.registerTargetedDelegate(this._touchPriority, true, this);
     },
-
+    /**
+     * MouseEnabled getter
+     * @returns {Boolean}
+     */
     isMouseEnabled:function () {
         return this._isMouseEnabled;
     },
 
+    /**
+     * MouseEnabled setter
+     * @param {Boolean} enabled
+     */
     setMouseEnabled:function (enabled) {
         if(!cc.MouseDispatcher)
             throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
@@ -479,6 +494,14 @@ ccs.ComController = cc.Component.extend({
     onKeyUp:function (keyCode) {
     }
 });
+/**
+ * allocates and initializes a ComController.
+ * @constructs
+ * @return {ccs.ComController}
+ * @example
+ * // example
+ * var com = ccs.ComController.create();
+ */
 ccs.ComController.create = function () {
     var com = new ccs.ComController();
     if (com && com.init()) {

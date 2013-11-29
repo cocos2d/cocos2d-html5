@@ -23,7 +23,8 @@
  ****************************************************************************/
 
 /**
- *  list view direction
+ * list view direction
+ * @type {Object}
  */
 ccs.ListViewDirection = {
     none: 0,
@@ -32,7 +33,8 @@ ccs.ListViewDirection = {
 };
 
 /**
- *  list view scroll direction
+ * list view scroll direction
+ * @type {Object}
  */
 ccs.ListViewMoveDirection = {
     none: 0,
@@ -42,6 +44,10 @@ ccs.ListViewMoveDirection = {
     right: 4
 };
 
+/**
+ * ListView event type
+ * @type {Object}
+ */
 ccs.ListViewEventType = {
     init_child: 0,
     update_child: 1
@@ -52,7 +58,7 @@ ccs.ListViewEventType = {
  * @class
  * @extends ccs.UILayout
  */
-ccs.UIListView = ccs.UILayout.extend({
+ccs.UIListView = ccs.UILayout.extend(/** @lends ccs.UIListView# */{
     _direction: null,
     _moveDirection: null,
     _touchStartLocation: 0,
@@ -1260,16 +1266,27 @@ ccs.UIListView = ccs.UILayout.extend({
      * @param {Function} selector
      * @param {Object} target
      */
-    addEventListener: function (selector, target) {
+    addEventListenerListView: function (selector, target) {
         this._eventSelector = selector;
         this._eventListener = target;
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "ListView";
     }
 });
-
+/**
+ * allocates and initializes a UIListView.
+ * @constructs
+ * @return {ccs.UIListView}
+ * @example
+ * // example
+ * var uiListView = ccs.UIListView.create();
+ */
 ccs.UIListView.create = function () {
     var uiListView = new ccs.UIListView();
     if (uiListView && uiListView.init()) {

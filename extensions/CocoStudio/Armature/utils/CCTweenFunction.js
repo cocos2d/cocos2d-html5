@@ -22,14 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * TweenType
+ * @type Object
+ */
 ccs.TweenType = {
     tweenEasingMin:-1,
     linear:0,
 
     sineEaseIn:1,
-    sineEaseInOut:2,
-    sineEaseOut:3,
-
+    sineEaseOut:2,
+    sineEaseInOut:3,
 
     quadEaseIn:4,
     quadEaseOut:5,
@@ -70,7 +73,7 @@ ccs.TweenType = {
     tweenEasingMax:10000
 };
 
-ccs.TweenFunction = ccs.TweenFunction || {};
+ccs.TweenFunction = ccs.TweenFunction || ccs.Class.extend({});
 
 ccs.TweenFunction.tweenTo = function (from, change, time, duration, tweenType) {
     var delta = 0;
@@ -198,7 +201,8 @@ ccs.TweenFunction.quadEaseOut = function (t, b, c, d) {
     return -c * (t /= d) * (t - 2) + b;
 };
 ccs.TweenFunction.quadEaseInOut = function (t, b, c, d) {
-    if ((t /= d / 2) < 1)
+    t = t/d*2;
+    if (t < 1)
         return c / 2 * t * t + b;
     return -c / 2 * ((--t) * (t - 2) - 1) + b;
 };
@@ -210,7 +214,8 @@ ccs.TweenFunction.cubicEaseOut = function (t, b, c, d) {
     return c * (( t = t / d - 1) * t * t + 1) + b;
 };
 ccs.TweenFunction.cubicEaseInOut = function (t, b, c, d) {
-    if ((t /= d / 2) < 1)
+    t = t/d*2;
+    if (t < 1)
         return c / 2 * t * t * t + b;
     return c / 2 * ((t -= 2) * t * t + 2) + b;
 };
@@ -222,7 +227,8 @@ ccs.TweenFunction.quartEaseOut = function (t, b, c, d) {
     return -c * (( t = t / d - 1) * t * t * t - 1) + b;
 };
 ccs.TweenFunction.quartEaseInOut = function (t, b, c, d) {
-    if ((t /= d / 2) < 1)
+    t = t/d*2;
+    if (t < 1)
         return c / 2 * t * t * t * t + b;
     return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
 };
@@ -234,7 +240,8 @@ ccs.TweenFunction.quintEaseOut = function (t, b, c, d) {
     return c * (( t = t / d - 1) * t * t * t * t + 1) + b;
 };
 ccs.TweenFunction.quintEaseInOut = function (t, b, c, d) {
-    if ((t /= d / 2) < 1)
+    t = t/d*2;
+    if (t < 1)
         return c / 2 * t * t * t * t * t + b;
     return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
 };
@@ -272,7 +279,8 @@ ccs.TweenFunction.circEaseOut = function (t, b, c, d) {
     return c * Math.sqrt(1 - ( t = t / d - 1) * t) + b;
 };
 ccs.TweenFunction.circEaseInOut = function (t, b, c, d) {
-    if ((t /= d / 2) < 1)
+    t = t / d * 2;
+    if (t < 1)
         return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
     return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
 };
@@ -311,7 +319,8 @@ ccs.TweenFunction.elasticEaseInOut = function (t, b, c, d, a, p) {
     var s = 0;
     if (t == 0)
         return b;
-    if ((t /= d / 2) == 2)
+    t = t / d * 2;
+    if (t == 2)
         return b + c;
     if (!p)
         p = d * (.3 * 1.5);

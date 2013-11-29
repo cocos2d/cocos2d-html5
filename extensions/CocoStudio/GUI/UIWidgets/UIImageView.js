@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UIImageView = ccs.UIWidget.extend({
+ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     _clickCount: 0,
     _clickTimeInterval: 0,
     _startCheckDoubleClick: false,
@@ -49,7 +49,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
         this._doubleClickEnabled = false;
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
-        this._capInsets = null;
+        this._capInsets = cc.rect(0,0,0,0);
         this._imageRenderer = null;
         this._textureFile = "";
         this._imageTexType = ccs.TextureResType.local;
@@ -80,6 +80,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
                     this._imageRenderer.initWithFile(fileName);
                     this._imageRenderer.setColor(this.getColor());
                     this._imageRenderer.setOpacity(this.getOpacity());
+                    this._imageRenderer.setCapInsets(this._capInsets);
                 }
                 else {
                     this._imageRenderer.initWithFile(fileName);
@@ -92,6 +93,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
                     this._imageRenderer.initWithSpriteFrameName(fileName);
                     this._imageRenderer.setColor(this.getColor());
                     this._imageRenderer.setOpacity(this.getOpacity());
+                    this._imageRenderer.setCapInsets(this._capInsets);
                 }
                 else {
                     this._imageRenderer.initWithSpriteFrameName(fileName);
@@ -331,12 +333,35 @@ ccs.UIImageView = ccs.UIWidget.extend({
             }
         }
     },
+
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "ImageView";
+    },
+
+    createCloneInstance:function(){
+        return ccs.UIImageView.create();
+    },
+
+    copySpecialProperties: function (imageView) {
+        this._prevIgnoreSize = imageView._prevIgnoreSize;
+        this.setScale9Enabled(imageView._scale9Enabled);
+        this.loadTexture(imageView._textureFile, imageView._imageTexType);
+        this.setCapInsets(imageView._capInsets);
     }
 
 });
-
+/**
+ * allocates and initializes a UIImageView.
+ * @constructs
+ * @return {ccs.UIImageView}
+ * @example
+ * // example
+ * var uiImageView = ccs.UIImageView.create();
+ */
 ccs.UIImageView.create = function () {
     var uiImageView = new ccs.UIImageView();
     if (uiImageView && uiImageView.init()) {

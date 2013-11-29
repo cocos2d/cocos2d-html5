@@ -305,7 +305,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             return;
 
         cc.NODE_DRAW_SETUP(this);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
         this._textureAtlas.drawQuads();
 
         //cc.PROFILER_STOP("CCParticleBatchNode - draw");

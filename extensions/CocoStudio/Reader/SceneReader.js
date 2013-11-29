@@ -22,26 +22,34 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SceneReader = cc.Class.extend({
+/**
+ * Base class for ccs.SceneReader
+ * @class
+ * @extends ccs.Class
+ */
+ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
     _baseBath:"",
     ctor: function () {
         this._instance = null;
         this._baseBath = "";
     },
+    /**
+     * create node with json file that exported by cocostudio scene editor
+     * @param pszFileName
+     * @returns {cc.Node}
+     */
     createNodeWithSceneFile: function (pszFileName) {
-        var size = 0;
         var data = 0;
         var node = null;
         do {
             if (!pszFileName)
                 break;
 
-            var strFullFileName = cc.FileUtils.getInstance().fullPathForFilename(pszFileName);
             var pos = pszFileName.lastIndexOf("/");
             if(pos>-1){
                 this._baseBath =pszFileName.substr(0,pos+1);
             }
-            data = cc.FileUtils.getInstance().getTextFileData(strFullFileName);
+            data = cc.FileUtils.getInstance().getTextFileData(pszFileName);
 
             if (!data)
                 break;
@@ -53,6 +61,12 @@ ccs.SceneReader = cc.Class.extend({
         return node;
     },
 
+    /**
+     *  create object from data
+     * @param {Object} inputFiles
+     * @param {cc.Node} parenet
+     * @returns {cc.Node}
+     */
     createObject: function (inputFiles, parenet) {
         var className = inputFiles["classname"];
         if (className == "CCNode") {
@@ -179,7 +193,7 @@ ccs.SceneReader = cc.Class.extend({
                     if (pos != -1) {
                         file_path = reDir.substr(0, pos + 1);
                     }
-                    var des = cc.FileUtils.getInstance().getTextFileData(fullPath);
+                    var des = cc.FileUtils.getInstance().getTextFileData(path);
                     if (!des) {
                         cc.log("read json file[%s] error!\n", path);
                         continue;
@@ -238,11 +252,11 @@ ccs.SceneReader = cc.Class.extend({
                     var attribute = null;
                     if (resType == 0) {
                         attribute = ccs.ComAttribute.create();
-                        var size = 0;
-                        var data = 0;
-                        data = cc.FileUtils.getInstance().getTextFileData(path);
-                        if (data) {
-                            attribute.setDict(JSON.parse(data));
+                        if(this._baseBath!=path){
+                            var data = cc.FileUtils.getInstance().getTextFileData(path);
+                            if (data) {
+                                attribute.setDict(JSON.parse(data));
+                            }
                         }
                     }
                     else {
@@ -295,7 +309,11 @@ ccs.SceneReader = cc.Class.extend({
         return null;
     },
 
-
+    /**
+     * set property
+     * @param {cc.Node} node
+     * @param {Object} dict
+     */
     setPropertyFromJsonDict: function (node, dict) {
         var x = dict["x"] || 0;
         var y = dict["y"] || 0;
@@ -319,11 +337,19 @@ ccs.SceneReader = cc.Class.extend({
         node.setRotation(fRotationZ);
     },
 
-    purgeSceneReader: function () {
+    /**
+     * purge instance
+     */
+    purge: function () {
         this._instance = null;
     }
 });
 ccs.SceneReader._instance = null;
+/**
+ * get a singleton SceneReader
+ * @function
+ * @return {ccs.SceneReader}
+ */
 ccs.SceneReader.getInstance = function () {
     if (!this._instance) {
         this._instance = new ccs.SceneReader();

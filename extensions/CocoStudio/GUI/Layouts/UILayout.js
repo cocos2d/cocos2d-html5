@@ -21,12 +21,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+/**
+ * layoutBackGround color type
+ * @type {Object}
+ */
 ccs.LayoutBackGroundColorType = {
     none: 0,
     solid: 1,
     gradient: 2
 };
 
+/**
+ * Layout type
+ * @type {Object}
+ */
 ccs.LayoutType = {
     absolute: 0,
     linearVertical: 1,
@@ -39,9 +47,9 @@ ccs.LayoutType = {
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILayout = ccs.UIWidget.extend({
+ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     _clippingEnabled: null,
-    _backGroundScale9Enable: null,
+    _backGroundScale9Enabled: null,
     _backGroundImage: null,
     _backGroundImageFileName: null,
     _backGroundImageCapInsets: null,
@@ -59,7 +67,7 @@ ccs.UILayout = ccs.UIWidget.extend({
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
         this._clippingEnabled = false;
-        this._backGroundScale9Enable = false;
+        this._backGroundScale9Enabled = false;
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageCapInsets = cc.RectZero();
@@ -137,10 +145,16 @@ ccs.UILayout = ccs.UIWidget.extend({
     onSizeChanged: function () {
         if (this._renderer instanceof ccs.UIRectClippingNode)
             this._renderer.setClippingSize(this._size);
-        this.doLayout();
+        if(this.getDescription() == "Layout"){
+            for (var i = 0; i < this._children.length; i++) {
+                var child = this._children[i];
+                child.updateSizeAndPosition();
+            }
+            this.doLayout();
+        }
         if (this._backGroundImage) {
             this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
-            if (this._backGroundScale9Enable) {
+            if (this._backGroundScale9Enabled) {
                 if (this._backGroundImage instanceof cc.Scale9Sprite) {
                     this._backGroundImage.setPreferredSize(this._size);
                 }
@@ -159,13 +173,13 @@ ccs.UILayout = ccs.UIWidget.extend({
      * @param {Boolean} able
      */
     setBackGroundImageScale9Enabled: function (able) {
-        if (this._backGroundScale9Enable == able) {
+        if (this._backGroundScale9Enabled == able) {
             return;
         }
         this._renderer.removeChild(this._backGroundImage, true);
         this._backGroundImage = null;
-        this._backGroundScale9Enable = able;
-        if (this._backGroundScale9Enable) {
+        this._backGroundScale9Enabled = able;
+        if (this._backGroundScale9Enabled) {
             this._backGroundImage = cc.Scale9Sprite.create();
         }
         else {
@@ -192,7 +206,7 @@ ccs.UILayout = ccs.UIWidget.extend({
         }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
-        if (this._backGroundScale9Enable) {
+        if (this._backGroundScale9Enabled) {
             switch (this._bgImageTexType) {
                 case ccs.TextureResType.local:
                     this._backGroundImage.initWithFile(fileName);
@@ -217,7 +231,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                     break;
             }
         }
-        if (this._backGroundScale9Enable) {
+        if (this._backGroundScale9Enabled) {
             this._backGroundImage.setColor(this.getColor());
             this._backGroundImage.setOpacity(this.getOpacity());
         }
@@ -235,7 +249,7 @@ ccs.UILayout = ccs.UIWidget.extend({
      */
     setBackGroundImageCapInsets: function (capInsets) {
         this._backGroundImageCapInsets = capInsets;
-        if (this._backGroundScale9Enable) {
+        if (this._backGroundScale9Enabled) {
             this._backGroundImage.setCapInsets(capInsets);
         }
     },
@@ -249,13 +263,13 @@ ccs.UILayout = ccs.UIWidget.extend({
                 break;
             case ccs.LayoutType.linearHorizontal:
             case ccs.LayoutType.linearVertical:
-                var layoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.linear);
+                var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.UILinearLayoutParameter.create());
                 }
                 break;
             case ccs.LayoutType.relative:
-                var layoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.relative);
+                var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.UIRelativeLayoutParameter.create());
                 }
@@ -269,7 +283,7 @@ ccs.UILayout = ccs.UIWidget.extend({
      * init background image renderer.
      */
     addBackGroundImage: function () {
-        if (this._backGroundScale9Enable) {
+        if (this._backGroundScale9Enabled) {
             this._backGroundImage = cc.Scale9Sprite.create();
             this._backGroundImage.setZOrder(-1);
             this._renderer.addChild(this._backGroundImage);
@@ -479,7 +493,7 @@ ccs.UILayout = ccs.UIWidget.extend({
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.linear);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -514,7 +528,7 @@ ccs.UILayout = ccs.UIWidget.extend({
         var leftBoundary = 0;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.linear);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -551,14 +565,14 @@ ccs.UILayout = ccs.UIWidget.extend({
 
         for (var i = 0; i < length; i++) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.relative);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
             locLayoutParameter._put = false;
         }
 
         while (unlayoutChildCount > 0) {
             for (var i = 0; i < length; i++) {
                 var locChild = layoutChildrenArray[i];
-                var locLayoutParameter = locChild.getLayoutParameter(ccs.UILayoutParameterType.relative);
+                var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
 
                 if (locLayoutParameter) {
                     if (locLayoutParameter._put) {
@@ -573,9 +587,9 @@ ccs.UILayout = ccs.UIWidget.extend({
                     var locFinalPosX = 0;
                     var locFinalPosY = 0;
                     if (locRelativeName) {
-                        locRelativeWidget = ccs.UIHelper.getInstance().seekWidgetByRelativeName(this, locRelativeName);
+                        locRelativeWidget = ccs.UIHelper.seekWidgetByRelativeName(this, locRelativeName);
                         if (locRelativeWidget) {
-                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccs.UILayoutParameterType.relative);
+                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccs.LayoutParameterType.relative);
                         }
                     }
                     switch (locAlign) {
@@ -703,7 +717,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                                 }
                                 var rbs = locRelativeWidget.getSize();
                                 var locationLeft = locRelativeWidget.getRightInParent();
-                                locFinalPosX = locFinalPosX = locationLeft + locAP.x * locSize.width;
+                                locFinalPosX = locationLeft + locAP.x * locSize.width;
 
                                 locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
@@ -759,7 +773,7 @@ ccs.UILayout = ccs.UIWidget.extend({
                     var locRelativeWidgetMargin;
                     var locMargin = locLayoutParameter.getMargin();
                     if (locRelativeWidget) {
-                        locRelativeWidgetMargin = locRelativeWidget.getLayoutParameter(ccs.UILayoutParameterType.relative).getMargin();
+                        locRelativeWidgetMargin = locRelativeWidget.getLayoutParameter(ccs.LayoutParameterType.relative).getMargin();
                     }
                     //handle margin
                     switch (locAlign) {
@@ -853,9 +867,38 @@ ccs.UILayout = ccs.UIWidget.extend({
      */
     getDescription: function () {
         return "Layout";
+    },
+
+    createCloneInstance: function () {
+        return ccs.UILayout.create();
+    },
+
+    copyClonedWidgetChildren: function (model) {
+        ccs.UIWidget.prototype.copyClonedWidgetChildren.call(this, model);
+        this.doLayout();
+    },
+
+    copySpecialProperties: function (layout) {
+        this.setBackGroundImageScale9Enabled(layout._backGroundScale9Enabled);
+        this.setBackGroundImage(layout._backGroundImageFileName, layout._bgImageTexType);
+        this.setBackGroundImageCapInsets(layout._backGroundImageCapInsets);
+        this.setBackGroundColorType(layout._colorType);
+        this.setBackGroundColor(layout._color);
+        this.setBackGroundColor(layout._startColor, layout._endColor);
+        this.setBackGroundColorOpacity(layout._opacity);
+        this.setBackGroundColorVector(layout._alongVector);
+        this.setLayoutType(layout._layoutType);
+        this.setClippingEnabled(layout._clippingEnabled);
     }
 });
-
+/**
+ * allocates and initializes a UILayout.
+ * @constructs
+ * @return {ccs.UILayout}
+ * @example
+ * // example
+ * var uiLayout = ccs.UILayout.create();
+ */
 ccs.UILayout.create = function () {
     var layout = new ccs.UILayout();
     if (layout && layout.init()) {

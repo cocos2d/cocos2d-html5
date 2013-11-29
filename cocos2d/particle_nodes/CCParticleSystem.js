@@ -2263,7 +2263,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _updateBlendFunc:function () {
-        if(!this._batchNode){
+        if(this._batchNode){
             cc.log("Can't change blending functions when the particle is being batched");
             return;
         }

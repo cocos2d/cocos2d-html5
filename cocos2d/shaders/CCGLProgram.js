@@ -258,9 +258,8 @@ cc.GLProgram = cc.Class.extend({
         if (!source || !shader)
             return false;
 
-        var preStr = (type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
-
-        source = preStr
+        //var preStr = (type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
+        source = "precision highp float;        \n"
             + "uniform mat4 CC_PMatrix;         \n"
             + "uniform mat4 CC_MVMatrix;        \n"
             + "uniform mat4 CC_MVPMatrix;       \n"
@@ -407,7 +406,7 @@ cc.GLProgram = cc.Class.extend({
         if (cc.COCOS2D_DEBUG) {
             var status = this._glContext.getProgramParameter(this._programObj, this._glContext.LINK_STATUS);
             if (!status) {
-                cc.log("cocos2d: ERROR: Failed to link program: " + this._programObj);
+                cc.log("cocos2d: ERROR: Failed to link program: " + this._glContext.getProgramInfoLog(this._programObj));
                 cc.glDeleteProgram(this._programObj);
                 this._programObj = null;
                 return false;

@@ -450,9 +450,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     /**
      * find Object from Array
      * @private
-     * @param {Array} Source Array
-     * @param {cc.Class} destination object
-     * @return {cc.ListEntry} object if finded, or return null
+     * @param {Array} array Array
+     * @param {cc.Class} target object
+     * @return {cc.ListEntry} object if found, or return null
      */
     _findElementFromArray:function (array, target) {
         for (var i = 0; i < array.length; i++) {

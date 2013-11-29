@@ -61,7 +61,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _strokeShadowOffsetX:0,
     _strokeShadowOffsetY:0,
-    _originalPosition:null,
     _needUpdateTexture:false,
 
     _labelCanvas:null,
@@ -95,7 +94,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._fillColorStr = "rgba(255,255,255,1)";
         this._strokeShadowOffsetX = 0;
         this._strokeShadowOffsetY = 0;
-        this._originalPosition = cc.PointZero();
         this._needUpdateTexture = false;
 
         this._setColorsString();
@@ -684,6 +682,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                                 break;
                             }
                         } while (tempLineWidth > locDimensionsWidth);
+                        if (cutoff === -1) {
+                            break;
+                        }
                         var newline = strings[i].substr(cutoff + 1);
                         strings.splice(i + 1, 0, newline);
                         strings[i] = str;
@@ -733,12 +734,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var oldAPP = {x: oldContentSize.width * locAP.x, y: oldContentSize.height * locAP.y};
         this._anchorPointInPoints.x = startPoint.x + oldAPP.x;
         this._anchorPointInPoints.y = startPoint.y + oldAPP.y;
-    },
-
-    getPosition:function(){
-        if(this._needUpdateTexture)
-            this._updateTTF();
-        return cc.p(this._originalPosition.x, this._originalPosition.y);
     },
 
     getContentSize:function(){

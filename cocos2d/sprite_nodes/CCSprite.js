@@ -1271,6 +1271,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _textureLoadedCallback: null,
 
     _textureLoadedCallbackForWebGL: function (sender) {
+        if(this._textureLoaded)
+            return;
+
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
@@ -1291,6 +1294,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _textureLoadedCallbackForCanvas: function (sender) {
+        if(this._textureLoaded)
+            return;
+
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
@@ -1662,7 +1668,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
                     this.setTexture(locNewTexture);
-                this.setTextureRect(sender.getRect(), sender._rectRotated, sender.getOriginalSize());
+                this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
+
                 this._callLoadedEventCallbacks();
             }, this);
         }
@@ -1694,7 +1701,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
                     this.setTexture(locNewTexture);
-                this.setTextureRect(sender.getRect(), this._rectRotated, sender.getOriginalSize());
+                this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 this._callLoadedEventCallbacks();
             }, this);
         }
@@ -2070,7 +2077,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         flipXOffset *= locEGL_ScaleX;
         flipYOffset *= locEGL_ScaleY;
 
-        if (this._texture && locRect.width > 0) {
+        if (this._texture && locTextureCoord.width > 0) {
             var image = this._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,

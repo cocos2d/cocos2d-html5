@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.Armature objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends ccs.NodeRGBA
  */
-ccs.Armature = cc.NodeRGBA.extend({
+ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     _animation:null,
     _armatureData:null,
     _batchNode:null,
@@ -39,8 +39,10 @@ ccs.Armature = cc.NodeRGBA.extend({
     _armatureIndexDic:null,
     _offsetPoint:null,
     _version:0,
-    _armatureTransformDirty:false,
+    _armatureTransformDirty:true,
     _body:null,
+    _textureAtlasDic:null,
+    _blendFunc:null,
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._animation = null;
@@ -50,12 +52,14 @@ ccs.Armature = cc.NodeRGBA.extend({
         this._textureAtlas = null;
         this._parentBone = null;
         this._boneDic = null;
-        this._topBoneList = [];
+        this._topBoneList = null;
         this._armatureIndexDic = {};
         this._offsetPoint = cc.p(0, 0);
         this._version = 0;
-        this._armatureTransformDirty = false;
+        this._armatureTransformDirty = true;
         this._body = null;
+        this._textureAtlasDic = null;
+        this._blendFunc = null;
     },
 
     /**
@@ -73,8 +77,9 @@ ccs.Armature = cc.NodeRGBA.extend({
         this._animation = new ccs.ArmatureAnimation();
         this._animation.init(this);
         this._boneDic = {};
-        this._boneList = [];
-
+        this._topBoneList = [];
+        this._textureAtlasDic = {};
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._name = (!name) ? "" : name;
         var armatureDataManager = ccs.ArmatureDataManager.getInstance();
         if (name != "") {
@@ -187,17 +192,11 @@ ccs.Armature = cc.NodeRGBA.extend({
                 boneParent.addChildBone(bone);
             }
             else {
-                if (this._parentBone)
-                    this._parentBone.addChildBone(bone);
-                else
-                    this._topBoneList.push(bone);
+                this._topBoneList.push(bone);
             }
         }
         else {
-            if (this._parentBone)
-                this._parentBone.addChildBone(bone);
-            else
-                this._topBoneList.push(bone);
+            this._topBoneList.push(bone);
         }
         bone.setArmature(this);
         this._boneDic[bone.getName()] = bone;
@@ -217,7 +216,7 @@ ccs.Armature = cc.NodeRGBA.extend({
 
         bone.setArmature(null);
         bone.removeFromParent(recursion);
-        cc.ArrayRemoveObject(this._boneList, bone);
+        cc.ArrayRemoveObject(this._topBoneList, bone);
         delete  this._boneDic[bone.getName()];
         this.removeChild(bone, true);
     },
@@ -474,6 +473,22 @@ ccs.Armature = cc.NodeRGBA.extend({
     },
 
     /**
+     * conforms to cc.TextureProtocol protocol
+     * @param {cc.BlendFunc} blendFunc
+     */
+    setBlendFunc: function (blendFunc) {
+        this._blendFunc = blendFunc;
+    },
+
+    /**
+     * blendFunc getter
+     * @returns {cc.BlendFunc}
+     */
+    getBlendFunc: function () {
+        return this._blendFunc;
+    },
+
+    /**
      * This boundingBox will calculate all bones' boundingBox every time
      * @return {cc.rect}
      */
@@ -502,7 +517,60 @@ ccs.Armature = cc.NodeRGBA.extend({
                 boundingBox = cc.rect(minx, miny, maxx - minx, maxy - miny);
             }
         }
-        return boundingBox;
+        return cc.RectApplyAffineTransform(boundingBox, this.nodeToParentTransform());
+    },
+
+    /**
+     * when bone  contain the point ,then return it.
+     * @param {Number} x
+     * @param {Number} y
+     * @returns {ccs.Bone}
+     */
+    getBoneAtPoint: function (x, y) {
+        for (var i = this._children.length - 1; i >= 0; i--) {
+            var child = this._children[i];
+            if (child instanceof ccs.Bone) {
+                if (child.getDisplayManager().containPoint(x, y)) {
+                    return child;
+                }
+            }
+        }
+        return null;
+    },
+
+    getTexureAtlasWithTexture:function(){
+        return null;
+    },
+
+    /**
+     * parent bone setter
+     * @param {ccs.Bone} parentBone
+     */
+    setParentBone: function (parentBone) {
+        this._parentBone = parentBone;
+        for (var key in this._boneDic) {
+            var bone = this._boneDic[key];
+            bone.setArmature(this);
+        }
+    },
+
+    /**
+     * set collider filter
+     * @param {ccs.ColliderFilter} filter
+     */
+    setColliderFilter: function (filter) {
+        for (var key in this._boneDic) {
+            var bone = this._boneDic[key];
+            bone.setColliderFilter(filter);
+        }
+    },
+
+    /**
+     * return parent bone
+     * @returns {ccs.Bone}
+     */
+    getParentBone:function(){
+        return this._parentBone;
     },
 
     /**

@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ActionManager
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ActionManager = cc.Class.extend({
+ccs.ActionManager = ccs.Class.extend(/** @lends ccs.ActionManager# */{
     _actionDic: null,
     ctor: function () {
         this._actionDic = {};

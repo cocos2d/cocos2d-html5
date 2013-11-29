@@ -22,194 +22,97 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
+ccs.UIHelper = ccs.UIHelper || ccs.Class.extend({});
+
 /**
- * Base class for ccs.UIHelper
- * @class
- * @extends cc.Class
+ * Finds a widget whose tag equals to param tag from root widget.
+ * @param {ccs.UIWidget} root
+ * @param {number} tag
+ * @returns {ccs.UIWidget}
  */
-ccs.UIHelper = cc.Class.extend({
-    _fileDesignWidth: 0,
-    _fileDesignHeight: 0,
-//texture
-    _textureFiles: [],
-    ctor: function () {
-        var winSize = cc.Director.getInstance().getWinSize();
-        this._fileDesignWidth = winSize.width;
-        this._fileDesignHeight = winSize.height;
-        this.init();
-    },
-    init: function () {
-        this._textureFiles = [];
-    },
-
-    /**
-     * Load a widget with json file.
-     * @param {String} fileName
-     * @returns {String}
-     */
-    createWidgetFromJsonFile: function (fileName) {
-        return ccs.GUIReader.getInstance().widgetFromJsonFile(fileName);
-    },
-
-    /**
-     * add a plist file for loading widget's texture.
-     * @param {String} fileName
-     */
-    addSpriteFrame: function (fileName) {
-        if (!fileName) {
-            return;
-        }
-        for (var i = 0; i < this._textureFiles.length; i++) {
-            var file = this._textureFiles[i];
-            if (file == fileName) {
-                return;
-            }
-        }
-        this._textureFiles.push(fileName);
-        cc.SpriteFrameCache.getInstance().addSpriteFrames(fileName);
-    },
-
-    /**
-     * remove a plist file for loading widget's texture.
-     * @param fileName
-     */
-    removeSpriteFrame: function (fileName) {
-        if (!fileName) {
-            return;
-        }
-        for (var i = 0; i < this._textureFiles.length; i++) {
-            var file = this._textureFiles[i];
-            if (file == fileName) {
-                cc.SpriteFrameCache.getInstance().removeSpriteFrameByName(fileName);
-                cc.ArrayRemoveObject(this._textureFiles, file);
-                return;
-            }
-        }
-    },
-
-    /**
-     * remove all plist files for loading widget's texture.
-     */
-    removeAllSpriteFrame: function () {
-        for (var i = 0; i < this._textureFiles.length; i++) {
-            var file = this._textureFiles[i];
-            cc.SpriteFrameCache.getInstance().removeSpriteFrameByName(file);
-        }
-        this._textureFiles = [];
-    },
-
-    /**
-     * Finds a widget whose tag equals to param tag from root widget.
-     * @param {ccs.UIWidget} root
-     * @param {number} tag
-     * @returns {ccs.UIWidget}
-     */
-    seekWidgetByTag: function (root, tag) {
-        if (!root) {
-            return null;
-        }
-        if (root.getTag() == tag) {
-            return root;
-        }
-        var arrayRootChildren = root.getChildren();
-        var length = arrayRootChildren.length;
-        for (var i = 0; i < length; i++) {
-            var child = arrayRootChildren[i];
-            var res = this.seekWidgetByTag(child, tag);
-            if (res != null) {
-                return res;
-            }
-        }
+ccs.UIHelper.seekWidgetByTag = function (root, tag) {
+    if (!root) {
         return null;
-    },
-
-    /**
-     * Finds a widget whose name equals to param name from root widget.
-     * @param {ccs.UIWidget} root
-     * @param {String} name
-     * @returns {ccs.UIWidget}
-     */
-    seekWidgetByName: function (root, name) {
-        if (!root) {
-            return null;
-        }
-        if (root.getName() == name) {
-            return root;
-        }
-        var arrayRootChildren = root.getChildren();
-        var length = arrayRootChildren.length;
-        for (var i = 0; i < length; i++) {
-            var child = arrayRootChildren[i];
-            var res = this.seekWidgetByName(child, name);
-            if (res != null) {
-                return res;
-            }
-        }
-        return null;
-    },
-
-    /**
-     * Finds a widget whose name equals to param name from root widget.
-     * RelativeLayout will call this method to find the widget witch is needed.
-     * @param {ccs.UIWidget} root
-     * @param {String} name
-     * @returns {ccs.UIWidget}
-     */
-    seekWidgetByRelativeName: function (root, name) {
-        if (!root) {
-            return null;
-        }
-        var arrayRootChildren = root.getChildren();
-        var length = arrayRootChildren.length;
-        for (var i = 0; i < length; i++) {
-            var child = arrayRootChildren[i];
-            var layoutParameter = child.getLayoutParameter(ccs.UILayoutParameterType.relative);
-            if (layoutParameter && layoutParameter.getRelativeName() == name) {
-                return child;
-            }
-        }
-        return null;
-    },
-
-    /**
-     * Set file design width
-     * @param {number} width
-     */
-    setFileDesignWidth: function (width) {
-        this._fileDesignWidth = width;
-    },
-
-    /**
-     * Get file design width
-     * @returns {number}
-     */
-    getFileDesignWidth: function () {
-        return this._fileDesignWidth;
-    },
-
-    /**
-     * Set file design height
-     * @param {number} height
-     */
-    setFileDesignHeight: function (height) {
-        this._fileDesignHeight = height;
-    },
-
-    /**
-     * Get file design height
-     * @returns {number}
-     */
-    getFileDesignHeight: function () {
-        return this._fileDesignHeight;
     }
-});
-ccs.UIHelper._instance = null;
-ccs.UIHelper.getInstance = function () {
-    if (!this._instance) {
-        this._instance = new ccs.UIHelper();
+    if (root.getTag() == tag) {
+        return root;
     }
-    return this._instance;
+    var arrayRootChildren = root.getChildren();
+    var length = arrayRootChildren.length;
+    for (var i = 0; i < length; i++) {
+        var child = arrayRootChildren[i];
+        var res = this.seekWidgetByTag(child, tag);
+        if (res != null) {
+            return res;
+        }
+    }
+    return null;
 };
-ccs.UIHelper.purge = function(){
-    this._instance=null;
+
+/**
+ * Finds a widget whose name equals to param name from root widget.
+ * @param {ccs.UIWidget} root
+ * @param {String} name
+ * @returns {ccs.UIWidget}
+ */
+ccs.UIHelper.seekWidgetByName = function (root, name) {
+    if (!root) {
+        return null;
+    }
+    if (root.getName() == name) {
+        return root;
+    }
+    var arrayRootChildren = root.getChildren();
+    var length = arrayRootChildren.length;
+    for (var i = 0; i < length; i++) {
+        var child = arrayRootChildren[i];
+        var res = this.seekWidgetByName(child, name);
+        if (res != null) {
+            return res;
+        }
+    }
+    return null;
+};
+
+/**
+ * Finds a widget whose name equals to param name from root widget.
+ * RelativeLayout will call this method to find the widget witch is needed.
+ * @param {ccs.UIWidget} root
+ * @param {String} name
+ * @returns {ccs.UIWidget}
+ */
+ccs.UIHelper.seekWidgetByRelativeName = function (root, name) {
+    if (!root) {
+        return null;
+    }
+    var arrayRootChildren = root.getChildren();
+    var length = arrayRootChildren.length;
+    for (var i = 0; i < length; i++) {
+        var child = arrayRootChildren[i];
+        var layoutParameter = child.getLayoutParameter(ccs.LayoutParameterType.relative);
+        if (layoutParameter && layoutParameter.getRelativeName() == name) {
+            return child;
+        }
+    }
+    return null;
+};
+
+/*temp action*/
+ccs.UIHelper.seekActionWidgetByActionTag = function (root, tag) {
+    if (!root) {
+        return null;
+    }
+    if (root.getActionTag() == tag) {
+        return root;
+    }
+    var arrayRootChildren = root.getChildren();
+    for (var i = 0; i < arrayRootChildren.length; i++) {
+        var child = arrayRootChildren[i];
+        var res = this.seekActionWidgetByActionTag(child, tag);
+        if (res != null) {
+            return res;
+        }
+    }
+    return null;
 };

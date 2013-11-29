@@ -22,12 +22,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.Skin = cc.Sprite.extend({
+/**
+ * Base class for ccs.Skin
+ * @class
+ * @extends ccs.Sprite
+ */
+ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _skinData:null,
     _bone:null,
     _skinTransform:null,
     _displayName:"",
     _blend:null,
+    _armature:null,
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
@@ -35,19 +41,16 @@ ccs.Skin = cc.Sprite.extend({
         this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
         this._blend = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._armature = null;
     },
     initWithSpriteFrameName:function(spriteFrameName){
         var ret = cc.Sprite.prototype.initWithSpriteFrameName.call(this,spriteFrameName);
-        var atlas = ccs.SpriteFrameCacheHelper.getInstance().getTexureAtlasWithTexture(this._texture);
-        this.setTextureAtlas(atlas);
         this._displayName = spriteFrameName;
         return ret;
     },
-    initWithFile:function(spriteFrameName){
+    initWithFile:function(fileName){
         var ret = cc.Sprite.prototype.initWithFile.call(this,spriteFrameName);
-        var atlas = ccs.SpriteFrameCacheHelper.getInstance().getTexureAtlasWithTexture(this._texture);
-        this.setTextureAtlas(atlas);
-        this._displayName = spriteFrameName;
+        this._displayName = fileName;
         return ret;
     },
     setSkinData:function (skinData) {
@@ -55,10 +58,12 @@ ccs.Skin = cc.Sprite.extend({
 
         this.setScaleX(skinData.scaleX);
         this.setScaleY(skinData.scaleY);
-        this.setRotation(cc.RADIANS_TO_DEGREES(skinData.skewX));
+        this.setRotationX(cc.RADIANS_TO_DEGREES(skinData.skewX));
+        this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
         this._skinTransform = this.nodeToParentTransform();
+        this.updateArmatureTransform();
     },
 
     getSkinData:function () {
@@ -75,6 +80,11 @@ ccs.Skin = cc.Sprite.extend({
 
     updateArmatureTransform:function () {
         this._transform = cc.AffineTransformConcat(this._skinTransform, this._bone.nodeToArmatureTransform());
+        var locTransform = this._transform;
+        var locArmature = this._armature;
+        if (locArmature && locArmature.getBatchNode()) {
+            this._transform = cc.AffineTransformConcat(locTransform, locTransform.nodeToParentTransform());
+        }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
@@ -97,6 +107,7 @@ ccs.Skin = cc.Sprite.extend({
     nodeToWorldTransform: function () {
         return cc.AffineTransformConcat(this._transform, this._bone.getArmature().nodeToWorldTransform());
     },
+
 
     nodeToWorldTransformAR: function () {
         var displayTransform = this._transform;
@@ -138,6 +149,15 @@ ccs.Skin = cc.Sprite.extend({
     }
 });
 
+/**
+ * allocates and initializes a skin.
+ * @param {String} fileName
+ * @param {cc.Rect} rect
+ * @returns {ccs.Skin}
+ * @example
+ * // example
+ * var skin = ccs.Skin.create("res/test.png",cc.rect(0,0,50,50));
+ */
 ccs.Skin.create = function (fileName, rect) {
     var argnum = arguments.length;
     var sprite = new ccs.Skin();
@@ -151,6 +171,14 @@ ccs.Skin.create = function (fileName, rect) {
     return null;
 };
 
+/**
+ * allocates and initializes a skin.
+ * @param {String} pszSpriteFrameName
+ * @returns {ccs.Skin}
+ * @example
+ * // example
+ * var skin = ccs.Skin.createWithSpriteFrameName("test.png");
+ */
 ccs.Skin.createWithSpriteFrameName = function (pszSpriteFrameName) {
     var skin = new ccs.Skin();
     if (skin && skin.initWithSpriteFrameName(pszSpriteFrameName)) {

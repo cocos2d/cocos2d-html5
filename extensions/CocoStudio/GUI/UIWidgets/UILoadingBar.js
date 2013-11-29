@@ -22,6 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * loadingBar type
+ * @type {Object}
+ */
 ccs.LoadingBarType = { left: 0, right: 1};
 
 /**
@@ -29,7 +33,7 @@ ccs.LoadingBarType = { left: 0, right: 1};
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILoadingBar = ccs.UIWidget.extend({
+ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -113,14 +117,18 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this._textureFile = texture;
         switch (this._renderBarTexType) {
             case ccs.TextureResType.local:
-                if (this._scale9Enabled)
+                if (this._scale9Enabled){
                     this._barRenderer.initWithFile(texture);
+                    this._barRenderer.setCapInsets(this._capInsets);
+                }
                 else
                     this._barRenderer.initWithFile(texture);
                 break;
             case ccs.TextureResType.plist:
-                if (this._scale9Enabled)
+                if (this._scale9Enabled){
                     this._barRenderer.initWithSpriteFrameName(texture);
+                    this._barRenderer.setCapInsets(this._capInsets);
+                }
                 else
                     this._barRenderer.initWithSpriteFrameName(texture);
                 break;
@@ -284,7 +292,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
             }
             else {
 
-                var textureSize = this._barRenderer.getContentSize();
+                var textureSize = this._barRendererTextureSize;
                 if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                     this._barRenderer.setScale(1.0);
                     return;
@@ -309,14 +317,37 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
 
     setScale9Scale: function () {
         var width = (this._percent) / 100 * this._totalLength;
-        this._barRenderer.setPreferredSize(cc.size(width, this._barRendererTextureSize.height));
+        this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "LoadingBar";
+    },
+
+    createCloneInstance: function () {
+        return ccs.UILoadingBar.create();
+    },
+
+    copySpecialProperties: function (loadingBar) {
+        this._prevIgnoreSize = loadingBar._prevIgnoreSize;
+        this.setScale9Enabled(loadingBar._scale9Enabled);
+        this.loadTexture(loadingBar._textureFile, loadingBar._renderBarTexType);
+        this.setCapInsets(loadingBar._capInsets);
+        this.setPercent(loadingBar._percent);
     }
 });
-
+/**
+ * allocates and initializes a UILoadingBar.
+ * @constructs
+ * @return {ccs.UILoadingBar}
+ * @example
+ * // example
+ * var uiLoadingBar = ccs.UILoadingBar.create();
+ */
 ccs.UILoadingBar.create = function () {
     var uiLoadingBar = new ccs.UILoadingBar();
     if (uiLoadingBar && uiLoadingBar.init()) {
