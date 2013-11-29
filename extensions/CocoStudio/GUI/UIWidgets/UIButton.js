@@ -32,7 +32,7 @@ var TITLE_RENDERER_ZORDER = 1;
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UIButton = ccs.UIWidget.extend({
+ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     _buttonNormalRenderer: null,
     _buttonClickedRenderer: null,
     _buttonDisableRenderer: null,
@@ -643,6 +643,10 @@ ccs.UIButton = ccs.UIWidget.extend({
         this.setTitleColor(this._titleColor);
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "Button";
     },
@@ -668,6 +672,14 @@ ccs.UIButton = ccs.UIWidget.extend({
     }
 
 });
+/**
+ * allocates and initializes a UIButton.
+ * @constructs
+ * @return {ccs.UIButton}
+ * @example
+ * // example
+ * var uiButton = ccs.UIButton.create();
+ */
 ccs.UIButton.create = function () {
     var uiButton = new ccs.UIButton();
     if (uiButton && uiButton.init()) {

@@ -22,10 +22,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * PageView event type
+ * @type {Object}
+ */
 ccs.PageViewEventType = {
     turning: 0
 };
 
+/**
+ * PageView touch direction
+ * @type {Object}
+ */
 ccs.PVTouchDir = {
     touchLeft: 0,
     touchRight: 1
@@ -36,7 +44,7 @@ ccs.PVTouchDir = {
  * @class
  * @extends ccs.UILayout
  */
-ccs.UIPageView = ccs.UILayout.extend({
+ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     _curPageIdx: 0,
     _pages: null,
     _touchMoveDir: null,
@@ -534,14 +542,26 @@ ccs.UIPageView = ccs.UILayout.extend({
         this._pageViewEventListener = target;
     },
 
+    /**
+     * get pages
+     * @returns {Array}
+     */
     getPages:function(){
         return this._pages;
     },
 
+    /**
+     * get cur page index
+     * @returns {number}
+     */
     getCurPageIndex: function () {
         return this._curPageIdx;
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "PageView";
     },
@@ -562,7 +582,14 @@ ccs.UIPageView = ccs.UILayout.extend({
         ccs.UILayout.prototype.copySpecialProperties.call(this, pageView);
     }
 });
-
+/**
+ * allocates and initializes a UIPageView.
+ * @constructs
+ * @return {ccs.UIPageView}
+ * @example
+ * // example
+ * var uiPageView = ccs.UIPageView.create();
+ */
 ccs.UIPageView.create = function () {
     var uiPageView = new ccs.UIPageView();
     if (uiPageView && uiPageView.init()) {

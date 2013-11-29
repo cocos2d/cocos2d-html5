@@ -21,8 +21,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-ccs.GUIReader = cc.Class.extend({
+/**
+ * Base class for ccs.SceneReader
+ * @class
+ * @extends ccs.Class
+ */
+ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
     _filePath: "",
     _olderVersion: false,
     _fileDesignSizes: {},
@@ -32,10 +36,18 @@ ccs.GUIReader = cc.Class.extend({
         this._fileDesignSizes = {};
     },
 
+    /**
+     * purge instance
+     */
     purgeGUIReader: function () {
         this._instance = null;
     },
 
+    /**
+     * get version
+     * @param {String} str
+     * @returns {Number}
+     */
     getVersionInteger: function (str) {
         /*********temp***********/
         var strVersion = str;
@@ -71,13 +83,30 @@ ccs.GUIReader = cc.Class.extend({
         var version = it * 1000 + ih * 100 + ite * 10 + is;
         return version;
     },
+
+    /**
+     * store file designSize
+     * @param {String} fileName
+     * @param {cc.Size} size
+     */
     storeFileDesignSize: function (fileName, size) {
         this._fileDesignSizes[fileName] = size;
     },
+
+    /**
+     *
+     * @param {String} fileName
+     * @returns {cc.Size}
+     */
     getFileDesignSize: function (fileName) {
         return this._fileDesignSizes[fileName];
     },
 
+    /**
+     *  create uiWidget from a josn file that exported by cocostudio UI editor
+     * @param {String} fileName
+     * @returns {ccs.UIWidget}
+     */
     widgetFromJsonFile: function (fileName) {
         var jsonPath = fileName || "";
         var fullJsonPath = cc.FileUtils.getInstance().fullPathForFilename(fileName);
@@ -114,7 +143,7 @@ ccs.GUIReader = cc.Class.extend({
         return widget;
     }
 });
-ccs.WidgetPropertiesReader = cc.Class.extend({
+ccs.WidgetPropertiesReader = ccs.Class.extend({
     _filePath: "",
     createWidget: function (jsonDict, fullPath, fileName) {
     },
@@ -1571,6 +1600,11 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 });
 
 ccs.GUIReader._instance = null;
+/**
+ * returns a shared instance of the GUIReader
+ * @function
+ * @return {ccs.GUIReader}
+ */
 ccs.GUIReader.getInstance = function () {
     if (!this._instance) {
         this._instance = new ccs.GUIReader();

@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.ProcessBase
  */
-ccs.Tween = ccs.ProcessBase.extend({
+ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     _tweenData:null,
     _to:null,
     _from:null,

@@ -22,6 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * UILinearGravity
+ * @type {Object}
+ */
 ccs.UILinearGravity = {
     none: 0,
     left: 1,
@@ -32,6 +36,10 @@ ccs.UILinearGravity = {
     centerHorizontal: 6
 };
 
+/**
+ * UIRelativeAlign
+ * @type {Object}
+ */
 ccs.UIRelativeAlign = {
     alignNone: 0,
     alignParentTopLeft: 1,
@@ -60,9 +68,9 @@ ccs.UIRelativeAlign = {
 /**
  * Base class for ccs.UIMargin
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.UIMargin = cc.Class.extend({
+ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
     left: 0,
     top: 0,
     right: 0,
@@ -82,12 +90,24 @@ ccs.UIMargin = cc.Class.extend({
             this.bottom = arguments[3];
         }
     },
+    /**
+     *  set margin
+     * @param {Number} l
+     * @param {Number} t
+     * @param {Number} r
+     * @param {Number} b
+     */
     setMargin: function (l, t, r, b) {
         this.left = l;
         this.top = t;
         this.right = r;
         this.bottom = b;
     },
+    /**
+     *  check is equals
+     * @param {ccs.UIMargin} target
+     * @returns {boolean}
+     */
     equals: function (target) {
         return (this.left == target.left && this.top == target.top && this.right == target.right && this.bottom == target.bottom);
     }
