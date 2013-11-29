@@ -220,7 +220,12 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
      */
     loadTexturePressed: function (selected, texType) {
         if (!selected) {
-            return;
+            selected = this._normalFileName;
+            texType = this._normalTexType;
+            this._pressedTexColor = true;
+            if(!selected){
+                return;
+            }
         }
         texType = texType || ccs.TextureResType.local;
         this._clickedFileName = selected;
@@ -236,8 +241,6 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
                 default:
                     break;
             }
-            this._buttonClickedRenderer.setColor(this.getColor());
-            this._buttonClickedRenderer.setOpacity(this.getOpacity());
             this._buttonClickedRenderer.setCapInsets(this._capInsetsNormal);
         }
         else {
@@ -251,9 +254,13 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
                 default:
                     break;
             }
-            this._buttonClickedRenderer.setColor(this.getColor());
-            this._buttonClickedRenderer.setOpacity(this.getOpacity());
         }
+        if(!this._pressedTexColor){
+            this._buttonClickedRenderer.setColor(this.getColor());
+        } else {
+            this._buttonClickedRenderer.setColor(cc.GRAY);
+        }
+        this._buttonClickedRenderer.setOpacity(this.getOpacity());
         this._pressedTextureSize = this._buttonClickedRenderer.getContentSize();
         this.updateAnchorPoint();
         this.pressedTextureScaleChangedWithSize();
