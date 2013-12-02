@@ -299,13 +299,12 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
      * Removes all children from the container, and do a cleanup to all running actions depending on the cleanup parameter.
      */
     removeAllChildren: function () {
+        var childrenLength = this._children.length;
         if (this._children.length <= 0) {
-            return;
+            return
         }
-        var locChild;
-        for (var i = 0; i < this._children.length; ++i) {
-            locChild = this._children[i];
-            this.removeChild(this._children[i]);
+        for (var i = 0; i < childrenLength; ++i) {
+            this.removeChild(this._children[0]);
         }
     },
 
