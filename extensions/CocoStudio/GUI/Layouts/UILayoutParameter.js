@@ -142,6 +142,7 @@ ccs.UIRelativeLayoutParameter = ccs.UILayoutParameter.extend(/** @lends ccs.UIRe
         this._relativeWidgetName = "";
         this._relativeLayoutName = "";
         this._put = false;
+        this._layoutParameterType = ccs.LayoutParameterType.relative;
     },
 
     /**
