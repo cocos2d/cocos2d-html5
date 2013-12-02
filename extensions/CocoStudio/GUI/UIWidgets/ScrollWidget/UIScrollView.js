@@ -455,17 +455,17 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
         var finalOffsetX = des.x;
         var finalOffsetY = des.y;
         switch (this._direction) {
-            case cc.ScrollViewDir.vertical:
+            case ccs.ScrollViewDir.vertical:
                 if (des.y <= 0) {
                     finalOffsetY = Math.max(des.y, this._size.height - this._innerContainer.getSize().height);
                 }
                 break;
-            case cc.ScrollViewDir.horizontal:
+            case ccs.ScrollViewDir.horizontal:
                 if (des.x <= 0) {
                     finalOffsetX = Math.max(des.x, this._size.width - this._innerContainer.getSize().width);
                 }
                 break;
-            case cc.ScrollViewDir.both:
+            case ccs.ScrollViewDir.both:
                 if (des.y <= 0) {
                     finalOffsetY = Math.max(des.y, this._size.height - this._innerContainer.getSize().height);
                 }
