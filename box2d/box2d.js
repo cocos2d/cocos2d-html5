@@ -10797,11 +10797,11 @@ Box2D.postDefs = [];
         var drawScale = this.m_drawScale;
         s.beginPath();
         s.strokeStyle = this._color(color.color, this.m_alpha);
-        s.moveTo(vertices[0].x * drawScale, vertices[0].y * drawScale);
+        s.moveTo(vertices[0].x * drawScale, -vertices[0].y * drawScale);
         for (var i = 1; i < vertexCount; i++) {
-            s.lineTo(vertices[i].x * drawScale, vertices[i].y * drawScale);
+            s.lineTo(vertices[i].x * drawScale, -vertices[i].y * drawScale);
         }
-        s.lineTo(vertices[0].x * drawScale, vertices[0].y * drawScale);
+        s.lineTo(vertices[0].x * drawScale, -vertices[0].y * drawScale);
         s.closePath();
         s.stroke();
     };
@@ -10812,11 +10812,11 @@ Box2D.postDefs = [];
         s.beginPath();
         s.strokeStyle = this._color(color.color, this.m_alpha);
         s.fillStyle = this._color(color.color, this.m_fillAlpha);
-        s.moveTo(vertices[0].x * drawScale, vertices[0].y * drawScale);
+        s.moveTo(vertices[0].x * drawScale, -vertices[0].y * drawScale);
         for (var i = 1; i < vertexCount; i++) {
-            s.lineTo(vertices[i].x * drawScale, vertices[i].y * drawScale);
+            s.lineTo(vertices[i].x * drawScale, -vertices[i].y * drawScale);
         }
-        s.lineTo(vertices[0].x * drawScale, vertices[0].y * drawScale);
+        s.lineTo(vertices[0].x * drawScale, -vertices[0].y * drawScale);
         s.closePath();
         s.fill();
         s.stroke();
@@ -10827,7 +10827,7 @@ Box2D.postDefs = [];
         var drawScale = this.m_drawScale;
         s.beginPath();
         s.strokeStyle = this._color(color.color, this.m_alpha);
-        s.arc(center.x * drawScale, center.y * drawScale, radius * drawScale, 0, Math.PI * 2, true);
+        s.arc(center.x * drawScale, -center.y * drawScale, radius * drawScale, 0, Math.PI * 2, true);
         s.closePath();
         s.stroke();
     };
@@ -10836,14 +10836,14 @@ Box2D.postDefs = [];
         var s = this.m_ctx,
             drawScale = this.m_drawScale,
             cx = center.x * drawScale,
-            cy = center.y * drawScale;
+            cy = -center.y * drawScale;
         s.moveTo(0, 0);
         s.beginPath();
         s.strokeStyle = this._color(color.color, this.m_alpha);
         s.fillStyle = this._color(color.color, this.m_fillAlpha);
         s.arc(cx, cy, radius * drawScale, 0, Math.PI * 2, true);
         s.moveTo(cx, cy);
-        s.lineTo((center.x + axis.x * radius) * drawScale, (center.y + axis.y * radius) * drawScale);
+        s.lineTo((center.x + axis.x * radius) * drawScale, -(center.y + axis.y * radius) * drawScale);
         s.closePath();
         s.fill();
         s.stroke();
@@ -10853,8 +10853,8 @@ Box2D.postDefs = [];
             drawScale = this.m_drawScale;
         s.strokeStyle = this._color(color.color, this.m_alpha);
         s.beginPath();
-        s.moveTo(p1.x * drawScale, p1.y * drawScale);
-        s.lineTo(p2.x * drawScale, p2.y * drawScale);
+        s.moveTo(p1.x * drawScale, -p1.y * drawScale);
+        s.lineTo(p2.x * drawScale, -p2.y * drawScale);
         s.closePath();
         s.stroke();
     };
@@ -10863,12 +10863,12 @@ Box2D.postDefs = [];
             drawScale = this.m_drawScale;
         s.beginPath();
         s.strokeStyle = this._color(0xff0000, this.m_alpha);
-        s.moveTo(xf.position.x * drawScale, xf.position.y * drawScale);
-        s.lineTo((xf.position.x + this.m_xformScale * xf.R.col1.x) * drawScale, (xf.position.y + this.m_xformScale * xf.R.col1.y) * drawScale);
+        s.moveTo(xf.position.x * drawScale, -xf.position.y * drawScale);
+        s.lineTo((xf.position.x + this.m_xformScale * xf.R.col1.x) * drawScale, -(xf.position.y + this.m_xformScale * xf.R.col1.y) * drawScale);
 
         s.strokeStyle = this._color(0xff00, this.m_alpha);
-        s.moveTo(xf.position.x * drawScale, xf.position.y * drawScale);
-        s.lineTo((xf.position.x + this.m_xformScale * xf.R.col2.x) * drawScale, (xf.position.y + this.m_xformScale * xf.R.col2.y) * drawScale);
+        s.moveTo(xf.position.x * drawScale, -xf.position.y * drawScale);
+        s.lineTo((xf.position.x + this.m_xformScale * xf.R.col2.x) * drawScale, -(xf.position.y + this.m_xformScale * xf.R.col2.y) * drawScale);
         s.closePath();
         s.stroke();
     };
