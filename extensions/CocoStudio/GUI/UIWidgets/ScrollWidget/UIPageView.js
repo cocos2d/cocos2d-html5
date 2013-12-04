@@ -494,7 +494,8 @@ ccs.UIPageView = ccs.UILayout.extend({
     },
 
     checkChildInfo: function (handleState, sender, touchPoint) {
-        this.interceptTouchEvent(handleState, sender, touchPoint);
+        if(this._enabled && this._touchEnabled)
+            this.interceptTouchEvent(handleState, sender, touchPoint);
     },
 
     interceptTouchEvent: function (handleState, sender, touchPoint) {

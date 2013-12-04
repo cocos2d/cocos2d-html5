@@ -434,7 +434,8 @@ ccs.UIListView = ccs.UILayout.extend({
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
-        this.interceptTouchEvent(handleState, sender, touchPoint);
+        if(this._enabled && this._touchEnabled)
+            this.interceptTouchEvent(handleState, sender, touchPoint);
     },
 
     moveChildren: function (offset) {
