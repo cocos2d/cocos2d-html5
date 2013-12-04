@@ -151,10 +151,10 @@ ClassManager.getNewInstanceId=function(){
 
         // The dummy Class constructor
         function Class() {
+            this.__instanceId = ClassManager.getNewInstanceId();
             // All construction is actually done in the init method
             if (this.ctor)
                 this.ctor.apply(this, arguments);
-            this.__instanceId = ClassManager.getNewInstanceId();
         }
 
         Class.id = classId;

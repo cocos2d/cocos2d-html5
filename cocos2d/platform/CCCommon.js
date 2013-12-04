@@ -100,7 +100,7 @@ cc._logToWebPage = function (message) {
         logList = document.createElement("ul");
         logDiv.appendChild(logList);
         logList.setAttribute("id", "logInfoList");
-        logList.style.height = "200px";
+        logList.style.height = cc.canvas.height + "px";
         logList.style.color = "#fff";
         logList.style.textAlign = "left";
         logList.style.listStyle = "disc outside";
