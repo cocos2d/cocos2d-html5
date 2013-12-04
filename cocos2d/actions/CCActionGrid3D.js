@@ -151,7 +151,7 @@ cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
     initWithSize:function (gridSize, duration) {
         if (gridSize.width != 1 || gridSize.height != 1) {
             // Grid size must be (1,1)
-            cc.Assert(0, "");
+            cc.log("Grid size must be (1,1)");
             return false;
         }
         return  cc.Grid3DAction.prototype.initWithDuration.call(this, duration, gridSize);
@@ -366,7 +366,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
      * @return {cc.Point}
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position.x,this._position.y);
     },
 
     /**
@@ -487,7 +487,7 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
      * @return {cc.Point}
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position.x, this._position.y);
     },
 
     /**
@@ -899,7 +899,7 @@ cc.Twirl = cc.Grid3DAction.extend({
      * @return {cc.Point}
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position.x, this._position.y);
     },
 
     /**

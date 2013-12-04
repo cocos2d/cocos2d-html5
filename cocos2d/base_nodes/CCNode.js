@@ -158,6 +158,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
         this._children = [];
+        this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
@@ -330,8 +331,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *                                                                                                             <br/>
      *     This is an internal method. Don't call it outside the framework.                                        <br/>
      *     The difference between setZOrder(int) and _setOrder(int) is:                                            <br/>
-     *        - _setZOrder(int) is a pure setter for m_nZOrder memeber variable                                    <br/>
-     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's chilren array.
+     *        - _setZOrder(int) is a pure setter for m_nZOrder member variable                                    <br/>
+     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's children array.
      * </p>
      * @param {Number} z
      * @private
@@ -387,7 +388,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number} The rotation of the node in degrees.
      */
     getRotation:function () {
-        cc.Assert(this._rotationX == this._rotationY, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
+        if(this._rotationX !== this._rotationY)
+            cc.log("cc.Node.rotation(): RotationX != RotationY. Don't know which one to return");
         return this._rotationX;
     },
 
@@ -461,7 +463,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getScale:function () {
-        cc.Assert(this._scaleX == this._scaleY, "cc.Node#scale. ScaleX != ScaleY. Don't know which one to return");
+        if(this._scaleX !== this._scaleY)
+            cc.log("cc.Node.getScale(): ScaleX != ScaleY. Don't know which one to return");
         return this._scaleX;
     },
 
@@ -593,7 +596,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Composing a "tree" structure is a very important feature of CCNode
      * @return {Array} An array of children
      * @example
-     *  //This sample code traverses all children nodes, and set theie position to (0,0)
+     *  //This sample code traverses all children nodes, and set their position to (0,0)
      *  var allChildren = parent.getChildren();
      * for(var i = 0; i< allChildren.length; i++) {
      *     allChildren[i].setPosition(0,0);
@@ -715,7 +718,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Returns a pointer to the parent node
-     * @return {cc.Node} A pointer to the parnet node
+     * @return {cc.Node} A pointer to the parent node
      */
     getParent:function () {
         return this._parent;
@@ -723,7 +726,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Sets the parent node
-     * @param {cc.Node} Var A pointer to the parnet node
+     * @param {cc.Node} Var A pointer to the parent node
      */
     setParent:function (Var) {
         this._parent = Var;
@@ -757,7 +760,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns a tag that is used to identify the node easily.
      *
-     * @return {Number} A interger that identifies the node.
+     * @return {Number} An integer that identifies the node.
      * @example
      *  //You can set tags to node then identify them easily.
      * // set tags
@@ -787,7 +790,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Changes the tag that is used to identify the node easily. <br/>
      * Please refer to getTag for the sample code.
-     * @param {Number} Var A interger that indentifies the node.
+     * @param {Number} Var A integer that identifies the node.
      */
     setTag:function (Var) {
         this._tag = Var;
@@ -809,7 +812,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *    Sets a custom user data pointer                                                                   <br/>
      *    You can set everything in UserData pointer, a data block, a structure or an object, etc.
      * </p>
-     * @warning Don't forget to relfease the memroy manually,especially before you change this data pointer, and before this node is autoreleased.
+     * @warning Don't forget to release the memory manually,especially before you change this data pointer, and before this node is autoreleased.
      * @param {object} Var A custom user data
      */
     setUserData:function (Var) {
@@ -829,8 +832,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>
      *      Returns a user assigned CCObject                                                                                       <br/>
      *      Similar to UserData, but instead of holding a void* it holds an object.                                               <br/>
-     *      The UserObject will be retained once in this method, and the previous UserObject (if existed) will be relese.         <br/>
-     *      The UserObject will be released in CCNode's destructure.
+     *      The UserObject will be retained once in this method, and the previous UserObject (if existed) will be release.         <br/>
+     *      The UserObject will be released in CCNode's destruction.
      * </p>
      * @param {object} newValue A user assigned CCObject
      */
@@ -842,7 +845,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
 
     /**
-     * Returns the arrival order, indecates which children is added previously.
+     * Returns the arrival order, indicates which children is added previously.
      * @return {Number} The arrival order.
      */
     getOrderOfArrival:function () {
@@ -907,7 +910,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *   Sets a CCScheduler object that is used to schedule all "updates" and timers.           <br/>
      * </p>
      * @warning If you set a new CCScheduler, then previously created timers/update are going to be removed.
-     * @param scheduler A cc.Shdeduler object that is used to schedule all "update" and timers.
+     * @param scheduler A cc.Scheduler object that is used to schedule all "update" and timers.
      */
     setScheduler:function (scheduler) {
         if (this._scheduler != scheduler) {
@@ -919,7 +922,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
-     * @note This method returns a temporaty variable, so it can't returns const CCRect&
+     * @note This method returns a temporary variable, so it can't returns const CCRect&
      * @const
      * @return {cc.Rect}
      */
@@ -955,7 +958,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Node} a CCNode object whose tag equals to the input parameter
      */
     getChildByTag:function (aTag) {
-        //cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
         var __children = this._children;
         if (__children != null) {
             for (var i = 0; i < __children.length; i++) {
@@ -975,17 +977,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *
      * @param {cc.Node} child  A child node
      * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
-     * @param {Number} [tag=]  A interger to identify the node easily. Please refer to setTag(int)
+     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild:function (child, zOrder, tag) {
+        if(!child)
+            throw "cc.Node.addChild(): child must be non-null";
         if (child === this) {
-            console.warn('cc.Node.addChild: An Node can\'t be added as a child of itself.');
+            cc.log('cc.Node.addChild(): An Node can\'t be added as a child of itself.');
             return;
         }
 
-        cc.Assert(child != null, "Argument must be non-nil");
         if (child._parent !== null) {
-            cc.Assert(child._parent === null, "child already added. It can't be added again");
+            cc.log("cc.Node.addChild(): child already added. It can't be added again");
             return;
         }
 
@@ -1059,7 +1062,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @see removeChildByTag(int, bool)
      */
     removeChildByTag:function (tag, cleanup) {
-        cc.Assert(tag != cc.NODE_TAG_INVALID, "Invalid tag");
+        if(tag === cc.NODE_TAG_INVALID)
+            cc.log("cc.Node.removeChildByTag(): argument tag is an invalid tag");
 
         var child = this.getChildByTag(tag);
         if (child == null)
@@ -1081,7 +1085,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false oterwise.
+     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false otherwise.
      */
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
@@ -1151,7 +1155,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} zOrder Z order for drawing priority. Please refer to setZOrder(int)
      */
     reorderChild:function (child, zOrder) {
-        cc.Assert(child != null, "Child must be non-nil");
+        if(!child)
+            throw "cc.Node.reorderChild(): child must be non-null";
         this._reorderChildDirty = true;
         child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
         child._setZOrder(zOrder);
@@ -1161,7 +1166,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * <p>
      *     Sorts the children array once before drawing, instead of every time when a child is added or reordered.    <br/>
-     *     This appraoch can improves the performance massively.
+     *     This approach can improves the performance massively.
      * </p>
      * @note Don't call this manually unless a child added needs to be removed in the same frame
      */
@@ -1205,7 +1210,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
-        //cc.Assert(0);
         // override me
         // Only use- this function to draw your staff.
         // DON'T draw your stuff outside this method
@@ -1282,7 +1286,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} An Action pointer
      */
     runAction:function (action) {
-        cc.Assert(action != null, "Argument must be non-nil");
+        if(!action)
+            throw "cc.Node.runAction(): action must be non-null";
         this.getActionManager().addAction(action, this, !this._running);
         return action;
     },
@@ -1307,7 +1312,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} tag A tag that indicates the action to be removed.
      */
     stopActionByTag:function (tag) {
-        cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
+        if(tag === cc.ACTION_TAG_INVALID){
+            cc.log("cc.Node.stopActionBy(): argument tag an invalid tag");
+            return;
+        }
         this.getActionManager().removeActionByTag(tag, this);
     },
 
@@ -1318,7 +1326,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} The action object with the given tag.
      */
     getActionByTag:function (tag) {
-        cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
+        if(tag === cc.ACTION_TAG_INVALID){
+            cc.log("cc.Node.getActionByTag(): argument tag is an invalid tag");
+            return null;
+        }
         return this.getActionManager().getActionByTag(tag, this);
     },
 
@@ -1328,7 +1339,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *    If you are running 7 Sequences of 2 actions, it will return 7.
      * @return {Number} The number of actions that are running plus the ones that are schedule to run
      */
-    numberOfRunningActions:function () {
+    getNumberOfRunningActions:function () {
         return this.getActionManager().numberOfRunningActionsInTarget(this);
     },
 
@@ -1371,14 +1382,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *
      * @param {function} callback_fn A function wrapped as a selector
      * @param {Number} interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
-     * @param {Number} repeat    The selector will be excuted (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
+     * @param {Number} repeat    The selector will be executed (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
      * @param {Number} delay     The amount of time that the first tick will wait before execution.
      */
     schedule:function (callback_fn, interval, repeat, delay) {
         interval = interval || 0;
 
-        cc.Assert(callback_fn, "Argument must be non-nil");
-        cc.Assert(interval >= 0, "Argument must be positive");
+        if(!callback_fn)
+            throw "cc.Node.schedule(): callback function must be non-null";
+        if(interval < 0)
+            throw "cc.Node.schedule(): interval must be positive";
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
@@ -1461,7 +1474,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * // Gets the spriteA's transform.
      * var t = spriteA.nodeToParentTransform();
      *
-     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA.
+     * // Sets the additional transform to spriteB, spriteB's position will based on its pseudo parent i.e. spriteA.
      * spriteB.setAdditionalTransform(t);
      *
      * //scale
@@ -1611,7 +1624,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
      * This is a hack, and should be removed once JSB fixes the retain/release bug
      */
@@ -1665,6 +1678,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _ctorForCanvas: function () {
         this._initNode();
+
+        //Canvas
     },
 
     _ctorForWebGL: function () {
@@ -1772,9 +1787,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _transformForCanvas: function (ctx) {
         // transform for canvas
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc.renderContext, eglViewer = cc.EGLView.getInstance();
+
         var t = this.nodeToParentTransform();
-        context.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
+        context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
     },
 
     _transformForWebGL: function () {
@@ -1824,6 +1840,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
         if (this._transformDirty) {
             var t = this._transform;// quick reference
+
             // base position
             t.tx = this._position.x;
             t.ty = this._position.y;
@@ -2032,8 +2049,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getBoundingBoxToWorld:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
-        rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
+        //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
+
         //query child's BoundingBox
         if (!this._children)
             return rect;
@@ -2042,7 +2061,28 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         for (var i = 0; i < locChildren.length; i++) {
             var child = locChildren[i];
             if (child && child._visible) {
-                var childRect = child.getBoundingBoxToWorld();
+                var childRect = child._getBoundingBoxToCurrentNode(trans);
+                if (childRect)
+                    rect = cc.rectUnion(rect, childRect);
+            }
+        }
+        return rect;
+    },
+
+    _getBoundingBoxToCurrentNode: function (parentTransform) {
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
+        rect = cc.RectApplyAffineTransform(rect, trans);
+
+        //query child's BoundingBox
+        if (!this._children)
+            return rect;
+
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
+            if (child && child._visible) {
+                var childRect = child._getBoundingBoxToCurrentNode(trans);
                 if (childRect)
                     rect = cc.rectUnion(rect, childRect);
             }
@@ -2130,21 +2170,19 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     setOpacity:function(opacity){
         this._displayedOpacity = this._realOpacity = opacity;
 
-        if (this._cascadeOpacityEnabled) {
-            var parentOpacity = 255, locParent = this._parent;
-            if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
-                parentOpacity = locParent.getDisplayedOpacity();
-            this.updateDisplayedOpacity(parentOpacity);
-        }
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
     },
 
-    updateDisplayedOpacity:function(parentOpacity){
-        this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
+    updateDisplayedOpacity: function (parentOpacity) {
+        this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
         if (this._cascadeOpacityEnabled) {
             var selChildren = this._children;
-            for(var i = 0; i< selChildren.length;i++){
+            for (var i = 0; i < selChildren.length; i++) {
                 var item = selChildren[i];
-                if(item && item.RGBAProtocol)
+                if (item && item.RGBAProtocol)
                     item.updateDisplayedOpacity(this._displayedOpacity);
             }
         }
@@ -2155,7 +2193,32 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     setCascadeOpacityEnabled:function(cascadeOpacityEnabled){
+        if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
+            return;
+
         this._cascadeOpacityEnabled = cascadeOpacityEnabled;
+        if(cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
+        else
+            this._disableCascadeOpacity();
+    },
+
+    _enableCascadeOpacity:function(){
+        var parentOpacity = 255, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            parentOpacity = locParent.getDisplayedOpacity();
+        this.updateDisplayedOpacity(parentOpacity);
+    },
+
+    _disableCascadeOpacity:function(){
+        this._displayedOpacity = this._realOpacity;
+
+        var selChildren = this._children;
+        for(var i = 0; i< selChildren.length;i++){
+            var item = selChildren[i];
+            if(item && item.RGBAProtocol && item._disableCascadeOpacity)
+                item._disableCascadeOpacity();
+        }
     },
 
     getColor:function(){
@@ -2169,33 +2232,29 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     setColor:function(color){
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
-        locDisplayedColor.r = color.r;
-        locDisplayedColor.g = color.g;
-        locDisplayedColor.b = color.b;
-        locRealColor.r = color.r;
-        locRealColor.g = color.g;
-        locRealColor.b = color.b;
+        locDisplayedColor.r = locRealColor.r = color.r;
+        locDisplayedColor.g = locRealColor.g = color.g;
+        locDisplayedColor.b = locRealColor.b = color.b;
 
-        if (this._cascadeColorEnabled) {
-            var parentColor = cc.white();
-            var locParent =  this._parent;
-            if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
-                parentColor = locParent.getDisplayedColor();
-            this.updateDisplayedColor(parentColor);
-        }
+        var parentColor, locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.white();
+        this.updateDisplayedColor(parentColor);
     },
 
-    updateDisplayedColor:function(parentColor){
+    updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor, locRealColor = this._realColor;
-        locDispColor.r = locRealColor.r * parentColor.r/255.0;
-        locDispColor.g = locRealColor.g * parentColor.g/255.0;
-        locDispColor.b = locRealColor.b * parentColor.b/255.0;
+        locDispColor.r = 0|(locRealColor.r * parentColor.r / 255.0);
+        locDispColor.g = 0|(locRealColor.g * parentColor.g / 255.0);
+        locDispColor.b = 0|(locRealColor.b * parentColor.b / 255.0);
 
-        if (this._cascadeColorEnabled){
+        if (this._cascadeColorEnabled) {
             var selChildren = this._children;
-            for(var i = 0; i< selChildren.length;i++){
+            for (var i = 0; i < selChildren.length; i++) {
                 var item = selChildren[i];
-                if(item && item.RGBAProtocol)
+                if (item && item.RGBAProtocol)
                     item.updateDisplayedColor(locDispColor);
             }
         }
@@ -2206,7 +2265,45 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     setCascadeColorEnabled:function(cascadeColorEnabled){
+        if(this._cascadeColorEnabled === cascadeColorEnabled)
+            return;
         this._cascadeColorEnabled = cascadeColorEnabled;
+        if(this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        else
+            this._disableCascadeColor();
+    },
+
+    _enableCascadeColor: function(){
+        var parentColor , locParent =  this._parent;
+        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+            parentColor = locParent.getDisplayedColor();
+        else
+            parentColor = cc.white();
+        this.updateDisplayedColor(parentColor);
+    },
+
+    _disableCascadeColor: function(){
+        var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
+        locDisplayedColor.r = locRealColor.r;
+        locDisplayedColor.g = locRealColor.g;
+        locDisplayedColor.b = locRealColor.b;
+
+        var selChildren = this._children;
+        for(var i = 0; i< selChildren.length;i++){
+            var item = selChildren[i];
+            if(item && item.RGBAProtocol && item._disableCascadeColor)
+                item._disableCascadeColor();
+        }
+    },
+
+    addChild:function(child, zOrder, tag){
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
+
+        if(this._cascadeColorEnabled)
+            this._enableCascadeColor();
+        if(this._cascadeOpacityEnabled)
+            this._enableCascadeOpacity();
     },
 
     setOpacityModifyRGB:function(opacityValue){},

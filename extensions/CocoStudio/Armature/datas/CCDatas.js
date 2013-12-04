@@ -22,29 +22,30 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.BlendType = {
-    NORMAL: 0,
-    LAYER: 1,
-    DARKEN: 2,
-    MULTIPLY: 3,
-    LIGHTEN: 4,
-    SCREEN: 5,
-    OVERLAY: 6,
-    HARD_LIGHT: 7,
-    ADD: 8,
-    SUBSTRACT: 9,
-    DIFFERENCE: 10,
-    INVERT: 11,
-    ALPHA: 12,
-    ERASE: 13
+ccs.BlendType = {
+    normal: 0,
+    layer: 1,
+    darken: 2,
+    multiply: 3,
+    lighten: 4,
+    screen: 5,
+    overlay: 6,
+    highlight: 7,
+    add: 8,
+    subtract: 9,
+    difference: 10,
+    invert: 11,
+    alpha: 12,
+    erase: 13
+};
+ccs.DisplayType = {
+    sprite: 0,
+    armature: 1,
+    particle: 2,
+    max: 3
 };
 
-CC_DISPLAY_SPRITE = 0;
-CC_DISPLAY_ARMATURE = 1;
-CC_DISPLAY_PARTICLE = 2;
-CC_DISPLAY_MAX = 3;
-
-cc.BaseData = cc.Class.extend({
+ccs.BaseData = cc.Class.extend({
     x:0,
     y:0,
     zOrder:0,
@@ -100,7 +101,7 @@ cc.BaseData = cc.Class.extend({
         return cc.c4f(this.r, this.g, this.b, this.a);
     },
 
-    subtract:function (from, to) {
+    subtract:function (from, to, limit) {
         this.x = to.x - from.x;
         this.y = to.y - from.y;
         this.scaleX = to.scaleX - from.scaleX;
@@ -119,17 +120,19 @@ cc.BaseData = cc.Class.extend({
             this.isUseColorInfo = false;
         }
 
-        if (this.skewX > cc.PI) {
-            this.skewX -= 2 * cc.PI;
-        }
-        if (this.skewX < -cc.PI) {
-            this.skewX += 2 * cc.PI;
-        }
-        if (this.skewY > cc.PI) {
-            this.skewY -= 2 * cc.PI;
-        }
-        if (this.skewY < -cc.PI) {
-            this.skewY += 2 * cc.PI;
+        if (limit){
+            if (this.skewX > cc.PI) {
+                this.skewX -= 2 * cc.PI;
+            }
+            if (this.skewX < -cc.PI) {
+                this.skewX += 2 * cc.PI;
+            }
+            if (this.skewY > cc.PI) {
+                this.skewY -= 2 * cc.PI;
+            }
+            if (this.skewY < -cc.PI) {
+                this.skewY += 2 * cc.PI;
+            }
         }
 
         if (to.tweenRotate) {
@@ -139,10 +142,10 @@ cc.BaseData = cc.Class.extend({
     }
 });
 
-cc.DisplayData = cc.Class.extend({
-    displayType:CC_DISPLAY_SPRITE,
+ccs.DisplayData = cc.Class.extend({
+    displayType:ccs.DisplayType.max,
     ctor:function () {
-        this.displayType = CC_DISPLAY_MAX;
+        this.displayType = ccs.DisplayType.max;
     },
     changeDisplayToTexture:function (displayName) {
         // remove .xxx
@@ -156,13 +159,13 @@ cc.DisplayData = cc.Class.extend({
     }
 });
 
-cc.SpriteDisplayData = cc.DisplayData.extend({
+ccs.SpriteDisplayData = ccs.DisplayData.extend({
     displayName:"",
     skinData:null,
     ctor:function () {
         this.displayName = "";
-        this.skinData = new cc.BaseData();
-        this.displayType = CC_DISPLAY_SPRITE;
+        this.skinData = new ccs.BaseData();
+        this.displayType = ccs.DisplayType.sprite;
     },
     setParam:function (displayName) {
         this.displayName = displayName;
@@ -174,7 +177,7 @@ cc.SpriteDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.NodeDisplayData = cc.DisplayData.extend({
+ccs.NodeDisplayData = ccs.DisplayData.extend({
     node:null,
     ctor:function () {
         this.displayName = "";
@@ -188,11 +191,11 @@ cc.NodeDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.ArmatureDisplayData = cc.DisplayData.extend({
+ccs.ArmatureDisplayData = ccs.DisplayData.extend({
     displayName:"",
     ctor:function () {
         this.displayName = "";
-        this.displayType = CC_DISPLAY_ARMATURE;
+        this.displayType = ccs.DisplayType.armature;
 
     },
     setParam:function (displayName) {
@@ -204,11 +207,11 @@ cc.ArmatureDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.ParticleDisplayData = cc.DisplayData.extend({
+ccs.ParticleDisplayData = ccs.DisplayData.extend({
     plist:"",
     ctor:function () {
         this.plist = "";
-        this.displayType = CC_DISPLAY_PARTICLE;
+        this.displayType = ccs.DisplayType.particle;
 
     },
     setParam:function (plist) {
@@ -220,7 +223,7 @@ cc.ParticleDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.ShaderDisplayData = cc.DisplayData.extend({
+ccs.ShaderDisplayData = ccs.DisplayData.extend({
     vert:"",
     frag:"",
     ctor:function () {
@@ -240,7 +243,7 @@ cc.ShaderDisplayData = cc.DisplayData.extend({
     }
 });
 
-cc.BoneData = cc.BaseData.extend({
+ccs.BoneData = ccs.BaseData.extend({
     displayDataList:null,
     name:"",
     parentName:"",
@@ -264,14 +267,14 @@ cc.BoneData = cc.BaseData.extend({
     }
 });
 
-cc.ArmatureData = cc.Class.extend({
+ccs.ArmatureData = cc.Class.extend({
     boneDataDic:null,
     name:"",
-    dataVersion:0,
+    dataVersion:0.1,
     ctor:function () {
         this.boneDataDic = {};
         this.name = "";
-        this.dataVersion = 0;
+        this.dataVersion = 0.1;
     },
     init:function () {
         return true;
@@ -287,7 +290,7 @@ cc.ArmatureData = cc.Class.extend({
     }
 });
 
-cc.FrameData = cc.BaseData.extend({
+ccs.FrameData = ccs.BaseData.extend({
         duration:0,
         tweenEasing:0,
         displayIndex:-1,
@@ -297,22 +300,23 @@ cc.FrameData = cc.BaseData.extend({
         soundEffect:"",
         blendType:0,
         frameID:0,
-
+        isTween:true,
         ctor:function () {
-            cc.BaseData.prototype.ctor.call(this);
+            ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
-            this.tweenEasing = cc.TweenType.Linear;
+            this.tweenEasing = ccs.TweenType.linear;
             this.displayIndex = 0;
             this.movement = "";
             this.event = "";
             this.sound = "";
             this.soundEffect = "";
-            this.blendType = cc.BlendType.NORMAL;
+            this.blendType = ccs.BlendType.normal;
             this.frameID = 0;
+            this.isTween = true;
         },
 
         copy:function (frameData) {
-            cc.BaseData.prototype.copy.call(this, frameData);
+            ccs.BaseData.prototype.copy.call(this, frameData);
             this.duration = frameData.duration;
             this.tweenEasing = frameData.tweenEasing;
             this.displayIndex = frameData.displayIndex;
@@ -321,11 +325,12 @@ cc.FrameData = cc.BaseData.extend({
             this.sound = frameData.sound;
             this.soundEffect = frameData.soundEffect;
             this.blendType = frameData.blendType;
+            this.isTween = frameData.isTween;
         }
     }
 );
 
-cc.MovementBoneData = cc.Class.extend({
+ccs.MovementBoneData = cc.Class.extend({
     delay:0,
     scale:1,
     duration:0,
@@ -349,12 +354,12 @@ cc.MovementBoneData = cc.Class.extend({
     }
 });
 
-cc.MovementData = cc.Class.extend({
+ccs.MovementData = cc.Class.extend({
     movBoneDataDic:null,
     duration:0,
-    scale:0,
+    scale:1,
     durationTo:0,
-    durationTween:cc.TweenType.Linear,
+    durationTween:ccs.TweenType.linear,
     loop:true,
     tweenEasing:2,
     name:"",
@@ -365,7 +370,7 @@ cc.MovementData = cc.Class.extend({
         this.durationTo = 0;
         this.durationTween = 0;
         this.loop = true;
-        this.tweenEasing = cc.TweenType.Linear;
+        this.tweenEasing = ccs.TweenType.linear;
         this.movBoneDataDic = {};
     },
 
@@ -377,7 +382,7 @@ cc.MovementData = cc.Class.extend({
     }
 });
 
-cc.AnimationData = cc.Class.extend({
+ccs.AnimationData = cc.Class.extend({
     moveDataDic:null,
     movementNames:null,
     name:"",
@@ -397,12 +402,12 @@ cc.AnimationData = cc.Class.extend({
     }
 });
 
-cc.ContourVertex2 = function (x, y) {
+ccs.ContourVertex2 = function (x, y) {
     this.x = x || 0;
     this.y = y || 0;
 };
 
-cc.ContourData = cc.Class.extend({
+ccs.ContourData = cc.Class.extend({
     vertexList:null,
     ctor:function () {
         this.vertexList = [];
@@ -418,12 +423,12 @@ cc.ContourData = cc.Class.extend({
      * @param {cc.p} p
      */
     addVertex: function (p) {
-       var v = cc.ContourVertex2(p.x, p.y);
+       var v = ccs.ContourVertex2(p.x, p.y);
        this.vertexList.push(v);
     }
 });
 
-cc.TextureData = cc.Class.extend({
+ccs.TextureData = cc.Class.extend({
     height:0,
     width:0,
     pivotX:0,

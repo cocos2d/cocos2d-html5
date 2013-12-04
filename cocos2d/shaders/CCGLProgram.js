@@ -258,9 +258,8 @@ cc.GLProgram = cc.Class.extend({
         if (!source || !shader)
             return false;
 
-        var preStr = (type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
-
-        source = preStr
+        //var preStr = (type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
+        source = "precision highp float;        \n"
             + "uniform mat4 CC_PMatrix;         \n"
             + "uniform mat4 CC_MVMatrix;        \n"
             + "uniform mat4 CC_MVPMatrix;       \n"
@@ -360,8 +359,8 @@ cc.GLProgram = cc.Class.extend({
      */
     initWithVertexShaderFilename: function (vShaderFilename, fShaderFileName) {
         var fileUtils = cc.FileUtils.getInstance();
-        var vertexSource = fileUtils.getTextFileData(fileUtils.fullPathForFilename(vShaderFilename));
-        var fragmentSource = fileUtils.getTextFileData(fileUtils.fullPathForFilename(fShaderFileName));
+        var vertexSource = fileUtils.getTextFileData(vShaderFilename);
+        var fragmentSource = fileUtils.getTextFileData(fShaderFileName);
         return this.initWithVertexShaderByteArray(vertexSource, fragmentSource);
     },
 
@@ -389,7 +388,10 @@ cc.GLProgram = cc.Class.extend({
      * @return {Boolean}
      */
     link: function () {
-        cc.Assert(this._programObj != null, "Cannot link invalid program");
+        if(!this._programObj) {
+            cc.log("cc.GLProgram.link(): Cannot link invalid program");
+            return false;
+        }
 
         this._glContext.linkProgram(this._programObj);
 
@@ -404,7 +406,7 @@ cc.GLProgram = cc.Class.extend({
         if (cc.COCOS2D_DEBUG) {
             var status = this._glContext.getProgramParameter(this._programObj, this._glContext.LINK_STATUS);
             if (!status) {
-                cc.log("cocos2d: ERROR: Failed to link program: " + this._programObj);
+                cc.log("cocos2d: ERROR: Failed to link program: " + this._glContext.getProgramInfoLog(this._programObj));
                 cc.glDeleteProgram(this._programObj);
                 this._programObj = null;
                 return false;
@@ -452,8 +454,10 @@ cc.GLProgram = cc.Class.extend({
      * @returns {Number}
      */
     getUniformLocationForName:function(name){
-        cc.Assert(name != null, "Invalid uniform name" );
-        cc.Assert(this._programObj != 0, "Invalid operation. Cannot get uniform location when program is not initialized");
+        if(!name)
+            throw "cc.GLProgram.getUniformLocationForName(): uniform name should be non-null";
+        if(!this._programObj)
+            throw "cc.GLProgram.getUniformLocationForName(): Invalid operation. Cannot get uniform location when program is not initialized";
 
         return this._glContext.getUniformLocation(this._programObj, name);
     },

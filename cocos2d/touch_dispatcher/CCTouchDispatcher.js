@@ -239,7 +239,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                 if (h.getPriority() < handler.getPriority())
                     ++u;
                 if (h.getDelegate() == handler.getDelegate()) {
-                    cc.Assert(0, "TouchDispatcher.forceAddHandler()");
+                    cc.log("cc.TouchDispatcher.forceAddHandler(): The handler has been added.");
                     return array;
                 }
             }
@@ -299,15 +299,16 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * @param {cc.TouchDelegate} delegate
      */
     setPriority:function (priority, delegate) {
-        cc.Assert(delegate != null, "TouchDispatcher.setPriority():Arguments is null");
-
+        if(!delegate)
+            throw "cc.TouchDispatcher.setPriority(): delegate should be non-null.";
         var handler = this.findHandler(delegate);
-
-        cc.Assert(handler != null, "TouchDispatcher.setPriority():Cant find TouchHandler");
+        if(!handler){
+            cc.log("cc.TouchDispatcher.setPriority(): Can't find TouchHandler.");
+            return;
+        }
 
         if (handler.getPriority() != priority) {
             handler.setPriority(priority);
-
             this.rearrangeHandlers(this._targetedHandlers);
             this.rearrangeHandlers(this._standardHandlers);
         }
@@ -319,7 +320,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * @param {Number} index
      */
     touches:function (touches, event, index) {
-        cc.Assert(index >= 0 && index < 4, "TouchDispatcher.touches()");
+        if(index< 0 || index >=4)
+            throw "cc.TouchDispatcher.touches(): invalid index";
 
         this._locked = true;
 
@@ -515,6 +517,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         switch (arguments.length) {
             case 1:
                 delegate = arguments[0];
+                if(!delegate)
+                    throw "cc.TouchDispatcher.findHandler(): delegate should be non-null.";
                 for (var i = 0; i < this._targetedHandlers.length; i++) {
                     if (this._targetedHandlers[i].getDelegate() == delegate) {
                         return this._targetedHandlers[i];
@@ -528,7 +532,10 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                 return null;
                 break;
             case 2:
-                cc.Assert(array != null && delegate != null, "TouchDispatcher.findHandler():Arguments is null");
+                if(!array)
+                    throw "cc.TouchDispatcher.findHandler(): array should be non-null.";
+                if(!delegate)
+                    throw "cc.TouchDispatcher.findHandler(): delegate should be non-null.";
 
                 for (i = 0; i < array.length; i++) {
                     if (array[i].getDelegate() == delegate) {

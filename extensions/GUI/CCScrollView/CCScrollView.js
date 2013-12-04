@@ -51,7 +51,7 @@ cc.ScrollViewDelegate = cc.Class.extend({
 });
 
 /**
- * ScrollView support for cocos2d for iphone.
+ * ScrollView support for cocos2d -x.
  * It provides scroll view functionalities to cocos2d projects natively.
  */
 cc.ScrollView = cc.Layer.extend({
@@ -145,7 +145,7 @@ cc.ScrollView = cc.Layer.extend({
      * Sets a new content offset. It ignores max/min offset. It just sets what's given. (just like UIKit's UIScrollView)
      *
      * @param {cc.Point} offset new offset
-     * @param {Number} [animated=] If YES, the view scrolls to the new offset
+     * @param {Number} [animated=] If true, the view will scroll to the new offset
      */
     setContentOffset: function (offset, animated) {
         if (animated) { //animate scrolling
@@ -215,7 +215,7 @@ cc.ScrollView = cc.Layer.extend({
             newCenter = locContainer.convertToWorldSpace(oldCenter);
 
             var offset = cc.pSub(center, newCenter);
-            if (this._delegate != null)
+            if (this._delegate && this._delegate.scrollViewDidZoom)
                 this._delegate.scrollViewDidZoom(this);
             this.setContentOffset(cc.pAdd(locContainer.getPosition(), offset));
         }
@@ -386,7 +386,7 @@ cc.ScrollView = cc.Layer.extend({
         locTouches.push(touch);
         //}
 
-        if (locTouches.length == 1) { // scrolling
+        if (locTouches.length === 1) { // scrolling
             this._touchPoint = this.convertTouchToNodeSpace(touch);
             this._touchMoved = false;
             this._dragging = true; //dragging started
@@ -549,8 +549,9 @@ cc.ScrollView = cc.Layer.extend({
                 // draw children zOrder >= 0
                 for (; i < childrenLen; i++)
                     locChildren[i].visit(context);
-            } else
+            } else{
                 this.draw(context);             // self draw
+            }
 
             this._afterDraw();
 
@@ -582,8 +583,9 @@ cc.ScrollView = cc.Layer.extend({
                 // draw children zOrder >= 0
                 for (; i < childrenLen; i++)
                     locChildren[i].visit();
-            } else
+            } else{
                 this.draw(context);
+            }
 
             this._afterDraw(context);
             if (locGrid && locGrid.isActive())
@@ -717,7 +719,7 @@ cc.ScrollView = cc.Layer.extend({
             return;
         }
 
-        if (this._delegate != null)
+        if (this._delegate && this._delegate.scrollViewDidScroll)
             this._delegate.scrollViewDidScroll(this);
     },
     /**
@@ -726,7 +728,7 @@ cc.ScrollView = cc.Layer.extend({
     _stoppedAnimatedScroll:function (node) {
         this.unschedule(this._performedAnimatedScroll);
         // After the animation stopped, "scrollViewDidScroll" should be invoked, this could fix the bug of lack of tableview cells.
-        if (this._delegate != null) {
+        if (this._delegate && this._delegate.scrollViewDidScroll) {
             this._delegate.scrollViewDidScroll(this);
         }
     },
@@ -737,15 +739,15 @@ cc.ScrollView = cc.Layer.extend({
     _beforeDraw:function (context) {
         if (this._clippingToBounds) {
             this._scissorRestored = false;
-            var frame = this._getViewRect();
+            var frame = this._getViewRect(), locEGLViewer = cc.EGLView.getInstance();
 
             var scaleX = this.getScaleX();
             var scaleY = this.getScaleY();
 
             var ctx = context || cc.renderContext;
             if (cc.renderContextType === cc.CANVAS) {
-                var getWidth = (this._viewSize.width * scaleX);
-                var getHeight = (this._viewSize.height * scaleY);
+                var getWidth = (this._viewSize.width * scaleX) * locEGLViewer.getScaleX();
+                var getHeight = (this._viewSize.height * scaleY) * locEGLViewer.getScaleY();
                 var startX = 0;
                 var startY = 0;
 

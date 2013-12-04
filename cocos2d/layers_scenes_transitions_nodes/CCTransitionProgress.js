@@ -98,7 +98,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     },
 
     _progressTimerNodeWithRenderTexture:function (texture) {
-        cc.Assert(false, "override me - abstract class");
+        cc.log("cc.TransitionProgress._progressTimerNodeWithRenderTexture(): should be overridden in subclass");
         return null;
     },
 
@@ -124,7 +124,7 @@ cc.TransitionProgress.create = function (t, scene) {
 
 /**
  *  cc.TransitionRadialCCW transition.<br/>
- *  A counter colock-wise radial transition to the next scene
+ *  A counter clock-wise radial transition to the next scene
  * @class
  * @extends cc.TransitionProgress
  */
