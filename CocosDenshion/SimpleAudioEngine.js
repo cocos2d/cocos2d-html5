@@ -1818,7 +1818,7 @@ cc.AudioEngine.getInstance = function () {
         if (cc.Browser.supportWebAudio && !(/iPhone OS/.test(ua)||/iPad/.test(ua))) {
             this._instance = new cc.WebAudioEngine();
         } else {
-            if(cc.Browser.isMobile())     //TODO construct a supported list for mobile browser
+            if(cc.Browser.isMobile)     //TODO construct a supported list for mobile browser
                 this._instance = new cc.SimpleAudioEngineForMobile();
             else
                 this._instance = new cc.SimpleAudioEngine();

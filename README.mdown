@@ -32,7 +32,7 @@ Contact us
 ------------------
    * Forum: [http://forum.cocos2d-x.org][5]
    * Twitter: [http://www.twitter.com/cocos2dhtml5][6]
-   * Sina macro-blog: [http://t.sina.com.cn/cocos2dhtml5][7]
+   * Sina Microblog: [http://t.sina.com.cn/cocos2dhtml5][7]
    
 [1]: http://www.cocos2d-x.org "Cocos2d-html5"
 [2]: http://www.cocos2d-x.org "Cocos2d-X"
