@@ -750,10 +750,11 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                         default:
                             break;
                     }
-                    var locRelativeWidgetMargin;
+                    var locRelativeWidgetMargin,locRelativeWidgetLPAlign;
                     var locMargin = locLayoutParameter.getMargin();
                     if (locRelativeWidgetLP) {
                         locRelativeWidgetMargin = locRelativeWidgetLP.getMargin();
+                        locRelativeWidgetLPAlign = locRelativeWidgetLP.getAlign();
                     }
                     //handle margin
                     switch (locAlign) {
@@ -791,10 +792,10 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
 
                         case ccs.UIRelativeAlign.locationAboveLeftAlign:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignNone
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopRight)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
@@ -802,20 +803,20 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                             break;
                         case ccs.UIRelativeAlign.locationAboveCenter:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignNone
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopRight)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             break;
                         case ccs.UIRelativeAlign.locationAboveRightAlign:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignNone
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopRight)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
@@ -823,10 +824,10 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                             break;
                         case ccs.UIRelativeAlign.locationLeftOfTopAlign:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignNone
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
@@ -834,20 +835,20 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                             break;
                         case ccs.UIRelativeAlign.locationLeftOfCenter:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignNone
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             break;
                         case ccs.UIRelativeAlign.locationLeftOfBottomAlign:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignNone
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
@@ -856,9 +857,9 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                             break;
                         case ccs.UIRelativeAlign.locationRightOfTopAlign:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopRight
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightCenterVertical)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
@@ -866,18 +867,18 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                             break;
                         case ccs.UIRelativeAlign.locationRightOfCenter:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopRight
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightCenterVertical)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             break;
                         case ccs.UIRelativeAlign.locationRightOfBottomAlign:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentTopRight
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightCenterVertical)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
@@ -886,9 +887,9 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                             break;
                         case ccs.UIRelativeAlign.locationBelowLeftAlign:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
@@ -896,18 +897,18 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                             break;
                         case ccs.UIRelativeAlign.locationBelowCenter:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             break;
                         case ccs.UIRelativeAlign.locationBelowRightAlign:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLP.getAlign() != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
