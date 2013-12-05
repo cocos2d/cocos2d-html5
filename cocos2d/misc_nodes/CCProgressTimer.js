@@ -633,6 +633,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 return;
             }
         }
+        this._updateColor();
 
         var locVertexData = this._vertexData;
         if (!sameIndexCount) {
@@ -770,6 +771,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             locVertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
             locVertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         }
+        this._updateColor();
     },
 
     _updateColor:function () {
