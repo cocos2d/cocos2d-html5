@@ -300,7 +300,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
      */
     removeAllChildren: function () {
         var childrenLength = this._children.length;
-        if (this._children.length <= 0) {
+        if (childrenLength <= 0) {
             return
         }
         for (var i = 0; i < childrenLength; ++i) {
@@ -313,12 +313,12 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
      * @param {ccs.UIWidget} child
      */
     reorderChild: function (child) {
-        cc.ArrayRemoveObject(this._children, child);
         var childrenCount = this._children.length;
         if (childrenCount <= 0) {
-            this._children.push(child);
+            return;
         }
         else {
+            cc.ArrayRemoveObject(this._children, child);
             var seekSucceed = false;
             var arrayChildren = this._children;
             for (var i = childrenCount - 1; i >= 0; --i) {
@@ -509,7 +509,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         this._ignoreSize = ignore;
-        var locSize = this.getContentSize();
+        var locSize;
         if (this._ignoreSize) {
             locSize = this.getContentSize();
         }
