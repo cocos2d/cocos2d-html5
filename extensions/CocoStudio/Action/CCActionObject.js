@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ActionObject
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ActionObject = cc.Class.extend({
+ccs.ActionObject = ccs.Class.extend({
     _actionNodeList: null,
     _name: "",
     _loop: false,

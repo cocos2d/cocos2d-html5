@@ -229,7 +229,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         var locSplit = this._split, locActions = this._actions, locLast = this._last;
         if (time < locSplit) {
             // action[0]
-            new_t = (locSplit) ? time / locSplit : 1;
+            new_t = (locSplit !== 0) ? time / locSplit : 1;
 
             if (found === 0 && locLast === 1) {
                 // Reverse mode ?

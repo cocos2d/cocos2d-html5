@@ -167,21 +167,23 @@ cc.isAddedHiddenEvent = false;
  */
 cc.setup = function (el, width, height) {
     var element = cc.$(el) || cc.$('#' + el);
+    var localCanvas, localContainer, localConStyle;
     if (element.tagName == "CANVAS") {
         width = width || element.width;
         height = height || element.height;
 
         //it is already a canvas, we wrap it around with a div
-        cc.container = cc.$new("DIV");
-        cc.canvas = element;
-        cc.canvas.parentNode.insertBefore(cc.container, cc.canvas);
-        cc.canvas.appendTo(cc.container);
-        cc.container.style.width = (width || 480) + "px";
-        cc.container.style.height = (height || 320) + "px";
-        cc.container.setAttribute('id', 'Cocos2dGameContainer');
-        cc.container.style.margin = "0 auto";
-        cc.canvas.setAttribute("width", width || 480);
-        cc.canvas.setAttribute("height", height || 320);
+        localContainer = cc.container = cc.$new("DIV");
+        localConStyle = localContainer.style;
+        localCanvas = cc.canvas = element;
+        localCanvas.parentNode.insertBefore(localContainer, localCanvas);
+        localCanvas.appendTo(localContainer);
+        localConStyle.width = (width || 480) + "px";
+        localConStyle.height = (height || 320) + "px";
+        localContainer.setAttribute('id', 'Cocos2dGameContainer');
+        localConStyle.margin = "0 auto";
+        localCanvas.setAttribute("width", width || 480);
+        localCanvas.setAttribute("height", height || 320);
     } else {//we must make a new canvas and place into this element
         if (element.tagName != "DIV") {
             cc.log("Warning: target element is not a DIV or CANVAS");
@@ -189,40 +191,41 @@ cc.setup = function (el, width, height) {
         width = width || element.clientWidth;
         height = height || element.clientHeight;
 
-        cc.canvas = cc.$new("CANVAS");
-        cc.canvas.addClass("gameCanvas");
-        cc.canvas.setAttribute("width", width || 480);
-        cc.canvas.setAttribute("height", height || 320);
-        cc.container = element;
-        element.appendChild(cc.canvas);
-        cc.container.style.width = (width || 480) + "px";
-        cc.container.style.height = (height || 320) + "px";
-        cc.container.style.margin = "0 auto";
+        localCanvas = cc.canvas = cc.$new("CANVAS");
+        localCanvas.addClass("gameCanvas");
+        localCanvas.setAttribute("width", width || 480);
+        localCanvas.setAttribute("height", height || 320);
+        localContainer = cc.container = element;
+        localConStyle = localContainer.style;
+        element.appendChild(localCanvas);
+        localConStyle.width = (width || 480) + "px";
+        localConStyle.height = (height || 320) + "px";
+        localConStyle.margin = "0 auto";
     }
-    cc.container.style.position = 'relative';
-    cc.container.style.overflow = 'hidden';
-    cc.container.top = '100%';
+    localConStyle.position = 'relative';
+    localConStyle.overflow = 'hidden';
+    localContainer.top = '100%';
 
     if(cc.__renderDoesnotSupport)
         return;
 
     if (cc.Browser.supportWebGL)
-        cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
+        cc.renderContext = cc.webglContext = cc.create3DContext(localCanvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
         window.gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc.TextureCache.getInstance()._initializingRenderer();
     } else {
-        cc.renderContext = cc.canvas.getContext("2d");
+        cc.renderContext = localCanvas.getContext("2d");
         cc.mainRenderContextBackup = cc.renderContext;
         cc.renderContextType = cc.CANVAS;
-        cc.renderContext.translate(0, cc.canvas.height);
+        cc.renderContext.translate(0, localCanvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
 
-    cc.originalCanvasSize = cc.size(cc.canvas.width, cc.canvas.height);
-    cc.gameDiv = cc.container;
+    cc.originalCanvasSize = cc.size(localCanvas.width, localCanvas.height);
+    cc.gameDiv = localContainer;
 
     cc.log(cc.ENGINE_VERSION);
     cc.Configuration.getInstance();
@@ -250,13 +253,30 @@ cc.setup = function (el, width, height) {
     }
 
     function handleVisibilityChange() {
-        if (!document[hidden])
+        var audioEngine = cc.AudioEngine.getInstance();
+        if (!document[hidden]){
             cc.Director.getInstance()._resetLastUpdate();
+            audioEngine.resumeAllEffects();
+            audioEngine.resumeMusic();
+        } else{
+            audioEngine.pauseAllEffects();
+            audioEngine.pauseMusic();
+        }
     }
 
     if (typeof document.addEventListener === "undefined" ||
         typeof hidden === "undefined") {
         cc.isAddedHiddenEvent = false;
+        window.addEventListener("focus", function () {
+            var audioEngine = cc.AudioEngine.getInstance();
+            audioEngine.resumeAllEffects();
+            audioEngine.resumeMusic();
+        }, false);
+        window.addEventListener("blur", function () {
+            var audioEngine = cc.AudioEngine.getInstance();
+            audioEngine.pauseAllEffects();
+            audioEngine.pauseMusic();
+        }, false);
     } else {
         cc.isAddedHiddenEvent = true;
         document.addEventListener(visibilityChange, handleVisibilityChange, false);
@@ -275,7 +295,8 @@ cc._addUserSelectStatus = function(){
 cc._addBottomTag = function () {
     var bottom = document.createElement("div");
     bottom.id = "bottom";
-    bottom.style.border = bottom.style.margin = bottom.style.padding = bottom.style.height = bottom.style.lineHeight = bottom.style.fontSize = "0px";
+    var bStyle = bottom.style;
+    bStyle.border = bStyle.margin = bStyle.padding = bStyle.height = bStyle.lineHeight = bStyle.fontSize = "0px";
     document.body.appendChild(bottom);
     window.location.href="#bottom";
 };

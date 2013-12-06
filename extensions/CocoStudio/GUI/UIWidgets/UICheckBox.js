@@ -21,6 +21,11 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+/**
+ * checkBoxEvent type
+ * @type {Object}
+ */
 ccs.CheckBoxEventType = {
     selected: 0,
     unselected: 1
@@ -31,7 +36,7 @@ ccs.CheckBoxEventType = {
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UICheckBox = ccs.UIWidget.extend({
+ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     _backGroundBoxRenderer: null,
     _backGroundSelectedBoxRenderer: null,
     _frontCrossRenderer: null,
@@ -482,6 +487,10 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         }
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "CheckBox";
     },
@@ -499,7 +508,14 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         this.setSelectedState(uiCheckBox._isSelected);
     }
 });
-
+/**
+ * allocates and initializes a UICheckBox.
+ * @constructs
+ * @return {ccs.UICheckBox}
+ * @example
+ * // example
+ * var uiCheckBox = ccs.UICheckBox.create();
+ */
 ccs.UICheckBox.create = function () {
     var uiCheckBox = new ccs.UICheckBox();
     if (uiCheckBox && uiCheckBox.init()) {

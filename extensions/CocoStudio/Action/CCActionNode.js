@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ActionNode
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ActionNode = cc.Class.extend({
+ccs.ActionNode = ccs.Class.extend({
     _currentFrameIndex: 0,
     _destFrameIndex: 0,
     _unitTime: 0,

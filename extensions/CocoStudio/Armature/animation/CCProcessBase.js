@@ -24,20 +24,55 @@
 
 
 //animation type
-CC_ANIMATION_TYPE_SINGLE_FRAME = -4;//the animation just have one frame
-CC_ANIMATION_TYPE_NO_LOOP = -3;//the animation isn't loop
-CC_ANIMATION_TYPE_TO_LOOP_FRONT = -2;//the animation to loop from front
-CC_ANIMATION_TYPE_TO_LOOP_BACK = -1;//the animation to loop from back
-CC_ANIMATION_TYPE_LOOP_FRONT = 0;//the animation loop from front
-CC_ANIMATION_TYPE_LOOP_BACK = 1;//the animation loop from back
-CC_ANIMATION_TYPE_MAX = 2;//the animation max
+/**
+ * the animation just have one frame
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_SINGLE_FRAME = -4;
+/**
+ * the animation isn't loop
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_NO_LOOP = -3;
+/**
+ * the animation to loop from front
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_TO_LOOP_FRONT = -2;
+/**
+ * the animation to loop from back
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_TO_LOOP_BACK = -1;
+/**
+ * the animation loop from front
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_LOOP_FRONT = 0;
+/**
+ * the animation loop from back
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_LOOP_BACK = 1;
+/**
+ * the animation max
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_MAX = 2;
 
 /**
  * Base class for ccs.ProcessBase objects.
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ProcessBase = cc.Class.extend({
+ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     _processScale:1,
     _isComplete:true,
     _isPause:true,
@@ -69,18 +104,25 @@ ccs.ProcessBase = cc.Class.extend({
         this._isLoopBack = false;
     },
 
-
+    /**
+     * Pause the Process
+     */
     pause:function () {
         this._isPause = true;
         this._isPlaying = false;
     },
 
-
+    /**
+     * Resume the Process
+     */
     resume:function () {
         this._isPause = false;
         this._isPlaying = true;
     },
 
+    /**
+     * Stop the Process
+     */
     stop:function () {
         this._isComplete = true;
         this._isPlaying = false;
@@ -163,6 +205,10 @@ ccs.ProcessBase = cc.Class.extend({
         //override
     },
 
+    /**
+     * goto frame
+     * @param {Number} frameIndex
+     */
     gotoFrame:function (frameIndex) {
         var locLoopType = this._loopType;
         if (locLoopType == CC_ANIMATION_TYPE_NO_LOOP) {
@@ -185,36 +231,90 @@ ccs.ProcessBase = cc.Class.extend({
         return this._curFrameIndex;
     },
 
+    /**
+     * whether the animation is pause
+     * @returns {boolean}
+     */
     isPause:function () {
         return this._isPause;
     },
+
+    /**
+     * whether the animation is complete
+     * @returns {boolean}
+     */
     isComplete:function () {
         return this._isComplete;
     },
+
+    /**
+     * current percent getter
+     * @returns {number}
+     */
     getCurrentPercent:function () {
         return this._currentPercent;
     },
+
+    /**
+     * rawDuration getter
+     * @returns {number}
+     */
     getRawDuration:function () {
         return this._rawDuration;
     },
+
+    /**
+     *  loop type getter
+     * @returns {number}
+     */
     getLoop:function () {
         return this._loopType;
     },
+
+    /**
+     * tween easing getter
+     * @returns {number}
+     */
     getTweenEasing:function () {
         return this._tweenEasing;
     },
+
+    /**
+     * animationInternal getter
+     * @returns {number}
+     */
     getAnimationInternal:function () {
         return this._animationInternal;
     },
+
+    /**
+     * animationInternal setter
+     * @param animationInternal
+     */
     setAnimationInternal:function(animationInternal){
         this._animationInternal = animationInternal;
     },
+
+    /**
+     * process scale getter
+     * @returns {number}
+     */
     getProcessScale:function () {
         return this._processScale;
     },
+
+    /**
+     * process scale setter
+     * @param processScale
+     */
     setProcessScale:function (processScale) {
         this._processScale = processScale;
     },
+
+    /**
+     * whether the animation is playing
+     * @returns {boolean}
+     */
     isPlaying:function () {
         return this._isPlaying;
     }

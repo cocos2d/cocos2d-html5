@@ -22,6 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * slider event type
+ * @type {Obejct}
+ */
 ccs.SliderEventType = {percent_changed: 0};
 
 /**
@@ -29,7 +33,7 @@ ccs.SliderEventType = {percent_changed: 0};
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UISlider = ccs.UIWidget.extend({
+ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -535,6 +539,10 @@ ccs.UISlider = ccs.UIWidget.extend({
         this._slidBallDisabledRenderer.setVisible(true);
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "Slider";
     },
@@ -554,6 +562,14 @@ ccs.UISlider = ccs.UIWidget.extend({
         this.setPercent(slider.getPercent());
     }
 });
+/**
+ * allocates and initializes a UISlider.
+ * @constructs
+ * @return {ccs.UISlider}
+ * @example
+ * // example
+ * var uiSlider = ccs.UISlider.create();
+ */
 ccs.UISlider.create = function () {
     var uiSlider = new ccs.UISlider();
     if (uiSlider && uiSlider.init()) {

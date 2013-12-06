@@ -22,6 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * loadingBar type
+ * @type {Object}
+ */
 ccs.LoadingBarType = { left: 0, right: 1};
 
 /**
@@ -29,7 +33,7 @@ ccs.LoadingBarType = { left: 0, right: 1};
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILoadingBar = ccs.UIWidget.extend({
+ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -316,6 +320,10 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "LoadingBar";
     },
@@ -332,7 +340,14 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this.setPercent(loadingBar._percent);
     }
 });
-
+/**
+ * allocates and initializes a UILoadingBar.
+ * @constructs
+ * @return {ccs.UILoadingBar}
+ * @example
+ * // example
+ * var uiLoadingBar = ccs.UILoadingBar.create();
+ */
 ccs.UILoadingBar.create = function () {
     var uiLoadingBar = new ccs.UILoadingBar();
     if (uiLoadingBar && uiLoadingBar.init()) {
