@@ -1251,8 +1251,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     _beginSound: function(key, loop, volume, offset) {
         var sfxCache = new cc.WebAudioSFX();
-        loop = loop || false;
-        volume = volume || 1;
+        loop = loop == null ? false : loop;
+        volume = volume == null ? 1 : volume;
         offset = offset || 0;
 
         sfxCache.key = key;
