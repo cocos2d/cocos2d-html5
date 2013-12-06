@@ -200,8 +200,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         var locChild;
         for (var i = 0; i < this._children.length; i++) {
             locChild = this._children[i];
-            if (locChild instanceof ccs.UIWidget)
-                locChild.onEnter();
+            locChild.onEnter();
         }
         this._isRunning = true;
         this.updateSizeAndPosition();
@@ -212,8 +211,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         var locChild;
         for (var i = 0; i < this._children.length; i++) {
             locChild = this._children[i];
-            if (locChild instanceof ccs.UIWidget)
-                locChild.onExit();
+            locChild.onExit();
         }
     },
 
@@ -631,14 +629,10 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         }
         this._updateEnabled = enable;
         if (enable) {
-            if (this._scheduler) {
-                this._scheduler.scheduleUpdateForTarget(this, 0, false);
-            }
+            this._scheduler.scheduleUpdateForTarget(this, 0, false);
         }
         else {
-            if (this._scheduler) {
-                this._scheduler.unscheduleUpdateForTarget(this);
-            }
+            this._scheduler.unscheduleUpdateForTarget(this);
         }
     },
 
