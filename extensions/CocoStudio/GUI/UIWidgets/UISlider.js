@@ -129,14 +129,8 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             default:
                 break;
         }
-        if (this._scale9Enabled) {
-            this._barRenderer.setColor(this.getColor());
-            this._barRenderer.setOpacity(this.getOpacity());
-        }
-        else {
-            this._barRenderer.setColor(this.getColor());
-            this._barRenderer.setOpacity(this.getOpacity());
-        }
+        this._barRenderer.setColor(this.getColor());
+        this._barRenderer.setOpacity(this.getOpacity());
         this.barRendererScaleChangedWithSize();
     },
 
@@ -162,14 +156,8 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             default:
                 break;
         }
-        if (this._scale9Enabled) {
-            this._progressBarRenderer.setColor(this.getColor());
-            this._progressBarRenderer.setOpacity(this.getOpacity());
-        }
-        else {
-            this._progressBarRenderer.setColor(this.getColor());
-            this._progressBarRenderer.setOpacity(this.getOpacity());
-        }
+        this._progressBarRenderer.setColor(this.getColor());
+        this._progressBarRenderer.setOpacity(this.getOpacity());
         this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
         var locSize = this._progressBarRenderer.getContentSize();
         this._progressBarTextureSize.width = locSize.width;
@@ -369,17 +357,13 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
         else {
             var x = 0, y = 0;
-            switch (this._progressBarTexType) {
-                case ccs.TextureResType.plist:
-                    var barNode = this._progressBarRenderer;
-                    if (barNode) {
-                        var to = barNode.getTextureRect().origin;
-                        x = to.x;
-                        y = to.y;
-                    }
-                    break;
-                default:
-                    break;
+            if (this._progressBarTexType == ccs.TextureResType.plist) {
+                var barNode = this._progressBarRenderer;
+                if (barNode) {
+                    var to = barNode.getTextureRect().origin;
+                    x = to.x;
+                    y = to.y;
+                }
             }
             this._progressBarRenderer.setTextureRect(cc.rect(x, y, this._progressBarTextureSize.width * (percent / 100.0), this._progressBarTextureSize.height));
         }

@@ -278,7 +278,6 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var x = options["x"];
         var y = options["y"];
         widget.setPosition(cc.p(x, y));
-        ;
         if (options.hasOwnProperty("scaleX")) {
             widget.setScaleX(options["scaleX"]);
         }
@@ -1126,6 +1125,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         }
         frontCrossDisabledDic = null;
 
+        var selectedState = options["selectedState"] || false;
+        widget.setSelectedState(selectedState);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
 
