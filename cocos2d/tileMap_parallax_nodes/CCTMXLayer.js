@@ -72,6 +72,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _cacheCanvas:null,
     _cacheContext:null,
     _cacheTexture:null,
+    // Sub caches for avoid Chrome big image draw issue
+    _subCacheCanvas:[],
+    _subCacheContext:[],
+    _subCacheCount:0,
+    _subCacheWidth:0,
+    // Maximum pixel number by cache, a little more than 3072*3072, real limit is 4096*4096
+    _maxCachePixel:10000000,
 
     /**
      *  Constructor
@@ -113,6 +120,28 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             var locContentSize = this._cacheTexture._contentSize;
             locContentSize.width = locCanvas.width;
             locContentSize.height = locCanvas.height;
+
+            // Init sub caches if needed
+            var totalPixel = locCanvas.width * locCanvas.height;
+            if(totalPixel > this._maxCachePixel) {
+                this._subCacheCount = Math.ceil( totalPixel / this._maxCachePixel );
+                for(var i = 0; i < this._subCacheCount; i++) {
+                    if(!this._subCacheCanvas[i]) {
+                        this._subCacheCanvas[i] = document.createElement('canvas');
+                        this._subCacheContext[i] = this._subCacheCanvas[i].getContext('2d');
+                    }
+                    var tmpCanvas = this._subCacheCanvas[i];
+                    tmpCanvas.width = this._subCacheWidth = Math.round( locCanvas.width / this._subCacheCount );
+                    tmpCanvas.height = locCanvas.height;
+                }
+                // Clear wasted cache to release memory
+                for(var i = this._subCacheCount; i < this._subCacheCanvas.length; i++) {
+                    tmpCanvas.width = 0;
+                    tmpCanvas.height = 0;
+                }
+            }
+            // Otherwise use count as a flag to disable sub caches
+            else this._subCacheCount = 0;
         }
     },
 
@@ -160,6 +189,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 }
             }
             locCacheContext.restore();
+            // Update sub caches if needed
+            if(this._subCacheCount > 0) {
+                var subCacheW = this._subCacheWidth, subCacheH = locCacheCanvas.height;
+                for(var i = 0; i < this._subCacheCount; i++) {
+                    this._subCacheContext[i].drawImage(locCacheCanvas, i * subCacheW, 0, subCacheW, subCacheH, 0, 0, subCacheW, subCacheH);
+                }
+            }
             this._cacheDirty = false;
         }
         // draw RenderTexture
@@ -179,8 +215,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
-        if (locCacheCanvas)
-            context.drawImage(locCacheCanvas, posX, -(posY + locCacheCanvas.height));
+        if (locCacheCanvas) {
+            if(this._subCacheCount > 0) {
+                for(var i = 0; i < this._subCacheCount; i++) {
+                    context.drawImage(this._subCacheCanvas[i], posX+i*this._subCacheWidth, -(posY + locCacheCanvas.height));
+                }
+            }
+            else context.drawImage(locCacheCanvas, posX, -(posY + locCacheCanvas.height));
+        }
     },
 
     /**

@@ -52,6 +52,13 @@ cc.create3DContext = function (canvas, opt_attribs) {
  * @type {Object}
  */
 cc.Browser = {};
+
+/**
+ * Browsers that Cocos2d-HTML5 support well in WebGL render mode
+ * @type {Array}
+ */
+cc.Browser.webglWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari"];
+
 (function () {
     var ua = navigator.userAgent;
     cc.Browser.ua = ua.toLowerCase();
@@ -77,7 +84,8 @@ cc.Browser = {};
     // check supportWebGL item
     cc._userRenderMode = parseInt(c["renderMode"]) || 0;
 
-    if (cc._userRenderMode === 1 || (cc._userRenderMode === 0 && cc.Browser.isMobile)) {
+    var notInWhiteList = cc.Browser.webglWhiteList.indexOf(cc.Browser.type) == -1;
+    if (cc._userRenderMode === 1 || (cc._userRenderMode === 0 && (cc.Browser.isMobile || notInWhiteList))) {
         //canvas only
         cc.Browser.supportWebGL = false;
     } else {

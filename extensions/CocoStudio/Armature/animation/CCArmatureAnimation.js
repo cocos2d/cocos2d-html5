@@ -22,7 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//movement event type
+/**
+ * movement event type
+ * @type {Object}
+ */
 ccs.MovementEventType = {
     start: 0,
     complete: 1,
@@ -31,9 +34,9 @@ ccs.MovementEventType = {
 /**
  * Base class for cc.MovementEvent objects.
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.AnimationEvent = cc.Class.extend({
+ccs.AnimationEvent = ccs.Class.extend({
     _arguments:null,
     _callFunc:null,
     _selectorTarget:null,
@@ -51,6 +54,10 @@ ccs.AnimationEvent = cc.Class.extend({
         this._arguments = args;
     }
 });
+/**
+ * frame event
+ * @constructor
+ */
 ccs.FrameEvent = function () {
     this.bone = null;
     this.frameEventName = "";
@@ -62,7 +69,7 @@ ccs.FrameEvent = function () {
  * @class
  * @extends ccs.ProcessBase
  */
-ccs.ArmatureAnimation = ccs.ProcessBase.extend({
+ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation# */{
     _animationData:null,
     _movementData:null,
     _armature:null,
@@ -508,10 +515,18 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend({
         return this._userObject;
     },
 
+    /**
+     * Determines if the frame event is ignore
+     * @returns {boolean}
+     */
     isIgnoreFrameEvent:function(){
         return this._ignoreFrameEvent;
     },
 
+    /**
+     * Sets whether the frame event is ignore
+     * @param {Boolean} bool
+     */
     setIgnoreFrameEvent:function(bool){
         this._ignoreFrameEvent = bool;
     }

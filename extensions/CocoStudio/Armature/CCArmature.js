@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.Armature objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends ccs.NodeRGBA
  */
-ccs.Armature = cc.NodeRGBA.extend({
+ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     _animation:null,
     _armatureData:null,
     _batchNode:null,

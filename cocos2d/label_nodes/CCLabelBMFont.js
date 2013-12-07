@@ -583,7 +583,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     updateDisplayedOpacity:function(parentOpacity){
         this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
         var locChildren = this._children;
-        for(var i = 0; i< locChildren; i++){
+        for(var i = 0; i< locChildren.length; i++){
             var locChild = locChildren[i];
             if(cc.Browser.supportWebGL){
                 locChild.updateDisplayedOpacity(this._displayedOpacity);

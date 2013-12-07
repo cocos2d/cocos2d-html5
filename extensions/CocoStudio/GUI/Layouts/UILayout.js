@@ -21,12 +21,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+/**
+ * layoutBackGround color type
+ * @type {Object}
+ */
 ccs.LayoutBackGroundColorType = {
     none: 0,
     solid: 1,
     gradient: 2
 };
 
+/**
+ * Layout type
+ * @type {Object}
+ */
 ccs.LayoutType = {
     absolute: 0,
     linearVertical: 1,
@@ -39,7 +47,7 @@ ccs.LayoutType = {
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILayout = ccs.UIWidget.extend({
+ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     _clippingEnabled: null,
     _backGroundScale9Enabled: null,
     _backGroundImage: null,
@@ -198,39 +206,21 @@ ccs.UILayout = ccs.UIWidget.extend({
         }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
+        switch (this._bgImageTexType) {
+            case ccs.TextureResType.local:
+                this._backGroundImage.initWithFile(fileName);
+                break;
+            case ccs.TextureResType.plist:
+                this._backGroundImage.initWithSpriteFrameName(fileName);
+                break;
+            default:
+                break;
+        }
         if (this._backGroundScale9Enabled) {
-            switch (this._bgImageTexType) {
-                case ccs.TextureResType.local:
-                    this._backGroundImage.initWithFile(fileName);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._backGroundImage.initWithSpriteFrameName(fileName);
-                    break;
-                default:
-                    break;
-            }
             this._backGroundImage.setPreferredSize(this._size);
         }
-        else {
-            switch (this._bgImageTexType) {
-                case ccs.TextureResType.local:
-                    this._backGroundImage.initWithFile(fileName);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._backGroundImage.initWithSpriteFrameName(fileName);
-                    break;
-                default:
-                    break;
-            }
-        }
-        if (this._backGroundScale9Enabled) {
-            this._backGroundImage.setColor(this.getColor());
-            this._backGroundImage.setOpacity(this.getOpacity());
-        }
-        else {
-            this._backGroundImage.setColor(this.getColor());
-            this._backGroundImage.setOpacity(this.getOpacity());
-        }
+        this._backGroundImage.setColor(this.getColor());
+        this._backGroundImage.setOpacity(this.getOpacity());
         this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
         this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
     },
@@ -277,15 +267,13 @@ ccs.UILayout = ccs.UIWidget.extend({
     addBackGroundImage: function () {
         if (this._backGroundScale9Enabled) {
             this._backGroundImage = cc.Scale9Sprite.create();
-            this._backGroundImage.setZOrder(-1);
-            this._renderer.addChild(this._backGroundImage);
             this._backGroundImage.setPreferredSize(this._size);
         }
         else {
             this._backGroundImage = cc.Sprite.create();
-            this._backGroundImage.setZOrder(-1);
-            this._renderer.addChild(this._backGroundImage);
         }
+        this._backGroundImage.setZOrder(-1);
+        this._renderer.addChild(this._backGroundImage);
         this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
     },
 
@@ -762,10 +750,11 @@ ccs.UILayout = ccs.UIWidget.extend({
                         default:
                             break;
                     }
-                    var locRelativeWidgetMargin;
+                    var locRelativeWidgetMargin,locRelativeWidgetLPAlign;
                     var locMargin = locLayoutParameter.getMargin();
-                    if (locRelativeWidget) {
-                        locRelativeWidgetMargin = locRelativeWidget.getLayoutParameter(ccs.LayoutParameterType.relative).getMargin();
+                    if (locRelativeWidgetLP) {
+                        locRelativeWidgetMargin = locRelativeWidgetLP.getMargin();
+                        locRelativeWidgetLPAlign = locRelativeWidgetLP.getAlign();
                     }
                     //handle margin
                     switch (locAlign) {
@@ -802,28 +791,128 @@ ccs.UILayout = ccs.UIWidget.extend({
                             break;
 
                         case ccs.UIRelativeAlign.locationAboveLeftAlign:
+                            locFinalPosY += locMargin.bottom;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight)
+                            {
+                                locFinalPosY += locRelativeWidgetMargin.top;
+                            }
+                            locFinalPosY += locMargin.left;
+                            break;
                         case ccs.UIRelativeAlign.locationAboveCenter:
+                            locFinalPosY += locMargin.bottom;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight)
+                            {
+                                locFinalPosY += locRelativeWidgetMargin.top;
+                            }
+                            break;
                         case ccs.UIRelativeAlign.locationAboveRightAlign:
                             locFinalPosY += locMargin.bottom;
-                            locFinalPosY += locRelativeWidgetMargin.top;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopCenterHorizontal
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight)
+                            {
+                                locFinalPosY += locRelativeWidgetMargin.top;
+                            }
+                            locFinalPosX -= locMargin.right;
                             break;
                         case ccs.UIRelativeAlign.locationLeftOfTopAlign:
+                            locFinalPosX -= locMargin.right;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
+                            {
+                                locFinalPosX -= locRelativeWidgetMargin.left;
+                            }
+                            locFinalPosY -= locMargin.top;
+                            break;
                         case ccs.UIRelativeAlign.locationLeftOfCenter:
+                            locFinalPosX -= locMargin.right;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
+                            {
+                                locFinalPosX -= locRelativeWidgetMargin.left;
+                            }
+                            break;
                         case ccs.UIRelativeAlign.locationLeftOfBottomAlign:
                             locFinalPosX -= locMargin.right;
-                            locFinalPosX -= locRelativeWidgetMargin.left;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopLeft
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignNone
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftCenterVertical)
+                            {
+                                locFinalPosX -= locRelativeWidgetMargin.left;
+                            }
+                            locFinalPosY += locMargin.bottom;
+                            break;
                             break;
                         case ccs.UIRelativeAlign.locationRightOfTopAlign:
+                            locFinalPosX += locMargin.left;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightCenterVertical)
+                            {
+                                locFinalPosX += locRelativeWidgetMargin.right;
+                            }
+                            locFinalPosY -= locMargin.top;
+                            break;
                         case ccs.UIRelativeAlign.locationRightOfCenter:
+                            locFinalPosX += locMargin.left;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightCenterVertical)
+                            {
+                                locFinalPosX += locRelativeWidgetMargin.right;
+                            }
+                            break;
                         case ccs.UIRelativeAlign.locationRightOfBottomAlign:
                             locFinalPosX += locMargin.left;
-                            locFinalPosX += locRelativeWidgetMargin.right;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentTopRight
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightCenterVertical)
+                            {
+                                locFinalPosX += locRelativeWidgetMargin.right;
+                            }
+                            locFinalPosY += locMargin.bottom;
+                            break;
                             break;
                         case ccs.UIRelativeAlign.locationBelowLeftAlign:
+                            locFinalPosY -= locMargin.top;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
+                            {
+                                locFinalPosY -= locRelativeWidgetMargin.bottom;
+                            }
+                            locFinalPosX += locMargin.left;
+                            break;
                         case ccs.UIRelativeAlign.locationBelowCenter:
+                            locFinalPosY -= locMargin.top;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
+                            {
+                                locFinalPosY -= locRelativeWidgetMargin.bottom;
+                            }
+                            break;
                         case ccs.UIRelativeAlign.locationBelowRightAlign:
                             locFinalPosY -= locMargin.top;
-                            locFinalPosY -= locRelativeWidgetMargin.bottom;
+                            if (locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentLeftBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentRightBottom
+                                && locRelativeWidgetLPAlign != ccs.UIRelativeAlign.alignParentBottomCenterHorizontal)
+                            {
+                                locFinalPosY -= locRelativeWidgetMargin.bottom;
+                            }
+                            locFinalPosX -= locMargin.right;
                             break;
                         default:
                             break;
@@ -883,7 +972,14 @@ ccs.UILayout = ccs.UIWidget.extend({
         this.setClippingEnabled(layout._clippingEnabled);
     }
 });
-
+/**
+ * allocates and initializes a UILayout.
+ * @constructs
+ * @return {ccs.UILayout}
+ * @example
+ * // example
+ * var uiLayout = ccs.UILayout.create();
+ */
 ccs.UILayout.create = function () {
     var layout = new ccs.UILayout();
     if (layout && layout.init()) {
@@ -915,7 +1011,7 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
         this._arrRect[3] = cc.p(0, this._clippingSize.height);
 
         var green = cc.c4f(0, 1, 0, 1);
-        this._innerStencil.drawPoly(this._arrRect, 4, green, 0, green);
+        //this._innerStencil.drawPoly(this._arrRect,green, 0, green);
         if (cc.Browser.supportWebGL) {
             if (cc.ClippingNode.prototype.init.call(this, this._innerStencil)) {
                 return true;
@@ -939,7 +1035,7 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
         this._arrRect[3] = cc.p(0, this._clippingSize.height);
         var green = cc.c4f(0, 1, 0, 1);
         this._innerStencil.clear();
-        this._innerStencil.drawPoly(this._arrRect, 4, green, 0, green);
+        //this._innerStencil.drawPoly(this._arrRect, green, 0, green);
     },
 
     setClippingEnabled: function (enabled) {
@@ -1000,6 +1096,7 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
 
         this._orderOfArrival = 0;
         context.restore();
+        this._stencil.visit();
     },
 
     setEnabled: function (enabled) {

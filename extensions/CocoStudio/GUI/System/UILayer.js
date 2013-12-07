@@ -27,7 +27,7 @@
  * @class
  * @extends cc.Layer
  */
-ccs.UILayer = cc.Layer.extend({
+ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     _rootWidget: null,
     _inputManager: null,
     init: function () {
@@ -54,23 +54,35 @@ ccs.UILayer = cc.Layer.extend({
         cc.Layer.prototype.onExit.call(this);
     },
 
-    onEnterTransitionDidFinish: function () {
-        cc.Layer.prototype.onEnterTransitionDidFinish.call(this);
-    },
-
+    /**
+     * add widget
+     * @param {ccs.Widget} widget
+     */
     addWidget: function (widget) {
         this._rootWidget.addChild(widget);
     },
 
+    /**
+     * remove widget
+     * @param {ccs.Widget} widget
+     */
     removeWidget: function (widget) {
         this._rootWidget.removeChild(widget);
     },
 
+    /**
+     * @param {Boolean} visible
+     */
     setVisible: function (visible) {
         cc.Layer.prototype.setVisible.call(this,visible);
         this._rootWidget.setVisible(visible);
     },
 
+    /**
+     * get widget by tag
+     * @param {Number} tag
+     * @returns {ccs.Widget}
+     */
     getWidgetByTag: function (tag) {
         if (!this._rootWidget) {
             return null;
@@ -78,6 +90,11 @@ ccs.UILayer = cc.Layer.extend({
         return ccs.UIHelper.seekWidgetByTag(this._rootWidget, tag);
     },
 
+    /**
+     * get widget by name
+     * @param name
+     * @returns {ccs.Widget}
+     */
     getWidgetByName: function (name) {
         if (!this._rootWidget) {
             return null;
@@ -85,20 +102,31 @@ ccs.UILayer = cc.Layer.extend({
         return ccs.UIHelper.seekWidgetByName(this._rootWidget, name);
     },
 
+    /**
+     * get root widget
+     * @returns {ccs.Widget}
+     */
     getRootWidget: function () {
         return this._rootWidget;
     },
 
+    /**
+     * get inputManager
+     * @returns {ccs.UIInputManager}
+     */
     getInputManager: function () {
         return this._inputManager;
     },
 
+    /**
+     * remove all children
+     */
     clear: function () {
         this._rootWidget.removeAllChildren();
     },
 
     onTouchBegan: function (touch, event) {
-        if (this._inputManager && this._inputManager.onTouchBegan(touch)) {
+        if (this._inputManager.onTouchBegan(touch)) {
             return true;
         }
         return false;
@@ -116,14 +144,30 @@ ccs.UILayer = cc.Layer.extend({
         this._inputManager.onTouchCancelled(touch);
     },
 
+    /**
+     * remove all children
+     */
     dispose: function () {
         this.removeFromParent(true);
     },
 
+    /**
+     * remove Widget
+     * @param {ccs.Widget} widget
+     * @param {Boolean} cleanup
+     */
     removeWidgetAndCleanUp: function (widget, cleanup) {
         this.removeWidget(widget);
     }
 });
+/**
+ * allocates and initializes a UILayer.
+ * @constructs
+ * @return {ccs.UILayer}
+ * @example
+ * // example
+ * var uiLayer = ccs.UILayer.create();
+ */
 ccs.UILayer.create = function () {
     var uiLayer = new ccs.UILayer();
     if (uiLayer && uiLayer.init()) {

@@ -22,6 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * loadingBar type
+ * @type {Object}
+ */
 ccs.LoadingBarType = { left: 0, right: 1};
 
 /**
@@ -29,7 +33,7 @@ ccs.LoadingBarType = { left: 0, right: 1};
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILoadingBar = ccs.UIWidget.extend({
+ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -113,32 +117,19 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this._textureFile = texture;
         switch (this._renderBarTexType) {
             case ccs.TextureResType.local:
-                if (this._scale9Enabled){
-                    this._barRenderer.initWithFile(texture);
-                    this._barRenderer.setCapInsets(this._capInsets);
-                }
-                else
-                    this._barRenderer.initWithFile(texture);
+                this._barRenderer.initWithFile(texture);
                 break;
             case ccs.TextureResType.plist:
-                if (this._scale9Enabled){
-                    this._barRenderer.initWithSpriteFrameName(texture);
-                    this._barRenderer.setCapInsets(this._capInsets);
-                }
-                else
-                    this._barRenderer.initWithSpriteFrameName(texture);
+                this._barRenderer.initWithSpriteFrameName(texture);
                 break;
             default:
                 break;
         }
-        if (this._scale9Enabled) {
-            this._barRenderer.setColor(this.getColor());
-            this._barRenderer.setOpacity(this.getOpacity());
+        if (this._scale9Enabled){
+            this._barRenderer.setCapInsets(this._capInsets);
         }
-        else {
-            this._barRenderer.setColor(this.getColor());
-            this._barRenderer.setOpacity(this.getOpacity());
-        }
+        this._barRenderer.setColor(this.getColor());
+        this._barRenderer.setOpacity(this.getOpacity());
         this._barRendererTextureSize.width = this._barRenderer.getContentSize().width;
         this._barRendererTextureSize.height = this._barRenderer.getContentSize().height;
 
@@ -216,17 +207,13 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         var res = this._percent / 100.0;
 
         var x = 0, y = 0;
-        switch (this._renderBarTexType) {
-            case ccs.TextureResType.plist:
-                var barNode = this._barRenderer;
-                if (barNode) {
-                    var to = barNode.getTextureRect().origin;
-                    x = to.x;
-                    y = to.y;
-                }
-                break;
-            default:
-                break;
+        if(this._renderBarTexType==ccs.TextureResType.plist){
+            var barNode = this._barRenderer;
+            if (barNode) {
+                var to = barNode.getTextureRect().origin;
+                x = to.x;
+                y = to.y;
+            }
         }
         if (this._scale9Enabled)
             this.setScale9Scale();
@@ -316,6 +303,10 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "LoadingBar";
     },
@@ -332,7 +323,14 @@ ccs.UILoadingBar = ccs.UIWidget.extend({
         this.setPercent(loadingBar._percent);
     }
 });
-
+/**
+ * allocates and initializes a UILoadingBar.
+ * @constructs
+ * @return {ccs.UILoadingBar}
+ * @example
+ * // example
+ * var uiLoadingBar = ccs.UILoadingBar.create();
+ */
 ccs.UILoadingBar.create = function () {
     var uiLoadingBar = new ccs.UILoadingBar();
     if (uiLoadingBar && uiLoadingBar.init()) {

@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ActionNode
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ActionNode = cc.Class.extend({
+ccs.ActionNode = ccs.Class.extend({
     _currentFrameIndex: 0,
     _destFrameIndex: 0,
     _unitTime: 0,
@@ -279,13 +279,17 @@ ccs.ActionNode = cc.Class.extend({
     /**
      * Play the action.
      * @param {Boolean} loop
+     * @param {cc.CallFunc} fun
      */
-    playAction: function () {
+    playAction: function (fun) {
         if (this._object == null || this._actionSpawn == null) {
             return;
         }
-         this._action = cc.Sequence.create(this._actionSpawn, null);
-        this._action.retain();
+        if(fun){
+            this._action = cc.Sequence.create(this._actionSpawn,fun);
+        }else{
+            this._action = cc.Sequence.create(this._actionSpawn);
+        }
         this.runAction();
     },
 

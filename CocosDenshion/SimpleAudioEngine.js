@@ -169,6 +169,8 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     _soundList:null,
     _maxAudioInstance:10,
     _canPlay:true,
+    _musicListenerBound:null,
+    _musicIsStopped: false,
 
     /**
      * Constructor
@@ -177,6 +179,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         cc.AudioEngine.prototype.ctor.call(this);
         this._effectList = {};
         this._soundList = {};
+        this._musicListenerBound = this._musicListener.bind(this);
         var ua = navigator.userAgent;
         if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
             this._canPlay = false;
@@ -256,14 +259,13 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         var au;
 
         var locSoundList = this._soundList;
-        if (locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (locSoundList.hasOwnProperty(this._playingMusic))
             locSoundList[this._playingMusic].audio.pause();
-        }
 
         this._playingMusic = keyname;
-        if (locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (locSoundList.hasOwnProperty(this._playingMusic))
             au = locSoundList[this._playingMusic].audio;
-        } else {
+        else {
             var sfxCache = new cc.SimpleSFX();
             sfxCache.ext = extName;
             au = sfxCache.audio = new Audio(path);
@@ -272,16 +274,19 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             sfxCache.audio.load();
         }
 
-        au.addEventListener("pause", this._musicListener , false);
-
+        au.addEventListener("pause", this._musicListenerBound , false);
         au.loop = loop || false;
         au.play();
         cc.AudioEngine.isMusicPlaying = true;
+        this._musicIsStopped = false;
     },
 
     _musicListener:function(e){
         cc.AudioEngine.isMusicPlaying = false;
-        this.removeEventListener('pause', arguments.callee, false);
+        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+            var au = this._soundList[this._playingMusic].audio;
+            au.removeEventListener('pause', arguments.callee, false);
+        }
     },
 
     /**
@@ -297,10 +302,10 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             var au = locSoundList[locPlayingMusic].audio;
             au.pause();
             au.currentTime = au.duration;
-            if (releaseData) {
+            if (releaseData)
                 delete locSoundList[locPlayingMusic];
-            }
             cc.AudioEngine.isMusicPlaying = false;
+            this._musicIsStopped = true;
         }
     },
 
@@ -311,7 +316,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().pauseMusic();
      */
     pauseMusic:function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
             au.pause();
             cc.AudioEngine.isMusicPlaying = false;
@@ -325,10 +330,10 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().resumeMusic();
      */
     resumeMusic:function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
             au.play();
-            au.addEventListener("pause", this._musicListener , false);
+            au.addEventListener("pause", this._musicListenerBound , false);
             cc.AudioEngine.isMusicPlaying = true;
         }
     },
@@ -344,8 +349,9 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             var au = this._soundList[this._playingMusic].audio;
             au.currentTime = 0;
             au.play();
-            au.addEventListener("pause", this._musicListener , false);
+            au.addEventListener("pause", this._musicListenerBound , false);
             cc.AudioEngine.isMusicPlaying = true;
+            this._musicIsStopped = false;
         }
     },
 
@@ -628,6 +634,467 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     }
 });
 
+cc.PlayingTask = function(id, audio,isLoop, status){
+    this.id = id;
+    this.audio = audio;
+    this.isLoop = isLoop || false;
+    this.status = status || cc.PlayingTaskStatus.stop;
+};
+
+cc.PlayingTaskStatus = {playing:1, pause:2, stop:3, waiting:4};
+
+cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
+    _playingList: null,
+    _currentTask:null,
+    _isPauseForList: false,
+    _checkFlag: true,
+    _audioEndedCallbackBound: null,
+
+    ctor:function(){
+        cc.SimpleAudioEngine.prototype.ctor.call(this);
+
+        this._playingList = [];
+        window.playingList = this._playingList;
+        this._isPauseForList = false;
+        this._checkFlag = true;
+        this._audioEndedCallbackBound = this._audioEndCallback.bind(this);
+    },
+
+    _stopAllEffectsForList: function(){
+        var tmpArr, au, locEffectList = this._effectList;
+        for (var i in locEffectList) {
+            tmpArr = locEffectList[i];
+            for (var j = 0; j < tmpArr.length; j++) {
+                au = tmpArr[j];
+                if (!au.ended) {
+                    au.removeEventListener('ended', this._audioEndedCallbackBound, false);
+                    au.loop = false;
+                    au.currentTime = au.duration;
+                }
+            }
+        }
+        this._playingList = [];
+        this._currentTask = null;
+    },
+
+    /**
+     * Play music.
+     * @param {String} path The path of the music file without filename extension.
+     * @param {Boolean} loop Whether the music loop or not.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().playMusic(path, false);
+     */
+    playMusic:function (path, loop) {
+        if (!this._soundSupported)
+            return;
+
+        this._stopAllEffectsForList();
+
+        var keyname = this._getPathWithoutExt(path);
+        var extName = this._getExtFromFullPath(path);
+        var au;
+
+        var locSoundList = this._soundList;
+        if (locSoundList.hasOwnProperty(this._playingMusic)){
+            var currMusic = locSoundList[this._playingMusic];
+            currMusic.audio.removeEventListener("pause",this._musicListenerBound , false)
+            currMusic.audio.pause();
+        }
+
+        this._playingMusic = keyname;
+        if (locSoundList.hasOwnProperty(this._playingMusic))
+            au = locSoundList[this._playingMusic].audio;
+        else {
+            var sfxCache = new cc.SimpleSFX();
+            sfxCache.ext = extName;
+            au = sfxCache.audio = new Audio(path);
+            sfxCache.audio.preload = 'auto';
+            locSoundList[keyname] = sfxCache;
+            sfxCache.audio.load();
+        }
+
+        au.addEventListener("pause", this._musicListenerBound , false);
+        au.loop = loop || false;
+        au.play();
+        cc.AudioEngine.isMusicPlaying = true;
+        this._musicIsStopped = false;
+    },
+
+    _musicListener:function(){
+        cc.AudioEngine.isMusicPlaying = false;
+        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+            var au = this._soundList[this._playingMusic].audio;
+            au.removeEventListener('pause', arguments.callee, false);
+        }
+        if(this._checkFlag)
+            this._isPauseForList = false;
+        else
+            this._checkFlag = true;
+    },
+
+    _stopExpiredTask:function(expendTime){
+        var locPlayingList = this._playingList, locAudioIDList = this._audioIDList;
+        for(var i = 0; i < locPlayingList.length; ){
+            var selTask = locPlayingList[i];
+            if ((selTask.status === cc.PlayingTaskStatus.waiting)){
+                if (selTask.audio.currentTime + expendTime >= selTask.audio.duration) {
+                    locPlayingList.splice(i, 1);
+                    if (locAudioIDList.hasOwnProperty(selTask.id)) {
+                        var au = locAudioIDList[selTask.id];
+                        if (!au.ended) {
+                            au.removeEventListener('ended', this._audioEndedCallbackBound, false);
+                            au.loop = false;
+                            au.currentTime = au.duration;
+                        }
+                    }
+                    continue;
+                } else
+                    selTask.audio.currentTime = selTask.audio.currentTime + expendTime;
+            }
+            i++;
+        }
+    },
+
+    _audioEndCallback: function () {
+        var locCurrentTask = this._currentTask;
+        var expendTime = locCurrentTask.audio.currentTime;
+        this._stopExpiredTask(expendTime);
+
+        if (locCurrentTask.isLoop) {
+            locCurrentTask.audio.play();
+            return;
+        }
+
+        locCurrentTask.audio.removeEventListener('ended', this._audioEndedCallbackBound, false);
+        cc.ArrayRemoveObject(this._playingList, locCurrentTask);
+
+        locCurrentTask = this._getNextTaskToPlay();
+        if (!locCurrentTask) {
+            this._currentTask = null;
+            if (this._isPauseForList) {
+                this._isPauseForList = false;
+                this.resumeMusic();
+            }
+        } else {
+            this._currentTask = locCurrentTask;
+            locCurrentTask.status = cc.PlayingTaskStatus.playing;
+            locCurrentTask.audio.play();
+        }
+    },
+
+    _pushingPlayingTask: function(playingTask){
+        if(!playingTask)
+            throw "cc.SimpleAudioEngineForMobile._pushingPlayingTask(): playingTask should be non-null.";
+
+        var locPlayingTaskList = this._playingList;
+        if(!this._currentTask){
+            if(this.isMusicPlaying()){
+                this._checkFlag = false;
+                this.pauseMusic();
+                this._isPauseForList = true;
+            }
+        }else{
+            this._currentTask.status = cc.PlayingTaskStatus.waiting;
+            this._currentTask.audio.pause();
+        }
+        locPlayingTaskList.push(playingTask);
+        this._currentTask = playingTask;
+        this._playingAudioTask(playingTask)
+    },
+
+    _playingAudioTask: function(playTask){
+        playTask.audio.addEventListener("ended", this._audioEndedCallbackBound, false);
+        playTask.audio.play();
+        playTask.status = cc.PlayingTaskStatus.playing;
+    },
+
+    _getPlayingTaskFromList:function(audioID){
+        var locPlayList = this._playingList;
+        for(var i = 0, len = locPlayList.length;i< len;i++){
+            if(locPlayList[i].id === audioID)
+                return locPlayList[i];
+        }
+        return null;
+    },
+
+    _getNextTaskToPlay: function(){
+        var locPlayingList = this._playingList;
+        for(var i = locPlayingList.length -1; i >= 0; i--){
+            var selTask = locPlayingList[i];
+            if(selTask.status === cc.PlayingTaskStatus.waiting)
+                return selTask;
+        }
+        return null;
+    },
+
+    _playingNextTask:function(){
+        var locCurrentTask = this._currentTask = this._getNextTaskToPlay();
+        if(locCurrentTask){
+            locCurrentTask.status = cc.PlayingTaskStatus.playing;
+            locCurrentTask.audio.play();
+        } else {
+            if(this._isPauseForList){
+                this._isPauseForList = false;
+                this.resumeMusic();
+            }
+        }
+    },
+
+    _deletePlayingTaskFromList: function(audioID){
+        var locPlayList = this._playingList;
+        for(var i = 0, len = locPlayList.length;i< len;i++){
+            var selTask = locPlayList[i];
+            if(selTask.id === audioID){
+                locPlayList.splice(i,1);
+                if(selTask == this._currentTask)
+                    this._playingNextTask();
+                return;
+            }
+        }
+    },
+
+    _pausePlayingTaskFromList: function (audioID) {
+        var locPlayList = this._playingList;
+        for (var i = 0, len = locPlayList.length; i < len; i++) {
+            var selTask = locPlayList[i];
+            if (selTask.id === audioID) {
+                selTask.status = cc.PlayingTaskStatus.pause;
+                if (selTask == this._currentTask)
+                    this._playingNextTask();
+                return;
+            }
+        }
+    },
+
+    _resumePlayingTaskFromList: function(audioID){
+        var locPlayList = this._playingList;
+        for (var i = 0, len = locPlayList.length; i < len; i++) {
+            var selTask = locPlayList[i];
+            if (selTask.id === audioID) {
+                selTask.status = cc.PlayingTaskStatus.waiting;
+                if(!this._currentTask){
+                    var locCurrentTask = this._getNextTaskToPlay();
+                    if(locCurrentTask){
+                        //pause music
+                        if(this.isMusicPlaying()){
+                            this._checkFlag = false;
+                            this.pauseMusic();
+                            this._isPauseForList = true;
+                        }
+                        locCurrentTask.status = cc.PlayingTaskStatus.playing;
+                        locCurrentTask.audio.play();
+                    }
+                }
+                return;
+            }
+        }
+    },
+
+    /**
+     * Play sound effect.
+     * @param {String} path The path of the sound effect with filename extension.
+     * @param {Boolean} loop Whether to loop the effect playing, default value is false
+     * @return {Number|null} the audio id
+     * @example
+     * //example
+     * var soundId = cc.AudioEngine.getInstance().playEffect(path);
+     */
+    playEffect: function (path, loop) {
+        if (!this._soundSupported)
+            return null;
+
+        var keyname = this._getPathWithoutExt(path), actExt;
+        if (this._soundList.hasOwnProperty(keyname))
+            actExt = this._soundList[keyname].ext;
+        else
+            actExt = this._getExtFromFullPath(path);
+
+        var reclaim = this._getEffectList(keyname), au;
+        if (reclaim.length > 0) {
+            for (var i = 0; i < reclaim.length; i++) {
+                //if one of the effect ended, play it
+                if (reclaim[i].ended) {
+                    au = reclaim[i];
+                    au.currentTime = 0;
+                    if (window.chrome)
+                        au.load();
+                    break;
+                }
+            }
+        }
+
+        if (!au) {
+            if (reclaim.length >= this._maxAudioInstance) {
+                cc.log("Error: " + path + " greater than " + this._maxAudioInstance);
+                return null;
+            }
+            au = new Audio(keyname + "." + actExt);
+            au.volume = this._effectsVolume;
+            reclaim.push(au);
+        }
+
+        var playingTask = new cc.PlayingTask(this._audioID++, au, loop);
+        this._pushingPlayingTask(playingTask);
+        this._audioIDList[playingTask.id] = au;
+        return playingTask.id;
+    },
+
+    /**
+     * Pause playing sound effect.
+     * @param {Number} audioID The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().pauseEffect(audioID);
+     */
+    pauseEffect:function (audioID) {
+        if (audioID == null) return;
+
+        var strID = audioID.toString();
+        if (this._audioIDList.hasOwnProperty(strID)) {
+            var au = this._audioIDList[strID];
+            if (!au.ended) au.pause();
+        }
+        this._pausePlayingTaskFromList(audioID);
+    },
+
+    /**
+     * Pause all playing sound effect.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().pauseAllEffects();
+     */
+    pauseAllEffects:function () {
+        var tmpArr, au;
+        var locEffectList = this._effectList;
+        for (var selKey in locEffectList) {
+            tmpArr = locEffectList[selKey];
+            for (var j = 0; j < tmpArr.length; j++) {
+                au = tmpArr[j];
+                if (!au.ended) au.pause();
+            }
+        }
+
+        var locPlayTask = this._playingList;
+        for(var i = 0, len = locPlayTask.length; i < len; i++)
+            locPlayTask[i].status = cc.PlayingTaskStatus.pause;
+        this._currentTask = null;
+
+        if(this._isPauseForList){
+            this._isPauseForList = false;
+            this.resumeMusic();
+        }
+    },
+
+    /**
+     * Resume playing sound effect.
+     * @param {Number} audioID The return value of function playEffect.
+     * @audioID
+     * //example
+     * cc.AudioEngine.getInstance().resumeEffect(audioID);
+     */
+    resumeEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended)
+                au.play();
+        }
+        this._resumePlayingTaskFromList(audioID);
+    },
+
+    /**
+     * Resume all playing sound effect
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().resumeAllEffects();
+     */
+    resumeAllEffects:function () {
+        var tmpArr, au;
+        var locEffectList = this._effectList;
+        for (var selKey in locEffectList) {
+            tmpArr = locEffectList[selKey];
+            if (tmpArr.length > 0) {
+                for (var j = 0; j < tmpArr.length; j++) {
+                    au = tmpArr[j];
+                    if (!au.ended) au.play();
+                }
+            }
+        }
+
+        var locPlayingList = this._playingList;
+        for(var i = 0, len = locPlayingList.length; i < len; i++){
+             var selTask = locPlayingList[i];
+            if(selTask.status === cc.PlayingTaskStatus.pause)
+                selTask.status = cc.PlayingTaskStatus.waiting;
+        }
+        if(this._currentTask == null){
+            var locCurrentTask = this._getNextTaskToPlay();
+            if(locCurrentTask){
+                //pause music
+                if(this.isMusicPlaying()){
+                    this._checkFlag = false;
+                    this.pauseMusic();
+                    this._isPauseForList = true;
+                }
+                locCurrentTask.status = cc.PlayingTaskStatus.playing;
+                locCurrentTask.audio.play();
+            }
+        }
+    },
+
+    /**
+     * Stop playing sound effect.
+     * @param {Number} audioID The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().stopEffect(audioID);
+     */
+    stopEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended) {
+                au.removeEventListener('ended', this._audioEndedCallbackBound, false);
+                au.loop = false;
+                au.currentTime = au.duration;
+            }
+        }
+        this._deletePlayingTaskFromList(audioID);
+    },
+
+    /**
+     * Stop all playing sound effects.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().stopAllEffects();
+     */
+    stopAllEffects:function () {
+        var tmpArr, au, locEffectList = this._effectList;
+        for (var i in locEffectList) {
+            tmpArr = locEffectList[i];
+            for (var j = 0; j < tmpArr.length; j++) {
+                au = tmpArr[j];
+                if (!au.ended) {
+                    au.removeEventListener('ended', this._audioEndedCallbackBound, false);
+                    au.loop = false;
+                    au.currentTime = au.duration;
+                }
+            }
+        }
+
+        this._playingList = [];
+        this._currentTask = null;
+
+        if(this._isPauseForList){
+            this._isPauseForList = false;
+            this.resumeMusic();
+        }
+    }
+});
+
 /**
  * The entity stored in cc.WebAudioEngine, representing a sound object
  */
@@ -784,8 +1251,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     _beginSound: function(key, loop, volume, offset) {
         var sfxCache = new cc.WebAudioSFX();
-        loop = loop || false;
-        volume = volume || 1;
+        loop = loop == null ? false : loop;
+        volume = volume == null ? 1 : volume;
         offset = offset || 0;
 
         sfxCache.key = key;
@@ -1355,7 +1822,10 @@ cc.AudioEngine.getInstance = function () {
         if (cc.Browser.supportWebAudio && !(/iPhone OS/.test(ua)||/iPad/.test(ua))) {
             this._instance = new cc.WebAudioEngine();
         } else {
-            this._instance = new cc.SimpleAudioEngine();
+            if(cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
+                this._instance = new cc.SimpleAudioEngineForMobile();
+            else
+                this._instance = new cc.SimpleAudioEngine();
         }
         this._instance.init();
     }

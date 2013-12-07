@@ -15,7 +15,7 @@
 CSSProperties.prototype._super;
 
 /**
- * cocos2d-html5-only. We need this becuase the cc.Class.extend's new
+ * cocos2d-html5-only. We need this because the cc.Class.extend's new
  * infrastructure requires it.
  * @type {string}
  */
