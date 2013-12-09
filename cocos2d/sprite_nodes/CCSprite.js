@@ -1375,10 +1375,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         //this._textureRect_Canvas = cc.RECT_POINTS_TO_PIXELS(rect);                      //this._setTextureCoords(rect);
         var locTextureRect = this._textureRect_Canvas;
         var scaleFactor = cc.CONTENT_SCALE_FACTOR();
-        locTextureRect.x = 0|(rect.x * scaleFactor);
-        locTextureRect.y = 0|(rect.y * scaleFactor);
-        locTextureRect.width = 0|(rect.width * scaleFactor);
-        locTextureRect.height = 0|(rect.height * scaleFactor);
+        locTextureRect.x = 0 | (rect.x * scaleFactor);
+        locTextureRect.y = 0 | (rect.y * scaleFactor);
+        locTextureRect.width = 0 | (rect.width * scaleFactor);
+        locTextureRect.height = 0 | (rect.height * scaleFactor);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
@@ -2059,7 +2059,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition, locDrawSizeCanvas = this._drawSize_Canvas;
         var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = this._textureRect_Canvas;
-        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
+        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX ;
         locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
         if (this._flippedX || this._flippedY) {
