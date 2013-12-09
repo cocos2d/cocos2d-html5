@@ -79,8 +79,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _subCacheWidth:0,
     // Maximum pixel number by cache, a little more than 3072*3072, real limit is 4096*4096
     _maxCachePixel:10000000,
-    _layerScaleX:1,
-    _layerScaleY:1,
 
     /**
      *  Constructor
