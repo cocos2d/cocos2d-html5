@@ -28,7 +28,6 @@
  * @extends ccs.Class
  */
 ccs.UIInputManager = ccs.Class.extend({
-    _manageredWidget: null,
     _selectedWidgets: null,
     _touchBeganedPoint: null,
     _touchMovedPoint: null,
@@ -40,7 +39,6 @@ ccs.UIInputManager = ccs.Class.extend({
     _checkedDoubleClickWidget: null,
     _rootWidget: null,
     ctor: function () {
-        this._manageredWidget = null;
         this._selectedWidgets = [];
         this._touchBeganedPoint = cc.p(0, 0);
         this._touchMovedPoint = cc.p(0, 0);
@@ -51,20 +49,6 @@ ccs.UIInputManager = ccs.Class.extend({
         this._longClickRecordTime = 0;
         this._checkedDoubleClickWidget = [];
         this._rootWidget = null;
-    },
-
-    /**
-     * Regist a widget to input manager.
-     * @param {ccs.UIWidget} widget
-     */
-    registWidget: function (widget) {
-        if (!widget) {
-            return;
-        }
-        if (cc.ArrayContainsObject(this._manageredWidget, widget)) {
-            return;
-        }
-        this._manageredWidget.push(widget);
     },
 
     /**
@@ -88,20 +72,6 @@ ccs.UIInputManager = ccs.Class.extend({
             return true;
         }
         return false;
-    },
-
-    /**
-     * Remove a registed widget from input manager.
-     * @param {ccs.UIWidget} widget
-     */
-    removeManageredWidget: function (widget) {
-        if (!widget) {
-            return;
-        }
-        if (!cc.ArrayContainsObject(this._manageredWidget, widget)) {
-            return;
-        }
-        cc.ArrayRemoveObject(this._manageredWidget, widget);
     },
 
     /**

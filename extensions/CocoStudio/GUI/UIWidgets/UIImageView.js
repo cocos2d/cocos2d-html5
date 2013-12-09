@@ -76,33 +76,18 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
         this._imageTexType = texType;
         switch (this._imageTexType) {
             case ccs.TextureResType.local:
-                if (this._scale9Enabled) {
-                    this._imageRenderer.initWithFile(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                    this._imageRenderer.setCapInsets(this._capInsets);
-                }
-                else {
-                    this._imageRenderer.initWithFile(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                }
+                this._imageRenderer.initWithFile(fileName);
                 break;
             case ccs.TextureResType.plist:
-                if (this._scale9Enabled) {
-                    this._imageRenderer.initWithSpriteFrameName(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                    this._imageRenderer.setCapInsets(this._capInsets);
-                }
-                else {
-                    this._imageRenderer.initWithSpriteFrameName(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                }
+                this._imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
+        }
+        this._imageRenderer.setColor(this.getColor());
+        this._imageRenderer.setOpacity(this.getOpacity());
+        if (this._scale9Enabled) {
+            this._imageRenderer.setCapInsets(this._capInsets);
         }
         this._imageTextureSize = this._imageRenderer.getContentSize();
         this.updateAnchorPoint();

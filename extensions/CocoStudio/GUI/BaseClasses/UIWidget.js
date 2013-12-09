@@ -200,8 +200,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         var locChild;
         for (var i = 0; i < this._children.length; i++) {
             locChild = this._children[i];
-            if (locChild instanceof ccs.UIWidget)
-                locChild.onEnter();
+            locChild.onEnter();
         }
         this._isRunning = true;
         this.updateSizeAndPosition();
@@ -212,8 +211,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         var locChild;
         for (var i = 0; i < this._children.length; i++) {
             locChild = this._children[i];
-            if (locChild instanceof ccs.UIWidget)
-                locChild.onExit();
+            locChild.onExit();
         }
     },
 
@@ -300,7 +298,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
      */
     removeAllChildren: function () {
         var childrenLength = this._children.length;
-        if (this._children.length <= 0) {
+        if (childrenLength <= 0) {
             return
         }
         for (var i = 0; i < childrenLength; ++i) {
@@ -313,12 +311,12 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
      * @param {ccs.UIWidget} child
      */
     reorderChild: function (child) {
-        cc.ArrayRemoveObject(this._children, child);
         var childrenCount = this._children.length;
         if (childrenCount <= 0) {
-            this._children.push(child);
+            return;
         }
         else {
+            cc.ArrayRemoveObject(this._children, child);
             var seekSucceed = false;
             var arrayChildren = this._children;
             for (var i = childrenCount - 1; i >= 0; --i) {
@@ -509,7 +507,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         this._ignoreSize = ignore;
-        var locSize = this.getContentSize();
+        var locSize;
         if (this._ignoreSize) {
             locSize = this.getContentSize();
         }
@@ -631,14 +629,10 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         }
         this._updateEnabled = enable;
         if (enable) {
-            if (this._scheduler) {
-                this._scheduler.scheduleUpdateForTarget(this, 0, false);
-            }
+            this._scheduler.scheduleUpdateForTarget(this, 0, false);
         }
         else {
-            if (this._scheduler) {
-                this._scheduler.unscheduleUpdateForTarget(this);
-            }
+            this._scheduler.unscheduleUpdateForTarget(this);
         }
     },
 

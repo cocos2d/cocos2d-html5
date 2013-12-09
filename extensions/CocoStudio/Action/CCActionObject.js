@@ -170,18 +170,19 @@ ccs.ActionObject = ccs.Class.extend({
 
     /**
      * Play the action.
+     * @param {cc.CallFunc} fun
      */
-    play: function () {
+    play: function (fun) {
         this.stop();
         this.updateToFrameByTime(0);
         var frameNum = this._actionNodeList.length;
         for (var i = 0; i < frameNum; i++) {
             var locActionNode = this._actionNodeList[i];
-            locActionNode.playAction(this.getLoop());
+            locActionNode.playAction(fun);
         }
         if (this._loop) {
-            this._scheduler.scheduleCallbackForTarget(this, this.simulationActionUpdate, this, 0., cc.REPEAT_FOREVER, 0, false);
-        }
+            this._scheduler.scheduleCallbackForTarget(this, this.simulationActionUpdate, 0, cc.REPEAT_FOREVER, 0, false);
+    }
     },
 
     /**
