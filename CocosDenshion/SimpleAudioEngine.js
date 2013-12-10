@@ -1255,11 +1255,15 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         volume = volume == null ? 1 : volume;
         offset = offset || 0;
 
+        var locCtx = this._ctx;
         sfxCache.key = key;
         sfxCache.sourceNode = this._ctx.createBufferSource();
         sfxCache.sourceNode.buffer = this._audioData[key];
         sfxCache.sourceNode.loop = loop;
-        sfxCache.volumeNode = this._ctx.createGain();
+        if(locCtx.createGain)
+            sfxCache.volumeNode = this._ctx.createGain();
+        else
+            sfxCache.volumeNode = this._ctx.createGainNode();
         sfxCache.volumeNode.gain.value = volume;
 
         sfxCache.sourceNode.connect(sfxCache.volumeNode);

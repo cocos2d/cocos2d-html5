@@ -68,7 +68,8 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._bone = bone;
         this._tweenData = this._bone.getTweenData();
         this._tweenData.displayIndex = -1;
-        this._animation = this._bone.getArmature() != null ? this._bone.getArmature().getAnimation() : null;
+         var armature = bone.getArmature();
+        if (armature) this._animation = armature.getAnimation();
         return true;
     },
 
