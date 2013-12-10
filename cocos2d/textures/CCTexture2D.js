@@ -218,6 +218,14 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
     },
 
+    /**
+     * content size - compatibility with jsbindings
+     * @return {cc.Size}
+     */
+    contentSize:function () {
+        return this.getContentSize();
+    },
+    
     getContentSizeInPixels:function () {
         return this._contentSize;
     },
