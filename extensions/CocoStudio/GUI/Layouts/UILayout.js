@@ -1035,7 +1035,8 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
         this._arrRect[3] = cc.p(0, this._clippingSize.height);
         var green = cc.c4f(0, 1, 0, 1);
         this._innerStencil.clear();
-        //this._innerStencil.drawPoly(this._arrRect, green, 0, green);
+        this._innerStencil.drawPoly(this._arrRect, green, 0, green);
+        this.setStencil(this._innerStencil);
     },
 
     setClippingEnabled: function (enabled) {
@@ -1047,56 +1048,11 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
             return;
         }
         if (this._clippingEnabled) {
-            if (cc.Browser.supportWebGL) {
-                cc.ClippingNode.prototype.visit.call(this, ctx);
-            } else {
-                this.visitCanvas(ctx);
-            }
+            cc.ClippingNode.prototype.visit.call(this, ctx);
         }
         else {
             cc.Node.prototype.visit.call(this, ctx);
         }
-    },
-
-    visitCanvas: function (ctx) {
-        // quick return if not visible
-        if (!this._visible)
-            return;
-
-        //visit for canvas
-        var context = ctx || cc.renderContext, i;
-        var children = this._children, locChild;
-        context.save();
-        this.transform(context);
-        context.beginPath();
-        var locContentSize = this.getContentSize();
-        var locRect = cc.rect(0, 0, locContentSize.width, locContentSize.height);
-        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
-
-        context.rect(locRect.x * locEGL_ScaleX, locRect.y * locEGL_ScaleY, locRect.width * locEGL_ScaleX, -locRect.height * locEGL_ScaleY);
-        context.clip();
-        context.closePath();
-        var len = children.length;
-        if (len > 0) {
-            this.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < len; i++) {
-                locChild = children[i];
-                if (locChild._zOrder < 0)
-                    locChild.visit(context);
-                else
-                    break;
-            }
-            this.draw(context);
-            for (; i < len; i++) {
-                children[i].visit(context);
-            }
-        } else
-            this.draw(context);
-
-        this._orderOfArrival = 0;
-        context.restore();
-        this._stencil.visit();
     },
 
     setEnabled: function (enabled) {
