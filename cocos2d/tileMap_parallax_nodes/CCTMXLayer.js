@@ -231,13 +231,17 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
         if (locCacheCanvas) {
-            if(this._subCacheCount > 0) {
-                for(var i = 0; i < this._subCacheCount; i++)
-                    context.drawImage(this._subCacheCanvas[i], posX+i*this._subCacheWidth, -(posY + locCacheCanvas.height));
+            var locSubCacheCount = this._subCacheCount, locCanvasHeight = locCacheCanvas.height * eglViewer._scaleY;
+            if(locSubCacheCount > 0) {
+                var locSubCacheCanvasArr = this._subCacheCanvas;
+                for(var i = 0; i < locSubCacheCount; i++){
+                    var selSubCanvas = locSubCacheCanvasArr[i];
+                    context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
+                        posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                }
             } else{
                 //context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                 //    posX, -(posY + locCacheCanvas.height ), locCacheCanvas.width, locCacheCanvas.height );
-                var locCanvasHeight = locCacheCanvas.height * eglViewer._scaleY;
                 context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
                     posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
             }
