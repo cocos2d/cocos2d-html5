@@ -358,9 +358,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         } else if (stencil instanceof cc.Node) {
             stencil.draw = function () {
                 var locSize = stencil.getContentSize();
-                var locRect = cc.rect(0, 0, locSize.width * locEGL_ScaleX, locSize.height * locEGL_ScaleY);
                 locContext.beginPath();
-                locContext.rect(locRect.x, locRect.y, locRect.width, -locRect.height);
+                locContext.rect(0, 0, locSize.width, -locSize.height);
             }
         }
     },
