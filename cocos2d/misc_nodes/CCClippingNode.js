@@ -65,7 +65,9 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * The stencil node will be retained, and its parent will be set to this clipping node.
      * @param {cc.Node} [stencil=null]
      */
-    init:function(stencil){
+    init:null,
+
+    _initForWebGL:function(stencil){
         this._stencil = stencil;
 
         this._alphaThreshold = 1;
@@ -79,6 +81,12 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             cc.ClippingNode._init_once = false;
         }
         return true;
+    },
+
+    _initForCanvas:function(stencil){
+        this._stencil = stencil;
+        this._alphaThreshold = 1;
+        this._inverted = false;
     },
 
     onEnter:function(){
@@ -101,7 +109,9 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.Node.prototype.onExit.call(this);
     },
 
-    visit:function(ctx){
+    visit:null,
+
+    _visitForWebGL:function(ctx){
         var gl = ctx || cc.renderContext;
 
         // if stencil buffer disabled
@@ -270,6 +280,46 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.ClippingNode._layer--;
     },
 
+    _visitForCanvas:function(ctx){
+        // return fast (draw nothing, or draw everything if in inverted mode) if:
+        // - nil stencil node
+        // - or stencil node invisible:
+        if (!this._stencil || !this._stencil.isVisible()) {
+            if (this._inverted)
+                cc.Node.prototype.visit.call(this, ctx);   // draw everything
+            return;
+        }
+
+        //visit for canvas
+        var context = ctx || cc.renderContext, i;
+        var children = this._children, locChild;
+        context.save();
+        this.transform(context);
+
+        this._stencil.visit(ctx);
+        context.clip();
+
+        var len = children.length;
+        if (len > 0) {
+            this.sortAllChildren();
+            // draw children zOrder < 0
+            for (i = 0; i < len; i++) {
+                locChild = children[i];
+                if (locChild._zOrder < 0)
+                    locChild.visit(context);
+                else
+                    break;
+            }
+            this.draw(context);
+            for (; i < len; i++) {
+                children[i].visit(context);
+            }
+        } else
+            this.draw(context);
+
+        context.restore();
+    },
+
     /**
      * The cc.Node to use as a stencil to do the clipping.                                   <br/>
      * The stencil node will be retained. This default to nil.
@@ -282,8 +332,36 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     /**
      * @param {cc.Node} stencil
      */
-    setStencil:function(stencil){
+    setStencil:null,
+
+    _setStencilForWebGL:function(stencil){
         this._stencil = stencil;
+    },
+
+    _setStencilForCanvas: function (stencil) {
+        this._stencil = stencil;
+        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locContext = cc.renderContext;
+        //rewrite the draw of stencil ,only init the clip path and draw nothing.
+        if (stencil instanceof cc.DrawNode) {
+            stencil.draw = function () {
+                for (var i = 0; i < stencil._buffer.length; i++) {
+                    var element = stencil._buffer[i];
+                    var vertices = element.verts;
+                    var firstPoint = vertices[0];
+                    locContext.beginPath();
+                    locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+                    for (var j = 1, len = vertices.length; j < len; j++)
+                        locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
+                }
+            }
+        } else if (stencil instanceof cc.Node) {
+            stencil.draw = function () {
+                var locSize = stencil.getContentSize();
+                locContext.beginPath();
+                locContext.rect(0, 0, locSize.width * locEGL_ScaleX, -locSize.height * locEGL_ScaleY);
+            }
+        }
     },
 
     /**
@@ -328,6 +406,17 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         this._inverted = inverted;
     }
 });
+
+if(cc.Browser.supportWebGL){
+    //WebGL
+    cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForWebGL;
+    cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForWebGL;
+    cc.ClippingNode.prototype.setStencil = cc.ClippingNode.prototype._setStencilForWebGL;
+}else{
+    cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForCanvas;
+    cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForCanvas;
+    cc.ClippingNode.prototype.setStencil = cc.ClippingNode.prototype._setStencilForCanvas;
+}
 
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;
