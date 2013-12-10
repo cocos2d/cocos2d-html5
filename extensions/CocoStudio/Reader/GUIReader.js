@@ -49,23 +49,24 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
      * @returns {Number}
      */
     getVersionInteger: function (str) {
-        /*********temp***********/
+        if(!str)
+            return 0;
         var strVersion = str;
-        var length = strVersion.length;
-        if (length < 7) {
+        var versionLength = strVersion.length;
+        if (versionLength < 7) {
             return 0;
         }
         var pos = strVersion.indexOf(".");
         var t = strVersion.substr(0, pos);
-        strVersion = strVersion.substr(pos + 1, strVersion.length - 1);
+        strVersion = strVersion.substr(pos + 1, versionLength - 1);
 
         pos = strVersion.indexOf(".");
         var h = strVersion.substr(0, pos);
-        strVersion = strVersion.substr(pos + 1, strVersion.length - 1);
+        strVersion = strVersion.substr(pos + 1, versionLength - 1);
 
         pos = strVersion.indexOf(".");
         var te = strVersion.substr(0, pos);
-        strVersion = strVersion.substr(pos + 1, strVersion.length - 1);
+        strVersion = strVersion.substr(pos + 1, versionLength - 1);
 
         pos = strVersion.indexOf(".");
         var s;
@@ -109,7 +110,6 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
      */
     widgetFromJsonFile: function (fileName) {
         var jsonPath = fileName || "";
-        var fullJsonPath = cc.FileUtils.getInstance().fullPathForFilename(fileName);
         var pos = jsonPath.lastIndexOf('/');
         this._filePath = jsonPath.substr(0, pos + 1);
         var des = cc.FileUtils.getInstance().getTextFileData(jsonPath);
@@ -121,8 +121,8 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
 
         var fileVersion = jsonDict["version"];
         var pReader, widget;
+        var versionInteger = this.getVersionInteger(fileVersion);
         if (fileVersion) {
-            var versionInteger = this.getVersionInteger(fileVersion);
             if (versionInteger < 250) {
                 pReader = new ccs.WidgetPropertiesReader0250();
                 widget = pReader.createWidget(jsonDict, this._filePath, fileName);
@@ -135,7 +135,7 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
             widget = pReader.createWidget(jsonDict, this._filePath, fileName);
         }
 
-        if (!fileVersion || this.getVersionInteger(fileVersion) < 250) {
+        if (!fileVersion || versionInteger < 250) {
             this._olderVersion = true;
         }
         jsonDict = null;
@@ -278,7 +278,6 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var x = options["x"];
         var y = options["y"];
         widget.setPosition(cc.p(x, y));
-        ;
         if (options.hasOwnProperty("scaleX")) {
             widget.setScaleX(options["scaleX"]);
         }
@@ -365,9 +364,9 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         if (options.hasOwnProperty("fontName")) {
             button.setTitleFontName(options["fontName"]);
         }
-        var cr = options.hasOwnProperty("colorR") ? options["colorR"] : 255;
-        var cg = options.hasOwnProperty("colorG") ? options["colorG"] : 255;
-        var cb = options.hasOwnProperty("colorB") ? options["colorB"] : 255;
+        var cr = options.hasOwnProperty("textColorR") ? options["textColorR"] : 255;
+        var cg = options.hasOwnProperty("textColorG") ? options["textColorG"] : 255;
+        var cb = options.hasOwnProperty("textColorB") ? options["textColorB"] : 255;
         var tc = cc.c3b(cr, cg, cb);
         button.setTitleColor(tc);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -527,27 +526,18 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var imageFileName = options["backGroundImage"];
         var imageFileName_tp = imageFileName ? this._filePath + imageFileName : null;
         var useMergedTexture = options["useMergedTexture"];
+        if (useMergedTexture) {
+            panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
+        }
+        else {
+            panel.setBackGroundImage(imageFileName_tp);
+        }
         if (backGroundScale9Enable) {
             var cx = options["capInsetsX"];
             var cy = options["capInsetsY"];
             var cw = options["capInsetsWidth"];
             var ch = options["capInsetsHeight"];
-            if (useMergedTexture) {
-                panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
-            }
-            else {
-                panel.setBackGroundImage(imageFileName_tp);
-            }
             panel.setBackGroundImageCapInsets(cc.rect(cx, cy, cw, ch));
-        }
-        else {
-
-            if (useMergedTexture) {
-                panel.setBackGroundImage(imageFileName, ccs.TextureResType.plist);
-            }
-            else {
-                panel.setBackGroundImage(imageFileName_tp);
-            }
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -897,7 +887,6 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var x = options["x"];
         var y = options["y"];
         widget.setPosition(cc.p(x, y));
-        ;
         if (options.hasOwnProperty("scaleX")) {
             widget.setScaleX(options["scaleX"]);
         }
@@ -1136,6 +1125,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         }
         frontCrossDisabledDic = null;
 
+        var selectedState = options["selectedState"] || false;
+        widget.setSelectedState(selectedState);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
 
@@ -1250,7 +1241,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var backGroundScale9Enable = options["backGroundScale9Enable"];
         panel.setBackGroundImageScale9Enabled(backGroundScale9Enable);
         var cr = options["bgColorR"];
-        var cg = options["bgColorG"]
+        var cg = options["bgColorG"];
         var cb = options["bgColorB"];
 
         var scr = options["bgStartColorR"];

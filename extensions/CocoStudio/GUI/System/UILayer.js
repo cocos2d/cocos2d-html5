@@ -54,10 +54,6 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
         cc.Layer.prototype.onExit.call(this);
     },
 
-    onEnterTransitionDidFinish: function () {
-        cc.Layer.prototype.onEnterTransitionDidFinish.call(this);
-    },
-
     /**
      * add widget
      * @param {ccs.Widget} widget
@@ -130,7 +126,7 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     },
 
     onTouchBegan: function (touch, event) {
-        if (this._inputManager && this._inputManager.onTouchBegan(touch)) {
+        if (this._inputManager.onTouchBegan(touch)) {
             return true;
         }
         return false;
