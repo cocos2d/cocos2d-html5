@@ -359,7 +359,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             stencil.draw = function () {
                 var locSize = stencil.getContentSize();
                 locContext.beginPath();
-                locContext.rect(0, 0, locSize.width, -locSize.height);
+                locContext.rect(0, 0, locSize.width * locEGL_ScaleX, -locSize.height * locEGL_ScaleY);
             }
         }
     },
