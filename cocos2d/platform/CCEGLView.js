@@ -385,16 +385,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         // calculate the rect of viewport
         var contentW = locDesignResolutionSize.width * this._scaleX,
             contentH = locDesignResolutionSize.height * this._scaleY;
-        var viewPortW = Math.min(contentW, locScreenSizeW);
-        var viewPortH = Math.min(contentH, locScreenSizeH);
+        var isCanvas = cc.renderContextType === cc.CANVAS;
+        var viewPortW = isCanvas ? Math.min(contentW, locScreenSizeW) : locScreenSizeW,
+            viewPortH = isCanvas ? Math.min(contentH, locScreenSizeH) : locScreenSizeH;
 
-        this._viewPortRect = cc.rect((contentW - viewPortW) / 2, (contentH - viewPortH) / 2, viewPortW, viewPortH);
+        this._viewPortRect = cc.rect((viewPortW - contentW) / 2, (viewPortH - contentH) / 2, viewPortW, viewPortH);
 
         // reset director's member variables to fit visible rect
         var director = cc.Director.getInstance();
         director._winSizeInPoints = this.getDesignResolutionSize();
 
-        if (cc.renderContextType === cc.CANVAS) {
+        if (isCanvas) {
             if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
                 var locHeight = Math.abs(locScreenSizeH - viewPortH) / 2;
                 cc.canvas.width = viewPortW;
@@ -632,8 +633,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 }
 
                 var touch = cc.Touches[unusedIndex] = new cc.Touch();
-                touch.setTouchInfo(unusedIndex, (x + locViewPortRect.x) / locScaleX,
-                    (y + locViewPortRect.y) / locScaleY);
+                touch.setTouchInfo(unusedIndex, (x - locViewPortRect.x) / locScaleX,
+                    (y - locViewPortRect.y) / locScaleY);
 
                 var interObj = 0 | unusedIndex;
                 cc.TouchesIntergerDict[id] = interObj;
@@ -670,8 +671,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
             var touch = cc.Touches[index];
             if (touch) {
-                touch.setTouchInfo(index, (x + locViewPortX) / locScaleX,
-                    (y + locViewPortY) / locScaleY);
+                touch.setTouchInfo(index, (x - locViewPortX) / locScaleX,
+                    (y - locViewPortY) / locScaleY);
                 arr.push(touch);
             }
             else {
@@ -736,8 +737,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             var touch = cc.Touches[index];
             if (touch) {
                 //cc.log("Ending touches with id: " + id + ", x=" + x + ", y=" + y);
-                touch.setTouchInfo(index, (x + locViewPortRect.x) / locScaleX,
-                    (y + locViewPortRect.y) / locScaleY);
+                touch.setTouchInfo(index, (x - locViewPortRect.x) / locScaleX,
+                    (y - locViewPortRect.y) / locScaleY);
 
                 arr.push(touch);
 
