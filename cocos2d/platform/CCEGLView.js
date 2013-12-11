@@ -416,7 +416,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 cc.canvas.height = viewPortH;
                 cc.container.style.width = viewPortW +"px";
                 cc.container.style.height = viewPortH +"px";
-                cc.renderContext.translate(-this._viewPortRect.x, -this._viewPortRect.y + contentH);
+                cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + contentH);
             }
         } else {
             // reset director's member variables to fit visible rect
