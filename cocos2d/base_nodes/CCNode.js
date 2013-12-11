@@ -2153,8 +2153,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         cc.Node.prototype.ctor.call(this);
         this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.WHITE;
-        this._realColor = cc.WHITE;
+        this._displayedColor = cc.white();
+        this._realColor = cc.white();
         this._cascadeColorEnabled = false;
         this._cascadeOpacityEnabled = false;
     },
