@@ -80,6 +80,26 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
     _spritesGenerated: false,
     _spriteFrameRotated: false,
+    _textureLoaded:false,
+    _loadedEventListeners: null,
+
+    textureLoaded:function(){
+        return this._textureLoaded;
+    },
+
+    addLoadedEventListener:function(callback, target){
+        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    _callLoadedEventCallbacks:function(){
+        this._textureLoaded = true;
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0, len = locListeners.length;  i < len; i++){
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
+    },
 
     _updateCapInset: function () {
         var insets, locInsetLeft = this._insetLeft, locInsetTop = this._insetTop, locInsetRight = this._insetRight;
@@ -179,6 +199,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._color = cc.white();
         this._opacity = 255;
         this._capInsets = cc.RectZero();
+        this._loadedEventListeners = [];
     },
 
     /** Original sprite's size. */
@@ -368,6 +389,25 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
         if(!file)
             throw "cc.Scale9Sprite.initWithFile(): file should be non-null";
+
+        var texture = cc.TextureCache.getInstance().textureForKey(file);
+        if (!texture) {
+            texture = cc.TextureCache.getInstance().addImage(file);
+            var locLoaded = texture.isLoaded();
+            this._textureLoaded = locLoaded;
+            if(!locLoaded){
+                texture.addLoadedEventListener(function(sender){
+                    // the texture is rotated on Canvas render mode, so isRotated always is false.
+                    var preferredSize = this._preferredSize;
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                    var size  = sender.getContentSize();
+                    this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
+                    this.setPreferredSize(preferredSize);
+                    this._positionsAreDirty = true;
+                    this._callLoadedEventCallbacks();
+                }, this);
+            }
+        }
         var batchnode = cc.SpriteBatchNode.create(file, 9);
         return this.initWithBatchNode(batchnode, rect, false, capInsets);
     },
@@ -387,8 +427,9 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             throw "cc.Scale9Sprite.initWithSpriteFrame(): spriteFrame should be non-null and its texture should be non-null";
 
         capInsets = capInsets || cc.RectZero();
-
-        if(!spriteFrame.textureLoaded()){
+        var locLoaded = spriteFrame.textureLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
             spriteFrame.addLoadedEventListener(function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
@@ -396,6 +437,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
+                this._callLoadedEventCallbacks();
             },this);
         }
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
@@ -478,14 +520,17 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
         if (this._scale9Image != batchNode){
             this._scale9Image = batchNode;
-            var tmpTexture = batchNode.getTexture();
-            if(!tmpTexture.isLoaded()){
-                tmpTexture.addLoadedEventListener(function(sender){
-                    this._positionsAreDirty = true;
-                },this);
-            }
         }
-
+        var tmpTexture = batchNode.getTexture();
+        var locLoaded = tmpTexture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            tmpTexture.addLoadedEventListener(function(sender){
+                this._positionsAreDirty = true;
+                this._callLoadedEventCallbacks();
+            },this);
+            return;
+        }
         var locScale9Image = this._scale9Image;
         locScale9Image.removeAllChildren(true);
 
@@ -777,7 +822,9 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     setSpriteFrame: function (spriteFrame) {
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
-        if(!spriteFrame.textureLoaded()){
+        var locLoaded = spriteFrame.textureLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
             spriteFrame.addLoadedEventListener(function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
@@ -785,6 +832,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
+                this._callLoadedEventCallbacks();
             },this);
         }
         this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, cc.RectZero());
