@@ -179,27 +179,50 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         texType = texType||ccs.TextureResType.local;
         this._normalFileName = normal;
         this._normalTexType = texType;
-
+        var buttonNormalRenderer = this._buttonNormalRenderer;
         switch (this._normalTexType) {
             case ccs.TextureResType.local:
-                this._buttonNormalRenderer.initWithFile(normal);
+                buttonNormalRenderer.initWithFile(normal);
                 break;
             case ccs.TextureResType.plist:
-                this._buttonNormalRenderer.initWithSpriteFrameName(normal);
+                buttonNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
                 break;
         }
 
-        this._buttonNormalRenderer.setColor(this.getColor());
-        this._buttonNormalRenderer.setOpacity(this.getOpacity());
+        buttonNormalRenderer.setColor(this.getColor());
+        buttonNormalRenderer.setOpacity(this.getOpacity());
 
         if (this._scale9Enabled) {
-            this._buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
+            buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
+
+        if(buttonNormalRenderer.textureLoaded()){
+            this._normalTextureSize = buttonNormalRenderer.getContentSize();
+        }else{
+            buttonNormalRenderer.addLoadedEventListener(this._textureLoadedCallBack,this);
+            this._normalTextureSize.width = this._customSize.width;
+            this._normalTextureSize.height = this._customSize.height;
+        }
+
         this.updateAnchorPoint();
         this.normalTextureScaleChangedWithSize();
+    },
+
+    _textureLoadedCallBack:function(render){
+        if(render==this._buttonNormalRenderer){
+            this._normalTextureSize = render.getContentSize();
+            this.normalTextureScaleChangedWithSize();
+        }
+        if(render==this._buttonClickedRenderer){
+            this._pressedTextureSize = render.getContentSize();
+            this.pressedTextureScaleChangedWithSize();
+        }
+        if(render==this._buttonDisableRenderer){
+            this._disabledTextureSize = render.getContentSize();
+            this.disabledTextureScaleChangedWithSize();
+        }
     },
 
     /**
@@ -214,25 +237,33 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         texType = texType || ccs.TextureResType.local;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
-
+        var buttonClickedRenderer = this._buttonClickedRenderer;
         switch (this._pressedTexType) {
             case ccs.TextureResType.local:
-                this._buttonClickedRenderer.initWithFile(selected);
+                buttonClickedRenderer.initWithFile(selected);
                 break;
             case ccs.TextureResType.plist:
-                this._buttonClickedRenderer.initWithSpriteFrameName(selected);
+                buttonClickedRenderer.initWithSpriteFrameName(selected);
                 break;
             default:
                 break;
         }
 
-        this._buttonClickedRenderer.setColor(this.getColor());
-        this._buttonClickedRenderer.setOpacity(this.getOpacity());
+        buttonClickedRenderer.setColor(this.getColor());
+        buttonClickedRenderer.setOpacity(this.getOpacity());
 
         if (this._scale9Enabled) {
-            this._buttonClickedRenderer.setCapInsets(this._capInsetsNormal);
+            buttonClickedRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._pressedTextureSize = this._buttonClickedRenderer.getContentSize();
+
+        if(buttonClickedRenderer.textureLoaded()){
+            this._pressedTextureSize = buttonClickedRenderer.getContentSize();
+        }else{
+            buttonClickedRenderer.addLoadedEventListener(this._textureLoadedCallBack,this);
+            this._pressedTextureSize.width = this._customSize.width;
+            this._pressedTextureSize.height = this._customSize.height;
+        }
+
         this.updateAnchorPoint();
         this.pressedTextureScaleChangedWithSize();
     },
@@ -249,25 +280,33 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         texType = texType || ccs.TextureResType.local;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
-
+        var buttonDisableRenderer = this._buttonDisableRenderer;
         switch (this._disabledTexType) {
             case ccs.TextureResType.local:
-                this._buttonDisableRenderer.initWithFile(disabled);
+                buttonDisableRenderer.initWithFile(disabled);
                 break;
             case ccs.TextureResType.plist:
-                this._buttonDisableRenderer.initWithSpriteFrameName(disabled);
+                buttonDisableRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
                 break;
         }
 
-        this._buttonDisableRenderer.setColor(this.getColor());
-        this._buttonDisableRenderer.setOpacity(this.getOpacity());
+        buttonDisableRenderer.setColor(this.getColor());
+        buttonDisableRenderer.setOpacity(this.getOpacity());
 
         if (this._scale9Enabled) {
-            this._buttonDisableRenderer.setCapInsets(this._capInsetsNormal);
+            buttonDisableRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._disabledTextureSize = this._buttonDisableRenderer.getContentSize();
+
+        if(buttonDisableRenderer.textureLoaded()){
+            this._disabledTextureSize = buttonDisableRenderer.getContentSize();
+        }else{
+            buttonDisableRenderer.addLoadedEventListener(this._textureLoadedCallBack,this);
+            this._disabledTextureSize.width = this._customSize.width;
+            this._disabledTextureSize.height = this._customSize.height;
+        }
+
         this.updateAnchorPoint();
         this.disabledTextureScaleChangedWithSize();
     },
