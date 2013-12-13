@@ -317,6 +317,11 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         context.globalCompositeOperation = "destination-atop";
         context.drawImage(locCache, 0, 0);
         context.restore();
+
+        // Release cache memory
+        locCache.width = 0;
+        locCache.height = 0;
+        this._cacheCanvasCtx.clearRect(0, 0, 1, 1);
     },
 
     /**
