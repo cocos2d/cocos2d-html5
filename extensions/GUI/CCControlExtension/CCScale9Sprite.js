@@ -83,10 +83,19 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     _textureLoaded:false,
     _loadedEventListeners: null,
 
+    /**
+     * return  texture is loaded
+     * @returns {boolean}
+     */
     textureLoaded:function(){
         return this._textureLoaded;
     },
 
+    /**
+     * add texture loaded event listener
+     * @param {Function} callback
+     * @param {Object} target
+     */
     addLoadedEventListener:function(callback, target){
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
     },
