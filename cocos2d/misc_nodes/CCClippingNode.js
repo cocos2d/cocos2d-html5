@@ -52,8 +52,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _stencil:null,
     _alphaThreshold:0,
     _inverted:false,
-    _cacheCanvas:null,
-    _cacheCanvasCtx:null,
 
     ctor:function(){
         cc.Node.prototype.ctor.call(this);
@@ -89,8 +87,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         this._stencil = stencil;
         this._alphaThreshold = 1;
         this._inverted = false;
-        this._cacheCanvas = document.createElement("canvas");
-        this._cacheCanvasCtx = this._cacheCanvas.getContext("2d");
     },
 
     onEnter:function(){
@@ -289,7 +285,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // - nil stencil node
         // - or stencil node invisible:
         // and not inverted
-        if ((!this._stencil || !this._stencil.isVisible())) {
+        if (!this._stencil || !this._stencil.isVisible()) {
             if(!this._inverted) {
                 this._super(ctx);
             }
@@ -299,10 +295,11 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         var context = ctx || cc.renderContext;
         // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
         var canvas = context.canvas;
-        var locCache = this._cacheCanvas;
+        var locCache = cc.ClippingNode._getSharedCache();
         locCache.width = canvas.width;
         locCache.height = canvas.height;
-        this._cacheCanvasCtx.drawImage(canvas, 0, 0);
+        var locCacheCtx = locCache.getContext("2d");
+        locCacheCtx.drawImage(canvas, 0, 0);
 
         context.save();
         // Draw everything first using node visit function
@@ -321,11 +318,6 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         context.globalCompositeOperation = "destination-atop";
         context.drawImage(locCache, 0, 0);
         context.restore();
-
-        // Release cache memory
-        locCache.width = 0;
-        locCache.height = 0;
-        this._cacheCanvasCtx.clearRect(0, 0, 1, 1);
     },
 
     /**
@@ -399,6 +391,11 @@ if(cc.Browser.supportWebGL){
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;
 cc.ClippingNode._layer = null;
+cc.ClippingNode._sharedCache = null;
+
+cc.ClippingNode._getSharedCache = function() {
+    return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
+}
 
 /**
  * Creates and initializes a clipping node with an other node as its stencil.                               <br/>
