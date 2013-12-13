@@ -90,9 +90,16 @@ ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
         this._itemWidth = itemWidth;
         this._itemHeight = itemHeight;
         this._startCharMap = startCharMap;
-        this._labelAtlasRenderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
+        var renderer = this._labelAtlasRenderer;
+        renderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
         this.updateAnchorPoint();
         this.labelAtlasScaleChangedWithSize();
+
+        if (!renderer.textureLoaded()) {
+            renderer.addLoadedEventListener(function () {
+                this.labelAtlasScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**

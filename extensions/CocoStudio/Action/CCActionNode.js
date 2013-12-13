@@ -309,7 +309,8 @@ ccs.ActionNode = ccs.Class.extend({
     stopAction: function () {
         var node = this.getActionNode();
         if (node != null && this._action != null) {
-            node.stopAction(this._action);
+            if(!this._action.isDone())
+                node.stopAction(this._action);
         }
     },
 
