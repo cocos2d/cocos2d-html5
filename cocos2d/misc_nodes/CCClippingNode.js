@@ -289,8 +289,12 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // - nil stencil node
         // - or stencil node invisible:
         // and not inverted
-        if ((!this._stencil || !this._stencil.isVisible()) && !this._inverted)
+        if ((!this._stencil || !this._stencil.isVisible())) {
+            if(!this._inverted) {
+                this._super(ctx);
+            }
             return;
+        }
 
         var context = ctx || cc.renderContext;
         // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
