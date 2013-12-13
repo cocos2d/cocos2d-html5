@@ -205,7 +205,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
 
             // Set up the mask with the Mask shader
             this._stencil = maskSprite;
-            this._maskSize = this._stencil.getContentSize();
+            var maskSize = this._maskSize = this._stencil.getContentSize();
             this._stencil.setPosition(cc.p(0, 0));
 
             // Init clipper for mask
