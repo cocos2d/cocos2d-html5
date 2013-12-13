@@ -74,22 +74,37 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
         texType = texType || ccs.TextureResType.local;
         this._textureFile = fileName;
         this._imageTexType = texType;
+        var imageRenderer = this._imageRenderer
         switch (this._imageTexType) {
             case ccs.TextureResType.local:
-                this._imageRenderer.initWithFile(fileName);
+                imageRenderer.initWithFile(fileName);
                 break;
             case ccs.TextureResType.plist:
-                this._imageRenderer.initWithSpriteFrameName(fileName);
+                imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._imageRenderer.setColor(this.getColor());
-        this._imageRenderer.setOpacity(this.getOpacity());
-        if (this._scale9Enabled) {
-            this._imageRenderer.setCapInsets(this._capInsets);
+        imageRenderer.setColor(this.getColor());
+        imageRenderer.setOpacity(this.getOpacity());
+
+        if(imageRenderer.textureLoaded()){
+            this._imageTextureSize = imageRenderer.getContentSize();
+        }else{
+            imageRenderer.addLoadedEventListener(function(){
+                this._imageTextureSize = imageRenderer.getContentSize();
+                if (imageRenderer.setCapInsets) {
+                    imageRenderer.setCapInsets(this._capInsets);
+                }
+                this.imageTextureScaleChangedWithSize();
+            },this);
+            this._imageTextureSize.width = this._customSize.width;
+            this._imageTextureSize.height = this._customSize.height;
         }
-        this._imageTextureSize = this._imageRenderer.getContentSize();
+
+        if (this._scale9Enabled) {
+            imageRenderer.setCapInsets(this._capInsets);
+        }
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },
