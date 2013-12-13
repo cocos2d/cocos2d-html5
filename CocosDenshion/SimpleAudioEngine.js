@@ -301,7 +301,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         if (locSoundList.hasOwnProperty(locPlayingMusic)) {
             var au = locSoundList[locPlayingMusic].audio;
             au.pause();
-            au.currentTime = au.duration;
+            au.currentTime = au.duration ? au.duration : 0;
             if (releaseData)
                 delete locSoundList[locPlayingMusic];
             cc.AudioEngine.isMusicPlaying = false;
@@ -573,7 +573,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             var au = this._audioIDList[audioID];
             if (!au.ended) {
                 au.loop = false;
-                au.currentTime = au.duration;
+                au.currentTime = au.duration ? au.duration : 0;
             }
         }
     },
@@ -592,7 +592,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                 au = tmpArr[j];
                 if (!au.ended) {
                     au.loop = false;
-                    au.currentTime = au.duration;
+                    au.currentTime = au.duration ? au.duration : 0;
                 }
             }
         }
@@ -669,7 +669,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                 if (!au.ended) {
                     au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                     au.loop = false;
-                    au.currentTime = au.duration;
+                    au.currentTime = au.duration ? au.duration : 0;
                 }
             }
         }
@@ -745,7 +745,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                         if (!au.ended) {
                             au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                             au.loop = false;
-                            au.currentTime = au.duration;
+                            au.currentTime = au.duration ? au.duration : 0;
                         }
                     }
                     continue;
@@ -1059,7 +1059,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             if (!au.ended) {
                 au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                 au.loop = false;
-                au.currentTime = au.duration;
+                au.currentTime = au.duration ? au.duration : 0;
             }
         }
         this._deletePlayingTaskFromList(audioID);
@@ -1080,7 +1080,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                 if (!au.ended) {
                     au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                     au.loop = false;
-                    au.currentTime = au.duration;
+                    au.currentTime = au.duration ? au.duration : 0;
                 }
             }
         }
@@ -1255,11 +1255,15 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         volume = volume == null ? 1 : volume;
         offset = offset || 0;
 
+        var locCtx = this._ctx;
         sfxCache.key = key;
         sfxCache.sourceNode = this._ctx.createBufferSource();
         sfxCache.sourceNode.buffer = this._audioData[key];
         sfxCache.sourceNode.loop = loop;
-        sfxCache.volumeNode = this._ctx.createGain();
+        if(locCtx.createGain)
+            sfxCache.volumeNode = this._ctx.createGain();
+        else
+            sfxCache.volumeNode = this._ctx.createGainNode();
         sfxCache.volumeNode.gain.value = volume;
 
         sfxCache.sourceNode.connect(sfxCache.volumeNode);

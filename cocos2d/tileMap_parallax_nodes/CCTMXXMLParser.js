@@ -440,7 +440,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @param {object} Var
      */
     setProperties:function (Var) {
-        this._properties.push(Var);
+        this._properties = Var;
     },
 
     /**
@@ -509,11 +509,11 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             // The parent element is the map
             var propertyArr = map.querySelectorAll("map > properties >  property");
             if (propertyArr) {
+                var aPropertyDict = {};
                 for (i = 0; i < propertyArr.length; i++) {
-                    var aProperty = {};
-                    aProperty[propertyArr[i].getAttribute('name')] = propertyArr[i].getAttribute('value');
-                    this.setProperties(aProperty);
+                    aPropertyDict[propertyArr[i].getAttribute('name')] = propertyArr[i].getAttribute('value');
                 }
+                this.setProperties(aPropertyDict);
             }
         }
 

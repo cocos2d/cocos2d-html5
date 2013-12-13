@@ -148,7 +148,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     _scrollToBottom:function(){
         if (cc.Browser.isMobile && cc.Browser.type != "baidubrowser") {
-            cc.canvas.height = this._ele.clientHeight + 100;
+            cc.container.style.height = (this._ele.clientHeight + 100) + "px";
             window.location.href="#bottom";
         }
     },
@@ -159,7 +159,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         locScreenSize.height = this._ele.clientHeight;
         var userAgent = navigator.userAgent.toLowerCase();
         if (userAgent.indexOf("iphone") > -1 && userAgent.indexOf("version/7.0") < 0) {
-            locScreenSize.height +=(locScreenSize.width/320)*60;       //TODO
+            locScreenSize.height += (locScreenSize.width/320)*60;       //TODO
         }
     },
 
@@ -362,41 +362,42 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             this.initialize();
         }
 
-        var locScreenSize = this._screenSize, locDesignResolutionSize = this._designResolutionSize;
+        var locScreenSizeW = this._screenSize.width, locScreenSizeH = this._screenSize.height,
+            locDesignResolutionSize = this._designResolutionSize;
         var locResolutionPolicy = this._resolutionPolicy;
 
-        this._scaleX = locScreenSize.width / locDesignResolutionSize.width;
-        this._scaleY = locScreenSize.height / locDesignResolutionSize.height;
+        this._scaleX = locScreenSizeW / locDesignResolutionSize.width;
+        this._scaleY = locScreenSizeH / locDesignResolutionSize.height;
 
         if (locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER)
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
-
-        if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
+        else if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
             this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
-
-        if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) {
+        else if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) {
             this._scaleX = this._scaleY;
-            locDesignResolutionSize.width = Math.ceil(locScreenSize.width / this._scaleX);
+            locDesignResolutionSize.width = Math.ceil(locScreenSizeW / this._scaleX);
         }
-
-        if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH) {
+        else if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH) {
             this._scaleY = this._scaleX;
-            locDesignResolutionSize.height = Math.ceil(locScreenSize.height / this._scaleY);
+            locDesignResolutionSize.height = Math.ceil(locScreenSizeH / this._scaleY);
         }
 
         // calculate the rect of viewport
-        var viewPortW = locDesignResolutionSize.width * this._scaleX;
-        var viewPortH = locDesignResolutionSize.height * this._scaleY;
+        var contentW = locDesignResolutionSize.width * this._scaleX,
+            contentH = locDesignResolutionSize.height * this._scaleY;
+        var isCanvas = cc.renderContextType === cc.CANVAS;
+        var viewPortW = isCanvas ? Math.min(contentW, locScreenSizeW) : locScreenSizeW,
+            viewPortH = isCanvas ? Math.min(contentH, locScreenSizeH) : locScreenSizeH;
 
-        this._viewPortRect = cc.rect((locScreenSize.width - viewPortW) / 2, (locScreenSize.height - viewPortH) / 2, viewPortW, viewPortH);
+        this._viewPortRect = cc.rect((viewPortW - contentW) / 2, (viewPortH - contentH) / 2, viewPortW, viewPortH);
 
         // reset director's member variables to fit visible rect
         var director = cc.Director.getInstance();
         director._winSizeInPoints = this.getDesignResolutionSize();
 
-        if (cc.renderContextType === cc.CANVAS) {
+        if (isCanvas) {
             if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-                var locHeight = Math.abs(locScreenSize.height - viewPortH) / 2;
+                var locHeight = Math.abs(locScreenSizeH - viewPortH) / 2;
                 cc.canvas.width = viewPortW;
                 cc.canvas.height = viewPortH;
                 if(cc.Browser.isMobile){
@@ -415,7 +416,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 cc.canvas.height = viewPortH;
                 cc.container.style.width = viewPortW +"px";
                 cc.container.style.height = viewPortH +"px";
-                cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + this._viewPortRect.height);
+                cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + contentH);
             }
         } else {
             // reset director's member variables to fit visible rect

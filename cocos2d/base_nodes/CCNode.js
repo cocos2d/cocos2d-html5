@@ -2153,8 +2153,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         cc.Node.prototype.ctor.call(this);
         this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.WHITE;
-        this._realColor = cc.WHITE;
+        this._displayedColor = cc.white();
+        this._realColor = cc.white();
         this._cascadeColorEnabled = false;
         this._cascadeOpacityEnabled = false;
     },
@@ -2216,8 +2216,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         var selChildren = this._children;
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
-            if(item && item.RGBAProtocol && item._disableCascadeOpacity)
-                item._disableCascadeOpacity();
+            if(item && item.RGBAProtocol)
+                item.updateDisplayedOpacity(255);
         }
     },
 
@@ -2246,9 +2246,9 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor, locRealColor = this._realColor;
-        locDispColor.r = 0|(locRealColor.r * parentColor.r / 255.0);
-        locDispColor.g = 0|(locRealColor.g * parentColor.g / 255.0);
-        locDispColor.b = 0|(locRealColor.b * parentColor.b / 255.0);
+        locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
+        locDispColor.g = 0 | (locRealColor.g * parentColor.g / 255.0);
+        locDispColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
 
         if (this._cascadeColorEnabled) {
             var selChildren = this._children;
@@ -2289,11 +2289,11 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children;
+        var selChildren = this._children, whiteColor = cc.white();
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
-            if(item && item.RGBAProtocol && item._disableCascadeColor)
-                item._disableCascadeColor();
+            if(item && item.RGBAProtocol)
+                item.updateDisplayedColor(whiteColor);
         }
     },
 

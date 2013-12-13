@@ -59,7 +59,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
 
         var plist = xmlDoc.documentElement;
         if (plist.tagName != 'plist')
-            throw "cocos2d: " + path + " is not a plist file";
+            throw "cocos2d: " + path + " is not a plist file or you forgot to preload the plist file";
 
         // Get first real node
         var node = null;
