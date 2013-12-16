@@ -301,7 +301,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         if (locSoundList.hasOwnProperty(locPlayingMusic)) {
             var au = locSoundList[locPlayingMusic].audio;
             au.pause();
-            au.currentTime = au.duration ? au.duration : 0;
+            au.duration && (au.currentTime = au.duration);
             if (releaseData)
                 delete locSoundList[locPlayingMusic];
             cc.AudioEngine.isMusicPlaying = false;
@@ -573,7 +573,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             var au = this._audioIDList[audioID];
             if (!au.ended) {
                 au.loop = false;
-                au.currentTime = au.duration ? au.duration : 0;
+                au.duration && (au.currentTime = au.duration);
             }
         }
     },
@@ -592,7 +592,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                 au = tmpArr[j];
                 if (!au.ended) {
                     au.loop = false;
-                    au.currentTime = au.duration ? au.duration : 0;
+                    au.duration && (au.currentTime = au.duration);
                 }
             }
         }
@@ -669,7 +669,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                 if (!au.ended) {
                     au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                     au.loop = false;
-                    au.currentTime = au.duration ? au.duration : 0;
+                    au.duration && (au.currentTime = au.duration);
                 }
             }
         }
@@ -745,7 +745,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                         if (!au.ended) {
                             au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                             au.loop = false;
-                            au.currentTime = au.duration ? au.duration : 0;
+                            au.duration && (au.currentTime = au.duration);
                         }
                     }
                     continue;
@@ -1059,7 +1059,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             if (!au.ended) {
                 au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                 au.loop = false;
-                au.currentTime = au.duration ? au.duration : 0;
+                au.duration && (au.currentTime = au.duration);
             }
         }
         this._deletePlayingTaskFromList(audioID);
@@ -1080,7 +1080,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                 if (!au.ended) {
                     au.removeEventListener('ended', this._audioEndedCallbackBound, false);
                     au.loop = false;
-                    au.currentTime = au.duration ? au.duration : 0;
+                    au.duration && (au.currentTime = au.duration);
                 }
             }
         }

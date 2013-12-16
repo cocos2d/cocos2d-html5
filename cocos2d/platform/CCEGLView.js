@@ -397,23 +397,24 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         if (isCanvas) {
             if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-                var locHeight = Math.abs(locScreenSizeH - viewPortH) / 2;
-                cc.canvas.width = viewPortW;
-                cc.canvas.height = viewPortH;
+                var offy = Math.ceil((locScreenSizeH - viewPortH) / 2);
+                var offx = Math.ceil((locScreenSizeW - viewPortW) / 2);
+                cc.canvas.width = viewPortW = Math.floor(locScreenSizeW - 2*offx);
+                cc.canvas.height = viewPortH = Math.floor(locScreenSizeH - 2*offy);
                 if(cc.Browser.isMobile){
                     cc.container.style.width = viewPortW +"px";
                     cc.container.style.height = viewPortH +"px";
                 }
-                cc.container.style.textAlign = "center";
-                cc.container.style.verticalAlign = "middle";
                 cc.renderContext.translate(0, viewPortH);
-                this._ele.style.paddingTop = locHeight + "px";
-                this._ele.style.paddingBottom = locHeight + "px";
+                this._ele.style.paddingTop = offy + "px";
+                this._ele.style.paddingBottom = offy + "px";
+                this._ele.style.paddingLeft = offx + "px";
+                this._ele.style.paddingRight = offx + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
             } else if ((locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH)
                 || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) || (locResolutionPolicy === cc.RESOLUTION_POLICY.EXACT_FIT)) {
-                cc.canvas.width = viewPortW;
-                cc.canvas.height = viewPortH;
+                cc.canvas.width = Math.floor(viewPortW);
+                cc.canvas.height = Math.floor(viewPortH);
                 cc.container.style.width = viewPortW +"px";
                 cc.container.style.height = viewPortH +"px";
                 cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + contentH);
@@ -436,20 +437,35 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     _adjustMobileViewPort:function(width,height){
         if(this._isAdjustViewPort){
-            if(width<=320){
+            /*if(width<=320){
                 width = 321;
                 cc.canvas.witdh = width;
                 cc.container.style.width = width+"px";
+            }*/
+            var viewportMetas = {"user-scalable":"no", "maximum-scale":"1.0", "initial-scale":"1.0"},
+                elems = document.getElementsByName("viewport"),
+                vp, content;
+            if(elems.length == 0) {
+                vp = document.createElement("meta");
+                vp.name = "viewport";
+                vp.content = "";
+                document.head.appendChild(vp);
             }
-            var vp = document.getElementById("viewport");
-            var content = "user-scalable=no,target-densitydpi=device-dpi";
+            else vp = elems[0];
+            content = vp.content;
+            for(var key in viewportMetas) {
+                var pattern = new RegExp(key);
+                if(!pattern.test(content)) {
+                    content += (content == "" ? "" : ",") + key + "=" + viewportMetas[key];
+                }
+            }
 
            /* if(height){
                 content ="height="+height+","+content;
-            }*/
+            }
             if(width){
                 content ="width="+width+","+content;
-            }
+            }*/
             vp.content = content;
         }
     },
@@ -466,7 +482,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     setDesignResolutionSize:function (width, height, resolutionPolicy) {
         if(cc.Browser.isMobile){
             this._scrollToBottom();
-            //this._adjustMobileViewPort(cc.originalCanvasSize.width,cc.originalCanvasSize.height);
+            this._adjustMobileViewPort(cc.originalCanvasSize.width,cc.originalCanvasSize.height);
             var self = this;
             var fun = function(){
                 self._adjustSizeToBrowser();
