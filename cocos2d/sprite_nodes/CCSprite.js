@@ -207,7 +207,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
     }
 
-    if ((selColor.r === 0) && (selColor.g === 0) && (selColor.b === 0)) {
+    if (selColor.r + selColor.g + selColor.b < 255) {
         ctx.globalAlpha = a;
         ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
     }
@@ -1271,6 +1271,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _textureLoadedCallback: null,
 
     _textureLoadedCallbackForWebGL: function (sender) {
+        if(this._textureLoaded)
+            return;
+
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
@@ -1291,6 +1294,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _textureLoadedCallbackForCanvas: function (sender) {
+        if(this._textureLoaded)
+            return;
+
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
@@ -1369,10 +1375,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         //this._textureRect_Canvas = cc.RECT_POINTS_TO_PIXELS(rect);                      //this._setTextureCoords(rect);
         var locTextureRect = this._textureRect_Canvas;
         var scaleFactor = cc.CONTENT_SCALE_FACTOR();
-        locTextureRect.x = 0|(rect.x * scaleFactor);
-        locTextureRect.y = 0|(rect.y * scaleFactor);
-        locTextureRect.width = 0|(rect.width * scaleFactor);
-        locTextureRect.height = 0|(rect.height * scaleFactor);
+        locTextureRect.x = 0 | (rect.x * scaleFactor);
+        locTextureRect.y = 0 | (rect.y * scaleFactor);
+        locTextureRect.width = 0 | (rect.width * scaleFactor);
+        locTextureRect.height = 0 | (rect.height * scaleFactor);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
@@ -1662,7 +1668,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
                     this.setTexture(locNewTexture);
-                this.setTextureRect(sender.getRect(), sender._rectRotated, sender.getOriginalSize());
+                this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
+
                 this._callLoadedEventCallbacks();
             }, this);
         }
@@ -1694,7 +1701,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
                     this.setTexture(locNewTexture);
-                this.setTextureRect(sender.getRect(), this._rectRotated, sender.getOriginalSize());
+                this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 this._callLoadedEventCallbacks();
             }, this);
         }

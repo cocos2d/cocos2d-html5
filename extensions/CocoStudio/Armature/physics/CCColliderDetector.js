@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 ccs.PT_RATIO = 32;
-ccs.ColliderFilter = cc.Class.extend({
+/**
+ * Base class for ccs.ColliderFilter
+ * @class
+ * @extends ccs.Class
+ */
+ccs.ColliderFilter = ccs.Class.extend(/** @lends ccs.ColliderFilter# */{
     _collisionType: 0,
     _group: 0,
     ctor: function (collisionType, group) {
@@ -34,7 +39,12 @@ ccs.ColliderFilter = cc.Class.extend({
         shape.group = this._group;
     }
 });
-ccs.ColliderBody = cc.Class.extend({
+/**
+ * Base class for ccs.ColliderBody
+ * @class
+ * @extends ccs.Class
+ */
+ccs.ColliderBody = ccs.Class.extend(/** @lends ccs.ColliderBody# */{
     _shape: null,
     _contourData: null,
     _filter:null,
@@ -47,29 +57,70 @@ ccs.ColliderBody = cc.Class.extend({
             this._calculatedVertexList = [];
         }
     },
+
+    /**
+     * contourData getter
+     * @returns {ccs.ContourData}
+     */
     getContourData: function () {
         return this._contourData;
     },
+
+    /**
+     * contourData setter
+     * @param {ccs.ContourData}contourData
+     */
     setContourData: function (contourData) {
         this._contourData = contourData;
     },
+
+    /**
+     * shape setter
+     * @param {cs.Shape}contourData
+     */
     getShape: function () {
         return this._shape;
     },
+
+    /**
+     * shape getter
+     * @param {cs.Shape} shage
+     */
     setShape: function (shage) {
         this._shape = shage;
     },
+
+    /**
+     * colliderFilter getter
+     * @returns {ccs.ColliderFilter}
+     */
     getColliderFilter: function () {
         return this._filter;
     },
+
+    /**
+     * colliderFilter setter
+     * @param {ccs.ColliderFilter} filter
+     */
     setColliderFilter: function (filter) {
         this._filter = filter;
     },
+
+    /**
+     * get calculated vertex list
+     * @returns {Array}
+     */
     getCalculatedVertexList:function(){
         return this._calculatedVertexList;
     }
 });
-ccs.ColliderDetector = cc.Class.extend({
+
+/**
+ * Base class for ccs.ColliderDetector
+ * @class
+ * @extends ccs.Class
+ */
+ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
     _colliderBodyList: null,
     _bone: null,
     _body: null,
@@ -89,6 +140,11 @@ ccs.ColliderDetector = cc.Class.extend({
         this._filter = new ccs.ColliderFilter();
         return true;
     },
+
+    /**
+     *  add contourData
+     * @param {ccs.ContourData} contourData
+     */
     addContourData: function (contourData) {
         var colliderBody = new ccs.ColliderBody(contourData);
         this._colliderBodyList.push(colliderBody);
@@ -101,11 +157,21 @@ ccs.ColliderDetector = cc.Class.extend({
             }
         }
     },
+
+    /**
+     * add contourData
+     * @param {Array} contourDataList
+     */
     addContourDataList: function (contourDataList) {
         for (var i = 0; i < contourDataList.length; i++) {
             this.addContourData(contourDataList[i]);
         }
     },
+
+    /**
+     * remove contourData
+     * @param contourData
+     */
     removeContourData: function (contourData) {
         var locColliderBodyList = this._colliderBodyList;
         for (var i = 0; i < locColliderBodyList.length; i++) {
@@ -115,10 +181,18 @@ ccs.ColliderDetector = cc.Class.extend({
             }
         }
     },
+
+    /**
+     * remove all body
+     */
     removeAll: function () {
         this._colliderBodyList = [];
     },
 
+    /**
+     * set colliderFilter
+     * @param {ccs.ColliderFilter} filter
+     */
     setColliderFilter: function (filter) {
         this._filter = filter;
         for (var i = 0; i < this._colliderBodyList.length; i++) {
@@ -132,6 +206,10 @@ ccs.ColliderDetector = cc.Class.extend({
         }
     },
 
+    /**
+     * get colliderFilter
+     * @returns {ccs.ColliderFilter}
+     */
     getColliderFilter:function(){
         return this._filter;
     },

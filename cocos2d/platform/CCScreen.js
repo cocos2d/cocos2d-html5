@@ -107,6 +107,7 @@ cc.Screen.getInstance = function () {
     if (!this._instance){
         var screen = new cc.Screen();
         screen.init();
+        this._instance = screen;
     }
     return this._instance;
 };

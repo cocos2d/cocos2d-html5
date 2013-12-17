@@ -22,6 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * TweenType
+ * @type Object
+ */
 ccs.TweenType = {
     tweenEasingMin:-1,
     linear:0,
@@ -69,7 +73,7 @@ ccs.TweenType = {
     tweenEasingMax:10000
 };
 
-ccs.TweenFunction = ccs.TweenFunction || {};
+ccs.TweenFunction = ccs.TweenFunction || ccs.Class.extend({});
 
 ccs.TweenFunction.tweenTo = function (from, change, time, duration, tweenType) {
     var delta = 0;

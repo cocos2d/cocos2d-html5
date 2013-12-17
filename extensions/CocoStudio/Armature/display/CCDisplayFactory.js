@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.DisplayFactory = ccs.DisplayFactory || {};
+ccs.DisplayFactory = ccs.DisplayFactory || ccs.Class.extend({});
 ccs.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
     switch (displayData.displayType) {
         case ccs.DisplayType.sprite:
@@ -78,6 +78,7 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
     switch (bone.getDisplayRenderNodeType()) {
         case ccs.DisplayType.sprite:
             if (dirty){
+                display.updateBlendType(bone.getBlendType());
                 display.updateArmatureTransform();
             }
             break;

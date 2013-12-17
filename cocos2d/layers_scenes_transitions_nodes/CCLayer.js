@@ -676,8 +676,8 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         var selChildren = this._children;
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
-            if(item && item.RGBAProtocol && item._disableCascadeOpacity)
-                item._disableCascadeOpacity();
+            if(item && item.RGBAProtocol)
+                item.updateDisplayedOpacity(255);
         }
     },
 
@@ -750,11 +750,11 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children;
+        var selChildren = this._children, whiteColor = cc.white();
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
-            if(item && item.RGBAProtocol && item._disableCascadeColor)
-                item._disableCascadeColor();
+            if(item && item.RGBAProtocol)
+                item.updateDisplayedColor(whiteColor);
         }
     },
 

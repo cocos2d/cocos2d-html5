@@ -58,7 +58,7 @@ ccs.UICCLabelAtlas.create = function () {
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILabelAtlas = ccs.UIWidget.extend({
+ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
     _labelAtlasRenderer: null,
     _stringValue: "",
     _charMapFileName: "",
@@ -90,9 +90,16 @@ ccs.UILabelAtlas = ccs.UIWidget.extend({
         this._itemWidth = itemWidth;
         this._itemHeight = itemHeight;
         this._startCharMap = startCharMap;
-        this._labelAtlasRenderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
+        var renderer = this._labelAtlasRenderer;
+        renderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
         this.updateAnchorPoint();
         this.labelAtlasScaleChangedWithSize();
+
+        if (!renderer.textureLoaded()) {
+            renderer.addLoadedEventListener(function () {
+                this.labelAtlasScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**
@@ -160,6 +167,10 @@ ccs.UILabelAtlas = ccs.UIWidget.extend({
         }
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "LabelAtlase";
     },
@@ -172,7 +183,14 @@ ccs.UILabelAtlas = ccs.UIWidget.extend({
         this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap);
     }
 });
-
+/**
+ * allocates and initializes a UILabelAtlas.
+ * @constructs
+ * @return {ccs.UILabelAtlas}
+ * @example
+ * // example
+ * var uiLabelAtlas = ccs.UILabelAtlas.create();
+ */
 ccs.UILabelAtlas.create = function () {
     var uiLabelAtlas = new ccs.UILabelAtlas();
     if (uiLabelAtlas && uiLabelAtlas.init()) {

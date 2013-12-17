@@ -65,7 +65,9 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * The stencil node will be retained, and its parent will be set to this clipping node.
      * @param {cc.Node} [stencil=null]
      */
-    init:function(stencil){
+    init:null,
+
+    _initForWebGL:function(stencil){
         this._stencil = stencil;
 
         this._alphaThreshold = 1;
@@ -79,6 +81,12 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             cc.ClippingNode._init_once = false;
         }
         return true;
+    },
+
+    _initForCanvas:function(stencil){
+        this._stencil = stencil;
+        this._alphaThreshold = 1;
+        this._inverted = false;
     },
 
     onEnter:function(){
@@ -101,7 +109,9 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.Node.prototype.onExit.call(this);
     },
 
-    visit:function(ctx){
+    visit:null,
+
+    _visitForWebGL:function(ctx){
         var gl = ctx || cc.renderContext;
 
         // if stencil buffer disabled
@@ -270,6 +280,46 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.ClippingNode._layer--;
     },
 
+    _visitForCanvas:function(ctx){
+        // return fast (draw nothing if:
+        // - nil stencil node
+        // - or stencil node invisible:
+        // and not inverted
+        if (!this._stencil || !this._stencil.isVisible()) {
+            if(!this._inverted) {
+                this._super(ctx);
+            }
+            return;
+        }
+
+        var context = ctx || cc.renderContext;
+        // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
+        var canvas = context.canvas;
+        var locCache = cc.ClippingNode._getSharedCache();
+        locCache.width = canvas.width;
+        locCache.height = canvas.height;
+        var locCacheCtx = locCache.getContext("2d");
+        locCacheCtx.drawImage(canvas, 0, 0);
+
+        context.save();
+        // Draw everything first using node visit function
+        this._super(context);
+
+        context.globalCompositeOperation = this._inverted ? "destination-out" : "destination-in";
+
+        this.transform(context);
+        this._stencil.visit();
+
+        context.restore();
+
+        // Redraw the cached canvas, so that the cliped area shows the background etc.
+        context.save();
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        context.globalCompositeOperation = "destination-atop";
+        context.drawImage(locCache, 0, 0);
+        context.restore();
+    },
+
     /**
      * The cc.Node to use as a stencil to do the clipping.                                   <br/>
      * The stencil node will be retained. This default to nil.
@@ -282,7 +332,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     /**
      * @param {cc.Node} stencil
      */
-    setStencil:function(stencil){
+    setStencil:function(stencil) {
         this._stencil = stencil;
     },
 
@@ -329,9 +379,23 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     }
 });
 
+if(cc.Browser.supportWebGL){
+    //WebGL
+    cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForWebGL;
+    cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForWebGL;
+}else{
+    cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForCanvas;
+    cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForCanvas;
+}
+
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;
 cc.ClippingNode._layer = null;
+cc.ClippingNode._sharedCache = null;
+
+cc.ClippingNode._getSharedCache = function() {
+    return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
+}
 
 /**
  * Creates and initializes a clipping node with an other node as its stencil.                               <br/>

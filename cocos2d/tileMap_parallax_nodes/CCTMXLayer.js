@@ -72,13 +72,19 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _cacheCanvas:null,
     _cacheContext:null,
     _cacheTexture:null,
+    // Sub caches for avoid Chrome big image draw issue
+    _subCacheCanvas:null,
+    _subCacheContext:null,
+    _subCacheCount:0,
+    _subCacheWidth:0,
+    // Maximum pixel number by cache, a little more than 3072*3072, real limit is 4096*4096
+    _maxCachePixel:10000000,
 
     /**
      *  Constructor
      */
     ctor:function () {
         cc.SpriteBatchNode.prototype.ctor.call(this);
-        this._children = [];
         this._descendants = [];
 
         this._layerSize = cc.SizeZero();
@@ -105,13 +111,47 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Node.prototype.setContentSize.call(this, size);
 
         if(cc.renderContextType === cc.CANVAS){
+            var eglViewer = cc.EGLView.getInstance();
             var locCanvas = this._cacheCanvas;
-            locCanvas.width = 0|(size.width * 1.5);
-            locCanvas.height = 0|(size.height * 1.5);
+
+            //locCanvas.width = 0|(size.width * 1.5 * eglViewer._scaleX);
+            //locCanvas.height = 0|(size.height * 1.5 * eglViewer._scaleY);
+
+            //TODO: to consider for contentScaleFactor
+            var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+            locCanvas.width = 0 | (size.width * 1.5 * scaleFactor);
+            locCanvas.height = 0 | (size.height * 1.5 * scaleFactor);
+
             this._cacheContext.translate(0, locCanvas.height);
             var locContentSize = this._cacheTexture._contentSize;
             locContentSize.width = locCanvas.width;
             locContentSize.height = locCanvas.height;
+
+            // Init sub caches if needed
+            var totalPixel = locCanvas.width * locCanvas.height;
+            if(totalPixel > this._maxCachePixel) {
+                if(!this._subCacheCanvas) this._subCacheCanvas = [];
+                if(!this._subCacheContext) this._subCacheContext = [];
+
+                this._subCacheCount = Math.ceil( totalPixel / this._maxCachePixel );
+                var locSubCacheCanvas = this._subCacheCanvas, i;
+                for(i = 0; i < this._subCacheCount; i++) {
+                    if(!locSubCacheCanvas[i]) {
+                        locSubCacheCanvas[i] = document.createElement('canvas');
+                        this._subCacheContext[i] = locSubCacheCanvas[i].getContext('2d');
+                    }
+                    var tmpCanvas = locSubCacheCanvas[i];
+                    tmpCanvas.width = this._subCacheWidth = Math.round( locCanvas.width / this._subCacheCount );
+                    tmpCanvas.height = locCanvas.height;
+                }
+                // Clear wasted cache to release memory
+                for(i = this._subCacheCount; i < locSubCacheCanvas.length; i++) {
+                    tmpCanvas.width = 0;
+                    tmpCanvas.height = 0;
+                }
+            }
+            // Otherwise use count as a flag to disable sub caches
+            else this._subCacheCount = 0;
         }
     },
 
@@ -131,11 +171,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @override
      * @param {CanvasRenderingContext2D} ctx
      */
-    visit:function (ctx) {
-        if (cc.renderContextType === cc.WEBGL) {
-            cc.SpriteBatchNode.prototype.visit.call(this, ctx);
-            return;
-        }
+    visit: null,
+
+    _visitForCanvas: function (ctx) {
         var context = ctx || cc.renderContext;
         // quick return if not visible
         if (!this._visible)
@@ -146,6 +184,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var i, locChildren = this._children;
 
         if (this._cacheDirty) {
+            //
+            var eglViewer = cc.EGLView.getInstance();
+            eglViewer._setScaleXYForRenderTexture();
             //add dirty region
             var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
             locCacheContext.clearRect(0, 0, locCacheCanvas.width, -locCacheCanvas.height);
@@ -159,6 +200,16 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 }
             }
             locCacheContext.restore();
+            // Update sub caches if needed
+            if(this._subCacheCount > 0) {
+                var subCacheW = this._subCacheWidth, subCacheH = locCacheCanvas.height;
+                for(i = 0; i < this._subCacheCount; i++) {
+                    this._subCacheContext[i].drawImage(locCacheCanvas, i * subCacheW, 0, subCacheW, subCacheH, 0, 0, subCacheW, subCacheH);
+                }
+            }
+
+            //reset Scale
+            eglViewer._resetScale();
             this._cacheDirty = false;
         }
         // draw RenderTexture
@@ -176,10 +227,25 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var context = ctx || cc.renderContext;
         //context.globalAlpha = this._opacity / 255;
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
+        var eglViewer = cc.EGLView.getInstance();
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
-        if (locCacheCanvas)
-            context.drawImage(locCacheCanvas, posX, -(posY + locCacheCanvas.height));
+        if (locCacheCanvas) {
+            var locSubCacheCount = this._subCacheCount, locCanvasHeight = locCacheCanvas.height * eglViewer._scaleY;
+            if(locSubCacheCount > 0) {
+                var locSubCacheCanvasArr = this._subCacheCanvas;
+                for(var i = 0; i < locSubCacheCount; i++){
+                    var selSubCanvas = locSubCacheCanvasArr[i];
+                    context.drawImage(locSubCacheCanvasArr[i], 0, 0, selSubCanvas.width, selSubCanvas.height,
+                        posX + i * this._subCacheWidth, -(posY + locCanvasHeight), selSubCanvas.width * eglViewer._scaleX, locCanvasHeight);
+                }
+            } else{
+                //context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                //    posX, -(posY + locCacheCanvas.height ), locCacheCanvas.width, locCacheCanvas.height );
+                context.drawImage(locCacheCanvas, 0, 0, locCacheCanvas.width, locCacheCanvas.height,
+                    posX, -(posY + locCanvasHeight), locCacheCanvas.width * eglViewer._scaleX, locCanvasHeight);
+            }
+        }
     },
 
     /**
@@ -916,8 +982,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
 if(cc.Browser.supportWebGL){
     cc.TMXLayer.prototype.draw = cc.SpriteBatchNode.prototype.draw;
+    cc.TMXLayer.prototype.visit = cc.SpriteBatchNode.prototype.visit;
 }else{
     cc.TMXLayer.prototype.draw = cc.TMXLayer.prototype._drawForCanvas;
+    cc.TMXLayer.prototype.visit = cc.TMXLayer.prototype._visitForCanvas;
 }
 
 /**

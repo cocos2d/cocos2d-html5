@@ -94,14 +94,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._ele = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
         this._viewName = "Cocos2dHTML5";
 
-        this._designResolutionSize = cc.SizeZero();
-        this._originalDesignResolutionSize = cc.SizeZero();
+        this._designResolutionSize = cc.size(cc.canvas.width, cc.canvas.height);
+        this._originalDesignResolutionSize = cc.size(cc.canvas.width, cc.canvas.height);
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
         this._contentTranslateLeftTop = {left:0, top:0};
         this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
 
-        cc.VisibleRect.init(this._screenSize);
+        cc.VisibleRect.init(this.getVisibleSize());
 
         this._hDC = cc.canvas;
         this._hRC = cc.renderContext;
@@ -147,21 +147,20 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     _scrollToBottom:function(){
-        if(cc.Browser.isMobile){
-            cc.canvas.height = this._ele.clientHeight + 100;
+        if (cc.Browser.isMobile && cc.Browser.type != "baidubrowser") {
+            cc.container.style.height = (this._ele.clientHeight + 100) + "px";
             window.location.href="#bottom";
         }
-
     },
 
     _initScreenSize:function(){
         var locScreenSize = this._screenSize;
         locScreenSize.width = this._ele.clientWidth;
         locScreenSize.height = this._ele.clientHeight;
-        if(navigator.userAgent.match(/iPhone/i)){
-            locScreenSize.height +=(locScreenSize.width/320)*60;       //TODO
+        var userAgent = navigator.userAgent.toLowerCase();
+        if (userAgent.indexOf("iphone") > -1 && userAgent.indexOf("version/7.0") < 0) {
+            locScreenSize.height += (locScreenSize.width/320)*60;       //TODO
         }
-        cc.VisibleRect.init(this._screenSize);
     },
 
     _setupViewport:function(isWidth, wohValue){
@@ -216,11 +215,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     // hack
-    _adjustSizeKeepCanvasSize:function () {
-        if (!("opengl" in sys.capabilities))
-            cc.renderContext.translate(0, cc.canvas.height);
-        this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
-        this.setDesignResolutionSize();
+    _adjustSizeKeepCanvasSize:function (width, height) {
+        this._screenSize.width = width;
+        this._screenSize.height = height;
+
+        var designWidth = this._originalDesignResolutionSize.width;
+        var designHeight = this._originalDesignResolutionSize.height;
+        if(designWidth>0)
+            this.__setDesignResolutionSize(designWidth,designHeight,this._resolutionPolicy);
     },
 
     /**
@@ -344,7 +346,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     __setDesignResolutionSize:function(width, height, resolutionPolicy){
-        this._adjustSizeToBrowser();
         cc.Assert(resolutionPolicy !== cc.RESOLUTION_POLICY.UNKNOWN, "should set resolutionPolicy");
         if (width == 0 || height == 0)
             return;
@@ -361,58 +362,62 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             this.initialize();
         }
 
-        var locScreenSize = this._screenSize, locDesignResolutionSize = this._designResolutionSize;
+        var locScreenSizeW = this._screenSize.width, locScreenSizeH = this._screenSize.height,
+            locDesignResolutionSize = this._designResolutionSize;
         var locResolutionPolicy = this._resolutionPolicy;
 
-        this._scaleX = locScreenSize.width / locDesignResolutionSize.width;
-        this._scaleY = locScreenSize.height / locDesignResolutionSize.height;
+        this._scaleX = locScreenSizeW / locDesignResolutionSize.width;
+        this._scaleY = locScreenSizeH / locDesignResolutionSize.height;
 
         if (locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER)
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
-
-        if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
+        else if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
             this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
-
-        if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) {
+        else if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) {
             this._scaleX = this._scaleY;
-            locDesignResolutionSize.width = Math.ceil(locScreenSize.width / this._scaleX);
+            locDesignResolutionSize.width = Math.ceil(locScreenSizeW / this._scaleX);
         }
-
-        if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH) {
+        else if (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH) {
             this._scaleY = this._scaleX;
-            locDesignResolutionSize.height = Math.ceil(locScreenSize.height / this._scaleY);
+            locDesignResolutionSize.height = Math.ceil(locScreenSizeH / this._scaleY);
         }
 
         // calculate the rect of viewport
-        var viewPortW = locDesignResolutionSize.width * this._scaleX;
-        var viewPortH = locDesignResolutionSize.height * this._scaleY;
+        var contentW = locDesignResolutionSize.width * this._scaleX,
+            contentH = locDesignResolutionSize.height * this._scaleY;
+        var isCanvas = cc.renderContextType === cc.CANVAS;
+        var viewPortW = isCanvas ? Math.min(contentW, locScreenSizeW) : locScreenSizeW,
+            viewPortH = isCanvas ? Math.min(contentH, locScreenSizeH) : locScreenSizeH;
 
-        this._viewPortRect = cc.rect((locScreenSize.width - viewPortW) / 2, (locScreenSize.height - viewPortH) / 2, viewPortW, viewPortH);
+        this._viewPortRect = cc.rect((viewPortW - contentW) / 2, (viewPortH - contentH) / 2, viewPortW, viewPortH);
 
         // reset director's member variables to fit visible rect
         var director = cc.Director.getInstance();
         director._winSizeInPoints = this.getDesignResolutionSize();
 
-        if (cc.renderContextType === cc.CANVAS) {
+        if (isCanvas) {
             if (locResolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-                var locHeight = Math.abs(locScreenSize.height - viewPortH) / 2;
-                cc.canvas.width = viewPortW;
-                cc.canvas.height = viewPortH;
-                cc.container.style.width = viewPortW +"px";
-                cc.container.style.height = viewPortH +"px";
-                cc.container.style.textAlign = "center";
-                cc.container.style.verticalAlign = "middle";
+                var offy = Math.ceil((locScreenSizeH - viewPortH) / 2);
+                var offx = Math.ceil((locScreenSizeW - viewPortW) / 2);
+                cc.canvas.width = viewPortW = Math.floor(locScreenSizeW - 2*offx);
+                cc.canvas.height = viewPortH = Math.floor(locScreenSizeH - 2*offy);
+                if(cc.Browser.isMobile){
+                    cc.container.style.width = viewPortW +"px";
+                    cc.container.style.height = viewPortH +"px";
+                }
                 cc.renderContext.translate(0, viewPortH);
-                this._ele.style.paddingTop = locHeight + "px";
-                this._ele.style.paddingBottom = locHeight + "px";
+                this._ele.style.paddingTop = offy + "px";
+                this._ele.style.paddingBottom = offy + "px";
+                this._ele.style.paddingLeft = offx + "px";
+                this._ele.style.paddingRight = offx + "px";
                 this._viewPortRect = cc.rect(0, 0, viewPortW, viewPortH);
             } else if ((locResolutionPolicy === cc.RESOLUTION_POLICY.NO_BORDER) || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_WIDTH)
                 || (locResolutionPolicy === cc.RESOLUTION_POLICY.FIXED_HEIGHT) || (locResolutionPolicy === cc.RESOLUTION_POLICY.EXACT_FIT)) {
-                cc.canvas.width = viewPortW;
-                cc.canvas.height = viewPortH;
+                cc.canvas.width = Math.floor(viewPortW);
+                cc.canvas.height = Math.floor(viewPortH);
                 cc.container.style.width = viewPortW +"px";
                 cc.container.style.height = viewPortH +"px";
-                cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + this._viewPortRect.height);
+                cc.renderContext.translate(this._viewPortRect.x, this._viewPortRect.y + contentH);
             }
         } else {
             // reset director's member variables to fit visible rect
@@ -426,24 +431,41 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         //set the viewport for mobile
         if (cc.Browser.isMobile && this.__isAdjustSizeToBrowser)
             this._calculateViewPortByPolicy();
+
+        cc.VisibleRect.init(this.getVisibleSize());
     },
 
     _adjustMobileViewPort:function(width,height){
         if(this._isAdjustViewPort){
-            if(width<=320){
+            /*if(width<=320){
                 width = 321;
                 cc.canvas.witdh = width;
                 cc.container.style.width = width+"px";
+            }*/
+            var viewportMetas = {"user-scalable":"no", "maximum-scale":"1.0", "initial-scale":"1.0"},
+                elems = document.getElementsByName("viewport"),
+                vp, content;
+            if(elems.length == 0) {
+                vp = document.createElement("meta");
+                vp.name = "viewport";
+                vp.content = "";
+                document.head.appendChild(vp);
             }
-            var vp = document.getElementById("viewport");
-            var content = "user-scalable=no,target-densitydpi=device-dpi";
+            else vp = elems[0];
+            content = vp.content;
+            for(var key in viewportMetas) {
+                var pattern = new RegExp(key);
+                if(!pattern.test(content)) {
+                    content += (content == "" ? "" : ",") + key + "=" + viewportMetas[key];
+                }
+            }
 
            /* if(height){
                 content ="height="+height+","+content;
-            }*/
+            }
             if(width){
                 content ="width="+width+","+content;
-            }
+            }*/
             vp.content = content;
         }
     },
@@ -460,13 +482,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     setDesignResolutionSize:function (width, height, resolutionPolicy) {
         if(cc.Browser.isMobile){
             this._scrollToBottom();
-            //this._adjustMobileViewPort(cc.originalCanvasSize.width,cc.originalCanvasSize.height);
+            this._adjustMobileViewPort(cc.originalCanvasSize.width,cc.originalCanvasSize.height);
             var self = this;
             var fun = function(){
+                self._adjustSizeToBrowser();
                 self.__setDesignResolutionSize(width, height, resolutionPolicy);
             };
             setTimeout(fun,1);
         }else{
+            this._adjustSizeToBrowser();
             this.__setDesignResolutionSize(width, height, resolutionPolicy);
         }
     },

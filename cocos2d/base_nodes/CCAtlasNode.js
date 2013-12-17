@@ -193,7 +193,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _initWithTextureForWebGL:function(texture, tileWidth, tileHeight, itemsToRender){
         this._itemWidth = tileWidth;
         this._itemHeight = tileHeight;
-        this._colorUnmodified = cc.WHITE;
+        this._colorUnmodified = cc.white();
         this._opacityModifyRGB = true;
 
         this._blendFunc.src = cc.BLEND_SRC;

@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ComAttribute
  * @class
- * @extends cc.Component
+ * @extends ccs.Component
  */
-ccs.ComAttribute = cc.Component.extend({
+ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     _attributes: null,
     _jsonDict: null,
     ctor: function () {
@@ -195,7 +195,14 @@ ccs.ComAttribute = cc.Component.extend({
          this._jsonDict = dict;
     }
 });
-
+/**
+ * allocates and initializes a ComAttribute.
+ * @constructs
+ * @return {ccs.ComAttribute}
+ * @example
+ * // example
+ * var com = ccs.ComAttribute.create();
+ */
 ccs.ComAttribute.create = function () {
     var com = new ccs.ComAttribute();
     if (com && com.init()) {

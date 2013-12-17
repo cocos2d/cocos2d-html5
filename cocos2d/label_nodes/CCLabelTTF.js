@@ -39,6 +39,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _fontName: null,
     _fontSize:0.0,
     _string:"",
+    _originalText: null,
     _isMultiLine:false,
     _fontStyleStr:null,
 
@@ -496,14 +497,37 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     setString:function (text) {
         text = String(text);
-        if (this._string != text) {
-            this._string = text + "";
+        if (this._originalText != text) {
+            this._originalText = text + "";
+
+            this._updateString();
 
             // Force update
             this._needUpdateTexture = true;
         }
     },
+    _updateString: function() {
+        if (this._originalText.length > 1) {
+            if (this._dimensions.width > 0 && this._dimensions.height > 0) {
+                var buffer = [];
+                var maxWidth = 0;
+                for (var i = 0; i < this._originalText.length ; i ++) {
+                    var width = cc.LabelTTF._getCharWidth(this._originalText.charCodeAt(i), this._fontSize, this._fontName);
 
+                    if (maxWidth + width > this._dimensions.width) {
+                        buffer.push('\n');
+                        maxWidth = 0;
+                    }
+
+                    buffer.push(this._originalText[i]);
+                    maxWidth += width;
+                }
+                this._string = buffer.join("");
+                return;
+            }
+        }
+        this._string = this._originalText;
+    },
     /**
      * set Horizontal Alignment of cc.LabelTTF
      * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
@@ -537,7 +561,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setDimensions:function (dim) {
         if (dim.width != this._dimensions.width || dim.height != this._dimensions.height) {
             this._dimensions = dim;
-
+            this._updateString();
             // Force udpate
             this._needUpdateTexture = true;
         }
@@ -682,6 +706,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                                 break;
                             }
                         } while (tempLineWidth > locDimensionsWidth);
+                        if (cutoff === -1) {
+                            break;
+                        }
                         var newline = strings[i].substr(cutoff + 1);
                         strings.splice(i + 1, 0, newline);
                         strings[i] = str;
@@ -1005,6 +1032,28 @@ if(cc.USE_LA88_LABELS)
 else
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTUREA8COLOR;
 
+cc.LabelTTF.__charWidthCache = {};
+cc.LabelTTF._getCharWidth = function(code, fontSize, fontName) {
+    if (!cc.LabelTTF.__charWidthCache[fontName + fontSize]) {
+        var label = cc.LabelTTF.create("字", fontName, fontSize);
+        var width = label.getContentSize().width;
+        var label2 = cc.LabelTTF.create("a", fontName, fontSize);
+        var width2 = label2.getContentSize().width;
+        cc.LabelTTF.__charWidthCache[fontName + fontSize] = {
+            double: width,
+            single: width2
+        };
+    }
+
+    var _charCache = cc.LabelTTF.__charWidthCache[fontName + fontSize];
+    var isDouble = code > 255;
+    if (isDouble) {
+        return _charCache.double;
+    }
+    else {
+        return _charCache.single;
+    }
+};
 cc.LabelTTF.__labelHeightDiv = document.createElement("div");
 cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";

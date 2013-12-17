@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILabelBMFont = ccs.UIWidget.extend({
+ccs.UILabelBMFont = ccs.UIWidget.extend(/** @lends ccs.UILabelBMFont# */{
     _labelBMFontRenderer: null,
     _fileHasInit: false,
     _fntFileName: "",
@@ -57,6 +57,12 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
         this.labelBMFontScaleChangedWithSize();
         this._fileHasInit = true;
         this.setText(this._stringValue);
+
+        if (!this._labelBMFontRenderer.textureLoaded()) {
+            this._labelBMFontRenderer.addLoadedEventListener(function () {
+                this.labelBMFontScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**
@@ -127,6 +133,10 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
         }
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "LabelBMFont";
     },
@@ -140,7 +150,14 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
         this.setText(labelBMFont._stringValue);
     }
 });
-
+/**
+ * allocates and initializes a UILabelBMFont.
+ * @constructs
+ * @return {ccs.UILabelBMFont}
+ * @example
+ * // example
+ * var uiLabelBMFont = ccs.UILabelBMFont.create();
+ */
 ccs.UILabelBMFont.create = function () {
     var uiLabelBMFont = new ccs.UILabelBMFont();
     if (uiLabelBMFont && uiLabelBMFont.init()) {

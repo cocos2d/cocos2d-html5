@@ -220,6 +220,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setColor:function (color) {
         this._sprite.setColor(color);
+        this._updateColor();
     },
 
     /**
@@ -228,6 +229,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      */
     setOpacity:function (opacity) {
         this._sprite.setOpacity(opacity);
+        this._updateColor();
     },
 
     /**
@@ -631,6 +633,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 return;
             }
         }
+        this._updateColor();
 
         var locVertexData = this._vertexData;
         if (!sameIndexCount) {
@@ -768,6 +771,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             locVertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
             locVertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         }
+        this._updateColor();
     },
 
     _updateColor:function () {
@@ -881,7 +885,6 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             this._updateRadial();
         else if(locType === cc.PROGRESS_TIMER_TYPE_BAR)
             this._updateBar();
-        this._updateColor();
         this._vertexDataDirty = true;
     }
 });

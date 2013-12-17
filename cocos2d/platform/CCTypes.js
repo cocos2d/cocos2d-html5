@@ -1382,11 +1382,11 @@ cc.FontDefinition = function(){
     this.fontSize = 12;
     this.fontAlignmentH = cc.TEXT_ALIGNMENT_CENTER;
     this.fontAlignmentV = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-    this.fontFillColor = cc.WHITE;
+    this.fontFillColor = cc.white();
     this.fontDimensions = cc.size(0,0);
 
     this.strokeEnabled = false;
-    this.strokeColor = cc.WHITE;
+    this.strokeColor = cc.white();
     this.strokeSize = 1;
 
     this.shadowEnabled = false;
