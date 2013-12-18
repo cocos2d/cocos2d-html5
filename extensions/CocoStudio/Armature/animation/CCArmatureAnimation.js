@@ -55,6 +55,15 @@ ccs.AnimationEvent = ccs.Class.extend({
     }
 });
 /**
+ * movement event
+ * @constructor
+ */
+ccs.MovementEvent = function () {
+    this.armature = null;
+    this.movementType = "";
+    this.movementID = "";
+};
+/**
  * frame event
  * @constructor
  */
@@ -82,6 +91,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     _speedScale:1,
     _ignoreFrameEvent:false,
     _frameEventQueue:null,
+    _movementEventQueue:null,
     _userObject:null,
     _movementList: null,
     _onMovementList: false,
@@ -101,6 +111,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._speedScale = 1;
         this._ignoreFrameEvent = false;
         this._frameEventQueue = [];
+        this._movementEventQueue = [];
         this._userObject = null;
         this._movementList = [];
         this._onMovementList = false;
@@ -253,7 +264,6 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             }
             else {
                 this._loopType = CC_ANIMATION_TYPE_NO_LOOP;
-                this._rawDuration--;
             }
             this._durationTween = durationTween;
         }
@@ -425,14 +435,19 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                 this._tweenList[i].update(dt);
             }
         }
-        if (this._frameEventQueue.length > 0) {
-            for (var i = 0; i < this._frameEventQueue.length; i++) {
-                var frameEvent = this._frameEventQueue[i];
-                this._ignoreFrameEvent = true;
-                this.callFrameEvent([frameEvent.bone, frameEvent.frameEventName, frameEvent.originFrameIndex, frameEvent.currentFrameIndex]);
-                this._ignoreFrameEvent = false;
-            }
-            this._frameEventQueue = [];
+
+        var frameEvents = this._frameEventQueue;
+        while (frameEvents.length > 0) {
+            var frameEvent = frameEvents.shift();
+            this._ignoreFrameEvent = true;
+            this.callFrameEvent([frameEvent.bone, frameEvent.frameEventName, frameEvent.originFrameIndex, frameEvent.currentFrameIndex]);
+            this._ignoreFrameEvent = false;
+        }
+
+        var movementEvents = this._movementEventQueue;
+        while (movementEvents.length > 0) {
+            var movEvent = movementEvents.shift();
+            this.callMovementEvent([movEvent.armature, movEvent.movementType, movEvent.movementID]);
         }
     },
 
@@ -449,7 +464,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                     locCurrentPercent = this._currentFrame / this._durationTween;
                     if (locCurrentPercent < 1.0) {
                         this._nextFrameIndex = this._durationTween;
-                        this.callMovementEvent([this._armature, ccs.MovementEventType.start, this._movementID]);
+                        this.movementEvent(this._armature, ccs.MovementEventType.start, this._movementID);
                         break;
                     }
                 case CC_ANIMATION_TYPE_MAX:
@@ -457,7 +472,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
-                    this.callMovementEvent([this._armature, ccs.MovementEventType.complete, this._movementID]);
+                    this.movementEvent(this._armature, ccs.MovementEventType.complete, this._movementID);
                     this.updateMovementList();
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
@@ -465,13 +480,13 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                     locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = this._nextFrameIndex == 0 ? 0 : ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
-                    this.callMovementEvent([this, ccs.MovementEventType.start, this._movementID]);
+                    this.movementEvent(this, ccs.MovementEventType.start, this._movementID);
                     break;
                 default:
                     //locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
-                    this.callMovementEvent([this._armature, ccs.MovementEventType.loopComplete, this._movementID]);
+                    this.movementEvent(this._armature, ccs.MovementEventType.loopComplete, this._movementID);
                     break;
             }
             this._currentPercent = locCurrentPercent;
@@ -525,6 +540,16 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         if (this._frameEvent) {
             this._frameEvent.setArguments(args);
             this._frameEvent.call();
+        }
+    },
+
+    movementEvent:function(armature, movementType,  movementID){
+        if (this._movementEvent)    {
+            var event = new ccs.MovementEvent();
+            event.armature = armature;
+            event.movementType = movementType;
+            event.movementID = movementID;
+            this._movementEventQueue.push(event);
         }
     },
 
