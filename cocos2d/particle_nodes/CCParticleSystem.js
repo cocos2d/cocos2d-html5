@@ -2331,7 +2331,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             retParticle._endSizeVar = this._endSizeVar;
 
             // position
-            retParticle.setPosition(new cc.Point(this._position.x, this._position.y));
+            retParticle.setPosition(this._position.x, this._position.y);
             retParticle._posVar.x = this._posVar.x;
             retParticle._posVar.y = this._posVar.y;
 

@@ -194,8 +194,10 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         buttonNormalRenderer.setColor(this.getColor());
         buttonNormalRenderer.setOpacity(this.getOpacity());
 
+        var buttonRenderSize = buttonNormalRenderer.getContentSize();
         if(buttonNormalRenderer.textureLoaded()){
-            this._normalTextureSize = buttonNormalRenderer.getContentSize();
+            this._normalTextureSize.width = buttonRenderSize.width;
+            this._normalTextureSize.height = buttonRenderSize.height;
         }else{
             buttonNormalRenderer.addLoadedEventListener(function(){
                 this._normalTextureSize = buttonNormalRenderer.getContentSize();
@@ -207,10 +209,10 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
             this._normalTextureSize.width = this._customSize.width;
             this._normalTextureSize.height = this._customSize.height;
         }
-
         if (this._scale9Enabled) {
             buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
+
         this.updateAnchorPoint();
         this.normalTextureScaleChangedWithSize();
     },
@@ -497,7 +499,8 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._buttonNormalRenderer.setScale(1.0);
-                this._size = this._normalTextureSize;
+                this._size.width = this._normalTextureSize.width;
+                this._size.height = this._normalTextureSize.height;
             }
         }
         else {

@@ -381,7 +381,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _initWithSpriteForCanvas:function (sprite) {
         this.setPercentage(0);
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
@@ -397,7 +397,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataCount = 0;
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
@@ -427,17 +427,17 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
         context.globalAlpha = locSprite._displayedOpacity / 255;
         var locRect = locSprite._rect, locContentSize = locSprite._contentSize, locOffsetPosition = locSprite._offsetPosition, locDrawSizeCanvas = locSprite._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = locSprite._textureRect_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition._x), flipYOffset = -locOffsetPosition._y - locRect.height, locTextureCoord = locSprite._textureRect_Canvas;
         locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
         locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
         context.save();
         if (locSprite._flippedX) {
-            flipXOffset = -locOffsetPosition.x - locRect.width;
+            flipXOffset = -locOffsetPosition._x - locRect.width;
             context.scale(-1, 1);
         }
         if (locSprite._flippedY) {
-            flipYOffset = locOffsetPosition.y;
+            flipYOffset = locOffsetPosition._y;
             context.scale(1, -1);
         }
 
@@ -473,10 +473,10 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                     locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
-        } else if (locContentSize.width !== 0) {
+        } else if (locContentSize._width !== 0) {
             var curColor = this.getColor();
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
+            context.fillRect(flipXOffset, flipYOffset, locContentSize._width * locEGL_ScaleX, locContentSize._height * locEGL_ScaleY);
         }
 
         context.restore();

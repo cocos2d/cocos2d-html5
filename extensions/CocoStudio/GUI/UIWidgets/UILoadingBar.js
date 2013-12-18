@@ -63,7 +63,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._renderer.addChild(this._barRenderer);
-        this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+        this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
     },
 
     /**
@@ -79,14 +79,14 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
 
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
-                this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_RIGHT);
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
@@ -143,23 +143,27 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
                 if (barRenderer.setCapInsets) {
                     barRenderer.setCapInsets(this._capInsets);
                 }
-                this._barRendererTextureSize = barRenderer.getContentSize();
+                var locBarRendererSize = barRenderer.getContentSize();
+                this._barRendererTextureSize.width = locBarRendererSize.width;
+                this._barRendererTextureSize.height = locBarRendererSize.height;
                 this.barRendererScaleChangedWithSize();
                 this.setPercent(this._percent);
             }, this);
         } else {
-            this._barRendererTextureSize = barRenderer.getContentSize();
+            var locRendererSize = barRenderer.getContentSize();
+            this._barRendererTextureSize.width = locRendererSize.width;
+            this._barRendererTextureSize.height = locRendererSize.height;
         }
 
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
                 if (!this._scale9Enabled) {
                     barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
-                barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_RIGHT);
                 if (!this._scale9Enabled) {
                     barRenderer.setFlippedX(true);
                 }
@@ -286,10 +290,10 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 this._barRenderer.setScale(1.0);
-                this._size = this._barRendererTextureSize;
+                this._size.width = this._barRendererTextureSize.width;
+                this._size.height = this._barRendererTextureSize.height;
             }
-        }
-        else {
+        } else {
             this._totalLength = this._size.width;
             if (this._scale9Enabled) {
                 this.setScale9Scale();

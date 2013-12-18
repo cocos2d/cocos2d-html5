@@ -368,7 +368,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         if (batchNode) {
             this.updateWithBatchNode(batchNode, rect, rotated, capInsets);
         }
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
         this._positionsAreDirty = true;
         return true;
     },

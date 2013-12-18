@@ -210,7 +210,11 @@ cc.setup = function (el, width, height) {
         return;
 
     if (cc.Browser.supportWebGL)
-        cc.renderContext = cc.webglContext = cc.create3DContext(localCanvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
+        cc.renderContext = cc.webglContext = cc.create3DContext(localCanvas,{
+            'stencil': true,
+            'preserveDrawingBuffer': true,
+            'antialias': !cc.Browser.isMobile,
+            'alpha': false});
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
         window.gl = cc.renderContext; // global variable declared in CCMacro.js
@@ -369,6 +373,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             return 0;
 
         var callback, director = cc.Director.getInstance(), w = window;
+        cc.director = director;
         if (w.requestAnimFrame && this._animationInterval == 1 / 60) {
             callback = function () {
                 director.mainLoop();

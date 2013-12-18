@@ -337,7 +337,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             return cc.p((this._designResolutionSize.width - this._screenSize.width / this._scaleX) / 2,
                 (this._designResolutionSize.height - this._screenSize.height / this._scaleY) / 2);
         } else {
-            return cc.p(0, 0);
+            return cc.POINT_ZERO;
         }
     },
 

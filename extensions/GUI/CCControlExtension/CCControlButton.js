@@ -167,7 +167,7 @@ cc.ControlButton = cc.Control.extend({
 
             // Set the default anchor point
             this.ignoreAnchorPointForPosition(false);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
             // Set the nodes
             this._titleLabel = label;
@@ -499,7 +499,7 @@ cc.ControlButton = cc.Control.extend({
 
         locTable[state] = titleLabel;
         titleLabel.setVisible(false);
-        titleLabel.setAnchorPoint(cc.p(0.5, 0.5));
+        titleLabel.setAnchorPoint(cc.ANCHOR_MIDDLE);
         this.addChild(titleLabel, 1);
 
         // If the current state if equal to the given state we update the layout
@@ -606,7 +606,7 @@ cc.ControlButton = cc.Control.extend({
 
         locTable[state] = sprite;
         sprite.setVisible(false);
-        sprite.setAnchorPoint(cc.p(0.5, 0.5));
+        sprite.setAnchorPoint(cc.ANCHOR_MIDDLE);
         this.addChild(sprite);
 
         var locPreferredSize = this._preferredSize;

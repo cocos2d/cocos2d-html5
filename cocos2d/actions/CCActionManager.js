@@ -187,11 +187,9 @@ cc.ActionManager = cc.Class.extend({
             var limit = element.actions.length;
             for (var i = 0; i < limit; ++i) {
                 var action = element.actions[i];
-                if (action) {
-                    if (action.getTag() === tag && action.getOriginalTarget() == target) {
-                        this._removeActionAtIndex(i, element);
-                        break;
-                    }
+                if (action && action.getTag() === tag && action.getOriginalTarget() == target) {
+                    this._removeActionAtIndex(i, element);
+                    break;
                 }
             }
         }

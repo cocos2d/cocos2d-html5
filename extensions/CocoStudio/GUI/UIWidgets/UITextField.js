@@ -578,7 +578,9 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     textfieldRendererScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._textFieldRender.setScale(1.0);
-            this._size = this.getContentSize();
+            var rendererSize = this.getContentSize();
+            this._size.width = rendererSize.width;
+            this._size.height = rendererSize.height;
         }
         else {
             var textureSize = this.getContentSize();

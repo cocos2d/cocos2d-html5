@@ -241,7 +241,7 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
 };
 
 /**
- * Converts a rect in points to pixels
+ * Converts a Point in points to pixels
  * @param {cc.Point} points
  * @return {cc.Point}
  * @function
@@ -250,8 +250,13 @@ cc.POINT_POINTS_TO_PIXELS = function (points) {
     return cc.p(points.x * cc.CONTENT_SCALE_FACTOR(), points.y * cc.CONTENT_SCALE_FACTOR())
 };
 
+cc._POINT_POINTS_TO_PIXELS_OUT = function (points, outPixels) {
+    outPixels._x = points.x * cc.CONTENT_SCALE_FACTOR();
+    outPixels._y = points.y * cc.CONTENT_SCALE_FACTOR();
+};
+
 /**
- * Converts a rect in points to pixels
+ * Converts a Size in points to pixels
  * @param {cc.Size} sizeInPoints
  * @return {cc.Size}
  * @function
@@ -261,7 +266,7 @@ cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
 };
 
 /**
- * Converts a rect in pixels to points
+ * Converts a size in pixels to points
  * @param {cc.Size} sizeInPixels
  * @return {cc.Size}
  * @function
@@ -270,15 +275,24 @@ cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
     return cc.size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
 };
 
+cc._SIZE_PIXELS_TO_POINTS_OUT = function (sizeInPixels, outSize) {
+    outSize._width = sizeInPixels.width / cc.CONTENT_SCALE_FACTOR();
+    outSize._height = sizeInPixels.height / cc.CONTENT_SCALE_FACTOR();
+};
+
 /**
- * Converts a rect in pixels to points
- * @param pixels
+ * Converts a Point in pixels to points
+ * @param {Point} pixels
  * @function
  */
 cc.POINT_PIXELS_TO_POINTS = function (pixels) {
     return cc.p(pixels.x / cc.CONTENT_SCALE_FACTOR(), pixels.y / cc.CONTENT_SCALE_FACTOR());
 };
 
+cc._POINT_PIXELS_TO_POINTS_OUT = function(pixels, outPoint){
+    outPoint._x = pixels.x / cc.CONTENT_SCALE_FACTOR();
+    outPoint._y = pixels.y / cc.CONTENT_SCALE_FACTOR();
+};
 
 /**
  * Converts a rect in pixels to points

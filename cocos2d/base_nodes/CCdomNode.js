@@ -48,11 +48,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setPosition:function (x, y) {
         if (arguments.length == 2) {
-            this._position.x = x;
-            this._position.y = y;
+            this._position._x = x;
+            this._position._y = y;
             //this._position = cc.p(newPosOrxValue,yValue);
         } else {
-            this._position = x;
+            this._position._x = x.x;
+            this._position._y = x.y;
         }
         this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
@@ -62,7 +63,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this._position.y = y;
+        this._position._y = y;
         this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
     },
@@ -72,7 +73,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this._position.x = x;
+        this._position._x = x;
         this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
     },
@@ -120,9 +121,10 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {object} point
      */
     setAnchorPoint:function (point) {
-        this._anchorPoint = point;
-        this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-            this._contentSize.height * this._anchorPoint.y);
+        this._anchorPoint.setX(point.x);
+        this._anchorPoint.setY(point.y);
+        this._anchorPointInPoints.setX(this._contentSize.width * this._anchorPoint.x);
+        this._anchorPointInPoints.setY(this._contentSize.height * this._anchorPoint.y);
         this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + this._anchorPointInPoints.x + 'px ' + -this._anchorPointInPoints.y + 'px';
         if (this.isIgnoreAnchorPointForPosition()) {
             this.dom.style.marginLeft = 0;
@@ -141,9 +143,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setContentSize:function (size) {
         if (!cc.sizeEqualToSize(size, this._contentSize)) {
-            this._contentSize = size;
-            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-                this._contentSize.height * this._anchorPoint.y);
+            this._contentSize.setWidth(size.width);
+            this._contentSize.setHeight(size.height);
             this.dom.width = size.width;
             this.dom.height = size.height;
             this.setAnchorPoint(this.getAnchorPoint());

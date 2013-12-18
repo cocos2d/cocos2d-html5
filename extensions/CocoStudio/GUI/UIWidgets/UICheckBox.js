@@ -410,7 +410,9 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     backGroundTextureScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._backGroundBoxRenderer.setScale(1.0);
-            this._size = this._backGroundBoxRenderer.getContentSize();
+            var locBackSize = this._backGroundBoxRenderer.getContentSize();
+            this._size.width = locBackSize.width;
+            this._size.height = locBackSize.height;
         }
         else {
             var textureSize = this._backGroundBoxRenderer.getContentSize();

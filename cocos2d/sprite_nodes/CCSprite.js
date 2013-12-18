@@ -437,7 +437,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {cc.Point}
      */
     getOffsetPosition:function () {
-        return cc.p(this._offsetPosition.x, this._offsetPosition.y);
+        return this._offsetPosition;
     },
 
     /**
@@ -645,14 +645,15 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * position setter (override cc.Node )
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} newPosOrxValue The position (x,y) of the node in coordinates or  X coordinate for position
+     * @param {Number} [yValue] Y coordinate for position
      * @override
      */
-    setPosition:function (pos) {
+    setPosition:function (newPosOrxValue, yValue) {
         if (arguments.length >= 2)
-            cc.Node.prototype.setPosition.call(this, pos, arguments[1]);
+            cc.Node.prototype.setPosition.call(this, newPosOrxValue, yValue);
         else
-            cc.Node.prototype.setPosition.call(this, pos);
+            cc.Node.prototype.setPosition.call(this, newPosOrxValue);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -932,8 +933,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _ctorForWebGL: function (fileName) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._shouldBeHidden = false;
-        this._offsetPosition = cc.p(0, 0);
-        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+        this._offsetPosition = cc._pConst(0, 0);
+        this._unflippedOffsetPositionFromCenter = cc._pConst(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._rect = cc.rect(0,0,0,0);
 
@@ -966,15 +967,15 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _ctorForCanvas: function (fileName) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._shouldBeHidden = false;
-        this._offsetPosition = cc.p(0, 0);
-        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+        this._offsetPosition = cc._pConst(0, 0);
+        this._unflippedOffsetPositionFromCenter = cc._pConst(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._rect = cc.rect(0, 0, 0, 0);
 
         this._newTextureWhenChangeColor = false;
         this._textureLoaded = true;
         this._loadedEventListeners = [];
-        this._textureRect_Canvas = cc.rect(0, 0, 0, 0);
+        this._textureRect_Canvas = {x: 0, y: 0, width: 0, height: 0};    //cc.rect(0, 0, 0, 0);
         this._drawSize_Canvas = cc.size(0, 0);
 
         if (fileName) {
@@ -1050,10 +1051,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
         // zwoptex default values
-        this._offsetPosition = cc.PointZero();
+        this._offsetPosition._x = 0;
+        this._offsetPosition._y = 0;
         this._hasChildren = false;
 
         // Atlas: Color
@@ -1087,10 +1089,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
         // zwoptex default values
-        this._offsetPosition = cc.PointZero();
+        this._offsetPosition._x = 0;
+        this._offsetPosition._y = 0;
         this._hasChildren = false;
 
         // updated in "useSelfRender"
@@ -1166,10 +1169,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
         // zwoptex default values
-        this._offsetPosition = cc.p(0, 0);
+        this._offsetPosition._x = 0;
+        this._offsetPosition._y = 0;
         this._hasChildren = false;
 
         // Atlas: Color
@@ -1232,10 +1236,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
         // zwoptex default values
-        this._offsetPosition = cc.p(0, 0);
+        this._offsetPosition._x = 0;
+        this._offsetPosition._y = 0;
         this._hasChildren = false;
 
         var locTextureLoaded = texture.isLoaded();
@@ -1334,13 +1339,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
-            relativeOffset.x = -relativeOffset.x;
+            relativeOffset._x = -relativeOffset._x;
         if (this._flippedY)
-            relativeOffset.y = -relativeOffset.y;
+            relativeOffset._y = -relativeOffset._y;
 
-        var locRect = this._rect;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - locRect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - locRect.height) / 2;
+        var locRect = this._rect, locOffsetPosition = this._offsetPosition;
+        locOffsetPosition._x = relativeOffset._x + (this._contentSize._width - locRect.width) / 2;
+        locOffsetPosition._y = relativeOffset._y + (this._contentSize._height - locRect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1350,8 +1355,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         } else {
             // self rendering
             // Atlas: Vertex
-            var x1 = 0 + this._offsetPosition.x;
-            var y1 = 0 + this._offsetPosition.y;
+            var x1 = 0 + locOffsetPosition._x;
+            var y1 = 0 + locOffsetPosition._y;
             var x2 = x1 + locRect.width;
             var y2 = y1 + locRect.height;
 
@@ -1382,11 +1387,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
-            relativeOffset.x = -relativeOffset.x;
+            relativeOffset._x = -relativeOffset._x;
         if (this._flippedY)
-            relativeOffset.y = -relativeOffset.y;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
+            relativeOffset._y = -relativeOffset._y;
+        this._offsetPosition._x = relativeOffset._x + (this._contentSize._width - this._rect.width) / 2;
+        this._offsetPosition._y = relativeOffset._y + (this._contentSize._height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1430,8 +1435,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 //
                 var locTransformToBatch = this._transformToBatch;
                 var size = this._rect.size;
-                var x1 = this._offsetPosition.x;
-                var y1 = this._offsetPosition.y;
+                var x1 = this._offsetPosition._x;
+                var y1 = this._offsetPosition._y;
 
                 var x2 = x1 + size.width;
                 var y2 = y1 + size.height;
@@ -1656,8 +1661,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setDisplayFrameForWebGL: function (newFrame) {
         this.setNodeDirty();
         var frameOffset = newFrame.getOffset();
-        this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
-        this._unflippedOffsetPositionFromCenter.y = frameOffset.y;
+        this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
+        this._unflippedOffsetPositionFromCenter._y = frameOffset.y;
 
         var pNewTexture = newFrame.getTexture();
         var locTextureLoaded = newFrame.textureLoaded();
@@ -1686,8 +1691,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this.setNodeDirty();
 
         var frameOffset = newFrame.getOffset();
-        this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
-        this._unflippedOffsetPositionFromCenter.y = frameOffset.y;
+        this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
+        this._unflippedOffsetPositionFromCenter._y = frameOffset.y;
 
         // update rect
         this._rectRotated = newFrame.isRotated();
@@ -1772,8 +1777,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             this._recursiveDirty = false;
             this.setDirty(false);
 
-            var x1 = this._offsetPosition.x;
-            var y1 = this._offsetPosition.y;
+            var x1 = this._offsetPosition._x;
+            var y1 = this._offsetPosition._y;
             var x2 = x1 + this._rect.width;
             var y2 = y1 + this._rect.height;
             var locQuad = this._quad;
@@ -2058,18 +2063,18 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition, locDrawSizeCanvas = this._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = this._textureRect_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition._x), flipYOffset = -locOffsetPosition._y - locRect.height, locTextureCoord = this._textureRect_Canvas;
         locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
         locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
         if (this._flippedX || this._flippedY) {
             context.save();
             if (this._flippedX) {
-                flipXOffset = -locOffsetPosition.x - locRect.width;
+                flipXOffset = -locOffsetPosition._x - locRect.width;
                 context.scale(-1, 1);
             }
             if (this._flippedY) {
-                flipYOffset = locOffsetPosition.y;
+                flipYOffset = locOffsetPosition._y;
                 context.scale(1, -1);
             }
         }
@@ -2088,10 +2093,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
-        } else if (locContentSize.width !== 0) {
+        } else if (locContentSize._width !== 0) {
             var curColor = this.getColor();
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
+            context.fillRect(flipXOffset, flipYOffset, locContentSize._width * locEGL_ScaleX, locContentSize._height * locEGL_ScaleY);
         }
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {

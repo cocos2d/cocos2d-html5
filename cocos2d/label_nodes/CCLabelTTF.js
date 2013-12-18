@@ -756,8 +756,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var startPoint = {x:locStrokeShadowOffsetX * 0.5, y: locStrokeShadowOffsetY * 0.5 };
         var locAP = this._anchorPoint;
         var oldAPP = {x: oldContentSize.width * locAP.x, y: oldContentSize.height * locAP.y};
-        this._anchorPointInPoints.x = startPoint.x + oldAPP.x;
-        this._anchorPointInPoints.y = startPoint.y + oldAPP.y;
+        this._anchorPointInPoints._x = startPoint.x + oldAPP.x;
+        this._anchorPointInPoints._y = startPoint.y + oldAPP.y;
     },
 
     getContentSize:function(){
@@ -876,11 +876,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
-            relativeOffset.x = -relativeOffset.x;
+            relativeOffset._x = -relativeOffset.x;
         if (this._flippedY)
-            relativeOffset.y = -relativeOffset.y;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
+            relativeOffset._y = -relativeOffset.y;
+        this._offsetPosition._x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition._y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
