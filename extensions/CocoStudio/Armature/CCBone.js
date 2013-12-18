@@ -494,6 +494,15 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     },
 
     /**
+     * change display by name
+     * @param {String} name
+     * @param {Boolean} force
+     */
+    changeDisplayByName:function (name, force) {
+        this._displayManager.changeDisplayByName(name, force);
+    },
+
+    /**
      * get the collider body list in this bone.
      * @returns {*}
      */

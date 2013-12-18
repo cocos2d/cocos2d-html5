@@ -180,6 +180,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
  */
 ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
     displayType:ccs.DisplayType.max,
+    displayName:"",
     ctor:function () {
         this.displayType = ccs.DisplayType.max;
     },
@@ -197,6 +198,14 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
             textureName = textureName.substring(0, startPos);
         }
         return textureName;
+    },
+    /**
+     * copy data
+     * @param {ccs.DisplayData} displayData
+     */
+    copy:function (displayData) {
+        this.displayName = displayData.displayName;
+        this.displayType = displayData.displayType;
     }
 });
 
@@ -206,27 +215,17 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
  * @extends ccs.DisplayData
  */
 ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData# */{
-    displayName:"",
     skinData:null,
     ctor:function () {
-        this.displayName = "";
         this.skinData = new ccs.BaseData();
         this.displayType = ccs.DisplayType.sprite;
-    },
-    /**
-     * set display name
-     * @param {String} displayName
-     */
-    setParam:function (displayName) {
-        this.displayName = displayName;
     },
     /**
      * copy data
      * @param {ccs.SpriteDisplayData} displayData
      */
     copy:function (displayData) {
-        this.displayName = displayData.displayName;
-        this.displayType = displayData.displayType;
+        ccs.DisplayData.prototype.copy.call(this,displayData);
         this.skinData = displayData.skinData;
     }
 });
@@ -241,22 +240,6 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
     ctor:function () {
         this.displayName = "";
         this.displayType = ccs.DisplayType.armature;
-
-    },
-    /**
-     * set display name
-     * @param {String} displayName
-     */
-    setParam:function (displayName) {
-        this.displayName = displayName;
-    },
-    /**
-     * copy data
-     * @param {ccs.ArmatureDisplayData} displayData
-     */
-    copy:function (displayData) {
-        this.displayName = displayData.displayName;
-        this.displayType = displayData.displayType;
     }
 });
 
@@ -266,26 +249,8 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
  * @extends ccs.DisplayData
  */
 ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayData# */{
-    plist:"",
     ctor:function () {
-        this.plist = "";
         this.displayType = ccs.DisplayType.particle;
-
-    },
-    /**
-     * set plist value
-     * @param {String} plist
-     */
-    setParam:function (plist) {
-        this.plist = plist;
-    },
-    /**
-     * copy data
-     * @param {ccs.ParticleDisplayData} displayData
-     */
-    copy:function (displayData) {
-        this.plist = displayData.plist;
-        this.displayType = displayData.displayType;
     }
 });
 

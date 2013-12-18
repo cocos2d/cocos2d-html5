@@ -738,7 +738,7 @@ ccs.DataReaderHelper.decodeBoneDisplayFromJson = function (json, dataInfo) {
             break;
         case ccs.DisplayType.particle:
             displayData = new ccs.ParticleDisplayData();
-            displayData.plist = dataInfo.basefilePath + json[ccs.CONST_A_PLIST] || "";
+            displayData.displayName = dataInfo.basefilePath + json[ccs.CONST_A_PLIST] || "";
             break;
         default:
             displayData = new ccs.SpriteDisplayData();

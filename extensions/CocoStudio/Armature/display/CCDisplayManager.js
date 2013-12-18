@@ -77,6 +77,7 @@ ccs.DisplayManager = ccs.Class.extend({
             var skin = display;
             skin.setBone(this._bone);
             displayData = new ccs.SpriteDisplayData();
+            displayData.displayName = skin.getDisplayName();
             ccs.DisplayFactory.initSpriteDisplay(this._bone, decoDisplay, skin.getDisplayName(), skin);
             var spriteDisplayData = decoDisplay.getDisplayData();
             if (spriteDisplayData instanceof ccs.SpriteDisplayData)
@@ -86,9 +87,11 @@ ccs.DisplayManager = ccs.Class.extend({
         }
         else if (display instanceof cc.ParticleSystem){
             displayData = new ccs.ParticleDisplayData();
+            displayData.displayName = display._plistFile;
         }
         else if (display instanceof ccs.Armature){
             displayData = new ccs.ArmatureDisplayData();
+            displayData.displayName = display.getName();
             display.setParentBone(this._bone);
         }
         else  {
@@ -139,6 +142,15 @@ ccs.DisplayManager = ccs.Class.extend({
             return;
         }
         this.setCurrentDecorativeDisplay(decoDisplay);
+    },
+
+    changeDisplayByName: function (name, force) {
+        for (var i = 0; i < this._decoDisplayList.length; i++) {
+            if (this._decoDisplayList[i].getDisplayData().displayName == name) {
+                this.changeDisplayByIndex(i, force);
+                break;
+            }
+        }
     },
 
     setCurrentDecorativeDisplay:function (decoDisplay) {
