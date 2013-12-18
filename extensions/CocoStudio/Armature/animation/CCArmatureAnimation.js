@@ -81,8 +81,12 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     _movementEvent:null,
     _speedScale:1,
     _ignoreFrameEvent:false,
-    _frameEventQueue:[],
+    _frameEventQueue:null,
     _userObject:null,
+    _movementList: null,
+    _onMovementList: false,
+    _movementListLoop: false,
+    _movementIndex: 0,
     ctor:function () {
         ccs.ProcessBase.prototype.ctor.call(this);
         this._animationData = null;
@@ -98,6 +102,10 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._ignoreFrameEvent = false;
         this._frameEventQueue = [];
         this._userObject = null;
+        this._movementList = [];
+        this._onMovementList = false;
+        this._movementListLoop = false;
+        this._movementIndex = 0;
     },
 
     /**
@@ -180,27 +188,25 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
     /**
      * play animation by animation name.
-     * @param {Number} animationName The animation name you want to play
+     * @param {String||Array} animationName The animation name you want to play
      * @param {Number} durationTo
      *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} durationTween he
-     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
      *         -1 : use the value from CCMovementData get from flash design panel
      * @param {Number} loop
      *          Whether the animation is loop.
      *         loop < 0 : use the value from CCMovementData get from flash design panel
      *         loop = 0 : this animation is not loop
      *         loop > 0 : this animation is loop
-     * @param {Number} tweenEasing
-     *          CCTween easing is used for calculate easing effect
-     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
-     *         -1 : fade out
-     *         0  : line
-     *         1  : fade in
-     *         2  : fade in and out
      */
-    play:function (animationName, durationTo, durationTween, loop, tweenEasing) {
+    play:function (animationName, durationTo, loop) {
+        if(typeof animationName == "string"){
+            this._playByName(animationName, durationTo, loop);
+        } else if(animationName instanceof Array){
+            this._playByNames(animationName, durationTo, loop);
+        }
+    },
+
+    _playByName:function(animationName, durationTo, loop){
         if (this._animationData == null) {
             cc.log("this._animationData can not be null");
             return;
@@ -213,15 +219,11 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         if (typeof durationTo == "undefined") {
             durationTo = -1;
         }
-        if (typeof durationTween == "undefined") {
-            durationTween = -1;
-        }
+
         if (typeof loop == "undefined") {
             loop = -1;
         }
-        if (typeof tweenEasing == "undefined") {
-            tweenEasing = ccs.TweenType.tweenEasingMax;
-        }
+
         var locMovementData = this._movementData;
         //Get key frame count
         this._rawDuration = locMovementData.duration;
@@ -229,12 +231,18 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._processScale = this._speedScale * locMovementData.scale;
         //Further processing parameters
         durationTo = (durationTo == -1) ? locMovementData.durationTo : durationTo;
-        durationTween = (durationTween == -1) ? locMovementData.durationTween : durationTween;
+        var durationTween = locMovementData.durationTween;
         durationTween = (durationTween == 0) ? locMovementData.duration : durationTween;//todo
-        tweenEasing = (tweenEasing == ccs.TweenType.tweenEasingMax) ? locMovementData.tweenEasing : tweenEasing;
-        loop = (loop < 0) ? locMovementData.loop : loop;
+        var tweenEasing = locMovementData.tweenEasing;
 
-        ccs.ProcessBase.prototype.play.call(this, durationTo, durationTween, loop, tweenEasing);
+        if (loop < 0) {
+            loop = locMovementData.loop;
+        } else {
+            loop = Boolean(loop);
+        }
+
+        this._onMovementList = false;
+        ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
 
         if (this._rawDuration == 0) {
             this._loopType = CC_ANIMATION_TYPE_SINGLE_FRAME;
@@ -279,6 +287,43 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._armature.update(0);
     },
 
+    _playByNames: function (movementNames,durationTo, loop) {
+        this._movementList = [];
+        this._movementListLoop = loop;
+        this._onMovementList = true;
+        this._movementIndex = 0;
+
+        for (var i = 0; i < movementNames.length; i++) {
+            this._movementList.push({name:movementNames[i],durationTo:durationTo});
+        }
+
+        this.updateMovementList();
+    },
+
+    updateMovementList: function () {
+        if (this._onMovementList) {
+            if (this._movementListLoop) {
+                var movementObj = this._movementList[this._movementIndex];
+                this.play(movementObj.name, movementObj.durationTo,0);
+                this._movementIndex++;
+                if (this._movementIndex >= this._movementList.length) {
+                    this._movementIndex = 0;
+                }
+            }
+            else {
+                if (this._movementIndex < this._movementList.length) {
+                    var movementObj = this._movementList[this._movementIndex];
+                    this.play(movementObj.name, movementObj.durationTo,0);
+                    this._movementIndex++;
+                }
+                else {
+                    this._onMovementList = false;
+                }
+            }
+            this._onMovementList = true;
+        }
+    },
+    
     /**
      * Go to specified frame and play current movement.
      * You need first switch to the movement you want to play, then call this function.
@@ -324,31 +369,46 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
     /**
      * Play animation by index, the other param is the same to play.
-     * @param {Number} animationIndex
+     * @param {Number||Array} animationIndex
      * @param {Number} durationTo
-     * @param {Number} durationTween
      * @param {Number} loop
-     * @param {Number} tweenEasing
      */
-    playByIndex:function (animationIndex, durationTo, durationTween, loop, tweenEasing) {
+    playByIndex:function (animationIndex, durationTo, loop) {
+        if(typeof animationIndex =="number"){
+            this._playByIndex(animationIndex, durationTo, loop);
+        } else if(animationIndex instanceof Array){
+            this._playByIndexs(animationIndex, durationTo, loop);
+        }
+
+    },
+    _playByIndex:function (animationIndex, durationTo, loop) {
         if (typeof durationTo == "undefined") {
             durationTo = -1;
         }
-        if (typeof durationTween == "undefined") {
-            durationTween = -1;
-        }
         if (typeof loop == "undefined") {
             loop = -1;
-        }
-        if (typeof tweenEasing == "undefined") {
-            tweenEasing = 10000;
         }
         var moveNames = this._animationData.movementNames;
         if (animationIndex < -1 || animationIndex >= moveNames.length) {
             return;
         }
         var animationName = moveNames[animationIndex];
-        this.play(animationName, durationTo, durationTween, loop, tweenEasing);
+        this.play(animationName, durationTo, loop);
+    },
+    _playByIndexs: function (movementIndexes,durationTo, loop) {
+        this._movementList = [];
+        this._movementListLoop = loop;
+        this._onMovementList = true;
+        this._movementIndex = 0;
+
+        var movName = this._animationData.movementNames;
+
+        for (var i = 0; i < movementIndexes.length; i++) {
+            var name = movName[movementIndexes[i]];
+            this._movementList.push({name:name,durationTo:durationTo});
+        }
+
+        this.updateMovementList();
     },
 
     /**
@@ -398,6 +458,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                     this._isComplete = true;
                     this._isPlaying = false;
                     this.callMovementEvent([this._armature, ccs.MovementEventType.complete, this._movementID]);
+                    this.updateMovementList();
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
                     this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
@@ -501,7 +562,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
     /**
      * userObject setter
-     * @param {Object} aniData
+     * @param {Object} userObject
      */
     setUserObject:function (userObject) {
         this._userObject = userObject;

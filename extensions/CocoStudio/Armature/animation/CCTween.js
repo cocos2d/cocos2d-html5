@@ -74,29 +74,15 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     },
 
     /**
-     * play animation by animation name.
-     * @param {Number} animationName The animation name you want to play
+     * Start the Process
+     * @param {ccs.MovementBoneData} movementBoneData
      * @param {Number} durationTo
-     *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} durationTween he
-     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} loop
-     *          Whether the animation is loop.
-     *         loop < 0 : use the value from CCMovementData get from flash design panel
-     *         loop = 0 : this animation is not loop
-     *         loop > 0 : this animation is loop
-     * @param {Number} tweenEasing
-     *          CCTween easing is used for calculate easing effect
-     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
-     *         -1 : fade out
-     *         0  : line
-     *         1  : fade in
-     *         2  : fade in and out
+     * @param {Number} durationTween
+     * @param {Boolean} loop
+     * @param {ccs.TweenType} tweenEasing
      */
     play:function (movementBoneData, durationTo, durationTween, loop, tweenEasing) {
-        ccs.ProcessBase.prototype.play.call(this, durationTo, durationTween, loop, tweenEasing);
+        ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
 
         if(loop){
             this._loopType = CC_ANIMATION_TYPE_TO_LOOP_FRONT;
@@ -241,6 +227,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * Calculate the between value of _from and _to, and give it to between frame data
      * @param {ccs.FrameData} from
      * @param {ccs.FrameData} to
+     * @param {Boolean} limit
      */
     setBetween:function (from, to, limit) {
         if (typeof limit == "undefined") {
@@ -335,7 +322,6 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     /**
      * Calculate which frame arrived, and if current frame have event, then call the event listener
      * @param {Number} currentPercent
-     * @param {Boolean} activeFrame
      * @return {Number}
      */
     updateFrameData:function (currentPercent) {
