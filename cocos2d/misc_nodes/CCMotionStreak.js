@@ -71,7 +71,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      */
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
-        this._positionR = cc.PointZero();
+        this._positionR = cc._pConst(0, 0);
         this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         this._vertexWebGLBuffer = cc.renderContext.createBuffer();
 
@@ -276,9 +276,15 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @override
      * @param {cc.Point} position
      */
-    setPosition:function (position) {
+    setPosition:function (position, yValue) {
         this._startingPositionInitialized = true;
-        this._positionR = cc.p(position.x,position.y);
+        if(arguments.length === 1){
+            this._positionR._x = position.x;
+            this._positionR._y = position.y;
+        } else {
+            this._positionR._x = position;
+            this._positionR._y = yValue;
+        }
     },
 
     /**

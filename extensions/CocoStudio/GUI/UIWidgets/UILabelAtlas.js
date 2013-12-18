@@ -145,7 +145,9 @@ ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
     labelAtlasScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelAtlasRenderer.setScale(1.0);
-            this._size = this._labelAtlasRenderer.getContentSize();
+            var atlasRenderSize = this._labelAtlasRenderer.getContentSize();
+            this._size.width = atlasRenderSize.width;
+            this._size.height = atlasRenderSize.height;
         }
         else {
             var textureSize = this._labelAtlasRenderer.getContentSize();

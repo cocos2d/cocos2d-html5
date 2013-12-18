@@ -53,7 +53,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
         this._imageRenderer = null;
         this._textureFile = "";
         this._imageTexType = ccs.TextureResType.local;
-        this._imageTextureSize = this._size;
+        this._imageTextureSize = cc.size(this._size.width, this._size.height);
     },
 
     initRenderer: function () {
@@ -89,7 +89,9 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
         if (this._scale9Enabled) {
             this._imageRenderer.setCapInsets(this._capInsets);
         }
-        this._imageTextureSize = this._imageRenderer.getContentSize();
+        var locRendererSize = this._imageRenderer.getContentSize();
+        this._imageTextureSize.width = locRendererSize.width;
+        this._imageTextureSize.height = locRendererSize.height;
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },

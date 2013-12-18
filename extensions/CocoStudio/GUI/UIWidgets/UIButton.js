@@ -197,7 +197,9 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         if (this._scale9Enabled) {
             this._buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
+        var buttonRenderSize = this._buttonNormalRenderer.getContentSize();
+        this._normalTextureSize.width = buttonRenderSize.width;
+        this._normalTextureSize.height = buttonRenderSize.height;
         this.updateAnchorPoint();
         this.normalTextureScaleChangedWithSize();
     },
@@ -458,7 +460,8 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._buttonNormalRenderer.setScale(1.0);
-                this._size = this._normalTextureSize;
+                this._size.width = this._normalTextureSize.width;
+                this._size.height = this._normalTextureSize.height;
             }
         }
         else {

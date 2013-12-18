@@ -54,11 +54,11 @@ cc.ControlSwitch = cc.Control.extend({
 
             this._switchSprite = new cc.ControlSwitchSprite();
             this._switchSprite.initWithMaskSprite(maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel);
-            this._switchSprite.setPosition(cc.p(this._switchSprite.getContentSize().width / 2, this._switchSprite.getContentSize().height / 2));
+            this._switchSprite.setPosition(this._switchSprite.getContentSize().width / 2, this._switchSprite.getContentSize().height / 2);
             this.addChild(this._switchSprite);
 
             this.ignoreAnchorPointForPosition(false);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(cc.ANCHOR_MIDDLE);
             this.setContentSize(this._switchSprite.getContentSize());
             return true;
         }
@@ -269,22 +269,22 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     },
 
     needsLayout:function () {
-        this._onSprite.setPosition(cc.p(this._onSprite.getContentSize().width / 2 + this._sliderXPosition,
-            this._onSprite.getContentSize().height / 2));
-        this._offSprite.setPosition(cc.p(this._onSprite.getContentSize().width + this._offSprite.getContentSize().width / 2 + this._sliderXPosition,
-            this._offSprite.getContentSize().height / 2));
+        this._onSprite.setPosition(this._onSprite.getContentSize().width / 2 + this._sliderXPosition,
+            this._onSprite.getContentSize().height / 2);
+        this._offSprite.setPosition(this._onSprite.getContentSize().width + this._offSprite.getContentSize().width / 2 + this._sliderXPosition,
+            this._offSprite.getContentSize().height / 2);
 
         if (this._onLabel) {
-            this._onLabel.setPosition(cc.p(this._onSprite.getPosition().x - this._thumbSprite.getContentSize().width / 6,
-                this._onSprite.getContentSize().height / 2));
+            this._onLabel.setPosition(this._onSprite.getPosition().x - this._thumbSprite.getContentSize().width / 6,
+                this._onSprite.getContentSize().height / 2);
         }
         if (this._offLabel) {
-            this._offLabel.setPosition(cc.p(this._offSprite.getPosition().x + this._thumbSprite.getContentSize().width / 6,
-                this._offSprite.getContentSize().height / 2));
+            this._offLabel.setPosition(this._offSprite.getPosition().x + this._thumbSprite.getContentSize().width / 6,
+                this._offSprite.getContentSize().height / 2);
         }
         var locMaskSize = this._maskTexture.getContentSize();
-        this._thumbSprite.setPosition(cc.p(this._onSprite.getContentSize().width + this._sliderXPosition,
-            locMaskSize.height / 2));
+        this._thumbSprite.setPosition(this._onSprite.getContentSize().width + this._sliderXPosition,
+            locMaskSize.height / 2);
         var rt = cc.RenderTexture.create(locMaskSize.width, locMaskSize.height);
 
         rt.begin();

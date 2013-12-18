@@ -75,7 +75,8 @@
         },
         _syncPosition:function () {
             var pos = this._body.GetPosition();
-            this._position = cc.p(pos.x * this._PTMRatio, pos.y * this._PTMRatio);
+            this._position._x = pos.x * this._PTMRatio;
+            this._position._y = pos.y * this._PTMRatio;
             this._rotationRadians = this._rotation * (Math.PI / 180);
         },
         _syncRotation:function () {

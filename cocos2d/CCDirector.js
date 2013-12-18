@@ -230,7 +230,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //purge?
         this._purgeDirecotorInNextLoop = false;
 
-        this._winSizeInPoints = cc.size(0, 0);
+        this._winSizeInPoints = cc._sizeConst(0, 0);
 
         this._openGLView = null;
         this._contentScaleFactor = 1.0;
@@ -426,7 +426,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Size}
      */
     getWinSize:function () {
-        return cc.size(this._winSizeInPoints.width, this._winSizeInPoints.height);
+        return this._winSizeInPoints;
     },
 
     /**
@@ -453,7 +453,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._openGLView) {
             return this._openGLView.getVisibleOrigin();
         } else {
-            return cc.p(0, 0);
+            return cc.POINT_ZERO;
         }
     },
 
@@ -643,7 +643,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         else
             cc.glBlendFunc(cc.renderContext.ONE, cc.renderContext.ZERO);
-
         //cc.CHECK_GL_ERROR_DEBUG();
     },
 
@@ -670,13 +669,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if(cc.renderContextType === cc.CANVAS)
             return;
 
+        var loc_gl= cc.renderContext;
         if (on) {
-            cc.renderContext.clearDepth(1.0);
-            cc.renderContext.enable(cc.renderContext.DEPTH_TEST);
-            cc.renderContext.depthFunc(cc.renderContext.LEQUAL);
+            loc_gl.clearDepth(1.0);
+            loc_gl.enable(loc_gl.DEPTH_TEST);
+            loc_gl.depthFunc(loc_gl.LEQUAL);
             //cc.renderContext.hint(cc.renderContext.PERSPECTIVE_CORRECTION_HINT, cc.renderContext.NICEST);
         } else {
-            cc.renderContext.disable(cc.renderContext.DEPTH_TEST);
+            loc_gl.disable(loc_gl.DEPTH_TEST);
         }
         //cc.CHECK_GL_ERROR_DEBUG();
     },
@@ -720,15 +720,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         // If it is not a transition, call onExit/cleanup
         if (!newIsTransition) {
-            if (this._runningScene) {
-                this._runningScene.onExitTransitionDidStart();
-                this._runningScene.onExit();
+            var locRunningScene = this._runningScene;
+            if (locRunningScene) {
+                locRunningScene.onExitTransitionDidStart();
+                locRunningScene.onExit();
             }
 
             // issue #709. the root node (scene) should receive the cleanup message too
             // otherwise it might be leaked.
-            if (this._sendCleanupToScene && this._runningScene)
-                this._runningScene.cleanup();
+            if (this._sendCleanupToScene && locRunningScene)
+                locRunningScene.cleanup();
         }
 
         this._runningScene = this._nextScene;
@@ -766,7 +767,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setOpenGLView:function (openGLView) {
         // set size
-        this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);        //this._openGLView.getDesignResolutionSize();
+        this._winSizeInPoints.setWidth(cc.canvas.width);      //this._openGLView.getDesignResolutionSize();
+        this._winSizeInPoints.setHeight(cc.canvas.height);
         this._openGLView = openGLView || cc.EGLView.getInstance();
 
         if (cc.renderContextType === cc.CANVAS)
@@ -777,9 +779,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         conf.gatherGPUInfo();
         conf.dumpInfo();
 
-            // set size
-            //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
-            //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+        // set size
+        //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
+        //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
 
         //if (this._openGLView != openGLView) {
         // because EAGLView is not kind of CCObject
@@ -863,28 +865,25 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     /**
      * shows the FPS in the screen
      */
-    _showStats:function () {
+    _showStats: function () {
         this._frames++;
         this._accumDt += this._deltaTime;
-        if (this._displayStats) {
-            if (this._FPSLabel && this._SPFLabel && this._drawsLabel) {
-                if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
-                    this._SPFLabel.setString(this._secondsPerFrame.toFixed(3));
+        if (this._FPSLabel && this._SPFLabel && this._drawsLabel) {
+            if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
+                this._SPFLabel.setString(this._secondsPerFrame.toFixed(3));
 
-                    this._frameRate = this._frames / this._accumDt;
-                    this._frames = 0;
-                    this._accumDt = 0;
+                this._frameRate = this._frames / this._accumDt;
+                this._frames = 0;
+                this._accumDt = 0;
 
-                    this._FPSLabel.setString(this._frameRate.toFixed(1));
-                    this._drawsLabel.setString((0 | cc.g_NumberOfDraws).toString());
-                }
-                this._FPSLabel.visit();
-                this._SPFLabel.visit();
-                this._drawsLabel.visit();
-            } else {
-                this._createStatsLabel();
+                this._FPSLabel.setString(this._frameRate.toFixed(1));
+                this._drawsLabel.setString((0 | cc.g_NumberOfDraws).toString());
             }
-        }
+            this._FPSLabel.visit();
+            this._SPFLabel.visit();
+            this._drawsLabel.visit();
+        } else
+            this._createStatsLabel();
         cc.g_NumberOfDraws = 0;
     },
 
@@ -1266,6 +1265,15 @@ cc.Director.getInstance = function () {
     }
     return cc.s_SharedDirector;
 };
+
+Object.defineProperties(cc, {
+    windowSize: {
+        get: function () {
+            return  cc.director.getWinSize();
+        },
+        enumerable: true
+    }
+});
 
 /**
  * is director first run

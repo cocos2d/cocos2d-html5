@@ -92,7 +92,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
-        this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+        this._progressBarRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
         this._renderer.addChild(this._barRenderer, -1);
         this._renderer.addChild(this._progressBarRenderer, -1);
         this._slidBallNormalRenderer = cc.Sprite.create();
@@ -158,7 +158,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
         this._progressBarRenderer.setColor(this.getColor());
         this._progressBarRenderer.setOpacity(this.getOpacity());
-        this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+        this._progressBarRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
         var locSize = this._progressBarRenderer.getContentSize();
         this._progressBarTextureSize.width = locSize.width;
         this._progressBarTextureSize.height = locSize.height;

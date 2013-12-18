@@ -725,9 +725,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._cascadeOpacityEnabled = true;
             this._cascadeColorEnabled = true;
 
-            this._contentSize = cc.SizeZero();
+            this._contentSize._width = 0;
+            this._contentSize._height = 0;
 
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(cc.ANCHOR_MIDDLE);
 
             if (cc.renderContextType === cc.WEBGL) {
                 var locTexture = this._textureAtlas.getTexture();

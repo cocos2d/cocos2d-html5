@@ -112,7 +112,9 @@ ccs.UILabelBMFont = ccs.UIWidget.extend(/** @lends ccs.UILabelBMFont# */{
     labelBMFontScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelBMFontRenderer.setScale(1.0);
-            this._size = this._labelBMFontRenderer.getContentSize();
+            var rendererSize = this._labelBMFontRenderer.getContentSize();
+            this._size.width = rendererSize.width;
+            this._size.height = rendererSize.height;
         }
         else {
             var textureSize = this._labelBMFontRenderer.getContentSize();

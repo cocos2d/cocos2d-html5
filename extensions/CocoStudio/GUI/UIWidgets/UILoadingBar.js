@@ -62,7 +62,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._renderer.addChild(this._barRenderer);
-        this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+        this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
     },
 
     /**
@@ -78,14 +78,14 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
 
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
-                this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_RIGHT);
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
@@ -135,13 +135,13 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
 
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_LEFT);
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
-                this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
+                this._barRenderer.setAnchorPoint(cc.ANCHOR_MIDDLE_RIGHT);
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
                 }

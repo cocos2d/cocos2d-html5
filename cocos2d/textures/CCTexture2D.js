@@ -160,7 +160,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._maxS = 0;
         this._maxT = 0;
         this._hasPremultipliedAlpha = false;
-        this._contentSize = cc.size(0, 0);
+        this._contentSize = cc._sizeConst(0, 0);
 
         this._hasMipmaps = false;
         this._pVRHaveAlphaPremultiplied = true;
@@ -357,7 +357,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         }
 
 
-        this._contentSize = contentSize;
+        this._contentSize._width = contentSize.width;
+        this._contentSize._height = contentSize.height;
         this._pixelsWide = pixelsWide;
         this._pixelsHigh = pixelsHigh;
         this._pixelFormat = pixelFormat;
@@ -514,9 +515,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var pixelsWide = this._htmlElementObj.width;
         var pixelsHigh = this._htmlElementObj.height;
 
-        this._contentSize = new cc.Size(pixelsWide, pixelsHigh);
-        this._pixelsWide = pixelsWide;
-        this._pixelsHigh = pixelsHigh;
+        this._pixelsWide = this._contentSize._width = pixelsWide;
+        this._pixelsHigh = this._contentSize._height = pixelsHigh;
         this._pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
         this._maxS = 1;
         this._maxT = 1;
@@ -608,7 +608,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             this._maxT = 1.0;
             this._pixelsWide = pvr.getWidth();
             this._pixelsHigh = pvr.getHeight();
-            this._contentSize = cc.size(this._pixelsWide, this._pixelsHigh);
+            this._contentSize._width = this._pixelsWide;
+            this._contentSize._height = this._pixelsHigh;
             this._hasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
             this._pixelFormat = pvr.getFormat();
 
@@ -950,7 +951,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     _loadedEventListeners:null,
     /*public:*/
     ctor:function () {
-        this._contentSize = cc.size(0,0);
+        this._contentSize = cc._sizeConst(0,0);
         this._isLoaded = false;
         this._htmlElementObj = null;
         this._loadedEventListeners = [];
@@ -1005,7 +1006,8 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     handleLoadedTexture:function () {
         this._isLoaded = true;
         var locElement =  this._htmlElementObj;
-        this._contentSize = new cc.Size(locElement.width, locElement.height);
+        this._contentSize._width = locElement.width;
+        this._contentSize._height = locElement.height;
 
         this._callLoadedEventCallbacks();
     },

@@ -96,7 +96,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this.ignoreContentAdaptWithSize(false);
         this.setSize(cc.SizeZero());
         this.setBright(true);
-        this.setAnchorPoint(cc.p(0, 0));
+        this.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
         this._scheduler = cc.Director.getInstance().getScheduler();
         return true;
     },
@@ -153,7 +153,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
             this.doLayout();
         }
         if (this._backGroundImage) {
-            this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
+            this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
             if (this._backGroundScale9Enabled) {
                 if (this._backGroundImage instanceof cc.Scale9Sprite) {
                     this._backGroundImage.setPreferredSize(this._size);
@@ -221,7 +221,9 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         }
         this._backGroundImage.setColor(this.getColor());
         this._backGroundImage.setOpacity(this.getOpacity());
-        this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
+        var locBackSize = this._backGroundImage.getContentSize();
+        this._backGroundImageTextureSize.width = locBackSize.width;
+        this._backGroundImageTextureSize.height = locBackSize.height;
         this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
     },
 

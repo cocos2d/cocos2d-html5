@@ -40,6 +40,113 @@ cc.Point = function (_x, _y) {
     this.y = _y || 0;
 };
 
+cc._PointConst = function (x, y) {
+    this._x = x || 0;
+    this._y = y || 0;
+
+    this.setX = function (x) {
+        this._x = x;
+    };
+    this.setY = function (y) {
+        this._y = y;
+    }
+};
+
+cc._pConst = function (x, y) {
+    return new cc._PointConst(x, y);
+};
+
+Object.defineProperties(cc._PointConst.prototype, {
+    x: {
+        get: function () {
+            return this._x;
+        },
+        set: function () {
+            cc.log("Warning of _PointConst: Modification to const or private property is forbidden");
+        },
+        enumerable: true
+    },
+
+    y: {
+        get: function () {
+            return this._y;
+        },
+        set: function () {
+            cc.log("Warning of _PointConst: Modification to const or private property is forbidden");
+        },
+        enumerable: true
+    }
+});
+
+cc._anchorConsts = {
+    anchorMiddle: cc._pConst(0.5, 0.5),
+    anchorBottomLeft: cc._pConst(0, 0),
+    anchorTopLeft: cc._pConst(0, 1),
+    anchorBottomRight: cc._pConst(1, 0),
+    anchorTopRight: cc._pConst(1, 1),
+    anchorMiddleRight: cc._pConst(1, 0.5),
+    anchorMiddleLeft: cc._pConst(0, 0.5),
+    anchorMiddleTop: cc._pConst(0.5, 1),
+    anchorMiddleBottom: cc._pConst(0.5, 0)
+};
+
+Object.defineProperties(cc, {
+    ANCHOR_MIDDLE: {
+        get: function () {
+            return cc._anchorConsts.anchorMiddle;
+        },
+        enumerable: true
+    },
+    ANCHOR_BOTTOM_LEFT: {
+        get: function () {
+            return cc._anchorConsts.anchorBottomLeft;
+        },
+        enumerable: true
+    },
+    ANCHOR_TOP_LEFT: {
+        get: function () {
+            return cc._anchorConsts.anchorTopLeft;
+        },
+        enumerable: true
+    },
+    ANCHOR_BOTTOM_RIGHT: {
+        get: function () {
+            return cc._anchorConsts.anchorBottomRight;
+        },
+        enumerable: true
+    },
+    ANCHOR_TOP_RIGHT: {
+        get: function () {
+            return cc._anchorConsts.anchorTopRight;
+        },
+        enumerable: true
+    },
+    ANCHOR_MIDDLE_RIGHT: {
+        get: function () {
+            return cc._anchorConsts.anchorMiddleRight;
+        },
+        enumerable: true
+    },
+    ANCHOR_MIDDLE_LEFT: {
+        get: function () {
+            return cc._anchorConsts.anchorMiddleLeft;
+        },
+        enumerable: true
+    },
+    ANCHOR_MIDDLE_TOP: {
+        get: function () {
+            return cc._anchorConsts.anchorMiddleTop;
+        },
+        enumerable: true
+    },
+    ANCHOR_MIDDLE_BOTTOM: {
+        get: function () {
+            return cc._anchorConsts.anchorMiddleBottom;
+        },
+        enumerable: true
+    }
+});
+
 /**
  * @function
  * @param {Number} x
@@ -58,7 +165,7 @@ cc.PointMake = function (x, y) {
  */
 cc.p = function (x, y) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
-    // memory usage and overall peformance drastically
+    // memory usage and overall performance drastically
     return new cc.Point(x, y);
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
@@ -76,24 +183,6 @@ cc._p = cc.p;
 cc.PointZero = function () {
     return cc.p(0, 0);
 };
-
-Object.defineProperties(cc, {
-    POINT_ZERO:{
-        get:function () {
-            return cc.p(0, 0);
-        }
-    },
-    SIZE_ZERO:{
-        get:function () {
-            return cc.size(0, 0);
-        }
-    },
-    RECT_ZERO:{
-        get:function () {
-            return cc.rect(0, 0, 0, 0);
-        }
-    }
-});
 
 /**
  * @function
@@ -127,6 +216,44 @@ cc.Size = function (_width, _height) {
     this.width = _width || 0;
     this.height = _height || 0;
 };
+
+cc._SizeConst = function (width, height) {
+    this._width = width || 0;
+    this._height = height || 0;
+
+    this.setWidth = function (width) {
+        this._width = width;
+    };
+    this.setHeight = function (height) {
+        this._height = height;
+    }
+};
+
+cc._sizeConst = function (width, height) {
+    return new cc._SizeConst(width, height);
+};
+
+Object.defineProperties(cc._SizeConst.prototype, {
+    width: {
+        get: function () {
+            return this._width;
+        },
+        set: function () {
+            cc.log("Warning of _SizeConst: Modification to const or private property is forbidden");
+        },
+        enumerable: true
+    },
+
+    height: {
+        get: function () {
+            return this._height;
+        },
+        set: function () {
+            cc.log("Warning of _SizeConst: Modification to const or private property is forbidden");
+        },
+        enumerable: true
+    }
+});
 
 /**
  * @function
@@ -165,6 +292,26 @@ cc._size = cc.size;
 cc.SizeZero = function () {
     return cc.size(0, 0);
 };
+
+cc._zeroConsts = {pointZero: cc._pConst(0,0), sizeZero: cc._sizeConst(0,0)};
+
+Object.defineProperties(cc, {
+    POINT_ZERO:{
+        get:function () {
+            return cc._zeroConsts.pointZero;
+        }
+    },
+    SIZE_ZERO:{
+        get:function () {
+            return cc._zeroConsts.sizeZero;
+        }
+    },
+    RECT_ZERO:{
+        get:function () {
+            return cc.rect(0, 0, 0, 0);
+        }
+    }
+});
 
 
 /**

@@ -59,7 +59,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     _initLayer:function () {
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
@@ -1353,8 +1353,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
 /**
  * creates a gradient layer
- * @param {cc.Color3B} start starting color
- * @param {cc.Color3B} end ending color
+ * @param {cc.Color4B} start starting color
+ * @param {cc.Color4B} end ending color
  * @param {cc.Point|Null} v
  * @return {cc.LayerGradient}
  */
