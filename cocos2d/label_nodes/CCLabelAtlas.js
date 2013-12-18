@@ -35,6 +35,40 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     // the first char in the charmap
     _mapStartChar:null,
 
+    _textureLoaded:false,
+    _loadedEventListeners: null,
+
+    ctor:function(){
+        cc.AtlasNode.prototype.ctor.call(this);
+        this._loadedEventListeners = [];
+    },
+
+    /**
+     * return  texture is loaded
+     * @returns {boolean}
+     */
+    textureLoaded:function(){
+        return this._textureLoaded;
+    },
+
+    /**
+     * add texture loaded event listener
+     * @param {Function} callback
+     * @param {Object} target
+     */
+    addLoadedEventListener:function(callback, target){
+        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    _callLoadedEventCallbacks:function(){
+        this._textureLoaded = true;
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0, len = locListeners.length;  i < len; i++){
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
+    },
     /**
      * <p>
      * initializes the cc.LabelAtlas with a string, a char map file(the atlas),                     <br/>
@@ -80,7 +114,15 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             texture = textureFilename;
         else
             texture = cc.TextureCache.getInstance().addImage(textureFilename);
-
+        var locLoaded = texture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            texture.addLoadedEventListener(function(sender){
+                this.initWithTexture(texture, width, height, label.length);
+                this.setString(label);
+                this._callLoadedEventCallbacks();
+            },this);
+        }
         if (this.initWithTexture(texture, width, height, label.length)) {
             this._mapStartChar = startChar;
             this.setString(label);

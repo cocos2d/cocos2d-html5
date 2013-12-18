@@ -450,6 +450,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _cascadeOpacityEnabled:false,
 
     _textureLoaded: false,
+    _loadedEventListeners: null,
 
     _setString:function(newString, needUpdateLabel){
         if(!needUpdateLabel){
@@ -495,7 +496,34 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         this._fntFile = "";
         this._reusedChar = [];
+        this._loadedEventListeners = [];
     },
+    /**
+     * return  texture is loaded
+     * @returns {boolean}
+     */
+    textureLoaded:function(){
+        return this._textureLoaded;
+    },
+
+    /**
+     * add texture loaded event listener
+     * @param {Function} callback
+     * @param {Object} target
+     */
+    addLoadedEventListener:function(callback, target){
+        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    _callLoadedEventCallbacks:function(){
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0, len = locListeners.length;  i < len; i++){
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
+    },
+
     /**
      * @param {CanvasRenderingContext2D} ctx
      */
@@ -699,12 +727,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var locIsLoaded = texture.isLoaded();
             this._textureLoaded = locIsLoaded;
             if(!locIsLoaded){
-                this._textureLoaded = false;
                 texture.addLoadedEventListener(function(sender){
                     this._textureLoaded = true;
                     //reset the LabelBMFont
-                    this.initWithTexture(sender, theString.length);
-                    this.setString(theString,true);
+                    this.initWithTexture(sender, this._initialString.length);
+                    this.setString(this._initialString,true);
+                    this._callLoadedEventCallbacks();
                 }, this);
             }
         } else{
@@ -1176,6 +1204,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     this.createFontChars();
                     this._changeTextureColor();
                     this.updateLabel();
+                    this._callLoadedEventCallbacks();
                 }, this);
             } else {
                 this.createFontChars();

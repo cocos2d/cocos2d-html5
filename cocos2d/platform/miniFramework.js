@@ -57,7 +57,7 @@ cc.Browser = {};
  * Browsers that Cocos2d-HTML5 support well in WebGL render mode
  * @type {Array}
  */
-cc.Browser.webglWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari"];
+cc.Browser.webglWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari", "ie"];
 
 (function () {
     var ua = navigator.userAgent;

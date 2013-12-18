@@ -127,21 +127,27 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
         texType = texType || ccs.TextureResType.local;
         this._backGroundFileName = backGround;
         this._backGroundTexType = texType;
+        var bgBoxRenderer = this._backGroundBoxRenderer;
         switch (this._backGroundTexType) {
             case ccs.TextureResType.local:
-                this._backGroundBoxRenderer.initWithFile(backGround);
+                bgBoxRenderer.initWithFile(backGround);
                 break;
             case ccs.TextureResType.plist:
-                this._backGroundBoxRenderer.initWithSpriteFrameName(backGround);
+                bgBoxRenderer.initWithSpriteFrameName(backGround);
                 break;
             default:
                 break;
         }
-        this._backGroundBoxRenderer.setColor(this.getColor());
-        this._backGroundBoxRenderer.setOpacity(this.getOpacity());
+        bgBoxRenderer.setColor(this.getColor());
+        bgBoxRenderer.setOpacity(this.getOpacity());
+
+        if(!bgBoxRenderer.textureLoaded()){
+            bgBoxRenderer.addLoadedEventListener(function(){
+                this.backGroundTextureScaleChangedWithSize();
+            },this);
+        }
         this.backGroundTextureScaleChangedWithSize();
     },
-
     /**
      * Load backGroundSelected texture for checkbox.
      * @param {String} backGroundSelected

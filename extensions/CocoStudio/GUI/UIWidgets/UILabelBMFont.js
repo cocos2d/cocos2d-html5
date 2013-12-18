@@ -57,6 +57,12 @@ ccs.UILabelBMFont = ccs.UIWidget.extend(/** @lends ccs.UILabelBMFont# */{
         this.labelBMFontScaleChangedWithSize();
         this._fileHasInit = true;
         this.setText(this._stringValue);
+
+        if (!this._labelBMFontRenderer.textureLoaded()) {
+            this._labelBMFontRenderer.addLoadedEventListener(function () {
+                this.labelBMFontScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**
