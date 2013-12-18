@@ -282,11 +282,17 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UIImageView or The anchor point.x of UIImageView.
+     * @param {Number} [y] The anchor point.y of UIImageView.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._imageRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._imageRenderer.setAnchorPoint(point, y);
+        } else {
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._imageRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {

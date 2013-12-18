@@ -648,18 +648,26 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     But you can use values higher than (1,1) and lower than (0,0) too.                                                             <br/>
      *     The default anchorPoint is (0.5,0.5), so it starts in the center of the node.
      * </p>
-     * @param {cc.Point} point The anchor point of node.
+     * @param {cc.Point|Number} point The anchor point of node or The anchor point.x of node.
+     * @param {Number} [y] The anchor point.y of node.
      */
-    setAnchorPoint:function (point) {
+    setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
-        if (!cc.pointEqualToPoint(point, locAnchorPoint)) {
-            locAnchorPoint.x =  point.x;
+        if (arguments.length === 2) {
+            if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+                return;
+            locAnchorPoint.x = point;
+            locAnchorPoint.y = y;
+        } else {
+            if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+                return;
+            locAnchorPoint.x = point.x;
             locAnchorPoint.y = point.y;
-            var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-            locAPP.x = locSize.width * point.x;
-            locAPP.y = locSize.height * point.y;
-            this.setNodeDirty();
         }
+        var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
+        this.setNodeDirty();
     },
 
     /**

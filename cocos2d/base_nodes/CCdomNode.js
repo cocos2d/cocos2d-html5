@@ -117,20 +117,33 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 
     /**
      * replace set anchorpoint of ccNode
-     * @param {object} point
+     * @param {cc.Point|Number} point The anchor point of node or The anchor point.x of node.
+     * @param {Number} [y] The anchor point.y of node.
      */
-    setAnchorPoint:function (point) {
-        this._anchorPoint = point;
-        this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-            this._contentSize.height * this._anchorPoint.y);
-        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + this._anchorPointInPoints.x + 'px ' + -this._anchorPointInPoints.y + 'px';
+    setAnchorPoint:function (point, y) {
+        var locAnchorPoint = this._anchorPoint;
+        if (arguments.length === 2) {
+            if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+                return;
+            locAnchorPoint.x = point;
+            locAnchorPoint.y = y;
+        } else {
+            if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+                return;
+            locAnchorPoint.x = point.x;
+            locAnchorPoint.y = point.y;
+        }
+        var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
+
+        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
         if (this.isIgnoreAnchorPointForPosition()) {
             this.dom.style.marginLeft = 0;
             this.dom.style.marginBottom = 0;
-        }
-        else {
-            this.dom.style.marginLeft = (this.isToggler) ? 0 : -this._anchorPointInPoints.x + 'px';
-            this.dom.style.marginBottom = -this._anchorPointInPoints.y + 'px';
+        } else {
+            this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP.x + 'px';
+            this.dom.style.marginBottom = -locAPP.y + 'px';
         }
         this.setNodeDirty();
     },
