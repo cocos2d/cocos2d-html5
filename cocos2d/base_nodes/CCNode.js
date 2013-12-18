@@ -691,18 +691,26 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     The contentSize remains the same no matter the node is scaled or rotated.            <br/>
      *     All nodes has a size. Layer and Scene has the same size of the screen.
      * </p>
-     * @param {cc.Size} size The untransformed size of the node.
+     * @param {cc.Size|Number} size The untransformed size of the node or The untransformed size's width of the node.
+     * @param {Number} [height] The untransformed size's height of the node.
      */
-    setContentSize:function (size) {
+    setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if (!cc.sizeEqualToSize(size, locContentSize)) {
+        if (arguments.length === 2) {
+            if ((size === locContentSize.width) && (height === locContentSize.height))
+                return;
+            locContentSize.width = size;
+            locContentSize.height = height;
+        } else {
+            if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
+                return;
             locContentSize.width = size.width;
             locContentSize.height = size.height;
-            var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-            locAPP.x = locContentSize.width * locAnchorPoint.x;
-            locAPP.y = locContentSize.height * locAnchorPoint.y;
-            this.setNodeDirty();
         }
+        var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
+        this.setNodeDirty();
     },
 
     /**

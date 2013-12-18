@@ -137,17 +137,28 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 
     /**
      * replace set ContentSize of ccNode
-     * @param {cc.Size} size
+     * @param {cc.Size|Number} size The untransformed size of the node or The untransformed size's width of the node.
+     * @param {Number} [height] The untransformed size's height of the node.
      */
-    setContentSize:function (size) {
-        if (!cc.sizeEqualToSize(size, this._contentSize)) {
-            this._contentSize = size;
-            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-                this._contentSize.height * this._anchorPoint.y);
-            this.dom.width = size.width;
-            this.dom.height = size.height;
-            this.setAnchorPoint(this.getAnchorPoint());
+    setContentSize:function (size, height) {
+        var locContentSize = this._contentSize;
+        if (arguments.length === 2) {
+            if ((size === locContentSize.width) && (height === locContentSize.height))
+                return;
+            locContentSize.width = size;
+            locContentSize.height = height;
+        } else {
+            if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
+                return;
+            locContentSize.width = size.width;
+            locContentSize.height = size.height;
         }
+        var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
+        this.dom.width = size.width;
+        this.dom.height = size.height;
+        this.setAnchorPoint(this.getAnchorPoint());
         if (this.canvas) {
             this.canvas.width = this._contentSize.width;
             this.canvas.height = this._contentSize.height;
@@ -457,8 +468,9 @@ cc.DOM.setTransform = function (x) {
 cc.DOM.forSprite = function (x) {
     x.dom = cc.$new('div');
     x.canvas = cc.$new('canvas');
-    x.canvas.width = x.getContentSize().width;
-    x.canvas.height = x.getContentSize().height;
+    var locContentSize = x.getContentSize();
+    x.canvas.width = locContentSize.width;
+    x.canvas.height = locContentSize.height;
     x.dom.style.position = 'absolute';
     x.dom.style.bottom = 0;
     x.ctx = x.canvas.getContext('2d');

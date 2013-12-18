@@ -486,9 +486,12 @@ cc.ScrollView = cc.Layer.extend({
         this._touchMoved = false;
     },
 
-    setContentSize: function (size) {
+    setContentSize: function (size, height) {
         if (this.getContainer() != null) {
-            this.getContainer().setContentSize(size);
+            if(arguments.length === 2)
+                this.getContainer().setContentSize(size, height);
+            else
+                this.getContainer().setContentSize(size);
             this.updateInset();
         }
     },
