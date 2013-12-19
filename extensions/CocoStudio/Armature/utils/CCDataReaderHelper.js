@@ -521,8 +521,7 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     frameData.sound = frameXML.getAttribute(ccs.CONST_A_SOUND) || "";
     frameData.soundEffect = frameXML.getAttribute(ccs.CONST_A_SOUND_EFFECT) || "";
 
-    var isTween = false;
-    isTween = frameXML.getAttribute(ccs.CONST_A_TWEEN_FRAME) || false;
+    var isTween = frameXML.getAttribute(ccs.CONST_A_TWEEN_FRAME) || true;
     frameData.isTween = Boolean(isTween);
 
     if (dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0) {
