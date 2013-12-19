@@ -446,7 +446,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.setBatchNode(this);
             tile.setPosition(this.getPositionAt(pos));
             tile.setVertexZ(this._vertexZForPos(pos));
-            tile.setAnchorPoint(cc.PointZero());
+            tile.setAnchorPoint(0,0);
             tile.setOpacity(this._opacity);
 
             var indexForZ = this._atlasIndexForExistantZ(z);
@@ -873,7 +873,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         else
             sprite.setTag(z);
 
-        sprite.setAnchorPoint(cc.PointZero());
+        sprite.setAnchorPoint(0,0);
         sprite.setOpacity(this._opacity);
         if (cc.renderContextType === cc.WEBGL) {
             sprite.setRotation(0.0);
