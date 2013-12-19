@@ -96,7 +96,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this.ignoreContentAdaptWithSize(false);
         this.setSize(cc.SizeZero());
         this.setBright(true);
-        this.setAnchorPoint(cc.p(0, 0));
+        this.setAnchorPoint(0, 0);
         this._scheduler = cc.Director.getInstance().getScheduler();
         return true;
     },

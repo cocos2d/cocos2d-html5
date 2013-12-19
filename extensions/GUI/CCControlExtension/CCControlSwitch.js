@@ -58,7 +58,7 @@ cc.ControlSwitch = cc.Control.extend({
             this.addChild(this._switchSprite);
 
             this.ignoreAnchorPointForPosition(false);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(this._switchSprite.getContentSize());
             return true;
         }
@@ -210,7 +210,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
 
             // Init clipper for mask
             this._clipper = cc.ClippingNode.create();
-            this._clipper.setAnchorPoint(cc.p(0.5, 0.5));
+            this._clipper.setAnchorPoint(0.5, 0.5);
             this._clipper.setPosition(cc.p(maskSize.width / 2, maskSize.height / 2));
             this._clipper.setStencil(this._stencil);
             this._backRT = cc.RenderTexture.create(maskSize.width, maskSize.height);

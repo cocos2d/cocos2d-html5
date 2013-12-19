@@ -127,21 +127,27 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
         texType = texType || ccs.TextureResType.local;
         this._backGroundFileName = backGround;
         this._backGroundTexType = texType;
+        var bgBoxRenderer = this._backGroundBoxRenderer;
         switch (this._backGroundTexType) {
             case ccs.TextureResType.local:
-                this._backGroundBoxRenderer.initWithFile(backGround);
+                bgBoxRenderer.initWithFile(backGround);
                 break;
             case ccs.TextureResType.plist:
-                this._backGroundBoxRenderer.initWithSpriteFrameName(backGround);
+                bgBoxRenderer.initWithSpriteFrameName(backGround);
                 break;
             default:
                 break;
         }
-        this._backGroundBoxRenderer.setColor(this.getColor());
-        this._backGroundBoxRenderer.setOpacity(this.getOpacity());
+        bgBoxRenderer.setColor(this.getColor());
+        bgBoxRenderer.setOpacity(this.getOpacity());
+
+        if(!bgBoxRenderer.textureLoaded()){
+            bgBoxRenderer.addLoadedEventListener(function(){
+                this.backGroundTextureScaleChangedWithSize();
+            },this);
+        }
         this.backGroundTextureScaleChangedWithSize();
     },
-
     /**
      * Load backGroundSelected texture for checkbox.
      * @param {String} backGroundSelected
@@ -366,15 +372,25 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UICheckBox or The anchor point.x of UICheckBox.
+     * @param {Number} [y] The anchor point.y of UICheckBox.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._backGroundBoxRenderer.setAnchorPoint(pt);
-        this._backGroundSelectedBoxRenderer.setAnchorPoint(pt);
-        this._backGroundBoxDisabledRenderer.setAnchorPoint(pt);
-        this._frontCrossRenderer.setAnchorPoint(pt);
-        this._frontCrossDisabledRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._backGroundBoxRenderer.setAnchorPoint(point, y);
+            this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
+            this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
+            this._frontCrossRenderer.setAnchorPoint(point, y);
+            this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
+        }else{
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._backGroundBoxRenderer.setAnchorPoint(point);
+            this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
+            this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
+            this._frontCrossRenderer.setAnchorPoint(point);
+            this._frontCrossDisabledRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {

@@ -50,7 +50,7 @@ var Helloworld = cc.Layer.extend({
             function () {
                 history.go(-1);
             },this);
-        closeItem.setAnchorPoint(cc.p(0.5, 0.5));
+        closeItem.setAnchorPoint(0.5, 0.5);
 
         var menu = cc.Menu.create(closeItem);
         menu.setPosition(cc.PointZero());

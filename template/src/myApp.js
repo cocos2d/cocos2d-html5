@@ -50,7 +50,7 @@ var MyLayer = cc.Layer.extend({
             function () {
                 cc.log("close");
             },this);
-        closeItem.setAnchorPoint(cc.p(0.5, 0.5));
+        closeItem.setAnchorPoint(0.5, 0.5);
 
         var menu = cc.Menu.create(closeItem);
         menu.setPosition(cc.p(0, 0));
@@ -69,7 +69,7 @@ var MyLayer = cc.Layer.extend({
 
         // add "Helloworld" splash screen"
         this.sprite = cc.Sprite.create(s_HelloWorld);
-        this.sprite.setAnchorPoint(cc.p(0.5, 0.5));
+        this.sprite.setAnchorPoint(0.5, 0.5);
         this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
         this.sprite.setScale(size.height/this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);

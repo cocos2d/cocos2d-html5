@@ -144,12 +144,12 @@ cc.ControlSlider = cc.Control.extend({
             this.setContentSize(size);
 
             // Add the slider background
-            this._backgroundSprite.setAnchorPoint(cc.p(0.5, 0.5));
+            this._backgroundSprite.setAnchorPoint(0.5, 0.5);
             this._backgroundSprite.setPosition(cc.p(size.width / 2, size.height / 2));
             this.addChild(this._backgroundSprite);
 
             // Add the progress bar
-            this._progressSprite.setAnchorPoint(cc.p(0.0, 0.5));
+            this._progressSprite.setAnchorPoint(0.0, 0.5);
             this._progressSprite.setPosition(cc.p(0.0, size.height / 2));
             this.addChild(this._progressSprite);
 
