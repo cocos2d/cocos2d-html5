@@ -429,10 +429,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * Set the design resolution size.
      * @param {Number} width Design resolution width.
      * @param {Number} height Design resolution height.
-     * @param {Number} resolutionPolicy The resolution policy desired, you may choose:
-     * [1] ResolutionExactFit Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.
-     * [2] ResolutionNoBorder Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.
-     * [3] ResolutionShowAll  Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
+     * @param {cc.ResolutionPolicy|Number} resolutionPolicy The resolution policy desired, you may choose:
+     * [1] ResolutionExactFit       Fill screen by stretch-to-fit: if the design resolution ratio of width to height is different from the screen resolution ratio, your game view will be stretched.
+     * [2] ResolutionNoBorder       Full screen without black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two areas of your game view will be cut.
+     * [3] ResolutionShowAll        Full screen with black border: if the design resolution ratio of width to height is different from the screen resolution ratio, two black borders will be shown.
+     * [4] ResolutionFixedHeight    Scale the content's height to screen's height and proportionally scale its width
+     * [5] ResolutionFixedWidth     Scale the content's width to screen's width and proportionally scale its height
+     * [cc.ResolutionPolicy]        Custom resolution policy, constructed by cc.ResolutionPolicy
      */
     setDesignResolutionSize:function (width, height, resolutionPolicy) {
         // Defensive code
@@ -442,7 +445,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
 
         // Reinit frame size
+        var frameW = this._frameSize.width, frameH = this._frameSize.height;
         this._initFrameSize();
+        // No change
+        if(frameW == this._frameSize.width && frameH == this._frameSize.height)
+            return;
         this._designResolutionSize = cc.size(width, height);
         this._originalDesignResolutionSize = cc.size(width, height);
 
