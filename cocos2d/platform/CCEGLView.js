@@ -448,7 +448,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var frameW = this._frameSize.width, frameH = this._frameSize.height;
         this._initFrameSize();
         // No change
-        if(frameW == this._frameSize.width && frameH == this._frameSize.height)
+        if(resolutionPolicy == this._resolutionPolicy
+            && width == this._originalDesignResolutionSize.width && height == this._originalDesignResolutionSize.height
+            && frameW == this._frameSize.width && frameH == this._frameSize.height)
             return;
         this._designResolutionSize = cc.size(width, height);
         this._originalDesignResolutionSize = cc.size(width, height);
