@@ -101,7 +101,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tempTexture.initWithElement(tmpCanvas);
             tempTexture.handleLoadedTexture();
             this._cacheTexture = tempTexture;
-            this.setContentSize(cc.size(locCanvas.width, locCanvas.height));
+            this.setContentSize(locCanvas.width, locCanvas.height);
         }
     },
 

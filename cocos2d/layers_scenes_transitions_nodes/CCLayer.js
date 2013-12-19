@@ -802,7 +802,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(cc.size(w, h));
+        this.setContentSize(w, h);
     },
 
     /**
@@ -810,7 +810,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(cc.size(w, this._contentSize.height));
+        this.setContentSize(w, this._contentSize.height);
     },
 
     /**
@@ -818,7 +818,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(cc.size(this._contentSize.width, h));
+        this.setContentSize(this._contentSize.width, h);
     },
 
     /**
@@ -925,7 +925,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         this._displayedOpacity = color.a;
         this._realOpacity = color.a;
 
-        this.setContentSize(cc.size(width, height));
+        this.setContentSize(width, height);
         this._updateColor();
         return true;
     },

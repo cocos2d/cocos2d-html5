@@ -107,7 +107,7 @@ cc.ControlButton = cc.Control.extend({
         if (this._doesAdjustBackgroundImage) {
             // Add the margins
             if(locBackgroundSprite)
-                locBackgroundSprite.setContentSize(cc.size(titleLabelSize.width + this._marginH * 2, titleLabelSize.height + this._marginV * 2));
+                locBackgroundSprite.setContentSize(titleLabelSize.width + this._marginH * 2, titleLabelSize.height + this._marginV * 2);
         } else {
             //TODO: should this also have margins if one of the preferred sizes is relaxed?
             if(locBackgroundSprite){
@@ -126,7 +126,7 @@ cc.ControlButton = cc.Control.extend({
         var rectTitle = label? label.getBoundingBox():cc.rect(0,0,0,0);
         var rectBackground = locBackgroundSprite? locBackgroundSprite.getBoundingBox():cc.rect(0,0,0,0);
         var maxRect = cc.rectUnion(rectTitle, rectBackground);
-        this.setContentSize(cc.size(maxRect.width, maxRect.height));
+        this.setContentSize(maxRect.width, maxRect.height);
         locContentSize = this.getContentSize();
         if(label){
             label.setPosition(locContentSize.width / 2, locContentSize.height / 2);
