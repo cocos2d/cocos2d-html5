@@ -173,7 +173,7 @@
             '../extensions/CCBReader/CCBSequence.js',
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
-            '../extensions/CCEditBox.js',
+            '../extensions/CCEditBox/CCEditBox.js',
 
             '../extensions/CocoStudio/CocoStudio.js',
             // CocoStudio Armature
