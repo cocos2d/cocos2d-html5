@@ -111,6 +111,7 @@ cc.Screen = cc.Class.extend({
             theScreen.requestFullScreen(element, onFullScreenChange);
             element.removeEventListener(theScreen._touchEvent, callback);
         }
+        this.requestFullScreen(element, onFullScreenChange);
         element.addEventListener(this._touchEvent, callback);
     }
 });
