@@ -904,10 +904,10 @@ cc.ContentStrategy = cc.Class.extend({
             scaleX < scaleY ? (containerW = frameW, containerH = designH * scaleX) : (containerW = designW * scaleY, containerH = frameH);
 
             // Adjust container size with integer value
-            var offx = Math.ceil((frameW - containerW) / 2);
-            var offy = Math.ceil((frameH - containerH) / 2);
-            containerW = Math.floor(frameW - 2*offx);
-            containerH = Math.floor(frameH - 2*offy);
+            var offx = Math.floor((frameW - containerW) / 2);
+            var offy = Math.floor((frameH - containerH) / 2);
+            containerW = Math.ceil(frameW - 2*offx);
+            containerH = Math.ceil(frameH - 2*offy);
 
             if(cc.Browser.isMobile)
                 view._setViewPortMeta(containerW, containerH);
