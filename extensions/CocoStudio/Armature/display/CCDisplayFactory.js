@@ -80,11 +80,11 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
             break;
     }
 
-    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
         if (dirty) {
             var decoDisplay = bone.getDisplayManager().getCurrentDecorativeDisplay();
             var detector = decoDisplay.getColliderDetector();
-            if (detector&&detector.getBody()) {
+            if (detector) {
                 var node = decoDisplay.getDisplay();
                 var displayTransform = node.nodeToParentTransform();
                 var anchorPoint =  node.getAnchorPointInPoints();
@@ -146,7 +146,7 @@ ccs.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, 
         //! Init display anchorPoint, every Texture have a anchor point
         skin.setAnchorPoint(cc.p(textureData.pivotX, textureData.pivotY));
     }
-    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
         if (textureData && textureData.contourDataList.length > 0)        {
             var colliderDetector = ccs.ColliderDetector.create(bone);
             colliderDetector.addContourDataList(textureData.contourDataList);

@@ -516,7 +516,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
                 return detector.getColliderBodyList();
             }
         }
-        return null;
+        return [];
     },
 
     /**

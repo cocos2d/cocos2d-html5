@@ -155,7 +155,7 @@ ccs.DisplayManager = ccs.Class.extend({
 
     setCurrentDecorativeDisplay:function (decoDisplay) {
         var locCurrentDecoDisplay = this._currentDecoDisplay;
-        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
             if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
                 locCurrentDecoDisplay.getColliderDetector().setActive(false);
             }
@@ -163,7 +163,7 @@ ccs.DisplayManager = ccs.Class.extend({
 
         this._currentDecoDisplay = decoDisplay;
         locCurrentDecoDisplay = this._currentDecoDisplay;
-        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
             if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
                 locCurrentDecoDisplay.getColliderDetector().setActive(true);
             }

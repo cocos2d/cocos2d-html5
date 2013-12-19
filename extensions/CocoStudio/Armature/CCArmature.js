@@ -535,6 +535,23 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     },
 
     /**
+     * draw contour
+     */
+    drawContour: function () {
+        cc.drawingUtil.setDrawColor4B(255, 255, 255, 255);
+        cc.drawingUtil.setLineWidth(1);
+        for (var key in this._boneDic) {
+            var bone = this._boneDic[key];
+            var bodyList = bone.getColliderBodyList();
+            for (var i = 0; i < bodyList.length; i++) {
+                var body = bodyList[i];
+                var vertexList = body.getCalculatedVertexList();
+                cc.drawingUtil.drawPoly(vertexList, vertexList.length, true);
+            }
+        }
+    },
+
+    /**
      * return parent bone
      * @returns {ccs.Bone}
      */
