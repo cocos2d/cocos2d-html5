@@ -209,7 +209,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     initWithTMXFile:function (tmxFile,resourcePath) {
         if(!tmxFile || tmxFile.length == 0)
             throw "cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.";
-        this.setContentSize(cc.SizeZero());
+        this.setContentSize(0, 0);
         var mapInfo = cc.TMXMapInfo.create(tmxFile,resourcePath);
         if (!mapInfo)
             return false;
@@ -222,7 +222,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     },
 
     initWithXML:function(tmxString, resourcePath){
-        this.setContentSize(cc.SizeZero());
+        this.setContentSize(0, 0);
 
         var mapInfo = cc.TMXMapInfo.createWithXML(tmxString, resourcePath);
         var locTilesets = mapInfo.getTilesets();

@@ -152,7 +152,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             // menu in the center of the screen
             var winSize = cc.Director.getInstance().getWinSize();
             this.ignoreAnchorPointForPosition(true);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(winSize);
             this.setPosition(winSize.width / 2, winSize.height / 2);
 

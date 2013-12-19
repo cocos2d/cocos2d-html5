@@ -200,7 +200,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             texture = cc.TextureCache.getInstance().addImage(texture);
 
         cc.Node.prototype.setPosition.call(this, cc.PointZero());
-        this.setAnchorPoint(cc.PointZero());
+        this.setAnchorPoint(0,0);
         this.ignoreAnchorPointForPosition(true);
         this._startingPositionInitialized = false;
 
