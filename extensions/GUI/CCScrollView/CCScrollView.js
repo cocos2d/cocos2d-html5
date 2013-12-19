@@ -343,7 +343,7 @@ cc.ScrollView = cc.Layer.extend({
 
         this._container = container;
         container.ignoreAnchorPointForPosition(false);
-        container.setAnchorPoint(cc.p(0.0, 0.0));
+        container.setAnchorPoint(0, 0);
 
         this.addChild(container);
         this.setViewSize(this._viewSize);
@@ -606,7 +606,7 @@ cc.ScrollView = cc.Layer.extend({
         tag = tag || child.getTag();
 
         child.ignoreAnchorPointForPosition(false);
-        child.setAnchorPoint(cc.p(0.0, 0.0));
+        child.setAnchorPoint(0, 0);
         if (this._container != child) {
             this._container.addChild(child, zOrder, tag);
         } else {

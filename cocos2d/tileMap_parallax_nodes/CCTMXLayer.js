@@ -885,7 +885,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
-            sprite.setAnchorPoint(cc.p(0.5, 0.5));
+            sprite.setAnchorPoint(0.5, 0.5);
             sprite.setPosition(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
                 this.getPositionAt(pos).y + sprite.getContentSize().width / 2);
 

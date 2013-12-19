@@ -90,7 +90,7 @@ cc.MenuPassive = cc.Layer.extend({
 
             // Set the default anchor point
             this.ignoreAnchorPointForPosition(true);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(winSize);
 
             this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));

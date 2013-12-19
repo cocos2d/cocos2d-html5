@@ -1054,7 +1054,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.PointZero();
@@ -1091,7 +1091,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.PointZero();
@@ -1170,7 +1170,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.p(0, 0);
@@ -1236,7 +1236,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.p(0, 0);
