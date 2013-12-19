@@ -59,6 +59,27 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
     if(!display)
         return;
 
+    switch (bone.getDisplayRenderNodeType()) {
+        case ccs.DisplayType.sprite:
+            if (dirty){
+                if(bone.isBlendDirty()){
+                    display.setBlendFunc(bone.getBlendFunc());
+                    bone.setBlendDirty(false);
+                }
+                display.updateArmatureTransform();
+            }
+            break;
+        case ccs.DisplayType.particle:
+            this.updateParticleDisplay(bone, display, dt);
+            break;
+        case ccs.DisplayType.armature:
+            this.updateArmatureDisplay(bone, display, dt);
+            break;
+        default:
+            display.setAdditionalTransform(bone.nodeToArmatureTransform());
+            break;
+    }
+
     if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
         if (dirty) {
             var decoDisplay = bone.getDisplayManager().getCurrentDecorativeDisplay();
@@ -75,23 +96,7 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
             }
         }
     }
-    switch (bone.getDisplayRenderNodeType()) {
-        case ccs.DisplayType.sprite:
-            if (dirty){
-                display.updateBlendType(bone.getBlendType());
-                display.updateArmatureTransform();
-            }
-            break;
-        case ccs.DisplayType.particle:
-            this.updateParticleDisplay(bone, display, dt);
-            break;
-        case ccs.DisplayType.armature:
-            this.updateArmatureDisplay(bone, display, dt);
-            break;
-        default:
-            display.setAdditionalTransform(bone.nodeToArmatureTransform());
-            break;
-    }
+
 };
 ccs.DisplayFactory.addSpriteDisplay = function (bone, decoDisplay, displayData) {
     var sdp = new ccs.SpriteDisplayData();
@@ -148,13 +153,6 @@ ccs.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, 
             decoDisplay.setColliderDetector(colliderDetector);
         }
     }
-},
-
-ccs.DisplayFactory.updateSpriteDisplay = function (bone, skin, dt, dirty) {
-    if(!dirty)
-        return;
-    skin.updateBlendType(bone.getBlendType());
-    skin.updateArmatureTransform();
 };
 
 ccs.DisplayFactory.addArmatureDisplay = function (bone, decoDisplay, displayData) {

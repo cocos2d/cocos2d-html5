@@ -40,7 +40,8 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     _parentBone:null,
     _boneTransformDirty:false,
     _worldTransform:null,
-    _blendType:0,
+    _blendFunc:0,
+    _blendDirty:false,
     _worldInfo:null,
     _armatureParentBone:null,
     _dataVersion:0,
@@ -58,7 +59,8 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
         this._parentBone = null;
         this._boneTransformDirty = true;
         this._worldTransform = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
-        this._blendType=ccs.BlendType.normal;
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._blendDirty = false;
     },
 
     /**
@@ -606,19 +608,30 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     },
 
     /**
-     * blendType  setter
-     * @param {ccs.BlendType} blendType
+     * BlendFunc  setter
+     * @param {cc.BlendFunc} blendFunc
      */
-    setBlendType:function (blendType) {
-        this._blendType = blendType;
+    setBlendFunc:function (blendFunc) {
+        if (this._blendFunc.src != blendFunc.src || this._blendFunc.dst != blendFunc.dst)        {
+            this._blendFunc = blendFunc;
+            this._blendDirty = true;
+        }
     },
 
     /**
      * blendType  getter
-     * @return {ccs.BlendType}
+     * @return {cc.BlendFunc}
      */
-    getBlendType:function () {
-        return this._blendType;
+    getBlendFunc:function () {
+        return this._blendFunc;
+    },
+
+    setBlendDirty:function(dirty){
+        this._blendDirty = dirty;
+    },
+
+    isBlendDirty:function(){
+        return this._blendDirty;
     }
 });
 

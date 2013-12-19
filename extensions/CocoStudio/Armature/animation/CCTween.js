@@ -137,7 +137,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._fromIndex = this._toIndex = 0;
         this._isPlaying = true;
         this._isComplete = this._isPause = false;
-        this._currentPercent = this._curFrameIndex / this._rawDuration;
+        this._currentPercent = this._curFrameIndex / (this._rawDuration-1);
         this._currentFrame = this._nextFrameIndex * this._currentPercent;
     },
 
@@ -270,7 +270,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             }
             this._tweenData.zOrder = keyFrameData.zOrder;
             locBone.updateZOrder();
-            locBone.setBlendType(keyFrameData.blendType);
+            locBone.setBlendFunc(keyFrameData.blendFunc);
             var childAramture = locBone.getChildArmature();
             if (childAramture) {
                 if (keyFrameData.movement != "") {
@@ -328,7 +328,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         if (currentPercent > 1 && this._movementBoneData.delay != 0) {
             currentPercent = ccs.fmodf(currentPercent,1);
         }
-        var playedTime = this._rawDuration * currentPercent;
+        var playedTime = (this._rawDuration-1) * currentPercent;
         var from, to;
         var locTotalDuration = this._totalDuration,locBetweenDuration = this._betweenDuration, locToIndex = this._toIndex;
         // if play to current frame's front or back, then find current frame again
@@ -390,7 +390,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
          *  if frame tween easing equal to TWEEN_EASING_MAX, then it will not do tween.
          */
         var tweenType = (this._frameTweenEasing != ccs.TweenType.linear) ? this._frameTweenEasing : this._tweenEasing;
-        if (tweenType != ccs.TweenType.tweenEasingMax&&tweenType != ccs.TweenType.linear) {
+        if (tweenType != ccs.TweenType.tweenEasingMax&&tweenType != ccs.TweenType.linear&& !this._passLastFrame) {
             currentPercent = ccs.TweenFunction.tweenTo(0, 1, currentPercent, 1, tweenType);
         }
         return currentPercent;

@@ -69,6 +69,8 @@ ccs.CONST_A_IS_ARMATURE = "isArmature";
 ccs.CONST_A_DISPLAY_TYPE = "displayType";
 ccs.CONST_A_MOVEMENT = "mov";
 ccs.CONST_A_BLEND_TYPE = "bd";
+ccs.CONST_A_BLEND_SRC = "bd_src";
+ccs.CONST_A_BLEND_DST = "bd_dst";
 
 ccs.CONST_A_X = "x";
 ccs.CONST_A_Y = "y";
@@ -492,6 +494,29 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     frameData.movement = frameXML.getAttribute(ccs.CONST_A_MOVEMENT) || "";
     frameData.event = frameXML.getAttribute(ccs.CONST_A_EVENT) || "";
     frameData.blendType = parseInt(frameXML.getAttribute(ccs.CONST_A_BLEND_TYPE)) || ccs.BlendType.normal;
+
+    var blendFunc = frameData.blendFunc;
+    switch (frameData.blendType) {
+        case ccs.BlendType.normal:
+            blendFunc.src = cc.BLEND_SRC;
+            blendFunc.dst = cc.BLEND_DST;
+            break;
+        case ccs.BlendType.add:
+            blendFunc.src = gl.SRC_ALPHA;
+            blendFunc.dst = gl.ONE;
+            break;
+        case ccs.BlendType.multiply:
+            blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
+            blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+            break;
+        case ccs.BlendType.screen:
+            blendFunc.src = gl.ONE;
+            blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+            break;
+        default:
+            break;
+    }
+
     frameData.sound = frameXML.getAttribute(ccs.CONST_A_SOUND) || "";
     frameData.soundEffect = frameXML.getAttribute(ccs.CONST_A_SOUND_EFFECT) || "";
 
@@ -837,7 +862,12 @@ ccs.DataReaderHelper.decodeFrameFromJson = function (json, dataInfo) {
     frameData.duration = json[ccs.CONST_A_DURATION] || 0;
     frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
     frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX] || 0;
-    frameData.blendType = json[ccs.CONST_A_BLEND_TYPE] || 0;
+
+    var bd_src = json[ccs.CONST_A_BLEND_SRC] || cc.BLEND_SRC;
+    var bd_dst = json[ccs.CONST_A_BLEND_DST] || cc.BLEND_DST;
+    frameData.blendFunc.src = bd_src;
+    frameData.blendFunc.dst = bd_dst;
+
     frameData.event = json[ccs.CONST_A_EVENT] || null;
     if(json.hasOwnProperty(ccs.CONST_A_TWEEN_FRAME)){
         frameData.isTween = json[ccs.CONST_A_TWEEN_FRAME]
@@ -879,8 +909,8 @@ ccs.DataReaderHelper.decodeContourFromJson = function (json) {
 };
 
 ccs.DataReaderHelper.decodeNodeFromJson = function (node, json, dataInfo) {
-    node.x = (json[ccs.CONST_A_X] || 0) * this._positionReadScale;
-    node.y = (json[ccs.CONST_A_Y] || 0) * this._positionReadScale;
+    node.x = json[ccs.CONST_A_X] || 0 ;
+    node.y = json[ccs.CONST_A_Y] || 0;
 
     node.x *= dataInfo.contentScale;
     node.y *= dataInfo.contentScale;

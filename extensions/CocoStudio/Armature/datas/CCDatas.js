@@ -346,7 +346,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         event:"",
         sound:"",
         soundEffect:"",
-        blendType:0,
+        blendFunc:0,
         frameID:0,
         isTween:true,
         ctor:function () {
@@ -358,7 +358,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
             this.event = "";
             this.sound = "";
             this.soundEffect = "";
-            this.blendType = ccs.BlendType.normal;
+            this.blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
             this.frameID = 0;
             this.isTween = true;
         },
@@ -376,7 +376,7 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
             this.event = frameData.event;
             this.sound = frameData.sound;
             this.soundEffect = frameData.soundEffect;
-            this.blendType = frameData.blendType;
+            this.blendFunc = frameData.blendFunc;
             this.isTween = frameData.isTween;
         }
     }

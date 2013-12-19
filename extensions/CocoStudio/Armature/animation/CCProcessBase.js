@@ -126,8 +126,6 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     stop:function () {
         this._isComplete = true;
         this._isPlaying = false;
-        this._currentFrame = 0;
-        this._currentPercent = 0;
     },
 
     /**
@@ -206,7 +204,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @return {Number}
      */
     getCurrentFrameIndex:function () {
-        this._curFrameIndex = this._rawDuration * this._currentPercent;
+        this._curFrameIndex = (this._rawDuration-1) * this._currentPercent;
         return this._curFrameIndex;
     },
 

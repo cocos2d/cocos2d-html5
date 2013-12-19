@@ -442,35 +442,6 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     },
 
     /**
-     * update blendType
-     * @param {ccs.BlendType} blendType
-     */
-    updateBlendType: function (blendType) {
-        var blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        switch (blendType) {
-            case ccs.BlendType.normal:
-                blendFunc.src = cc.BLEND_SRC;
-                blendFunc.dst = cc.BLEND_DST;
-                break;
-            case ccs.BlendType.add:
-                blendFunc.src = gl.SRC_ALPHA;
-                blendFunc.dst = gl.ONE;
-                break;
-            case ccs.BlendType.multiply:
-                blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            case ccs.BlendType.screen:
-                blendFunc.src = gl.ONE;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            default:
-                break;
-        }
-        this.setBlendFunc(blendFunc.src, blendFunc.dst);
-    },
-
-    /**
      * conforms to cc.TextureProtocol protocol
      * @param {cc.BlendFunc} blendFunc
      */
