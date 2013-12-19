@@ -96,7 +96,7 @@ cc.LayerLoader = cc.NodeLoader.extend({
 
         var layer=cc.Layer.create();
 
-        layer.setContentSize(cc.size(0,0));
+        layer.setContentSize(0,0);
 
         return layer;
     },
@@ -212,7 +212,7 @@ cc.MenuLoader = cc.LayerLoader.extend({
     _createCCNode:function (parent, ccbReader) {
         var menu = cc.Menu.create();
 
-        menu.setContentSize(cc.size(0,0));
+        menu.setContentSize(0,0);
 
         return menu;
     }

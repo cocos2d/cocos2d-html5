@@ -165,7 +165,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
         if (this.init()) {
             this._duration = t;
-            this.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
+            this.setAnchorPoint(0, 0);
             this.setPosition(0, 0);
             // retain
             this._inScene = scene;
@@ -288,8 +288,8 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
         this._inScene.setScale(0.001);
         this._outScene.setScale(1.0);
 
-        this._inScene.setAnchorPoint(cc.ANCHOR_MIDDLE);
-        this._outScene.setAnchorPoint(cc.ANCHOR_MIDDLE);
+        this._inScene.setAnchorPoint(0.5, 0.5);
+        this._outScene.setAnchorPoint(0.5, 0.5);
 
         var rotoZoom = cc.Sequence.create(
             cc.Spawn.create(cc.ScaleBy.create(this._duration / 2, 0.001),
@@ -335,8 +335,8 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZo
 
         this._inScene.setScale(0.5);
         this._inScene.setPosition(winSize.width, 0);
-        this._inScene.setAnchorPoint(cc.ANCHOR_MIDDLE);
-        this._outScene.setAnchorPoint(cc.ANCHOR_MIDDLE);
+        this._inScene.setAnchorPoint(0.5, 0.5);
+        this._outScene.setAnchorPoint(0.5, 0.5);
 
         var jump = cc.JumpBy.create(this._duration / 4, cc.p(-winSize.width, 0), winSize.width / 4, 2);
         var scaleIn = cc.ScaleTo.create(this._duration / 4, 1.0);
@@ -740,8 +740,8 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
         this._inScene.setScale(0.001);
         this._outScene.setScale(1.0);
 
-        this._inScene.setAnchorPoint(cc.p(2 / 3.0, 0.5));
-        this._outScene.setAnchorPoint(cc.p(1 / 3.0, 0.5));
+        this._inScene.setAnchorPoint(2 / 3.0, 0.5);
+        this._outScene.setAnchorPoint(1 / 3.0, 0.5);
 
         var scaleOut = cc.ScaleTo.create(this._duration, 0.01);
         var scaleIn = cc.ScaleTo.create(this._duration, 1.0);
@@ -1315,9 +1315,9 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         if (null == inTexture)
             return;
 
-        inTexture.getSprite().setAnchorPoint(cc.ANCHOR_MIDDLE);
+        inTexture.getSprite().setAnchorPoint(0.5, 0.5);
         inTexture.setPosition(winSize.width / 2, winSize.height / 2);
-        inTexture.setAnchorPoint(cc.ANCHOR_MIDDLE);
+        inTexture.setAnchorPoint(0.5, 0.5);
 
         // render inScene to its texturebuffer
         inTexture.begin();
@@ -1326,9 +1326,9 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create the second render texture for outScene
         var outTexture = cc.RenderTexture.create(winSize.width, winSize.height);
-        outTexture.getSprite().setAnchorPoint(cc.ANCHOR_MIDDLE);
+        outTexture.getSprite().setAnchorPoint(0.5, 0.5);
         outTexture.setPosition(winSize.width / 2, winSize.height / 2);
-        outTexture.setAnchorPoint(cc.ANCHOR_MIDDLE);
+        outTexture.setAnchorPoint(0.5, 0.5);
 
         // render outScene to its texturebuffer
         outTexture.begin();

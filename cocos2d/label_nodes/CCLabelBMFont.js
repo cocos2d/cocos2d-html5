@@ -753,10 +753,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._cascadeOpacityEnabled = true;
             this._cascadeColorEnabled = true;
 
-            this._contentSize._width = 0;
-            this._contentSize._height = 0;
+            this._contentSize = cc.SizeZero();
 
-            this.setAnchorPoint(cc.ANCHOR_MIDDLE);
+            this.setAnchorPoint(0.5, 0.5);
 
             if (cc.renderContextType === cc.WEBGL) {
                 var locTexture = this._textureAtlas.getTexture();
@@ -1220,14 +1219,23 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * set the AnchorPoint of the label
-     * @param {cc.Point} point
+     * set the AnchorPoint of the labelBMFont
+     * @override
+     * @param {cc.Point|Number} point The anchor point of labelBMFont or The anchor point.x of labelBMFont.
+     * @param {Number} [y] The anchor point.y of labelBMFont.
      */
-    setAnchorPoint:function (point) {
-        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
+    setAnchorPoint:function (point, y) {
+        var locAnchorPoint = this._anchorPoint;
+        if (arguments.length === 2) {
+            if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+                return;
+            cc.Node.prototype.setAnchorPoint.call(this, point, y);
+        } else {
+            if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+                return;
             cc.Node.prototype.setAnchorPoint.call(this, point);
-            this.updateLabel();
         }
+        this.updateLabel();
     },
 
     _atlasNameFromFntFile:function (fntFile) {

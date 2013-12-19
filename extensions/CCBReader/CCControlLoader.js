@@ -249,7 +249,9 @@ var PROPERTY_INSETBOTTOM = "insetBottom";
 cc.Scale9SpriteLoader = cc.NodeLoader.extend({
     _createCCNode:function(parent,ccbReader){
         var sprite = cc.Scale9Sprite.create();
-        sprite.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
+
+        sprite.setAnchorPoint(0, 0);
+
         return sprite;
     },
 

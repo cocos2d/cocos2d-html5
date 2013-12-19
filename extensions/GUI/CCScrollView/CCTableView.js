@@ -309,7 +309,7 @@ cc.TableView = cc.ScrollView.extend({
     },
 
     _setIndexForCell:function (index, cell) {
-        cell.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
+        cell.setAnchorPoint(0, 0);
         cell.setPosition(this._offsetFromIndex(index));
         cell.setIdx(index);
     },
@@ -516,8 +516,7 @@ cc.TableView = cc.ScrollView.extend({
             this._tableViewDelegate.scrollViewDidScroll(this);
 
         var  idx = 0, locViewSize = this._viewSize, locContainer = this.getContainer();
-        var locContentOffset = this.getContentOffset();
-        var offset = cc.p(locContentOffset.x, locContentOffset.y);
+        var offset = this.getContentOffset();
         offset.x *= -1;
         offset.y *= -1;
 

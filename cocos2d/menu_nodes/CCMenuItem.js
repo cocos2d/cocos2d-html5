@@ -136,7 +136,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @return {Boolean}
      */
     initWithCallback:function (callback, target) {
-        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
+        this.setAnchorPoint(0.5, 0.5);
         this._target = target;
         this._callback = callback;
         this._isEnabled = true;
@@ -261,7 +261,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     setLabel:function (label) {
         if (label) {
             this.addChild(label);
-            label.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
+            label.setAnchorPoint(0, 0);
             this.setContentSize(label.getContentSize());
         }
 
@@ -623,7 +623,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
         if (normalImage) {
             this.addChild(normalImage, 0, cc.NORMAL_TAG);
-            normalImage.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
+            normalImage.setAnchorPoint(0, 0);
         }
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
@@ -657,7 +657,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (selectedImage) {
             this.addChild(selectedImage, 0, cc.SELECTED_TAG);
-            selectedImage.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
+            selectedImage.setAnchorPoint(0, 0);
         }
 
         if (this._selectedImage) {
@@ -690,7 +690,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (disabledImage) {
             this.addChild(disabledImage, 0, cc.DISABLE_TAG);
-            disabledImage.setAnchorPoint(cc.ANCHOR_BOTTOM_LEFT);
+            disabledImage.setAnchorPoint(0, 0);
         }
 
         if (this._disabledImage)

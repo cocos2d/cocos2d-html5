@@ -287,7 +287,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         label = String(label);
         var len = label.length;
         this._string = label;
-        this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
+        this.setContentSize(len * this._itemWidth, this._itemHeight);
         if (this._children) {
             var locChildren = this._children;
             len = locChildren.length;
@@ -309,7 +309,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             this._textureAtlas.resizeCapacity(len);
 
         this._string = label;
-        this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
+        this.setContentSize(len * this._itemWidth, this._itemHeight);
 
         this.updateAtlasValues();
         this._quadsToDraw = len;

@@ -342,8 +342,17 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._updateCapInset();
     },
 
-    setContentSize: function (size) {
-        cc.Node.prototype.setContentSize.call(this, size);
+    /**
+     * Sets the untransformed size of the Scale9Sprite.
+     * @override
+     * @param {cc.Size|Number} size The untransformed size of the Scale9Sprite or The untransformed size's width of the Scale9Sprite.
+     * @param {Number} [height] The untransformed size's height of the Scale9Sprite.
+     */
+    setContentSize: function (size, height) {
+        if(arguments.length === 2)
+            cc.Node.prototype.setContentSize.call(this, size, height);
+        else
+            cc.Node.prototype.setContentSize.call(this, size);
         this._positionsAreDirty = true;
     },
 
@@ -368,7 +377,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         if (batchNode) {
             this.updateWithBatchNode(batchNode, rect, rotated, capInsets);
         }
-        this.setAnchorPoint(cc.ANCHOR_MIDDLE);
+        this.setAnchorPoint(0.5, 0.5);
         this._positionsAreDirty = true;
         return true;
     },
