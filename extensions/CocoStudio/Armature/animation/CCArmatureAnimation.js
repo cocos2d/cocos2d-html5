@@ -181,22 +181,6 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         return this.setSpeedScale(animationScale);
     },
 
-    setAnimationInternal:function (animationInternal) {
-        if (animationInternal == this._animationInternal) {
-            return;
-        }
-        this._animationInternal = animationInternal;
-
-        var dict = this._armature.getBoneDic();
-        for (var key in dict) {
-            var bone = dict[key];
-            bone.getTween().setAnimationInternal(this._animationInternal);
-            if (bone.getChildArmature()) {
-                bone.getChildArmature().getAnimation().setAnimationInternal(this._animationInternal);
-            }
-        }
-    },
-
     /**
      * play animation by animation name.
      * @param {String||Array} animationName The animation name you want to play
@@ -282,10 +266,8 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                 tween.play(movementBoneData, durationTo, durationTween, loop, tweenEasing);
 
                 tween.setProcessScale(this._processScale);
-                tween.setAnimationInternal(this._animationInternal);
                 if (bone.getChildArmature()) {
                     bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
-                    bone.getChildArmature().getAnimation().setAnimationInternal(this._animationInternal);
                 }
             } else {
                 if (!bone.getIgnoreMovementBoneData()) {
@@ -357,7 +339,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._isComplete = this._isPause = false;
 
         ccs.ProcessBase.prototype.gotoFrame.call(this, frameIndex);
-        this._currentPercent = this._curFrameIndex / this._movementData.duration;
+        this._currentPercent = this._curFrameIndex / (this._movementData.duration - 1);
         this._currentFrame = this._nextFrameIndex * this._currentPercent;
 
         for (var i = 0; i < this._tweenList.length; i++) {

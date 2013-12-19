@@ -341,6 +341,8 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
 ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         duration:0,
         tweenEasing:0,
+        easingParamNumber: 0,
+        easingParams: null,
         displayIndex:-1,
         movement:"",
         event:"",
@@ -353,6 +355,8 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
             ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
             this.tweenEasing = ccs.TweenType.linear;
+            this.easingParamNumber = 0;
+            this.easingParams = [];
             this.displayIndex = 0;
             this.movement = "";
             this.event = "";
@@ -378,6 +382,14 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
             this.soundEffect = frameData.soundEffect;
             this.blendFunc = frameData.blendFunc;
             this.isTween = frameData.isTween;
+
+            this.easingParamNumber = frameData.easingParamNumber;
+            this.easingParams = [];
+            if (this.easingParamNumber != 0)            {
+                for (var i = 0; i<this.easingParamNumber; i++)                {
+                    this.easingParams[i] = frameData.easingParams[i];
+                }
+            }
         }
     }
 );

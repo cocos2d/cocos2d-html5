@@ -391,7 +391,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
          */
         var tweenType = (this._frameTweenEasing != ccs.TweenType.linear) ? this._frameTweenEasing : this._tweenEasing;
         if (tweenType != ccs.TweenType.tweenEasingMax&&tweenType != ccs.TweenType.linear&& !this._passLastFrame) {
-            currentPercent = ccs.TweenFunction.tweenTo(0, 1, currentPercent, 1, tweenType);
+            currentPercent = ccs.TweenFunction.tweenTo(currentPercent, tweenType, this._from.easingParams);
         }
         return currentPercent;
     },

@@ -82,8 +82,24 @@ ccs.DisplayManager = ccs.Class.extend({
             var spriteDisplayData = decoDisplay.getDisplayData();
             if (spriteDisplayData instanceof ccs.SpriteDisplayData)
                 skin.setSkinData(spriteDisplayData.skinData);
-            else
+            else{
+                var find = false;
+                for (var i = this._decoDisplayList.length - 2; i >= 0; i--) {
+                    var dd = this._decoDisplayList[i];
+                    var sdd = dd.getDisplayData();
+                    if (sdd) {
+                        find = true;
+                        skin.setSkinData(sdd.skinData);
+                        displayData.skinData = sdd.skinData;
+                        break;
+                    }
+                }
+                if (!find) {
+                    skin.setSkinData(new ccs.BaseData());
+                }
                 skin.setSkinData(new ccs.BaseData());
+            }
+                
         }
         else if (display instanceof cc.ParticleSystem){
             displayData = new ccs.ParticleDisplayData();

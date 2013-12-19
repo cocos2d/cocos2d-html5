@@ -65,6 +65,7 @@ ccs.CONST_A_SOUND = "sd";
 ccs.CONST_A_SOUND_EFFECT = "sdE";
 ccs.CONST_A_TWEEN_EASING = "twE";
 ccs.CONST_A_TWEEN_ROTATE = "twR";
+ccs.CONST_A_EASING_PARAM = "twEP";
 ccs.CONST_A_IS_ARMATURE = "isArmature";
 ccs.CONST_A_DISPLAY_TYPE = "displayType";
 ccs.CONST_A_MOVEMENT = "mov";
@@ -520,6 +521,10 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     frameData.sound = frameXML.getAttribute(ccs.CONST_A_SOUND) || "";
     frameData.soundEffect = frameXML.getAttribute(ccs.CONST_A_SOUND_EFFECT) || "";
 
+    var isTween = false;
+    isTween = frameXML.getAttribute(ccs.CONST_A_TWEEN_FRAME) || false;
+    frameData.isTween = Boolean(isTween);
+
     if (dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0) {
         frameData.x = parseFloat(frameXML.getAttribute(ccs.CONST_A_COCOS2DX_X)) || 0;
         frameData.y = -parseFloat(frameXML.getAttribute(ccs.CONST_A_COCOS2DX_Y)) || 0;
@@ -876,6 +881,13 @@ ccs.DataReaderHelper.decodeFrameFromJson = function (json, dataInfo) {
         frameData.duration = json[ccs.CONST_A_DURATION] || 0;
     else
         frameData.frameID = json[ccs.CONST_A_FRAME_INDEX] || 0;
+
+    var twEPs = json[ccs.CONST_A_EASING_PARAM] || [];
+    for (var i = 0; i < twEPs.length; i++) {
+        var twEP = twEPs[i];
+        frameData.easingParams[i] = twEP;
+    }
+
     return frameData;
 };
 
