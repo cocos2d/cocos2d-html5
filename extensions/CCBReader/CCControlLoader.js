@@ -250,7 +250,7 @@ cc.Scale9SpriteLoader = cc.NodeLoader.extend({
     _createCCNode:function(parent,ccbReader){
         var sprite = cc.Scale9Sprite.create();
 
-        sprite.setAnchorPoint(cc.p(0, 0));
+        sprite.setAnchorPoint(0, 0);
 
         return sprite;
     },

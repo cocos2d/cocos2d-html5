@@ -112,7 +112,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         this._cacheCanvas = document.createElement('canvas');
         this._cacheContext = this._cacheCanvas.getContext('2d');
-        this.setAnchorPoint(cc.p(0, 0));
+        this.setAnchorPoint(0, 0);
     },
 
     _ctorForWebGL: function () {

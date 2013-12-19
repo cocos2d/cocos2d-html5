@@ -93,7 +93,7 @@ var MyLayer = cc.Layer.extend({
 
         var label = cc.LabelTTF.create("Reload all plugins", "Arial", 24);
         var menuItem = cc.MenuItemLabel.create(label, this.reloadPluginMenuCallback, this);
-        menuItem.setAnchorPoint(cc.p(0.5, 0));
+        menuItem.setAnchorPoint(0.5, 0);
         pMenu.addChild(menuItem, 0);
         menuItem.setPosition(posBC);
     },

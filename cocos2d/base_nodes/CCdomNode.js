@@ -117,37 +117,61 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 
     /**
      * replace set anchorpoint of ccNode
-     * @param {object} point
+     * @param {cc.Point|Number} point The anchor point of node or The anchor point.x of node.
+     * @param {Number} [y] The anchor point.y of node.
      */
-    setAnchorPoint:function (point) {
-        this._anchorPoint = point;
-        this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-            this._contentSize.height * this._anchorPoint.y);
-        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + this._anchorPointInPoints.x + 'px ' + -this._anchorPointInPoints.y + 'px';
+    setAnchorPoint:function (point, y) {
+        var locAnchorPoint = this._anchorPoint;
+        if (arguments.length === 2) {
+            if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+                return;
+            locAnchorPoint.x = point;
+            locAnchorPoint.y = y;
+        } else {
+            if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+                return;
+            locAnchorPoint.x = point.x;
+            locAnchorPoint.y = point.y;
+        }
+        var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
+
+        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
         if (this.isIgnoreAnchorPointForPosition()) {
             this.dom.style.marginLeft = 0;
             this.dom.style.marginBottom = 0;
-        }
-        else {
-            this.dom.style.marginLeft = (this.isToggler) ? 0 : -this._anchorPointInPoints.x + 'px';
-            this.dom.style.marginBottom = -this._anchorPointInPoints.y + 'px';
+        } else {
+            this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP.x + 'px';
+            this.dom.style.marginBottom = -locAPP.y + 'px';
         }
         this.setNodeDirty();
     },
 
     /**
      * replace set ContentSize of ccNode
-     * @param {cc.Size} size
+     * @param {cc.Size|Number} size The untransformed size of the node or The untransformed size's width of the node.
+     * @param {Number} [height] The untransformed size's height of the node.
      */
-    setContentSize:function (size) {
-        if (!cc.sizeEqualToSize(size, this._contentSize)) {
-            this._contentSize = size;
-            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-                this._contentSize.height * this._anchorPoint.y);
-            this.dom.width = size.width;
-            this.dom.height = size.height;
-            this.setAnchorPoint(this.getAnchorPoint());
+    setContentSize:function (size, height) {
+        var locContentSize = this._contentSize;
+        if (arguments.length === 2) {
+            if ((size === locContentSize.width) && (height === locContentSize.height))
+                return;
+            locContentSize.width = size;
+            locContentSize.height = height;
+        } else {
+            if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
+                return;
+            locContentSize.width = size.width;
+            locContentSize.height = size.height;
         }
+        var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
+        this.dom.width = size.width;
+        this.dom.height = size.height;
+        this.setAnchorPoint(this.getAnchorPoint());
         if (this.canvas) {
             this.canvas.width = this._contentSize.width;
             this.canvas.height = this._contentSize.height;
@@ -457,8 +481,9 @@ cc.DOM.setTransform = function (x) {
 cc.DOM.forSprite = function (x) {
     x.dom = cc.$new('div');
     x.canvas = cc.$new('canvas');
-    x.canvas.width = x.getContentSize().width;
-    x.canvas.height = x.getContentSize().height;
+    var locContentSize = x.getContentSize();
+    x.canvas.width = locContentSize.width;
+    x.canvas.height = locContentSize.height;
     x.dom.style.position = 'absolute';
     x.dom.style.bottom = 0;
     x.ctx = x.canvas.getContext('2d');

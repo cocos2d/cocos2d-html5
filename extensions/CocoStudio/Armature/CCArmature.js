@@ -276,7 +276,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         locOffsetPoint.x = -rect.x;
         locOffsetPoint.y = -rect.y;
         if (rect.width != 0 && rect.height != 0) {
-            this.setAnchorPoint(cc.p(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height));
+            this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
         }
     },
 
@@ -371,8 +371,8 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
             if (this._rotationX) {
-                Cos = Math.cos(this._rotationRadiansX);
-                Sin = Math.sin(this._rotationRadiansX);
+                Cos = Math.cos(-this._rotationRadiansX);
+                Sin = Math.sin(-this._rotationRadiansX);
             }
 
             // base abcd
@@ -388,11 +388,9 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
                 sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
 
-
             // Add offset point
             t.tx += Cos * this._offsetPoint.x * lScaleX + -Sin * this._offsetPoint.y * lScaleY;
             t.ty += Sin * this._offsetPoint.x * lScaleX + Cos * this._offsetPoint.y * lScaleY;
-
 
             // skew
             if (this._skewX || this._skewY) {
@@ -418,8 +416,8 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             }
 
             // adjust anchorPoint
-            t.tx += Cos * -appX * sx + -Sin * appY * sy;
-            t.ty -= Sin * -appX * sx + Cos * appY * sy;
+            t.tx += Cos * -appX * sx + -Sin * -appY * sy;
+            t.ty += Sin * -appX * sx + Cos * -appY * sy;
 
             // if ignore anchorPoint
             if (this._ignoreAnchorPointForPosition) {

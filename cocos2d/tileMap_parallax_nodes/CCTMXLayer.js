@@ -101,31 +101,38 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tempTexture.initWithElement(tmpCanvas);
             tempTexture.handleLoadedTexture();
             this._cacheTexture = tempTexture;
-            this.setContentSize(cc.size(locCanvas.width, locCanvas.height));
+            this.setContentSize(locCanvas.width, locCanvas.height);
         }
     },
 
-    setContentSize:function (size) {
-        if (!size)
-            return;
-        cc.Node.prototype.setContentSize.call(this, size);
+    /**
+     * Sets the untransformed size of the TMXLayer.
+     * @override
+     * @param {cc.Size|Number} size The untransformed size of the TMXLayer or The untransformed size's width of the TMXLayer.
+     * @param {Number} [height] The untransformed size's height of the TMXLayer.
+     */
+    setContentSize:function (size, height) {
+        var locContentSize = this._contentSize;
+        if(arguments.length === 2){
+            if((size === locContentSize.width) && (height === locContentSize.height))
+                return;
+            cc.Node.prototype.setContentSize.call(this, size, height);
+        } else {
+            if((size.width === locContentSize.width) && (size.height === locContentSize.height))
+                return;
+            cc.Node.prototype.setContentSize.call(this, size);
+        }
 
         if(cc.renderContextType === cc.CANVAS){
-            var eglViewer = cc.EGLView.getInstance();
             var locCanvas = this._cacheCanvas;
-
-            //locCanvas.width = 0|(size.width * 1.5 * eglViewer._scaleX);
-            //locCanvas.height = 0|(size.height * 1.5 * eglViewer._scaleY);
-
-            //TODO: to consider for contentScaleFactor
             var scaleFactor = cc.CONTENT_SCALE_FACTOR();
-            locCanvas.width = 0 | (size.width * 1.5 * scaleFactor);
-            locCanvas.height = 0 | (size.height * 1.5 * scaleFactor);
+            locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
+            locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
             this._cacheContext.translate(0, locCanvas.height);
-            var locContentSize = this._cacheTexture._contentSize;
-            locContentSize.width = locCanvas.width;
-            locContentSize.height = locCanvas.height;
+            var locTexContentSize = this._cacheTexture._contentSize;
+            locTexContentSize.width = locCanvas.width;
+            locTexContentSize.height = locCanvas.height;
 
             // Init sub caches if needed
             var totalPixel = locCanvas.width * locCanvas.height;
@@ -439,7 +446,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.setBatchNode(this);
             tile.setPosition(this.getPositionAt(pos));
             tile.setVertexZ(this._vertexZForPos(pos));
-            tile.setAnchorPoint(cc.PointZero());
+            tile.setAnchorPoint(0,0);
             tile.setOpacity(this._opacity);
 
             var indexForZ = this._atlasIndexForExistantZ(z);
@@ -866,7 +873,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         else
             sprite.setTag(z);
 
-        sprite.setAnchorPoint(cc.PointZero());
+        sprite.setAnchorPoint(0,0);
         sprite.setOpacity(this._opacity);
         if (cc.renderContextType === cc.WEBGL) {
             sprite.setRotation(0.0);
@@ -878,7 +885,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
-            sprite.setAnchorPoint(cc.p(0.5, 0.5));
+            sprite.setAnchorPoint(0.5, 0.5);
             sprite.setPosition(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
                 this.getPositionAt(pos).y + sprite.getContentSize().width / 2);
 

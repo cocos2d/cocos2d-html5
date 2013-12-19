@@ -955,12 +955,19 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
 
     /**
      * Sets the anchor point in percent.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UIWidget or The anchor point.x of UIWidget.
+     * @param {Number} [y] The anchor point.y of UIWidget.
      */
-    setAnchorPoint: function (pt) {
-        this._anchorPoint.x = pt.x;
-        this._anchorPoint.y = pt.y;
-        this._renderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if (arguments.length === 2) {
+            this._anchorPoint.x = point;
+            this._anchorPoint.y = y;
+            this._renderer.setAnchorPoint(point, y);
+        } else {
+            this._anchorPoint.x = point.x;
+            this._anchorPoint.y = point.y;
+            this._renderer.setAnchorPoint(point);
+        }
     },
 
     updateAnchorPoint: function () {
