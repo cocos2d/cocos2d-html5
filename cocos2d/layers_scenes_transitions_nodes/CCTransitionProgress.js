@@ -54,9 +54,9 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
         // create the second render texture for outScene
         var texture = cc.RenderTexture.create(winSize.width, winSize.height);
-        texture.getSprite().setAnchorPoint(cc.p(0.5, 0.5));
+        texture.getSprite().setAnchorPoint(0.5, 0.5);
         texture.setPosition(winSize.width / 2, winSize.height / 2);
-        texture.setAnchorPoint(cc.p(0.5, 0.5));
+        texture.setAnchorPoint(0.5, 0.5);
 
         // render outScene to its texturebuffer
         texture.clear(0, 0, 0, 1);
@@ -143,7 +143,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
         pNode.setReverseDirection(false);
         pNode.setPercentage(100);
         pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(cc.p(0.5, 0.5));
+        pNode.setAnchorPoint(0.5, 0.5);
 
         return pNode;
     }
@@ -185,7 +185,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
         pNode.setReverseDirection(true);
         pNode.setPercentage(100);
         pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(cc.p(0.5, 0.5));
+        pNode.setAnchorPoint(0.5, 0.5);
 
         return pNode;
     }
@@ -228,7 +228,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
 
         pNode.setPercentage(100);
         pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(cc.p(0.5, 0.5));
+        pNode.setAnchorPoint(0.5, 0.5);
 
         return pNode;
     }
@@ -270,7 +270,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
 
         pNode.setPercentage(100);
         pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(cc.p(0.5, 0.5));
+        pNode.setAnchorPoint(0.5, 0.5);
 
         return pNode;
     }
@@ -311,7 +311,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
 
         pNode.setPercentage(0);
         pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(cc.p(0.5, 0.5));
+        pNode.setAnchorPoint(0.5, 0.5);
 
         return pNode;
     },
@@ -360,7 +360,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
 
         pNode.setPercentage(100);
         pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(cc.p(0.5, 0.5));
+        pNode.setAnchorPoint(0.5, 0.5);
 
         return pNode;
     }

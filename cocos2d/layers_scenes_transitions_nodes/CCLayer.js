@@ -59,7 +59,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     _initLayer:function () {
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
@@ -802,7 +802,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(cc.size(w, h));
+        this.setContentSize(w, h);
     },
 
     /**
@@ -810,7 +810,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(cc.size(w, this._contentSize.height));
+        this.setContentSize(w, this._contentSize.height);
     },
 
     /**
@@ -818,7 +818,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(cc.size(this._contentSize.width, h));
+        this.setContentSize(this._contentSize.width, h);
     },
 
     /**
@@ -925,25 +925,36 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         this._displayedOpacity = color.a;
         this._realOpacity = color.a;
 
-        this.setContentSize(cc.size(width, height));
+        this.setContentSize(width, height);
         this._updateColor();
         return true;
     },
 
     /**
-     * override contentSize
-     * @param {cc.Size} size
+     * Sets the untransformed size of the LayerColor.
+     * @override
+     * @param {cc.Size|Number} size The untransformed size of the LayerColor or The untransformed size's width of the LayerColor.
+     * @param {Number} [height] The untransformed size's height of the LayerColor.
      */
     setContentSize:null,
 
-    _setContentSizeForWebGL:function (size) {
+    _setContentSizeForWebGL:function (size, height) {
         var locSquareVertices = this._squareVertices;
-        locSquareVertices[1].x = size.width;
-        locSquareVertices[2].y = size.height;
-        locSquareVertices[3].x = size.width;
-        locSquareVertices[3].y = size.height;
-        this._bindLayerVerticesBufferData();
-        cc.Layer.prototype.setContentSize.call(this,size);
+        if(arguments.length === 2){
+            locSquareVertices[1].x = size;
+            locSquareVertices[2].y = height;
+            locSquareVertices[3].x = size;
+            locSquareVertices[3].y = height;
+            this._bindLayerVerticesBufferData();
+            cc.Layer.prototype.setContentSize.call(this, size, height);
+        }else{
+            locSquareVertices[1].x = size.width;
+            locSquareVertices[2].y = size.height;
+            locSquareVertices[3].x = size.width;
+            locSquareVertices[3].y = size.height;
+            this._bindLayerVerticesBufferData();
+            cc.Layer.prototype.setContentSize.call(this,size);
+        }
     },
 
     _updateColor:null,
@@ -1121,11 +1132,16 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * override contentSize
-     * @param {cc.Size} size
+     * Sets the untransformed size of the LayerGradient.
+     * @override
+     * @param {cc.Size|Number} size The untransformed size of the LayerGradient or The untransformed size's width of the LayerGradient.
+     * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
-    setContentSize:function(size){
-        cc.LayerColor.prototype.setContentSize.call(this,size);
+    setContentSize:function(size, height){
+        if(arguments.length === 2)
+            cc.LayerColor.prototype.setContentSize.call(this,size, height);
+        else
+            cc.LayerColor.prototype.setContentSize.call(this,size);
         this._updateColor();
     },
 

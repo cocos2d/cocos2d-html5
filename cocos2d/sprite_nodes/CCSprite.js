@@ -739,12 +739,16 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * AnchorPoint setter  (override cc.Node )
-     * @param {cc.Point} anchor
+     * Sets the anchor point in percent. (override cc.Node )
+     * @param {cc.Point|Number} anchor The anchor Sprite of Sprite or The anchor point.x of Sprite.
+     * @param {Number} [y] The anchor point.y of Sprite.
      * @override
      */
-    setAnchorPoint:function (anchor) {
-        cc.Node.prototype.setAnchorPoint.call(this, anchor);
+    setAnchorPoint:function (anchor, y) {
+        if(arguments.length === 2)
+            cc.Node.prototype.setAnchorPoint.call(this, anchor, y);
+        else
+            cc.Node.prototype.setAnchorPoint.call(this, anchor);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1050,7 +1054,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.PointZero();
@@ -1087,7 +1091,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.PointZero();
@@ -1166,7 +1170,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.p(0, 0);
@@ -1232,7 +1236,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._flippedX = this._flippedY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
 
         // zwoptex default values
         this._offsetPosition = cc.p(0, 0);
