@@ -393,6 +393,39 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
+     * Get the current resolution policy
+     * @return {cc.ResolutionPolicy}
+     */
+    getResolutionPolicy:function() {
+        return this._resolutionPolicy;
+    },
+
+    /**
+     * Set the current resolution policy
+     * @param {cc.ResolutionPolicy|Number} resolutionPolicy
+     */
+    setResolutionPolicy:function(resolutionPolicy) {
+        if(resolutionPolicy instanceof cc.ResolutionPolicy) {
+            this._resolutionPolicy = resolutionPolicy;
+        }
+        // Ensure compatibility with JSB
+        else {
+            switch (resolutionPolicy) {
+                case cc.RESOLUTION_POLICY.EXACT_FIT:
+                    this._resolutionPolicy = this._rpExactFit;break;
+                case cc.RESOLUTION_POLICY.SHOW_ALL:
+                    this._resolutionPolicy = this._rpShowAll;break;
+                case cc.RESOLUTION_POLICY.NO_BORDER:
+                    this._resolutionPolicy = this._rpNoBorder;break;
+                case cc.RESOLUTION_POLICY.FIXED_HEIGHT:
+                    this._resolutionPolicy = this._rpFixedHeight;break;
+                case cc.RESOLUTION_POLICY.FIXED_WIDTH:
+                    this._resolutionPolicy = this._rpFixedWidth;break;
+            }
+        }
+    },
+
+    /**
      * Set the design resolution size.
      * @param {Number} width Design resolution width.
      * @param {Number} height Design resolution height.
@@ -413,29 +446,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._designResolutionSize = cc.size(width, height);
         this._originalDesignResolutionSize = cc.size(width, height);
 
-        var policy = null;
-        if(resolutionPolicy instanceof cc.ResolutionPolicy) {
-            policy = resolutionPolicy;
-        }
-        // Ensure compatibility with JSB
-        else {
-            switch (resolutionPolicy) {
-                case cc.RESOLUTION_POLICY.EXACT_FIT:
-                    policy = this._rpExactFit;break;
-                case cc.RESOLUTION_POLICY.SHOW_ALL:
-                    policy = this._rpShowAll;break;
-                case cc.RESOLUTION_POLICY.NO_BORDER:
-                    policy = this._rpNoBorder;break;
-                case cc.RESOLUTION_POLICY.FIXED_HEIGHT:
-                    policy = this._rpFixedHeight;break;
-                case cc.RESOLUTION_POLICY.FIXED_WIDTH:
-                    policy = this._rpFixedWidth;break;
-            }
-        }
+        var policy;
+        this.setResolutionPolicy(resolutionPolicy);
 
-        if(policy) {
-            this._resolutionPolicy = policy;
-
+        if(policy = this._resolutionPolicy) {
             var result = policy.apply(this, this._designResolutionSize);
             if(result.scale && result.scale.length == 2) {
                 this._scaleX = result.scale[0];
@@ -828,6 +842,8 @@ cc.EGLView.getInstance = function () {
 cc.ContainerStrategy = cc.Class.extend({
     /**
      * Function to apply this strategy
+     * @param {cc.EGLView} view
+     * @param {cc.Size} designedResolution
      */
     apply: function(view, designedResolution){},
 
@@ -882,6 +898,11 @@ cc.ContentStrategy = cc.Class.extend({
 
     /**
      * Function to apply this strategy
+     * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
+     * The target view can then apply these value to itself, it's prefered not to modify directly its private variables
+     * @param {cc.EGLView} view
+     * @param {cc.Size} designedResolution
+     * @return {object} scaleAndViewportRect
      */
     apply: function(view, designedResolution){
         return {"scale": [1, 1]};
@@ -909,8 +930,8 @@ cc.ContentStrategy = cc.Class.extend({
             // Adjust container size with integer value
             var offx = Math.floor((frameW - containerW) / 2);
             var offy = Math.floor((frameH - containerH) / 2);
-            containerW = Math.ceil(frameW - 2*offx);
-            containerH = Math.ceil(frameH - 2*offy);
+            containerW = frameW - 2*offx;
+            containerH = frameH - 2*offy;
 
             if(cc.Browser.isMobile)
                 view._setViewPortMeta(containerW, containerH);
@@ -1023,6 +1044,11 @@ cc.ResolutionPolicy = cc.Class.extend({
 
     /**
      * Function to apply this resolution policy
+     * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
+     * The target view can then apply these value to itself, it's prefered not to modify directly its private variables
+     * @param {cc.EGLView} The target view
+     * @param {cc.Size} The user defined design resolution
+     * @return {object} An object contains the scale X/Y values and the viewport rect
      */
     apply: function(view, designedResolution) {
         this._containerStrategy.apply(view, designedResolution);
