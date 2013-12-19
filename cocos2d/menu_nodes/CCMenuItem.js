@@ -630,13 +630,12 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
 
         this._normalImage = normalImage;
-        if(normalImage.textureLoaded()){
-            this.setContentSize(this._normalImage.getContentSize());
-            this._updateImagesVisibility();
-        } else {
-            normalImage.addLoadedEventListener(function(sender){
+        this.setContentSize(this._normalImage.getContentSize());
+        this._updateImagesVisibility();
+
+        if (normalImage.textureLoaded && !normalImage.textureLoaded()) {
+            normalImage.addLoadedEventListener(function (sender) {
                 this.setContentSize(sender.getContentSize());
-                this._updateImagesVisibility();
             }, this);
         }
     },
@@ -665,13 +664,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
 
         this._selectedImage = selectedImage;
-        if(selectedImage.textureLoaded()){
-            this._updateImagesVisibility();
-        } else {
-            selectedImage.addLoadedEventListener(function(sender){
-                this._updateImagesVisibility();
-            }, this);
-        }
+        this._updateImagesVisibility();
     },
 
     /**
@@ -697,13 +690,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             this.removeChild(this._disabledImage, true);
 
         this._disabledImage = disabledImage;
-        if(disabledImage.textureLoaded()){
-            this._updateImagesVisibility();
-        } else {
-            disabledImage.addLoadedEventListener(function(sender){
-                this._updateImagesVisibility();
-            }, this);
-        }
+        this._updateImagesVisibility();
     },
 
     /**
@@ -720,21 +707,19 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this.setSelectedImage(selectedSprite);
         this.setDisabledImage(disabledSprite);
         var locNormalImage = this._normalImage;
-        if (locNormalImage){
-            if(locNormalImage.textureLoaded()){
-                this.setContentSize(locNormalImage.getContentSize());
-                this.setCascadeColorEnabled(true);
-                this.setCascadeOpacityEnabled(true);
-            } else{
-                locNormalImage.addLoadedEventListener(function(sender){
+        if (locNormalImage) {
+            this.setContentSize(locNormalImage.getContentSize());
+
+            if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
+                locNormalImage.addLoadedEventListener(function (sender) {
                     this.setContentSize(sender.getContentSize());
                     this.setCascadeColorEnabled(true);
                     this.setCascadeOpacityEnabled(true);
                 }, this);
             }
         }
-
-
+        this.setCascadeColorEnabled(true);
+        this.setCascadeOpacityEnabled(true);
         return true;
     },
 
