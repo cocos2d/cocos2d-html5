@@ -280,8 +280,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     /**
      * Force destroying EGL view, subclass must implement this method.
      */
-    end:function () {
-    },
+    end:function () {},
 
     /**
      * Get whether render system is ready(no matter opengl or canvas),
@@ -305,8 +304,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     /**
      * Exchanges the front and back buffers, subclass must implement this method.
      */
-    swapBuffers:function () {
-    },
+    swapBuffers:function () {},
 
     /**
      * Open or close IME keyboard , subclass must implement this method.
@@ -364,9 +362,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
     },
 
-    centerWindow:function () {
-        //do nothing
-    },
+    centerWindow:function () {},
 
     setAccelerometerKeyHook:function (accelerometerKeyHook) {
         this._accelerometerKeyHook = accelerometerKeyHook;
@@ -923,6 +919,10 @@ cc.ContentStrategy = cc.Class.extend({
 // Container scale strategys
     var EqualToWindow = cc.ContainerStrategy.extend({
         apply: function(view) {
+            if(cc.Browser.isMobile) {
+                // Automatically full screen when user touches on mobile version
+                cc.Screen.getInstance().autoFullScreen(cc.canvas);
+            }
             this._setupContainer(view._frameSize.width, view._frameSize.height);
         }
     });
@@ -942,8 +942,12 @@ cc.ContentStrategy = cc.Class.extend({
             containerW = frameW - 2*offx;
             containerH = frameH - 2*offy;
 
-            if(cc.Browser.isMobile)
+            if(cc.Browser.isMobile) {
                 view._setViewPortMeta(containerW, containerH);
+                // Automatically full screen when user touches on mobile version
+                cc.Screen.getInstance().autoFullScreen(cc.canvas);
+            }
+
             this._setupContainer(containerW, containerH);
             // Setup frame's padding
             frameStyle.paddingLeft = offx + "px";
