@@ -263,6 +263,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._indexBitsUsed &= temp;
     },
 
+    // Useless, just make sure the compatibility temporarily, should be removed
+    _adjustSizeToBrowser: function() {},
+
     /**
      * init
      */
