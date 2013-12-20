@@ -35,20 +35,24 @@ cc.Screen = cc.Class.extend({
     _browserPrefix: "",
     _preElement: null,//the pre element to show in full screen mode.
     _preOnFullScreenChange: null,//the pre fullscreenchange function
+    _touchEvent: "",
     init: function () {
         var browserPres = 'webkit,moz,o,ms,khtml'.split(',');
-        var d = document;
-        if (d["cancelFullScreen"]) {
-            this._supportsFullScreen = true
+        var body = document.body;
+        if (body["requestFullScreen"]) {
+            this._supportsFullScreen = true;
         } else {
-            for (var i = 0, il = browserPres.length; i < il; i++) {
-                this._browserPrefix = browserPres[i];
-                if (d[this._browserPrefix + 'CancelFullScreen']) {
+            for (var i = 0, il = browserPres.length, prefix; i < il; i++) {
+                prefix = browserPres[i];
+                if (body[prefix + "RequestFullScreen"]) {
                     this._supportsFullScreen = true;
+                    this._browserPrefix = prefix;
                     break;
                 }
             }
         }
+
+        this._touchEvent = ('ontouchstart' in window) ? 'touchstart' : 'mousedown';
     },
 
     /**
@@ -94,7 +98,21 @@ cc.Screen = cc.Class.extend({
      */
     exitFullScreen: function () {
         if (!this._supportsFullScreen || !this.fullScreen()) return;
-        return (this._browserPrefix === '') ? document["cancelFullScreen"]() : document[this._browserPrefix + 'CancelFullScreen']();
+        return (this._browserPrefix === '') ? document.body["cancelFullScreen"]() : document.body[this._browserPrefix + 'CancelFullScreen']();
+    },
+
+    /**
+     * Automatically request full screen with a touch/click event
+     */
+    autoFullScreen: function (element, onFullScreenChange) {
+        var theScreen = this;
+        // Function bind will be too complicated here because we need the callback function's reference to remove the listener
+        function callback() {
+            theScreen.requestFullScreen(element, onFullScreenChange);
+            element.removeEventListener(theScreen._touchEvent, callback);
+        }
+        this.requestFullScreen(element, onFullScreenChange);
+        element.addEventListener(this._touchEvent, callback);
     }
 });
 
