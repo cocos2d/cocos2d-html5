@@ -1205,11 +1205,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (!rect) {
-            rect = cc.rect(0, 0, 0, 0);
-            rect.size = texture.getContentSize();
+            var locSize1 = texture.getContentSize();
+            rect = cc.rect(0, 0, locSize1.width, locSize1.height);
         }
         this.setTexture(texture);
-        this.setTextureRect(rect, rotated, rect.size);
+        this.setTextureRect(rect, rotated, rect._size);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1263,13 +1263,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (!rect) {
-            rect = cc.rect(0, 0, 0, 0);
-            rect.size = texture.getContentSize();
+            var locSize1 = texture.getContentSize();
+            rect = cc.rect(0, 0, locSize1.width, locSize1.height);
         }
         this._originalTexture = texture;
 
         this.setTexture(texture);
-        this.setTextureRect(rect, rotated, rect.size);
+        this.setTextureRect(rect, rotated, rect._size);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1286,14 +1286,16 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
-            locRect = cc.rect(0, 0, 0, 0);
-            locRect.size = sender.getContentSize();
+            var locSize1 = sender.getContentSize();
+            locRect = cc.rect(0, 0, locSize1.width, locSize1.height);
         } else if (cc._rectEqualToZero(locRect)) {
-            locRect.size = sender.getContentSize();
+            var locSize2 = sender.getContentSize();
+            locRect.width = locSize2.width;
+            locRect.height = locSize2.height;
         }
 
         this.setTexture(sender);
-        this.setTextureRect(locRect, this._rectRotated, locRect.size);
+        this.setTextureRect(locRect, this._rectRotated, locRect._size);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1309,15 +1311,17 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
-            locRect = cc.rect(0, 0, 0, 0);
-            locRect.size = sender.getContentSize();
+            var locSize1 = sender.getContentSize();
+            locRect = cc.rect(0, 0, locSize1.width, locSize1.height);
         } else if (cc._rectEqualToZero(locRect)) {
-            locRect.size = sender.getContentSize();
+            var locSize2 = sender.getContentSize();
+            locRect.width = locSize2.width;
+            locRect.height = locSize2.height;
         }
         this._originalTexture = sender;
 
         this.setTexture(sender);
-        this.setTextureRect(locRect, this._rectRotated, locRect.size);
+        this.setTextureRect(locRect, this._rectRotated, locRect._size);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1335,7 +1339,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForWebGL:function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-        untrimmedSize = untrimmedSize || rect.size;
+        untrimmedSize = untrimmedSize || rect._size;
 
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
@@ -1377,7 +1381,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-        untrimmedSize = untrimmedSize || rect.size;
+        untrimmedSize = untrimmedSize || rect._size;
 
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
@@ -1438,7 +1442,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 // calculate the Quad based on the Affine Matrix
                 //
                 var locTransformToBatch = this._transformToBatch;
-                var size = this._rect.size;
+                var size = this._rect._size;
                 var x1 = this._offsetPosition._x;
                 var y1 = this._offsetPosition._y;
 
@@ -2047,7 +2051,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             cc.drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
-            var drawSizeG2 = this.getTextureRect().size;
+            var drawSizeG2 = this.getTextureRect()._size;
             var offsetPixG2 = this.getOffsetPosition();
             var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
@@ -2117,7 +2121,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             context.strokeStyle = "rgba(0,255,0,1)";
-            var drawSize = this._rect.size;
+            var drawSize = this._rect._size;
             flipYOffset = -flipYOffset;
             var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawSize.width, flipYOffset),
                 cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];

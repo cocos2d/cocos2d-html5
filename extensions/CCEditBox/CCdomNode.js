@@ -332,8 +332,8 @@ cc.DOM._resetEGLViewDiv = function(){
             designSizeHeight = screenSize.height;
         }
 
-        var viewPortWidth = viewPortRect.size.width, viewPortHeight = viewPortRect.size.height;
-        if((viewPortRect.size.width === 0) && (viewPortRect.size.height === 0)){
+        var viewPortWidth = viewPortRect._size.width, viewPortHeight = viewPortRect._size.height;
+        if((viewPortRect._size.width === 0) && (viewPortRect._size.height === 0)){
             viewPortWidth = screenSize.width;
             viewPortHeight = screenSize.height;
         }
@@ -403,8 +403,8 @@ cc.DOM.parentDOM = function (x) {
                     designSizeHeight = screenSize.height;
                 }
 
-                var viewPortWidth = viewPortRect.size.width, viewPortHeight = viewPortRect.size.height;
-                if ((viewPortRect.size.width === 0) && (viewPortRect.size.height === 0)) {
+                var viewPortWidth = viewPortRect._size.width, viewPortHeight = viewPortRect._size.height;
+                if ((viewPortRect._size.width === 0) && (viewPortRect._size.height === 0)) {
                     viewPortWidth = screenSize.width;
                     viewPortHeight = screenSize.height;
                 }
