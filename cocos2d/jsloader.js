@@ -139,7 +139,6 @@
 
         // useless
         'CCUserDefault.js',
-
         'CCImage.js'
 
     ];
@@ -207,7 +206,6 @@
             '../extensions/CocoStudio/Action/CCActionNode.js',
             '../extensions/CocoStudio/Action/CCActionObject.js',
             // CocoStudio Components
-
             '../extensions/CocoStudio/Components/CCComAttribute.js',
             '../extensions/CocoStudio/Components/CCComAudio.js',
             '../extensions/CocoStudio/Components/CCComController.js',
