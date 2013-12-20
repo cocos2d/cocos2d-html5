@@ -114,11 +114,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if(arguments.length === 2){
-            if((size === locContentSize.width) && (height === locContentSize.height))
+            if((size === locContentSize._width) && (height === locContentSize._height))
                 return;
             cc.Node.prototype.setContentSize.call(this, size, height);
         } else {
-            if((size.width === locContentSize.width) && (size.height === locContentSize.height))
+            if((size.width === locContentSize._width) && (size.height === locContentSize._height))
                 return;
             cc.Node.prototype.setContentSize.call(this, size);
         }
@@ -126,8 +126,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if(cc.renderContextType === cc.CANVAS){
             var locCanvas = this._cacheCanvas;
             var scaleFactor = cc.CONTENT_SCALE_FACTOR();
-            locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
-            locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
+            locCanvas.width = 0 | (locContentSize._width * 1.5 * scaleFactor);
+            locCanvas.height = 0 | (locContentSize._height * 1.5 * scaleFactor);
 
             this._cacheContext.translate(0, locCanvas.height);
             var locTexContentSize = this._cacheTexture._contentSize;

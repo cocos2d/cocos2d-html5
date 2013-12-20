@@ -962,7 +962,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Number}
      */
     getPixelsWide:function () {
-        return this._contentSize.width;
+        return this._contentSize._width;
     },
 
     /**
@@ -970,7 +970,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Number}
      */
     getPixelsHigh:function () {
-        return this._contentSize.height;
+        return this._contentSize._height;
     },
 
     /**
@@ -978,7 +978,8 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {cc.Size}
      */
     getContentSize:function () {
-        return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
+        var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        return cc.size(this._contentSize._width / locScaleFactor, this._contentSize._height / locScaleFactor);
     },
 
     getContentSizeInPixels:function () {
@@ -1013,7 +1014,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     description:function () {
-        return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height+">";
+        return "<cc.Texture2D | width = " + this._contentSize._width + " height " + this._contentSize._height+">";
     },
 
     /**

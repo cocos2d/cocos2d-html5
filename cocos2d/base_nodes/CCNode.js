@@ -155,7 +155,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _initNode:function () {
         this._anchorPoint = cc._pConst(0, 0);
         this._anchorPointInPoints = cc._pConst(0, 0);
-        this._contentSize = cc.size(0, 0);
+        this._contentSize = cc._sizeConst(0, 0);
         this._position = cc._pConst(0, 0);
         this._children = [];
         this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
@@ -530,7 +530,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} [yValue] Y coordinate for position
      * @example
      *    var size = cc.Director.getInstance().getWinSize();
-     *    node.setPosition( cc.p(size.width/2, size.height/2) )
+     *    node.setPosition(size.width/2, size.height/2);
      */
     setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
@@ -538,8 +538,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locPosition._x = newPosOrxValue;
             locPosition._y = yValue;
         } else if (arguments.length == 1) {
-            locPosition.x = newPosOrxValue.x;
-            locPosition.y = newPosOrxValue.y;
+            locPosition._x = newPosOrxValue.x;
+            locPosition._y = newPosOrxValue.y;
         }
         this.setNodeDirty();
     },
@@ -665,8 +665,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             locAnchorPoint._y = point.y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP._x = locSize.width * locAnchorPoint._x;
-        locAPP._y = locSize.height * locAnchorPoint._y;
+        locAPP._x = locSize._width * locAnchorPoint._x;
+        locAPP._y = locSize._height * locAnchorPoint._y;
         this.setNodeDirty();
     },
 
@@ -689,7 +689,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
-        return cc.size(this._contentSize.width, this._contentSize.height);
+        return this._contentSize;
     },
 
     /**
@@ -705,19 +705,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if (arguments.length === 2) {
-            if ((size === locContentSize.width) && (height === locContentSize.height))
+            if ((size === locContentSize._width) && (height === locContentSize._height))
                 return;
-            locContentSize.width = size;
-            locContentSize.height = height;
+            locContentSize._width = size;
+            locContentSize._height = height;
         } else {
-            if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
+            if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
                 return;
-            locContentSize.width = size.width;
-            locContentSize.height = size.height;
+            locContentSize._width = size.width;
+            locContentSize._height = size.height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP._x = locContentSize.width * locAnchorPoint._x;
-        locAPP._y = locContentSize.height * locAnchorPoint._y;
+        locAPP._x = locContentSize._width * locAnchorPoint._x;
+        locAPP._y = locContentSize._height * locAnchorPoint._y;
         this.setNodeDirty();
     },
 
@@ -943,7 +943,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
@@ -2064,7 +2064,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
@@ -2086,7 +2086,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
         rect = cc.RectApplyAffineTransform(rect, trans);
 

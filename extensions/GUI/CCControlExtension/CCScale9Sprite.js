@@ -138,8 +138,8 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         var locTopLeft = this._topLeft, locTopRight = this._topRight, locBottomRight = this._bottomRight;
         var locCenter = this._centre, locCenterContentSize = this._centre.getContentSize();
 
-        var sizableWidth = size.width - locTopLeft.getContentSize().width - locTopRight.getContentSize().width;
-        var sizableHeight = size.height - locTopLeft.getContentSize().height - locBottomRight.getContentSize().height;
+        var sizableWidth = size._width - locTopLeft.getContentSize().width - locTopRight.getContentSize().width;
+        var sizableHeight = size._height - locTopLeft.getContentSize().height - locBottomRight.getContentSize().height;
         var horizontalScale = sizableWidth / locCenterContentSize.width;
         var verticalScale = sizableHeight / locCenterContentSize.height;
         var rescaledWidth = locCenterContentSize.width * horizontalScale;
@@ -269,11 +269,11 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         }
         //backup the contentSize
         var contentSize = this._contentSize;
-        contentSize = new cc.Size(contentSize.width,contentSize.height);
+        var tempWidth = contentSize._width, tempHeight = contentSize._height;
 
         this.updateWithBatchNode(this._scale9Image, this._spriteRect, this._spriteFrameRotated, capInsets);
         //restore the contentSize
-        this.setContentSize(contentSize);
+        this.setContentSize(tempWidth, tempHeight);
     },
 
     /**

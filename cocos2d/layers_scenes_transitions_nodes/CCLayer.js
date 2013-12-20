@@ -810,7 +810,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(w, this._contentSize.height);
+        this.setContentSize(w, this._contentSize._height);
     },
 
     /**
@@ -818,7 +818,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(this._contentSize.width, h);
+        this.setContentSize(this._contentSize._width, h);
     },
 
     /**
@@ -1318,8 +1318,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             var tWidth = this.getContentSize().width * 0.5;
             var tHeight = this.getContentSize().height * 0.5;
 
-            this._gradientStartPoint = cc.p(tWidth * (-locAlongVector.x) + tWidth, tHeight * locAlongVector.y - tHeight);
-            this._gradientEndPoint = cc.p(tWidth * locAlongVector.x + tWidth, tHeight * (-locAlongVector.y) - tHeight);
+            this._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
+            this._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;
+            this._gradientEndPoint.x = tWidth * locAlongVector.x + tWidth;
+            this._gradientEndPoint.y = tHeight * (-locAlongVector.y) - tHeight;
         } else {
             var h = cc.pLength(locAlongVector);
             if (h === 0)
