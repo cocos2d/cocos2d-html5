@@ -53,7 +53,7 @@ ccs.DisplayFactory.createDisplay = function (bone, decoDisplay) {
             break;
     }
 };
-
+ccs.DisplayFactory._helpTransform =  {a:1, b:0, c:0, d:1, tx:0, ty:0};
 ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
     var display = bone.getDisplayRenderNode();
     if(!display)
@@ -87,11 +87,18 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
             if (detector) {
                 var node = decoDisplay.getDisplay();
                 var displayTransform = node.nodeToParentTransform();
+                var helpTransform = this._helpTransform;
+                helpTransform.a = displayTransform.a;
+                helpTransform.b = displayTransform.b;
+                helpTransform.c = displayTransform.c;
+                helpTransform.d = displayTransform.d;
+                helpTransform.tx = displayTransform.tx;
+                helpTransform.ty = displayTransform.ty;
                 var anchorPoint =  node.getAnchorPointInPoints();
-                anchorPoint = cc.PointApplyAffineTransform(anchorPoint, displayTransform);
-                displayTransform.tx = anchorPoint.x;
-                displayTransform.ty = anchorPoint.y;
-                var t = cc.AffineTransformConcat(displayTransform, bone.getArmature().nodeToParentTransform());
+                anchorPoint = cc.PointApplyAffineTransform(anchorPoint, helpTransform);
+                helpTransform.tx = anchorPoint.x;
+                helpTransform.ty = anchorPoint.y;
+                var t = cc.AffineTransformConcat(helpTransform, bone.getArmature().nodeToParentTransform());
                 detector.updateTransform(t);
             }
         }
