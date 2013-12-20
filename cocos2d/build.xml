@@ -160,7 +160,7 @@
                 <file name="GUI/CCScrollView/CCSorting.js"/>
                 <file name="GUI/CCScrollView/CCScrollView.js"/>
                 <file name="GUI/CCScrollView/CCTableView.js"/>
-                <file name="CCEditBox.js"/>
+                <file name="CCEditBox/CCEditBox.js"/>
                 <file name="CocoStudio/CocoStudio.js"/>
                 <file name="CocoStudio/Armature/utils/CCArmatureDefine.js"/>
                 <file name="CocoStudio/Armature/utils/CCDataReaderHelper.js"/>

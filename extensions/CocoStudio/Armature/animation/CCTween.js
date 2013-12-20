@@ -74,29 +74,15 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     },
 
     /**
-     * play animation by animation name.
-     * @param {Number} animationName The animation name you want to play
+     * Start the Process
+     * @param {ccs.MovementBoneData} movementBoneData
      * @param {Number} durationTo
-     *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} durationTween he
-     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} loop
-     *          Whether the animation is loop.
-     *         loop < 0 : use the value from CCMovementData get from flash design panel
-     *         loop = 0 : this animation is not loop
-     *         loop > 0 : this animation is loop
-     * @param {Number} tweenEasing
-     *          CCTween easing is used for calculate easing effect
-     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
-     *         -1 : fade out
-     *         0  : line
-     *         1  : fade in
-     *         2  : fade in and out
+     * @param {Number} durationTween
+     * @param {Boolean} loop
+     * @param {ccs.TweenType} tweenEasing
      */
     play:function (movementBoneData, durationTo, durationTween, loop, tweenEasing) {
-        ccs.ProcessBase.prototype.play.call(this, durationTo, durationTween, loop, tweenEasing);
+        ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
 
         if(loop){
             this._loopType = CC_ANIMATION_TYPE_TO_LOOP_FRONT;
@@ -151,7 +137,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._fromIndex = this._toIndex = 0;
         this._isPlaying = true;
         this._isComplete = this._isPause = false;
-        this._currentPercent = this._curFrameIndex / this._rawDuration;
+        this._currentPercent = this._curFrameIndex / (this._rawDuration-1);
         this._currentFrame = this._nextFrameIndex * this._currentPercent;
     },
 
@@ -241,6 +227,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * Calculate the between value of _from and _to, and give it to between frame data
      * @param {ccs.FrameData} from
      * @param {ccs.FrameData} to
+     * @param {Boolean} limit
      */
     setBetween:function (from, to, limit) {
         if (typeof limit == "undefined") {
@@ -283,7 +270,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             }
             this._tweenData.zOrder = keyFrameData.zOrder;
             locBone.updateZOrder();
-            locBone.setBlendType(keyFrameData.blendType);
+            locBone.setBlendFunc(keyFrameData.blendFunc);
             var childAramture = locBone.getChildArmature();
             if (childAramture) {
                 if (keyFrameData.movement != "") {
@@ -335,14 +322,13 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     /**
      * Calculate which frame arrived, and if current frame have event, then call the event listener
      * @param {Number} currentPercent
-     * @param {Boolean} activeFrame
      * @return {Number}
      */
     updateFrameData:function (currentPercent) {
         if (currentPercent > 1 && this._movementBoneData.delay != 0) {
             currentPercent = ccs.fmodf(currentPercent,1);
         }
-        var playedTime = this._rawDuration * currentPercent;
+        var playedTime = (this._rawDuration-1) * currentPercent;
         var from, to;
         var locTotalDuration = this._totalDuration,locBetweenDuration = this._betweenDuration, locToIndex = this._toIndex;
         // if play to current frame's front or back, then find current frame again
@@ -404,8 +390,8 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
          *  if frame tween easing equal to TWEEN_EASING_MAX, then it will not do tween.
          */
         var tweenType = (this._frameTweenEasing != ccs.TweenType.linear) ? this._frameTweenEasing : this._tweenEasing;
-        if (tweenType != ccs.TweenType.tweenEasingMax&&tweenType != ccs.TweenType.linear) {
-            currentPercent = ccs.TweenFunction.tweenTo(0, 1, currentPercent, 1, tweenType);
+        if (tweenType != ccs.TweenType.tweenEasingMax&&tweenType != ccs.TweenType.linear&& !this._passLastFrame) {
+            currentPercent = ccs.TweenFunction.tweenTo(currentPercent, tweenType, this._from.easingParams);
         }
         return currentPercent;
     },

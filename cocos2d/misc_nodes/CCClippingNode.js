@@ -27,15 +27,15 @@
 
 cc.stencilBits = -1;
 
-cc.setProgram = function(node, program){
+cc.setProgram = function (node, program) {
     node.setShaderProgram(program);
 
     var children = node.getChildren();
-    if(!children)
+    if (!children)
         return;
 
-    for(var i = 0; i < children.length;i++)
-        cc.setProgram(children[i],program);
+    for (var i = 0; i < children.length; i++)
+        cc.setProgram(children[i], program);
 };
 
 /**
@@ -49,11 +49,12 @@ cc.setProgram = function(node, program){
  * @extends cc.Node
  */
 cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
-    _stencil:null,
-    _alphaThreshold:0,
-    _inverted:false,
+    _stencil: null,
+    _alphaThreshold: 0,
+    _inverted: false,
+    _godhelpme: false,
 
-    ctor:function(){
+    ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._stencil = null;
         this._alphaThreshold = 0;
@@ -65,53 +66,53 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * The stencil node will be retained, and its parent will be set to this clipping node.
      * @param {cc.Node} [stencil=null]
      */
-    init:null,
+    init: null,
 
-    _initForWebGL:function(stencil){
+    _initForWebGL: function (stencil) {
         this._stencil = stencil;
 
         this._alphaThreshold = 1;
         this._inverted = false;
         // get (only once) the number of bits of the stencil buffer
         cc.ClippingNode._init_once = true;
-        if(cc.ClippingNode._init_once){
+        if (cc.ClippingNode._init_once) {
             cc.stencilBits = cc.renderContext.getParameter(cc.renderContext.STENCIL_BITS);
-            if(cc.stencilBits <= 0)
+            if (cc.stencilBits <= 0)
                 cc.log("Stencil buffer is not enabled.");
             cc.ClippingNode._init_once = false;
         }
         return true;
     },
 
-    _initForCanvas:function(stencil){
+    _initForCanvas: function (stencil) {
         this._stencil = stencil;
         this._alphaThreshold = 1;
         this._inverted = false;
     },
 
-    onEnter:function(){
+    onEnter: function () {
         cc.Node.prototype.onEnter.call(this);
         this._stencil.onEnter();
     },
 
-    onEnterTransitionDidFinish:function(){
+    onEnterTransitionDidFinish: function () {
         cc.Node.prototype.onEnterTransitionDidFinish.call(this);
         this._stencil.onEnterTransitionDidFinish();
     },
 
-    onExitTransitionDidStart:function(){
+    onExitTransitionDidStart: function () {
         this._stencil.onExitTransitionDidStart();
         cc.Node.prototype.onExitTransitionDidStart.call(this);
     },
 
-    onExit:function(){
+    onExit: function () {
         this._stencil.onExit();
         cc.Node.prototype.onExit.call(this);
     },
 
-    visit:null,
+    visit: null,
 
-    _visitForWebGL:function(ctx){
+    _visitForWebGL: function (ctx) {
         var gl = ctx || cc.renderContext;
 
         // if stencil buffer disabled
@@ -242,7 +243,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // restore alpha test state
         //if (this._alphaThreshold < 1) {
-            // XXX: we need to find a way to restore the shaders of the stencil node and its childs
+        // XXX: we need to find a way to restore the shaders of the stencil node and its childs
         //}
 
         // restore the depth test state
@@ -280,44 +281,78 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.ClippingNode._layer--;
     },
 
-    _visitForCanvas:function(ctx){
-        // return fast (draw nothing if:
+    _visitForCanvas: function (ctx) {
+        // return fast (draw nothing, or draw everything if in inverted mode) if:
         // - nil stencil node
         // - or stencil node invisible:
-        // and not inverted
         if (!this._stencil || !this._stencil.isVisible()) {
-            if(!this._inverted) {
-                this._super(ctx);
-            }
+            if (this._inverted)
+                cc.Node.prototype.visit.call(this, ctx);   // draw everything
             return;
         }
 
-        var context = ctx || cc.renderContext;
-        // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
-        var canvas = context.canvas;
-        var locCache = cc.ClippingNode._getSharedCache();
-        locCache.width = canvas.width;
-        locCache.height = canvas.height;
-        var locCacheCtx = locCache.getContext("2d");
-        locCacheCtx.drawImage(canvas, 0, 0);
+        // Composition mode, costy but support texture stencil
+        if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
+            var context = ctx || cc.renderContext;
+            // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
+            var canvas = context.canvas;
+            var locCache = cc.ClippingNode._getSharedCache();
+            locCache.width = canvas.width;
+            locCache.height = canvas.height;
+            var locCacheCtx = locCache.getContext("2d");
+            locCacheCtx.drawImage(canvas, 0, 0);
 
-        context.save();
-        // Draw everything first using node visit function
-        this._super(context);
+            context.save();
+            // Draw everything first using node visit function
+            this._super(context);
 
-        context.globalCompositeOperation = this._inverted ? "destination-out" : "destination-in";
+            context.globalCompositeOperation = this._inverted ? "destination-out" : "destination-in";
 
-        this.transform(context);
-        this._stencil.visit();
+            this.transform(context);
+            this._stencil.visit();
 
-        context.restore();
+            context.restore();
 
-        // Redraw the cached canvas, so that the cliped area shows the background etc.
-        context.save();
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        context.globalCompositeOperation = "destination-atop";
-        context.drawImage(locCache, 0, 0);
-        context.restore();
+            // Redraw the cached canvas, so that the cliped area shows the background etc.
+            context.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.globalCompositeOperation = "destination-over";
+            context.drawImage(locCache, 0, 0);
+            context.restore();
+        }
+        // Clip mode, fast, but only support cc.DrawNode
+        else {
+            var context = ctx || cc.renderContext, i, children = this._children, locChild;
+
+            context.save();
+            this.transform(context);
+            this._stencil.visit(context);
+            context.clip();
+
+            // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
+            // so if it has ClippingNode as a child, the child must uses composition stencil.
+            this._cangodhelpme(true);
+            var len = children.length;
+            if (len > 0) {
+                this.sortAllChildren();
+                // draw children zOrder < 0
+                for (i = 0; i < len; i++) {
+                    locChild = children[i];
+                    if (locChild._zOrder < 0)
+                        locChild.visit(context);
+                    else
+                        break;
+                }
+                this.draw(context);
+                for (; i < len; i++) {
+                    children[i].visit(context);
+                }
+            } else
+                this.draw(context);
+            this._cangodhelpme(false);
+
+            context.restore();
+        }
     },
 
     /**
@@ -325,15 +360,41 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * The stencil node will be retained. This default to nil.
      * @return {cc.Node}
      */
-    getStencil:function(){
+    getStencil: function () {
         return this._stencil;
     },
 
     /**
      * @param {cc.Node} stencil
      */
-    setStencil:function(stencil) {
+    setStencil: null,
+
+    _setStencilForWebGL: function (stencil) {
         this._stencil = stencil;
+    },
+
+    _setStencilForCanvas: function (stencil) {
+        this._stencil = stencil;
+        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locContext = cc.renderContext;
+        // For texture stencil, use the sprite itself
+        if (stencil instanceof cc.Sprite) {
+            return;
+        }
+        // For shape stencil, rewrite the draw of stencil ,only init the clip path and draw nothing.
+        else if (stencil instanceof cc.DrawNode) {
+            stencil.draw = function () {
+                for (var i = 0; i < stencil._buffer.length; i++) {
+                    var element = stencil._buffer[i];
+                    var vertices = element.verts;
+                    var firstPoint = vertices[0];
+                    locContext.beginPath();
+                    locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+                    for (var j = 1, len = vertices.length; j < len; j++)
+                        locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
+                }
+            }
+        }
     },
 
     /**
@@ -345,7 +406,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * </P>
      * @return {Number}
      */
-    getAlphaThreshold:function(){
+    getAlphaThreshold: function () {
         return this._alphaThreshold;
     },
 
@@ -353,7 +414,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * set alpha threshold.
      * @param {Number} alphaThreshold
      */
-    setAlphaThreshold:function(alphaThreshold){
+    setAlphaThreshold: function (alphaThreshold) {
         this._alphaThreshold = alphaThreshold;
     },
 
@@ -365,7 +426,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * </p>
      * @return {Boolean}
      */
-    isInverted:function(){
+    isInverted: function () {
         return this._inverted;
     },
 
@@ -374,18 +435,26 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * set whether or not invert of stencil
      * @param {Boolean} inverted
      */
-    setInverted:function(inverted){
+    setInverted: function (inverted) {
         this._inverted = inverted;
+    },
+
+    _cangodhelpme: function (godhelpme) {
+        if (godhelpme === true || godhelpme === false)
+            cc.ClippingNode.prototype._godhelpme = godhelpme;
+        return cc.ClippingNode.prototype._godhelpme;
     }
 });
 
-if(cc.Browser.supportWebGL){
+if (cc.Browser.supportWebGL) {
     //WebGL
     cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForWebGL;
     cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForWebGL;
-}else{
+    cc.ClippingNode.prototype.setStencil = cc.ClippingNode.prototype._setStencilForWebGL;
+} else {
     cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForCanvas;
     cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForCanvas;
+    cc.ClippingNode.prototype.setStencil = cc.ClippingNode.prototype._setStencilForCanvas;
 }
 
 cc.ClippingNode._init_once = null;
@@ -393,7 +462,7 @@ cc.ClippingNode._visit_once = null;
 cc.ClippingNode._layer = null;
 cc.ClippingNode._sharedCache = null;
 
-cc.ClippingNode._getSharedCache = function() {
+cc.ClippingNode._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 }
 
@@ -403,7 +472,7 @@ cc.ClippingNode._getSharedCache = function() {
  * @param {cc.Node} [stencil=null]
  * @return {cc.ClippingNode}
  */
-cc.ClippingNode.create = function(stencil){
+cc.ClippingNode.create = function (stencil) {
     var node = new cc.ClippingNode();
     node.init(stencil);
     return node;

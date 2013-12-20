@@ -261,18 +261,22 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
                 locBody.p.x = t.tx;
                 locBody.p.y = t.ty;
                 locBody.p.a = t.a;
-                var vs = contourData.vertexList;
-                for (var i = 0; i < vs.length; i++) {
-                    locHelpPoint.x = vs[i].x;
-                    locHelpPoint.y = vs[i].y;
-                    locHelpPoint = cc.PointApplyAffineTransform(locHelpPoint, t);
-                    if (shape) {
-                        var v = new cp.Vect(0, 0);
-                        v.x = locHelpPoint.x;
-                        v.y = locHelpPoint.y;
-                        shape.verts[i * 2] = locHelpPoint.x - t.tx;
-                        shape.verts[i * 2 + 1] = locHelpPoint.y - t.ty;
-                    }
+            }
+            var vs = contourData.vertexList;
+            var cvs = colliderBody.getCalculatedVertexList();
+            for (var i = 0; i < vs.length; i++) {
+                locHelpPoint.x = vs[i].x;
+                locHelpPoint.y = vs[i].y;
+                locHelpPoint = cc.PointApplyAffineTransform(locHelpPoint, t);
+                if (shape) {
+                    shape.verts[i * 2] = locHelpPoint.x - t.tx;
+                    shape.verts[i * 2 + 1] = locHelpPoint.y - t.ty;
+                }
+                if (ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
+                    var v = new cp.Vect(0, 0);
+                    v.x = locHelpPoint.x;
+                    v.y = locHelpPoint.y;
+                    cvs[i] = v;
                 }
             }
         }

@@ -165,7 +165,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._scheduler = director.getScheduler();
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
-        this._componentContainer = new cc.ComponentContainer(this);
+        if(cc.ComponentContainer){
+            this._componentContainer = new cc.ComponentContainer(this);
+        }
     },
 
     /**
@@ -1290,7 +1292,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._running = false;
         this.pauseSchedulerAndActions();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
-        this._componentContainer.removeAll();
+        if(this._componentContainer){
+            this._componentContainer.removeAll();
+        }
     },
 
     // actions
