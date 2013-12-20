@@ -97,11 +97,11 @@ cc.PointMake = function (x, y) {
 cc.p = function (x, y) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
     // memory usage and overall performance drastically
-    return new cc.Point(x, y);
+    //return new cc.Point(x, y);
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT,
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Point(x, y)
-    //return {x:x, y:y};
+    return {x: x, y: y};
 };
 
 // JSB compatbility: in JSB, cc._p reuses objects instead of creating new ones
@@ -207,11 +207,11 @@ cc.SizeMake = function (width, height) {
 cc.size = function (w, h) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
     // memory usage and overall peformance drastically
-    return new cc.Size(w, h);
+    //return new cc.Size(w, h);
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Size(w, h)
-    //return {width:w, height:h};
+    return { width: w, height: h};
 };
 
 // JSB compatbility: in JSB, cc._size reuses objects instead of creating new ones
@@ -279,23 +279,23 @@ cc.sizeEqualToSize = function (size1, size2) {
 cc.Rect = function (x1, y1, width1, height1) {
     var argLen =arguments.length;
     if(argLen === 4){
-        this.origin = new cc.Point(x1 || 0, y1 || 0);
-        this.size = new cc.Size(width1 || 0, height1 || 0);
+        this._origin = new cc.Point(x1 || 0, y1 || 0);
+        this._size = new cc.Size(width1 || 0, height1 || 0);
         return;
     }
     if(argLen === 1) {
-        this.origin = new cc.Point(x1.origin.x, x1.origin.y);
-        this.size = new cc.Size(x1.size.width, x1.size.height);
+        this._origin = new cc.Point(x1._origin.x, x1._origin.y);
+        this._size = new cc.Size(x1._size.width, x1._size.height);
         return;
     }
     if(argLen === 0) {
-        this.origin = new cc.Point(0, 0);
-        this.size = new cc.Size(0,0);
+        this._origin = new cc.Point(0, 0);
+        this._size = new cc.Size(0,0);
         return;
     }
     if(argLen === 2) {
-        this.origin = new cc.Point(x1.x, x1.y);
-        this.size = new cc.Size(y1.width,y1.height);
+        this._origin = new cc.Point(x1.x, x1.y);
+        this._size = new cc.Size(y1.width,y1.height);
         return;
     }
     throw "unknown argument type";
@@ -353,8 +353,8 @@ cc.RectZero = function () {
 cc.rectEqualToRect = function (rect1, rect2) {
     if(!rect1 || !rect2)
         return false;
-    return ((cc.pointEqualToPoint(rect1.origin, rect2.origin)) &&
-        (cc.sizeEqualToSize(rect1.size, rect2.size)));
+    return ((cc.pointEqualToPoint(rect1._origin, rect2._origin)) &&
+        (cc.sizeEqualToSize(rect1._size, rect2._size)));
 };
 
 cc._rectEqualToZero = function(rect){
@@ -516,28 +516,28 @@ cc.rectIntersection = function (rectA, rectB) {
 //   rect.origin, rect.size
 //
 cc.Rect.prototype.getX = function() {
-    return this.origin.x;
+    return this._origin.x;
 };
 cc.Rect.prototype.setX = function(x) {
-    this.origin.x = x;
+    this._origin.x = x;
 };
 cc.Rect.prototype.getY = function() {
-    return this.origin.y;
+    return this._origin.y;
 };
 cc.Rect.prototype.setY = function(y) {
-    this.origin.y = y;
+    this._origin.y = y;
 };
 cc.Rect.prototype.getWidth = function(){
-    return this.size.width;
+    return this._size.width;
 };
 cc.Rect.prototype.setWidth = function(w){
-    this.size.width = w;
+    this._size.width = w;
 };
 cc.Rect.prototype.getHeight = function(){
-    return this.size.height;
+    return this._size.height;
 };
 cc.Rect.prototype.setHeight = function(h){
-    this.size.height = h;
+    this._size.height = h;
 };
 
 Object.defineProperties(cc.Rect.prototype,
