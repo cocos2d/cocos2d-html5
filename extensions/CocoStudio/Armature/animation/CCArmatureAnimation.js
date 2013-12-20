@@ -183,21 +183,38 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
     /**
      * play animation by animation name.
-     * @param {String||Array} animationName The animation name you want to play
+     * @param {String} animationName The animation name you want to play
      * @param {Number} durationTo
      *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
+     *         -1 : use the value from CCMovementData get from flash design panel
+     * @param {Number} durationTween he
+     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
      *         -1 : use the value from CCMovementData get from flash design panel
      * @param {Number} loop
      *          Whether the animation is loop.
      *         loop < 0 : use the value from CCMovementData get from flash design panel
      *         loop = 0 : this animation is not loop
      *         loop > 0 : this animation is loop
+     * @param {Number} tweenEasing
+     *          CCTween easing is used for calculate easing effect
+     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
+     *         -1 : fade out
+     *         0  : line
+     *         1  : fade in
+     *         2  : fade in and out
+     * @example
+     * // example
+     * armature.getAnimation().play("run",-1,-1,1,-1);//loop play
+     * armature.getAnimation().play("run",-1,-1,-1,-1);//not loop play
+     * armature.getAnimation().play(["run1","run2","run3"],1);//loop play animations
      */
-    play:function (animationName, durationTo, loop) {
+    play:function (animationName, durationTo, durationTween, loop, tweenEasing) {
         if(typeof animationName == "string"){
             this._playByName(animationName, durationTo, loop);
         } else if(animationName instanceof Array){
-            this._playByNames(animationName, durationTo, loop);
+            this._playByNames(arguments[0], -1, arguments[1]);
+            //todo
+            //this._playByNames(animationName, durationTo, loop);
         }
     },
 
@@ -296,7 +313,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         if (this._onMovementList) {
             if (this._movementListLoop) {
                 var movementObj = this._movementList[this._movementIndex];
-                this.play(movementObj.name, movementObj.durationTo,0);
+                this.play(movementObj.name, movementObj.durationTo,-1,0);
                 this._movementIndex++;
                 if (this._movementIndex >= this._movementList.length) {
                     this._movementIndex = 0;
@@ -305,7 +322,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             else {
                 if (this._movementIndex < this._movementList.length) {
                     var movementObj = this._movementList[this._movementIndex];
-                    this.play(movementObj.name, movementObj.durationTo,0);
+                    this.play(movementObj.name, movementObj.durationTo,-1,0);
                     this._movementIndex++;
                 }
                 else {
@@ -385,7 +402,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             return;
         }
         var animationName = moveNames[animationIndex];
-        this.play(animationName, durationTo, loop);
+        this.play(animationName, durationTo,-1, loop, 0);
     },
     _playByIndexs: function (movementIndexes,durationTo, loop) {
         this._movementList = [];
