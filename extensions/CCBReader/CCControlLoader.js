@@ -195,7 +195,7 @@ cc.ScrollViewLoader = cc.NodeLoader.extend({
         if(propertyName == PROPERTY_CONTENTSIZE){
             node.setViewSize(size);
         }else{
-            cc.NodeLoader.prototype.onHandlePropTypeSize.call(this, node,parent,propertyName.size,ccbReader);
+            cc.NodeLoader.prototype.onHandlePropTypeSize.call(this, node,parent,propertyName,size,ccbReader);
         }
     },
 

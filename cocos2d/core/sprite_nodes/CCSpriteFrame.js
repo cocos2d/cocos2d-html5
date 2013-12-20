@@ -306,7 +306,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
         offset = offset || cc.p(0, 0);
-        originalSize = originalSize || rect.size;
+        originalSize = originalSize || rect._size;
 
         this.setTexture(texture);
         this._rectInPixels = rect;
@@ -337,7 +337,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
         offset = offset || cc.p(0, 0);
-        originalSize = originalSize || rect.size;
+        originalSize = originalSize || rect._size;
 
         this._texture = null;
         this._textureFilename = filename;

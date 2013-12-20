@@ -67,9 +67,9 @@
                 <file name="shaders/CCShaderCache.js"/>
                 <file name="shaders/CCGLProgram.js"/>
                 <file name="shaders/CCGLStateCache.js"/>
-                <file name="misc_nodes/CCRenderTexture.js"/>
-                <file name="misc_nodes/CCMotionStreak.js"/>
-                <file name="misc_nodes/CCClippingNode.js"/>
+                <file name="render_texture/CCRenderTexture.js"/>
+                <file name="motion_streak/CCMotionStreak.js"/>
+                <file name="clipping_nodes/CCClippingNode.js"/>
                 <file name="effects/CCGrid.js"/>
                 <file name="effects/CCGrabber.js"/>
                 <file name="draw_nodes/CCDrawNode.js"/>
