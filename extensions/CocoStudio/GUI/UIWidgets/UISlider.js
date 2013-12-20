@@ -385,7 +385,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             if (this._progressBarTexType == ccs.TextureResType.plist) {
                 var barNode = this._progressBarRenderer;
                 if (barNode) {
-                    var to = barNode.getTextureRect().origin;
+                    var to = barNode.getTextureRect()._origin;
                     x = to.x;
                     y = to.y;
                 }

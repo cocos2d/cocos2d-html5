@@ -235,7 +235,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         if(this._renderBarTexType==ccs.TextureResType.plist){
             var barNode = this._barRenderer;
             if (barNode) {
-                var to = barNode.getTextureRect().origin;
+                var to = barNode.getTextureRect()._origin;
                 x = to.x;
                 y = to.y;
             }

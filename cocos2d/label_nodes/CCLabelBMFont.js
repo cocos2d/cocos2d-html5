@@ -848,7 +848,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.setTextureRect(rect, false, cc.SizeZero());
                 } else {
                     // updating previous sprite
-                    fontChar.setTextureRect(rect, false, rect.size);
+                    fontChar.setTextureRect(rect, false, rect._size);
                     // restore to default in case they were modified
                     fontChar.setVisible(true);
                 }
