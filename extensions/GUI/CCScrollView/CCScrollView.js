@@ -169,7 +169,8 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     getContentOffset:function () {
-        return this._container.getPosition();
+        var locPos = this._container.getPosition();
+        return cc.p(locPos.x, locPos.y);
     },
 
     /**
