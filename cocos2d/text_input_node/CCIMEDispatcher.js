@@ -197,7 +197,8 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             var tx = event.pageX || 0;
             var ty = event.pageY || 0;
 
-            selfPointer._lastClickPosition = cc.p(tx, ty);
+            selfPointer._lastClickPosition.x = tx;
+            selfPointer._lastClickPosition.y = ty;
         }, false);
     },
 

@@ -153,10 +153,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationRadiansY:0,
 
     _initNode:function () {
-        this._anchorPoint = cc.p(0, 0);
-        this._anchorPointInPoints = cc.p(0, 0);
-        this._contentSize = cc.size(0, 0);
-        this._position = cc.p(0, 0);
+        this._anchorPoint = cc._pConst(0, 0);
+        this._anchorPointInPoints = cc._pConst(0, 0);
+        this._contentSize = cc._sizeConst(0, 0);
+        this._position = cc._pConst(0, 0);
         this._children = [];
         this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
@@ -529,19 +529,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *     and Passing two numbers (x,y) is much efficient than passing CCPoint object.
      * </p>
      * @param {cc.Point|Number} newPosOrxValue The position (x,y) of the node in coordinates or  X coordinate for position
-     * @param {Number} yValue Y coordinate for position
+     * @param {Number} [yValue] Y coordinate for position
      * @example
      *    var size = cc.Director.getInstance().getWinSize();
-     *    node.setPosition( cc.p(size.width/2, size.height/2) )
+     *    node.setPosition(size.width/2, size.height/2);
      */
     setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (arguments.length == 2) {
-            locPosition.x = newPosOrxValue;
-            locPosition.y = yValue;
+            locPosition._x = newPosOrxValue;
+            locPosition._y = yValue;
         } else if (arguments.length == 1) {
-            locPosition.x = newPosOrxValue.x;
-            locPosition.y = newPosOrxValue.y;
+            locPosition._x = newPosOrxValue.x;
+            locPosition._y = newPosOrxValue.y;
         }
         this.setNodeDirty();
     },
@@ -552,21 +552,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition:function () {
-        return cc.p(this._position.x, this._position.y);
+        return this._position;
     },
 
     /**
      * @return {Number}
      */
     getPositionX:function () {
-        return this._position.x;
+        return this._position._x;
     },
 
     /**
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this._position.x = x;
+        this._position._x = x;
         this.setNodeDirty();
     },
 
@@ -574,14 +574,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getPositionY:function () {
-        return  this._position.y;
+        return  this._position._y;
     },
 
     /**
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this._position.y = y;
+        this._position._y = y;
         this.setNodeDirty();
     },
 
@@ -637,7 +637,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint:function () {
-        return cc.p(this._anchorPoint.x, this._anchorPoint.y);
+        return this._anchorPoint;
     },
 
     /**
@@ -656,19 +656,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (arguments.length === 2) {
-            if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
                 return;
-            locAnchorPoint.x = point;
-            locAnchorPoint.y = y;
+            locAnchorPoint._x = point;
+            locAnchorPoint._y = y;
         } else {
-            if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
                 return;
-            locAnchorPoint.x = point.x;
-            locAnchorPoint.y = point.y;
+            locAnchorPoint._x = point.x;
+            locAnchorPoint._y = point.y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP.x = locSize.width * locAnchorPoint.x;
-        locAPP.y = locSize.height * locAnchorPoint.y;
+        locAPP._x = locSize._width * locAnchorPoint._x;
+        locAPP._y = locSize._height * locAnchorPoint._y;
         this.setNodeDirty();
     },
 
@@ -680,7 +680,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
-        return cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
+        return this._anchorPointInPoints;
     },
 
     /**
@@ -691,7 +691,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
-        return cc.size(this._contentSize.width, this._contentSize.height);
+        return this._contentSize;
     },
 
     /**
@@ -707,19 +707,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if (arguments.length === 2) {
-            if ((size === locContentSize.width) && (height === locContentSize.height))
+            if ((size === locContentSize._width) && (height === locContentSize._height))
                 return;
-            locContentSize.width = size;
-            locContentSize.height = height;
+            locContentSize._width = size;
+            locContentSize._height = height;
         } else {
-            if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
+            if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
                 return;
-            locContentSize.width = size.width;
-            locContentSize.height = size.height;
+            locContentSize._width = size.width;
+            locContentSize._height = size.height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP.x = locContentSize.width * locAnchorPoint.x;
-        locAPP.y = locContentSize.height * locAnchorPoint.y;
+        locAPP._x = locContentSize._width * locAnchorPoint._x;
+        locAPP._y = locContentSize._height * locAnchorPoint._y;
         this.setNodeDirty();
     },
 
@@ -945,7 +945,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
@@ -1837,7 +1837,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
-            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
+            var apx = this._anchorPointInPoints._x, apy = this._anchorPointInPoints._y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
@@ -1862,8 +1862,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             var t = this._transform;// quick reference
 
             // base position
-            t.tx = this._position.x;
-            t.ty = this._position.y;
+            t.tx = this._position._x;
+            t.ty = this._position._y;
 
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
@@ -1878,7 +1878,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             t.c = Sin;
 
             var lScaleX = this._scaleX, lScaleY = this._scaleY;
-            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
+            var appX = this._anchorPointInPoints._x, appY = this._anchorPointInPoints._y;
 
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
@@ -1931,10 +1931,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _nodeToParentTransformForWebGL:function () {
         if (this._transformDirty) {
             // Translate values
-            var x = this._position.x;
-            var y = this._position.y;
-            var apx = this._anchorPointInPoints.x, napx = -apx;
-            var apy = this._anchorPointInPoints.y, napy = -apy;
+            var x = this._position._x;
+            var y = this._position._y;
+            var apx = this._anchorPointInPoints._x, napx = -apx;
+            var apy = this._anchorPointInPoints._y, napy = -apy;
             var scx = this._scaleX, scy = this._scaleY;
 
             if (this._ignoreAnchorPointForPosition) {
@@ -2068,7 +2068,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
@@ -2090,7 +2090,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
         rect = cc.RectApplyAffineTransform(rect, trans);
 

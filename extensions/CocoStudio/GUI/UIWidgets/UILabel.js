@@ -285,7 +285,9 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     labelScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelRenderer.setScale(1.0);
-            this._size = this._labelRenderer.getContentSize();
+            var renderSize = this._labelRenderer.getContentSize();
+            this._size.width = renderSize.width;
+            this._size.height = renderSize.height;
         }
         else {
             var textureSize = this._labelRenderer.getContentSize();

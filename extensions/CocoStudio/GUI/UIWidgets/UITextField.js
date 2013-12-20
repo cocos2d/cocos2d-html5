@@ -539,7 +539,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     hitTest: function (pt) {
         var nsp = this._renderer.convertToNodeSpace(pt);
         var locSize = this._textFieldRender.getContentSize();
-        var bb = cc.rect(-locSize.width * this._anchorPoint.x, -locSize.height * this._anchorPoint.y, locSize.width, locSize.height);
+        var bb = cc.rect(-locSize.width * this._anchorPoint._x, -locSize.height * this._anchorPoint._y, locSize.width, locSize.height);
         if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
             return true;
         }
@@ -584,7 +584,9 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     textfieldRendererScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._textFieldRender.setScale(1.0);
-            this._size = this.getContentSize();
+            var rendererSize = this.getContentSize();
+            this._size.width = rendererSize.width;
+            this._size.height = rendererSize.height;
         }
         else {
             var textureSize = this.getContentSize();
