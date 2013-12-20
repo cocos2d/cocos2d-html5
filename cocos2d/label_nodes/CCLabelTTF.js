@@ -103,6 +103,59 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     init:function () {
         return this.initWithString(" ", this._fontName, this._fontSize);
     },
+
+    _initMeasureUtil: function() {
+        var proto = cc.LabelTTF.prototype;
+        if(!proto._measureCanvas) {
+            var canvas = proto._measureCanvas = document.createElement("canvas");
+            canvas.width = 160;
+            canvas.height = 160;
+            proto._measureCtx = canvas.getContext("2d");
+        }
+    },
+    _measureConfig: function() {
+        this._measureCtx.font = this._fontStyleStr;
+    },
+    _measure: function(text) {
+        return this._measureCtx.measureText(text).width;
+    },
+    _checkNextline: function( text, maxM, width){
+        // Next line is the whole text remaining
+        if(maxM >= text.length) return text.length;
+        // Next line is a line with line break
+        var nextlinebreak = text.indexOf('\n');
+        if(maxM >= nextlinebreak && nextlinebreak > 0) return nextlinebreak+1;
+        // Forward check
+        var prevId, nextId = maxM, foundLineChange = false, l = width + 1;
+
+        do {
+            prevId = nextId;
+            // Find next space or chinese caracters
+            var index = text.substr(prevId).search(/[\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/);
+            index = (index == -1) ? -1 : prevId+index;
+            // No space after
+            if(index == -1) {
+                if(this._measure(text) <= width)
+                    prevId = text.length;
+                break;
+            }
+            foundLineChange = text[index] == '\n';
+            // Text length
+            l = this._measure(text.substr(0, index));
+            nextId = index+1;
+        } while(l < width && !foundLineChange);
+        // Forward check success
+        if(prevId != maxM || foundLineChange) {
+            return prevId;
+        }
+        // Backward check when forward check failed
+        else {// Find last space
+            var lastsp = text.lastIndexOf(' ', maxM);
+            if(lastsp == -1) return maxM;
+            else return (lastsp+1);
+        }
+    },
+
     /**
      * Prints out a description of this class
      * @return {String}
@@ -507,24 +560,21 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
     _updateString: function() {
-        if (this._originalText.length > 1) {
-            if (this._dimensions.width > 0 && this._dimensions.height > 0) {
-                var buffer = [];
-                var maxWidth = 0;
-                for (var i = 0; i < this._originalText.length ; i ++) {
-                    var width = cc.LabelTTF._getCharWidth(this._originalText.charCodeAt(i), this._fontSize, this._fontName);
+        var width = this._dimensions.width, length = this._originalText.length;
+        if (length > 1 && width > 0 && this._dimensions.height > 0) {
+            // Content processing
+            this._measureConfig();
+            var maxM = Math.floor( width/this._measure('A')), text = this._originalText, buffer = [];
 
-                    if (maxWidth + width > this._dimensions.width) {
-                        buffer.push('\n');
-                        maxWidth = 0;
-                    }
-
-                    buffer.push(this._originalText[i]);
-                    maxWidth += width;
-                }
-                this._string = buffer.join("");
-                return;
+            for(var i = 0; i < length;) {
+                // Find the index of next line
+                var next = this._checkNextline(text.substr(i), maxM, width);
+                buffer = buffer.concat(text.substr(i, next));
+                buffer.push('\n');
+                i += next;
             }
+            this._string = buffer.join("");
+            return;
         }
         this._string = this._originalText;
     },
