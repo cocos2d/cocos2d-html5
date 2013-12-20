@@ -451,6 +451,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         // Reinit frame size
         var frameW = this._frameSize.width, frameH = this._frameSize.height;
+        if(cc.Browser.isMobile)
+            this._setViewPortMeta(this._frameSize.width, this._frameSize.height);
         this._initFrameSize();
         // No change
         if (resolutionPolicy == this._resolutionPolicy
@@ -866,7 +868,6 @@ cc.ContainerStrategy = cc.Class.extend({
     _adjustBrowser: function (view) {
         if (cc.Browser.isMobile) {
             view._scrollToBottom();
-            view._setViewPortMeta(view._frameSize.width, view._frameSize.height);
         }
     },
 
