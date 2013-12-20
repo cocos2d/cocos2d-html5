@@ -29,11 +29,11 @@ ccs.ARMATURE_MAX_CHILD = 50.0;
 ccs.ARMATURE_MAX_ZORDER = 100;
 ccs.ARMATURE_MAX_COUNT = ((ccs.MAX_VERTEXZ_VALUE) / (ccs.ARMATURE_MAX_CHILD) / ccs.ARMATURE_MAX_ZORDER);
 ccs.AUTO_ADD_SPRITE_FRAME_NAME_PREFIX = false;
-ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT = true;
+ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT = false;
 ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX = false;
 
 ccs.armatureVersion = function(){
-    return "v1.0.0.0";
+    return "v1.1.0.0";
 };
 
 cc.RESOURCE_TYPE["TEXT"].push("ExportJson");
