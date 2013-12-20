@@ -218,13 +218,11 @@ cc.ControlSlider = cc.Control.extend({
     },
     needsLayout:function(){
         var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
-        var pos = this._thumbSprite.getPosition();
-        pos.x = percent * this._backgroundSprite.getContentSize().width;
-        this._thumbSprite.setPosition(pos);
+        this._thumbSprite.setPositionX(percent * this._backgroundSprite.getContentSize().width);
 
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.rect(textureRect.x, textureRect.y, pos.x, textureRect.height);
+        textureRect = cc.rect(textureRect.x, textureRect.y,  this._thumbSprite.getPositionX(), textureRect.height);
         this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
     },
     /** Returns the value for the given location. */
