@@ -533,7 +533,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
             var size = this.getContentSize();
-            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
+            var pos = cc.p(0 | ( -this._anchorPointInPoints._x), 0 | ( -this._anchorPointInPoints._y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
             cc.drawingUtil.setDrawColor4B(0,255,0,255);
             cc.drawingUtil.drawPoly(vertices, 4, true);
@@ -1227,11 +1227,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (arguments.length === 2) {
-            if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
                 return;
             cc.Node.prototype.setAnchorPoint.call(this, point, y);
         } else {
-            if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
                 return;
             cc.Node.prototype.setAnchorPoint.call(this, point);
         }

@@ -396,8 +396,8 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         }
 
         if (appendNewPoint) {
-            locPointVertexes[locNuPoints * 2] = this._positionR.x;
-            locPointVertexes[locNuPoints * 2 + 1] = this._positionR.y;
+            locPointVertexes[locNuPoints * 2] = this._positionR._x;
+            locPointVertexes[locNuPoints * 2 + 1] = this._positionR._y;
             locPointState[locNuPoints] = 1.0;
 
             // Color assignment

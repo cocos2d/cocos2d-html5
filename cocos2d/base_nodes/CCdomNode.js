@@ -48,23 +48,23 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setPosition:function (x, y) {
         if (arguments.length == 2) {
-            this._position.x = x;
-            this._position.y = y;
+            this._position._x = x;
+            this._position._y = y;
             //this._position = cc.p(newPosOrxValue,yValue);
         } else {
             this._position = x;
         }
         this.setNodeDirty();
-        this.dom.translates(this._position.x, -this._position.y);
+        this.dom.translates(this._position._x, -this._position._y);
     },
     /**
      * replace set Position Y of ccNode
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this._position.y = y;
+        this._position._y = y;
         this.setNodeDirty();
-        this.dom.translates(this._position.x, -this._position.y);
+        this.dom.translates(this._position._x, -this._position._y);
     },
 
     /**
@@ -72,9 +72,9 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this._position.x = x;
+        this._position._x = x;
         this.setNodeDirty();
-        this.dom.translates(this._position.x, -this._position.y);
+        this.dom.translates(this._position._x, -this._position._y);
     },
 
     /**
@@ -123,27 +123,27 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (arguments.length === 2) {
-            if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
                 return;
-            locAnchorPoint.x = point;
-            locAnchorPoint.y = y;
+            locAnchorPoint._x = point;
+            locAnchorPoint._y = y;
         } else {
-            if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
                 return;
-            locAnchorPoint.x = point.x;
-            locAnchorPoint.y = point.y;
+            locAnchorPoint._x = point.x;
+            locAnchorPoint._y = point.y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP.x = locSize.width * locAnchorPoint.x;
-        locAPP.y = locSize.height * locAnchorPoint.y;
+        locAPP._x = locSize.width * locAnchorPoint._x;
+        locAPP._y = locSize.height * locAnchorPoint._y;
 
-        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
+        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP._x + 'px ' + -locAPP._y + 'px';
         if (this.isIgnoreAnchorPointForPosition()) {
             this.dom.style.marginLeft = 0;
             this.dom.style.marginBottom = 0;
         } else {
-            this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP.x + 'px';
-            this.dom.style.marginBottom = -locAPP.y + 'px';
+            this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP._x + 'px';
+            this.dom.style.marginBottom = -locAPP._y + 'px';
         }
         this.setNodeDirty();
     },
@@ -167,8 +167,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
             locContentSize.height = size.height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP.x = locContentSize.width * locAnchorPoint.x;
-        locAPP.y = locContentSize.height * locAnchorPoint.y;
+        locAPP._x = locContentSize.width * locAnchorPoint._x;
+        locAPP._y = locContentSize.height * locAnchorPoint._y;
         this.dom.width = size.width;
         this.dom.height = size.height;
         this.setAnchorPoint(this.getAnchorPoint());

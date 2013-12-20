@@ -460,13 +460,13 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
             this._buttonNormalRenderer.setAnchorPoint(point, y);
             this._buttonClickedRenderer.setAnchorPoint(point, y);
             this._buttonDisableRenderer.setAnchorPoint(point, y);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
+            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
         } else {
             ccs.UIWidget.prototype.setAnchorPoint.call(this,point);
             this._buttonNormalRenderer.setAnchorPoint(point);
             this._buttonClickedRenderer.setAnchorPoint(point);
             this._buttonDisableRenderer.setAnchorPoint(point);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
+            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
         }
     },
 

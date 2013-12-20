@@ -752,12 +752,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
         // need computing _anchorPointInPoints
-        var oldContentSize = cc.size(locSize.width - locStrokeShadowOffsetX, locSize.height - locStrokeShadowOffsetY);
-        var startPoint = {x:locStrokeShadowOffsetX * 0.5, y: locStrokeShadowOffsetY * 0.5 };
         var locAP = this._anchorPoint;
-        var oldAPP = {x: oldContentSize.width * locAP.x, y: oldContentSize.height * locAP.y};
-        this._anchorPointInPoints._x = startPoint.x + oldAPP.x;
-        this._anchorPointInPoints._y = startPoint.y + oldAPP.y;
+        this._anchorPointInPoints._x = (locStrokeShadowOffsetX * 0.5) + ((locSize.width - locStrokeShadowOffsetX) * locAP._x);
+        this._anchorPointInPoints._y = (locStrokeShadowOffsetY * 0.5) + ((locSize.height - locStrokeShadowOffsetY) * locAP._y);
     },
 
     getContentSize:function(){

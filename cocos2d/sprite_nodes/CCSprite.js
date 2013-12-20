@@ -207,7 +207,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
     }
 
-    if (selColor.r + selColor.g + selColor.b < 255) {
+    if (selColor.r + selColor.g + selColor.b < 1) {
         ctx.globalAlpha = a;
         ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
     }
