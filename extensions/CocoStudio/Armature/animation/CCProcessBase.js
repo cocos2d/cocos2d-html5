@@ -98,7 +98,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
         this._rawDuration = 0;
         this._loopType = CC_ANIMATION_TYPE_LOOP_BACK;
         this._tweenEasing = ccs.TweenType.linear;
-        this._animationInternal = cc.Director.getInstance().getAnimationInterval();
+        this._animationInternal = 1/60;
         this._curFrameIndex = 0;
         this._durationTween = 0;
         this._isLoopBack = false;
@@ -126,41 +126,18 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     stop:function () {
         this._isComplete = true;
         this._isPlaying = false;
-        this._currentFrame = 0;
-        this._currentPercent = 0;
     },
 
     /**
-     * play animation by animation name.
+     * Play the Process
      * @param {Number} durationTo
-     *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} durationTween he
-     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} loop
-     *          Whether the animation is loop.
-     *         loop < 0 : use the value from CCMovementData get from flash design panel
-     *         loop = 0 : this animation is not loop
-     *         loop > 0 : this animation is loop
-     * @param {Number} tweenEasing
-     *          CCTween easing is used for calculate easing effect
-     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
-     *         -1 : fade out
-     *         0  : line
-     *         1  : fade in
-     *         2  : fade in and out
+     * @param {ccs.TweenType} tweenEasing
      */
-    play:function (durationTo, durationTween, loop, tweenEasing) {
+    play:function (durationTo, tweenEasing) {
         this._isComplete = false;
         this._isPause = false;
         this._isPlaying = true;
         this._currentFrame = 0;
-
-        /*
-         *  Set this._nextFrameIndex to durationTo, it is used for change tween between two animation.
-         *  When changing end, this._nextFrameIndex will be setted to _durationTween
-         */
         this._nextFrameIndex = durationTo;
         this._tweenEasing = tweenEasing;
     },
@@ -227,7 +204,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @return {Number}
      */
     getCurrentFrameIndex:function () {
-        this._curFrameIndex = this._rawDuration * this._currentPercent;
+        this._curFrameIndex = (this._rawDuration-1) * this._currentPercent;
         return this._curFrameIndex;
     },
 

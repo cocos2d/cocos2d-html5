@@ -491,7 +491,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             this._originalScaleX = this._scaleX;
             this._originalScaleY = this._scaleY;
             // For editbox
-            cc.DOM._resetEGLViewDiv();
+            if( cc.DOM){
+                cc.DOM._resetEGLViewDiv();
+            }
 
             cc.VisibleRect.init(this.getVisibleSize());
         }
