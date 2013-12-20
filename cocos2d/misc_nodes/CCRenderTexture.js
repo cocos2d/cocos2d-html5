@@ -131,7 +131,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _cleanupForWebGL: function () {
         cc.Node.prototype.onExit.call(this);
 
-        this._sprite = null;
+        //this._sprite = null;
         this._textureCopy = null;
 
         var gl = cc.renderContext;
@@ -139,8 +139,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if (this._depthRenderBuffer)
             gl.deleteRenderbuffer(this._depthRenderBuffer);
         this._uITextureImage = null;
-        if (this._texture)
-            this._texture.releaseTexture();
+        //if (this._texture)
+        //    this._texture.releaseTexture();
     },
 
     /**
@@ -355,7 +355,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         r = r || 0;
         g = g || 0;
         b = b || 0;
-        a = a || 1;
+        a = isNaN(a) ? 1 : a;
 
         //var context = cc.renderContext;
         var context = this._cacheContext;

@@ -145,16 +145,16 @@ cc.ControlSlider = cc.Control.extend({
 
             // Add the slider background
             this._backgroundSprite.setAnchorPoint(0.5, 0.5);
-            this._backgroundSprite.setPosition(cc.p(size.width / 2, size.height / 2));
+            this._backgroundSprite.setPosition(size.width / 2, size.height / 2);
             this.addChild(this._backgroundSprite);
 
             // Add the progress bar
             this._progressSprite.setAnchorPoint(0.0, 0.5);
-            this._progressSprite.setPosition(cc.p(0.0, size.height / 2));
+            this._progressSprite.setPosition(0, size.height / 2);
             this.addChild(this._progressSprite);
 
             // Add the slider thumb
-            this._thumbSprite.setPosition(cc.p(0, size.height / 2));
+            this._thumbSprite.setPosition(0, size.height / 2);
             this.addChild(this._thumbSprite);
 
             // Init default values
@@ -218,13 +218,11 @@ cc.ControlSlider = cc.Control.extend({
     },
     needsLayout:function(){
         var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
-        var pos = this._thumbSprite.getPosition();
-        pos.x = percent * this._backgroundSprite.getContentSize().width;
-        this._thumbSprite.setPosition(pos);
+        this._thumbSprite.setPositionX(percent * this._backgroundSprite.getContentSize().width);
 
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.rect(textureRect.x, textureRect.y, pos.x, textureRect.height);
+        textureRect = cc.rect(textureRect.x, textureRect.y,  this._thumbSprite.getPositionX(), textureRect.height);
         this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
     },
     /** Returns the value for the given location. */

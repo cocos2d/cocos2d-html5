@@ -98,7 +98,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         var transForm = this.nodeToParentTransform();
         return cc.RectApplyAffineTransform(rect, transForm);
     },

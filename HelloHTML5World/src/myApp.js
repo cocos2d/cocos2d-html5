@@ -53,9 +53,9 @@ var Helloworld = cc.Layer.extend({
         closeItem.setAnchorPoint(0.5, 0.5);
 
         var menu = cc.Menu.create(closeItem);
-        menu.setPosition(cc.PointZero());
+        menu.setPosition(0,0);
         this.addChild(menu, 1);
-        closeItem.setPosition(cc.p(size.width - 20, 20));
+        closeItem.setPosition(size.width - 20, 20);
 
         /////////////////////////////
         // 3. add your codes below...
@@ -63,7 +63,7 @@ var Helloworld = cc.Layer.extend({
         // create and initialize a label
         this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
         // position the label on the center of the screen
-        this.helloLabel.setPosition(cc.p(size.width / 2, 0));
+        this.helloLabel.setPosition(size.width / 2, 0);
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
@@ -72,7 +72,7 @@ var Helloworld = cc.Layer.extend({
 
         // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
-        this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
+        this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(0.5);
         this.sprite.setRotation(180);
 
@@ -97,7 +97,7 @@ var Helloworld = cc.Layer.extend({
     onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                //this.circle.setPosition(cc.p(touches[0].getLocation().x, touches[0].getLocation().y));
+                //this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);
             }
         }
     },
