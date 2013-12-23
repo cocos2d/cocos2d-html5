@@ -572,7 +572,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 // Find the index of next line
                 var next = this._checkNextline(text.substr(i), maxM, width);
                 buffer = buffer.concat(text.substr(i, next));
-                buffer.push('\n');
+                text[next] == '\n' && buffer.push('\n');
                 i += next;
             }
             this._string = buffer.join("");
