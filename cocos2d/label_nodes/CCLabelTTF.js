@@ -72,6 +72,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
+        // Init class properties
+        this._initMeasureUtil();
+
         this._dimensions = cc.SizeZero();
         this._hAlignment = cc.TEXT_ALIGNMENT_LEFT;
         this._vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
@@ -105,19 +108,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _initMeasureUtil: function() {
-        var proto = cc.LabelTTF.prototype;
-        if(!proto._measureCanvas) {
-            var canvas = proto._measureCanvas = document.createElement("canvas");
+        if(!cc.LabelTTF._measureCanvas) {
+            var canvas = cc.LabelTTF._measureCanvas = document.createElement("canvas");
             canvas.width = 160;
             canvas.height = 160;
-            proto._measureCtx = canvas.getContext("2d");
+            cc.LabelTTF._measureCtx = canvas.getContext("2d");
         }
     },
     _measureConfig: function() {
-        this._measureCtx.font = this._fontStyleStr;
+        cc.LabelTTF._measureCtx.font = this._fontStyleStr;
     },
     _measure: function(text) {
-        return this._measureCtx.measureText(text).width;
+        return cc.LabelTTF._measureCtx.measureText(text).width;
     },
     _checkNextline: function( text, maxM, width){
         // Next line is the whole text remaining
@@ -1040,6 +1042,10 @@ if(cc.Browser.supportWebGL){
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 
 cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
+
+// Class static properties for measure util
+cc.LabelTTF._measureCanvas = null;
+cc.LabelTTF._measureCtx = null;
 
 /**
  * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
