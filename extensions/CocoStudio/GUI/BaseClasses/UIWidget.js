@@ -136,7 +136,7 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         this._touchPassedEnabled = false;
         this._focus = false;
         this._widgetZOrder = 0;
-        this._anchorPoint = cc.p(0.5, 0.5);
+        this._anchorPoint = cc._pConst(0.5, 0.5);
         this._widgetParent = null;
         this._brightStyle = ccs.BrightStyle.none;
         this._updateEnabled = false;
@@ -955,12 +955,19 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
 
     /**
      * Sets the anchor point in percent.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UIWidget or The anchor point.x of UIWidget.
+     * @param {Number} [y] The anchor point.y of UIWidget.
      */
-    setAnchorPoint: function (pt) {
-        this._anchorPoint.x = pt.x;
-        this._anchorPoint.y = pt.y;
-        this._renderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if (arguments.length === 2) {
+            this._anchorPoint._x = point;
+            this._anchorPoint._y = y;
+            this._renderer.setAnchorPoint(point, y);
+        } else {
+            this._anchorPoint._x = point.x;
+            this._anchorPoint._y = point.y;
+            this._renderer.setAnchorPoint(point);
+        }
     },
 
     updateAnchorPoint: function () {
@@ -1583,8 +1590,8 @@ ccs.UIWidget = ccs.Class.extend(/** @lends ccs.UIWidget# */{
         var wPos = this.getWorldPosition();
         var width = this._size.width;
         var height = this._size.height;
-        var offset_width = this._anchorPoint.x * width;
-        var offset_height = this._anchorPoint.y * height;
+        var offset_width = this._anchorPoint._x * width;
+        var offset_height = this._anchorPoint._y * height;
         return cc.rect(wPos.x - offset_width, wPos.y - offset_height, width, height);
     },
     getValidNode: function () {

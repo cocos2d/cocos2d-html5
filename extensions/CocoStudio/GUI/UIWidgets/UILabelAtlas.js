@@ -90,9 +90,16 @@ ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
         this._itemWidth = itemWidth;
         this._itemHeight = itemHeight;
         this._startCharMap = startCharMap;
-        this._labelAtlasRenderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
+        var renderer = this._labelAtlasRenderer;
+        renderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
         this.updateAnchorPoint();
         this.labelAtlasScaleChangedWithSize();
+
+        if (!renderer.textureLoaded()) {
+            renderer.addLoadedEventListener(function () {
+                this.labelAtlasScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**
@@ -115,11 +122,17 @@ ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UILabelAtlas or The anchor point.x of UILabelAtlas.
+     * @param {Number} [y] The anchor point.y of UILabelAtlas.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._labelAtlasRenderer.setAnchorPoint(cc.p(pt.x, pt.y));
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._labelAtlasRenderer.setAnchorPoint(point, y);
+        } else {
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._labelAtlasRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
@@ -145,7 +158,9 @@ ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
     labelAtlasScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelAtlasRenderer.setScale(1.0);
-            this._size = this._labelAtlasRenderer.getContentSize();
+            var atlasRenderSize = this._labelAtlasRenderer.getContentSize();
+            this._size.width = atlasRenderSize.width;
+            this._size.height = atlasRenderSize.height;
         }
         else {
             var textureSize = this._labelAtlasRenderer.getContentSize();

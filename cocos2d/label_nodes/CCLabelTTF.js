@@ -103,6 +103,59 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     init:function () {
         return this.initWithString(" ", this._fontName, this._fontSize);
     },
+
+    _initMeasureUtil: function() {
+        var proto = cc.LabelTTF.prototype;
+        if(!proto._measureCanvas) {
+            var canvas = proto._measureCanvas = document.createElement("canvas");
+            canvas.width = 160;
+            canvas.height = 160;
+            proto._measureCtx = canvas.getContext("2d");
+        }
+    },
+    _measureConfig: function() {
+        this._measureCtx.font = this._fontStyleStr;
+    },
+    _measure: function(text) {
+        return this._measureCtx.measureText(text).width;
+    },
+    _checkNextline: function( text, maxM, width){
+        // Next line is the whole text remaining
+        if(maxM >= text.length) return text.length;
+        // Next line is a line with line break
+        var nextlinebreak = text.indexOf('\n');
+        if(maxM >= nextlinebreak && nextlinebreak > 0) return nextlinebreak+1;
+        // Forward check
+        var prevId, nextId = maxM, foundLineChange = false, l = width + 1;
+
+        do {
+            prevId = nextId;
+            // Find next space or chinese caracters
+            var index = text.substr(prevId).search(/[\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/);
+            index = (index == -1) ? -1 : prevId+index;
+            // No space after
+            if(index == -1) {
+                if(this._measure(text) <= width)
+                    prevId = text.length;
+                break;
+            }
+            foundLineChange = text[index] == '\n';
+            // Text length
+            l = this._measure(text.substr(0, index));
+            nextId = index+1;
+        } while(l < width && !foundLineChange);
+        // Forward check success
+        if(prevId != maxM || foundLineChange) {
+            return prevId;
+        }
+        // Backward check when forward check failed
+        else {// Find last space
+            var lastsp = text.lastIndexOf(' ', maxM);
+            if(lastsp == -1) return maxM;
+            else return (lastsp+1);
+        }
+    },
+
     /**
      * Prints out a description of this class
      * @return {String}
@@ -507,24 +560,21 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
     _updateString: function() {
-        if (this._originalText.length > 1) {
-            if (this._dimensions.width > 0 && this._dimensions.height > 0) {
-                var buffer = [];
-                var maxWidth = 0;
-                for (var i = 0; i < this._originalText.length ; i ++) {
-                    var width = cc.LabelTTF._getCharWidth(this._originalText.charCodeAt(i), this._fontSize, this._fontName);
+        var width = this._dimensions.width, length = this._originalText.length;
+        if (length > 1 && width > 0 && this._dimensions.height > 0) {
+            // Content processing
+            this._measureConfig();
+            var maxM = Math.floor( width/this._measure('A')), text = this._originalText, buffer = [];
 
-                    if (maxWidth + width > this._dimensions.width) {
-                        buffer.push('\n');
-                        maxWidth = 0;
-                    }
-
-                    buffer.push(this._originalText[i]);
-                    maxWidth += width;
-                }
-                this._string = buffer.join("");
-                return;
+            for(var i = 0; i < length;) {
+                // Find the index of next line
+                var next = this._checkNextline(text.substr(i), maxM, width);
+                buffer = buffer.concat(text.substr(i, next));
+                buffer.push('\n');
+                i += next;
             }
+            this._string = buffer.join("");
+            return;
         }
         this._string = this._originalText;
     },
@@ -599,7 +649,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (!context)
             return;
         var locStrokeShadowOffsetX = this._strokeShadowOffsetX, locStrokeShadowOffsetY = this._strokeShadowOffsetY;
-        var locContentSizeHeight = this._contentSize.height - locStrokeShadowOffsetY, locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
+        var locContentSizeHeight = this._contentSize._height - locStrokeShadowOffsetY, locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
             locFontHeight = this._fontClientHeight, locStrokeSize = this._strokeSize;
 
         context.setTransform(1, 0, 0, 1, 0 + locStrokeShadowOffsetX * 0.5 , locContentSizeHeight + locStrokeShadowOffsetY * 0.5);
@@ -629,7 +679,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
         context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
 
-        var locContentWidth = this._contentSize.width - locStrokeShadowOffsetX;
+        var locContentWidth = this._contentSize._width - locStrokeShadowOffsetX;
         if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
             xOffset += locContentWidth;
         else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
@@ -752,12 +802,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
         // need computing _anchorPointInPoints
-        var oldContentSize = cc.size(locSize.width - locStrokeShadowOffsetX, locSize.height - locStrokeShadowOffsetY);
-        var startPoint = {x:locStrokeShadowOffsetX * 0.5, y: locStrokeShadowOffsetY * 0.5 };
         var locAP = this._anchorPoint;
-        var oldAPP = {x: oldContentSize.width * locAP.x, y: oldContentSize.height * locAP.y};
-        this._anchorPointInPoints.x = startPoint.x + oldAPP.x;
-        this._anchorPointInPoints.y = startPoint.y + oldAPP.y;
+        this._anchorPointInPoints._x = (locStrokeShadowOffsetX * 0.5) + ((locSize.width - locStrokeShadowOffsetX) * locAP._x);
+        this._anchorPointInPoints._y = (locStrokeShadowOffsetY * 0.5) + ((locSize.height - locStrokeShadowOffsetY) * locAP._y);
     },
 
     getContentSize:function(){
@@ -772,15 +819,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if(this._string.length === 0){
             locLabelCanvas.width = 1;
-            locLabelCanvas.height = locContentSize.height;
-            this.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
+            locLabelCanvas.height = locContentSize._height;
+            this.setTextureRect(cc.rect(0, 0, 1, locContentSize._height));
             return true;
         }
 
         //set size for labelCanvas
         locContext.font = this._fontStyleStr;
         this._updateTTF();
-        var width = locContentSize.width, height = locContentSize.height;
+        var width = locContentSize._width, height = locContentSize._height;
         var flag = locLabelCanvas.width == width && locLabelCanvas.height == height;
         locLabelCanvas.width = width;
         locLabelCanvas.height = height;
@@ -852,7 +899,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             cc.drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
-            var drawSizeG2 = this.getTextureRect().size;
+            var drawSizeG2 = this.getTextureRect()._size;
             var offsetPixG2 = this.getOffsetPosition();
             var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
@@ -863,7 +910,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-        untrimmedSize = untrimmedSize || rect.size;
+        untrimmedSize = untrimmedSize || rect._size;
 
         this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
@@ -876,11 +923,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
-            relativeOffset.x = -relativeOffset.x;
+            relativeOffset._x = -relativeOffset._x;
         if (this._flippedY)
-            relativeOffset.y = -relativeOffset.y;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
+            relativeOffset._y = -relativeOffset._y;
+        this._offsetPosition._x = relativeOffset.x + (this._contentSize._width - this._rect.width) / 2;
+        this._offsetPosition._y = relativeOffset.y + (this._contentSize._height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {

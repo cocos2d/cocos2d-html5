@@ -249,11 +249,17 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UILabel or The anchor point.x of UILabel.
+     * @param {Number} [y] The anchor point.y of UILabel.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._labelRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._labelRenderer.setAnchorPoint(point, y);
+        } else {
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._labelRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
@@ -279,7 +285,9 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     labelScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelRenderer.setScale(1.0);
-            this._size = this._labelRenderer.getContentSize();
+            var renderSize = this._labelRenderer.getContentSize();
+            this._size.width = renderSize.width;
+            this._size.height = renderSize.height;
         }
         else {
             var textureSize = this._labelRenderer.getContentSize();

@@ -59,6 +59,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     _ballNTexType: null,
     _ballPTexType: null,
     _ballDTexType: null,
+    _isTextureLoaded: false,
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
         this._barRenderer = null;
@@ -86,13 +87,14 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         this._ballNTexType = ccs.TextureResType.local;
         this._ballPTexType = ccs.TextureResType.local;
         this._ballDTexType = ccs.TextureResType.local;
+        this._isTextureLoaded = false;
     },
 
     initRenderer: function () {
         ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
-        this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+        this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
         this._renderer.addChild(this._barRenderer, -1);
         this._renderer.addChild(this._progressBarRenderer, -1);
         this._slidBallNormalRenderer = cc.Sprite.create();
@@ -119,19 +121,26 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         texType = texType || ccs.TextureResType.local;
         this._textureFile = fileName;
         this._barTexType = texType;
+        var barRenderer = this._barRenderer;
         switch (this._barTexType) {
             case ccs.TextureResType.local:
-                this._barRenderer.initWithFile(fileName);
+                barRenderer.initWithFile(fileName);
                 break;
             case ccs.TextureResType.plist:
-                this._barRenderer.initWithSpriteFrameName(fileName);
+                barRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._barRenderer.setColor(this.getColor());
-        this._barRenderer.setOpacity(this.getOpacity());
+        barRenderer.setColor(this.getColor());
+        barRenderer.setOpacity(this.getOpacity());
         this.barRendererScaleChangedWithSize();
+
+        if (!barRenderer.textureLoaded()) {
+            barRenderer.addLoadedEventListener(function () {
+                this.barRendererScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**
@@ -146,23 +155,36 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         texType = texType || ccs.TextureResType.local;
         this._progressBarTextureFile = fileName;
         this._progressBarTexType = texType;
+        var progressBarRenderer = this._progressBarRenderer;
         switch (this._progressBarTexType) {
             case ccs.TextureResType.local:
-                this._progressBarRenderer.initWithFile(fileName);
+                progressBarRenderer.initWithFile(fileName);
                 break;
             case ccs.TextureResType.plist:
-                this._progressBarRenderer.initWithSpriteFrameName(fileName);
+                progressBarRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._progressBarRenderer.setColor(this.getColor());
-        this._progressBarRenderer.setOpacity(this.getOpacity());
-        this._progressBarRenderer.setAnchorPoint(cc.p(0.0, 0.5));
-        var locSize = this._progressBarRenderer.getContentSize();
+        progressBarRenderer.setColor(this.getColor());
+        progressBarRenderer.setOpacity(this.getOpacity());
+        progressBarRenderer.setAnchorPoint(0.0, 0.5);
+        var locSize = progressBarRenderer.getContentSize();
         this._progressBarTextureSize.width = locSize.width;
         this._progressBarTextureSize.height = locSize.height;
         this.progressBarRendererScaleChangedWithSize();
+
+        var textLoaded = progressBarRenderer.textureLoaded();
+        this._isTextureLoaded = textLoaded;
+        if (!textLoaded) {
+            progressBarRenderer.addLoadedEventListener(function () {
+                this._isTextureLoaded = true;
+                var locSize = progressBarRenderer.getContentSize();
+                this._progressBarTextureSize.width = locSize.width;
+                this._progressBarTextureSize.height = locSize.height;
+                this.progressBarRendererScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**
@@ -350,6 +372,9 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             percent = 0;
         }
         this._percent = percent;
+        if(!this._isTextureLoaded){
+            return;
+        }
         var dis = this._barLength * (percent / 100.0);
         this._slidBallRenderer.setPosition(cc.p(-this._barLength / 2.0 + dis, 0.0));
         if (this._scale9Enabled) {
@@ -360,7 +385,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             if (this._progressBarTexType == ccs.TextureResType.plist) {
                 var barNode = this._progressBarRenderer;
                 if (barNode) {
-                    var to = barNode.getTextureRect().origin;
+                    var to = barNode.getTextureRect()._origin;
                     x = to.x;
                     y = to.y;
                 }

@@ -62,7 +62,14 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
-        this._skinTransform = this.nodeToParentTransform();
+        var localTransform = this.nodeToParentTransform();
+        var skinTransform = this._skinTransform;
+        skinTransform.a = localTransform.a;
+        skinTransform.b = localTransform.b;
+        skinTransform.c = localTransform.c;
+        skinTransform.d = localTransform.d;
+        skinTransform.tx = localTransform.tx;
+        skinTransform.ty = localTransform.ty;
         this.updateArmatureTransform();
     },
 
@@ -91,7 +98,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         var transForm = this.nodeToParentTransform();
         return cc.RectApplyAffineTransform(rect, transForm);
     },

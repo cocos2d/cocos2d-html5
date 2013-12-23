@@ -44,6 +44,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     _prevIgnoreSize: true,
     _capInsets: null,
     _textureFile: "",
+    _isTextureLoaded: false,
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
         this._barType = ccs.LoadingBarType.left;
@@ -62,7 +63,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._renderer.addChild(this._barRenderer);
-        this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+        this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
 
     /**
@@ -78,14 +79,14 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
 
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+                this._barRenderer.setAnchorPoint(0.0, 0.5);
                 this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
-                this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
+                this._barRenderer.setAnchorPoint(1.0, 0.5);
                 this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
@@ -115,35 +116,56 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         texType = texType || ccs.TextureResType.local;
         this._renderBarTexType = texType;
         this._textureFile = texture;
+        var barRenderer = this._barRenderer;
         switch (this._renderBarTexType) {
             case ccs.TextureResType.local:
-                this._barRenderer.initWithFile(texture);
+                barRenderer.initWithFile(texture);
                 break;
             case ccs.TextureResType.plist:
-                this._barRenderer.initWithSpriteFrameName(texture);
+                barRenderer.initWithSpriteFrameName(texture);
                 break;
             default:
                 break;
         }
         if (this._scale9Enabled){
-            this._barRenderer.setCapInsets(this._capInsets);
+            barRenderer.setCapInsets(this._capInsets);
         }
-        this._barRenderer.setColor(this.getColor());
-        this._barRenderer.setOpacity(this.getOpacity());
-        this._barRendererTextureSize.width = this._barRenderer.getContentSize().width;
-        this._barRendererTextureSize.height = this._barRenderer.getContentSize().height;
+        barRenderer.setColor(this.getColor());
+        barRenderer.setOpacity(this.getOpacity());
+
+        var textLoaded = barRenderer.textureLoaded();
+        this._isTextureLoaded = textLoaded;
+        if (!textLoaded) {
+            this._barRendererTextureSize.width = this._customSize.width;
+            this._barRendererTextureSize.height = this._customSize.height;
+            barRenderer.addLoadedEventListener(function () {
+                this._isTextureLoaded = true;
+                if (barRenderer.setCapInsets) {
+                    barRenderer.setCapInsets(this._capInsets);
+                }
+                var locSize = barRenderer.getContentSize();
+                this._barRendererTextureSize.width = locSize.width;
+                this._barRendererTextureSize.height = locSize.height;
+                this.barRendererScaleChangedWithSize();
+                this.setPercent(this._percent);
+            }, this);
+        } else {
+            var locBarSize = barRenderer.getContentSize();
+            this._barRendererTextureSize.width = locBarSize.width;
+            this._barRendererTextureSize.height = locBarSize.height;
+        }
 
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                this._barRenderer.setAnchorPoint(cc.p(0.0, 0.5));
+                barRenderer.setAnchorPoint(0.0, 0.5);
                 if (!this._scale9Enabled) {
-                    this._barRenderer.setFlippedX(false);
+                    barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
-                this._barRenderer.setAnchorPoint(cc.p(1.0, 0.5));
+                barRenderer.setAnchorPoint(1.0, 0.5);
                 if (!this._scale9Enabled) {
-                    this._barRenderer.setFlippedX(true);
+                    barRenderer.setFlippedX(true);
                 }
                 break;
         }
@@ -204,13 +226,16 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             return;
         }
         this._percent = percent;
+        if(!this._isTextureLoaded){
+            return;
+        }
         var res = this._percent / 100.0;
 
         var x = 0, y = 0;
         if(this._renderBarTexType==ccs.TextureResType.plist){
             var barNode = this._barRenderer;
             if (barNode) {
-                var to = barNode.getTextureRect().origin;
+                var to = barNode.getTextureRect()._origin;
                 x = to.x;
                 y = to.y;
             }
@@ -265,7 +290,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 this._barRenderer.setScale(1.0);
-                this._size = this._barRendererTextureSize;
+                this._size.width = this._barRendererTextureSize;
             }
         }
         else {
