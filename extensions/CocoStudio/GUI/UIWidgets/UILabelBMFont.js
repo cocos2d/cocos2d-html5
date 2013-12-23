@@ -102,6 +102,7 @@ ccs.UILabelBMFont = ccs.UIWidget.extend(/** @lends ccs.UILabelBMFont# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.labelBMFontScaleChangedWithSize();
     },
 

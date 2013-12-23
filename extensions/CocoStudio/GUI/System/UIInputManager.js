@@ -54,33 +54,36 @@ ccs.UIInputManager = ccs.Class.extend({
     /**
      * Check touch event
      * @param {ccs.UIWidget} root
-     * @param {cc.Point} touchPoint
+     * @param {cc.Touch} touch
+     * @param {event} event
      * @returns {boolean}
      */
-    checkTouchEvent: function (root, touchPoint) {
+    checkTouchEvent: function (root, touch,event) {
         var arrayRootChildren = root.getChildren();
         var length = arrayRootChildren.length;
         for (var i = length - 1; i >= 0; i--) {
             var widget = arrayRootChildren[i];
-            if (this.checkTouchEvent(widget, touchPoint)) {
+            if (this.checkTouchEvent(widget, touch,event)) {
                 return true;
             }
         }
-        if (root.isEnabled() && root.isTouchEnabled() && root.hitTest(touchPoint) && root.clippingParentAreaContainPoint(touchPoint)) {
+        var pass = root.onTouchBegan(touch,event);
+        if (root._hitted)
+        {
             this._selectedWidgets.push(root);
-            root.onTouchBegan(touchPoint);
             return true;
         }
-        return false;
+        return pass;
     },
 
     /**
      * Finds a widget which is selected and call it's "onTouchBegan" method.
-     * @param {cc.Point} touchPoint
+     * @param {cc.Touch} touch
+     * @param {event} event
      * @returns {boolean}
      */
-    checkEventWidget: function (touchPoint) {
-        this.checkTouchEvent(this._rootWidget, touchPoint);
+    checkEventWidget: function (touch,event) {
+        this.checkTouchEvent(this._rootWidget, touch,event);
         return (this._selectedWidgets.length > 0);
     },
 
@@ -112,20 +115,20 @@ ccs.UIInputManager = ccs.Class.extend({
         }
     },
 
-    onTouchBegan: function (touch) {
+    onTouchBegan: function (touch,event) {
         this._touchBeganedPoint.x = touch.getLocation().x;
         this._touchBeganedPoint.y = touch.getLocation().y;
         this._touchDown = true;
-        return this.checkEventWidget(this._touchBeganedPoint);
+        return this.checkEventWidget(touch,event);
     },
 
-    onTouchMoved: function (touch) {
+    onTouchMoved: function (touch,event) {
         this._touchMovedPoint.x = touch.getLocation().x;
         this._touchMovedPoint.y = touch.getLocation().y;
         var selectedWidgetArray = this._selectedWidgets;
         for (var i = 0; i < selectedWidgetArray.length; ++i) {
             var hitWidget = selectedWidgetArray[i];
-            hitWidget.onTouchMoved(this._touchMovedPoint);
+            hitWidget.onTouchMoved(touch,event);
         }
         if (this._touchDown) {
             this._longClickRecordTime = 0;
@@ -133,26 +136,26 @@ ccs.UIInputManager = ccs.Class.extend({
         }
     },
 
-    onTouchEnded: function (touch) {
+    onTouchEnded: function (touch,event) {
         this._touchDown = false;
         this._touchEndedPoint.x = touch.getLocation().x;
         this._touchEndedPoint.y = touch.getLocation().y;
         var selectedWidgetArray = this._selectedWidgets;
         for (var i = 0; i < selectedWidgetArray.length; ++i) {
             var hitWidget = selectedWidgetArray[i];
-            hitWidget.onTouchEnded(this._touchEndedPoint);
+            hitWidget.onTouchEnded(touch,event);
         }
         this._selectedWidgets = [];
     },
 
-    onTouchCancelled: function (touch) {
+    onTouchCancelled: function (touch,event) {
         this._touchDown = false;
         this._touchEndedPoint.x = touch.getLocation().x;
         this._touchEndedPoint.y = touch.getLocation().y;
         var selectedWidgetArray = this._selectedWidgets;
         for (var i = 0; i < selectedWidgetArray.length; ++i) {
             var hitWidget = selectedWidgetArray[i];
-            hitWidget.onTouchCancelled(this._touchEndedPoint);
+            hitWidget.onTouchCancelled(touch,event);
         }
         this._selectedWidgets = [];
     },

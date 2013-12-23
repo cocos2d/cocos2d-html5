@@ -471,6 +471,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.normalTextureScaleChangedWithSize();
         this.pressedTextureScaleChangedWithSize();
         this.disabledTextureScaleChangedWithSize();

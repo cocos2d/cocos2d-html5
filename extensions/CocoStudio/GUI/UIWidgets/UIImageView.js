@@ -28,11 +28,6 @@
  * @extends ccs.UIWidget
  */
 ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
-    _clickCount: 0,
-    _clickTimeInterval: 0,
-    _startCheckDoubleClick: false,
-    _touchRelease: false,
-    _doubleClickEnabled: false,
     _scale9Enabled: false,
     _prevIgnoreSize: true,
     _capInsets: null,
@@ -42,11 +37,6 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     _imageTextureSize: null,
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
-        this._clickCount = 0;
-        this._clickTimeInterval = 0;
-        this._startCheckDoubleClick = false;
-        this._touchRelease = false;
-        this._doubleClickEnabled = false;
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
         this._capInsets = cc.rect(0,0,0,0);
@@ -122,70 +112,6 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
         if (!this._scale9Enabled){
             this._imageRenderer.setTextureRect(rect);
         }
-    },
-
-    onTouchBegan: function (touchPoint) {
-        this.setFocused(true);
-        this._touchStartPos.x = touchPoint.x;
-        this._touchStartPos.y = touchPoint.y;
-        this._widgetParent.checkChildInfo(0, this, touchPoint);
-        this.pushDownEvent();
-
-        if (this._doubleClickEnabled) {
-            this._clickTimeInterval = 0;
-            this._startCheckDoubleClick = true;
-            this._clickCount++;
-            this._touchRelease = false;
-        }
-        return this._touchPassedEnabled;
-    },
-
-    onTouchEnded: function (touchPoint) {
-        if (this._doubleClickEnabled) {
-            if (this._clickCount >= 2) {
-                this.doubleClickEvent();
-                this._clickCount = 0;
-                this._startCheckDoubleClick = false;
-            }
-            else {
-                this._touchRelease = true;
-            }
-        }
-        else {
-            ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
-        }
-    },
-
-    doubleClickEvent: function () {
-
-    },
-
-    checkDoubleClick: function (dt) {
-        if (this._startCheckDoubleClick) {
-            this._clickTimeInterval += dt;
-            if (this._clickTimeInterval >= 200 && this._clickCount > 0) {
-                this._clickTimeInterval = 0;
-                this._clickCount--;
-                this._startCheckDoubleClick = false;
-            }
-        }
-        else {
-            if (this._clickCount <= 1) {
-                if (this._touchRelease) {
-                    this.releaseUpEvent();
-                    this._clickTimeInterval = 0;
-                    this._clickCount = 0;
-                    this._touchRelease = false;
-                }
-            }
-        }
-    },
-
-    setDoubleClickEnabled: function (bool) {
-        if (bool == this._doubleClickEnabled) {
-            return;
-        }
-        this._doubleClickEnabled = bool;
     },
 
     /**
@@ -301,6 +227,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.imageTextureScaleChangedWithSize();
     },
 

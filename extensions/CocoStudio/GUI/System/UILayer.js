@@ -32,9 +32,8 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     _inputManager: null,
     init: function () {
         if (cc.Layer.prototype.init.call(this)) {
-            this._rootWidget = ccs.UIRootWidget.create();
-            this._rootWidget.onEnter();
-            this.addChild(this._rootWidget.getRenderer());
+            this._rootWidget = ccs.UIWidget.create();
+            this.addChild(this._rootWidget);
             this._inputManager = new ccs.UIInputManager();
             this._inputManager.setRootWidget(this._rootWidget);
             return true;
@@ -126,22 +125,22 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     },
 
     onTouchBegan: function (touch, event) {
-        if (this._inputManager.onTouchBegan(touch)) {
+        if (this._inputManager.onTouchBegan(touch, event)) {
             return true;
         }
         return false;
     },
 
     onTouchMoved: function (touch, event) {
-        this._inputManager.onTouchMoved(touch);
+        this._inputManager.onTouchMoved(touch, event);
     },
 
     onTouchEnded: function (touch, event) {
-        this._inputManager.onTouchEnded(touch);
+        this._inputManager.onTouchEnded(touch, event);
     },
 
     onTouchCancelled: function (touch, event) {
-        this._inputManager.onTouchCancelled(touch);
+        this._inputManager.onTouchCancelled(touch, event);
     },
 
     /**

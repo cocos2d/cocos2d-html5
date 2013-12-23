@@ -394,27 +394,32 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
     },
 
-    onTouchBegan: function (touchPoint) {
-        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this,touchPoint);
-        var nsp = this._renderer.convertToNodeSpace(touchPoint);
-        this.setPercent(this.getPercentWithBallPos(nsp.x));
-        this.percentChangedEvent();
+    onTouchBegan: function (touch , event) {
+        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this,touch , event);
+        if(this._hitted){
+            var nsp = this.convertToNodeSpace(this._touchStartPos);
+            this.setPercent(this.getPercentWithBallPos(nsp.x));
+            this.percentChangedEvent();
+        }
         return pass;
     },
 
-    onTouchMoved: function (touchPoint) {
-        var nsp = this._renderer.convertToNodeSpace(touchPoint);
+    onTouchMoved: function (touch , event) {
+        var touchPoint = touch.getLocation();
+        this._touchMovePos.x = touchPoint.x;
+        this._touchMovePos.y = touchPoint.y;
+        var nsp = this.convertToNodeSpace(touchPoint);
         this._slidBallRenderer.setPosition(cc.p(nsp.x, 0));
         this.setPercent(this.getPercentWithBallPos(nsp.x));
         this.percentChangedEvent();
     },
 
-    onTouchEnded: function (touchPoint) {
-        ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
+    onTouchEnded: function (touch , event) {
+        ccs.UIWidget.prototype.onTouchEnded.call(this, touch , event);
     },
 
-    onTouchCancelled: function (touchPoint) {
-        ccs.UIWidget.prototype.onTouchCancelled.call(this, touchPoint);
+    onTouchCancelled: function (touch , event) {
+        ccs.UIWidget.prototype.onTouchCancelled.call(this, touch , event);
     },
 
     /**
@@ -451,6 +456,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.barRendererScaleChangedWithSize();
         this.progressBarRendererScaleChangedWithSize();
     },

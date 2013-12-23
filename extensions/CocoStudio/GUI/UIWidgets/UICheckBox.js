@@ -256,7 +256,10 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
         this.frontCrossDisabledTextureScaleChangedWithSize();
     },
 
-    onTouchEnded: function (touchPoint) {
+    onTouchEnded: function (touch , event) {
+        var touchPoint = touch.getLocation();
+        this._touchEndPos.x = touchPoint.x;
+        this._touchEndPos.y = touchPoint.y;
         if (this._focus) {
             this.releaseUpEvent();
             if (this._isSelected) {
@@ -269,7 +272,10 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
             }
         }
         this.setFocused(false);
-        this._widgetParent.checkChildInfo(2, this, touchPoint);
+        var widgetParent = this.getWidgetParent();
+        if(widgetParent){
+            widgetParent.checkChildInfo(2, this, touchPoint);
+        }
     },
 
     onPressStateChangedToNormal: function () {
@@ -394,6 +400,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.backGroundTextureScaleChangedWithSize();
         this.backGroundSelectedTextureScaleChangedWithSize();
         this.frontCrossTextureScaleChangedWithSize();

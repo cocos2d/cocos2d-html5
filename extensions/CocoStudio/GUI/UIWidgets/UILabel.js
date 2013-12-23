@@ -263,6 +263,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.labelScaleChangedWithSize();
     },
 

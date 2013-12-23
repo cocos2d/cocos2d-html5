@@ -226,6 +226,22 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
             default:
                 break;
         }
+        var innerContainer = this._innerContainer;
+        var innerSize = innerContainer.getSize();
+        var innerPos = innerContainer.getPosition();
+        var innerAP = innerContainer.getAnchorPoint();
+        if (innerContainer.getLeftInParent() > 0.0) {
+            innerContainer.setPosition(cc.p(innerAP.x * innerSize.width, innerPos.y));
+        }
+        if (innerContainer.getRightInParent() < locSize.width) {
+            innerContainer.setPosition(cc.p(locSize.width - ((1.0 - innerAP.x) * innerSize.width), innerPos.y));
+        }
+        if (innerPos.y > 0.0) {
+            innerContainer.setPosition(cc.p(innerPos.x, innerAP.y * innerSize.height));
+        }
+        if (innerContainer.getTopInParent() < locSize.height) {
+            innerContainer.setPosition(cc.p(innerPos.x, locSize.height - (1.0 - innerAP.y) * innerSize.height));
+        }
     },
 
     getInnerContainerSize: function () {
@@ -235,10 +251,12 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     /**
      * Add widget
      * @param {ccs.UIWidget} widget
+     * @param {Number} zOrder
+     * @param {Number} tag
      * @returns {boolean}
      */
-    addChild: function (widget) {
-        return this._innerContainer.addChild(widget);
+    addChild: function (widget, zOrder, tag) {
+        return this._innerContainer.addChild(widget, zOrder, tag);
     },
 
     removeAllChildren: function () {
@@ -1204,14 +1222,14 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     handlePressLogic: function (touchPoint) {
-        this._touchBeganPoint = this._renderer.convertToNodeSpace(touchPoint);
+        this._touchBeganPoint = this.convertToNodeSpace(touchPoint);
         this._touchMovingPoint = this._touchBeganPoint;
         this.startRecordSlidAction();
         this._bePressed = true;
     },
 
     handleMoveLogic: function (touchPoint) {
-        this._touchMovedPoint = this._renderer.convertToNodeSpace(touchPoint);
+        this._touchMovedPoint = this.convertToNodeSpace(touchPoint);
         var delta = cc.pSub(this._touchMovedPoint, this._touchMovingPoint);
         this._touchMovingPoint = this._touchMovedPoint;
         switch (this._direction) {
@@ -1230,29 +1248,31 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     handleReleaseLogic: function (touchPoint) {
-        this._touchEndedPoint = this._renderer.convertToNodeSpace(touchPoint);
+        this._touchEndedPoint = this.convertToNodeSpace(touchPoint);
         this.endRecordSlidAction();
         this._bePressed = false;
     },
 
-    onTouchBegan: function (touchPoint) {
-        var pass = ccs.UILayout.prototype.onTouchBegan.call(this, touchPoint);
-        this.handlePressLogic(touchPoint);
+    onTouchBegan: function (touch , event) {
+        var pass = ccs.UILayout.prototype.onTouchBegan.call(this, touch , event);
+        if (this._hitted)        {
+            this.handlePressLogic(this._touchStartPos);
+        }
         return pass;
     },
 
-    onTouchMoved: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchMoved.call(this, touchPoint);
-        this.handleMoveLogic(touchPoint);
+    onTouchMoved: function (touch , event) {
+        ccs.UILayout.prototype.onTouchMoved.call(this, touch , event);
+        this.handleMoveLogic(this._touchMovePos);
     },
 
-    onTouchEnded: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchEnded.call(this, touchPoint);
-        this.handleReleaseLogic(touchPoint);
+    onTouchEnded: function (touch , event) {
+        ccs.UILayout.prototype.onTouchEnded.call(this, touch , event);
+        this.handleReleaseLogic(this._touchEndPos);
     },
 
-    onTouchCancelled: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchCancelled.call(this, touchPoint);
+    onTouchCancelled: function (touch , event) {
+        ccs.UILayout.prototype.onTouchCancelled.call(this, touch , event);
     },
 
     onTouchLongClicked: function (touchPoint) {
@@ -1449,7 +1469,9 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     doLayout: function () {
-        this._innerContainer.doLayout();
+        if (!this._doLayoutDirty)
+            return;
+        this._doLayoutDirty = false;
     },
 
     /**

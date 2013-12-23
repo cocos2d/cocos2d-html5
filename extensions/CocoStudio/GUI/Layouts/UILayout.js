@@ -43,6 +43,15 @@ ccs.LayoutType = {
 };
 
 /**
+ * Layout type
+ * @type {Object}
+ */
+ccs.LayoutClippingType = {
+    stencil: 0,
+    scissor: 1
+};
+
+/**
  * Base class for ccs.UILayout
  * @class
  * @extends ccs.UIWidget
@@ -64,6 +73,13 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     _opacity: null,
     _backGroundImageTextureSize: null,
     _layoutType: null,
+    _doLayoutDirty: false,
+    _clippingType : null,
+    _clippingStencil: null,
+    _handleScissor: false,
+    _scissorRectDirty: false,
+    _clippingRect: null,
+    _clippingParent: null,
     ctor: function () {
         ccs.UIWidget.prototype.ctor.call(this);
         this._clippingEnabled = false;
@@ -83,36 +99,49 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this._backGroundImageTextureSize = cc.SizeZero();
         this._layoutType = ccs.LayoutType.absolute;
         this._widgetType = ccs.WidgetType.container;
+        this._doLayoutDirty = false;
+        this._clippingType = ccs.LayoutClippingType.stencil;
+        this._clippingStencil = null;
+        this._handleScissor = false;
+        this._scissorRectDirty = false;
+        this._clippingRect = cc.rect(0, 0, 0, 0);
+        this._clippingParent = null;
     },
     init: function () {
-        this._layoutParameterDictionary = {};
-        this._children = [];
-        this.initRenderer();
-        this._renderer.setZOrder(this._widgetZOrder);
-        if (this._renderer.RGBAProtocol) {
-            this._renderer.setCascadeColorEnabled(false);
-            this._renderer.setCascadeOpacityEnabled(false);
+        if (cc.NodeRGBA.prototype.init.call(this)){
+            this._layoutParameterDictionary = {};
+            this._widgetChildren = [];
+            this.initRenderer();
+            this.setCascadeColorEnabled(false);
+            this.setCascadeOpacityEnabled(false);
+            this.ignoreContentAdaptWithSize(false);
+            this.setSize(cc.SizeZero());
+            this.setBright(true);
+            this.setAnchorPoint(0, 0);
+            return true;
         }
-        this.ignoreContentAdaptWithSize(false);
-        this.setSize(cc.SizeZero());
-        this.setBright(true);
-        this.setAnchorPoint(0, 0);
-        this._scheduler = cc.Director.getInstance().getScheduler();
-        return true;
+        return false;
     },
 
     initRenderer: function () {
         this._renderer = ccs.UIRectClippingNode.create();
+        this._renderer.setVisitEventListener(this.rendererVisitCallBack,this);
     },
 
     /**
      * Adds a locChild to the container.
      * @param {ccs.UIWidget} locChild
+     * @param {Number} zOrder
+     * @param {Number} tag
      * @returns {boolean}
      */
-    addChild: function (locChild) {
+    addChild: function (locChild, zOrder, tag) {
+        if(!(child instanceof ccs.UIWidget)){
+            cc.log("Widget only supports Widgets as children");
+        }
         this.supplyTheLayoutParameterLackToChild(locChild);
-        return ccs.UIWidget.prototype.addChild.call(this, locChild);
+        this._doLayoutDirty = true;
+        ccs.UIWidget.prototype.addChild.call(this, locChild, zOrder, tag)
     },
 
     /**
@@ -123,13 +152,47 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         return this._clippingEnabled;
     },
 
-    hitTest: function (pt) {
-        var nsp = this._renderer.convertToNodeSpace(pt);
-        var bb = cc.rect(0.0, 0, this._size.width, this._size.height);
-        if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
-            return true;
+    visit: function () {
+        if (!this._enabled) {
+            return;
         }
-        return false;
+        if (this._clippingEnabled) {
+            switch (this._clippingType) {
+                case ccs.LayoutClippingType.stencil:
+                    this.stencilClippingVisit();
+                    break;
+                case ccs.LayoutClippingType.scissor:
+                    this.scissorClippingVisit();
+                    break;
+                default:
+                    break;
+            }
+        }
+        else {
+            cc.NodeRGBA.prototype.visit.call(this);
+        }
+    },
+
+    sortAllChildren: function () {
+        ccs.UIWidget.prototype.sortAllChildren();
+        this.doLayout();
+    },
+
+    stencilClippingVisit: function (ctx) {
+
+    },
+
+    scissorClippingVisit: function (ctx) {
+        var clippingRect = this.getClippingRect();
+        var gl = ctx || cc.renderContext;
+        if (this._handleScissor) {
+            gl.enabled(gl.SCISSOR_TEST);
+        }
+        cc.EGLView.getInstance().setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        cc.NodeRGBA.prototype.visit.call(this);
+        if (this._handleScissor) {
+            gl.disabled(gl.SCISSOR_TEST);
+        }
     },
 
     /**
@@ -137,23 +200,141 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
      * @param {Boolean} able
      */
     setClippingEnabled: function (able) {
+        if (able == this._clippingEnabled) {
+            return;
+        }
         this._clippingEnabled = able;
-        if (this._renderer instanceof ccs.UIRectClippingNode)
-            this._renderer.setClippingEnabled(able);
+        switch (this._clippingType) {
+            case ccs.LayoutClippingType.stencil:
+                if (able) {
+                    var gl = cc.renderContext;
+                    //glGetIntegerv(GL_STENCIL_BITS, && g_sStencilBits);
+                    this._clippingStencil = cc.DrawNode.create();
+                    this._clippingStencil.onEnter();
+                    this.setStencilClippingSize(this._size);
+                }
+                else {
+                    this._clippingStencil.onExit();
+                    this._clippingStencil = null;
+                }
+                break;
+            default:
+                break;
+        }
+    },
+
+    /**
+     * set clipping type
+     * @param {ccs.LayoutClippingType} type
+     */
+    setClippingType: function (type) {
+        if (type == this._clippingType) {
+            return;
+        }
+        var clippingEnabled = this.isClippingEnabled();
+        this.setClippingEnabled(false);
+        this._clippingType = type;
+        this.setClippingEnabled(clippingEnabled);
+    },
+
+    setStencilClippingSize: function (size) {
+        if (this._clippingEnabled && this._clippingType == ccs.stencil) {
+            var rect = [];
+            rect[0] = cc.p(0, 0);
+            rect[1] = cc.p(size.width, 0);
+            rect[2] = cc.p(size.width, size.height);
+            rect[3] = cc.p(0, size.height);
+            var green = cc.c4f(0, 1, 0, 1);
+            this._clippingStencil.clear();
+            this._clippingStencil.drawPoly(rect, 4, green, 0, green);
+        }
+    },
+
+    rendererVisitCallBack: function () {
+        this.doLayout();
+    },
+
+    getClippingRect: function () {
+        this._handleScissor = true;
+        var worldPos = this.convertToWorldSpace(cc.p(0, 0));
+        var t = this.nodeToWorldTransform();
+        var scissorWidth = this._size.width * t.a;
+        var scissorHeight = this._size.height * t.d;
+        var parentClippingRect;
+        var parent = this;
+        var firstClippingParentFounded = false;
+        while (parent) {
+            parent = parent.getParent();
+            if (parent && parent instanceof ccs.UILayout) {
+                if (parent.isClippingEnabled()) {
+                    if (!firstClippingParentFounded) {
+                        this._clippingParent = parent;
+                        firstClippingParentFounded = true;
+                    }
+
+                    if (parent._clippingType == ccs.LayoutClippingType.scissor) {
+                        this._handleScissor = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (this._clippingParent) {
+            parentClippingRect = this._clippingParent.getClippingRect();
+            var finalX = worldPos.x - (scissorWidth * this._anchorPoint.x);
+            var finalY = worldPos.y - (scissorHeight * this._anchorPoint.y);
+            var finalWidth = scissorWidth;
+            var finalHeight = scissorHeight;
+
+            var leftOffset = worldPos.x - parentClippingRect.x;
+            if (leftOffset < 0) {
+                finalX = parentClippingRect.x;
+                finalWidth += leftOffset;
+            }
+            var rightOffset = (worldPos.x + scissorWidth) - (parentClippingRect.x + parentClippingRect.width);
+            if (rightOffset > 0) {
+                finalWidth -= rightOffset;
+            }
+            var topOffset = (worldPos.y + scissorHeight) - (parentClippingRect.y + parentClippingRect.height);
+            if (topOffset > 0) {
+                finalHeight -= topOffset;
+            }
+            var bottomOffset = worldPos.y - parentClippingRect.y;
+            if (bottomOffset < 0) {
+                finalY = parentClippingRect.x;
+                finalHeight += bottomOffset;
+            }
+            if (finalWidth < 0) {
+                finalWidth = 0;
+            }
+            if (finalHeight < 0) {
+                finalHeight = 0;
+            }
+            this._clippingRect.x = finalX;
+            this._clippingRect.y = finalY;
+            this._clippingRect.width = finalWidth;
+            this._clippingRect.height = finalHeight;
+        }
+        else {
+            this._clippingRect.x = worldPos.x - (scissorWidth * this._anchorPoint.x);
+            this._clippingRect.y = worldPos.y - (scissorHeight * this._anchorPoint.y);
+            this._clippingRect.width = scissorWidth;
+            this._clippingRect.height = scissorHeight;
+        }
+        return this._clippingRect;
     },
 
     onSizeChanged: function () {
-        if (this._renderer instanceof ccs.UIRectClippingNode)
-            this._renderer.setClippingSize(this._size);
-        if(this.getDescription() == "Layout"){
-            for (var i = 0; i < this._children.length; i++) {
-                var child = this._children[i];
-                child.updateSizeAndPosition();
-            }
-            this.doLayout();
-        }
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        this.setStencilClippingSize(this._size);
+        /*if (this._renderer instanceof ccs.UIRectClippingNode)
+            this._renderer.setClippingSize(this._size);*/
+
+        this._doLayoutDirty = true;
+
         if (this._backGroundImage) {
-            this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
+            this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
             if (this._backGroundScale9Enabled) {
                 if (this._backGroundImage instanceof cc.Scale9Sprite) {
                     this._backGroundImage.setPreferredSize(this._size);
@@ -222,7 +403,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this._backGroundImage.setColor(this.getColor());
         this._backGroundImage.setOpacity(this.getOpacity());
         this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
-        this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
+        this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
     /**
@@ -274,7 +455,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         }
         this._backGroundImage.setZOrder(-1);
         this._renderer.addChild(this._backGroundImage);
-        this._backGroundImage.setPosition(cc.p(this._size.width / 2.0, this._size.height / 2.0));
+        this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
     /**
@@ -404,45 +585,11 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     },
 
     /**
-     * Sets background color
-     * @param {cc.c3b} color
-     */
-    setColor: function (color) {
-        ccs.UIWidget.prototype.setColor.call(this, color);
-        if (this._backGroundImage) {
-            if (this._backGroundImage.RGBAProtocol) {
-                this._backGroundImage.setColor(color);
-            }
-        }
-    },
-
-    /**
-     * Sets background opacity
-     * @param {number} opacity
-     */
-    setOpacity: function (opacity) {
-        ccs.UIWidget.prototype.setOpacity.call(this, opacity);
-        if (this._backGroundImage) {
-            if (this._backGroundImage.RGBAProtocol) {
-                this._backGroundImage.setOpacity(opacity);
-            }
-        }
-    },
-
-    /**
      * Gets background image texture size.
      * @returns {cc.Size}
      */
     getBackGroundImageTextureSize: function () {
         return this._backGroundImageTextureSize;
-    },
-
-    /**
-     * Gets the content size of widget.
-     * @returns {cc.Size}
-     */
-    getContentSize: function () {
-        return this._renderer.getContentSize();
     },
 
     /**
@@ -457,6 +604,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
             locChild = layoutChildrenArray[i];
             this.supplyTheLayoutParameterLackToChild(locChild);
         }
+        this._doLayoutDirty = true;
     },
 
     /**
@@ -925,6 +1073,9 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         }
     },
     doLayout: function () {
+        if(!this._doLayoutDirty){
+            return;
+        }
         switch (this._layoutType) {
             case ccs.LayoutType.absolute:
                 break;
@@ -940,6 +1091,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
             default:
                 break;
         }
+        this._doLayoutDirty = false;
     },
 
     /**
@@ -956,7 +1108,6 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
 
     copyClonedWidgetChildren: function (model) {
         ccs.UIWidget.prototype.copyClonedWidgetChildren.call(this, model);
-        this.doLayout();
     },
 
     copySpecialProperties: function (layout) {
@@ -970,6 +1121,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this.setBackGroundColorVector(layout._alongVector);
         this.setLayoutType(layout._layoutType);
         this.setClippingEnabled(layout._clippingEnabled);
+        this.setClippingType(layout._clippingType);
     }
 });
 /**
@@ -994,6 +1146,8 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
     _arrRect: null,
     _clippingSize: null,
     _clippingEnabled: null,
+    _visitTarget: null,
+    _visitEvent: null,
     ctor: function () {
         cc.ClippingNode.prototype.ctor.call(this);
         this._innerStencil = null;
@@ -1061,6 +1215,18 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
 
     isEnabled: function () {
         return this._enabled;
+    },
+
+    sortAllChildren: function () {
+        cc.ClippingNode.prototype.sortAllChildren.call(this);
+        if (this._visitTarget && this._visitEvent) {
+            this._visitEvent.call(this._visitTarget);
+        }
+    },
+
+    setVisitEventListener: function (selector, target) {
+        this._visitTarget = target;
+        this._visitEvent = selector;
     }
 });
 ccs.UIRectClippingNode.create = function () {

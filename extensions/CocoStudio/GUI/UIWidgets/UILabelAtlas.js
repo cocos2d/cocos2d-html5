@@ -136,6 +136,7 @@ ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.labelAtlasScaleChangedWithSize();
     },
 

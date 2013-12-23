@@ -578,6 +578,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     },
 
     onSizeChanged: function () {
+        ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.textfieldRendererScaleChangedWithSize();
     },
 
