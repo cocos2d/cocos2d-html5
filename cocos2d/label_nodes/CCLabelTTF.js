@@ -67,11 +67,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _labelCanvas:null,
     _labelContext:null,
 
+    // Class static properties
+    _measureCanvas: null,
+    _measureCtx: null,
+
     /**
      * Constructor
      */
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
+        // Init class properties
+        this._initMeasureUtil();
+
         this._dimensions = cc.SizeZero();
         this._hAlignment = cc.TEXT_ALIGNMENT_LEFT;
         this._vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
