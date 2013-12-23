@@ -87,7 +87,7 @@
         'clipping_nodes/CCClippingNode.js',
         'effects/CCGrid.js',
         'effects/CCGrabber.js',
-        'draw_nodes/CCDrawNode.js',
+        'shape_nodes/CCDrawNode.js',
         'actions/CCAction.js',
         'actions/CCActionInterval.js',
         'actions/CCActionInstant.js',
