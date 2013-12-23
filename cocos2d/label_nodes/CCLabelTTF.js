@@ -162,11 +162,12 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         substr = text.substr(0, baseNb);
         idfound = baseNb;
         while (result = reversre.exec(substr)) {
+            // BUG: Not secured if check with result[0]
             idfound = result[1].length;
             substr = result[1];
             l = this._measure(substr);
             if(l < width) {
-                if(/[\s\-\/\\\:]/.test(result[2]))
+                if(enre.test(result[2]))
                     idfound++;
                 break;
             }
