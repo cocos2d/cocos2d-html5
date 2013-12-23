@@ -72,7 +72,7 @@
                 <file name="clipping_nodes/CCClippingNode.js"/>
                 <file name="effects/CCGrid.js"/>
                 <file name="effects/CCGrabber.js"/>
-                <file name="draw_nodes/CCDrawNode.js"/>
+                <file name="shape_nodes/CCDrawNode.js"/>
                 <file name="actions/CCAction.js"/>
                 <file name="actions/CCActionInterval.js"/>
                 <file name="actions/CCActionInstant.js"/>
