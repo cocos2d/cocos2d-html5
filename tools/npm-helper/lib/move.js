@@ -60,7 +60,7 @@ function move(srcDir, targetDir, list){
 };
 
 
-var srcDir = "/Users/small/WebstormProjects/cocos2d-html5-test";
+var srcDir = "/Users/linshun/sourcecode/cocos2d-html5";
 var targetDir = path.join(__dirname, "../../../");
 var version = "2.2.2";
 var list = [
@@ -71,7 +71,7 @@ var list = [
     {name : "cccliping",        version : version, dir : "cocos2d/clipping_nodes"},
     {name : "cccompress",       version : version, dir : "cocos2d/compress"},
     {name : "cocos2d-html5",    version : version, dir : "cocos2d/core"},
-    {name : "ccdraw",           version : version, dir : "cocos2d/draw_nodes"},
+    {name : "ccshapenode",      version : version, dir : "cocos2d/shape_nodes"},
     {name : "cceffects",        version : version, dir : "cocos2d/effects"},
     {name : "cckazmath",        version : version, dir : "cocos2d/kazmath"},
     {name : "cckeyboard",       version : version, dir : "cocos2d/keyboard_dispatcher"},

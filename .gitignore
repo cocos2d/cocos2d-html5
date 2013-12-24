@@ -1,2 +1,5 @@
-# Ignore files build by WebStorm
+/web.config
 .idea
+build
+aspnet_client
+node_modules
