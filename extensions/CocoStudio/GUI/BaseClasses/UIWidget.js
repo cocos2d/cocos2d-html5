@@ -122,6 +122,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     _hitted: false,
 
     ctor: function () {
+        cc.NodeRGBA.prototype.ctor.call(this);
         this._enabled = true;
         this._bright = true;
         this._touchEnabled = false;
@@ -240,7 +241,11 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     },
 
     getWidgetParent: function () {
-        return this.getParent();
+        var widget = this.getParent();
+        if(widget instanceof ccs.UIWidget){
+            return widget;
+        }
+        return null;
     },
 
     removeFromParent: function (cleanup) {
@@ -318,7 +323,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
      */
     initRenderer: function () {
         this._renderer = cc.NodeRGBA.create();
-        cc.NodeRGBA.prototype.addChild(this._renderer, -1, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._renderer, -1, -1);
     },
 
     /**
@@ -598,6 +603,12 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
             return;
         }
         this._updateEnabled = enable;
+        if (enable)        {
+            this.scheduleUpdate();
+        }
+        else        {
+            this.unscheduleUpdate();
+        }
     },
 
     /**
@@ -968,6 +979,19 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
      */
     getPositionType: function () {
         return this._positionType;
+    },
+
+    setFlippedX: function (flipX) {
+    },
+
+    isFlippedX: function () {
+        return false;
+    },
+
+    setFlippedY: function (flipY) {
+    },
+    isFlippedY: function () {
+        return false;
     },
 
     /**

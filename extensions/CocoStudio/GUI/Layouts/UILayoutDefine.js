@@ -114,5 +114,5 @@ ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
 });
 
 ccs.UIMarginZero = function(){
-   return ccs.UIMargin(0,0,0,0);
+   return new ccs.UIMargin(0,0,0,0);
 };

@@ -118,14 +118,38 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
             this.setSize(cc.SizeZero());
             this.setBright(true);
             this.setAnchorPoint(0, 0);
+            this.initStencil();
             return true;
         }
         return false;
     },
-
-    initRenderer: function () {
-        this._renderer = ccs.UIRectClippingNode.create();
-        this._renderer.setVisitEventListener(this.rendererVisitCallBack,this);
+    initStencil : null,
+    _initStencilForWebGL:function(){
+        this._clippingStencil = cc.DrawNode.create();
+        ccs.UILayout._init_once = true;
+        if (ccs.UILayout._init_once) {
+            cc.stencilBits = cc.renderContext.getParameter(cc.renderContext.STENCIL_BITS);
+            if (cc.stencilBits <= 0)
+                cc.log("Stencil buffer is not enabled.");
+            ccs.UILayout._init_once = false;
+        }
+    },
+    _initStencilForCanvas: function () {
+        this._clippingStencil = cc.DrawNode.create();
+        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locContext = cc.renderContext;
+        var stencil = this._clippingStencil;
+        stencil.draw = function () {
+            for (var i = 0; i < stencil._buffer.length; i++) {
+                var element = stencil._buffer[i];
+                var vertices = element.verts;
+                var firstPoint = vertices[0];
+                locContext.beginPath();
+                locContext.moveTo(firstPoint.x * locEGL_ScaleX, -firstPoint.y * locEGL_ScaleY);
+                for (var j = 1, len = vertices.length; j < len; j++)
+                    locContext.lineTo(vertices[j].x * locEGL_ScaleX, -vertices[j].y * locEGL_ScaleY);
+            }
+        }
     },
 
     /**
@@ -135,13 +159,13 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
      * @param {Number} tag
      * @returns {boolean}
      */
-    addChild: function (locChild, zOrder, tag) {
+    addChild: function (child, zOrder, tag) {
         if(!(child instanceof ccs.UIWidget)){
             cc.log("Widget only supports Widgets as children");
         }
-        this.supplyTheLayoutParameterLackToChild(locChild);
+        this.supplyTheLayoutParameterLackToChild(child);
         this._doLayoutDirty = true;
-        ccs.UIWidget.prototype.addChild.call(this, locChild, zOrder, tag)
+        ccs.UIWidget.prototype.addChild.call(this, child, zOrder, tag)
     },
 
     /**
@@ -152,24 +176,24 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         return this._clippingEnabled;
     },
 
-    visit: function () {
+    visit: function (ctx) {
         if (!this._enabled) {
             return;
         }
         if (this._clippingEnabled) {
             switch (this._clippingType) {
                 case ccs.LayoutClippingType.stencil:
-                    this.stencilClippingVisit();
+                    this.stencilClippingVisit(ctx);
                     break;
                 case ccs.LayoutClippingType.scissor:
-                    this.scissorClippingVisit();
+                    this.scissorClippingVisit(ctx);
                     break;
                 default:
                     break;
             }
         }
         else {
-            cc.NodeRGBA.prototype.visit.call(this);
+            cc.NodeRGBA.prototype.visit.call(this,ctx);
         }
     },
 
@@ -178,20 +202,253 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this.doLayout();
     },
 
-    stencilClippingVisit: function (ctx) {
+    stencilClippingVisit : null,
 
+    _stencilClippingVisitForWebGL: function (ctx) {
+        var gl = ctx || cc.renderContext;
+
+        // if stencil buffer disabled
+        if (cc.stencilBits < 1) {
+            // draw everything, as if there where no stencil
+            cc.Node.prototype.visit.call(this, ctx);
+            return;
+        }
+
+        // return fast (draw nothing, or draw everything if in inverted mode) if:
+        // - nil stencil node
+        // - or stencil node invisible:
+        if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
+            return;
+        }
+
+        // store the current stencil layer (position in the stencil buffer),
+        // this will allow nesting up to n CCClippingNode,
+        // where n is the number of bits of the stencil buffer.
+        ccs.UILayout._layer = -1;
+
+        // all the _stencilBits are in use?
+        if (ccs.UILayout._layer + 1 == cc.stencilBits) {
+            // warn once
+            ccs.UILayout._visit_once = true;
+            if (ccs.UILayout._visit_once) {
+                cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its childs.");
+                ccs.UILayout._visit_once = false;
+            }
+            // draw everything, as if there where no stencil
+            cc.Node.prototype.visit.call(this, ctx);
+            return;
+        }
+
+        ///////////////////////////////////
+        // INIT
+
+        // increment the current layer
+        ccs.UILayout._layer++;
+
+        // mask of the current layer (ie: for layer 3: 00000100)
+        var mask_layer = 0x1 << ccs.UILayout._layer;
+        // mask of all layers less than the current (ie: for layer 3: 00000011)
+        var mask_layer_l = mask_layer - 1;
+        // mask of all layers less than or equal to the current (ie: for layer 3: 00000111)
+        var mask_layer_le = mask_layer | mask_layer_l;
+
+        // manually save the stencil state
+        var currentStencilEnabled = gl.isEnabled(gl.STENCIL_TEST);
+        var currentStencilWriteMask = gl.getParameter(gl.STENCIL_WRITEMASK);
+        var currentStencilFunc = gl.getParameter(gl.STENCIL_FUNC);
+        var currentStencilRef = gl.getParameter(gl.STENCIL_REF);
+        var currentStencilValueMask = gl.getParameter(gl.STENCIL_VALUE_MASK);
+        var currentStencilFail = gl.getParameter(gl.STENCIL_FAIL);
+        var currentStencilPassDepthFail = gl.getParameter(gl.STENCIL_PASS_DEPTH_FAIL);
+        var currentStencilPassDepthPass = gl.getParameter(gl.STENCIL_PASS_DEPTH_PASS);
+
+        // enable stencil use
+        gl.enable(gl.STENCIL_TEST);
+        // check for OpenGL error while enabling stencil test
+        //cc.CHECK_GL_ERROR_DEBUG();
+
+        // all bits on the stencil buffer are readonly, except the current layer bit,
+        // this means that operation like glClear or glStencilOp will be masked with this value
+        gl.stencilMask(mask_layer);
+
+        // manually save the depth test state
+        //GLboolean currentDepthTestEnabled = GL_TRUE;
+        //currentDepthTestEnabled = glIsEnabled(GL_DEPTH_TEST);
+        var currentDepthWriteMask = gl.getParameter(gl.DEPTH_WRITEMASK);
+
+        // disable depth test while drawing the stencil
+        //glDisable(GL_DEPTH_TEST);
+        // disable update to the depth buffer while drawing the stencil,
+        // as the stencil is not meant to be rendered in the real scene,
+        // it should never prevent something else to be drawn,
+        // only disabling depth buffer update should do
+        gl.depthMask(false);
+
+        ///////////////////////////////////
+        // CLEAR STENCIL BUFFER
+
+        // manually clear the stencil buffer by drawing a fullscreen rectangle on it
+        // setup the stencil test func like this:
+        // for each pixel in the fullscreen rectangle
+        //     never draw it into the frame buffer
+        //     if not in inverted mode: set the current layer value to 0 in the stencil buffer
+        //     if in inverted mode: set the current layer value to 1 in the stencil buffer
+        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
+        gl.stencilOp(gl.ZERO, gl.KEEP, gl.KEEP);
+
+        // draw a fullscreen solid rectangle to clear the stencil buffer
+        //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
+        cc.drawingUtil.drawSolidRect(cc.PointZero(), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+
+        ///////////////////////////////////
+        // DRAW CLIPPING STENCIL
+
+        // setup the stencil test func like this:
+        // for each pixel in the stencil node
+        //     never draw it into the frame buffer
+        //     if not in inverted mode: set the current layer value to 1 in the stencil buffer
+        //     if in inverted mode: set the current layer value to 0 in the stencil buffer
+        gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
+        gl.stencilOp(gl.REPLACE, gl.KEEP, gl.KEEP);
+
+
+        // draw the stencil node as if it was one of our child
+        // (according to the stencil test func/op and alpha (or alpha shader) test)
+        cc.kmGLPushMatrix();
+        this.transform();
+        this._clippingStencil.visit();
+        cc.kmGLPopMatrix();
+
+        // restore alpha test state
+        //if (this._alphaThreshold < 1) {
+        // XXX: we need to find a way to restore the shaders of the stencil node and its childs
+        //}
+
+        // restore the depth test state
+        gl.depthMask(currentDepthWriteMask);
+        //if (currentDepthTestEnabled) {
+        //    glEnable(GL_DEPTH_TEST);
+        //}
+
+        ///////////////////////////////////
+        // DRAW CONTENT
+
+        // setup the stencil test func like this:
+        // for each pixel of this node and its childs
+        //     if all layers less than or equals to the current are set to 1 in the stencil buffer
+        //         draw the pixel and keep the current layer in the stencil buffer
+        //     else
+        //         do not draw the pixel but keep the current layer in the stencil buffer
+        gl.stencilFunc(gl.EQUAL, mask_layer_le, mask_layer_le);
+        gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
+
+        // draw (according to the stencil test func) this node and its childs
+        cc.Node.prototype.visit.call(this, ctx);
+
+        ///////////////////////////////////
+        // CLEANUP
+
+        // manually restore the stencil state
+        gl.stencilFunc(currentStencilFunc, currentStencilRef, currentStencilValueMask);
+        gl.stencilOp(currentStencilFail, currentStencilPassDepthFail, currentStencilPassDepthPass);
+        gl.stencilMask(currentStencilWriteMask);
+        if (!currentStencilEnabled)
+            gl.disable(gl.STENCIL_TEST);
+
+        // we are done using this layer, decrement
+        ccs.UILayout._layer--;
     },
 
-    scissorClippingVisit: function (ctx) {
+    _stencilClippingVisitForCanvas: function (ctx) {
+        // return fast (draw nothing, or draw everything if in inverted mode) if:
+        // - nil stencil node
+        // - or stencil node invisible:
+        if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
+            return;
+        }
+
+        // Composition mode, costy but support texture stencil
+        if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
+            var context = ctx || cc.renderContext;
+            // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
+            var canvas = context.canvas;
+            var locCache = ccs.UILayout._getSharedCache();
+            locCache.width = canvas.width;
+            locCache.height = canvas.height;
+            var locCacheCtx = locCache.getContext("2d");
+            locCacheCtx.drawImage(canvas, 0, 0);
+
+            context.save();
+            // Draw everything first using node visit function
+            this._super(context);
+
+            context.globalCompositeOperation = "destination-in";
+
+            this.transform(context);
+            this._clippingStencil.visit();
+
+            context.restore();
+
+            // Redraw the cached canvas, so that the cliped area shows the background etc.
+            context.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.globalCompositeOperation = "destination-over";
+            context.drawImage(locCache, 0, 0);
+            context.restore();
+        }
+        // Clip mode, fast, but only support cc.DrawNode
+        else {
+            var context = ctx || cc.renderContext, i, children = this._children, locChild;
+
+            context.save();
+            this.transform(context);
+            this._clippingStencil.visit(context);
+            context.clip();
+
+            // Clip mode doesn't support recusive stencil, so once we used a clip stencil,
+            // so if it has ClippingNode as a child, the child must uses composition stencil.
+            this._cangodhelpme(true);
+            var len = children.length;
+            if (len > 0) {
+                this.sortAllChildren();
+                // draw children zOrder < 0
+                for (i = 0; i < len; i++) {
+                    locChild = children[i];
+                    if (locChild._zOrder < 0)
+                        locChild.visit(context);
+                    else
+                        break;
+                }
+                this.draw(context);
+                for (; i < len; i++) {
+                    children[i].visit(context);
+                }
+            } else
+                this.draw(context);
+            this._cangodhelpme(false);
+
+            context.restore();
+        }
+    },
+
+    _godhelpme:false,
+    _cangodhelpme: function (godhelpme) {
+        if (godhelpme === true || godhelpme === false)
+            cc.ClippingNode.prototype._godhelpme = godhelpme;
+        return cc.ClippingNode.prototype._godhelpme;
+    },
+
+    scissorClippingVisit : null,
+    _scissorClippingVisitForWebGL: function (ctx) {
         var clippingRect = this.getClippingRect();
         var gl = ctx || cc.renderContext;
         if (this._handleScissor) {
-            gl.enabled(gl.SCISSOR_TEST);
+            gl.enable(gl.SCISSOR_TEST);
         }
         cc.EGLView.getInstance().setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
         cc.NodeRGBA.prototype.visit.call(this);
         if (this._handleScissor) {
-            gl.disabled(gl.SCISSOR_TEST);
+            gl.disable(gl.SCISSOR_TEST);
         }
     },
 
@@ -207,14 +464,9 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         switch (this._clippingType) {
             case ccs.LayoutClippingType.stencil:
                 if (able) {
-                    var gl = cc.renderContext;
-                    //glGetIntegerv(GL_STENCIL_BITS, && g_sStencilBits);
-                    this._clippingStencil = cc.DrawNode.create();
-                    this._clippingStencil.onEnter();
                     this.setStencilClippingSize(this._size);
                 }
                 else {
-                    this._clippingStencil.onExit();
                     this._clippingStencil = null;
                 }
                 break;
@@ -238,7 +490,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     },
 
     setStencilClippingSize: function (size) {
-        if (this._clippingEnabled && this._clippingType == ccs.stencil) {
+        if (this._clippingEnabled && this._clippingType == ccs.LayoutClippingType.stencil) {
             var rect = [];
             rect[0] = cc.p(0, 0);
             rect[1] = cc.p(size.width, 0);
@@ -1124,6 +1376,24 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this.setClippingType(layout._clippingType);
     }
 });
+ccs.UILayout._init_once = null;
+ccs.UILayout._visit_once = null;
+ccs.UILayout._layer = null;
+ccs.UILayout._sharedCache = null;
+
+if (cc.Browser.supportWebGL) {
+    //WebGL
+    ccs.UILayout.prototype.initStencil = ccs.UILayout.prototype._initStencilForWebGL;
+    ccs.UILayout.prototype.stencilClippingVisit = ccs.UILayout.prototype._stencilClippingVisitForWebGL;
+    ccs.UILayout.prototype.scissorClippingVisit = ccs.UILayout.prototype._scissorClippingVisitForWebGL;
+}else{
+    ccs.UILayout.prototype.initStencil = ccs.UILayout.prototype._initStencilForCanvas;
+    ccs.UILayout.prototype.stencilClippingVisit = ccs.UILayout.prototype._stencilClippingVisitForCanvas;
+    ccs.UILayout.prototype.scissorClippingVisit = ccs.UILayout.prototype._stencilClippingVisitForCanvas;
+}
+ccs.UILayout._getSharedCache = function () {
+    return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
+};
 /**
  * allocates and initializes a UILayout.
  * @constructs
@@ -1229,6 +1499,7 @@ ccs.UIRectClippingNode = cc.ClippingNode.extend({
         this._visitEvent = selector;
     }
 });
+
 ccs.UIRectClippingNode.create = function () {
     var node = new ccs.UIRectClippingNode();
     if (node && node.init()) {

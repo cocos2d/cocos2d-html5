@@ -375,7 +375,9 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     onTouchBegan: function (touch,event) {
         var pass = ccs.UILayout.prototype.onTouchBegan.call(this, touch,event);
-        this.handlePressLogic(touch.getLocation());
+        if (this._hitted){
+            this.handlePressLogic(touch.getLocation());
+        }
         return pass;
     },
 
@@ -396,14 +398,13 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     onTouchEnded: function (touch, event) {
-        var touchPoint = touch.getLocation();
-        ccs.UILayout.prototype.onTouchEnded.call(this, touchPoint);
-        this.handleReleaseLogic(touchPoint);
+        ccs.UILayout.prototype.onTouchEnded.call(this, touch, event);
+        this.handleReleaseLogic(this._touchEndPos);
     },
 
     onTouchCancelled: function (touch, event) {
         var touchPoint = touch.getLocation();
-        ccs.UILayout.prototype.onTouchCancelled.call(this, touchPoint);
+        ccs.UILayout.prototype.onTouchCancelled.call(this, touch, event);
         this.handleReleaseLogic(touchPoint);
     },
 
