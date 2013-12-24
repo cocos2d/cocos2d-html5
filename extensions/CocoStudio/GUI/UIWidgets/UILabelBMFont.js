@@ -22,6 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ccs.LABELBMFONTRENDERERZ = -1;
 /**
  * Base class for ccs.UILabelBMFont
  * @class
@@ -38,9 +39,8 @@ ccs.UILabelBMFont = ccs.UIWidget.extend(/** @lends ccs.UILabelBMFont# */{
         this._fileHasInit = false;
     },
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._labelBMFontRenderer = cc.LabelBMFont.create();
-        this._renderer.addChild(this._labelBMFontRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.LABELBMFONTRENDERERZ, -1);
     },
 
     /**

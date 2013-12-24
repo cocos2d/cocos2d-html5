@@ -187,7 +187,7 @@ ccs.ActionNode = ccs.Class.extend({
             return this._object;
         }
         else if (this._object instanceof ccs.UIWidget) {
-            return this._object.getRenderer();
+            return this._object;
         }
         return null;
     },

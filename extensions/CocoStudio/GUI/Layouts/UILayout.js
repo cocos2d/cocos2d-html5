@@ -51,6 +51,8 @@ ccs.LayoutClippingType = {
     scissor: 1
 };
 
+ccs.BACKGROUNDIMAGEZ = -2;
+ccs.BACKGROUNDCOLORRENDERERZ = -2;
 /**
  * Base class for ccs.UILayout
  * @class
@@ -198,7 +200,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     },
 
     sortAllChildren: function () {
-        ccs.UIWidget.prototype.sortAllChildren();
+        ccs.UIWidget.prototype.sortAllChildren.call(this);
         this.doLayout();
     },
 
@@ -580,9 +582,6 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     onSizeChanged: function () {
         ccs.UIWidget.prototype.onSizeChanged.call(this);
         this.setStencilClippingSize(this._size);
-        /*if (this._renderer instanceof ccs.UIRectClippingNode)
-            this._renderer.setClippingSize(this._size);*/
-
         this._doLayoutDirty = true;
 
         if (this._backGroundImage) {
@@ -609,7 +608,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         if (this._backGroundScale9Enabled == able) {
             return;
         }
-        this._renderer.removeChild(this._backGroundImage, true);
+        this.removeChild(this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundScale9Enabled = able;
         if (this._backGroundScale9Enabled) {
@@ -618,8 +617,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        this._renderer.addChild(this._backGroundImage);
-        this._backGroundImage.setZOrder(-1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
     },
@@ -705,8 +703,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        this._backGroundImage.setZOrder(-1);
-        this._renderer.addChild(this._backGroundImage);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
@@ -717,7 +714,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         if (!this._backGroundImage) {
             return;
         }
-        this._renderer.removeChild(this._backGroundImage, true);
+        this.removeChild(this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageTextureSize = cc.SizeZero();
@@ -734,23 +731,23 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         switch (this._colorType) {
             case ccs.LayoutBackGroundColorType.none:
                 if (this._colorRender) {
-                    this._renderer.removeChild(this._colorRender, true);
+                    this.removeChild(this._colorRender, true);
                     this._colorRender = null;
                 }
                 if (this._gradientRender) {
-                    this._renderer.removeChild(this._gradientRender, true);
+                    this.removeChild(this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;
             case ccs.LayoutBackGroundColorType.solid:
                 if (this._colorRender) {
-                    this._renderer.removeChild(this._colorRender, true);
+                    this.removeChild(this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
                 if (this._gradientRender) {
-                    this._renderer.removeChild(this._gradientRender, true);
+                    this.removeChild(this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;
@@ -766,7 +763,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                 this._colorRender.setContentSize(this._size);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
-                this._renderer.addChild(this._colorRender, -2);
+                cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
                 this._gradientRender = cc.LayerGradient.create(cc.c4b(255, 0, 0, 255), cc.c4b(0, 255, 0, 255));
@@ -775,7 +772,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
                 this._gradientRender.setStartColor(this._startColor);
                 this._gradientRender.setEndColor(this._endColor);
                 this._gradientRender.setVector(this._alongVector);
-                this._renderer.addChild(this._gradientRender, -2);
+                cc.NodeRGBA.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
                 break;
             default:
                 break;
@@ -1406,104 +1403,6 @@ ccs.UILayout.create = function () {
     var layout = new ccs.UILayout();
     if (layout && layout.init()) {
         return layout;
-    }
-    return null;
-};
-
-ccs.UIRectClippingNode = cc.ClippingNode.extend({
-    _innerStencil: null,
-    _enabled: null,
-    _arrRect: null,
-    _clippingSize: null,
-    _clippingEnabled: null,
-    _visitTarget: null,
-    _visitEvent: null,
-    ctor: function () {
-        cc.ClippingNode.prototype.ctor.call(this);
-        this._innerStencil = null;
-        this._enabled = true;
-        this._arrRect = [];
-        this._clippingSize = cc.size(50, 50);
-        this._clippingEnabled = false;
-    },
-
-    init: function () {
-        this._innerStencil = cc.DrawNode.create();
-        this._arrRect[0] = cc.p(0, 0);
-        this._arrRect[1] = cc.p(this._clippingSize.width, 0);
-        this._arrRect[2] = cc.p(this._clippingSize.width, this._clippingSize.height);
-        this._arrRect[3] = cc.p(0, this._clippingSize.height);
-
-        var green = cc.c4f(0, 1, 0, 1);
-        //this._innerStencil.drawPoly(this._arrRect,green, 0, green);
-        if (cc.Browser.supportWebGL) {
-            if (cc.ClippingNode.prototype.init.call(this, this._innerStencil)) {
-                return true;
-            }
-        } else {
-            this._stencil = this._innerStencil;
-            this._alphaThreshold = 1;
-            this._inverted = false;
-            return true;
-        }
-
-        return false;
-    },
-
-    setClippingSize: function (size) {
-        this.setContentSize(size);
-        this._clippingSize = cc.size(size.width, size.height);
-        this._arrRect[0] = cc.p(0, 0);
-        this._arrRect[1] = cc.p(this._clippingSize.width, 0);
-        this._arrRect[2] = cc.p(this._clippingSize.width, this._clippingSize.height);
-        this._arrRect[3] = cc.p(0, this._clippingSize.height);
-        var green = cc.c4f(0, 1, 0, 1);
-        this._innerStencil.clear();
-        this._innerStencil.drawPoly(this._arrRect, green, 0, green);
-        this.setStencil(this._innerStencil);
-    },
-
-    setClippingEnabled: function (enabled) {
-        this._clippingEnabled = enabled;
-    },
-
-    visit: function (ctx) {
-        if (!this._enabled) {
-            return;
-        }
-        if (this._clippingEnabled) {
-            cc.ClippingNode.prototype.visit.call(this, ctx);
-        }
-        else {
-            cc.Node.prototype.visit.call(this, ctx);
-        }
-    },
-
-    setEnabled: function (enabled) {
-        this._enabled = enabled;
-    },
-
-    isEnabled: function () {
-        return this._enabled;
-    },
-
-    sortAllChildren: function () {
-        cc.ClippingNode.prototype.sortAllChildren.call(this);
-        if (this._visitTarget && this._visitEvent) {
-            this._visitEvent.call(this._visitTarget);
-        }
-    },
-
-    setVisitEventListener: function (selector, target) {
-        this._visitTarget = target;
-        this._visitEvent = selector;
-    }
-});
-
-ccs.UIRectClippingNode.create = function () {
-    var node = new ccs.UIRectClippingNode();
-    if (node && node.init()) {
-        return node;
     }
     return null;
 };

@@ -22,6 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ccs.LABELRENDERERZ = -1;
 /**
  * Base class for ccs.UIButton
  * @class
@@ -54,9 +55,8 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._labelRenderer = cc.LabelTTF.create();
-        this._renderer.addChild(this._labelRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._labelRenderer, ccs.LABELRENDERERZ, -1);
     },
 
     /**
@@ -212,7 +212,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     },
 
     clickScale: function (scale, scaleY) {
-        this._renderer.setScale(scale, scaleY);
+        this.setScale(scale, scaleY);
     },
 
     /**

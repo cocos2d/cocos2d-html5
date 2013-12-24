@@ -31,6 +31,11 @@ ccs.CheckBoxEventType = {
     unselected: 1
 };
 
+ccs.BACKGROUNDBOXRENDERERZ = -1;
+ccs.BACKGROUNDBOXSELECTEDRENDERERZ = -1;
+ccs.FRONTCROSSRENDERERZ = -1;
+ccs.BACKGROUNDBOXDISABLEDRENDERER = -1;
+ccs.FRONTCROSSDISABLEDRENDERER = -1;
 /**
  * Base class for ccs.UICheckBox
  * @class
@@ -85,17 +90,16 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._backGroundBoxRenderer = cc.Sprite.create();
         this._backGroundSelectedBoxRenderer = cc.Sprite.create();
         this._frontCrossRenderer = cc.Sprite.create();
         this._backGroundBoxDisabledRenderer = cc.Sprite.create();
         this._frontCrossDisabledRenderer = cc.Sprite.create();
-        this._renderer.addChild(this._backGroundBoxRenderer);
-        this._renderer.addChild(this._backGroundSelectedBoxRenderer);
-        this._renderer.addChild(this._frontCrossRenderer);
-        this._renderer.addChild(this._backGroundBoxDisabledRenderer);
-        this._renderer.addChild(this._frontCrossDisabledRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUNDBOXRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUNDBOXSELECTEDRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONTCROSSRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUNDBOXDISABLEDRENDERER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONTCROSSDISABLEDRENDERER, -1);
     },
 
     /**

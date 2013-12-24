@@ -135,16 +135,6 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
         this._scrollViewEventListener = null;
         this._scrollViewEventSelector = null;
     },
-    releaseResoures: function () {
-        this.setUpdateEnabled(false);
-        this.removeAllChildren();
-        this._renderer.removeAllChildren(true);
-        this._renderer.removeFromParent(true);
-
-        ccs.UILayout.prototype.removeChild.call(this, this._innerContainer);
-
-        this._children = [];
-    },
 
     init: function () {
         if (ccs.UILayout.prototype.init.call(this)) {

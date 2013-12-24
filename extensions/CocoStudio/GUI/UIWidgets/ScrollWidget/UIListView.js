@@ -374,7 +374,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
     },
 
     copySpecialProperties: function (listView) {
-        ccs.UIScrollView.prototype.copySpecialProperties(listView);
+        ccs.UIScrollView.prototype.copySpecialProperties.call(this, listView);
         this.setItemModel(listView._model);
         this.setItemsMargin(listView._itemsMargin);
         this.setGravity(listView._gravity);

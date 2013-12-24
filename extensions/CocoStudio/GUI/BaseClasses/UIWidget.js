@@ -96,7 +96,6 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     _focus: false,              ///< is the widget on focus
     _brightStyle: null, ///< bright style
     _updateEnabled: false,      ///< is "update" method scheduled
-    _renderer: null,        ///< base renderer
     _touchStartPos: null,    ///< touch began point
     _touchMovePos: null,     ///< touch moved point
     _touchEndPos: null,      ///< touch ended point
@@ -130,7 +129,6 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
         this._focus = false;
         this._brightStyle = ccs.BrightStyle.none;
         this._updateEnabled = false;
-        this._renderer = null;
         this._touchStartPos = cc.PointZero();
         this._touchMovePos = cc.PointZero();
         this._touchEndPos = cc.PointZero();
@@ -162,8 +160,8 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
             this._layoutParameterDictionary = {};
             this._widgetChildren = [];
             this.initRenderer();
-            this._renderer.setCascadeColorEnabled(true);
-            this._renderer.setCascadeOpacityEnabled(true);
+            this.setCascadeColorEnabled(true);
+            this.setCascadeOpacityEnabled(true);
             this.setBright(true);
             this.ignoreContentAdaptWithSize(true);
             this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -184,15 +182,14 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
 
     /**
      * Adds a child to the container.
-     * @param {ccs.UIWidget}child
+     * @param {ccs.UIWidget||cc.Node} child
      * @returns {boolean}
      */
-    addChild: function (child,zOrder,tag) {
-        if(!(child instanceof ccs.UIWidget)){
-            cc.log("Widget only supports Widgets as children");
+    addChild: function (child, zOrder, tag) {
+        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
+        if (child instanceof ccs.UIWidget) {
+            this._widgetChildren.push(child);
         }
-        cc.NodeRGBA.prototype.addChild.call(this,child,zOrder,tag);
-        this._widgetChildren.push(child);
     },
 
     sortAllChildren: function () {
@@ -322,8 +319,6 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
      * initializes renderer of widget.
      */
     initRenderer: function () {
-        this._renderer = cc.NodeRGBA.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._renderer, -1, -1);
     },
 
     /**
@@ -549,7 +544,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
      * @returns {cc.Point}
      */
     getWorldPosition: function () {
-        return this._renderer.convertToWorldSpace(cc.PointZero());
+        return this.convertToWorldSpace(cc.PointZero());
     },
 
     /**
@@ -557,7 +552,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {
-        return this._renderer;
+        return this;
     },
 
     /**
@@ -823,39 +818,12 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     },
 
     /**
-     * Gets the renderer of widget
-     * @returns {cc.Node}
-     */
-    getRenderer: function () {
-        return this._renderer;
-    },
-
-    /**
-     * Add a CCNode for rendering.
-     * renderer is a CCNode, it's for drawing
-     * @param {cc.Node} renderer
-     * @param {number} zOrder
-     */
-    addRenderer: function (renderer, zOrder) {
-        this._renderer.addChild(renderer, zOrder);
-    },
-
-    /**
-     * Remove a CCNode from widget.
-     * @param {cc.Node} renderer
-     * @param {Boolean} cleanup
-     */
-    removeRenderer: function (renderer, cleanup) {
-        this._renderer.removeChild(renderer, cleanup);
-    },
-
-    /**
      * Checks a point if is in widget's space
      * @param {cc.Point} pt
      * @returns {boolean}
      */
     hitTest: function (pt) {
-        var nsp = this._renderer.convertToNodeSpace(pt);
+        var nsp = this.convertToNodeSpace(pt);
         var bb = cc.rect(-this._size.width * this._anchorPoint.x, -this._size.height * this._anchorPoint.y, this._size.width, this._size.height);
         if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
             return true;
@@ -948,7 +916,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
             if(widgetParent){
                 var parentSize = widgetParent.getSize();
                 var absPos = cc.p(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y);
-                this._renderer.setPosition(absPos);
+                this.setPosition(absPos);
             }
         }
     },

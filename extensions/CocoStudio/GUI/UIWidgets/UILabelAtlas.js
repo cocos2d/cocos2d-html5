@@ -22,6 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ccs.LABELATLASRENDERERZ = -1;
 /**
  * Base class for ccs.UICCLabelAtlas
  * @class
@@ -71,9 +72,8 @@ ccs.UILabelAtlas = ccs.UIWidget.extend(/** @lends ccs.UILabelAtlas# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._labelAtlasRenderer = ccs.UICCLabelAtlas.create();
-        this._renderer.addChild(this._labelAtlasRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.LABELATLASRENDERERZ, -1);
     },
 
     /**

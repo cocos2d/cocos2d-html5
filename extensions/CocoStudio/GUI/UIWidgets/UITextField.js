@@ -28,6 +28,7 @@ ccs.TextFiledEventType = {
     delete_backward: 3
 };
 
+ccs.TEXTFIELDRENDERERZ = -1;
 /**
  * Base class for ccs.UICCTextField
  * @class
@@ -279,9 +280,8 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._textFieldRender = ccs.UICCTextField.create("input words here", "Thonburi", 20);
-        this._renderer.addChild(this._textFieldRender);
+        cc.NodeRGBA.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELDRENDERERZ, -1);
 
     },
 
@@ -537,7 +537,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @returns {boolean}
      */
     hitTest: function (pt) {
-        var nsp = this._renderer.convertToNodeSpace(pt);
+        var nsp = this.convertToNodeSpace(pt);
         var locSize = this._textFieldRender.getContentSize();
         var bb = cc.rect(-locSize.width * this._anchorPoint._x, -locSize.height * this._anchorPoint._y, locSize.width, locSize.height);
         if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {

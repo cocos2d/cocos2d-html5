@@ -22,10 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var NORMAL_RENDERER_ZORDER = 0;
-var PRESSED_RENDERER_ZORDER = 0;
-var DISABLED_RENDERER_ZORDER = 0;
-var TITLE_RENDERER_ZORDER = 1;
+var NORMAL_RENDERER_ZORDER = -2;
+var PRESSED_RENDERER_ZORDER = -2;
+var DISABLED_RENDERER_ZORDER = -2;
+var TITLE_RENDERER_ZORDER = -1;
 
 /**
  * Base class for ccs.UIButton
@@ -86,15 +86,14 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._buttonNormalRenderer = cc.Sprite.create();
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        this._renderer.addChild(this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
-        this._renderer.addChild(this._titleRenderer, TITLE_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -108,9 +107,9 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this._brightStyle = ccs.BrightStyle.none;
         this._scale9Enabled = able;
 
-        this._renderer.removeChild(this._buttonNormalRenderer, true);
-        this._renderer.removeChild(this._buttonClickedRenderer, true);
-        this._renderer.removeChild(this._buttonDisableRenderer, true);
+        this.removeChild(this._buttonNormalRenderer, true);
+        this.removeChild(this._buttonClickedRenderer, true);
+        this.removeChild(this._buttonDisableRenderer, true);
 
         if (this._scale9Enabled) {
             this._buttonNormalRenderer = cc.Scale9Sprite.create();
@@ -126,9 +125,9 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        this._renderer.addChild(this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);

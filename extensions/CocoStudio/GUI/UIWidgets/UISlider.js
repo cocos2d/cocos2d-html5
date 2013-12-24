@@ -28,6 +28,9 @@
  */
 ccs.SliderEventType = {percent_changed: 0};
 
+ccs.BASEBARRENDERERZ = -3;
+ccs.PROGRESSBARRENDERERZ = -2;
+ccs.SLIDBALLRENDERERZ = -1;
 /**
  * Base class for ccs.UISlider
  * @class
@@ -91,12 +94,11 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
         this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
-        this._renderer.addChild(this._barRenderer, -1);
-        this._renderer.addChild(this._progressBarRenderer, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
         this._slidBallNormalRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer.setVisible(false);
@@ -106,7 +108,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
-        this._renderer.addChild(this._slidBallRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._slidBallRenderer, ccs.SLIDBALLRENDERERZ, -1);
     },
 
     /**
@@ -197,8 +199,8 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
 
         this._scale9Enabled = able;
-        this._renderer.removeChild(this._barRenderer, true);
-        this._renderer.removeChild(this._progressBarRenderer, true);
+        this.removeChild(this._barRenderer, true);
+        this.removeChild(this._progressBarRenderer, true);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {
@@ -211,8 +213,8 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
         this.loadBarTexture(this._textureFile, this._barTexType);
         this.loadProgressBarTexture(this._progressBarTextureFile, this._progressBarTexType);
-        this._renderer.addChild(this._barRenderer, -1);
-        this._renderer.addChild(this._progressBarRenderer, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);

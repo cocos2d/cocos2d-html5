@@ -28,6 +28,7 @@
  */
 ccs.LoadingBarType = { left: 0, right: 1};
 
+ccs.BARRENDERERZ = -1;
 /**
  * Base class for ccs.UILoadingBar
  * @class
@@ -60,9 +61,8 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
-        this._renderer.addChild(this._barRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
         this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
 
@@ -181,7 +181,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             return;
         }
         this._scale9Enabled = enabled;
-        this._renderer.removeChild(this._barRenderer, true);
+        this.removeChild(this._barRenderer, true);
         this._barRenderer = null;
         if (this._scale9Enabled) {
             this._barRenderer = cc.Scale9Sprite.create();
@@ -190,7 +190,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             this._barRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._renderBarTexType);
-        this._renderer.addChild(this._barRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);

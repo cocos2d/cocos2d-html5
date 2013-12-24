@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+ccs.IMAGERENDERERZ = -1;
 /**
  * Base class for ccs.UIButton
  * @class
@@ -47,9 +47,8 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._imageRenderer = cc.Sprite.create();
-        this._renderer.addChild(this._imageRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
     },
 
     /**
@@ -167,7 +166,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
 
 
         this._scale9Enabled = able;
-        this._renderer.removeChild(this._imageRenderer, true);
+        this.removeChild(this._imageRenderer, true);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
             this._imageRenderer = cc.Scale9Sprite.create();
@@ -176,7 +175,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        this._renderer.addChild(this._imageRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
