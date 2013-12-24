@@ -2,7 +2,10 @@ var resCfg = cc.resCfg;
 var jsRes = js.ccmenu;
 
 resCfg["ccmenu"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.CCMenuItem_js,
+        jsRes.CCMenu_js
+    ]//Base references for the project.
 };
 
 resCfg.gameModules = [];//Game modules

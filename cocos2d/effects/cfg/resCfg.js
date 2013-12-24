@@ -2,7 +2,8 @@ var resCfg = cc.resCfg;
 var jsRes = js.cceffects;
 
 resCfg["cceffects"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.CCGrid_js,
+        jsRes.CCGrabber_js
+    ]//Base references for the project.
 };
-
-resCfg.gameModules = [];//Game modules

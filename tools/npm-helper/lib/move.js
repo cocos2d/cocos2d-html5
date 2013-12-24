@@ -60,7 +60,7 @@ function move(srcDir, targetDir, list){
 };
 
 
-var srcDir = "/Users/linshun/sourcecode/cocos2d-html5";
+var srcDir = "/Users/small/WebstormProjects/cocos2d-html5-test";
 var targetDir = path.join(__dirname, "../../../");
 var version = "2.2.2";
 var list = [

@@ -2,7 +2,7 @@ var resCfg = cc.resCfg;
 var jsRes = js.cccliping;
 
 resCfg["cccliping"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.CCClippingNode_js
+    ]//Base references for the project.
 };
-
-resCfg.gameModules = [];//Game modules

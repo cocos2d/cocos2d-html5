@@ -10,7 +10,7 @@ var list = [
     "cocos2d/clipping_nodes",
     "cocos2d/compress",
     "cocos2d/core",
-    "cocos2d/draw_nodes",
+    "cocos2d/shape_nodes",
     "cocos2d/effects",
     "cocos2d/kazmath",
     "cocos2d/keyboard_dispatcher",

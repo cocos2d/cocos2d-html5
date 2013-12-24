@@ -2,7 +2,65 @@ var resCfg = cc.resCfg;
 var jsRes = js.cocostudio;
 
 resCfg["cocostudio"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.CCComponent_js,
+        jsRes.CCComponentContainer_js,
+        jsRes.CocoStudio_js,
+        // CocoStudio Armature
+        jsRes.CCArmatureDefine_js,
+        jsRes.CCDataReaderHelper_js,
+        jsRes.CCSpriteFrameCacheHelper_js,
+        jsRes.CCTransformHelp_js,
+        jsRes.CCTweenFunction_js,
+        jsRes.CCUtilMath_js,
+        jsRes.CCArmatureDataManager_js,
+        jsRes.CCDatas_js,
+        jsRes.CCDecorativeDisplay_js,
+        jsRes.CCDisplayFactory_js,
+        jsRes.CCDisplayManager_js,
+        jsRes.CCSkin_js,
+        jsRes.CCProcessBase_js,
+        jsRes.CCArmatureAnimation_js,
+        jsRes.CCTween_js,
+        jsRes.CCColliderDetector_js,
+        jsRes.CCArmature_js,
+        jsRes.CCBone_js,
+        // CocoStudio Action
+        jsRes.CCActionFrame_js,
+        jsRes.CCActionManager_js,
+        jsRes.CCActionNode_js,
+        jsRes.CCActionObject_js,
+        // CocoStudio Components
+        jsRes.CCComAttribute_js,
+        jsRes.CCComAudio_js,
+        jsRes.CCComController_js,
+        jsRes.CCComRender_js,
+        // CocoStudio GUI
+        jsRes.UIWidget_js,
+        jsRes.UILayout_js,
+        jsRes.UIRootWidget_js,
+        jsRes.UILayoutParameter_js,
+        jsRes.UILayoutDefine_js,
+        jsRes.CocosGUI_js,
+        jsRes.UIHelper_js,
+        jsRes.UIInputManager_js,
+        jsRes.UILayer_js,
+        jsRes.UIButton_js,
+        jsRes.UICheckBox_js,
+        jsRes.UIImageView_js,
+        jsRes.UILabel_js,
+        jsRes.UILabelAtlas_js,
+        jsRes.UILabelBMFont_js,
+        jsRes.UILoadingBar_js,
+        jsRes.UISlider_js,
+        jsRes.UISwitch_js,
+        jsRes.UITextField_js,
+        jsRes.CompatibleClasses_js,
+        jsRes.UIScrollView_js,
+        jsRes.UIListView_js,
+        jsRes.UIPageView_js,
+        jsRes.UIScrollInterface_js,
+        jsRes.GUIReader_js,
+        jsRes.SceneReader_js
+    ]//Base references for the project.
 };
-
-resCfg.gameModules = [];//Game modules

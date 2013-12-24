@@ -2,7 +2,9 @@ var resCfg = cc.resCfg;
 var jsRes = js.cctransitions;
 
 resCfg["cctransitions"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.CCTransition_js,
+        jsRes.CCTransitionProgress_js,
+        jsRes.CCTransitionPageTurn_js
+    ]//Base references for the project.
 };
-
-resCfg.gameModules = [];//Game modules

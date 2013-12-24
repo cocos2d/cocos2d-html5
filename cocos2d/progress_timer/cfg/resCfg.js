@@ -2,7 +2,8 @@ var resCfg = cc.resCfg;
 var jsRes = js.ccprogress;
 
 resCfg["ccprogress"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.CCProgressTimer_js,
+        jsRes.CCActionProgressTimer_js
+    ]//Base references for the project.
 };
-
-resCfg.gameModules = [];//Game modules

@@ -2,7 +2,7 @@ var resCfg = cc.resCfg;
 var jsRes = js.ccbox2d;
 
 resCfg["ccbox2d"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.box2d_js
+    ]//Base references for the project.
 };
-
-resCfg.gameModules = [];//Game modules
