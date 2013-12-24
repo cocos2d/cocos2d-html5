@@ -5,6 +5,12 @@ var fileFmt = require("cocos-utils").fileFmt;
 var exec = require("child_process").exec;
 var msgCode = require("cocos-utils").msgCode;
 
+//ignore to delete
+var ignoreFiles = [
+    "cocos.json",
+    "package.json",
+    "cfg"
+];
 
 /**
  * Desc: Run plugin.
@@ -20,13 +26,19 @@ function move(srcDir, targetDir, list){
         var sPath = path.join(srcDir, dir);
         var tPath = path.join(targetDir, dir);
         var libPath = path.join(tPath, "lib");
-        core4cc.mkdirSyncRecursive(libPath);
+
+        if(!fs.existsSync(tPath)) core4cc.mkdirSyncRecursive(tPath);
+        var files = fs.readdirSync(tPath);
+        for(var j = 0, lj = files.length; j < lj; j++){
+            if(ignoreFiles.indexOf(files[j]) >= 0) continue;
+            core4cc.rmdirSyncRecursive(path.join(tPath, files[j]));
+        }
         core4cc.copyFiles(sPath, libPath);
 
         var cfgPath = path.join(tPath, "cfg");
         core4cc.mkdirSyncRecursive(cfgPath);
 
-        var packagePath = path.join(tPath, "pacakge.json");
+        var packagePath = path.join(tPath, "package.json");
 
         if(!fs.existsSync(packagePath)){
             var handler = new fileFmt.Handler({name : itemi.name, version : itemi.version}, {
@@ -41,6 +53,7 @@ function move(srcDir, targetDir, list){
         exec("cocos genJsRes " + tPath, function(err, data, info){
             console.log(data);
             if(err) return console.error(err);
+            console.log(info);
             core4cc.log(msgCode.SUCCESS_PATH, {path : sPath + "--->" + tPath})
         });
     }
