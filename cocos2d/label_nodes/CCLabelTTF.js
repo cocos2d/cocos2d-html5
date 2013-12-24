@@ -131,7 +131,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var nextlinebreak = text.indexOf('\n');
         if(baseNb*0.8 >= nextlinebreak && nextlinebreak > 0) return nextlinebreak+1;
 
-        var found = false, l = width + 1, idfound = -1, index = baseNb, offset, result,
+        var found = false, l = width + 1, idfound = -1, index = baseNb, result,
             re = cc.LabelTTF._checkRegEx,
             reversre = cc.LabelTTF._reverseCheckRegEx,
             enre = cc.LabelTTF._checkEnRegEx,
@@ -139,9 +139,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         // Forward check
         // Find next special caracter or chinese caracters
-        while ((offset = substr.search(re)) != -1) {
-            index += offset;
-            if(text[index] == '\n') {
+        while (result = re.exec(substr)) {
+            index += result[0].length;
+            if(result[2] == '\n') {
                 found = true;
                 idfound = index;
                 break;
@@ -1036,7 +1036,7 @@ cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 // Class static properties for measure util
 cc.LabelTTF._measureCanvas = null;
 cc.LabelTTF._measureCtx = null;
-cc.LabelTTF._checkRegEx = /[\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0]/;
+cc.LabelTTF._checkRegEx = /(.+?)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
 cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
 cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
 
