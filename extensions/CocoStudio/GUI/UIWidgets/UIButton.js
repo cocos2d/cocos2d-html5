@@ -28,11 +28,11 @@ var DISABLED_RENDERER_ZORDER = -2;
 var TITLE_RENDERER_ZORDER = -1;
 
 /**
- * Base class for ccs.UIButton
+ * Base class for ccs.Button
  * @class
  * @extends ccs.Widget
  */
-ccs.UIButton = ccs.Widget.extend(/** @lends ccs.UIButton# */{
+ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     _buttonNormalRenderer: null,
     _buttonClickedRenderer: null,
     _buttonDisableRenderer: null,
@@ -670,7 +670,7 @@ ccs.UIButton = ccs.Widget.extend(/** @lends ccs.UIButton# */{
     },
 
     createCloneInstance:function(){
-        return ccs.UIButton.create();
+        return ccs.Button.create();
     },
 
     copySpecialProperties:function(uiButton){
@@ -693,13 +693,13 @@ ccs.UIButton = ccs.Widget.extend(/** @lends ccs.UIButton# */{
 /**
  * allocates and initializes a UIButton.
  * @constructs
- * @return {ccs.UIButton}
+ * @return {ccs.Button}
  * @example
  * // example
- * var uiButton = ccs.UIButton.create();
+ * var uiButton = ccs.Button.create();
  */
-ccs.UIButton.create = function () {
-    var uiButton = new ccs.UIButton();
+ccs.Button.create = function () {
+    var uiButton = new ccs.Button();
     if (uiButton && uiButton.init()) {
         return uiButton;
     }

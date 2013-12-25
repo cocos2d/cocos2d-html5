@@ -24,7 +24,7 @@
 
 ccs.LABELRENDERERZ = -1;
 /**
- * Base class for ccs.UIButton
+ * Base class for ccs.Button
  * @class
  * @extends ccs.Widget
  */
