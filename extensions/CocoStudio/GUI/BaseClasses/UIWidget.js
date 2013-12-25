@@ -842,7 +842,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
         var parent = this.getParent();
         var clippingParent = null;
         while (parent) {
-            if (parent instanceof ccs.UILayout) {
+            if (parent instanceof ccs.Layout) {
                 if (parent.isClippingEnabled()) {
                     this._affectByClipping = true;
                     clippingParent = parent;

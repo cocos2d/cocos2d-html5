@@ -42,9 +42,9 @@ ccs.PVTouchDir = {
 /**
  * Base class for ccs.UIPageView
  * @class
- * @extends ccs.UILayout
+ * @extends ccs.Layout
  */
-ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
+ccs.UIPageView = ccs.Layout.extend(/** @lends ccs.UIPageView# */{
     _curPageIdx: 0,
     _pages: null,
     _touchMoveDir: null,
@@ -63,7 +63,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     ctor: function () {
-        ccs.UILayout.prototype.ctor.call(this);
+        ccs.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;
         this._pages = [];
         this._touchMoveDir = ccs.PVTouchDir.touchLeft;
@@ -84,7 +84,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     init: function () {
-        if (ccs.UILayout.prototype.init.call(this)) {
+        if (ccs.Layout.prototype.init.call(this)) {
             this._pages = [];
             this.setClippingEnabled(true);
             this.setUpdateEnabled(true);
@@ -128,17 +128,17 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * create page
-     * @returns {ccs.UILayout}
+     * @returns {ccs.Layout}
      */
     createPage: function () {
-        var newPage = ccs.UILayout.create();
+        var newPage = ccs.Layout.create();
         newPage.setSize(this.getSize());
         return newPage;
     },
 
     /**
      * Push back a page to pageview.
-     * @param {ccs.UILayout} page
+     * @param {ccs.Layout} page
      */
     addPage: function (page) {
         if (!page) {
@@ -164,7 +164,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Inert a page to pageview.
-     * @param {ccs.UILayout} page
+     * @param {ccs.Layout} page
      * @param {Number} idx
      */
     insertPage: function (page, idx) {
@@ -208,7 +208,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Remove a page of pageview.
-     * @param {ccs.UILayout} page
+     * @param {ccs.Layout} page
      */
     removePage: function (page) {
         if (!page) {
@@ -260,7 +260,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
      * @returns {boolean}
      */
     addChild: function (widget, zOrder, tag) {
-        return ccs.UILayout.prototype.addChild.call(this, widget, zOrder, tag);
+        return ccs.Layout.prototype.addChild.call(this, widget, zOrder, tag);
     },
 
     /**
@@ -269,11 +269,11 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
      */
     removeChild: function (child) {
         cc.ArrayRemoveObject(this._pages, child);
-        ccs.UILayout.prototype.removeChild.call(this, child);
+        ccs.Layout.prototype.removeChild.call(this, child);
     },
 
     onSizeChanged: function () {
-        ccs.UILayout.prototype.onSizeChanged.call(this);
+        ccs.Layout.prototype.onSizeChanged.call(this);
         this._rightBoundary = this.getSize().width;
         this.updateChildrenSize();
         this.updateChildrenPosition();
@@ -314,7 +314,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     removeAllChildren: function () {
         this._pages = [];
-        ccs.UILayout.prototype.removeAllChildren.call(this);
+        ccs.Layout.prototype.removeAllChildren.call(this);
     },
 
     /**
@@ -374,7 +374,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     onTouchBegan: function (touch,event) {
-        var pass = ccs.UILayout.prototype.onTouchBegan.call(this, touch,event);
+        var pass = ccs.Layout.prototype.onTouchBegan.call(this, touch,event);
         if (this._hitted){
             this.handlePressLogic(touch.getLocation());
         }
@@ -398,13 +398,13 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     onTouchEnded: function (touch, event) {
-        ccs.UILayout.prototype.onTouchEnded.call(this, touch, event);
+        ccs.Layout.prototype.onTouchEnded.call(this, touch, event);
         this.handleReleaseLogic(this._touchEndPos);
     },
 
     onTouchCancelled: function (touch, event) {
         var touchPoint = touch.getLocation();
-        ccs.UILayout.prototype.onTouchCancelled.call(this, touch, event);
+        ccs.Layout.prototype.onTouchCancelled.call(this, touch, event);
         this.handleReleaseLogic(touchPoint);
     },
 
@@ -582,7 +582,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     copySpecialProperties: function (pageView) {
-        ccs.UILayout.prototype.copySpecialProperties.call(this, pageView);
+        ccs.Layout.prototype.copySpecialProperties.call(this, pageView);
     },
 
     doLayout: function () {

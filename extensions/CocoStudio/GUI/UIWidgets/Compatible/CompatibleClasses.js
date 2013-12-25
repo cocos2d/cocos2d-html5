@@ -23,25 +23,25 @@
  ****************************************************************************/
 
 //class type define
-ccs.UIPanel = ccs.UILayout;
+ccs.UIPanel = ccs.Layout;
 ccs.UITextArea = ccs.UILabel;
-ccs.UIContainerWidget = ccs.UILayout;
-ccs.UITextButton = ccs.UIButton;
-ccs.UINodeContainer = ccs.UIWidget;
+ccs.UIContainerWidget = ccs.Layout;
+ccs.UITextButton = ccs.Button;
+ccs.UINodeContainer = ccs.Widget;
 ccs.PanelColorType = ccs.LayoutBackGroundColorType;
 
 
-ccs.Layout = ccs.UILayout;
-ccs.Widget = ccs.UIWidget;
+ccs.UILayout = ccs.Layout;
+ccs.UIWidget = ccs.Widget;
 
-ccs.LayoutParameter = ccs.UILayoutParameter;
-ccs.Margin = ccs.UIMargin;
+ccs.UILayoutParameter = ccs.LayoutParameter;
+ccs.UIMargin = ccs.Margin;
 
-ccs.ListView = ccs.UIListView;
-ccs.PageView = ccs.UIPageView;
-ccs.ScrollView = ccs.UIScrollView;
-ccs.Button = ccs.UIButton;
-ccs.CheckBox = ccs.UICheckBox;
+ccs.UIListView = ccs.ListView;
+ccs.UIPageView = ccs.PageView;
+ccs.UIScrollView = ccs.ScrollView;
+ccs.UIButton = ccs.Button;
+ccs.CheckBox = ccs.Button;
 ccs.ImageView = ccs.UIImageView;
 ccs.Label = ccs.UILabel;
 ccs.LabelAtlas = ccs.UILabelAtlas;

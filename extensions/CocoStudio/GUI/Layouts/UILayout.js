@@ -54,11 +54,11 @@ ccs.LayoutClippingType = {
 ccs.BACKGROUNDIMAGEZ = -2;
 ccs.BACKGROUNDCOLORRENDERERZ = -2;
 /**
- * Base class for ccs.UILayout
+ * Base class for ccs.Layout
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
+ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
     _clippingEnabled: null,
     _backGroundScale9Enabled: null,
     _backGroundImage: null,
@@ -128,12 +128,12 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     initStencil : null,
     _initStencilForWebGL:function(){
         this._clippingStencil = cc.DrawNode.create();
-        ccs.UILayout._init_once = true;
-        if (ccs.UILayout._init_once) {
+        ccs.Layout._init_once = true;
+        if (ccs.Layout._init_once) {
             cc.stencilBits = cc.renderContext.getParameter(cc.renderContext.STENCIL_BITS);
             if (cc.stencilBits <= 0)
                 cc.log("Stencil buffer is not enabled.");
-            ccs.UILayout._init_once = false;
+            ccs.Layout._init_once = false;
         }
     },
     _initStencilForCanvas: function () {
@@ -223,15 +223,15 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         // store the current stencil layer (position in the stencil buffer),
         // this will allow nesting up to n CCClippingNode,
         // where n is the number of bits of the stencil buffer.
-        ccs.UILayout._layer = -1;
+        ccs.Layout._layer = -1;
 
         // all the _stencilBits are in use?
-        if (ccs.UILayout._layer + 1 == cc.stencilBits) {
+        if (ccs.Layout._layer + 1 == cc.stencilBits) {
             // warn once
-            ccs.UILayout._visit_once = true;
-            if (ccs.UILayout._visit_once) {
+            ccs.Layout._visit_once = true;
+            if (ccs.Layout._visit_once) {
                 cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its childs.");
-                ccs.UILayout._visit_once = false;
+                ccs.Layout._visit_once = false;
             }
             // draw everything, as if there where no stencil
             cc.Node.prototype.visit.call(this, ctx);
@@ -242,10 +242,10 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         // INIT
 
         // increment the current layer
-        ccs.UILayout._layer++;
+        ccs.Layout._layer++;
 
         // mask of the current layer (ie: for layer 3: 00000100)
-        var mask_layer = 0x1 << ccs.UILayout._layer;
+        var mask_layer = 0x1 << ccs.Layout._layer;
         // mask of all layers less than the current (ie: for layer 3: 00000011)
         var mask_layer_l = mask_layer - 1;
         // mask of all layers less than or equal to the current (ie: for layer 3: 00000111)
@@ -355,7 +355,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
             gl.disable(gl.STENCIL_TEST);
 
         // we are done using this layer, decrement
-        ccs.UILayout._layer--;
+        ccs.Layout._layer--;
     },
 
     _stencilClippingVisitForCanvas: function (ctx) {
@@ -371,7 +371,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
             var context = ctx || cc.renderContext;
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
             var canvas = context.canvas;
-            var locCache = ccs.UILayout._getSharedCache();
+            var locCache = ccs.Layout._getSharedCache();
             locCache.width = canvas.width;
             locCache.height = canvas.height;
             var locCacheCtx = locCache.getContext("2d");
@@ -516,7 +516,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         var firstClippingParentFounded = false;
         while (parent) {
             parent = parent.getParent();
-            if (parent && parent instanceof ccs.UILayout) {
+            if (parent && parent instanceof ccs.Layout) {
                 if (parent.isClippingEnabled()) {
                     if (!firstClippingParentFounded) {
                         this._clippingParent = parent;
@@ -1349,7 +1349,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UILayout.create();
+        return ccs.Layout.create();
     },
 
     copyClonedWidgetChildren: function (model) {
@@ -1370,34 +1370,34 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         this.setClippingType(layout._clippingType);
     }
 });
-ccs.UILayout._init_once = null;
-ccs.UILayout._visit_once = null;
-ccs.UILayout._layer = null;
-ccs.UILayout._sharedCache = null;
+ccs.Layout._init_once = null;
+ccs.Layout._visit_once = null;
+ccs.Layout._layer = null;
+ccs.Layout._sharedCache = null;
 
 if (cc.Browser.supportWebGL) {
     //WebGL
-    ccs.UILayout.prototype.initStencil = ccs.UILayout.prototype._initStencilForWebGL;
-    ccs.UILayout.prototype.stencilClippingVisit = ccs.UILayout.prototype._stencilClippingVisitForWebGL;
-    ccs.UILayout.prototype.scissorClippingVisit = ccs.UILayout.prototype._scissorClippingVisitForWebGL;
+    ccs.Layout.prototype.initStencil = ccs.Layout.prototype._initStencilForWebGL;
+    ccs.Layout.prototype.stencilClippingVisit = ccs.Layout.prototype._stencilClippingVisitForWebGL;
+    ccs.Layout.prototype.scissorClippingVisit = ccs.Layout.prototype._scissorClippingVisitForWebGL;
 }else{
-    ccs.UILayout.prototype.initStencil = ccs.UILayout.prototype._initStencilForCanvas;
-    ccs.UILayout.prototype.stencilClippingVisit = ccs.UILayout.prototype._stencilClippingVisitForCanvas;
-    ccs.UILayout.prototype.scissorClippingVisit = ccs.UILayout.prototype._stencilClippingVisitForCanvas;
+    ccs.Layout.prototype.initStencil = ccs.Layout.prototype._initStencilForCanvas;
+    ccs.Layout.prototype.stencilClippingVisit = ccs.Layout.prototype._stencilClippingVisitForCanvas;
+    ccs.Layout.prototype.scissorClippingVisit = ccs.Layout.prototype._stencilClippingVisitForCanvas;
 }
-ccs.UILayout._getSharedCache = function () {
+ccs.Layout._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 };
 /**
  * allocates and initializes a UILayout.
  * @constructs
- * @return {ccs.UILayout}
+ * @return {ccs.Layout}
  * @example
  * // example
- * var uiLayout = ccs.UILayout.create();
+ * var uiLayout = ccs.Layout.create();
  */
-ccs.UILayout.create = function () {
-    var layout = new ccs.UILayout();
+ccs.Layout.create = function () {
+    var layout = new ccs.Layout();
     if (layout && layout.init()) {
         return layout;
     }

@@ -230,7 +230,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Panel") {
-            widget = ccs.UILayout.create();
+            widget = ccs.Layout.create();
             this.setPropsForLayoutFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Slider") {
@@ -824,7 +824,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Panel") {
-            widget = ccs.UILayout.create();
+            widget = ccs.Layout.create();
             this.setPropsForLayoutFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Slider") {
