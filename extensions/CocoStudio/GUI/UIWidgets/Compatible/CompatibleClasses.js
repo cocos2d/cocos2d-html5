@@ -48,4 +48,4 @@ ccs.UILabelAtlas = ccs.LabelAtlas;
 ccs.UILabelBMFont = ccs.LabelBMFont;
 ccs.UILoadingBar = ccs.LoadingBar;
 ccs.UISlider = ccs.Slider;
-ccs.TextField = ccs.UITextField;
+ccs.UITextField = ccs.TextField;

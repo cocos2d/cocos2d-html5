@@ -232,11 +232,11 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
 };
 
 /**
- * Base class for ccs.UITextField
+ * Base class for ccs.TextField
  * @class
  * @extends ccs.Widget
  */
-ccs.UITextField = ccs.Widget.extend(/** @lends ccs.UITextField# */{
+ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     _textFieldRender: null,
     _touchWidth: 0,
     _touchHeight: 0,
@@ -631,7 +631,7 @@ ccs.UITextField = ccs.Widget.extend(/** @lends ccs.UITextField# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UITextField.create();
+        return ccs.TextField.create();
     },
 
     copySpecialProperties: function (textField) {
@@ -652,13 +652,13 @@ ccs.UITextField = ccs.Widget.extend(/** @lends ccs.UITextField# */{
 /**
  * allocates and initializes a UITextField.
  * @constructs
- * @return {ccs.UITextField}
+ * @return {ccs.TextField}
  * @example
  * // example
- * var uiTextField = ccs.UITextField.create();
+ * var uiTextField = ccs.TextField.create();
  */
-ccs.UITextField.create = function () {
-    var uiTextField = new ccs.UITextField();
+ccs.TextField.create = function () {
+    var uiTextField = new ccs.TextField();
     if (uiTextField && uiTextField.init()) {
         return uiTextField;
     }
