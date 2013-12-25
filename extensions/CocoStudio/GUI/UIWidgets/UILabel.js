@@ -28,7 +28,7 @@ ccs.LABELRENDERERZ = -1;
  * @class
  * @extends ccs.Widget
  */
-ccs.UILabel = ccs.Widget.extend(/** @lends ccs.UILabel# */{
+ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     _touchScaleChangeEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
@@ -313,7 +313,7 @@ ccs.UILabel = ccs.Widget.extend(/** @lends ccs.UILabel# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UILabel.create();
+        return ccs.Label.create();
     },
 
     copySpecialProperties: function (uiLabel) {
@@ -326,13 +326,13 @@ ccs.UILabel = ccs.Widget.extend(/** @lends ccs.UILabel# */{
 /**
  * allocates and initializes a UILabel.
  * @constructs
- * @return {ccs.UILabel}
+ * @return {ccs.Label}
  * @example
  * // example
- * var uiLabel = ccs.UILabel.create();
+ * var uiLabel = ccs.Label.create();
  */
-ccs.UILabel.create = function () {
-    var uiLabel = new ccs.UILabel();
+ccs.Label.create = function () {
+    var uiLabel = new ccs.Label();
     if (uiLabel && uiLabel.init()) {
         return uiLabel;
     }

@@ -24,7 +24,7 @@
 
 //class type define
 ccs.UIPanel = ccs.Layout;
-ccs.UITextArea = ccs.UILabel;
+ccs.UITextArea = ccs.Label;
 ccs.UIContainerWidget = ccs.Layout;
 ccs.UITextButton = ccs.Button;
 ccs.UINodeContainer = ccs.Widget;
@@ -43,7 +43,7 @@ ccs.UIScrollView = ccs.ScrollView;
 ccs.UIButton = ccs.Button;
 ccs.UICheckBox = ccs.CheckBox;
 ccs.UIImageView = ccs.ImageView;
-ccs.Label = ccs.UILabel;
+ccs.UILabel = ccs.Label;
 ccs.LabelAtlas = ccs.UILabelAtlas;
 ccs.LabelBMFont = ccs.UILabelBMFont;
 ccs.LoadingBar = ccs.UILoadingBar;
