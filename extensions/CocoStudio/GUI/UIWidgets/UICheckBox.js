@@ -37,11 +37,11 @@ ccs.FRONTCROSSRENDERERZ = -1;
 ccs.BACKGROUNDBOXDISABLEDRENDERER = -1;
 ccs.FRONTCROSSDISABLEDRENDERER = -1;
 /**
- * Base class for ccs.UICheckBox
+ * Base class for ccs.CheckBox
  * @class
  * @extends ccs.Widget
  */
-ccs.UICheckBox = ccs.Widget.extend(/** @lends ccs.UICheckBox# */{
+ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     _backGroundBoxRenderer: null,
     _backGroundSelectedBoxRenderer: null,
     _frontCrossRenderer: null,
@@ -525,7 +525,7 @@ ccs.UICheckBox = ccs.Widget.extend(/** @lends ccs.UICheckBox# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UICheckBox.create();
+        return ccs.CheckBox.create();
     },
 
     copySpecialProperties: function (uiCheckBox) {
@@ -540,13 +540,13 @@ ccs.UICheckBox = ccs.Widget.extend(/** @lends ccs.UICheckBox# */{
 /**
  * allocates and initializes a UICheckBox.
  * @constructs
- * @return {ccs.UICheckBox}
+ * @return {ccs.CheckBox}
  * @example
  * // example
- * var uiCheckBox = ccs.UICheckBox.create();
+ * var uiCheckBox = ccs.CheckBox.create();
  */
-ccs.UICheckBox.create = function () {
-    var uiCheckBox = new ccs.UICheckBox();
+ccs.CheckBox.create = function () {
+    var uiCheckBox = new ccs.CheckBox();
     if (uiCheckBox && uiCheckBox.init()) {
         return uiCheckBox;
     }
