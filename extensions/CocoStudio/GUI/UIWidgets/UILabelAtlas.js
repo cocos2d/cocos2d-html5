@@ -55,11 +55,11 @@ ccs.UICCLabelAtlas.create = function () {
 };
 
 /**
- * Base class for ccs.UILabelAtlas
+ * Base class for ccs.LabelAtlas
  * @class
  * @extends ccs.Widget
  */
-ccs.UILabelAtlas = ccs.Widget.extend(/** @lends ccs.UILabelAtlas# */{
+ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
     _labelAtlasRenderer: null,
     _stringValue: "",
     _charMapFileName: "",
@@ -185,7 +185,7 @@ ccs.UILabelAtlas = ccs.Widget.extend(/** @lends ccs.UILabelAtlas# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UILabelAtlas.create();
+        return ccs.LabelAtlas.create();
     },
 
     copySpecialProperties: function (labelAtlas) {
@@ -195,13 +195,13 @@ ccs.UILabelAtlas = ccs.Widget.extend(/** @lends ccs.UILabelAtlas# */{
 /**
  * allocates and initializes a UILabelAtlas.
  * @constructs
- * @return {ccs.UILabelAtlas}
+ * @return {ccs.LabelAtlas}
  * @example
  * // example
- * var uiLabelAtlas = ccs.UILabelAtlas.create();
+ * var uiLabelAtlas = ccs.LabelAtlas.create();
  */
-ccs.UILabelAtlas.create = function () {
-    var uiLabelAtlas = new ccs.UILabelAtlas();
+ccs.LabelAtlas.create = function () {
+    var uiLabelAtlas = new ccs.LabelAtlas();
     if (uiLabelAtlas && uiLabelAtlas.init()) {
         return uiLabelAtlas;
     }

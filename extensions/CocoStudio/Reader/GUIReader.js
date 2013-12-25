@@ -203,7 +203,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelAtlas") {
-            widget = ccs.UILabelAtlas.create();
+            widget = ccs.LabelAtlas.create();
             this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LoadingBar") {
@@ -797,7 +797,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelAtlas") {
-            widget = ccs.UILabelAtlas.create();
+            widget = ccs.LabelAtlas.create();
             this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LoadingBar") {
