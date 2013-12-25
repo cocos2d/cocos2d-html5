@@ -10,7 +10,7 @@
                 sourceMapOutputFile="sourcemap"
                 sourceMapFormat="V3">
             <externs dir="${basedir}/../cocos2d">
-                <file name="cocos2d_externs.js"/>
+                <file name="core/cocos2d_externs.js"/>
             </externs>
             <sources dir="${basedir}/../cocos2d">
                 <file name="core/platform/CCClass.js"/>
@@ -78,7 +78,6 @@
                 <file name="actions/CCAction.js"/>
                 <file name="actions/CCActionInterval.js"/>
                 <file name="actions/CCActionInstant.js"/>
-                <file name="actions/CCActionManager.js"/>
                 <file name="actions/CCActionCamera.js"/>
                 <file name="actions/CCActionEase.js"/>
                 <file name="actions/CCActionCatmullRom.js"/>
