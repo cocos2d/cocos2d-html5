@@ -53,7 +53,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
             //this._position = cc.p(newPosOrxValue,yValue);
         } else {
             this._position = x;
-        }
+        }g
         this.setNodeDirty();
         this.dom.translates(this._position._x, -this._position._y);
     },
@@ -449,7 +449,8 @@ cc.DOM.setTransform = function (x) {
          x.ctx.setTransform(1,0,0,1,0,0);
          x.ctx.clearRect(0,0,x.canvas.width, x.canvas.height);
          x.ctx.restore();*/
-        x.ctx.translate(x.getAnchorPointInPoints().x, x.getAnchorPointInPoints().y);
+        var xAnchorPointInPoints = x.getAnchorPointInPoints();
+        x.ctx.translate(xAnchorPointInPoints.x, xAnchorPointInPoints.y);
         if (x.isSprite) {
             var tmp = x._children;
             x._children = [];
@@ -461,8 +462,9 @@ cc.DOM.setTransform = function (x) {
         }
     }
     if (x.dom) {
-        x.dom.position.x = x.getPosition().x;
-        x.dom.position.y = -x.getPosition().y;
+        var xPosition = x.getPosition();
+        x.dom.position.x = xPosition.x;
+        x.dom.position.y = -xPosition.y;
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
