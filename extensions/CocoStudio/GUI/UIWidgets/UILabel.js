@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILabel = ccs.UIWidget.extend({
+ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     _touchScaleChangeEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
@@ -184,16 +184,28 @@ ccs.UILabel = ccs.UIWidget.extend({
 
     },
 
+    /**
+     * set scale
+     * @param {Number} scale
+     */
     setScale: function (scale) {
         ccs.UIWidget.prototype.setScale.call(this, scale);
         this._normalScaleValueX = this._normalScaleValueY = scale;
     },
 
+    /**
+     * set scaleX
+     * @param {Number} scaleX
+     */
     setScaleX: function (scaleX) {
         ccs.UIWidget.prototype.setScaleX.call(this, scaleX);
         this._normalScaleValueX = scaleX;
     },
 
+    /**
+     * set scaleY
+     * @param {Number} scaleY
+     */
     setScaleY: function (scaleY) {
         ccs.UIWidget.prototype.setScaleY.call(this, scaleY);
         this._normalScaleValueY = scaleY;
@@ -237,11 +249,17 @@ ccs.UILabel = ccs.UIWidget.extend({
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UILabel or The anchor point.x of UILabel.
+     * @param {Number} [y] The anchor point.y of UILabel.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._labelRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._labelRenderer.setAnchorPoint(point, y);
+        } else {
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._labelRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
@@ -267,7 +285,9 @@ ccs.UILabel = ccs.UIWidget.extend({
     labelScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelRenderer.setScale(1.0);
-            this._size = this._labelRenderer.getContentSize();
+            var renderSize = this._labelRenderer.getContentSize();
+            this._size.width = renderSize.width;
+            this._size.height = renderSize.height;
         }
         else {
             var textureSize = this._labelRenderer.getContentSize();
@@ -283,6 +303,10 @@ ccs.UILabel = ccs.UIWidget.extend({
 
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "Label";
     },
@@ -298,7 +322,14 @@ ccs.UILabel = ccs.UIWidget.extend({
         this.setTouchScaleChangeEnabled(uiLabel._touchScaleChangeEnabled);
     }
 });
-
+/**
+ * allocates and initializes a UILabel.
+ * @constructs
+ * @return {ccs.UILabel}
+ * @example
+ * // example
+ * var uiLabel = ccs.UILabel.create();
+ */
 ccs.UILabel.create = function () {
     var uiLabel = new ccs.UILabel();
     if (uiLabel && uiLabel.init()) {

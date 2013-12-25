@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SpriteFrameCacheHelper = cc.Class.extend({
+ccs.SpriteFrameCacheHelper = ccs.Class.extend({
     _textureAtlasDic:null,
     _imagePaths:[],
     ctor:function () {

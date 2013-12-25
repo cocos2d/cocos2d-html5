@@ -48,7 +48,14 @@ ccs.UIRootWidget = ccs.UILayout.extend({
         return "RootWidget";
     }
 });
-
+/**
+ * allocates and initializes a UIRootWidget.
+ * @constructs
+ * @return {ccs.UIRootWidget}
+ * @example
+ * // example
+ * var widget = ccs.UIRootWidget.create();
+ */
 ccs.UIRootWidget.create = function () {
     var widget = new ccs.UIRootWidget();
     if (widget && widget.init()) {

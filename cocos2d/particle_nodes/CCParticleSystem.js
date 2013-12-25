@@ -2196,8 +2196,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     // translate newPos to correct position, since matrix transform isn't performed in batchnode
                     // don't update the particle with the new position information, it will interfere with the radius and tangential calculations
                     if (this._batchNode) {
-                        newPos.x += this._position.x;
-                        newPos.y += this._position.y;
+                        newPos.x += this._position._x;
+                        newPos.y += this._position._y;
                     }
 
                     if (cc.renderContextType == cc.WEBGL) {
@@ -2331,7 +2331,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             retParticle._endSizeVar = this._endSizeVar;
 
             // position
-            retParticle.setPosition(new cc.Point(this._position.x, this._position.y));
+            retParticle.setPosition(this._position._x, this._position._y);
             retParticle._posVar.x = this._posVar.x;
             retParticle._posVar.y = this._posVar.y;
 

@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.DisplayFactory = ccs.DisplayFactory || cc.Class.extend({});
+ccs.DisplayFactory = ccs.DisplayFactory || ccs.Class.extend({});
 ccs.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
     switch (displayData.displayType) {
         case ccs.DisplayType.sprite:
@@ -53,32 +53,19 @@ ccs.DisplayFactory.createDisplay = function (bone, decoDisplay) {
             break;
     }
 };
-
+ccs.DisplayFactory._helpTransform =  {a:1, b:0, c:0, d:1, tx:0, ty:0};
 ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
     var display = bone.getDisplayRenderNode();
     if(!display)
         return;
 
-    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
-        if (dirty) {
-            var decoDisplay = bone.getDisplayManager().getCurrentDecorativeDisplay();
-            var detector = decoDisplay.getColliderDetector();
-            if (detector&&detector.getBody()) {
-                var node = decoDisplay.getDisplay();
-                var displayTransform = node.nodeToParentTransform();
-                var anchorPoint =  node.getAnchorPointInPoints();
-                anchorPoint = cc.PointApplyAffineTransform(anchorPoint, displayTransform);
-                displayTransform.tx = anchorPoint.x;
-                displayTransform.ty = anchorPoint.y;
-                var t = cc.AffineTransformConcat(displayTransform, bone.getArmature().nodeToParentTransform());
-                detector.updateTransform(t);
-            }
-        }
-    }
     switch (bone.getDisplayRenderNodeType()) {
         case ccs.DisplayType.sprite:
             if (dirty){
-                display.updateBlendType(bone.getBlendType());
+                if(bone.isBlendDirty()){
+                    display.setBlendFunc(bone.getBlendFunc());
+                    bone.setBlendDirty(false);
+                }
                 display.updateArmatureTransform();
             }
             break;
@@ -92,6 +79,31 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
             display.setAdditionalTransform(bone.nodeToArmatureTransform());
             break;
     }
+
+    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
+        if (dirty) {
+            var decoDisplay = bone.getDisplayManager().getCurrentDecorativeDisplay();
+            var detector = decoDisplay.getColliderDetector();
+            if (detector) {
+                var node = decoDisplay.getDisplay();
+                var displayTransform = node.nodeToParentTransform();
+                var helpTransform = this._helpTransform;
+                helpTransform.a = displayTransform.a;
+                helpTransform.b = displayTransform.b;
+                helpTransform.c = displayTransform.c;
+                helpTransform.d = displayTransform.d;
+                helpTransform.tx = displayTransform.tx;
+                helpTransform.ty = displayTransform.ty;
+                var anchorPoint =  node.getAnchorPointInPoints();
+                anchorPoint = cc.PointApplyAffineTransform(anchorPoint, helpTransform);
+                helpTransform.tx = anchorPoint.x;
+                helpTransform.ty = anchorPoint.y;
+                var t = cc.AffineTransformConcat(helpTransform, bone.getArmature().nodeToParentTransform());
+                detector.updateTransform(t);
+            }
+        }
+    }
+
 };
 ccs.DisplayFactory.addSpriteDisplay = function (bone, decoDisplay, displayData) {
     var sdp = new ccs.SpriteDisplayData();
@@ -139,22 +151,15 @@ ccs.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, 
     var textureData = ccs.ArmatureDataManager.getInstance().getTextureData(textureName);
     if (textureData) {
         //! Init display anchorPoint, every Texture have a anchor point
-        skin.setAnchorPoint(cc.p(textureData.pivotX, textureData.pivotY));
+        skin.setAnchorPoint(textureData.pivotX, textureData.pivotY);
     }
-    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+    if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
         if (textureData && textureData.contourDataList.length > 0)        {
             var colliderDetector = ccs.ColliderDetector.create(bone);
             colliderDetector.addContourDataList(textureData.contourDataList);
             decoDisplay.setColliderDetector(colliderDetector);
         }
     }
-},
-
-ccs.DisplayFactory.updateSpriteDisplay = function (bone, skin, dt, dirty) {
-    if(!dirty)
-        return;
-    skin.updateBlendType(bone.getBlendType());
-    skin.updateArmatureTransform();
 };
 
 ccs.DisplayFactory.addArmatureDisplay = function (bone, decoDisplay, displayData) {
@@ -184,7 +189,7 @@ ccs.DisplayFactory.addParticleDisplay = function (bone, decoDisplay, displayData
 };
 ccs.DisplayFactory.createParticleDisplay = function (bone, decoDisplay) {
     var displayData = decoDisplay.getDisplayData();
-    var system = cc.ParticleSystem.create(displayData.plist);
+    var system = cc.ParticleSystem.create(displayData.displayName);
     var armature = bone.getArmature();
     if (armature)    {
         system.setParent(bone.getArmature());

@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.DisplayManager = cc.Class.extend({
+ccs.DisplayManager = ccs.Class.extend({
     _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,
@@ -77,18 +77,37 @@ ccs.DisplayManager = cc.Class.extend({
             var skin = display;
             skin.setBone(this._bone);
             displayData = new ccs.SpriteDisplayData();
+            displayData.displayName = skin.getDisplayName();
             ccs.DisplayFactory.initSpriteDisplay(this._bone, decoDisplay, skin.getDisplayName(), skin);
             var spriteDisplayData = decoDisplay.getDisplayData();
             if (spriteDisplayData instanceof ccs.SpriteDisplayData)
                 skin.setSkinData(spriteDisplayData.skinData);
-            else
+            else{
+                var find = false;
+                for (var i = this._decoDisplayList.length - 2; i >= 0; i--) {
+                    var dd = this._decoDisplayList[i];
+                    var sdd = dd.getDisplayData();
+                    if (sdd) {
+                        find = true;
+                        skin.setSkinData(sdd.skinData);
+                        displayData.skinData = sdd.skinData;
+                        break;
+                    }
+                }
+                if (!find) {
+                    skin.setSkinData(new ccs.BaseData());
+                }
                 skin.setSkinData(new ccs.BaseData());
+            }
+                
         }
         else if (display instanceof cc.ParticleSystem){
             displayData = new ccs.ParticleDisplayData();
+            displayData.displayName = display._plistFile;
         }
         else if (display instanceof ccs.Armature){
             displayData = new ccs.ArmatureDisplayData();
+            displayData.displayName = display.getName();
             display.setParentBone(this._bone);
         }
         else  {
@@ -141,9 +160,18 @@ ccs.DisplayManager = cc.Class.extend({
         this.setCurrentDecorativeDisplay(decoDisplay);
     },
 
+    changeDisplayByName: function (name, force) {
+        for (var i = 0; i < this._decoDisplayList.length; i++) {
+            if (this._decoDisplayList[i].getDisplayData().displayName == name) {
+                this.changeDisplayByIndex(i, force);
+                break;
+            }
+        }
+    },
+
     setCurrentDecorativeDisplay:function (decoDisplay) {
         var locCurrentDecoDisplay = this._currentDecoDisplay;
-        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
             if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
                 locCurrentDecoDisplay.getColliderDetector().setActive(false);
             }
@@ -151,7 +179,7 @@ ccs.DisplayManager = cc.Class.extend({
 
         this._currentDecoDisplay = decoDisplay;
         locCurrentDecoDisplay = this._currentDecoDisplay;
-        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT) {
+        if (ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT || ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
             if (locCurrentDecoDisplay && locCurrentDecoDisplay.getColliderDetector()) {
                 locCurrentDecoDisplay.getColliderDetector().setActive(true);
             }

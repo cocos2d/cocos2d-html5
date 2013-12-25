@@ -21,6 +21,11 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+/**
+ * checkBoxEvent type
+ * @type {Object}
+ */
 ccs.CheckBoxEventType = {
     selected: 0,
     unselected: 1
@@ -31,7 +36,7 @@ ccs.CheckBoxEventType = {
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UICheckBox = ccs.UIWidget.extend({
+ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     _backGroundBoxRenderer: null,
     _backGroundSelectedBoxRenderer: null,
     _frontCrossRenderer: null,
@@ -122,21 +127,27 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         texType = texType || ccs.TextureResType.local;
         this._backGroundFileName = backGround;
         this._backGroundTexType = texType;
+        var bgBoxRenderer = this._backGroundBoxRenderer;
         switch (this._backGroundTexType) {
             case ccs.TextureResType.local:
-                this._backGroundBoxRenderer.initWithFile(backGround);
+                bgBoxRenderer.initWithFile(backGround);
                 break;
             case ccs.TextureResType.plist:
-                this._backGroundBoxRenderer.initWithSpriteFrameName(backGround);
+                bgBoxRenderer.initWithSpriteFrameName(backGround);
                 break;
             default:
                 break;
         }
-        this._backGroundBoxRenderer.setColor(this.getColor());
-        this._backGroundBoxRenderer.setOpacity(this.getOpacity());
+        bgBoxRenderer.setColor(this.getColor());
+        bgBoxRenderer.setOpacity(this.getOpacity());
+
+        if(!bgBoxRenderer.textureLoaded()){
+            bgBoxRenderer.addLoadedEventListener(function(){
+                this.backGroundTextureScaleChangedWithSize();
+            },this);
+        }
         this.backGroundTextureScaleChangedWithSize();
     },
-
     /**
      * Load backGroundSelected texture for checkbox.
      * @param {String} backGroundSelected
@@ -361,15 +372,25 @@ ccs.UICheckBox = ccs.UIWidget.extend({
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UICheckBox or The anchor point.x of UICheckBox.
+     * @param {Number} [y] The anchor point.y of UICheckBox.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._backGroundBoxRenderer.setAnchorPoint(pt);
-        this._backGroundSelectedBoxRenderer.setAnchorPoint(pt);
-        this._backGroundBoxDisabledRenderer.setAnchorPoint(pt);
-        this._frontCrossRenderer.setAnchorPoint(pt);
-        this._frontCrossDisabledRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._backGroundBoxRenderer.setAnchorPoint(point, y);
+            this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
+            this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
+            this._frontCrossRenderer.setAnchorPoint(point, y);
+            this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
+        }else{
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._backGroundBoxRenderer.setAnchorPoint(point);
+            this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
+            this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
+            this._frontCrossRenderer.setAnchorPoint(point);
+            this._frontCrossDisabledRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
@@ -399,7 +420,9 @@ ccs.UICheckBox = ccs.UIWidget.extend({
     backGroundTextureScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._backGroundBoxRenderer.setScale(1.0);
-            this._size = this._backGroundBoxRenderer.getContentSize();
+            var locBackSize = this._backGroundBoxRenderer.getContentSize();
+            this._size.width = locBackSize.width;
+            this._size.height = locBackSize.height;
         }
         else {
             var textureSize = this._backGroundBoxRenderer.getContentSize();
@@ -482,6 +505,10 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         }
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "CheckBox";
     },
@@ -499,7 +526,14 @@ ccs.UICheckBox = ccs.UIWidget.extend({
         this.setSelectedState(uiCheckBox._isSelected);
     }
 });
-
+/**
+ * allocates and initializes a UICheckBox.
+ * @constructs
+ * @return {ccs.UICheckBox}
+ * @example
+ * // example
+ * var uiCheckBox = ccs.UICheckBox.create();
+ */
 ccs.UICheckBox.create = function () {
     var uiCheckBox = new ccs.UICheckBox();
     if (uiCheckBox && uiCheckBox.init()) {

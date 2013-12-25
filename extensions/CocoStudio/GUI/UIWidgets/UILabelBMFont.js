@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UILabelBMFont = ccs.UIWidget.extend({
+ccs.UILabelBMFont = ccs.UIWidget.extend(/** @lends ccs.UILabelBMFont# */{
     _labelBMFontRenderer: null,
     _fileHasInit: false,
     _fntFileName: "",
@@ -57,6 +57,12 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
         this.labelBMFontScaleChangedWithSize();
         this._fileHasInit = true;
         this.setText(this._stringValue);
+
+        if (!this._labelBMFontRenderer.textureLoaded()) {
+            this._labelBMFontRenderer.addLoadedEventListener(function () {
+                this.labelBMFontScaleChangedWithSize();
+            }, this);
+        }
     },
 
     /**
@@ -82,11 +88,17 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UILabelBMFont or The anchor point.x of UILabelBMFont.
+     * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._labelBMFontRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._labelBMFontRenderer.setAnchorPoint(point, y);
+        } else {
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._labelBMFontRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
@@ -112,7 +124,9 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
     labelBMFontScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._labelBMFontRenderer.setScale(1.0);
-            this._size = this._labelBMFontRenderer.getContentSize();
+            var rendererSize = this._labelBMFontRenderer.getContentSize();
+            this._size.width = rendererSize.width;
+            this._size.height = rendererSize.height;
         }
         else {
             var textureSize = this._labelBMFontRenderer.getContentSize();
@@ -127,6 +141,10 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
         }
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "LabelBMFont";
     },
@@ -140,7 +158,14 @@ ccs.UILabelBMFont = ccs.UIWidget.extend({
         this.setText(labelBMFont._stringValue);
     }
 });
-
+/**
+ * allocates and initializes a UILabelBMFont.
+ * @constructs
+ * @return {ccs.UILabelBMFont}
+ * @example
+ * // example
+ * var uiLabelBMFont = ccs.UILabelBMFont.create();
+ */
 ccs.UILabelBMFont.create = function () {
     var uiLabelBMFont = new ccs.UILabelBMFont();
     if (uiLabelBMFont && uiLabelBMFont.init()) {

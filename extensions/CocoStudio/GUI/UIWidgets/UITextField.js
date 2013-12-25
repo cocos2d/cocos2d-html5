@@ -235,7 +235,7 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UITextField = ccs.UIWidget.extend({
+ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     _textFieldRender: null,
     _touchWidth: 0,
     _touchHeight: 0,
@@ -331,19 +331,34 @@ ccs.UITextField = ccs.UIWidget.extend({
         this.textfieldRendererScaleChangedWithSize();
     },
 
+    /**
+     * detach with IME
+     */
     didNotSelectSelf: function () {
         this._textFieldRender.detachWithIME();
     },
 
+    /**
+     * get textField string value
+     * @returns {String}
+     */
     getStringValue: function () {
         return this._textFieldRender.getString();
     },
 
+    /**
+     * touch began
+     * @param {cc.Point} touchPoint
+     */
     onTouchBegan: function (touchPoint) {
         var pass = ccs.UIWidget.prototype.onTouchBegan.call(this, touchPoint);
         return pass;
     },
 
+    /**
+     * touch ended
+     * @param touchPoint
+     */
     onTouchEnded: function (touchPoint) {
         ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
         this._textFieldRender.attachWithIME();
@@ -420,18 +435,34 @@ ccs.UITextField = ccs.UIWidget.extend({
         }
     },
 
+    /**
+     * get whether attach with IME.
+     * @returns {Boolean}
+     */
     getAttachWithIME: function () {
         return this._textFieldRender.getAttachWithIME();
     },
 
+    /**
+     * set attach with IME.
+     * @param {Boolean} attach
+     */
     setAttachWithIME: function (attach) {
         this._textFieldRender.setAttachWithIME(attach);
     },
 
+    /**
+     * get whether eetach with IME.
+     * @returns {Boolean}
+     */
     getDetachWithIME: function () {
         return this._textFieldRender.getDetachWithIME();
     },
 
+    /**
+     * set detach with IME.
+     * @param {Boolean} detach
+     */
     setDetachWithIME: function (detach) {
         this._textFieldRender.setDetachWithIME(detach);
     },
@@ -500,10 +531,15 @@ ccs.UITextField = ccs.UIWidget.extend({
         this._textFieldEventListener = target;
     },
 
+    /**
+     * check hit
+     * @param {cc.Point} pt
+     * @returns {boolean}
+     */
     hitTest: function (pt) {
         var nsp = this._renderer.convertToNodeSpace(pt);
         var locSize = this._textFieldRender.getContentSize();
-        var bb = cc.rect(-locSize.width * this._anchorPoint.x, -locSize.height * this._anchorPoint.y, locSize.width, locSize.height);
+        var bb = cc.rect(-locSize.width * this._anchorPoint._x, -locSize.height * this._anchorPoint._y, locSize.width, locSize.height);
         if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
             return true;
         }
@@ -512,11 +548,17 @@ ccs.UITextField = ccs.UIWidget.extend({
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UILabelBMFont or The anchor point.x of UILabelBMFont.
+     * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._textFieldRender.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._textFieldRender.setAnchorPoint(point, y);
+        } else {
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._textFieldRender.setAnchorPoint(point);
+        }
     },
 
     /**
@@ -542,7 +584,9 @@ ccs.UITextField = ccs.UIWidget.extend({
     textfieldRendererScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._textFieldRender.setScale(1.0);
-            this._size = this.getContentSize();
+            var rendererSize = this.getContentSize();
+            this._size.width = rendererSize.width;
+            this._size.height = rendererSize.height;
         }
         else {
             var textureSize = this.getContentSize();
@@ -573,6 +617,10 @@ ccs.UITextField = ccs.UIWidget.extend({
         return this._textFieldRender;
     },
 
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "TextField";
     },
@@ -600,6 +648,14 @@ ccs.UITextField = ccs.UIWidget.extend({
         this.setDeleteBackward(textField.getDeleteBackward());
     }
 });
+/**
+ * allocates and initializes a UITextField.
+ * @constructs
+ * @return {ccs.UITextField}
+ * @example
+ * // example
+ * var uiTextField = ccs.UITextField.create();
+ */
 ccs.UITextField.create = function () {
     var uiTextField = new ccs.UITextField();
     if (uiTextField && uiTextField.init()) {

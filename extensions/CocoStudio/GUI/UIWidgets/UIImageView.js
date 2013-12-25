@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.UIWidget
  */
-ccs.UIImageView = ccs.UIWidget.extend({
+ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     _clickCount: 0,
     _clickTimeInterval: 0,
     _startCheckDoubleClick: false,
@@ -53,7 +53,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
         this._imageRenderer = null;
         this._textureFile = "";
         this._imageTexType = ccs.TextureResType.local;
-        this._imageTextureSize = this._size;
+        this._imageTextureSize = cc.size(this._size.width, this._size.height);
     },
 
     initRenderer: function () {
@@ -74,37 +74,42 @@ ccs.UIImageView = ccs.UIWidget.extend({
         texType = texType || ccs.TextureResType.local;
         this._textureFile = fileName;
         this._imageTexType = texType;
+        var imageRenderer = this._imageRenderer
         switch (this._imageTexType) {
             case ccs.TextureResType.local:
-                if (this._scale9Enabled) {
-                    this._imageRenderer.initWithFile(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                    this._imageRenderer.setCapInsets(this._capInsets);
-                }
-                else {
-                    this._imageRenderer.initWithFile(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                }
+                imageRenderer.initWithFile(fileName);
                 break;
             case ccs.TextureResType.plist:
-                if (this._scale9Enabled) {
-                    this._imageRenderer.initWithSpriteFrameName(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                    this._imageRenderer.setCapInsets(this._capInsets);
-                }
-                else {
-                    this._imageRenderer.initWithSpriteFrameName(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                }
+                imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._imageTextureSize = this._imageRenderer.getContentSize();
+        imageRenderer.setColor(this.getColor());
+        imageRenderer.setOpacity(this.getOpacity());
+
+        var locRendererSize = imageRenderer.getContentSize();
+        if(imageRenderer.textureLoaded()){
+            this._imageTextureSize.width = locRendererSize.width;
+            this._imageTextureSize.height = locRendererSize.height;
+        }else{
+            imageRenderer.addLoadedEventListener(function(){
+                var locSize = imageRenderer.getContentSize();
+                this._imageTextureSize.width = locSize.width;
+                this._imageTextureSize.height = locSize.height;
+                if (imageRenderer.setCapInsets) {
+                    imageRenderer.setCapInsets(this._capInsets);
+                }
+                this.imageTextureScaleChangedWithSize();
+            },this);
+            this._imageTextureSize.width = this._customSize.width;
+            this._imageTextureSize.height = this._customSize.height;
+        }
+
+        if (this._scale9Enabled) {
+            imageRenderer.setCapInsets(this._capInsets);
+        }
+
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },
@@ -282,11 +287,17 @@ ccs.UIImageView = ccs.UIWidget.extend({
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UIImageView or The anchor point.x of UIImageView.
+     * @param {Number} [y] The anchor point.y of UIImageView.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._imageRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            this._imageRenderer.setAnchorPoint(point, y);
+        } else {
+            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            this._imageRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
@@ -333,6 +344,11 @@ ccs.UIImageView = ccs.UIWidget.extend({
             }
         }
     },
+
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "ImageView";
     },
@@ -349,7 +365,14 @@ ccs.UIImageView = ccs.UIWidget.extend({
     }
 
 });
-
+/**
+ * allocates and initializes a UIImageView.
+ * @constructs
+ * @return {ccs.UIImageView}
+ * @example
+ * // example
+ * var uiImageView = ccs.UIImageView.create();
+ */
 ccs.UIImageView.create = function () {
     var uiImageView = new ccs.UIImageView();
     if (uiImageView && uiImageView.init()) {
