@@ -35,7 +35,7 @@ ccs.ListViewGravity = {
     centerVertical: 5
 };
 
-ccs.UIListView = ccs.UIScrollView.extend({
+ccs.ListView = ccs.UIScrollView.extend({
     _model: null,
     _items: null,
     _gravity: null,
@@ -362,7 +362,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
     },
 
     createCloneInstance: function () {
-        return ccs.UIListView.create();
+        return ccs.ListView.create();
     },
 
     copyClonedWidgetChildren: function (model) {
@@ -381,8 +381,8 @@ ccs.UIListView = ccs.UIScrollView.extend({
     }
 });
 
-ccs.UIListView.create = function () {
-    var uiListView = new ccs.UIListView();
+ccs.ListView.create = function () {
+    var uiListView = new ccs.ListView();
     if (uiListView && uiListView.init()) {
         return uiListView;
     }

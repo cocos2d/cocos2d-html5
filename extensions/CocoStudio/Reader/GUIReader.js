@@ -493,7 +493,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForLayoutFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
-        if (!(containerWidget instanceof ccs.UIScrollView) && !(containerWidget instanceof ccs.UIListView)) {
+        if (!(containerWidget instanceof ccs.UIScrollView) && !(containerWidget instanceof ccs.ListView)) {
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
         var panel = widget;
@@ -559,7 +559,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
         if (containerWidget instanceof ccs.UIScrollView ||
-            containerWidget instanceof ccs.UIListView) {
+            containerWidget instanceof ccs.ListView) {
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -840,7 +840,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ListView") {
-            widget = ccs.UIListView.create();
+            widget = ccs.ListView.create();
             this.setPropsForListViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "PageView") {
@@ -1233,7 +1233,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     setPropsForLayoutFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var panel = widget;
-        if (!(panel instanceof ccs.UIScrollView) && !(panel instanceof ccs.UIListView)) {
+        if (!(panel instanceof ccs.UIScrollView) && !(panel instanceof ccs.ListView)) {
             panel.setClippingEnabled(options["clipAble"]);
         }
         var backGroundScale9Enable = options["backGroundScale9Enable"];
