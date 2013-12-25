@@ -53,7 +53,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
             //this._position = cc.p(newPosOrxValue,yValue);
         } else {
             this._position = x;
-        }g
+        }
         this.setNodeDirty();
         this.dom.translates(this._position._x, -this._position._y);
     },
