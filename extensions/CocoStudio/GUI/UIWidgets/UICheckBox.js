@@ -39,9 +39,9 @@ ccs.FRONTCROSSDISABLEDRENDERER = -1;
 /**
  * Base class for ccs.UICheckBox
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
+ccs.UICheckBox = ccs.Widget.extend(/** @lends ccs.UICheckBox# */{
     _backGroundBoxRenderer: null,
     _backGroundSelectedBoxRenderer: null,
     _frontCrossRenderer: null,
@@ -61,7 +61,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._backGroundBoxRenderer = null;
         this._backGroundSelectedBoxRenderer = null;
         this._frontCrossRenderer = null;
@@ -82,7 +82,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
         this._frontCrossDisabledFileName = "";
     },
     init: function () {
-        if (ccs.UIWidget.prototype.init.call(this)) {
+        if (ccs.Widget.prototype.init.call(this)) {
             this.setSelectedState(false);
             return true;
         }
@@ -387,14 +387,14 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._backGroundBoxRenderer.setAnchorPoint(point, y);
             this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
             this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
             this._frontCrossRenderer.setAnchorPoint(point, y);
             this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
         }else{
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
             this._backGroundBoxRenderer.setAnchorPoint(point);
             this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
             this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
@@ -404,7 +404,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.backGroundTextureScaleChangedWithSize();
         this.backGroundSelectedTextureScaleChangedWithSize();
         this.frontCrossTextureScaleChangedWithSize();

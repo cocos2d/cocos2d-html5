@@ -26,9 +26,9 @@ ccs.LABELRENDERERZ = -1;
 /**
  * Base class for ccs.UIButton
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
+ccs.UILabel = ccs.Widget.extend(/** @lends ccs.UILabel# */{
     _touchScaleChangeEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
@@ -37,7 +37,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     _onSelectedScaleOffset: 0,
     _labelRenderer: "",
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._touchScaleChangeEnabled = false;
         this._normalScaleValueX = 0;
         this._normalScaleValueY = 0;
@@ -48,7 +48,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     },
 
     init: function () {
-        if (ccs.UIWidget.prototype.init.call(this)) {
+        if (ccs.Widget.prototype.init.call(this)) {
             return true;
         }
         return false;
@@ -189,7 +189,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      * @param {Number} scale
      */
     setScale: function (scale) {
-        ccs.UIWidget.prototype.setScale.call(this, scale);
+        ccs.Widget.prototype.setScale.call(this, scale);
         this._normalScaleValueX = this._normalScaleValueY = scale;
     },
 
@@ -198,7 +198,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      * @param {Number} scaleX
      */
     setScaleX: function (scaleX) {
-        ccs.UIWidget.prototype.setScaleX.call(this, scaleX);
+        ccs.Widget.prototype.setScaleX.call(this, scaleX);
         this._normalScaleValueX = scaleX;
     },
 
@@ -207,7 +207,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      * @param {Number} scaleY
      */
     setScaleY: function (scaleY) {
-        ccs.UIWidget.prototype.setScaleY.call(this, scaleY);
+        ccs.Widget.prototype.setScaleY.call(this, scaleY);
         this._normalScaleValueY = scaleY;
     },
 
@@ -254,16 +254,16 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._labelRenderer.setAnchorPoint(point, y);
         } else {
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
             this._labelRenderer.setAnchorPoint(point);
         }
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.labelScaleChangedWithSize();
     },
 

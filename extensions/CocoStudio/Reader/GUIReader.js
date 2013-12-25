@@ -106,7 +106,7 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
     /**
      *  create uiWidget from a josn file that exported by cocostudio UI editor
      * @param {String} fileName
-     * @returns {ccs.UIWidget}
+     * @returns {ccs.Widget}
      */
     widgetFromJsonFile: function (fileName) {
         var jsonPath = fileName || "";

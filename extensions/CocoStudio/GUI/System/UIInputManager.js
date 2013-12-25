@@ -53,7 +53,7 @@ ccs.UIInputManager = ccs.Class.extend({
 
     /**
      * Check touch event
-     * @param {ccs.UIWidget} root
+     * @param {ccs.Widget} root
      * @param {cc.Touch} touch
      * @param {event} event
      * @returns {boolean}

@@ -30,9 +30,9 @@ var TITLE_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.UIButton
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
+ccs.UIButton = ccs.Widget.extend(/** @lends ccs.UIButton# */{
     _buttonNormalRenderer: null,
     _buttonClickedRenderer: null,
     _buttonDisableRenderer: null,
@@ -55,7 +55,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     _pressedActionEnabled: false,
     _titleColor: null,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._buttonNormalRenderer = null;
         this._buttonClickedRenderer = null;
         this._buttonDisableRenderer = null;
@@ -80,7 +80,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     },
 
     init: function () {
-        if (ccs.UIWidget.prototype.init.call(this))
+        if (ccs.Widget.prototype.init.call(this))
             return true;
         return false;
     },
@@ -148,7 +148,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -455,13 +455,13 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this,point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this,point, y);
             this._buttonNormalRenderer.setAnchorPoint(point, y);
             this._buttonClickedRenderer.setAnchorPoint(point, y);
             this._buttonDisableRenderer.setAnchorPoint(point, y);
             this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
         } else {
-            ccs.UIWidget.prototype.setAnchorPoint.call(this,point);
+            ccs.Widget.prototype.setAnchorPoint.call(this,point);
             this._buttonNormalRenderer.setAnchorPoint(point);
             this._buttonClickedRenderer.setAnchorPoint(point);
             this._buttonDisableRenderer.setAnchorPoint(point);
@@ -470,7 +470,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.normalTextureScaleChangedWithSize();
         this.pressedTextureScaleChangedWithSize();
         this.disabledTextureScaleChangedWithSize();
@@ -657,7 +657,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
      * @param color
      */
     setColor: function (color) {
-        ccs.UIWidget.prototype.setColor.call(this,color);
+        ccs.Widget.prototype.setColor.call(this,color);
         this.setTitleColor(this._titleColor);
     },
 

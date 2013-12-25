@@ -80,15 +80,15 @@ ccs.PositionType = {
 };
 
 /**
- * Base class for ccs.UIWidget
+ * Base class for ccs.Widget
  * @sample
- * var uiWidget = ccs.UIWidget.create();
+ * var uiWidget = ccs.Widget.create();
  * var uiLayer = ccs.UILayer.create();
  * uiLayer.addWidget(uiWidget);
  * @class
  * @extends ccs.Class
  */
-ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
+ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _enabled: true,            ///< Highest control of widget
     _bright: true,             ///< is this widget bright
     _touchEnabled: false,       ///< is this widget touch endabled
@@ -182,12 +182,12 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
 
     /**
      * Adds a child to the container.
-     * @param {ccs.UIWidget||cc.Node} child
+     * @param {ccs.Widget||cc.Node} child
      * @returns {boolean}
      */
     addChild: function (child, zOrder, tag) {
         cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
-        if (child instanceof ccs.UIWidget) {
+        if (child instanceof ccs.Widget) {
             this._widgetChildren.push(child);
         }
     },
@@ -239,7 +239,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
 
     getWidgetParent: function () {
         var widget = this.getParent();
-        if(widget instanceof ccs.UIWidget){
+        if(widget instanceof ccs.Widget){
             return widget;
         }
         return null;
@@ -255,7 +255,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
 
     /**
      * remove  child
-     * @param {ccs.UIWidget} child
+     * @param {ccs.Widget} child
      * @param {Boolean} cleanup
      */
     removeChild: function (child, cleanup) {
@@ -303,7 +303,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     /**
      * Gets a child from the container with its name
      * @param {string} name
-     * @returns {ccs.UIWidget}
+     * @returns {ccs.Widget}
      */
     getChildByName: function (name) {
         var arrayChildren = this._widgetChildren;
@@ -873,7 +873,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     /**
      * Sends the touch event to widget's parent
      * @param {number} handleState
-     * @param {ccs.UIWidget} sender
+     * @param {ccs.Widget} sender
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
@@ -1098,7 +1098,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UIWidget.create();
+        return ccs.Widget.create();
     },
 
     copyClonedWidgetChildren: function (model) {
@@ -1160,13 +1160,13 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
 /**
  * allocates and initializes a UIWidget.
  * @constructs
- * @return {ccs.UIWidget}
+ * @return {ccs.Widget}
  * @example
  * // example
- * var uiWidget = ccs.UIWidget.create();
+ * var uiWidget = ccs.Widget.create();
  */
-ccs.UIWidget.create = function () {
-    var widget = new ccs.UIWidget();
+ccs.Widget.create = function () {
+    var widget = new ccs.Widget();
     if (widget && widget.init()) {
         return widget;
     }

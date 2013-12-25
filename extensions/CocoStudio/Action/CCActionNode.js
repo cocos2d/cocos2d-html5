@@ -121,7 +121,7 @@ ccs.ActionNode = ccs.Class.extend({
         if (root instanceof cc.Node) {
             cc.log("Need a definition of <initActionNodeFromRoot> for gameObject");
         }
-        else if (root instanceof ccs.UIWidget) {
+        else if (root instanceof ccs.Widget) {
             var widget = ccs.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
             if (widget) {
                 this.setObject(widget);
@@ -186,7 +186,7 @@ ccs.ActionNode = ccs.Class.extend({
         if (this._object instanceof cc.Node) {
             return this._object;
         }
-        else if (this._object instanceof ccs.UIWidget) {
+        else if (this._object instanceof ccs.Widget) {
             return this._object;
         }
         return null;

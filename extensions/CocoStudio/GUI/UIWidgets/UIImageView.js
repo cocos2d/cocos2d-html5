@@ -25,9 +25,9 @@ ccs.IMAGERENDERERZ = -1;
 /**
  * Base class for ccs.UIButton
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
+ccs.UIImageView = ccs.Widget.extend(/** @lends ccs.UIImageView# */{
     _scale9Enabled: false,
     _prevIgnoreSize: true,
     _capInsets: null,
@@ -36,7 +36,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     _imageTexType: null,
     _imageTextureSize: null,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
         this._capInsets = cc.rect(0,0,0,0);
@@ -193,7 +193,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -217,16 +217,16 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._imageRenderer.setAnchorPoint(point, y);
         } else {
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
             this._imageRenderer.setAnchorPoint(point);
         }
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.imageTextureScaleChangedWithSize();
     },
 

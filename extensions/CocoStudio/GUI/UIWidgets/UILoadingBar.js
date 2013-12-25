@@ -32,9 +32,9 @@ ccs.BARRENDERERZ = -1;
 /**
  * Base class for ccs.UILoadingBar
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
+ccs.UILoadingBar = ccs.Widget.extend(/** @lends ccs.UILoadingBar# */{
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -47,7 +47,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     _textureFile: "",
     _isTextureLoaded: false,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._barType = ccs.LoadingBarType.left;
         this._percent = 100;
         this._totalLength = 0;
@@ -255,7 +255,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.barRendererScaleChangedWithSize();
     },
 
@@ -265,7 +265,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },

@@ -234,9 +234,9 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
 /**
  * Base class for ccs.UITextField
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
+ccs.UITextField = ccs.Widget.extend(/** @lends ccs.UITextField# */{
     _textFieldRender: null,
     _touchWidth: 0,
     _touchHeight: 0,
@@ -253,7 +253,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     _deleteBackwardSelector: null,
     _passwordStyleText:"",
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._textFieldRender = null;
         this._touchWidth = 0;
         this._touchHeight = 0;
@@ -272,7 +272,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     },
 
     init: function () {
-        if (ccs.UIWidget.prototype.init.call(this)) {
+        if (ccs.Widget.prototype.init.call(this)) {
             this.setUpdateEnabled(true);
             return true;
         }
@@ -351,7 +351,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @param {cc.Point} touchPoint
      */
     onTouchBegan: function (touchPoint) {
-        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this, touchPoint);
+        var pass = ccs.Widget.prototype.onTouchBegan.call(this, touchPoint);
         return pass;
     },
 
@@ -360,7 +360,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @param touchPoint
      */
     onTouchEnded: function (touchPoint) {
-        ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
+        ccs.Widget.prototype.onTouchEnded.call(this, touchPoint);
         this._textFieldRender.attachWithIME();
     },
 
@@ -553,10 +553,10 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._textFieldRender.setAnchorPoint(point, y);
         } else {
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
             this._textFieldRender.setAnchorPoint(point);
         }
     },
@@ -565,7 +565,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @param {cc.c3b} color
      */
     setColor: function (color) {
-        ccs.UIWidget.prototype.setColor.call(this, color);
+        ccs.Widget.prototype.setColor.call(this, color);
         this._textFieldRender.setColor(color);
     },
 
@@ -573,12 +573,12 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @param {number} opacity
      */
     setOpacity: function (opacity) {
-        ccs.UIWidget.prototype.setOpacity.call(this, opacity);
+        ccs.Widget.prototype.setOpacity.call(this, opacity);
         this._textFieldRender.setOpacity(opacity);
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.textfieldRendererScaleChangedWithSize();
     },
 

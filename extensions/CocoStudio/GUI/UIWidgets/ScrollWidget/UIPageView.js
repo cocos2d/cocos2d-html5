@@ -96,7 +96,7 @@ ccs.UIPageView = ccs.Layout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Add a widget to a page of pageview.
-     * @param {ccs.UIWidget} widget
+     * @param {ccs.Widget} widget
      * @param {number} pageIdx
      * @param {Boolean} forceCreate
      */
@@ -254,7 +254,7 @@ ccs.UIPageView = ccs.Layout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Add widget
-     * @param {ccs.UIWidget} widget
+     * @param {ccs.Widget} widget
      * @param {Number} zOrder
      * @param {Number} tag
      * @returns {boolean}
@@ -265,7 +265,7 @@ ccs.UIPageView = ccs.Layout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      *  remove widget child override
-     * @param {ccs.UIWidget} child
+     * @param {ccs.Widget} child
      */
     removeChild: function (child) {
         cc.ArrayRemoveObject(this._pages, child);

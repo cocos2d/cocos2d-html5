@@ -56,9 +56,9 @@ ccs.BACKGROUNDCOLORRENDERERZ = -2;
 /**
  * Base class for ccs.Layout
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
+ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _clippingEnabled: null,
     _backGroundScale9Enabled: null,
     _backGroundImage: null,
@@ -83,7 +83,7 @@ ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
     _clippingRect: null,
     _clippingParent: null,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._clippingEnabled = false;
         this._backGroundScale9Enabled = false;
         this._backGroundImage = null;
@@ -156,7 +156,7 @@ ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Adds a locChild to the container.
-     * @param {ccs.UIWidget} locChild
+     * @param {ccs.Widget} locChild
      * @param {Number} zOrder
      * @param {Number} tag
      * @returns {boolean}
@@ -164,7 +164,7 @@ ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
     addChild: function (child, zOrder, tag) {
         this.supplyTheLayoutParameterLackToChild(child);
         this._doLayoutDirty = true;
-        ccs.UIWidget.prototype.addChild.call(this, child, zOrder, tag)
+        ccs.Widget.prototype.addChild.call(this, child, zOrder, tag)
     },
 
     /**
@@ -197,7 +197,7 @@ ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
     },
 
     sortAllChildren: function () {
-        ccs.UIWidget.prototype.sortAllChildren.call(this);
+        ccs.Widget.prototype.sortAllChildren.call(this);
         this.doLayout();
     },
 
@@ -577,7 +577,7 @@ ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.setStencilClippingSize(this._size);
         this._doLayoutDirty = true;
 
@@ -1353,7 +1353,7 @@ ccs.Layout = ccs.UIWidget.extend(/** @lends ccs.Layout# */{
     },
 
     copyClonedWidgetChildren: function (model) {
-        ccs.UIWidget.prototype.copyClonedWidgetChildren.call(this, model);
+        ccs.Widget.prototype.copyClonedWidgetChildren.call(this, model);
     },
 
     copySpecialProperties: function (layout) {

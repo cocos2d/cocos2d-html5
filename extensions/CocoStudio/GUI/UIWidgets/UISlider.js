@@ -34,9 +34,9 @@ ccs.SLIDBALLRENDERERZ = -1;
 /**
  * Base class for ccs.UISlider
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
+ccs.UISlider = ccs.Widget.extend(/** @lends ccs.UISlider# */{
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -64,7 +64,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     _ballDTexType: null,
     _isTextureLoaded: false,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         this._progressBarTextureSize = cc.size(0, 0);
@@ -233,7 +233,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -397,7 +397,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     onTouchBegan: function (touch , event) {
-        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this,touch , event);
+        var pass = ccs.Widget.prototype.onTouchBegan.call(this,touch , event);
         if(this._hitted){
             var nsp = this.convertToNodeSpace(this._touchStartPos);
             this.setPercent(this.getPercentWithBallPos(nsp.x));
@@ -417,11 +417,11 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     onTouchEnded: function (touch , event) {
-        ccs.UIWidget.prototype.onTouchEnded.call(this, touch , event);
+        ccs.Widget.prototype.onTouchEnded.call(this, touch , event);
     },
 
     onTouchCancelled: function (touch , event) {
-        ccs.UIWidget.prototype.onTouchCancelled.call(this, touch , event);
+        ccs.Widget.prototype.onTouchCancelled.call(this, touch , event);
     },
 
     /**
@@ -458,7 +458,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     onSizeChanged: function () {
-        ccs.UIWidget.prototype.onSizeChanged.call(this);
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.barRendererScaleChangedWithSize();
         this.progressBarRendererScaleChangedWithSize();
     },

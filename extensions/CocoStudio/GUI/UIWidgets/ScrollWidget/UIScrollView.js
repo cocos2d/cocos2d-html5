@@ -240,7 +240,7 @@ ccs.UIScrollView = ccs.Layout.extend(/** @lends ccs.UIScrollView# */{
 
     /**
      * Add widget
-     * @param {ccs.UIWidget} widget
+     * @param {ccs.Widget} widget
      * @param {Number} zOrder
      * @param {Number} tag
      * @returns {boolean}
@@ -255,7 +255,7 @@ ccs.UIScrollView = ccs.Layout.extend(/** @lends ccs.UIScrollView# */{
 
     /**
      *  remove widget child override
-     * @param {ccs.UIWidget} child
+     * @param {ccs.Widget} child
      * @returns {boolean}
      */
     removeChild: function (child) {
@@ -1288,7 +1288,7 @@ ccs.UIScrollView = ccs.Layout.extend(/** @lends ccs.UIScrollView# */{
     /**
      * Intercept touch event
      * @param {number} handleState
-     * @param {ccs.UIWidget} sender
+     * @param {ccs.Widget} sender
      * @param {cc.Point} touchPoint
      */
     interceptTouchEvent: function (handleState, sender, touchPoint) {
@@ -1315,7 +1315,7 @@ ccs.UIScrollView = ccs.Layout.extend(/** @lends ccs.UIScrollView# */{
     /**
      *
      * @param {number} handleState
-     * @param {ccs.UIWidget} sender
+     * @param {ccs.Widget} sender
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {

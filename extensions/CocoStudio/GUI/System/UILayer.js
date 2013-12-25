@@ -32,7 +32,7 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     _inputManager: null,
     init: function () {
         if (cc.Layer.prototype.init.call(this)) {
-            this._rootWidget = ccs.UIWidget.create();
+            this._rootWidget = ccs.Widget.create();
             this.addChild(this._rootWidget);
             this._inputManager = new ccs.UIInputManager();
             this._inputManager.setRootWidget(this._rootWidget);
