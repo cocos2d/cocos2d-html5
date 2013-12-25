@@ -205,7 +205,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         var type = this._getResType(resInfo);
         switch (type) {
             case "IMAGE":
-                if(sharedTextureCache) sharedTextureCache.addImage(resInfo.src);
+                sharedTextureCache.addImage(resInfo.src);
                 break;
             case "SOUND":
                 if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
