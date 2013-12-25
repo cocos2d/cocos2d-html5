@@ -32,11 +32,11 @@ ccs.BASEBARRENDERERZ = -3;
 ccs.PROGRESSBARRENDERERZ = -2;
 ccs.SLIDBALLRENDERERZ = -1;
 /**
- * Base class for ccs.UISlider
+ * Base class for ccs.Slider
  * @class
  * @extends ccs.Widget
  */
-ccs.UISlider = ccs.Widget.extend(/** @lends ccs.UISlider# */{
+ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -565,7 +565,7 @@ ccs.UISlider = ccs.Widget.extend(/** @lends ccs.UISlider# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UISlider.create();
+        return ccs.Slider.create();
     },
 
     copySpecialProperties: function (slider) {
@@ -582,13 +582,13 @@ ccs.UISlider = ccs.Widget.extend(/** @lends ccs.UISlider# */{
 /**
  * allocates and initializes a UISlider.
  * @constructs
- * @return {ccs.UISlider}
+ * @return {ccs.Slider}
  * @example
  * // example
- * var uiSlider = ccs.UISlider.create();
+ * var uiSlider = ccs.Slider.create();
  */
-ccs.UISlider.create = function () {
-    var uiSlider = new ccs.UISlider();
+ccs.Slider.create = function () {
+    var uiSlider = new ccs.Slider();
     if (uiSlider && uiSlider.init()) {
         return uiSlider;
     }
