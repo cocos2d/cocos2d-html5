@@ -40,11 +40,11 @@ ccs.PVTouchDir = {
 };
 
 /**
- * Base class for ccs.UIPageView
+ * Base class for ccs.PageView
  * @class
  * @extends ccs.Layout
  */
-ccs.UIPageView = ccs.Layout.extend(/** @lends ccs.UIPageView# */{
+ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
     _curPageIdx: 0,
     _pages: null,
     _touchMoveDir: null,
@@ -570,7 +570,7 @@ ccs.UIPageView = ccs.Layout.extend(/** @lends ccs.UIPageView# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UIPageView.create();
+        return ccs.PageView.create();
     },
 
     copyClonedWidgetChildren: function (model) {
@@ -594,13 +594,13 @@ ccs.UIPageView = ccs.Layout.extend(/** @lends ccs.UIPageView# */{
 /**
  * allocates and initializes a UIPageView.
  * @constructs
- * @return {ccs.UIPageView}
+ * @return {ccs.PageView}
  * @example
  * // example
- * var uiPageView = ccs.UIPageView.create();
+ * var uiPageView = ccs.PageView.create();
  */
-ccs.UIPageView.create = function () {
-    var uiPageView = new ccs.UIPageView();
+ccs.PageView.create = function () {
+    var uiPageView = new ccs.PageView();
     if (uiPageView && uiPageView.init()) {
         return uiPageView;
     }

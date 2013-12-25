@@ -38,7 +38,7 @@ ccs.UILayoutParameter = ccs.LayoutParameter;
 ccs.UIMargin = ccs.Margin;
 
 ccs.UIListView = ccs.ListView;
-ccs.PageView = ccs.UIPageView;
+ccs.UIPageView = ccs.PageView;
 ccs.ScrollView = ccs.UIScrollView;
 ccs.Button = ccs.UIButton;
 ccs.CheckBox = ccs.UICheckBox;
