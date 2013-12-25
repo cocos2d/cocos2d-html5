@@ -856,9 +856,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             }
             subData = null;
         }
-        if (widget instanceof ccs.UILayout) {
-            widget.doLayout();
-        }
+
         uiOptions = null;
         return widget;
     },
