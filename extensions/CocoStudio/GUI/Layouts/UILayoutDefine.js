@@ -66,11 +66,11 @@ ccs.UIRelativeAlign = {
 };
 
 /**
- * Base class for ccs.UIMargin
+ * Base class for ccs.Margin
  * @class
  * @extends ccs.Class
  */
-ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
+ccs.Margin = ccs.Class.extend(/** @lends ccs.Margin# */{
     left: 0,
     top: 0,
     right: 0,
@@ -105,7 +105,7 @@ ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
     },
     /**
      *  check is equals
-     * @param {ccs.UIMargin} target
+     * @param {ccs.Margin} target
      * @returns {boolean}
      */
     equals: function (target) {
@@ -114,5 +114,5 @@ ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
 });
 
 ccs.UIMarginZero = function(){
-   return new ccs.UIMargin(0,0,0,0);
+   return new ccs.Margin(0,0,0,0);
 };

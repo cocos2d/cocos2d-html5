@@ -1067,7 +1067,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Sets layout parameter
-     * @param {ccs.UILayoutParameter} parameter
+     * @param {ccs.LayoutParameter} parameter
      */
     setLayoutParameter: function (parameter) {
         this._layoutParameterDictionary[parameter.getLayoutType()] = parameter;
@@ -1076,7 +1076,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     /**
      * Gets layout parameter
      * @param {ccs.LayoutParameterType} type
-     * @returns {ccs.UILayoutParameter}
+     * @returns {ccs.LayoutParameter}
      */
     getLayoutParameter: function (type) {
         return this._layoutParameterDictionary[type];

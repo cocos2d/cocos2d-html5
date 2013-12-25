@@ -37,11 +37,11 @@ ccs.UIWidget = ccs.Widget;
 ccs.UILayoutParameter = ccs.LayoutParameter;
 ccs.UIMargin = ccs.Margin;
 
-ccs.UIListView = ccs.ListView;
-ccs.UIPageView = ccs.PageView;
-ccs.UIScrollView = ccs.ScrollView;
-ccs.UIButton = ccs.Button;
-ccs.CheckBox = ccs.Button;
+ccs.ListView = ccs.UIListView;
+ccs.PageView = ccs.UIPageView;
+ccs.ScrollView = ccs.UIScrollView;
+ccs.Button = ccs.UIButton;
+ccs.CheckBox = ccs.UICheckBox;
 ccs.ImageView = ccs.UIImageView;
 ccs.Label = ccs.UILabel;
 ccs.LabelAtlas = ccs.UILabelAtlas;

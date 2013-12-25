@@ -675,13 +675,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             case ccs.LayoutType.linearVertical:
                 var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
                 if (!layoutParameter) {
-                    locChild.setLayoutParameter(ccs.UILinearLayoutParameter.create());
+                    locChild.setLayoutParameter(ccs.LinearLayoutParameter.create());
                 }
                 break;
             case ccs.LayoutType.relative:
                 var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
                 if (!layoutParameter) {
-                    locChild.setLayoutParameter(ccs.UIRelativeLayoutParameter.create());
+                    locChild.setLayoutParameter(ccs.RelativeLayoutParameter.create());
                 }
                 break;
             default:

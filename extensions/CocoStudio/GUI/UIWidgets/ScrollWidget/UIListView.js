@@ -110,7 +110,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
             case ccs.ScrollViewDir.vertical:
                 var llp = item.getLayoutParameter(ccs.LayoutParameterType.linear);
                 if (!llp) {
-                    var defaultLp = ccs.UILinearLayoutParameter.create();
+                    var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccs.ListViewGravity.left:
                             defaultLp.setGravity(ccs.UILinearGravity.left);
@@ -128,7 +128,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
                         defaultLp.setMargin(ccs.UIMarginZero());
                     }
                     else {
-                        defaultLp.setMargin(new ccs.UIMargin(0.0, this._itemsMargin, 0.0, 0.0));
+                        defaultLp.setMargin(new ccs.Margin(0.0, this._itemsMargin, 0.0, 0.0));
                     }
                     item.setLayoutParameter(defaultLp);
                 }
@@ -137,7 +137,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
                         llp.setMargin(ccs.UIMarginZero());
                     }
                     else {
-                        llp.setMargin(new ccs.UIMargin(0, this._itemsMargin, 0, 0));
+                        llp.setMargin(new ccs.Margin(0, this._itemsMargin, 0, 0));
                     }
                     switch (this._gravity) {
                         case ccs.ListViewGravity.left:
@@ -157,7 +157,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
             case ccs.ScrollViewDir.horizontal:
                 var llp = item.getLayoutParameter(ccs.LayoutParameterType.linear);
                 if (!llp) {
-                    var defaultLp = ccs.UILinearLayoutParameter.create();
+                    var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccs.ListViewGravity.top:
                             defaultLp.setGravity(ccs.UILinearGravity.top);
@@ -175,7 +175,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
                         defaultLp.setMargin(ccs.UIMarginZero());
                     }
                     else {
-                        defaultLp.setMargin(new ccs.UIMargin(this._itemsMargin, 0.0, 0.0, 0.0));
+                        defaultLp.setMargin(new ccs.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
                     }
                     item.setLayoutParameter(defaultLp);
                 }
@@ -184,7 +184,7 @@ ccs.UIListView = ccs.UIScrollView.extend({
                         llp.setMargin(ccs.UIMarginZero());
                     }
                     else {
-                        llp.setMargin(new ccs.UIMargin(this._itemsMargin, 0.0, 0.0, 0.0));
+                        llp.setMargin(new ccs.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
                     }
                     switch (this._gravity) {
                         case ccs.ListViewGravity.top:
