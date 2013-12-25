@@ -78,7 +78,6 @@
                 <file name="actions/CCAction.js"/>
                 <file name="actions/CCActionInterval.js"/>
                 <file name="actions/CCActionInstant.js"/>
-                <file name="actions/CCActionManager.js"/>
                 <file name="actions/CCActionCamera.js"/>
                 <file name="actions/CCActionEase.js"/>
                 <file name="actions/CCActionCatmullRom.js"/>
