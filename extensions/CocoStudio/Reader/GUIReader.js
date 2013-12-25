@@ -210,7 +210,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             widget = ccs.UILoadingBar.create();
             this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ScrollView") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextArea") {
@@ -242,7 +242,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "DragPanel") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         var children = data["children"];
@@ -493,7 +493,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForLayoutFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
-        if (!(containerWidget instanceof ccs.UIScrollView) && !(containerWidget instanceof ccs.ListView)) {
+        if (!(containerWidget instanceof ccs.ScrollView) && !(containerWidget instanceof ccs.ListView)) {
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
         var panel = widget;
@@ -558,7 +558,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForContainerWidgetFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
-        if (containerWidget instanceof ccs.UIScrollView ||
+        if (containerWidget instanceof ccs.ScrollView ||
             containerWidget instanceof ccs.ListView) {
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
@@ -804,7 +804,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             widget = ccs.UILoadingBar.create();
             this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ScrollView") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextArea") {
@@ -836,7 +836,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "DragPanel") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ListView") {
@@ -1233,7 +1233,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     setPropsForLayoutFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var panel = widget;
-        if (!(panel instanceof ccs.UIScrollView) && !(panel instanceof ccs.ListView)) {
+        if (!(panel instanceof ccs.ScrollView) && !(panel instanceof ccs.ListView)) {
             panel.setClippingEnabled(options["clipAble"]);
         }
         var backGroundScale9Enable = options["backGroundScale9Enable"];

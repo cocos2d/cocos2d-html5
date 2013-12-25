@@ -35,7 +35,7 @@ ccs.ListViewGravity = {
     centerVertical: 5
 };
 
-ccs.ListView = ccs.UIScrollView.extend({
+ccs.ListView = ccs.ScrollView.extend({
     _model: null,
     _items: null,
     _gravity: null,
@@ -45,7 +45,7 @@ ccs.ListView = ccs.UIScrollView.extend({
     _curSelectedIndex: 0,
     _refreshViewDirty: true,
     ctor: function () {
-        ccs.UIScrollView.prototype.ctor.call(this);
+        ccs.ScrollView.prototype.ctor.call(this);
         this._model = null;
         this._items = [];
         this._gravity = ccs.ListViewGravity.centerHorizontal;
@@ -57,7 +57,7 @@ ccs.ListView = ccs.UIScrollView.extend({
     },
 
     init: function () {
-        if (ccs.UIScrollView.prototype.init.call(this)) {
+        if (ccs.ScrollView.prototype.init.call(this)) {
             this._items = [];
             this.setLayoutType(ccs.LayoutType.linearVertical);
             return true;
@@ -301,7 +301,7 @@ ccs.ListView = ccs.UIScrollView.extend({
                 return;
                 break;
         }
-        ccs.UIScrollView.prototype.setDirection.call(this, dir);
+        ccs.ScrollView.prototype.setDirection.call(this, dir);
 
     },
 
@@ -317,7 +317,7 @@ ccs.ListView = ccs.UIScrollView.extend({
     },
 
     interceptTouchEvent: function (handleState, sender, touchPoint) {
-        ccs.UIScrollView.prototype.interceptTouchEvent.call(this, handleState, sender, touchPoint);
+        ccs.ScrollView.prototype.interceptTouchEvent.call(this, handleState, sender, touchPoint);
         if (handleState != 1) {
             var parent = sender;
             while (parent) {
@@ -346,7 +346,7 @@ ccs.ListView = ccs.UIScrollView.extend({
     },
 
     sortAllChildren: function () {
-        ccs.UIScrollView.prototype.sortAllChildren.call(this);
+        ccs.ScrollView.prototype.sortAllChildren.call(this);
         if (this._refreshViewDirty) {
             this.refreshView();
             this._refreshViewDirty = false;
@@ -354,7 +354,7 @@ ccs.ListView = ccs.UIScrollView.extend({
     },
 
     onSizeChanged: function () {
-        ccs.UIScrollView.prototype.onSizeChanged.call(this);
+        ccs.ScrollView.prototype.onSizeChanged.call(this);
         this._refreshViewDirty = true;
     },
     getDescription: function () {
@@ -374,7 +374,7 @@ ccs.ListView = ccs.UIScrollView.extend({
     },
 
     copySpecialProperties: function (listView) {
-        ccs.UIScrollView.prototype.copySpecialProperties.call(this, listView);
+        ccs.ScrollView.prototype.copySpecialProperties.call(this, listView);
         this.setItemModel(listView._model);
         this.setItemsMargin(listView._itemsMargin);
         this.setGravity(listView._gravity);

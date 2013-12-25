@@ -53,11 +53,11 @@ ccs.SCROLLDIR_DOWN = cc.p(0, -1);
 ccs.SCROLLDIR_LEFT = cc.p(-1, 0);
 ccs.SCROLLDIR_RIGHT = cc.p(1, 0);
 /**
- * Base class for ccs.UIScrollView
+ * Base class for ccs.ScrollView
  * @class
  * @extends ccs.Layout
  */
-ccs.UIScrollView = ccs.Layout.extend(/** @lends ccs.UIScrollView# */{
+ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     _innerContainer: null,
     _direction: null,
     _touchBeganPoint: null,
@@ -1487,13 +1487,13 @@ ccs.UIScrollView = ccs.Layout.extend(/** @lends ccs.UIScrollView# */{
 /**
  * allocates and initializes a UIScrollView.
  * @constructs
- * @return {ccs.UIScrollView}
+ * @return {ccs.ScrollView}
  * @example
  * // example
- * var uiScrollView = ccs.UIScrollView.create();
+ * var uiScrollView = ccs.ScrollView.create();
  */
-ccs.UIScrollView.create = function () {
-    var uiScrollView = new ccs.UIScrollView();
+ccs.ScrollView.create = function () {
+    var uiScrollView = new ccs.ScrollView();
     if (uiScrollView && uiScrollView.init()) {
         return uiScrollView;
     }
