@@ -577,7 +577,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         locSpriteRect.width = rect.width;
         locSpriteRect.height = rect.height;
 
-        var rectSize = rect.size;
+        var rectSize = rect._size;
         this._originalSize.width = rectSize.width;
         this._originalSize.height = rectSize.height;
 
@@ -823,7 +823,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             locScale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
         }
 
-        this.setContentSize(rect.size);
+        this.setContentSize(rect._size);
         this.addChild(locScale9Image);
 
         if (this._spritesGenerated) {

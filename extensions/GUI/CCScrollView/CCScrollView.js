@@ -169,7 +169,8 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     getContentOffset:function () {
-        return this._container.getPosition();
+        var locPos = this._container.getPosition();
+        return cc.p(locPos.x, locPos.y);
     },
 
     /**
@@ -689,10 +690,8 @@ cc.ScrollView = cc.Layer.extend({
          newX = Math.max(newX, minInset.x);
          var newY = Math.min(this._container.getPosition().y, maxInset.y);
          newY = Math.max(newY, minInset.y);*/
-        oldPosition.x = this._container.getPositionX();
-        oldPosition.y = this._container.getPositionY();
-        var newX = oldPosition.x;
-        var newY = oldPosition.y;
+        var newX = this._container.getPositionX();
+        var newY = this._container.getPositionY();
 
         //this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(newX - this._container.getPosition().x, newY - this._container.getPosition().y));
         //= this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(0, 0)); = do nothing

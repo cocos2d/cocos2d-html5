@@ -794,18 +794,16 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
             this._radius = Math.round(Math.sqrt(spriteSize.width * spriteSize.width + spriteSize.height * spriteSize.height));
-            var locStartAngle = 270;
-            var locEndAngle = 270;
-            var locCounterClockWise = false;
-            var locOrigin = this._origin;
-
+            var locStartAngle, locEndAngle, locCounterClockWise = false, locOrigin = this._origin;
             locOrigin.x = spriteSize.width * locMidPoint.x;
             locOrigin.y = -spriteSize.height * locMidPoint.y;
 
             if (this._reverseDirection) {
+                locEndAngle = 270;
                 locStartAngle = 270 - 3.6 * this._percentage;
             } else {
-                locEndAngle = 270 + 3.6 * this._percentage;
+                locStartAngle = -90;
+                locEndAngle = -90 + 3.6 * this._percentage;
             }
 
             if (locSprite._flippedX) {

@@ -848,7 +848,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.setTextureRect(rect, false, cc.SizeZero());
                 } else {
                     // updating previous sprite
-                    fontChar.setTextureRect(rect, false, rect.size);
+                    fontChar.setTextureRect(rect, false, rect._size);
                     // restore to default in case they were modified
                     fontChar.setVisible(true);
                 }
@@ -941,8 +941,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     updateLabel:function () {
         this.setString(this._initialString, false);
 
+        // Step 1: Make multiline
         if (this._width > 0) {
-            // Step 1: Make multiline
             var stringLength = this._string.length;
             var multiline_string = [];
             var last_word = [];
@@ -956,8 +956,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     justSkipped++;
                 skip += justSkipped;
 
-                if (!characterSprite.isVisible())
-                    continue;
                 if (i >= stringLength)
                     break;
 
@@ -987,7 +985,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         break;
 
                     character = this._string[i];
-
                     if (!startOfWord) {
                         startOfWord = this._getLetterPosXLeft(characterSprite);
                         start_word = true;
@@ -996,10 +993,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         startOfLine = startOfWord;
                         start_line = true;
                     }
+                    i++;
+                    continue;
                 }
 
                 // Whitespace.
-                if (character.charCodeAt(0) == 32) {
+                if (cc.isspace_unicode(character)) {
                     last_word.push(character);
                     multiline_string = multiline_string.concat(last_word);
                     last_word.length = 0;
@@ -1089,7 +1088,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar.getPosition().x + lastChar.getContentSize().width / 2;
+                    lineWidth = lastChar.getPositionX() + lastChar.getContentSize().width / 2;
 
                     var shift = 0;
                     switch (this._alignment) {
@@ -1254,11 +1253,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.getPosition().x * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.getPositionX() * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.getPosition().x * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.getPositionX() * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     }
 });
 

@@ -377,7 +377,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Size}
      */
     getVisibleSize: function () {
-        return this._visibleRect.size;
+        return this._visibleRect._size;
     },
 
     /**
@@ -385,7 +385,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
-        return this._visibleRect.origin;
+        return this._visibleRect._origin;
     },
 
     canSetContentScaleFactor: function () {
@@ -451,6 +451,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         // Reinit frame size
         var frameW = this._frameSize.width, frameH = this._frameSize.height;
+        if(cc.Browser.isMobile)
+            this._setViewPortMeta(this._frameSize.width, this._frameSize.height);
         this._initFrameSize();
         // No change
         if (resolutionPolicy == this._resolutionPolicy
@@ -472,10 +474,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             if (result.viewport instanceof cc.Rect) {
                 var vp = this._viewPortRect = result.viewport, visible = this._visibleRect,
                     designW = this._designResolutionSize.width, designH = this._designResolutionSize.height;
-                visible.size.width = Math.min(vp.width / this._scaleX, designW);
-                visible.size.height = Math.min(vp.height / this._scaleY, designH);
-                visible.origin.x = (designW - visible.size.width) / 2;
-                visible.origin.y = (designH - visible.size.height) / 2;
+                visible._size.width = Math.min(vp.width / this._scaleX, designW);
+                visible._size.height = Math.min(vp.height / this._scaleY, designH);
+                visible._origin.x = (designW - visible._size.width) / 2;
+                visible._origin.y = (designH - visible._size.height) / 2;
             }
 
             // reset director's member variables to fit visible rect
@@ -866,7 +868,6 @@ cc.ContainerStrategy = cc.Class.extend({
     _adjustBrowser: function (view) {
         if (cc.Browser.isMobile) {
             view._scrollToBottom();
-            view._setViewPortMeta(view._frameSize.width, view._frameSize.height);
         }
     },
 

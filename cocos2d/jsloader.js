@@ -82,12 +82,12 @@
         'shaders/CCShaderCache.js',
         'shaders/CCGLProgram.js',
         'shaders/CCGLStateCache.js',
-        'misc_nodes/CCRenderTexture.js',
-        'misc_nodes/CCMotionStreak.js',
-        'misc_nodes/CCClippingNode.js',
+        'render_texture/CCRenderTexture.js',
+        'motion_streak/CCMotionStreak.js',
+        'clipping_nodes/CCClippingNode.js',
         'effects/CCGrid.js',
         'effects/CCGrabber.js',
-        'draw_nodes/CCDrawNode.js',
+        'shape_nodes/CCDrawNode.js',
         'actions/CCAction.js',
         'actions/CCActionInterval.js',
         'actions/CCActionInstant.js',
@@ -139,7 +139,6 @@
 
         // useless
         'CCUserDefault.js',
-
         'CCImage.js'
 
     ];
@@ -207,7 +206,6 @@
             '../extensions/CocoStudio/Action/CCActionNode.js',
             '../extensions/CocoStudio/Action/CCActionObject.js',
             // CocoStudio Components
-
             '../extensions/CocoStudio/Components/CCComAttribute.js',
             '../extensions/CocoStudio/Components/CCComAudio.js',
             '../extensions/CocoStudio/Components/CCComController.js',
