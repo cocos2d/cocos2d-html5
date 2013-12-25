@@ -27,7 +27,7 @@ ccs.IMAGERENDERERZ = -1;
  * @class
  * @extends ccs.Widget
  */
-ccs.UIImageView = ccs.Widget.extend(/** @lends ccs.UIImageView# */{
+ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     _scale9Enabled: false,
     _prevIgnoreSize: true,
     _capInsets: null,
@@ -280,7 +280,7 @@ ccs.UIImageView = ccs.Widget.extend(/** @lends ccs.UIImageView# */{
     },
 
     createCloneInstance:function(){
-        return ccs.UIImageView.create();
+        return ccs.ImageView.create();
     },
 
     copySpecialProperties: function (imageView) {
@@ -294,13 +294,13 @@ ccs.UIImageView = ccs.Widget.extend(/** @lends ccs.UIImageView# */{
 /**
  * allocates and initializes a UIImageView.
  * @constructs
- * @return {ccs.UIImageView}
+ * @return {ccs.ImageView}
  * @example
  * // example
- * var uiImageView = ccs.UIImageView.create();
+ * var uiImageView = ccs.ImageView.create();
  */
-ccs.UIImageView.create = function () {
-    var uiImageView = new ccs.UIImageView();
+ccs.ImageView.create = function () {
+    var uiImageView = new ccs.ImageView();
     if (uiImageView && uiImageView.init()) {
         return uiImageView;
     }

@@ -226,7 +226,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ImageView") {
-            widget = ccs.UIImageView.create();
+            widget = ccs.ImageView.create();
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Panel") {
@@ -820,7 +820,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ImageView") {
-            widget = ccs.UIImageView.create();
+            widget = ccs.ImageView.create();
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Panel") {
