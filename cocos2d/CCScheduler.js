@@ -414,8 +414,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _updates0List:null, // list priority == 0
     _updatesPosList:null, // list priority > 0
     _hashForUpdates:null, // hash used to fetch quickly the list entries for pause,delete,etc
+    _arrayForUpdates:null,
 
     _hashForTimers:null, //Used for "selectors with interval"
+    _arrayForTimes:null,
 
     _currentTarget:null,
     _currentTargetSalvaged:false,
@@ -431,8 +433,11 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         this._updates0List = [];
         this._updatesPosList = [];
 
-        this._hashForUpdates = [];
-        this._hashForTimers = [];
+        this._hashForUpdates = {};
+        this._arrayForUpdates = [];
+
+        this._hashForTimers = {};
+        this._arrayForTimers = [];
 
         this._currentTarget = null;
         this._currentTargetSalvaged = false;
@@ -441,9 +446,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
     //-----------------------private method----------------------
     _removeHashElement:function (element) {
+        delete this._hashForTimers[element.target.__instanceId];
+        cc.ArrayRemoveObject(this._arrayForTimers, element);
         element.Timer = null;
         element.target = null;
-        cc.ArrayRemoveObject(this._hashForTimers, element);
         element = null;
     },
 
@@ -464,15 +470,19 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     _removeUpdateFromHash:function (entry) {
-        var element = this._findElementFromArray(this._hashForUpdates, entry.target);
+//        var element = this._findElementFromArray(this._hashForUpdates, entry.target);
+        var element = this._hashForUpdates[entry.target.__instanceId];
         if (element) {
             //list entry
             cc.ArrayRemoveObject(element.list, element.entry);
+
+            delete this._hashForUpdates[element.target.__instanceId];
+            cc.ArrayRemoveObject(this._arrayForUpdates, element);
             element.entry = null;
 
             //hash entry
             element.target = null;
-            cc.ArrayRemoveObject(this._hashForUpdates, element);
+//            cc.ArrayRemoveObject(this._hashForUpdates, element);
         }
     },
 
@@ -501,7 +511,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         //update hash entry for quick access
         var hashElement = new cc.HashUpdateEntry(ppList, listElement, target, null);
-        this._hashForUpdates.push(hashElement);
+        this._arrayForUpdates.push(hashElement);
+        this._hashForUpdates[target.__instanceId] = hashElement;
+//        this._hashForUpdates.push(hashElement);
 
         return ppList;
     },
@@ -512,7 +524,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         //update hash entry for quicker access
         var hashElement = new cc.HashUpdateEntry(ppList, listElement, target, null);
-        this._hashForUpdates.push(hashElement);
+        this._arrayForUpdates.push(hashElement);
+        this._hashForUpdates[target.__instanceId] = hashElement;
+//        this._hashForUpdates.push(hashElement);
     },
 
     //-----------------------public method-------------------------
@@ -577,8 +591,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         //Interate all over the custom selectors
         var elt;
-        for (i = 0; i < this._hashForTimers.length; i++) {
-            this._currentTarget = this._hashForTimers[i];
+        for (i = 0; i < this._arrayForTimers.length; i++) {
+            this._currentTarget = this._arrayForTimers[i];
             elt = this._currentTarget;
             this._currentTargetSalvaged = false;
 
@@ -656,12 +670,13 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         delay = delay || 0;
         paused = paused || false;
 
-        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
+        var element = this._hashForTimers[target.__instanceId];
 
         if (!element) {
             // Is this the 1st element ? Then set the pause level to all the callback_fns of this target
             element = new cc.HashTimerEntry(null, target, 0, null, null, paused, null);
-            this._hashForTimers.push(element);
+            this._arrayForTimers.push(element);
+            this._hashForTimers[target.__instanceId] = element;
         }
 
         var timer;
@@ -698,7 +713,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
-        var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);
+        var hashElement = this._hashForUpdates[target.__instanceId];
 
         if (hashElement) {
             // TODO: check if priority has changed!
@@ -735,7 +750,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             return;
         }
 
-        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
+        var element = this._hashForTimers[target.__instanceId];
         if (element != null) {
             for (var i = 0; i < element.timers.length; i++) {
                 var timer = element.timers[i];
@@ -775,7 +790,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             return;
         }
 
-        var element = cc.HASH_FIND_INT(this._hashForUpdates, target);
+        var element = this._hashForUpdates[target.__instanceId];
         if (element != null) {
             if (this._updateHashLocked) {
                 element.entry.markedForDeletion = true;
@@ -795,7 +810,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             return;
         }
 
-        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
+        var element = this._hashForTimers[target.__instanceId];
         if (element) {
             if ((!element.currentTimerSalvaged) && (cc.ArrayContainsObject(element.timers, element.currentTimer))) {
                 element.currentTimerSalvaged = true;
@@ -832,9 +847,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     unscheduleAllCallbacksWithMinPriority:function (minPriority) {
         // Custom Selectors
         var i;
-        for (i = 0; i < this._hashForTimers.length; i++) {
+        for (i = 0; i < this._arrayForTimers.length; i++) {
             // element may be removed in unscheduleAllCallbacksForTarget
-            this.unscheduleAllCallbacksForTarget(this._hashForTimers[i].target);
+            this.unscheduleAllCallbacksForTarget(this._arrayForTimers[i].target);
         }
 
         //updates selectors
@@ -877,8 +892,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         var i, element;
         // Custom Selectors
-        for (i = 0; i < this._hashForTimers.length; i++) {
-            element = this._hashForTimers[i];
+        for (i = 0; i < this._arrayForTimers.length; i++) {
+            element = this._arrayForTimers[i];
             if (element) {
                 element.paused = true;
                 idsWithSelectors.push(element.target);
@@ -944,14 +959,16 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             throw "cc.Scheduler.pauseTarget():target should be non-null";
 
         //customer selectors
-        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
-        if (element)
+        var element = this._hashForTimers[target.__instanceId];
+        if (element) {
             element.paused = true;
+        }
 
         //update selector
-        var elementUpdate = cc.HASH_FIND_INT(this._hashForUpdates, target);
-        if (elementUpdate && elementUpdate.entry)
+        var elementUpdate = this._hashForUpdates[target.__instanceId];
+        if (elementUpdate) {
             elementUpdate.entry.paused = true;
+        }
     },
 
     /**
@@ -965,15 +982,18 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             throw "cc.Scheduler.resumeTarget():target should be non-null";
 
         // custom selectors
-        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
+        var element = this._hashForTimers[target.__instanceId];
 
-        if (element)
+        if (element) {
             element.paused = false;
+        }
 
         //update selector
-        var elementUpdate = cc.HASH_FIND_INT(this._hashForUpdates, target);
-        if (elementUpdate && elementUpdate.entry)
+        var elementUpdate = this._hashForUpdates[target.__instanceId];
+
+        if (elementUpdate) {
             elementUpdate.entry.paused = false;
+        }
     },
 
     /**
@@ -986,9 +1006,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             throw "cc.Scheduler.isTargetPaused():target should be non-null";
 
         // Custom selectors
-        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
-        if (element)
+        var element = this._hashForTimers[target.__instanceId];
+        if (element) {
             return element.paused;
+        }
         return false;
     }
 });
