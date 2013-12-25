@@ -213,7 +213,6 @@
             // CocoStudio GUI
             '../extensions/CocoStudio/GUI/BaseClasses/UIWidget.js',
             '../extensions/CocoStudio/GUI/Layouts/UILayout.js',
-            '../extensions/CocoStudio/GUI/BaseClasses/UIRootWidget.js',
             '../extensions/CocoStudio/GUI/Layouts/UILayoutParameter.js',
             '../extensions/CocoStudio/GUI/Layouts/UILayoutDefine.js',
             '../extensions/CocoStudio/GUI/System/CocosGUI.js',

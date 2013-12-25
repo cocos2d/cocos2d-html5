@@ -186,7 +186,6 @@
                 <file name="CocoStudio/Components/CCComRender.js"/>
                 <file name="CocoStudio/GUI/BaseClasses/UIWidget.js"/>
                 <file name="CocoStudio/GUI/Layouts/UILayout.js"/>
-                <file name="CocoStudio/GUI/BaseClasses/UIRootWidget.js"/>
                 <file name="CocoStudio/GUI/Layouts/UILayoutParameter.js"/>
                 <file name="CocoStudio/GUI/Layouts/UILayoutDefine.js"/>
                 <file name="CocoStudio/GUI/System/CocosGUI.js"/>
