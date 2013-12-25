@@ -143,7 +143,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     releaseResources: function (resources) {
         if (resources && resources.length > 0) {
             var sharedTextureCache = cc.TextureCache.getInstance();
-            var sharedEngine = cc.AudioEngine.getInstance();
+            var sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null;
             var sharedParser = cc.SAXParser.getInstance();
             var sharedFileUtils = cc.FileUtils.getInstance();
 
@@ -156,6 +156,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
                         sharedTextureCache.removeTextureForKey(resInfo.src);
                         break;
                     case "SOUND":
+                        if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
                         sharedEngine.unloadEffect(resInfo.src);
                         break;
                     case "XML":
@@ -196,7 +197,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
     _loadOneResource: function () {
         var sharedTextureCache = cc.TextureCache.getInstance();
-        var sharedEngine = cc.AudioEngine.getInstance();
+        var sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null;
         var sharedParser = cc.SAXParser.getInstance();
         var sharedFileUtils = cc.FileUtils.getInstance();
 
@@ -207,6 +208,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
                 sharedTextureCache.addImage(resInfo.src);
                 break;
             case "SOUND":
+                if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
                 sharedEngine.preloadSound(resInfo.src);
                 break;
             case "XML":
@@ -439,7 +441,6 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         //loading percent
         this._label = cc.LabelTTF.create("Loading... 0%", "Arial", 14);
         this._label.setColor(cc.c3(180, 180, 180));
-        this._label.setOpacity(0);
         this._label.setPosition(cc.pAdd(centerPos, cc.p(0, -logoHeight / 2 - 10)));
         this._bgLayer.addChild(this._label, 10);
     },
@@ -452,9 +453,6 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         this._logo.setPosition(centerPos);
         this._bgLayer.addChild(this._logo, 10);
-
-        //load resources
-        this._logoFadeIn();
     },
 
     onEnter: function () {
@@ -484,19 +482,6 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         this.unschedule(this._startLoading);
         cc.Loader.preload(this.resources, this.selector, this.target);
         this.schedule(this._updatePercent);
-    },
-
-    _logoFadeIn: function () {
-        var logoAction = cc.Spawn.create(
-            cc.EaseBounce.create(cc.MoveBy.create(0.25, cc.p(0, 10))),
-            cc.FadeIn.create(0.5));
-
-        var labelAction = cc.Sequence.create(
-            cc.DelayTime.create(0.15),
-            logoAction.clone());
-
-        this._logo.runAction(logoAction);
-        this._label.runAction(labelAction);
     },
 
     _updatePercent: function () {
