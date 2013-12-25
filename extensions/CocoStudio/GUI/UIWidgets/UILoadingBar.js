@@ -30,11 +30,11 @@ ccs.LoadingBarType = { left: 0, right: 1};
 
 ccs.BARRENDERERZ = -1;
 /**
- * Base class for ccs.UILoadingBar
+ * Base class for ccs.LoadingBar
  * @class
  * @extends ccs.Widget
  */
-ccs.UILoadingBar = ccs.Widget.extend(/** @lends ccs.UILoadingBar# */{
+ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -338,7 +338,7 @@ ccs.UILoadingBar = ccs.Widget.extend(/** @lends ccs.UILoadingBar# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UILoadingBar.create();
+        return ccs.LoadingBar.create();
     },
 
     copySpecialProperties: function (loadingBar) {
@@ -352,13 +352,13 @@ ccs.UILoadingBar = ccs.Widget.extend(/** @lends ccs.UILoadingBar# */{
 /**
  * allocates and initializes a UILoadingBar.
  * @constructs
- * @return {ccs.UILoadingBar}
+ * @return {ccs.LoadingBar}
  * @example
  * // example
- * var uiLoadingBar = ccs.UILoadingBar.create();
+ * var uiLoadingBar = ccs.LoadingBar.create();
  */
-ccs.UILoadingBar.create = function () {
-    var uiLoadingBar = new ccs.UILoadingBar();
+ccs.LoadingBar.create = function () {
+    var uiLoadingBar = new ccs.LoadingBar();
     if (uiLoadingBar && uiLoadingBar.init()) {
         return uiLoadingBar;
     }

@@ -46,6 +46,6 @@ ccs.UIImageView = ccs.ImageView;
 ccs.UILabel = ccs.Label;
 ccs.UILabelAtlas = ccs.LabelAtlas;
 ccs.UILabelBMFont = ccs.LabelBMFont;
-ccs.LoadingBar = ccs.UILoadingBar;
+ccs.UILoadingBar = ccs.LoadingBar;
 ccs.Slider = ccs.UISlider;
 ccs.TextField = ccs.UITextField;
