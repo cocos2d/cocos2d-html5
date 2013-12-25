@@ -64,7 +64,7 @@ ccs.CONST_A_EVENT = "evt";
 ccs.CONST_A_SOUND = "sd";
 ccs.CONST_A_SOUND_EFFECT = "sdE";
 ccs.CONST_A_TWEEN_EASING = "twE";
-ccs.CONST_A_TWEEN_ROTATE = "twR";
+ccs.CONST_A_TWEEN_ROTATION = "twR";
 ccs.CONST_A_EASING_PARAM = "twEP";
 ccs.CONST_A_IS_ARMATURE = "isArmature";
 ccs.CONST_A_DISPLAY_TYPE = "displayType";
@@ -541,6 +541,7 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     frameData.duration = parseFloat(frameXML.getAttribute(ccs.CONST_A_DURATION)) || 0;
     frameData.displayIndex = parseFloat(frameXML.getAttribute(ccs.CONST_A_DISPLAY_INDEX)) || 0;
     frameData.zOrder = parseFloat(frameXML.getAttribute(ccs.CONST_A_Z)) || 0;
+    frameData.tweenRotate = parseFloat(frameXML.getAttribute(ccs.CONST_A_TWEEN_ROTATION)) || 0;
 
     var colorTransformXMLList = frameXML.querySelectorAll(ccs.CONST_FRAME + " > " + ccs.CONST_A_COLOR_TRANSFORM);
     if (colorTransformXMLList.length > 0) {

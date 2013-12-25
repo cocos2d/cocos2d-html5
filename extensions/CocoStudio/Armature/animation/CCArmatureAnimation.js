@@ -205,20 +205,9 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
      * @example
      * // example
      * armature.getAnimation().play("run",-1,-1,1,-1);//loop play
-     * armature.getAnimation().play("run",-1,-1,-1,-1);//not loop play
-     * armature.getAnimation().play(["run1","run2","run3"],1);//loop play animations
+     * armature.getAnimation().play("run",-1,-1,0,-1);//not loop play
      */
     play:function (animationName, durationTo, durationTween, loop, tweenEasing) {
-        if(typeof animationName == "string"){
-            this._playByName(animationName, durationTo, loop);
-        } else if(animationName instanceof Array){
-            this._playByNames(arguments[0], -1, arguments[1]);
-            //todo
-            //this._playByNames(animationName, durationTo, loop);
-        }
-    },
-
-    _playByName:function(animationName, durationTo, loop){
         if (this._animationData == null) {
             cc.log("this._animationData can not be null");
             return;
@@ -296,14 +285,20 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._armature.update(0);
     },
 
-    _playByNames: function (movementNames,durationTo, loop) {
+    /**
+     * play with names
+     * @param {Array} movementNames
+     * @param {Number} durationTo
+     * @param {Boolean} loop
+     */
+    playWithNames: function (movementNames, durationTo, loop) {
         this._movementList = [];
         this._movementListLoop = loop;
         this._onMovementList = true;
         this._movementIndex = 0;
 
         for (var i = 0; i < movementNames.length; i++) {
-            this._movementList.push({name:movementNames[i],durationTo:durationTo});
+            this._movementList.push({name: movementNames[i], durationTo: durationTo});
         }
 
         this.updateMovementList();
@@ -377,20 +372,14 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     },
 
     /**
-     * Play animation by index, the other param is the same to play.
+     * Play animation with index, the other param is the same to play.
      * @param {Number||Array} animationIndex
      * @param {Number} durationTo
+     * @param {Number} durationTween
      * @param {Number} loop
+     * @param {Number} tweenEasing
      */
-    playByIndex:function (animationIndex, durationTo, loop) {
-        if(typeof animationIndex =="number"){
-            this._playByIndex(animationIndex, durationTo, loop);
-        } else if(animationIndex instanceof Array){
-            this._playByIndexs(animationIndex, durationTo, loop);
-        }
-
-    },
-    _playByIndex:function (animationIndex, durationTo, loop) {
+    playWithIndex:function (animationIndex, durationTo, durationTween, loop, tweenEasing) {
         if (typeof durationTo == "undefined") {
             durationTo = -1;
         }
@@ -404,7 +393,27 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         var animationName = moveNames[animationIndex];
         this.play(animationName, durationTo,-1, loop, 0);
     },
-    _playByIndexs: function (movementIndexes,durationTo, loop) {
+
+    /**
+     * Play animation with index, the o ther param is the same to play.
+     * @param {Number} animationIndex
+     * @param {Number} durationTo
+     * @param {Number} durationTween
+     * @param {Number} loop
+     * @param {Number} tweenEasing
+     */
+    playByIndex:function(animationIndex, durationTo, durationTween, loop, tweenEasing){
+        cc.log("playByIndex is deprecated. Use playWithIndex instead.");
+        this.playWithIndex(animationIndex, durationTo, durationTween, loop, tweenEasing);
+    },
+
+    /**
+     *  play by indexes
+     * @param movementIndexes
+     * @param {Number} durationTo
+     * @param {Boolean} loop
+     */
+    playWithIndexes: function (movementIndexes, durationTo, loop) {
         this._movementList = [];
         this._movementListLoop = loop;
         this._onMovementList = true;
@@ -414,7 +423,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
 
         for (var i = 0; i < movementIndexes.length; i++) {
             var name = movName[movementIndexes[i]];
-            this._movementList.push({name:name,durationTo:durationTo});
+            this._movementList.push({name: name, durationTo: durationTo});
         }
 
         this.updateMovementList();
