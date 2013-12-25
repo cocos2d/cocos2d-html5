@@ -10,7 +10,7 @@
                 sourceMapOutputFile="sourcemap"
                 sourceMapFormat="V3">
             <externs dir="${basedir}/../cocos2d">
-                <file name="cocos2d_externs.js"/>
+                <file name="core/cocos2d_externs.js"/>
             </externs>
             <sources dir="${basedir}/../cocos2d">
                 <file name="core/platform/CCClass.js"/>
