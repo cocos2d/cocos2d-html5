@@ -107,9 +107,9 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this._brightStyle = ccs.BrightStyle.none;
         this._scale9Enabled = able;
 
-        this.removeChild(this._buttonNormalRenderer, true);
-        this.removeChild(this._buttonClickedRenderer, true);
-        this.removeChild(this._buttonDisableRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
 
         if (this._scale9Enabled) {
             this._buttonNormalRenderer = cc.Scale9Sprite.create();
@@ -485,7 +485,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     },
 
     /**
-     * override "getContentSize" method of widget.
+     * Gets the Virtual Renderer of widget.
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {

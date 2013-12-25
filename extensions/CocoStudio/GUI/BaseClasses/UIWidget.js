@@ -256,6 +256,7 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
     /**
      * remove  child
      * @param {ccs.UIWidget} child
+     * @param {Boolean} cleanup
      */
     removeChild: function (child, cleanup) {
         cc.NodeRGBA.prototype.removeChild.call(this, child, cleanup);
@@ -594,14 +595,14 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
      * @param enable
      */
     setUpdateEnabled: function (enable) {
-        if(this._updateEnabled == enable){
+        if (this._updateEnabled == enable) {
             return;
         }
         this._updateEnabled = enable;
-        if (enable)        {
+        if (enable) {
             this.scheduleUpdate();
         }
-        else        {
+        else {
             this.unscheduleUpdate();
         }
     },
@@ -884,9 +885,10 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
 
     /**
      * Changes the position (x,y) of the widget .
-     * @param {cc.Point} pos
+     * @param {cc.Point||Number} pos
+     * @param {Number} posY
      */
-    setPosition: function (pos) {
+    setPosition: function (pos, posY) {
         if (this._running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
@@ -896,13 +898,18 @@ ccs.UIWidget = ccs.NodeRGBA.extend(/** @lends ccs.UIWidget# */{
                     this._positionPercent.y = 0;
                 }
                 else {
-                    this._positionPercent.x = pos.x / pSize.width;
-                    this._positionPercent.y = pos.y / pSize.height;
+                    if(posY){
+                        this._positionPercent.x = pos / pSize.width;
+                        this._positionPercent.y = posY / pSize.height;
+                    }else{
+                        this._positionPercent.x = pos.x / pSize.width;
+                        this._positionPercent.y = pos.y / pSize.height;
+                    }
                 }
             }
         }
 
-        cc.NodeRGBA.prototype.setPosition.call(this, pos);
+        cc.NodeRGBA.prototype.setPosition.apply(this,arguments);
     },
 
     /**

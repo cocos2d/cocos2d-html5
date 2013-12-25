@@ -166,7 +166,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
 
 
         this._scale9Enabled = able;
-        this.removeChild(this._imageRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._imageRenderer, true);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
             this._imageRenderer = cc.Scale9Sprite.create();

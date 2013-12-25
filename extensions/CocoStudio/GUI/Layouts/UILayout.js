@@ -162,9 +162,6 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
      * @returns {boolean}
      */
     addChild: function (child, zOrder, tag) {
-        if(!(child instanceof ccs.UIWidget)){
-            cc.log("Widget only supports Widgets as children");
-        }
         this.supplyTheLayoutParameterLackToChild(child);
         this._doLayoutDirty = true;
         ccs.UIWidget.prototype.addChild.call(this, child, zOrder, tag)
@@ -608,7 +605,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         if (this._backGroundScale9Enabled == able) {
             return;
         }
-        this.removeChild(this._backGroundImage, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundScale9Enabled = able;
         if (this._backGroundScale9Enabled) {
@@ -714,7 +711,7 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         if (!this._backGroundImage) {
             return;
         }
-        this.removeChild(this._backGroundImage, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageTextureSize = cc.SizeZero();
@@ -731,23 +728,23 @@ ccs.UILayout = ccs.UIWidget.extend(/** @lends ccs.UILayout# */{
         switch (this._colorType) {
             case ccs.LayoutBackGroundColorType.none:
                 if (this._colorRender) {
-                    this.removeChild(this._colorRender, true);
+                    cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 if (this._gradientRender) {
-                    this.removeChild(this._gradientRender, true);
+                    cc.NodeRGBA.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;
             case ccs.LayoutBackGroundColorType.solid:
                 if (this._colorRender) {
-                    this.removeChild(this._colorRender, true);
+                    cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
                 if (this._gradientRender) {
-                    this.removeChild(this._gradientRender, true);
+                    cc.NodeRGBA.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;

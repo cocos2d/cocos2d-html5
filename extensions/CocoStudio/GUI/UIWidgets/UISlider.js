@@ -199,8 +199,8 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
 
         this._scale9Enabled = able;
-        this.removeChild(this._barRenderer, true);
-        this.removeChild(this._progressBarRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._progressBarRenderer, true);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {

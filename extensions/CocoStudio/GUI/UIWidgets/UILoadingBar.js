@@ -181,7 +181,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             return;
         }
         this._scale9Enabled = enabled;
-        this.removeChild(this._barRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
         this._barRenderer = null;
         if (this._scale9Enabled) {
             this._barRenderer = cc.Scale9Sprite.create();
