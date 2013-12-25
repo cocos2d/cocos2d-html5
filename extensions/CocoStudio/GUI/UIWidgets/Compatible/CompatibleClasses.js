@@ -30,18 +30,22 @@ ccs.UITextButton = ccs.UIButton;
 ccs.UINodeContainer = ccs.UIWidget;
 ccs.PanelColorType = ccs.LayoutBackGroundColorType;
 
-/**
- * Base class for ccs.UIZoomButton
- * @class
- * @extends ccs.UITextButton
- */
-ccs.UIZoomButton = ccs.UITextButton.extend({
-    init: function () {
-        if (ccs.UITextButton.prototype.init.call(this)) {
-            this.setScale9Enabled(true);
-            this.setPressedActionEnabled(true);
-            return true;
-        }
-        return false;
-    }
-});
+
+ccs.Layout = ccs.UILayout;
+ccs.Widget = ccs.UIWidget;
+
+ccs.LayoutParameter = ccs.UILayoutParameter;
+ccs.Margin = ccs.UIMargin;
+
+ccs.ListView = ccs.UIListView;
+ccs.PageView = ccs.UIPageView;
+ccs.ScrollView = ccs.UIScrollView;
+ccs.Button = ccs.UIButton;
+ccs.CheckBox = ccs.UICheckBox;
+ccs.ImageView = ccs.UIImageView;
+ccs.Label = ccs.UILabel;
+ccs.LabelAtlas = ccs.UILabelAtlas;
+ccs.LabelBMFont = ccs.UILabelBMFont;
+ccs.LoadingBar = ccs.UILoadingBar;
+ccs.Slider = ccs.UISlider;
+ccs.TextField = ccs.UITextField;
