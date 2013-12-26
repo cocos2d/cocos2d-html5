@@ -1,6 +1,6 @@
 {
     "name":"cccompress",
-    "description":"",
+    "description":"Compress tools package",
     "version":"0.1.1",
     "keywords":[
         "cocos2d-html5",

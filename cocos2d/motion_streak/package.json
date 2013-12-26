@@ -1,6 +1,6 @@
 {
     "name":"ccmotionstreak",
-    "description":"",
+    "description":"CCMotionStreak package",
     "version":"0.1.1",
     "keywords":[
         "cocos2d-html5",

@@ -1,6 +1,6 @@
 {
     "name":"ccactions",
-    "description":"",
+    "description":"Actions package",
     "version":"0.1.1",
     "keywords":[
         "cocos2d-html5",

@@ -1,6 +1,6 @@
 {
     "name":"ccmenu",
-    "description":"",
+    "description":"Menu package",
     "version":"0.1.2",
     "keywords":[
         "cocos2d-html5",
