@@ -413,10 +413,10 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                 }else{
                     pSize = this._parent.getContentSize();
                 }
-                if (pSize.width > 0)                    {
+                if (pSize.width > 0) {
                     spx = this._customSize.width / pSize.width;
                 }
-                if (pSize.height > 0)                    {
+                if (pSize.height > 0) {
                     spy = this._customSize.height / pSize.height;
                 }
                 this._sizePercent.x = spx;
