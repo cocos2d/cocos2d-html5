@@ -645,10 +645,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * position setter (override cc.Node )
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} pos position or x value of position
+     * @param {Number} [yValue] y value of position
      * @override
      */
-    setPosition:function (pos) {
+    setPosition:function (pos, yValue) {
         if (arguments.length >= 2)
             cc.Node.prototype.setPosition.call(this, pos, arguments[1]);
         else
