@@ -189,7 +189,6 @@
                 <file name="CocoStudio/GUI/Layouts/UILayoutDefine.js"/>
                 <file name="CocoStudio/GUI/System/CocosGUI.js"/>
                 <file name="CocoStudio/GUI/System/UIHelper.js"/>
-                <file name="CocoStudio/GUI/System/UIInputManager.js"/>
                 <file name="CocoStudio/GUI/System/UILayer.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UIButton.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UICheckBox.js"/>

@@ -29,13 +29,23 @@
  */
 ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     _rootWidget: null,
-    _inputManager: null,
+    _selectedWidgets: null,
+    _touchBeganedPoint: null,
+    _touchMovedPoint: null,
+    _touchEndedPoint: null,
+    _touchCanceledPoint: null,
+    ctor: function () {
+        cc.Layer.prototype.ctor.call(this);
+        this._selectedWidgets = [];
+        this._touchBeganedPoint = cc.p(0, 0);
+        this._touchMovedPoint = cc.p(0, 0);
+        this._touchEndedPoint = cc.p(0, 0);
+        this._touchCanceledPoint = cc.p(0, 0);
+    },
     init: function () {
         if (cc.Layer.prototype.init.call(this)) {
             this._rootWidget = ccs.Widget.create();
             this.addChild(this._rootWidget);
-            this._inputManager = new ccs.UIInputManager();
-            this._inputManager.setRootWidget(this._rootWidget);
             return true;
         }
         return false;
@@ -54,6 +64,42 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     },
 
     /**
+     * Check touch event
+     * @param {ccs.Widget} root
+     * @param {cc.Touch} touch
+     * @param {event} event
+     * @returns {boolean}
+     */
+    checkTouchEvent: function (root, touch,event) {
+        var arrayRootChildren = root.getChildren();
+        var length = arrayRootChildren.length;
+        for (var i = length - 1; i >= 0; i--) {
+            var widget = arrayRootChildren[i];
+            if (this.checkTouchEvent(widget, touch,event)) {
+                return true;
+            }
+        }
+        var pass = root.onTouchBegan(touch,event);
+        if (root._hitted)
+        {
+            this._selectedWidgets.push(root);
+            return true;
+        }
+        return pass;
+    },
+
+    /**
+     * Finds a widget which is selected and call it's "onTouchBegan" method.
+     * @param {cc.Touch} touch
+     * @param {event} event
+     * @returns {boolean}
+     */
+    checkEventWidget: function (touch,event) {
+        this.checkTouchEvent(this._rootWidget, touch,event);
+        return (this._selectedWidgets.length > 0);
+    },
+
+    /**
      * add widget
      * @param {ccs.Widget} widget
      */
@@ -67,14 +113,6 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
      */
     removeWidget: function (widget) {
         this._rootWidget.removeChild(widget);
-    },
-
-    /**
-     * @param {Boolean} visible
-     */
-    setVisible: function (visible) {
-        cc.Layer.prototype.setVisible.call(this,visible);
-        this._rootWidget.setVisible(visible);
     },
 
     /**
@@ -125,38 +163,33 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     },
 
     onTouchBegan: function (touch, event) {
-        if (this._inputManager.onTouchBegan(touch, event)) {
-            return true;
-        }
-        return false;
+        return this.checkEventWidget(touch,event);
     },
 
     onTouchMoved: function (touch, event) {
-        this._inputManager.onTouchMoved(touch, event);
+        var selectedWidgetArray = this._selectedWidgets;
+        for (var i = 0; i < selectedWidgetArray.length; ++i) {
+            var hitWidget = selectedWidgetArray[i];
+            hitWidget.onTouchMoved(touch,event);
+        }
     },
 
     onTouchEnded: function (touch, event) {
-        this._inputManager.onTouchEnded(touch, event);
+        var selectedWidgetArray = this._selectedWidgets;
+        for (var i = 0; i < selectedWidgetArray.length; ++i) {
+            var hitWidget = selectedWidgetArray[i];
+            hitWidget.onTouchEnded(touch,event);
+        }
+        this._selectedWidgets = [];
     },
 
     onTouchCancelled: function (touch, event) {
-        this._inputManager.onTouchCancelled(touch, event);
-    },
-
-    /**
-     * remove all children
-     */
-    dispose: function () {
-        this.removeFromParent(true);
-    },
-
-    /**
-     * remove Widget
-     * @param {ccs.Widget} widget
-     * @param {Boolean} cleanup
-     */
-    removeWidgetAndCleanUp: function (widget, cleanup) {
-        this.removeWidget(widget);
+        var selectedWidgetArray = this._selectedWidgets;
+        for (var i = 0; i < selectedWidgetArray.length; ++i) {
+            var hitWidget = selectedWidgetArray[i];
+            hitWidget.onTouchCancelled(touch,event);
+        }
+        this._selectedWidgets = [];
     }
 });
 /**

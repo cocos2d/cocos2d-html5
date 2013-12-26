@@ -30,7 +30,7 @@ ccs.UITextButton = ccs.Button;
 ccs.UINodeContainer = ccs.Widget;
 ccs.PanelColorType = ccs.LayoutBackGroundColorType;
 
-
+ccs.TouchGroup = ccs.UILayer;
 ccs.UILayout = ccs.Layout;
 ccs.UIWidget = ccs.Widget;
 
