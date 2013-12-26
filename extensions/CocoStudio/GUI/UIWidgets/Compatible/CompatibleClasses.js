@@ -35,7 +35,14 @@ ccs.UILayout = ccs.Layout;
 ccs.UIWidget = ccs.Widget;
 
 ccs.UILayoutParameter = ccs.LayoutParameter;
+ccs.UILinearLayoutParameter = ccs.LinearLayoutParameter;
+ccs.UIRelativeLayoutParameter = ccs.RelativeLayoutParameter;
+
+ccs.UILinearGravity = ccs.LinearGravity;
+ccs.UIRelativeAlign = ccs.RelativeAlign;
+
 ccs.UIMargin = ccs.Margin;
+ccs.UIMarginZero = ccs.MarginZero;
 
 ccs.UIListView = ccs.ListView;
 ccs.UIPageView = ccs.PageView;

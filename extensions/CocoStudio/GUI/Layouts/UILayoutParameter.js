@@ -92,21 +92,21 @@ ccs.LinearLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.LinearLayo
     _linearGravity: null,
     ctor: function () {
         ccs.LayoutParameter.prototype.ctor.call(this);
-        this._linearGravity = ccs.UILinearGravity.none;
+        this._linearGravity = ccs.LinearGravity.none;
         this._layoutParameterType = ccs.LayoutParameterType.linear;
     },
 
     /**
-     * Sets UILinearGravity parameter for LayoutParameter.
-     * @param {ccs.UILinearGravity} gravity
+     * Sets LinearGravity parameter for LayoutParameter.
+     * @param {ccs.LinearGravity} gravity
      */
     setGravity: function (gravity) {
         this._linearGravity = gravity;
     },
 
     /**
-     * Gets UILinearGravity parameter for LayoutParameter.
-     * @returns {ccs.UILinearGravity}
+     * Gets LinearGravity parameter for LayoutParameter.
+     * @returns {ccs.LinearGravity}
      */
     getGravity: function () {
         return this._linearGravity;
@@ -138,7 +138,7 @@ ccs.RelativeLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.Relative
     _put:false,
     ctor: function () {
         ccs.LayoutParameter.prototype.ctor.call(this);
-        this._relativeAlign = ccs.UIRelativeAlign.alignNone;
+        this._relativeAlign = ccs.RelativeAlign.alignNone;
         this._relativeWidgetName = "";
         this._relativeLayoutName = "";
         this._put = false;
@@ -146,16 +146,16 @@ ccs.RelativeLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.Relative
     },
 
     /**
-     * Sets UIRelativeAlign parameter for LayoutParameter.
-     * @param {ccs.UIRelativeAlign} align
+     * Sets RelativeAlign parameter for LayoutParameter.
+     * @param {ccs.RelativeAlign} align
      */
     setAlign: function (align) {
         this._relativeAlign = align;
     },
 
     /**
-     * Gets UIRelativeAlign parameter for LayoutParameter.
-     * @returns {ccs.UIRelativeAlign}
+     * Gets RelativeAlign parameter for LayoutParameter.
+     * @returns {ccs.RelativeAlign}
      */
     getAlign: function () {
         return this._relativeAlign;

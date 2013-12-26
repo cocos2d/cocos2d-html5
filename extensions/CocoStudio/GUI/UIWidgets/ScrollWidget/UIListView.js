@@ -113,13 +113,13 @@ ccs.ListView = ccs.ScrollView.extend({
                     var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccs.ListViewGravity.left:
-                            defaultLp.setGravity(ccs.UILinearGravity.left);
+                            defaultLp.setGravity(ccs.LinearGravity.left);
                             break;
                         case ccs.ListViewGravity.right:
-                            defaultLp.setGravity(ccs.UILinearGravity.right);
+                            defaultLp.setGravity(ccs.LinearGravity.right);
                             break;
                         case ccs.ListViewGravity.centerHorizontal:
-                            defaultLp.setGravity(ccs.UILinearGravity.centerHorizontal);
+                            defaultLp.setGravity(ccs.LinearGravity.centerHorizontal);
                             break;
                         default:
                             break;
@@ -141,13 +141,13 @@ ccs.ListView = ccs.ScrollView.extend({
                     }
                     switch (this._gravity) {
                         case ccs.ListViewGravity.left:
-                            llp.setGravity(ccs.UILinearGravity.left);
+                            llp.setGravity(ccs.LinearGravity.left);
                             break;
                         case ccs.ListViewGravity.right:
-                            llp.setGravity(ccs.UILinearGravity.right);
+                            llp.setGravity(ccs.LinearGravity.right);
                             break;
                         case ccs.ListViewGravity.centerHorizontal:
-                            llp.setGravity(ccs.UILinearGravity.centerHorizontal);
+                            llp.setGravity(ccs.LinearGravity.centerHorizontal);
                             break;
                         default:
                             break;
@@ -160,13 +160,13 @@ ccs.ListView = ccs.ScrollView.extend({
                     var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccs.ListViewGravity.top:
-                            defaultLp.setGravity(ccs.UILinearGravity.top);
+                            defaultLp.setGravity(ccs.LinearGravity.top);
                             break;
                         case ccs.ListViewGravity.bottom:
-                            defaultLp.setGravity(ccs.UILinearGravity.bottom);
+                            defaultLp.setGravity(ccs.LinearGravity.bottom);
                             break;
                         case ccs.ListViewGravity.centerVertical:
-                            defaultLp.setGravity(ccs.UILinearGravity.centerVertical);
+                            defaultLp.setGravity(ccs.LinearGravity.centerVertical);
                             break;
                         default:
                             break;
@@ -188,13 +188,13 @@ ccs.ListView = ccs.ScrollView.extend({
                     }
                     switch (this._gravity) {
                         case ccs.ListViewGravity.top:
-                            llp.setGravity(ccs.UILinearGravity.top);
+                            llp.setGravity(ccs.LinearGravity.top);
                             break;
                         case ccs.ListViewGravity.bottom:
-                            llp.setGravity(ccs.UILinearGravity.bottom);
+                            llp.setGravity(ccs.LinearGravity.bottom);
                             break;
                         case ccs.ListViewGravity.centerVertical:
-                            llp.setGravity(ccs.UILinearGravity.centerVertical);
+                            llp.setGravity(ccs.LinearGravity.centerVertical);
                             break;
                         default:
                             break;
