@@ -136,14 +136,18 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         }
 
-        this.unscheduleUpdate();
-        this.scheduleUpdate();
-
         this.setCascadeOpacityEnabled(true);
         this.setCascadeColorEnabled(true);
         return true;
     },
-
+    onEnter:function(){
+        cc.NodeRGBA.prototype.onEnter.call(this);
+        this.scheduleUpdate();
+    },
+    onExit:function(){
+        cc.NodeRGBA.prototype.onExit.call(this);
+        this.unscheduleUpdate();
+    },
     /**
      * create a bone
      * @param {String} boneName
