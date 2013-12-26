@@ -74,8 +74,6 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             default:
                 break;
         }
-        imageRenderer.setColor(this.getColor());
-        imageRenderer.setOpacity(this.getOpacity());
 
         var locRendererSize = imageRenderer.getContentSize();
         if(imageRenderer.textureLoaded()){
@@ -99,6 +97,8 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },

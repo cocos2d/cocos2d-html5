@@ -190,9 +190,6 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
                 break;
         }
 
-        buttonNormalRenderer.setColor(this.getColor());
-        buttonNormalRenderer.setOpacity(this.getOpacity());
-
         var buttonRenderSize = buttonNormalRenderer.getContentSize();
         if(buttonNormalRenderer.textureLoaded()){
             this._normalTextureSize.width = buttonRenderSize.width;
@@ -212,7 +209,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
 
-        this.updateAnchorPoint();
+        this._updateDisplay();
         this.normalTextureScaleChangedWithSize();
     },
 
@@ -240,9 +237,6 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
                 break;
         }
 
-        clickedRenderer.setColor(this.getColor());
-        clickedRenderer.setOpacity(this.getOpacity());
-
         if(clickedRenderer.textureLoaded()){
             this._pressedTextureSize = clickedRenderer.getContentSize();
         }else{
@@ -260,7 +254,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             clickedRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this.updateAnchorPoint();
+        this._updateDisplay();
         this.pressedTextureScaleChangedWithSize();
     },
 
@@ -288,9 +282,6 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
                 break;
         }
 
-        disableRenderer.setColor(this.getColor());
-        disableRenderer.setOpacity(this.getOpacity());
-
         if(disableRenderer.textureLoaded()){
             this._disabledTextureSize = disableRenderer.getContentSize();
         }else{
@@ -308,8 +299,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             disableRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this.updateAnchorPoint();
+        this._updateDisplay();
         this.disabledTextureScaleChangedWithSize();
+    },
+
+    _updateDisplay:function(){
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateAnchorPoint();
     },
 
     /**
@@ -608,7 +605,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      */
     setTitleColor: function (color) {
         this._titleColor = color;
-        this._titleRenderer.setColor(color);
+        this._titleRenderer.updateDisplayedColor(color);
     },
 
     /**

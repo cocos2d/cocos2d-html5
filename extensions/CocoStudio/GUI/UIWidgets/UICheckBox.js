@@ -142,8 +142,8 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        bgBoxRenderer.setColor(this.getColor());
-        bgBoxRenderer.setOpacity(this.getOpacity());
+
+        this._updateDisplay();
 
         if(!bgBoxRenderer.textureLoaded()){
             bgBoxRenderer.addLoadedEventListener(function(){
@@ -174,8 +174,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._backGroundSelectedBoxRenderer.setColor(this.getColor());
-        this._backGroundSelectedBoxRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.backGroundSelectedTextureScaleChangedWithSize();
     },
 
@@ -201,8 +200,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._frontCrossRenderer.setColor(this.getColor());
-        this._frontCrossRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.frontCrossTextureScaleChangedWithSize();
     },
 
@@ -228,8 +226,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._backGroundBoxDisabledRenderer.setColor(this.getColor());
-        this._backGroundBoxDisabledRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.backGroundDisabledTextureScaleChangedWithSize();
     },
 
@@ -255,9 +252,14 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._frontCrossDisabledRenderer.setColor(this.getColor());
-        this._frontCrossRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.frontCrossDisabledTextureScaleChangedWithSize();
+    },
+
+    _updateDisplay:function(){
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateAnchorPoint();
     },
 
     onTouchEnded: function (touch , event) {

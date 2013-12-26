@@ -130,8 +130,8 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         if (this._scale9Enabled){
             barRenderer.setCapInsets(this._capInsets);
         }
-        barRenderer.setColor(this.getColor());
-        barRenderer.setOpacity(this.getOpacity());
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
 
         var textLoaded = barRenderer.textureLoaded();
         this._isTextureLoaded = textLoaded;

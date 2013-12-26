@@ -134,8 +134,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        barRenderer.setColor(this.getColor());
-        barRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.barRendererScaleChangedWithSize();
 
         if (!barRenderer.textureLoaded()) {
@@ -168,8 +167,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        progressBarRenderer.setColor(this.getColor());
-        progressBarRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         progressBarRenderer.setAnchorPoint(0.0, 0.5);
         var locSize = progressBarRenderer.getContentSize();
         this._progressBarTextureSize.width = locSize.width;
@@ -187,6 +185,11 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
                 this.progressBarRendererScaleChangedWithSize();
             }, this);
         }
+    },
+
+    _updateDisplay:function(){
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
     },
 
     /**
@@ -306,8 +309,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._slidBallNormalRenderer.setColor(this.getColor());
-        this._slidBallNormalRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
     },
 
     /**
@@ -332,8 +334,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._slidBallPressedRenderer.setColor(this.getColor());
-        this._slidBallPressedRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
     },
 
     /**
@@ -358,8 +359,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._slidBallDisabledRenderer.setColor(this.getColor());
-        this._slidBallDisabledRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
     },
 
     /**

@@ -561,22 +561,6 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         }
     },
 
-    /**
-     * @param {cc.c3b} color
-     */
-    setColor: function (color) {
-        ccs.Widget.prototype.setColor.call(this, color);
-        this._textFieldRender.setColor(color);
-    },
-
-    /**
-     * @param {number} opacity
-     */
-    setOpacity: function (opacity) {
-        ccs.Widget.prototype.setOpacity.call(this, opacity);
-        this._textFieldRender.setOpacity(opacity);
-    },
-
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
         this.textfieldRendererScaleChangedWithSize();
