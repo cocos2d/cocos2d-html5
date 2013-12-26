@@ -1,6 +1,6 @@
 {
     "name":"cctextinput",
-    "description":"",
+    "description":"Text input node package",
     "version":"0.1.2",
     "keywords":[
         "cocos2d-html5",

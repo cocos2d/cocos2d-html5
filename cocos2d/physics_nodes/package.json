@@ -1,6 +1,6 @@
 {
     "name":"ccphysics",
-    "description":"",
+    "description":"Physic node package",
     "version":"0.1.2",
     "keywords":[
         "cocos2d-html5",
