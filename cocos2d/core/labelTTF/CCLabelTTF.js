@@ -72,8 +72,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
-        // Init class properties
-        this._initMeasureUtil();
 
         this._dimensions = cc.SizeZero();
         this._hAlignment = cc.TEXT_ALIGNMENT_LEFT;
@@ -107,29 +105,21 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this.initWithString(" ", this._fontName, this._fontSize);
     },
 
-    _initMeasureUtil: function() {
-        if(!cc.LabelTTF._measureCanvas) {
-            var canvas = cc.LabelTTF._measureCanvas = document.createElement("canvas");
-            canvas.width = 160;
-            canvas.height = 160;
-            cc.LabelTTF._measureCtx = canvas.getContext("2d");
-        }
-    },
     _measureConfig: function() {
-        cc.LabelTTF._measureCtx.font = this._fontStyleStr;
+        this._getLabelContext().font = this._fontStyleStr;
     },
     _measure: function(text) {
-        return cc.LabelTTF._measureCtx.measureText(text).width;
+        return this._getLabelContext().measureText(text).width;
     },
     _checkNextline: function( text, width){
         var tWidth = this._measure(text);
-        // Text width smaller than requested width
-        if(tWidth < width) return text.length;
         // Estimated word number per line
         var baseNb = Math.floor( text.length * width / tWidth );
         // Next line is a line with line break
         var nextlinebreak = text.indexOf('\n');
         if(baseNb*0.8 >= nextlinebreak && nextlinebreak > 0) return nextlinebreak+1;
+        // Text width smaller than requested width
+        if(tWidth < width) return text.length;
 
         var found = false, l = width + 1, idfound = -1, index = baseNb, result,
             re = cc.LabelTTF._checkRegEx,
@@ -739,10 +729,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _updateTTF:function () {
-        var locDimensionsWidth = this._dimensions.width, locLabelContext = this._labelContext;
-        var stringWidth = locLabelContext.measureText(this._string).width;
+        var locDimensionsWidth = this._dimensions.width;
+        this._lineWidths = [];
 
-        if(locDimensionsWidth !== 0 && stringWidth > locDimensionsWidth) {
+        this._isMultiLine = false;
+        if(locDimensionsWidth !== 0) {
             // Content processing
             this._measureConfig();
             var text = this._string;
@@ -752,15 +743,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 // Find the index of next line
                 var next = this._checkNextline(text.substr(i), locDimensionsWidth);
                 var append = text.substr(i, next);
-                //if( text[i+next-1] != '\n' && text[i+next] != '\n' )
-                //    buffer.push('\n');
 
+                this._lineWidths.push(this._measure(append));
                 this._strings.push(append);
                 i += next;
             }
-            this._isMultiLine = true;
+            if(this._strings.length > 0)
+                this._isMultiLine = true;
         }
-        else this._isMultiLine = false;
 
         var locSize, locStrokeShadowOffsetX = 0, locStrokeShadowOffsetY = 0;
         if(this._strokeEnabled)
@@ -777,7 +767,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 locSize = cc.size(0 | (Math.max.apply(Math, this._lineWidths) + locStrokeShadowOffsetX),
                     0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
             else
-                locSize = cc.size(0 | (stringWidth + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
+                locSize = cc.size(0 | (this._measure(this._string) + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
         } else {
             if(this._dimensions.height === 0){
                 if (this._isMultiLine)
@@ -1031,19 +1021,17 @@ cc.LabelTTF._textAlign = ["left", "center", "right"];
 cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
 
 // Class static properties for measure util
-cc.LabelTTF._measureCanvas = null;
-cc.LabelTTF._measureCtx = null;
 cc.LabelTTF._checkRegEx = /(.+?)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
 cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
 cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
 
 /**
- * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
+ * creates a cc.LabelTTF from a font name, alignment, dimension and font size
  * @param {String} label
  * @param {String} fontName
  * @param {Number} fontSize
  * @param {cc.Size} [dimensions=cc.SIZE_ZERO]
- * @param {Number} [hAlignment]
+ * @param {Number} [hAlignment=]
  * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
  * @return {cc.LabelTTF|Null}
  * @example
