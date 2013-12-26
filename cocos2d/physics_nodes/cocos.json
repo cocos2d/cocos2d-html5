@@ -1,5 +1,7 @@
 {
     "dependencies":[
+        "ccchipmunk",
+        "ccbox2d"
     ],
     "genJsRes" : {
         "dirCfgs" : ["lib"]

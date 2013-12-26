@@ -10,7 +10,7 @@ var list = [
     "cocos2d/clipping_nodes",
     "cocos2d/compress",
     "cocos2d/core",
-    "cocos2d/draw_nodes",
+    "cocos2d/shape_nodes",
     "cocos2d/effects",
     "cocos2d/kazmath",
     "cocos2d/keyboard_dispatcher",
@@ -39,7 +39,7 @@ for(var i = 0, li = list.length; i < li; i++){
     var targetPath = path.join(basePath, list[i]);
     exec("npm publish " + targetPath, function(err, data, info){
         if(err) return console.error(err);
-        console.log(data);
         console.log(info);
+        console.log(data);
     });
 }

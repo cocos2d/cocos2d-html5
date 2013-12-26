@@ -1,5 +1,11 @@
 {
     "dependencies":[
+        "ccgui",
+        "ccmenu",
+        "ccparticle",
+        "ccactions",
+        "cctouch",
+        "cclabel"
     ],
     "genJsRes" : {
         "dirCfgs" : ["lib"]

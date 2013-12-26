@@ -38,10 +38,20 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _soundSupported:false,                                        // if sound is not enabled, this engine's init() will return false
     _effectsVolume:1,                                              // the volume applied to all effects
     _playingMusic:null,                                           // the music being played, when null, no music is being played; when not null, it may be playing or paused
+    _resPath : "",          //root path for resources
 
     ctor:function(){
         this._audioIDList = {};
         this._supportedFormat = [];
+    },
+
+    /**
+     * Set root path for music resources.
+     * @param resPath
+     */
+    setResPath : function(resPath){
+        if(!resPath || resPath.length == 0) return;
+        this._resPath = resPath.substring(resPath.length - 1) == "/" ? resPath : resPath + "/";
     },
     /**
      * Check each type to see if it can be played by current browser
@@ -212,13 +222,14 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      */
     preloadSound:function (path) {
         if (this._soundSupported) {
+            var realPath = this._resPath + path;
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
             if (this.isFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
                 if(this._canPlay){
                     var sfxCache = new cc.SimpleSFX();
                     sfxCache.ext = extName;
-                    sfxCache.audio = new Audio(path);
+                    sfxCache.audio = new Audio(realPath);
                     sfxCache.audio.preload = 'auto';
                     var soundPreloadCanplayHandler = function () {
                         cc.Loader.getInstance().onResLoaded();
@@ -1197,7 +1208,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _fetchData: function(url, onSuccess, onError) {
         // currently, only the webkit browsers support Web Audio API, so it should be fine just writing like this.
         var req = new window.XMLHttpRequest();
-        req.open('GET', url, true);
+        var realPath = this._resPath + url;
+        req.open('GET', realPath, true);
         req.responseType = 'arraybuffer';
         var engine = this;
         req.onload = function() {

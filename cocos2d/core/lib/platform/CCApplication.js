@@ -225,7 +225,7 @@ cc.setup = function (el, width, height) {
         cc.mainRenderContextBackup = cc.renderContext;
         cc.renderContextType = cc.CANVAS;
         cc.renderContext.translate(0, localCanvas.height);
-        cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
+        cc.drawingUtil = cc.DrawingPrimitiveCanvas ? new cc.DrawingPrimitiveCanvas(cc.renderContext) : null;
     }
 
     cc.originalCanvasSize = cc.size(localCanvas.width, localCanvas.height);
@@ -257,6 +257,7 @@ cc.setup = function (el, width, height) {
     }
 
     function handleVisibilityChange() {
+        if(!cc.AudioEngine) return;
         var audioEngine = cc.AudioEngine.getInstance();
         if (!document[hidden]){
             cc.Director.getInstance()._resetLastUpdate();
@@ -272,11 +273,13 @@ cc.setup = function (el, width, height) {
         typeof hidden === "undefined") {
         cc.isAddedHiddenEvent = false;
         window.addEventListener("focus", function () {
+            if(!cc.AudioEngine) return;
             var audioEngine = cc.AudioEngine.getInstance();
             audioEngine.resumeAllEffects();
             audioEngine.resumeMusic();
         }, false);
         window.addEventListener("blur", function () {
+            if(!cc.AudioEngine) return;
             var audioEngine = cc.AudioEngine.getInstance();
             audioEngine.pauseAllEffects();
             audioEngine.pauseMusic();

@@ -1,8 +1,14 @@
 {
-    "name":"cocos2d-html5",
-    "description":"",
-    "version":"2.2.2",
-    "keywords":[
+    "name": "cocos2d-html5",
+    "description": "cocos2d-html5",
+    "version":"0.1.3",
+    "author": {
+        "name": "cocos2d-html5",
+        "email": "linshun@cocos2d-x.org"
+    },
+    "dependencies": {},
+    "devDependencies": {},
+    "keywords": [
         "cocos2d-html5",
         "cocos",
         "utils",
@@ -12,32 +18,8 @@
         "app",
         "api"
     ],
-    "maintainers":[
-        {
-            "name":"linshun",
-            "email":"linshun@cocos2d-x.org"
-        }
-    ],
-    "contributors":[
-        {
-            "name":"authors",
-            "web":"https://github.com/cocos2d/cocos2d-html5/blob/develop/AUTHORS.txt"
-        }
-    ],
-    "bugs":{
-        "web":"https://github.com/cocos2d/cocos2d-html5/issues"
-    },
-    "license":[
-        {
-            "type":"MIT",
-            "url":"https://github.com/cocos2d/cocos2d-html5/blob/master/licenses/LICENSE_cocos2d-html5.txt"
-        }
-    ],
-    "repository":{
-        "type":"git",
-        "url":"https://github.com/cocos2d/cocos2d-html5.git"
-    },
-    "dependencies":{},
-    "readme":"",
-    "homepage":"https://github.com/cocos2d/cocos2d-html5"
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cocos2d/cocos2d-html5.git"
+    }
 }

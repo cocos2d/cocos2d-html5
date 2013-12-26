@@ -1,5 +1,6 @@
 {
     "dependencies":[
+        "cctouch"
     ],
     "genJsRes" : {
         "dirCfgs" : ["lib"]

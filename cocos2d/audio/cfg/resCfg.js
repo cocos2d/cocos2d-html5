@@ -2,7 +2,7 @@ var resCfg = cc.resCfg;
 var jsRes = js.ccaudio;
 
 resCfg["ccaudio"] = {
-    ref : []//Base references for the project.
+    ref : [
+        jsRes.SimpleAudioEngine_js
+    ]//Base references for the project.
 };
-
-resCfg.gameModules = [];//Game modules

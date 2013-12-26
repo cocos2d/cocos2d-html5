@@ -1,5 +1,7 @@
 {
     "dependencies":[
+        "ccactions",
+        "cceffects"
     ],
     "genJsRes" : {
         "dirCfgs" : ["lib"]

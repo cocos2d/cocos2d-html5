@@ -1,5 +1,12 @@
 {
     "dependencies":[
+        "ccgui",
+        "cctouch",
+        "ccactions",
+        "cclabel",
+        "cctextinput",
+        "cctilemap",
+        "ccaudio"
     ],
     "genJsRes" : {
         "dirCfgs" : ["lib"]

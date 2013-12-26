@@ -26,12 +26,17 @@ function move(srcDir, targetDir, list){
         var sPath = path.join(srcDir, dir);
         var tPath = path.join(targetDir, dir);
         var libPath = path.join(tPath, "lib");
+        var ignores = [];
+        if(itemi.name == "cocos2d-html5"){
+            ignores.push(path.join(libPath, "cc.js"));
+            ignores.push(path.join(libPath, "cc4publish.js"));
+        }
 
         if(!fs.existsSync(tPath)) core4cc.mkdirSyncRecursive(tPath);
         var files = fs.readdirSync(tPath);
         for(var j = 0, lj = files.length; j < lj; j++){
             if(ignoreFiles.indexOf(files[j]) >= 0) continue;
-            core4cc.rmdirSyncRecursive(path.join(tPath, files[j]));
+            core4cc.rmdirSyncRecursive(path.join(tPath, files[j]), ignores);
         }
         core4cc.copyFiles(sPath, libPath);
 
@@ -48,7 +53,8 @@ function move(srcDir, targetDir, list){
             core4cc.copyFiles(path.join(__dirname, "../template/base"), tPath, handler);
         }else{
             var content = fs.readFileSync(packagePath).toString();
-            content = content.replace(/"version"[\s]*:[\s]*"[\d\.\-]+"/, '"version" : "' + itemi.version + '"');
+            content = content.replace(/"version"[\s]*:[\s]*"[\d\.\-]+"/, '"version":"' + itemi.version + '"');
+            fs.writeFileSync(packagePath, content);
         }
         exec("cocos genJsRes " + tPath, function(err, data, info){
             console.log(data);
@@ -60,9 +66,9 @@ function move(srcDir, targetDir, list){
 };
 
 
-var srcDir = "/Users/linshun/sourcecode/cocos2d-html5";
+var srcDir = "/Users/small/WebstormProjects/cocos2d-html5-test";
 var targetDir = path.join(__dirname, "../../../");
-var version = "2.2.2";
+var version = "0.1.1";
 var list = [
     {name : "ccaccelerometer",  version : version, dir : "cocos2d/accelerometer"},
     {name : "ccactions",        version : version, dir : "cocos2d/actions"},
