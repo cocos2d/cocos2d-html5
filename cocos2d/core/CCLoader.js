@@ -541,3 +541,193 @@ cc.LoaderScene.preload = function (resources, selector, target) {
 
     return this._instance;
 };
+
+
+
+
+cc.ResLoader = cc.Class.extend({
+
+
+    url: null,
+    type: null,
+    callbackList: null,
+    thisObjList: null,
+    state: 0,
+    data: null,
+
+    ctor: function (url, type) {
+        this.url = url;
+        this._getDataType(type);
+        this.type = type;
+        this.callbackList = [];
+        this.thisObjList = [];
+    },
+
+
+    _getDataType: function (type) {
+        if (type){
+            this.type = type;
+            return;
+        }
+        var url = this.url;
+        var ext = url.substring(url.lastIndexOf("."));
+        switch (ext) {
+            case ".plist":
+            case ".xml":
+            case ".txt":
+            case ".fnt":
+            case ".zip":
+            case ".json":
+                this.type = cc.ResLoader.DATA_TYPE_TEXT;
+                break;
+            case ".png":
+            case ".jpg":
+                this.type = cc.ResLoader.DATA_TYPE_IMAGE;
+                break;
+            default :
+                this.type = cc.ResLoader.DATA_TYPE_BINARY;
+                break;
+        }
+    },
+
+    load: function () {
+        if (this.type == cc.ResLoader.DATA_TYPE_IMAGE) {
+            return this._loadByImage();
+        }
+        else {
+            this._loadByAjax();
+        }
+    },
+
+    addCallback: function (callback, thisObj) {
+        if (this.callbackList.indexOf(callback) != -1) {
+            return;
+        }
+        this.callbackList.push(callback);
+        this.thisObjList.push(thisObj);
+    },
+
+    _executeAllCallback: function (data) {
+        this.state = 1;
+        this.data = data;
+        while (this.thisObjList.length > 0) {
+            var callback = this.callbackList.shift();
+            var thisObj = this.thisObjList.shift();
+            callback.call(thisObj, data);
+        }
+    },
+
+    _loadByAjax: function () {
+        var fileUrl = this.url;
+        var selfPointer = this;
+
+        var xhr = this._getXMLHttpRequest();
+        xhr.open("GET", cc.FileUtils.getInstance().fullPathForFilename(fileUrl), true);
+        this._setXMLHttpRequestHeader(xhr);
+        xhr.onreadystatechange = function (event) {
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    var fileContents = selfPointer._processXMLHttpResponse(xhr);
+                    selfPointer._executeAllCallback(fileContents);
+                } else {
+                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                }
+                cc.Loader.getInstance().onResLoaded();
+            }
+        };
+        xhr.send(null);
+    },
+
+    _loadByImage: function () {
+        var image = new Image();
+        image.crossOrigin = "Anonymous";
+        var fileUrl = cc.FileUtils.getInstance().fullPathForFilename(this.url);
+        var that = this;
+        image.addEventListener("load", function () {
+            that._executeAllCallback(this);
+            cc.Loader.getInstance().onResLoaded();
+            this.removeEventListener('load', arguments.callee, false);
+            this.removeEventListener('error', arguments.callee, false);
+        });
+        image.addEventListener("error", function () {
+            cc.Loader.getInstance().onResLoadingErr(this.url);
+            //remove from cache
+            if (that._textures.hasOwnProperty(this.url))
+                delete that._textures[this.url];
+
+            this.removeEventListener('error', arguments.callee, false);
+        });
+        image.src = fileUrl;
+        return image;
+    },
+
+
+    _setXMLHttpRequestHeader: function (xhr) {
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            // IE-specific logic here
+            if (this.type == cc.ResLoader.DATA_TYPE_BINARY) {
+                xhr.setRequestHeader("Accept-Charset", "x-user-defined");
+            }
+            else {
+                xhr.setRequestHeader("Accept-Charset", "utf-8");
+            }
+
+        }
+        else {
+            if (xhr.overrideMimeType) {
+                if (this.type == cc.ResLoader.DATA_TYPE_BINARY) {
+                    xhr.overrideMimeType("text\/plain; charset=x-user-defined");
+                }
+                else {
+                    xhr.overrideMimeType("text\/plain; charset=utf-8");
+                }
+            }
+        }
+    },
+
+    _processXMLHttpResponse: function (xhr) {
+        if (this.type == cc.ResLoader.DATA_TYPE_TEXT) {
+            return  fileContents = xhr.responseText;
+        }
+        var fileContents;
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            // IE-specific logic here
+            fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
+        }
+        else {
+            fileContents = xhr.responseText;
+        }
+        return this._stringConvertToArray(fileContents);
+    },
+
+
+    _stringConvertToArray: function (strData) {
+        if (!strData)
+            return null;
+
+        var arrData = new Uint8Array(strData.length);
+        for (var i = 0; i < strData.length; i++) {
+            arrData[i] = strData.charCodeAt(i) & 0xff;
+        }
+        return arrData;
+    },
+
+    _getXMLHttpRequest: function () {
+        if (window.XMLHttpRequest) {
+            return new window.XMLHttpRequest();
+        } else {
+            return new ActiveXObject("MSXML2.XMLHTTP");
+        }
+    }
+
+
+
+})
+
+cc.ResLoader.DATA_TYPE_BINARY = "binary";
+cc.ResLoader.DATA_TYPE_TEXT = "text";
+cc.ResLoader.DATA_TYPE_IMAGE = "image";
+
+
+cc.ResLoader.LOAD_STATE_INIT = 0;
+cc.ResLoader.LOAD_STATE_LOADED = 1;
