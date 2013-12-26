@@ -206,7 +206,6 @@
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js"/>
-                <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollInterface.js"/>
                 <file name="CocoStudio/Reader/GUIReader.js"/>
                 <file name="CocoStudio/Reader/SceneReader.js"/>
             </sources>

@@ -233,7 +233,6 @@
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js',
-            '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollInterface.js',
             '../extensions/CocoStudio/Reader/GUIReader.js',
             '../extensions/CocoStudio/Reader/SceneReader.js'
 

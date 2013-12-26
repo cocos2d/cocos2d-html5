@@ -125,7 +125,7 @@ ccs.ListView = ccs.ScrollView.extend({
                             break;
                     }
                     if (this.getIndex(item) == 0) {
-                        defaultLp.setMargin(ccs.UIMarginZero());
+                        defaultLp.setMargin(ccs.MarginZero());
                     }
                     else {
                         defaultLp.setMargin(new ccs.Margin(0.0, this._itemsMargin, 0.0, 0.0));
@@ -134,7 +134,7 @@ ccs.ListView = ccs.ScrollView.extend({
                 }
                 else {
                     if (this.getIndex(item) == 0) {
-                        llp.setMargin(ccs.UIMarginZero());
+                        llp.setMargin(ccs.MarginZero());
                     }
                     else {
                         llp.setMargin(new ccs.Margin(0, this._itemsMargin, 0, 0));
@@ -172,7 +172,7 @@ ccs.ListView = ccs.ScrollView.extend({
                             break;
                     }
                     if (this.getIndex(item) == 0) {
-                        defaultLp.setMargin(ccs.UIMarginZero());
+                        defaultLp.setMargin(ccs.MarginZero());
                     }
                     else {
                         defaultLp.setMargin(new ccs.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
@@ -181,7 +181,7 @@ ccs.ListView = ccs.ScrollView.extend({
                 }
                 else {
                     if (this.getIndex(item) == 0) {
-                        llp.setMargin(ccs.UIMarginZero());
+                        llp.setMargin(ccs.MarginZero());
                     }
                     else {
                         llp.setMargin(new ccs.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
