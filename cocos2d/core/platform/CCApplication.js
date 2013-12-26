@@ -238,7 +238,6 @@ cc.setup = function (el, width, height) {
 
     if(cc.Browser.isMobile){
         cc._addUserSelectStatus();
-        cc._addBottomTag();
     }
 
     var hidden, visibilityChange;
@@ -294,15 +293,6 @@ cc._addUserSelectStatus = function(){
 
     fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
         +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
-};
-
-cc._addBottomTag = function () {
-    var bottom = document.createElement("div");
-    bottom.id = "bottom";
-    var bStyle = bottom.style;
-    bStyle.border = bStyle.margin = bStyle.padding = bStyle.height = bStyle.lineHeight = bStyle.fontSize = "0px";
-    document.body.appendChild(bottom);
-    window.location.href="#bottom";
 };
 
 cc._isContextMenuEnable = false;
