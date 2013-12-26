@@ -1065,7 +1065,7 @@ cc.SpriteBatchNode.create = function (fileImage, capacity) {
  *   The capacity will be increased in 33% in runtime if it run out of space.               <br/>
  * </p>
  * @param {cc.Texture2D} texture
- * @param {Number} capacity
+ * @param {Number} [capacity]
  * @return {cc.SpriteBatchNode}
  */
 cc.SpriteBatchNode.createWithTexture = function (texture, capacity) {

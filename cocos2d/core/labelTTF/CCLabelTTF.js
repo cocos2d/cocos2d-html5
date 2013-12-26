@@ -1038,12 +1038,12 @@ cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-
 cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
 
 /**
- * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
+ * creates a cc.LabelTTF from a font name, alignment, dimension and font size
  * @param {String} label
  * @param {String} fontName
  * @param {Number} fontSize
  * @param {cc.Size} [dimensions=cc.SIZE_ZERO]
- * @param {Number} [hAlignment]
+ * @param {Number} [hAlignment=]
  * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
  * @return {cc.LabelTTF|Null}
  * @example
