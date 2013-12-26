@@ -241,8 +241,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._actionManager = new cc.ActionManager();
         this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.PRIORITY_SYSTEM, false);
         //touchDispatcher
-        this._touchDispatcher = new cc.TouchDispatcher();
-        this._touchDispatcher.init();
+        if(cc.TouchDispatcher){
+            this._touchDispatcher = new cc.TouchDispatcher();
+            this._touchDispatcher.init();
+        }
 
         //KeyboardDispatcher
         if(cc.KeyboardDispatcher)
@@ -493,7 +495,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         if (c == 0)
             this.end();
-         else {
+        else {
             this._sendCleanupToScene = true;
             this._nextScene = this._scenesStack[c - 1];
         }
@@ -568,7 +570,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     pushScene:function (scene) {
         if(!scene)
-             throw "the scene should not null";
+            throw "the scene should not null";
 
         this._sendCleanupToScene = false;
 
@@ -714,9 +716,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * set next scene
      */
     setNextScene:function () {
-        var runningIsTransition = this._runningScene ? this._runningScene instanceof cc.TransitionScene : false;
-
-        var newIsTransition = this._nextScene ? this._nextScene instanceof cc.TransitionScene : false;
+        var runningIsTransition = false, newIsTransition = false;
+        if(cc.TransitionScene){
+            runningIsTransition = this._runningScene ? this._runningScene instanceof cc.TransitionScene : false;
+            newIsTransition = this._nextScene ? this._nextScene instanceof cc.TransitionScene : false;
+        }
 
         // If it is not a transition, call onExit/cleanup
         if (!newIsTransition) {
@@ -791,9 +795,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //if (this._openGLView)
         this.setGLDefaultValues();
 
-            /* if (this._contentScaleFactor != 1) {
-             this.updateContentScaleFactor();
-             }*/
+        /* if (this._contentScaleFactor != 1) {
+         this.updateContentScaleFactor();
+         }*/
 
         this._touchDispatcher.setDispatchEvents(true);
         //}

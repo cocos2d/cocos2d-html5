@@ -39,7 +39,7 @@ for(var i = 0, li = list.length; i < li; i++){
     var targetPath = path.join(basePath, list[i]);
     exec("npm publish " + targetPath, function(err, data, info){
         if(err) return console.error(err);
-        console.log(data);
         console.log(info);
+        console.log(data);
     });
 }

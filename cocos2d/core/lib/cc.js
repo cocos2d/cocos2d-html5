@@ -65,6 +65,8 @@ function ResLoader(baseCfg){
         var cfg = resCfg[js];
         var isJs = js.length >= 4 && js.substring(js.length - 3) == ".js";//is js ?
 
+        cfg = cfg || {};
+
         var result = {jsArr:[], resArr:[]};
         var ref = cfg.ref || [];
         for(var i = 0, li = ref.length; i < li; i++){
@@ -74,7 +76,7 @@ function ResLoader(baseCfg){
                 if(r.resArr && r.resArr.length > 0) result.resArr = result.resArr.concat(r.resArr);
             }
         }
-        var res = cfg.resArr || [];
+        var res = cfg.res || [];
         for(var i = 0, li = res.length; i < li; ++i){
             if(resCache[res[i]]) continue;
             result.resArr.push({src : res[i]});
@@ -228,13 +230,15 @@ function ResLoader(baseCfg){
 
 }
 
+var  resLoader = new ResLoader(baseCfg);
+
 /**
  * Load game module.
  * @param moduleName
  * @param cb
  */
 cc.loadGameModule = function(moduleName, cb){
-    test.loadGameModule(moduleName, cb);
+    resLoader.loadGameModule(moduleName, cb);
 }
 
 
@@ -337,7 +341,6 @@ cc.test = function(cfgName){
     });
 };
 
-var  test = new ResLoader(baseCfg);
-test.loadGame();
+resLoader.loadGame();
 
 

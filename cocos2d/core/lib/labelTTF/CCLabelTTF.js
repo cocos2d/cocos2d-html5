@@ -1075,28 +1075,6 @@ if(cc.USE_LA88_LABELS)
 else
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTUREA8COLOR;
 
-cc.LabelTTF.__charWidthCache = {};
-cc.LabelTTF._getCharWidth = function(code, fontSize, fontName) {
-    if (!cc.LabelTTF.__charWidthCache[fontName + fontSize]) {
-        var label = cc.LabelTTF.create("字", fontName, fontSize);
-        var width = label.getContentSize().width;
-        var label2 = cc.LabelTTF.create("a", fontName, fontSize);
-        var width2 = label2.getContentSize().width;
-        cc.LabelTTF.__charWidthCache[fontName + fontSize] = {
-            double: width,
-            single: width2
-        };
-    }
-
-    var _charCache = cc.LabelTTF.__charWidthCache[fontName + fontSize];
-    var isDouble = code > 255;
-    if (isDouble) {
-        return _charCache.double;
-    }
-    else {
-        return _charCache.single;
-    }
-};
 cc.LabelTTF.__labelHeightDiv = document.createElement("div");
 cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";

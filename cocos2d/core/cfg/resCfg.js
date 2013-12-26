@@ -1,5 +1,8 @@
+var cc = cc || {};
+cc.resCfg = cc.resCfg || {};
+var js = js || {};
 var resCfg = cc.resCfg;
-var jsRes = js.cocos2d-html5;
+var jsRes = js.cocos2d_html5;
 
 resCfg["cocos2d-html5"] = {
     ref : [
@@ -40,6 +43,8 @@ resCfg["cocos2d-html5"] = {
         jsRes.CCLoader_js,
         jsRes.CCApplication_js,
         jsRes.CCSAXParser_js,
-        jsRes.AppControl_js
+        jsRes.AppControl_js,
+        jsRes.CCLabelTTF_js,
+        jsRes.CCActionManager_js
     ]//Base references for the project.
 };

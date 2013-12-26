@@ -6,7 +6,6 @@ resCfg["ccactions"] = {
         jsRes.CCAction_js,
         jsRes.CCActionInterval_js,
         jsRes.CCActionInstant_js,
-        jsRes.CCActionManager_js,
         jsRes.CCActionCamera_js,
         jsRes.CCActionEase_js,
         jsRes.CCActionCatmullRom_js,
