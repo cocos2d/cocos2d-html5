@@ -10,7 +10,7 @@
                 sourceMapOutputFile="sourcemap"
                 sourceMapFormat="V3">
             <externs dir="${basedir}/../cocos2d">
-                <file name="cocos2d_externs.js"/>
+                <file name="core/cocos2d_externs.js"/>
             </externs>
             <sources dir="${basedir}/../cocos2d">
                 <file name="core/platform/CCClass.js"/>
@@ -51,6 +51,8 @@
                 <file name="core/platform/CCApplication.js"/>
                 <file name="core/platform/CCSAXParser.js"/>
                 <file name="core/platform/AppControl.js"/>
+                <file name="core/labelTTF/CCLabelTTF.js"/>
+                <file name="core/CCActionManager.js"/>
                 <file name="kazmath/utility.js"/>
                 <file name="kazmath/vec2.js"/>
                 <file name="kazmath/vec3.js"/>
@@ -76,7 +78,6 @@
                 <file name="actions/CCAction.js"/>
                 <file name="actions/CCActionInterval.js"/>
                 <file name="actions/CCActionInstant.js"/>
-                <file name="actions/CCActionManager.js"/>
                 <file name="actions/CCActionCamera.js"/>
                 <file name="actions/CCActionEase.js"/>
                 <file name="actions/CCActionCatmullRom.js"/>
@@ -91,7 +92,6 @@
                 <file name="transitions_nodes/CCTransitionProgress.js"/>
                 <file name="transitions_nodes/CCTransitionPageTurn.js"/>
                 <file name="label_nodes/CCLabelAtlas.js"/>
-                <file name="label_nodes/CCLabelTTF.js"/>
                 <file name="label_nodes/CCLabelBMFont.js"/>
                 <file name="compress/ZipUtils.js"/>
                 <file name="compress/base64.js"/>
@@ -177,7 +177,6 @@
                 <file name="CocoStudio/Armature/CCArmature.js"/>
                 <file name="CocoStudio/Armature/CCBone.js"/>
                 <file name="CocoStudio/Action/CCActionFrame.js"/>
-                <file name="CocoStudio/Action/CCActionManager.js"/>
                 <file name="CocoStudio/Action/CCActionNode.js"/>
                 <file name="CocoStudio/Action/CCActionObject.js"/>
                 <file name="CocoStudio/Components/CCComAttribute.js"/>
