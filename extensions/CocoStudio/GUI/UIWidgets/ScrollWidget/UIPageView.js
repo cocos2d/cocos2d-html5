@@ -40,16 +40,15 @@ ccs.PVTouchDir = {
 };
 
 /**
- * Base class for ccs.UIPageView
+ * Base class for ccs.PageView
  * @class
- * @extends ccs.UILayout
+ * @extends ccs.Layout
  */
-ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
+ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
     _curPageIdx: 0,
     _pages: null,
     _touchMoveDir: null,
     _touchStartLocation: 0,
-    _touchEndLocation: 0,
     _touchMoveStartLocation: 0,
     _movePagePoint: null,
     _leftChild: null,
@@ -64,12 +63,11 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     ctor: function () {
-        ccs.UILayout.prototype.ctor.call(this);
+        ccs.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;
         this._pages = [];
         this._touchMoveDir = ccs.PVTouchDir.touchLeft;
         this._touchStartLocation = 0;
-        this._touchEndLocation = 0;
         this._touchMoveStartLocation = 0;
         this._movePagePoint = null;
         this._leftChild = null;
@@ -86,7 +84,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     init: function () {
-        if (ccs.UILayout.prototype.init.call(this)) {
+        if (ccs.Layout.prototype.init.call(this)) {
             this._pages = [];
             this.setClippingEnabled(true);
             this.setUpdateEnabled(true);
@@ -98,7 +96,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Add a widget to a page of pageview.
-     * @param {ccs.UIWidget} widget
+     * @param {ccs.Widget} widget
      * @param {number} pageIdx
      * @param {Boolean} forceCreate
      */
@@ -130,17 +128,17 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * create page
-     * @returns {ccs.UILayout}
+     * @returns {ccs.Layout}
      */
     createPage: function () {
-        var newPage = ccs.UILayout.create();
+        var newPage = ccs.Layout.create();
         newPage.setSize(this.getSize());
         return newPage;
     },
 
     /**
      * Push back a page to pageview.
-     * @param {ccs.UILayout} page
+     * @param {ccs.Layout} page
      */
     addPage: function (page) {
         if (!page) {
@@ -166,7 +164,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Inert a page to pageview.
-     * @param {ccs.UILayout} page
+     * @param {ccs.Layout} page
      * @param {Number} idx
      */
     insertPage: function (page, idx) {
@@ -210,7 +208,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Remove a page of pageview.
-     * @param {ccs.UILayout} page
+     * @param {ccs.Layout} page
      */
     removePage: function (page) {
         if (!page) {
@@ -256,28 +254,26 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     /**
      * Add widget
-     * @param {ccs.UIWidget} widget
+     * @param {ccs.Widget} widget
+     * @param {Number} zOrder
+     * @param {Number} tag
      * @returns {boolean}
      */
-    addChild: function (widget) {
-        return ccs.UILayout.prototype.addChild.call(this, widget);
+    addChild: function (widget, zOrder, tag) {
+        return ccs.Layout.prototype.addChild.call(this, widget, zOrder, tag);
     },
 
     /**
      *  remove widget child override
-     * @param {ccs.UIWidget} child
-     * @returns {boolean}
+     * @param {ccs.Widget} child
      */
-    removeChild: function (widget) {
-        if (cc.ArrayContainsObject(this._pages, widget)) {
-            cc.ArrayRemoveObject(this._pages, widget);
-            return ccs.UILayout.prototype.removeChild.call(this, widget);
-        }
-        return false;
+    removeChild: function (child) {
+        cc.ArrayRemoveObject(this._pages, child);
+        ccs.Layout.prototype.removeChild.call(this, child);
     },
 
     onSizeChanged: function () {
-        ccs.UILayout.prototype.onSizeChanged.call(this);
+        ccs.Layout.prototype.onSizeChanged.call(this);
         this._rightBoundary = this.getSize().width;
         this.updateChildrenSize();
         this.updateChildrenPosition();
@@ -318,7 +314,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
 
     removeAllChildren: function () {
         this._pages = [];
-        ccs.UILayout.prototype.removeAllChildren.call(this);
+        ccs.Layout.prototype.removeAllChildren.call(this);
     },
 
     /**
@@ -377,28 +373,38 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
         }
     },
 
-    onTouchBegan: function (touchPoint) {
-        var pass = ccs.UILayout.prototype.onTouchBegan.call(this, touchPoint);
-        this.handlePressLogic(touchPoint);
+    onTouchBegan: function (touch,event) {
+        var pass = ccs.Layout.prototype.onTouchBegan.call(this, touch,event);
+        if (this._hitted){
+            this.handlePressLogic(touch.getLocation());
+        }
         return pass;
     },
 
-    onTouchMoved: function (touchPoint) {
+    onTouchMoved: function (touch,event) {
+        var touchPoint = touch.getLocation();
         this._touchMovePos.x = touchPoint.x;
         this._touchMovePos.y = touchPoint.y;
         this.handleMoveLogic(touchPoint);
-        if (this._widgetParent) {
-            this._widgetParent.checkChildInfo(1, this, touchPoint);
+        var widgetParent = this.getWidgetParent();
+        if (widgetParent) {
+            widgetParent.checkChildInfo(1, this, touchPoint);
         }
         this.moveEvent();
         if (!this.hitTest(touchPoint)) {
             this.setFocused(false);
-            this.onTouchEnded(touchPoint);
+            this.onTouchEnded(touch,event);
         }
     },
 
-    onTouchEnded: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchEnded.call(this, touchPoint);
+    onTouchEnded: function (touch, event) {
+        ccs.Layout.prototype.onTouchEnded.call(this, touch, event);
+        this.handleReleaseLogic(this._touchEndPos);
+    },
+
+    onTouchCancelled: function (touch, event) {
+        var touchPoint = touch.getLocation();
+        ccs.Layout.prototype.onTouchCancelled.call(this, touch, event);
         this.handleReleaseLogic(touchPoint);
     },
 
@@ -447,18 +453,14 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
         return true;
     },
 
-    onTouchCancelled: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchCancelled.call(this, touchPoint);
-    },
-
     handlePressLogic: function (touchPoint) {
-        var nsp = this._renderer.convertToNodeSpace(touchPoint);
+        var nsp = this.convertToNodeSpace(touchPoint);
         this._touchMoveStartLocation = nsp.x;
         this._touchStartLocation = nsp.x;
     },
 
     handleMoveLogic: function (touchPoint) {
-        var nsp = this._renderer.convertToNodeSpace(touchPoint);
+        var nsp = this.convertToNodeSpace(touchPoint);
         var offset = 0.0;
         var moveX = nsp.x;
         offset = moveX - this._touchMoveStartLocation;
@@ -568,7 +570,7 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UIPageView.create();
+        return ccs.PageView.create();
     },
 
     copyClonedWidgetChildren: function (model) {
@@ -580,19 +582,25 @@ ccs.UIPageView = ccs.UILayout.extend(/** @lends ccs.UIPageView# */{
     },
 
     copySpecialProperties: function (pageView) {
-        ccs.UILayout.prototype.copySpecialProperties.call(this, pageView);
+        ccs.Layout.prototype.copySpecialProperties.call(this, pageView);
+    },
+
+    doLayout: function () {
+        if (!this._doLayoutDirty)
+            return;
+        this._doLayoutDirty = false;
     }
 });
 /**
  * allocates and initializes a UIPageView.
  * @constructs
- * @return {ccs.UIPageView}
+ * @return {ccs.PageView}
  * @example
  * // example
- * var uiPageView = ccs.UIPageView.create();
+ * var uiPageView = ccs.PageView.create();
  */
-ccs.UIPageView.create = function () {
-    var uiPageView = new ccs.UIPageView();
+ccs.PageView.create = function () {
+    var uiPageView = new ccs.PageView();
     if (uiPageView && uiPageView.init()) {
         return uiPageView;
     }

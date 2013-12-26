@@ -22,6 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.UISwitch = ccs.UIWidget.extend({
+ccs.UISwitch = ccs.Widget.extend({
 
 });
