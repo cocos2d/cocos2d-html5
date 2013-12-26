@@ -113,13 +113,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
     _checkNextline: function( text, width){
         var tWidth = this._measure(text);
-        // Text width smaller than requested width
-        if(tWidth < width) return text.length;
         // Estimated word number per line
         var baseNb = Math.floor( text.length * width / tWidth );
         // Next line is a line with line break
         var nextlinebreak = text.indexOf('\n');
         if(baseNb*0.8 >= nextlinebreak && nextlinebreak > 0) return nextlinebreak+1;
+        // Text width smaller than requested width
+        if(tWidth < width) return text.length;
 
         var found = false, l = width + 1, idfound = -1, index = baseNb, result,
             re = cc.LabelTTF._checkRegEx,
@@ -730,6 +730,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _updateTTF:function () {
         var locDimensionsWidth = this._dimensions.width;
+        this._lineWidths = [];
 
         this._isMultiLine = false;
         if(locDimensionsWidth !== 0) {
