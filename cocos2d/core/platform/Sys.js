@@ -29,11 +29,13 @@ var sys = sys || {};
 */
 try{
 	sys.localStorage = window.localStorage;
+	window.localStorage.setItem("storage", "");
+	window.localStorage.removeItem("storage");
 
 }catch(e){
 
-	if( e.name === "SECURITY_ERR" ) {
-		cc.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+	if( e.name === "SECURITY_ERR" || e.name === "QuotaExceededError" ) {
+		console.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
 	}
 	sys.localStorage = function(){};
 }
