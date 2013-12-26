@@ -91,6 +91,7 @@ Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing fr
                                     LabelTTF improvements
                                     cc.TextureCache.dumpCachedTextureInfo 's bug fix
                                     CCTween bug fix
+                                    CCScale9Sprite bug fix
                                     sys.localStorage bug fix
 
 Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
