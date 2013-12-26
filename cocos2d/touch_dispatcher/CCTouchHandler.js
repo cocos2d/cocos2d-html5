@@ -85,7 +85,8 @@ cc.TouchHandler = cc.Class.extend(/** @lends cc.TouchHandler# */{
      * @return {Boolean}
      */
     initWithDelegate:function (delegate, priority) {
-        cc.Assert(delegate != null, "TouchHandler.initWithDelegate():touch delegate should not be null");
+        if(!delegate)
+             throw "cc.TouchHandler.initWithDelegate(): touch delegate should not be null";
         this._delegate = delegate;
         this._priority = priority;
         this._enabledSelectors = 0;
@@ -94,12 +95,12 @@ cc.TouchHandler = cc.Class.extend(/** @lends cc.TouchHandler# */{
 });
 
 /**
- *  Allocates a TouchHandler with a delegate and a priority
+ *  Create a TouchHandler with a delegate and a priority
  * @param {cc.TouchDelegate} delegate
  * @param {Number} priority
  * @return {cc.TouchHandler}
  */
-cc.TouchHandler.handlerWithDelegate = function (delegate, priority) {
+cc.TouchHandler.create = function (delegate, priority) {
     var handler = new cc.TouchHandler();
     if (handler) {
         handler.initWithDelegate(delegate, priority);
@@ -121,20 +122,17 @@ cc.StandardTouchHandler = cc.TouchHandler.extend(/** @lends cc.StandardTouchHand
      * @return {Boolean}
      */
     initWithDelegate:function (delegate, priority) {
-        if (this._super(delegate, priority)) {
-            return true;
-        }
-        return false;
+        return cc.TouchHandler.prototype.initWithDelegate.call(this, delegate, priority);
     }
 });
 
 /**
- * Allocates a TouchHandler with a delegate and a priority
- * @param {cc.TouchDelegate} delegate
+ * Create a TouchHandler with a delegate and a priority
+ * @param {Object} delegate
  * @param {Number} priority
  * @return {cc.StandardTouchHandler}
  */
-cc.StandardTouchHandler.handlerWithDelegate = function (delegate, priority) {
+cc.StandardTouchHandler.create = function (delegate, priority) {
     var handler = new cc.StandardTouchHandler();
     if (handler) {
         handler.initWithDelegate(delegate, priority);
@@ -181,7 +179,7 @@ cc.TargetedTouchHandler = cc.TouchHandler.extend(/** @lends cc.TargetedTouchHand
      * @return {Boolean}
      */
     initWithDelegate:function (delegate, priority, swallow) {
-        if (this._super(delegate, priority)) {
+        if (cc.TouchHandler.prototype.initWithDelegate.call(this, delegate, priority)) {
             this._claimedTouches = [];
             this._swallowsTouches = swallow;
             return true;
@@ -191,13 +189,13 @@ cc.TargetedTouchHandler = cc.TouchHandler.extend(/** @lends cc.TargetedTouchHand
 });
 
 /**
- * Allocates a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not
- * @param {cc.TouchDelegate} delegate
+ * Create a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not
+ * @param {Object} delegate
  * @param {Number} priority
  * @param {Boolean} swallow
  * @return {cc.TargetedTouchHandler}
  */
-cc.TargetedTouchHandler.handlerWithDelegate = function (delegate, priority, swallow) {
+cc.TargetedTouchHandler.create = function (delegate, priority, swallow) {
     var handler = new cc.TargetedTouchHandler();
     if (handler) {
         handler.initWithDelegate(delegate, priority, swallow);

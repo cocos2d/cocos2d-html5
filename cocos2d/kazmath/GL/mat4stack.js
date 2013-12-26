@@ -43,7 +43,6 @@ cc.km_mat4_stack_push = function(stack, item){
 };
 
 cc.km_mat4_stack_pop = function(stack, pOut){
-    //cc.Assert(stack.item_count , "Cannot pop an empty stack");
     stack.top = stack.stack.pop();
 };
 

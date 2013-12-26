@@ -27,14 +27,14 @@ cc.Spacer = cc.Layer.extend({});
 cc.Spacer.verticalSpacer = function (space) {
     var pRet = new cc.Spacer();
     pRet.init();
-    pRet.setContentSize(cc.SizeMake(0, space));
+    pRet.setContentSize(0, space);
     return pRet;
 };
 
 cc.Spacer.horizontalSpacer = function (space) {
     var pRet = new cc.Spacer();
     pRet.init();
-    pRet.setContentSize(cc.SizeMake(space, 0));
+    pRet.setContentSize(space, 0);
     return pRet;
 };
 
@@ -90,10 +90,10 @@ cc.MenuPassive = cc.Layer.extend({
 
             // Set the default anchor point
             this.ignoreAnchorPointForPosition(true);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(winSize);
 
-            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
+            this.setPosition(winSize.width / 2, winSize.height / 2);
             var z = 0;
 
             if (item) {
@@ -136,12 +136,12 @@ cc.MenuPassive = cc.Layer.extend({
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
                     width = Math.max(width, this._children[i].getContentSize().width);
-                    this._children[i].setPosition(cc.p(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2.0));
+                    this._children[i].setPosition(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2.0);
                     y -= this._children[i].getContentSize().height * this._children[i].getScaleY() + padding;
                 }
             }
         }
-        this.setContentSize(cc.SizeMake(width, height));
+        this.setContentSize(width, height);
     },
 
     /** align items horizontally */
@@ -169,12 +169,12 @@ cc.MenuPassive = cc.Layer.extend({
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
                     height = Math.max(height, this._children[i].getContentSize().height);
-                    this._children[i].setPosition(cc.p(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2.0, 0));
+                    this._children[i].setPosition(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2.0, 0);
                     x += this._children[i].getContentSize().width * this._children[i].getScaleX() + padding;
                 }
             }
         }
-        this.setContentSize(cc.SizeMake(width, height));
+        this.setContentSize(width, height);
     },
 
     /** align items in rows of columns */
@@ -195,11 +195,17 @@ cc.MenuPassive = cc.Layer.extend({
         if (this._children && this._children.length > 0) {
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
-                    cc.Assert(row < rows.size(), "");
+                    if(row >= rows.length){
+                        cc.log("cc.MenuPassive.alignItemsInColumns(): invalid row index");
+                        continue;
+                    }
 
                     rowColumns = rows[row];
                     // can not have zero columns on a row
-                    cc.Assert(rowColumns, "");
+                    if(!rowColumns) {
+                        cc.log("cc.MenuPassive.alignItemsInColumns(): can not have zero columns on a row");
+                        continue;
+                    }
 
                     tmp = this._children[i].getContentSize().height;
                     rowHeight = 0 | ((rowHeight >= tmp || (tmp == null)) ? rowHeight : tmp);
@@ -217,7 +223,7 @@ cc.MenuPassive = cc.Layer.extend({
         }
 
         // check if too many rows/columns for available menu items
-        cc.Assert(!columnsOccupied, "");
+        //cc.Assert(!columnsOccupied, "");            //?
 
         var winSize = cc.Director.getInstance().getWinSize();
 
@@ -239,8 +245,8 @@ cc.MenuPassive = cc.Layer.extend({
                     tmp = this._children[i].getContentSize().height;
                     rowHeight = 0 | ((rowHeight >= tmp || (tmp == null)) ? rowHeight : tmp);
 
-                    this._children[i].setPosition(cc.p(x - winSize.width / 2,
-                        y - this._children[i].getContentSize().height / 2));
+                    this._children[i].setPosition(x - winSize.width / 2,
+                        y - this._children[i].getContentSize().height / 2);
 
                     x += w;
                     ++columnsOccupied;
@@ -281,11 +287,17 @@ cc.MenuPassive = cc.Layer.extend({
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
                     // check if too many menu items for the amount of rows/columns
-                    cc.Assert(column < columns.size(), "");
+                    if(column >= columns.length){
+                        cc.log("cc.MenuPassive.alignItemsInRows(): invalid row index");
+                        continue;
+                    }
 
                     columnRows = columns[column];
                     // can't have zero rows on a column
-                    cc.Assert(columnRows, "");
+                    if(!columnRows) {
+                        cc.log("cc.MenuPassive.alignItemsInColumns(): can't have zero rows on a column");
+                        continue;
+                    }
 
                     // columnWidth = fmaxf(columnWidth, [item contentSize].width);
                     tmp = this._children[i].getContentSize().width;
@@ -309,7 +321,7 @@ cc.MenuPassive = cc.Layer.extend({
         }
 
         // check if too many rows/columns for available menu items.
-        cc.Assert(!rowsOccupied, "");
+        //cc.Assert(!rowsOccupied, "");      //?
 
         var winSize = cc.Director.getInstance().getWinSize();
 
@@ -330,7 +342,7 @@ cc.MenuPassive = cc.Layer.extend({
                     tmp = this._children[i].getContentSize().width;
                     columnWidth = 0 | ((columnWidth >= tmp || (tmp == null)) ? columnWidth : tmp);
 
-                    this._children[i].setPosition(cc.p(x + columnWidths[column] / 2, y - winSize.height / 2));
+                    this._children[i].setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
 
                     y -= this._children[i].getContentSize().height + 10;
                     ++rowsOccupied;

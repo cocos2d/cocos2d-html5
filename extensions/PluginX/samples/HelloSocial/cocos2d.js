@@ -60,6 +60,7 @@
 
 
     window.addEventListener('DOMContentLoaded', function () {
+        this.removeEventListener('DOMContentLoaded', arguments.callee, false);
         //first load engine file if specified
         var s = d.createElement('script');
         /*********Delete this section if you have packed all files into one*******/
@@ -67,7 +68,7 @@
             s.src = c.SingleEngineFile;
         }
         else if (c.engineDir && !c.SingleEngineFile) {
-            s.src = c.engineDir + 'platform/jsloader.js';
+            s.src = c.engineDir + 'jsloader.js';
         }
         else {
             alert('You must specify either the single engine file OR the engine directory in "cocos2d.js"');

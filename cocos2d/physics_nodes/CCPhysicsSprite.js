@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Scott Lembcke and Howling Moon Software
+/** Copyright (c) 2012 Scott Lembcke and Howling Moon Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -51,11 +51,13 @@
         },
         getPosition:function () {
             var pos = this._body.GetPosition();
-            return cc.p(pos.x * this._PTMRatio, pos.y * this._PTMRatio);
+            var locPTMRatio =this._PTMRatio;
+            return cc.p(pos.x * locPTMRatio, pos.y * locPTMRatio);
         },
         setPosition:function (p) {
             var angle = this._body.GetAngle();
-            this._body.setTransform(Box2D.b2Vec2(p.x / this._PTMRatio, p.y / this._PTMRatio), angle);
+            var locPTMRatio =this._PTMRatio;
+            this._body.setTransform(Box2D.b2Vec2(p.x / locPTMRatio, p.y / locPTMRatio), angle);
             this.setNodeDirty();
         },
         getRotation:function () {
@@ -64,16 +66,17 @@
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
                 this._rotation = r;
-            }
-            else {
-                var p = this._body.GetPosition();
-                this._body.SetTransform(p, cc.DEGREES_TO_RADIANS(r));
+            } else {
+                var locBody = this._body;
+                var p = locBody.GetPosition();
+                locBody.SetTransform(p, cc.DEGREES_TO_RADIANS(r));
             }
             this.setNodeDirty();
         },
         _syncPosition:function () {
             var pos = this._body.GetPosition();
-            this._position = cc.p(pos.x * this._PTMRatio, pos.y * this._PTMRatio);
+            this._position._x = pos.x * this._PTMRatio;
+            this._position._y = pos.y * this._PTMRatio;
             this._rotationRadians = this._rotation * (Math.PI / 180);
         },
         _syncRotation:function () {
@@ -102,16 +105,32 @@
             return this._body;
         },
         getPosition:function () {
-            return {x:this._body.p.x, y:this._body.p.y};
+            var locBody = this._body;
+            return {x:locBody.p.x, y:locBody.p.y};
         },
-        setPosition:function (pos) {
-            this._body.p.x = pos.x;
-            this._body.p.y = pos.y;
+
+        getPositionX:function () {
+            return this._body.p.x;
+        },
+
+        getPositionY:function () {
+            return this._body.p.y;
+        },
+
+        setPosition:function (newPosOrxValue, yValue) {
+            if(arguments.length==2){
+                this._body.p.x = newPosOrxValue;
+                this._body.p.y = yValue;
+            }else{
+                this._body.p.x = newPosOrxValue.x;
+                this._body.p.y = newPosOrxValue.y;
+            }
             //this._syncPosition();
         },
         _syncPosition:function () {
-            if (this._position.x != this._body.p.x || this._position.y != this._body.p.y) {
-                cc.Sprite.prototype.setPosition.call(this, {x:this._body.p.x, y:this._body.p.y});
+            var locPosition = this._position, locBody = this._body;
+            if (locPosition._x != locBody.p.x || locPosition._y != locBody.p.y) {
+                cc.Sprite.prototype.setPosition.call(this, locBody.p.x, locBody.p.y);
             }
         },
         getRotation:function () {
@@ -119,9 +138,8 @@
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
-                this._super(r);
-            }
-            else {
+                cc.Sprite.prototype.setRotation.call(this, r);
+            } else {
                 this._body.a = -cc.DEGREES_TO_RADIANS(r);
                 //this._syncRotation();
             }
@@ -135,73 +153,73 @@
             if(cc.renderContextType === cc.CANVAS)
                 return this._nodeToParentTransformForCanvas();
 
-            var x = this._body.p.x;
-            var y = this._body.p.y;
+            var locBody = this._body, locAnchorPIP = this._anchorPointInPoints, locScaleX = this._scaleX, locScaleY = this._scaleY;
+            var x = locBody.p.x;
+            var y = locBody.p.y;
 
             if (this._ignoreAnchorPointForPosition) {
-                x += this._anchorPointInPoints.x;
-                y += this._anchorPointInPoints.y;
+                x += locAnchorPIP._x;
+                y += locAnchorPIP._y;
             }
 
             // Make matrix
-            var radians = this._body.a;
+            var radians = locBody.a;
             var c = Math.cos(radians);
             var s = Math.sin(radians);
 
             // Although scale is not used by physics engines, it is calculated just in case
             // the sprite is animated (scaled up/down) using actions.
             // For more info see: http://www.cocos2d-iphone.org/forum/topic/68990
-            if (!cc.pointEqualToPoint(this._anchorPointInPoints, cc.PointZero())) {
-                x += c * -this._anchorPointInPoints.x * this._scaleX + -s * -this._anchorPointInPoints.y * this._scaleY;
-                y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
+            if (!cc._rectEqualToZero(locAnchorPIP)) {
+                x += c * -locAnchorPIP._x * locScaleX + -s * -locAnchorPIP._y * locScaleY;
+                y += s * -locAnchorPIP._x * locScaleX + c * -locAnchorPIP._y * locScaleY;
             }
 
             // Rot, Translate Matrix
-            this._transform = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX,
-                -s * this._scaleY, c * this._scaleY,
+            this._transform = cc.AffineTransformMake(c * locScaleX, s * locScaleX,
+                -s * locScaleY, c * locScaleY,
                 x, y);
 
             return this._transform;
         },
 
-        _nodeToParentTransformForCanvas:function(){
-            if(!this._transform)
-                this._transform = {a:1,b:0,c:0,d:1,tx:0,ty:0};
-            if(this.isDirty()){
+        _nodeToParentTransformForCanvas: function () {
+            if (this.isDirty()) {
                 var t = this._transform;// quick reference
                 // base position
-                t.tx = this._body.p.x;
-                t.ty = this._body.p.y;
+                var locBody = this._body, locScaleX = this._scaleX, locScaleY = this._scaleY, locAnchorPIP = this._anchorPointInPoints;
+                t.tx = locBody.p.x;
+                t.ty = locBody.p.y;
 
                 // rotation Cos and Sin
-                var radians = -this._body.a;
+                var radians = -locBody.a;
                 var Cos = 1, Sin = 0;
-                if(radians){
+                if (radians) {
                     Cos = Math.cos(radians);
                     Sin = Math.sin(radians);
                 }
 
                 // base abcd
                 t.a = t.d = Cos;
-                t.c = -Sin;
-                t.b = Sin;
+                t.b = -Sin;
+                t.c = Sin;
 
                 // scale
-                if(this._scaleX !== 1 || this._scaleY !== 1){
-                    t.a *= this._scaleX;
-                    t.b *= this._scaleX;
-                    t.c *= this._scaleY;
-                    t.d *= this._scaleY;
+                if (locScaleX !== 1 || locScaleY !== 1) {
+                    t.a *= locScaleX;
+                    t.c *= locScaleX;
+                    t.b *= locScaleY;
+                    t.d *= locScaleY;
                 }
 
                 // adjust anchorPoint
-                t.tx += Cos*-this._anchorPointInPoints.x*this._scaleX + -Sin*this._anchorPointInPoints.y*this._scaleY;
-                t.ty -= Sin*-this._anchorPointInPoints.x*this._scaleX + Cos*this._anchorPointInPoints.y*this._scaleY;
+                t.tx += Cos * -locAnchorPIP._x * locScaleX + -Sin * locAnchorPIP._y * locScaleY;
+                t.ty -= Sin * -locAnchorPIP._x * locScaleX + Cos * locAnchorPIP._y * locScaleY;
 
                 // if ignore anchorPoint
-                if(this._ignoreAnchorPointForPosition){
-                    t.tx += this._anchorPointInPoints.x;
-                    t.ty += this._anchorPointInPoints.y;
+                if (this._ignoreAnchorPointForPosition) {
+                    t.tx += locAnchorPIP._x;
+                    t.ty += locAnchorPIP._y;
                 }
                 this._transformDirty = false;
             }
@@ -255,7 +273,7 @@
 
     /**
      * Creates a PhysicsSprite with a sprite frame name
-     * @param {String} spriteFrame name
+     * @param {String} spriteFrameName
      * @return {cc.Sprite}
      * @example
      *
@@ -299,6 +317,4 @@
         }
         return null;
     };
-
-
 })();
