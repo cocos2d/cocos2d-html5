@@ -116,11 +116,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         cc.VisibleRect.init(this._designResolutionSize);
 
         // Setup system default resolution policies
-        this._rpExactFit = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_WINDOW, cc.ContentStrategy.EXACT_FIT);
-        this._rpShowAll = new cc.ResolutionPolicy(cc.ContainerStrategy.PROPORTION_TO_WINDOW, cc.ContentStrategy.SHOW_ALL);
-        this._rpNoBorder = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_WINDOW, cc.ContentStrategy.NO_BORDER);
-        this._rpFixedHeight = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_WINDOW, cc.ContentStrategy.FIXED_HEIGHT);
-        this._rpFixedWidth = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_WINDOW, cc.ContentStrategy.FIXED_WIDTH);
+        this._rpExactFit = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.EXACT_FIT);
+        this._rpShowAll = new cc.ResolutionPolicy(cc.ContainerStrategy.PROPORTION_TO_FRAME, cc.ContentStrategy.SHOW_ALL);
+        this._rpNoBorder = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.NO_BORDER);
+        this._rpFixedHeight = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.FIXED_HEIGHT);
+        this._rpFixedWidth = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.FIXED_WIDTH);
+        this._rpFixedWidth = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.FIXED_WIDTH);
 
         this._hDC = cc.canvas;
         this._hRC = cc.renderContext;
@@ -163,15 +164,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
     },
 
-
-    // Browser related helper functions
-    _scrollToBottom: function () {
-        if (cc.Browser.isMobile && cc.Browser.type != "baidubrowser") {
-            cc.container.style.height = (this._frame.clientHeight + 100) + "px";
-            window.location.href = "#bottom";
-        }
-    },
-
     _initFrameSize: function () {
         var locFrameSize = this._frameSize;
         locFrameSize.width = this._frame.clientWidth;
@@ -191,11 +183,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     _setViewPortMeta: function (width, height) {
         if (this._isAdjustViewPort) {
-            /*if(width<=320){
-             width = 321;
-             cc.canvas.witdh = width;
-             cc.container.style.width = width+"px";
-             }*/
             var viewportMetas = {"user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"}, elems = document.getElementsByName("viewport"), vp, content;
             if (elems.length == 0) {
                 vp = document.createElement("meta");
@@ -211,13 +198,15 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                     content += (content == "" ? "" : ",") + key + "=" + viewportMetas[key];
                 }
             }
-
-            /* if(height){
-             content ="height="+height+","+content;
+            /*
+             if(width<=320){
+             width = 321;
              }
-             if(width){
+             if(height)
+             content ="height="+height+","+content;
+             if(width)
              content ="width="+width+","+content;
-             }*/
+             */
             vp.content = content;
         }
     },
@@ -448,10 +437,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             cc.log("Resolution not valid");
             return;
         }
+        this.setResolutionPolicy(resolutionPolicy);
+        if (policy = this._resolutionPolicy)
+            policy.init(this);
+        else {
+            cc.log("should set resolutionPolicy");
+            return;
+        }
 
         // Reinit frame size
         var frameW = this._frameSize.width, frameH = this._frameSize.height;
-        if(cc.Browser.isMobile)
+        if (cc.Browser.isMobile)
             this._setViewPortMeta(this._frameSize.width, this._frameSize.height);
         this._initFrameSize();
         // No change
@@ -462,46 +458,38 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._designResolutionSize = cc.size(width, height);
         this._originalDesignResolutionSize = cc.size(width, height);
 
-        var policy;
-        this.setResolutionPolicy(resolutionPolicy);
+        var result = policy.apply(this, this._designResolutionSize);
+        if (result.scale && result.scale.length == 2) {
+            this._scaleX = result.scale[0];
+            this._scaleY = result.scale[1];
+        }
+        if (result.viewport instanceof cc.Rect) {
+            var vp = this._viewPortRect = result.viewport, visible = this._visibleRect,
+                designW = this._designResolutionSize.width, designH = this._designResolutionSize.height;
+            visible._size.width = Math.min(vp.width / this._scaleX, designW);
+            visible._size.height = Math.min(vp.height / this._scaleY, designH);
+            visible._origin.x = (designW - visible._size.width) / 2;
+            visible._origin.y = (designH - visible._size.height) / 2;
+        }
 
-        if (policy = this._resolutionPolicy) {
-            var result = policy.apply(this, this._designResolutionSize);
-            if (result.scale && result.scale.length == 2) {
-                this._scaleX = result.scale[0];
-                this._scaleY = result.scale[1];
-            }
-            if (result.viewport instanceof cc.Rect) {
-                var vp = this._viewPortRect = result.viewport, visible = this._visibleRect,
-                    designW = this._designResolutionSize.width, designH = this._designResolutionSize.height;
-                visible._size.width = Math.min(vp.width / this._scaleX, designW);
-                visible._size.height = Math.min(vp.height / this._scaleY, designH);
-                visible._origin.x = (designW - visible._size.width) / 2;
-                visible._origin.y = (designH - visible._size.height) / 2;
-            }
+        // reset director's member variables to fit visible rect
+        var director = cc.Director.getInstance();
+        director._winSizeInPoints = this.getDesignResolutionSize();
 
+        if (cc.renderContextType == cc.WEBGL) {
             // reset director's member variables to fit visible rect
-            var director = cc.Director.getInstance();
-            director._winSizeInPoints = this.getDesignResolutionSize();
-
-            if (cc.renderContextType == cc.WEBGL) {
-                // reset director's member variables to fit visible rect
-                director._createStatsLabel();
-                director.setGLDefaultValues();
-            }
-
-            this._originalScaleX = this._scaleX;
-            this._originalScaleY = this._scaleY;
-            // For editbox
-            if( cc.DOM){
-                cc.DOM._resetEGLViewDiv();
-            }
-
-            cc.VisibleRect.init(this.getVisibleSize());
+            director._createStatsLabel();
+            director.setGLDefaultValues();
         }
-        else {
-            cc.log("should set resolutionPolicy");
+
+        this._originalScaleX = this._scaleX;
+        this._originalScaleY = this._scaleY;
+        // For editbox
+        if (cc.DOM) {
+            cc.DOM._resetEGLViewDiv();
         }
+
+        cc.VisibleRect.init(this.getVisibleSize());
     },
 
     /**
@@ -858,6 +846,13 @@ cc.EGLView.getInstance = function () {
 
 cc.ContainerStrategy = cc.Class.extend({
     /**
+     * Function to init the strategy
+     * @param {cc.EGLView} The target view
+     */
+    init: function (view) {
+    },
+
+    /**
      * Function to apply this strategy
      * @param {cc.EGLView} view
      * @param {cc.Size} designedResolution
@@ -865,13 +860,12 @@ cc.ContainerStrategy = cc.Class.extend({
     apply: function (view, designedResolution) {
     },
 
-    _adjustBrowser: function (view) {
-        if (cc.Browser.isMobile) {
-            view._scrollToBottom();
+    _setupContainer: function (frame, w, h) {
+        if (cc.Browser.isMobile && frame == document.documentElement) {
+            // Automatically full screen when user touches on mobile version
+            cc.Screen.getInstance().autoFullScreen(cc.canvas);
         }
-    },
 
-    _setupContainer: function (w, h) {
         var locCanvasElement = cc.canvas, locContainer = cc.container;
         // Setup canvas
         locCanvasElement.width = w;
@@ -883,6 +877,18 @@ cc.ContainerStrategy = cc.Class.extend({
         var body = document.body;
         if (body)
             body.style.padding = body.style.border = body.style.margin = 0 + "px";
+    },
+
+    _fixContainer: function () {
+        document.body.insertBefore(cc.container, document.body.firstChild);
+        /*var bs = document.body.style;
+         bs.width = document.documentElement.clientWidth + "px";
+         bs.height = document.documentElement.clientHeight + "px";
+         bs.overflow = "hidden";*/
+        document.body.scrollTop = 0;
+        /*var contStyle = cc.container.style;
+         contStyle.position = "fixed";
+         contStyle.left = contStyle.top = "0px";*/
     }
 });
 
@@ -914,6 +920,13 @@ cc.ContentStrategy = cc.Class.extend({
     },
 
     /**
+     * Function to init the strategy
+     * @param {cc.EGLView} The target view
+     */
+    init: function (view) {
+    },
+
+    /**
      * Function to apply this strategy
      * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
      * The target view can then apply these value to itself, it's prefered not to modify directly its private variables
@@ -929,19 +942,15 @@ cc.ContentStrategy = cc.Class.extend({
 (function () {
 
 // Container scale strategys
-    var EqualToWindow = cc.ContainerStrategy.extend({
+    var EqualToFrame = cc.ContainerStrategy.extend({
         apply: function (view) {
-            if (cc.Browser.isMobile) {
-                // Automatically full screen when user touches on mobile version
-                cc.Screen.getInstance().autoFullScreen(cc.canvas);
-            }
-            this._setupContainer(view._frameSize.width, view._frameSize.height);
+            this._setupContainer(view._frame, view._frameSize.width, view._frameSize.height);
         }
     });
 
-    var ProportionalToWindow = cc.ContainerStrategy.extend({
+    var ProportionalToFrame = cc.ContainerStrategy.extend({
         apply: function (view, designedResolution) {
-            var frameW = view._frameSize.width, frameH = view._frameSize.height, frameStyle = view._frame.style,
+            var frameW = view._frameSize.width, frameH = view._frameSize.height, containerStyle = cc.container.style,
                 designW = designedResolution.width, designH = designedResolution.height,
                 scaleX = frameW / designW, scaleY = frameH / designH,
                 containerW, containerH;
@@ -954,27 +963,49 @@ cc.ContentStrategy = cc.Class.extend({
             containerW = frameW - 2 * offx;
             containerH = frameH - 2 * offy;
 
-            if (cc.Browser.isMobile) {
-                view._setViewPortMeta(containerW, containerH);
-                // Automatically full screen when user touches on mobile version
-                cc.Screen.getInstance().autoFullScreen(cc.canvas);
-            }
+            this._setupContainer(view._frame, containerW, containerH);
+            // Setup container's margin
+            containerStyle.marginLeft = offx + "px";
+            containerStyle.marginRight = offx + "px";
+            containerStyle.marginTop = offy + "px";
+            containerStyle.marginBottom = offy + "px";
+        }
+    });
 
-            this._setupContainer(containerW, containerH);
-            // Setup frame's padding
-            frameStyle.paddingLeft = offx + "px";
-            frameStyle.paddingRight = offx + "px";
-            frameStyle.paddingTop = offy + "px";
-            frameStyle.paddingBottom = offy + "px";
+    var EqualToWindow = EqualToFrame.extend({
+        init: function (view) {
+            view._frame = document.documentElement;
+        },
+
+        apply: function (view) {
+            this._super(view);
+
+            this._fixContainer();
+        }
+    });
+
+    var ProportionalToWindow = ProportionalToFrame.extend({
+        init: function (view) {
+            view._frame = document.documentElement;
+        },
+
+        apply: function (view, designedResolution) {
+            this._super(view, designedResolution);
+
+            this._fixContainer();
         }
     });
 
     var OriginalContainer = cc.ContainerStrategy.extend({});
 
-// Alias: Strategy that makes the container's size equals to the window's size
-    cc.ContainerStrategy.EQUAL_TO_WINDOW = new EqualToWindow();
-// Alias: Strategy that scale proportionally the container's size to window's size
-    cc.ContainerStrategy.PROPORTION_TO_WINDOW = new ProportionalToWindow();
+// #NOT STABLE on Android# Alias: Strategy that makes the container's size equals to the window's size
+//    cc.ContainerStrategy.EQUAL_TO_WINDOW = new EqualToWindow();
+// #NOT STABLE on Android# Alias: Strategy that scale proportionally the container's size to window's size
+//    cc.ContainerStrategy.PROPORTION_TO_WINDOW = new ProportionalToWindow();
+// Alias: Strategy that makes the container's size equals to the frame's size
+    cc.ContainerStrategy.EQUAL_TO_FRAME = new EqualToFrame();
+// Alias: Strategy that scale proportionally the container's size to frame's size
+    cc.ContainerStrategy.PROPORTION_TO_FRAME = new ProportionalToFrame();
 // Alias: Strategy that keeps the original container's size
     cc.ContainerStrategy.ORIGINAL_CONTAINER = new OriginalContainer();
 
@@ -1065,6 +1096,15 @@ cc.ResolutionPolicy = cc.Class.extend({
     ctor: function (containerStg, contentStg) {
         this.setContainerStrategy(containerStg);
         this.setContentStrategy(contentStg);
+    },
+
+    /**
+     * Function to init the resolution policy
+     * @param {cc.EGLView} The target view
+     */
+    init: function (view) {
+        this._containerStrategy.init(view);
+        this._contentStrategy.init(view);
     },
 
     /**
