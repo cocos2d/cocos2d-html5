@@ -94,6 +94,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Rect} rectInPixels
      */
     setRectInPixels:function (rectInPixels) {
+        if (!this._rectInPixels){
+            this._rectInPixels = cc.rect(0,0,0,0);
+        }
         this._rectInPixels.x = rectInPixels.x;
         this._rectInPixels.y = rectInPixels.y;
         this._rectInPixels.width = rectInPixels.width;
@@ -133,6 +136,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Rect} rect
      */
     setRect:function (rect) {
+        if (!this._rect){
+            this._rect = cc.rect(0,0,0,0);
+        }
         this._rect.x = rect.x;
         this._rect.y = rect.y;
         this._rect.width = rect.width;
