@@ -728,34 +728,40 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._labelContext;
     },
 
-    _updateTTF:function () {
+    _updateTTF: function () {
         var locDimensionsWidth = this._dimensions.width;
         this._lineWidths = [];
 
         this._isMultiLine = false;
-        if(locDimensionsWidth !== 0) {
+        if (locDimensionsWidth !== 0) {
             // Content processing
             this._measureConfig();
             var text = this._string;
 
             this._strings = [];
-            for(var i = 0, length = this._string.length; i < length;) {
+            for (var i = 0, length = this._string.length; i < length;) {
                 // Find the index of next line
                 var next = this._checkNextline(text.substr(i), locDimensionsWidth);
                 var append = text.substr(i, next);
 
-                this._lineWidths.push(this._measure(append));
                 this._strings.push(append);
                 i += next;
             }
-            if(this._strings.length > 0)
-                this._isMultiLine = true;
+        }
+        else {
+            this._strings = this._string.split('\n');
+            for (var i = 0, length = this._strings.length; i < length; i++) {
+                this._lineWidths.push(this._measure(this._strings[i]));
+            }
         }
 
+        if (this._strings.length > 0)
+            this._isMultiLine = true;
+
         var locSize, locStrokeShadowOffsetX = 0, locStrokeShadowOffsetY = 0;
-        if(this._strokeEnabled)
+        if (this._strokeEnabled)
             locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize * 2;
-        if(this._shadowEnabled){
+        if (this._shadowEnabled) {
             var locOffsetSize = this._shadowOffset;
             locStrokeShadowOffsetX += Math.abs(locOffsetSize.width) * 2;
             locStrokeShadowOffsetY += Math.abs(locOffsetSize.height) * 2;
@@ -769,7 +775,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             else
                 locSize = cc.size(0 | (this._measure(this._string) + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
         } else {
-            if(this._dimensions.height === 0){
+            if (this._dimensions.height === 0) {
                 if (this._isMultiLine)
                     locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
                 else
