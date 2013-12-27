@@ -1601,19 +1601,22 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             audioID = this._audioID++;
             this._audioIDList[audioID] = addSFX;
             return audioID;
-
         } else if (this.isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;
-
             audioID = this._audioID++;
             this._audioIDList[audioID] = null;
             this._fetchData(path, function(buffer) {
                 // resource fetched, save it and call playEffect() again, this time it should be alright
                 engine._audioData[keyName] = buffer;
                 delete engine._audiosLoading[keyName];
-                engine._audioIDList[audioID] = engine._beginSound(keyName, loop, engine.getEffectsVolume());
+                var asynSFX = engine._beginSound(keyName, loop, engine.getEffectsVolume());
+                engine._audioIDList[audioID] = asynSFX;
+                var locEffects = engine._effects;
+                if (!(keyName in locEffects))
+                    locEffects[keyName] = [];
+                locEffects[keyName].push(asynSFX);
             }, function() {
                 // resource fetching failed, doing nothing here
                 delete engine._audiosLoading[keyName];
