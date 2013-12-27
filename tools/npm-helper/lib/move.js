@@ -52,9 +52,9 @@ function move(srcDir, targetDir, list){
             });
             core4cc.copyFiles(path.join(__dirname, "../template/base"), tPath, handler);
         }else{
-            var content = fs.readFileSync(packagePath).toString();
-            content = content.replace(/"version"[\s]*:[\s]*"[\d\.\-]+"/, '"version":"' + itemi.version + '"');
-            fs.writeFileSync(packagePath, content);
+//            var content = fs.readFileSync(packagePath).toString();
+//            content = content.replace(/"version"[\s]*:[\s]*"[\d\.\-]+"/, '"version":"' + itemi.version + '"');
+//            fs.writeFileSync(packagePath, content);
         }
         exec("cocos genJsRes " + tPath, function(err, data, info){
             console.log(data);

@@ -1,5 +1,6 @@
-var exec = require("child_process").exec;
+var fs = require("fs");
 var path = require("path");
+var core4cc = require("cocos-utils").core4cc;
 
 var basePath = path.join(__dirname, "../../../");
 var list = [
@@ -35,11 +36,9 @@ var list = [
     "external/box2d",
     "external/chipmunk"
 ];
+
+
 for(var i = 0, li = list.length; i < li; i++){
-    var targetPath = path.join(basePath, list[i]);
-    exec("npm publish " + targetPath, function(err, data, info){
-        if(err) return console.error(err);
-        console.log(info);
-        console.log(data);
-    });
+    var targetPath = path.join(basePath, list[i], ".npmignore");
+    core4cc.copyFiles(path.join(__dirname, "../template/base/.npmignore"), targetPath);
 }
