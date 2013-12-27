@@ -10,6 +10,8 @@ function ResLoader(baseCfg){
     var jsCache = {};//cache for js
     var resCache = {};//cache for resources
 
+    var jsCache4All = {};//cache for all js
+
     /**
      * Desc: Get base resources to be loaded
      * @param js
@@ -24,7 +26,7 @@ function ResLoader(baseCfg){
         for(var i = 0, li = ref.length; i < li; i++){
             resArr = resArr.concat(_getBaseRes(ref[i]));
         }
-        var res = cfg.resArr || [];
+        var res = cfg.res || [];
         for(var i = 0, li = res.length; i < li; ++i){
             if(baseResCache[res[i]]) continue;
             resArr.push({src : res[i]});
@@ -51,8 +53,15 @@ function ResLoader(baseCfg){
         resCache = {};
         var result = getResCfg(moduleName) || {jsArr:[], resArr:[]};
         var self = this;
+        if(!isBaseResLoaded){
+            var baseResult = getResCfg(baseCfg.projName) || {jsArr:[], resArr:[]};
+            result.jsArr = result.jsArr.concat(baseResult.jsArr);
+        }
         this.loadJs("", result.jsArr, function(){
-            if(!isBaseResLoaded) cb(result.resArr.concat(self.getBaseResList()));
+            if(!isBaseResLoaded) {
+                isBaseResLoaded = true;
+                cb(result.resArr.concat(self.getBaseResList()));
+            }
         });
     };
     /**
@@ -121,6 +130,7 @@ function ResLoader(baseCfg){
         }
         return this._loadJsList(baseDir, jsList, 0, cb);
     };
+
     /**
      * Add next after loaded.
      * @param baseDir
@@ -135,9 +145,12 @@ function ResLoader(baseCfg){
             if(cb) cb();
             return;
         }
+        var jsPath = baseDir + jsList[index];
+        if(jsCache4All[jsPath]) return this._loadJsList4Dependency(baseDir, jsList, index+1, cb);
         var script = document.createElement('script');
         script.type = 'text/javascript';
-        script.src = baseDir + jsList[index];
+        script.src = jsPath;
+        jsCache4All[jsPath] = true;
         var self = this;
         script.addEventListener('load',function(){
             self._loadJsList4Dependency(baseDir, jsList, index+1, cb);
@@ -171,9 +184,12 @@ function ResLoader(baseCfg){
              }
              };*/
             jsList.forEach(function (f, i) {
+                var jsPath = baseDir + f;
+                if(jsCache4All[jsPath]) return;
                 var s = d.createElement('script');
                 s.async = false;
-                s.src = baseDir + f;
+                s.src = jsPath;
+                jsCache4All[jsPath] = true;
                 s.addEventListener('load',function(){
 //                    cc._jsLoadCount++;
 //                    updateLoading(loaded / que.length);
@@ -342,5 +358,3 @@ cc.test = function(cfgName){
 };
 
 resLoader.loadGame();
-
-
