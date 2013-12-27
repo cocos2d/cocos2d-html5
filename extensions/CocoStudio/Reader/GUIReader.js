@@ -852,7 +852,13 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             var subData = children[i];
             var child = this.widgetFromJsonDictionary(subData);
             if (child) {
-                widget.addChild(child);
+                if (widget instanceof ccs.PageView && child instanceof ccs.Layout) {
+                    widget.addPage(child);
+                } else if (widget instanceof ccs.ListView) {
+                    widget.pushBackCustomItem(child);
+                } else {
+                    widget.addChild(child);
+                }
             }
             subData = null;
         }
