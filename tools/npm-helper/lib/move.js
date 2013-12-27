@@ -9,7 +9,9 @@ var msgCode = require("cocos-utils").msgCode;
 var ignoreFiles = [
     "cocos.json",
     "package.json",
-    "cfg"
+    "cfg",
+    ".npmignore",
+    "README.md"
 ];
 
 /**
@@ -23,21 +25,20 @@ function move(srcDir, targetDir, list){
     for(var i = 0, li = list.length; i < li; i++){
         var itemi = list[i];
         var dir = itemi.dir;
+        var name = itemi.name;
         var sPath = path.join(srcDir, dir);
-        var tPath = path.join(targetDir, dir);
+        var tPath = path.join(targetDir, name);
         var libPath = path.join(tPath, "lib");
         var ignores = [];
-        if(itemi.name == "cocos2d-html5"){
+        if(name == "cocos2d-html5"){
             ignores.push(path.join(libPath, "cc.js"));
             ignores.push(path.join(libPath, "cc4publish.js"));
         }
 
         if(!fs.existsSync(tPath)) core4cc.mkdirSyncRecursive(tPath);
         var files = fs.readdirSync(tPath);
-        for(var j = 0, lj = files.length; j < lj; j++){
-            if(ignoreFiles.indexOf(files[j]) >= 0) continue;
-            core4cc.rmdirSyncRecursive(path.join(tPath, files[j]), ignores);
-        }
+        core4cc.rmdirSyncRecursive(libPath, ignores);
+        core4cc.mkdirSyncRecursive(libPath);
         core4cc.copyFiles(sPath, libPath);
 
         var cfgPath = path.join(tPath, "cfg");
@@ -67,7 +68,7 @@ function move(srcDir, targetDir, list){
 
 
 var srcDir = "/Users/small/WebstormProjects/cocos2d-html5-test";
-var targetDir = path.join(__dirname, "../../../");
+var targetDir = path.join(__dirname, "../../../node_modules");
 var version = "0.1.1";
 var list = [
     {name : "ccaccelerometer",  version : version, dir : "cocos2d/accelerometer"},
