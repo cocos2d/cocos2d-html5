@@ -185,12 +185,10 @@
                 <file name="CocoStudio/Components/CCComRender.js"/>
                 <file name="CocoStudio/GUI/BaseClasses/UIWidget.js"/>
                 <file name="CocoStudio/GUI/Layouts/UILayout.js"/>
-                <file name="CocoStudio/GUI/BaseClasses/UIRootWidget.js"/>
                 <file name="CocoStudio/GUI/Layouts/UILayoutParameter.js"/>
                 <file name="CocoStudio/GUI/Layouts/UILayoutDefine.js"/>
                 <file name="CocoStudio/GUI/System/CocosGUI.js"/>
                 <file name="CocoStudio/GUI/System/UIHelper.js"/>
-                <file name="CocoStudio/GUI/System/UIInputManager.js"/>
                 <file name="CocoStudio/GUI/System/UILayer.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UIButton.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UICheckBox.js"/>
@@ -206,7 +204,6 @@
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js"/>
-                <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollInterface.js"/>
                 <file name="CocoStudio/Reader/GUIReader.js"/>
                 <file name="CocoStudio/Reader/SceneReader.js"/>
             </sources>

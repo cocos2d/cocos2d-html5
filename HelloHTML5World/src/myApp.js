@@ -32,7 +32,6 @@ var Helloworld = cc.Layer.extend({
     sprite:null,
 
     init:function () {
-        var selfPointer = this;
         //////////////////////////////
         // 1. super init first
         this._super();

@@ -356,12 +356,12 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._positionsAreDirty = true;
     },
 
-    visit: function () {
+    visit: function (ctx) {
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
         }
-        cc.NodeRGBA.prototype.visit.call(this);
+        cc.NodeRGBA.prototype.visit.call(this, ctx);
     },
 
     init: function () {

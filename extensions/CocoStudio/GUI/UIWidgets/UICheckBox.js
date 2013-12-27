@@ -31,12 +31,17 @@ ccs.CheckBoxEventType = {
     unselected: 1
 };
 
+ccs.BACKGROUNDBOXRENDERERZ = -1;
+ccs.BACKGROUNDBOXSELECTEDRENDERERZ = -1;
+ccs.FRONTCROSSRENDERERZ = -1;
+ccs.BACKGROUNDBOXDISABLEDRENDERER = -1;
+ccs.FRONTCROSSDISABLEDRENDERER = -1;
 /**
- * Base class for ccs.UICheckBox
+ * Base class for ccs.CheckBox
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
+ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     _backGroundBoxRenderer: null,
     _backGroundSelectedBoxRenderer: null,
     _frontCrossRenderer: null,
@@ -56,7 +61,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._backGroundBoxRenderer = null;
         this._backGroundSelectedBoxRenderer = null;
         this._frontCrossRenderer = null;
@@ -77,7 +82,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
         this._frontCrossDisabledFileName = "";
     },
     init: function () {
-        if (ccs.UIWidget.prototype.init.call(this)) {
+        if (ccs.Widget.prototype.init.call(this)) {
             this.setSelectedState(false);
             return true;
         }
@@ -85,17 +90,16 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._backGroundBoxRenderer = cc.Sprite.create();
         this._backGroundSelectedBoxRenderer = cc.Sprite.create();
         this._frontCrossRenderer = cc.Sprite.create();
         this._backGroundBoxDisabledRenderer = cc.Sprite.create();
         this._frontCrossDisabledRenderer = cc.Sprite.create();
-        this._renderer.addChild(this._backGroundBoxRenderer);
-        this._renderer.addChild(this._backGroundSelectedBoxRenderer);
-        this._renderer.addChild(this._frontCrossRenderer);
-        this._renderer.addChild(this._backGroundBoxDisabledRenderer);
-        this._renderer.addChild(this._frontCrossDisabledRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUNDBOXRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUNDBOXSELECTEDRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONTCROSSRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUNDBOXDISABLEDRENDERER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONTCROSSDISABLEDRENDERER, -1);
     },
 
     /**
@@ -138,8 +142,8 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
             default:
                 break;
         }
-        bgBoxRenderer.setColor(this.getColor());
-        bgBoxRenderer.setOpacity(this.getOpacity());
+
+        this._updateDisplay();
 
         if(!bgBoxRenderer.textureLoaded()){
             bgBoxRenderer.addLoadedEventListener(function(){
@@ -170,8 +174,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
             default:
                 break;
         }
-        this._backGroundSelectedBoxRenderer.setColor(this.getColor());
-        this._backGroundSelectedBoxRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.backGroundSelectedTextureScaleChangedWithSize();
     },
 
@@ -197,8 +200,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
             default:
                 break;
         }
-        this._frontCrossRenderer.setColor(this.getColor());
-        this._frontCrossRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.frontCrossTextureScaleChangedWithSize();
     },
 
@@ -224,8 +226,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
             default:
                 break;
         }
-        this._backGroundBoxDisabledRenderer.setColor(this.getColor());
-        this._backGroundBoxDisabledRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.backGroundDisabledTextureScaleChangedWithSize();
     },
 
@@ -251,12 +252,20 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
             default:
                 break;
         }
-        this._frontCrossDisabledRenderer.setColor(this.getColor());
-        this._frontCrossRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.frontCrossDisabledTextureScaleChangedWithSize();
     },
 
-    onTouchEnded: function (touchPoint) {
+    _updateDisplay:function(){
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateAnchorPoint();
+    },
+
+    onTouchEnded: function (touch , event) {
+        var touchPoint = touch.getLocation();
+        this._touchEndPos.x = touchPoint.x;
+        this._touchEndPos.y = touchPoint.y;
         if (this._focus) {
             this.releaseUpEvent();
             if (this._isSelected) {
@@ -269,7 +278,10 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
             }
         }
         this.setFocused(false);
-        this._widgetParent.checkChildInfo(2, this, touchPoint);
+        var widgetParent = this.getWidgetParent();
+        if(widgetParent){
+            widgetParent.checkChildInfo(2, this, touchPoint);
+        }
     },
 
     onPressStateChangedToNormal: function () {
@@ -377,14 +389,14 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._backGroundBoxRenderer.setAnchorPoint(point, y);
             this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
             this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
             this._frontCrossRenderer.setAnchorPoint(point, y);
             this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
         }else{
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
             this._backGroundBoxRenderer.setAnchorPoint(point);
             this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
             this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
@@ -394,6 +406,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.backGroundTextureScaleChangedWithSize();
         this.backGroundSelectedTextureScaleChangedWithSize();
         this.frontCrossTextureScaleChangedWithSize();
@@ -514,7 +527,7 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UICheckBox.create();
+        return ccs.CheckBox.create();
     },
 
     copySpecialProperties: function (uiCheckBox) {
@@ -529,13 +542,13 @@ ccs.UICheckBox = ccs.UIWidget.extend(/** @lends ccs.UICheckBox# */{
 /**
  * allocates and initializes a UICheckBox.
  * @constructs
- * @return {ccs.UICheckBox}
+ * @return {ccs.CheckBox}
  * @example
  * // example
- * var uiCheckBox = ccs.UICheckBox.create();
+ * var uiCheckBox = ccs.CheckBox.create();
  */
-ccs.UICheckBox.create = function () {
-    var uiCheckBox = new ccs.UICheckBox();
+ccs.CheckBox.create = function () {
+    var uiCheckBox = new ccs.CheckBox();
     if (uiCheckBox && uiCheckBox.init()) {
         return uiCheckBox;
     }

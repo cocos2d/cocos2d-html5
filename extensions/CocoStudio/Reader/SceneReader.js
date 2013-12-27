@@ -29,9 +29,13 @@
  */
 ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
     _baseBath:"",
+    _listener:null,
+    _selector:null,
     ctor: function () {
         this._instance = null;
         this._baseBath = "";
+        this._listener = null;
+        this._selector = null;
     },
     /**
      * create node with json file that exported by cocostudio scene editor
@@ -42,9 +46,6 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
         var data = 0;
         var node = null;
         do {
-            if (!pszFileName)
-                break;
-
             var pos = pszFileName.lastIndexOf("/");
             if(pos>-1){
                 this._baseBath =pszFileName.substr(0,pos+1);
@@ -142,6 +143,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     }
 
                     gb.addComponent(render);
+                    this._callSelector(sprite, subDict);
                 }
                 else if (className == "CCTMXTiledMap") {
                     var tmx = null;
@@ -161,6 +163,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         render.setName(comName);
                     }
                     gb.addComponent(render);
+                    this._callSelector(tmx, subDict);
                 }
                 else if (className == "CCParticleSystemQuad") {
                     var startPos = path.lastIndexOf(".plist");
@@ -182,6 +185,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         render.setName(comName);
                     }
                     gb.addComponent(render);
+                    this._callSelector(particle, subDict);
                 }
                 else if (className == "CCArmature") {
                     if (resType != 0) {
@@ -236,6 +240,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     jsonDict = null;
                     subData = null;
                     des = null;
+                    this._callSelector(armature, subDict);
                 }
                 else if (className == "CCComAudio") {
                     var audio = null;
@@ -247,6 +252,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     }
                     audio.preloadEffect(path);
                     gb.addComponent(audio);
+                    this._callSelector(audio, subDict);
                 }
                 else if (className == "CCComAttribute") {
                     var attribute = null;
@@ -264,6 +270,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         continue;
                     }
                     gb.addComponent(attribute);
+                    this._callSelector(attribute, subDict);
                 }
                 else if (className == "CCBackgroundAudio") {
                     var audio = null;
@@ -279,6 +286,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     audio.setLoop(bLoop);
                     gb.addComponent(audio);
                     audio.playBackgroundMusic(path, bLoop);
+                    this._callSelector(audio, subDict);
                 }
                 else if (className == "GUIComponent") {
                     var pLayer = ccs.UILayer.create();
@@ -290,6 +298,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         render.setName(comName);
                     }
                     gb.addComponent(render);
+                    this._callSelector(audio, subDict);
                 }
                 subDict = null;
             }
@@ -336,7 +345,15 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
         var fRotationZ = dict["rotation"] || 0;
         node.setRotation(fRotationZ);
     },
-
+    setTarget : function(selector,listener){
+        this._listener = listener;
+        this._selector = selector;
+    },
+    _callSelector:function(obj,subDict){
+        if(this._selector){
+            this._selector.call(this._listener,obj,subDict);
+        }
+    },
     /**
      * purge instance
      */
@@ -357,5 +374,5 @@ ccs.SceneReader.getInstance = function () {
     return this._instance;
 };
 ccs.SceneReader.sceneReaderVersion = function () {
-    return "1.0.0.0";
+    return "1.2.0.0";
 };

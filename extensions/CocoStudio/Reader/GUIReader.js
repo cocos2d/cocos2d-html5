@@ -106,7 +106,7 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
     /**
      *  create uiWidget from a josn file that exported by cocostudio UI editor
      * @param {String} fileName
-     * @returns {ccs.UIWidget}
+     * @returns {ccs.Widget}
      */
     widgetFromJsonFile: function (fileName) {
         var jsonPath = fileName || "";
@@ -191,58 +191,58 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var classname = data["classname"];
         var uiOptions = data["options"];
         if (classname == "Button") {
-            widget = ccs.UIButton.create();
+            widget = ccs.Button.create();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "CheckBox") {
-            widget = ccs.UICheckBox.create();
+            widget = ccs.CheckBox.create();
             this.setPropsForCheckBoxFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Label") {
-            widget = ccs.UILabel.create();
+            widget = ccs.Label.create();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelAtlas") {
-            widget = ccs.UILabelAtlas.create();
+            widget = ccs.LabelAtlas.create();
             this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LoadingBar") {
-            widget = ccs.UILoadingBar.create();
+            widget = ccs.LoadingBar.create();
             this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ScrollView") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextArea") {
-            widget = ccs.UITextArea.create();
+            widget = ccs.Label.create();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextButton") {
-            widget = ccs.UITextButton.create();
+            widget = ccs.Button.create();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextField") {
-            widget = ccs.UITextField.create();
+            widget = ccs.TextField.create();
             this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ImageView") {
-            widget = ccs.UIImageView.create();
+            widget = ccs.ImageView.create();
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Panel") {
-            widget = ccs.UIPanel.create();
+            widget = ccs.Layout.create();
             this.setPropsForLayoutFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Slider") {
-            widget = ccs.UISlider.create();
+            widget = ccs.Slider.create();
             this.setPropsForSliderFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelBMFont") {
-            widget = ccs.UILabelBMFont.create();
+            widget = ccs.LabelBMFont.create();
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "DragPanel") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         var children = data["children"];
@@ -493,7 +493,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForLayoutFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
-        if (!(containerWidget instanceof ccs.UIScrollView) && !(containerWidget instanceof ccs.UIListView)) {
+        if (!(containerWidget instanceof ccs.ScrollView) && !(containerWidget instanceof ccs.ListView)) {
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
         var panel = widget;
@@ -558,8 +558,8 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForContainerWidgetFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var containerWidget = widget;
-        if (containerWidget instanceof ccs.UIScrollView ||
-            containerWidget instanceof ccs.UIListView) {
+        if (containerWidget instanceof ccs.ScrollView ||
+            containerWidget instanceof ccs.ListView) {
             containerWidget.setClippingEnabled(options["clipAble"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -785,66 +785,66 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var classname = data["classname"];
         var uiOptions = data["options"];
         if (classname == "Button") {
-            widget = ccs.UIButton.create();
+            widget = ccs.Button.create();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "CheckBox") {
-            widget = ccs.UICheckBox.create();
+            widget = ccs.CheckBox.create();
             this.setPropsForCheckBoxFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Label") {
-            widget = ccs.UILabel.create();
+            widget = ccs.Label.create();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelAtlas") {
-            widget = ccs.UILabelAtlas.create();
+            widget = ccs.LabelAtlas.create();
             this.setPropsForLabelAtlasFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LoadingBar") {
-            widget = ccs.UILoadingBar.create();
+            widget = ccs.LoadingBar.create();
             this.setPropsForLoadingBarFromJsonDictionary(widget, uiOptions);
         } else if (classname == "ScrollView") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextArea") {
-            widget = ccs.UITextArea.create();
+            widget = ccs.Label.create();
             this.setPropsForLabelFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextButton") {
-            widget = ccs.UIButton.create();
+            widget = ccs.Button.create();
             this.setPropsForButtonFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "TextField") {
-            widget = ccs.UITextField.create();
+            widget = ccs.TextField.create();
             this.setPropsForTextFieldFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ImageView") {
-            widget = ccs.UIImageView.create();
+            widget = ccs.ImageView.create();
             this.setPropsForImageViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Panel") {
-            widget = ccs.UILayout.create();
+            widget = ccs.Layout.create();
             this.setPropsForLayoutFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "Slider") {
-            widget = ccs.UISlider.create();
+            widget = ccs.Slider.create();
             this.setPropsForSliderFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "LabelBMFont") {
-            widget = ccs.UILabelBMFont.create();
+            widget = ccs.LabelBMFont.create();
             this.setPropsForLabelBMFontFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "DragPanel") {
-            widget = ccs.UIScrollView.create();
+            widget = ccs.ScrollView.create();
             this.setPropsForScrollViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "ListView") {
-            widget = ccs.UIListView.create();
+            widget = ccs.ListView.create();
             this.setPropsForListViewFromJsonDictionary(widget, uiOptions);
         }
         else if (classname == "PageView") {
-            widget = ccs.UIPageView.create();
+            widget = ccs.PageView.create();
             this.setPropsForPageViewFromJsonDictionary(widget, uiOptions);
         }
         var children = data["children"];
@@ -856,9 +856,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             }
             subData = null;
         }
-        if (widget instanceof ccs.UILayout) {
-            widget.doLayout();
-        }
+
         uiOptions = null;
         return widget;
     },
@@ -909,12 +907,12 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
                 case 0:
                     break;
                 case 1:
-                    parameter = ccs.UILinearLayoutParameter.create();
+                    parameter = ccs.LinearLayoutParameter.create();
                     var gravity = layoutParameterDic["gravity"];
                     parameter.setGravity(gravity);
                     break;
                 case 2:
-                    parameter = ccs.UIRelativeLayoutParameter.create();
+                    parameter = ccs.RelativeLayoutParameter.create();
                     var relativeName = layoutParameterDic["relativeName"];
                     parameter.setRelativeName(relativeName);
                     var relativeToName = layoutParameterDic["relativeToName"];
@@ -928,7 +926,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             var mgt = layoutParameterDic["marginTop"];
             var mgr = layoutParameterDic["marginRight"];
             var mgb = layoutParameterDic["marginDown"];
-            parameter.setMargin(new ccs.UIMargin(mgl, mgt, mgr, mgb));
+            parameter.setMargin(new ccs.Margin(mgl, mgt, mgr, mgb));
             widget.setLayoutParameter(parameter);
         }
     },
@@ -1235,7 +1233,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     setPropsForLayoutFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var panel = widget;
-        if (!(panel instanceof ccs.UIScrollView) && !(panel instanceof ccs.UIListView)) {
+        if (!(panel instanceof ccs.ScrollView) && !(panel instanceof ccs.ListView)) {
             panel.setClippingEnabled(options["clipAble"]);
         }
         var backGroundScale9Enable = options["backGroundScale9Enable"];
