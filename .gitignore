@@ -2,4 +2,4 @@
 .idea
 build
 aspnet_client
-node_modules
+tools/npm-helper/node_modules/
