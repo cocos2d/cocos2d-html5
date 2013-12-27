@@ -357,8 +357,10 @@ if (!cc.Browser.supportWebGL) {
 }
 
 cc.CHECK_GL_ERROR_DEBUG = function () {
-    var _error = cc.renderContext.getError();
-    if (_error) {
-        cc.log("WebGL error " + _error);
+    if (cc.renderMode == cc.WEBGL) {
+        var _error = cc.renderContext.getError();
+        if (_error) {
+            cc.log("WebGL error " + _error);
+        }
     }
 };
