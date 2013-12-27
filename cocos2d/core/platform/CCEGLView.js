@@ -172,9 +172,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     // hack
     _adjustSizeKeepCanvasSize: function (width, height) {
-        this._frameSize.width = width;
-        this._frameSize.height = height;
-
         var designWidth = this._originalDesignResolutionSize.width;
         var designHeight = this._originalDesignResolutionSize.height;
         if (designWidth > 0)
