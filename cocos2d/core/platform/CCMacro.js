@@ -247,12 +247,14 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
  * @function
  */
 cc.POINT_POINTS_TO_PIXELS = function (points) {
-    return cc.p(points.x * cc.CONTENT_SCALE_FACTOR(), points.y * cc.CONTENT_SCALE_FACTOR())
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    return cc.p(points.x * scale, points.y * scale);
 };
 
 cc._POINT_POINTS_TO_PIXELS_OUT = function (points, outPixels) {
-    outPixels._x = points.x * cc.CONTENT_SCALE_FACTOR();
-    outPixels._y = points.y * cc.CONTENT_SCALE_FACTOR();
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    outPixels._x = points.x * scale;
+    outPixels._y = points.y * scale;
 };
 
 /**
@@ -262,7 +264,8 @@ cc._POINT_POINTS_TO_PIXELS_OUT = function (points, outPixels) {
  * @function
  */
 cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
-    return cc.size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints.height * cc.CONTENT_SCALE_FACTOR());
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    return cc.size(sizeInPoints.width * scale, sizeInPoints.height * scale);
 };
 
 /**
@@ -272,12 +275,14 @@ cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
  * @function
  */
 cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
-    return cc.size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    return cc.size(sizeInPixels.width / scale, sizeInPixels.height / scale);
 };
 
 cc._SIZE_PIXELS_TO_POINTS_OUT = function (sizeInPixels, outSize) {
-    outSize._width = sizeInPixels.width / cc.CONTENT_SCALE_FACTOR();
-    outSize._height = sizeInPixels.height / cc.CONTENT_SCALE_FACTOR();
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    outSize._width = sizeInPixels.width / scale;
+    outSize._height = sizeInPixels.height / scale;
 };
 
 /**
@@ -286,12 +291,14 @@ cc._SIZE_PIXELS_TO_POINTS_OUT = function (sizeInPixels, outSize) {
  * @function
  */
 cc.POINT_PIXELS_TO_POINTS = function (pixels) {
-    return cc.p(pixels.x / cc.CONTENT_SCALE_FACTOR(), pixels.y / cc.CONTENT_SCALE_FACTOR());
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    return cc.p(pixels.x / scale, pixels.y / scale);
 };
 
 cc._POINT_PIXELS_TO_POINTS_OUT = function(pixels, outPoint){
-    outPoint._x = pixels.x / cc.CONTENT_SCALE_FACTOR();
-    outPoint._y = pixels.y / cc.CONTENT_SCALE_FACTOR();
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    outPoint._x = pixels.x / scale;
+    outPoint._y = pixels.y / scale;
 };
 
 /**
@@ -300,8 +307,9 @@ cc._POINT_PIXELS_TO_POINTS_OUT = function(pixels, outPoint){
  * @function
  */
 cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
-    return cc.rect(pixel.x / cc.CONTENT_SCALE_FACTOR(), pixel.y / cc.CONTENT_SCALE_FACTOR(),
-        pixel.width / cc.CONTENT_SCALE_FACTOR(), pixel.height / cc.CONTENT_SCALE_FACTOR());
+    var scale = cc.CONTENT_SCALE_FACTOR();
+    return cc.rect(pixel.x / scale, pixel.y / scale,
+        pixel.width / scale, pixel.height / scale);
 } : function (p) {
     return p;
 };
@@ -312,8 +320,9 @@ cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
  * @function
  */
 cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
-    return cc.rect(point.x * cc.CONTENT_SCALE_FACTOR(), point.y * cc.CONTENT_SCALE_FACTOR(),
-        point.width * cc.CONTENT_SCALE_FACTOR(), point.height * cc.CONTENT_SCALE_FACTOR());
+   var scale = cc.CONTENT_SCALE_FACTOR();
+    return cc.rect(point.x * scale, point.y * scale,
+        point.width * scale, point.height * scale);
 } : function (p) {
     return p;
 };
