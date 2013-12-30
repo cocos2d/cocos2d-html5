@@ -15,7 +15,7 @@ function playTestCase(flag){
     var gms = resCfg.gameModules;
     testCaseIndex += flag;
     testCaseIndex = testCaseIndex >= gms.length ? 0 : testCaseIndex;
-    testCaseIndex = testCaseIndex < 0 ? 0 : testCaseIndex;
+    testCaseIndex = testCaseIndex < 0 ? gms.length - 1 : testCaseIndex;
     var cfgName = gms[testCaseIndex];
     var cfg = resCfg[cfgName];
     testTitle.innerHTML = cfg.title || "";
@@ -35,6 +35,10 @@ nextBtn.addEventListener("click", function(){
 
 function logTest(msg){
     testConsole.value = testConsole.value + JSON.stringify(msg) + "\r\n";
+};
+
+function clearTextConsole(){
+    testCaseIndex.value = "";
 }
 
 var cocos2dApp = cc.Application.extend({
