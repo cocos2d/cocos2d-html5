@@ -15,12 +15,11 @@ function playTestCase(flag){
     testCaseIndex += flag;
     testCaseIndex = testCaseIndex >= gms.length ? 0 : testCaseIndex;
     testCaseIndex = testCaseIndex < 0 ? 0 : testCaseIndex;
-    console.log(testCaseIndex);
     var cfgName = gms[testCaseIndex];
     var cfg = resCfg[cfgName];
     testTitle.innerHTML = cfg.title || "";
-    testJsPath.innerHTML = cfgName.replace(/\[\%[\w\d\-_]*\%\]/, "")
-    cc.test(cfgName);
+    testJsPath.innerHTML = cfgName.replace(/\[\%[\w\d\-_]*\%\]/, "");
+    cc.test(cfgName, flag == 0 ? cc.Loader : null);
 }
 
 preBtn.addEventListener("click", function(){
@@ -54,7 +53,9 @@ var cocos2dApp = cc.Application.extend({
         // set FPS. the default value is 1.0/60 if you don't call this
         director.setAnimationInterval(1.0 / config['frameRate']);
 
-        playTestCase(1);
+        cc.LoaderScene.preload(cc.resLoader.getResCfg(TEST_RES).resArr, function(){//preLoad testResources
+            playTestCase(1);
+        });
         return true;
     }
 
