@@ -3,6 +3,7 @@ var rePlayBtn = document.getElementById("rePlayBtn");
 var nextBtn = document.getElementById("nextBtn");
 var testTitle = document.getElementById("testTitle");
 var testJsPath = document.getElementById("testJsPath");
+var testConsole = document.getElementById("testConsole");
 
 var testCaseIndex = -1;
 
@@ -31,6 +32,10 @@ rePlayBtn.addEventListener("click", function(){
 nextBtn.addEventListener("click", function(){
     playTestCase(1);
 });
+
+function logTest(msg){
+    testConsole.value = testConsole.value + JSON.stringify(msg) + "\r\n";
+}
 
 var cocos2dApp = cc.Application.extend({
     config : document["ccConfig"],
