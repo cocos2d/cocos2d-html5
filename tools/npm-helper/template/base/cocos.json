@@ -1,0 +1,7 @@
+{
+    "dependencies":[
+    ],
+    "genJsRes" : {
+        "dirCfgs" : ["lib"]
+    }
+}

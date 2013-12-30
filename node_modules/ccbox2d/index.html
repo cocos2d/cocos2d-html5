@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Cocos2d-HTML5 Test Cases</title>
+    <link rel="icon" type="image/GIF" href="images/favicon.ico"/>
+    <style type="text/css">
+        body {
+            text-align: center;
+            background: #f2f6f8;
+        }
+
+        #ccBannerImg {
+            clear:both;
+            margin-bottom: 20px
+        }
+
+        .test-canvas-container {
+            display:inline-block;
+            width:auto;
+            margin: 0
+            auto;
+            background: black;
+            position:relative;
+            border:5px solid black;
+            border-radius: 10px;
+            box-shadow: 0 5px 50px #333
+        }
+
+        .test-btn-container {
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <img id="ccBannerImg" src="images/cocos2dbanner.png"/>
+    <div><h2 id="testTitle"></h2></div>
+    <div class="test-canvas-container">
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+    </div>
+    <div><h5 id="testJsPath"></h5></div>
+    <div class="test-btn-container">
+        <button id="preBtn">Pre</button>
+        <button id="rePlayBtn">RePlay</button>
+        <button id="nextBtn">Next</button>
+    </div>
+    <script src="baseCfg.js"></script>
+    <script src="../cocos2d-html5/lib/cc.js"></script>
+</body>
+</html>
