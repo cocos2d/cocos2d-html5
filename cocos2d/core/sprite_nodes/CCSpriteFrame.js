@@ -61,7 +61,6 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._textureFilename = "";
         this._texture = null;
         this._textureLoaded = false;
-        this._eventListeners = [];
     },
 
     // attributes
@@ -70,6 +69,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     },
 
     addLoadedEventListener:function(callback, target){
+        if (this._eventListeners == null){
+           this._eventListeners = [];
+        }
         this._eventListeners.push({eventCallback:callback, eventTarget:target});
     },
 
