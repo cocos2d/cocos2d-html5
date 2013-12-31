@@ -1017,19 +1017,27 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     setBlendFunc: null,
 
     _setBlendFuncForWebGL: function (src, dst) {
-        if (arguments.length == 1)
-            this._blendFunc = src;
-        else
-            this._blendFunc = {src: src, dst: dst};
+        var locBlendFunc = this._blendFunc;
+        if (arguments.length === 1) {
+            locBlendFunc.src = src.src;
+            locBlendFunc.dst = src.dst;
+        } else {
+            locBlendFunc.src = src;
+            locBlendFunc.dst = dst;
+        }
     },
 
     _setBlendFuncForCanvas: function (src, dst) {
-        if (arguments.length == 1)
-            this._blendFunc = src;
-        else
-            this._blendFunc = {src: src, dst: dst};
-        this._isLighterMode = (this._blendFunc &&
-            (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE)));
+        var locBlendFunc = this._blendFunc;
+        if (arguments.length === 1) {
+            locBlendFunc.src = src.src;
+            locBlendFunc.dst = src.dst;
+        } else {
+            locBlendFunc.src = src;
+            locBlendFunc.dst = dst;
+        }
+        this._isLighterMode = (locBlendFunc &&
+            (( locBlendFunc.src == gl.SRC_ALPHA && locBlendFunc.dst == gl.ONE) || (locBlendFunc.src == gl.ONE && locBlendFunc.dst == gl.ONE)));
     },
 
     /**

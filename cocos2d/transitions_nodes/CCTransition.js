@@ -88,7 +88,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         director.replaceScene(this._inScene);
 
         // enable events while transitions
-        director.getTouchDispatcher().setDispatchEvents(true);
+        if(cc.TouchDispatcher)
+            director.getTouchDispatcher().setDispatchEvents(true);
         // issue #267
         this._outScene.setVisible(true);
     },
@@ -118,7 +119,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         cc.Node.prototype.onEnter.call(this);
 
         // disable events while transitions
-        cc.Director.getInstance().getTouchDispatcher().setDispatchEvents(false);
+        if(cc.TouchDispatcher)
+            cc.Director.getInstance().getTouchDispatcher().setDispatchEvents(false);
 
         // outScene should not receive the onEnter callback
         // only the onExitTransitionDidStart
@@ -134,7 +136,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         cc.Node.prototype.onExit.call(this);
 
         // enable events while transitions
-        cc.Director.getInstance().getTouchDispatcher().setDispatchEvents(true);
+        if(cc.TouchDispatcher)
+            cc.Director.getInstance().getTouchDispatcher().setDispatchEvents(true);
 
         this._outScene.onExit();
 
