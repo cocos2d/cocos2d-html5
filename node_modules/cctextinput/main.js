@@ -4,6 +4,7 @@ var nextBtn = document.getElementById("nextBtn");
 var testTitle = document.getElementById("testTitle");
 var testJsPath = document.getElementById("testJsPath");
 var testConsole = document.getElementById("testConsole");
+var custDiv = document.getElementById("custDiv");
 
 var testCaseIndex = -1;
 
@@ -20,6 +21,7 @@ function playTestCase(flag){
     var cfg = resCfg[cfgName];
     testTitle.innerHTML = cfg.title || "";
     testJsPath.innerHTML = cfgName.replace(/\[\%[\w\d\-_]*\%\]/, "");
+    clearTextConsole();
     cc.test(cfgName, flag == 0 ? cc.Loader : null);
 }
 
@@ -34,11 +36,12 @@ nextBtn.addEventListener("click", function(){
 });
 
 function logTest(msg){
-    testConsole.value = testConsole.value + JSON.stringify(msg) + "\r\n";
+    msg = typeof msg == "string" ? msg : JSON.stringify(msg);
+    testConsole.value = testConsole.value + msg + "\r\n";
 };
 
 function clearTextConsole(){
-    testCaseIndex.value = "";
+    testConsole.value = "TextConsole...\r\n";
 }
 
 var cocos2dApp = cc.Application.extend({
