@@ -335,6 +335,12 @@ ccs.ListView = ccs.ScrollView.extend({
         return this._curSelectedIndex;
     },
 
+    /**
+     * request refresh view
+     */
+    requestRefreshView: function () {
+        this._refreshViewDirty = true;
+    },
 
     refreshView: function () {
         for (var i = 0; i < this._items.length; i++) {

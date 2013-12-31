@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2013 cocos2d-x.org
 
  http://www.cocos2d-x.org
 
@@ -21,17 +21,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-ccs.VERSION_COMBINED = 0.30;
-ccs.VERSION_CHANGE_ROTATION_RANGE = 1.0;
-ccs.VERSION_COLOR_READING = 1.1;
-ccs.MAX_VERTEXZ_VALUE = 5000000.0;
-ccs.ARMATURE_MAX_CHILD = 50.0;
-ccs.ARMATURE_MAX_ZORDER = 100;
-ccs.ARMATURE_MAX_COUNT = ((ccs.MAX_VERTEXZ_VALUE) / (ccs.ARMATURE_MAX_CHILD) / ccs.ARMATURE_MAX_ZORDER);
-ccs.AUTO_ADD_SPRITE_FRAME_NAME_PREFIX = false;
-ccs.ENABLE_PHYSICS_CHIPMUNK_DETECT = false;
-ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX = false;
 
-ccs.armatureVersion = function(){
-    return "v1.1.0.0";
+ccs.sendEvent = function (event) {
+    var triggerObjArr = ccs.TriggerMng.getInstance().get(event);
+    if (triggerObjArr == null) {
+        return;
+    }
+    for (var i = 0; i < triggerObjArr.length; i++) {
+        var triObj = triggerObjArr[i];
+        if (triObj != null && triObj.detect()) {
+            triObj.done();
+        }
+    }
+};
+
+ccs.registerTriggerClass = function (className, func) {
+    new ccs.TInfo(className, func);
 };

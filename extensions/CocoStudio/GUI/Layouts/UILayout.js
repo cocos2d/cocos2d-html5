@@ -861,6 +861,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         return this._layoutType;
     },
 
+    /**
+     * request do layout
+     */
+    requestDoLayout: function () {
+        this._doLayoutDirty = true;
+    },
+
     doLayout_LINEAR_VERTICAL: function () {
         var layoutChildrenArray = this.getChildren();
         var layoutSize = this.getSize();

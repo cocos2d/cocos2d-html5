@@ -146,6 +146,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._updateDisplay();
 
         if(!bgBoxRenderer.textureLoaded()){
+            this._backGroundBoxRenderer.setContentSize(this._customSize);
             bgBoxRenderer.addLoadedEventListener(function(){
                 this.backGroundTextureScaleChangedWithSize();
             },this);

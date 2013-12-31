@@ -724,12 +724,11 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     },
 
     setPropsForListViewFromJsonDictionary: function (widget, options) {
-        this.setPropsForScrollViewFromJsonDictionary(widget, options);
+        this.setPropsForLayoutFromJsonDictionary(widget, options);
     },
 
     setPropsForPageViewFromJsonDictionary: function (widget, options) {
-       /* this.setPropsForPanelFromJsonDictionary(widget, options);
-        this.setColorPropsForWidgetFromJsonDictionary(widget, options);*/
+        this.setPropsForLayoutFromJsonDictionary(widget, options);
     },
 
     setPropsForLabelBMFontFromJsonDictionary: function (widget, options) {
@@ -852,7 +851,13 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             var subData = children[i];
             var child = this.widgetFromJsonDictionary(subData);
             if (child) {
-                widget.addChild(child);
+                if (widget instanceof ccs.PageView && child instanceof ccs.Layout) {
+                    widget.addPage(child);
+                } else if (widget instanceof ccs.ListView) {
+                    widget.pushBackCustomItem(child);
+                } else {
+                    widget.addChild(child);
+                }
             }
             subData = null;
         }
@@ -1552,12 +1557,17 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     },
 
     setPropsForListViewFromJsonDictionary: function (widget, options) {
-        this.setPropsForScrollViewFromJsonDictionary(widget, options);
+        this.setPropsForLayoutFromJsonDictionary(widget, options);
+        var innerWidth = options["innerWidth"] || 0;
+        var innerHeight = options["innerHeight"] || 0;
+        widget.setInnerContainerSize(cc.size(innerWidth, innerHeight));
+        widget.setDirection(options["direction"] || 0);
+        widget.setGravity(options["gravity"] || 0);
+        widget.setItemsMargin(options["itemMargin"] || 0);
     },
 
     setPropsForPageViewFromJsonDictionary: function (widget, options) {
-        /*this.setPropsForPanelFromJsonDictionary(widget, options);
-        this.setColorPropsForWidgetFromJsonDictionary(widget, options);*/
+        this.setPropsForLayoutFromJsonDictionary(widget, options);
     },
 
     setPropsForLabelBMFontFromJsonDictionary: function (widget, options) {
