@@ -35,6 +35,6 @@ ccs.sendEvent = function (event) {
     }
 };
 
-ccs.registerTriggerClass = function (className, createFunc) {
-    new ccs.TInfo(className, createFunc);
+ccs.registerTriggerClass = function (className, func) {
+    new ccs.TInfo(className, func);
 };
