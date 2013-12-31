@@ -861,9 +861,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                     cc.log("cocos2d: Director: unrecognized projection");
                     break;
             }
+            this._projection = projection;
+            cc.setProjectionMatrixDirty();
+            return;
         }
         this._projection = projection;
-        cc.setProjectionMatrixDirty();
     },
 
     /**
