@@ -303,6 +303,16 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         if (!text) {
             return;
         }
+        if (this.isMaxLengthEnabled()) {
+            text = text.substr(0, this.getMaxLength());
+        }
+        if (this.isPasswordEnabled()) {
+            this._textFieldRender.setPasswordText(text);
+            this._textFieldRender.insertText(text, text.length);
+        }
+        else {
+            this._textFieldRender.setString(text);
+        }
         this._textFieldRender.setString(text);
         this.textfieldRendererScaleChangedWithSize();
     },
