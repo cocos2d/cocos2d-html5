@@ -31,6 +31,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
     _baseBath:"",
     _listener:null,
     _selector:null,
+    _node: null,
     ctor: function () {
         this._instance = null;
         this._baseBath = "";
@@ -44,7 +45,6 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
      */
     createNodeWithSceneFile: function (pszFileName) {
         var data = 0;
-        var node = null;
         do {
             var pos = pszFileName.lastIndexOf("/");
             if(pos>-1){
@@ -56,10 +56,11 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                 break;
 
             var jsonDict = JSON.parse(data);
-            node = this.createObject(jsonDict, null);
+            this._node = this.createObject(jsonDict, null);
+            ccs.TriggerMng.getInstance().parse(jsonDict["Triggers"]||[]);
         } while (0);
         this._baseBath = "";
-        return node;
+        return this._node;
     },
 
     /**
@@ -316,6 +317,40 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
         }
 
         return null;
+    },
+
+
+    nodeByTag: function (parent, tag) {
+        if (parent == null) {
+            return null;
+        }
+        var retNode = null;
+        var children = parent.getChildren();
+
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child && child.getTag() == tag) {
+                retNode = child;
+                break;
+            }
+            else {
+                retNode = this.nodeByTag(child, tag);
+                if (retNode) {
+                    break;
+                }
+            }
+        }
+        return retNode;
+    },
+
+    getNodeByTag: function (tag) {
+        if (this._node == null) {
+            return null;
+        }
+        if (this._node.getTag() == tag) {
+            return this._node;
+        }
+        return this.nodeByTag(this._node, tag);
     },
 
     /**

@@ -210,6 +210,11 @@
             '../extensions/CocoStudio/Components/CCComAudio.js',
             '../extensions/CocoStudio/Components/CCComController.js',
             '../extensions/CocoStudio/Components/CCComRender.js',
+            // CocoStudio Trigger
+            '../extensions/CocoStudio/Trigger/ObjectFactory.js',
+            '../extensions/CocoStudio/Trigger/TriggerBase.js',
+            '../extensions/CocoStudio/Trigger/TriggerMng.js',
+            '../extensions/CocoStudio/Trigger/TriggerObj.js',
             // CocoStudio GUI
             '../extensions/CocoStudio/GUI/BaseClasses/UIWidget.js',
             '../extensions/CocoStudio/GUI/Layouts/UILayout.js',
