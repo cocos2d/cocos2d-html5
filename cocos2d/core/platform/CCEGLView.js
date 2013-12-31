@@ -172,9 +172,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     // hack
     _adjustSizeKeepCanvasSize: function (width, height) {
-        this._frameSize.width = width;
-        this._frameSize.height = height;
-
         var designWidth = this._originalDesignResolutionSize.width;
         var designHeight = this._originalDesignResolutionSize.height;
         if (designWidth > 0)
@@ -874,9 +871,21 @@ cc.ContainerStrategy = cc.Class.extend({
         locContainer.style.width = w + "px";
         locContainer.style.height = h + "px";
 
-        var body = document.body;
-        if (body)
-            body.style.padding = body.style.border = body.style.margin = 0 + "px";
+        var body = document.body, style;
+        if (body && (style = body.style)) {
+            style.paddingTop = style.paddingTop || "0px";
+            style.paddingRight = style.paddingRight || "0px";
+            style.paddingBottom = style.paddingBottom || "0px";
+            style.paddingLeft = style.paddingLeft || "0px";
+            style.borderTop = style.borderTop || "0px";
+            style.borderRight = style.borderRight || "0px";
+            style.borderBottom = style.borderBottom || "0px";
+            style.borderLeft = style.borderLeft || "0px";
+            style.marginTop = style.marginTop || "0px";
+            style.marginRight = style.marginRight || "0px";
+            style.marginBottom = style.marginBottom || "0px";
+            style.marginLeft = style.marginLeft || "0px";
+        }
     },
 
     _fixContainer: function () {

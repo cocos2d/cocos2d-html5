@@ -152,7 +152,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
             default:
                 break;
         }
-        this.setBlendFunc(blendFunc.src, blendFunc.dst);
+        this.setBlendFunc(blendFunc);
     }
 });
 

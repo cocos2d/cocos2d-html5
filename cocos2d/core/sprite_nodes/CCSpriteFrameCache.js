@@ -93,8 +93,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     ow = Math.abs(ow);
                     oh = Math.abs(oh);
                     // create frame
-                    spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(texture, cc.rect(x, y, w, h), false, cc.p(ox, oy), cc.size(ow, oh));
+                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, cc.rect(x, y, w, h), false, cc.p(ox, oy), cc.size(ow, oh));
                 }
                 else if (format == 1 || format == 2) {
                     var frame = cc.RectFromString(frameDict["frame"]);
@@ -107,8 +106,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var offset = cc.PointFromString(frameDict["offset"]);
                     var sourceSize = cc.SizeFromString(frameDict["sourceSize"]);
                     // create frame
-                    spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(texture, frame, rotated, offset, sourceSize);
+                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, frame, rotated, offset, sourceSize);
                 }
                 else if (format == 3) {
                     // get values
@@ -129,18 +127,11 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                         }
                         this._spriteFramesAliases[aliases[aliasKey]] = frameKey;
                     }
-
-                    // create frame
-                    spriteFrame = new cc.SpriteFrame();
                     if (frameDict.hasOwnProperty("spriteSize")) {
-                        spriteFrame.initWithTexture(texture,
-                            cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height),
-                            textureRotated,
-                            spriteOffset,
-                            spriteSourceSize);
-                    } else {
-                        spriteFrame.initWithTexture(texture, spriteSize, textureRotated, spriteOffset, spriteSourceSize);
+                        textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                     }
+                    //create frame
+                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, textureRect, textureRotated, spriteOffset, spriteSourceSize);
                 }
                 else {
                     var filename = frameDict["filename"], tmpFrame = frameDict["frame"], tmpSourceSize = frameDict["sourceSize"];
@@ -148,10 +139,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var jsonRotated = frameDict["rotated"];
                     var jsonOffset = cc.p(0, 0);
                     var jsonSourceSize = cc.size(tmpSourceSize.w, tmpSourceSize.h);
-
                     // create frame
-                    spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(texture, jsonFrame, jsonRotated, jsonOffset, jsonSourceSize);
+                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, jsonFrame, jsonRotated, jsonOffset, jsonSourceSize);
                 }
 
                 if (cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()) {

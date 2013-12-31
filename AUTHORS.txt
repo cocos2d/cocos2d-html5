@@ -93,6 +93,8 @@ Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing fr
                                     CCTween bug fix
                                     CCScale9Sprite bug fix
                                     sys.localStorage bug fix
+                                    CCArmature refactoring
+                                    cc.SpriteFrame and cc.SpriteFrameCache refactoring
 
 Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
 
