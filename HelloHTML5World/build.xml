@@ -102,6 +102,8 @@
                 <file name="particle_nodes/CCParticleSystem.js"/>
                 <file name="particle_nodes/CCParticleExamples.js"/>
                 <file name="particle_nodes/CCParticleBatchNode.js"/>
+                <file name="physics_nodes/CCPhysicsDebugNode.js"/>
+                <file name="physics_nodes/CCPhysicsSprite.js"/>
                 <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
                 <file name="touch_dispatcher/CCTouchHandler.js"/>
                 <file name="touch_dispatcher/CCTouchDispatcher.js"/>
@@ -177,6 +179,7 @@
                 <file name="CocoStudio/Armature/CCArmature.js"/>
                 <file name="CocoStudio/Armature/CCBone.js"/>
                 <file name="CocoStudio/Action/CCActionFrame.js"/>
+                <file name="CocoStudio/Action/CCActionManager.js"/>
                 <file name="CocoStudio/Action/CCActionNode.js"/>
                 <file name="CocoStudio/Action/CCActionObject.js"/>
                 <file name="CocoStudio/Components/CCComAttribute.js"/>
@@ -204,6 +207,10 @@
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js"/>
+                <file name="CocoStudio/Trigger/ObjectFactory.js"/>
+                <file name="CocoStudio/Trigger/TriggerBase.js"/>
+                <file name="CocoStudio/Trigger/TriggerMng.js"/>
+                <file name="CocoStudio/Trigger/TriggerObj.js"/>
                 <file name="CocoStudio/Reader/GUIReader.js"/>
                 <file name="CocoStudio/Reader/SceneReader.js"/>
             </sources>
