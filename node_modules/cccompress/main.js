@@ -36,11 +36,13 @@ nextBtn.addEventListener("click", function(){
 });
 
 function logTest(msg){
+    if(testConsole.hidden) testConsole.hidden = null;
     msg = typeof msg == "string" ? msg : JSON.stringify(msg);
     testConsole.value = testConsole.value + msg + "\r\n";
 };
 
 function clearTextConsole(){
+    if(!testConsole.hidden) testConsole.hidden = "hidden";
     testConsole.value = "TextConsole...\r\n";
 }
 
