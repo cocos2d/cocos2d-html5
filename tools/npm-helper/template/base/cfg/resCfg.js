@@ -5,4 +5,4 @@ resCfg["[%name%]"] = {
     ref : []//Base references for the project.
 };
 
-resCfg.gameModules = [];//Game modules
+cc.gameModules = [];//Game modules
