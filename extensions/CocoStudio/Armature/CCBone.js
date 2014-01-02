@@ -506,12 +506,12 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     },
 
     /**
-     * change display by name
+     * change display with name
      * @param {String} name
      * @param {Boolean} force
      */
-    changeDisplayByName:function (name, force) {
-        this._displayManager.changeDisplayByName(name, force);
+    changeDisplayWithName:function (name, force) {
+        this._displayManager.changeDisplayWithName(name, force);
     },
 
     /**

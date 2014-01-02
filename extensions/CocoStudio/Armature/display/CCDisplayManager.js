@@ -160,7 +160,7 @@ ccs.DisplayManager = ccs.Class.extend({
         this.setCurrentDecorativeDisplay(decoDisplay);
     },
 
-    changeDisplayByName: function (name, force) {
+    changeDisplayWithName: function (name, force) {
         for (var i = 0; i < this._decoDisplayList.length; i++) {
             if (this._decoDisplayList[i].getDisplayData().displayName == name) {
                 this.changeDisplayWithIndex(i, force);
