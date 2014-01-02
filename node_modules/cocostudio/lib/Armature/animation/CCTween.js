@@ -106,7 +106,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             this._tweenData.scaleY += 1;
         }
 
-        if (this._rawDuration==0) {
+        if (this._rawDuration == 0 || this._movementBoneData.frameList.length == 1) {
             this._loopType = CC_ANIMATION_TYPE_SINGLE_FRAME;
             if (durationTo == 0) {
                 this.setBetween(nextKeyFrame, nextKeyFrame);
@@ -204,6 +204,9 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                     break;
                 default:
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
+                    this._totalDuration = 0;
+                    this._betweenDuration = 0;
+                    this._fromIndex = this._toIndex = 0;
                     break;
             }
         }
