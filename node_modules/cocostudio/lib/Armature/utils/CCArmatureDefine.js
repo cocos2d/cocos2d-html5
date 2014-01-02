@@ -35,5 +35,3 @@ ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX = false;
 ccs.armatureVersion = function(){
     return "v1.1.0.0";
 };
-
-cc.RESOURCE_TYPE["TEXT"].push("ExportJson");

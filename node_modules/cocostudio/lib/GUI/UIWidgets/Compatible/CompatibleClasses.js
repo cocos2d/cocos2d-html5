@@ -23,25 +23,36 @@
  ****************************************************************************/
 
 //class type define
-ccs.UIPanel = ccs.UILayout;
-ccs.UITextArea = ccs.UILabel;
-ccs.UIContainerWidget = ccs.UILayout;
-ccs.UITextButton = ccs.UIButton;
-ccs.UINodeContainer = ccs.UIWidget;
+ccs.UIPanel = ccs.Layout;
+ccs.UITextArea = ccs.Label;
+ccs.UIContainerWidget = ccs.Layout;
+ccs.UITextButton = ccs.Button;
+ccs.UINodeContainer = ccs.Widget;
 ccs.PanelColorType = ccs.LayoutBackGroundColorType;
 
-/**
- * Base class for ccs.UIZoomButton
- * @class
- * @extends ccs.UITextButton
- */
-ccs.UIZoomButton = ccs.UITextButton.extend({
-    init: function () {
-        if (ccs.UITextButton.prototype.init.call(this)) {
-            this.setScale9Enabled(true);
-            this.setPressedActionEnabled(true);
-            return true;
-        }
-        return false;
-    }
-});
+ccs.TouchGroup = ccs.UILayer;
+ccs.UILayout = ccs.Layout;
+ccs.UIWidget = ccs.Widget;
+
+ccs.UILayoutParameter = ccs.LayoutParameter;
+ccs.UILinearLayoutParameter = ccs.LinearLayoutParameter;
+ccs.UIRelativeLayoutParameter = ccs.RelativeLayoutParameter;
+
+ccs.UILinearGravity = ccs.LinearGravity;
+ccs.UIRelativeAlign = ccs.RelativeAlign;
+
+ccs.UIMargin = ccs.Margin;
+ccs.UIMarginZero = ccs.MarginZero;
+
+ccs.UIListView = ccs.ListView;
+ccs.UIPageView = ccs.PageView;
+ccs.UIScrollView = ccs.ScrollView;
+ccs.UIButton = ccs.Button;
+ccs.UICheckBox = ccs.CheckBox;
+ccs.UIImageView = ccs.ImageView;
+ccs.UILabel = ccs.Label;
+ccs.UILabelAtlas = ccs.LabelAtlas;
+ccs.UILabelBMFont = ccs.LabelBMFont;
+ccs.UILoadingBar = ccs.LoadingBar;
+ccs.UISlider = ccs.Slider;
+ccs.UITextField = ccs.TextField;

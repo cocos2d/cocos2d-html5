@@ -23,10 +23,10 @@
  ****************************************************************************/
 
 /**
- * UILinearGravity
+ * LinearGravity
  * @type {Object}
  */
-ccs.UILinearGravity = {
+ccs.LinearGravity = {
     none: 0,
     left: 1,
     top: 2,
@@ -37,10 +37,10 @@ ccs.UILinearGravity = {
 };
 
 /**
- * UIRelativeAlign
+ * RelativeAlign
  * @type {Object}
  */
-ccs.UIRelativeAlign = {
+ccs.RelativeAlign = {
     alignNone: 0,
     alignParentTopLeft: 1,
     alignParentTopCenterHorizontal: 2,
@@ -66,11 +66,11 @@ ccs.UIRelativeAlign = {
 };
 
 /**
- * Base class for ccs.UIMargin
+ * Base class for ccs.Margin
  * @class
  * @extends ccs.Class
  */
-ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
+ccs.Margin = ccs.Class.extend(/** @lends ccs.Margin# */{
     left: 0,
     top: 0,
     right: 0,
@@ -105,7 +105,7 @@ ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
     },
     /**
      *  check is equals
-     * @param {ccs.UIMargin} target
+     * @param {ccs.Margin} target
      * @returns {boolean}
      */
     equals: function (target) {
@@ -113,6 +113,6 @@ ccs.UIMargin = ccs.Class.extend(/** @lends ccs.UIMargin# */{
     }
 });
 
-ccs.UIMarginZero = function(){
-   return ccs.UIMargin(0,0,0,0);
+ccs.MarginZero = function(){
+   return new ccs.Margin(0,0,0,0);
 };

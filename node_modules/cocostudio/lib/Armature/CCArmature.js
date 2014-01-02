@@ -136,14 +136,18 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         }
 
-        this.unscheduleUpdate();
-        this.scheduleUpdate();
-
         this.setCascadeOpacityEnabled(true);
         this.setCascadeColorEnabled(true);
         return true;
     },
-
+    onEnter:function(){
+        cc.NodeRGBA.prototype.onEnter.call(this);
+        this.scheduleUpdate();
+    },
+    onExit:function(){
+        cc.NodeRGBA.prototype.onExit.call(this);
+        this.unscheduleUpdate();
+    },
     /**
      * create a bone
      * @param {String} boneName
@@ -289,11 +293,10 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         this._armatureTransformDirty = false;
     },
 
-    nodeToParentTransform:function () {
-        return cc.Browser.supportWebGL ? this.nodeToParentTransformWEBGL() : this.nodeToParentTransformCanvas();
-    },
 
-    nodeToParentTransformWEBGL:function () {
+    nodeToParentTransform: null,
+
+    _nodeToParentTransformForWebGL:function () {
         if (this._transformDirty) {
             this._armatureTransformDirty = true;
             // Translate values
@@ -358,7 +361,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         return this._transform;
     },
 
-    nodeToParentTransformCanvas:function () {
+    _nodeToParentTransformForCanvas:function () {
         if (!this._transform)
             this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
         if (this._transformDirty) {
@@ -657,6 +660,15 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     }
 
 });
+
+
+if(cc.Browser.supportWebGL){
+    //WebGL
+    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
+}else{
+    //Canvas
+    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForCanvas;
+}
 
 /**
  * allocates and initializes a armature.

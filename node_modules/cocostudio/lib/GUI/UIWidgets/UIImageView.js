@@ -21,18 +21,13 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+ccs.IMAGERENDERERZ = -1;
 /**
- * Base class for ccs.UIButton
+ * Base class for ccs.Button
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
-    _clickCount: 0,
-    _clickTimeInterval: 0,
-    _startCheckDoubleClick: false,
-    _touchRelease: false,
-    _doubleClickEnabled: false,
+ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     _scale9Enabled: false,
     _prevIgnoreSize: true,
     _capInsets: null,
@@ -41,12 +36,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     _imageTexType: null,
     _imageTextureSize: null,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
-        this._clickCount = 0;
-        this._clickTimeInterval = 0;
-        this._startCheckDoubleClick = false;
-        this._touchRelease = false;
-        this._doubleClickEnabled = false;
+        ccs.Widget.prototype.ctor.call(this);
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
         this._capInsets = cc.rect(0,0,0,0);
@@ -57,9 +47,8 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._imageRenderer = cc.Sprite.create();
-        this._renderer.addChild(this._imageRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
     },
 
     /**
@@ -85,8 +74,6 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
             default:
                 break;
         }
-        imageRenderer.setColor(this.getColor());
-        imageRenderer.setOpacity(this.getOpacity());
 
         var locRendererSize = imageRenderer.getContentSize();
         if(imageRenderer.textureLoaded()){
@@ -110,6 +97,8 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },
@@ -122,70 +111,6 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
         if (!this._scale9Enabled){
             this._imageRenderer.setTextureRect(rect);
         }
-    },
-
-    onTouchBegan: function (touchPoint) {
-        this.setFocused(true);
-        this._touchStartPos.x = touchPoint.x;
-        this._touchStartPos.y = touchPoint.y;
-        this._widgetParent.checkChildInfo(0, this, touchPoint);
-        this.pushDownEvent();
-
-        if (this._doubleClickEnabled) {
-            this._clickTimeInterval = 0;
-            this._startCheckDoubleClick = true;
-            this._clickCount++;
-            this._touchRelease = false;
-        }
-        return this._touchPassedEnabled;
-    },
-
-    onTouchEnded: function (touchPoint) {
-        if (this._doubleClickEnabled) {
-            if (this._clickCount >= 2) {
-                this.doubleClickEvent();
-                this._clickCount = 0;
-                this._startCheckDoubleClick = false;
-            }
-            else {
-                this._touchRelease = true;
-            }
-        }
-        else {
-            ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
-        }
-    },
-
-    doubleClickEvent: function () {
-
-    },
-
-    checkDoubleClick: function (dt) {
-        if (this._startCheckDoubleClick) {
-            this._clickTimeInterval += dt;
-            if (this._clickTimeInterval >= 200 && this._clickCount > 0) {
-                this._clickTimeInterval = 0;
-                this._clickCount--;
-                this._startCheckDoubleClick = false;
-            }
-        }
-        else {
-            if (this._clickCount <= 1) {
-                if (this._touchRelease) {
-                    this.releaseUpEvent();
-                    this._clickTimeInterval = 0;
-                    this._clickCount = 0;
-                    this._touchRelease = false;
-                }
-            }
-        }
-    },
-
-    setDoubleClickEnabled: function (bool) {
-        if (bool == this._doubleClickEnabled) {
-            return;
-        }
-        this._doubleClickEnabled = bool;
     },
 
     /**
@@ -241,7 +166,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
 
 
         this._scale9Enabled = able;
-        this._renderer.removeChild(this._imageRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._imageRenderer, true);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
             this._imageRenderer = cc.Scale9Sprite.create();
@@ -250,7 +175,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        this._renderer.addChild(this._imageRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -268,7 +193,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -292,15 +217,16 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._imageRenderer.setAnchorPoint(point, y);
         } else {
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
             this._imageRenderer.setAnchorPoint(point);
         }
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.imageTextureScaleChangedWithSize();
     },
 
@@ -354,7 +280,7 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
     },
 
     createCloneInstance:function(){
-        return ccs.UIImageView.create();
+        return ccs.ImageView.create();
     },
 
     copySpecialProperties: function (imageView) {
@@ -368,13 +294,13 @@ ccs.UIImageView = ccs.UIWidget.extend(/** @lends ccs.UIImageView# */{
 /**
  * allocates and initializes a UIImageView.
  * @constructs
- * @return {ccs.UIImageView}
+ * @return {ccs.ImageView}
  * @example
  * // example
- * var uiImageView = ccs.UIImageView.create();
+ * var uiImageView = ccs.ImageView.create();
  */
-ccs.UIImageView.create = function () {
-    var uiImageView = new ccs.UIImageView();
+ccs.ImageView.create = function () {
+    var uiImageView = new ccs.ImageView();
     if (uiImageView && uiImageView.init()) {
         return uiImageView;
     }

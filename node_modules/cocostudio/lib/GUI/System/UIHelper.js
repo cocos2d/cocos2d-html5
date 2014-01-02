@@ -27,9 +27,9 @@ ccs.UIHelper = ccs.UIHelper || ccs.Class.extend({});
 
 /**
  * Finds a widget whose tag equals to param tag from root widget.
- * @param {ccs.UIWidget} root
+ * @param {ccs.Widget} root
  * @param {number} tag
- * @returns {ccs.UIWidget}
+ * @returns {ccs.Widget}
  */
 ccs.UIHelper.seekWidgetByTag = function (root, tag) {
     if (!root) {
@@ -52,9 +52,9 @@ ccs.UIHelper.seekWidgetByTag = function (root, tag) {
 
 /**
  * Finds a widget whose name equals to param name from root widget.
- * @param {ccs.UIWidget} root
+ * @param {ccs.Widget} root
  * @param {String} name
- * @returns {ccs.UIWidget}
+ * @returns {ccs.Widget}
  */
 ccs.UIHelper.seekWidgetByName = function (root, name) {
     if (!root) {
@@ -78,9 +78,9 @@ ccs.UIHelper.seekWidgetByName = function (root, name) {
 /**
  * Finds a widget whose name equals to param name from root widget.
  * RelativeLayout will call this method to find the widget witch is needed.
- * @param {ccs.UIWidget} root
+ * @param {ccs.Widget} root
  * @param {String} name
- * @returns {ccs.UIWidget}
+ * @returns {ccs.Widget}
  */
 ccs.UIHelper.seekWidgetByRelativeName = function (root, name) {
     if (!root) {

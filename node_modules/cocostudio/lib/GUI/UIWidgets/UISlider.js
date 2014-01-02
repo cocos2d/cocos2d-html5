@@ -28,12 +28,15 @@
  */
 ccs.SliderEventType = {percent_changed: 0};
 
+ccs.BASEBARRENDERERZ = -3;
+ccs.PROGRESSBARRENDERERZ = -2;
+ccs.SLIDBALLRENDERERZ = -1;
 /**
- * Base class for ccs.UISlider
+ * Base class for ccs.Slider
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
+ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -61,7 +64,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     _ballDTexType: null,
     _isTextureLoaded: false,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         this._progressBarTextureSize = cc.size(0, 0);
@@ -91,12 +94,11 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
         this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
-        this._renderer.addChild(this._barRenderer, -1);
-        this._renderer.addChild(this._progressBarRenderer, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
         this._slidBallNormalRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer.setVisible(false);
@@ -106,7 +108,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
-        this._renderer.addChild(this._slidBallRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._slidBallRenderer, ccs.SLIDBALLRENDERERZ, -1);
     },
 
     /**
@@ -132,8 +134,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             default:
                 break;
         }
-        barRenderer.setColor(this.getColor());
-        barRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         this.barRendererScaleChangedWithSize();
 
         if (!barRenderer.textureLoaded()) {
@@ -166,8 +167,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             default:
                 break;
         }
-        progressBarRenderer.setColor(this.getColor());
-        progressBarRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
         progressBarRenderer.setAnchorPoint(0.0, 0.5);
         var locSize = progressBarRenderer.getContentSize();
         this._progressBarTextureSize.width = locSize.width;
@@ -187,6 +187,11 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
     },
 
+    _updateDisplay:function(){
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
+    },
+
     /**
      * Sets if slider is using scale9 renderer.
      * @param {Boolean} able
@@ -197,8 +202,8 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
 
         this._scale9Enabled = able;
-        this._renderer.removeChild(this._barRenderer, true);
-        this._renderer.removeChild(this._progressBarRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._progressBarRenderer, true);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {
@@ -211,8 +216,8 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
         this.loadBarTexture(this._textureFile, this._barTexType);
         this.loadProgressBarTexture(this._progressBarTextureFile, this._progressBarTexType);
-        this._renderer.addChild(this._barRenderer, -1);
-        this._renderer.addChild(this._progressBarRenderer, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -231,7 +236,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -304,8 +309,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             default:
                 break;
         }
-        this._slidBallNormalRenderer.setColor(this.getColor());
-        this._slidBallNormalRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
     },
 
     /**
@@ -330,8 +334,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             default:
                 break;
         }
-        this._slidBallPressedRenderer.setColor(this.getColor());
-        this._slidBallPressedRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
     },
 
     /**
@@ -356,8 +359,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
             default:
                 break;
         }
-        this._slidBallDisabledRenderer.setColor(this.getColor());
-        this._slidBallDisabledRenderer.setOpacity(this.getOpacity());
+        this._updateDisplay();
     },
 
     /**
@@ -394,27 +396,32 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
         }
     },
 
-    onTouchBegan: function (touchPoint) {
-        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this,touchPoint);
-        var nsp = this._renderer.convertToNodeSpace(touchPoint);
-        this.setPercent(this.getPercentWithBallPos(nsp.x));
-        this.percentChangedEvent();
+    onTouchBegan: function (touch , event) {
+        var pass = ccs.Widget.prototype.onTouchBegan.call(this,touch , event);
+        if(this._hitted){
+            var nsp = this.convertToNodeSpace(this._touchStartPos);
+            this.setPercent(this.getPercentWithBallPos(nsp.x));
+            this.percentChangedEvent();
+        }
         return pass;
     },
 
-    onTouchMoved: function (touchPoint) {
-        var nsp = this._renderer.convertToNodeSpace(touchPoint);
+    onTouchMoved: function (touch , event) {
+        var touchPoint = touch.getLocation();
+        this._touchMovePos.x = touchPoint.x;
+        this._touchMovePos.y = touchPoint.y;
+        var nsp = this.convertToNodeSpace(touchPoint);
         this._slidBallRenderer.setPosition(cc.p(nsp.x, 0));
         this.setPercent(this.getPercentWithBallPos(nsp.x));
         this.percentChangedEvent();
     },
 
-    onTouchEnded: function (touchPoint) {
-        ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
+    onTouchEnded: function (touch , event) {
+        ccs.Widget.prototype.onTouchEnded.call(this, touch , event);
     },
 
-    onTouchCancelled: function (touchPoint) {
-        ccs.UIWidget.prototype.onTouchCancelled.call(this, touchPoint);
+    onTouchCancelled: function (touch , event) {
+        ccs.Widget.prototype.onTouchCancelled.call(this, touch , event);
     },
 
     /**
@@ -451,6 +458,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.barRendererScaleChangedWithSize();
         this.progressBarRendererScaleChangedWithSize();
     },
@@ -557,7 +565,7 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UISlider.create();
+        return ccs.Slider.create();
     },
 
     copySpecialProperties: function (slider) {
@@ -574,13 +582,13 @@ ccs.UISlider = ccs.UIWidget.extend(/** @lends ccs.UISlider# */{
 /**
  * allocates and initializes a UISlider.
  * @constructs
- * @return {ccs.UISlider}
+ * @return {ccs.Slider}
  * @example
  * // example
- * var uiSlider = ccs.UISlider.create();
+ * var uiSlider = ccs.Slider.create();
  */
-ccs.UISlider.create = function () {
-    var uiSlider = new ccs.UISlider();
+ccs.Slider.create = function () {
+    var uiSlider = new ccs.Slider();
     if (uiSlider && uiSlider.init()) {
         return uiSlider;
     }

@@ -28,12 +28,13 @@
  */
 ccs.LoadingBarType = { left: 0, right: 1};
 
+ccs.BARRENDERERZ = -1;
 /**
- * Base class for ccs.UILoadingBar
+ * Base class for ccs.LoadingBar
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
+ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -46,7 +47,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     _textureFile: "",
     _isTextureLoaded: false,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._barType = ccs.LoadingBarType.left;
         this._percent = 100;
         this._totalLength = 0;
@@ -60,9 +61,8 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._barRenderer = cc.Sprite.create();
-        this._renderer.addChild(this._barRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
         this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
 
@@ -80,14 +80,14 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         switch (this._barType) {
             case ccs.LoadingBarType.left:
                 this._barRenderer.setAnchorPoint(0.0, 0.5);
-                this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
+                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
                 this._barRenderer.setAnchorPoint(1.0, 0.5);
-                this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
+                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
                 }
@@ -130,8 +130,8 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         if (this._scale9Enabled){
             barRenderer.setCapInsets(this._capInsets);
         }
-        barRenderer.setColor(this.getColor());
-        barRenderer.setOpacity(this.getOpacity());
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
 
         var textLoaded = barRenderer.textureLoaded();
         this._isTextureLoaded = textLoaded;
@@ -181,7 +181,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             return;
         }
         this._scale9Enabled = enabled;
-        this._renderer.removeChild(this._barRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
         this._barRenderer = null;
         if (this._scale9Enabled) {
             this._barRenderer = cc.Scale9Sprite.create();
@@ -190,7 +190,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
             this._barRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._renderBarTexType);
-        this._renderer.addChild(this._barRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -255,6 +255,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.barRendererScaleChangedWithSize();
     },
 
@@ -264,7 +265,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -313,10 +314,10 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
         }
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                this._barRenderer.setPosition(cc.p(-this._totalLength * 0.5, 0.0));
+                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
                 break;
             case ccs.LoadingBarType.right:
-                this._barRenderer.setPosition(cc.p(this._totalLength * 0.5, 0.0));
+                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
                 break;
             default:
                 break;
@@ -337,7 +338,7 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UILoadingBar.create();
+        return ccs.LoadingBar.create();
     },
 
     copySpecialProperties: function (loadingBar) {
@@ -351,13 +352,13 @@ ccs.UILoadingBar = ccs.UIWidget.extend(/** @lends ccs.UILoadingBar# */{
 /**
  * allocates and initializes a UILoadingBar.
  * @constructs
- * @return {ccs.UILoadingBar}
+ * @return {ccs.LoadingBar}
  * @example
  * // example
- * var uiLoadingBar = ccs.UILoadingBar.create();
+ * var uiLoadingBar = ccs.LoadingBar.create();
  */
-ccs.UILoadingBar.create = function () {
-    var uiLoadingBar = new ccs.UILoadingBar();
+ccs.LoadingBar.create = function () {
+    var uiLoadingBar = new ccs.LoadingBar();
     if (uiLoadingBar && uiLoadingBar.init()) {
         return uiLoadingBar;
     }
