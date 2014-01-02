@@ -273,7 +273,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
                     shape.verts[i * 2 + 1] = locHelpPoint.y - t.ty;
                 }
                 if (ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
-                    var v = new cp.Vect(0, 0);
+                    var v =  cc.p(0, 0);
                     v.x = locHelpPoint.x;
                     v.y = locHelpPoint.y;
                     cvs[i] = v;
