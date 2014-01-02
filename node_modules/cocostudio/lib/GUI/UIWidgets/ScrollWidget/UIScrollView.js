@@ -53,11 +53,11 @@ ccs.SCROLLDIR_DOWN = cc.p(0, -1);
 ccs.SCROLLDIR_LEFT = cc.p(-1, 0);
 ccs.SCROLLDIR_RIGHT = cc.p(1, 0);
 /**
- * Base class for ccs.UIScrollView
+ * Base class for ccs.ScrollView
  * @class
- * @extends ccs.UILayout
+ * @extends ccs.Layout
  */
-ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
+ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     _innerContainer: null,
     _direction: null,
     _touchBeganPoint: null,
@@ -96,7 +96,7 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
     ctor: function () {
-        ccs.UILayout.prototype.ctor.call(this);
+        ccs.Layout.prototype.ctor.call(this);
         this._innerContainer = null;
         this._direction = ccs.ScrollViewDir.none;
         this._touchBeganPoint = cc.p(0, 0);
@@ -135,19 +135,9 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
         this._scrollViewEventListener = null;
         this._scrollViewEventSelector = null;
     },
-    releaseResoures: function () {
-        this.setUpdateEnabled(false);
-        this.removeAllChildren();
-        this._renderer.removeAllChildren(true);
-        this._renderer.removeFromParent(true);
-
-        ccs.UILayout.prototype.removeChild.call(this, this._innerContainer);
-
-        this._children = [];
-    },
 
     init: function () {
-        if (ccs.UILayout.prototype.init.call(this)) {
+        if (ccs.Layout.prototype.init.call(this)) {
             this.setUpdateEnabled(true);
             this.setTouchEnabled(true);
             this.setClippingEnabled(true);
@@ -158,13 +148,13 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     initRenderer: function () {
-        ccs.UILayout.prototype.initRenderer.call(this);
-        this._innerContainer = ccs.UILayout.create();
-        ccs.UILayout.prototype.addChild.call(this, this._innerContainer);
+        ccs.Layout.prototype.initRenderer.call(this);
+        this._innerContainer = ccs.Layout.create();
+        ccs.Layout.prototype.addChild.call(this, this._innerContainer);
     },
 
     onSizeChanged: function () {
-        ccs.UILayout.prototype.onSizeChanged.call(this);
+        ccs.Layout.prototype.onSizeChanged.call(this);
         var locSize = this._size;
         this._topBoundary = locSize.height;
         this._rightBoundary = locSize.width;
@@ -226,6 +216,22 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
             default:
                 break;
         }
+        var innerContainer = this._innerContainer;
+        var innerSize = innerContainer.getSize();
+        var innerPos = innerContainer.getPosition();
+        var innerAP = innerContainer.getAnchorPoint();
+        if (innerContainer.getLeftInParent() > 0.0) {
+            innerContainer.setPosition(cc.p(innerAP.x * innerSize.width, innerPos.y));
+        }
+        if (innerContainer.getRightInParent() < locSize.width) {
+            innerContainer.setPosition(cc.p(locSize.width - ((1.0 - innerAP.x) * innerSize.width), innerPos.y));
+        }
+        if (innerPos.y > 0.0) {
+            innerContainer.setPosition(cc.p(innerPos.x, innerAP.y * innerSize.height));
+        }
+        if (innerContainer.getTopInParent() < locSize.height) {
+            innerContainer.setPosition(cc.p(innerPos.x, locSize.height - (1.0 - innerAP.y) * innerSize.height));
+        }
     },
 
     getInnerContainerSize: function () {
@@ -234,11 +240,13 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
 
     /**
      * Add widget
-     * @param {ccs.UIWidget} widget
+     * @param {ccs.Widget} widget
+     * @param {Number} zOrder
+     * @param {Number} tag
      * @returns {boolean}
      */
-    addChild: function (widget) {
-        return this._innerContainer.addChild(widget);
+    addChild: function (widget, zOrder, tag) {
+        return this._innerContainer.addChild(widget, zOrder, tag);
     },
 
     removeAllChildren: function () {
@@ -247,7 +255,7 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
 
     /**
      *  remove widget child override
-     * @param {ccs.UIWidget} child
+     * @param {ccs.Widget} child
      * @returns {boolean}
      */
     removeChild: function (child) {
@@ -1204,14 +1212,14 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     handlePressLogic: function (touchPoint) {
-        this._touchBeganPoint = this._renderer.convertToNodeSpace(touchPoint);
+        this._touchBeganPoint = this.convertToNodeSpace(touchPoint);
         this._touchMovingPoint = this._touchBeganPoint;
         this.startRecordSlidAction();
         this._bePressed = true;
     },
 
     handleMoveLogic: function (touchPoint) {
-        this._touchMovedPoint = this._renderer.convertToNodeSpace(touchPoint);
+        this._touchMovedPoint = this.convertToNodeSpace(touchPoint);
         var delta = cc.pSub(this._touchMovedPoint, this._touchMovingPoint);
         this._touchMovingPoint = this._touchMovedPoint;
         switch (this._direction) {
@@ -1230,29 +1238,31 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     handleReleaseLogic: function (touchPoint) {
-        this._touchEndedPoint = this._renderer.convertToNodeSpace(touchPoint);
+        this._touchEndedPoint = this.convertToNodeSpace(touchPoint);
         this.endRecordSlidAction();
         this._bePressed = false;
     },
 
-    onTouchBegan: function (touchPoint) {
-        var pass = ccs.UILayout.prototype.onTouchBegan.call(this, touchPoint);
-        this.handlePressLogic(touchPoint);
+    onTouchBegan: function (touch , event) {
+        var pass = ccs.Layout.prototype.onTouchBegan.call(this, touch , event);
+        if (this._hitted)        {
+            this.handlePressLogic(this._touchStartPos);
+        }
         return pass;
     },
 
-    onTouchMoved: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchMoved.call(this, touchPoint);
-        this.handleMoveLogic(touchPoint);
+    onTouchMoved: function (touch , event) {
+        ccs.Layout.prototype.onTouchMoved.call(this, touch , event);
+        this.handleMoveLogic(this._touchMovePos);
     },
 
-    onTouchEnded: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchEnded.call(this, touchPoint);
-        this.handleReleaseLogic(touchPoint);
+    onTouchEnded: function (touch , event) {
+        ccs.Layout.prototype.onTouchEnded.call(this, touch , event);
+        this.handleReleaseLogic(this._touchEndPos);
     },
 
-    onTouchCancelled: function (touchPoint) {
-        ccs.UILayout.prototype.onTouchCancelled.call(this, touchPoint);
+    onTouchCancelled: function (touch , event) {
+        ccs.Layout.prototype.onTouchCancelled.call(this, touch , event);
     },
 
     onTouchLongClicked: function (touchPoint) {
@@ -1278,7 +1288,7 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     /**
      * Intercept touch event
      * @param {number} handleState
-     * @param {ccs.UIWidget} sender
+     * @param {ccs.Widget} sender
      * @param {cc.Point} touchPoint
      */
     interceptTouchEvent: function (handleState, sender, touchPoint) {
@@ -1305,7 +1315,7 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     /**
      *
      * @param {number} handleState
-     * @param {ccs.UIWidget} sender
+     * @param {ccs.Widget} sender
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
@@ -1426,7 +1436,7 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
 
     /**
      * get inner container
-     * @returns {ccs.UILayout}
+     * @returns {ccs.Layout}
      */
     getInnerContainer: function () {
         return this._innerContainer;
@@ -1449,7 +1459,9 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     doLayout: function () {
-        this._innerContainer.doLayout();
+        if (!this._doLayoutDirty)
+            return;
+        this._doLayoutDirty = false;
     },
 
     /**
@@ -1461,11 +1473,11 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
     },
 
     copyClonedWidgetChildren: function (model) {
-        ccs.UILayout.prototype.copyClonedWidgetChildren.call(this, model);
+        ccs.Layout.prototype.copyClonedWidgetChildren.call(this, model);
     },
 
     copySpecialProperties: function (scrollView) {
-        ccs.UILayout.prototype.copySpecialProperties.call(this, scrollView);
+        ccs.Layout.prototype.copySpecialProperties.call(this, scrollView);
         this.setInnerContainerSize(scrollView.getInnerContainerSize());
         this.setDirection(scrollView._direction);
         this.setBounceEnabled(scrollView._bounceEnabled);
@@ -1475,13 +1487,13 @@ ccs.UIScrollView = ccs.UILayout.extend(/** @lends ccs.UIScrollView# */{
 /**
  * allocates and initializes a UIScrollView.
  * @constructs
- * @return {ccs.UIScrollView}
+ * @return {ccs.ScrollView}
  * @example
  * // example
- * var uiScrollView = ccs.UIScrollView.create();
+ * var uiScrollView = ccs.ScrollView.create();
  */
-ccs.UIScrollView.create = function () {
-    var uiScrollView = new ccs.UIScrollView();
+ccs.ScrollView.create = function () {
+    var uiScrollView = new ccs.ScrollView();
     if (uiScrollView && uiScrollView.init()) {
         return uiScrollView;
     }
