@@ -6,20 +6,101 @@
     <link rel="icon" type="image/GIF" href="images/favicon.ico"/>
     <style type="text/css">
         body {
-            text-align: center;
             background: #f2f6f8;
+            padding: 0px;
+            margin: 0px;
+            border: 0px;
         }
 
-        #ccBannerImg {
-            clear:both;
-            margin-bottom: 20px
+        ul, ul li {
+            text-decoration: none;
+            list-style: none;
+            font: 16px/25px "Helvetica Neue", Helvetica, Arial;
         }
 
+        .btn {
+            font-size: 16px;
+            border-radius: 3px;
+            font-family: "Helvetica Neue", Helvetica, Arial;
+            text-align: center;
+            padding: 4px 6px;
+
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            -o-appearance: none;
+            appearance: none;
+
+            -moz-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+            -webkit-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+            -o-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+            box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+        }
+        .btn:active {
+            -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+            -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+            -o-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+            box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+        }
+
+        .btn_black {
+            background-image: -webkit-linear-gradient(bottom, #232323, #424242);
+            background-image: -moz-linear-gradient(bottom, #232323, #424242);
+            background-image: -o-linear-gradient(bottom, #232323, #424242);
+            background-image: linear-gradient(bottom, #232323, #424242);
+
+            border: 1px solid #303030;
+            color: #fff;
+        }
+        .btn_black:active {
+            background-image: -webkit-linear-gradient(bottom, #424242, #232323);
+            background-image: -moz-linear-gradient(bottom, #424242, #232323);
+            background-image: -o-linear-gradient(bottom, #424242, #232323);
+            background-image: linear-gradient(bottom, #424242, #232323);
+        }
+
+        menu {
+            position: fixed;
+            left: 0px;
+            top: 0px;
+            margin: 50px 0;
+            padding: 0px;
+        }
+
+        menu #ccBannerImg {
+            width: 200px;
+            z-index: 100;
+        }
+
+        menu ul {
+            padding: 20px;
+            margin: 10px 0px;
+            width: 160px;
+
+            background: #d5ecbf;
+        }
+
+        menu ul li {
+            margin: 5px 0px 0px 0px;
+        }
+
+        article {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            margin: 50px 250px 50px 250px;
+            padding: 0px;
+            width: auto;
+            z-index: 1;
+        }
+        article h1 {
+            margin: 0px;
+            font: 30px/52px "Arial";
+            text-align: center;
+        }
         .test-canvas-container {
             display:inline-block;
-            width:auto;
-            margin: 0
-            auto;
+            width:100%;
+            margin: 15px -5px;
             background: black;
             position:relative;
             border:5px solid black;
@@ -27,28 +108,96 @@
             box-shadow: 0 5px 50px #333
         }
 
+        #testConsole {
+            width: 100%;
+            margin: 10px -5px;
+            padding: 5px;
+            resize: none;
+        }
+
+        article.text {
+            position: relative;
+            margin: 20px;
+        }
+
         .test-btn-container {
-            margin: 10px;
+            text-align: center;
+            width: 100%;
+            margin: 20px 0px;
+        }
+        .test-btn-container .btn {
+            width: 150px;
+            margin: 0px 8px;
         }
     </style>
 </head>
 <body>
-<img id="ccBannerImg" src="images/cocos2dbanner.png"/>
-<div><h2 id="testTitle"></h2></div>
-<div class="test-canvas-container">
-    <canvas id="gameCanvas" width="800" height="450"></canvas>
-</div>
-<div><h5 id="testJsPath"></h5></div>
-<div class="test-btn-container">
-    <button id="preBtn">Pre</button>
-    <button id="rePlayBtn">RePlay</button>
-    <button id="nextBtn">Next</button>
-</div>
-<div id="custDiv"></div>
-<div>
+
+<menu class="menu">
+    <img id="ccBannerImg" src="images/cocos2dbanner.png"/>
+
+    <ul>
+        <li><a>aaaa</a></li>
+        <li><a>bbbb</a></li>
+    </ul>
+</menu>
+
+<article>
+    <h1 id="testTitle"></h1>
+    <div class="test-canvas-container">
+        <canvas id="gameCanvas" width="800" height="450"></canvas>
+    </div>
+
+    <div class="test-btn-container">
+        <button id="preBtn" type="button" class="btn btn_black">Previous</button>
+        <button id="rePlayBtn" type="button" class="btn btn_black">RePlay</button>
+        <button id="nextBtn" type="button" class="btn btn_black">Next</button>
+    </div>
+
     <textarea id="testConsole" hidden="hidden" disabled cols="100" rows="10"></textarea>
-</div>
+
+    <article class="text">
+        <h4>Test Js File: <span id="testJsPath"></span></h4>
+        <h5 id="scriptContent"></h5>
+    </article>
+</article>
+
 <script src="baseCfg.js"></script>
 <script src="../cocos2d-html5/lib/cc.js"></script>
+
+<script>
+
+    function getFileContent(url, callback) {
+        var httpRequest;
+        if (window.XMLHttpRequest) { // Mozilla, Safari, ...
+            httpRequest = new XMLHttpRequest();
+        } else if (window.ActiveXObject) { // IE
+            try {
+                httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+            }
+            catch (e) {
+                try {
+                    httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                catch (e) {}
+            }
+        }
+        if (!httpRequest) return false;
+
+        httpRequest.onreadystatechange = function() {
+            if (httpRequest.readyState === 4) {
+                if (httpRequest.status === 200) {
+                    callback(httpRequest.responseText);
+                }
+                else callback(null);
+            }
+        };
+
+        httpRequest.open('GET', url, true);
+        httpRequest.send();
+    }
+
+</script>
+
 </body>
 </html>
