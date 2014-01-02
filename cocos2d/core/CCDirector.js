@@ -370,8 +370,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _clearCanvas: function() {
-        //cc.renderContext.clearRect(0, 0, cc.originalCanvasSize.width, -cc.originalCanvasSize.height);
-        cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
+        var viewport = this._openGLView.getViewPortRect();
+        cc.renderContext.clearRect(-viewport.x, -viewport.y, viewport.width, -viewport.height);
     },
 
     _clearWebGL: function() {
