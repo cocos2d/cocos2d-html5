@@ -492,7 +492,17 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * @param {Boolean} force
      */
     changeDisplayByIndex:function (index, force) {
-        this._displayManager.changeDisplayByIndex(index, force);
+        cc.log("changeDisplayByIndex is deprecated. Use changeDisplayWithIndex instead.");
+        this.changeDisplayWithIndex(index, force);
+    },
+
+    /**
+     * change display with index
+     * @param {Number} index
+     * @param {Boolean} force
+     */
+    changeDisplayWithIndex:function (index, force) {
+        this._displayManager.changeDisplayWithIndex(index, force);
     },
 
     /**

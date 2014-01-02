@@ -67,7 +67,7 @@ ccs.DisplayManager = ccs.Class.extend({
         //! if changed display index is current display index, then change current display to the new display
         if (index == this._displayIndex) {
             this._displayIndex = -1;
-            this.changeDisplayByIndex(index, false);
+            this.changeDisplayWithIndex(index, false);
         }
     },
 
@@ -128,7 +128,7 @@ ccs.DisplayManager = ccs.Class.extend({
         return this._decoDisplayList;
     },
 
-    changeDisplayByIndex:function (index, force) {
+    changeDisplayWithIndex:function (index, force) {
         if (index >= this._decoDisplayList.length) {
             cc.log("the index value is out of range");
             return;
@@ -163,7 +163,7 @@ ccs.DisplayManager = ccs.Class.extend({
     changeDisplayByName: function (name, force) {
         for (var i = 0; i < this._decoDisplayList.length; i++) {
             if (this._decoDisplayList[i].getDisplayData().displayName == name) {
-                this.changeDisplayByIndex(i, force);
+                this.changeDisplayWithIndex(i, force);
                 break;
             }
         }
