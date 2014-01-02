@@ -22,12 +22,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+ccs.LABELRENDERERZ = -1;
 /**
- * Base class for ccs.UIButton
+ * Base class for ccs.Button
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
+ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     _touchScaleChangeEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
@@ -36,7 +37,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     _onSelectedScaleOffset: 0,
     _labelRenderer: "",
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._touchScaleChangeEnabled = false;
         this._normalScaleValueX = 0;
         this._normalScaleValueY = 0;
@@ -47,16 +48,15 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     },
 
     init: function () {
-        if (ccs.UIWidget.prototype.init.call(this)) {
+        if (ccs.Widget.prototype.init.call(this)) {
             return true;
         }
         return false;
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._labelRenderer = cc.LabelTTF.create();
-        this._renderer.addChild(this._labelRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._labelRenderer, ccs.LABELRENDERERZ, -1);
     },
 
     /**
@@ -189,7 +189,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      * @param {Number} scale
      */
     setScale: function (scale) {
-        ccs.UIWidget.prototype.setScale.call(this, scale);
+        ccs.Widget.prototype.setScale.call(this, scale);
         this._normalScaleValueX = this._normalScaleValueY = scale;
     },
 
@@ -198,7 +198,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      * @param {Number} scaleX
      */
     setScaleX: function (scaleX) {
-        ccs.UIWidget.prototype.setScaleX.call(this, scaleX);
+        ccs.Widget.prototype.setScaleX.call(this, scaleX);
         this._normalScaleValueX = scaleX;
     },
 
@@ -207,12 +207,12 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      * @param {Number} scaleY
      */
     setScaleY: function (scaleY) {
-        ccs.UIWidget.prototype.setScaleY.call(this, scaleY);
+        ccs.Widget.prototype.setScaleY.call(this, scaleY);
         this._normalScaleValueY = scaleY;
     },
 
     clickScale: function (scale, scaleY) {
-        this._renderer.setScale(scale, scaleY);
+        this.setScale(scale, scaleY);
     },
 
     /**
@@ -254,15 +254,16 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
      */
     setAnchorPoint: function (point, y) {
         if(arguments.length === 2){
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point, y);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
             this._labelRenderer.setAnchorPoint(point, y);
         } else {
-            ccs.UIWidget.prototype.setAnchorPoint.call(this, point);
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
             this._labelRenderer.setAnchorPoint(point);
         }
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.labelScaleChangedWithSize();
     },
 
@@ -312,7 +313,7 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UILabel.create();
+        return ccs.Label.create();
     },
 
     copySpecialProperties: function (uiLabel) {
@@ -325,13 +326,13 @@ ccs.UILabel = ccs.UIWidget.extend(/** @lends ccs.UILabel# */{
 /**
  * allocates and initializes a UILabel.
  * @constructs
- * @return {ccs.UILabel}
+ * @return {ccs.Label}
  * @example
  * // example
- * var uiLabel = ccs.UILabel.create();
+ * var uiLabel = ccs.Label.create();
  */
-ccs.UILabel.create = function () {
-    var uiLabel = new ccs.UILabel();
+ccs.Label.create = function () {
+    var uiLabel = new ccs.Label();
     if (uiLabel && uiLabel.init()) {
         return uiLabel;
     }

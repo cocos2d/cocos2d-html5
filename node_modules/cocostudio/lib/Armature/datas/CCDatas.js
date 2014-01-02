@@ -128,8 +128,8 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * Calculate two baseData's between value(to - from) and set to self
-     * @param {cc.Color4B} from
-     * @param {cc.Color4B} to
+     * @param {ccs.BaseData} from
+     * @param {ccs.BaseData} to
      * @param {Boolean} limit
      */
     subtract:function (from, to, limit) {
@@ -151,24 +151,24 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
             this.isUseColorInfo = false;
         }
 
-        if (limit){
+        if (limit) {
             if (this.skewX > cc.PI) {
-                this.skewX -= 2 * cc.PI;
+                this.skewX -= ccs.M_PI_X_2;
             }
             if (this.skewX < -cc.PI) {
-                this.skewX += 2 * cc.PI;
+                this.skewX += ccs.M_PI_X_2;
             }
             if (this.skewY > cc.PI) {
-                this.skewY -= 2 * cc.PI;
+                this.skewY -= ccs.M_PI_X_2;
             }
             if (this.skewY < -cc.PI) {
-                this.skewY += 2 * cc.PI;
+                this.skewY += ccs.M_PI_X_2;
             }
         }
 
         if (to.tweenRotate) {
-            this.skewX += to.tweenRotate;
-            this.skewY += to.tweenRotate;
+            this.skewX += to.tweenRotate * ccs.M_PI_X_2;
+            this.skewY -= to.tweenRotate * ccs.M_PI_X_2;
         }
     }
 });
