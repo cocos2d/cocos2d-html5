@@ -77,7 +77,7 @@ function createMenuItem(cfgName, cfg, index){
     var a = document.createElement("a");
     li.appendChild(a);
     a.href = "javascript:;";
-    a.innerHTML = cfg.layer;
+    a.innerHTML = cfg.layer || cfg.sprite || cfg.scene || cfg.ccbi;
     a.addEventListener("click", function(){
         isCurr = testCaseIndex == index;
         testCaseIndex = index;
