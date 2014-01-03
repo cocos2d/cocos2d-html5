@@ -119,7 +119,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _positionPercent: null,
     _reorderWidgetChildDirty: false,
     _hitted: false,
-
+    _nodes: null,
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._enabled = true;
@@ -149,6 +149,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._positionPercent = cc.PointZero();
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
+        this._nodes = [];
     },
 
     /**
@@ -320,6 +321,77 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * initializes renderer of widget.
      */
     initRenderer: function () {
+    },
+
+    /**
+     * add node for widget
+     * @param {cc.Node} node
+     * @param {Number} zOrder
+     * @param {Number} tag
+     */
+    addNode: function (node, zOrder, tag) {
+        if (node instanceof ccs.Widget) {
+            cc.log("Widget only supports Nodes as renderer");
+        }
+        cc.NodeRGBA.prototype.addChild.call(this, node, zOrder, tag);
+        this._nodes.push(node);
+    },
+
+    /**
+     * get node by tag
+     * @param {Number} tag
+     * @returns {cc.Node}
+     */
+    getNodeByTag: function (tag) {
+        for (var i = 0; i < this._nodes.length; i++) {
+            var node = this._nodes[i];
+            if (node && node.getTag() == tag) {
+                return node;
+            }
+        }
+        return null;
+    },
+
+    /**
+     * get all node
+     * @returns {Array}
+     */
+    getNodes: function () {
+        return this._nodes;
+    },
+
+    /**
+     * remove node
+     * @param {cc.Node} node
+     */
+    removeNode: function (node) {
+        cc.NodeRGBA.prototype.removeChild.call(this, node);
+        cc.ArrayRemoveObject(this._nodes, node);
+    },
+
+    /**
+     *  remove node by tag
+     * @param tag
+     */
+    removeNodeByTag: function (tag) {
+        var node = this.getNodeByTag(tag);
+        if (!node) {
+            cc.log("cocos2d: removeNodeByTag(tag = %d): child not found!", tag);
+        }
+        else {
+            this.removeNode(node);
+        }
+    },
+
+    /**
+     * remove all node
+     */
+    removeAllNodes: function () {
+        for (var i = 0; i < this._nodes.length; i++) {
+            var node = this._nodes[i];
+            cc.NodeRGBA.prototype.removeChild.call(this, node);
+        }
+        this._nodes = [];
     },
 
     /**
