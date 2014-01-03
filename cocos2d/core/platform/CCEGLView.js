@@ -138,7 +138,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             this.setDesignResolutionSize(width, height, this._resolutionPolicy);
     },
 
-    _resizeWithBrowserSize: function (enabled) {
+    resizeWithBrowserSize: function (enabled) {
         var adjustSize;
         if (enabled) {
             //enable
