@@ -37,13 +37,6 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
     },
 
     /**
-     * purge instance
-     */
-    purgeGUIReader: function () {
-        this._instance = null;
-    },
-
-    /**
      * get version
      * @param {String} str
      * @returns {Number}
@@ -1609,4 +1602,11 @@ ccs.GUIReader.getInstance = function () {
         this._instance = new ccs.GUIReader();
     }
     return this._instance;
+};
+
+/**
+ * purge  instance
+ */
+ccs.GUIReader.purge = function(){
+    this._instance = null;
 };

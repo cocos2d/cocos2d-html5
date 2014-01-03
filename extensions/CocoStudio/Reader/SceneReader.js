@@ -386,6 +386,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
      * purge instance
      */
     purge: function () {
+        cc.log("deprecated. purge is a static class now. Use 'ccs.SceneReader.purge()' instead.");
         this._instance = null;
     }
 });
@@ -400,6 +401,12 @@ ccs.SceneReader.getInstance = function () {
         this._instance = new ccs.SceneReader();
     }
     return this._instance;
+};
+/**
+ * purge instance
+ */
+ccs.SceneReader.purge = function () {
+    this._instance = null;
 };
 ccs.SceneReader.sceneReaderVersion = function () {
     return "1.2.0.0";
