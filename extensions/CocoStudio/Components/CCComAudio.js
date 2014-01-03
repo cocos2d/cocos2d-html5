@@ -64,7 +64,11 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
      * @param {Boolean} loop
      */
     playBackgroundMusic: function (pszFilePath, loop) {
-        cc.AudioEngine.getInstance().playMusic(pszFilePath, loop);
+        if(pszFilePath){
+            cc.AudioEngine.getInstance().playMusic(pszFilePath, loop);
+        }else{
+            cc.AudioEngine.getInstance().playMusic(this._filePath, this._loop);
+        }
     },
 
     /**
@@ -151,7 +155,11 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
      * @returns {Boolean}
      */
     playEffect: function (pszFilePath, loop) {
-        return cc.AudioEngine.getInstance().playEffect(pszFilePath, loop);
+        if (pszFilePath) {
+            return cc.AudioEngine.getInstance().playEffect(pszFilePath, loop);
+        } else {
+            return cc.AudioEngine.getInstance().playEffect(this._filePath, this._loop);
+        }
     },
 
     /**
@@ -205,6 +213,8 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
      */
     preloadEffect: function (pszFilePath) {
         cc.AudioEngine.getInstance().preloadEffect(pszFilePath);
+        this.setFile(pszFilePath);
+        this.setLoop(false);
     },
 
     /**

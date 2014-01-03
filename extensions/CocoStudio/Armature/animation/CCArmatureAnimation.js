@@ -277,7 +277,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                 }
             } else {
                 if (!bone.getIgnoreMovementBoneData()) {
-                    bone.getDisplayManager().changeDisplayByIndex(-1, false);
+                    bone.getDisplayManager().changeDisplayWithIndex(-1, false);
                     tween.stop();
                 }
             }
