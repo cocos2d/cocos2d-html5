@@ -389,8 +389,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 
 /**
  * @param {cc.Node} label
- * @param {function|String|Null} selector
- * @param {cc.Node|Null} target
+ * @param {function|String|Null} [selector=]
+ * @param {cc.Node|Null} [target=]
  * @return {cc.MenuItemLabel}
  */
 cc.MenuItemLabel.create = function (label, selector, target) {
