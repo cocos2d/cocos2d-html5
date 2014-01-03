@@ -9,7 +9,6 @@ body {
 ul, ul li {
     text-decoration: none;
     list-style: none;
-    font: 16px/25px "Helvetica Neue", Helvetica, Arial;
 }
 
 .btn {
@@ -56,34 +55,51 @@ menu {
     position: fixed;
     left: 0px;
     top: 0px;
-    margin: 50px 0;
+    margin: 40px 20px;
     padding: 0px;
+    z-index: 100;
 }
 
 menu #ccBannerImg {
     width: 200px;
-    z-index: 100;
+    z-index: 1;
 }
-
 menu ul {
-    padding: 20px;
-    margin: 10px 0px;
-    width: 160px;
+    padding: 20px 5px 25px 20px;
+    margin: 10px 0px 10px 0px;
+    width: 175px;
 
-    background: #d5ecbf;
+    background: #1f6377;
+    background-image: -webkit-linear-gradient(bottom, #626375, #000);
+    background-image: -moz-linear-gradient(bottom, #626375, #000);
+    background-image: -o-linear-gradient(bottom, #626375, #000);
+    background-image: linear-gradient(bottom, #626375, #000);
+
+    box-shadow: 1px 0px 6px 0px #333;
+    border-radius: 2px;
+    z-index: 0;
 }
-
 menu ul li {
     margin: 5px 0px 0px 0px;
+}
+menu ul li a {
+    color: #ebebeb;
+    width: 100%;
+    word-break: break-all;
+
+    font: bold 14px/23px "Helvetica Neue", Helvetica, Arial;
+}
+menu ul li a:hover {
+    color: rgb(246, 168, 0);
 }
 
 article {
     position: absolute;
-    left: 0px;
+    left: 57%;
     top: 0px;
-    margin: 50px 250px 50px 250px;
-    padding: 0px;
-    width: auto;
+    width: 800px;
+    margin: 40px -400px;
+    padding: 0px 0px 40px 0px;
     z-index: 1;
 }
 article h1 {
@@ -99,7 +115,7 @@ article h1 {
     position:relative;
     border:5px solid black;
     border-radius: 10px;
-    box-shadow: 0 5px 50px #333
+    box-shadow: 0 5px 20px #333;
 }
 
 #testConsole {
@@ -109,9 +125,49 @@ article h1 {
     resize: none;
 }
 
+
+.sep_line {
+    position: relative;
+    left: -40px;
+    top: 40px;
+    width: 880px;
+    height: 1px;
+
+    background-image: -webkit-linear-gradient(left, #f2f6f8 0%, #888 50%, #f2f6f8 100%);
+    background-image: -moz-linear-gradient(left, #f2f6f8 0%, #888 50%, #f2f6f8 100%);
+    background-image: -o-linear-gradient(left, #f2f6f8 0%, #888 50%, #f2f6f8 100%);
+    background-image: linear-gradient(left, #f2f6f8 0%, #888 50%, #f2f6f8 100%);
+}
+.dropshadow {
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    width: 820px;
+    left: -10px;
+    top: -1px;
+    height: 30px;
+
+    background-image: -webkit-linear-gradient(bottom, rgba(255,255,255,0), #f2f6f8);
+    background-image: -moz-linear-gradient(bottom, rgba(255,255,255,0), #f2f6f8);
+    background-image: -o-linear-gradient(bottom, rgba(255,255,255,0), #f2f6f8);
+    background-image: linear-gradient(bottom, rgba(255,255,255,0), #f2f6f8);
+}
 article.text {
     position: relative;
-    margin: 20px;
+    margin: 40px 0;
+    padding: 5px;
+    left: 0px;
+    width: 790px;
+    border: 1px solid #dddddd;
+    border-radius: 3px;
+    background: #fff;
+}
+article.text h4 {
+    color: #b94a48;
+}
+article code {
+    width: 100%;
+    word-break: break-word;
 }
 
 .test-btn-container {
