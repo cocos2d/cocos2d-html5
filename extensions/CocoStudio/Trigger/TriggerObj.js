@@ -23,6 +23,10 @@
  ****************************************************************************/
 
 ccs.BaseTriggerCondition = ccs.Class.extend({
+    ctor:function(){
+
+    },
+
     init: function () {
         return true;
     },
@@ -38,6 +42,9 @@ ccs.BaseTriggerCondition = ccs.Class.extend({
     }
 });
 ccs.BaseTriggerAction = ccs.Class.extend({
+    ctor:function(){
+
+    },
 
     init: function () {
         return true;

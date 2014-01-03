@@ -259,7 +259,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     if (comName) {
                         attribute.setName(comName);
                     }
-                    attribute.setJsonName(path);
+                    attribute.setFile(path);
                     gb.addComponent(attribute);
                     this._callSelector(attribute, subDict);
                 }
@@ -406,6 +406,8 @@ ccs.SceneReader.getInstance = function () {
  * purge instance
  */
 ccs.SceneReader.purge = function () {
+    ccs.TriggerMng.getInstance().destroyInstance();
+    cc.AudioEngine.end();
     this._instance = null;
 };
 ccs.SceneReader.sceneReaderVersion = function () {
