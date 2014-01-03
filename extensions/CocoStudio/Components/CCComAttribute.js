@@ -36,7 +36,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
         this._attributes = {};
         this._jsonDict = {};
         this._jsonName = "";
-        this._name = "ComAttribute";
+        this._name = "CCComAttribute";
     },
     init: function () {
         this._attributes = {};
