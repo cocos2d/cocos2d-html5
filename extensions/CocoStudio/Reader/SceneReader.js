@@ -235,6 +235,9 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         continue;
                     }
                     audio.preloadEffect(path);
+                    if (comName) {
+                        audio.setName(comName);
+                    }
                     gb.addComponent(audio);
                     this._callSelector(audio, subDict);
                 }
@@ -253,6 +256,10 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         cc.log("unknown resourcetype on CCComAttribute!");
                         continue;
                     }
+                    if (comName) {
+                        attribute.setName(comName);
+                    }
+                    attribute.setJsonName(path);
                     gb.addComponent(attribute);
                     this._callSelector(attribute, subDict);
                 }
@@ -268,6 +275,9 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     audio.setFile(path);
                     var bLoop = Boolean(subDict["loop"] || 0);
                     audio.setLoop(bLoop);
+                    if (comName) {
+                        audio.setName(comName);
+                    }
                     gb.addComponent(audio);
                     audio.playBackgroundMusic(path, bLoop);
                     this._callSelector(audio, subDict);
