@@ -462,7 +462,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         }
 
         //draw sprite
-        if (locSprite._texture && locRect.validRect) {
+        if (locSprite._texture && locTextureCoord.validRect) {
             var image = locSprite._texture.getHtmlElementObj();
             if (this._colorized) {
                 context.drawImage(image,
