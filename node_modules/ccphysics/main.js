@@ -9,12 +9,11 @@ var scriptContent = document.getElementById("scriptContent");
 var menuUl = document.getElementById("menuUl");
 
 var testCaseIndex = -1;
-var isCurr = false;
+var loadCache = {};
 
 function playTestCase(flag){
     var resCfg = cc.resCfg;
     var gms = cc.gameModules;
-    isCurr = flag == 0;
     testCaseIndex += flag;
     testCaseIndex = testCaseIndex >= gms.length ? 0 : testCaseIndex;
     testCaseIndex = testCaseIndex < 0 ? gms.length - 1 : testCaseIndex;
@@ -26,13 +25,14 @@ function showTestCase(cfgName, cfg){
     testTitle.innerHTML = cfg.title || "";
     testJsPath.innerHTML = cfgName.replace(/\[\%[\w\d\-_]*\%\]/, "");
     clearTextConsole();
+    custDiv.innerHTML = "";
     getFileContent(testJsPath.innerHTML, function(content){
         scriptContent.innerHTML = content;
         scriptContent.className = "prettyprint";
         prettyPrint();
     });
-    cc.test(cfgName, isCurr ? cc.Loader : null);
-    isCurr = false;
+    cc.test(cfgName, loadCache[cfgName] ? cc.Loader : null);
+    loadCache[cfgName] = true;
 }
 
 preBtn.addEventListener("click", function(){
@@ -79,7 +79,6 @@ function createMenuItem(cfgName, cfg, index){
     a.href = "javascript:;";
     a.innerHTML = cfg.layer || cfg.sprite || cfg.scene || cfg.ccbi;
     a.addEventListener("click", function(){
-        isCurr = testCaseIndex == index;
         testCaseIndex = index;
         showTestCase(cfgName, cfg);
     });
