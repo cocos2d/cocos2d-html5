@@ -30,10 +30,12 @@
 ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     _attributes: null,
     _jsonDict: null,
+    _jsonName: "",
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._attributes = {};
         this._jsonDict = {};
+        this._jsonName = "";
         this._name = "ComAttribute";
     },
     init: function () {
@@ -181,7 +183,6 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
 
     /**
      * Getter of jsonDict
-     * @returns {Object}
      */
     getDict: function () {
         return this._jsonDict;
@@ -193,6 +194,21 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      */
     setDict: function (dict) {
          this._jsonDict = dict;
+    },
+
+    /**
+     * Getter of jsonName
+     * @returns {String}
+     */
+    getJsonName:function(){
+      return this._jsonName;
+    },
+
+    /**
+     * setter of jsonName
+     */
+    setJsonName:function(jsonName){
+        this._jsonName = jsonName;
     }
 });
 /**
