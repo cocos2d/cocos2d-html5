@@ -205,27 +205,10 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     }
                     var jsonDict = JSON.parse(des);
                     var armature_data = jsonDict["armature_data"];
-                    var childrenCount = armature_data.length;
                     var subData = armature_data[0];
                     var name = subData["name"];
 
-                    var config_file_path = jsonDict["config_file_path"];
-                    childrenCount = config_file_path.length;
-                    for (var i = 0; i < childrenCount; ++i) {
-                        var plist = config_file_path[i];
-                        var plistpath = "";
-                        plistpath += file_path;
-                        plistpath += plist;
-                        var locFullPlistPath = cc.FileUtils.getInstance().fullPathForFilename(plistpath);
-                        var root = cc.FileUtils.getInstance().createDictionaryWithContentsOfFile(locFullPlistPath);
-                        var metadata = root["metadata"];
-                        var textureFileName = metadata["textureFileName"];
-
-                        var textupath = "";
-                        textupath += file_path;
-                        textupath += textureFileName;
-                        ccs.ArmatureDataManager.getInstance().addArmatureFileInfo(textupath, plistpath, path);
-                    }
+                    ccs.ArmatureDataManager.getInstance().addArmatureFileInfo(path);
 
                     var armature = ccs.Armature.create(name);
                     var render = ccs.ComRender.create(armature, "CCArmature");
