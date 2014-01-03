@@ -215,19 +215,19 @@ cc.ControlStepper = cc.Control.extend({
         if (location.x < this._minusSprite.getContentSize().width
             && this._value > this._minimumValue) {
             this._touchedPart = cc.CONTROL_STEPPER_PARTMINUS;
-            this._minusSprite.setColor(cc.GRAY);
-            this._plusSprite.setColor(cc.WHITE);
+            this._minusSprite.setColor(cc.gray());
+            this._plusSprite.setColor(cc.white());
 
         } else if (location.x >= this._minusSprite.getContentSize().width
             && this._value < this._maximumValue) {
             this._touchedPart = cc.CONTROL_STEPPER_PARTPLUS;
-            this._minusSprite.setColor(cc.WHITE);
-            this._plusSprite.setColor(cc.GRAY);
+            this._minusSprite.setColor(cc.white());
+            this._plusSprite.setColor(cc.gray());
 
         } else {
             this._touchedPart = cc.CONTROL_STEPPER_PARTNONE;
-            this._minusSprite.setColor(cc.WHITE);
-            this._plusSprite.setColor(cc.WHITE);
+            this._minusSprite.setColor(cc.white());
+            this._plusSprite.setColor(cc.white());
         }
     },
 
@@ -263,8 +263,8 @@ cc.ControlStepper = cc.Control.extend({
         } else {
             this._touchInsideFlag = false;
             this._touchedPart = cc.CONTROL_STEPPER_PARTNONE;
-            this._minusSprite.setColor(cc.WHITE);
-            this._plusSprite.setColor(cc.WHITE);
+            this._minusSprite.setColor(cc.white());
+            this._plusSprite.setColor(cc.white());
             if (this._autorepeat) {
                 this.stopAutorepeat();
             }
@@ -272,8 +272,8 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     onTouchEnded:function (touch, event) {
-        this._minusSprite.setColor(cc.WHITE);
-        this._plusSprite.setColor(cc.WHITE);
+        this._minusSprite.setColor(cc.white());
+        this._plusSprite.setColor(cc.white());
 
         if (this._autorepeat) {
             this.stopAutorepeat();
