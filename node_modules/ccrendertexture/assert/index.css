@@ -1,0 +1,125 @@
+
+body {
+    background: #f2f6f8;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+ul, ul li {
+    text-decoration: none;
+    list-style: none;
+    font: 16px/25px "Helvetica Neue", Helvetica, Arial;
+}
+
+.btn {
+    font-size: 16px;
+    border-radius: 3px;
+    font-family: "Helvetica Neue", Helvetica, Arial;
+    text-align: center;
+    padding: 4px 6px;
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -o-appearance: none;
+    appearance: none;
+
+    -moz-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+    -webkit-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+    -o-box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+    box-shadow: inset 0px 1px 1px rgba(255, 255, 255, 0.4), 0px 0px 10px 10px #fff;
+}
+.btn:active {
+    -moz-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+    -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+    -o-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+    box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.4), 0px 0px 10px 10px #fff;
+}
+
+.btn_black {
+    background-image: -webkit-linear-gradient(bottom, #232323, #424242);
+    background-image: -moz-linear-gradient(bottom, #232323, #424242);
+    background-image: -o-linear-gradient(bottom, #232323, #424242);
+    background-image: linear-gradient(bottom, #232323, #424242);
+
+    border: 1px solid #303030;
+    color: #fff;
+}
+.btn_black:active {
+    background-image: -webkit-linear-gradient(bottom, #424242, #232323);
+    background-image: -moz-linear-gradient(bottom, #424242, #232323);
+    background-image: -o-linear-gradient(bottom, #424242, #232323);
+    background-image: linear-gradient(bottom, #424242, #232323);
+}
+
+menu {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    margin: 50px 0;
+    padding: 0px;
+}
+
+menu #ccBannerImg {
+    width: 200px;
+    z-index: 100;
+}
+
+menu ul {
+    padding: 20px;
+    margin: 10px 0px;
+    width: 160px;
+
+    background: #d5ecbf;
+}
+
+menu ul li {
+    margin: 5px 0px 0px 0px;
+}
+
+article {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    margin: 50px 250px 50px 250px;
+    padding: 0px;
+    width: auto;
+    z-index: 1;
+}
+article h1 {
+    margin: 0px;
+    font: 30px/52px "Arial";
+    text-align: center;
+}
+.test-canvas-container {
+    display:inline-block;
+    width:100%;
+    margin: 15px -5px;
+    background: black;
+    position:relative;
+    border:5px solid black;
+    border-radius: 10px;
+    box-shadow: 0 5px 50px #333
+}
+
+#testConsole {
+    width: 100%;
+    margin: 10px -5px;
+    padding: 5px;
+    resize: none;
+}
+
+article.text {
+    position: relative;
+    margin: 20px;
+}
+
+.test-btn-container {
+    text-align: center;
+    width: 100%;
+    margin: 20px 0px;
+}
+.test-btn-container .btn {
+    width: 100px;
+    margin: 0px 8px;
+}
