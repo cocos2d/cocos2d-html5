@@ -30,12 +30,12 @@
 ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     _attributes: null,
     _jsonDict: null,
-    _jsonName: "",
+    _filePath: "",
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
         this._attributes = {};
         this._jsonDict = {};
-        this._jsonName = "";
+        this._filePath = "";
         this._name = "CCComAttribute";
     },
     init: function () {
@@ -193,22 +193,22 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @returns {Object}
      */
     setDict: function (dict) {
-         this._jsonDict = dict;
+        this._jsonDict = dict;
     },
 
     /**
      * Getter of jsonName
      * @returns {String}
      */
-    getJsonName:function(){
-      return this._jsonName;
+    getFile:function(){
+      return this._filePath;
     },
 
     /**
-     * setter of jsonName
+     * setter of fileName
      */
-    setJsonName:function(jsonName){
-        this._jsonName = jsonName;
+    setFile:function(filePath){
+        this._filePath = filePath;
     }
 });
 /**
