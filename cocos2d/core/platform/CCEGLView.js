@@ -888,15 +888,19 @@ cc.ContainerStrategy = cc.Class.extend({
     },
 
     _fixContainer: function () {
+        // Add container to document body
         document.body.insertBefore(cc.container, document.body.firstChild);
-        /*var bs = document.body.style;
-         bs.width = document.documentElement.clientWidth + "px";
-         bs.height = document.documentElement.clientHeight + "px";
-         bs.overflow = "hidden";*/
+        // Set body's width height to window's size, and forbid overflow, so that game will be centered
+        var bs = document.body.style;
+        bs.width = window.innerWidth + "px";
+        bs.height = window.innerHeight + "px";
+        bs.overflow = "hidden";
+        // Body size solution doesn't work on all mobile browser so this is the aleternative: fixed container
+        var contStyle = cc.container.style;
+        contStyle.position = "fixed";
+        contStyle.left = contStyle.top = "0px";
+        // Reposition body
         document.body.scrollTop = 0;
-        /*var contStyle = cc.container.style;
-         contStyle.position = "fixed";
-         contStyle.left = contStyle.top = "0px";*/
     }
 });
 
