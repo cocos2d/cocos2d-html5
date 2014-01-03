@@ -222,7 +222,7 @@ ccs.ListView = ccs.ScrollView.extend({
             return;
         }
         var newItem = this._model.clone();
-        this._items[index] = newItem;
+        cc.ArrayAppendObjectToIndex(this._items, newItem, index);
         this.remedyLayoutParameter(newItem);
         this.addChild(newItem);
         this._refreshViewDirty = true;
@@ -236,7 +236,7 @@ ccs.ListView = ccs.ScrollView.extend({
     },
 
     insertCustomItem: function (item, index) {
-        this._items[index] = item;
+        cc.ArrayAppendObjectToIndex(this._items, item, index);
         this.remedyLayoutParameter(item);
         this.addChild(item);
         this._refreshViewDirty = true;
