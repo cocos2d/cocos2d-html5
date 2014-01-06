@@ -55,6 +55,7 @@
                 <include name="core/CCCamera.js"/>
                 <include name="core/CCScheduler.js"/>
                 <include name="core/CCLoader.js"/>
+                <include name="core/CCDrawingPrimitives.js"/>
                 <include name="core/platform/CCApplication.js"/>
                 <include name="core/platform/CCSAXParser.js"/>
                 <include name="core/platform/AppControl.js"/>
@@ -118,7 +119,6 @@
                 <include name="accelerometer/CCAccelerometer.js"/>
                 <include name="text_input_node/CCIMEDispatcher.js"/>
                 <include name="text_input_node/CCTextFieldTTF.js"/>
-                <include name="CCDrawingPrimitives.js"/>
                 <include name="menu_nodes/CCMenuItem.js"/>
                 <include name="menu_nodes/CCMenu.js"/>
                 <include name="tileMap_nodes/CCTGAlib.js"/>

@@ -30,7 +30,6 @@
  * converted to Javascript / cocos2d-x by Angus C
  */
 
-
 cc.ControlColourPicker = cc.Control.extend({
     _hsv:null,
     _colourPicker:null,
@@ -84,10 +83,10 @@ cc.ControlColourPicker = cc.Control.extend({
         if (cc.Control.prototype.init.call(this)) {
             this.setTouchEnabled(true);
             // Cache the sprites
-            cc.SpriteFrameCache.getInstance().addSpriteFrames("res/extensions/CCControlColourPickerSpriteSheet.plist");
+            cc.SpriteFrameCache.getInstance().addSpriteFrames(res.CCControlColourPickerSpriteSheet_plist);
 
             // Create the sprite batch node
-            var spriteSheet = cc.SpriteBatchNode.create("res/extensions/CCControlColourPickerSpriteSheet.png");
+            var spriteSheet = cc.SpriteBatchNode.create(res.CCControlColourPickerSpriteSheet_png);
             this.addChild(spriteSheet);
 
           /*// MIPMAP
@@ -160,3 +159,8 @@ cc.ControlColourPicker.create = function () {
     pRet.init();
     return pRet;
 };
+
+// compatible with NPM
+var res = res || {};
+res.CCControlColourPickerSpriteSheet_plist = res.CCControlColourPickerSpriteSheet_plist || "res/extensions/CCControlColourPickerSpriteSheet.plist";
+res.CCControlColourPickerSpriteSheet_png = res.CCControlColourPickerSpriteSheet_png || "res/extensions/CCControlColourPickerSpriteSheet.png";
