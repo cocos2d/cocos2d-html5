@@ -1,3 +1,10 @@
+var MODULE_NAMES = ["ccaccelerometer", "ccactions", "ccactions3d", "ccaudio", "ccbox2d", "ccchipmunk",
+                    "cccliping", "cccompress", "cceditbox", "cceffects", "ccgui", "cckazmath", "cckeyboard",
+                    "cclabel", "ccmenu", "ccmotionstreak", "ccparallax", "ccphysics", "ccpluginx", "ccprogress",
+                    "ccrendertexture", "ccshaders", "ccshapenode", "cctextinput", "cctilemap", "cctouch",
+                    "cctransitions", "cocos2d-html5", "cocosbuilder", "cocostudio"];
+var ERRSTATUS = /4|5\d+/;
+
 var preBtn = document.getElementById("preBtn");
 var rePlayBtn = document.getElementById("rePlayBtn");
 var nextBtn = document.getElementById("nextBtn");
@@ -7,6 +14,8 @@ var testConsole = document.getElementById("testConsole");
 var custDiv = document.getElementById("custDiv");
 var scriptContent = document.getElementById("scriptContent");
 var menuUl = document.getElementById("menuUl");
+var rootUl = document.getElementById("rootUl");
+var menuContainer = document.getElementById("menuContainer");
 
 var testCaseIndex = -1;
 var loadCache = {};
@@ -85,7 +94,7 @@ function createMenuItem(cfgName, cfg, index){
     menuUl.appendChild(li);
 }
 
-function getFileContent(url, callback) {
+function createHttpReq() {
     var httpRequest;
     if (window.XMLHttpRequest) { // Mozilla, Safari, ...
         httpRequest = new XMLHttpRequest();
@@ -101,16 +110,59 @@ function getFileContent(url, callback) {
         }
     }
     if (!httpRequest) return false;
+    else return httpRequest;
+}
+function getFileContent(url, callback) {
+    var httpRequest = createHttpReq();
+    if(!httpRequest) return false;
 
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4) {
-            if (httpRequest.status === 200) callback(httpRequest.responseText);
-            else callback(null);
+            if (ERRSTATUS.test(httpRequest.status)) callback(null);
+            else callback(httpRequest.responseText);
         }
     };
 
     httpRequest.open('GET', url, true);
     httpRequest.send();
+    return true;
+}
+
+function checkUrl(url) {
+    var httpreq = createHttpReq();
+    if(!httpreq) return false;
+    httpreq.open('HEAD', url, false);
+    httpreq.send();
+    return ERRSTATUS.test(httpreq.status) ? false : true;
+}
+
+function switchToRoot() {
+    rootUl.className = "active";
+    menuUl.className = "";
+    menuContainer.style.height = rootUl.clientHeight+20 + "px";
+}
+function switchToMenu() {
+    rootUl.className = "";
+    menuUl.className = "active";
+    menuContainer.style.height = menuUl.clientHeight+20 + "px";
+}
+
+for(var i = 0, l = MODULE_NAMES.length; i < l; i++) {
+    var name = MODULE_NAMES[i], url = "../"+name;
+    var li = document.createElement("li");
+    // Module exist
+    if(checkUrl(url)) {
+        var a = document.createElement("a");
+        li.appendChild(a);
+        a.href = url;
+        a.innerHTML = name;
+        rootUl.appendChild(li);
+    }
+    else {
+        li.innerHTML = name;
+        li.className = "inactive";
+        rootUl.appendChild(li);
+    }
 }
 
 var gms = cc.gameModules;
@@ -118,6 +170,8 @@ for(var i = 0, li = gms.length; i < li; i++){
     var cfgName = gms[i];
     createMenuItem(cfgName, cc.resCfg[cfgName], i);
 }
+
+switchToMenu();
 
 var cocos2dApp = cc.Application.extend({
     config : document["ccConfig"],
