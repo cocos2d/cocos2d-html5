@@ -6,9 +6,9 @@
 
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="myTemplate.js"
-                sourceMapOutputFile="sourcemap"
-                sourceMapFormat="V3">
+                debug="false" output="myTemplate.js">
+                <!--sourceMapOutputFile="sourcemap"
+                sourceMapFormat="V3">-->
             <externs dir="${basedir}/../cocos2d">
                 <file name="core/cocos2d_externs.js"/>
             </externs>
