@@ -157,7 +157,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
     },
 
-    _setResizeCallback: function (callback) {
+    setResizeCallback: function (callback) {
         if (typeof callback == "function" || callback == null) {
             this._resizeCallback = callback;
         }

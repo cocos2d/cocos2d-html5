@@ -104,6 +104,7 @@
                 <include name="compress/base64.js"/>
                 <include name="compress/gzip.js"/>
                 <include name="compress/zlib.min.js"/>
+                <include name="particle_nodes/CCFormatHelper.js"/>
                 <include name="particle_nodes/CCPNGReader.js"/>
                 <include name="particle_nodes/CCTIFFReader.js"/>
                 <include name="particle_nodes/CCParticleSystem.js"/>
