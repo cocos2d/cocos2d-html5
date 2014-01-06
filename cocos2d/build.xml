@@ -97,6 +97,7 @@
                 <file name="compress/base64.js"/>
                 <file name="compress/gzip.js"/>
                 <file name="compress/zlib.min.js"/>
+                <file name="particle_nodes/CCFormatHelper.js"/>
                 <file name="particle_nodes/CCPNGReader.js"/>
                 <file name="particle_nodes/CCTIFFReader.js"/>
                 <file name="particle_nodes/CCParticleSystem.js"/>
