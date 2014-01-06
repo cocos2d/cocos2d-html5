@@ -6,9 +6,9 @@
 
     <target name="compile_Canvas">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="../lib/Cocos2d-html5-v2.2.2.min.js"
-                sourceMapOutputFile="sourcemap"
-                sourceMapFormat="V3">
+                debug="false" output="../lib/Cocos2d-html5-v2.2.2.min.js">
+                <!--sourceMapOutputFile="sourcemap"
+                sourceMapFormat="V3">-->
             <externs dir="${basedir}">
                 <file name="core/cocos2d_externs.js"/>
             </externs>
