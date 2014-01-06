@@ -28,18 +28,15 @@
  * @extends ccs.Component
  */
 ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
-    _attributes: null,
     _jsonDict: null,
     _filePath: "",
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
-        this._attributes = {};
         this._jsonDict = {};
         this._filePath = "";
         this._name = "CCComAttribute";
     },
     init: function () {
-        this._attributes = {};
         this._jsonDict = {};
         return true;
     },
@@ -54,7 +51,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -67,7 +64,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -80,7 +77,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -93,7 +90,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -106,7 +103,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -119,7 +116,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -128,7 +125,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @returns {Number}
      */
     getInt: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return parseInt(ret || 0);
     },
 
@@ -138,7 +135,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @returns {Number}
      */
     getDouble: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return parseFloat(ret || 0.0);
     },
 
@@ -148,7 +145,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @returns {Number}
      */
     getFloat: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return parseFloat(ret || 0.0);
     },
 
@@ -158,7 +155,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @returns {Boolean}
      */
     getBool: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return Boolean(ret || false);
     },
 
@@ -168,7 +165,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @returns {String}
      */
     getCString: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return ret || "";
     },
 
@@ -178,37 +175,18 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @returns {Object}
      */
     getObject: function (key) {
-        return this._attributes[key];
+        return this._jsonDict[key];
     },
 
     /**
-     * Getter of jsonDict
+     *
+     * @param path
      */
-    getDict: function () {
-        return this._jsonDict;
-    },
-
-    /**
-     * setter of jsonDict
-     * @returns {Object}
-     */
-    setDict: function (dict) {
-        this._jsonDict = dict;
-    },
-
-    /**
-     * Getter of jsonName
-     * @returns {String}
-     */
-    getFile:function(){
-      return this._filePath;
-    },
-
-    /**
-     * setter of fileName
-     */
-    setFile:function(filePath){
-        this._filePath = filePath;
+    parse:function(path){
+        var data = cc.FileUtils.getInstance().getTextFileData(path);
+        if (data) {
+            this._jsonDict = JSON.parse(data);
+        }
     }
 });
 /**
