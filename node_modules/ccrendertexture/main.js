@@ -4,7 +4,7 @@ var MODULE_NAMES = ["ccaccelerometer", "ccactions", "ccactions3d", "ccaudio", "c
                     "ccrendertexture", "ccshaders", "ccshapenode", "cctextinput", "cctilemap", "cctouch",
                     "cctransitions", "cocos2d-html5", "cocosbuilder", "cocostudio"];
 var ERRSTATUS = /4|5\d+/;
-var MODULE_NAME_FINDER = /\/(\w+)\/?(index\.html)?$/;
+var MODULE_NAME_FINDER = /\/([\w\-\_\d]+)\/?(index\.html)?$/;
 
 var preBtn = document.getElementById("preBtn");
 var rePlayBtn = document.getElementById("rePlayBtn");
@@ -51,10 +51,11 @@ function showTestCase(cfgName, cfg){
     var tag = cfg.layer || cfg.sprite || cfg.scene || cfg.ccbi;
     var lis = menuUl.children;
     for (var i = 1, l = lis.length; i < l; i++) {
-        if (lis[i].innerText == tag) {
-            lis[i].className = "active";
+        var li = lis[i];
+        if (li.children[0].innerHTML == tag) {
+            li.className = "active";
         }
-        else lis[i].className = "";
+        else li.className = "";
     }
 }
 
@@ -111,45 +112,52 @@ function createMenuItem(cfgName, cfg, index, active){
 }
 
 function createHttpReq() {
-    var httpRequest;
+    var httpreq;
     if (window.XMLHttpRequest) { // Mozilla, Safari, ...
-        httpRequest = new XMLHttpRequest();
+        httpreq = new XMLHttpRequest();
     } else if (window.ActiveXObject) { // IE
         try {
-            httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+            httpreq = new ActiveXObject("Msxml2.XMLHTTP");
         }
         catch (e) {
             try {
-                httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+                httpreq = new ActiveXObject("Microsoft.XMLHTTP");
             }
             catch (e) {}
         }
     }
-    if (!httpRequest) return false;
-    else return httpRequest;
+    if (!httpreq) return false;
+    else return httpreq;
 }
 function getFileContent(url, callback) {
-    var httpRequest = createHttpReq();
-    if(!httpRequest) return false;
+    var httpreq = createHttpReq();
+    if(!httpreq) return false;
 
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4) {
-            if (ERRSTATUS.test(httpRequest.status)) callback(null);
-            else callback(httpRequest.responseText);
+    httpreq.onreadystatechange = function() {
+        if (httpreq.readyState === 4) {
+            if (ERRSTATUS.test(httpreq.status)) callback(null);
+            else callback(httpreq.responseText);
         }
     };
 
-    httpRequest.open('GET', url, true);
-    httpRequest.send();
+    httpreq.open('GET', url, true);
+    httpreq.send();
     return true;
 }
 
-function checkUrl(url) {
+function checkUrl(url, callback) {
     var httpreq = createHttpReq();
     if(!httpreq) return false;
+
+    httpreq.onreadystatechange = function() {
+        if (httpreq.readyState === 4) {
+            if (ERRSTATUS.test(httpreq.status)) callback(url, false);
+            else callback(url, true);
+        }
+    };
+
     httpreq.open('HEAD', url, false);
     httpreq.send();
-    return ERRSTATUS.test(httpreq.status) ? false : true;
 }
 
 function switchToRoot() {
@@ -169,22 +177,25 @@ var result = MODULE_NAME_FINDER.exec(document.location.pathname);
 var module = result[1] ? result[1] : "";
 for(var i = 0, l = MODULE_NAMES.length; i < l; i++) {
     var name = MODULE_NAMES[i], url = "../" + name +"/index.html";
-    var li = document.createElement("li");
-    // Module exist
-    if(checkUrl(url)) {
-        var a = document.createElement("a");
-        li.appendChild(a);
-        if(module == name)
-            li.className = "active";
-        a.href = url;
-        a.innerHTML = name;
-        rootUl.appendChild(li);
-    }
-    else {
-        li.innerHTML = name;
-        li.className = "inactive";
-        rootUl.appendChild(li);
-    }
+
+    checkUrl(url, function(url, exist) {
+        if(exist) {
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            li.appendChild(a);
+            if(module == name)
+                li.className = "active";
+            a.href = url;
+            a.innerHTML = name;
+            rootUl.appendChild(li);
+        }
+        else {
+            var li = document.createElement("li");
+            li.innerHTML = name;
+            li.className = "inactive";
+            rootUl.appendChild(li);
+        }
+    });
 }
 
 var gms = cc.gameModules;
