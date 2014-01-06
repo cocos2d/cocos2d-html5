@@ -183,14 +183,15 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Adds a child to the container.
-     * @param {ccs.Widget||cc.Node} child
-     * @returns {boolean}
+     * @param {ccs.Widget} child
      */
     addChild: function (child, zOrder, tag) {
-        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
-        if (child instanceof ccs.Widget) {
-            this._widgetChildren.push(child);
+        if(!(child instanceof ccs.Widget)){
+            cc.log("Widget only supports Widgets as children");
+            return;
         }
+        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
+        this._widgetChildren.push(child);
     },
 
     sortAllChildren: function () {
@@ -332,6 +333,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     addNode: function (node, zOrder, tag) {
         if (node instanceof ccs.Widget) {
             cc.log("Widget only supports Nodes as renderer");
+            return;
         }
         cc.NodeRGBA.prototype.addChild.call(this, node, zOrder, tag);
         this._nodes.push(node);
@@ -1177,7 +1179,9 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         var widgetChildren = model.getChildren();
         for (var i = 0; i < widgetChildren.length; i++) {
             var locChild = widgetChildren[i];
-            this.addChild(locChild.clone());
+            if(locChild instanceof ccs.Widget){
+                this.addChild(locChild.clone());
+            }
         }
     },
 
