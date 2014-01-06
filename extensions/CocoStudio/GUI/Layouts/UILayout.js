@@ -159,12 +159,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      * @param {ccs.Widget} locChild
      * @param {Number} zOrder
      * @param {Number} tag
-     * @returns {boolean}
      */
     addChild: function (child, zOrder, tag) {
+        if(!(child instanceof ccs.Widget))
+            return;
         this.supplyTheLayoutParameterLackToChild(child);
+        ccs.Widget.prototype.addChild.call(this, child, zOrder, tag);
         this._doLayoutDirty = true;
-        ccs.Widget.prototype.addChild.call(this, child, zOrder, tag)
     },
 
     /**
@@ -844,7 +845,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      */
     setLayoutType: function (type) {
         this._layoutType = type;
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var locChild = null;
         for (var i = 0; i < layoutChildrenArray.length; i++) {
             locChild = layoutChildrenArray[i];
@@ -869,7 +870,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     doLayout_LINEAR_VERTICAL: function () {
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var layoutSize = this.getSize();
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
@@ -904,7 +905,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
     },
     doLayout_LINEAR_HORIZONTAL: function () {
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var layoutSize = this.getSize();
         var leftBoundary = 0;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
@@ -939,7 +940,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
     },
     doLayout_RELATIVE: function () {
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var length = layoutChildrenArray.length;
         var unlayoutChildCount = length;
         var layoutSize = this.getSize();
