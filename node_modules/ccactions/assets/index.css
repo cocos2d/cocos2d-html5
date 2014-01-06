@@ -109,6 +109,9 @@ menu ul li {
 menu ul li.inactive {
     color: #848484;
 }
+menu ul li.active a {
+    color: rgb(246, 168, 0);
+}
 menu ul li.highlightli {
     background: #189bca;
     position: relative;
@@ -120,6 +123,7 @@ menu ul li a {
     width: 100%;
     color: #ebebeb;
     word-break: break-all;
+    text-decoration: none;
 
     font: bold 14px/23px "Helvetica Neue", Helvetica, Arial;
 }

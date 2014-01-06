@@ -1,9 +1,10 @@
 var MODULE_NAMES = ["ccaccelerometer", "ccactions", "ccactions3d", "ccaudio", "ccbox2d", "ccchipmunk",
                     "cccliping", "cccompress", "cceditbox", "cceffects", "ccgui", "cckazmath", "cckeyboard",
-                    "cclabel", "ccmenu", "ccmotionstreak", "ccparallax", "ccphysics", "ccpluginx", "ccprogress",
+                    "cclabel", "ccmenu", "ccmotionstreak", "ccparallax", "ccparticle", "ccphysics", "ccpluginx", "ccprogress",
                     "ccrendertexture", "ccshaders", "ccshapenode", "cctextinput", "cctilemap", "cctouch",
                     "cctransitions", "cocos2d-html5", "cocosbuilder", "cocostudio"];
 var ERRSTATUS = /4|5\d+/;
+var MODULE_NAME_FINDER = /\/(\w+)\/?(index\.html)?$/;
 
 var preBtn = document.getElementById("preBtn");
 var rePlayBtn = document.getElementById("rePlayBtn");
@@ -44,6 +45,17 @@ function showTestCase(cfgName, cfg){
     });
     cc.test(cfgName, loadCache[cfgName] ? cc.Loader : null);
     loadCache[cfgName] = true;
+
+    // Set current li item to active
+    var cfg = cc.resCfg[cfgName];
+    var tag = cfg.layer || cfg.sprite || cfg.scene || cfg.ccbi;
+    var lis = menuUl.children;
+    for (var i = 1, l = lis.length; i < l; i++) {
+        if (lis[i].innerText == tag) {
+            lis[i].className = "active";
+        }
+        else lis[i].className = "";
+    }
 }
 
 preBtn.addEventListener("click", function(){
@@ -83,10 +95,12 @@ function createBtn(container, text, func){
     return btn;
 };
 
-function createMenuItem(cfgName, cfg, index){
+function createMenuItem(cfgName, cfg, index, active){
     var li = document.createElement("li");
     var a = document.createElement("a");
     li.appendChild(a);
+    if(active === true)
+        li.className = "active";
     a.href = "javascript:;";
     a.innerHTML = cfg.layer || cfg.sprite || cfg.scene || cfg.ccbi;
     a.addEventListener("click", function(){
@@ -149,6 +163,10 @@ function switchToMenu() {
     menuContainer.style.height = menuUl.clientHeight+20 + "px";
 }
 
+
+// Set current li item to active
+var result = MODULE_NAME_FINDER.exec(document.location.pathname);
+var module = result[1] ? result[1] : "";
 for(var i = 0, l = MODULE_NAMES.length; i < l; i++) {
     var name = MODULE_NAMES[i], url = "../" + name +"/index.html";
     var li = document.createElement("li");
@@ -156,6 +174,8 @@ for(var i = 0, l = MODULE_NAMES.length; i < l; i++) {
     if(checkUrl(url)) {
         var a = document.createElement("a");
         li.appendChild(a);
+        if(module == name)
+            li.className = "active";
         a.href = url;
         a.innerHTML = name;
         rootUl.appendChild(li);
@@ -170,6 +190,7 @@ for(var i = 0, l = MODULE_NAMES.length; i < l; i++) {
 var gms = cc.gameModules;
 for(var i = 0, li = gms.length; i < li; i++){
     var cfgName = gms[i];
+
     createMenuItem(cfgName, cc.resCfg[cfgName], i);
 }
 
