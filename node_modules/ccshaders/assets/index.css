@@ -123,6 +123,7 @@ menu ul li a {
     width: 100%;
     color: #ebebeb;
     word-break: break-all;
+    text-decoration: none;
 
     font: bold 14px/23px "Helvetica Neue", Helvetica, Arial;
 }
