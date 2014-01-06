@@ -1,6 +1,6 @@
 var MODULE_NAMES = ["ccaccelerometer", "ccactions", "ccactions3d", "ccaudio", "ccbox2d", "ccchipmunk",
                     "cccliping", "cccompress", "cceditbox", "cceffects", "ccgui", "cckazmath", "cckeyboard",
-                    "cclabel", "ccmenu", "ccmotionstreak", "ccparallax", "ccphysics", "ccpluginx", "ccprogress",
+                    "cclabel", "ccmenu", "ccmotionstreak", "ccparallax", "ccparticle", "ccphysics", "ccpluginx", "ccprogress",
                     "ccrendertexture", "ccshaders", "ccshapenode", "cctextinput", "cctilemap", "cctouch",
                     "cctransitions", "cocos2d-html5", "cocosbuilder", "cocostudio"];
 var ERRSTATUS = /4|5\d+/;
