@@ -153,8 +153,11 @@ article {
     z-index: 1;
 }
 article h1 {
-    margin: 0px;
-    font: 30px/52px "Arial";
+    margin: 10px;
+    text-align: center;
+}
+article h3 {
+    margin: 10px;
     text-align: center;
 }
 .test-canvas-container {

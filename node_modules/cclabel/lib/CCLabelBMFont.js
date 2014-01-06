@@ -1262,10 +1262,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 });
 
 /**
- * creates a bitmap font altas with an initial string and the FNT file
+ * creates a bitmap font atlas with an initial string and the FNT file
  * @param {String} str
  * @param {String} fntFile
- * @param {String} width
+ * @param {Number} width
  * @param {Number} alignment
  * @param {cc.Point} imageOffset
  * @return {cc.LabelBMFont|Null}
@@ -1282,9 +1282,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
     if (arguments.length == 0) {
-        if (ret && ret.init()) {
+        if (ret && ret.init())
             return ret;
-        }
         return null;
     }
 
