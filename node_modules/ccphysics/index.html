@@ -9,9 +9,18 @@
 </head>
 <body>
 
-<menu class="menu">
+<menu>
     <img id="ccBannerImg" src="assert/images/cocos2dbanner.png"/>
-    <ul id="menuUl"></ul>
+
+    <div id="menuContainer">
+        <ul id="rootUl">
+            <li class="highlightli"><a href="javascript:switchToMenu();">BACK</a></li>
+        </ul>
+        <ul id="menuUl" class="active">
+            <li class="highlightli"><a href="javascript:switchToRoot();">ROOT</a></li>
+        </ul>
+    </div>
+
 </menu>
 
 <article>

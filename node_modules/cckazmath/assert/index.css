@@ -52,10 +52,11 @@ ul, ul li {
 }
 
 menu {
-    position: fixed;
+    position: absolute;
     left: 0px;
     top: 0px;
-    margin: 40px 20px;
+    height: auto;
+    margin: 40px 20px 0px 20px;
     padding: 0px;
     z-index: 100;
 }
@@ -64,7 +65,23 @@ menu #ccBannerImg {
     width: 200px;
     z-index: 1;
 }
+menu div {
+    position: absolute;
+    left: -20px;
+    width: 240px;
+    top: 57px;
+    height: auto;
+    overflow: hidden;
+
+    -webkit-transition: all 0.6s linear;
+    -moz-transition: all 0.6s linear;
+    -o-transition: all 0.6s linear;
+    transition: all 0.6s linear;
+}
 menu ul {
+    position: absolute;
+    left: 20PX;
+    top: 0px;
     padding: 20px 5px 25px 20px;
     margin: 10px 0px 10px 0px;
     width: 175px;
@@ -78,19 +95,52 @@ menu ul {
     box-shadow: 1px 0px 6px 0px #333;
     border-radius: 2px;
     z-index: 0;
+
+    -webkit-transition: all 0.6s linear;
+    -moz-transition: all 0.6s linear;
+    -o-transition: all 0.6s linear;
+    transition: all 0.6s linear;
 }
 menu ul li {
     margin: 5px 0px 0px 0px;
+    color: #ebebeb;
+    font: bold 14px/23px "Helvetica Neue", Helvetica, Arial;
+}
+menu ul li.inactive {
+    color: #848484;
+}
+menu ul li.highlightli {
+    background: #189bca;
+    position: relative;
+    left: -20px;
+    width: 180px;
+    padding: 0px 10px;
 }
 menu ul li a {
-    color: #ebebeb;
     width: 100%;
+    color: #ebebeb;
     word-break: break-all;
 
     font: bold 14px/23px "Helvetica Neue", Helvetica, Arial;
 }
 menu ul li a:hover {
     color: rgb(246, 168, 0);
+}
+menu #menuUl {
+    top: 1000px;
+    opacity: 0;
+}
+menu #menuUl.active {
+    top: 0px;
+    opacity: 1;
+}
+menu #rootUl {
+    top: -1000px;
+    opacity: 0;
+}
+menu #rootUl.active {
+    top: 0px;
+    opacity: 1;
 }
 
 article {
