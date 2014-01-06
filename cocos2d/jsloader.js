@@ -112,6 +112,7 @@
         'compress/base64.js',
         'compress/gzip.js',
         'compress/zlib.min.js',
+        'particle_nodes/CCFormatHelper.js',
         'particle_nodes/CCPNGReader.js',
         'particle_nodes/CCTIFFReader.js',
         'particle_nodes/CCParticleSystem.js',
