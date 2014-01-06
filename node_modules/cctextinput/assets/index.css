@@ -109,6 +109,9 @@ menu ul li {
 menu ul li.inactive {
     color: #848484;
 }
+menu ul li.active a {
+    color: rgb(246, 168, 0);
+}
 menu ul li.highlightli {
     background: #189bca;
     position: relative;
