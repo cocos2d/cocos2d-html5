@@ -62,7 +62,7 @@ Object.defineProperties(cc._PointConst.prototype, {
             return this._x;
         },
         set: function () {
-            cc.log("Warning of _PointConst: Modification to const or private property is forbidden");
+            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
         },
         enumerable: true
     },
@@ -72,7 +72,7 @@ Object.defineProperties(cc._PointConst.prototype, {
             return this._y;
         },
         set: function () {
-            cc.log("Warning of _PointConst: Modification to const or private property is forbidden");
+            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
         },
         enumerable: true
     }
@@ -171,7 +171,7 @@ Object.defineProperties(cc._SizeConst.prototype, {
             return this._width;
         },
         set: function () {
-            cc.log("Warning of _SizeConst: Modification to const or private property is forbidden");
+            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
         },
         enumerable: true
     },
@@ -181,7 +181,7 @@ Object.defineProperties(cc._SizeConst.prototype, {
             return this._height;
         },
         set: function () {
-            cc.log("Warning of _SizeConst: Modification to const or private property is forbidden");
+            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
         },
         enumerable: true
     }

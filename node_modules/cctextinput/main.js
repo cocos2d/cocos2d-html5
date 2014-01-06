@@ -9,6 +9,7 @@ var preBtn = document.getElementById("preBtn");
 var rePlayBtn = document.getElementById("rePlayBtn");
 var nextBtn = document.getElementById("nextBtn");
 var testTitle = document.getElementById("testTitle");
+var testSubTitle = document.getElementById("testSubTitle");
 var testJsPath = document.getElementById("testJsPath");
 var testConsole = document.getElementById("testConsole");
 var custDiv = document.getElementById("custDiv");
@@ -32,6 +33,7 @@ function playTestCase(flag){
 
 function showTestCase(cfgName, cfg){
     testTitle.innerHTML = cfg.title || "";
+    testSubTitle.innerHTML = cfg.subTitle || "";
     testJsPath.innerHTML = cfgName.replace(/\[\%[\w\d\-_]*\%\]/, "");
     clearTextConsole();
     custDiv.innerHTML = "";
@@ -148,7 +150,7 @@ function switchToMenu() {
 }
 
 for(var i = 0, l = MODULE_NAMES.length; i < l; i++) {
-    var name = MODULE_NAMES[i], url = "../"+name;
+    var name = MODULE_NAMES[i], url = "../" + name +"/index.html";
     var li = document.createElement("li");
     // Module exist
     if(checkUrl(url)) {

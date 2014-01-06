@@ -5,15 +5,6 @@ var fileFmt = require("cocos-utils").fileFmt;
 var exec = require("child_process").exec;
 var msgCode = require("cocos-utils").msgCode;
 
-//ignore to delete
-var ignoreFiles = [
-    "cocos.json",
-    "package.json",
-    "cfg",
-    ".npmignore",
-    "README.md"
-];
-
 /**
  * Desc: Run plugin.
  * @param srcDir
@@ -57,7 +48,7 @@ function move(srcDir, targetDir, list){
 //            content = content.replace(/"version"[\s]*:[\s]*"[\d\.\-]+"/, '"version":"' + itemi.version + '"');
 //            fs.writeFileSync(packagePath, content);
         }
-        exec("cocos genJsRes " + tPath, function(err, data, info){
+        exec("cocos build " + tPath, function(err, data, info){
             console.log(data);
             if(err) return console.error(err);
             console.log(info);
@@ -67,7 +58,7 @@ function move(srcDir, targetDir, list){
 };
 
 
-var srcDir = "/Users/small/WebstormProjects/cocos2d-html5-test";
+var srcDir = "/Users/small/WebstormProjects/cocos2d-html5";
 var targetDir = path.join(__dirname, "../../../node_modules");
 var version = "0.1.1";
 var list = [

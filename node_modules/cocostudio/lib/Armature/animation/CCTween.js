@@ -268,7 +268,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             var displayIndex = keyFrameData.displayIndex;
             var displayManager = locBone.getDisplayManager();
             if (!displayManager.getForceChangeDisplay()) {
-                displayManager.changeDisplayByIndex(displayIndex, false);
+                displayManager.changeDisplayWithIndex(displayIndex, false);
 
             }
             this._tweenData.zOrder = keyFrameData.zOrder;

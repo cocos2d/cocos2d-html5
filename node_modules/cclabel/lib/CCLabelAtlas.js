@@ -168,12 +168,12 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locString = this._string;
         var n = locString.length;
         var texture = this.getTexture();
-        var locItemWidth = this._itemWidth, locItemHeight = this._itemHeight;
-        var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight ;     //needn't multiply cc.CONTENT_SCALE_FACTOR(), because sprite's draw will do this
+
         for (var i = 0; i < n; i++) {
             var a = locString.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._itemsPerRow, 10) * locScaleFactor;
-            var col = parseInt(a / this._itemsPerRow, 10) * locScaleFactor;
+            var row = parseInt(a % this._itemsPerRow, 10);
+            var col = parseInt(a / this._itemsPerRow, 10);
 
             var rect = cc.rect(row * locItemWidth, col * locItemHeight, locItemWidth, locItemHeight);
             var c = locString.charCodeAt(i);

@@ -114,7 +114,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
                         break;
                     }
                     bone.getTweenData().copy(frameData);
-                    bone.changeDisplayByIndex(frameData.displayIndex, false);
+                    bone.changeDisplayWithIndex(frameData.displayIndex, false);
                 } while (0);
             }
             this.update(0);
@@ -171,7 +171,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         }
 
         bone.setBoneData(boneData);
-        bone.getDisplayManager().changeDisplayByIndex(-1, false);
+        bone.getDisplayManager().changeDisplayWithIndex(-1, false);
         return bone;
     },
 
