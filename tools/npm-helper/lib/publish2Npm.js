@@ -37,7 +37,7 @@ var list = [
     "ccchipmunk"
 ];
 
-var baseVersion = "0.2.1";
+var baseVersion = "2.2.2";
 var isChgBaseVersion = false;
 var baseContent = {};
 
