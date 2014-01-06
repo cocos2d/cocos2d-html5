@@ -245,11 +245,8 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     var attribute = null;
                     if (resType == 0) {
                         attribute = ccs.ComAttribute.create();
-                        if(this._baseBath!=path){
-                            var data = cc.FileUtils.getInstance().getTextFileData(path);
-                            if (data) {
-                                attribute.setDict(JSON.parse(data));
-                            }
+                        if (this._baseBath != path) {
+                            attribute.parse(path);
                         }
                     }
                     else {
@@ -259,7 +256,6 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     if (comName) {
                         attribute.setName(comName);
                     }
-                    attribute.setFile(path);
                     gb.addComponent(attribute);
                     this._callSelector(attribute, subDict);
                 }
