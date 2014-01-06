@@ -518,7 +518,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         // don't release the event handlers
         // They are needed in case the director is run again
-        this._touchDispatcher.removeAllDelegates();
+        if(this._touchDispatcher)this._touchDispatcher.removeAllDelegates();
 
         if (this._runningScene) {
             this._runningScene.onExitTransitionDidStart();
@@ -799,7 +799,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          this.updateContentScaleFactor();
          }*/
 
-        this._touchDispatcher.setDispatchEvents(true);
+        if(this._touchDispatcher)this._touchDispatcher.setDispatchEvents(true);
         //}
     },
 
@@ -1108,6 +1108,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _createStatsLabel: null,
 
     _createStatsLabelForWebGL:function(){
+        if(!cc.LabelAtlas)
+            return this._createStatsLabelForCanvas();
+
         if((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
             return;
 
