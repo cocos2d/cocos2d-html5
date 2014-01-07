@@ -22,7 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
+/**
+ * Action frame type
+ * @constant
+ * @type Object
+ */
 ccs.FrameType = {
     move: 0,
     scale: 1,
@@ -35,9 +39,9 @@ ccs.FrameType = {
 /**
  * Base class for ccs.ActionFrame
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ActionFrame = cc.Class.extend({
+ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
     _frameType: 0,
     _easingType: 0,
     _frameIndex: 0,

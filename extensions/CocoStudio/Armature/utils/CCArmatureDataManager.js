@@ -22,6 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * RelativeData
+ * @constructor
+ */
 ccs.RelativeData = function(){
     this.plistFiles=[];
     this.armatures=[];
@@ -32,9 +36,9 @@ ccs.RelativeData = function(){
 /**
  * format and manage armature configuration and armature animation
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ArmatureDataManager = cc.Class.extend({
+ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# */{
     _animationDatas:null,
     _armarureDatas:null,
     _textureDatas:null,
@@ -51,6 +55,10 @@ ccs.ArmatureDataManager = cc.Class.extend({
 
     },
 
+    /**
+     * remove armature cache data by configFilePath
+     * @param {String} configFilePath
+     */
     removeArmatureFileInfo:function(configFilePath){
         var data = this.getRelativeData(configFilePath);
         for (var i = 0; i < data.armatures.length; i++) {
@@ -207,6 +215,11 @@ ccs.ArmatureDataManager = cc.Class.extend({
      * @param {String} imagePath
      * @param {String} plistPath
      * @param {String} configFilePath
+     * @example
+     * //example1
+     * ccs.ArmatureDataManager.getInstance().addArmatureFileInfo("res/test.json");
+     * //example2
+     * ccs.ArmatureDataManager.getInstance().addArmatureFileInfo("res/test.png","res/test.plist","res/test.json");
      */
     addArmatureFileInfo:function (/*imagePath,plistPath,configFilePath*/) {
         var imagePath,plistPath,configFilePath;
@@ -270,11 +283,20 @@ ccs.ArmatureDataManager = cc.Class.extend({
         return this._autoLoadSpriteFile;
     },
 
+    /**
+     * add RelativeData
+     * @param {String} configFilePath
+     */
     addRelativeData: function (configFilePath) {
         if (!this._relativeDatas.hasOwnProperty(configFilePath))
             this._relativeDatas[configFilePath] = new ccs.RelativeData();
     },
 
+    /**
+     * get RelativeData
+     * @param {String} configFilePath
+     * @returns {ccs.RelativeData}
+     */
     getRelativeData: function (configFilePath) {
         return this._relativeDatas[configFilePath];
     },
@@ -288,6 +310,11 @@ ccs.ArmatureDataManager = cc.Class.extend({
 });
 
 ccs.ArmatureDataManager._instance = null;
+/**
+ * returns a shared instance of the ArmatureDataManager
+ * @function
+ * @return {ccs.ArmatureDataManager}
+ */
 ccs.ArmatureDataManager.getInstance = function () {
     if (!this._instance) {
         this._instance = new ccs.ArmatureDataManager();

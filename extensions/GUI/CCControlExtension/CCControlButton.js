@@ -101,13 +101,13 @@ cc.ControlButton = cc.Control.extend({
             locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Get the title label size
-        var titleLabelSize = label ? label.getBoundingBox().size : cc.size(0, 0);
+        var titleLabelSize = label ? label.getBoundingBox()._size : cc.size(0, 0);
 
         // Adjust the background image if necessary
         if (this._doesAdjustBackgroundImage) {
             // Add the margins
             if(locBackgroundSprite)
-                locBackgroundSprite.setContentSize(cc.size(titleLabelSize.width + this._marginH * 2, titleLabelSize.height + this._marginV * 2));
+                locBackgroundSprite.setContentSize(titleLabelSize.width + this._marginH * 2, titleLabelSize.height + this._marginV * 2);
         } else {
             //TODO: should this also have margins if one of the preferred sizes is relaxed?
             if(locBackgroundSprite){
@@ -126,7 +126,7 @@ cc.ControlButton = cc.Control.extend({
         var rectTitle = label? label.getBoundingBox():cc.rect(0,0,0,0);
         var rectBackground = locBackgroundSprite? locBackgroundSprite.getBoundingBox():cc.rect(0,0,0,0);
         var maxRect = cc.rectUnion(rectTitle, rectBackground);
-        this.setContentSize(cc.size(maxRect.width, maxRect.height));
+        this.setContentSize(maxRect.width, maxRect.height);
         locContentSize = this.getContentSize();
         if(label){
             label.setPosition(locContentSize.width / 2, locContentSize.height / 2);
@@ -167,7 +167,7 @@ cc.ControlButton = cc.Control.extend({
 
             // Set the default anchor point
             this.ignoreAnchorPointForPosition(false);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
 
             // Set the nodes
             this._titleLabel = label;
@@ -499,7 +499,7 @@ cc.ControlButton = cc.Control.extend({
 
         locTable[state] = titleLabel;
         titleLabel.setVisible(false);
-        titleLabel.setAnchorPoint(cc.p(0.5, 0.5));
+        titleLabel.setAnchorPoint(0.5, 0.5);
         this.addChild(titleLabel, 1);
 
         // If the current state if equal to the given state we update the layout
@@ -606,7 +606,7 @@ cc.ControlButton = cc.Control.extend({
 
         locTable[state] = sprite;
         sprite.setVisible(false);
-        sprite.setAnchorPoint(cc.p(0.5, 0.5));
+        sprite.setAnchorPoint(0.5, 0.5);
         this.addChild(sprite);
 
         var locPreferredSize = this._preferredSize;

@@ -22,20 +22,30 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SceneReader = cc.Class.extend({
+/**
+ * Base class for ccs.SceneReader
+ * @class
+ * @extends ccs.Class
+ */
+ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
     _baseBath:"",
+    _listener:null,
+    _selector:null,
+    _node: null,
     ctor: function () {
         this._instance = null;
         this._baseBath = "";
+        this._listener = null;
+        this._selector = null;
     },
+    /**
+     * create node with json file that exported by cocostudio scene editor
+     * @param pszFileName
+     * @returns {cc.Node}
+     */
     createNodeWithSceneFile: function (pszFileName) {
-        var size = 0;
         var data = 0;
-        var node = null;
         do {
-            if (!pszFileName)
-                break;
-
             var pos = pszFileName.lastIndexOf("/");
             if(pos>-1){
                 this._baseBath =pszFileName.substr(0,pos+1);
@@ -46,12 +56,19 @@ ccs.SceneReader = cc.Class.extend({
                 break;
 
             var jsonDict = JSON.parse(data);
-            node = this.createObject(jsonDict, null);
+            this._node = this.createObject(jsonDict, null);
+            ccs.TriggerMng.getInstance().parse(jsonDict["Triggers"]||[]);
         } while (0);
         this._baseBath = "";
-        return node;
+        return this._node;
     },
 
+    /**
+     *  create object from data
+     * @param {Object} inputFiles
+     * @param {cc.Node} parenet
+     * @returns {cc.Node}
+     */
     createObject: function (inputFiles, parenet) {
         var className = inputFiles["classname"];
         if (className == "CCNode") {
@@ -127,6 +144,7 @@ ccs.SceneReader = cc.Class.extend({
                     }
 
                     gb.addComponent(render);
+                    this._callSelector(sprite, subDict);
                 }
                 else if (className == "CCTMXTiledMap") {
                     var tmx = null;
@@ -146,6 +164,7 @@ ccs.SceneReader = cc.Class.extend({
                         render.setName(comName);
                     }
                     gb.addComponent(render);
+                    this._callSelector(tmx, subDict);
                 }
                 else if (className == "CCParticleSystemQuad") {
                     var startPos = path.lastIndexOf(".plist");
@@ -167,6 +186,7 @@ ccs.SceneReader = cc.Class.extend({
                         render.setName(comName);
                     }
                     gb.addComponent(render);
+                    this._callSelector(particle, subDict);
                 }
                 else if (className == "CCArmature") {
                     if (resType != 0) {
@@ -185,27 +205,10 @@ ccs.SceneReader = cc.Class.extend({
                     }
                     var jsonDict = JSON.parse(des);
                     var armature_data = jsonDict["armature_data"];
-                    var childrenCount = armature_data.length;
                     var subData = armature_data[0];
                     var name = subData["name"];
 
-                    var config_file_path = jsonDict["config_file_path"];
-                    childrenCount = config_file_path.length;
-                    for (var i = 0; i < childrenCount; ++i) {
-                        var plist = config_file_path[i];
-                        var plistpath = "";
-                        plistpath += file_path;
-                        plistpath += plist;
-                        var locFullPlistPath = cc.FileUtils.getInstance().fullPathForFilename(plistpath);
-                        var root = cc.FileUtils.getInstance().createDictionaryWithContentsOfFile(locFullPlistPath);
-                        var metadata = root["metadata"];
-                        var textureFileName = metadata["textureFileName"];
-
-                        var textupath = "";
-                        textupath += file_path;
-                        textupath += textureFileName;
-                        ccs.ArmatureDataManager.getInstance().addArmatureFileInfo(textupath, plistpath, path);
-                    }
+                    ccs.ArmatureDataManager.getInstance().addArmatureFileInfo(path);
 
                     var armature = ccs.Armature.create(name);
                     var render = ccs.ComRender.create(armature, "CCArmature");
@@ -221,6 +224,7 @@ ccs.SceneReader = cc.Class.extend({
                     jsonDict = null;
                     subData = null;
                     des = null;
+                    this._callSelector(armature, subDict);
                 }
                 else if (className == "CCComAudio") {
                     var audio = null;
@@ -231,24 +235,29 @@ ccs.SceneReader = cc.Class.extend({
                         continue;
                     }
                     audio.preloadEffect(path);
+                    if (comName) {
+                        audio.setName(comName);
+                    }
                     gb.addComponent(audio);
+                    this._callSelector(audio, subDict);
                 }
                 else if (className == "CCComAttribute") {
                     var attribute = null;
                     if (resType == 0) {
                         attribute = ccs.ComAttribute.create();
-                        if(this._baseBath!=path){
-                            var data = cc.FileUtils.getInstance().getTextFileData(path);
-                            if (data) {
-                                attribute.setDict(JSON.parse(data));
-                            }
+                        if (this._baseBath != path) {
+                            attribute.parse(path);
                         }
                     }
                     else {
                         cc.log("unknown resourcetype on CCComAttribute!");
                         continue;
                     }
+                    if (comName) {
+                        attribute.setName(comName);
+                    }
                     gb.addComponent(attribute);
+                    this._callSelector(attribute, subDict);
                 }
                 else if (className == "CCBackgroundAudio") {
                     var audio = null;
@@ -262,8 +271,12 @@ ccs.SceneReader = cc.Class.extend({
                     audio.setFile(path);
                     var bLoop = Boolean(subDict["loop"] || 0);
                     audio.setLoop(bLoop);
+                    if (comName) {
+                        audio.setName(comName);
+                    }
                     gb.addComponent(audio);
                     audio.playBackgroundMusic(path, bLoop);
+                    this._callSelector(audio, subDict);
                 }
                 else if (className == "GUIComponent") {
                     var pLayer = ccs.UILayer.create();
@@ -275,6 +288,7 @@ ccs.SceneReader = cc.Class.extend({
                         render.setName(comName);
                     }
                     gb.addComponent(render);
+                    this._callSelector(audio, subDict);
                 }
                 subDict = null;
             }
@@ -295,6 +309,44 @@ ccs.SceneReader = cc.Class.extend({
     },
 
 
+    nodeByTag: function (parent, tag) {
+        if (parent == null) {
+            return null;
+        }
+        var retNode = null;
+        var children = parent.getChildren();
+
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child && child.getTag() == tag) {
+                retNode = child;
+                break;
+            }
+            else {
+                retNode = this.nodeByTag(child, tag);
+                if (retNode) {
+                    break;
+                }
+            }
+        }
+        return retNode;
+    },
+
+    getNodeByTag: function (tag) {
+        if (this._node == null) {
+            return null;
+        }
+        if (this._node.getTag() == tag) {
+            return this._node;
+        }
+        return this.nodeByTag(this._node, tag);
+    },
+
+    /**
+     * set property
+     * @param {cc.Node} node
+     * @param {Object} dict
+     */
     setPropertyFromJsonDict: function (node, dict) {
         var x = dict["x"] || 0;
         var y = dict["y"] || 0;
@@ -317,18 +369,43 @@ ccs.SceneReader = cc.Class.extend({
         var fRotationZ = dict["rotation"] || 0;
         node.setRotation(fRotationZ);
     },
-
+    setTarget : function(selector,listener){
+        this._listener = listener;
+        this._selector = selector;
+    },
+    _callSelector:function(obj,subDict){
+        if(this._selector){
+            this._selector.call(this._listener,obj,subDict);
+        }
+    },
+    /**
+     * purge instance
+     */
     purge: function () {
+        cc.log("deprecated. purge is a static class now. Use 'ccs.SceneReader.purge()' instead.");
         this._instance = null;
     }
 });
 ccs.SceneReader._instance = null;
+/**
+ * get a singleton SceneReader
+ * @function
+ * @return {ccs.SceneReader}
+ */
 ccs.SceneReader.getInstance = function () {
     if (!this._instance) {
         this._instance = new ccs.SceneReader();
     }
     return this._instance;
 };
+/**
+ * purge instance
+ */
+ccs.SceneReader.purge = function () {
+    ccs.TriggerMng.getInstance().destroyInstance();
+    cc.AudioEngine.end();
+    this._instance = null;
+};
 ccs.SceneReader.sceneReaderVersion = function () {
-    return "1.0.0.0";
+    return "1.2.0.0";
 };

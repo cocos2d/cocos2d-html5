@@ -22,7 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.UILinearGravity = {
+/**
+ * LinearGravity
+ * @type {Object}
+ */
+ccs.LinearGravity = {
     none: 0,
     left: 1,
     top: 2,
@@ -32,7 +36,11 @@ ccs.UILinearGravity = {
     centerHorizontal: 6
 };
 
-ccs.UIRelativeAlign = {
+/**
+ * RelativeAlign
+ * @type {Object}
+ */
+ccs.RelativeAlign = {
     alignNone: 0,
     alignParentTopLeft: 1,
     alignParentTopCenterHorizontal: 2,
@@ -58,11 +66,11 @@ ccs.UIRelativeAlign = {
 };
 
 /**
- * Base class for ccs.UIMargin
+ * Base class for ccs.Margin
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.UIMargin = cc.Class.extend({
+ccs.Margin = ccs.Class.extend(/** @lends ccs.Margin# */{
     left: 0,
     top: 0,
     right: 0,
@@ -82,17 +90,29 @@ ccs.UIMargin = cc.Class.extend({
             this.bottom = arguments[3];
         }
     },
+    /**
+     *  set margin
+     * @param {Number} l
+     * @param {Number} t
+     * @param {Number} r
+     * @param {Number} b
+     */
     setMargin: function (l, t, r, b) {
         this.left = l;
         this.top = t;
         this.right = r;
         this.bottom = b;
     },
+    /**
+     *  check is equals
+     * @param {ccs.Margin} target
+     * @returns {boolean}
+     */
     equals: function (target) {
         return (this.left == target.left && this.top == target.top && this.right == target.right && this.bottom == target.bottom);
     }
 });
 
-ccs.UIMarginZero = function(){
-   return ccs.UIMargin(0,0,0,0);
+ccs.MarginZero = function(){
+   return new ccs.Margin(0,0,0,0);
 };

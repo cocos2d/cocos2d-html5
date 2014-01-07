@@ -93,7 +93,12 @@ var PROPERTY_IS_KEYBOARD_ENABLED = "isKeyboardEnabled";
 
 cc.LayerLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return cc.Layer.create();
+
+        var layer=cc.Layer.create();
+
+        layer.setContentSize(0,0);
+
+        return layer;
     },
     onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
         if (propertyName === PROPERTY_TOUCH_ENABLED || propertyName === PROPERTY_IS_TOUCH_ENABLED) {
@@ -205,7 +210,11 @@ cc.LayerGradientLoader.loader = function () {
 
 cc.MenuLoader = cc.LayerLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return cc.Menu.create();
+        var menu = cc.Menu.create();
+
+        menu.setContentSize(0,0);
+
+        return menu;
     }
 });
 

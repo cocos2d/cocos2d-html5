@@ -80,6 +80,35 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
     _spritesGenerated: false,
     _spriteFrameRotated: false,
+    _textureLoaded:false,
+    _loadedEventListeners: null,
+
+    /**
+     * return  texture is loaded
+     * @returns {boolean}
+     */
+    textureLoaded:function(){
+        return this._textureLoaded;
+    },
+
+    /**
+     * add texture loaded event listener
+     * @param {Function} callback
+     * @param {Object} target
+     */
+    addLoadedEventListener:function(callback, target){
+        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    _callLoadedEventCallbacks:function(){
+        this._textureLoaded = true;
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0, len = locListeners.length;  i < len; i++){
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
+    },
 
     _updateCapInset: function () {
         var insets, locInsetLeft = this._insetLeft, locInsetTop = this._insetTop, locInsetRight = this._insetRight;
@@ -106,19 +135,20 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         var size = this._contentSize;
-        var locTopLeft = this._topLeft, locTopRight = this._topRight, locBottomRight = this._bottomRight;
+        var locTopLeft = this._topLeft, locTopRight = this._topRight, locBottomRight = this._bottomRight, locBottomLeft = this._bottomLeft;
         var locCenter = this._centre, locCenterContentSize = this._centre.getContentSize();
+        var locTopLeftContentSize = locTopLeft.getContentSize();
+        var locBottomLeftContentSize = locBottomLeft.getContentSize();
 
-        var sizableWidth = size.width - locTopLeft.getContentSize().width - locTopRight.getContentSize().width;
-        var sizableHeight = size.height - locTopLeft.getContentSize().height - locBottomRight.getContentSize().height;
+        var sizableWidth = size._width - locTopLeftContentSize.width - locTopRight.getContentSize().width;
+        var sizableHeight = size._height - locTopLeftContentSize.height - locBottomRight.getContentSize().height;
         var horizontalScale = sizableWidth / locCenterContentSize.width;
         var verticalScale = sizableHeight / locCenterContentSize.height;
         var rescaledWidth = locCenterContentSize.width * horizontalScale;
         var rescaledHeight = locCenterContentSize.height * verticalScale;
 
-        var locBottomLeft = this._bottomLeft;
-        var leftWidth = locBottomLeft.getContentSize().width;
-        var bottomHeight = locBottomLeft.getContentSize().height;
+        var leftWidth = locBottomLeftContentSize.width;
+        var bottomHeight = locBottomLeftContentSize.height;
 
         if(!cc.Browser.supportWebGL) {
             //browser is in canvas mode, need to manually control rounding to prevent overlapping pixels
@@ -179,6 +209,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._color = cc.white();
         this._opacity = 255;
         this._capInsets = cc.RectZero();
+        this._loadedEventListeners = [];
     },
 
     /** Original sprite's size. */
@@ -239,11 +270,11 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         }
         //backup the contentSize
         var contentSize = this._contentSize;
-        contentSize = new cc.Size(contentSize.width,contentSize.height);
+        var tempWidth = contentSize._width, tempHeight = contentSize._height;
 
         this.updateWithBatchNode(this._scale9Image, this._spriteRect, this._spriteFrameRotated, capInsets);
         //restore the contentSize
-        this.setContentSize(contentSize);
+        this.setContentSize(tempWidth, tempHeight);
     },
 
     /**
@@ -312,17 +343,26 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._updateCapInset();
     },
 
-    setContentSize: function (size) {
-        cc.Node.prototype.setContentSize.call(this, size);
+    /**
+     * Sets the untransformed size of the Scale9Sprite.
+     * @override
+     * @param {cc.Size|Number} size The untransformed size of the Scale9Sprite or The untransformed size's width of the Scale9Sprite.
+     * @param {Number} [height] The untransformed size's height of the Scale9Sprite.
+     */
+    setContentSize: function (size, height) {
+        if(arguments.length === 2)
+            cc.Node.prototype.setContentSize.call(this, size, height);
+        else
+            cc.Node.prototype.setContentSize.call(this, size);
         this._positionsAreDirty = true;
     },
 
-    visit: function () {
+    visit: function (ctx) {
         if (this._positionsAreDirty) {
             this._updatePositions();
             this._positionsAreDirty = false;
         }
-        cc.NodeRGBA.prototype.visit.call(this);
+        cc.NodeRGBA.prototype.visit.call(this, ctx);
     },
 
     init: function () {
@@ -338,7 +378,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         if (batchNode) {
             this.updateWithBatchNode(batchNode, rect, rotated, capInsets);
         }
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setAnchorPoint(0.5, 0.5);
         this._positionsAreDirty = true;
         return true;
     },
@@ -368,6 +408,25 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
         if(!file)
             throw "cc.Scale9Sprite.initWithFile(): file should be non-null";
+
+        var texture = cc.TextureCache.getInstance().textureForKey(file);
+        if (!texture) {
+            texture = cc.TextureCache.getInstance().addImage(file);
+            var locLoaded = texture.isLoaded();
+            this._textureLoaded = locLoaded;
+            if(!locLoaded){
+                texture.addLoadedEventListener(function(sender){
+                    // the texture is rotated on Canvas render mode, so isRotated always is false.
+                    var preferredSize = this._preferredSize;
+                    preferredSize = cc.size(preferredSize.width, preferredSize.height);
+                    var size  = sender.getContentSize();
+                    this.updateWithBatchNode(this._scale9Image, cc.rect(0,0,size.width,size.height), false, this._capInsets);
+                    this.setPreferredSize(preferredSize);
+                    this._positionsAreDirty = true;
+                    this._callLoadedEventCallbacks();
+                }, this);
+            }
+        }
         var batchnode = cc.SpriteBatchNode.create(file, 9);
         return this.initWithBatchNode(batchnode, rect, false, capInsets);
     },
@@ -387,8 +446,9 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             throw "cc.Scale9Sprite.initWithSpriteFrame(): spriteFrame should be non-null and its texture should be non-null";
 
         capInsets = capInsets || cc.RectZero();
-
-        if(!spriteFrame.textureLoaded()){
+        var locLoaded = spriteFrame.textureLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
             spriteFrame.addLoadedEventListener(function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
@@ -396,6 +456,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
+                this._callLoadedEventCallbacks();
             },this);
         }
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
@@ -478,14 +539,17 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
         if (this._scale9Image != batchNode){
             this._scale9Image = batchNode;
-            var tmpTexture = batchNode.getTexture();
-            if(!tmpTexture.isLoaded()){
-                tmpTexture.addLoadedEventListener(function(sender){
-                    this._positionsAreDirty = true;
-                },this);
-            }
         }
-
+        var tmpTexture = batchNode.getTexture();
+        var locLoaded = tmpTexture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            tmpTexture.addLoadedEventListener(function(sender){
+                this._positionsAreDirty = true;
+                this._callLoadedEventCallbacks();
+            },this);
+            return;
+        }
         var locScale9Image = this._scale9Image;
         locScale9Image.removeAllChildren(true);
 
@@ -514,7 +578,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         locSpriteRect.width = rect.width;
         locSpriteRect.height = rect.height;
 
-        var rectSize = rect.size;
+        var rectSize = rect._size;
         this._originalSize.width = rectSize.width;
         this._originalSize.height = rectSize.height;
 
@@ -760,7 +824,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             locScale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
         }
 
-        this.setContentSize(rect.size);
+        this.setContentSize(rect._size);
         this.addChild(locScale9Image);
 
         if (this._spritesGenerated) {
@@ -777,7 +841,9 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     setSpriteFrame: function (spriteFrame) {
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
-        if(!spriteFrame.textureLoaded()){
+        var locLoaded = spriteFrame.textureLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
             spriteFrame.addLoadedEventListener(function(sender){
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
@@ -785,6 +851,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
+                this._callLoadedEventCallbacks();
             },this);
         }
         this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, cc.RectZero());

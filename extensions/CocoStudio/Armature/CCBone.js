@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.Bone objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends ccs.NodeRGBA
  */
-ccs.Bone = cc.NodeRGBA.extend({
+ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     _boneData:null,
     _armature:null,
     _childArmature:null,
@@ -40,7 +40,8 @@ ccs.Bone = cc.NodeRGBA.extend({
     _parentBone:null,
     _boneTransformDirty:false,
     _worldTransform:null,
-    _blendType:0,
+    _blendFunc:0,
+    _blendDirty:false,
     _worldInfo:null,
     _armatureParentBone:null,
     _dataVersion:0,
@@ -58,7 +59,8 @@ ccs.Bone = cc.NodeRGBA.extend({
         this._parentBone = null;
         this._boneTransformDirty = true;
         this._worldTransform = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
-        this._blendType=ccs.BlendType.normal;
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._blendDirty = false;
     },
 
     /**
@@ -174,8 +176,8 @@ ccs.Bone = cc.NodeRGBA.extend({
                 locTweenData.scaleY -= 1;
             }
 
-            locWorldInfo.x = locTweenData.x + this._position.x;
-            locWorldInfo.y = locTweenData.y + this._position.y;
+            locWorldInfo.x = locTweenData.x + this._position._x;
+            locWorldInfo.y = locTweenData.y + this._position._y;
             locWorldInfo.scaleX = locTweenData.scaleX * this._scaleX;
             locWorldInfo.scaleY = locTweenData.scaleY * this._scaleY;
             locWorldInfo.skewX = locTweenData.skewX + this._skewX + this._rotationX;
@@ -490,7 +492,26 @@ ccs.Bone = cc.NodeRGBA.extend({
      * @param {Boolean} force
      */
     changeDisplayByIndex:function (index, force) {
-        this._displayManager.changeDisplayByIndex(index, force);
+        cc.log("changeDisplayByIndex is deprecated. Use changeDisplayWithIndex instead.");
+        this.changeDisplayWithIndex(index, force);
+    },
+
+    /**
+     * change display with index
+     * @param {Number} index
+     * @param {Boolean} force
+     */
+    changeDisplayWithIndex:function (index, force) {
+        this._displayManager.changeDisplayWithIndex(index, force);
+    },
+
+    /**
+     * change display with name
+     * @param {String} name
+     * @param {Boolean} force
+     */
+    changeDisplayWithName:function (name, force) {
+        this._displayManager.changeDisplayWithName(name, force);
     },
 
     /**
@@ -505,7 +526,7 @@ ccs.Bone = cc.NodeRGBA.extend({
                 return detector.getColliderBodyList();
             }
         }
-        return null;
+        return [];
     },
 
     /**
@@ -597,19 +618,30 @@ ccs.Bone = cc.NodeRGBA.extend({
     },
 
     /**
-     * blendType  setter
-     * @param {ccs.BlendType} blendType
+     * BlendFunc  setter
+     * @param {cc.BlendFunc} blendFunc
      */
-    setBlendType:function (blendType) {
-        this._blendType = blendType;
+    setBlendFunc:function (blendFunc) {
+        if (this._blendFunc.src != blendFunc.src || this._blendFunc.dst != blendFunc.dst)        {
+            this._blendFunc = blendFunc;
+            this._blendDirty = true;
+        }
     },
 
     /**
      * blendType  getter
-     * @return {ccs.BlendType}
+     * @return {cc.BlendFunc}
      */
-    getBlendType:function () {
-        return this._blendType;
+    getBlendFunc:function () {
+        return this._blendFunc;
+    },
+
+    setBlendDirty:function(dirty){
+        this._blendDirty = dirty;
+    },
+
+    isBlendDirty:function(){
+        return this._blendDirty;
     }
 });
 

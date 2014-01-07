@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ActionNode
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ActionNode = cc.Class.extend({
+ccs.ActionNode = ccs.Class.extend({
     _currentFrameIndex: 0,
     _destFrameIndex: 0,
     _unitTime: 0,
@@ -118,10 +118,7 @@ ccs.ActionNode = cc.Class.extend({
     },
 
     initActionNodeFromRoot: function (root) {
-        if (root instanceof cc.Node) {
-            cc.log("Need a definition of <initActionNodeFromRoot> for gameObject");
-        }
-        else if (root instanceof ccs.UIWidget) {
+        if (root instanceof ccs.Widget) {
             var widget = ccs.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
             if (widget) {
                 this.setObject(widget);
@@ -186,8 +183,8 @@ ccs.ActionNode = cc.Class.extend({
         if (this._object instanceof cc.Node) {
             return this._object;
         }
-        else if (this._object instanceof ccs.UIWidget) {
-            return this._object.getRenderer();
+        else if (this._object instanceof ccs.Widget) {
+            return this._object;
         }
         return null;
     },
@@ -279,13 +276,17 @@ ccs.ActionNode = cc.Class.extend({
     /**
      * Play the action.
      * @param {Boolean} loop
+     * @param {cc.CallFunc} fun
      */
-    playAction: function () {
+    playAction: function (fun) {
         if (this._object == null || this._actionSpawn == null) {
             return;
         }
-         this._action = cc.Sequence.create(this._actionSpawn, null);
-        this._action.retain();
+        if(fun){
+            this._action = cc.Sequence.create(this._actionSpawn,fun);
+        }else{
+            this._action = cc.Sequence.create(this._actionSpawn);
+        }
         this.runAction();
     },
 
@@ -305,7 +306,8 @@ ccs.ActionNode = cc.Class.extend({
     stopAction: function () {
         var node = this.getActionNode();
         if (node != null && this._action != null) {
-            node.stopAction(this._action);
+            if(!this._action.isDone())
+                node.stopAction(this._action);
         }
     },
 

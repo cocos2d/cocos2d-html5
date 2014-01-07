@@ -25,19 +25,18 @@
 /**
  * Base class for ccs.ComAttribute
  * @class
- * @extends cc.Component
+ * @extends ccs.Component
  */
-ccs.ComAttribute = cc.Component.extend({
-    _attributes: null,
+ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
     _jsonDict: null,
+    _filePath: "",
     ctor: function () {
         cc.Component.prototype.ctor.call(this);
-        this._attributes = {};
         this._jsonDict = {};
-        this._name = "ComAttribute";
+        this._filePath = "";
+        this._name = "CCComAttribute";
     },
     init: function () {
-        this._attributes = {};
         this._jsonDict = {};
         return true;
     },
@@ -52,7 +51,7 @@ ccs.ComAttribute = cc.Component.extend({
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -65,7 +64,7 @@ ccs.ComAttribute = cc.Component.extend({
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -78,7 +77,7 @@ ccs.ComAttribute = cc.Component.extend({
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -91,7 +90,7 @@ ccs.ComAttribute = cc.Component.extend({
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -104,7 +103,7 @@ ccs.ComAttribute = cc.Component.extend({
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -117,7 +116,7 @@ ccs.ComAttribute = cc.Component.extend({
             cc.log("Argument must be non-nil");
             return;
         }
-        this._attributes[key] = value;
+        this._jsonDict[key] = value;
     },
 
     /**
@@ -126,7 +125,7 @@ ccs.ComAttribute = cc.Component.extend({
      * @returns {Number}
      */
     getInt: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return parseInt(ret || 0);
     },
 
@@ -136,7 +135,7 @@ ccs.ComAttribute = cc.Component.extend({
      * @returns {Number}
      */
     getDouble: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return parseFloat(ret || 0.0);
     },
 
@@ -146,7 +145,7 @@ ccs.ComAttribute = cc.Component.extend({
      * @returns {Number}
      */
     getFloat: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return parseFloat(ret || 0.0);
     },
 
@@ -156,7 +155,7 @@ ccs.ComAttribute = cc.Component.extend({
      * @returns {Boolean}
      */
     getBool: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return Boolean(ret || false);
     },
 
@@ -166,7 +165,7 @@ ccs.ComAttribute = cc.Component.extend({
      * @returns {String}
      */
     getCString: function (key) {
-        var ret = this._attributes[key];
+        var ret = this._jsonDict[key];
         return ret || "";
     },
 
@@ -176,26 +175,28 @@ ccs.ComAttribute = cc.Component.extend({
      * @returns {Object}
      */
     getObject: function (key) {
-        return this._attributes[key];
+        return this._jsonDict[key];
     },
 
     /**
-     * Getter of jsonDict
-     * @returns {Object}
+     *
+     * @param path
      */
-    getDict: function () {
-        return this._jsonDict;
-    },
-
-    /**
-     * setter of jsonDict
-     * @returns {Object}
-     */
-    setDict: function (dict) {
-         this._jsonDict = dict;
+    parse:function(path){
+        var data = cc.FileUtils.getInstance().getTextFileData(path);
+        if (data) {
+            this._jsonDict = JSON.parse(data);
+        }
     }
 });
-
+/**
+ * allocates and initializes a ComAttribute.
+ * @constructs
+ * @return {ccs.ComAttribute}
+ * @example
+ * // example
+ * var com = ccs.ComAttribute.create();
+ */
 ccs.ComAttribute.create = function () {
     var com = new ccs.ComAttribute();
     if (com && com.init()) {

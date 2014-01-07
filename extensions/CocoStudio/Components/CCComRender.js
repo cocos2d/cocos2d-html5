@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ComRender
  * @class
- * @extends cc.Component
+ * @extends ccs.Component
  */
-ccs.ComRender = cc.Component.extend({
+ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
     _render: null,
     ctor: function (node, comName) {
         cc.Component.prototype.ctor.call(this);
@@ -45,14 +45,30 @@ ccs.ComRender = cc.Component.extend({
         this._render = null;
     },
 
+    /**
+     * Node getter
+     * @returns {cc.Node}
+     */
     getNode: function () {
         return this._render;
     },
 
+    /**
+     * Node setter
+     * @param {cc.Node} node
+     */
     setNode: function (node) {
         this._render = node;
     }
 });
+/**
+ * allocates and initializes a ComRender.
+ * @constructs
+ * @return {ccs.ComRender}
+ * @example
+ * // example
+ * var com = ccs.ComRender.create();
+ */
 ccs.ComRender.create = function (node, comName) {
     var com = new ccs.ComRender(node, comName);
     if (com && com.init()) {

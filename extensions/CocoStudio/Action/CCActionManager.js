@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.ActionManager
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-ccs.ActionManager = cc.Class.extend({
+ccs.ActionManager = ccs.Class.extend(/** @lends ccs.ActionManager# */{
     _actionDic: null,
     ctor: function () {
         this._actionDic = {};
@@ -78,11 +78,12 @@ ccs.ActionManager = cc.Class.extend({
      * Play an Action with a name.
      * @param {String} jsonName
      * @param {String} actionName
+     * @param {cc.CallFunc} fun
      */
-    playActionByName: function (jsonName, actionName) {
+    playActionByName: function (jsonName, actionName, fun) {
         var action = this.getActionByName(jsonName, actionName);
         if (action) {
-            action.play();
+            action.play(fun);
         }
     },
 
