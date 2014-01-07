@@ -232,7 +232,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     initWithDuration:function (duration, gridSize, seed) {
         if (cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._seed = seed;
-            this._tilesOrder = null;
+            this._tilesOrder.length = 0;
             this._tiles = null;
             return true;
         }
@@ -298,16 +298,16 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
         var locGridSize = this._gridSize;
 
         this._tilesCount = locGridSize.width * locGridSize.height;
-        this._tilesOrder = [];
+        var locTilesOrder = this._tilesOrder;
+        locTilesOrder.length = 0;
 
         /**
          * Use k to loop. Because m_nTilesCount is unsigned int,
          * and i is used later for int.
          */
         for (var k = 0; k < this._tilesCount; ++k)
-            this._tilesOrder[k] = k;
-
-        this.shuffle(this._tilesOrder, this._tilesCount);
+            locTilesOrder[k] = k;
+        this.shuffle(locTilesOrder, this._tilesCount);
 
         var locTiles = [];
         var tileIndex = 0;
@@ -568,7 +568,7 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
     initWithDuration:function (duration, gridSize, seed) {
         if (cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._seed = seed;
-            this._tilesOrder = null;
+            this._tilesOrder.length = 0;
             return true;
         }
         return false;
@@ -608,11 +608,11 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
         cc.TiledGrid3DAction.prototype.startWithTarget.call(this, target);
 
         this._tilesCount = this._gridSize.width * this._gridSize.height;
-        var locTilesOrder = [];
+        var locTilesOrder = this._tilesOrder;
+        locTilesOrder.length = 0;
         for (var i = 0; i < this._tilesCount; ++i)
             locTilesOrder[i] = i;
-        this._tilesOrder = locTilesOrder;
-        this.shuffle(this._tilesOrder, this._tilesCount);
+        this.shuffle(locTilesOrder, this._tilesCount);
     },
 
     /**
@@ -620,9 +620,9 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
      */
     update:function (time) {
         var l = 0 | (time * this._tilesCount), locGridSize = this._gridSize;
-        var t,tilePos = cc.p(0,0);
+        var t,tilePos = cc.p(0,0), locTilesOrder = this._tilesOrder;
         for (var i = 0; i < this._tilesCount; i++) {
-            t = this._tilesOrder[i];
+            t = locTilesOrder[i];
             tilePos.x = 0 | (t / locGridSize.height);
             tilePos.y = t % (0 | locGridSize.height);
             if (i < l)
