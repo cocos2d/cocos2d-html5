@@ -233,7 +233,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
         if (cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._seed = seed;
             this._tilesOrder.length = 0;
-            this._tiles = null;
+            this._tiles.length = 0;
             return true;
         }
         return false;
@@ -309,18 +309,20 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
             locTilesOrder[k] = k;
         this.shuffle(locTilesOrder, this._tilesCount);
 
-        var locTiles = [];
-        var tileIndex = 0;
+        var locTiles = this._tiles ;
+        locTiles.length = 0;
+        var tileIndex = 0, tempSize = cc.size(0,0);
         for (var i = 0; i < locGridSize.width; ++i) {
             for (var j = 0; j < locGridSize.height; ++j) {
                 locTiles[tileIndex] = new cc.Tile();
                 locTiles[tileIndex].position = cc.p(i, j);
                 locTiles[tileIndex].startPosition = cc.p(i, j);
-                locTiles[tileIndex].delta = this.getDelta(cc.size(i, j));
+                tempSize.width = i;
+                tempSize.height = j;
+                locTiles[tileIndex].delta = this.getDelta(tempSize);
                 ++tileIndex;
             }
         }
-        this._tiles = locTiles;
     },
 
     update:function (time) {

@@ -531,7 +531,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         // remove all objects, but don't release it.
         // runWithScene might be executed after 'end'.
-        this._scenesStack = [];
+        this._scenesStack.length = 0;
 
         this.stopAnimation();
 

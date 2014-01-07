@@ -196,6 +196,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
  * @extends cc.DrawingPrimitive
  */
 cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrimitiveCanvas# */{
+    _cacheArray:[],
     /**
      * draws a point given x and y coordinate measured in points
      * @override
@@ -282,9 +283,9 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     },
 
     /**
-     * draws a polygon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
+     * draws a polygon given a pointer to cc.Point coordinates and the number of vertices measured in points.
      * @override
-     * @param {Array} vertices a pointer to cc.Point coordiantes
+     * @param {Array} vertices a pointer to cc.Point coordinates
      * @param {Number} numOfVertices the number of vertices measured in points
      * @param {Boolean} closePolygon The polygon can be closed or open
      * @param {Boolean} [fill=] The polygon can be closed or open and optionally filled with current color
@@ -315,14 +316,14 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     },
 
     /**
-     * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
-     * @param {Array} poli
+     * draws a solid polygon given a pointer to CGPoint coordinates, the number of vertices measured in points, and a color.
+     * @param {Array} polygons
      * @param {Number} numberOfPoints
      * @param {cc.Color4F} color
      */
-    drawSolidPoly:function (poli, numberOfPoints, color) {
+    drawSolidPoly:function (polygons, numberOfPoints, color) {
         this.setDrawColor4F(color.r, color.g, color.b, color.a);
-        this.drawPoly(poli, numberOfPoints, true, true);
+        this.drawPoly(polygons, numberOfPoints, true, true);
     },
 
     /**
@@ -357,7 +358,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      */
     drawQuadBezier:function (origin, control, destination, segments) {
         //this is OpenGL Algorithm
-        var vertices = [];
+        var vertices = this._cacheArray;
+        vertices.length =0;
 
         var t = 0.0;
         for (var i = 0; i < segments; i++) {
@@ -382,7 +384,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      */
     drawCubicBezier:function (origin, control1, control2, destination, segments) {
         //this is OpenGL Algorithm
-        var vertices = [];
+        var vertices = this._cacheArray;
+        vertices.length =0;
 
         var t = 0;
         for (var i = 0; i < segments; i++) {
@@ -416,7 +419,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     drawCardinalSpline:function (config, tension, segments) {
         //lazy_init();
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
-        var points = [];
+        var points = this._cacheArray;
+        points.length = 0;
         var p, lt;
         var deltaT = 1.0 / config.length;
 
