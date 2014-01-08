@@ -434,6 +434,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             return;
         }
         this.setResolutionPolicy(resolutionPolicy);
+        var policy;
         if (policy = this._resolutionPolicy)
             policy.preApply(this);
         else {
@@ -929,8 +930,8 @@ cc.ContentStrategy = cc.Class.extend({
 
     _buildResult: function (containerW, containerH, contentW, contentH, scaleX, scaleY) {
         var viewport = cc.rect(Math.round((containerW - contentW) / 2),
-            Math.round((containerH - contentH) / 2),
-            contentW, contentH);
+                               Math.round((containerH - contentH) / 2),
+                               contentW, contentH);
 
         // Translate the content
         if (cc.renderContextType == cc.CANVAS)
@@ -987,8 +988,8 @@ cc.ContentStrategy = cc.Class.extend({
             scaleX < scaleY ? (containerW = frameW, containerH = designH * scaleX) : (containerW = designW * scaleY, containerH = frameH);
 
             // Adjust container size with integer value
-            var offx = Math.floor((frameW - containerW) / 2);
-            var offy = Math.floor((frameH - containerH) / 2);
+            var offx = Math.round((frameW - containerW) / 2);
+            var offy = Math.round((frameH - containerH) / 2);
             containerW = frameW - 2 * offx;
             containerH = frameH - 2 * offy;
 
