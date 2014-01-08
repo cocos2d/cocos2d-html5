@@ -308,34 +308,35 @@ cc.GLProgram = cc.Class.extend({
      * @return {Boolean}
      */
     initWithVertexShaderByteArray: function (vertShaderStr, fragShaderStr) {
-        this._programObj = cc.renderContext.createProgram();
+        var locGL = this._glContext;
+        this._programObj = locGL.createProgram();
         //cc.CHECK_GL_ERROR_DEBUG();
 
         this._vertShader = null;
         this._fragShader = null;
 
         if (vertShaderStr) {
-            this._vertShader = this._glContext.createShader(this._glContext.VERTEX_SHADER);
-            if (!this._compileShader(this._vertShader, this._glContext.VERTEX_SHADER, vertShaderStr)) {
+            this._vertShader = locGL.createShader(locGL.VERTEX_SHADER);
+            if (!this._compileShader(this._vertShader, locGL.VERTEX_SHADER, vertShaderStr)) {
                 cc.log("cocos2d: ERROR: Failed to compile vertex shader");
             }
         }
 
         // Create and compile fragment shader
         if (fragShaderStr) {
-            this._fragShader = this._glContext.createShader(this._glContext.FRAGMENT_SHADER);
-            if (!this._compileShader(this._fragShader, this._glContext.FRAGMENT_SHADER, fragShaderStr)) {
+            this._fragShader = locGL.createShader(locGL.FRAGMENT_SHADER);
+            if (!this._compileShader(this._fragShader, locGL.FRAGMENT_SHADER, fragShaderStr)) {
                 cc.log("cocos2d: ERROR: Failed to compile fragment shader");
             }
         }
 
         if (this._vertShader)
-            this._glContext.attachShader(this._programObj, this._vertShader);
+            locGL.attachShader(this._programObj, this._vertShader);
         cc.CHECK_GL_ERROR_DEBUG();
 
         if (this._fragShader)
-            this._glContext.attachShader(this._programObj, this._fragShader);
-        this._hashForUniforms = [];
+            locGL.attachShader(this._programObj, this._fragShader);
+        this._hashForUniforms.length = 0;
 
         cc.CHECK_GL_ERROR_DEBUG();
         return true;
@@ -802,7 +803,7 @@ cc.GLProgram = cc.Class.extend({
     reset: function () {
         this._vertShader = null;
         this._fragShader = null;
-        this._uniforms = [];
+        this._uniforms.length = 0;
 
         // it is already deallocated by android
         //ccGLDeleteProgram(m_uProgram);
@@ -815,7 +816,7 @@ cc.GLProgram = cc.Class.extend({
             this._hashForUniforms[i] = null;
         }
 
-        this._hashForUniforms = [];
+        this._hashForUniforms.length = 0;
     },
 
     /**
@@ -827,7 +828,7 @@ cc.GLProgram = cc.Class.extend({
     },
 
     /**
-     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
      * This is a hack, and should be removed once JSB fixes the retain/release bug
      */
