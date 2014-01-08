@@ -603,9 +603,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     /**
      * Touch events are handled by default; if you want to customize your handlers, please override these functions:
      * @param {Number} num
-     * @param {Number} ids
-     * @param {Number} xs
-     * @param {Number} ys
+     * @param {Array} ids
+     * @param {Array} xs
+     * @param {Array} ys
      */
     handleTouchesBegin: function (num, ids, xs, ys) {
         var arr = [], locViewPortRect = this._viewPortRect, locScaleX = this._scaleX, locScaleY = this._scaleY;
@@ -631,17 +631,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 touch.setTouchInfo(unusedIndex, (x - locViewPortRect.x) / locScaleX,
                     (y - locViewPortRect.y) / locScaleY);
 
-                var interObj = 0 | unusedIndex;
-                cc.TouchesIntergerDict[id] = interObj;
+                cc.TouchesIntergerDict[id] = 0 | unusedIndex;
                 arr.push(touch);
             }
         }
 
-        if (arr.length == 0) {
-            //cc.log("touchesBegan: count = 0");
-            return;
-        }
-        this._delegate.touchesBegan(arr, null);
+        if (arr.length !== 0)
+            this._delegate.touchesBegan(arr, null);
     },
 
     /**
@@ -747,10 +743,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 return;
             }
         }
-
-        /*if (arr.length == 0) {
-         cc.log("touchesEnded or touchesCancel: count = 0");
-         }*/
     },
 
     // Pass the touches to the superview
@@ -843,8 +835,8 @@ cc.EGLView.getInstance = function () {
 
 cc.ContainerStrategy = cc.Class.extend({
     /**
-     * Manipulation before appling the strategy
-     * @param {cc.EGLView} The target view
+     * Manipulation before applying the strategy
+     * @param {cc.EGLView} view The target view
      */
     preApply: function (view) {
     },
@@ -858,8 +850,8 @@ cc.ContainerStrategy = cc.Class.extend({
     },
 
     /**
-     * Manipulation after appling the strategy
-     * @param {cc.EGLView} The target view
+     * Manipulation after applying the strategy
+     * @param {cc.EGLView} view The target view
      */
     postApply: function (view) {
     },

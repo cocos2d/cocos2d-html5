@@ -625,7 +625,7 @@ cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
 
 cc.V3F_C4B_T2F_QuadsCopy = function (sourceQuads) {
     if (!sourceQuads)
-        return  [];
+        return [];
 
     var retArr = [];
     for (var i = 0; i < sourceQuads.length; i++) {
