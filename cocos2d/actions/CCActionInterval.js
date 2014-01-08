@@ -2310,7 +2310,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         this._nextFrame = 0;
         this._origFrame = null;
         this._executedLoops = 0;
-        this._splitTimes = null;
+        this._splitTimes = [];
     },
 
     /**
@@ -2341,7 +2341,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
             this._origFrame = null;
             this._executedLoops = 0;
-            var locTimes = [];
+            var locTimes = this._splitTimes;
+            locTimes.length = 0;
 
             var accumUnitsOfTime = 0;
             var newUnitOfTimeValue = singleDuration / animation.getTotalDelayUnits();
@@ -2355,7 +2356,6 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
                 accumUnitsOfTime += frame.getDelayUnits();
                 locTimes.push(value);
             }
-            this._splitTimes = locTimes;
             return true;
         }
         return false;

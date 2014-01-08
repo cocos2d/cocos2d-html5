@@ -665,7 +665,6 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         cc.SimpleAudioEngine.prototype.ctor.call(this);
 
         this._playingList = [];
-        window.playingList = this._playingList;
         this._isPauseForList = false;
         this._checkFlag = true;
         this._audioEndedCallbackBound = this._audioEndCallback.bind(this);
@@ -684,7 +683,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                 }
             }
         }
-        this._playingList = [];
+        this._playingList.length = 0;
         this._currentTask = null;
     },
 
@@ -1096,7 +1095,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             }
         }
 
-        this._playingList = [];
+        this._playingList.length = 0;
         this._currentTask = null;
 
         if(this._isPauseForList){

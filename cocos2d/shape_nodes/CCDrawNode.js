@@ -275,7 +275,8 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
                 this._trianglesArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
                 this._trianglesReader = new Uint8Array(this._trianglesArrayBuffer);
             } else {
-                var newTriangles = [];
+                var newTriangles = this._buffer;
+                newTriangles.length = 0;
                 var newArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
 
                 for(var i = 0; i < this._buffer.length;i++){
@@ -283,7 +284,6 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
                         newArrayBuffer,i * TriangleLength);
                 }
                 this._trianglesReader = new Uint8Array(newArrayBuffer);
-                this._buffer = newTriangles;
                 this._trianglesArrayBuffer = newArrayBuffer;
             }
         }

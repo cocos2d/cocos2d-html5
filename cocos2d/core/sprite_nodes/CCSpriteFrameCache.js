@@ -273,9 +273,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * </p>
      */
     removeSpriteFrames: function () {
-        this._spriteFrames = [];
-        this._spriteFramesAliases = [];
-        this._loadedFileNames = {};
+        this._spriteFrames = {};
+        this._spriteFramesAliases = {};
+        this._loadedFileNames.length = 0;
     },
 
     /**
