@@ -156,7 +156,7 @@ function checkUrl(url, callback) {
         }
     };
 
-    httpreq.open('HEAD', url, false);
+    httpreq.open('HEAD', url, true);
     httpreq.send();
 }
 
@@ -178,24 +178,14 @@ var module = result[1] ? result[1] : "";
 for(var i = 0, l = MODULE_NAMES.length; i < l; i++) {
     var name = MODULE_NAMES[i], url = "../" + name +"/index.html";
 
-    checkUrl(url, function(url, exist) {
-        if(exist) {
-            var li = document.createElement("li");
-            var a = document.createElement("a");
-            li.appendChild(a);
-            if(module == name)
-                li.className = "active";
-            a.href = url;
-            a.innerHTML = name;
-            rootUl.appendChild(li);
-        }
-        else {
-            var li = document.createElement("li");
-            li.innerHTML = name;
-            li.className = "inactive";
-            rootUl.appendChild(li);
-        }
-    });
+    var li = document.createElement("li");
+    var a = document.createElement("a");
+    li.appendChild(a);
+    if(module == name)
+        li.className = "active";
+    a.href = url;
+    a.innerHTML = name;
+    rootUl.appendChild(li);
 }
 
 var gms = cc.gameModules;
