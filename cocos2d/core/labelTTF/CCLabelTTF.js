@@ -166,7 +166,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             }
         }
 
-        return idfound;
+        // Avoid when idfound == 0, the process may enter in a infinite loop
+        return idfound || 1;
     },
 
     /**
