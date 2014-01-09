@@ -783,7 +783,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
  * <li>RGB colors</li></ul>                                                                 <br/>
  * </p>
  * @class
- * @extends cc.Layer
+ * @extends cc.LayerColor
  */
 cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _blendFunc:null,
