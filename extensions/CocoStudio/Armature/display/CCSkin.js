@@ -32,7 +32,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _bone:null,
     _skinTransform:null,
     _displayName:"",
-    _blend:null,
     _armature:null,
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
@@ -40,7 +39,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._bone = null;
         this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
-        this._blend = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this._armature = null;
     },
     initWithSpriteFrameName:function(spriteFrameName){
@@ -49,7 +47,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return ret;
     },
     initWithFile:function(fileName){
-        var ret = cc.Sprite.prototype.initWithFile.call(this,spriteFrameName);
+        var ret = cc.Sprite.prototype.initWithFile.call(this,fileName);
         this._displayName = fileName;
         return ret;
     },
@@ -125,34 +123,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         displayTransform.ty = anchorPoint.y;
 
         return cc.AffineTransformConcat(displayTransform, this._bone.getArmature().nodeToWorldTransform());
-    },
-    /**
-     * update blendType
-     * @param {ccs.BlendType} blendType
-     */
-    updateBlendType: function (blendType) {
-        var blendFunc = this._blend;
-        switch (blendType) {
-            case ccs.BlendType.normal:
-                blendFunc.src = cc.BLEND_SRC;
-                blendFunc.dst = cc.BLEND_DST;
-                break;
-            case ccs.BlendType.add:
-                blendFunc.src = gl.SRC_ALPHA;
-                blendFunc.dst = gl.ONE;
-                break;
-            case ccs.BlendType.multiply:
-                blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            case ccs.BlendType.screen:
-                blendFunc.src = gl.ONE;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            default:
-                break;
-        }
-        this.setBlendFunc(blendFunc);
     }
 });
 
