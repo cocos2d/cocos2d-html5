@@ -314,23 +314,32 @@
     var que = engine.concat(c.appFiles);
     que.push('main.js');
 
+
+    var loadHandlerIE = function (loaded){
+        loadNext();
+        updateLoading(loaded / que.length);
+        this.removeEventListener('load', loadHandlerIE, false);
+    };
+    var loadNext = function () {
+        i++;
+        if (i < que.length) {
+            var f = d.createElement('script');
+            f.src = que[i];
+            f.addEventListener('load', loadHandlerIE.bind(f, loaded), false);
+            d.body.appendChild(f);
+        }
+        updateLoading(i / (que.length - 1));
+    };
+    var loadHandler = function (){
+        loaded++;
+        updateLoading(loaded / que.length);
+        this.removeEventListener('load', loadHandler, false);
+    };
+
     if (navigator.userAgent.indexOf("Trident/5") > -1) {
         //ie9
         var i = -1;
-        var loadNext = function () {
-            i++;
-            if (i < que.length) {
-                var f = d.createElement('script');
-                f.src = que[i];
-                f.addEventListener('load',function(){
-                    loadNext();
-                    updateLoading(loaded / que.length);
-                    this.removeEventListener('load', arguments.callee, false);
-                },false);
-                d.body.appendChild(f);
-            }
-            updateLoading(i / (que.length - 1));
-        };
+
         loadNext();
     }
     else {
@@ -338,11 +347,7 @@
             var s = d.createElement('script');
             s.async = false;
             s.src = f;
-            s.addEventListener('load',function(){
-                loaded++;
-                updateLoading(loaded / que.length);
-                this.removeEventListener('load', arguments.callee, false);
-            },false);
+            s.addEventListener('load', loadHandler, false);
             d.body.appendChild(s);
         });
     }

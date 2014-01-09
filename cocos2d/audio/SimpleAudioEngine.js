@@ -296,7 +296,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         cc.AudioEngine.isMusicPlaying = false;
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
-            au.removeEventListener('pause', arguments.callee, false);
+            au.removeEventListener('pause', this._musicListener, false);
         }
     },
 
@@ -735,7 +735,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         cc.AudioEngine.isMusicPlaying = false;
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
-            au.removeEventListener('pause', arguments.callee, false);
+            au.removeEventListener('pause', this._musicListener, false);
         }
         if(this._checkFlag)
             this._isPauseForList = false;
