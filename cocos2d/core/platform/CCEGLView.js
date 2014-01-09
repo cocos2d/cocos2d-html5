@@ -434,8 +434,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             return;
         }
         this.setResolutionPolicy(resolutionPolicy);
-        var policy;
-        if (policy = this._resolutionPolicy)
+        var policy = this._resolutionPolicy;
+        if (policy)
             policy.preApply(this);
         else {
             cc.log("should set resolutionPolicy");
