@@ -465,7 +465,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
      * @return {cc.rect}
      */
     boundingBox:function () {
-        var minx, miny, maxx, maxy = 0;
+        var minx = 0, miny = 0, maxx = 0, maxy = 0;
         var first = true;
         var boundingBox = cc.rect(0, 0, 0, 0);
         for (var i = 0; i < this._children.length; i++) {

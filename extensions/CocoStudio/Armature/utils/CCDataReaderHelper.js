@@ -546,8 +546,8 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     var colorTransformXMLList = frameXML.querySelectorAll(ccs.CONST_FRAME + " > " + ccs.CONST_A_COLOR_TRANSFORM);
     if (colorTransformXMLList.length > 0) {
         var colorTransformXML = colorTransformXMLList[0];
-        var alpha = red = green = blue = 0;
-        var alphaOffset = redOffset = greenOffset = blueOffset = 100;
+        var alpha = 0, red = 0, green = 0, blue = 0;
+        var alphaOffset = 0, redOffset = 0, greenOffset = 0, blueOffset = 100;
 
         alpha = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_ALPHA)) || alpha;
         red = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_RED)) || red;
