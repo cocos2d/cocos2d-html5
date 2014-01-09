@@ -604,16 +604,16 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     /**
-     *
-     * @returns {number}
+     * Get the opacity of Layer
+     * @returns {number} opacity
      */
     getOpacity: function () {
         return this._realOpacity;
     },
 
     /**
-     *
-     * @returns {number}
+     * Get the displayed opacity of Layer
+     * @returns {number} displayed opacity
      */
     getDisplayedOpacity: function () {
         return this._displayedOpacity;
@@ -633,7 +633,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     /**
-     *
+     * Update displayed opacity of Layer
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
@@ -649,10 +649,18 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade opacity.
+     * @returns {boolean}
+     */
     isCascadeOpacityEnabled: function () {
         return this._cascadeOpacityEnabled;
     },
 
+    /**
+     * Enable or disable cascade opacity
+     * @param {boolean} cascadeOpacityEnabled
+     */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
         if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
             return;
@@ -681,16 +689,28 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * Get the color of Layer
+     * @returns {cc.Color3B}
+     */
     getColor: function () {
         var locRealColor = this._realColor;
         return cc.c3b(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
+    /**
+     * Get the displayed color of Layer
+     * @returns {cc.Color3B}
+     */
     getDisplayedColor: function () {
         var locDisplayedColor = this._displayedColor;
         return cc.c3b(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
     },
 
+    /**
+     * Set the color of Layer
+     * @param {cc.Color3B} color
+     */
     setColor: function (color) {
         var locDisplayed = this._displayedColor, locRealColor = this._realColor;
         locDisplayed.r = locRealColor.r = color.r;
@@ -705,6 +725,10 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this.updateDisplayedColor(parentColor);
     },
 
+    /**
+     * update the displayed color of Node
+     * @param {cc.Color3B} parentColor
+     */
     updateDisplayedColor: function (parentColor) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
         locDisplayedColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
@@ -721,10 +745,18 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade color.
+     * @returns {boolean}
+     */
     isCascadeColorEnabled: function () {
         return this._cascadeColorEnabled;
     },
 
+    /**
+     * Enable or disable cascade color
+     * @param {boolean} cascadeColorEnabled
+     */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
         if(this._cascadeColorEnabled === cascadeColorEnabled)
             return;
@@ -758,6 +790,13 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * add a child to layer
+     * @overried
+     * @param {cc.Node} child  A child node
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
+     */
     addChild:function(child, zOrder, tag){
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
 

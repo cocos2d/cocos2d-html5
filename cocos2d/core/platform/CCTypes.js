@@ -28,9 +28,9 @@
  * RGB color composed of bytes 3 bytes
  * @Class
  * @Construct
- * @param {Number | cc.Color3B} r1 red value (0 to 255) or destination color of new color
- * @param {Number} g1 green value (0 to 255)
- * @param {Number} b1 blue value (0 to 255)
+ * @param {Number|cc.Color3B} r1 red value (0 to 255) or destination color of new color
+ * @param {Number} [g1] green value (0 to 255)
+ * @param {Number} [b1] blue value (0 to 255)
  * @example
  * //create an empty color
  * var color1 = new cc.Color3B();
