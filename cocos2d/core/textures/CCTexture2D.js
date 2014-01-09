@@ -170,7 +170,6 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._isLoaded = false;
         this._htmlElementObj = null;
         this._webTextureObj = null;
-        this._loadedEventListeners = [];
     },
 
     releaseTexture:function () {
@@ -910,10 +909,14 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     addLoadedEventListener: function (callback, target) {
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
     },
 
     removeLoadedEventListener:function(target){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0;  i < locListeners.length; i++){
             var selCallback = locListeners[i];
@@ -924,6 +927,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     _callLoadedEventCallbacks: function () {
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for (var i = 0, len = locListeners.length; i < len; i++) {
             var selCallback = locListeners[i];
@@ -954,7 +959,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._contentSize = cc._sizeConst(0,0);
         this._isLoaded = false;
         this._htmlElementObj = null;
-        this._loadedEventListeners = [];
     },
 
     /**
@@ -1257,10 +1261,14 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
     },
 
     removeLoadedEventListener:function(target){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0;  i < locListeners.length; i++){
             var selCallback = locListeners[i];
@@ -1271,6 +1279,8 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0, len = locListeners.length;  i < len; i++){
             var selCallback = locListeners[i];

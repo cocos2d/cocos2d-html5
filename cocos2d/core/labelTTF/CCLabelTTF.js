@@ -66,6 +66,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _labelCanvas:null,
     _labelContext:null,
+    _lineWidths:null,
 
     /**
      * Constructor
@@ -97,6 +98,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._strokeShadowOffsetX = 0;
         this._strokeShadowOffsetY = 0;
         this._needUpdateTexture = false;
+
+        this._lineWidths = [];
 
         this._setColorsString();
     },
@@ -729,29 +732,27 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _updateTTF: function () {
-        var locDimensionsWidth = this._dimensions.width;
-        this._lineWidths = [];
+        var locDimensionsWidth = this._dimensions.width, i, strLength;
+        var locLineWidth = this._lineWidths;
+        locLineWidth.length = 0;
 
-        this._isMultiLine = false;
+        this._isMultiLine = false ;
+        this._measureConfig();
         if (locDimensionsWidth !== 0) {
             // Content processing
-            this._measureConfig();
             var text = this._string;
-
             this._strings = [];
-            for (var i = 0, length = this._string.length; i < length;) {
+            for (i = 0, strLength = this._string.length; i < strLength;) {
                 // Find the index of next line
                 var next = this._checkNextline(text.substr(i), locDimensionsWidth);
                 var append = text.substr(i, next);
-
                 this._strings.push(append);
                 i += next;
             }
-        }
-        else {
+        } else {
             this._strings = this._string.split('\n');
-            for (var i = 0, length = this._strings.length; i < length; i++) {
-                this._lineWidths.push(this._measure(this._strings[i]));
+            for (i = 0, strLength = this._strings.length; i < strLength; i++) {
+                locLineWidth.push(this._measure(this._strings[i]));
             }
         }
 
@@ -770,7 +771,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
-                locSize = cc.size(0 | (Math.max.apply(Math, this._lineWidths) + locStrokeShadowOffsetX),
+                locSize = cc.size(0 | (Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
                     0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
             else
                 locSize = cc.size(0 | (this._measure(this._string) + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
