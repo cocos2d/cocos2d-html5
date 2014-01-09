@@ -1201,13 +1201,13 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.setName(widget.getName());
         this.setActionTag(widget.getActionTag());
         this._ignoreSize = widget._ignoreSize;
-        this._size = widget._size;
-        this._customSize = widget._customSize;
+        this._size = cc.size(widget._size.width, widget._size.height);
+        this._customSize = cc.size(widget._customSize.width, widget._customSize.height);
         this.copySpecialProperties(widget);
         this._sizeType = widget.getSizeType();
-        this._sizePercent = widget._sizePercent;
+        this._sizePercent = cc.p(widget._sizePercent.x, widget._sizePercent.y);
         this._positionType = widget._positionType;
-        this._positionPercent = widget._positionPercent;
+        this._positionPercent = cc.p(widget._positionPercent.x, widget._positionPercent.y);
         this.setPosition(widget.getPosition());
         this.setAnchorPoint(widget.getAnchorPoint());
         this.setScaleX(widget.getScaleX());
