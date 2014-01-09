@@ -472,6 +472,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var director = cc.Director.getInstance();
         director._winSizeInPoints = this.getDesignResolutionSize();
 
+        policy.postApply(this);
+
         if (cc.renderContextType == cc.WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
@@ -486,8 +488,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
 
         cc.VisibleRect.init(this.getVisibleSize());
-
-        policy.postApply(this);
     },
 
     /**
