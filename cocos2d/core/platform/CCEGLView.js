@@ -600,7 +600,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * Get the real location in view
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
-        return {x: tx * this._devicePixelRatio - relatedPos.left, y: relatedPos.top + (relatedPos.height - ty) * this._devicePixelRatio};
+        return {x: this._devicePixelRatio * (tx - relatedPos.left), y: this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty)};
     },
 
     /**
