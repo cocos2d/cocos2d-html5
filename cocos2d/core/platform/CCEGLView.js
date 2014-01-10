@@ -66,6 +66,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _viewPortRect: null,
     // The visible rect in content's coordinate in point
     _visibleRect: null,
+    // The device's pixel ratio (for retina displays)
+    _devicePixelRatio: 1,
     // the view name
     _viewName: "",
     // Custom callback for resize event
@@ -598,7 +600,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * Get the real location in view
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
-        return {x: tx - relatedPos.left, y: relatedPos.top + relatedPos.height - ty};
+        return {x: tx * this._devicePixelRatio - relatedPos.left, y: relatedPos.top + (relatedPos.height - ty) * this._devicePixelRatio};
     },
 
     /**
@@ -835,9 +837,12 @@ cc.EGLView.getInstance = function () {
  */
 
 cc.ContainerStrategy = cc.Class.extend({
+    // Adjust canvas's size for retina display
+    _adjustRetina: true,
+
     /**
-     * Manipulation before applying the strategy
-     * @param {cc.EGLView} view The target view
+     * Manipulation before appling the strategy
+     * @param {cc.EGLView} The target view
      */
     preApply: function (view) {
     },
@@ -851,25 +856,31 @@ cc.ContainerStrategy = cc.Class.extend({
     },
 
     /**
-     * Manipulation after applying the strategy
-     * @param {cc.EGLView} view The target view
+     * Manipulation after appling the strategy
+     * @param {cc.EGLView} The target view
      */
     postApply: function (view) {
+
     },
 
-    _setupContainer: function (frame, w, h) {
+    _setupContainer: function (view, w, h) {
+        var frame = view._frame;
         if (cc.Browser.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
             cc.Screen.getInstance().autoFullScreen(cc.canvas);
         }
 
         var locCanvasElement = cc.canvas, locContainer = cc.container;
-        // Setup canvas
-        locCanvasElement.width = w;
-        locCanvasElement.height = h;
         // Setup container
-        locContainer.style.width = w + "px";
-        locContainer.style.height = h + "px";
+        locContainer.style.width = locCanvasElement.style.width = w + "px";
+        locContainer.style.height = locCanvasElement.style.height = h + "px";
+        // Setup pixel ratio for retina display
+        var devicePixelRatio = view._devicePixelRatio = 1;
+        if (this._adjustRetina)
+            devicePixelRatio = view._devicePixelRatio = window.devicePixelRatio || 1;
+        // Setup canvas
+        locCanvasElement.width = w * devicePixelRatio;
+        locCanvasElement.height = h * devicePixelRatio;
 
         var body = document.body, style;
         if (body && (style = body.style)) {
@@ -966,7 +977,7 @@ cc.ContentStrategy = cc.Class.extend({
 // Container scale strategys
     var EqualToFrame = cc.ContainerStrategy.extend({
         apply: function (view) {
-            this._setupContainer(view._frame, view._frameSize.width, view._frameSize.height);
+            this._setupContainer(view, view._frameSize.width, view._frameSize.height);
         }
     });
 
@@ -985,7 +996,7 @@ cc.ContentStrategy = cc.Class.extend({
             containerW = frameW - 2 * offx;
             containerH = frameH - 2 * offy;
 
-            this._setupContainer(view._frame, containerW, containerH);
+            this._setupContainer(view, containerW, containerH);
             // Setup container's margin
             containerStyle.marginLeft = offx + "px";
             containerStyle.marginRight = offx + "px";
@@ -1018,7 +1029,11 @@ cc.ContentStrategy = cc.Class.extend({
         }
     });
 
-    var OriginalContainer = cc.ContainerStrategy.extend({});
+    var OriginalContainer = cc.ContainerStrategy.extend({
+        apply: function (view) {
+            this._setupContainer(view, cc.canvas.width, cc.canvas.height);
+        }
+    });
 
 // #NOT STABLE on Android# Alias: Strategy that makes the container's size equals to the window's size
 //    cc.ContainerStrategy.EQUAL_TO_WINDOW = new EqualToWindow();
