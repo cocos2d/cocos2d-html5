@@ -729,28 +729,25 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _updateTTF: function () {
-        var locDimensionsWidth = this._dimensions.width;
+        var locDimensionsWidth = this._dimensions.width, i, strLength;
         this._lineWidths = [];
 
-        this._isMultiLine = false;
+        this._isMultiLine = false ;
+        this._measureConfig();
         if (locDimensionsWidth !== 0) {
             // Content processing
-            this._measureConfig();
             var text = this._string;
-
             this._strings = [];
-            for (var i = 0, length = this._string.length; i < length;) {
+            for (i = 0, strLength = this._string.length; i < strLength;) {
                 // Find the index of next line
                 var next = this._checkNextline(text.substr(i), locDimensionsWidth);
                 var append = text.substr(i, next);
-
                 this._strings.push(append);
                 i += next;
             }
-        }
-        else {
+        } else {
             this._strings = this._string.split('\n');
-            for (var i = 0, length = this._strings.length; i < length; i++) {
+            for (i = 0, strLength = this._strings.length; i < strLength; i++) {
                 this._lineWidths.push(this._measure(this._strings[i]));
             }
         }
