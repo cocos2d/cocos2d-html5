@@ -597,6 +597,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
+     * Get device pixel ratio for retina display.
+     */
+    getDevicePixelRatio: function() {
+        return this._devicePixelRatio;
+    },
+
+    /**
      * Get the real location in view
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
