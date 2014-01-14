@@ -1856,8 +1856,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     nodeToParentTransform: null,
 
     _nodeToParentTransformForCanvas:function () {
-        if (!this._transform)
-            this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
         if (this._transformDirty) {
             var t = this._transform;// quick reference
 
@@ -1919,7 +1917,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             }
 
             if (this._additionalTransformDirty) {
-                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
+                this._transform = cc.AffineTransformConcat(t, this._additionalTransform);
                 this._additionalTransformDirty = false;
             }
 
@@ -1964,7 +1962,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // Build Transform Matrix
             // Adjusted transform calculation for rotational skew
-            var t = {a: cy * scx, b: sy * scx, c: -sx * scy, d: cx * scy, tx: x, ty: y};
+            var t = this._transform;
+            t.a = cy * scx;
+            t.b = sy * scx;
+            t.c = -sx * scy;
+            t.d = cx * scy;
+            t.tx = x;
+            t.ty = y;
 
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
