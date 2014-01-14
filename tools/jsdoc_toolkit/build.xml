@@ -32,7 +32,6 @@
                 <include name="core/platform/CCEGLView.js"/>
                 <include name="core/platform/CCScreen.js"/>
                 <include name="core/platform/CCVisibleRect.js"/>
-                <include name="core/cocoa/CCNS.js"/>
                 <include name="core/cocoa/CCAffineTransform.js"/>
                 <include name="core/support/CCPointExtension.js"/>
                 <include name="core/support/CCVertex.js"/>

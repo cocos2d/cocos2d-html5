@@ -39,7 +39,6 @@
         'core/platform/CCEGLView.js',
         'core/platform/CCScreen.js',
         'core/platform/CCVisibleRect.js',
-        'core/cocoa/CCNS.js',
         'core/cocoa/CCAffineTransform.js',
         'core/support/CCPointExtension.js',
         'core/support/CCVertex.js',

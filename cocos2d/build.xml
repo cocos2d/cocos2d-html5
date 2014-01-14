@@ -25,7 +25,6 @@
                 <file name="core/platform/CCEGLView.js"/>
                 <file name="core/platform/CCScreen.js"/>
                 <file name="core/platform/CCVisibleRect.js"/>
-                <file name="core/cocoa/CCNS.js"/>
                 <file name="core/cocoa/CCAffineTransform.js"/>
                 <file name="core/support/CCPointExtension.js"/>
                 <file name="core/support/CCVertex.js"/>
