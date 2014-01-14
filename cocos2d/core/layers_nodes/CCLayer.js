@@ -138,7 +138,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * Enable touch events
      * @param {Boolean} enabled
-     * @param {Boolean} swallow: if the event listener will swallow touch after been triggered
+     * @param {Boolean} [swallow=true] if the event listener will swallow touch after been triggered
      */
     setTouchEnabled:function (enabled, swallow) {
         if (this._isTouchEnabled !== enabled) {

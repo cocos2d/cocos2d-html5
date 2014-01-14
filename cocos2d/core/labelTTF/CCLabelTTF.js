@@ -134,13 +134,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         // Find next special caracter or chinese caracters
         while (result = re.exec(substr)) {
             index += result[0].length;
-            if(result[2] == '\n') {
+	        var tem = text.substr(0, index);
+	        l = this._measure(tem);
+            if(result[2] == '\n' && l < width) {
                 found = true;
                 idfound = index;
                 break;
             }
-            var tem = text.substr(0, index);
-            l = this._measure(tem);
             if(l > width) {
                 if(idfound != -1)
                     found = true;
