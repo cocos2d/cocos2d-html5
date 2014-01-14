@@ -23,49 +23,8 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-/**
- * first, judge whether the form of the string like this: {x,y}  <br/>
- * if the form is right,the string will be splited into the parameter strs;<br/>
- * or the parameter strs will be empty. <br/>
- * if the form is right return true,else return false.<br/>
- * @function
- * @param {String} content
- * @param {String} strs
- * @return {String}
- */
-cc.splitWithForm = function (content, strs) {
-    do {
-        if (!content) break;
-
-        // string is empty
-        if (content.length == 0) break;
-
-        var posLeft = content.indexOf('{');
-        var posRight = content.indexOf('}');
-
-        // don't have '{' and '}'
-        if (posLeft == -1 || posRight == -1) break;
-        // '}' is before '{'
-        if (posLeft > posRight) break;
-
-        var pointStr = content.substr(posLeft + 1, posRight - posLeft - 1);
-        // nothing between '{' and '}'
-        if (pointStr.length == 0) break;
-
-        var nPos1 = pointStr.indexOf('{');
-        var nPos2 = pointStr.indexOf('}');
-        // contain '{' or '}'
-        if (nPos1 != -1 || nPos2 != -1) break;
-        strs = pointStr.split(",");
-        if (strs.length != 2 || strs[0] != null || strs[1] != null) {
-            break;
-        }
-    } while (0);
-
-    return strs;
-};
-
+var CCNS_REG1 = /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/;
+var CCNS_REG2 = /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*\}\s*$/
 /**
  * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
  * The string is not localized, so items are always separated with a comma. <br/>
@@ -81,36 +40,9 @@ cc.splitWithForm = function (content, strs) {
  * var rect = cc.RectFromString("{{3,2},{4,5}}");
  */
 cc.RectFromString = function (content) {
-    var result = cc.RectZero();
-    do {
-        if (!content) break;
-
-        // find the first '{' and the third '}'
-        var posLeft = content.indexOf('{') + 1;
-        var posRight = content.lastIndexOf('}', content.length);
-        if (posLeft == -1 || posRight == -1) break;
-
-        content = content.substring(posLeft, posRight);
-        var nPointEnd = content.indexOf('}');
-        if (nPointEnd == -1) break;
-        nPointEnd = content.indexOf(',', nPointEnd);
-        if (nPointEnd == -1) break;
-        // get the point string and size string
-        var pointStr = content.substr(0, nPointEnd);
-        var sizeStr = content.substr(nPointEnd + 1, content.length - nPointEnd);
-
-        // split the string with ','
-        var pointInfo = cc.splitWithForm(pointStr);
-        var sizeInfo = cc.splitWithForm(sizeStr);
-
-        var x = parseFloat(pointInfo[0]);
-        var y = parseFloat(pointInfo[1]);
-        var width = parseFloat(sizeInfo[0]);
-        var height = parseFloat(sizeInfo[1]);
-
-        result = cc.rect(x, y, width, height);
-    } while (0);
-    return result;
+    var result = CCNS_REG2.exec(content);
+    if(!result) return cc.RectZero();
+    return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
 };
 
 /**
@@ -128,18 +60,9 @@ cc.RectFromString = function (content) {
  * var point = cc.PointFromString("{3.0,2.5}");
  */
 cc.PointFromString = function (content) {
-    var ret = cc.PointZero();
-    try {
-        if (content == "")
-            return ret;
-
-        var strs = cc.splitWithForm(content);
-        var x = parseFloat(strs[0]);
-        var y = parseFloat(strs[1]);
-        ret = cc.p(x, y);
-    } catch (e) {
-    }
-    return ret;
+    var result = CCNS_REG1.exec(content);
+    if(!result) return cc.PointZero();
+    return cc.p(parseFloat(result[1]), parseFloat(result[2]));
 };
 
 /**
@@ -156,16 +79,7 @@ cc.PointFromString = function (content) {
  * var size = cc.SizeFromString("{3.0,2.5}");
  */
 cc.SizeFromString = function (content) {
-    var ret = cc.SizeZero();
-    try {
-        if (content == "")
-            return ret;
-
-        var strs = cc.splitWithForm(content);
-        var width = parseFloat(strs[0]);
-        var height = parseFloat(strs[1]);
-        ret = cc.size(width, height);
-    } catch (e) {
-    }
-    return ret;
+    var result = CCNS_REG1.exec(content);
+    if(!result) return cc.SizeZero();
+    return cc.size(parseFloat(result[1]), parseFloat(result[2]));
 };
