@@ -62,7 +62,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
-        if (!cc.Browser.supportWebGL) {
+        if (cc.renderContextType === cc.CANVAS) {
             if (skinData.skewX != -skinData.skewY) {
                 this._skewOver = true;
                 this.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
