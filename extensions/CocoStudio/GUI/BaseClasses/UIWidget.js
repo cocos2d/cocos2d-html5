@@ -1221,6 +1221,11 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.setOpacity(widget.getOpacity());
         this.setCascadeOpacityEnabled(widget.isCascadeOpacityEnabled());
         this.setCascadeColorEnabled(widget.isCascadeColorEnabled());
+        for (var key in widget._layoutParameterDictionary) {
+            var parameter = widget._layoutParameterDictionary[key];
+            if (parameter)
+                this.setLayoutParameter(parameter.clone());
+        }
         this.onSizeChanged();
     },
     

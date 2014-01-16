@@ -164,8 +164,8 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      */
     setTouchScaleChangeEnabled: function (enable) {
         this._touchScaleChangeEnabled = enable;
-        this._normalScaleValueX = this.getScaleX();
-        this._normalScaleValueY = this.getScaleY();
+        //this._normalScaleValueX = this.getScaleX();
+        //this._normalScaleValueY = this.getScaleY();
     },
 
     /**
@@ -187,7 +187,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         if (!this._touchScaleChangeEnabled) {
             return;
         }
-        this.clickScale(this._normalScaleValueX + this._onSelectedScaleOffset,this._normalScaleValueY + this._onSelectedScaleOffset);
+        ccs.Widget.prototype.setScale.call(this, this._normalScaleValueX + this._onSelectedScaleOffset,this._normalScaleValueY + this._onSelectedScaleOffset);
     },
 
     onPressStateChangedToDisabled: function () {

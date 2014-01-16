@@ -784,12 +784,17 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      */
     setBackGroundColor: function (color, endColor) {
         if (!endColor) {
-            this._color = color;
+            this._color.r = color.r;
+            this._color.g = color.g;
+            this._color.b = color.b;
             if (this._colorRender) {
                 this._colorRender.setColor(color);
             }
         } else {
-            this._startColor = color;
+            this._startColor.r = color.r;
+            this._startColor.g = color.g;
+            this._startColor.b = color.b;
+
             if (this._gradientRender) {
                 this._gradientRender.setStartColor(color);
             }
@@ -825,7 +830,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      * @param {cc.Point} vector
      */
     setBackGroundColorVector: function (vector) {
-        this._alongVector = vector;
+        this._alongVector.x = vector.x;
+        this._alongVector.y = vector.y;
         if (this._gradientRender) {
             this._gradientRender.setVector(vector);
         }

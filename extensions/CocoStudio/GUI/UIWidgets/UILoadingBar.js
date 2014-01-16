@@ -347,6 +347,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         this.loadTexture(loadingBar._textureFile, loadingBar._renderBarTexType);
         this.setCapInsets(loadingBar._capInsets);
         this.setPercent(loadingBar._percent);
+        this.setDirection(loadingBar._barType);
     }
 });
 /**
