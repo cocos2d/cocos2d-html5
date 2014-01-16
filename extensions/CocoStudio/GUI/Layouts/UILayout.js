@@ -380,7 +380,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
             context.save();
             // Draw everything first using node visit function
-            this._super(context);
+            cc.Node.prototype.visit.call(this, context);
 
             context.globalCompositeOperation = "destination-in";
 
