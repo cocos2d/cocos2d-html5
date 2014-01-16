@@ -258,25 +258,30 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
             var shape = null;
             if (locBody) {
                 shape = colliderBody.getShape();
-                locBody.p.x = t.tx;
-                locBody.p.y = t.ty;
-                locBody.p.a = t.a;
             }
             var vs = contourData.vertexList;
             var cvs = colliderBody.getCalculatedVertexList();
-            for (var i = 0; i < vs.length; i++) {
-                locHelpPoint.x = vs[i].x;
-                locHelpPoint.y = vs[i].y;
+            for (var j = 0; j < vs.length; j++) {
+                locHelpPoint.x = vs[j].x;
+                locHelpPoint.y = vs[j].y;
                 locHelpPoint = cc.PointApplyAffineTransform(locHelpPoint, t);
                 if (shape) {
-                    shape.verts[i * 2] = locHelpPoint.x - t.tx;
-                    shape.verts[i * 2 + 1] = locHelpPoint.y - t.ty;
+                    shape.verts[j * 2] = locHelpPoint.x;
+                    shape.verts[j * 2 + 1] = locHelpPoint.y;
                 }
                 if (ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
                     var v =  cc.p(0, 0);
                     v.x = locHelpPoint.x;
                     v.y = locHelpPoint.y;
-                    cvs[i] = v;
+                    cvs[j] = v;
+                }
+            }
+            if (shape) {
+                for (var j = 0; j < vs.length; j++)            {
+                    var b = shape.verts[(j + 1) % shape.verts.length];
+                    var n = cp.v.normalize(cp.v.perp(cp.v.sub(b, shape.verts[j])));
+                    shape.axes[j].n = n;
+                    shape.axes[j].d = cp.v.dot(n, shape.verts[j]);
                 }
             }
         }
