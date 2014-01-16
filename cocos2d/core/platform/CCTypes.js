@@ -1394,3 +1394,15 @@ cc.FontDefinition = function(){
     this.shadowBlur = 0;
     this.shadowOpacity = 1.0;
 };
+
+
+/**
+ * The device accelerometer reports values for each axis in units of g-force
+ * @constructor
+ */
+cc.Acceleration = function(){
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+    this.timestamp = 0;
+};
