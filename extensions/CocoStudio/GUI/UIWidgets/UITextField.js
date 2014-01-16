@@ -300,6 +300,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         if (!text) {
             return;
         }
+        text = String(text);
         if (this.isMaxLengthEnabled()) {
             text = text.substr(0, this.getMaxLength());
         }
