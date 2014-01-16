@@ -86,7 +86,7 @@ ccs.PositionType = {
  * var uiLayer = ccs.UILayer.create();
  * uiLayer.addWidget(uiWidget);
  * @class
- * @extends ccs.Class
+ * @extends ccs.NodeRGBA
  */
 ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _enabled: true,            ///< Highest control of widget

@@ -62,10 +62,6 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
     switch (bone.getDisplayRenderNodeType()) {
         case ccs.DisplayType.sprite:
             if (dirty){
-                if(bone.isBlendDirty()){
-                    display.setBlendFunc(bone.getBlendFunc());
-                    bone.setBlendDirty(false);
-                }
                 display.updateArmatureTransform();
             }
             break;

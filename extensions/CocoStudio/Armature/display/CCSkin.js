@@ -33,7 +33,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _skinTransform:null,
     _displayName:"",
     _armature:null,
-    _skewOver:false,
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
@@ -41,7 +40,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
         this._armature = null;
-        this._skewOver = false;
     },
     initWithSpriteFrameName:function(spriteFrameName){
         var ret = cc.Sprite.prototype.initWithSpriteFrameName.call(this,spriteFrameName);
@@ -61,13 +59,6 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.setRotationX(cc.RADIANS_TO_DEGREES(skinData.skewX));
         this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
-
-        if (cc.renderContextType === cc.CANVAS) {
-            if (skinData.skewX != -skinData.skewY) {
-                this._skewOver = true;
-                this.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
-            }
-        }
 
         var localTransform = this.nodeToParentTransform();
         var skinTransform = this._skinTransform;
@@ -95,15 +86,17 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     updateArmatureTransform:function () {
         this._transform = cc.AffineTransformConcat(this._skinTransform, this._bone.nodeToArmatureTransform());
         var locTransform = this._transform;
-
-        if (this._skewOver) {
-            locTransform.b *= -1;
-            locTransform.c *= -1;
-        }
-
         var locArmature = this._armature;
         if (locArmature && locArmature.getBatchNode()) {
-            this._transform = cc.AffineTransformConcat(locTransform, locTransform.nodeToParentTransform());
+            this._transform = cc.AffineTransformConcat(locTransform, locArmature.nodeToParentTransform());
+        }
+        if (cc.renderContextType === cc.CANVAS) {
+            locTransform = this._transform
+            locTransform.b *= -1;
+            locTransform.c *= -1;
+            var tempB = locTransform.b;
+            locTransform.b = locTransform.c;
+            locTransform.c = tempB;
         }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
@@ -140,7 +133,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return cc.AffineTransformConcat(displayTransform, this._bone.getArmature().nodeToWorldTransform());
     }
 });
-
+ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
 /**
  * allocates and initializes a skin.
  * @param {String} fileName
