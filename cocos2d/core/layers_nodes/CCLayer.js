@@ -46,6 +46,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _touchMode:cc.TOUCH_ALL_AT_ONCE,
     _isMouseEnabled:false,
     _mousePriority:0,
+	// This is only useful in mode TOUCH_ONE_BY_ONE
+	_swallowTouch:true,
 
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
@@ -83,7 +85,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
             cc.registerStandardDelegate(this,this._touchPriority);
         else
-            cc.registerTargetedDelegate(this._touchPriority, true, this);
+            cc.registerTargetedDelegate(this._touchPriority, this._swallowTouch, this);
     },
 
     isMouseEnabled:function () {
@@ -136,10 +138,12 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * Enable touch events
      * @param {Boolean} enabled
+     * @param {Boolean} [swallow=true] if the event listener will swallow touch after been triggered
      */
-    setTouchEnabled:function (enabled) {
+    setTouchEnabled:function (enabled, swallow) {
         if (this._isTouchEnabled !== enabled) {
             this._isTouchEnabled = enabled;
+	        this._swallowTouch = (swallow === false ? false : true);
 
             if (this._running) {
                 if (enabled) {

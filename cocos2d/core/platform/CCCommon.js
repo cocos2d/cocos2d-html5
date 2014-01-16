@@ -422,3 +422,136 @@ cc.KEY = {
     quote:222,
     space:32
 };
+
+
+/**
+ * Image Format:JPG
+ * @constant
+ * @type Number
+ */
+cc.FMT_JPG = 0;
+
+/**
+ * Image Format:PNG
+ * @constant
+ * @type Number
+ */
+cc.FMT_PNG = 1;
+
+/**
+ * Image Format:TIFF
+ * @constant
+ * @type Number
+ */
+cc.FMT_TIFF = 2;
+
+/**
+ * Image Format:RAWDATA
+ * @constant
+ * @type Number
+ */
+cc.FMT_RAWDATA = 3;
+
+/**
+ * Image Format:WEBP
+ * @constant
+ * @type Number
+ */
+cc.FMT_WEBP = 4;
+
+/**
+ * Image Format:UNKNOWN
+ * @constant
+ * @type Number
+ */
+cc.FMT_UNKNOWN = 5;
+
+cc.getImageFormatByData = function (imgData) {
+	// if it is a png file buffer.
+	if (imgData.length > 8) {
+		if (imgData[0] == 0x89
+			&& imgData[1] == 0x50
+			&& imgData[2] == 0x4E
+			&& imgData[3] == 0x47
+			&& imgData[4] == 0x0D
+			&& imgData[5] == 0x0A
+			&& imgData[6] == 0x1A
+			&& imgData[7] == 0x0A) {
+			return cc.FMT_PNG;
+		}
+	}
+
+	// if it is a tiff file buffer.
+	if (imgData.length > 2) {
+		if ((imgData[0] == 0x49 && imgData[1] == 0x49)
+			|| (imgData[0] == 0x4d && imgData[1] == 0x4d)
+			|| (imgData[0] == 0xff && imgData[1] == 0xd8)) {
+			return cc.FMT_TIFF;
+		}
+	}
+
+	return cc.FMT_UNKNOWN;
+};
+
+
+
+var CCNS_REG1 = /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/;
+var CCNS_REG2 = /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*\}\s*$/
+/**
+ * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
+ * The string is not localized, so items are always separated with a comma. <br/>
+ * If the string is not well-formed, the function returns cc.RectZero.
+ * @function
+ * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
+ * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
+ * These components can represent integer or float values.
+ * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
+ * Constructor
+ * @example
+ * // example
+ * var rect = cc.RectFromString("{{3,2},{4,5}}");
+ */
+cc.RectFromString = function (content) {
+	var result = CCNS_REG2.exec(content);
+	if(!result) return cc.RectZero();
+	return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
+};
+
+/**
+ * Returns a Core Graphics point structure corresponding to the data in a given string.
+ * @function
+ * @param {String} content   A string object whose contents are of the form "{x,y}",
+ * where x is the x coordinate and y is the y coordinate.<br/>
+ * The x and y values can represent integer or float values. <br/>
+ * The string is not localized, so items are always separated with a comma.<br/>
+ * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
+ * If the string is not well-formed, the function returns cc.PointZero.
+ * Constructor
+ * @example
+ * //example
+ * var point = cc.PointFromString("{3.0,2.5}");
+ */
+cc.PointFromString = function (content) {
+	var result = CCNS_REG1.exec(content);
+	if(!result) return cc.PointZero();
+	return cc.p(parseFloat(result[1]), parseFloat(result[2]));
+};
+
+/**
+ * Returns a Core Graphics size structure corresponding to the data in a given string.
+ * @function
+ * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
+ * where w is the width and h is the height.<br/>
+ * The w and h values can be integer or float values. <br/>
+ * The string is not localized, so items are always separated with a comma.<br/>
+ * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
+ * If the string is not well-formed, the function returns cc.SizeZero.
+ * @example
+ * // example
+ * var size = cc.SizeFromString("{3.0,2.5}");
+ */
+cc.SizeFromString = function (content) {
+	var result = CCNS_REG1.exec(content);
+	if(!result) return cc.SizeZero();
+	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
+};

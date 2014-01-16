@@ -597,10 +597,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
+     * Get device pixel ratio for retina display.
+     */
+    getDevicePixelRatio: function() {
+        return this._devicePixelRatio;
+    },
+
+    /**
      * Get the real location in view
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
-        return {x: tx * this._devicePixelRatio - relatedPos.left, y: relatedPos.top + (relatedPos.height - ty) * this._devicePixelRatio};
+        return {x: this._devicePixelRatio * (tx - relatedPos.left), y: this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty)};
     },
 
     /**
@@ -867,7 +874,7 @@ cc.ContainerStrategy = cc.Class.extend({
         var frame = view._frame;
         if (cc.Browser.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
-            cc.Screen.getInstance().autoFullScreen(cc.canvas);
+            cc.Screen.getInstance().autoFullScreen(frame);
         }
 
         var locCanvasElement = cc.canvas, locContainer = cc.container;
