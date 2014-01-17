@@ -106,8 +106,6 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     _objectGroups:null,
     _mapOrientation:null,
     //tile properties
-    //todo delete
-    _TMXLayers:null,
     _tileProperties:null,
 
     ctor:function(){
@@ -117,7 +115,6 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         this._properties = null;
         this._objectGroups = null;
         this._mapOrientation = null;
-        this._TMXLayers = null;
 
         this._tileProperties = [];
     },
@@ -258,26 +255,37 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
             }
         }
     },
-    /** return the TMXLayer for the specific layer
+
+    allLayers: function () {
+        var retArr = [], locChildren = this._children;
+        for(var i = 0, len = locChildren.length;i< len;i++){
+            var layer = locChildren[i];
+            if(layer && layer instanceof cc.TMXLayer)
+                retArr.push(layer);
+        }
+        return retArr;
+    },
+
+    /**
+     * return the TMXLayer for the specific layer
      * @param {String} layerName
      * @return {cc.TMXLayer}
      */
     getLayer:function (layerName) {
         if(!layerName || layerName.length === 0)
             throw "cc.TMXTiledMap.getLayer(): layerName should be non-null or non-empty string.";
-
-        for (var i = 0; i < this._children.length; i++) {
-            var layer = this._children[i];
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var layer = locChildren[i];
             if (layer && layer.getLayerName() == layerName)
                 return layer;
         }
-
         // layer not found
         return null;
     },
 
     /**
-     * Return the TMXObjectGroup for the secific group
+     * Return the TMXObjectGroup for the specific group
      * @param {String} groupName
      * @return {cc.TMXObjectGroup}
      */
