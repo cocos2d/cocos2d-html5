@@ -30,13 +30,13 @@
 cc.Event = cc.Class.extend(/** @lends cc.Event# */{
     _type: 0,                                   //  Event type
     _isStopped: false,                         //< whether the event has been stopped.
-    _currentTarget:null,                       //< Current target
+    _currentTarget: null,                       //< Current target
 
-    _setCurrentTarget:function(target){
+    _setCurrentTarget: function (target) {
 
     },
 
-    ctor: function(type){
+    ctor: function (type) {
         this._type = type;
     },
 
@@ -44,14 +44,14 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
      * Gets the event type
      * @returns {number}
      */
-    getType:function(){
-         return this._type;
+    getType: function () {
+        return this._type;
     },
 
     /**
      * Stops propagation for current event
      */
-    stopPropagation: function(){
+    stopPropagation: function () {
         this._isStopped = true;
     },
 
@@ -59,7 +59,7 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
      * Checks whether the event has been stopped
      * @returns {boolean}
      */
-    isStopped:function(){
+    isStopped: function () {
         return this._isStopped;
     },
 
@@ -71,7 +71,7 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
      * </p>
      * @returns {cc.Node}  The target with which the event associates.
      */
-    getCurrentTarget: function(){
+    getCurrentTarget: function () {
         return this._currentTarget;
     }
 });
@@ -118,7 +118,7 @@ cc.Event.CUSTOM = 4;
  */
 cc.EventAcceleration = cc.Event.extend(/** @lends cc.EventAcceleration# */{
     _acc: null,
-    ctor:function(acc){
+    ctor: function (acc) {
         cc.Event.prototype.ctor.call(this, cc.Event.ACCELERATION);
         this._acc = acc;
     }
@@ -130,9 +130,9 @@ cc.EventAcceleration = cc.Event.extend(/** @lends cc.EventAcceleration# */{
  * @extends cc.Event
  */
 cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
-    _eventName:null,
+    _eventName: null,
     _userData: null,                                 // User data
-    ctor:function(eventName){
+    ctor: function (eventName) {
 
     },
 
@@ -140,15 +140,15 @@ cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
      * Sets user data
      * @param {*} data
      */
-    setUserData: function(data){
-       this._userData = data;
+    setUserData: function (data) {
+        this._userData = data;
     },
 
     /**
      * Gets user data
      * @returns {*}
      */
-    getUserData: function(){
+    getUserData: function () {
         return this.userData;
     },
 
@@ -156,7 +156,7 @@ cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
      * Gets event name
      * @returns {String}
      */
-    getEventName: function(){
+    getEventName: function () {
         return this._eventName;
     }
 });
@@ -168,9 +168,9 @@ cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
  */
 cc.EventKeyboard = cc.Event.extend(/** @lends cc.EventKeyboard# */{
     _keyCode: 0,
-    _isPressed:false,
+    _isPressed: false,
 
-    ctor:function(keyCode, isPressed){
+    ctor: function (keyCode, isPressed) {
         cc.Event.prototype.ctor.call(this, cc.Event.KEYBOARD);
         this._keyCode = keyCode;
         this._isPressed = isPressed;
@@ -183,16 +183,16 @@ cc.EventKeyboard = cc.Event.extend(/** @lends cc.EventKeyboard# */{
  * @extends cc.Event
  */
 cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
-    _mouseEventType: 0,
-    _mouseButton:0,
-    _x:0,
-    _y:0,
-    _scrollX:0,
-    _scrollY:0,
+    _eventType: 0,
+    _button: 0,
+    _x: 0,
+    _y: 0,
+    _scrollX: 0,
+    _scrollY: 0,
 
-    ctor: function(mouseEventCode){
+    ctor: function (eventType) {
         cc.Event.prototype.ctor.call(this, cc.Event.MOUSE);
-        this._mouseEventType = mouseEventCode;
+        this._eventType = eventType;
     },
 
     /**
@@ -200,7 +200,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * @param {number} scrollX
      * @param {number} scrollY
      */
-    setScrollData: function(scrollX, scrollY){
+    setScrollData: function (scrollX, scrollY) {
         this._scrollX = scrollX;
         this._scrollY = scrollY;
     },
@@ -209,7 +209,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * gets scrollX data
      * @returns {number}
      */
-    getScrollX: function(){
+    getScrollX: function () {
         return this._scrollX;
     },
 
@@ -217,7 +217,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * gets scrollY data
      * @returns {number}
      */
-    getScrollY: function(){
+    getScrollY: function () {
         return this._scrollY;
     },
 
@@ -226,7 +226,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * @param {number} x
      * @param {number} y
      */
-    setCursorPosition: function(x, y){
+    setCursorPosition: function (x, y) {
         this._x = x;
         this._y = y;
     },
@@ -235,23 +235,23 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * Sets mouse button
      * @param {number} button
      */
-    setMouseButton: function(button){
-        this._mouseButton = button;
+    setButton: function (button) {
+        this._button = button;
     },
 
     /**
      * Gets mouse button
      * @returns {number}
      */
-    getMouseButton: function(){
-        return this._mouseButton;
+    getButton: function () {
+        return this._button;
     },
 
     /**
      * gets cursorX data
      * @returns {number}
      */
-    getCursorX: function(){
+    getCursorX: function () {
         return this._x;
     },
 
@@ -259,7 +259,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * gets cursorY data
      * @returns {number}
      */
-    getCursorY: function(){
+    getCursorY: function () {
         return this._y;
     }
 });
@@ -333,10 +333,10 @@ cc.EventMouse.BUTTON_8 = 7;
  * @extends cc.Event
  */
 cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
-    _eventCode:0,
+    _eventCode: 0,
     _touches: null,
 
-    ctor:function(){
+    ctor: function () {
         cc.Event.prototype.ctor.call(this, cc.Event.TOUCH);
         this._touches = [];
     },
@@ -345,7 +345,7 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
      * Gets event code
      * @returns {number}
      */
-    getEventCode: function(){
+    getEventCode: function () {
         return this._eventCode;
     },
 
@@ -353,15 +353,15 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
      * Get touches of event
      * @returns {array}
      */
-    getTouches: function(){
+    getTouches: function () {
         return this._touches;
     },
 
-    _setEventCode: function(eventCode){
-       this._eventCode = eventCode;
+    _setEventCode: function (eventCode) {
+        this._eventCode = eventCode;
     },
 
-    _setTouches: function(touches){
+    _setTouches: function (touches) {
         this._touches = touches;
     }
 });
@@ -372,4 +372,4 @@ cc.EventTouch.MAX_TOUCHES = 5;
  * The event code of Touch event.
  * @type {Object}
  */
-cc.EventTouch.EventCode = {BEGAN:0, MOVED:1, ENDED:2, CANCELLED:3};
+cc.EventTouch.EventCode = {BEGAN: 0, MOVED: 1, ENDED: 2, CANCELLED: 3};
