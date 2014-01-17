@@ -228,20 +228,21 @@ cc.EventListenerMouse = cc.EventListener.extend({
     ctor: function () {
         var selfPointer = this;
         var listener = function (event) {
+            var eventType = cc.EventMouse.EventType;
             switch (event._eventType) {
-                case cc.EventMouse.EventType.DOWN:
+                case eventType.DOWN:
                     if (selfPointer.onMouseDown)
                         selfPointer.onMouseDown(event);
                     break;
-                case cc.EventMouse.EventType.UP:
+                case eventType.UP:
                     if (selfPointer.onMouseUp)
                         selfPointer.onMouseUp(event);
                     break;
-                case cc.EventMouse.EventType.MOVE:
+                case eventType.MOVE:
                     if (selfPointer.onMouseMove)
                         selfPointer.onMouseMove(event);
                     break;
-                case cc.EventMouse.EventType.SCROLL:
+                case eventType.SCROLL:
                     if (selfPointer.onMouseScroll)
                         selfPointer.onMouseScroll(event);
                     break;
