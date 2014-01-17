@@ -188,8 +188,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         if (ext == "plist") {
             var fullPath = fileUtils.fullPathForFilename(filePath);
             dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
-        }
-        else {
+        } else {
             dict = JSON.parse(fileUtils.getTextFileData(filePath));
         }
 
@@ -206,7 +205,6 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     if (texturePath != "") {
                         // build texture path relative to plist file
                         texturePath = fileUtils.fullPathFromRelativeFile(texturePath, filePath);
-
                     } else {
                         // build texture path by replacing file extension
                         texturePath = filePath;
@@ -220,9 +218,10 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
 
                     var getTexture = cc.TextureCache.getInstance().addImage(texturePath);
-                    if (getTexture)
+                    if (getTexture){
                         this._addSpriteFramesWithDictionary(dict, getTexture);
-                    else
+                        this._loadedFileNames.push(filePath);
+                    } else
                         cc.log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
                 }
                 break;
@@ -241,6 +240,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                     if (gTexture) {
                         this._addSpriteFramesWithDictionary(dict, gTexture);
+                        this._loadedFileNames.push(filePath);
                     } else {
                         cc.log("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found " + textureFileName);
                     }
@@ -296,7 +296,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
             delete(this._spriteFrames[name]);
         }
         // XXX. Since we don't know the .plist file that originated the frame, we must remove all .plist from the cache
-        this._loadedFileNames = {};
+        this._loadedFileNames.length = 0;
     },
 
     /**
@@ -316,7 +316,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
         //remove it from the cache
         if (cc.ArrayContainsObject(this._loadedFileNames, plist)) {
-            cc.ArrayRemoveObject(plist);
+            cc.ArrayRemoveObject(this._loadedFileNames, plist);
         }
     },
 
