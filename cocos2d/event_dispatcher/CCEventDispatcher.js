@@ -23,34 +23,193 @@
  ****************************************************************************/
 
 cc.EventDispatcher = cc.Class.extend({
+    _listeners: null,
+    _priorityDirtyFlagMap:null,
+    _nodeListenersMap:null,
+    _nodePriorityMap:null,
+    _toAddedListeners:null,
+    _dirtyNodes:null,
+    _inDispatch:0,
+    _isEnabled: false,
+    _nodePriorityIndex:null,
 
-});
-
-cc.EventListenerVector = cc.Class.extend({
-     ctor:function(){
-
-     },
-    size:function(){
-
-    },
-    empty: function(){
-
-    },
-    push_back:function(item){
-
+    ctor: function(){
+           cc.p()
     },
 
-    clearSceneGraphListeners:function(){
+    _setDirtyForNode:function(node){
 
     },
 
-    clearFixedListeners: function(){
+    _pauseTarget: function(node){
 
     },
 
-    clear: function(){
+    _resumeTarget: function(node){
+
+    },
+
+    _cleanTarget: function(node){
+
+    },
+
+    _addEventListener: function(listener){
+
+    },
+
+    _forceAddEventListener: function(listener){
+
+    },
+
+    _getListeners: function(listenerID){
+
+    },
+
+    _updateDirtyFlagForSceneGraph: function(){
+
+    },
+
+    _removeEventListenersForListenerID: function(listenerID){
+
+    },
+
+    _sortEventListeners: function(listenerID){
+
+    },
+
+    _sortEventListenersOfSceneGraphPriority: function(listenerID){
+
+    },
+
+    _sortEventListenersOfFixedPriority: function(listenerID){
+
+    },
+
+    _updateListeners: function(event){
+
+    },
+
+    _dispatchTouchEvent: function(event){
+
+    },
+
+    _associateNodeAndEventListener: function(node, listener){
+
+    },
+
+    _dissociateNodeAndEventListener: function(node, listener){
+
+    },
+
+    _dispatchEventToListeners: function(listeners, onEvent){
+
+    },
+
+    _setDirty: function(listenerID, flag){
+
+    },
+
+    _visitTarget: function(node){
+
+    },
+
+    addEventListenerWithSceneGraphPriority: function(listener, node){
+
+    },
+
+    addEventListenerWithFixedPriority: function(listener, fixedPriority){
+
+    },
+
+    addCustomEventListener: function(eventName, callback){
+
+    },
+
+    removeEventListener: function(listener){
+
+    },
+
+    removeEventListeners: function(listenerType){
+
+    },
+
+    removeCustomEventListeners: function(customEventName){
+
+    },
+
+    removeAllEventListeners: function(){
+
+    },
+
+    setPriority: function(listener, fixedPriority){
+
+    },
+
+    setEnabled: function(enabled){
+
+    },
+
+    isEnabled: function(){
+
+    },
+
+    dispatchEvent: function(event){
+
+    },
+
+    dispatchCustomEvent: function(eventName, optionalUserData){
 
     }
 });
 
-cc.EventDispatcher.DirtyFlag = {NONE: 0, FIXED_PRITORY: 1 << 0, SCENE_GRAPH_PRIORITY: 1 << 1, ALL: 3};
+cc.EventListenerVector = cc.Class.extend({
+    _fixedListeners: null,
+    _sceneGraphListeners: null,
+    _gt0Index: 0,
+
+    ctor: function () {
+
+    },
+    size: function () {
+
+    },
+    empty: function () {
+
+    },
+    push_back: function (item) {
+
+    },
+
+    clearSceneGraphListeners: function () {
+
+    },
+
+    clearFixedListeners: function () {
+
+    },
+
+    clear: function () {
+
+    },
+
+    getFixedPriorityListeners: function () {
+        return this._fixedListeners;
+    },
+
+    getSceneGraphPriorityListeners: function () {
+        return this._sceneGraphListeners;
+    },
+
+    getGt0Index: function () {
+        return this._gt0Index;
+    },
+
+    setGt0Index: function (index) {
+        this._gt0Index = index;
+    }
+});
+
+/**
+ * Priority dirty flag
+ */
+cc.EventDispatcher.DirtyFlag = {NONE: 0, FIXED_PRIORITY: 1 << 0, SCENE_GRAPH_PRIORITY: 1 << 1, ALL: 3};
