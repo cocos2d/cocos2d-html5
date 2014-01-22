@@ -1402,7 +1402,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         locTextureRect.y = 0 | (rect.y * scaleFactor);
         locTextureRect.width = 0 | (rect.width * scaleFactor);
         locTextureRect.height = 0 | (rect.height * scaleFactor);
-        locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0);
+        locTextureRect.validRect = !(locTextureRect.width === 0 || locTextureRect.height === 0 || locTextureRect.x < 0 || locTextureRect.y < 0);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
