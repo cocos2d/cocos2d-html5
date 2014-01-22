@@ -770,7 +770,7 @@ cc.DrawNode.create = function () {
     return null;
 };
 
-cc._DrawNodeElement = function (type) {
+cc._DrawNodeElement = function (type, verts, fillColor, lineWidth, lineColor, lineCap, isClosePolygon, isFill, isStroke) {
     this.type = type;
     this.verts = verts || null;
     this.fillColor = fillColor || null;
