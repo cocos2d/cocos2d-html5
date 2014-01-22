@@ -43,7 +43,7 @@ cc.DOM.addMethods = function (x) {
 cc.DOM.methods = /** @lends cc.DOM# */{
     /**
      * Replace the set position of ccNode
-     * @param {object|Number} x
+     * @param {cc.Point|Number} x
      * @param {Number} y
      */
     setPosition:function (x, y) {
@@ -52,7 +52,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
             this._position._y = y;
             //this._position = cc.p(newPosOrxValue,yValue);
         } else {
-            this._position = x;
+            this._position._x = x.x;
+            this._position._y = x.y;
         }
         this.setNodeDirty();
         this.dom.translates(this._position._x, -this._position._y);
