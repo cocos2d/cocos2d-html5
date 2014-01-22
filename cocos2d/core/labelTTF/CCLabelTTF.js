@@ -907,7 +907,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         locTextureCoordRect.y = rect.y;
         locTextureCoordRect.width = rect.width;
         locTextureCoordRect.height = rect.height;
-        locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 || locTextureCoordRect.height === 0);
+        locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 || locTextureCoordRect.height === 0
+            || locTextureCoordRect.x < 0 || locTextureCoordRect.y < 0);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
