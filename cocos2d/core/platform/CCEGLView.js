@@ -828,7 +828,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
 cc.EGLView.getInstance = function () {
     if (!this._instance) {
-        this._instance = new cc.EGLView();
+	    // First init director
+	    cc.Director.getInstance();
+
+        this._instance = this._instance || new cc.EGLView();
         this._instance.initialize();
     }
     return this._instance;
