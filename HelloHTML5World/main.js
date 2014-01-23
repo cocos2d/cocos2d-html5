@@ -40,11 +40,12 @@ var cocos2dApp = cc.Application.extend({
             alert("Browser doesn't support WebGL");
             return false;
         }
-        // initialize director
-        var director = cc.Director.getInstance();
 
         cc.EGLView.getInstance().resizeWithBrowserSize(true);
         cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.SHOW_ALL);
+
+	    // initialize director
+	    var director = cc.Director.getInstance();
 
         // turn on display FPS
         director.setDisplayStats(this.config['showFPS']);
