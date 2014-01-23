@@ -22,147 +22,213 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.EventDispatcher = cc.Class.extend({
+/**
+ * <p>
+ *  This class manages event listener subscriptions and event dispatching.                                      <br/>
+ *                                                                                                              <br/>
+ *  The EventListener list is managed in such a way that event listeners can be added and removed even          <br/>
+ *  from within an EventListener, while events are being dispatched.
+ * </p>
+ * @class
+ * @extends cc.Class
+ */
+cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
     _listeners: null,
-    _priorityDirtyFlagMap:null,
-    _nodeListenersMap:null,
-    _nodePriorityMap:null,
-    _toAddedListeners:null,
-    _dirtyNodes:null,
-    _inDispatch:0,
+    _priorityDirtyFlagMap: null,
+    _nodeListenersMap: null,
+    _nodePriorityMap: null,
+    _toAddedListeners: null,
+    _dirtyNodes: null,
+    _inDispatch: 0,
     _isEnabled: false,
-    _nodePriorityIndex:null,
+    _nodePriorityIndex: null,
 
-    ctor: function(){
-           cc.p()
-    },
-
-    _setDirtyForNode:function(node){
+    ctor: function () {
 
     },
 
-    _pauseTarget: function(node){
+    _setDirtyForNode: function (node) {
 
     },
 
-    _resumeTarget: function(node){
+    _pauseTarget: function (node) {
 
     },
 
-    _cleanTarget: function(node){
+    _resumeTarget: function (node) {
 
     },
 
-    _addEventListener: function(listener){
+    _cleanTarget: function (node) {
 
     },
 
-    _forceAddEventListener: function(listener){
+    _addEventListener: function (listener) {
 
     },
 
-    _getListeners: function(listenerID){
+    _forceAddEventListener: function (listener) {
 
     },
 
-    _updateDirtyFlagForSceneGraph: function(){
+    _getListeners: function (listenerID) {
 
     },
 
-    _removeEventListenersForListenerID: function(listenerID){
+    _updateDirtyFlagForSceneGraph: function () {
 
     },
 
-    _sortEventListeners: function(listenerID){
+    _removeEventListenersForListenerID: function (listenerID) {
 
     },
 
-    _sortEventListenersOfSceneGraphPriority: function(listenerID){
+    _sortEventListeners: function (listenerID) {
 
     },
 
-    _sortEventListenersOfFixedPriority: function(listenerID){
+    _sortEventListenersOfSceneGraphPriority: function (listenerID) {
 
     },
 
-    _updateListeners: function(event){
+    _sortEventListenersOfFixedPriority: function (listenerID) {
 
     },
 
-    _dispatchTouchEvent: function(event){
+    _updateListeners: function (event) {
 
     },
 
-    _associateNodeAndEventListener: function(node, listener){
+    _dispatchTouchEvent: function (event) {
 
     },
 
-    _dissociateNodeAndEventListener: function(node, listener){
+    _associateNodeAndEventListener: function (node, listener) {
 
     },
 
-    _dispatchEventToListeners: function(listeners, onEvent){
+    _dissociateNodeAndEventListener: function (node, listener) {
 
     },
 
-    _setDirty: function(listenerID, flag){
+    _dispatchEventToListeners: function (listeners, onEvent) {
 
     },
 
-    _visitTarget: function(node){
+    _setDirty: function (listenerID, flag) {
 
     },
 
-    addEventListenerWithSceneGraphPriority: function(listener, node){
+    _visitTarget: function (node) {
 
     },
 
-    addEventListenerWithFixedPriority: function(listener, fixedPriority){
+    /**
+     * Adds a event listener for a specified event with the priority of scene graph.
+     * @param {cc.EventListener} listener The listener of a specified event.
+     * @param {cc.Node} node The priority of the listener is based on the draw order of this node.
+     * @note  The priority of scene graph will be fixed value 0. So the order of listener item in the vector will be ' <0, scene graph (0 priority), >0'.
+     */
+    addEventListenerWithSceneGraphPriority: function (listener, node) {
 
     },
 
-    addCustomEventListener: function(eventName, callback){
+    /**
+     * Adds a event listener for a specified event with the fixed priority.
+     * @param {cc.EventListener} listener The listener of a specified event.
+     * @param {Number} fixedPriority The fixed priority of the listener.
+     * @note A lower priority will be called before the ones that have a higher value. 0 priority is forbidden for fixed priority since it's used for scene graph based priority.
+     */
+    addEventListenerWithFixedPriority: function (listener, fixedPriority) {
 
     },
 
-    removeEventListener: function(listener){
+    /**
+     * Adds a Custom event listener. It will use a fixed priority of 1.
+     * @param {string} eventName
+     * @param {function} callback
+     * @return the generated event. Needed in order to remove the event from the dispatcher
+     */
+    addCustomEventListener: function (eventName, callback) {
+        return null;
+    },
+
+    /**
+     * Remove a listener
+     * @param {cc.EventListener} listener
+     */
+    removeEventListener: function (listener) {
 
     },
 
-    removeEventListeners: function(listenerType){
+    /**
+     * Removes all listeners with the same event listener type
+     * @param {Number} listenerType
+     */
+    removeEventListeners: function (listenerType) {
 
     },
 
-    removeCustomEventListeners: function(customEventName){
+    /**
+     * Removes all custom listeners with the same event name
+     * @param {string} customEventName
+     */
+    removeCustomEventListeners: function (customEventName) {
 
     },
 
-    removeAllEventListeners: function(){
+    /**
+     * Removes all listeners
+     */
+    removeAllEventListeners: function () {
 
     },
 
-    setPriority: function(listener, fixedPriority){
+    /**
+     * Sets listener's priority with fixed value.
+     * @param {cc.EventListener} listener
+     * @param {Number} fixedPriority
+     */
+    setPriority: function (listener, fixedPriority) {
 
     },
 
-    setEnabled: function(enabled){
+    /**
+     * Whether to enable dispatching events
+     * @param {boolean} enabled
+     */
+    setEnabled: function (enabled) {
 
     },
 
-    isEnabled: function(){
+    /**
+     * Checks whether dispatching events is enabled
+     * @returns {boolean}
+     */
+    isEnabled: function () {
+        return this._isEnabled;
+    },
+
+    /**
+     * Dispatches the event, also removes all EventListeners marked for deletion from the event dispatcher list.
+     * @param {cc.Event} event
+     */
+    dispatchEvent: function (event) {
 
     },
 
-    dispatchEvent: function(event){
-
-    },
-
-    dispatchCustomEvent: function(eventName, optionalUserData){
+    /**
+     * Dispatches a Custom Event with a event name an optional user data
+     * @param {string} eventName
+     * @param {*} optionalUserData
+     */
+    dispatchCustomEvent: function (eventName, optionalUserData) {
 
     }
 });
 
-cc.EventListenerVector = cc.Class.extend({
+
+cc._EventListenerVector = cc.Class.extend({
     _fixedListeners: null,
     _sceneGraphListeners: null,
     _gt0Index: 0,
