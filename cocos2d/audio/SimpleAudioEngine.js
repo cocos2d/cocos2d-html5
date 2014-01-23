@@ -1414,6 +1414,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _endSound: function(sfxCache) {
+	    if (sfxCache.sourceNode.playbackState && sfxCache.sourceNode.playbackState == 3)
+	        return;
         if (sfxCache.sourceNode.stop) {
             sfxCache.sourceNode.stop(0);
         } else {
@@ -1837,7 +1839,7 @@ cc.AudioEngine.isMusicPlaying = false;
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
         var ua = navigator.userAgent;
-        if (cc.Browser.supportWebAudio && !(/iPhone OS/.test(ua)||/iPad/.test(ua))) {
+        if (cc.Browser.supportWebAudio) {
             this._instance = new cc.WebAudioEngine();
         } else {
             if(cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
