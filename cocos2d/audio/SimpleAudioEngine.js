@@ -296,7 +296,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         cc.AudioEngine.isMusicPlaying = false;
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
-            au.removeEventListener('pause', arguments.callee, false);
+            au.removeEventListener('pause', this._musicListener, false);
         }
     },
 
@@ -665,7 +665,6 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         cc.SimpleAudioEngine.prototype.ctor.call(this);
 
         this._playingList = [];
-        window.playingList = this._playingList;
         this._isPauseForList = false;
         this._checkFlag = true;
         this._audioEndedCallbackBound = this._audioEndCallback.bind(this);
@@ -684,7 +683,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                 }
             }
         }
-        this._playingList = [];
+        this._playingList.length = 0;
         this._currentTask = null;
     },
 
@@ -736,7 +735,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         cc.AudioEngine.isMusicPlaying = false;
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
-            au.removeEventListener('pause', arguments.callee, false);
+            au.removeEventListener('pause', this._musicListener, false);
         }
         if(this._checkFlag)
             this._isPauseForList = false;
@@ -1096,7 +1095,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             }
         }
 
-        this._playingList = [];
+        this._playingList.length = 0;
         this._currentTask = null;
 
         if(this._isPauseForList){
@@ -1415,6 +1414,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _endSound: function(sfxCache) {
+	    if (sfxCache.sourceNode.playbackState && sfxCache.sourceNode.playbackState == 3)
+	        return;
         if (sfxCache.sourceNode.stop) {
             sfxCache.sourceNode.stop(0);
         } else {
@@ -1838,7 +1839,7 @@ cc.AudioEngine.isMusicPlaying = false;
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
         var ua = navigator.userAgent;
-        if (cc.Browser.supportWebAudio && !(/iPhone OS/.test(ua)||/iPad/.test(ua))) {
+        if (cc.Browser.supportWebAudio) {
             this._instance = new cc.WebAudioEngine();
         } else {
             if(cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser

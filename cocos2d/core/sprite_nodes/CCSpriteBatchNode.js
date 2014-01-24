@@ -906,7 +906,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._descendants = [];
+        this._descendants.length = 0;
     },
 
     _removeAllChildrenForWebGL:function (cleanup) {
@@ -920,7 +920,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             }
         }
         cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._descendants = [];
+        this._descendants.length = 0;
         this._textureAtlas.removeAllQuads();
     },
 

@@ -188,7 +188,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      * @param {Boolean} cleanup
      */
     removeAllChildren:function (cleanup) {
-        this._parallaxArray = [];
+        this._parallaxArray.length = 0;
         cc.NodeRGBA.prototype.removeAllChildren.call(this, cleanup);
     },
 

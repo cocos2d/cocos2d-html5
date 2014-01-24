@@ -141,7 +141,7 @@ cc.ActionManager = cc.Class.extend({
             if (element.actions.indexOf(element.currentAction) !== -1 && !(element.currentActionSalvaged))
                 element.currentActionSalvaged = true;
 
-            element.actions = [];
+            element.actions.length = 0;
             if (this._currentTarget == element && !forceDelete) {
                 this._currentTargetSalvaged = true;
             } else {
@@ -253,6 +253,7 @@ cc.ActionManager = cc.Class.extend({
 
     /**
      * Pauses all running actions, returning a list of targets whose actions were paused.
+     * @return {Array}  a list of targets whose actions were paused.
      */
     pauseAllRunningActions:function(){
         var idsWithActions = [];

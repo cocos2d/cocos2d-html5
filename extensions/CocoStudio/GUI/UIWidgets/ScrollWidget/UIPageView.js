@@ -87,11 +87,15 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (ccs.Layout.prototype.init.call(this)) {
             this._pages = [];
             this.setClippingEnabled(true);
-            this.setUpdateEnabled(true);
             this.setTouchEnabled(true);
             return true;
         }
         return false;
+    },
+
+    onEnter:function(){
+        ccs.Layout.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     /**

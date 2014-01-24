@@ -138,13 +138,17 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     init: function () {
         if (ccs.Layout.prototype.init.call(this)) {
-            this.setUpdateEnabled(true);
             this.setTouchEnabled(true);
             this.setClippingEnabled(true);
             this._innerContainer.setTouchEnabled(false);
             return true;
         }
         return false;
+    },
+
+    onEnter:function(){
+        ccs.Layout.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {

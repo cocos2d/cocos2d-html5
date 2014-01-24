@@ -1090,10 +1090,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this.initWithCallback(null, null);
         }
 
-        this._subItems = [];
+        var locSubItems = this._subItems;
+        locSubItems.length = 0;
         for (var i = 0; i < l; i++) {
             if (args[i])
-                this._subItems.push(args[i]);
+                locSubItems.push(args[i]);
         }
         this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);
