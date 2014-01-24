@@ -569,21 +569,23 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         }
 
         // PARSE  <tile>
-        var tiles = map.querySelectorAll('tile');
-        if (tiles) {
-            for (i = 0; i < tiles.length; i++) {
-                var info = this._tileSets[0];
-                var t = tiles[i];
-                this.setParentGID(parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0));
-                var tp = t.querySelectorAll("properties > property");
-                if (tp) {
-                    var dict = {};
-                    for (j = 0; j < tp.length; j++) {
-                        var name = tp[j].getAttribute('name');
-                        var value = tp[j].getAttribute('value');
-                        dict[name] = value;
+        for(var z = 0;z < this._tileSets.length;z++){
+            var info = this._tileSets[z];
+            var tiles = tilesets[z].getElementsByTagName('tile');
+            if (tiles) {
+                for (i = 0; i < tiles.length; i++) {
+                    var t = tiles[i];
+                    this.setParentGID(parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0));
+                    var tp = t.querySelectorAll("properties > property");
+                    if (tp) {
+                        var dict = {};
+                        for (j = 0; j < tp.length; j++) {
+                            var name = tp[j].getAttribute('name');
+                            var value = tp[j].getAttribute('value');
+                            dict[name] = value;
+                        }
+                        this._tileProperties[this.getParentGID()] = dict;
                     }
-                    this._tileProperties[this.getParentGID()] = dict;
                 }
             }
         }
