@@ -1957,15 +1957,14 @@ cc.AudioEngine.isMusicPlaying = false;
  */
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
-/*        if (cc.Browser.supportWebAudio) {
+        if (cc.Browser.supportWebAudio) {
             this._instance = new cc.WebAudioEngine();
         } else {
-            if(cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
+            if (cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
                 this._instance = new cc.SimpleAudioEngineForMobile();
             else
                 this._instance = new cc.SimpleAudioEngine();
-        }*/
-        this._instance = new cc.SimpleAudioEngineForMobile();
+        }
         this._instance.init();
     }
     return this._instance;
