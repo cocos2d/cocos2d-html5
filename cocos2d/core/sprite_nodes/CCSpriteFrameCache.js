@@ -128,7 +128,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                         }
                         this._spriteFramesAliases[alias] = frameKey;
                     }
-                    if (frameDict.spriteSize) {
+                    if (frameDict["spriteSize"]) {
                         textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                     }
                     //create frame
