@@ -271,7 +271,7 @@ cc.Control = cc.LayerRGBA.extend({
     _dispatchListforControlEvent:function (controlEvent) {
         controlEvent = controlEvent.toString();
         // If the invocation list does not exist for the  dispatch table, we create it
-        if (!this._dispatchTable.hasOwnProperty(controlEvent))
+        if (!this._dispatchTable[controlEvent])
             this._dispatchTable[controlEvent] = [];
         return this._dispatchTable[controlEvent];
     },
