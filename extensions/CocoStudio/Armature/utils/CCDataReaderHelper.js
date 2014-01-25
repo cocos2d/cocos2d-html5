@@ -748,10 +748,10 @@ ccs.DataReaderHelper.decodeBoneDisplayFromJson = function (json, dataInfo) {
                 var skinData = displayData.skinData;
                 skinData.x = (dic[ccs.CONST_A_X]|| 0) * this._positionReadScale;
                 skinData.y = (dic[ccs.CONST_A_Y]||0) * this._positionReadScale;
-                if(dic.hasOwnProperty(ccs.CONST_A_SCALE_X)){
+                if(dic[ccs.CONST_A_SCALE_X]){
                     skinData.scaleX = dic[ccs.CONST_A_SCALE_X];
                 }
-                if(dic.hasOwnProperty(ccs.CONST_A_SCALE_Y)){
+                if(dic[ccs.CONST_A_SCALE_Y]){
                     skinData.scaleY = dic[ccs.CONST_A_SCALE_Y];
                 }
                 skinData.skewX = dic[ccs.CONST_A_SKEW_X]|| 0;
@@ -798,7 +798,7 @@ ccs.DataReaderHelper.decodeMovementFromJson = function (json, dataInfo) {
     movementData.durationTween = json[ccs.CONST_A_DURATION_TWEEN] || 0;
     movementData.durationTo = json[ccs.CONST_A_DURATION_TO] || 0;
     movementData.duration = json[ccs.CONST_A_DURATION] || 0;
-    if(json.hasOwnProperty(ccs.CONST_A_MOVEMENT_SCALE)){
+    if(json[ccs.CONST_A_MOVEMENT_SCALE]){
         movementData.scale = json[ccs.CONST_A_MOVEMENT_SCALE]
     }
     movementData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
@@ -815,7 +815,7 @@ ccs.DataReaderHelper.decodeMovementFromJson = function (json, dataInfo) {
 ccs.DataReaderHelper.decodeMovementBoneFromJson = function (json, dataInfo) {
     var movementBoneData = new ccs.MovementBoneData();
     movementBoneData.delay = json[ccs.CONST_A_MOVEMENT_DELAY] || 0;
-    if(json.hasOwnProperty(ccs.CONST_A_MOVEMENT_SCALE)){
+    if(json[ccs.CONST_A_MOVEMENT_SCALE]){
         movementBoneData.scale = json[ccs.CONST_A_MOVEMENT_SCALE];
     }
 
@@ -874,7 +874,7 @@ ccs.DataReaderHelper.decodeFrameFromJson = function (json, dataInfo) {
     frameData.blendFunc.dst = bd_dst;
 
     frameData.event = json[ccs.CONST_A_EVENT] || null;
-    if(json.hasOwnProperty(ccs.CONST_A_TWEEN_FRAME)){
+    if(json[ccs.CONST_A_TWEEN_FRAME]){
         frameData.isTween = json[ccs.CONST_A_TWEEN_FRAME]
     }
     if (dataInfo.cocoStudioVersion < ccs.CONST_VERSION_COMBINED)
@@ -931,10 +931,10 @@ ccs.DataReaderHelper.decodeNodeFromJson = function (node, json, dataInfo) {
 
     node.skewX = json[ccs.CONST_A_SKEW_X] || 0;
     node.skewY = json[ccs.CONST_A_SKEW_Y] || 0;
-    if(json.hasOwnProperty(ccs.CONST_A_SCALE_X)){
+    if(json[ccs.CONST_A_SCALE_X]){
         node.scaleX = json[ccs.CONST_A_SCALE_X];
     }
-    if(json.hasOwnProperty(ccs.CONST_A_SCALE_Y)){
+    if(json[ccs.CONST_A_SCALE_Y]){
         node.scaleY = json[ccs.CONST_A_SCALE_Y];
     }
 

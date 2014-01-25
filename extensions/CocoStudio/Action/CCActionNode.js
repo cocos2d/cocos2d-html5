@@ -58,14 +58,14 @@ ccs.ActionNode = ccs.Class.extend({
      * @param {Object} root
      */
     initWithDictionary: function (dic, root) {
-        this.setActionTag(dic["ActionTag"]);
-        var actionframelist = dic["actionframelist"];
+        this.setActionTag(dic.ActionTag);
+        var actionframelist = dic.actionframelist;
         for (var i = 0; i < actionframelist.length; i++) {
             var actionFrameDic = actionframelist[i];
-            var frameInex = actionFrameDic["frameid"];
-            if (actionFrameDic.hasOwnProperty("positionx")) {
-                var positionX = actionFrameDic["positionx"];
-                var positionY = actionFrameDic["positiony"];
+            var frameInex = actionFrameDic.frameid;
+            if (actionFrameDic.positionx) {
+                var positionX = actionFrameDic.positionx;
+                var positionY = actionFrameDic.positiony;
                 var actionFrame = new ccs.ActionMoveFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setPosition(cc.p(positionX, positionY));
@@ -73,9 +73,9 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("scalex")) {
-                var scaleX = actionFrameDic["scalex"];
-                var scaleY = actionFrameDic["scaley"];
+            if (actionFrameDic.scalex) {
+                var scaleX = actionFrameDic.scalex;
+                var scaleY = actionFrameDic.scaley;
                 var actionFrame = new ccs.ActionScaleFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setScaleX(scaleX);
@@ -84,8 +84,8 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("rotation")) {
-                var rotation = actionFrameDic["rotation"];
+            if (actionFrameDic.rotation) {
+                var rotation = actionFrameDic.rotation;
                 var actionFrame = new ccs.ActionRotationFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setRotation(rotation);
@@ -93,8 +93,8 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("opacity")) {
-                var opacity = actionFrameDic["opacity"];
+            if (actionFrameDic.opacity) {
+                var opacity = actionFrameDic.opacity;
                 var actionFrame = new ccs.ActionFadeFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setOpacity(opacity);
@@ -102,10 +102,10 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("colorr")) {
-                var colorR = actionFrameDic["colorr"];
-                var colorG = actionFrameDic["colorg"];
-                var colorB = actionFrameDic["colorb"];
+            if (actionFrameDic.colorr) {
+                var colorR = actionFrameDic.colorr;
+                var colorG = actionFrameDic.colorg;
+                var colorB = actionFrameDic.colorb;
                 var actionFrame = new ccs.ActionTintFrame();
                 actionFrame.setFrameIndex(frameInex);
                 actionFrame.setColor(cc.c3b(colorR, colorG, colorB));
