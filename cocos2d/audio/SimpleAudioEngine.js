@@ -714,7 +714,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     ctor:function(){
         cc.SimpleAudioEngine.prototype.ctor.call(this);
-
+        this._maxAudioInstance = 1;
         this._playingList = [];
         this._isPauseForList = false;
         this._checkFlag = true;
@@ -1960,10 +1960,10 @@ cc.AudioEngine.getInstance = function () {
         if (cc.Browser.supportWebAudio) {
             this._instance = new cc.WebAudioEngine();
         } else {
-            if (cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
-                this._instance = new cc.SimpleAudioEngineForMobile();
-            else
+            if (cc.Browser.multipleAudioWhiteList.indexOf(cc.Browser.type) == -1)
                 this._instance = new cc.SimpleAudioEngine();
+            else
+                this._instance = new cc.SimpleAudioEngineForMobile();
         }
         this._instance.init();
     }
