@@ -86,7 +86,7 @@ ccs.PositionType = {
  * var uiLayer = ccs.UILayer.create();
  * uiLayer.addWidget(uiWidget);
  * @class
- * @extends ccs.Class
+ * @extends ccs.NodeRGBA
  */
 ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _enabled: true,            ///< Highest control of widget
@@ -1221,6 +1221,11 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.setOpacity(widget.getOpacity());
         this.setCascadeOpacityEnabled(widget.isCascadeOpacityEnabled());
         this.setCascadeColorEnabled(widget.isCascadeColorEnabled());
+        for (var key in widget._layoutParameterDictionary) {
+            var parameter = widget._layoutParameterDictionary[key];
+            if (parameter)
+                this.setLayoutParameter(parameter.clone());
+        }
         this.onSizeChanged();
     },
     

@@ -59,5 +59,8 @@ CSSProperties.prototype.destination;
 CSSProperties.prototype.decodeAudioData;
 CSSProperties.prototype.gain;
 CSSProperties.prototype.connect;
+CSSProperties.prototype.playbackState;
+CSSProperties.prototype.noteGrainOn;
+CSSProperties.prototype.noteOn;
 
 

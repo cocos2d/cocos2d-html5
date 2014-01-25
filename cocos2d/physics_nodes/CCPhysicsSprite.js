@@ -92,6 +92,9 @@
                 cc.log("PhysicsSprite body or PTIMRatio was not set");
             }
             this._super();
+        },
+        setIgnoreBodyRotation: function(b) {
+            this._ignoreBodyRotation = b;
         }
     };
     var chipmunkAPI = {
@@ -134,7 +137,7 @@
             }
         },
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadiansX) : -cc.RADIANS_TO_DEGREES(this._body.a)
+            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadiansX) : -cc.RADIANS_TO_DEGREES(this._body.a);
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
@@ -228,7 +231,11 @@
 
         isDirty:function(){
            return !this._body.isSleeping();
+        },
+        setIgnoreBodyRotation: function(b) {
+            this._ignoreBodyRotation = b;
         }
+
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
 
