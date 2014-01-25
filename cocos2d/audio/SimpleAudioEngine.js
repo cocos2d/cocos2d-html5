@@ -714,7 +714,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     ctor:function(){
         cc.SimpleAudioEngine.prototype.ctor.call(this);
-        this._maxAudioInstance = 1;
+        this._maxAudioInstance = 3;
         this._playingList = [];
         this._isPauseForList = false;
         this._checkFlag = true;
