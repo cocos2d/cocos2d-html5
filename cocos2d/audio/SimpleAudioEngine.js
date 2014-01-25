@@ -296,7 +296,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
     _musicListener:function(e){
         cc.AudioEngine.isMusicPlaying = false;
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.removeEventListener('pause', this._musicListener, false);
         }
@@ -329,7 +329,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().pauseMusic();
      */
     pauseMusic:function () {
-        if (!this._musicIsStopped && this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.pause();
             cc.AudioEngine.isMusicPlaying = false;
@@ -358,7 +358,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().rewindMusic();
      */
     rewindMusic:function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.currentTime = 0;
             au.play();
@@ -390,7 +390,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().setMusicVolume(0.5);
      */
     setMusicVolume:function (volume) {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var music = this._soundList[this._playingMusic].audio;
             if (volume > 1) {
                 music.volume = 1;
@@ -507,7 +507,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     pauseEffect:function (audioID) {
         if (audioID == null) return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)) {
+        if (this._audioIDList[audioID]) {
             var au = this._audioIDList[audioID];
             if (!au.ended) {
                 au.pause();
@@ -621,7 +621,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     unloadEffect:function (path) {
         if (!path) return;
         var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
+        if (this._effectList[keyname]) {
             delete this._effectList[keyname];
         }
 
@@ -649,7 +649,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     _pausePlaying: function(){
         var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList;
         var tmpArr, au;
-        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && locSoundList[this._playingMusic]) {
             au = locSoundList[this._playingMusic].audio;
             if (!au.paused) {
                 au.pause();
@@ -757,7 +757,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         var au;
 
         var locSoundList = this._soundList;
-        if (locSoundList.hasOwnProperty(this._playingMusic)){
+        if (locSoundList[this._playingMusic]){
             var currMusic = locSoundList[this._playingMusic];
             currMusic.audio.removeEventListener("pause",this._musicListenerBound , false)
             currMusic.audio.pause();
@@ -784,7 +784,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     _musicListener:function(){
         cc.AudioEngine.isMusicPlaying = false;
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.removeEventListener('pause', this._musicListener, false);
         }
@@ -966,7 +966,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             return null;
 
         var keyname = this._getPathWithoutExt(path), actExt;
-        if (this._soundList.hasOwnProperty(keyname))
+        if (this._soundList[keyname])
             actExt = this._soundList[keyname].ext;
         else
             actExt = this._getExtFromFullPath(path);
@@ -1057,7 +1057,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
     resumeEffect:function (audioID) {
         if (audioID == null) return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)) {
+        if (this._audioIDList[audioID]) {
             var au = this._audioIDList[audioID];
             if (!au.ended)
                 au.play();
@@ -1157,7 +1157,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     _pausePlaying: function(){
         var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList, au;
-        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && locSoundList[this._playingMusic]) {
             au = locSoundList[this._playingMusic].audio;
             if (!au.paused) {
                 au.pause();
@@ -1760,7 +1760,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (audioID == null)
             return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)){
+        if (this._audioIDList[audioID]){
             var sfxCache = this._audioIDList[audioID];
             if (sfxCache && this._isSoundPlaying(sfxCache))
                 this._pauseSound(sfxCache);
@@ -1850,7 +1850,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
 
         var locAudioIDList = this._audioIDList;
-        if (locAudioIDList.hasOwnProperty(audioID))
+        if (locAudioIDList[audioID])
             this._endSound(locAudioIDList[audioID]);
     },
 
