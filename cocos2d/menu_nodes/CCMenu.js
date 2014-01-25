@@ -48,7 +48,7 @@ cc.DEFAULT_PADDING = 5;
 /**
  * <p> Features and Limitation:<br/>
  *  - You can add MenuItem objects in runtime using addChild:<br/>
- *  - But the only accecpted children are MenuItem objects</p>
+ *  - But the only accepted children are MenuItem objects</p>
  * @class
  * @extends cc.LayerRGBA
  */
@@ -141,6 +141,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
     /**
      * initializes a cc.Menu with a Array of cc.MenuItem objects
+     * @param {Array} arrayOfItems
+     * @return {Boolean}
      */
     initWithArray:function (arrayOfItems) {
         if (this.init()) {
@@ -152,7 +154,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             // menu in the center of the screen
             var winSize = cc.Director.getInstance().getWinSize();
             this.ignoreAnchorPointForPosition(true);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(winSize);
             this.setPosition(winSize.width / 2, winSize.height / 2);
 
@@ -566,13 +568,14 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
 /**
  * create a new menu
+ * @param {...cc.MenuItem|null} menuItems
  * @return {cc.Menu}
  * @example
  * // Example
  * //there is no limit on how many menu item you can pass in
  * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
-cc.Menu.create = function (/*Multiple Arguments*/) {
+cc.Menu.create = function (menuItems) {
     if((arguments.length > 0) && (arguments[arguments.length-1] == null))
         cc.log("parameters should not be ending with null in Javascript");
 

@@ -25,9 +25,9 @@
 /**
  * Base class for ccs.Armature objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends ccs.NodeRGBA
  */
-ccs.Armature = cc.NodeRGBA.extend({
+ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     _animation:null,
     _armatureData:null,
     _batchNode:null,
@@ -114,7 +114,7 @@ ccs.Armature = cc.NodeRGBA.extend({
                         break;
                     }
                     bone.getTweenData().copy(frameData);
-                    bone.changeDisplayByIndex(frameData.displayIndex, false);
+                    bone.changeDisplayWithIndex(frameData.displayIndex, false);
                 } while (0);
             }
             this.update(0);
@@ -136,14 +136,18 @@ ccs.Armature = cc.NodeRGBA.extend({
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         }
 
-        this.unscheduleUpdate();
-        this.scheduleUpdate();
-
         this.setCascadeOpacityEnabled(true);
         this.setCascadeColorEnabled(true);
         return true;
     },
-
+    onEnter:function(){
+        cc.NodeRGBA.prototype.onEnter.call(this);
+        this.scheduleUpdate();
+    },
+    onExit:function(){
+        cc.NodeRGBA.prototype.onExit.call(this);
+        this.unscheduleUpdate();
+    },
     /**
      * create a bone
      * @param {String} boneName
@@ -167,7 +171,7 @@ ccs.Armature = cc.NodeRGBA.extend({
         }
 
         bone.setBoneData(boneData);
-        bone.getDisplayManager().changeDisplayByIndex(-1, false);
+        bone.getDisplayManager().changeDisplayWithIndex(-1, false);
         return bone;
     },
 
@@ -271,12 +275,12 @@ ccs.Armature = cc.NodeRGBA.extend({
     updateOffsetPoint:function () {
         // Set contentsize and Calculate anchor point.
         var rect = this.boundingBox();
-        this.setContentSize(rect.size);
+        this.setContentSize(rect._size);
         var locOffsetPoint = this._offsetPoint;
         locOffsetPoint.x = -rect.x;
         locOffsetPoint.y = -rect.y;
         if (rect.width != 0 && rect.height != 0) {
-            this.setAnchorPoint(cc.p(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height));
+            this.setAnchorPoint(locOffsetPoint.x / rect.width, locOffsetPoint.y / rect.height);
         }
     },
 
@@ -289,18 +293,17 @@ ccs.Armature = cc.NodeRGBA.extend({
         this._armatureTransformDirty = false;
     },
 
-    nodeToParentTransform:function () {
-        return cc.Browser.supportWebGL ? this.nodeToParentTransformWEBGL() : this.nodeToParentTransformCanvas();
-    },
 
-    nodeToParentTransformWEBGL:function () {
+    nodeToParentTransform: null,
+
+    _nodeToParentTransformForWebGL:function () {
         if (this._transformDirty) {
             this._armatureTransformDirty = true;
             // Translate values
-            var x = this._position.x;
-            var y = this._position.y;
-            var apx = this._anchorPointInPoints.x, napx = -apx;
-            var apy = this._anchorPointInPoints.y, napy = -apy;
+            var x = this._position._x;
+            var y = this._position._y;
+            var apx = this._anchorPointInPoints._x, napx = -apx;
+            var apy = this._anchorPointInPoints._y, napy = -apy;
             var scx = this._scaleX, scy = this._scaleY;
 
             if (this._ignoreAnchorPointForPosition) {
@@ -358,21 +361,21 @@ ccs.Armature = cc.NodeRGBA.extend({
         return this._transform;
     },
 
-    nodeToParentTransformCanvas:function () {
+    _nodeToParentTransformForCanvas:function () {
         if (!this._transform)
             this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
         if (this._transformDirty) {
             this._armatureTransformDirty = true;
             var t = this._transform;// quick reference
             // base position
-            t.tx = this._position.x;
-            t.ty = this._position.y;
+            t.tx = this._position._x;
+            t.ty = this._position._y;
 
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
             if (this._rotationX) {
-                Cos = Math.cos(this._rotationRadiansX);
-                Sin = Math.sin(this._rotationRadiansX);
+                Cos = Math.cos(-this._rotationRadiansX);
+                Sin = Math.sin(-this._rotationRadiansX);
             }
 
             // base abcd
@@ -381,18 +384,16 @@ ccs.Armature = cc.NodeRGBA.extend({
             t.b = Sin;
 
             var lScaleX = this._scaleX, lScaleY = this._scaleY;
-            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
+            var appX = this._anchorPointInPoints._x, appY = this._anchorPointInPoints._y;
 
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
             var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
                 sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
 
-
             // Add offset point
             t.tx += Cos * this._offsetPoint.x * lScaleX + -Sin * this._offsetPoint.y * lScaleY;
             t.ty += Sin * this._offsetPoint.x * lScaleX + Cos * this._offsetPoint.y * lScaleY;
-
 
             // skew
             if (this._skewX || this._skewY) {
@@ -418,8 +419,8 @@ ccs.Armature = cc.NodeRGBA.extend({
             }
 
             // adjust anchorPoint
-            t.tx += Cos * -appX * sx + -Sin * appY * sy;
-            t.ty -= Sin * -appX * sx + Cos * appY * sy;
+            t.tx += Cos * -appX * sx + -Sin * -appY * sy;
+            t.ty += Sin * -appX * sx + Cos * -appY * sy;
 
             // if ignore anchorPoint
             if (this._ignoreAnchorPointForPosition) {
@@ -444,35 +445,6 @@ ccs.Armature = cc.NodeRGBA.extend({
     },
 
     /**
-     * update blendType
-     * @param {ccs.BlendType} blendType
-     */
-    updateBlendType: function (blendType) {
-        var blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        switch (blendType) {
-            case ccs.BlendType.normal:
-                blendFunc.src = cc.BLEND_SRC;
-                blendFunc.dst = cc.BLEND_DST;
-                break;
-            case ccs.BlendType.add:
-                blendFunc.src = gl.SRC_ALPHA;
-                blendFunc.dst = gl.ONE;
-                break;
-            case ccs.BlendType.multiply:
-                blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            case ccs.BlendType.screen:
-                blendFunc.src = gl.ONE;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            default:
-                break;
-        }
-        this.setBlendFunc(blendFunc.src, blendFunc.dst);
-    },
-
-    /**
      * conforms to cc.TextureProtocol protocol
      * @param {cc.BlendFunc} blendFunc
      */
@@ -493,7 +465,7 @@ ccs.Armature = cc.NodeRGBA.extend({
      * @return {cc.rect}
      */
     boundingBox:function () {
-        var minx, miny, maxx, maxy = 0;
+        var minx = 0, miny = 0, maxx = 0, maxy = 0;
         var first = true;
         var boundingBox = cc.rect(0, 0, 0, 0);
         for (var i = 0; i < this._children.length; i++) {
@@ -562,6 +534,23 @@ ccs.Armature = cc.NodeRGBA.extend({
         for (var key in this._boneDic) {
             var bone = this._boneDic[key];
             bone.setColliderFilter(filter);
+        }
+    },
+
+    /**
+     * draw contour
+     */
+    drawContour: function () {
+        cc.drawingUtil.setDrawColor4B(255, 255, 255, 255);
+        cc.drawingUtil.setLineWidth(1);
+        for (var key in this._boneDic) {
+            var bone = this._boneDic[key];
+            var bodyList = bone.getColliderBodyList();
+            for (var i = 0; i < bodyList.length; i++) {
+                var body = bodyList[i];
+                var vertexList = body.getCalculatedVertexList();
+                cc.drawingUtil.drawPoly(vertexList, vertexList.length, true);
+            }
         }
     },
 
@@ -671,6 +660,15 @@ ccs.Armature = cc.NodeRGBA.extend({
     }
 
 });
+
+
+if(cc.Browser.supportWebGL){
+    //WebGL
+    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
+}else{
+    //Canvas
+    ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForCanvas;
+}
 
 /**
  * allocates and initializes a armature.

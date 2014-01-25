@@ -35,6 +35,43 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     // the first char in the charmap
     _mapStartChar:null,
 
+    _textureLoaded:false,
+    _loadedEventListeners: null,
+
+    ctor:function(){
+        cc.AtlasNode.prototype.ctor.call(this);
+    },
+
+    /**
+     * return  texture is loaded
+     * @returns {boolean}
+     */
+    textureLoaded:function(){
+        return this._textureLoaded;
+    },
+
+    /**
+     * add texture loaded event listener
+     * @param {Function} callback
+     * @param {Object} target
+     */
+    addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
+        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
+        this._textureLoaded = true;
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0, len = locListeners.length;  i < len; i++){
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
+    },
     /**
      * <p>
      * initializes the cc.LabelAtlas with a string, a char map file(the atlas),                     <br/>
@@ -80,7 +117,15 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             texture = textureFilename;
         else
             texture = cc.TextureCache.getInstance().addImage(textureFilename);
-
+        var locLoaded = texture.isLoaded();
+        this._textureLoaded = locLoaded;
+        if(!locLoaded){
+            texture.addLoadedEventListener(function(sender){
+                this.initWithTexture(texture, width, height, label.length);
+                this.setString(label);
+                this._callLoadedEventCallbacks();
+            },this);
+        }
         if (this.initWithTexture(texture, width, height, label.length)) {
             this._mapStartChar = startChar;
             this.setString(label);
@@ -126,12 +171,12 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locString = this._string;
         var n = locString.length;
         var texture = this.getTexture();
-        var locItemWidth = this._itemWidth, locItemHeight = this._itemHeight;
-        var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight ;     //needn't multiply cc.CONTENT_SCALE_FACTOR(), because sprite's draw will do this
+
         for (var i = 0; i < n; i++) {
             var a = locString.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._itemsPerRow, 10) * locScaleFactor;
-            var col = parseInt(a / this._itemsPerRow, 10) * locScaleFactor;
+            var row = parseInt(a % this._itemsPerRow, 10);
+            var col = parseInt(a / this._itemsPerRow, 10);
 
             var rect = cc.rect(row * locItemWidth, col * locItemHeight, locItemWidth, locItemHeight);
             var c = locString.charCodeAt(i);
@@ -245,7 +290,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         label = String(label);
         var len = label.length;
         this._string = label;
-        this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
+        this.setContentSize(len * this._itemWidth, this._itemHeight);
         if (this._children) {
             var locChildren = this._children;
             len = locChildren.length;
@@ -267,7 +312,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             this._textureAtlas.resizeCapacity(len);
 
         this._string = label;
-        this.setContentSize(cc.size(len * this._itemWidth, this._itemHeight));
+        this.setContentSize(len * this._itemWidth, this._itemHeight);
 
         this.updateAtlasValues();
         this._quadsToDraw = len;

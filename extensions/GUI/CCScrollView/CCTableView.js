@@ -309,7 +309,7 @@ cc.TableView = cc.ScrollView.extend({
     },
 
     _setIndexForCell:function (index, cell) {
-        cell.setAnchorPoint(cc.p(0.0, 0.0));
+        cell.setAnchorPoint(0, 0);
         cell.setPosition(this._offsetFromIndex(index));
         cell.setIdx(index);
     },
@@ -582,7 +582,7 @@ cc.TableView = cc.ScrollView.extend({
 
         if (this._touchedCell){
             var bb = this.getBoundingBox();
-            bb.origin = this._parent.convertToWorldSpace(bb.origin);
+            bb._origin = this._parent.convertToWorldSpace(bb._origin);
             var locTableViewDelegate = this._tableViewDelegate;
             if (cc.rectContainsPoint(bb, touch.getLocation()) && locTableViewDelegate != null){
                 if(locTableViewDelegate.tableCellUnhighlight)

@@ -64,11 +64,14 @@ ccs.CONST_A_EVENT = "evt";
 ccs.CONST_A_SOUND = "sd";
 ccs.CONST_A_SOUND_EFFECT = "sdE";
 ccs.CONST_A_TWEEN_EASING = "twE";
-ccs.CONST_A_TWEEN_ROTATE = "twR";
+ccs.CONST_A_TWEEN_ROTATION = "twR";
+ccs.CONST_A_EASING_PARAM = "twEP";
 ccs.CONST_A_IS_ARMATURE = "isArmature";
 ccs.CONST_A_DISPLAY_TYPE = "displayType";
 ccs.CONST_A_MOVEMENT = "mov";
 ccs.CONST_A_BLEND_TYPE = "bd";
+ccs.CONST_A_BLEND_SRC = "bd_src";
+ccs.CONST_A_BLEND_DST = "bd_dst";
 
 ccs.CONST_A_X = "x";
 ccs.CONST_A_Y = "y";
@@ -122,7 +125,7 @@ ccs.CONST_COLOR_INFO = "color";
 ccs.CONST_CONFIG_FILE_PATH = "config_file_path";
 ccs.CONST_CONTENT_SCALE = "content_scale";
 
-ccs.DataReaderHelper = ccs.DataReaderHelper || cc.Class.extend({});
+ccs.DataReaderHelper = ccs.DataReaderHelper || ccs.Class.extend({});
 ccs.DataReaderHelper._configFileList = [];
 ccs.DataReaderHelper._flashToolVersion = ccs.CONST_VERSION_2_0;
 ccs.DataReaderHelper._cocoStudioVersion = ccs.CONST_VERSION_COMBINED;
@@ -492,8 +495,34 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     frameData.movement = frameXML.getAttribute(ccs.CONST_A_MOVEMENT) || "";
     frameData.event = frameXML.getAttribute(ccs.CONST_A_EVENT) || "";
     frameData.blendType = parseInt(frameXML.getAttribute(ccs.CONST_A_BLEND_TYPE)) || ccs.BlendType.normal;
+
+    var blendFunc = frameData.blendFunc;
+    switch (frameData.blendType) {
+        case ccs.BlendType.normal:
+            blendFunc.src = cc.BLEND_SRC;
+            blendFunc.dst = cc.BLEND_DST;
+            break;
+        case ccs.BlendType.add:
+            blendFunc.src = gl.SRC_ALPHA;
+            blendFunc.dst = gl.ONE;
+            break;
+        case ccs.BlendType.multiply:
+            blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
+            blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+            break;
+        case ccs.BlendType.screen:
+            blendFunc.src = gl.ONE;
+            blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+            break;
+        default:
+            break;
+    }
+
     frameData.sound = frameXML.getAttribute(ccs.CONST_A_SOUND) || "";
     frameData.soundEffect = frameXML.getAttribute(ccs.CONST_A_SOUND_EFFECT) || "";
+
+    var isTween = frameXML.getAttribute(ccs.CONST_A_TWEEN_FRAME) || true;
+    frameData.isTween = Boolean(isTween);
 
     if (dataInfo.flashToolVersion >= ccs.CONST_VERSION_2_0) {
         frameData.x = parseFloat(frameXML.getAttribute(ccs.CONST_A_COCOS2DX_X)) || 0;
@@ -512,12 +541,13 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     frameData.duration = parseFloat(frameXML.getAttribute(ccs.CONST_A_DURATION)) || 0;
     frameData.displayIndex = parseFloat(frameXML.getAttribute(ccs.CONST_A_DISPLAY_INDEX)) || 0;
     frameData.zOrder = parseFloat(frameXML.getAttribute(ccs.CONST_A_Z)) || 0;
+    frameData.tweenRotate = parseFloat(frameXML.getAttribute(ccs.CONST_A_TWEEN_ROTATION)) || 0;
 
     var colorTransformXMLList = frameXML.querySelectorAll(ccs.CONST_FRAME + " > " + ccs.CONST_A_COLOR_TRANSFORM);
     if (colorTransformXMLList.length > 0) {
         var colorTransformXML = colorTransformXMLList[0];
-        var alpha = red = green = blue = 0;
-        var alphaOffset = redOffset = greenOffset = blueOffset = 100;
+        var alpha = 0, red = 0, green = 0, blue = 0;
+        var alphaOffset = 0, redOffset = 0, greenOffset = 0, blueOffset = 100;
 
         alpha = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_ALPHA)) || alpha;
         red = parseFloat(colorTransformXML.getAttribute(ccs.CONST_A_RED)) || red;
@@ -738,7 +768,7 @@ ccs.DataReaderHelper.decodeBoneDisplayFromJson = function (json, dataInfo) {
             break;
         case ccs.DisplayType.particle:
             displayData = new ccs.ParticleDisplayData();
-            displayData.plist = dataInfo.basefilePath + json[ccs.CONST_A_PLIST] || "";
+            displayData.displayName = dataInfo.basefilePath + json[ccs.CONST_A_PLIST] || "";
             break;
         default:
             displayData = new ccs.SpriteDisplayData();
@@ -837,7 +867,12 @@ ccs.DataReaderHelper.decodeFrameFromJson = function (json, dataInfo) {
     frameData.duration = json[ccs.CONST_A_DURATION] || 0;
     frameData.tweenEasing = json[ccs.CONST_A_TWEEN_EASING] || ccs.TweenType.linear;
     frameData.displayIndex = json[ccs.CONST_A_DISPLAY_INDEX] || 0;
-    frameData.blendType = json[ccs.CONST_A_BLEND_TYPE] || 0;
+
+    var bd_src = json[ccs.CONST_A_BLEND_SRC] || cc.BLEND_SRC;
+    var bd_dst = json[ccs.CONST_A_BLEND_DST] || cc.BLEND_DST;
+    frameData.blendFunc.src = bd_src;
+    frameData.blendFunc.dst = bd_dst;
+
     frameData.event = json[ccs.CONST_A_EVENT] || null;
     if(json.hasOwnProperty(ccs.CONST_A_TWEEN_FRAME)){
         frameData.isTween = json[ccs.CONST_A_TWEEN_FRAME]
@@ -846,6 +881,13 @@ ccs.DataReaderHelper.decodeFrameFromJson = function (json, dataInfo) {
         frameData.duration = json[ccs.CONST_A_DURATION] || 0;
     else
         frameData.frameID = json[ccs.CONST_A_FRAME_INDEX] || 0;
+
+    var twEPs = json[ccs.CONST_A_EASING_PARAM] || [];
+    for (var i = 0; i < twEPs.length; i++) {
+        var twEP = twEPs[i];
+        frameData.easingParams[i] = twEP;
+    }
+
     return frameData;
 };
 
@@ -879,8 +921,8 @@ ccs.DataReaderHelper.decodeContourFromJson = function (json) {
 };
 
 ccs.DataReaderHelper.decodeNodeFromJson = function (node, json, dataInfo) {
-    node.x = (json[ccs.CONST_A_X] || 0) * this._positionReadScale;
-    node.y = (json[ccs.CONST_A_Y] || 0) * this._positionReadScale;
+    node.x = json[ccs.CONST_A_X] || 0 ;
+    node.y = json[ccs.CONST_A_Y] || 0;
 
     node.x *= dataInfo.contentScale;
     node.y *= dataInfo.contentScale;

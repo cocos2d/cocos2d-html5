@@ -169,7 +169,8 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     getContentOffset:function () {
-        return this._container.getPosition();
+        var locPos = this._container.getPosition();
+        return cc.p(locPos.x, locPos.y);
     },
 
     /**
@@ -343,7 +344,7 @@ cc.ScrollView = cc.Layer.extend({
 
         this._container = container;
         container.ignoreAnchorPointForPosition(false);
-        container.setAnchorPoint(cc.p(0.0, 0.0));
+        container.setAnchorPoint(0, 0);
 
         this.addChild(container);
         this.setViewSize(this._viewSize);
@@ -486,9 +487,12 @@ cc.ScrollView = cc.Layer.extend({
         this._touchMoved = false;
     },
 
-    setContentSize: function (size) {
+    setContentSize: function (size, height) {
         if (this.getContainer() != null) {
-            this.getContainer().setContentSize(size);
+            if(arguments.length === 2)
+                this.getContainer().setContentSize(size, height);
+            else
+                this.getContainer().setContentSize(size);
             this.updateInset();
         }
     },
@@ -603,7 +607,7 @@ cc.ScrollView = cc.Layer.extend({
         tag = tag || child.getTag();
 
         child.ignoreAnchorPointForPosition(false);
-        child.setAnchorPoint(cc.p(0.0, 0.0));
+        child.setAnchorPoint(0, 0);
         if (this._container != child) {
             this._container.addChild(child, zOrder, tag);
         } else {
@@ -686,10 +690,8 @@ cc.ScrollView = cc.Layer.extend({
          newX = Math.max(newX, minInset.x);
          var newY = Math.min(this._container.getPosition().y, maxInset.y);
          newY = Math.max(newY, minInset.y);*/
-        oldPosition.x = this._container.getPositionX();
-        oldPosition.y = this._container.getPositionY();
-        var newX = oldPosition.x;
-        var newY = oldPosition.y;
+        var newX = this._container.getPositionX();
+        var newY = this._container.getPositionY();
 
         //this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(newX - this._container.getPosition().x, newY - this._container.getPosition().y));
         //= this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(0, 0)); = do nothing

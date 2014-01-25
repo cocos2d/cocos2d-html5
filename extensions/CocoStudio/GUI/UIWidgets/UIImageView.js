@@ -21,18 +21,13 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+ccs.IMAGERENDERERZ = -1;
 /**
- * Base class for ccs.UIButton
+ * Base class for ccs.Button
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UIImageView = ccs.UIWidget.extend({
-    _clickCount: 0,
-    _clickTimeInterval: 0,
-    _startCheckDoubleClick: false,
-    _touchRelease: false,
-    _doubleClickEnabled: false,
+ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     _scale9Enabled: false,
     _prevIgnoreSize: true,
     _capInsets: null,
@@ -41,25 +36,19 @@ ccs.UIImageView = ccs.UIWidget.extend({
     _imageTexType: null,
     _imageTextureSize: null,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
-        this._clickCount = 0;
-        this._clickTimeInterval = 0;
-        this._startCheckDoubleClick = false;
-        this._touchRelease = false;
-        this._doubleClickEnabled = false;
+        ccs.Widget.prototype.ctor.call(this);
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
         this._capInsets = cc.rect(0,0,0,0);
         this._imageRenderer = null;
         this._textureFile = "";
         this._imageTexType = ccs.TextureResType.local;
-        this._imageTextureSize = this._size;
+        this._imageTextureSize = cc.size(this._size.width, this._size.height);
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._imageRenderer = cc.Sprite.create();
-        this._renderer.addChild(this._imageRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
     },
 
     /**
@@ -74,37 +63,42 @@ ccs.UIImageView = ccs.UIWidget.extend({
         texType = texType || ccs.TextureResType.local;
         this._textureFile = fileName;
         this._imageTexType = texType;
+        var imageRenderer = this._imageRenderer
         switch (this._imageTexType) {
             case ccs.TextureResType.local:
-                if (this._scale9Enabled) {
-                    this._imageRenderer.initWithFile(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                    this._imageRenderer.setCapInsets(this._capInsets);
-                }
-                else {
-                    this._imageRenderer.initWithFile(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                }
+                imageRenderer.initWithFile(fileName);
                 break;
             case ccs.TextureResType.plist:
-                if (this._scale9Enabled) {
-                    this._imageRenderer.initWithSpriteFrameName(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                    this._imageRenderer.setCapInsets(this._capInsets);
-                }
-                else {
-                    this._imageRenderer.initWithSpriteFrameName(fileName);
-                    this._imageRenderer.setColor(this.getColor());
-                    this._imageRenderer.setOpacity(this.getOpacity());
-                }
+                imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._imageTextureSize = this._imageRenderer.getContentSize();
+
+        var locRendererSize = imageRenderer.getContentSize();
+        if(imageRenderer.textureLoaded()){
+            this._imageTextureSize.width = locRendererSize.width;
+            this._imageTextureSize.height = locRendererSize.height;
+        }else{
+            imageRenderer.addLoadedEventListener(function(){
+                var locSize = imageRenderer.getContentSize();
+                this._imageTextureSize.width = locSize.width;
+                this._imageTextureSize.height = locSize.height;
+                if (imageRenderer.setCapInsets) {
+                    imageRenderer.setCapInsets(this._capInsets);
+                }
+                this.imageTextureScaleChangedWithSize();
+            },this);
+            this._imageTextureSize.width = this._customSize.width;
+            this._imageTextureSize.height = this._customSize.height;
+        }
+
+        if (this._scale9Enabled) {
+            imageRenderer.setCapInsets(this._capInsets);
+        }
+
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },
@@ -117,70 +111,6 @@ ccs.UIImageView = ccs.UIWidget.extend({
         if (!this._scale9Enabled){
             this._imageRenderer.setTextureRect(rect);
         }
-    },
-
-    onTouchBegan: function (touchPoint) {
-        this.setFocused(true);
-        this._touchStartPos.x = touchPoint.x;
-        this._touchStartPos.y = touchPoint.y;
-        this._widgetParent.checkChildInfo(0, this, touchPoint);
-        this.pushDownEvent();
-
-        if (this._doubleClickEnabled) {
-            this._clickTimeInterval = 0;
-            this._startCheckDoubleClick = true;
-            this._clickCount++;
-            this._touchRelease = false;
-        }
-        return this._touchPassedEnabled;
-    },
-
-    onTouchEnded: function (touchPoint) {
-        if (this._doubleClickEnabled) {
-            if (this._clickCount >= 2) {
-                this.doubleClickEvent();
-                this._clickCount = 0;
-                this._startCheckDoubleClick = false;
-            }
-            else {
-                this._touchRelease = true;
-            }
-        }
-        else {
-            ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
-        }
-    },
-
-    doubleClickEvent: function () {
-
-    },
-
-    checkDoubleClick: function (dt) {
-        if (this._startCheckDoubleClick) {
-            this._clickTimeInterval += dt;
-            if (this._clickTimeInterval >= 200 && this._clickCount > 0) {
-                this._clickTimeInterval = 0;
-                this._clickCount--;
-                this._startCheckDoubleClick = false;
-            }
-        }
-        else {
-            if (this._clickCount <= 1) {
-                if (this._touchRelease) {
-                    this.releaseUpEvent();
-                    this._clickTimeInterval = 0;
-                    this._clickCount = 0;
-                    this._touchRelease = false;
-                }
-            }
-        }
-    },
-
-    setDoubleClickEnabled: function (bool) {
-        if (bool == this._doubleClickEnabled) {
-            return;
-        }
-        this._doubleClickEnabled = bool;
     },
 
     /**
@@ -236,7 +166,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
 
 
         this._scale9Enabled = able;
-        this._renderer.removeChild(this._imageRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._imageRenderer, true);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
             this._imageRenderer = cc.Scale9Sprite.create();
@@ -245,7 +175,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        this._renderer.addChild(this._imageRenderer);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -263,7 +193,7 @@ ccs.UIImageView = ccs.UIWidget.extend({
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -282,14 +212,21 @@ ccs.UIImageView = ccs.UIWidget.extend({
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UIImageView or The anchor point.x of UIImageView.
+     * @param {Number} [y] The anchor point.y of UIImageView.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._imageRenderer.setAnchorPoint(pt);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+            this._imageRenderer.setAnchorPoint(point, y);
+        } else {
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
+            this._imageRenderer.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.imageTextureScaleChangedWithSize();
     },
 
@@ -333,12 +270,17 @@ ccs.UIImageView = ccs.UIWidget.extend({
             }
         }
     },
+
+    /**
+     * Returns the "class name" of widget.
+     * @returns {string}
+     */
     getDescription: function () {
         return "ImageView";
     },
 
     createCloneInstance:function(){
-        return ccs.UIImageView.create();
+        return ccs.ImageView.create();
     },
 
     copySpecialProperties: function (imageView) {
@@ -349,9 +291,16 @@ ccs.UIImageView = ccs.UIWidget.extend({
     }
 
 });
-
-ccs.UIImageView.create = function () {
-    var uiImageView = new ccs.UIImageView();
+/**
+ * allocates and initializes a UIImageView.
+ * @constructs
+ * @return {ccs.ImageView}
+ * @example
+ * // example
+ * var uiImageView = ccs.ImageView.create();
+ */
+ccs.ImageView.create = function () {
+    var uiImageView = new ccs.ImageView();
     if (uiImageView && uiImageView.init()) {
         return uiImageView;
     }

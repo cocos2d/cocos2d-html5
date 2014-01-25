@@ -22,12 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.Skin = cc.Sprite.extend({
+/**
+ * Base class for ccs.Skin
+ * @class
+ * @extends ccs.Sprite
+ */
+ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _skinData:null,
     _bone:null,
     _skinTransform:null,
     _displayName:"",
-    _blend:null,
     _armature:null,
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
@@ -35,7 +39,6 @@ ccs.Skin = cc.Sprite.extend({
         this._bone = null;
         this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
-        this._blend = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this._armature = null;
     },
     initWithSpriteFrameName:function(spriteFrameName){
@@ -44,7 +47,7 @@ ccs.Skin = cc.Sprite.extend({
         return ret;
     },
     initWithFile:function(fileName){
-        var ret = cc.Sprite.prototype.initWithFile.call(this,spriteFrameName);
+        var ret = cc.Sprite.prototype.initWithFile.call(this,fileName);
         this._displayName = fileName;
         return ret;
     },
@@ -57,7 +60,14 @@ ccs.Skin = cc.Sprite.extend({
         this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
-        this._skinTransform = this.nodeToParentTransform();
+        var localTransform = this.nodeToParentTransform();
+        var skinTransform = this._skinTransform;
+        skinTransform.a = localTransform.a;
+        skinTransform.b = localTransform.b;
+        skinTransform.c = localTransform.c;
+        skinTransform.d = localTransform.d;
+        skinTransform.tx = localTransform.tx;
+        skinTransform.ty = localTransform.ty;
         this.updateArmatureTransform();
     },
 
@@ -78,7 +88,15 @@ ccs.Skin = cc.Sprite.extend({
         var locTransform = this._transform;
         var locArmature = this._armature;
         if (locArmature && locArmature.getBatchNode()) {
-            this._transform = cc.AffineTransformConcat(locTransform, locTransform.nodeToParentTransform());
+            this._transform = cc.AffineTransformConcat(locTransform, locArmature.nodeToParentTransform());
+        }
+        if (cc.renderContextType === cc.CANVAS) {
+            locTransform = this._transform
+            locTransform.b *= -1;
+            locTransform.c *= -1;
+            var tempB = locTransform.b;
+            locTransform.b = locTransform.c;
+            locTransform.c = tempB;
         }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
@@ -86,7 +104,7 @@ ccs.Skin = cc.Sprite.extend({
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
         var transForm = this.nodeToParentTransform();
         return cc.RectApplyAffineTransform(rect, transForm);
     },
@@ -103,6 +121,7 @@ ccs.Skin = cc.Sprite.extend({
         return cc.AffineTransformConcat(this._transform, this._bone.getArmature().nodeToWorldTransform());
     },
 
+
     nodeToWorldTransformAR: function () {
         var displayTransform = this._transform;
         var anchorPoint = this._anchorPointInPoints;
@@ -112,37 +131,18 @@ ccs.Skin = cc.Sprite.extend({
         displayTransform.ty = anchorPoint.y;
 
         return cc.AffineTransformConcat(displayTransform, this._bone.getArmature().nodeToWorldTransform());
-    },
-    /**
-     * update blendType
-     * @param {ccs.BlendType} blendType
-     */
-    updateBlendType: function (blendType) {
-        var blendFunc = this._blend;
-        switch (blendType) {
-            case ccs.BlendType.normal:
-                blendFunc.src = cc.BLEND_SRC;
-                blendFunc.dst = cc.BLEND_DST;
-                break;
-            case ccs.BlendType.add:
-                blendFunc.src = gl.SRC_ALPHA;
-                blendFunc.dst = gl.ONE;
-                break;
-            case ccs.BlendType.multiply:
-                blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            case ccs.BlendType.screen:
-                blendFunc.src = gl.ONE;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
-                break;
-            default:
-                break;
-        }
-        this.setBlendFunc(blendFunc.src, blendFunc.dst);
     }
 });
-
+ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
+/**
+ * allocates and initializes a skin.
+ * @param {String} fileName
+ * @param {cc.Rect} rect
+ * @returns {ccs.Skin}
+ * @example
+ * // example
+ * var skin = ccs.Skin.create("res/test.png",cc.rect(0,0,50,50));
+ */
 ccs.Skin.create = function (fileName, rect) {
     var argnum = arguments.length;
     var sprite = new ccs.Skin();
@@ -156,6 +156,14 @@ ccs.Skin.create = function (fileName, rect) {
     return null;
 };
 
+/**
+ * allocates and initializes a skin.
+ * @param {String} pszSpriteFrameName
+ * @returns {ccs.Skin}
+ * @example
+ * // example
+ * var skin = ccs.Skin.createWithSpriteFrameName("test.png");
+ */
 ccs.Skin.createWithSpriteFrameName = function (pszSpriteFrameName) {
     var skin = new ccs.Skin();
     if (skin && skin.initWithSpriteFrameName(pszSpriteFrameName)) {

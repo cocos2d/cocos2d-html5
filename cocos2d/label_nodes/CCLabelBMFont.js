@@ -450,6 +450,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _cascadeOpacityEnabled:false,
 
     _textureLoaded: false,
+    _loadedEventListeners: null,
 
     _setString:function(newString, needUpdateLabel){
         if(!needUpdateLabel){
@@ -497,6 +498,36 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._reusedChar = [];
     },
     /**
+     * return  texture is loaded
+     * @returns {boolean}
+     */
+    textureLoaded:function(){
+        return this._textureLoaded;
+    },
+
+    /**
+     * add texture loaded event listener
+     * @param {Function} callback
+     * @param {Object} target
+     */
+    addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
+        this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+    },
+
+    _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
+        var locListeners = this._loadedEventListeners;
+        for(var i = 0, len = locListeners.length;  i < len; i++){
+            var selCallback = locListeners[i];
+            selCallback.eventCallback.call(selCallback.eventTarget, this);
+        }
+        locListeners.length = 0;
+    },
+
+    /**
      * @param {CanvasRenderingContext2D} ctx
      */
     draw:function (ctx) {
@@ -505,7 +536,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
             var size = this.getContentSize();
-            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
+            var pos = cc.p(0 | ( -this._anchorPointInPoints._x), 0 | ( -this._anchorPointInPoints._y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
             cc.drawingUtil.setDrawColor4B(0,255,0,255);
             cc.drawingUtil.drawPoly(vertices, 4, true);
@@ -583,7 +614,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     updateDisplayedOpacity:function(parentOpacity){
         this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
         var locChildren = this._children;
-        for(var i = 0; i< locChildren; i++){
+        for(var i = 0; i< locChildren.length; i++){
             var locChild = locChildren[i];
             if(cc.Browser.supportWebGL){
                 locChild.updateDisplayedOpacity(this._displayedOpacity);
@@ -699,12 +730,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var locIsLoaded = texture.isLoaded();
             this._textureLoaded = locIsLoaded;
             if(!locIsLoaded){
-                this._textureLoaded = false;
                 texture.addLoadedEventListener(function(sender){
                     this._textureLoaded = true;
                     //reset the LabelBMFont
-                    this.initWithTexture(sender, theString.length);
-                    this.setString(theString,true);
+                    this.initWithTexture(sender, this._initialString.length);
+                    this.setString(this._initialString,true);
+                    this._callLoadedEventCallbacks();
                 }, this);
             }
         } else{
@@ -725,9 +756,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._cascadeOpacityEnabled = true;
             this._cascadeColorEnabled = true;
 
-            this._contentSize = cc.SizeZero();
+            this._contentSize._width = 0;
+            this._contentSize._height = 0;
 
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
 
             if (cc.renderContextType === cc.WEBGL) {
                 var locTexture = this._textureAtlas.getTexture();
@@ -819,7 +851,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.setTextureRect(rect, false, cc.SizeZero());
                 } else {
                     // updating previous sprite
-                    fontChar.setTextureRect(rect, false, rect.size);
+                    fontChar.setTextureRect(rect, false, rect._size);
                     // restore to default in case they were modified
                     fontChar.setVisible(true);
                 }
@@ -912,8 +944,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     updateLabel:function () {
         this.setString(this._initialString, false);
 
+        // Step 1: Make multiline
         if (this._width > 0) {
-            // Step 1: Make multiline
             var stringLength = this._string.length;
             var multiline_string = [];
             var last_word = [];
@@ -927,8 +959,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     justSkipped++;
                 skip += justSkipped;
 
-                if (!characterSprite.isVisible())
-                    continue;
                 if (i >= stringLength)
                     break;
 
@@ -958,7 +988,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         break;
 
                     character = this._string[i];
-
                     if (!startOfWord) {
                         startOfWord = this._getLetterPosXLeft(characterSprite);
                         start_word = true;
@@ -967,10 +996,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         startOfLine = startOfWord;
                         start_line = true;
                     }
+                    i++;
+                    continue;
                 }
 
                 // Whitespace.
-                if (character.charCodeAt(0) == 32) {
+                if (cc.isspace_unicode(character)) {
                     last_word.push(character);
                     multiline_string = multiline_string.concat(last_word);
                     last_word.length = 0;
@@ -1060,7 +1091,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar.getPosition().x + lastChar.getContentSize().width / 2;
+                    lineWidth = lastChar.getPositionX() + lastChar.getContentSize().width / 2;
 
                     var shift = 0;
                     switch (this._alignment) {
@@ -1175,6 +1206,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     this.createFontChars();
                     this._changeTextureColor();
                     this.updateLabel();
+                    this._callLoadedEventCallbacks();
                 }, this);
             } else {
                 this.createFontChars();
@@ -1190,14 +1222,23 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * set the AnchorPoint of the label
-     * @param {cc.Point} point
+     * set the AnchorPoint of the labelBMFont
+     * @override
+     * @param {cc.Point|Number} point The anchor point of labelBMFont or The anchor point.x of labelBMFont.
+     * @param {Number} [y] The anchor point.y of labelBMFont.
      */
-    setAnchorPoint:function (point) {
-        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
+    setAnchorPoint:function (point, y) {
+        var locAnchorPoint = this._anchorPoint;
+        if (arguments.length === 2) {
+            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
+                return;
+            cc.Node.prototype.setAnchorPoint.call(this, point, y);
+        } else {
+            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
+                return;
             cc.Node.prototype.setAnchorPoint.call(this, point);
-            this.updateLabel();
         }
+        this.updateLabel();
     },
 
     _atlasNameFromFntFile:function (fntFile) {
@@ -1215,19 +1256,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.getPosition().x * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.getPositionX() * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.getPosition().x * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.getPositionX() * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     }
 });
 
 /**
- * creates a bitmap font altas with an initial string and the FNT file
+ * creates a bitmap font atlas with an initial string and the FNT file
  * @param {String} str
  * @param {String} fntFile
- * @param {String} width
+ * @param {Number} width
  * @param {Number} alignment
  * @param {cc.Point} imageOffset
  * @return {cc.LabelBMFont|Null}
@@ -1244,9 +1285,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
     if (arguments.length == 0) {
-        if (ret && ret.init()) {
+        if (ret && ret.init())
             return ret;
-        }
         return null;
     }
 
