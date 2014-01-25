@@ -97,7 +97,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                 var resType = 0;
                 path +=this._baseBath;
                 if (fileData != null) {
-                    if(fileData["resourceType"]){
+                    if(fileData["resourceType"] !== undefined){
                         resType = fileData["resourceType"]
                     }else{
                         resType =-1;

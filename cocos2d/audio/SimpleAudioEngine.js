@@ -227,7 +227,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             var realPath = this._resPath + path;
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
-            if (this.isFormatSupported(extName) && !this._soundList[keyname]) {
+            if (!this._soundList[keyname] && this.isFormatSupported(extName)) {
                 if(this._canPlay){
                     var sfxCache = new cc.SimpleSFX();
                     sfxCache.ext = extName;
@@ -1465,7 +1465,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (this._audioData[keyName]) {
             // already loaded, just play it
             this._playingMusic = this._beginSound(keyName, loop, this._musicVolume);
-        } else if (this.isFormatSupported(extName) && !this._audiosLoading[keyName]) {
+        } else if (!this._audiosLoading[keyName] && this.isFormatSupported(extName)) {
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;
@@ -1679,7 +1679,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             audioID = this._audioID++;
             this._audioIDList[audioID] = addSFX;
             return audioID;
-        } else if (this.isFormatSupported(extName) && !this._audiosLoading[keyName]) {
+        } else if (!this._audiosLoading[keyName] && this.isFormatSupported(extName)) {
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;

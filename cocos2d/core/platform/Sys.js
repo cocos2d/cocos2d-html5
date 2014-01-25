@@ -53,13 +53,13 @@ Object.defineProperties(sys,
             if(cc.Browser.supportWebGL)
                 capabilities["opengl"] = true;
 
-			if( document.documentElement['ontouchstart'] || window.navigator.msPointerEnabled)
+			if( document.documentElement['ontouchstart'] !== undefined || window.navigator.msPointerEnabled)
 				capabilities["touches"] = true;
 
-			else if( document.documentElement['onmouseup'] )
+			else if( document.documentElement['onmouseup'] !== undefined )
 				capabilities["mouse"] = true;
 
-			if( document.documentElement['onkeyup'] )
+			if( document.documentElement['onkeyup'] !== undefined )
 				capabilities["keyboard"] = true;
 
             if(window.DeviceMotionEvent || window.DeviceOrientationEvent)
