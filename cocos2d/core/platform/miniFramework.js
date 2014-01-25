@@ -59,6 +59,12 @@ cc.Browser = {};
  */
 cc.Browser.webglWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari"];
 
+/**
+ * Browsers that multiple audio support well
+ * @type {Array}
+ */
+cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari"];
+
 (function () {
     var ua = navigator.userAgent;
     cc.Browser.ua = ua.toLowerCase();
