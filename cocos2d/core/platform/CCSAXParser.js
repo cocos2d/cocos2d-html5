@@ -207,7 +207,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} filePath
      */
     unloadPlist: function (filePath) {
-        if (this._xmlDict.hasOwnProperty(filePath))
+        if (this._xmlDict[filePath])
             delete this._xmlDict[filePath];
     },
 
