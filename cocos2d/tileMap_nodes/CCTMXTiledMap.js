@@ -116,7 +116,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         this._objectGroups = null;
         this._mapOrientation = null;
 
-        this._tileProperties = [];
+        this._tileProperties = null;
     },
 
     /**
