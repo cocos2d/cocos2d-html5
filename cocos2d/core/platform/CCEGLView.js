@@ -848,13 +848,15 @@ cc.EGLView.getInstance = function () {
 
 cc.ContainerStrategy = cc.Class.extend({
     // Adjust canvas's size for retina display
-    _adjustRetina: true,
+    _adjustRetina: false,
 
     /**
      * Manipulation before appling the strategy
      * @param {cc.EGLView} The target view
      */
     preApply: function (view) {
+	    if(sys.os == "iOS" || sys.os == "OS X")
+		    this._adjustRetina = true;
     },
 
     /**
@@ -1017,24 +1019,24 @@ cc.ContentStrategy = cc.Class.extend({
 
     var EqualToWindow = EqualToFrame.extend({
         preApply: function (view) {
+	        this._super(view);
             view._frame = document.documentElement;
         },
 
         apply: function (view) {
             this._super(view);
-
             this._fixContainer();
         }
     });
 
     var ProportionalToWindow = ProportionalToFrame.extend({
         preApply: function (view) {
+	        this._super(view);
             view._frame = document.documentElement;
         },
 
         apply: function (view, designedResolution) {
             this._super(view, designedResolution);
-
             this._fixContainer();
         }
     });

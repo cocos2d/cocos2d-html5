@@ -77,14 +77,14 @@ Object.defineProperties(sys,
 			var OSName=navigator.appVersion;
 			if (navigator.appVersion.indexOf("Win")!=-1)
 				OSName="Windows";
+			else if( iOS )
+				OSName = "iOS";
 			else if (navigator.appVersion.indexOf("Mac")!=-1)
 				OSName="OS X";
 			else if (navigator.appVersion.indexOf("X11")!=-1)
 				OSName="UNIX";
 			else if (navigator.appVersion.indexOf("Linux")!=-1)
 				OSName="Linux";
-			else if( iOS )
-				OSName = "iOS";
 			else if( isAndroid )
 				OSName = "Android";
 			return OSName;
