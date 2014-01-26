@@ -206,12 +206,12 @@ cc.ArrayForObjectSorting = cc.Class.extend({
     },
 
     removeObjectAtIndex:function (idx) {
-        cc.ArrayRemoveObjectAtIndex(this._saveObjectArr, idx);
+        this._saveObjectArr.splice(idx, 1);
         this._saveObjectArr.sort(_compareObject);
     },
 
     insertObject:function (addObj, idx) {
-        this._saveObjectArr = cc.ArrayAppendObjectToIndex(this._saveObjectArr, addObj, idx);
+        this._saveObjectArr.splice(idx, 0, addObj);
         this._saveObjectArr.sort(_compareObject);
     }
 });

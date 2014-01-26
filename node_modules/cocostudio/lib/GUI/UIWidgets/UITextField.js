@@ -271,12 +271,9 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this._deleteBackwardSelector = null;
     },
 
-    init: function () {
-        if (ccs.Widget.prototype.init.call(this)) {
-            this.setUpdateEnabled(true);
-            return true;
-        }
-        return false;
+    onEnter:function(){
+        ccs.Widget.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
@@ -303,6 +300,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         if (!text) {
             return;
         }
+        text = String(text);
         if (this.isMaxLengthEnabled()) {
             text = text.substr(0, this.getMaxLength());
         }

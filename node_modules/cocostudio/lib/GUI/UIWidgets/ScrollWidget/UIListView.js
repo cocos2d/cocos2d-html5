@@ -245,7 +245,7 @@ ccs.ListView = ccs.ScrollView.extend({
             return;
         }
         var newItem = this._model.clone();
-        cc.ArrayAppendObjectToIndex(this._items, newItem, index);
+        this._items.splice(index, 0, newItem);
         this.remedyLayoutParameter(newItem);
         this.addChild(newItem);
         this._refreshViewDirty = true;
@@ -268,7 +268,7 @@ ccs.ListView = ccs.ScrollView.extend({
      * @param {Number} index
      */
     insertCustomItem: function (item, index) {
-        cc.ArrayAppendObjectToIndex(this._items, item, index);
+        this._items.splice(index, 0, item);
         this.remedyLayoutParameter(item);
         this.addChild(item);
         this._refreshViewDirty = true;
@@ -283,7 +283,7 @@ ccs.ListView = ccs.ScrollView.extend({
         if (!item) {
             return;
         }
-        cc.ArrayRemoveObject(this._items, item);
+        cc.arrayRemoveObject(this._items, item);
         this.removeChild(item);
         this._refreshViewDirty = true;
     },
@@ -321,7 +321,7 @@ ccs.ListView = ccs.ScrollView.extend({
      * @returns {Number}
      */
     getIndex: function (item) {
-        return cc.ArrayGetIndexOfObject(this._items, item);
+        return this._items.indexOf(item);
     },
 
     /**
