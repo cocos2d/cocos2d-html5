@@ -71,7 +71,6 @@ cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome
     cc.Browser.platform = navigator.platform.toLowerCase();
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
     cc.Browser.type = (function () {
-        alert(cc.Browser.ua);
         var browserTypes = cc.Browser.ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|ie|opera|miuibrowser|firefox/)
             || cc.Browser.ua.match(/chrome|safari/);
 
@@ -85,7 +84,6 @@ cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome
         }
         return "unknow";
     })();
-    alert(cc.Browser.type);
     cc.Browser.mode = cc.Browser.type == 'ie' && document.documentMode;
 
     if (!document["ccConfig"])
