@@ -179,7 +179,7 @@ cc.SimpleSFX = function (audio, ext) {
 cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */{
     _effectList:null,
     _soundList:null,
-    _maxAudioInstance:10,
+    _maxAudioInstance:5,
     _canPlay:true,
     _musicListenerBound:null,
     _musicIsStopped: false,
