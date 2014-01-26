@@ -714,7 +714,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     ctor:function(){
         cc.SimpleAudioEngine.prototype.ctor.call(this);
-        this._maxAudioInstance = 3;
+        this._maxAudioInstance = 2;
         this._playingList = [];
         this._isPauseForList = false;
         this._checkFlag = true;
@@ -780,6 +780,15 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         au.play();
         cc.AudioEngine.isMusicPlaying = true;
         this._musicIsStopped = false;
+    },
+
+    isMusicPlaying:function(){
+        var locSoundList = this._soundList, locPlayingMusic = this._playingMusic;
+        if (locSoundList[locPlayingMusic]) {
+            var au = locSoundList[locPlayingMusic].audio;
+            return (!au.paused && !au.ended);
+        }
+        return false;
     },
 
     _musicListener:function(){
