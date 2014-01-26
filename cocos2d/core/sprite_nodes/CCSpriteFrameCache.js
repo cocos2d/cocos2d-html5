@@ -73,7 +73,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
             if (frameDict) {
                 var spriteFrame = this._spriteFrames[key];
                 if (spriteFrame) {
-                    continue;
+	                continue;
                 }
 
                 if (format == 0) {
@@ -228,6 +228,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 break;
             case 2:
                 if (texture instanceof cc.Texture2D) {
+	                if(this._loadedFileNames.indexOf(filePath) === -1) {
+		                this._checkConflict(dict);
+	                }
                     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames. */
                     this._addSpriteFramesWithDictionary(dict, texture);
                 } else {
@@ -240,8 +243,11 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var gTexture = cc.TextureCache.getInstance().addImage(textureFileName);
 
                     if (gTexture) {
+	                    if(this._loadedFileNames.indexOf(filePath) === -1) {
+		                    this._checkConflict(dict);
+		                    this._loadedFileNames.push(filePath);
+	                    }
                         this._addSpriteFramesWithDictionary(dict, gTexture);
-                        this._loadedFileNames.push(filePath);
                     } else {
                         cc.log("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found " + textureFileName);
                     }
@@ -251,6 +257,17 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 throw "Argument must be non-nil ";
         }
     },
+
+	// Function to check if frames to add exists already, if so there may be name conflit that must be solved
+	_checkConflict: function (dictionary) {
+		var framesDict = dictionary["frames"];
+
+		for (var key in framesDict) {
+			if (this._spriteFrames[key]) {
+				cc.log("cocos2d: WARNING: Sprite frame: "+key+" has already been added by another source, please fix name conflit");
+			}
+		}
+	},
 
     /**
      * <p>
