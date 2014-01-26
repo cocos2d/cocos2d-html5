@@ -66,7 +66,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
         for (var i = 0, len = plist.childNodes.length; i < len; i++) {
             node = plist.childNodes[i];
             if (node.nodeType == 1)
-                break
+                break;
         }
         xmlDoc = null;
 

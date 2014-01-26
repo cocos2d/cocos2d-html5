@@ -376,8 +376,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 key = this._spriteFramesAliases[name];
             }
             if (key) {
-                if (this._spriteFrames[key.toString()]) {
-                    frame = this._spriteFrames[key.toString()];
+	            var keystr = key.toString();
+                if (this._spriteFrames[keystr]) {
+                    frame = this._spriteFrames[keystr];
                 }
                 if (!frame) {
                     cc.log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
