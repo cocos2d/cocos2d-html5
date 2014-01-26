@@ -266,7 +266,7 @@ cc.UserDefault.getInstance = function () {
  * @return {cc.UserDefault|}
  */
 cc.UserDefault.purgeInstanceUserDefault = function () {
-    if (cc.hasOwnProperty("Browser")) { //TODO: clear() is not implemented in JSB
+    if (cc.Browser) { //TODO: clear() is not implemented in JSB
         if (this._db) {
             this._db.clear();
         }

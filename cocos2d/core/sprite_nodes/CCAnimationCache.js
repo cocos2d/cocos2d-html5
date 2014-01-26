@@ -53,7 +53,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         if (!name) {
             return;
         }
-        if (this._animations.hasOwnProperty(name)) {
+        if (this._animations[name]) {
             delete this._animations[name];
         }
     },
@@ -68,7 +68,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @return {cc.Animation}
      */
     getAnimation:function (name) {
-        if (this._animations.hasOwnProperty(name))
+        if (this._animations[name])
             return this._animations[name];
         return null;
     },

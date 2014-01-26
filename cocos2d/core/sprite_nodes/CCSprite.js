@@ -39,7 +39,7 @@ cc.SPRITE_INDEX_NOT_INITIALIZED = -1;
  */
 
 cc.generateTextureCacheForColor = function (texture) {
-    if (texture.hasOwnProperty('channelCache')) {
+    if (texture.channelCache) {
         return texture.channelCache;
     }
 

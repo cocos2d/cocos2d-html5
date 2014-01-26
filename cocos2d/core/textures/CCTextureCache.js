@@ -168,7 +168,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      */
     textureForKey:function (textureKeyName) {
         var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
-        if (this._textures.hasOwnProperty(fullPath))
+        if (this._textures[fullPath])
             return this._textures[fullPath];
         return null;
     },
@@ -210,7 +210,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
                 key = this._generalTextureKey();
         }
 
-        if (!this._textureColorsCache.hasOwnProperty(key))
+        if (!this._textureColorsCache[key])
             this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
         return this._textureColorsCache[key];
     },
@@ -301,7 +301,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     _loadErrorHandler: function(path, textureCache, removeFrom) {
         cc.Loader.getInstance().onResLoadingErr(path);
         //remove from cache
-        if (removeFrom.hasOwnProperty(path))
+        if (removeFrom[path])
             delete removeFrom[path];
 
         this.removeEventListener('error', textureCache._loadErrorHandler, false);
@@ -311,7 +311,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     _clientLoadHandler: function (texture, textureCache, callback, target) {
         if(texture instanceof cc.Texture2D)
             texture.handleLoadedTexture();
-        else if(textureCache._textures.hasOwnProperty(texture))
+        else if(textureCache._textures[texture])
             textureCache._textures[texture].handleLoadedTexture();
         textureCache._addImageAsyncCallBack(target, callback);
         this.removeEventListener('load', textureCache._addAsyncLoadHandler, false);
@@ -320,7 +320,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     _preloadHandler: function (texture, textureCache) {
         if(texture instanceof cc.Texture2D)
             texture.handleLoadedTexture();
-        else if(textureCache._textures.hasOwnProperty(texture))
+        else if(textureCache._textures[texture])
             textureCache._textures[texture].handleLoadedTexture();
         cc.Loader.getInstance().onResLoaded();
         this.removeEventListener('load', textureCache._addAsyncLoadHandler, false);
@@ -329,7 +329,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     _beforeRendererLoadHandler: function (path, textureCache) {
         cc.Loader.getInstance().onResLoaded();
         var loading = textureCache._loadingTexturesBefore;
-        if(loading.hasOwnProperty(path)) {
+        if(loading[path]) {
             textureCache._loadedTexturesBefore[path] = loading[path];
             delete loading[path];
         }
@@ -460,7 +460,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             throw "cc.Texture.addUIImage(): image should be non-null";
 
         if (key) {
-            if (this._textures.hasOwnProperty(key) && this._textures[key])
+            if (this._textures[key])
                 return this._textures[key];
         }
 

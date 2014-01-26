@@ -122,12 +122,13 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var frameKey = key.toString();
 
                     for (var aliasKey in aliases) {
-                        if (this._spriteFramesAliases.hasOwnProperty(aliases[aliasKey])) {
+	                    var alias = aliases[aliasKey];
+                        if (this._spriteFramesAliases[alias]) {
                             cc.log("cocos2d: WARNING: an alias with name " + aliasKey + " already exists");
                         }
-                        this._spriteFramesAliases[aliases[aliasKey]] = frameKey;
+                        this._spriteFramesAliases[alias] = frameKey;
                     }
-                    if (frameDict.hasOwnProperty("spriteSize")) {
+                    if (frameDict["spriteSize"] !== undefined) {
                         textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                     }
                     //create frame
@@ -289,10 +290,10 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         }
 
         // Is this an alias ?
-        if (this._spriteFramesAliases.hasOwnProperty(name)) {
+        if (this._spriteFramesAliases[name]) {
             delete(this._spriteFramesAliases[name]);
         }
-        if (this._spriteFrames.hasOwnProperty(name)) {
+        if (this._spriteFrames[name]) {
             delete(this._spriteFrames[name]);
         }
         // XXX. Since we don't know the .plist file that originated the frame, we must remove all .plist from the cache
@@ -328,7 +329,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         var framesDict = dictionary["frames"];
 
         for (var key in framesDict) {
-            if (this._spriteFrames.hasOwnProperty(key)) {
+            if (this._spriteFrames[key]) {
                 delete(this._spriteFrames[key]);
             }
         }
@@ -364,19 +365,20 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      */
     getSpriteFrame: function (name) {
         var frame;
-        if (this._spriteFrames.hasOwnProperty(name)) {
+        if (this._spriteFrames[name]) {
             frame = this._spriteFrames[name];
         }
 
         if (!frame) {
             // try alias dictionary
             var key;
-            if (this._spriteFramesAliases.hasOwnProperty(name)) {
+            if (this._spriteFramesAliases[name]) {
                 key = this._spriteFramesAliases[name];
             }
             if (key) {
-                if (this._spriteFrames.hasOwnProperty(key.toString())) {
-                    frame = this._spriteFrames[key.toString()];
+	            var keystr = key.toString();
+                if (this._spriteFrames[keystr]) {
+                    frame = this._spriteFrames[keystr];
                 }
                 if (!frame) {
                     cc.log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
