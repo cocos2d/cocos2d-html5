@@ -39,10 +39,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _effectsVolume:1,                                              // the volume applied to all effects
     _playingMusic:null,                                           // the music being played, when null, no music is being played; when not null, it may be playing or paused
     _resPath : "",          //root path for resources
+    _pausedPlayings: null,
 
     ctor:function(){
         this._audioIDList = {};
         this._supportedFormat = [];
+        this._pausedPlayings = [];
     },
 
     /**
@@ -296,7 +298,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         cc.AudioEngine.isMusicPlaying = false;
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
-            au.removeEventListener('pause', arguments.callee, false);
+            au.removeEventListener('pause', this._musicListener, false);
         }
     },
 
@@ -642,6 +644,55 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             locEffectList[elt] = [];
             return locEffectList[elt];
         }
+    },
+
+    _pausePlaying: function(){
+        var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList;
+        var tmpArr, au;
+        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+            au = locSoundList[this._playingMusic].audio;
+            if (!au.paused) {
+                au.pause();
+                cc.AudioEngine.isMusicPlaying = false;
+                locPausedPlayings.push(au);
+            }
+        }
+
+        var locEffectList = this._effectList;
+        for (var selKey in locEffectList) {
+            tmpArr = locEffectList[selKey];
+            for (var j = 0; j < tmpArr.length; j++) {
+                au = tmpArr[j];
+                if (!au.ended && !au.paused) {
+                    au.pause();
+                    locPausedPlayings.push(au);
+                }
+            }
+        }
+    },
+
+    _resumePlaying: function(){
+        var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList;
+        var tmpArr, au;
+        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+            au = locSoundList[this._playingMusic].audio;
+            if (locPausedPlayings.indexOf(au) !== -1) {
+                au.play();
+                au.addEventListener("pause", this._musicListenerBound, false);
+                cc.AudioEngine.isMusicPlaying = true;
+            }
+        }
+
+        var locEffectList = this._effectList;
+        for (var selKey in locEffectList) {
+            tmpArr = locEffectList[selKey];
+            for (var j = 0; j < tmpArr.length; j++) {
+                au = tmpArr[j];
+                if (!au.ended && locPausedPlayings.indexOf(au) !== -1)
+                    au.play();
+            }
+        }
+        locPausedPlayings.length = 0;
     }
 });
 
@@ -665,7 +716,6 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         cc.SimpleAudioEngine.prototype.ctor.call(this);
 
         this._playingList = [];
-        window.playingList = this._playingList;
         this._isPauseForList = false;
         this._checkFlag = true;
         this._audioEndedCallbackBound = this._audioEndCallback.bind(this);
@@ -684,7 +734,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
                 }
             }
         }
-        this._playingList = [];
+        this._playingList.length = 0;
         this._currentTask = null;
     },
 
@@ -736,7 +786,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         cc.AudioEngine.isMusicPlaying = false;
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
-            au.removeEventListener('pause', arguments.callee, false);
+            au.removeEventListener('pause', this._musicListener, false);
         }
         if(this._checkFlag)
             this._isPauseForList = false;
@@ -1096,13 +1146,39 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             }
         }
 
-        this._playingList = [];
+        this._playingList.length = 0;
         this._currentTask = null;
 
         if(this._isPauseForList){
             this._isPauseForList = false;
             this.resumeMusic();
         }
+    },
+
+    _pausePlaying: function(){
+        var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList, au;
+        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+            au = locSoundList[this._playingMusic].audio;
+            if (!au.paused) {
+                au.pause();
+                cc.AudioEngine.isMusicPlaying = false;
+                locPausedPlayings.push(au);
+            }
+        }
+        this.stopAllEffects();
+    },
+
+    _resumePlaying: function(){
+        var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList, au;
+        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+            au = locSoundList[this._playingMusic].audio;
+            if (locPausedPlayings.indexOf(au) !== -1) {
+                au.play();
+                au.addEventListener("pause", this._musicListenerBound, false);
+                cc.AudioEngine.isMusicPlaying = true;
+            }
+        }
+        locPausedPlayings.length = 0;
     }
 });
 
@@ -1415,6 +1491,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _endSound: function(sfxCache) {
+	    if (sfxCache.sourceNode.playbackState && sfxCache.sourceNode.playbackState == 3)
+	        return;
         if (sfxCache.sourceNode.stop) {
             sfxCache.sourceNode.stop(0);
         } else {
@@ -1824,6 +1902,48 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         if (keyName in this._audioData)
             delete this._audioData[keyName];
+    },
+
+    _pausePlaying: function(){
+        var locPausedPlayings = this._pausedPlayings;
+        if (this.isMusicPlaying()){
+            locPausedPlayings.push(this._playingMusic);
+            this._pauseSound(this._playingMusic);
+        }
+
+        var locEffects = this._effects;
+        for (var selKey in locEffects) {
+            var selEffectList = locEffects[selKey];
+            for (var idx = 0, len = selEffectList.length; idx < len; idx++) {
+                var sfxCache = selEffectList[idx];
+                if (sfxCache && this._isSoundPlaying(sfxCache)) {
+                    locPausedPlayings.push(sfxCache);
+                    this._pauseSound(sfxCache);
+                }
+            }
+        }
+    },
+
+    _resumePlaying: function(){
+        var locPausedPlayings = this._pausedPlayings, locVolume = this.getMusicVolume();
+
+        var locMusic = this._playingMusic;
+        // can resume only when it's paused
+        if (locMusic && this._isSoundPaused(locMusic) && locPausedPlayings.indexOf(locMusic) != -1)
+            this._playingMusic = this._resumeSound(locMusic, locVolume);
+
+        var locEffects = this._effects;
+        for (var selKey in locEffects){
+            var selEffects = locEffects[selKey];
+            for (var idx = 0, len = selEffects.length; idx < len; idx++) {
+                var sfxCache = selEffects[idx];
+                if (this._isSoundPaused(sfxCache) &&locPausedPlayings.indexOf(sfxCache) != -1)  {
+                    selEffects[idx] = this._resumeSound(sfxCache, locVolume);
+                    this._updateEffectsList(sfxCache, selEffects[idx]);
+                }
+            }
+        }
+        locPausedPlayings.length = 0;
     }
 });
 
@@ -1837,11 +1957,10 @@ cc.AudioEngine.isMusicPlaying = false;
  */
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
-        var ua = navigator.userAgent;
-        if (cc.Browser.supportWebAudio && !(/iPhone OS/.test(ua)||/iPad/.test(ua))) {
+        if (cc.Browser.supportWebAudio) {
             this._instance = new cc.WebAudioEngine();
         } else {
-            if(cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
+            if (cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
                 this._instance = new cc.SimpleAudioEngineForMobile();
             else
                 this._instance = new cc.SimpleAudioEngine();

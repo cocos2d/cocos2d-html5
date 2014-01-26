@@ -28,9 +28,9 @@
  * RGB color composed of bytes 3 bytes
  * @Class
  * @Construct
- * @param {Number | cc.Color3B} r1 red value (0 to 255) or destination color of new color
- * @param {Number} g1 green value (0 to 255)
- * @param {Number} b1 blue value (0 to 255)
+ * @param {Number|cc.Color3B} r1 red value (0 to 255) or destination color of new color
+ * @param {Number} [g1] green value (0 to 255)
+ * @param {Number} [b1] blue value (0 to 255)
  * @example
  * //create an empty color
  * var color1 = new cc.Color3B();
@@ -625,7 +625,7 @@ cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
 
 cc.V3F_C4B_T2F_QuadsCopy = function (sourceQuads) {
     if (!sourceQuads)
-        return  [];
+        return [];
 
     var retArr = [];
     for (var i = 0; i < sourceQuads.length; i++) {

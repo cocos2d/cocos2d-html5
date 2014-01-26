@@ -66,6 +66,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _labelCanvas:null,
     _labelContext:null,
+    _lineWidths:null,
 
     /**
      * Constructor
@@ -97,6 +98,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._strokeShadowOffsetX = 0;
         this._strokeShadowOffsetY = 0;
         this._needUpdateTexture = false;
+
+        this._lineWidths = [];
 
         this._setColorsString();
     },
@@ -131,13 +134,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         // Find next special caracter or chinese caracters
         while (result = re.exec(substr)) {
             index += result[0].length;
-            if(result[2] == '\n') {
+	        var tem = text.substr(0, index);
+	        l = this._measure(tem);
+            if(result[2] == '\n' && l < width) {
                 found = true;
                 idfound = index;
                 break;
             }
-            var tem = text.substr(0, index);
-            l = this._measure(tem);
             if(l > width) {
                 if(idfound != -1)
                     found = true;
@@ -163,7 +166,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             }
         }
 
-        return idfound;
+        // Avoid when idfound == 0, the process may enter in a infinite loop
+        return idfound || 1;
     },
 
     /**
@@ -730,7 +734,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _updateTTF: function () {
         var locDimensionsWidth = this._dimensions.width, i, strLength;
-        this._lineWidths = [];
+        var locLineWidth = this._lineWidths;
+        locLineWidth.length = 0;
 
         this._isMultiLine = false ;
         this._measureConfig();
@@ -748,7 +753,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         } else {
             this._strings = this._string.split('\n');
             for (i = 0, strLength = this._strings.length; i < strLength; i++) {
-                this._lineWidths.push(this._measure(this._strings[i]));
+                locLineWidth.push(this._measure(this._strings[i]));
             }
         }
 
@@ -767,7 +772,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         //get offset for stroke and shadow
         if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
-                locSize = cc.size(0 | (Math.max.apply(Math, this._lineWidths) + locStrokeShadowOffsetX),
+                locSize = cc.size(0 | (Math.max.apply(Math, locLineWidth) + locStrokeShadowOffsetX),
                     0 | ((this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY));
             else
                 locSize = cc.size(0 | (this._measure(this._string) + locStrokeShadowOffsetX), 0 | (this._fontClientHeight + locStrokeShadowOffsetY));
@@ -902,7 +907,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         locTextureCoordRect.y = rect.y;
         locTextureCoordRect.width = rect.width;
         locTextureCoordRect.height = rect.height;
-        locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 || locTextureCoordRect.height === 0);
+        locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 || locTextureCoordRect.height === 0
+            || locTextureCoordRect.x < 0 || locTextureCoordRect.y < 0);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)

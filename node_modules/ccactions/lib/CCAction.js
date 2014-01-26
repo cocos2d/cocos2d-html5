@@ -66,7 +66,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      * @return {object}
      */
     copy:function () {
-        return cc.clone(this);
+        return this.clone();
     },
 
     /**

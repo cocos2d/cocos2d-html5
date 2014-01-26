@@ -139,19 +139,20 @@ cc.KeyboardDispatcher = cc.Class.extend(/** @lends cc.KeyboardDispatcher# */{
         this._locked = false;
         if (this._toRemove) {
             this._toRemove = false;
-            for (i = 0; i < this._handlersToRemove.length; ++i) {
-                this.forceRemoveDelegate(this._handlersToRemove[i]);
+            var locHandlersToRemove = this._handlersToRemove;
+            for (i = 0; i < locHandlersToRemove.length; ++i) {
+                this.forceRemoveDelegate(locHandlersToRemove[i]);
             }
-            delete this._handlersToRemove;
-            this._handlersToRemove = [];
+            locHandlersToRemove.length = 0;
         }
 
         if (this._toAdd) {
             this._toAdd = false;
-            for (i = 0; i < this._handlersToAdd.length; ++i) {
-                this.forceAddDelegate(this._handlersToAdd[i]);
+            var locHandlersToAdd = this._handlersToAdd;
+            for (i = 0; i < locHandlersToAdd.length; ++i) {
+                this.forceAddDelegate(locHandlersToAdd[i]);
             }
-            this._handlersToAdd = [];
+            locHandlersToAdd.length = 0;
         }
         return true;
     },

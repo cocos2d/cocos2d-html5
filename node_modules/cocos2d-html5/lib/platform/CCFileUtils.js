@@ -147,7 +147,7 @@ cc.FileUtils = cc.Class.extend({
      * </p>
      */
     purgeCachedEntries:function(){
-        this._searchPathArray = [];
+        this._searchPathArray.length = 0;
     },
     /**
      * Get Byte Array from file
@@ -736,7 +736,8 @@ cc.FileUtils = cc.Class.extend({
     setSearchPaths:function (searchPaths) {
         var existDefaultRootPath = false;
 
-        this._searchPathArray = [];
+        var locPathArray = this._searchPathArray;
+        locPathArray.length = 0;
         for (var i = 0; i < searchPaths.length; i++) {
             var iter = searchPaths[i];
 
@@ -752,14 +753,13 @@ cc.FileUtils = cc.Class.extend({
             if (!existDefaultRootPath && path == this._defaultResRootPath) {
                 existDefaultRootPath = true;
             }
-            this._searchPathArray.push(path);
+            locPathArray.push(path);
         }
 
         if (!existDefaultRootPath) {
             //cc.log("Default root path doesn't exist, adding it.");
-            this._searchPathArray.push(this._defaultResRootPath);
+            locPathArray.push(this._defaultResRootPath);
         }
-
     },
 
     /**
