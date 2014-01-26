@@ -227,7 +227,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             var realPath = this._resPath + path;
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
-            if (this.isFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
+            if (!this._soundList[keyname] && this.isFormatSupported(extName)) {
                 if(this._canPlay){
                     var sfxCache = new cc.SimpleSFX();
                     sfxCache.ext = extName;
@@ -272,11 +272,11 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         var au;
 
         var locSoundList = this._soundList;
-        if (locSoundList.hasOwnProperty(this._playingMusic))
+        if (locSoundList[this._playingMusic])
             locSoundList[this._playingMusic].audio.pause();
 
         this._playingMusic = keyname;
-        if (locSoundList.hasOwnProperty(this._playingMusic))
+        if (locSoundList[this._playingMusic])
             au = locSoundList[this._playingMusic].audio;
         else {
             var sfxCache = new cc.SimpleSFX();
@@ -296,7 +296,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
     _musicListener:function(e){
         cc.AudioEngine.isMusicPlaying = false;
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.removeEventListener('pause', this._musicListener, false);
         }
@@ -311,7 +311,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      */
     stopMusic:function (releaseData) {
         var locSoundList = this._soundList, locPlayingMusic = this._playingMusic;
-        if (locSoundList.hasOwnProperty(locPlayingMusic)) {
+        if (locSoundList[locPlayingMusic]) {
             var au = locSoundList[locPlayingMusic].audio;
             au.pause();
             au.duration && (au.currentTime = au.duration);
@@ -329,7 +329,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().pauseMusic();
      */
     pauseMusic:function () {
-        if (!this._musicIsStopped && this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.pause();
             cc.AudioEngine.isMusicPlaying = false;
@@ -343,7 +343,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().resumeMusic();
      */
     resumeMusic:function () {
-        if (!this._musicIsStopped && this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.play();
             au.addEventListener("pause", this._musicListenerBound , false);
@@ -358,7 +358,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().rewindMusic();
      */
     rewindMusic:function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.currentTime = 0;
             au.play();
@@ -376,7 +376,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * var volume = cc.AudioEngine.getInstance().getMusicVolume();
      */
     getMusicVolume:function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             return this._soundList[this._playingMusic].audio.volume;
         }
         return 0;
@@ -390,7 +390,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * cc.AudioEngine.getInstance().setMusicVolume(0.5);
      */
     setMusicVolume:function (volume) {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var music = this._soundList[this._playingMusic].audio;
             if (volume > 1) {
                 music.volume = 1;
@@ -432,7 +432,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             return null;
 
         var keyname = this._getPathWithoutExt(path), actExt;
-        if (this._soundList.hasOwnProperty(keyname)) {
+        if (this._soundList[keyname]) {
             actExt = this._soundList[keyname].ext;
         } else {
             actExt = this._getExtFromFullPath(path);
@@ -507,7 +507,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     pauseEffect:function (audioID) {
         if (audioID == null) return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)) {
+        if (this._audioIDList[audioID]) {
             var au = this._audioIDList[audioID];
             if (!au.ended) {
                 au.pause();
@@ -544,7 +544,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     resumeEffect:function (audioID) {
         if (audioID == null) return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)) {
+        if (this._audioIDList[audioID]) {
             var au = this._audioIDList[audioID];
             if (!au.ended)
                 au.play();
@@ -582,7 +582,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     stopEffect:function (audioID) {
         if (audioID == null) return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)) {
+        if (this._audioIDList[audioID]) {
             var au = this._audioIDList[audioID];
             if (!au.ended) {
                 au.loop = false;
@@ -621,7 +621,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     unloadEffect:function (path) {
         if (!path) return;
         var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
+        if (this._effectList[keyname]) {
             delete this._effectList[keyname];
         }
 
@@ -638,7 +638,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
     _getEffectList:function (elt) {
         var locEffectList = this._effectList;
-        if (locEffectList.hasOwnProperty(elt)) {
+        if (locEffectList[elt]) {
             return locEffectList[elt];
         } else {
             locEffectList[elt] = [];
@@ -649,7 +649,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     _pausePlaying: function(){
         var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList;
         var tmpArr, au;
-        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && locSoundList[this._playingMusic]) {
             au = locSoundList[this._playingMusic].audio;
             if (!au.paused) {
                 au.pause();
@@ -674,7 +674,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     _resumePlaying: function(){
         var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList;
         var tmpArr, au;
-        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && locSoundList[this._playingMusic]) {
             au = locSoundList[this._playingMusic].audio;
             if (locPausedPlayings.indexOf(au) !== -1) {
                 au.play();
@@ -757,14 +757,14 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         var au;
 
         var locSoundList = this._soundList;
-        if (locSoundList.hasOwnProperty(this._playingMusic)){
+        if (locSoundList[this._playingMusic]){
             var currMusic = locSoundList[this._playingMusic];
             currMusic.audio.removeEventListener("pause",this._musicListenerBound , false)
             currMusic.audio.pause();
         }
 
         this._playingMusic = keyname;
-        if (locSoundList.hasOwnProperty(this._playingMusic))
+        if (locSoundList[this._playingMusic])
             au = locSoundList[this._playingMusic].audio;
         else {
             var sfxCache = new cc.SimpleSFX();
@@ -793,7 +793,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     _musicListener:function(){
         cc.AudioEngine.isMusicPlaying = false;
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
+        if (this._soundList[this._playingMusic]) {
             var au = this._soundList[this._playingMusic].audio;
             au.removeEventListener('pause', this._musicListener, false);
         }
@@ -810,7 +810,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             if ((selTask.status === cc.PlayingTaskStatus.waiting)){
                 if (selTask.audio.currentTime + expendTime >= selTask.audio.duration) {
                     locPlayingList.splice(i, 1);
-                    if (locAudioIDList.hasOwnProperty(selTask.id)) {
+                    if (locAudioIDList[selTask.id]) {
                         var au = locAudioIDList[selTask.id];
                         if (!au.ended) {
                             au.removeEventListener('ended', this._audioEndedCallbackBound, false);
@@ -975,7 +975,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
             return null;
 
         var keyname = this._getPathWithoutExt(path), actExt;
-        if (this._soundList.hasOwnProperty(keyname))
+        if (this._soundList[keyname])
             actExt = this._soundList[keyname].ext;
         else
             actExt = this._getExtFromFullPath(path);
@@ -1021,7 +1021,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         if (audioID == null) return;
 
         var strID = audioID.toString();
-        if (this._audioIDList.hasOwnProperty(strID)) {
+        if (this._audioIDList[strID]) {
             var au = this._audioIDList[strID];
             if (!au.ended) au.pause();
         }
@@ -1066,7 +1066,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
     resumeEffect:function (audioID) {
         if (audioID == null) return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)) {
+        if (this._audioIDList[audioID]) {
             var au = this._audioIDList[audioID];
             if (!au.ended)
                 au.play();
@@ -1124,7 +1124,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
     stopEffect:function (audioID) {
         if (audioID == null) return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)) {
+        if (this._audioIDList[audioID]) {
             var au = this._audioIDList[audioID];
             if (!au.ended) {
                 au.removeEventListener('ended', this._audioEndedCallbackBound, false);
@@ -1166,7 +1166,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     _pausePlaying: function(){
         var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList, au;
-        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && locSoundList[this._playingMusic]) {
             au = locSoundList[this._playingMusic].audio;
             if (!au.paused) {
                 au.pause();
@@ -1179,7 +1179,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     _resumePlaying: function(){
         var locPausedPlayings = this._pausedPlayings, locSoundList = this._soundList, au;
-        if (!this._musicIsStopped && locSoundList.hasOwnProperty(this._playingMusic)) {
+        if (!this._musicIsStopped && locSoundList[this._playingMusic]) {
             au = locSoundList[this._playingMusic].audio;
             if (locPausedPlayings.indexOf(au) !== -1) {
                 au.play();
@@ -1318,7 +1318,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var keyName = this._getPathWithoutExt(path);
 
         // not supported, already loaded, already loading
-        if (!this.isFormatSupported(extName) || keyName in this._audioData || keyName in this._audiosLoading) {
+        if (this._audioData[keyName] || this._audiosLoading[keyName] || !this.isFormatSupported(extName)) {
             cc.Loader.getInstance().onResLoaded();
             return;
         }
@@ -1471,10 +1471,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             this.stopMusic();
         }
 
-        if (keyName in this._audioData) {
+        if (this._audioData[keyName]) {
             // already loaded, just play it
             this._playingMusic = this._beginSound(keyName, loop, this._musicVolume);
-        } else if (this.isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+        } else if (!this._audiosLoading[keyName] && this.isFormatSupported(extName)) {
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;
@@ -1664,10 +1664,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         loop = loop || false;
 
-        if (keyName in this._audioData) {
+        if (this._audioData[keyName]) {
             // the resource has been loaded, just play it
             var locEffects = this._effects;
-            if (!(keyName in locEffects)) {
+            if (!locEffects[keyName]) {
                 locEffects[keyName] = [];
             }
             // a list of sound objects from the same resource
@@ -1688,7 +1688,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             audioID = this._audioID++;
             this._audioIDList[audioID] = addSFX;
             return audioID;
-        } else if (this.isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+        } else if (!this._audiosLoading[keyName] && this.isFormatSupported(extName)) {
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;
@@ -1701,7 +1701,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
                 var asynSFX = engine._beginSound(keyName, loop, engine.getEffectsVolume());
                 engine._audioIDList[audioID] = asynSFX;
                 var locEffects = engine._effects;
-                if (!(keyName in locEffects))
+                if (!locEffects[keyName])
                     locEffects[keyName] = [];
                 locEffects[keyName].push(asynSFX);
             }, function() {
@@ -1769,7 +1769,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (audioID == null)
             return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)){
+        if (this._audioIDList[audioID]){
             var sfxCache = this._audioIDList[audioID];
             if (sfxCache && this._isSoundPlaying(sfxCache))
                 this._pauseSound(sfxCache);
@@ -1815,7 +1815,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (audioID == null)
             return;
 
-        if (this._audioIDList.hasOwnProperty(audioID)){
+        if (this._audioIDList[audioID]){
             var sfxCache = this._audioIDList[audioID];
             if (sfxCache && this._isSoundPaused(sfxCache)){
                 this._audioIDList[audioID] = this._resumeSound(sfxCache, this.getEffectsVolume());
@@ -1859,7 +1859,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
 
         var locAudioIDList = this._audioIDList;
-        if (locAudioIDList.hasOwnProperty(audioID))
+        if (locAudioIDList[audioID])
             this._endSound(locAudioIDList[audioID]);
     },
 
@@ -1897,7 +1897,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
 
         var keyName = this._getPathWithoutExt(path);
-        if (this._effects.hasOwnProperty(keyName)){
+        if (this._effects[keyName]){
             var locEffect = this._effects[keyName];
             delete this._effects[keyName];
             var locAudioIDList = this._audioIDList;
@@ -1909,7 +1909,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             }
         }
 
-        if (keyName in this._audioData)
+        if (this._audioData[keyName])
             delete this._audioData[keyName];
     },
 

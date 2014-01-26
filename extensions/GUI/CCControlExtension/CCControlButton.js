@@ -476,7 +476,7 @@ cc.ControlButton = cc.Control.extend({
      */
     getTitleLabelForState:function (state) {
         var locTable = this._titleLabelDispatchTable;
-        if (locTable.hasOwnProperty(state) && locTable[state])
+        if (locTable[state])
             return locTable[state];
 
         return locTable[cc.CONTROL_STATE_NORMAL];
@@ -491,7 +491,7 @@ cc.ControlButton = cc.Control.extend({
      */
     setTitleLabelForState:function (titleLabel, state) {
         var locTable = this._titleLabelDispatchTable;
-        if (locTable.hasOwnProperty(state)) {
+        if (locTable[state]) {
             var previousLabel = locTable[state];
             if (previousLabel)
                 this.removeChild(previousLabel, true);
@@ -584,7 +584,7 @@ cc.ControlButton = cc.Control.extend({
      */
     getBackgroundSpriteForState:function (state) {
         var locTable = this._backgroundSpriteDispatchTable;
-        if (locTable.hasOwnProperty(state) && locTable[state]) {
+        if (locTable[state]) {
             return locTable[state];
         }
         return locTable[cc.CONTROL_STATE_NORMAL];
@@ -598,7 +598,7 @@ cc.ControlButton = cc.Control.extend({
      */
     setBackgroundSpriteForState:function (sprite, state) {
         var locTable = this._backgroundSpriteDispatchTable;
-        if (locTable.hasOwnProperty(state)) {
+        if (locTable[state]) {
             var previousSprite = locTable[state];
             if (previousSprite)
                 this.removeChild(previousSprite, true);
