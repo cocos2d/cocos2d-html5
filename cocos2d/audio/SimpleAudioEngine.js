@@ -1960,7 +1960,7 @@ cc.AudioEngine.getInstance = function () {
         if (cc.Browser.supportWebAudio) {
             this._instance = new cc.WebAudioEngine();
         } else {
-            if (cc.Browser.multipleAudioWhiteList.indexOf(cc.Browser.type) == -1)
+            if (cc.Browser.multipleAudioWhiteList.indexOf(cc.Browser.type) !== -1)
                 this._instance = new cc.SimpleAudioEngine();
             else
                 this._instance = new cc.SimpleAudioEngineForMobile();
