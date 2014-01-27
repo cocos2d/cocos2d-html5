@@ -276,7 +276,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._tileSets = [];
         this._objectGroups = [];
         this._properties = [];
-        this._tileProperties = [];
+        this._tileProperties = {};
 
         this._currentFirstGID = 0;
     },
@@ -580,8 +580,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                     var dict = {};
                     for (j = 0; j < tp.length; j++) {
                         var name = tp[j].getAttribute('name');
-                        var value = tp[j].getAttribute('value');
-                        dict[name] = value;
+                        dict[name] = tp[j].getAttribute('value');
                     }
                     this._tileProperties[this.getParentGID()] = dict;
                 }

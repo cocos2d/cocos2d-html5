@@ -53,13 +53,13 @@ cc.NodeLoaderLibrary = cc.Class.extend({
     },
 
     unregisterCCNodeLoader:function(className){
-        if(this._ccNodeLoaders.hasOwnProperty(className)){
+        if(this._ccNodeLoaders[className]){
            delete this._ccNodeLoaders[className];
         }
     },
 
     getCCNodeLoader:function(className){
-        if(this._ccNodeLoaders.hasOwnProperty(className))
+        if(this._ccNodeLoaders[className])
             return this._ccNodeLoaders[className];
         return null;
     },
