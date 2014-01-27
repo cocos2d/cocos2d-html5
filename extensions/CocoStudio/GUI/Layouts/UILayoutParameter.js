@@ -50,7 +50,10 @@ ccs.LayoutParameter = ccs.Class.extend(/** @lends ccs.LayoutParameter# */{
      * @param {ccs.Margin} margin
      */
     setMargin: function (margin) {
-        this._margin = margin;
+        this._margin.left = margin.left;
+        this._margin.top = margin.top;
+        this._margin.right = margin.right;
+        this._margin.bottom = margin.bottom;
     },
 
     /**
@@ -67,6 +70,12 @@ ccs.LayoutParameter = ccs.Class.extend(/** @lends ccs.LayoutParameter# */{
      */
     getLayoutType: function () {
         return this._layoutParameterType;
+    },
+
+    clone:function(){
+        var parameter = new ccs.LayoutParameter();
+        parameter.setMargin(this._margin);
+        return parameter;
     }
 });
 
@@ -110,6 +119,13 @@ ccs.LinearLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.LinearLayo
      */
     getGravity: function () {
         return this._linearGravity;
+    },
+
+    clone:function(){
+        var parameter = new ccs.LinearLayoutParameter();
+        parameter.setMargin(this._margin);
+        parameter.setGravity(this._linearGravity);
+        return parameter;
     }
 });
 
@@ -191,6 +207,15 @@ ccs.RelativeLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.Relative
      */
     getRelativeName: function () {
         return this._relativeLayoutName;
+    },
+
+    clone:function(){
+        var parameter = new ccs.RelativeLayoutParameter();
+        parameter.setMargin(this._margin);
+        parameter.setAlign(this._relativeAlign);
+        parameter.setRelativeToWidgetName(this._relativeWidgetName);
+        parameter.setRelativeName(this._relativeLayoutName);
+        return parameter;
     }
 });
 

@@ -88,7 +88,15 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         var locTransform = this._transform;
         var locArmature = this._armature;
         if (locArmature && locArmature.getBatchNode()) {
-            this._transform = cc.AffineTransformConcat(locTransform, locTransform.nodeToParentTransform());
+            this._transform = cc.AffineTransformConcat(locTransform, locArmature.nodeToParentTransform());
+        }
+        if (cc.renderContextType === cc.CANVAS) {
+            locTransform = this._transform
+            locTransform.b *= -1;
+            locTransform.c *= -1;
+            var tempB = locTransform.b;
+            locTransform.b = locTransform.c;
+            locTransform.c = tempB;
         }
     },
     /** returns a "local" axis aligned bounding box of the node. <br/>
@@ -125,7 +133,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         return cc.AffineTransformConcat(displayTransform, this._bone.getArmature().nodeToWorldTransform());
     }
 });
-
+ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
 /**
  * allocates and initializes a skin.
  * @param {String} fileName

@@ -25,7 +25,6 @@
                 <file name="core/platform/CCEGLView.js"/>
                 <file name="core/platform/CCScreen.js"/>
                 <file name="core/platform/CCVisibleRect.js"/>
-                <file name="core/cocoa/CCNS.js"/>
                 <file name="core/cocoa/CCAffineTransform.js"/>
                 <file name="core/support/CCPointExtension.js"/>
                 <file name="core/support/CCVertex.js"/>
@@ -98,7 +97,6 @@
                 <file name="compress/base64.js"/>
                 <file name="compress/gzip.js"/>
                 <file name="compress/zlib.min.js"/>
-                <file name="particle_nodes/CCFormatHelper.js"/>
                 <file name="particle_nodes/CCPNGReader.js"/>
                 <file name="particle_nodes/CCTIFFReader.js"/>
                 <file name="particle_nodes/CCParticleSystem.js"/>
