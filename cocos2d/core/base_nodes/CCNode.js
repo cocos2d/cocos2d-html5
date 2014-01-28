@@ -961,14 +961,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },
 
-    /**
-     * Gets the description string. It makes debugging easier.
-     * @return {String}
-     */
-    description:function () {
-        return "<cc.Node | Tag =" + this._tag + ">";
-    },
-
     // composition: GET
     /**
      * Gets a child from the container given its tag
@@ -2115,6 +2107,68 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     }
 });
 
+var temp = {
+	getWidth: function() {
+		return this._contentSize._width;
+	},
+	setWidth: function(width) {
+		typeof width === 'number' && (this._contentSize._width = width);
+	},
+	getHeight: function() {
+		return this._contentSize._height;
+	},
+	setHeight: function(height) {
+		typeof height === 'number' && (this._contentSize._height = height);
+	},
+	getAnchorX: function() {
+		return this._anchorPoint._x;
+	},
+	setAnchorX: function(x) {
+		typeof x === 'number' && (this._anchorPoint._x = x);
+	},
+	getAnchorY: function() {
+		return this._anchorPoint._y;
+	},
+	setAnchorY: function(y) {
+		typeof y === 'number' && (this._anchorPoint._y = y);
+	}
+};
+var proto = cc.Node.prototype;
+
+cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
+cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
+cc.defineGetterSetter(proto, "width", temp.getWidth, temp.setWidth);
+cc.defineGetterSetter(proto, "height", temp.getWidth, temp.setWidth);
+cc.defineGetterSetter(proto, "anchorX", temp.getAnchorX, temp.setAnchorX);
+cc.defineGetterSetter(proto, "anchorY", temp.getAnchorY, temp.setAnchorY);
+cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
+cc.defineGetterSetter(proto, "skewY", proto.getSkewY, proto.getSkewY);
+cc.defineGetterSetter(proto, "zOrder", proto.getZOrder, proto.setZOrder);
+cc.defineGetterSetter(proto, "vertexZ", proto.getVertexZ, proto.setVertexZ);
+cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
+cc.defineGetterSetter(proto, "rotationX", proto.getRotationX, proto.setRotationX);
+cc.defineGetterSetter(proto, "rotationY", proto.getRotationY, proto.setRotationY);
+cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
+cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
+cc.defineGetterSetter(proto, "children", proto.getChildren);
+cc.defineGetterSetter(proto, "childrenCount", proto.getChildrenCount);
+cc.defineGetterSetter(proto, "parent", proto.getParent, proto.setParent);
+cc.defineGetterSetter(proto, "visible", proto.isVisible, proto.setVisible);
+cc.defineGetterSetter(proto, "running", proto.isRunning);
+cc.defineGetterSetter(proto, "ignoreAnchor", proto.isIgnoreAnchorPointForPosition, proto.ignoreAnchorPointForPosition);
+cc.defineGetterSetter(proto, "tag", proto.getTag, proto.setTag);
+cc.defineGetterSetter(proto, "userData", proto.getUserData, proto.setUserData);
+cc.defineGetterSetter(proto, "userObject", proto.getUserObject, proto.setUserObject);
+cc.defineGetterSetter(proto, "arrivalOrder", proto.getOrderOfArrival, proto.setOrderOfArrival);
+cc.defineGetterSetter(proto, "actionManager", proto.getActionManager, proto.setActionManager);
+cc.defineGetterSetter(proto, "scheduler", proto.getScheduler, proto.setScheduler);
+//cc.defineGetterSetter(proto, "boundingBox", proto.getBoundingBox);
+cc.defineGetterSetter(proto, "grid", proto.getGrid, proto.setGrid);
+cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
+cc.defineGetterSetter(proto, "glServerState", proto.getGLServerState, proto.setGLServerState);
+
+delete temp;
+
 if(cc.Browser.supportWebGL){
     //WebGL
     cc.Node.prototype.ctor = cc.Node.prototype._ctorForWebGL;
@@ -2396,3 +2450,8 @@ cc.NodeRGBA.create = function () {
     res.init();
     return res;
 };
+
+proto = cc.NodeRGBA.prototype;
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
