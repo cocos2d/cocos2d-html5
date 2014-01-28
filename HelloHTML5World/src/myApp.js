@@ -49,15 +49,17 @@ var Helloworld = cc.Layer.extend({
             function () {
                 history.go(-1);
             },this);
-        closeItem.anchorX = 0.5;
-	    closeItem.anchorY = 0.5;
+	    closeItem.attr({
+		    x: size.width - 20,
+		    y: 20,
+		    anchorX: 0.5,
+		    anchorY: 0.5
+	    });
 
         var menu = cc.Menu.create(closeItem);
         menu.x = 0;
 	    menu.y = 0;
         this.addChild(menu, 1);
-        closeItem.x = size.width - 20;
-	    closeItem.y = 20;
 
         /////////////////////////////
         // 3. add your codes below...
@@ -75,10 +77,12 @@ var Helloworld = cc.Layer.extend({
 
         // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
-        this.sprite.x = size.width / 2;
-	    this.sprite.y = size.height / 2;
-        this.sprite.scale = 0.5;
-        this.sprite.rotation = 180;
+        this.sprite.attr({
+	        x: size.width / 2,
+	        y: size.height / 2,
+	        scale: 0.5,
+	        rotation: 180
+        });
 
         lazyLayer.addChild(this.sprite, 0);
 
