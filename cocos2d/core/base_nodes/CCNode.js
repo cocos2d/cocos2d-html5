@@ -2113,24 +2113,38 @@ var temp = {
 	},
 	setWidth: function(width) {
 		typeof width === 'number' && (this._contentSize._width = width);
+		this.setNodeDirty();
 	},
 	getHeight: function() {
 		return this._contentSize._height;
 	},
 	setHeight: function(height) {
 		typeof height === 'number' && (this._contentSize._height = height);
+		this.setNodeDirty();
 	},
 	getAnchorX: function() {
 		return this._anchorPoint._x;
 	},
 	setAnchorX: function(x) {
 		typeof x === 'number' && (this._anchorPoint._x = x);
+		this.setNodeDirty();
 	},
 	getAnchorY: function() {
 		return this._anchorPoint._y;
 	},
 	setAnchorY: function(y) {
 		typeof y === 'number' && (this._anchorPoint._y = y);
+		this.setNodeDirty();
+	},
+	getScale: function() {
+		if(this._scaleX !== this._scaleY)
+			cc.log("cc.Node.getScale(): ScaleX != ScaleY. Don't know which one to return");
+		return this._scaleX;
+	},
+	setScale: function(scale) {
+		this._scaleX = scale;
+		this._scaleY = scale;
+		this.setNodeDirty();
 	}
 };
 var proto = cc.Node.prototype;
@@ -2148,6 +2162,7 @@ cc.defineGetterSetter(proto, "vertexZ", proto.getVertexZ, proto.setVertexZ);
 cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
 cc.defineGetterSetter(proto, "rotationX", proto.getRotationX, proto.setRotationX);
 cc.defineGetterSetter(proto, "rotationY", proto.getRotationY, proto.setRotationY);
+cc.defineGetterSetter(proto, "scale", temp.getScale, temp.setScale);
 cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
 cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
 cc.defineGetterSetter(proto, "children", proto.getChildren);
