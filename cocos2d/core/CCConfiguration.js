@@ -147,7 +147,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
      */
     getCString:function(key, default_value){
        var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return default_value;
     },
@@ -162,7 +162,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
         if(default_value == null)
             default_value = false;
         var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return default_value;
     },
@@ -177,7 +177,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
         if(default_value == null)
             default_value = 0;
         var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return default_value;
     },
@@ -189,7 +189,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
      */
     getObject:function(key){
         var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return null;
     },
