@@ -179,7 +179,7 @@ cc.SimpleSFX = function (audio, ext) {
 cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */{
     _effectList:null,
     _soundList:null,
-    _maxAudioInstance:10,
+    _maxAudioInstance:5,
     _canPlay:true,
     _musicListenerBound:null,
     _musicIsStopped: false,
@@ -714,7 +714,7 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
 
     ctor:function(){
         cc.SimpleAudioEngine.prototype.ctor.call(this);
-
+        this._maxAudioInstance = 2;
         this._playingList = [];
         this._isPauseForList = false;
         this._checkFlag = true;
@@ -780,6 +780,15 @@ cc.SimpleAudioEngineForMobile = cc.SimpleAudioEngine.extend({
         au.play();
         cc.AudioEngine.isMusicPlaying = true;
         this._musicIsStopped = false;
+    },
+
+    isMusicPlaying:function(){
+        var locSoundList = this._soundList, locPlayingMusic = this._playingMusic;
+        if (locSoundList[locPlayingMusic]) {
+            var au = locSoundList[locPlayingMusic].audio;
+            return (!au.paused && !au.ended);
+        }
+        return false;
     },
 
     _musicListener:function(){
@@ -1960,10 +1969,10 @@ cc.AudioEngine.getInstance = function () {
         if (cc.Browser.supportWebAudio) {
             this._instance = new cc.WebAudioEngine();
         } else {
-            if (cc.Browser.isMobile)                                                        // TODO construct a supported list for mobile browser
-                this._instance = new cc.SimpleAudioEngineForMobile();
-            else
+            if (cc.Browser.multipleAudioWhiteList.indexOf(cc.Browser.type) !== -1)
                 this._instance = new cc.SimpleAudioEngine();
+            else
+                this._instance = new cc.SimpleAudioEngineForMobile();
         }
         this._instance.init();
     }
