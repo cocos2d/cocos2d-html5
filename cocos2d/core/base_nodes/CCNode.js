@@ -131,7 +131,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _transformDirty:true,
     _inverseDirty:true,
     _cacheDirty:true,
-	_ignoreDirty:false,
+	// Cached parent serves to construct the cached parent chain
+	_cachedParent:null,
     _transformGLDirty:null,
     _transform:null,
     _inverse:null,
@@ -254,16 +255,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setNodeDirty:null,
 
     _setNodeDirtyForCanvas:function () {
-	    if(this._ignoreDirty) return;
         this._setNodeDirtyForCache();
-        if(this._transformDirty === false)
-            this._transformDirty = this._inverseDirty = true;
+        this._transformDirty === false && (this._transformDirty = this._inverseDirty = true);
     },
 
     _setNodeDirtyForWebGL:function () {
-	    if(this._ignoreDirty) return;
-        if(this._transformDirty === false)
-            this._transformDirty = this._inverseDirty = true;
+	    this._transformDirty === false && (this._transformDirty = this._inverseDirty = true);
     },
 
 	/**
@@ -1029,6 +1026,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child._tag = (tag != null) ? tag : child._tag;
         this._insertChild(child, tmpzOrder);
         child._parent = this;
+	    this._cachedParent && (child._cachedParent = this._cachedParent);
 
         if (this._running) {
             child.onEnter();
@@ -2007,10 +2005,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _setNodeDirtyForCache:function () {
-        this._cacheDirty = true;
-        if (this._parent) {
-            this._parent._setNodeDirtyForCache();
-        }
+	    if(this._cacheDirty === false) {
+		    this._cacheDirty = true;
+
+		    var cachedP = this._cachedParent;
+	        cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
+	    }
     },
 
     /**

@@ -102,6 +102,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tempTexture.handleLoadedTexture();
             this._cacheTexture = tempTexture;
             this.setContentSize(locCanvas.width, locCanvas.height);
+	        // This class uses cache, so its default cachedParent should be himself
+	        this._cachedParent = this;
         }
     },
 
