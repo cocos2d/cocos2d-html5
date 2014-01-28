@@ -131,6 +131,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _transformDirty:true,
     _inverseDirty:true,
     _cacheDirty:true,
+	_ignoreDirty:false,
     _transformGLDirty:null,
     _transform:null,
     _inverse:null,
@@ -253,15 +254,37 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setNodeDirty:null,
 
     _setNodeDirtyForCanvas:function () {
+	    if(this._ignoreDirty) return;
         this._setNodeDirtyForCache();
         if(this._transformDirty === false)
             this._transformDirty = this._inverseDirty = true;
     },
 
     _setNodeDirtyForWebGL:function () {
+	    if(this._ignoreDirty) return;
         if(this._transformDirty === false)
             this._transformDirty = this._inverseDirty = true;
     },
+
+	/**
+	 *  <p>get the skew degrees in X </br>
+	 *  The X skew angle of the node in degrees.  <br/>
+	 *  This angle describes the shear distortion in the X direction.<br/>
+	 *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
+	 *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
+	 *  </p>
+	 * @return {Object}attrs Attributes to be set to node
+	 */
+	attr: function(attrs) {
+		this._ignoreDirty = true;
+
+		for(var key in attrs) {
+			this[key] = attrs[key];
+		}
+
+		this._ignoreDirty = false;
+		this.setNodeDirty();
+	},
 
     /**
      *  <p>get the skew degrees in X </br>
@@ -2112,28 +2135,29 @@ var temp = {
 		return this._contentSize._width;
 	},
 	setWidth: function(width) {
-		typeof width === 'number' && (this._contentSize._width = width);
+		this._contentSize._width = width;
 		this.setNodeDirty();
 	},
 	getHeight: function() {
 		return this._contentSize._height;
 	},
 	setHeight: function(height) {
-		typeof height === 'number' && (this._contentSize._height = height);
+		this._contentSize._height = height;
 		this.setNodeDirty();
 	},
 	getAnchorX: function() {
 		return this._anchorPoint._x;
 	},
 	setAnchorX: function(x) {
-		typeof x === 'number' && (this._anchorPoint._x = x);
+		this._anchorPoint._x = x;
+		this._anchorPointInPoints._x = this._contentSize._width * x;
 		this.setNodeDirty();
 	},
 	getAnchorY: function() {
 		return this._anchorPoint._y;
 	},
 	setAnchorY: function(y) {
-		typeof y === 'number' && (this._anchorPoint._y = y);
+		this._anchorPoint._y = y;
 		this.setNodeDirty();
 	},
 	getScale: function() {
@@ -2157,7 +2181,7 @@ cc.defineGetterSetter(proto, "anchorX", temp.getAnchorX, temp.setAnchorX);
 cc.defineGetterSetter(proto, "anchorY", temp.getAnchorY, temp.setAnchorY);
 cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
 cc.defineGetterSetter(proto, "skewY", proto.getSkewY, proto.getSkewY);
-cc.defineGetterSetter(proto, "zOrder", proto.getZOrder, proto.setZOrder);
+cc.defineGetterSetter(proto, "zIndex", proto.getZOrder, proto.setZOrder);
 cc.defineGetterSetter(proto, "vertexZ", proto.getVertexZ, proto.setVertexZ);
 cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
 cc.defineGetterSetter(proto, "rotationX", proto.getRotationX, proto.setRotationX);
