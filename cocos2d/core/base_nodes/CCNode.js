@@ -2145,10 +2145,26 @@ var temp = {
 		this._contentSize._height = height;
 		this.setNodeDirty();
 	},
+	getAnchor: function() {
+		return this._anchorPoint;
+	},
+	setAnchor: function(p) {
+		var x = p.x, y = p.y;
+		if(this._anchorPoint._x !== x) {
+			this._anchorPoint._x = x;
+			this._anchorPointInPoints._x = this._contentSize._width * x;
+		}
+		if(this._anchorPoint._y !== y) {
+			this._anchorPoint._y = y;
+			this._anchorPointInPoints._y = this._contentSize._height * y;
+		}
+		this.setNodeDirty();
+	},
 	getAnchorX: function() {
 		return this._anchorPoint._x;
 	},
 	setAnchorX: function(x) {
+		if(this._anchorPoint._x === x) return;
 		this._anchorPoint._x = x;
 		this._anchorPointInPoints._x = this._contentSize._width * x;
 		this.setNodeDirty();
@@ -2157,7 +2173,9 @@ var temp = {
 		return this._anchorPoint._y;
 	},
 	setAnchorY: function(y) {
+		if(this._anchorPoint._y === y) return;
 		this._anchorPoint._y = y;
+		this._anchorPointInPoints._y = this._contentSize._height * y;
 		this.setNodeDirty();
 	},
 	getScale: function() {
@@ -2176,7 +2194,8 @@ var proto = cc.Node.prototype;
 cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
 cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
 cc.defineGetterSetter(proto, "width", temp.getWidth, temp.setWidth);
-cc.defineGetterSetter(proto, "height", temp.getWidth, temp.setWidth);
+cc.defineGetterSetter(proto, "height", temp.getHeight, temp.setHeight);
+cc.defineGetterSetter(proto, "anchor", temp.getAnchor, temp.setAnchor);
 cc.defineGetterSetter(proto, "anchorX", temp.getAnchorX, temp.setAnchorX);
 cc.defineGetterSetter(proto, "anchorY", temp.getAnchorY, temp.setAnchorY);
 cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
