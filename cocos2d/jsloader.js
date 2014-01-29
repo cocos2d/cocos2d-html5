@@ -248,7 +248,7 @@
             '../extensions/PluginX/protocols/PluginUtils.js',
             '../extensions/PluginX/protocols/PluginProtocol.js',
             '../extensions/PluginX/protocols/ProtocolSocial.js',
-            //'../extensions/PluginX/protocols/ProtocolAds.js',
+            '../extensions/PluginX/protocols/ProtocolAds.js',
             '../extensions/PluginX/protocols/ProtocolAnalytics.js',
             //'../extensions/PluginX/protocols/ProtocolIAP.js',
             '../extensions/PluginX/protocols/PluginFactory.js',
