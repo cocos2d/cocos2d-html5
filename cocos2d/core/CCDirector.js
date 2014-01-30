@@ -1154,9 +1154,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(cc.pAdd(cc.p(0, 34 * factor), locStatsPosition));
-        this._SPFLabel.setPosition(cc.pAdd(cc.p(0, 17 * factor), locStatsPosition));
-        this._FPSLabel.setPosition(locStatsPosition);
+        this._drawsLabel.pos = cc.pAdd(cc.p(0, 34 * factor), locStatsPosition);
+        this._SPFLabel.pos = cc.pAdd(cc.p(0, 17 * factor), locStatsPosition);
+        this._FPSLabel.pos = locStatsPosition;
     },
 
     _createStatsLabelForCanvas:function(){
