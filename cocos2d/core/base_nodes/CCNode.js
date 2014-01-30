@@ -2194,11 +2194,17 @@ var proto = cc.Node.prototype;
 cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
 cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
 /** @expose */
+proto.pos;
+cc.defineGetterSetter(proto, "pos", proto.getPosition, proto.setPosition);
+/** @expose */
 proto.width;
 cc.defineGetterSetter(proto, "width", temp.getWidth, temp.setWidth);
 /** @expose */
 proto.height;
 cc.defineGetterSetter(proto, "height", temp.getHeight, temp.setHeight);
+/** @expose */
+proto.size;
+cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
 /** @expose */
 proto.anchor;
 cc.defineGetterSetter(proto, "anchor", temp.getAnchor, temp.setAnchor);
