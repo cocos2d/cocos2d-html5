@@ -2193,36 +2193,96 @@ var proto = cc.Node.prototype;
 
 cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
 cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
+/** @expose */
+proto.width;
 cc.defineGetterSetter(proto, "width", temp.getWidth, temp.setWidth);
+/** @expose */
+proto.height;
 cc.defineGetterSetter(proto, "height", temp.getHeight, temp.setHeight);
+/** @expose */
+proto.anchor;
 cc.defineGetterSetter(proto, "anchor", temp.getAnchor, temp.setAnchor);
+/** @expose */
+proto.anchorX;
 cc.defineGetterSetter(proto, "anchorX", temp.getAnchorX, temp.setAnchorX);
+/** @expose */
+proto.anchorY;
 cc.defineGetterSetter(proto, "anchorY", temp.getAnchorY, temp.setAnchorY);
+/** @expose */
+proto.skewX;
 cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
+/** @expose */
+proto.skewY;
 cc.defineGetterSetter(proto, "skewY", proto.getSkewY, proto.getSkewY);
+/** @expose */
+proto.zIndex;
 cc.defineGetterSetter(proto, "zIndex", proto.getZOrder, proto.setZOrder);
+/** @expose */
+proto.vertexZ;
 cc.defineGetterSetter(proto, "vertexZ", proto.getVertexZ, proto.setVertexZ);
+/** @expose */
+proto.rotation;
 cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
+/** @expose */
+proto.rotationX;
 cc.defineGetterSetter(proto, "rotationX", proto.getRotationX, proto.setRotationX);
+/** @expose */
+proto.rotationY;
 cc.defineGetterSetter(proto, "rotationY", proto.getRotationY, proto.setRotationY);
+/** @expose */
+proto.scale;
 cc.defineGetterSetter(proto, "scale", temp.getScale, temp.setScale);
+/** @expose */
+proto.scaleX;
 cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
+/** @expose */
+proto.scaleY;
 cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
+/** @expose */
+proto.children;
 cc.defineGetterSetter(proto, "children", proto.getChildren);
+/** @expose */
+proto.childrenCount;
 cc.defineGetterSetter(proto, "childrenCount", proto.getChildrenCount);
+/** @expose */
+proto.parent;
 cc.defineGetterSetter(proto, "parent", proto.getParent, proto.setParent);
+/** @expose */
+proto.visible;
 cc.defineGetterSetter(proto, "visible", proto.isVisible, proto.setVisible);
+/** @expose */
+proto.running;
 cc.defineGetterSetter(proto, "running", proto.isRunning);
+/** @expose */
+proto.ignoreAnchor;
 cc.defineGetterSetter(proto, "ignoreAnchor", proto.isIgnoreAnchorPointForPosition, proto.ignoreAnchorPointForPosition);
+/** @expose */
+proto.tag;
 cc.defineGetterSetter(proto, "tag", proto.getTag, proto.setTag);
+/** @expose */
+proto.userData;
 cc.defineGetterSetter(proto, "userData", proto.getUserData, proto.setUserData);
+/** @expose */
+proto.userObject;
 cc.defineGetterSetter(proto, "userObject", proto.getUserObject, proto.setUserObject);
+/** @expose */
+proto.arrivalOrder;
 cc.defineGetterSetter(proto, "arrivalOrder", proto.getOrderOfArrival, proto.setOrderOfArrival);
+/** @expose */
+proto.actionManager;
 cc.defineGetterSetter(proto, "actionManager", proto.getActionManager, proto.setActionManager);
+/** @expose */
+proto.scheduler;
 cc.defineGetterSetter(proto, "scheduler", proto.getScheduler, proto.setScheduler);
 //cc.defineGetterSetter(proto, "boundingBox", proto.getBoundingBox);
+/** @expose */
+proto.grid;
 cc.defineGetterSetter(proto, "grid", proto.getGrid, proto.setGrid);
+/** @expose */
+proto.shaderProgram;
 cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
+/** @expose */
+proto.glServerState;
 cc.defineGetterSetter(proto, "glServerState", proto.getGLServerState, proto.setGLServerState);
 
 delete temp;
