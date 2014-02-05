@@ -24,23 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CircleSprite = cc.Sprite.extend({
-    _degree:0,
-    ctor:function () {
-        this._super();
-    },
-    draw:function () {
-        cc.drawingUtil.setDrawColor4B(255,255,255,255);
-
-        if (this._degree < 0)
-            this._degree = 360;
-        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._degree), 60, true);
-    },
-    myUpdate:function (dt) {
-        this._degree -= 6;
-    }
-});
-
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,
     helloImg:null,
@@ -49,7 +32,6 @@ var Helloworld = cc.Layer.extend({
     sprite:null,
 
     init:function () {
-        var selfPointer = this;
         //////////////////////////////
         // 1. super init first
         this._super();
@@ -67,12 +49,12 @@ var Helloworld = cc.Layer.extend({
             function () {
                 history.go(-1);
             },this);
-        closeItem.setAnchorPoint(cc.p(0.5, 0.5));
+        closeItem.setAnchorPoint(0.5, 0.5);
 
         var menu = cc.Menu.create(closeItem);
-        menu.setPosition(cc.PointZero());
+        menu.setPosition(0,0);
         this.addChild(menu, 1);
-        closeItem.setPosition(cc.p(size.width - 20, 20));
+        closeItem.setPosition(size.width - 20, 20);
 
         /////////////////////////////
         // 3. add your codes below...
@@ -80,7 +62,7 @@ var Helloworld = cc.Layer.extend({
         // create and initialize a label
         this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
         // position the label on the center of the screen
-        this.helloLabel.setPosition(cc.p(size.width / 2, 0));
+        this.helloLabel.setPosition(size.width / 2, 0);
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
@@ -89,7 +71,7 @@ var Helloworld = cc.Layer.extend({
 
         // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
-        this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
+        this.sprite.setPosition(size.width / 2, size.height / 2);
         this.sprite.setScale(0.5);
         this.sprite.setRotation(180);
 
@@ -99,12 +81,6 @@ var Helloworld = cc.Layer.extend({
         var scaleToA = cc.ScaleTo.create(2, 1, 1);
 
         this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
-
-        this.circle = new CircleSprite();
-        this.circle.setPosition(cc.p(40, size.height - 60));
-        this.addChild(this.circle, 2);
-        this.circle.schedule(this.circle.myUpdate, 1 / 60);
-
         this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
         this.setTouchEnabled(true);
@@ -120,7 +96,7 @@ var Helloworld = cc.Layer.extend({
     onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                //this.circle.setPosition(cc.p(touches[0].getLocation().x, touches[0].getLocation().y));
+                //this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);
             }
         }
     },

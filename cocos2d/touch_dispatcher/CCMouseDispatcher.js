@@ -121,7 +121,7 @@ cc.MOUSE_MIDDLEBUTTON = 1;
 cc.MOUSE_RIGHTBUTTON = 2;
 
 /**
- *     CCMouseEventDelegate protocol.
+ * CCMouseEventDelegate protocol.
  * Implement it in your node to receive any of mouse events
  */
 cc.MouseEventDelegate = cc.Class.extend({
@@ -260,23 +260,44 @@ cc.MouseEventDelegate = cc.Class.extend({
     }
 });
 
-cc.Mouse = cc.Touch.extend({
-    _wheelDelta:0,
-    _button:cc.MOUSE_LEFTBUTTON,
+/**
+ * The data of Mouse event
+ * @class
+ * @extends cc.Touch
+ */
+cc.Mouse = cc.Touch.extend(/** @lends cc.Mouse# */{
+    _wheelDelta: 0,
+    _button: cc.MOUSE_LEFTBUTTON,
 
-    getWheelDelta:function () {
+    /**
+     * Gets mouse wheel delta
+     * @returns {number}
+     */
+    getWheelDelta: function () {
         return this._wheelDelta;
     },
 
-    setWheelDelta:function (delta) {
+    /**
+     * Sets mouse wheel delta
+     * @param delta
+     */
+    setWheelDelta: function (delta) {
         this._wheelDelta = delta;
     },
 
-    getButton:function () {
+    /**
+     * Gets mouse button
+     * @returns {number}
+     */
+    getButton: function () {
         return this._button;
     },
 
-    setButton:function (button) {
+    /**
+     * Sets mouse button
+     * @param {number} button
+     */
+    setButton: function (button) {
         this._button = button;
     }
 });
@@ -347,7 +368,13 @@ cc.MouseHandler.create = function (delegate, priority) {
     return handler;
 };
 
-cc.MouseDispatcher = cc.Class.extend({
+/**
+ * cc.MouseDispatcher.                                      <br/>
+ * Singleton that handles all the mouse events.
+ * @class
+ * @extends cc.Class
+ */
+cc.MouseDispatcher = cc.Class.extend(/** @lends cc.MouseDispatcher# */{
     _mousePressed:false,
     _rightMousePressed:false,
     _mouseDelegateHandlers:null,
@@ -404,11 +431,10 @@ cc.MouseDispatcher = cc.Class.extend({
         for (var i = 0; i < array.length; i++) {
             var h = array[i];
             if (h) {
-                if (h.getPriority() < handler.getPriority()) {
+                if (h.getPriority() < handler.getPriority())
                     ++u;
-                }
                 if (h.getDelegate() == handler.getDelegate()) {
-                    cc.Assert(0, "TouchDispatcher.forceAddHandler()");
+                    cc.log("cc.MouseDispatcher.forceAddHandler(): handler has been added.") ;
                     return array;
                 }
             }
@@ -443,9 +469,14 @@ cc.MouseDispatcher = cc.Class.extend({
     },
 
     setPriority:function (priority, delegate) {
-        cc.Assert(delegate != null, "MouseDispatcher.setPriority():Arguments is null");
+        if(!delegate)
+            throw "cc.MouseDispatcher.setPriority(): delegate should be non-null";
         var handler = this._findHandler(delegate);
-        cc.Assert(handler != null, "MouseDispatcher.setPriority():Cant find MouseHandler");
+        if(!handler) {
+            cc.log("cc.MouseDispatcher.setPriority(): Can't find MouseHandler in array");
+            return;
+        }
+
 
         if (handler.getPriority() != priority) {
             handler.setPriority(priority);
@@ -541,9 +572,11 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 
         var tx = event.pageX;
         var ty = event.pageY;
+        var eglViewer = cc.EGLView.getInstance();
 
-        var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
-        var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
+        var pixelRatio = eglViewer.getDevicePixelRatio();
+        var mouseX = (tx - pos.left) * pixelRatio / eglViewer.getScaleX();
+        var mouseY = (pos.height - (ty - pos.top)) * pixelRatio / eglViewer.getScaleY();
 
         var mouse = new cc.Mouse(mouseX, mouseY);
         mouse._setPrevPoint(cc.MouseDispatcher._preMousePoint.x, cc.MouseDispatcher._preMousePoint.y);

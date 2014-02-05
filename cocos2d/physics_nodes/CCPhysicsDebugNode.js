@@ -69,7 +69,8 @@ cc.DrawShape = function (shape, renderer) {
             this.drawPoly(cc.__convertVerts(shape.tVerts), color, 1.0, line);
             break;
         default:
-            cc.Assert(false, "Bad assertion in DrawShape()");
+            cc.log("cc.DrawShape(): Bad assertion in DrawShape()");
+            break;
     }
 };
 
@@ -136,7 +137,7 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
 
         this._spacePtr.eachShape(cc.DrawShape.bind(this));
         this._spacePtr.eachConstraint(cc.DrawConstraint.bind(this));
-        this._super();
+        cc.DrawNode.prototype.draw.call(this);
         this.clear();
     }
 });

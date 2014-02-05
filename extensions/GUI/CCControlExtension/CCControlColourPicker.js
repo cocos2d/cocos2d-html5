@@ -1,4 +1,4 @@
-/*
+/**
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
  *
@@ -29,7 +29,6 @@
  *
  * converted to Javascript / cocos2d-x by Angus C
  */
-
 
 cc.ControlColourPicker = cc.Control.extend({
     _hsv:null,
@@ -84,10 +83,10 @@ cc.ControlColourPicker = cc.Control.extend({
         if (cc.Control.prototype.init.call(this)) {
             this.setTouchEnabled(true);
             // Cache the sprites
-            cc.SpriteFrameCache.getInstance().addSpriteFrames("res/extensions/CCControlColourPickerSpriteSheet.plist");
+            cc.SpriteFrameCache.getInstance().addSpriteFrames(res.CCControlColourPickerSpriteSheet_plist);
 
             // Create the sprite batch node
-            var spriteSheet = cc.SpriteBatchNode.create("res/extensions/CCControlColourPickerSpriteSheet.png");
+            var spriteSheet = cc.SpriteBatchNode.create(res.CCControlColourPickerSpriteSheet_png);
             this.addChild(spriteSheet);
 
           /*// MIPMAP
@@ -101,7 +100,7 @@ cc.ControlColourPicker = cc.Control.extend({
             this._hsv = new cc.HSV(0, 0, 0);
 
             // Add image
-            this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("menuColourPanelBackground.png", spriteSheet, cc.PointZero, cc.p(0.5, 0.5));
+            this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("menuColourPanelBackground.png", spriteSheet, cc.PointZero(), cc.p(0.5, 0.5));
 
             var backgroundPointZero = cc.pSub(this._background.getPosition(),
                 cc.p(this._background.getContentSize().width / 2, this._background.getContentSize().height / 2));
@@ -160,3 +159,8 @@ cc.ControlColourPicker.create = function () {
     pRet.init();
     return pRet;
 };
+
+// compatible with NPM
+var res = res || {};
+res.CCControlColourPickerSpriteSheet_plist = res.CCControlColourPickerSpriteSheet_plist || "res/extensions/CCControlColourPickerSpriteSheet.plist";
+res.CCControlColourPickerSpriteSheet_png = res.CCControlColourPickerSpriteSheet_png || "res/extensions/CCControlColourPickerSpriteSheet.png";

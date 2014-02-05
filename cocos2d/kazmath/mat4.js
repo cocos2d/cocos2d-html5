@@ -1,4 +1,4 @@
-/*
+/**
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
  All rights reserved.
@@ -27,8 +27,9 @@
 /*
  A 4x4 matrix
 
+ mat =
  | 0   4   8  12 |
- mat =   | 1   5   9  13 |
+ | 1   5   9  13 |
  | 2   6  10  14 |
  | 3   7  11  15 |
  */
@@ -293,9 +294,11 @@ cc.getMat4MultiplyWithMat4 = function (pM1, pM2, swapMat) {
  * Assigns the value of pIn to pOut
  */
 cc.kmMat4Assign = function (pOut, pIn) {
-    //cc.Assert(pOut != pIn, "You have tried to self-assign!!");
-    if(pOut == pIn)
-        return;
+    if(pOut == pIn) {
+        cc.log("cc.kmMat4Assign(): pOut equals pIn");
+        return pOut;
+    }
+
     var outArr = pOut.mat;
     var inArr = pIn.mat;
 
@@ -325,7 +328,11 @@ cc.kmMat4Assign = function (pOut, pIn) {
  * Returns KM_TRUE if the 2 matrices are equal (approximately)
  */
 cc.kmMat4AreEqual = function (pMat1, pMat2) {
-    cc.Assert(pMat1 != pMat2, "You are comparing the same thing!");
+    if(pMat1 == pMat2){
+        cc.log("cc.kmMat4AreEqual(): pMat1 and pMat2 are same object.");
+        return true;
+    }
+
     for (var i = 0; i < 16; i++) {
         if (!(pMat1.mat[i] + cc.kmEpsilon > pMat2.mat[i] &&
             pMat1.mat[i] - cc.kmEpsilon < pMat2.mat[i])) {
@@ -764,7 +771,8 @@ cc.kmMat4ExtractPlane = function (pOut, pIn, plane) {
             pOut.d = pIn.mat[15] + pIn.mat[14];
             break;
         default:
-            cc.Assert(0, "Invalid plane index");
+            cc.log("cc.kmMat4ExtractPlane(): Invalid plane index");
+            break;
     }
 
     var t = Math.sqrt(pOut.a * pOut.a +

@@ -178,11 +178,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * Adds a standard touch delegate to the dispatcher's list.
      * See StandardTouchDelegate description.
      * IMPORTANT: The delegate will be retained.
-     * @param {cc.TouchDelegate} delegate
-     * @param {Number} priority
+     * @param {Object} delegate
+     * @param {Number} [priority=0]
      */
-    addStandardDelegate:function (delegate, priority) {
-        var handler = cc.StandardTouchHandler.handlerWithDelegate(delegate, priority);
+    _addStandardDelegate:function (delegate, priority) {
+        priority = priority || 0;
+        var handler = cc.StandardTouchHandler.create(delegate, priority);
 
         if (!this._locked) {
             this._standardHandlers = this.forceAddHandler(handler, this._standardHandlers);
@@ -201,12 +202,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
     },
 
     /**
-     * @param {cc.TouchDelegate} delegate
+     * @param {Object} delegate
      * @param {Number} priority
      * @param {Boolean} swallowsTouches
      */
-    addTargetedDelegate:function (delegate, priority, swallowsTouches) {
-        var handler = cc.TargetedTouchHandler.handlerWithDelegate(delegate, priority, swallowsTouches);
+    _addTargetedDelegate:function (delegate, priority, swallowsTouches) {
+        var handler = cc.TargetedTouchHandler.create(delegate, priority, swallowsTouches);
         if (!this._locked) {
             this._targetedHandlers = this.forceAddHandler(handler, this._targetedHandlers);
         } else {
@@ -238,7 +239,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                 if (h.getPriority() < handler.getPriority())
                     ++u;
                 if (h.getDelegate() == handler.getDelegate()) {
-                    cc.Assert(0, "TouchDispatcher.forceAddHandler()");
+                    cc.log("cc.TouchDispatcher.forceAddHandler(): The handler has been added.");
                     return array;
                 }
             }
@@ -259,7 +260,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * The delegate will be released
      * @param {cc.TouchDelegate} delegate
      */
-    removeDelegate:function (delegate) {
+    _removeDelegate:function (delegate) {
         if (delegate == null) {
             return;
         }
@@ -298,15 +299,16 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * @param {cc.TouchDelegate} delegate
      */
     setPriority:function (priority, delegate) {
-        cc.Assert(delegate != null, "TouchDispatcher.setPriority():Arguments is null");
-
+        if(!delegate)
+            throw "cc.TouchDispatcher.setPriority(): delegate should be non-null.";
         var handler = this.findHandler(delegate);
-
-        cc.Assert(handler != null, "TouchDispatcher.setPriority():Cant find TouchHandler");
+        if(!handler){
+            cc.log("cc.TouchDispatcher.setPriority(): Can't find TouchHandler.");
+            return;
+        }
 
         if (handler.getPriority() != priority) {
             handler.setPriority(priority);
-
             this.rearrangeHandlers(this._targetedHandlers);
             this.rearrangeHandlers(this._standardHandlers);
         }
@@ -318,7 +320,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * @param {Number} index
      */
     touches:function (touches, event, index) {
-        cc.Assert(index >= 0 && index < 4, "TouchDispatcher.touches()");
+        if(index< 0 || index >=4)
+            throw "cc.TouchDispatcher.touches(): invalid index";
 
         this._locked = true;
 
@@ -514,6 +517,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         switch (arguments.length) {
             case 1:
                 delegate = arguments[0];
+                if(!delegate)
+                    throw "cc.TouchDispatcher.findHandler(): delegate should be non-null.";
                 for (var i = 0; i < this._targetedHandlers.length; i++) {
                     if (this._targetedHandlers[i].getDelegate() == delegate) {
                         return this._targetedHandlers[i];
@@ -527,7 +532,10 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                 return null;
                 break;
             case 2:
-                cc.Assert(array != null && delegate != null, "TouchDispatcher.findHandler():Arguments is null");
+                if(!array)
+                    throw "cc.TouchDispatcher.findHandler(): array should be non-null.";
+                if(!delegate)
+                    throw "cc.TouchDispatcher.findHandler(): delegate should be non-null.";
 
                 for (i = 0; i < array.length; i++) {
                     if (array[i].getDelegate() == delegate) {
@@ -799,7 +807,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
@@ -843,7 +851,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
 
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
@@ -887,7 +895,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
 
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
@@ -931,7 +939,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
 
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
@@ -1031,3 +1039,31 @@ cc.TouchDispatcher._preTouchPool = [];
  * @type {Number}
  */
 cc.TouchDispatcher._preTouchPoolPointer = 0;
+
+/**
+ * register a targeted touch delegate to the dispatcher's list.
+ * @param {Number} priority
+ * @param {Boolean} swallowsTouches
+ * @param {Object} delegate
+ */
+cc.registerTargetedDelegate = function(priority, swallowsTouches, delegate){
+    cc.Director.getInstance().getTouchDispatcher()._addTargetedDelegate(delegate, priority, swallowsTouches);
+};
+
+/**
+ * Adds a standard touch delegate to the dispatcher's list.
+ * See StandardTouchDelegate description.
+ * @param {Object} delegate
+ * @param {Number} [priority=]
+ */
+cc.registerStandardDelegate = function(delegate, priority){
+    cc.Director.getInstance().getTouchDispatcher()._addStandardDelegate(delegate, priority);
+};
+
+/**
+ * Removes a touch delegate. from TouchDispatcher
+ * @param delegate
+ */
+cc.unregisterTouchDelegate = function(delegate){
+    cc.Director.getInstance().getTouchDispatcher()._removeDelegate(delegate);
+};

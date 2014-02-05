@@ -52,12 +52,12 @@ var _compareObject = function (val1, val2) {
 };
 
 cc.ArrayForObjectSorting = cc.Class.extend({
-    _saveObjectArr:[],
+    _saveObjectArr:null,
 
     ctor:function () {
         this._saveObjectArr = [];
     },
-    /*!
+    /**
      * Inserts a given object into array.
      *
      * Inserts a given object into array with key and value that are used in
@@ -66,10 +66,11 @@ cc.ArrayForObjectSorting = cc.Class.extend({
      * If the compare message does not result NSComparisonResult, sorting behavior
      * is not defined. It ignores duplicate entries and inserts next to it.
      *
-     * @param object to insert
+     * @param {object} addObject
      */
     insertSortedObject:function (addObject) {
-        cc.Assert(addObject instanceof cc.Class, "Invalid parameter.");
+        if(!addObject)
+            throw "cc.ArrayForObjectSorting.insertSortedObject(): addObject should be non-null.";
         var idx = this.indexOfSortedObject(addObject);
         this.insertObject(addObject, idx);
     },
@@ -128,9 +129,8 @@ cc.ArrayForObjectSorting = cc.Class.extend({
         var idx = this.indexOfSortedObject(foundObj);
         if (idx < this.count() && idx != cc.INVALID_INDEX) {
             foundObj = this.objectAtIndex(idx);
-            if (foundObj.getObjectID() != tag) {
+            if (foundObj.getObjectID() != tag)
                 foundObj = null;
-            }
         }
         return foundObj;
     },
@@ -167,8 +167,9 @@ cc.ArrayForObjectSorting = cc.Class.extend({
             var uPrevObjectID = 0;
             var uOfSortObjectID = idxObj.getObjectID();
 
-            for (var i = 0; i < this._saveObjectArr.length; i++) {
-                var pSortableObj = this._saveObjectArr[i];
+            var locObjectArr = this._saveObjectArr;
+            for (var i = 0; i < locObjectArr.length; i++) {
+                var pSortableObj = locObjectArr[i];
                 var curObjectID = pSortableObj.getObjectID();
                 if ((uOfSortObjectID == curObjectID) ||
                     (uOfSortObjectID >= uPrevObjectID && uOfSortObjectID < curObjectID)) {
@@ -189,9 +190,10 @@ cc.ArrayForObjectSorting = cc.Class.extend({
     },
 
     lastObject:function () {
-        if (this._saveObjectArr.length == 0)
+        var locObjectArr = this._saveObjectArr;
+        if (locObjectArr.length == 0)
             return null;
-        return this._saveObjectArr[this._saveObjectArr.length - 1];
+        return locObjectArr[locObjectArr.length - 1];
     },
 
     objectAtIndex:function (idx) {

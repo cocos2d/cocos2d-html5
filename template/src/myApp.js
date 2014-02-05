@@ -50,12 +50,12 @@ var MyLayer = cc.Layer.extend({
             function () {
                 cc.log("close");
             },this);
-        closeItem.setAnchorPoint(cc.p(0.5, 0.5));
+        closeItem.setAnchorPoint(0.5, 0.5);
 
         var menu = cc.Menu.create(closeItem);
-        menu.setPosition(cc.p(0, 0));
+        menu.setPosition(0, 0);
         this.addChild(menu, 1);
-        closeItem.setPosition(cc.p(size.width - 20, 20));
+        closeItem.setPosition(size.width - 20, 20);
 
         /////////////////////////////
         // 3. add your codes below...
@@ -63,14 +63,15 @@ var MyLayer = cc.Layer.extend({
         // create and initialize a label
         this.helloLabel = cc.LabelTTF.create("Hello World", "Impact", 38);
         // position the label on the center of the screen
-        this.helloLabel.setPosition(cc.p(size.width / 2, size.height - 40));
+        this.helloLabel.setPosition(size.width / 2, size.height - 40);
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
         // add "Helloworld" splash screen"
         this.sprite = cc.Sprite.create(s_HelloWorld);
-        this.sprite.setAnchorPoint(cc.p(0.5, 0.5));
-        this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
+        this.sprite.setAnchorPoint(0.5, 0.5);
+        this.sprite.setPosition(size.width / 2, size.height / 2);
+        this.sprite.setScale(size.height/this.sprite.getContentSize().height);
         this.addChild(this.sprite, 0);
     }
 });

@@ -40,7 +40,7 @@ plugin.PluginManager = cc.Class.extend({
      */
     unloadPlugin:function (name) {
         if (name == null || name.length == 0) return;
-        if (this._pluginsMap.hasOwnProperty(name)) {
+        if (this._pluginsMap[name]) {
             delete this._pluginsMap[name];
         }
 
@@ -55,7 +55,7 @@ plugin.PluginManager = cc.Class.extend({
         if (name == null || name.length == 0) return null;
 
         var tmpPlugin;
-        if (this._pluginsMap.hasOwnProperty(name)) {
+        if (this._pluginsMap[name]) {
             tmpPlugin = this._pluginsMap[name];
         }
         else {

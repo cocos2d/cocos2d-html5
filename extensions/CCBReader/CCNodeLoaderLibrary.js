@@ -45,7 +45,7 @@ cc.NodeLoaderLibrary = cc.Class.extend({
         this.registerCCNodeLoader("CCMenu", cc.MenuLoader.loader());
         this.registerCCNodeLoader("CCMenuItemImage", cc.MenuItemImageLoader.loader());
         this.registerCCNodeLoader("CCControlButton", cc.ControlButtonLoader.loader());
-        this.registerCCNodeLoader("CCParticleSystemQuad", cc.ParticleSystemQuadLoader.loader());
+        this.registerCCNodeLoader("CCParticleSystemQuad", cc.ParticleSystemLoader.loader());
     },
 
     registerCCNodeLoader:function(className,ccNodeLoader){
@@ -53,13 +53,13 @@ cc.NodeLoaderLibrary = cc.Class.extend({
     },
 
     unregisterCCNodeLoader:function(className){
-        if(this._ccNodeLoaders.hasOwnProperty(className)){
+        if(this._ccNodeLoaders[className]){
            delete this._ccNodeLoaders[className];
         }
     },
 
     getCCNodeLoader:function(className){
-        if(this._ccNodeLoaders.hasOwnProperty(className))
+        if(this._ccNodeLoaders[className])
             return this._ccNodeLoaders[className];
         return null;
     },

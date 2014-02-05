@@ -45,9 +45,9 @@ cc.BuilderMemberVariableAssigner = cc.Class.extend({
      * @param {Object} target The custom class
      * @param {string} memberVariableName The name of the member variable.
      * @param {cc.Node} node The member variable.
-     * @return Whether the assignment was successful.
+     * @return {Boolean} Whether the assignment was successful.
      */
-    onAssignCCBMemberVariable:function(target,memberVariableName, node){},
+    onAssignCCBMemberVariable:function(target,memberVariableName, node){ return false;},
 
     /**
      * The callback function of assigning custom properties.
@@ -55,7 +55,7 @@ cc.BuilderMemberVariableAssigner = cc.Class.extend({
      * @param {Object} target The custom class.
      * @param {string} memberVariableName The name of the member variable.
      * @param {*} value The value of the property.
-     * @return Whether the assignment was successful.
+     * @return {Boolean} Whether the assignment was successful.
      */
-    onAssignCCBCustomProperty:function(target, memberVariableName, value){}
+    onAssignCCBCustomProperty:function(target, memberVariableName, value){ return false; }
 });

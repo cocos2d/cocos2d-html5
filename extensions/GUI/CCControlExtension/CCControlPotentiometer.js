@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2012 cocos2d-x.org
  * http://www.cocos2d-x.org
  *
@@ -197,7 +197,7 @@ cc.ControlPotentiometer = cc.Control.extend({
 
     potentiometerBegan:function (location) {
         this.setSelected(true);
-        this.getThumbSprite().setColor(cc.GRAY);
+        this.getThumbSprite().setColor(cc.gray());
     },
 
     potentiometerMoved:function (location) {
@@ -217,7 +217,7 @@ cc.ControlPotentiometer = cc.Control.extend({
     },
 
     potentiometerEnded:function (location) {
-        this.getThumbSprite().setColor(cc.WHITE);
+        this.getThumbSprite().setColor(cc.white());
         this.setSelected(false);
     },
     setThumbSprite:function (sprite) {

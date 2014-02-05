@@ -43,7 +43,8 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
      * @return {Boolean}
      */
     initWithAction:function (action) {
-        cc.Assert(action != null, "");
+        if(!action)
+            throw "cc.ActionEase.initWithAction(): action must be non nil";
 
         if (this.initWithDuration(action.getDuration())) {
             this._inner = action;
@@ -604,8 +605,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
      * @return {Null}
      */
     reverse:function () {
-        cc.Assert(0, "Override me");
-        return null;
+        cc.log("cc.EaseElastic.reverse(): it should be overridden in subclass.");
     },
 
     clone:function(){
@@ -746,19 +746,20 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
      */
     update:function (time1) {
         var newT = 0;
+        var locPeriod = this._period
         if (time1 === 0 || time1 == 1) {
             newT = time1;
         } else {
             time1 = time1 * 2;
-            if (!this._period)
-                this._period = 0.3 * 1.5;
+            if (!locPeriod)
+                locPeriod = this._period = 0.3 * 1.5;
 
-            var s = this._period / 4;
+            var s = locPeriod / 4;
             time1 = time1 - 1;
             if (time1 < 0)
-                newT = -0.5 * Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
+                newT = -0.5 * Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / locPeriod);
             else
-                newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period) * 0.5 + 1;
+                newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / locPeriod) * 0.5 + 1;
         }
         this._inner.update(newT);
     },

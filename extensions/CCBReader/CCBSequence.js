@@ -77,7 +77,6 @@ cc.BuilderSequence = cc.Class.extend({
     setSoundChannel:function(channel) {
         this._soundChannel = channel;
     }
-
 });
 
 cc.BuilderSequenceProperty = cc.Class.extend({

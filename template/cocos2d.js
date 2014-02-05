@@ -33,6 +33,7 @@
         showFPS:true,
         loadExtension:false,
         frameRate:60,
+        renderMode:0,       //Choose of RenderMode: 0(default), 1(Canvas only), 2(WebGL only)
         tag:'gameCanvas', //the dom element to run cocos2d on
         engineDir:'../cocos2d/',
         //SingleEngineFile:'',
@@ -50,14 +51,15 @@
         var p = d.getElementById(c.tag).parentNode;
         p.style.background = 'none';
         p.style.border = 'none';
-        p.insertBefore(s);
+        p.insertBefore(s,d.getElementById(c.tag));
 
         d.body.style.background = '#ffffff';
         return;
     }
 
-
-    window.addEventListener('DOMContentLoaded', function () {
+    var fn;
+    window.addEventListener('DOMContentLoaded', fn = function () {
+        this.removeEventListener('DOMContentLoaded', fn, false);
         //first load engine file if specified
         var s = d.createElement('script');
         /*********Delete this section if you have packed all files into one*******/
@@ -65,7 +67,7 @@
             s.src = c.SingleEngineFile;
         }
         else if (c.engineDir && !c.SingleEngineFile) {
-            s.src = c.engineDir + 'platform/jsloader.js';
+            s.src = c.engineDir + 'jsloader.js';
         }
         else {
             alert('You must specify either the single engine file OR the engine directory in "cocos2d.js"');
