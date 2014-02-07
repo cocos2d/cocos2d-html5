@@ -944,6 +944,10 @@ cc.ContentStrategy = cc.Class.extend({
     },
 
     _buildResult: function (containerW, containerH, contentW, contentH, scaleX, scaleY) {
+	    // Makes content fit better the canvas
+	    Math.abs(containerW - contentW) < 2 && (contentW = containerW);
+	    Math.abs(containerH - contentH) < 2 && (contentH = containerH);
+
         var viewport = cc.rect(Math.round((containerW - contentW) / 2),
                                Math.round((containerH - contentH) / 2),
                                contentW, contentH);
@@ -1072,10 +1076,10 @@ cc.ContentStrategy = cc.Class.extend({
         apply: function (view, designedResolution) {
             var containerW = cc.canvas.width, containerH = cc.canvas.height,
                 designW = designedResolution.width, designH = designedResolution.height,
-                scaleX = containerW / designW, scaleY = containerH / designH, scale,
+                scaleX = containerW / designW, scaleY = containerH / designH, scale = 0,
                 contentW, contentH;
 
-            scaleX < scaleY ? (scale = scaleX, contentW = containerW, contentH = designH * scale)
+	        scaleX < scaleY ? (scale = scaleX, contentW = containerW, contentH = designH * scale)
                 : (scale = scaleY, contentW = designW * scale, contentH = containerH);
 
             return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);

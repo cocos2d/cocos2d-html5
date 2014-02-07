@@ -364,34 +364,32 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     /**
-     * Touches is the same as Touch, except this one can handle multi-touch
-     * @param {cc.Touch} touch
+     * Touches is the same as onTouchBegan, except this one can handle multi-touch
+     * @param {array} touches
      * @param {event} event
      */
-    onTouchesBegan:function (touch, event) {
+    onTouchesBegan:function (touches, event) {
     },
 
     /**
-     * when a touch moved
-     * @param {cc.Touch} touch
+     * @param {array} touches
      * @param {event} event
      */
-    onTouchesMoved:function (touch, event) {
+    onTouchesMoved:function (touches, event) {
     },
 
     /**
-     * when a touch finished
-     * @param {cc.Touch} touch
+     * @param {array} touches
      * @param {event} event
      */
-    onTouchesEnded:function (touch, event) {
+    onTouchesEnded:function (touches, event) {
     },
 
     /**
-     * @param touch
+     * @param {array} touches
      * @param event
      */
-    onTouchesCancelled:function (touch, event) {
+    onTouchesCancelled:function (touches, event) {
     },
 
     // ---------------------CCMouseEventDelegate interface------------------------------
@@ -399,40 +397,40 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p>called when the "mouseDown" event is received. <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseDown:function (event) {
+    onMouseDown:function (mouse) {
         return false;
     },
 
     /**
      * <p>called when the "mouseDragged" event is received.         <br/>
      * Return YES to avoid propagating the event to other delegates.</p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseDragged:function (event) {
+    onMouseDragged:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "mouseMoved" event is received.            <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseMoved:function (event) {
+    onMouseMoved:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "mouseUp" event is received.               <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseUp:function (event) {
+    onMouseUp:function (mouse) {
         return false;
     },
 
@@ -440,30 +438,30 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p> called when the "rightMouseDown" event is received.        <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onRightMouseDown:function (event) {
+    onRightMouseDown:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "rightMouseDragged" event is received.    <br/>
      * Return YES to avoid propagating the event to other delegates. </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onRightMouseDragged:function (event) {
+    onRightMouseDragged:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "rightMouseUp" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onRightMouseUp:function (event) {
+    onRightMouseUp:function (mouse) {
         return false;
     },
 
@@ -471,30 +469,30 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p>called when the "otherMouseDown" event is received.         <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onOtherMouseDown:function (event) {
+    onOtherMouseDown:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "otherMouseDragged" event is received.     <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onOtherMouseDragged:function (event) {
+    onOtherMouseDragged:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "otherMouseUp" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onOtherMouseUp:function (event) {
+    onOtherMouseUp:function (mouse) {
         return false;
     },
 
@@ -502,10 +500,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p> called when the "scrollWheel" event is received.           <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onScrollWheel:function (event) {
+    onScrollWheel:function (mouse) {
         return false;
     },
 
@@ -513,20 +511,20 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      *  <p> called when the "mouseEntered" event is received.         <br/>
      *  Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseEntered:function (theEvent) {
+    onMouseEntered:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "mouseExited" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseExited:function (theEvent) {
+    onMouseExited:function (mouse) {
         return false;
     },
 

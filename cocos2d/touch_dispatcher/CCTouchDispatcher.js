@@ -807,7 +807,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
@@ -851,7 +851,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
 
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
@@ -895,7 +895,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
 
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
@@ -939,7 +939,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     var location = cc.EGLView.getInstance().convertToLocationInView(tx, ty, pos);
 
                     touch = null;
-                    if (touch_event.hasOwnProperty("identifier")) {
+                    if (touch_event.identifier) {
                         touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                         //use Touch Pool
                         preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
