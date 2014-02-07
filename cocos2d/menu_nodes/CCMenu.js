@@ -156,7 +156,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             this.ignoreAnchorPointForPosition(true);
             this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(winSize);
-            this.setPosition(winSize.width / 2, winSize.height / 2);
+            this.x = winSize.width / 2;
+	        this.y = winSize.height / 2;
 
             if (arrayOfItems) {
                 for (var i = 0; i < arrayOfItems.length; i++)
