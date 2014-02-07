@@ -298,7 +298,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         if(this._texture && this._texture.isLoaded()){
             ctx = ctx || cc.renderContext;
             cc.NODE_DRAW_SETUP(this);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
             cc.glBindTexture2D(this._texture);
