@@ -381,7 +381,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _initWithSpriteForCanvas:function (sprite) {
         this.setPercentage(0);
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
@@ -397,7 +398,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataCount = 0;
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;

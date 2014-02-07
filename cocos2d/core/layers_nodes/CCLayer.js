@@ -61,7 +61,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     _initLayer:function () {
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();

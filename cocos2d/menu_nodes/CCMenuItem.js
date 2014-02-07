@@ -136,7 +136,8 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @return {Boolean}
      */
     initWithCallback:function (callback, target) {
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
         this._target = target;
         this._callback = callback;
         this._isEnabled = true;

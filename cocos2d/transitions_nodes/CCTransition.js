@@ -298,12 +298,17 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
 
-        this._inScene.setScale(0.001);
-        this._outScene.setScale(1.0);
-
-        this._inScene.setAnchorPoint(0.5, 0.5);
-        this._outScene.setAnchorPoint(0.5, 0.5);
-
+	    this._inScene.attr({
+		    scale: 0.001,
+		    anchorX: 0.5,
+		    anchorY: 0.5
+	    });
+	    this._outScene.attr({
+		    scale: 1.0,
+		    anchorX: 0.5,
+		    anchorY: 0.5
+	    });
+	    
         var rotoZoom = cc.Sequence.create(
             cc.Spawn.create(cc.ScaleBy.create(this._duration / 2, 0.001),
                 cc.RotateBy.create(this._duration / 2, 360 * 2)),
@@ -763,11 +768,16 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
 
-        this._inScene.setScale(0.001);
-        this._outScene.setScale(1.0);
-
-        this._inScene.setAnchorPoint(2 / 3.0, 0.5);
-        this._outScene.setAnchorPoint(1 / 3.0, 0.5);
+	    this._inScene.attr({
+		    scale: 0.001,
+		    anchorX: 2 / 3.0,
+		    anchorY: 0.5
+	    });
+	    this._outScene.attr({
+		    scale: 1.0,
+		    anchorX: 1 / 3.0,
+		    anchorY: 0.5
+	    });
 
         var scaleOut = cc.ScaleTo.create(this._duration, 0.01);
         var scaleIn = cc.ScaleTo.create(this._duration, 1.0);
@@ -1357,12 +1367,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         // create the second render texture for outScene
         var outTexture = cc.RenderTexture.create(winSize.width, winSize.height);
         outTexture.getSprite().setAnchorPoint(0.5, 0.5);
-        outTexture.attr({
-	        x: winSize.width / 2,
-	        y: winSize.height / 2,
-	        anchorX: 0.5,
-	        anchorY: 0.5
-        });
+        outTexture.setPosition(winSize.width / 2, winSize.height / 2);
+        outTexture.setAnchorPoint(0.5, 0.5);
 
         // render outScene to its texturebuffer
         outTexture.begin();
