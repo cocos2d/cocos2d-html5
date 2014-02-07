@@ -99,7 +99,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _frame: null,
     _frameZoomFactor: 1.0,
     __resizeWithBrowserSize: false,
-    _isAdjustViewPort: false,
+    _isAdjustViewPort: true,
 
     ctor: function () {
         this._frame = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
@@ -181,7 +181,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     _setViewPortMeta: function (width, height) {
         if (this._isAdjustViewPort) {
-            var viewportMetas = {"user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"}, elems = document.getElementsByName("viewport"), vp, content;
+	        var viewportMetas = {"user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"}, elems = document.getElementsByName("viewport"), vp, content;
             if (elems.length == 0) {
                 vp = document.createElement("meta");
                 vp.name = "viewport";
@@ -189,6 +189,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 document.head.appendChild(vp);
             }
             else vp = elems[0];
+
+	        // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
+	        if (cc.Browser.isMobile && cc.Browser.type == "firefox") {
+		        vp.content = "initial-scale:1";
+		        return;
+	        }
+
             content = vp.content;
             for (var key in viewportMetas) {
                 var pattern = new RegExp(key);
@@ -197,14 +204,14 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 }
             }
             /*
-             if(width<=320){
-             width = 321;
-             }
-             if(height)
-             content ="height="+height+","+content;
-             if(width)
-             content ="width="+width+","+content;
-             */
+            if(width<=320){
+                width = 321;
+            }
+            if(height)
+                content ="height="+height+","+content;
+            if(width)
+                content ="width="+width+","+content;
+            */
             vp.content = content;
         }
     },
