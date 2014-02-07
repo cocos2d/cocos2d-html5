@@ -73,7 +73,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
         if (!value) {
             return;
         }
-        this._strStringValue = value;
+        this._stringValue = value;
         this._labelBMFontRenderer.setString(value);
         this.labelBMFontScaleChangedWithSize();
     },
@@ -83,7 +83,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
      * @returns {String}
      */
     getStringValue: function () {
-        return this._strStringValue;
+        return this._stringValue;
     },
 
     /**
