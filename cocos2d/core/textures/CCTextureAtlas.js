@@ -586,7 +586,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         //vertices
         //gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
         // XXX: update is done in draw... perhaps it should be done in a timer
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
         if (this._dirty)

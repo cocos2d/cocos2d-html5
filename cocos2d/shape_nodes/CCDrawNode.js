@@ -566,7 +566,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
     _render:function () {
         var gl = cc.renderContext;
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._trianglesWebBuffer);
         if (this._dirty) {
             gl.bufferData(gl.ARRAY_BUFFER, this._trianglesArrayBuffer, gl.STREAM_DRAW);
