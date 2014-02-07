@@ -222,8 +222,10 @@ cc.FileUtils = cc.Class.extend({
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             req.setRequestHeader("Accept-Charset", "x-user-defined");
             req.send(null);
-            if (req.status != 200)
+            if (req.status != 200) {
+                cc.log("cocos2d: Unable to load file: " + fileUrl);
                 return null;
+            }
 
             var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
             if (fileContents) {
@@ -234,8 +236,10 @@ cc.FileUtils = cc.Class.extend({
             if (req.overrideMimeType)
                 req.overrideMimeType('text\/plain; charset=x-user-defined');
             req.send(null);
-            if (req.status != 200)
+            if (req.status != 200) {
+                cc.log("cocos2d: Unable to load file: " + fileUrl);
                 return null;
+            }
 
             arrayInfo = this._stringConvertToArray(req.responseText);
             this._fileDataCache[fileUrl] = arrayInfo;
