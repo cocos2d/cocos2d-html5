@@ -66,7 +66,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
-        this.setContentSize(director.getWinSize());
+        this.size = director.getWinSize();
     },
 
     /**
@@ -995,7 +995,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             locSquareVertices[3].x = size.width;
             locSquareVertices[3].y = size.height;
             this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this,size);
+            cc.Layer.prototype.setContentSize.call(this, size);
         }
     },
 
@@ -1181,9 +1181,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setContentSize:function(size, height){
         if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this,size, height);
+            cc.LayerColor.prototype.setContentSize.call(this, size, height);
         else
-            cc.LayerColor.prototype.setContentSize.call(this,size);
+            cc.LayerColor.prototype.setContentSize.call(this, size);
         this._updateColor();
     },
 

@@ -277,14 +277,14 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this.setContentSize(this._sprite.getContentSize());
+            this.size = this._sprite.getContentSize();
         }
     },
 
     _setSpriteForWebGL:function (sprite) {
         if (sprite && this._sprite != sprite) {
             this._sprite = sprite;
-            this.setContentSize(sprite.getContentSize());
+            this.size = sprite.getContentSize();
 
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
