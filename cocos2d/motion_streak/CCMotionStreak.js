@@ -202,7 +202,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         cc.Node.prototype.setPosition.call(this, cc.PointZero());
         this.anchorX = 0;
 	    this.anchorY = 0;
-        this.ignoreAnchorPointForPosition(true);
+        this.ignoreAnchor = true;
         this._startingPositionInitialized = false;
 
         this._fastMode = true;
