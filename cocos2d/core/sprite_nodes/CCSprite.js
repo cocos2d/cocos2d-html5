@@ -478,13 +478,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _spriteFrameLoadedCallback:null,
 
     _spriteFrameLoadedCallbackForWebGL:function(spriteFrame){
-        this.setNodeDirty();
+        this.setNodeDirty(true);
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
         this._callLoadedEventCallbacks();
     },
 
     _spriteFrameLoadedCallbackForCanvas:function(spriteFrame){
-        this.setNodeDirty();
+        this.setNodeDirty(true);
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
         var curColor = this.getColor();
         if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
@@ -617,155 +617,39 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // cc.Node property overloads
     //
 
-    /**
-     * set Recursively is or isn't Dirty
-     * used only when parent is cc.SpriteBatchNode
-     * @param {Boolean} value
-     */
-    setDirtyRecursively:function (value) {
-        this._recursiveDirty = value;
-        this.setDirty(value);
-        // recursively set dirty
-        var locChildren = this._children;
-        if (locChildren != null) {
-            for (var i = 0; i < locChildren.length; i++) {
-                if (locChildren[i] instanceof cc.Sprite)
-                    locChildren[i].setDirtyRecursively(true);
-            }
-        }
-    },
+	/**
+	 * set Recursively is or isn't Dirty
+	 * used only when parent is cc.SpriteBatchNode
+	 * @param {Boolean} value
+	 */
+	setDirtyRecursively:function (value) {
+		this._recursiveDirty = value;
+		this._dirty = value;
+		// recursively set dirty
+		var locChildren = this._children, child, l = locChildren ? locChildren.length : 0;
+		for (var i = 0; i < l; i++) {
+			child = locChildren[i];
+			(child instanceof cc.Sprite) && child.setDirtyRecursively(true);
+		}
+	},
 
-    /**
-     * HACK: optimization
-     */
-    SET_DIRTY_RECURSIVELY:function () {
-        if (this._batchNode && !this._recursiveDirty) {
-            this._recursiveDirty = true;
-            this._dirty = true;
-            if (this._hasChildren)
-                this.setDirtyRecursively(true);
-        }
-    },
-
-    /**
-     * position setter (override cc.Node )
-     * @param {cc.Point|Number} pos position or x value of position
-     * @param {Number} [yValue] y value of position
-     * @override
-     */
-    setPosition:function (pos, yValue) {
-        if (arguments.length >= 2)
-            cc.Node.prototype.setPosition.call(this, pos, arguments[1]);
-        else
-            cc.Node.prototype.setPosition.call(this, pos);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * Rotation setter (override cc.Node )
-     * @param {Number} rotation
-     * @override
-     */
-    setRotation:function (rotation) {
-        cc.Node.prototype.setRotation.call(this, rotation);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    setRotationX:function (rotationX) {
-        cc.Node.prototype.setRotationX.call(this, rotationX);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    setRotationY:function (rotationY) {
-        cc.Node.prototype.setRotationY.call(this, rotationY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * SkewX setter (override cc.Node )
-     * @param {Number} sx SkewX value
-     * @override
-     */
-    setSkewX:function (sx) {
-        cc.Node.prototype.setSkewX.call(this, sx);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * SkewY setter (override cc.Node )
-     * @param {Number} sy SkewY value
-     * @override
-     */
-    setSkewY:function (sy) {
-        cc.Node.prototype.setSkewY.call(this, sy);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * ScaleX setter (override cc.Node )
-     * @param {Number} scaleX
-     * @override
-     */
-    setScaleX:function (scaleX) {
-        cc.Node.prototype.setScaleX.call(this, scaleX);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * ScaleY setter (override cc.Node )
-     * @param {Number} scaleY
-     * @override
-     */
-    setScaleY:function (scaleY) {
-        cc.Node.prototype.setScaleY.call(this, scaleY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * <p>The scale factor of the node. 1.0 is the default scale factor. <br/>
-     * It modifies the X and Y scale at the same time. (override cc.Node ) <p/>
-     * @param {Number} scale
-     * @param {Number|null} [scaleY=]
-     * @override
-     */
-    setScale:function (scale, scaleY) {
-        cc.Node.prototype.setScale.call(this, scale, scaleY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * VertexZ setter (override cc.Node )
-     * @param {Number} vertexZ
-     * @override
-     */
-    setVertexZ:function (vertexZ) {
-        cc.Node.prototype.setVertexZ.call(this, vertexZ);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * Sets the anchor point in percent. (override cc.Node )
-     * @param {cc.Point|Number} anchor The anchor Sprite of Sprite or The anchor point.x of Sprite.
-     * @param {Number} [y] The anchor point.y of Sprite.
-     * @override
-     */
-    setAnchorPoint:function (anchor, y) {
-        if(arguments.length === 2)
-            cc.Node.prototype.setAnchorPoint.call(this, anchor, y);
-        else
-            cc.Node.prototype.setAnchorPoint.call(this, anchor);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * visible setter  (override cc.Node )
-     * @param {Boolean} visible
-     * @override
-     */
-    setVisible:function (visible) {
-        cc.Node.prototype.setVisible.call(this, visible);
-        this.SET_DIRTY_RECURSIVELY();
-    },
+	/**
+	 * Make the node dirty
+	 * @param {Boolean} norecursive When true children will not be set dirty recursively, by default, they will be.
+	 * @override
+	 */
+	setNodeDirty: function(norecursive) {
+		this._super();
+		// Lazy set dirty
+		if (!norecursive && this._batchNode && !this._recursiveDirty) {
+			if (this._hasChildren)
+				this.setDirtyRecursively(true);
+			else {
+				this._recursiveDirty = true;
+				this._dirty = true;
+			}
+		}
+	},
 
     /**
      * IsRelativeAnchorPoint setter  (override cc.Node )
@@ -788,7 +672,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (this._flippedX != flippedX) {
             this._flippedX = flippedX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty();
+            this.setNodeDirty(true);
         }
     },
 
@@ -800,7 +684,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (this._flippedY != flippedY) {
             this._flippedY = flippedY;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty();
+            this.setNodeDirty(true);
         }
     },
 
@@ -851,7 +735,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setOpacityModifyRGBForCanvas: function (modify) {
         if (this._opacityModifyRGB !== modify) {
             this._opacityModifyRGB = modify;
-            this.setNodeDirty();
+            this.setNodeDirty(true);
         }
     },
 
@@ -1678,7 +1562,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     setDisplayFrame: null,
 
     _setDisplayFrameForWebGL: function (newFrame) {
-        this.setNodeDirty();
+        this.setNodeDirty(true);
         var frameOffset = newFrame.getOffset();
         this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
         this._unflippedOffsetPositionFromCenter._y = frameOffset.y;
@@ -1707,7 +1591,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _setDisplayFrameForCanvas: function (newFrame) {
-        this.setNodeDirty();
+        this.setNodeDirty(true);
 
         var frameOffset = newFrame.getOffset();
         this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
