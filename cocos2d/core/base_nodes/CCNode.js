@@ -1322,7 +1322,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     runAction:function (action) {
         if(!action)
             throw "cc.Node.runAction(): action must be non-null";
-        this.getActionManager().addAction(action, this, !this._running);
+        this.actionManager.addAction(action, this, !this._running);
         return action;
     },
 
@@ -1330,7 +1330,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Stops and removes all actions from the running action list .
      */
     stopAllActions:function () {
-        this.getActionManager().removeAllActionsFromTarget(this);
+        this.actionManager.removeAllActionsFromTarget(this);
     },
 
     /**
@@ -1338,7 +1338,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Action} action An action object to be removed.
      */
     stopAction:function (action) {
-        this.getActionManager().removeAction(action);
+        this.actionManager.removeAction(action);
     },
 
     /**
@@ -1350,7 +1350,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             cc.log("cc.Node.stopActionBy(): argument tag an invalid tag");
             return;
         }
-        this.getActionManager().removeActionByTag(tag, this);
+        this.actionManager.removeActionByTag(tag, this);
     },
 
     /**
@@ -1364,7 +1364,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             cc.log("cc.Node.getActionByTag(): argument tag is an invalid tag");
             return null;
         }
-        return this.getActionManager().getActionByTag(tag, this);
+        return this.actionManager.getActionByTag(tag, this);
     },
 
     /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).<br/>
@@ -1374,7 +1374,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number} The number of actions that are running plus the ones that are schedule to run
      */
     getNumberOfRunningActions:function () {
-        return this.getActionManager().numberOfRunningActionsInTarget(this);
+        return this.actionManager.numberOfRunningActionsInTarget(this);
     },
 
     // cc.Node - Callbacks
@@ -1470,7 +1470,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     resumeSchedulerAndActions:function () {
         this.getScheduler().resumeTarget(this);
-        this.getActionManager().resumeTarget(this);
+        this.actionManager.resumeTarget(this);
     },
 
     /**
@@ -1479,7 +1479,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     pauseSchedulerAndActions:function () {
         this.getScheduler().pauseTarget(this);
-        this.getActionManager().pauseTarget(this);
+        this.actionManager.pauseTarget(this);
     },
 
     /**
