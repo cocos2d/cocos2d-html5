@@ -857,7 +857,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         zOrder = (zOrder == null) ? child.zIndex : zOrder;
-        tag = (tag == null) ? child.getTag() : tag;
+        tag = (tag == null) ? child.tag : tag;
 
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
@@ -877,7 +877,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         zOrder = (zOrder == null) ? child.zIndex : zOrder;
-        tag = (tag == null) ? child.getTag() : tag;
+        tag = (tag == null) ? child.tag : tag;
 
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);

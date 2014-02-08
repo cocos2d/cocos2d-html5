@@ -873,7 +873,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (cc.renderContextType === cc.WEBGL)
             sprite.setVertexZ(this._vertexZForPos(pos));
         else
-            sprite.setTag(z);
+            sprite.tag = z;
 
         sprite.setAnchorPoint(0,0);
         sprite.setOpacity(this._opacity);

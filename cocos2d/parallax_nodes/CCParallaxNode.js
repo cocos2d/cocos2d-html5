@@ -160,7 +160,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
         pos.y = pos.y * ratio.y + offset.y;
         child.setPosition(pos);
 
-        cc.NodeRGBA.prototype.addChild.call(this, child, z, child.getTag());
+        cc.NodeRGBA.prototype.addChild.call(this, child, z, child.tag);
     },
 
     /**

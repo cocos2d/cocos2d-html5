@@ -118,7 +118,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if(!(child instanceof cc.ParticleSystem))
             throw "cc.ParticleBatchNode.addChild() : only supports cc.ParticleSystem as children";
         zOrder = (zOrder == null) ? child.zIndex : zOrder;
-        tag = (tag == null) ? child.getTag() : tag;
+        tag = (tag == null) ? child.tag : tag;
 
         if(child.getTexture() != this._textureAtlas.getTexture())
             throw "cc.ParticleSystem.addChild() : the child is not using the same texture id";
@@ -483,7 +483,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         var pos = this._searchNewPositionInChildrenForZ(z);
 
         this._children = cc.ArrayAppendObjectToIndex(this._children, child, pos);
-        child.setTag(aTag);
+        child.tag = aTag;
         child._setZOrder(z);
         child.parent = this;
         if (this._running) {
