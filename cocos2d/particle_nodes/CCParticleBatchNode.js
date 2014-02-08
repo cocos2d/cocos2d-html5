@@ -470,7 +470,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _addChildHelper:function (child, z, aTag) {
         if(!child)
             throw "cc.ParticleBatchNode._addChildHelper(): child should be non-null";
-        if(child.getParent()){
+        if(child.parent){
             cc.log("cc.ParticleBatchNode._addChildHelper(): child already added. It can't be added again");
             return null;
         }
@@ -485,7 +485,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._children = cc.ArrayAppendObjectToIndex(this._children, child, pos);
         child.setTag(aTag);
         child._setZOrder(z);
-        child.setParent(this);
+        child.parent = this;
         if (this._running) {
             child.onEnter();
             child.onEnterTransitionDidFinish();

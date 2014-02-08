@@ -259,11 +259,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Number}
      */
     atlasIndexForChild:function (sprite, nZ) {
-        var brothers = sprite.getParent().getChildren();
+	    var selParent = sprite.parent;
+        var brothers = selParent.getChildren();
         var childIndex = cc.ArrayGetIndexOfObject(brothers, sprite);
 
         // ignore parent Z if parent is spriteSheet
-        var ignoreParent = sprite.getParent() == this;
+        var ignoreParent = selParent == this;
         var previous = null;
         if (childIndex > 0 && childIndex < cc.UINT_MAX)
             previous = brothers[childIndex - 1];
@@ -277,10 +278,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // parent is a cc.Sprite, so, it must be taken into account
         // first child of an cc.Sprite ?
-        var selParent;
         if (childIndex == 0) {
-            selParent = sprite.getParent();
-
             // less than parent and brothers
             if (nZ < 0)
                 return selParent.getAtlasIndex();
@@ -292,7 +290,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 return this.highestAtlasIndexInChild(previous) + 1;
 
             // else (previous < 0 and sprite >= 0 )
-            selParent = sprite.getParent();
             return selParent.getAtlasIndex() + 1;
         }
     },

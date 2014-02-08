@@ -459,7 +459,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this._enabled)
             return false;
 
-        for (var c = this._parent; c != null; c = c.getParent()) {
+        for (var c = this.parent; c != null; c = c.parent) {
             if (!c.isVisible())
                 return false;
         }

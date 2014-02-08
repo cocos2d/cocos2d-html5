@@ -934,7 +934,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._reusedTile = new cc.Sprite();
             this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
             this._reusedTile.setBatchNode(this);
-            this._reusedTile.setParent(this);
+            this._reusedTile.parent = this;
         }
         return this._reusedTile;
     },

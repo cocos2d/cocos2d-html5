@@ -1137,7 +1137,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                     if (cleanup)
                         node.cleanup();
                     // set parent nil at the end
-                    node.setParent(null);
+                    node.parent = null;
                 }
             }
             this._children.length = 0;
@@ -1164,7 +1164,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             child.cleanup();
 
         // set parent nil at the end
-        child.setParent(null);
+        child.parent = null;
 
         cc.ArrayRemoveObject(this._children, child);
     },
@@ -1553,7 +1553,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     nodeToWorldTransform:function () {
         var t = this.nodeToParentTransform();
-        for (var p = this._parent; p != null; p = p.getParent())
+        for (var p = this._parent; p != null; p = p.parent)
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
         return t;
     },
