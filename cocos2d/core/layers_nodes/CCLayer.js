@@ -947,7 +947,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             return false;
 
         if(cc.renderContextType !== cc.CANVAS)
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
+            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         var winSize = cc.Director.getInstance().getWinSize();
         color = color || new cc.Color4B(0, 0, 0, 255);

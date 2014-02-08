@@ -80,7 +80,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._children.length = 0;
 
         if (cc.renderContextType === cc.WEBGL)
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 

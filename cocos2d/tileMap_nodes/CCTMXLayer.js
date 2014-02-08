@@ -856,11 +856,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     alphaFuncValue = parseFloat(alphaFuncVal);
 
                 if (cc.renderContextType === cc.WEBGL) {
-                    this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST));
-                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.getShaderProgram().getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
+                    this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
+                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.shader.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
                     // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
-                    this.getShaderProgram().use();
-                    this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
+                    this.shader.use();
+                    this.shader.setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
                 }
             } else
                 this._vertexZvalue = parseInt(vertexz, 10);

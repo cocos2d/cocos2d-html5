@@ -1747,7 +1747,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             //else
             this._setupVBO();
 
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         }
 
         return true;

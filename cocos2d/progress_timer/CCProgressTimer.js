@@ -408,7 +408,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this.setSprite(sprite);
 
         //shader program
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
