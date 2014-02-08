@@ -270,16 +270,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 	 *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
 	 *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
 	 *  </p>
-	 * @return {Object}attrs Attributes to be set to node
+	 * @param {Object}attrs Attributes to be set to node
 	 */
 	attr: function(attrs) {
-		this._ignoreDirty = true;
-
 		for(var key in attrs) {
 			this[key] = attrs[key];
 		}
-
-		this._ignoreDirty = false;
 		this.setNodeDirty();
 	},
 
@@ -2178,16 +2174,6 @@ var temp = {
 		this._anchorPoint._y = y;
 		this._anchorPointInPoints._y = this._contentSize._height * y;
 		this.setNodeDirty();
-	},
-	getScale: function() {
-		if(this._scaleX !== this._scaleY)
-			cc.log("cc.Node.getScale(): ScaleX != ScaleY. Don't know which one to return");
-		return this._scaleX;
-	},
-	setScale: function(scale) {
-		this._scaleX = scale;
-		this._scaleY = scale;
-		this.setNodeDirty();
 	}
 };
 var proto = cc.Node.prototype;
@@ -2238,7 +2224,7 @@ proto.rotationY;
 cc.defineGetterSetter(proto, "rotationY", proto.getRotationY, proto.setRotationY);
 /** @expose */
 proto.scale;
-cc.defineGetterSetter(proto, "scale", temp.getScale, temp.setScale);
+cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
 /** @expose */
 proto.scaleX;
 cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
