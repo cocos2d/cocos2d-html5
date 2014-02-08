@@ -46,6 +46,13 @@ cc.Screen = cc.Class.extend({
 			'fullscreenElement'
 		],
 		[
+			'requestFullScreen',
+			'exitFullScreen',
+			'fullScreenchange',
+			'fullScreenEnabled',
+			'fullScreenElement'
+		],
+		[
 			'webkitRequestFullScreen',
 			'webkitCancelFullScreen',
 			'webkitfullscreenchange',

@@ -44,12 +44,12 @@ cc.VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_FLAG_TEXCOORDS = 1 << 2;
+cc.VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX = ( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS );
+cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = ( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS );
 
 /**
  * GL server side states
@@ -200,11 +200,11 @@ cc.setProjectionMatrixDirty = function () {
  *    Possible flags:                                           <br/>
  *    cc.VERTEX_ATTRIB_FLAG_POSITION                             <br/>
  *    cc.VERTEX_ATTRIB_FLAG_COLOR                                <br/>
- *    cc.VERTEX_ATTRIB_FLAG_TEXCOORDS                            <br/>
+ *    cc.VERTEX_ATTRIB_FLAG_TEX_COORDS                            <br/>
  *                                                              <br/>
  *    These flags can be ORed. The flags that are not present, will be disabled.
  * </p>
- * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS} flags
+ * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_OORDS} flags
  */
 cc.glEnableVertexAttribs = function (flags) {
     /* Position */
@@ -229,7 +229,7 @@ cc.glEnableVertexAttribs = function (flags) {
     }
 
     /* Tex Coords */
-    var enableTexCoords = (flags & cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+    var enableTexCoords = (flags & cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
     if (enableTexCoords !== cc._vertexAttribTexCoords) {
         if (enableTexCoords)
             ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
