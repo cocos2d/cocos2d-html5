@@ -522,7 +522,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      * @return {Boolean}
      */
     isDone:function () {
-        return ( !this._followedNode.isRunning() );
+        return ( !this._followedNode.running );
     },
 
     /**
