@@ -117,7 +117,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             throw "cc.ParticleBatchNode.addChild() : child should be non-null";
         if(!(child instanceof cc.ParticleSystem))
             throw "cc.ParticleBatchNode.addChild() : only supports cc.ParticleSystem as children";
-        zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
+        zOrder = (zOrder == null) ? child.zIndex : zOrder;
         tag = (tag == null) ? child.getTag() : tag;
 
         if(child.getTexture() != this._textureAtlas.getTexture())
@@ -223,7 +223,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             return;
         }
 
-        if (zOrder == child.getZOrder())
+        if (zOrder == child.zIndex)
             return;
 
         // no reordering if only 1 child
@@ -413,7 +413,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         var locChildren = this._children;
         var count = locChildren.length;
         for (var i = 0; i < count; i++) {
-            if (locChildren[i].getZOrder() > z)
+            if (locChildren[i].zIndex > z)
                 return i;
         }
         return count;
@@ -431,7 +431,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         for (var i = 0; i < count; i++) {
             var pNode = locChildren[i];
             // new index
-            if (pNode.getZOrder() > z && !foundNewIdx) {
+            if (pNode.zIndex > z && !foundNewIdx) {
                 newIndex = i;
                 foundNewIdx = true;
 

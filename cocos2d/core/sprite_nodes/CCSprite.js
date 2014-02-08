@@ -575,7 +575,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             return;
         }
 
-        if (zOrder === child.getZOrder())
+        if (zOrder === child.zIndex)
             return;
 
         if (this._batchNode && !this._reorderChildDirty) {
