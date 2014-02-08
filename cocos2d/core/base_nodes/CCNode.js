@@ -1399,7 +1399,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} priority
      */
     scheduleUpdateWithPriority:function (priority) {
-        this.getScheduler().scheduleUpdateForTarget(this, priority, !this._running);
+        this.scheduler.scheduleUpdateForTarget(this, priority, !this._running);
     },
 
     /**
@@ -1407,7 +1407,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @see scheduleUpdate();
      */
     unscheduleUpdate:function () {
-        this.getScheduler().unscheduleUpdateForTarget(this);
+        this.scheduler.unscheduleUpdateForTarget(this);
     },
 
     /**
@@ -1430,7 +1430,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
-        this.getScheduler().scheduleCallbackForTarget(this, callback_fn, interval, repeat, delay, !this._running);
+        this.scheduler.scheduleCallbackForTarget(this, callback_fn, interval, repeat, delay, !this._running);
     },
 
     /**
@@ -1453,7 +1453,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!callback_fn)
             return;
 
-        this.getScheduler().unscheduleCallbackForTarget(this, callback_fn);
+        this.scheduler.unscheduleCallbackForTarget(this, callback_fn);
     },
 
     /**
@@ -1461,7 +1461,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Actions are not affected by this method.
      */
     unscheduleAllCallbacks:function () {
-        this.getScheduler().unscheduleAllCallbacksForTarget(this);
+        this.scheduler.unscheduleAllCallbacksForTarget(this);
     },
 
     /**
@@ -1469,7 +1469,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * This method is called internally by onEnter
      */
     resumeSchedulerAndActions:function () {
-        this.getScheduler().resumeTarget(this);
+        this.scheduler.resumeTarget(this);
         this.actionManager.resumeTarget(this);
     },
 
@@ -1478,7 +1478,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * This method is called internally by onExit
      */
     pauseSchedulerAndActions:function () {
-        this.getScheduler().pauseTarget(this);
+        this.scheduler.pauseTarget(this);
         this.actionManager.pauseTarget(this);
     },
 
