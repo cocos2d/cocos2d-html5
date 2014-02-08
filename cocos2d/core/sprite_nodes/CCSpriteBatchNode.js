@@ -527,7 +527,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (count === 0) {
             oldIndex = sprite.getAtlasIndex();
             sprite.setAtlasIndex(curIndex);
-            sprite.setOrderOfArrival(0);
+            sprite.arrivalOrder = 0;
             if (oldIndex != curIndex)
                 this._swap(oldIndex, curIndex);
             curIndex++;
@@ -537,7 +537,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 //all children are in front of the parent
                 oldIndex = sprite.getAtlasIndex();
                 sprite.setAtlasIndex(curIndex);
-                sprite.setOrderOfArrival(0);
+                sprite.arrivalOrder = 0;
                 if (oldIndex != curIndex)
                     this._swap(oldIndex, curIndex);
                 curIndex++;
@@ -548,7 +548,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 if (needNewIndex && child.zIndex >= 0) {
                     oldIndex = sprite.getAtlasIndex();
                     sprite.setAtlasIndex(curIndex);
-                    sprite.setOrderOfArrival(0);
+                    sprite.arrivalOrder = 0;
                     if (oldIndex != curIndex) {
                         this._swap(oldIndex, curIndex);
                     }
@@ -562,7 +562,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 //all children have a zOrder < 0)
                 oldIndex = sprite.getAtlasIndex();
                 sprite.setAtlasIndex(curIndex);
-                sprite.setOrderOfArrival(0);
+                sprite.arrivalOrder = 0;
                 if (oldIndex != curIndex) {
                     this._swap(oldIndex, curIndex);
                 }
@@ -836,7 +836,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (locGrid && locGrid.isActive())
             locGrid.afterDraw(this);
         cc.kmGLPopMatrix();
-        this.setOrderOfArrival(0);
+        this.arrivalOrder = 0;
     },
 
     /**

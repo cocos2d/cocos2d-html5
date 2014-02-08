@@ -1189,7 +1189,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if(!child)
             throw "cc.Node.reorderChild(): child must be non-null";
         this._reorderChildDirty = true;
-        child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
+        child.arrivalOrder = cc.s_globalOrderOfArrival;
+	    cc.s_globalOrderOfArrival++
         child._setZOrder(zOrder);
         this.setNodeDirty();
     },
