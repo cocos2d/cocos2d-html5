@@ -2272,8 +2272,8 @@ cc.defineGetterSetter(proto, "scheduler", proto.getScheduler, proto.setScheduler
 proto.grid;
 cc.defineGetterSetter(proto, "grid", proto.getGrid, proto.setGrid);
 /** @expose */
-proto.shader;
-cc.defineGetterSetter(proto, "shader", proto.getShaderProgram, proto.setShaderProgram);
+proto.shaderProgram;
+cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
 /** @expose */
 proto.glServerState;
 cc.defineGetterSetter(proto, "glServerState", proto.getGLServerState, proto.setGLServerState);

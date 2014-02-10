@@ -28,7 +28,7 @@
 cc.stencilBits = -1;
 
 cc.setProgram = function (node, program) {
-    node.shader = program;
+    node.shaderProgram = program;
 
     var children = node.getChildren();
     if (!children)

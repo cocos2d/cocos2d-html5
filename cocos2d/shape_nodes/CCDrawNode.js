@@ -538,7 +538,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
 
     init:function () {
         if (cc.Node.prototype.init.call(this)) {
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR);
             this._ensureCapacity(512);
             this._trianglesWebBuffer = cc.renderContext.createBuffer();
             this._dirty = true;

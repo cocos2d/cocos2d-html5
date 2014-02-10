@@ -347,7 +347,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return false;
 
         // shader program
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
 
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);

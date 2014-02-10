@@ -1733,9 +1733,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (texture)
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         else
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         if (!this._batchNode && this._texture != texture) {
             this._texture = texture;
