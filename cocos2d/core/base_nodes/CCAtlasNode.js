@@ -343,7 +343,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItemsForCanvas:function () {
         var selTexture = this.getTexture();
-        var size = selTexture.getContentSize();
+        var size = selTexture.size;
 
         this._itemsPerColumn = 0 | (size.height / this._itemHeight);
         this._itemsPerRow = 0 | (size.width / this._itemWidth);
@@ -351,7 +351,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItemsForWebGL:function () {
         var selTexture = this.getTexture();
-        var size = selTexture.getContentSize();
+        var size = selTexture.size;
         if(this._ignoreContentScaleFactor)
             size = selTexture.getContentSizeInPixels();
 

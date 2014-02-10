@@ -155,7 +155,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     draw:function (ctx) {
         cc.AtlasNode.prototype.draw.call(this,ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
-            var s = this.getContentSize();
+            var s = this.size;
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
                 cc.p(s.width, s.height), cc.p(0, s.height)];
             cc.drawingUtil.drawPoly(vertices, 4, true);
@@ -291,7 +291,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         label = String(label);
         var len = label.length;
         this._string = label;
-        this.setContentSize(len * this._itemWidth, this._itemHeight);
+        this.width = len * this._itemWidth;
+	    this.height = this._itemHeight;
         if (this._children) {
             var locChildren = this._children;
             len = locChildren.length;
@@ -313,7 +314,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             this._textureAtlas.resizeCapacity(len);
 
         this._string = label;
-        this.setContentSize(len * this._itemWidth, this._itemHeight);
+        this.width = len * this._itemWidth;
+	    this.height = this._itemHeight;
 
         this.updateAtlasValues();
         this._quadsToDraw = len;

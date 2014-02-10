@@ -1026,7 +1026,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             return this.initWithTexture(texture, rect);
         } else {
             if (!rect) {
-                var size = texture.getContentSize();
+                var size = texture.size;
                 rect = cc.rect(0, 0, size.width, size.height);
             }
             return this.initWithTexture(texture, rect);
@@ -1100,7 +1100,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (!rect) {
-            var locSize1 = texture.getContentSize();
+            var locSize1 = texture.size;
             rect = cc.rect(0, 0, locSize1.width, locSize1.height);
         }
         this.setTexture(texture);
@@ -1158,7 +1158,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (!rect) {
-            var locSize1 = texture.getContentSize();
+            var locSize1 = texture.size;
             rect = cc.rect(0, 0, locSize1.width, locSize1.height);
         }
         this._originalTexture = texture;
@@ -1181,10 +1181,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
-            var locSize1 = sender.getContentSize();
+            var locSize1 = sender.size;
             locRect = cc.rect(0, 0, locSize1.width, locSize1.height);
         } else if (cc._rectEqualToZero(locRect)) {
-            var locSize2 = sender.getContentSize();
+            var locSize2 = sender.size;
             locRect.width = locSize2.width;
             locRect.height = locSize2.height;
         }
@@ -1206,10 +1206,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
-            var locSize1 = sender.getContentSize();
+            var locSize1 = sender.size;
             locRect = cc.rect(0, 0, locSize1.width, locSize1.height);
         } else if (cc._rectEqualToZero(locRect)) {
-            var locSize2 = sender.getContentSize();
+            var locSize2 = sender.size;
             locRect.width = locSize2.width;
             locRect.height = locSize2.height;
         }
@@ -1234,9 +1234,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForWebGL:function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-        untrimmedSize = untrimmedSize || rect._size;
+	    this.size = untrimmedSize || rect._size;
 
-        this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
         this._setTextureCoords(rect);
 
@@ -1276,9 +1275,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-        untrimmedSize = untrimmedSize || rect._size;
+	    this.size = untrimmedSize || rect._size;
 
-        this.setContentSize(untrimmedSize);
         this.setVertexRect(rect);
 
         var locTextureRect = this._textureRect_Canvas, scaleFactor = cc.CONTENT_SCALE_FACTOR();

@@ -2564,8 +2564,16 @@ cc.NodeRGBA.create = function () {
 };
 
 var proto = cc.NodeRGBA.prototype;
+/** @expose */
+proto.opacity;
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+/** @expose */
+proto.opacityModifyRGB;
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
+/** @expose */
+proto.cascadeOpacity;
 cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
+/** @expose */
+proto.color;
 cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;

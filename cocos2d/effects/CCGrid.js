@@ -183,9 +183,8 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._texture = texture;
         this._isTextureFlipped = flipped;
 
-        var texSize = this._texture.getContentSize();
-        this._step.x = texSize.width / gridSize.width;
-        this._step.y = texSize.height / gridSize.height;
+        this._step.x = this._texture.width / gridSize.width;
+        this._step.y = this._texture.height / gridSize.height;
 
         this._grabber = new cc.Grabber();
         if (!this._grabber)

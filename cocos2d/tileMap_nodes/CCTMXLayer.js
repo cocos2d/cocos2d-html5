@@ -101,7 +101,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tempTexture.initWithElement(tmpCanvas);
             tempTexture.handleLoadedTexture();
             this._cacheTexture = tempTexture;
-            this.setContentSize(locCanvas.width, locCanvas.height);
+            this.width = locCanvas.width;
+	        this.height = locCanvas.height;
 	        // This class uses cache, so its default cachedParent should be himself
 	        this._cachedParent = this;
         }
@@ -387,8 +388,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this.pos = cc.POINT_PIXELS_TO_POINTS(offset);
 
             this._atlasIndexArray = [];
-            this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
-                this._layerSize.height * this._mapTileSize.height)));
+            this.size = cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
+                this._layerSize.height * this._mapTileSize.height));
             this._useAutomaticVertexZ = false;
             this._vertexZvalue = 0;
             return true;
@@ -888,8 +889,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
             sprite.setAnchorPoint(0.5, 0.5);
-            sprite.x = this.getPositionAt(pos).x + sprite.getContentSize().width / 2;
-	        sprite.y = this.getPositionAt(pos).y + sprite.getContentSize().height / 2;
+            sprite.x = this.getPositionAt(pos).x + sprite.width / 2;
+	        sprite.y = this.getPositionAt(pos).y + sprite.height / 2;
 
             var flag = (gid & (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG) >>> 0) >>> 0;
             // handle the 4 diagonally flipped states.

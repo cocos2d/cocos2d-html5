@@ -1296,8 +1296,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
             //set the texture coord
             if(this._texture){
-                var size = this._texture.getContentSize();
-                this.initTexCoordsWithRect(cc.rect(0, 0, size.width, size.height));
+                this.initTexCoordsWithRect(cc.rect(0, 0, this._texture.width, this._texture.height));
             }
         } else
             this._totalParticles = tp;
@@ -1318,14 +1317,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setTexture:function (texture) {
         if(texture.isLoaded()){
-            var  size = texture.getContentSize();
-            this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
+            this.setTextureWithRect(texture, cc.rect(0, 0, texture.width, texture.height));
         } else {
             this._textureLoaded = false;
             texture.addLoadedEventListener(function(sender){
                 this._textureLoaded = true;
-                var  size = sender.getContentSize();
-                this.setTextureWithRect(sender, cc.rect(0, 0, size.width, size.height));
+                this.setTextureWithRect(sender, cc.rect(0, 0, sender.width, sender.height));
             }, this);
         }
     },

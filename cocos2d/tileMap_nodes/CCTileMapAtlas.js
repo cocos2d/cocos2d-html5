@@ -84,8 +84,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             this._color = cc.white();
             this._posToAtlasIndex = {};
             this._updateAtlasValues();
-            this.setContentSize((this._TGAInfo.width * this._itemWidth),
-                (this._TGAInfo.height * this._itemHeight));
+            this.width = this._TGAInfo.width * this._itemWidth;
+	        this.height = this._TGAInfo.height * this._itemHeight;
             return true;
         }
         return false;
