@@ -28,6 +28,7 @@ ccs.TextFiledEventType = {
     delete_backward: 3
 };
 
+ccs.TEXTFIELDRENDERERZ = -1;
 /**
  * Base class for ccs.UICCTextField
  * @class
@@ -231,11 +232,11 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
 };
 
 /**
- * Base class for ccs.UITextField
+ * Base class for ccs.TextField
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
+ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     _textFieldRender: null,
     _touchWidth: 0,
     _touchHeight: 0,
@@ -252,7 +253,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     _deleteBackwardSelector: null,
     _passwordStyleText:"",
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._textFieldRender = null;
         this._touchWidth = 0;
         this._touchHeight = 0;
@@ -270,18 +271,14 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
         this._deleteBackwardSelector = null;
     },
 
-    init: function () {
-        if (ccs.UIWidget.prototype.init.call(this)) {
-            this.setUpdateEnabled(true);
-            return true;
-        }
-        return false;
+    onEnter:function(){
+        ccs.Widget.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._textFieldRender = ccs.UICCTextField.create("input words here", "Thonburi", 20);
-        this._renderer.addChild(this._textFieldRender);
+        cc.NodeRGBA.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELDRENDERERZ, -1);
 
     },
 
@@ -302,6 +299,17 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     setText: function (text) {
         if (!text) {
             return;
+        }
+        text = String(text);
+        if (this.isMaxLengthEnabled()) {
+            text = text.substr(0, this.getMaxLength());
+        }
+        if (this.isPasswordEnabled()) {
+            this._textFieldRender.setPasswordText(text);
+            this._textFieldRender.insertText(text, text.length);
+        }
+        else {
+            this._textFieldRender.setString(text);
         }
         this._textFieldRender.setString(text);
         this.textfieldRendererScaleChangedWithSize();
@@ -351,7 +359,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @param {cc.Point} touchPoint
      */
     onTouchBegan: function (touchPoint) {
-        var pass = ccs.UIWidget.prototype.onTouchBegan.call(this, touchPoint);
+        var pass = ccs.Widget.prototype.onTouchBegan.call(this, touchPoint);
         return pass;
     },
 
@@ -360,7 +368,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @param touchPoint
      */
     onTouchEnded: function (touchPoint) {
-        ccs.UIWidget.prototype.onTouchEnded.call(this, touchPoint);
+        ccs.Widget.prototype.onTouchEnded.call(this, touchPoint);
         this._textFieldRender.attachWithIME();
     },
 
@@ -537,9 +545,9 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
      * @returns {boolean}
      */
     hitTest: function (pt) {
-        var nsp = this._renderer.convertToNodeSpace(pt);
+        var nsp = this.convertToNodeSpace(pt);
         var locSize = this._textFieldRender.getContentSize();
-        var bb = cc.rect(-locSize.width * this._anchorPoint.x, -locSize.height * this._anchorPoint.y, locSize.width, locSize.height);
+        var bb = cc.rect(-locSize.width * this._anchorPoint._x, -locSize.height * this._anchorPoint._y, locSize.width, locSize.height);
         if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
             return true;
         }
@@ -548,37 +556,30 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UILabelBMFont or The anchor point.x of UILabelBMFont.
+     * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this, pt);
-        this._textFieldRender.setAnchorPoint(pt);
-    },
-
-    /**
-     * @param {cc.c3b} color
-     */
-    setColor: function (color) {
-        ccs.UIWidget.prototype.setColor.call(this, color);
-        this._textFieldRender.setColor(color);
-    },
-
-    /**
-     * @param {number} opacity
-     */
-    setOpacity: function (opacity) {
-        ccs.UIWidget.prototype.setOpacity.call(this, opacity);
-        this._textFieldRender.setOpacity(opacity);
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+            this._textFieldRender.setAnchorPoint(point, y);
+        } else {
+            ccs.Widget.prototype.setAnchorPoint.call(this, point);
+            this._textFieldRender.setAnchorPoint(point);
+        }
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.textfieldRendererScaleChangedWithSize();
     },
 
     textfieldRendererScaleChangedWithSize: function () {
         if (this._ignoreSize) {
             this._textFieldRender.setScale(1.0);
-            this._size = this.getContentSize();
+            var rendererSize = this.getContentSize();
+            this._size.width = rendererSize.width;
+            this._size.height = rendererSize.height;
         }
         else {
             var textureSize = this.getContentSize();
@@ -622,7 +623,7 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
     },
 
     createCloneInstance: function () {
-        return ccs.UITextField.create();
+        return ccs.TextField.create();
     },
 
     copySpecialProperties: function (textField) {
@@ -643,13 +644,13 @@ ccs.UITextField = ccs.UIWidget.extend(/** @lends ccs.UITextField# */{
 /**
  * allocates and initializes a UITextField.
  * @constructs
- * @return {ccs.UITextField}
+ * @return {ccs.TextField}
  * @example
  * // example
- * var uiTextField = ccs.UITextField.create();
+ * var uiTextField = ccs.TextField.create();
  */
-ccs.UITextField.create = function () {
-    var uiTextField = new ccs.UITextField();
+ccs.TextField.create = function () {
+    var uiTextField = new ccs.TextField();
     if (uiTextField && uiTextField.init()) {
         return uiTextField;
     }

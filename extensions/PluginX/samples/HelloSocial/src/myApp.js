@@ -51,7 +51,7 @@ var MyLayer = cc.Layer.extend({
         var size = cc.Director.getInstance().getVisibleSize();
 
         var bg = cc.Sprite.create(s_Background);
-        bg.setPosition(cc.p(size.width / 2, size.height / 2));
+        bg.setPosition(size.width / 2, size.height / 2);
         this.addChild(bg);
 
         var eglView = cc.EGLView.getInstance();
@@ -64,11 +64,11 @@ var MyLayer = cc.Layer.extend({
             s_CloseSelected,
             this.menuCloseCallback,
             this);
-        closeItem.setPosition(cc.p(posBR.x - 20, posBR.y + 20));
+        closeItem.setPosition(posBR.x - 20, posBR.y + 20);
 
         // create menu, it's an autorelease object
         var pMenu = cc.Menu.create(closeItem);
-        pMenu.setPosition(cc.p(0, 0));
+        pMenu.setPosition(0, 0);
         this.addChild(pMenu, 1);
 
         var posStep = cc.p(150, -150);
@@ -93,7 +93,7 @@ var MyLayer = cc.Layer.extend({
 
         var label = cc.LabelTTF.create("Reload all plugins", "Arial", 24);
         var menuItem = cc.MenuItemLabel.create(label, this.reloadPluginMenuCallback, this);
-        menuItem.setAnchorPoint(cc.p(0.5, 0));
+        menuItem.setAnchorPoint(0.5, 0);
         pMenu.addChild(menuItem, 0);
         menuItem.setPosition(posBC);
     },

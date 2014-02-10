@@ -128,8 +128,8 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * Calculate two baseData's between value(to - from) and set to self
-     * @param {cc.Color4B} from
-     * @param {cc.Color4B} to
+     * @param {ccs.BaseData} from
+     * @param {ccs.BaseData} to
      * @param {Boolean} limit
      */
     subtract:function (from, to, limit) {
@@ -151,24 +151,24 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
             this.isUseColorInfo = false;
         }
 
-        if (limit){
+        if (limit) {
             if (this.skewX > cc.PI) {
-                this.skewX -= 2 * cc.PI;
+                this.skewX -= ccs.M_PI_X_2;
             }
             if (this.skewX < -cc.PI) {
-                this.skewX += 2 * cc.PI;
+                this.skewX += ccs.M_PI_X_2;
             }
             if (this.skewY > cc.PI) {
-                this.skewY -= 2 * cc.PI;
+                this.skewY -= ccs.M_PI_X_2;
             }
             if (this.skewY < -cc.PI) {
-                this.skewY += 2 * cc.PI;
+                this.skewY += ccs.M_PI_X_2;
             }
         }
 
         if (to.tweenRotate) {
-            this.skewX += to.tweenRotate;
-            this.skewY += to.tweenRotate;
+            this.skewX += to.tweenRotate * ccs.M_PI_X_2;
+            this.skewY -= to.tweenRotate * ccs.M_PI_X_2;
         }
     }
 });
@@ -180,6 +180,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
  */
 ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
     displayType:ccs.DisplayType.max,
+    displayName:"",
     ctor:function () {
         this.displayType = ccs.DisplayType.max;
     },
@@ -197,6 +198,14 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
             textureName = textureName.substring(0, startPos);
         }
         return textureName;
+    },
+    /**
+     * copy data
+     * @param {ccs.DisplayData} displayData
+     */
+    copy:function (displayData) {
+        this.displayName = displayData.displayName;
+        this.displayType = displayData.displayType;
     }
 });
 
@@ -206,27 +215,17 @@ ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
  * @extends ccs.DisplayData
  */
 ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData# */{
-    displayName:"",
     skinData:null,
     ctor:function () {
-        this.displayName = "";
         this.skinData = new ccs.BaseData();
         this.displayType = ccs.DisplayType.sprite;
-    },
-    /**
-     * set display name
-     * @param {String} displayName
-     */
-    setParam:function (displayName) {
-        this.displayName = displayName;
     },
     /**
      * copy data
      * @param {ccs.SpriteDisplayData} displayData
      */
     copy:function (displayData) {
-        this.displayName = displayData.displayName;
-        this.displayType = displayData.displayType;
+        ccs.DisplayData.prototype.copy.call(this,displayData);
         this.skinData = displayData.skinData;
     }
 });
@@ -241,22 +240,6 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
     ctor:function () {
         this.displayName = "";
         this.displayType = ccs.DisplayType.armature;
-
-    },
-    /**
-     * set display name
-     * @param {String} displayName
-     */
-    setParam:function (displayName) {
-        this.displayName = displayName;
-    },
-    /**
-     * copy data
-     * @param {ccs.ArmatureDisplayData} displayData
-     */
-    copy:function (displayData) {
-        this.displayName = displayData.displayName;
-        this.displayType = displayData.displayType;
     }
 });
 
@@ -266,26 +249,8 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
  * @extends ccs.DisplayData
  */
 ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayData# */{
-    plist:"",
     ctor:function () {
-        this.plist = "";
         this.displayType = ccs.DisplayType.particle;
-
-    },
-    /**
-     * set plist value
-     * @param {String} plist
-     */
-    setParam:function (plist) {
-        this.plist = plist;
-    },
-    /**
-     * copy data
-     * @param {ccs.ParticleDisplayData} displayData
-     */
-    copy:function (displayData) {
-        this.plist = displayData.plist;
-        this.displayType = displayData.displayType;
     }
 });
 
@@ -376,24 +341,28 @@ ccs.ArmatureData = ccs.Class.extend(/** @lends ccs.ArmatureData# */{
 ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
         duration:0,
         tweenEasing:0,
+        easingParamNumber: 0,
+        easingParams: null,
         displayIndex:-1,
         movement:"",
         event:"",
         sound:"",
         soundEffect:"",
-        blendType:0,
+        blendFunc:0,
         frameID:0,
         isTween:true,
         ctor:function () {
             ccs.BaseData.prototype.ctor.call(this);
             this.duration = 1;
             this.tweenEasing = ccs.TweenType.linear;
+            this.easingParamNumber = 0;
+            this.easingParams = [];
             this.displayIndex = 0;
             this.movement = "";
             this.event = "";
             this.sound = "";
             this.soundEffect = "";
-            this.blendType = ccs.BlendType.normal;
+            this.blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
             this.frameID = 0;
             this.isTween = true;
         },
@@ -411,8 +380,16 @@ ccs.FrameData = ccs.BaseData.extend(/** @lends ccs.FrameData# */{
             this.event = frameData.event;
             this.sound = frameData.sound;
             this.soundEffect = frameData.soundEffect;
-            this.blendType = frameData.blendType;
+            this.blendFunc = frameData.blendFunc;
             this.isTween = frameData.isTween;
+
+            this.easingParamNumber = frameData.easingParamNumber;
+            this.easingParams = [];
+            if (this.easingParamNumber != 0)            {
+                for (var i = 0; i<this.easingParamNumber; i++)                {
+                    this.easingParams[i] = frameData.easingParams[i];
+                }
+            }
         }
     }
 );

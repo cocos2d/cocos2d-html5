@@ -22,17 +22,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var NORMAL_RENDERER_ZORDER = 0;
-var PRESSED_RENDERER_ZORDER = 0;
-var DISABLED_RENDERER_ZORDER = 0;
-var TITLE_RENDERER_ZORDER = 1;
+var NORMAL_RENDERER_ZORDER = -2;
+var PRESSED_RENDERER_ZORDER = -2;
+var DISABLED_RENDERER_ZORDER = -2;
+var TITLE_RENDERER_ZORDER = -1;
 
 /**
- * Base class for ccs.UIButton
+ * Base class for ccs.Button
  * @class
- * @extends ccs.UIWidget
+ * @extends ccs.Widget
  */
-ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
+ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     _buttonNormalRenderer: null,
     _buttonClickedRenderer: null,
     _buttonDisableRenderer: null,
@@ -54,8 +54,15 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     _disabledTextureSize: null,
     _pressedActionEnabled: false,
     _titleColor: null,
+    _normalTextureScaleXInSize: 1,
+    _normalTextureScaleYInSize: 1,
+    _pressedTextureScaleXInSize: 1,
+    _pressedTextureScaleYInSize: 1,
+    _normalTextureLoaded: false,
+    _pressedTextureLoaded: false,
+    _disabledTextureLoaded: false,
     ctor: function () {
-        ccs.UIWidget.prototype.ctor.call(this);
+        ccs.Widget.prototype.ctor.call(this);
         this._buttonNormalRenderer = null;
         this._buttonClickedRenderer = null;
         this._buttonDisableRenderer = null;
@@ -77,24 +84,30 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this._disabledTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedActionEnabled = false;
         this._titleColor = cc.white();
+        this._normalTextureScaleXInSize = 1;
+        this._normalTextureScaleYInSize = 1;
+        this._pressedTextureScaleXInSize = 1;
+        this._pressedTextureScaleYInSize = 1;
+        this._normalTextureLoaded = false;
+        this._pressedTextureLoaded = false;
+        this._disabledTextureLoaded = false;
     },
 
     init: function () {
-        if (ccs.UIWidget.prototype.init.call(this))
+        if (ccs.Widget.prototype.init.call(this))
             return true;
         return false;
     },
 
     initRenderer: function () {
-        ccs.UIWidget.prototype.initRenderer.call(this);
         this._buttonNormalRenderer = cc.Sprite.create();
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        this._renderer.addChild(this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
-        this._renderer.addChild(this._titleRenderer, TITLE_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -108,9 +121,9 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this._brightStyle = ccs.BrightStyle.none;
         this._scale9Enabled = able;
 
-        this._renderer.removeChild(this._buttonNormalRenderer, true);
-        this._renderer.removeChild(this._buttonClickedRenderer, true);
-        this._renderer.removeChild(this._buttonDisableRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
+        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
 
         if (this._scale9Enabled) {
             this._buttonNormalRenderer = cc.Scale9Sprite.create();
@@ -126,9 +139,9 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        this._renderer.addChild(this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        this._renderer.addChild(this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -149,7 +162,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.UIWidget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -179,38 +192,40 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         texType = texType||ccs.TextureResType.local;
         this._normalFileName = normal;
         this._normalTexType = texType;
+        var buttonNormalRenderer = this._buttonNormalRenderer;
+        switch (this._normalTexType) {
+            case ccs.TextureResType.local:
+                buttonNormalRenderer.initWithFile(normal);
+                break;
+            case ccs.TextureResType.plist:
+                buttonNormalRenderer.initWithSpriteFrameName(normal);
+                break;
+            default:
+                break;
+        }
+
+        var buttonRenderSize = buttonNormalRenderer.getContentSize();
+        if(buttonNormalRenderer.textureLoaded()){
+            this._normalTextureSize.width = buttonRenderSize.width;
+            this._normalTextureSize.height = buttonRenderSize.height;
+        }else{
+            buttonNormalRenderer.addLoadedEventListener(function(){
+                this._normalTextureSize = buttonNormalRenderer.getContentSize();
+                if (buttonNormalRenderer.setCapInsets) {
+                    buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
+                }
+                this.normalTextureScaleChangedWithSize();
+            },this);
+            this._normalTextureSize.width = this._customSize.width;
+            this._normalTextureSize.height = this._customSize.height;
+        }
         if (this._scale9Enabled) {
-            switch (this._normalTexType) {
-                case ccs.TextureResType.local:
-                    this._buttonNormalRenderer.initWithFile(normal);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._buttonNormalRenderer.initWithSpriteFrameName(normal);
-                    break;
-                default:
-                    break;
-            }
-            this._buttonNormalRenderer.setColor(this.getColor());
-            this._buttonNormalRenderer.setOpacity(this.getOpacity());
-            this._buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
+            buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
-        else {
-            switch (this._normalTexType) {
-                case ccs.TextureResType.local:
-                    this._buttonNormalRenderer.initWithFile(normal);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._buttonNormalRenderer.initWithSpriteFrameName(normal);
-                    break;
-                default:
-                    break;
-            }
-            this._buttonNormalRenderer.setColor(this.getColor());
-            this._buttonNormalRenderer.setOpacity(this.getOpacity());
-        }
-        this._normalTextureSize = this._buttonNormalRenderer.getContentSize();
-        this.updateAnchorPoint();
+
+        this._updateDisplay();
         this.normalTextureScaleChangedWithSize();
+        this._normalTextureLoaded = true;
     },
 
     /**
@@ -225,38 +240,38 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         texType = texType || ccs.TextureResType.local;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
+        var clickedRenderer = this._buttonClickedRenderer;
+        switch (this._pressedTexType) {
+            case ccs.TextureResType.local:
+                clickedRenderer.initWithFile(selected);
+                break;
+            case ccs.TextureResType.plist:
+                clickedRenderer.initWithSpriteFrameName(selected);
+                break;
+            default:
+                break;
+        }
+
+        if(clickedRenderer.textureLoaded()){
+            this._pressedTextureSize = clickedRenderer.getContentSize();
+        }else{
+            clickedRenderer.addLoadedEventListener(function(){
+                this._pressedTextureSize = clickedRenderer.getContentSize();
+                if (clickedRenderer.setCapInsets) {
+                    clickedRenderer.setCapInsets(this._capInsetsNormal);
+                }
+                this.pressedTextureScaleChangedWithSize();
+            },this);
+            this._pressedTextureSize.width = this._customSize.width;
+            this._pressedTextureSize.height = this._customSize.height;
+        }
+
         if (this._scale9Enabled) {
-            switch (this._pressedTexType) {
-                case ccs.TextureResType.local:
-                    this._buttonClickedRenderer.initWithFile(selected);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._buttonClickedRenderer.initWithSpriteFrameName(selected);
-                    break;
-                default:
-                    break;
-            }
-            this._buttonClickedRenderer.setColor(this.getColor());
-            this._buttonClickedRenderer.setOpacity(this.getOpacity());
-            this._buttonClickedRenderer.setCapInsets(this._capInsetsNormal);
+            clickedRenderer.setCapInsets(this._capInsetsNormal);
         }
-        else {
-            switch (this._pressedTexType) {
-                case ccs.TextureResType.local:
-                    this._buttonClickedRenderer.initWithFile(selected);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._buttonClickedRenderer.initWithSpriteFrameName(selected);
-                    break;
-                default:
-                    break;
-            }
-            this._buttonClickedRenderer.setColor(this.getColor());
-            this._buttonClickedRenderer.setOpacity(this.getOpacity());
-        }
-        this._pressedTextureSize = this._buttonClickedRenderer.getContentSize();
-        this.updateAnchorPoint();
+        this._updateDisplay();
         this.pressedTextureScaleChangedWithSize();
+        this._pressedTextureLoaded = true;
     },
 
     /**
@@ -271,38 +286,44 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         texType = texType || ccs.TextureResType.local;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
+        var disableRenderer = this._buttonDisableRenderer;
+        switch (this._disabledTexType) {
+            case ccs.TextureResType.local:
+                disableRenderer.initWithFile(disabled);
+                break;
+            case ccs.TextureResType.plist:
+                disableRenderer.initWithSpriteFrameName(disabled);
+                break;
+            default:
+                break;
+        }
+
+        if(disableRenderer.textureLoaded()){
+            this._disabledTextureSize = disableRenderer.getContentSize();
+        }else{
+            disableRenderer.addLoadedEventListener(function(){
+                this._disabledTextureSize = disableRenderer.getContentSize();
+                if (disableRenderer.setCapInsets) {
+                    disableRenderer.setCapInsets(this._capInsetsNormal);
+                }
+                this.disabledTextureScaleChangedWithSize();
+            },this);
+            this._disabledTextureSize.width = this._customSize.width;
+            this._disabledTextureSize.height = this._customSize.height;
+        }
+
         if (this._scale9Enabled) {
-            switch (this._disabledTexType) {
-                case ccs.TextureResType.local:
-                    this._buttonDisableRenderer.initWithFile(disabled);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._buttonDisableRenderer.initWithSpriteFrameName(disabled);
-                    break;
-                default:
-                    break;
-            }
-            this._buttonDisableRenderer.setColor(this.getColor());
-            this._buttonDisableRenderer.setOpacity(this.getOpacity());
-            this._buttonDisableRenderer.setCapInsets(this._capInsetsNormal);
+            disableRenderer.setCapInsets(this._capInsetsNormal);
         }
-        else {
-            switch (this._disabledTexType) {
-                case ccs.TextureResType.local:
-                    this._buttonDisableRenderer.initWithFile(disabled);
-                    break;
-                case ccs.TextureResType.plist:
-                    this._buttonDisableRenderer.initWithSpriteFrameName(disabled);
-                    break;
-                default:
-                    break;
-            }
-            this._buttonDisableRenderer.setColor(this.getColor());
-            this._buttonDisableRenderer.setOpacity(this.getOpacity());
-        }
-        this._disabledTextureSize = this._buttonDisableRenderer.getContentSize();
-        this.updateAnchorPoint();
+        this._updateDisplay();
         this.disabledTextureScaleChangedWithSize();
+        this._disabledTextureLoaded = true;
+    },
+
+    _updateDisplay:function(){
+        this.updateDisplayedColor(this.getColor());
+        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateAnchorPoint();
     },
 
     /**
@@ -355,33 +376,48 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this._buttonNormalRenderer.setVisible(true);
         this._buttonClickedRenderer.setVisible(false);
         this._buttonDisableRenderer.setVisible(false);
-        if (this._pressedActionEnabled) {
+        if (this._pressedTextureLoaded) {
+            if (this._pressedActionEnabled) {
+                this._buttonNormalRenderer.stopAllActions();
+                this._buttonClickedRenderer.stopAllActions();
+                this._buttonDisableRenderer.stopAllActions();
+                var zoomAction = cc.ScaleTo.create(0.05, 1.0);
+                var zoomAction1 = cc.ScaleTo.create(0.05, 1.0);
+                var zoomAction2 = cc.ScaleTo.create(0.05, 1.0);
+                this._buttonNormalRenderer.runAction(zoomAction);
+                this._buttonClickedRenderer.runAction(zoomAction1);
+                this._buttonDisableRenderer.runAction(zoomAction2);
+            }
+        } else {
             this._buttonNormalRenderer.stopAllActions();
-            this._buttonClickedRenderer.stopAllActions();
-            this._buttonDisableRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, 1.0);
-            var zoomAction1 = cc.ScaleTo.create(0.05, 1.0);
-            var zoomAction2 = cc.ScaleTo.create(0.05, 1.0);
+            var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
             this._buttonNormalRenderer.runAction(zoomAction);
-            this._buttonClickedRenderer.runAction(zoomAction1);
-            this._buttonDisableRenderer.runAction(zoomAction2);
         }
     },
 
     onPressStateChangedToPressed: function () {
-        this._buttonNormalRenderer.setVisible(false);
-        this._buttonClickedRenderer.setVisible(true);
-        this._buttonDisableRenderer.setVisible(false);
-        if (this._pressedActionEnabled) {
+        if (this._pressedTextureLoaded) {
+            this._buttonNormalRenderer.setVisible(false);
+            this._buttonClickedRenderer.setVisible(true);
+            this._buttonDisableRenderer.setVisible(false);
+            if (this._pressedActionEnabled) {
+                this._buttonNormalRenderer.stopAllActions();
+                this._buttonClickedRenderer.stopAllActions();
+                this._buttonDisableRenderer.stopAllActions();
+                var zoomAction = cc.ScaleTo.create(0.05, 1.1);
+                var zoomAction1 = cc.ScaleTo.create(0.05, 1.1);
+                var zoomAction2 = cc.ScaleTo.create(0.05, 1.1);
+                this._buttonNormalRenderer.runAction(zoomAction);
+                this._buttonClickedRenderer.runAction(zoomAction1);
+                this._buttonDisableRenderer.runAction(zoomAction2);
+            }
+        } else {
+            this._buttonNormalRenderer.setVisible(true);
+            this._buttonClickedRenderer.setVisible(true);
+            this._buttonDisableRenderer.setVisible(false);
             this._buttonNormalRenderer.stopAllActions();
-            this._buttonClickedRenderer.stopAllActions();
-            this._buttonDisableRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, 1.1);
-            var zoomAction1 = cc.ScaleTo.create(0.05, 1.1);
-            var zoomAction2 = cc.ScaleTo.create(0.05, 1.1);
+            var zoomAction = cc.ScaleTo.create(0.05, this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
             this._buttonNormalRenderer.runAction(zoomAction);
-            this._buttonClickedRenderer.runAction(zoomAction1);
-            this._buttonDisableRenderer.runAction(zoomAction2);
         }
     },
 
@@ -389,6 +425,8 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         this._buttonNormalRenderer.setVisible(false);
         this._buttonClickedRenderer.setVisible(false);
         this._buttonDisableRenderer.setVisible(true);
+        this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
+        this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
     },
 
     /**
@@ -443,17 +481,27 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
 
     /**
      * override "setAnchorPoint" of widget.
-     * @param {cc.Point} pt
+     * @param {cc.Point|Number} point The anchor point of UIButton or The anchor point.x of UIButton.
+     * @param {Number} [y] The anchor point.y of UIButton.
      */
-    setAnchorPoint: function (pt) {
-        ccs.UIWidget.prototype.setAnchorPoint.call(this,pt);
-        this._buttonNormalRenderer.setAnchorPoint(pt);
-        this._buttonClickedRenderer.setAnchorPoint(pt);
-        this._buttonDisableRenderer.setAnchorPoint(pt);
-        this._titleRenderer.setPosition(cc.p(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y)));
+    setAnchorPoint: function (point, y) {
+        if(arguments.length === 2){
+            ccs.Widget.prototype.setAnchorPoint.call(this,point, y);
+            this._buttonNormalRenderer.setAnchorPoint(point, y);
+            this._buttonClickedRenderer.setAnchorPoint(point, y);
+            this._buttonDisableRenderer.setAnchorPoint(point, y);
+            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+        } else {
+            ccs.Widget.prototype.setAnchorPoint.call(this,point);
+            this._buttonNormalRenderer.setAnchorPoint(point);
+            this._buttonClickedRenderer.setAnchorPoint(point);
+            this._buttonDisableRenderer.setAnchorPoint(point);
+            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+        }
     },
 
     onSizeChanged: function () {
+        ccs.Widget.prototype.onSizeChanged.call(this);
         this.normalTextureScaleChangedWithSize();
         this.pressedTextureScaleChangedWithSize();
         this.disabledTextureScaleChangedWithSize();
@@ -468,7 +516,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     },
 
     /**
-     * override "getContentSize" method of widget.
+     * Gets the Virtual Renderer of widget.
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {
@@ -491,12 +539,15 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._buttonNormalRenderer.setScale(1.0);
-                this._size = this._normalTextureSize;
+                this._normalTextureScaleXInSize = this._normalTextureScaleYInSize = 1;
+                this._size.width = this._normalTextureSize.width;
+                this._size.height = this._normalTextureSize.height;
             }
         }
         else {
             if (this._scale9Enabled) {
                 this._buttonNormalRenderer.setPreferredSize(this._size);
+                this._normalTextureScaleXInSize = this._normalTextureScaleYInSize = 1;
             }
             else {
                 var textureSize = this._normalTextureSize;
@@ -508,6 +559,8 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
                 var scaleY = this._size.height / textureSize.height;
                 this._buttonNormalRenderer.setScaleX(scaleX);
                 this._buttonNormalRenderer.setScaleY(scaleY);
+                this._normalTextureScaleXInSize = scaleX;
+                this._normalTextureScaleYInSize = scaleY;
             }
         }
     },
@@ -516,11 +569,13 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
         if (this._ignoreSize) {
             if (!this._scale9Enabled) {
                 this._buttonClickedRenderer.setScale(1.0);
+                this._pressedTextureScaleXInSize = this._pressedTextureScaleYInSize = 1;
             }
         }
         else {
             if (this._scale9Enabled) {
                 this._buttonClickedRenderer.setPreferredSize(this._size);
+                this._pressedTextureScaleXInSize = this._pressedTextureScaleYInSize = 1;
             }
             else {
                 var textureSize = this._pressedTextureSize;
@@ -528,10 +583,12 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
                     this._buttonClickedRenderer.setScale(1.0);
                     return;
                 }
-                var scaleX = this._size.width / this._pressedTextureSize.width;
-                var scaleY = this._size.height / this._pressedTextureSize.height;
+                var scaleX = this._size.width / textureSize.width;
+                var scaleY = this._size.height / textureSize.height;
                 this._buttonClickedRenderer.setScaleX(scaleX);
                 this._buttonClickedRenderer.setScaleY(scaleY);
+                this._pressedTextureScaleXInSize = scaleX;
+                this._pressedTextureScaleYInSize = scaleY;
             }
         }
     },
@@ -552,8 +609,8 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
                     this._buttonDisableRenderer.setScale(1.0);
                     return;
                 }
-                var scaleX = this._size.width / this._disabledTextureSize.width;
-                var scaleY = this._size.height / this._disabledTextureSize.height;
+                var scaleX = this._size.width / textureSize.width;
+                var scaleY = this._size.height / textureSize.height;
                 this._buttonDisableRenderer.setScaleX(scaleX);
                 this._buttonDisableRenderer.setScaleY(scaleY);
             }
@@ -589,8 +646,10 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
      * @param {cc.c3b} color
      */
     setTitleColor: function (color) {
-        this._titleColor = color;
-        this._titleRenderer.setColor(color);
+        this._titleColor.r = color.r;
+        this._titleColor.g = color.g;
+        this._titleColor.b = color.b;
+        this._titleRenderer.updateDisplayedColor(color);
     },
 
     /**
@@ -639,7 +698,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
      * @param color
      */
     setColor: function (color) {
-        ccs.UIWidget.prototype.setColor.call(this,color);
+        ccs.Widget.prototype.setColor.call(this,color);
         this.setTitleColor(this._titleColor);
     },
 
@@ -652,7 +711,7 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
     },
 
     createCloneInstance:function(){
-        return ccs.UIButton.create();
+        return ccs.Button.create();
     },
 
     copySpecialProperties:function(uiButton){
@@ -675,13 +734,13 @@ ccs.UIButton = ccs.UIWidget.extend(/** @lends ccs.UIButton# */{
 /**
  * allocates and initializes a UIButton.
  * @constructs
- * @return {ccs.UIButton}
+ * @return {ccs.Button}
  * @example
  * // example
- * var uiButton = ccs.UIButton.create();
+ * var uiButton = ccs.Button.create();
  */
-ccs.UIButton.create = function () {
-    var uiButton = new ccs.UIButton();
+ccs.Button.create = function () {
+    var uiButton = new ccs.Button();
     if (uiButton && uiButton.init()) {
         return uiButton;
     }

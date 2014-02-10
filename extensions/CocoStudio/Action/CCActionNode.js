@@ -63,7 +63,7 @@ ccs.ActionNode = ccs.Class.extend({
         for (var i = 0; i < actionframelist.length; i++) {
             var actionFrameDic = actionframelist[i];
             var frameInex = actionFrameDic["frameid"];
-            if (actionFrameDic.hasOwnProperty("positionx")) {
+            if (actionFrameDic["positionx"] !== undefined) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
                 var actionFrame = new ccs.ActionMoveFrame();
@@ -73,7 +73,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("scalex")) {
+            if (actionFrameDic["scalex"] !== undefined) {
                 var scaleX = actionFrameDic["scalex"];
                 var scaleY = actionFrameDic["scaley"];
                 var actionFrame = new ccs.ActionScaleFrame();
@@ -84,7 +84,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("rotation")) {
+            if (actionFrameDic["rotation"] !== undefined) {
                 var rotation = actionFrameDic["rotation"];
                 var actionFrame = new ccs.ActionRotationFrame();
                 actionFrame.setFrameIndex(frameInex);
@@ -93,7 +93,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("opacity")) {
+            if (actionFrameDic["opacity"] !== undefined) {
                 var opacity = actionFrameDic["opacity"];
                 var actionFrame = new ccs.ActionFadeFrame();
                 actionFrame.setFrameIndex(frameInex);
@@ -102,7 +102,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("colorr")) {
+            if (actionFrameDic["colorr"] !== undefined) {
                 var colorR = actionFrameDic["colorr"];
                 var colorG = actionFrameDic["colorg"];
                 var colorB = actionFrameDic["colorb"];
@@ -118,10 +118,7 @@ ccs.ActionNode = ccs.Class.extend({
     },
 
     initActionNodeFromRoot: function (root) {
-        if (root instanceof cc.Node) {
-            cc.log("Need a definition of <initActionNodeFromRoot> for gameObject");
-        }
-        else if (root instanceof ccs.UIWidget) {
+        if (root instanceof ccs.Widget) {
             var widget = ccs.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
             if (widget) {
                 this.setObject(widget);
@@ -186,8 +183,8 @@ ccs.ActionNode = ccs.Class.extend({
         if (this._object instanceof cc.Node) {
             return this._object;
         }
-        else if (this._object instanceof ccs.UIWidget) {
-            return this._object.getRenderer();
+        else if (this._object instanceof ccs.Widget) {
+            return this._object;
         }
         return null;
     },
@@ -279,13 +276,17 @@ ccs.ActionNode = ccs.Class.extend({
     /**
      * Play the action.
      * @param {Boolean} loop
+     * @param {cc.CallFunc} fun
      */
-    playAction: function () {
+    playAction: function (fun) {
         if (this._object == null || this._actionSpawn == null) {
             return;
         }
-         this._action = cc.Sequence.create(this._actionSpawn, null);
-        this._action.retain();
+        if(fun){
+            this._action = cc.Sequence.create(this._actionSpawn,fun);
+        }else{
+            this._action = cc.Sequence.create(this._actionSpawn);
+        }
         this.runAction();
     },
 
@@ -305,7 +306,8 @@ ccs.ActionNode = ccs.Class.extend({
     stopAction: function () {
         var node = this.getActionNode();
         if (node != null && this._action != null) {
-            node.stopAction(this._action);
+            if(!this._action.isDone())
+                node.stopAction(this._action);
         }
     },
 

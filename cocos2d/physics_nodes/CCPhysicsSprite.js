@@ -75,7 +75,8 @@
         },
         _syncPosition:function () {
             var pos = this._body.GetPosition();
-            this._position = cc.p(pos.x * this._PTMRatio, pos.y * this._PTMRatio);
+            this._position._x = pos.x * this._PTMRatio;
+            this._position._y = pos.y * this._PTMRatio;
             this._rotationRadians = this._rotation * (Math.PI / 180);
         },
         _syncRotation:function () {
@@ -91,6 +92,9 @@
                 cc.log("PhysicsSprite body or PTIMRatio was not set");
             }
             this._super();
+        },
+        setIgnoreBodyRotation: function(b) {
+            this._ignoreBodyRotation = b;
         }
     };
     var chipmunkAPI = {
@@ -128,12 +132,12 @@
         },
         _syncPosition:function () {
             var locPosition = this._position, locBody = this._body;
-            if (locPosition.x != locBody.p.x || locPosition.y != locBody.p.y) {
+            if (locPosition._x != locBody.p.x || locPosition._y != locBody.p.y) {
                 cc.Sprite.prototype.setPosition.call(this, locBody.p.x, locBody.p.y);
             }
         },
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadiansX) : -cc.RADIANS_TO_DEGREES(this._body.a)
+            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadiansX) : -cc.RADIANS_TO_DEGREES(this._body.a);
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
@@ -157,8 +161,8 @@
             var y = locBody.p.y;
 
             if (this._ignoreAnchorPointForPosition) {
-                x += locAnchorPIP.x;
-                y += locAnchorPIP.y;
+                x += locAnchorPIP._x;
+                y += locAnchorPIP._y;
             }
 
             // Make matrix
@@ -170,8 +174,8 @@
             // the sprite is animated (scaled up/down) using actions.
             // For more info see: http://www.cocos2d-iphone.org/forum/topic/68990
             if (!cc._rectEqualToZero(locAnchorPIP)) {
-                x += c * -locAnchorPIP.x * locScaleX + -s * -locAnchorPIP.y * locScaleY;
-                y += s * -locAnchorPIP.x * locScaleX + c * -locAnchorPIP.y * locScaleY;
+                x += c * -locAnchorPIP._x * locScaleX + -s * -locAnchorPIP._y * locScaleY;
+                y += s * -locAnchorPIP._x * locScaleX + c * -locAnchorPIP._y * locScaleY;
             }
 
             // Rot, Translate Matrix
@@ -212,13 +216,13 @@
                 }
 
                 // adjust anchorPoint
-                t.tx += Cos * -locAnchorPIP.x * locScaleX + -Sin * locAnchorPIP.y * locScaleY;
-                t.ty -= Sin * -locAnchorPIP.x * locScaleX + Cos * locAnchorPIP.y * locScaleY;
+                t.tx += Cos * -locAnchorPIP._x * locScaleX + -Sin * locAnchorPIP._y * locScaleY;
+                t.ty -= Sin * -locAnchorPIP._x * locScaleX + Cos * locAnchorPIP._y * locScaleY;
 
                 // if ignore anchorPoint
                 if (this._ignoreAnchorPointForPosition) {
-                    t.tx += locAnchorPIP.x;
-                    t.ty += locAnchorPIP.y;
+                    t.tx += locAnchorPIP._x;
+                    t.ty += locAnchorPIP._y;
                 }
                 this._transformDirty = false;
             }
@@ -227,7 +231,11 @@
 
         isDirty:function(){
            return !this._body.isSleeping();
+        },
+        setIgnoreBodyRotation: function(b) {
+            this._ignoreBodyRotation = b;
         }
+
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
 
