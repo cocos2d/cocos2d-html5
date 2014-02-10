@@ -997,14 +997,16 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             locSquareVertices[2].y = height;
             locSquareVertices[3].x = size;
             locSquareVertices[3].y = height;
+	        this._bindLayerVerticesBufferData();
+	        cc.Layer.prototype.setContentSize.call(this, size, height);
         }else{
             locSquareVertices[1].x = size.width;
             locSquareVertices[2].y = size.height;
             locSquareVertices[3].x = size.width;
             locSquareVertices[3].y = size.height;
+	        this._bindLayerVerticesBufferData();
+	        cc.Layer.prototype.setContentSize.call(this, size);
         }
-	    this._bindLayerVerticesBufferData();
-	    cc.Layer.prototype.setContentSize.call(this, size, height);
     },
 
 	_setWidthForWebGL:function (width) {
@@ -1214,7 +1216,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-        cc.LayerColor.prototype.setContentSize.call(this, size, height);
+	    if(arguments.length === 2)
+            cc.LayerColor.prototype.setContentSize.call(this, size, height);
+	    else
+		    cc.LayerColor.prototype.setContentSize.call(this, size);
         this._updateColor();
     },
 
