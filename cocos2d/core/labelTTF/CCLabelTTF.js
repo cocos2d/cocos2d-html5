@@ -1004,29 +1004,33 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     }
 });
 
-cc.defineGetterSetter(cc.LabelTTF.prototype, "size", cc.LabelTTF.prototype.getContentSize);
-
+var proto = cc.LabelTTF.prototype;
 if(cc.Browser.supportWebGL){
-    cc.LabelTTF.prototype.setColor = cc.Sprite.prototype.setColor;
-    cc.LabelTTF.prototype._setColorsString = cc.LabelTTF.prototype._setColorsStringForWebGL;
-    cc.LabelTTF.prototype.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
-    cc.LabelTTF.prototype.setOpacity = cc.Sprite.prototype.setOpacity;
-    cc.LabelTTF.prototype.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
-    cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForWebGL;
-    cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForWebGL;
-    cc.LabelTTF.prototype.draw = cc.LabelTTF.prototype._drawForWebGL;
-    cc.LabelTTF.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
+	proto.setColor = cc.Sprite.prototype.setColor;
+    proto._setColorsString = proto._setColorsStringForWebGL;
+    proto.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
+    proto.setOpacity = cc.Sprite.prototype.setOpacity;
+    proto.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
+    proto.initWithStringAndTextDefinition = proto._initWithStringAndTextDefinitionForWebGL;
+    proto.setFontFillColor = proto._setFontFillColorForWebGL;
+    proto.draw = proto._drawForWebGL;
+    proto.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
 } else {
-    cc.LabelTTF.prototype.setColor = cc.LabelTTF.prototype._setColorForCanvas;
-    cc.LabelTTF.prototype._setColorsString = cc.LabelTTF.prototype._setColorsStringForCanvas;
-    cc.LabelTTF.prototype.updateDisplayedColor = cc.LabelTTF.prototype._updateDisplayedColorForCanvas;
-    cc.LabelTTF.prototype.setOpacity = cc.LabelTTF.prototype._setOpacityForCanvas;
-    cc.LabelTTF.prototype.updateDisplayedOpacity = cc.LabelTTF.prototype._updateDisplayedOpacityForCanvas;
-    cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForCanvas;
-    cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForCanvas;
-    cc.LabelTTF.prototype.draw = cc.Sprite.prototype.draw;
-    cc.LabelTTF.prototype.setTextureRect = cc.LabelTTF.prototype._setTextureRectForCanvas;
+    proto.setColor = proto._setColorForCanvas;
+    proto._setColorsString = proto._setColorsStringForCanvas;
+    proto.updateDisplayedColor = proto._updateDisplayedColorForCanvas;
+    proto.setOpacity = proto._setOpacityForCanvas;
+    proto.updateDisplayedOpacity = proto._updateDisplayedOpacityForCanvas;
+    proto.initWithStringAndTextDefinition = proto._initWithStringAndTextDefinitionForCanvas;
+    proto.setFontFillColor = proto._setFontFillColorForCanvas;
+    proto.draw = cc.Sprite.prototype.draw;
+    proto.setTextureRect = proto._setTextureRectForCanvas;
 }
+
+cc.defineGetterSetter(proto, "size", proto.getContentSize);
+cc.defineGetterSetter(proto, "color", null, proto.setColor);
+cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
+delete proto;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 

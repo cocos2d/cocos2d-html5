@@ -2029,8 +2029,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 });
 
 var proto = cc.Sprite.prototype;
-cc.defineGetterSetter(proto, "ignoreAnchor", null, proto.ignoreAnchorPointForPosition);
-
 if(cc.Browser.supportWebGL){
 	proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForWebGL;
 	proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForWebGL;
@@ -2072,6 +2070,11 @@ if(cc.Browser.supportWebGL){
     proto.setTexture = proto._setTextureForCanvas;
     proto.draw = proto._drawForCanvas;
 }
+
+cc.defineGetterSetter(proto, "ignoreAnchor", null, proto.ignoreAnchorPointForPosition);
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
+cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", null, proto.setColor);
 delete proto;
 
 /**

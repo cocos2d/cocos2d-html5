@@ -1275,6 +1275,10 @@ cc.defineGetterSetter(proto, "anchorY", null, proto._setAnchorY);
 cc.defineGetterSetter(proto, "scale", null, proto.setScale);
 cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
 cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;
 
 /**
