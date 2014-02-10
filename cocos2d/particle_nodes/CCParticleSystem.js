@@ -1362,7 +1362,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * does the alpha value modify color getter
      * @return {Boolean}
      */
-    getOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
         return this._opacityModifyRGB;
     },
 
@@ -2651,6 +2651,7 @@ cc.defineGetterSetter(proto, "rotation", null, proto.setRotation);
 cc.defineGetterSetter(proto, "scale", null, proto.setScale);
 cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
 cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 delete proto;
 
 /**
