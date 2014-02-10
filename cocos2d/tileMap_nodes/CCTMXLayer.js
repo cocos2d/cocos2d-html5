@@ -113,15 +113,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if(arguments.length === 2){
-            if((size === locContentSize._width) && (height === locContentSize._height))
-                return;
-            cc.Node.prototype.setContentSize.call(this, size, height);
-        } else {
-            if((size.width === locContentSize._width) && (size.height === locContentSize._height))
-                return;
-            cc.Node.prototype.setContentSize.call(this, size);
-        }
+	    cc.Node.prototype.setContentSize.call(this, size, height);
 
         if(cc.renderContextType === cc.CANVAS){
             var locCanvas = this._cacheCanvas;

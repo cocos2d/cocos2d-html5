@@ -129,9 +129,9 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             this._blendFunc = src;
-        } else if (arguments.length == 2) {
+        } else {
             this._blendFunc.src = src;
             this._blendFunc.dst = dst;
         }
@@ -278,7 +278,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      */
     setPosition:function (position, yValue) {
         this._startingPositionInitialized = true;
-        if(arguments.length === 1){
+        if(yValue === undefined){
             this._positionR._x = position.x;
             this._positionR._y = position.y;
         } else {

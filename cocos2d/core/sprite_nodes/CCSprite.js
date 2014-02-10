@@ -750,10 +750,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setAnchorPoint:function (anchor, y) {
-        if(arguments.length === 2)
-            cc.Node.prototype.setAnchorPoint.call(this, anchor, y);
-        else
-            cc.Node.prototype.setAnchorPoint.call(this, anchor);
+	    cc.Node.prototype.setAnchorPoint.call(this, anchor, y);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1020,7 +1017,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setBlendFuncForWebGL: function (src, dst) {
         var locBlendFunc = this._blendFunc;
-        if (arguments.length === 1) {
+        if (dst === undefined) {
             locBlendFunc.src = src.src;
             locBlendFunc.dst = src.dst;
         } else {
@@ -1031,7 +1028,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setBlendFuncForCanvas: function (src, dst) {
         var locBlendFunc = this._blendFunc;
-        if (arguments.length === 1) {
+        if (dst === undefined) {
             locBlendFunc.src = src.src;
             locBlendFunc.dst = src.dst;
         } else {
