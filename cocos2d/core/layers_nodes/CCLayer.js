@@ -1006,6 +1006,21 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         }
     },
 
+	_setWidthForWebGL:function (width) {
+		var locSquareVertices = this._squareVertices;
+		locSquareVertices[1].x = width;
+		locSquareVertices[3].x = width;
+		this._bindLayerVerticesBufferData();
+		cc.Layer.prototype._setWidth.call(this, width);
+	},
+	_setHeightForWebGL:function (height) {
+		var locSquareVertices = this._squareVertices;
+		locSquareVertices[2].y = height;
+		locSquareVertices[3].y = height;
+		this._bindLayerVerticesBufferData();
+		cc.Layer.prototype._setHeight.call(this, height);
+	},
+
     _updateColor:null,
 
     _updateColorForCanvas:function () {
@@ -1088,17 +1103,23 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 if(cc.Browser.supportWebGL){
     cc.LayerColor.prototype.ctor = cc.LayerColor.prototype._ctorForWebGL;
     cc.LayerColor.prototype.setContentSize = cc.LayerColor.prototype._setContentSizeForWebGL;
+	cc.LayerColor.prototype._setWidth = cc.LayerColor.prototype._setWidthForWebGL;
+	cc.LayerColor.prototype._setHeight = cc.LayerColor.prototype._setHeightForWebGL;
     cc.LayerColor.prototype._updateColor = cc.LayerColor.prototype._updateColorForWebGL;
     cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForWebGL;
 } else {
     cc.LayerColor.prototype.ctor = cc.LayerColor.prototype._ctorForCanvas;
     cc.LayerColor.prototype.setContentSize = cc.LayerRGBA.prototype.setContentSize;
+	cc.LayerColor.prototype._setWidth = cc.LayerRGBA.prototype._setWidth;
+	cc.LayerColor.prototype._setHeight = cc.LayerRGBA.prototype._setHeight;
     cc.LayerColor.prototype._updateColor = cc.LayerColor.prototype._updateColorForCanvas;
     cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForCanvas;
 }
 
 var proto = cc.LayerColor.prototype;
 cc.defineGetterSetter(proto, "size", null, proto.setContentSize);
+cc.defineGetterSetter(proto, "width", null, proto._setWidth);
+cc.defineGetterSetter(proto, "height", null, proto._setHeight);
 cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
 cc.defineGetterSetter(proto, "color", null, proto.setColor);
 cc.defineGetterSetter(proto, "opacityModifyRGB", null, proto.setOpacityModifyRGB);
@@ -1196,6 +1217,15 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         cc.LayerColor.prototype.setContentSize.call(this, size, height);
         this._updateColor();
     },
+
+	_setWidth:function(width){
+		cc.LayerColor.prototype._setWidth.call(this, width);
+		this._updateColor();
+	},
+	_setHeight:function(height){
+		cc.LayerColor.prototype._setHeight.call(this, height);
+		this._updateColor();
+	},
 
     /**
      * get the starting color
@@ -1423,6 +1453,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
 var proto = cc.LayerGradient.prototype;
 cc.defineGetterSetter(proto, "size", null, proto.setContentSize);
+cc.defineGetterSetter(proto, "width", null, proto._setWidth);
+cc.defineGetterSetter(proto, "height", null, proto._setHeight);
 delete proto;
 
 /**

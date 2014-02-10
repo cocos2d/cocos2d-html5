@@ -217,6 +217,13 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
     },
 
+	_getWidth:function () {
+		return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+	},
+	_getHeight:function () {
+		return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+	},
+
     getContentSizeInPixels:function () {
         return this._contentSize;
     },
@@ -1310,11 +1317,9 @@ cc.defineGetterSetter(proto, "pixelsWidth", proto.getPixelsWide);
 /** @expose */
 proto.pixelsHeight;
 cc.defineGetterSetter(proto, "pixelsHeight", proto.getPixelsHigh);
-/** @expose */
-proto.size;
 cc.defineGetterSetter(proto, "size", proto.getContentSize);
-/** @expose */
-proto.shaderProgram;
+cc.defineGetterSetter(proto, "width", proto._getWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight);
 cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
 /** @expose */
 proto.maxS;

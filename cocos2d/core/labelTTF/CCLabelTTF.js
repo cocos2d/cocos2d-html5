@@ -787,7 +787,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
             }
         }
-        this.setContentSize(locSize);
+        this.size = locSize;
         this._strokeShadowOffsetX = locStrokeShadowOffsetX;
         this._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
@@ -802,6 +802,17 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._updateTTF();
         return cc.Sprite.prototype.getContentSize.call(this);
     },
+
+	_getWidth:function(){
+		if(this._needUpdateTexture)
+			this._updateTTF();
+		return cc.Sprite.prototype._getWidth.call(this);
+	},
+	_getHeight:function(){
+		if(this._needUpdateTexture)
+			this._updateTTF();
+		return cc.Sprite.prototype._getHeight.call(this);
+	},
 
     _updateTexture:function () {
         var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
@@ -899,7 +910,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._rectRotated = rotated || false;
         untrimmedSize = untrimmedSize || rect._size;
 
-        this.setContentSize(untrimmedSize);
+        this.size = untrimmedSize;
         this.setVertexRect(rect);
 
         var locTextureCoordRect = this._textureRect_Canvas;
@@ -1028,6 +1039,8 @@ if(cc.Browser.supportWebGL){
 }
 
 cc.defineGetterSetter(proto, "size", proto.getContentSize);
+cc.defineGetterSetter(proto, "width", proto._getWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight);
 cc.defineGetterSetter(proto, "color", null, proto.setColor);
 cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
 delete proto;
