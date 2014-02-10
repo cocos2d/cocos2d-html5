@@ -952,8 +952,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target.getPositionX();
-        var locPosY = target.getPositionY();
+        var locPosX = target.x;
+        var locPosY = target.y;
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -969,20 +969,19 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
             var y = this._positionDelta.y * time;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target.getPositionX();
-                var targetY = this._target.getPositionY();
+                var targetX = this._target.x;
+                var targetY = this._target.y;
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
                 x = x + locStartPosition.x;
                 y = y + locStartPosition.y;
-
-                this._target.setPosition(x, y);
-                locPreviousPosition.x = x;
-                locPreviousPosition.y = y;
+	            this._target.x = locPreviousPosition.x = x;
+	            this._target.y = locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.x = locStartPosition.x + x;
+	            this._target.y = locStartPosition.y + y;
             }
         }
     },
@@ -1053,8 +1052,8 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     startWithTarget:function (target) {
         cc.MoveBy.prototype.startWithTarget.call(this, target);
-        this._positionDelta.x = this._endPosition.x - target.getPositionX();
-        this._positionDelta.y = this._endPosition.y - target.getPositionY();
+        this._positionDelta.x = this._endPosition.x - target.x;
+        this._positionDelta.y = this._endPosition.y - target.y;
     }
 });
 /**
@@ -1287,8 +1286,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target.getPositionX();
-        var locPosY = target.getPositionY();
+        var locPosX = target.x;
+        var locPosY = target.y;
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -1307,20 +1306,19 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
             var x = this._delta.x * time;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target.getPositionX();
-                var targetY = this._target.getPositionY();
+                var targetX = this._target.x;
+                var targetY = this._target.y;
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
                 x = x + locStartPosition.x;
                 y = y + locStartPosition.y;
-
-                this._target.setPosition(x, y);
-                locPreviousPosition.x = x;
-                locPreviousPosition.y = y;
+	            this._target.x = locPreviousPosition.x = x;
+	            this._target.y = locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.x = locStartPosition.x + x;
+	            this._target.y = locStartPosition.y + y;
             }
         }
     },
@@ -1457,8 +1455,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target.getPositionX();
-        var locPosY = target.getPositionY();
+        var locPosX = target.x;
+        var locPosY = target.y;
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -1486,19 +1484,19 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target.getPositionX();
-                var targetY = this._target.getPositionY();
+                var targetX = this._target.x;
+                var targetY = this._target.y;
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
                 x = x + locStartPosition.x;
                 y = y + locStartPosition.y;
-                this._target.setPosition(x, y);
-                locPreviousPosition.x = x;
-                locPreviousPosition.y = y;
+	            this._target.x = locPreviousPosition.x = x;
+	            this._target.y = locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.x = locStartPosition.x + x;
+	            this._target.y = locStartPosition.y + y;
             }
         }
     },
