@@ -2028,47 +2028,51 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     }
 });
 
+var proto = cc.Sprite.prototype;
+cc.defineGetterSetter(proto, "ignoreAnchor", null, proto.ignoreAnchorPointForPosition);
+
 if(cc.Browser.supportWebGL){
-    cc.Sprite.prototype._spriteFrameLoadedCallback = cc.Sprite.prototype._spriteFrameLoadedCallbackForWebGL;
-    cc.Sprite.prototype.setOpacityModifyRGB = cc.Sprite.prototype._setOpacityModifyRGBForWebGL;
-    cc.Sprite.prototype.updateDisplayedOpacity = cc.Sprite.prototype._updateDisplayedOpacityForWebGL;
-    cc.Sprite.prototype.ctor = cc.Sprite.prototype._ctorForWebGL;
-    cc.Sprite.prototype.setBlendFunc = cc.Sprite.prototype._setBlendFuncForWebGL;
-    cc.Sprite.prototype.init = cc.Sprite.prototype._initForWebGL;
-    cc.Sprite.prototype.initWithTexture = cc.Sprite.prototype._initWithTextureForWebGL;
-    cc.Sprite.prototype._textureLoadedCallback = cc.Sprite.prototype._textureLoadedCallbackForWebGL;
-    cc.Sprite.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
-    cc.Sprite.prototype.updateTransform = cc.Sprite.prototype._updateTransformForWebGL;
-    cc.Sprite.prototype.addChild = cc.Sprite.prototype._addChildForWebGL;
-    cc.Sprite.prototype.setOpacity = cc.Sprite.prototype._setOpacityForWebGL;
-    cc.Sprite.prototype.setColor = cc.Sprite.prototype._setColorForWebGL;
-    cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForWebGL;
-    cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForWebGL;
-    cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForWebGL;
-    cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForWebGL;
-    cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForWebGL;
-    cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForWebGL;
+	proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForWebGL;
+	proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForWebGL;
+	proto.updateDisplayedOpacity = proto._updateDisplayedOpacityForWebGL;
+	proto.ctor = proto._ctorForWebGL;
+    proto.setBlendFunc = proto._setBlendFuncForWebGL;
+    proto.init = proto._initForWebGL;
+    proto.initWithTexture = proto._initWithTextureForWebGL;
+    proto._textureLoadedCallback = proto._textureLoadedCallbackForWebGL;
+    proto.setTextureRect = proto._setTextureRectForWebGL;
+    proto.updateTransform = proto._updateTransformForWebGL;
+    proto.addChild = proto._addChildForWebGL;
+    proto.setOpacity = proto._setOpacityForWebGL;
+    proto.setColor = proto._setColorForWebGL;
+    proto.updateDisplayedColor = proto._updateDisplayedColorForWebGL;
+    proto.setDisplayFrame = proto._setDisplayFrameForWebGL;
+    proto.isFrameDisplayed = proto._isFrameDisplayedForWebGL;
+    proto.setBatchNode = proto._setBatchNodeForWebGL;
+    proto.setTexture = proto._setTextureForWebGL;
+    proto.draw = proto._drawForWebGL;
 }else{
-    cc.Sprite.prototype._spriteFrameLoadedCallback = cc.Sprite.prototype._spriteFrameLoadedCallbackForCanvas;
-    cc.Sprite.prototype.setOpacityModifyRGB = cc.Sprite.prototype._setOpacityModifyRGBForCanvas;
-    cc.Sprite.prototype.updateDisplayedOpacity = cc.Sprite.prototype._updateDisplayedOpacityForCanvas;
-    cc.Sprite.prototype.ctor = cc.Sprite.prototype._ctorForCanvas;
-    cc.Sprite.prototype.setBlendFunc = cc.Sprite.prototype._setBlendFuncForCanvas;
-    cc.Sprite.prototype.init = cc.Sprite.prototype._initForCanvas;
-    cc.Sprite.prototype.initWithTexture = cc.Sprite.prototype._initWithTextureForCanvas;
-    cc.Sprite.prototype._textureLoadedCallback = cc.Sprite.prototype._textureLoadedCallbackForCanvas;
-    cc.Sprite.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForCanvas;
-    cc.Sprite.prototype.updateTransform = cc.Sprite.prototype._updateTransformForCanvas;
-    cc.Sprite.prototype.addChild = cc.Sprite.prototype._addChildForCanvas;
-    cc.Sprite.prototype.setOpacity = cc.Sprite.prototype._setOpacityForCanvas;
-    cc.Sprite.prototype.setColor = cc.Sprite.prototype._setColorForCanvas;
-    cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForCanvas;
-    cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForCanvas;
-    cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForCanvas;
-    cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForCanvas;
-    cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForCanvas;
-    cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForCanvas;
+    proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForCanvas;
+    proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForCanvas;
+    proto.updateDisplayedOpacity = proto._updateDisplayedOpacityForCanvas;
+    proto.ctor = proto._ctorForCanvas;
+    proto.setBlendFunc = proto._setBlendFuncForCanvas;
+    proto.init = proto._initForCanvas;
+    proto.initWithTexture = proto._initWithTextureForCanvas;
+    proto._textureLoadedCallback = proto._textureLoadedCallbackForCanvas;
+    proto.setTextureRect = proto._setTextureRectForCanvas;
+    proto.updateTransform = proto._updateTransformForCanvas;
+    proto.addChild = proto._addChildForCanvas;
+    proto.setOpacity = proto._setOpacityForCanvas;
+    proto.setColor = proto._setColorForCanvas;
+    proto.updateDisplayedColor = proto._updateDisplayedColorForCanvas;
+    proto.setDisplayFrame = proto._setDisplayFrameForCanvas;
+    proto.isFrameDisplayed = proto._isFrameDisplayedForCanvas;
+    proto.setBatchNode = proto._setBatchNodeForCanvas;
+    proto.setTexture = proto._setTextureForCanvas;
+    proto.draw = proto._drawForCanvas;
 }
+delete proto;
 
 /**
  * <p>

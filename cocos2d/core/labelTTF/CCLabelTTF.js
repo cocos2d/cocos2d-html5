@@ -1004,6 +1004,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     }
 });
 
+cc.defineGetterSetter(cc.LabelTTF.prototype, "size", cc.LabelTTF.prototype.getContentSize);
+
 if(cc.Browser.supportWebGL){
     cc.LabelTTF.prototype.setColor = cc.Sprite.prototype.setColor;
     cc.LabelTTF.prototype._setColorsString = cc.LabelTTF.prototype._setColorsStringForWebGL;

@@ -2646,6 +2646,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
+var proto = cc.ParticleSystem.prototype;
+cc.defineGetterSetter(proto, "rotation", null, proto.setRotation);
+cc.defineGetterSetter(proto, "scale", null, proto.setScale);
+cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
+cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+delete proto;
+
 /**
  * <p> return the string found by key in dict. <br/>
  *    This plist files can be create manually or with Particle Designer:<br/>
