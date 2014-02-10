@@ -817,6 +817,13 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
+var proto = cc.LayerRGBA.prototype;
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+delete proto;
+
 /**
  * <p>
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
@@ -1092,6 +1099,9 @@ if(cc.Browser.supportWebGL){
 
 var proto = cc.LayerColor.prototype;
 cc.defineGetterSetter(proto, "size", null, proto.setContentSize);
+cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", null, proto.setColor);
+cc.defineGetterSetter(proto, "opacityModifyRGB", null, proto.setOpacityModifyRGB);
 delete proto;
 
 /**
