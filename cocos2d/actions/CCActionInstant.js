@@ -466,7 +466,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
  */
 cc.CallFunc.create = function (selector, selectorTarget, data) {
     var ret = new cc.CallFunc();
-    if(arguments.length == 1){
+    if(selectorTarget === undefined){
         if (ret && ret.initWithFunction(selector)) {
             return ret;
         }

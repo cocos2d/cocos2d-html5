@@ -36,7 +36,7 @@
  * Constructor
  */
 cc.Point = function (_x, _y) {
-    if(arguments.length === 1){
+    if(_y === undefined){
         this.x = _x.x;
         this.y = _x.y;
     } else {
@@ -107,7 +107,7 @@ cc.p = function (x, y) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT,
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Point(x, y)
-    if(arguments.length === 1)
+    if(y === undefined)
         return {x: x.x, y: x.y};
     else
         return {x: x || 0, y: y || 0};
@@ -154,7 +154,7 @@ cc.pointEqualToPoint = function (point1, point2) {
  * Constructor
  */
 cc.Size = function (_width, _height) {
-    if(arguments.length === 1){
+    if(_height === undefined){
         this.width = _width.width;
         this.height = _width.height;
     } else {
@@ -226,7 +226,7 @@ cc.size = function (w, h) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Size(w, h)
-    if(arguments.length === 1)
+    if(h === undefined)
         return { width: w.width, height: w.height};
     else
         return { width: w || 0, height: h || 0};

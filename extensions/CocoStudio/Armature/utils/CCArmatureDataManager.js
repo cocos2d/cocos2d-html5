@@ -221,8 +221,8 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * //example2
      * ccs.ArmatureDataManager.getInstance().addArmatureFileInfo("res/test.png","res/test.plist","res/test.json");
      */
-    addArmatureFileInfo:function (/*imagePath,plistPath,configFilePath*/) {
-        var imagePath,plistPath,configFilePath;
+    addArmatureFileInfo:function (/*imagePath, plistPath, configFilePath*/) {
+        var imagePath, plistPath, configFilePath;
         var isLoadSpriteFrame = false;
         if (arguments.length == 1) {
             configFilePath = arguments[0];
@@ -246,8 +246,8 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * @param {Object} target
      * @param {Function} configFilePath
      */
-    addArmatureFileInfoAsync:function (/*imagePath, plistPath, configFilePath,target,selector*/) {
-        var imagePath, plistPath, configFilePath,target,selector;
+    addArmatureFileInfoAsync:function (/*imagePath, plistPath, configFilePath, target, selector*/) {
+        var imagePath, plistPath, configFilePath, target, selector;
         var isLoadSpriteFrame = false;
         if (arguments.length == 3) {
             configFilePath = arguments[0];

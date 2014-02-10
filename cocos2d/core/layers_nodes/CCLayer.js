@@ -939,7 +939,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -992,21 +992,20 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     _setContentSizeForWebGL:function (size, height) {
         var locSquareVertices = this._squareVertices;
-        if(arguments.length === 2){
-            locSquareVertices[1].x = size;
-            locSquareVertices[2].y = height;
-            locSquareVertices[3].x = size;
-            locSquareVertices[3].y = height;
-	        this._bindLayerVerticesBufferData();
-	        cc.Layer.prototype.setContentSize.call(this, size, height);
-        }else{
-            locSquareVertices[1].x = size.width;
-            locSquareVertices[2].y = size.height;
-            locSquareVertices[3].x = size.width;
-            locSquareVertices[3].y = size.height;
-	        this._bindLayerVerticesBufferData();
-	        cc.Layer.prototype.setContentSize.call(this, size);
+
+        if (height === undefined) {
+	        locSquareVertices[1].x = size.width;
+	        locSquareVertices[2].y = size.height;
+	        locSquareVertices[3].x = size.width;
+	        locSquareVertices[3].y = size.height;
+        } else {
+	        locSquareVertices[1].x = size;
+	        locSquareVertices[2].y = height;
+	        locSquareVertices[3].x = size;
+	        locSquareVertices[3].y = height;
         }
+	    this._bindLayerVerticesBufferData();
+	    cc.Layer.prototype.setContentSize.call(this, size, height);
     },
 
 	_setWidthForWebGL:function (width) {
@@ -1216,10 +1215,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-	    if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this, size, height);
-	    else
-		    cc.LayerColor.prototype.setContentSize.call(this, size);
+	    cc.LayerColor.prototype.setContentSize.call(this,size, height);
         this._updateColor();
     },
 

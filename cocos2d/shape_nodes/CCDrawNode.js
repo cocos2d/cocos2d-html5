@@ -377,16 +377,17 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
     },
 
     /**
-     * draw a polygon with a fill color and line color
+     * draw a polygon with a fill color and line color without copying the vertex list
      * @param {Array} verts
      * @param {cc.Color4F} fillColor
      * @param {Number} lineWidth
      * @param {cc.Color4F} color
      */
-    drawPoly: function (verts, fillColor, lineWidth, color) {
+    drawPoly_: function (verts, fillColor, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
         var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_POLY);
+        
         element.verts = verts;
         element.fillColor = fillColor;
         element.lineWidth = lineWidth;
@@ -398,6 +399,21 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
             element.isFill = true;
         }
         this._buffer.push(element);
+    },
+    
+    /**
+     * draw a polygon with a fill color and line color, copying the vertex list
+     * @param {Array} verts
+     * @param {cc.Color4F} fillColor
+     * @param {Number} lineWidth
+     * @param {cc.Color4F} color
+     */
+    drawPoly: function (verts, fillColor, lineWidth, color) {
+        var vertsCopy = [];
+        for (var i=0; i < verts.length; i++) {
+            vertsCopy.push(cc.p(verts[i].x, verts[i].y));
+        }
+        return this.drawPoly_(vertsCopy, fillColor, lineWidth, color);     
     },
 
     draw: function (ctx) {
@@ -550,7 +566,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
     _render:function () {
         var gl = cc.renderContext;
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._trianglesWebBuffer);
         if (this._dirty) {
             gl.bufferData(gl.ARRAY_BUFFER, this._trianglesArrayBuffer, gl.STREAM_DRAW);

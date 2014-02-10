@@ -1301,7 +1301,7 @@ delete proto;
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
-    if (arguments.length == 0) {
+    if (str === undefined) {
         if (ret && ret.init())
             return ret;
         return null;
