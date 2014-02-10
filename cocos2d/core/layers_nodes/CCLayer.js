@@ -1090,6 +1090,9 @@ if(cc.Browser.supportWebGL){
     cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForCanvas;
 }
 
+var proto = cc.LayerColor.prototype;
+cc.defineGetterSetter(proto, "size", null, proto.setContentSize);
+delete proto;
 
 /**
  * creates a cc.Layer with color, width and height in Points
@@ -1180,10 +1183,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-        if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this, size, height);
-        else
-            cc.LayerColor.prototype.setContentSize.call(this, size);
+        cc.LayerColor.prototype.setContentSize.call(this, size, height);
         this._updateColor();
     },
 
@@ -1410,6 +1410,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         }
     }
 });
+
+var proto = cc.LayerGradient.prototype;
+cc.defineGetterSetter(proto, "size", null, proto.setContentSize);
+delete proto;
 
 /**
  * creates a gradient layer
