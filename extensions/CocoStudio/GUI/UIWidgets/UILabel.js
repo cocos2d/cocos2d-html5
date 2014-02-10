@@ -263,12 +263,12 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      * @param {Number} [y] The anchor point.y of UILabel.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._labelRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._labelRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._labelRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._labelRenderer.setAnchorPoint(point, y);
         }
     },
 
