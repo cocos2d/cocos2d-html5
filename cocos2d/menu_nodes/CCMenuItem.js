@@ -198,6 +198,10 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     }
 });
 
+var proto = cc.MenuItem.prototype;
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
+delete proto;
+
 /**
  * creates an empty menu item with target and callback<br/>
  * Not recommended to use the base class, should use more defined menu item classes
@@ -387,6 +391,11 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         }
     }
 });
+
+var proto = cc.MenuItemLabel.prototype;
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+delete proto;
 
 /**
  * @param {cc.Node} label
@@ -834,6 +843,11 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     }
 });
 
+var proto = cc.MenuItemSprite.prototype;
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+delete proto;
+
 /**
  * create a menu item from sprite
  * @param {Image} normalSprite normal state image
@@ -1168,6 +1182,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         this.setSelectedIndex(this._selectedIndex);
     }
 });
+
+var proto = cc.MenuItemToggle.prototype;
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+delete proto;
 
 /**
  * create a simple container class that "toggles" it's inner items<br/>
