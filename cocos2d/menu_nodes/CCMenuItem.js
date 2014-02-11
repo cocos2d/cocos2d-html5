@@ -784,13 +784,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         cc.MenuItem.prototype.selected.call(this);
         if (this._normalImage) {
             if (this._disabledImage)
-                this._disabledImage.setVisible(false);
+                this._disabledImage.visible = false;
 
             if (this._selectedImage) {
-                this._normalImage.setVisible(false);
-                this._selectedImage.setVisible(true);
+                this._normalImage.visible = false;
+                this._selectedImage.visible = true;
             } else
-                this._normalImage.setVisible(true);
+                this._normalImage.visible = true;
         }
     },
 
@@ -800,13 +800,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     unselected:function () {
         cc.MenuItem.prototype.unselected.call(this);
         if (this._normalImage) {
-            this._normalImage.setVisible(true);
+            this._normalImage.visible = true;
 
             if (this._selectedImage)
-                this._selectedImage.setVisible(false);
+                this._selectedImage.visible = false;
 
             if (this._disabledImage)
-                this._disabledImage.setVisible(false);
+                this._disabledImage.visible = false;
         }
     },
 
@@ -824,24 +824,24 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         var locNormalImage = this._normalImage, locSelImage = this._selectedImage, locDisImage = this._disabledImage;
         if (this._isEnabled) {
             if (locNormalImage)
-                locNormalImage.setVisible(true);
+                locNormalImage.visible = true;
             if (locSelImage)
-                locSelImage.setVisible(false);
+                locSelImage.visible = false;
             if (locDisImage)
-                locDisImage.setVisible(false);
+                locDisImage.visible = false;
         } else {
             if (locDisImage) {
                 if (locNormalImage)
-                    locNormalImage.setVisible(false);
+                    locNormalImage.visible = false;
                 if (locSelImage)
-                    locSelImage.setVisible(false);
+                    locSelImage.visible = false;
                 if (locDisImage)
-                    locDisImage.setVisible(true);
+                    locDisImage.visible = true;
             } else {
                 if (locNormalImage)
-                    locNormalImage.setVisible(true);
+                    locNormalImage.visible = true;
                 if (locSelImage)
-                    locSelImage.setVisible(false);
+                    locSelImage.visible = false;
             }
         }
     }

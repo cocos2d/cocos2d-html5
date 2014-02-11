@@ -797,7 +797,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             var pNode = this._parent;
             while (pNode && pNode != this._batchNode) {
                 pNode._setReorderChildDirtyRecursively();
-                pNode = pNode.getParent();
+                pNode = pNode.parent;
             }
         }
     },

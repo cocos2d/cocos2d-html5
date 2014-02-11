@@ -1782,17 +1782,17 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
         if (this._target && !this.isDone()) {
             var slice = 1.0 / this._times;
             var m = time % slice;
-            this._target.setVisible(m > (slice / 2));
+            this._target.visible = (m > (slice / 2));
         }
     },
 
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._originalState = target.isVisible();
+        this._originalState = target.visible;
     },
 
     stop:function () {
-        this._target.setVisible(this._originalState);
+        this._target.visible = this._originalState;
         cc.ActionInterval.prototype.stop.call(this);
     },
 

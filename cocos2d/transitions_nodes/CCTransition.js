@@ -91,7 +91,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         if(cc.TouchDispatcher)
             director.getTouchDispatcher().setDispatchEvents(true);
         // issue #267
-        this._outScene.setVisible(true);
+        this._outScene.visible = true;
     },
 
     //protected
@@ -829,7 +829,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -899,7 +899,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -968,7 +968,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -1038,7 +1038,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -1114,7 +1114,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -1188,7 +1188,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
         if (this._orientation === cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
@@ -1269,7 +1269,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var l = cc.LayerColor.create(this._color);
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         this.addChild(l, 2, cc.SCENE_FADE);
         var f = this.getChildByTag(cc.SCENE_FADE);
@@ -1494,7 +1494,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var split = this.action();
         var seq = cc.Sequence.create(
