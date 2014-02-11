@@ -394,7 +394,7 @@ if(cc.Browser.supportWebGL){
     proto._calculateMaxItems = proto._calculateMaxItemsForCanvas;
 }
 
-cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;
 

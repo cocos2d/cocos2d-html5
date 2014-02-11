@@ -1118,12 +1118,12 @@ if(cc.Browser.supportWebGL){
 }
 
 var proto = cc.LayerColor.prototype;
-cc.defineGetterSetter(proto, "size", null, proto.setContentSize);
-cc.defineGetterSetter(proto, "width", null, proto._setWidth);
-cc.defineGetterSetter(proto, "height", null, proto._setHeight);
-cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
-cc.defineGetterSetter(proto, "color", null, proto.setColor);
-cc.defineGetterSetter(proto, "opacityModifyRGB", null, proto.setOpacityModifyRGB);
+cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
+cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.getOpacityModifyRGB, proto.setOpacityModifyRGB);
 delete proto;
 
 /**
@@ -1453,9 +1453,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 });
 
 var proto = cc.LayerGradient.prototype;
-cc.defineGetterSetter(proto, "size", null, proto.setContentSize);
-cc.defineGetterSetter(proto, "width", null, proto._setWidth);
-cc.defineGetterSetter(proto, "height", null, proto._setHeight);
+cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
+cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
 delete proto;
 
 /**

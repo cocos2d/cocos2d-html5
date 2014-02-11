@@ -2069,10 +2069,10 @@ if(cc.Browser.supportWebGL){
     proto.draw = proto._drawForCanvas;
 }
 
-cc.defineGetterSetter(proto, "ignoreAnchor", null, proto.ignoreAnchorPointForPosition);
+cc.defineGetterSetter(proto, "ignoreAnchor", proto.isIgnoreAnchorPointForPosition, proto.ignoreAnchorPointForPosition);
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
-cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
-cc.defineGetterSetter(proto, "color", null, proto.setColor);
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;
 
 /**

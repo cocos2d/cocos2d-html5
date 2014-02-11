@@ -1269,12 +1269,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 });
 
 var proto = cc.LabelBMFont.prototype;
-cc.defineGetterSetter(proto, "anchor", null, proto._setAnchor);
-cc.defineGetterSetter(proto, "anchorX", null, proto._setAnchorX);
-cc.defineGetterSetter(proto, "anchorY", null, proto._setAnchorY);
-cc.defineGetterSetter(proto, "scale", null, proto.setScale);
-cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
-cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+cc.defineGetterSetter(proto, "anchor", proto._getAnchor, proto._setAnchor);
+cc.defineGetterSetter(proto, "anchorX", proto._getAnchorX, proto._setAnchorX);
+cc.defineGetterSetter(proto, "anchorY", proto._getAnchorY, proto._setAnchorY);
+cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
+cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
+cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);

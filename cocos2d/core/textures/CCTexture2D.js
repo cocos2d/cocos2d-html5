@@ -1317,9 +1317,9 @@ cc.defineGetterSetter(proto, "pixelsWidth", proto.getPixelsWide);
 /** @expose */
 proto.pixelsHeight;
 cc.defineGetterSetter(proto, "pixelsHeight", proto.getPixelsHigh);
-cc.defineGetterSetter(proto, "size", proto.getContentSize);
-cc.defineGetterSetter(proto, "width", proto._getWidth);
-cc.defineGetterSetter(proto, "height", proto._getHeight);
+cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
+cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
 cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
 /** @expose */
 proto.maxS;

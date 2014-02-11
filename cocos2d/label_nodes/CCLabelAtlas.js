@@ -351,8 +351,8 @@ if(cc.Browser.supportWebGL){
     proto.setOpacity =  proto._setOpacityForCanvas;
 }
 
-cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
-cc.defineGetterSetter(proto, "color", null, proto.setColor);
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;
 
 /**
