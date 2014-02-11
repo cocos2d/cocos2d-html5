@@ -204,14 +204,14 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var height = -padding, locChildren = this._children, len, i, locScaleY, locHeight, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
-                height += locChildren[i].height * locChildren[i].getScaleY() + padding;
+                height += locChildren[i].height * locChildren[i].scaleY + padding;
 
             var y = height / 2.0;
 
             for (i = 0, len = locChildren.length; i < len; i++) {
                 locChild = locChildren[i];
                 locHeight = locChild.height;
-                locScaleY = locChild.getScaleY();
+                locScaleY = locChild.scaleY;
                 locChild.x = 0;
 	            locChild.y = y - locHeight * locScaleY / 2;
                 y -= locHeight * locScaleY + padding;
@@ -234,13 +234,13 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var width = -padding, locChildren = this._children, i, len, locScaleX, locWidth, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
-                width += locChildren[i].width * locChildren[i].getScaleX() + padding;
+                width += locChildren[i].width * locChildren[i].scaleX + padding;
 
             var x = -width / 2.0;
 
             for (i = 0, len = locChildren.length; i < len; i++) {
                 locChild = locChildren[i];
-                locScaleX = locChild.getScaleX();
+                locScaleX = locChild.scaleX;
                 locWidth =  locChildren[i].width;
                 locChild.x = x + locWidth * locScaleX / 2;
 	            locChild.y = 0;

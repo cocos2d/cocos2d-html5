@@ -195,10 +195,10 @@ cc.Particle.ModeB = function (angle, degreesPerSecond, radius, deltaRadius) {
   * Array of Point instances used to optimize particle updates
   */
 cc.Particle.TemporaryPoints = [
-    cc.p(0, 0),
-    cc.p(0, 0),
-    cc.p(0, 0),
-    cc.p(0, 0)
+    cc.p(),
+    cc.p(),
+    cc.p(),
+    cc.p()
 ];
 
 /**
@@ -2644,10 +2644,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 });
 
 var proto = cc.ParticleSystem.prototype;
-cc.defineGetterSetter(proto, "rotation", null, proto.setRotation);
-cc.defineGetterSetter(proto, "scale", null, proto.setScale);
-cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
-cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
+cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
+cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
+cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 delete proto;
 

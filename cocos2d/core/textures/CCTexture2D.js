@@ -373,7 +373,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         this._hasPremultipliedAlpha = false;
         this._hasMipmaps = false;
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
 
         this._isLoaded = true;
 
@@ -515,7 +515,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
         cc.glBindTexture2D(null);
 
         var pixelsWide = this._htmlElementObj.width;
@@ -1317,9 +1317,9 @@ cc.defineGetterSetter(proto, "pixelsWidth", proto.getPixelsWide);
 /** @expose */
 proto.pixelsHeight;
 cc.defineGetterSetter(proto, "pixelsHeight", proto.getPixelsHigh);
-cc.defineGetterSetter(proto, "size", proto.getContentSize);
-cc.defineGetterSetter(proto, "width", proto._getWidth);
-cc.defineGetterSetter(proto, "height", proto._getHeight);
+cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
+cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
 cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
 /** @expose */
 proto.maxS;

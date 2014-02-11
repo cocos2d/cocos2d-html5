@@ -1138,19 +1138,19 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         var tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("00.0", texture, 12, 32 , '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._FPSLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("0.000", texture, 12, 32, '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._SPFLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("000", texture, 12, 32, '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;

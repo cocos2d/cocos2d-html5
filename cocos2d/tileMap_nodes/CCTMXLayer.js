@@ -440,8 +440,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.initWithTexture(this.getTexture(), rect);
             tile.setBatchNode(this);
             tile.pos = this.getPositionAt(pos);
-            tile.setVertexZ(this._vertexZForPos(pos));
-            tile.setAnchorPoint(0,0);
+            tile.vertexZ = this._vertexZForPos(pos);
+            tile.anchorX = 0;
+	        tile.anchorY = 0;
             tile.setOpacity(this._opacity);
 
             var indexForZ = this._atlasIndexForExistantZ(z);
@@ -864,14 +865,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var z = pos.x + pos.y * this._layerSize.width;
         sprite.pos = this.getPositionAt(pos);
         if (cc.renderContextType === cc.WEBGL)
-            sprite.setVertexZ(this._vertexZForPos(pos));
+            sprite.vertexZ = this._vertexZForPos(pos);
         else
             sprite.tag = z;
 
-        sprite.setAnchorPoint(0,0);
+        sprite.anchorX = 0;
+	    sprite.anchorY = 0;
         sprite.setOpacity(this._opacity);
         if (cc.renderContextType === cc.WEBGL) {
-            sprite.setRotation(0.0);
+            sprite.rotation = 0.0;
         }
 
         sprite.setFlippedX(false);
@@ -880,21 +882,22 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
-            sprite.setAnchorPoint(0.5, 0.5);
+            sprite.anchorX = 0.5;
+	        sprite.anchorY = 0.5;
             sprite.x = this.getPositionAt(pos).x + sprite.width / 2;
 	        sprite.y = this.getPositionAt(pos).y + sprite.height / 2;
 
             var flag = (gid & (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG) >>> 0) >>> 0;
             // handle the 4 diagonally flipped states.
             if (flag == cc.TMX_TILE_HORIZONTAL_FLAG)
-                sprite.setRotation(90);
+                sprite.rotation = 90;
             else if (flag == cc.TMX_TILE_VERTICAL_FLAG)
-                sprite.setRotation(270);
+                sprite.rotation = 270;
             else if (flag == (cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
-                sprite.setRotation(90);
+                sprite.rotation = 90;
                 sprite.setFlippedX(true);
             } else {
-                sprite.setRotation(270);
+                sprite.rotation = 270;
                 sprite.setFlippedX(true);
             }
         } else {

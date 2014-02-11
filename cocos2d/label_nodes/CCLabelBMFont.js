@@ -463,7 +463,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for(var i = 0; i< locChildren.length;i++){
                 var selNode = locChildren[i];
                 if(selNode)
-                    selNode.setVisible(false);
+                    selNode.visible = false;
             }
         }
         if(this._textureLoaded){
@@ -759,7 +759,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._contentSize._width = 0;
             this._contentSize._height = 0;
 
-            this.setAnchorPoint(0.5, 0.5);
+            this.anchorX = 0.5;
+	        this.anchorY = 0.5;
 
             if (cc.renderContextType === cc.WEBGL) {
                 var locTexture = this._textureAtlas.getTexture();
@@ -853,7 +854,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     // updating previous sprite
                     fontChar.setTextureRect(rect, false, rect._size);
                     // restore to default in case they were modified
-                    fontChar.setVisible(true);
+                    fontChar.visible = true;
                 }
             }
             // Apply label properties
@@ -896,7 +897,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for (var i = 0; i < locChildren.length; i++) {
                 var node = locChildren[i];
                 if (node)
-                    node.setVisible(false);
+                    node.visible = false;
             }
         }
         if (this._configuration)
@@ -1260,21 +1261,21 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.anchorX);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.anchorY);
     }
 });
 
 var proto = cc.LabelBMFont.prototype;
-cc.defineGetterSetter(proto, "anchor", null, proto._setAnchor);
-cc.defineGetterSetter(proto, "anchorX", null, proto._setAnchorX);
-cc.defineGetterSetter(proto, "anchorY", null, proto._setAnchorY);
-cc.defineGetterSetter(proto, "scale", null, proto.setScale);
-cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
-cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+cc.defineGetterSetter(proto, "anchor", proto._getAnchor, proto._setAnchor);
+cc.defineGetterSetter(proto, "anchorX", proto._getAnchorX, proto._setAnchorX);
+cc.defineGetterSetter(proto, "anchorY", proto._getAnchorY, proto._setAnchorY);
+cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
+cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
+cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);

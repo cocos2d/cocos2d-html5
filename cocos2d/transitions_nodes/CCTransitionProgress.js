@@ -63,7 +63,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
         // create the second render texture for outScene
         var texture = cc.RenderTexture.create(winSize.width, winSize.height);
-        texture.getSprite().setAnchorPoint(0.5, 0.5);
+        texture.getSprite().anchor = cc.p(0.5, 0.5);
         this._setAttrs(texture, winSize.width / 2, winSize.height / 2);
 
         // render outScene to its texturebuffer

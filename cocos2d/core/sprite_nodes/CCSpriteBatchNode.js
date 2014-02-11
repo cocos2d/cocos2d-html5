@@ -199,7 +199,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Number}
      */
     rebuildIndexInOrder:function (pobParent, index) {
-        var children = pobParent.getChildren();
+        var children = pobParent.children;
         if (children && children.length > 0) {
             for (var i = 0; i < children.length; i++) {
                 var obj = children[i];
@@ -230,7 +230,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Number}
      */
     highestAtlasIndexInChild:function (sprite) {
-        var children = sprite.getChildren();
+        var children = sprite.children;
 
         if (!children || children.length == 0)
             return sprite.getAtlasIndex();
@@ -244,7 +244,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Number}
      */
     lowestAtlasIndexInChild:function (sprite) {
-        var children = sprite.getChildren();
+        var children = sprite.children;
 
         if (!children || children.length == 0)
             return sprite.getAtlasIndex();
@@ -260,7 +260,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     atlasIndexForChild:function (sprite, nZ) {
 	    var selParent = sprite.parent;
-        var brothers = selParent.getChildren();
+        var brothers = selParent.children;
         var childIndex = cc.ArrayGetIndexOfObject(brothers, sprite);
 
         // ignore parent Z if parent is spriteSheet
@@ -519,7 +519,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _updateAtlasIndex:function (sprite, curIndex) {
         var count = 0;
-        var pArray = sprite.getChildren();
+        var pArray = sprite.children;
         if (pArray)
             count = pArray.length;
 
@@ -640,12 +640,13 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         // add children recursively
-        var locChildren = sprite.getChildren();
-        if (locChildren && locChildren.length > 0) {
-            for (i = 0; i < locChildren.length; i++) {
-                if (locChildren[i]) {
-                    var getIndex = this.atlasIndexForChild(locChildren[i], locChildren[i].zIndex);
-                    this.insertChild(locChildren[i], getIndex);
+        var locChildren = sprite.children, child;
+        if (locChildren) {
+            for (i = 0, l = locChildren.length || 0; i < l; i++) {
+				child = locChildren[i];
+                if (child) {
+                    var getIndex = this.atlasIndexForChild(child, child.zIndex);
+                    this.insertChild(child, getIndex);
                 }
             }
         }
@@ -667,8 +668,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setAtlasIndex(index);
 
         // add children recursively
-        var children = sprite.getChildren();
-        for (var i = 0; i < children.length; i++)
+        var children = sprite.children;
+        for (var i = 0, l = children.length || 0; i < l; i++)
             this.appendChild(children[i]);
     },
 
@@ -687,8 +688,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         locTextureAtlas.insertQuad(sprite.getQuad(), index);
 
         // add children recursively
-        var children = sprite.getChildren();
-        for (var i = 0; i < children.length; i++)
+        var children = sprite.children;
+        for (var i = 0, l = children.length || 0; i < l; i++)
             this.appendChild(children[i]);
     },
 
@@ -715,11 +716,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         // remove children recursively
-        var children = sprite.getChildren();
-        if (children && children.length > 0) {
-            for (var i = 0; i < children.length; i++)
-                if (children[i])
-                    this.removeSpriteFromAtlas(children[i]);
+        var children = sprite.children;
+        if (children) {
+            for (var i = 0, l = children.length || 0; i < l; i++)
+                children[i] && this.removeSpriteFromAtlas(children[i]);
         }
     },
 
@@ -744,11 +744,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         // remove children recursively
-        var children = sprite.getChildren();
-        if (children && children.length > 0) {
-            for (var i = 0; i < children.length; i++)
-                if (children[i])
-                    this.removeSpriteFromAtlas(children[i]);
+        var children = sprite.children;
+        if (children) {
+            for (var i = 0, l = children.length || 0; i < l; i++)
+                children[i] && this.removeSpriteFromAtlas(children[i]);
         }
     },
     // CCTextureProtocol

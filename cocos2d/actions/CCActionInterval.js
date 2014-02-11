@@ -760,7 +760,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
         // Calculate X
-        var locStartAngleX = target.getRotationX() % 360.0;
+        var locStartAngleX = target.rotationX % 360.0;
         var locDiffAngleX = this._dstAngleX - locStartAngleX;
         if (locDiffAngleX > 180)
             locDiffAngleX -= 360;
@@ -770,13 +770,13 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
         this._diffAngleX = locDiffAngleX;
 
         // Calculate Y  It's duplicated from calculating X since the rotation wrap should be the same
-        this._startAngleY = target.getRotationY() % 360.0;
+        this._startAngleY = target.rotationY % 360.0;
         var locDiffAngleY = this._dstAngleY - this._startAngleY;
         if (locDiffAngleY > 180)
             locDiffAngleY -= 360;
         if (locDiffAngleY < -180)
             locDiffAngleY += 360;
-        this._diffAngleY = locDiffAngleY
+        this._diffAngleY = locDiffAngleY;
     },
 
     /**
@@ -791,8 +791,8 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      */
     update:function (time) {
         if (this._target) {
-            this._target.setRotationX(this._startAngleX + this._diffAngleX * time);
-            this._target.setRotationY(this._startAngleY + this._diffAngleY * time);
+            this._target.rotationX = this._startAngleX + this._diffAngleX * time;
+            this._target.rotationY = this._startAngleY + this._diffAngleY * time;
         }
     }
 });
@@ -862,8 +862,8 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startAngleX = target.getRotationX();
-        this._startAngleY = target.getRotationY();
+        this._startAngleX = target.rotationX;
+        this._startAngleY = target.rotationY;
     },
 
     /**
@@ -871,8 +871,8 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      */
     update:function (time) {
         if (this._target) {
-            this._target.setRotationX(this._startAngleX + this._angleX * time);
-            this._target.setRotationY(this._startAngleY + this._angleY * time);
+            this._target.rotationX = this._startAngleX + this._angleX * time;
+            this._target.rotationY = this._startAngleY + this._angleY * time;
         }
     },
 
@@ -1129,14 +1129,14 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
-        this._startSkewX = target.getSkewX() % 180;
+        this._startSkewX = target.skewX % 180;
         this._deltaX = this._endSkewX - this._startSkewX;
         if (this._deltaX > 180)
             this._deltaX -= 360;
         if (this._deltaX < -180)
             this._deltaX += 360;
 
-        this._startSkewY = target.getSkewY() % 360;
+        this._startSkewY = target.skewY % 360;
         this._deltaY = this._endSkewY - this._startSkewY;
         if (this._deltaY > 180)
             this._deltaY -= 360;
@@ -1148,8 +1148,8 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
      * @param {Number} t time in seconds
      */
     update:function (t) {
-        this._target.setSkewX(this._startSkewX + this._deltaX * t);
-        this._target.setSkewY(this._startSkewY + this._deltaY * t);
+        this._target.skewX = this._startSkewX + this._deltaX * t;
+        this._target.skewY = this._startSkewY + this._deltaY * t;
     }
 });
 /**
@@ -1653,8 +1653,8 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startScaleX = target.getScaleX();
-        this._startScaleY = target.getScaleY();
+        this._startScaleX = target.scaleX;
+        this._startScaleY = target.scaleY;
         this._deltaX = this._endScaleX - this._startScaleX;
         this._deltaY = this._endScaleY - this._startScaleY;
     },
@@ -1663,8 +1663,10 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      * @param {Number} time
      */
     update:function (time) {
-        if (this._target)
-            this._target.setScale(this._startScaleX + this._deltaX * time, this._startScaleY + this._deltaY * time);
+        if (this._target) {
+            this._target.scaleX = this._startScaleX + this._deltaX * time;
+	        this._target.scaleY = this._startScaleY + this._deltaY * time;
+        }
     }
 });
 /**
@@ -1780,17 +1782,17 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
         if (this._target && !this.isDone()) {
             var slice = 1.0 / this._times;
             var m = time % slice;
-            this._target.setVisible(m > (slice / 2));
+            this._target.visible = (m > (slice / 2));
         }
     },
 
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._originalState = target.isVisible();
+        this._originalState = target.visible;
     },
 
     stop:function () {
-        this._target.setVisible(this._originalState);
+        this._target.visible = this._originalState;
         cc.ActionInterval.prototype.stop.call(this);
     },
 

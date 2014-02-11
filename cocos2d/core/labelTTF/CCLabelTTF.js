@@ -1038,11 +1038,11 @@ if(cc.Browser.supportWebGL){
     proto.setTextureRect = proto._setTextureRectForCanvas;
 }
 
-cc.defineGetterSetter(proto, "size", proto.getContentSize);
-cc.defineGetterSetter(proto, "width", proto._getWidth);
-cc.defineGetterSetter(proto, "height", proto._getHeight);
-cc.defineGetterSetter(proto, "color", null, proto.setColor);
-cc.defineGetterSetter(proto, "opacity", null, proto.setOpacity);
+cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
+cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 delete proto;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];

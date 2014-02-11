@@ -266,7 +266,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     setLabel:function (label) {
         if (label) {
             this.addChild(label);
-            label.setAnchorPoint(0, 0);
+            label.anchorX = 0;
+	        label.anchorY = 0;
             this.size = label.size;
         }
 
@@ -354,7 +355,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     activate:function () {
         if (this._isEnabled) {
             this.stopAllActions();
-            this.setScale(this._originalScale);
+            this.scale = this._originalScale;
             cc.MenuItem.prototype.activate.call(this);
         }
     },
@@ -370,7 +371,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             if (action)
                 this.stopAction(action);
              else
-                this._originalScale = this.getScale();
+                this._originalScale = this.scale;
 
             var zoomAction = cc.ScaleTo.create(0.1, this._originalScale * 1.2);
             zoomAction.setTag(cc.ZOOM_ACTION_TAG);
@@ -633,7 +634,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
         if (normalImage) {
             this.addChild(normalImage, 0, cc.NORMAL_TAG);
-            normalImage.setAnchorPoint(0, 0);
+            normalImage.anchorX = 0;
+	        normalImage.anchorY = 0;
         }
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
@@ -666,7 +668,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (selectedImage) {
             this.addChild(selectedImage, 0, cc.SELECTED_TAG);
-            selectedImage.setAnchorPoint(0, 0);
+            selectedImage.anchorX = 0;
+	        selectedImage.anchorY = 0;
         }
 
         if (this._selectedImage) {
@@ -693,7 +696,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (disabledImage) {
             this.addChild(disabledImage, 0, cc.DISABLE_TAG);
-            disabledImage.setAnchorPoint(0, 0);
+            disabledImage.anchorX = 0;
+	        disabledImage.anchorY = 0;
         }
 
         if (this._disabledImage)
@@ -780,13 +784,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         cc.MenuItem.prototype.selected.call(this);
         if (this._normalImage) {
             if (this._disabledImage)
-                this._disabledImage.setVisible(false);
+                this._disabledImage.visible = false;
 
             if (this._selectedImage) {
-                this._normalImage.setVisible(false);
-                this._selectedImage.setVisible(true);
+                this._normalImage.visible = false;
+                this._selectedImage.visible = true;
             } else
-                this._normalImage.setVisible(true);
+                this._normalImage.visible = true;
         }
     },
 
@@ -796,13 +800,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     unselected:function () {
         cc.MenuItem.prototype.unselected.call(this);
         if (this._normalImage) {
-            this._normalImage.setVisible(true);
+            this._normalImage.visible = true;
 
             if (this._selectedImage)
-                this._selectedImage.setVisible(false);
+                this._selectedImage.visible = false;
 
             if (this._disabledImage)
-                this._disabledImage.setVisible(false);
+                this._disabledImage.visible = false;
         }
     },
 
@@ -820,24 +824,24 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         var locNormalImage = this._normalImage, locSelImage = this._selectedImage, locDisImage = this._disabledImage;
         if (this._isEnabled) {
             if (locNormalImage)
-                locNormalImage.setVisible(true);
+                locNormalImage.visible = true;
             if (locSelImage)
-                locSelImage.setVisible(false);
+                locSelImage.visible = false;
             if (locDisImage)
-                locDisImage.setVisible(false);
+                locDisImage.visible = false;
         } else {
             if (locDisImage) {
                 if (locNormalImage)
-                    locNormalImage.setVisible(false);
+                    locNormalImage.visible = false;
                 if (locSelImage)
-                    locSelImage.setVisible(false);
+                    locSelImage.visible = false;
                 if (locDisImage)
-                    locDisImage.setVisible(true);
+                    locDisImage.visible = true;
             } else {
                 if (locNormalImage)
-                    locNormalImage.setVisible(true);
+                    locNormalImage.visible = true;
                 if (locSelImage)
-                    locSelImage.setVisible(false);
+                    locSelImage.visible = false;
             }
         }
     }

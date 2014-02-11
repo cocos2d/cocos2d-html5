@@ -70,7 +70,7 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setVisible(true);
+        this._target.visible = true;
     },
 
     /**
@@ -104,7 +104,7 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setVisible(false);
+        this._target.visible = false;
     },
 
     /**
@@ -138,7 +138,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setVisible(!this._target.isVisible());
+        this._target.visible = !this._target.visible;
     },
 
     /**
