@@ -1069,7 +1069,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
             cc.DelayTime.create(this._duration / 2)
         );
 
-        this._inScene.setScale(0.5);
+        this._inScene.scale = 0.5;
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
     }
@@ -1143,7 +1143,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
                 cc.ScaleTo.create(this._duration / 2, 0.5)),
             cc.Hide.create(), cc.DelayTime.create(this._duration / 2));
 
-        this._inScene.setScale(0.5);
+        this._inScene.scale = 0.5;
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
     }
@@ -1216,7 +1216,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
                 cc.ScaleTo.create(this._duration / 2, 0.5)),
             cc.Hide.create(), cc.DelayTime.create(this._duration / 2));
 
-        this._inScene.setScale(0.5);
+        this._inScene.scale = 0.5;
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
     }

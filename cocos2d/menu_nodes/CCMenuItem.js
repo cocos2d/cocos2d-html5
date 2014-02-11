@@ -355,7 +355,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     activate:function () {
         if (this._isEnabled) {
             this.stopAllActions();
-            this.setScale(this._originalScale);
+            this.scale = this._originalScale;
             cc.MenuItem.prototype.activate.call(this);
         }
     },
@@ -371,7 +371,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             if (action)
                 this.stopAction(action);
              else
-                this._originalScale = this.getScale();
+                this._originalScale = this.scale;
 
             var zoomAction = cc.ScaleTo.create(0.1, this._originalScale * 1.2);
             zoomAction.setTag(cc.ZOOM_ACTION_TAG);

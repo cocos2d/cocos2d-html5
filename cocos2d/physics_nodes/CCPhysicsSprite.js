@@ -255,6 +255,7 @@
 	cc.defineGetterSetter(proto, "pos", proto.getPosition, proto.setPosition);
 	cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
 	cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
+	cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
 
     /**
      * Create a PhysicsSprite with filename and rect
