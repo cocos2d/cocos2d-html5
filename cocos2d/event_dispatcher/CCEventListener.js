@@ -283,6 +283,7 @@ cc.EventListenerTouchOneByOne = cc.EventListener.extend({
 
     ctor: function () {
         cc.EventListener.prototype.ctor.call(this, cc.EventListener.Type.TOUCH_ONE_BY_ONE, cc.EventListenerTouchOneByOne.LISTENER_ID, null);
+        this._claimedTouches = [];
     },
 
     setSwallowTouches: function (needSwallow) {
