@@ -126,12 +126,12 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
      * @param {Number} [y] The anchor point.y of UILabelAtlas.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._labelAtlasRenderer.setAnchorPoint(point, y);
+        if (y === undefined) {
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._labelAtlasRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._labelAtlasRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._labelAtlasRenderer.setAnchorPoint(point, y);
         }
     },
 
