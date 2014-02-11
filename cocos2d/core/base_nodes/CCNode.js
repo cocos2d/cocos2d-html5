@@ -739,6 +739,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 	},
 	_setWidth: function(width) {
 		this._contentSize._width = width;
+		this._anchorPointInPoints._x = width * this._anchorPoint._x;
 		this.setNodeDirty();
 	},
 	_getHeight: function() {
@@ -746,6 +747,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 	},
 	_setHeight: function(height) {
 		this._contentSize._height = height;
+		this._anchorPointInPoints._y = height * this._anchorPoint._y;
 		this.setNodeDirty();
 	},
 
@@ -2207,7 +2209,7 @@ proto.skewX;
 cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
 /** @expose */
 proto.skewY;
-cc.defineGetterSetter(proto, "skewY", proto.getSkewY, proto.getSkewY);
+cc.defineGetterSetter(proto, "skewY", proto.getSkewY, proto.setSkewY);
 /** @expose */
 proto.zIndex;
 cc.defineGetterSetter(proto, "zIndex", proto.getZOrder, proto.setZOrder);
