@@ -449,6 +449,11 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     }
 });
 
+var proto = cc.MotionStreak.prototype;
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
+delete proto;
+
 /**
  * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture
  * @param {Number} fade time to fade

@@ -889,25 +889,31 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     }
 });
 
+var proto = cc.ProgressTimer.prototype;
 if(cc.Browser.supportWebGL) {
-    cc.ProgressTimer.prototype.ctor = cc.ProgressTimer.prototype._ctorForWebGL;
-    cc.ProgressTimer.prototype.setReverseProgress = cc.ProgressTimer.prototype._setReverseProgressForWebGL;
-    cc.ProgressTimer.prototype.setSprite = cc.ProgressTimer.prototype._setSpriteForWebGL;
-    cc.ProgressTimer.prototype.setType = cc.ProgressTimer.prototype._setTypeForWebGL;
-    cc.ProgressTimer.prototype.setReverseDirection = cc.ProgressTimer.prototype._setReverseDirectionForWebGL;
-    cc.ProgressTimer.prototype.initWithSprite = cc.ProgressTimer.prototype._initWithSpriteForWebGL;
-    cc.ProgressTimer.prototype.draw = cc.ProgressTimer.prototype._drawForWebGL;
-    cc.ProgressTimer.prototype._updateProgress = cc.ProgressTimer.prototype._updateProgressForWebGL;
+    proto.ctor = proto._ctorForWebGL;
+    proto.setReverseProgress = proto._setReverseProgressForWebGL;
+    proto.setSprite = proto._setSpriteForWebGL;
+    proto.setType = proto._setTypeForWebGL;
+    proto.setReverseDirection = proto._setReverseDirectionForWebGL;
+    proto.initWithSprite = proto._initWithSpriteForWebGL;
+    proto.draw = proto._drawForWebGL;
+    proto._updateProgress = proto._updateProgressForWebGL;
 } else {
-    cc.ProgressTimer.prototype.ctor = cc.ProgressTimer.prototype._ctorForCanvas;
-    cc.ProgressTimer.prototype.setReverseProgress = cc.ProgressTimer.prototype._setReverseProgressForCanvas;
-    cc.ProgressTimer.prototype.setSprite = cc.ProgressTimer.prototype._setSpriteForCanvas;
-    cc.ProgressTimer.prototype.setType = cc.ProgressTimer.prototype._setTypeForCanvas;
-    cc.ProgressTimer.prototype.setReverseDirection = cc.ProgressTimer.prototype._setReverseDirectionForCanvas;
-    cc.ProgressTimer.prototype.initWithSprite = cc.ProgressTimer.prototype._initWithSpriteForCanvas;
-    cc.ProgressTimer.prototype.draw = cc.ProgressTimer.prototype._drawForCanvas;
-    cc.ProgressTimer.prototype._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
+    proto.ctor = proto._ctorForCanvas;
+    proto.setReverseProgress = proto._setReverseProgressForCanvas;
+    proto.setSprite = proto._setSpriteForCanvas;
+    proto.setType = proto._setTypeForCanvas;
+    proto.setReverseDirection = proto._setReverseDirectionForCanvas;
+    proto.initWithSprite = proto._initWithSpriteForCanvas;
+    proto.draw = proto._drawForCanvas;
+    proto._updateProgress = proto._updateProgressForCanvas;
 }
+
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+delete proto;
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage
