@@ -384,7 +384,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             // offset (after layer orientation is set);
             var offset = this._calculateLayerOffset(layerInfo.offset);
-            this.setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
+            this.pos = cc.POINT_PIXELS_TO_POINTS(offset);
 
             this._atlasIndexArray = [];
             this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
@@ -446,7 +446,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile = new cc.Sprite();
             tile.initWithTexture(this.getTexture(), rect);
             tile.setBatchNode(this);
-            tile.setPosition(this.getPositionAt(pos));
+            tile.pos = this.getPositionAt(pos);
             tile.setVertexZ(this._vertexZForPos(pos));
             tile.setAnchorPoint(0,0);
             tile.setOpacity(this._opacity);
@@ -869,7 +869,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _setupTileSprite:function (sprite, pos, gid) {
         var z = pos.x + pos.y * this._layerSize.width;
-        sprite.setPosition(this.getPositionAt(pos));
+        sprite.pos = this.getPositionAt(pos);
         if (cc.renderContextType === cc.WEBGL)
             sprite.setVertexZ(this._vertexZForPos(pos));
         else
@@ -888,8 +888,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
             sprite.setAnchorPoint(0.5, 0.5);
-            sprite.setPosition(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
-                this.getPositionAt(pos).y + sprite.getContentSize().width / 2);
+            sprite.x = this.getPositionAt(pos).x + sprite.getContentSize().width / 2;
+	        sprite.y = this.getPositionAt(pos).y + sprite.getContentSize().height / 2;
 
             var flag = (gid & (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG) >>> 0) >>> 0;
             // handle the 4 diagonally flipped states.

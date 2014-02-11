@@ -1067,7 +1067,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this.addChild(item, 0, cc.CURRENT_ITEM);
             var s = item.size;
             this.size = s;
-            item.setPosition(s.width / 2, s.height / 2);
+            item.x = s.width / 2;
+	        item.y = s.height / 2;
         }
     },
 

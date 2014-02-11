@@ -630,6 +630,24 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     }
 });
 
+var proto = cc.TextureAtlas.prototype;
+/** @expose */
+proto.totalQuads;
+cc.defineGetterSetter(proto, "totalQuads", proto.getTotalQuads);
+/** @expose */
+proto.capacity;
+cc.defineGetterSetter(proto, "capacity", proto.getCapacity);
+/** @expose */
+proto.texture;
+cc.defineGetterSetter(proto, "texture", proto.getTexture, proto.setTexture);
+/** @expose */
+proto.dirty;
+cc.defineGetterSetter(proto, "dirty", proto.isDirty, proto.setDirty);
+/** @expose */
+//proto.quads;
+//cc.defineGetterSetter(proto, "quads", proto.getQuads, proto.setQuads);
+delete proto;
+
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
  * The TextureAtlas capacity can be increased in runtime. </p>

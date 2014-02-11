@@ -217,6 +217,13 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
     },
 
+	_getWidth:function () {
+		return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+	},
+	_getHeight:function () {
+		return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+	},
+
     getContentSizeInPixels:function () {
         return this._contentSize;
     },
@@ -1100,6 +1107,11 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         //support only in WebGl rendering mode
     },
 
+	getPixelFormat:function () {
+		//support only in WebGl rendering mode
+		return null;
+	},
+
     /**
      * return shader program used by drawAtPoint and drawInRect
      * @return {cc.GLProgram}
@@ -1291,6 +1303,31 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 });
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
+
+var proto = cc.Texture2D.prototype;
+/** @expose */
+proto.name;
+cc.defineGetterSetter(proto, "name", proto.getName);
+/** @expose */
+proto.pixelFormat;
+cc.defineGetterSetter(proto, "pixelFormat", proto.getPixelFormat);
+/** @expose */
+proto.pixelsWidth;
+cc.defineGetterSetter(proto, "pixelsWidth", proto.getPixelsWide);
+/** @expose */
+proto.pixelsHeight;
+cc.defineGetterSetter(proto, "pixelsHeight", proto.getPixelsHigh);
+cc.defineGetterSetter(proto, "size", proto.getContentSize);
+cc.defineGetterSetter(proto, "width", proto._getWidth);
+cc.defineGetterSetter(proto, "height", proto._getHeight);
+cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
+/** @expose */
+proto.maxS;
+cc.defineGetterSetter(proto, "maxS", proto.getMaxS, proto.setMaxS);
+/** @expose */
+proto.maxT;
+cc.defineGetterSetter(proto, "maxT", proto.getMaxT, proto.setMaxT);
+delete proto;
 
 /**
  * <p>

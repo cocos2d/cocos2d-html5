@@ -212,7 +212,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 locChild = locChildren[i];
                 locHeight = locChild.getContentSize().height;
                 locScaleY = locChild.getScaleY();
-                locChild.setPosition(0, y - locHeight * locScaleY / 2);
+                locChild.x = 0;
+	            locChild.y = y - locHeight * locScaleY / 2;
                 y -= locHeight * locScaleY + padding;
             }
         }
@@ -241,7 +242,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 locChild = locChildren[i];
                 locScaleX = locChild.getScaleX();
                 locWidth =  locChildren[i].getContentSize().width;
-                locChild.setPosition(x + locWidth * locScaleX / 2, 0);
+                locChild.x = x + locWidth * locScaleX / 2;
+	            locChild.y = 0;
                 x += locWidth * locScaleX + padding;
             }
         }
@@ -314,7 +316,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
                 tmp = child.getContentSize().height;
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
-                child.setPosition(x - winSize.width / 2, y - tmp / 2);
+                child.x = x - winSize.width / 2;
+	            child.y = y - tmp / 2;
 
                 x += w;
                 ++columnsOccupied;
@@ -410,7 +413,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 tmp = locContentSize.width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
-                child.setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
+                child.x = x + columnWidths[column] / 2;
+	            child.y = y - winSize.height / 2;
 
                 y -= locContentSize.height + 10;
                 ++rowsOccupied;

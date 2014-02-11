@@ -871,7 +871,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
                 nextFontPositionY + yOffset - rect.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
-            fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
+            fontChar.pos = cc.POINT_PIXELS_TO_POINTS(fontPos);
 
             // update kerning
             nextFontPositionX += fontDef.xAdvance + kerningAmount;
@@ -1091,7 +1091,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar.getPositionX() + lastChar.getContentSize().width / 2;
+                    lineWidth = lastChar.x + lastChar.getContentSize().width / 2;
 
                     var shift = 0;
                     switch (this._alignment) {
@@ -1111,7 +1111,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                             if (index < 0) continue;
                             characterSprite = this.getChildByTag(index);
                             if (characterSprite)
-                                characterSprite.setPosition(cc.pAdd(characterSprite.getPosition(), cc.p(shift, 0)));
+	                            characterSprite.x += shift;
                         }
                     }
 
@@ -1260,11 +1260,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.getPositionX() * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.getPositionX() * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     }
 });
 
