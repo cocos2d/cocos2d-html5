@@ -203,7 +203,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (children && children.length > 0) {
             for (var i = 0; i < children.length; i++) {
                 var obj = children[i];
-                if (obj && (obj.getZOrder() < 0)) {
+                if (obj && (obj.zIndex < 0)) {
                     index = this.rebuildIndexInOrder(obj, index);
                 }
             }
@@ -216,7 +216,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (children && children.length > 0) {
             for (i = 0; i < children.length; i++) {
                 obj = children[i];
-                if (obj && (obj.getZOrder() >= 0)) {
+                if (obj && (obj.zIndex >= 0)) {
                     index = this.rebuildIndexInOrder(obj, index);
                 }
             }
@@ -259,11 +259,12 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Number}
      */
     atlasIndexForChild:function (sprite, nZ) {
-        var brothers = sprite.getParent().getChildren();
+	    var selParent = sprite.parent;
+        var brothers = selParent.getChildren();
         var childIndex = cc.ArrayGetIndexOfObject(brothers, sprite);
 
         // ignore parent Z if parent is spriteSheet
-        var ignoreParent = sprite.getParent() == this;
+        var ignoreParent = selParent == this;
         var previous = null;
         if (childIndex > 0 && childIndex < cc.UINT_MAX)
             previous = brothers[childIndex - 1];
@@ -277,10 +278,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // parent is a cc.Sprite, so, it must be taken into account
         // first child of an cc.Sprite ?
-        var selParent;
         if (childIndex == 0) {
-            selParent = sprite.getParent();
-
             // less than parent and brothers
             if (nZ < 0)
                 return selParent.getAtlasIndex();
@@ -288,11 +286,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 return selParent.getAtlasIndex() + 1;
         } else {
             // previous & sprite belong to the same branch
-            if ((previous.getZOrder() < 0 && nZ < 0) || (previous.getZOrder() >= 0 && nZ >= 0))
+            if ((previous.zIndex < 0 && nZ < 0) || (previous.zIndex >= 0 && nZ >= 0))
                 return this.highestAtlasIndexInChild(previous) + 1;
 
             // else (previous < 0 and sprite >= 0 )
-            selParent = sprite.getParent();
             return selParent.getAtlasIndex() + 1;
         }
     },
@@ -339,7 +336,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             return;
         }
 
-        if (zOrder === child.getZOrder())
+        if (zOrder === child.zIndex)
             return;
 
         //set the z-order and sort later
@@ -530,17 +527,17 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (count === 0) {
             oldIndex = sprite.getAtlasIndex();
             sprite.setAtlasIndex(curIndex);
-            sprite.setOrderOfArrival(0);
+            sprite.arrivalOrder = 0;
             if (oldIndex != curIndex)
                 this._swap(oldIndex, curIndex);
             curIndex++;
         } else {
             var needNewIndex = true;
-            if (pArray[0].getZOrder() >= 0) {
+            if (pArray[0].zIndex >= 0) {
                 //all children are in front of the parent
                 oldIndex = sprite.getAtlasIndex();
                 sprite.setAtlasIndex(curIndex);
-                sprite.setOrderOfArrival(0);
+                sprite.arrivalOrder = 0;
                 if (oldIndex != curIndex)
                     this._swap(oldIndex, curIndex);
                 curIndex++;
@@ -548,10 +545,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             }
             for (var i = 0; i < pArray.length; i++) {
                 var child = pArray[i];
-                if (needNewIndex && child.getZOrder() >= 0) {
+                if (needNewIndex && child.zIndex >= 0) {
                     oldIndex = sprite.getAtlasIndex();
                     sprite.setAtlasIndex(curIndex);
-                    sprite.setOrderOfArrival(0);
+                    sprite.arrivalOrder = 0;
                     if (oldIndex != curIndex) {
                         this._swap(oldIndex, curIndex);
                     }
@@ -565,7 +562,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 //all children have a zOrder < 0)
                 oldIndex = sprite.getAtlasIndex();
                 sprite.setAtlasIndex(curIndex);
-                sprite.setOrderOfArrival(0);
+                sprite.arrivalOrder = 0;
                 if (oldIndex != curIndex) {
                     this._swap(oldIndex, curIndex);
                 }
@@ -614,7 +611,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._textureAtlas = new cc.TextureAtlas();
         this._textureAtlas.initWithTexture(tex, capacity);
         this._updateBlendFunc();
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -647,7 +644,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (locChildren && locChildren.length > 0) {
             for (i = 0; i < locChildren.length; i++) {
                 if (locChildren[i]) {
-                    var getIndex = this.atlasIndexForChild(locChildren[i], locChildren[i].getZOrder());
+                    var getIndex = this.atlasIndexForChild(locChildren[i], locChildren[i].zIndex);
                     this.insertChild(locChildren[i], getIndex);
                 }
             }
@@ -839,7 +836,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (locGrid && locGrid.isActive())
             locGrid.afterDraw(this);
         cc.kmGLPopMatrix();
-        this.setOrderOfArrival(0);
+        this.arrivalOrder = 0;
     },
 
     /**
@@ -859,8 +856,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             return;
         }
 
-        zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
-        tag = (tag == null) ? child.getTag() : tag;
+        zOrder = (zOrder == null) ? child.zIndex : zOrder;
+        tag = (tag == null) ? child.tag : tag;
 
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
@@ -879,8 +876,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             return;
         }
 
-        zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
-        tag = (tag == null) ? child.getTag() : tag;
+        zOrder = (zOrder == null) ? child.zIndex : zOrder;
+        tag = (tag == null) ? child.tag : tag;
 
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);

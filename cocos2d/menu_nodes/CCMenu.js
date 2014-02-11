@@ -153,10 +153,14 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
             // menu in the center of the screen
             var winSize = cc.Director.getInstance().getWinSize();
-            this.ignoreAnchorPointForPosition(true);
-            this.setAnchorPoint(0.5, 0.5);
-            this.setContentSize(winSize);
-            this.setPosition(winSize.width / 2, winSize.height / 2);
+	        this.attr({
+		        x: winSize.width / 2,
+		        y: winSize.height / 2,
+				size: winSize,
+		        anchorX: 0.5,
+		        anchorY: 0.5,
+		        ignoreAnchor: true
+	        });
 
             if (arrayOfItems) {
                 for (var i = 0; i < arrayOfItems.length; i++)
@@ -455,7 +459,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this._enabled)
             return false;
 
-        for (var c = this._parent; c != null; c = c.getParent()) {
+        for (var c = this.parent; c != null; c = c.parent) {
             if (!c.isVisible())
                 return false;
         }

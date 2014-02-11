@@ -41,6 +41,15 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     _from:0,
     _sceneToBeModified:null,
 
+	_setAttrs: function(node, x, y) {
+		node.attr({
+			x: x,
+			y: y,
+			anchorX: 0.5,
+			anchorY: 0.5
+		});
+	},
+
     /**
      * @override
      */
@@ -55,8 +64,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         // create the second render texture for outScene
         var texture = cc.RenderTexture.create(winSize.width, winSize.height);
         texture.getSprite().setAnchorPoint(0.5, 0.5);
-        texture.setPosition(winSize.width / 2, winSize.height / 2);
-        texture.setAnchorPoint(0.5, 0.5);
+        this._setAttrs(texture, winSize.width / 2, winSize.height / 2);
 
         // render outScene to its texturebuffer
         texture.clear(0, 0, 0, 1);
@@ -142,8 +150,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
         //    Return the radial type that we want to use
         pNode.setReverseDirection(false);
         pNode.setPercentage(100);
-        pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(0.5, 0.5);
+        this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
     }
@@ -184,8 +191,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
         //    Return the radial type that we want to use
         pNode.setReverseDirection(true);
         pNode.setPercentage(100);
-        pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(0.5, 0.5);
+        this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
     }
@@ -227,8 +233,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
         pNode.setBarChangeRate(cc.p(1, 0));
 
         pNode.setPercentage(100);
-        pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(0.5, 0.5);
+        this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
     }
@@ -269,8 +274,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
         pNode.setBarChangeRate(cc.p(0, 1));
 
         pNode.setPercentage(100);
-        pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(0.5, 0.5);
+        this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
     }
@@ -310,8 +314,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
         pNode.setBarChangeRate(cc.p(1, 1));
 
         pNode.setPercentage(0);
-        pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(0.5, 0.5);
+        this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
     },
@@ -359,8 +362,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
         pNode.setBarChangeRate(cc.p(1, 1));
 
         pNode.setPercentage(100);
-        pNode.setPosition(size.width / 2, size.height / 2);
-        pNode.setAnchorPoint(0.5, 0.5);
+        this._setAttrs(pNode, winSize.width / 2, winSize.height / 2);
 
         return pNode;
     }

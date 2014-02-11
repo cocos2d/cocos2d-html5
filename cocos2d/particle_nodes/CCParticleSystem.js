@@ -1566,9 +1566,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this._endSizeVar = parseFloat(locValueForKey("finishParticleSizeVariance", dictionary));
 
             // position
-            var x = parseFloat(locValueForKey("sourcePositionx", dictionary));
-            var y = parseFloat(locValueForKey("sourcePositiony", dictionary));
-            this.setPosition(x, y);
+            this.x = parseFloat(locValueForKey("sourcePositionx", dictionary));
+            this.y = parseFloat(locValueForKey("sourcePositiony", dictionary));
             this._posVar.x = parseFloat(locValueForKey("sourcePositionVariancex", dictionary));
             this._posVar.y = parseFloat(locValueForKey("sourcePositionVariancey", dictionary));
 
@@ -1748,7 +1747,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             //else
             this._setupVBO();
 
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         }
 
         return true;
@@ -2327,7 +2326,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             retParticle._endSizeVar = this._endSizeVar;
 
             // position
-            retParticle.setPosition(this._position._x, this._position._y);
+            retParticle.x = this._position._x;
+	        retParticle.y = this._position._y;
             retParticle._posVar.x = this._posVar.x;
             retParticle._posVar.y = this._posVar.y;
 
@@ -2539,7 +2539,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         //
         // Using VBO without VAO
         //
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices

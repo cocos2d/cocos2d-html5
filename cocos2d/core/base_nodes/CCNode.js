@@ -131,6 +131,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _transformDirty:true,
     _inverseDirty:true,
     _cacheDirty:true,
+	// Cached parent serves to construct the cached parent chain
+	_cachedParent:null,
     _transformGLDirty:null,
     _transform:null,
     _inverse:null,
@@ -254,14 +256,28 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _setNodeDirtyForCanvas:function () {
         this._setNodeDirtyForCache();
-        if(this._transformDirty === false)
-            this._transformDirty = this._inverseDirty = true;
+        this._transformDirty === false && (this._transformDirty = this._inverseDirty = true);
     },
 
     _setNodeDirtyForWebGL:function () {
-        if(this._transformDirty === false)
-            this._transformDirty = this._inverseDirty = true;
+	    this._transformDirty === false && (this._transformDirty = this._inverseDirty = true);
     },
+
+	/**
+	 *  <p>get the skew degrees in X </br>
+	 *  The X skew angle of the node in degrees.  <br/>
+	 *  This angle describes the shear distortion in the X direction.<br/>
+	 *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
+	 *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
+	 *  </p>
+	 * @param {Object}attrs Attributes to be set to node
+	 */
+	attr: function(attrs) {
+		for(var key in attrs) {
+			this[key] = attrs[key];
+		}
+		this.setNodeDirty();
+	},
 
     /**
      *  <p>get the skew degrees in X </br>
@@ -961,14 +977,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },
 
-    /**
-     * Gets the description string. It makes debugging easier.
-     * @return {String}
-     */
-    description:function () {
-        return "<cc.Node | Tag =" + this._tag + ">";
-    },
-
     // composition: GET
     /**
      * Gets a child from the container given its tag
@@ -1014,6 +1022,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         child._tag = (tag != null) ? tag : child._tag;
         this._insertChild(child, tmpzOrder);
         child._parent = this;
+	    this._cachedParent && (child._cachedParent = this._cachedParent);
 
         if (this._running) {
             child.onEnter();
@@ -1124,7 +1133,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                     if (cleanup)
                         node.cleanup();
                     // set parent nil at the end
-                    node.setParent(null);
+                    node.parent = null;
                 }
             }
             this._children.length = 0;
@@ -1151,7 +1160,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             child.cleanup();
 
         // set parent nil at the end
-        child.setParent(null);
+        child.parent = null;
 
         cc.ArrayRemoveObject(this._children, child);
     },
@@ -1176,7 +1185,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if(!child)
             throw "cc.Node.reorderChild(): child must be non-null";
         this._reorderChildDirty = true;
-        child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
+        child.arrivalOrder = cc.s_globalOrderOfArrival;
+	    cc.s_globalOrderOfArrival++
         child._setZOrder(zOrder);
         this.setNodeDirty();
     },
@@ -1308,7 +1318,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     runAction:function (action) {
         if(!action)
             throw "cc.Node.runAction(): action must be non-null";
-        this.getActionManager().addAction(action, this, !this._running);
+        this.actionManager.addAction(action, this, !this._running);
         return action;
     },
 
@@ -1316,7 +1326,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Stops and removes all actions from the running action list .
      */
     stopAllActions:function () {
-        this.getActionManager().removeAllActionsFromTarget(this);
+        this.actionManager.removeAllActionsFromTarget(this);
     },
 
     /**
@@ -1324,7 +1334,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Action} action An action object to be removed.
      */
     stopAction:function (action) {
-        this.getActionManager().removeAction(action);
+        this.actionManager.removeAction(action);
     },
 
     /**
@@ -1336,7 +1346,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             cc.log("cc.Node.stopActionBy(): argument tag an invalid tag");
             return;
         }
-        this.getActionManager().removeActionByTag(tag, this);
+        this.actionManager.removeActionByTag(tag, this);
     },
 
     /**
@@ -1350,7 +1360,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             cc.log("cc.Node.getActionByTag(): argument tag is an invalid tag");
             return null;
         }
-        return this.getActionManager().getActionByTag(tag, this);
+        return this.actionManager.getActionByTag(tag, this);
     },
 
     /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).<br/>
@@ -1360,7 +1370,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number} The number of actions that are running plus the ones that are schedule to run
      */
     getNumberOfRunningActions:function () {
-        return this.getActionManager().numberOfRunningActionsInTarget(this);
+        return this.actionManager.numberOfRunningActionsInTarget(this);
     },
 
     // cc.Node - Callbacks
@@ -1385,7 +1395,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} priority
      */
     scheduleUpdateWithPriority:function (priority) {
-        this.getScheduler().scheduleUpdateForTarget(this, priority, !this._running);
+        this.scheduler.scheduleUpdateForTarget(this, priority, !this._running);
     },
 
     /**
@@ -1393,7 +1403,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @see scheduleUpdate();
      */
     unscheduleUpdate:function () {
-        this.getScheduler().unscheduleUpdateForTarget(this);
+        this.scheduler.unscheduleUpdateForTarget(this);
     },
 
     /**
@@ -1416,7 +1426,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
-        this.getScheduler().scheduleCallbackForTarget(this, callback_fn, interval, repeat, delay, !this._running);
+        this.scheduler.scheduleCallbackForTarget(this, callback_fn, interval, repeat, delay, !this._running);
     },
 
     /**
@@ -1439,7 +1449,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!callback_fn)
             return;
 
-        this.getScheduler().unscheduleCallbackForTarget(this, callback_fn);
+        this.scheduler.unscheduleCallbackForTarget(this, callback_fn);
     },
 
     /**
@@ -1447,7 +1457,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Actions are not affected by this method.
      */
     unscheduleAllCallbacks:function () {
-        this.getScheduler().unscheduleAllCallbacksForTarget(this);
+        this.scheduler.unscheduleAllCallbacksForTarget(this);
     },
 
     /**
@@ -1455,8 +1465,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * This method is called internally by onEnter
      */
     resumeSchedulerAndActions:function () {
-        this.getScheduler().resumeTarget(this);
-        this.getActionManager().resumeTarget(this);
+        this.scheduler.resumeTarget(this);
+        this.actionManager.resumeTarget(this);
     },
 
     /**
@@ -1464,8 +1474,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * This method is called internally by onExit
      */
     pauseSchedulerAndActions:function () {
-        this.getScheduler().pauseTarget(this);
-        this.getActionManager().pauseTarget(this);
+        this.scheduler.pauseTarget(this);
+        this.actionManager.pauseTarget(this);
     },
 
     /**
@@ -1540,7 +1550,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     nodeToWorldTransform:function () {
         var t = this.nodeToParentTransform();
-        for (var p = this._parent; p != null; p = p.getParent())
+        for (var p = this._parent; p != null; p = p.parent)
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
         return t;
     },
@@ -1992,10 +2002,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _setNodeDirtyForCache:function () {
-        this._cacheDirty = true;
-        if (this._parent) {
-            this._parent._setNodeDirtyForCache();
-        }
+	    if(this._cacheDirty === false) {
+		    this._cacheDirty = true;
+
+		    var cachedP = this._cachedParent;
+	        cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
+	    }
     },
 
     /**
@@ -2114,6 +2126,159 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return rect;
     }
 });
+
+var temp = {
+	getWidth: function() {
+		return this._contentSize._width;
+	},
+	setWidth: function(width) {
+		this._contentSize._width = width;
+		this.setNodeDirty();
+	},
+	getHeight: function() {
+		return this._contentSize._height;
+	},
+	setHeight: function(height) {
+		this._contentSize._height = height;
+		this.setNodeDirty();
+	},
+	getAnchor: function() {
+		return this._anchorPoint;
+	},
+	setAnchor: function(p) {
+		var x = p.x, y = p.y;
+		if(this._anchorPoint._x !== x) {
+			this._anchorPoint._x = x;
+			this._anchorPointInPoints._x = this._contentSize._width * x;
+		}
+		if(this._anchorPoint._y !== y) {
+			this._anchorPoint._y = y;
+			this._anchorPointInPoints._y = this._contentSize._height * y;
+		}
+		this.setNodeDirty();
+	},
+	getAnchorX: function() {
+		return this._anchorPoint._x;
+	},
+	setAnchorX: function(x) {
+		if(this._anchorPoint._x === x) return;
+		this._anchorPoint._x = x;
+		this._anchorPointInPoints._x = this._contentSize._width * x;
+		this.setNodeDirty();
+	},
+	getAnchorY: function() {
+		return this._anchorPoint._y;
+	},
+	setAnchorY: function(y) {
+		if(this._anchorPoint._y === y) return;
+		this._anchorPoint._y = y;
+		this._anchorPointInPoints._y = this._contentSize._height * y;
+		this.setNodeDirty();
+	}
+};
+var proto = cc.Node.prototype;
+
+cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
+cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
+/** @expose */
+proto.pos;
+cc.defineGetterSetter(proto, "pos", proto.getPosition, proto.setPosition);
+/** @expose */
+proto.width;
+cc.defineGetterSetter(proto, "width", temp.getWidth, temp.setWidth);
+/** @expose */
+proto.height;
+cc.defineGetterSetter(proto, "height", temp.getHeight, temp.setHeight);
+/** @expose */
+proto.size;
+cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
+/** @expose */
+proto.anchor;
+cc.defineGetterSetter(proto, "anchor", temp.getAnchor, temp.setAnchor);
+/** @expose */
+proto.anchorX;
+cc.defineGetterSetter(proto, "anchorX", temp.getAnchorX, temp.setAnchorX);
+/** @expose */
+proto.anchorY;
+cc.defineGetterSetter(proto, "anchorY", temp.getAnchorY, temp.setAnchorY);
+/** @expose */
+proto.skewX;
+cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
+/** @expose */
+proto.skewY;
+cc.defineGetterSetter(proto, "skewY", proto.getSkewY, proto.getSkewY);
+/** @expose */
+proto.zIndex;
+cc.defineGetterSetter(proto, "zIndex", proto.getZOrder, proto.setZOrder);
+/** @expose */
+proto.vertexZ;
+cc.defineGetterSetter(proto, "vertexZ", proto.getVertexZ, proto.setVertexZ);
+/** @expose */
+proto.rotation;
+cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
+/** @expose */
+proto.rotationX;
+cc.defineGetterSetter(proto, "rotationX", proto.getRotationX, proto.setRotationX);
+/** @expose */
+proto.rotationY;
+cc.defineGetterSetter(proto, "rotationY", proto.getRotationY, proto.setRotationY);
+/** @expose */
+proto.scale;
+cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
+/** @expose */
+proto.scaleX;
+cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
+/** @expose */
+proto.scaleY;
+cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
+/** @expose */
+proto.children;
+cc.defineGetterSetter(proto, "children", proto.getChildren);
+/** @expose */
+proto.childrenCount;
+cc.defineGetterSetter(proto, "childrenCount", proto.getChildrenCount);
+/** @expose */
+proto.parent;
+cc.defineGetterSetter(proto, "parent", proto.getParent, proto.setParent);
+/** @expose */
+proto.visible;
+cc.defineGetterSetter(proto, "visible", proto.isVisible, proto.setVisible);
+/** @expose */
+proto.running;
+cc.defineGetterSetter(proto, "running", proto.isRunning);
+/** @expose */
+proto.ignoreAnchor;
+cc.defineGetterSetter(proto, "ignoreAnchor", proto.isIgnoreAnchorPointForPosition, proto.ignoreAnchorPointForPosition);
+/** @expose */
+proto.tag;
+cc.defineGetterSetter(proto, "tag", proto.getTag, proto.setTag);
+/** @expose */
+proto.userData;
+cc.defineGetterSetter(proto, "userData", proto.getUserData, proto.setUserData);
+/** @expose */
+proto.userObject;
+cc.defineGetterSetter(proto, "userObject", proto.getUserObject, proto.setUserObject);
+/** @expose */
+proto.arrivalOrder;
+cc.defineGetterSetter(proto, "arrivalOrder", proto.getOrderOfArrival, proto.setOrderOfArrival);
+/** @expose */
+proto.actionManager;
+cc.defineGetterSetter(proto, "actionManager", proto.getActionManager, proto.setActionManager);
+/** @expose */
+proto.scheduler;
+cc.defineGetterSetter(proto, "scheduler", proto.getScheduler, proto.setScheduler);
+//cc.defineGetterSetter(proto, "boundingBox", proto.getBoundingBox);
+/** @expose */
+proto.grid;
+cc.defineGetterSetter(proto, "grid", proto.getGrid, proto.setGrid);
+/** @expose */
+proto.shader;
+cc.defineGetterSetter(proto, "shader", proto.getShaderProgram, proto.setShaderProgram);
+/** @expose */
+proto.glServerState;
+cc.defineGetterSetter(proto, "glServerState", proto.getGLServerState, proto.setGLServerState);
+
+delete temp;
 
 if(cc.Browser.supportWebGL){
     //WebGL
@@ -2396,3 +2561,8 @@ cc.NodeRGBA.create = function () {
     res.init();
     return res;
 };
+
+proto = cc.NodeRGBA.prototype;
+cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
+cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);

@@ -160,7 +160,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
         pos.y = pos.y * ratio.y + offset.y;
         child.setPosition(pos);
 
-        cc.NodeRGBA.prototype.addChild.call(this, child, z, child.getTag());
+        cc.NodeRGBA.prototype.addChild.call(this, child, z, child.tag);
     },
 
     /**
@@ -213,8 +213,8 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
     _absolutePosition:function () {
         var ret = this._position;
         var cn = this;
-        while (cn.getParent() != null) {
-            cn = cn.getParent();
+        while (cn.parent != null) {
+            cn = cn.parent;
             ret = cc.pAdd(ret, cn.getPosition());
         }
         return ret;

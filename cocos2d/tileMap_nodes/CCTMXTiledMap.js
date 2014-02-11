@@ -206,7 +206,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     initWithTMXFile:function (tmxFile,resourcePath) {
         if(!tmxFile || tmxFile.length == 0)
             throw "cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.";
-        this.setContentSize(0, 0);
+	    this.width = 0;
+	    this.height = 0;
         var mapInfo = cc.TMXMapInfo.create(tmxFile,resourcePath);
         if (!mapInfo)
             return false;
@@ -219,7 +220,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     },
 
     initWithXML:function(tmxString, resourcePath){
-        this.setContentSize(0, 0);
+        this.width = 0;
+	    this.height = 0;
 
         var mapInfo = cc.TMXMapInfo.createWithXML(tmxString, resourcePath);
         var locTilesets = mapInfo.getTilesets();
@@ -248,8 +250,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
                     this.addChild(child, idx, idx);
                     // update content size with the max size
                     var childSize = child.getContentSize();
-                    var currentSize = this.getContentSize();
-                    this.setContentSize(cc.size(Math.max(currentSize.width, childSize.width), Math.max(currentSize.height, childSize.height)));
+	                this.width = Math.max(this.width, childSize.width);
+	                this.height = Math.max(this.height, childSize.height);
                     idx++;
                 }
             }

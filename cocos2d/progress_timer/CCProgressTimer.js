@@ -277,14 +277,14 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this.setContentSize(this._sprite.getContentSize());
+            this.size = this._sprite.getContentSize();
         }
     },
 
     _setSpriteForWebGL:function (sprite) {
         if (sprite && this._sprite != sprite) {
             this._sprite = sprite;
-            this.setContentSize(sprite.getContentSize());
+            this.size = sprite.getContentSize();
 
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
@@ -381,7 +381,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _initWithSpriteForCanvas:function (sprite) {
         this.setPercentage(0);
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
@@ -397,7 +398,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataCount = 0;
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
@@ -406,7 +408,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this.setSprite(sprite);
 
         //shader program
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -492,7 +494,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
         var blendFunc = this._sprite.getBlendFunc();
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         if (this._sprite.getTexture())
             cc.glBindTexture2D(this._sprite.getTexture());

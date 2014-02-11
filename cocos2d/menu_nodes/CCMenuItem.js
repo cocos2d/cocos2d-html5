@@ -136,7 +136,8 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @return {Boolean}
      */
     initWithCallback:function (callback, target) {
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
         this._target = target;
         this._callback = callback;
         this._isEnabled = true;
@@ -262,7 +263,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         if (label) {
             this.addChild(label);
             label.setAnchorPoint(0, 0);
-            this.setContentSize(label.getContentSize());
+            this.size = label.getContentSize();
         }
 
         if (this._label) {
@@ -340,7 +341,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      */
     setString:function (label) {
         this._label.setString(label);
-        this.setContentSize(this._label.getContentSize());
+        this.size = this._label.getContentSize();
     },
 
     /**
@@ -630,12 +631,12 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
 
         this._normalImage = normalImage;
-        this.setContentSize(this._normalImage.getContentSize());
+        this.size = this._normalImage.getContentSize();
         this._updateImagesVisibility();
 
         if (normalImage.textureLoaded && !normalImage.textureLoaded()) {
             normalImage.addLoadedEventListener(function (sender) {
-                this.setContentSize(sender.getContentSize());
+                this.size = sender.getContentSize();
             }, this);
         }
     },
@@ -708,11 +709,11 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this.setDisabledImage(disabledSprite);
         var locNormalImage = this._normalImage;
         if (locNormalImage) {
-            this.setContentSize(locNormalImage.getContentSize());
+            this.size = locNormalImage.getContentSize();
 
             if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
                 locNormalImage.addLoadedEventListener(function (sender) {
-                    this.setContentSize(sender.getContentSize());
+                    this.size = sender.getContentSize();
                     this.setCascadeColorEnabled(true);
                     this.setCascadeOpacityEnabled(true);
                 }, this);
@@ -1050,8 +1051,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
 
             var item = this._subItems[this._selectedIndex];
             this.addChild(item, 0, cc.CURRENT_ITEM);
-            var s = item.getContentSize();
-            this.setContentSize(s);
+            var s = item.size;
+            this.size = s;
             item.setPosition(s.width / 2, s.height / 2);
         }
     },
