@@ -121,15 +121,24 @@
         },
 
         setPosition:function (newPosOrxValue, yValue) {
-            if(arguments.length==2){
-                this._body.p.x = newPosOrxValue;
-                this._body.p.y = yValue;
-            }else{
-                this._body.p.x = newPosOrxValue.x;
-                this._body.p.y = newPosOrxValue.y;
+            if (yValue === undefined) {
+	            this._body.p.x = newPosOrxValue.x;
+	            this._body.p.y = newPosOrxValue.y;
+            } else {
+	            this._body.p.x = newPosOrxValue;
+	            this._body.p.y = yValue;
             }
             //this._syncPosition();
         },
+	    setPositionX:function (xValue) {
+		    this._body.p.x = xValue;
+		    //this._syncPosition();
+	    },
+	    setPositionY:function (yValue) {
+		    this._body.p.y = yValue;
+		    //this._syncPosition();
+	    },
+
         _syncPosition:function () {
             var locPosition = this._position, locBody = this._body;
             if (locPosition._x != locBody.p.x || locPosition._y != locBody.p.y) {
@@ -238,6 +247,14 @@
 
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
+
+	var proto = cc.PhysicsSprite.prototype;
+	/** @expose */
+	proto.body;
+	cc.defineGetterSetter(proto, "body", proto.getBody, proto.setBody);
+	cc.defineGetterSetter(proto, "pos", proto.getPosition, proto.setPosition);
+	cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
+	cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
 
     /**
      * Create a PhysicsSprite with filename and rect
