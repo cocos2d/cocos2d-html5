@@ -180,6 +180,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _scheduler:null,
     _actionManager:null,
+    _eventDispatcher: null,
     _touchDispatcher:null,
     _keyboardDispatcher:null,
     _accelerometer:null,
@@ -1053,6 +1054,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setActionManager:function (actionManager) {
         if (this._actionManager != actionManager) {
             this._actionManager = actionManager;
+        }
+    },
+
+    getEventDispatcher:function () {
+        return this._eventDispatcher;
+    },
+    setEventDispatcher:function (eventDispatcher) {
+        if (this._eventDispatcher != eventDispatcher) {
+            this._eventDispatcher = eventDispatcher;
         }
     },
 

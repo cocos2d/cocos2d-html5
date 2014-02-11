@@ -542,7 +542,7 @@ cc.ScrollView = cc.Layer.extend({
                 // draw children zOrder < 0
                 for (i = 0; i < childrenLen; i++) {
                     selChild = locChildren[i];
-                    if (selChild && selChild._zOrder < 0)
+                    if (selChild && selChild._localZOrder < 0)
                         selChild.visit(context);
                     else
                         break;
@@ -575,7 +575,7 @@ cc.ScrollView = cc.Layer.extend({
                 // draw children zOrder < 0
                 for (i = 0; i < childrenLen; i++) {
                     selChild = locChildren[i];
-                    if (selChild && selChild._zOrder < 0)
+                    if (selChild && selChild._localZOrder < 0)
                         selChild.visit();
                     else
                         break;

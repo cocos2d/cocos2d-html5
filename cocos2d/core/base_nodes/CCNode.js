@@ -103,8 +103,9 @@ cc.s_globalOrderOfArrival = 1;
  * };
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
-    _zOrder:0,
-    _vertexZ:0.0,
+    _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node
+    _globalZOrder: 0,                                    ///< Global order used to sort the node
+    _vertexZ: 0.0,
 
     _rotationX:0,
     _rotationY:0.0,
@@ -144,6 +145,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _actionManager:null,
     _scheduler:null,
+    _eventDispatcher: null,
 
     _initializedNode:false,
     _additionalTransformDirty:false,
@@ -165,6 +167,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
+        this._eventDispatcher = director.getEventDispatcher();
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         if(cc.ComponentContainer){
@@ -322,11 +325,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     * Changes the Y skew angle of the node in degrees.
-     *
-     * This angle describes the shear distortion in the Y direction.
-     * Thus, it is the angle between the X axis and the bottom edge of the shape
-     * The default skewY angle is 0. Positive values distort the node in a CCW direction.
+     * Changes the Y skew angle of the node in degrees.                                                        <br/>
+     *                                                                                                         <br/>
+     * This angle describes the shear distortion in the Y direction.                                           <br/>
+     * Thus, it is the angle between the X axis and the bottom edge of the shape                               <br/>
+     * The default skewY angle is 0. Positive values distort the node in a CCW direction.                      <br/>
      * </p>
      * @param {Number} newSkewY  The Y skew angle of the node in degrees.
      */
@@ -336,27 +339,49 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * zOrder getter
-     * @return {Number}
+     * <p> LocalZOrder is the 'key' used to sort the node relative to its siblings.                                    <br/>
+     *                                                                                                                 <br/>
+     * The Node's parent will sort all its children based ont the LocalZOrder value.                                   <br/>
+     * If two nodes have the same LocalZOrder, then the node that was added first to the children's array              <br/>
+     * will be in front of the other node in the array.                                                                <br/>
+     *                                                                                                                 <br/>
+     * Also, the Scene Graph is traversed using the "In-Order" tree traversal algorithm ( http://en.wikipedia.org/wiki/Tree_traversal#In-order )                <br/>
+     * And Nodes that have LocalZOder values < 0 are the "left" subtree                                                 <br/>
+     * While Nodes with LocalZOder >=0 are the "right" subtree.    </p>
+     * @param {Number} localZOrder
      */
-    getZOrder:function () {
-        return this._zOrder;
+    setLocalZOrder: function (localZOrder) {
+        this._localZOrder = localZOrder;
+        if (this._parent)
+            this._parent.reorderChild(this, localZOrder);
+        this._eventDispatcher._setDirtyForNode(this);
     },
 
     /**
-     * <p>
-     *     Sets the z order which stands for the drawing order                                                     <br/>
-     *                                                                                                             <br/>
-     *     This is an internal method. Don't call it outside the framework.                                        <br/>
-     *     The difference between setZOrder(int) and _setOrder(int) is:                                            <br/>
-     *        - _setZOrder(int) is a pure setter for m_nZOrder member variable                                    <br/>
-     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's children array.
-     * </p>
-     * @param {Number} z
+     * Helper function used by `setLocalZOrder`. Don't use it unless you know what you are doing.
+     * @param {Number} localZOrder
      * @private
      */
-    _setZOrder:function (z) {
-        this._zOrder = z;
+    _setLocalZOrder: function (localZOrder) {
+        this._localZOrder = localZOrder;
+    },
+
+    /**
+     * Gets the local Z order of this node.
+     * @returns {Number} The local (relative to its siblings) Z order.
+     */
+    getLocalZOrder: function () {
+        return this._localZOrder;
+    },
+
+    /**
+     * zOrder getter
+     * @return {Number}
+     * @deprecated
+     */
+    getZOrder: function () {
+        cc.log("getZOrder is deprecated. Please use getLocalZOrder instead.");
+        return this.getLocalZOrder();
     },
 
     /**
@@ -369,11 +394,41 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *      Please refer to setVertexZ(float) for the difference.
      * </p>
      * @param {Number} z Z order of this node.
+     * @deprecated
      */
-    setZOrder:function (z) {
-        this._setZOrder(z);
-        if (this._parent)
-            this._parent.reorderChild(this, z);
+    setZOrder: function (z) {
+        cc.log("setZOrder is deprecated. Please use setLocalZOrder instead.");
+        this.setLocalZOrder(z);
+    },
+
+    /**
+     * <p>Defines the oder in which the nodes are renderer.                                                                               <br/>
+     * Nodes that have a Global Z Order lower, are renderer first.                                                                        <br/>
+     *                                                                                                                                    <br/>
+     * In case two or more nodes have the same Global Z Order, the oder is not guaranteed.                                                <br/>
+     * The only exception if the Nodes have a Global Z Order == 0. In that case, the Scene Graph order is used.                           <br/>
+     *                                                                                                                                    <br/>
+     * By default, all nodes have a Global Z Order = 0. That means that by default, the Scene Graph order is used to render the nodes.    <br/>
+     *                                                                                                                                    <br/>
+     * Global Z Order is useful when you need to render nodes in an order different than the Scene Graph order.                           <br/>
+     *                                                                                                                                    <br/>
+     * Limitations: Global Z Order can't be used used by Nodes that have SpriteBatchNode as one of their ancestors.                       <br/>
+     * And if ClippingNode is one of the ancestors, then "global Z order" will be relative to the ClippingNode.   </p>
+     * @param {Number} globalZOrder
+     */
+    setGlobalZOrder: function (globalZOrder) {
+        if (this._globalZOrder != globalZOrder) {
+            this._globalZOrder = globalZOrder;
+            this._eventDispatcher._setDirtyForNode(this);
+        }
+    },
+
+    /**
+     * Returns the Node's Global Z Order.
+     * @returns {number} The node's global Z order
+     */
+    getGlobalZOrder: function () {
+        return this._globalZOrder;
     },
 
     /**
@@ -1003,10 +1058,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
      *
      * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [localZOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
-    addChild:function (child, zOrder, tag) {
+    addChild:function (child, localZOrder, tag) {
         if(!child)
             throw "cc.Node.addChild(): child must be non-null";
         if (child === this) {
@@ -1019,7 +1074,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
         }
 
-        var tmpzOrder = (zOrder != null) ? zOrder : child._zOrder;
+        var tmpzOrder = (localZOrder != null) ? localZOrder : child._localZOrder;
         child._tag = (tag != null) ? tag : child._tag;
         this._insertChild(child, tmpzOrder);
         child._parent = this;
@@ -1211,8 +1266,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 tempChild =  _children[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
                     _children[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  _children[j];
@@ -1747,7 +1802,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             // draw children zOrder < 0
             for (i = 0; i < len; i++) {
                 child = children[i];
-                if (child._zOrder < 0)
+                if (child._localZOrder < 0)
                     child.visit(context);
                 else
                     break;
@@ -1787,7 +1842,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this.sortAllChildren();
             // draw children zOrder < 0
             for (i = 0; i < childLen; i++) {
-                if (locChildren[i] && locChildren[i]._zOrder < 0)
+                if (locChildren[i] && locChildren[i]._localZOrder < 0)
                     locChildren[i].visit();
                 else
                     break;

@@ -109,7 +109,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
         }
         this._boneData = boneData;
         this._name = this._boneData.name;
-        this._zOrder = this._boneData.zOrder;
+        this._localZOrder = this._boneData.zOrder;
         this._displayManager.initDisplayList(boneData);
     },
 
@@ -407,7 +407,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * @param {Number}
         */
     setZOrder:function (zOrder) {
-        if (this._zOrder != zOrder)
+        if (this._localZOrder != zOrder)
             cc.Node.prototype.setZOrder.call(this, zOrder);
     },
 
