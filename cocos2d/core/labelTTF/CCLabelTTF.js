@@ -347,7 +347,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return false;
 
         // shader program
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
 
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);
@@ -1003,6 +1003,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._quadDirty = true;
     }
 });
+
+cc.defineGetterSetter(cc.LabelTTF.prototype, "size", cc.LabelTTF.prototype.getContentSize);
 
 if(cc.Browser.supportWebGL){
     cc.LabelTTF.prototype.setColor = cc.Sprite.prototype.setColor;

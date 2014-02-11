@@ -1747,7 +1747,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             //else
             this._setupVBO();
 
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         }
 
         return true;
@@ -2645,6 +2645,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         return true;
     }
 });
+
+var proto = cc.ParticleSystem.prototype;
+cc.defineGetterSetter(proto, "rotation", null, proto.setRotation);
+cc.defineGetterSetter(proto, "scale", null, proto.setScale);
+cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
+cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+delete proto;
 
 /**
  * <p> return the string found by key in dict. <br/>

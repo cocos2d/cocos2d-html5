@@ -688,6 +688,40 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.setNodeDirty();
     },
 
+	_getAnchor: function() {
+		return this._anchorPoint;
+	},
+	_setAnchor: function(p) {
+		var x = p.x, y = p.y;
+		if(this._anchorPoint._x !== x) {
+			this._anchorPoint._x = x;
+			this._anchorPointInPoints._x = this._contentSize._width * x;
+		}
+		if(this._anchorPoint._y !== y) {
+			this._anchorPoint._y = y;
+			this._anchorPointInPoints._y = this._contentSize._height * y;
+		}
+		this.setNodeDirty();
+	},
+	_getAnchorX: function() {
+		return this._anchorPoint._x;
+	},
+	_setAnchorX: function(x) {
+		if(this._anchorPoint._x === x) return;
+		this._anchorPoint._x = x;
+		this._anchorPointInPoints._x = this._contentSize._width * x;
+		this.setNodeDirty();
+	},
+	_getAnchorY: function() {
+		return this._anchorPoint._y;
+	},
+	_setAnchorY: function(y) {
+		if(this._anchorPoint._y === y) return;
+		this._anchorPoint._y = y;
+		this._anchorPointInPoints._y = this._contentSize._height * y;
+		this.setNodeDirty();
+	},
+
     /**
      *  The anchorPoint in absolute pixels.  <br/>
      *  you can only read it. If you wish to modify it, use anchorPoint instead
@@ -698,6 +732,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getAnchorPointInPoints:function () {
         return this._anchorPointInPoints;
     },
+
+	_getWidth: function() {
+		return this._contentSize._width;
+	},
+	_setWidth: function(width) {
+		this._contentSize._width = width;
+		this.setNodeDirty();
+	},
+	_getHeight: function() {
+		return this._contentSize._height;
+	},
+	_setHeight: function(height) {
+		this._contentSize._height = height;
+		this.setNodeDirty();
+	},
 
     /**
      * <p>The untransformed size of the node. <br/>
@@ -2127,55 +2176,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     }
 });
 
-var temp = {
-	getWidth: function() {
-		return this._contentSize._width;
-	},
-	setWidth: function(width) {
-		this._contentSize._width = width;
-		this.setNodeDirty();
-	},
-	getHeight: function() {
-		return this._contentSize._height;
-	},
-	setHeight: function(height) {
-		this._contentSize._height = height;
-		this.setNodeDirty();
-	},
-	getAnchor: function() {
-		return this._anchorPoint;
-	},
-	setAnchor: function(p) {
-		var x = p.x, y = p.y;
-		if(this._anchorPoint._x !== x) {
-			this._anchorPoint._x = x;
-			this._anchorPointInPoints._x = this._contentSize._width * x;
-		}
-		if(this._anchorPoint._y !== y) {
-			this._anchorPoint._y = y;
-			this._anchorPointInPoints._y = this._contentSize._height * y;
-		}
-		this.setNodeDirty();
-	},
-	getAnchorX: function() {
-		return this._anchorPoint._x;
-	},
-	setAnchorX: function(x) {
-		if(this._anchorPoint._x === x) return;
-		this._anchorPoint._x = x;
-		this._anchorPointInPoints._x = this._contentSize._width * x;
-		this.setNodeDirty();
-	},
-	getAnchorY: function() {
-		return this._anchorPoint._y;
-	},
-	setAnchorY: function(y) {
-		if(this._anchorPoint._y === y) return;
-		this._anchorPoint._y = y;
-		this._anchorPointInPoints._y = this._contentSize._height * y;
-		this.setNodeDirty();
-	}
-};
 var proto = cc.Node.prototype;
 
 cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
@@ -2185,22 +2185,22 @@ proto.pos;
 cc.defineGetterSetter(proto, "pos", proto.getPosition, proto.setPosition);
 /** @expose */
 proto.width;
-cc.defineGetterSetter(proto, "width", temp.getWidth, temp.setWidth);
+cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
 /** @expose */
 proto.height;
-cc.defineGetterSetter(proto, "height", temp.getHeight, temp.setHeight);
+cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
 /** @expose */
 proto.size;
 cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
 /** @expose */
 proto.anchor;
-cc.defineGetterSetter(proto, "anchor", temp.getAnchor, temp.setAnchor);
+cc.defineGetterSetter(proto, "anchor", proto._getAnchor, proto._setAnchor);
 /** @expose */
 proto.anchorX;
-cc.defineGetterSetter(proto, "anchorX", temp.getAnchorX, temp.setAnchorX);
+cc.defineGetterSetter(proto, "anchorX", proto._getAnchorX, proto._setAnchorX);
 /** @expose */
 proto.anchorY;
-cc.defineGetterSetter(proto, "anchorY", temp.getAnchorY, temp.setAnchorY);
+cc.defineGetterSetter(proto, "anchorY", proto._getAnchorY, proto._setAnchorY);
 /** @expose */
 proto.skewX;
 cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
@@ -2272,29 +2272,30 @@ cc.defineGetterSetter(proto, "scheduler", proto.getScheduler, proto.setScheduler
 proto.grid;
 cc.defineGetterSetter(proto, "grid", proto.getGrid, proto.setGrid);
 /** @expose */
-proto.shader;
-cc.defineGetterSetter(proto, "shader", proto.getShaderProgram, proto.setShaderProgram);
+proto.shaderProgram;
+cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
 /** @expose */
 proto.glServerState;
 cc.defineGetterSetter(proto, "glServerState", proto.getGLServerState, proto.setGLServerState);
 
-delete temp;
-
 if(cc.Browser.supportWebGL){
     //WebGL
-    cc.Node.prototype.ctor = cc.Node.prototype._ctorForWebGL;
-    cc.Node.prototype.setNodeDirty = cc.Node.prototype._setNodeDirtyForWebGL;
-    cc.Node.prototype.visit = cc.Node.prototype._visitForWebGL;
-    cc.Node.prototype.transform = cc.Node.prototype._transformForWebGL;
-    cc.Node.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
+    proto.ctor = proto._ctorForWebGL;
+    proto.setNodeDirty = proto._setNodeDirtyForWebGL;
+    proto.visit = proto._visitForWebGL;
+    proto.transform = proto._transformForWebGL;
+    proto.nodeToParentTransform = proto._nodeToParentTransformForWebGL;
 }else{
     //Canvas
-    cc.Node.prototype.ctor = cc.Node.prototype._ctorForCanvas;
-    cc.Node.prototype.setNodeDirty = cc.Node.prototype._setNodeDirtyForCanvas;
-    cc.Node.prototype.visit = cc.Node.prototype._visitForCanvas;
-    cc.Node.prototype.transform = cc.Node.prototype._transformForCanvas;
-    cc.Node.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForCanvas;
+    proto.ctor = proto._ctorForCanvas;
+    proto.setNodeDirty = proto._setNodeDirtyForCanvas;
+    proto.visit = proto._visitForCanvas;
+    proto.transform = proto._transformForCanvas;
+    proto.nodeToParentTransform = proto._nodeToParentTransformForCanvas;
 }
+
+delete temp;
+delete proto;
 
 /**
  * allocates and initializes a node.

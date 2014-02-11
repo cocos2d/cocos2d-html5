@@ -478,13 +478,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _spriteFrameLoadedCallback:null,
 
     _spriteFrameLoadedCallbackForWebGL:function(spriteFrame){
-        this.setNodeDirty();
+        this.setNodeDirty(true);
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
         this._callLoadedEventCallbacks();
     },
 
     _spriteFrameLoadedCallbackForCanvas:function(spriteFrame){
-        this.setNodeDirty();
+        this.setNodeDirty(true);
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
         var curColor = this.getColor();
         if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
@@ -617,155 +617,39 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // cc.Node property overloads
     //
 
-    /**
-     * set Recursively is or isn't Dirty
-     * used only when parent is cc.SpriteBatchNode
-     * @param {Boolean} value
-     */
-    setDirtyRecursively:function (value) {
-        this._recursiveDirty = value;
-        this.setDirty(value);
-        // recursively set dirty
-        var locChildren = this._children;
-        if (locChildren != null) {
-            for (var i = 0; i < locChildren.length; i++) {
-                if (locChildren[i] instanceof cc.Sprite)
-                    locChildren[i].setDirtyRecursively(true);
-            }
-        }
-    },
+	/**
+	 * set Recursively is or isn't Dirty
+	 * used only when parent is cc.SpriteBatchNode
+	 * @param {Boolean} value
+	 */
+	setDirtyRecursively:function (value) {
+		this._recursiveDirty = value;
+		this._dirty = value;
+		// recursively set dirty
+		var locChildren = this._children, child, l = locChildren ? locChildren.length : 0;
+		for (var i = 0; i < l; i++) {
+			child = locChildren[i];
+			(child instanceof cc.Sprite) && child.setDirtyRecursively(true);
+		}
+	},
 
-    /**
-     * HACK: optimization
-     */
-    SET_DIRTY_RECURSIVELY:function () {
-        if (this._batchNode && !this._recursiveDirty) {
-            this._recursiveDirty = true;
-            this._dirty = true;
-            if (this._hasChildren)
-                this.setDirtyRecursively(true);
-        }
-    },
-
-    /**
-     * position setter (override cc.Node )
-     * @param {cc.Point|Number} pos position or x value of position
-     * @param {Number} [yValue] y value of position
-     * @override
-     */
-    setPosition:function (pos, yValue) {
-        if (arguments.length >= 2)
-            cc.Node.prototype.setPosition.call(this, pos, arguments[1]);
-        else
-            cc.Node.prototype.setPosition.call(this, pos);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * Rotation setter (override cc.Node )
-     * @param {Number} rotation
-     * @override
-     */
-    setRotation:function (rotation) {
-        cc.Node.prototype.setRotation.call(this, rotation);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    setRotationX:function (rotationX) {
-        cc.Node.prototype.setRotationX.call(this, rotationX);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    setRotationY:function (rotationY) {
-        cc.Node.prototype.setRotationY.call(this, rotationY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * SkewX setter (override cc.Node )
-     * @param {Number} sx SkewX value
-     * @override
-     */
-    setSkewX:function (sx) {
-        cc.Node.prototype.setSkewX.call(this, sx);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * SkewY setter (override cc.Node )
-     * @param {Number} sy SkewY value
-     * @override
-     */
-    setSkewY:function (sy) {
-        cc.Node.prototype.setSkewY.call(this, sy);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * ScaleX setter (override cc.Node )
-     * @param {Number} scaleX
-     * @override
-     */
-    setScaleX:function (scaleX) {
-        cc.Node.prototype.setScaleX.call(this, scaleX);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * ScaleY setter (override cc.Node )
-     * @param {Number} scaleY
-     * @override
-     */
-    setScaleY:function (scaleY) {
-        cc.Node.prototype.setScaleY.call(this, scaleY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * <p>The scale factor of the node. 1.0 is the default scale factor. <br/>
-     * It modifies the X and Y scale at the same time. (override cc.Node ) <p/>
-     * @param {Number} scale
-     * @param {Number|null} [scaleY=]
-     * @override
-     */
-    setScale:function (scale, scaleY) {
-        cc.Node.prototype.setScale.call(this, scale, scaleY);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * VertexZ setter (override cc.Node )
-     * @param {Number} vertexZ
-     * @override
-     */
-    setVertexZ:function (vertexZ) {
-        cc.Node.prototype.setVertexZ.call(this, vertexZ);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * Sets the anchor point in percent. (override cc.Node )
-     * @param {cc.Point|Number} anchor The anchor Sprite of Sprite or The anchor point.x of Sprite.
-     * @param {Number} [y] The anchor point.y of Sprite.
-     * @override
-     */
-    setAnchorPoint:function (anchor, y) {
-        if(arguments.length === 2)
-            cc.Node.prototype.setAnchorPoint.call(this, anchor, y);
-        else
-            cc.Node.prototype.setAnchorPoint.call(this, anchor);
-        this.SET_DIRTY_RECURSIVELY();
-    },
-
-    /**
-     * visible setter  (override cc.Node )
-     * @param {Boolean} visible
-     * @override
-     */
-    setVisible:function (visible) {
-        cc.Node.prototype.setVisible.call(this, visible);
-        this.SET_DIRTY_RECURSIVELY();
-    },
+	/**
+	 * Make the node dirty
+	 * @param {Boolean} norecursive When true children will not be set dirty recursively, by default, they will be.
+	 * @override
+	 */
+	setNodeDirty: function(norecursive) {
+		this._super();
+		// Lazy set dirty
+		if (!norecursive && this._batchNode && !this._recursiveDirty) {
+			if (this._hasChildren)
+				this.setDirtyRecursively(true);
+			else {
+				this._recursiveDirty = true;
+				this._dirty = true;
+			}
+		}
+	},
 
     /**
      * IsRelativeAnchorPoint setter  (override cc.Node )
@@ -788,7 +672,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (this._flippedX != flippedX) {
             this._flippedX = flippedX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty();
+            this.setNodeDirty(true);
         }
     },
 
@@ -800,7 +684,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (this._flippedY != flippedY) {
             this._flippedY = flippedY;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
-            this.setNodeDirty();
+            this.setNodeDirty(true);
         }
     },
 
@@ -851,7 +735,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setOpacityModifyRGBForCanvas: function (modify) {
         if (this._opacityModifyRGB !== modify) {
             this._opacityModifyRGB = modify;
-            this.setNodeDirty();
+            this.setNodeDirty(true);
         }
     },
 
@@ -1678,7 +1562,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     setDisplayFrame: null,
 
     _setDisplayFrameForWebGL: function (newFrame) {
-        this.setNodeDirty();
+        this.setNodeDirty(true);
         var frameOffset = newFrame.getOffset();
         this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
         this._unflippedOffsetPositionFromCenter._y = frameOffset.y;
@@ -1707,7 +1591,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _setDisplayFrameForCanvas: function (newFrame) {
-        this.setNodeDirty();
+        this.setNodeDirty(true);
 
         var frameOffset = newFrame.getOffset();
         this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
@@ -1849,9 +1733,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (texture)
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         else
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         if (!this._batchNode && this._texture != texture) {
             this._texture = texture;
@@ -2144,47 +2028,51 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     }
 });
 
+var proto = cc.Sprite.prototype;
+cc.defineGetterSetter(proto, "ignoreAnchor", null, proto.ignoreAnchorPointForPosition);
+
 if(cc.Browser.supportWebGL){
-    cc.Sprite.prototype._spriteFrameLoadedCallback = cc.Sprite.prototype._spriteFrameLoadedCallbackForWebGL;
-    cc.Sprite.prototype.setOpacityModifyRGB = cc.Sprite.prototype._setOpacityModifyRGBForWebGL;
-    cc.Sprite.prototype.updateDisplayedOpacity = cc.Sprite.prototype._updateDisplayedOpacityForWebGL;
-    cc.Sprite.prototype.ctor = cc.Sprite.prototype._ctorForWebGL;
-    cc.Sprite.prototype.setBlendFunc = cc.Sprite.prototype._setBlendFuncForWebGL;
-    cc.Sprite.prototype.init = cc.Sprite.prototype._initForWebGL;
-    cc.Sprite.prototype.initWithTexture = cc.Sprite.prototype._initWithTextureForWebGL;
-    cc.Sprite.prototype._textureLoadedCallback = cc.Sprite.prototype._textureLoadedCallbackForWebGL;
-    cc.Sprite.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
-    cc.Sprite.prototype.updateTransform = cc.Sprite.prototype._updateTransformForWebGL;
-    cc.Sprite.prototype.addChild = cc.Sprite.prototype._addChildForWebGL;
-    cc.Sprite.prototype.setOpacity = cc.Sprite.prototype._setOpacityForWebGL;
-    cc.Sprite.prototype.setColor = cc.Sprite.prototype._setColorForWebGL;
-    cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForWebGL;
-    cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForWebGL;
-    cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForWebGL;
-    cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForWebGL;
-    cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForWebGL;
-    cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForWebGL;
+	proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForWebGL;
+	proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForWebGL;
+	proto.updateDisplayedOpacity = proto._updateDisplayedOpacityForWebGL;
+	proto.ctor = proto._ctorForWebGL;
+    proto.setBlendFunc = proto._setBlendFuncForWebGL;
+    proto.init = proto._initForWebGL;
+    proto.initWithTexture = proto._initWithTextureForWebGL;
+    proto._textureLoadedCallback = proto._textureLoadedCallbackForWebGL;
+    proto.setTextureRect = proto._setTextureRectForWebGL;
+    proto.updateTransform = proto._updateTransformForWebGL;
+    proto.addChild = proto._addChildForWebGL;
+    proto.setOpacity = proto._setOpacityForWebGL;
+    proto.setColor = proto._setColorForWebGL;
+    proto.updateDisplayedColor = proto._updateDisplayedColorForWebGL;
+    proto.setDisplayFrame = proto._setDisplayFrameForWebGL;
+    proto.isFrameDisplayed = proto._isFrameDisplayedForWebGL;
+    proto.setBatchNode = proto._setBatchNodeForWebGL;
+    proto.setTexture = proto._setTextureForWebGL;
+    proto.draw = proto._drawForWebGL;
 }else{
-    cc.Sprite.prototype._spriteFrameLoadedCallback = cc.Sprite.prototype._spriteFrameLoadedCallbackForCanvas;
-    cc.Sprite.prototype.setOpacityModifyRGB = cc.Sprite.prototype._setOpacityModifyRGBForCanvas;
-    cc.Sprite.prototype.updateDisplayedOpacity = cc.Sprite.prototype._updateDisplayedOpacityForCanvas;
-    cc.Sprite.prototype.ctor = cc.Sprite.prototype._ctorForCanvas;
-    cc.Sprite.prototype.setBlendFunc = cc.Sprite.prototype._setBlendFuncForCanvas;
-    cc.Sprite.prototype.init = cc.Sprite.prototype._initForCanvas;
-    cc.Sprite.prototype.initWithTexture = cc.Sprite.prototype._initWithTextureForCanvas;
-    cc.Sprite.prototype._textureLoadedCallback = cc.Sprite.prototype._textureLoadedCallbackForCanvas;
-    cc.Sprite.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForCanvas;
-    cc.Sprite.prototype.updateTransform = cc.Sprite.prototype._updateTransformForCanvas;
-    cc.Sprite.prototype.addChild = cc.Sprite.prototype._addChildForCanvas;
-    cc.Sprite.prototype.setOpacity = cc.Sprite.prototype._setOpacityForCanvas;
-    cc.Sprite.prototype.setColor = cc.Sprite.prototype._setColorForCanvas;
-    cc.Sprite.prototype.updateDisplayedColor = cc.Sprite.prototype._updateDisplayedColorForCanvas;
-    cc.Sprite.prototype.setDisplayFrame = cc.Sprite.prototype._setDisplayFrameForCanvas;
-    cc.Sprite.prototype.isFrameDisplayed = cc.Sprite.prototype._isFrameDisplayedForCanvas;
-    cc.Sprite.prototype.setBatchNode = cc.Sprite.prototype._setBatchNodeForCanvas;
-    cc.Sprite.prototype.setTexture = cc.Sprite.prototype._setTextureForCanvas;
-    cc.Sprite.prototype.draw = cc.Sprite.prototype._drawForCanvas;
+    proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForCanvas;
+    proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForCanvas;
+    proto.updateDisplayedOpacity = proto._updateDisplayedOpacityForCanvas;
+    proto.ctor = proto._ctorForCanvas;
+    proto.setBlendFunc = proto._setBlendFuncForCanvas;
+    proto.init = proto._initForCanvas;
+    proto.initWithTexture = proto._initWithTextureForCanvas;
+    proto._textureLoadedCallback = proto._textureLoadedCallbackForCanvas;
+    proto.setTextureRect = proto._setTextureRectForCanvas;
+    proto.updateTransform = proto._updateTransformForCanvas;
+    proto.addChild = proto._addChildForCanvas;
+    proto.setOpacity = proto._setOpacityForCanvas;
+    proto.setColor = proto._setColorForCanvas;
+    proto.updateDisplayedColor = proto._updateDisplayedColorForCanvas;
+    proto.setDisplayFrame = proto._setDisplayFrameForCanvas;
+    proto.isFrameDisplayed = proto._isFrameDisplayedForCanvas;
+    proto.setBatchNode = proto._setBatchNodeForCanvas;
+    proto.setTexture = proto._setTextureForCanvas;
+    proto.draw = proto._drawForCanvas;
 }
+delete proto;
 
 /**
  * <p>

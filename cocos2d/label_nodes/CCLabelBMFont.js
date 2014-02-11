@@ -1228,18 +1228,22 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {Number} [y] The anchor point.y of labelBMFont.
      */
     setAnchorPoint:function (point, y) {
-        var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            cc.Node.prototype.setAnchorPoint.call(this, point, y);
-        } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            cc.Node.prototype.setAnchorPoint.call(this, point);
-        }
+	    cc.Node.prototype.setAnchorPoint.call(this, point, y);
         this.updateLabel();
     },
+
+	_setAnchor: function(p) {
+		cc.Node.prototype._setAnchor.call(this, p);
+		this.updateLabel();
+	},
+	_setAnchorX: function(x) {
+		cc.Node.prototype._setAnchorX.call(this, x);
+		this.updateLabel();
+	},
+	_setAnchorY: function(y) {
+		cc.Node.prototype._setAnchorY.call(this, y);
+		this.updateLabel();
+	},
 
     _atlasNameFromFntFile:function (fntFile) {
     },
@@ -1263,6 +1267,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         return sp.getPositionX() * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     }
 });
+
+var proto = cc.LabelBMFont.prototype;
+cc.defineGetterSetter(proto, "anchor", null, proto._setAnchor);
+cc.defineGetterSetter(proto, "anchorX", null, proto._setAnchorX);
+cc.defineGetterSetter(proto, "anchorY", null, proto._setAnchorY);
+cc.defineGetterSetter(proto, "scale", null, proto.setScale);
+cc.defineGetterSetter(proto, "scaleX", null, proto.setScaleX);
+cc.defineGetterSetter(proto, "scaleY", null, proto.setScaleY);
+delete proto;
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file
