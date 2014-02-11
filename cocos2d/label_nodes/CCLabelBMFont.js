@@ -759,7 +759,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._contentSize._width = 0;
             this._contentSize._height = 0;
 
-            this.setAnchorPoint(0.5, 0.5);
+            this.anchorX = 0.5;
+	        this.anchorY = 0.5;
 
             if (cc.renderContextType === cc.WEBGL) {
                 var locTexture = this._textureAtlas.getTexture();
@@ -1260,11 +1261,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.anchorX);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.anchorY);
     }
 });
 

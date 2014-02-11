@@ -266,7 +266,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     setLabel:function (label) {
         if (label) {
             this.addChild(label);
-            label.setAnchorPoint(0, 0);
+            label.anchorX = 0;
+	        label.anchorY = 0;
             this.size = label.size;
         }
 
@@ -633,7 +634,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
         if (normalImage) {
             this.addChild(normalImage, 0, cc.NORMAL_TAG);
-            normalImage.setAnchorPoint(0, 0);
+            normalImage.anchorX = 0;
+	        normalImage.anchorY = 0;
         }
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
@@ -666,7 +668,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (selectedImage) {
             this.addChild(selectedImage, 0, cc.SELECTED_TAG);
-            selectedImage.setAnchorPoint(0, 0);
+            selectedImage.anchorX = 0;
+	        selectedImage.anchorY = 0;
         }
 
         if (this._selectedImage) {
@@ -693,7 +696,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (disabledImage) {
             this.addChild(disabledImage, 0, cc.DISABLE_TAG);
-            disabledImage.setAnchorPoint(0, 0);
+            disabledImage.anchorX = 0;
+	        disabledImage.anchorY = 0;
         }
 
         if (this._disabledImage)

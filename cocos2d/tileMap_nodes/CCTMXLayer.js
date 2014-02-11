@@ -441,7 +441,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.setBatchNode(this);
             tile.pos = this.getPositionAt(pos);
             tile.setVertexZ(this._vertexZForPos(pos));
-            tile.setAnchorPoint(0,0);
+            tile.anchorX = 0;
+	        tile.anchorY = 0;
             tile.setOpacity(this._opacity);
 
             var indexForZ = this._atlasIndexForExistantZ(z);
@@ -868,7 +869,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         else
             sprite.tag = z;
 
-        sprite.setAnchorPoint(0,0);
+        sprite.anchorX = 0;
+	    sprite.anchorY = 0;
         sprite.setOpacity(this._opacity);
         if (cc.renderContextType === cc.WEBGL) {
             sprite.setRotation(0.0);
@@ -880,7 +882,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
-            sprite.setAnchorPoint(0.5, 0.5);
+            sprite.anchorX = 0.5;
+	        sprite.anchorY = 0.5;
             sprite.x = this.getPositionAt(pos).x + sprite.width / 2;
 	        sprite.y = this.getPositionAt(pos).y + sprite.height / 2;
 
