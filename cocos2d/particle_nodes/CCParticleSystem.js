@@ -195,10 +195,10 @@ cc.Particle.ModeB = function (angle, degreesPerSecond, radius, deltaRadius) {
   * Array of Point instances used to optimize particle updates
   */
 cc.Particle.TemporaryPoints = [
-    cc.p(),
-    cc.p(),
-    cc.p(),
-    cc.p()
+    cc.p(0, 0),
+    cc.p(0, 0),
+    cc.p(0, 0),
+    cc.p(0, 0)
 ];
 
 /**
