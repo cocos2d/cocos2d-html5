@@ -347,7 +347,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return false;
 
         // shader program
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM));
+        this.shader = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
 
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);
@@ -861,7 +861,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(locTexture);
 
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
             if (this._quadDirty) {

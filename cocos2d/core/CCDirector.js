@@ -1023,7 +1023,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // pop stack until reaching desired level
         while (c > level) {
             var current = locScenesStack.pop();
-            if (current.isRunning()) {
+            if (current.running) {
                 current.onExitTransitionDidStart();
                 current.onExit();
             }

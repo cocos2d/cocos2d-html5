@@ -61,11 +61,12 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     _initLayer:function () {
-        this.setAnchorPoint(0.5, 0.5);
+        this.anchorX = 0.5;
+	    this.anchorY = 0.5;
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
-        this.setContentSize(director.getWinSize());
+        this.size = director.getWinSize();
     },
 
     /**
@@ -946,7 +947,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             return false;
 
         if(cc.renderContextType !== cc.CANVAS)
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
+            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         var winSize = cc.Director.getInstance().getWinSize();
         color = color || new cc.Color4B(0, 0, 0, 255);
@@ -994,7 +995,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             locSquareVertices[3].x = size.width;
             locSquareVertices[3].y = size.height;
             this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this,size);
+            cc.Layer.prototype.setContentSize.call(this, size);
         }
     },
 
@@ -1180,9 +1181,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      */
     setContentSize:function(size, height){
         if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this,size, height);
+            cc.LayerColor.prototype.setContentSize.call(this, size, height);
         else
-            cc.LayerColor.prototype.setContentSize.call(this,size);
+            cc.LayerColor.prototype.setContentSize.call(this, size);
         this._updateColor();
     },
 

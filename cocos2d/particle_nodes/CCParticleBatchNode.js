@@ -80,7 +80,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._children.length = 0;
 
         if (cc.renderContextType === cc.WEBGL)
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -117,8 +117,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             throw "cc.ParticleBatchNode.addChild() : child should be non-null";
         if(!(child instanceof cc.ParticleSystem))
             throw "cc.ParticleBatchNode.addChild() : only supports cc.ParticleSystem as children";
-        zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
-        tag = (tag == null) ? child.getTag() : tag;
+        zOrder = (zOrder == null) ? child.zIndex : zOrder;
+        tag = (tag == null) ? child.tag : tag;
 
         if(child.getTexture() != this._textureAtlas.getTexture())
             throw "cc.ParticleSystem.addChild() : the child is not using the same texture id";
@@ -223,7 +223,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             return;
         }
 
-        if (zOrder == child.getZOrder())
+        if (zOrder == child.zIndex)
             return;
 
         // no reordering if only 1 child
@@ -413,7 +413,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         var locChildren = this._children;
         var count = locChildren.length;
         for (var i = 0; i < count; i++) {
-            if (locChildren[i].getZOrder() > z)
+            if (locChildren[i].zIndex > z)
                 return i;
         }
         return count;
@@ -431,7 +431,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         for (var i = 0; i < count; i++) {
             var pNode = locChildren[i];
             // new index
-            if (pNode.getZOrder() > z && !foundNewIdx) {
+            if (pNode.zIndex > z && !foundNewIdx) {
                 newIndex = i;
                 foundNewIdx = true;
 
@@ -470,7 +470,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _addChildHelper:function (child, z, aTag) {
         if(!child)
             throw "cc.ParticleBatchNode._addChildHelper(): child should be non-null";
-        if(child.getParent()){
+        if(child.parent){
             cc.log("cc.ParticleBatchNode._addChildHelper(): child already added. It can't be added again");
             return null;
         }
@@ -483,9 +483,9 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         var pos = this._searchNewPositionInChildrenForZ(z);
 
         this._children = cc.ArrayAppendObjectToIndex(this._children, child, pos);
-        child.setTag(aTag);
+        child.tag = aTag;
         child._setZOrder(z);
-        child.setParent(this);
+        child.parent = this;
         if (this._running) {
             child.onEnter();
             child.onEnterTransitionDidFinish();

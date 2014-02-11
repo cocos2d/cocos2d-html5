@@ -200,8 +200,9 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             texture = cc.TextureCache.getInstance().addImage(texture);
 
         cc.Node.prototype.setPosition.call(this, cc.PointZero());
-        this.setAnchorPoint(0,0);
-        this.ignoreAnchorPointForPosition(true);
+        this.anchorX = 0;
+	    this.anchorY = 0;
+        this.ignoreAnchor = true;
         this._startingPositionInitialized = false;
 
         this._fastMode = true;
@@ -232,7 +233,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
 
         // shader program
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
         this.setTexture(texture);
         this.setColor(color);
@@ -298,7 +299,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         if(this._texture && this._texture.isLoaded()){
             ctx = ctx || cc.renderContext;
             cc.NODE_DRAW_SETUP(this);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
             cc.glBindTexture2D(this._texture);

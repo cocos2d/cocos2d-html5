@@ -555,3 +555,44 @@ cc.SizeFromString = function (content) {
 	if(!result) return cc.SizeZero();
 	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
 };
+
+
+/**
+ * Common getter setter configuration function
+ * @function
+ * @param {Object} proto    A class prototype or an object to config<br/>
+ * @param {String} prop     Property name
+ * @param {function} getter Getter function for the property
+ * @param {function} setter Setter function for the property
+ */
+cc.defineGetterSetter = function (proto, prop, getter, setter)
+{
+	if (proto.__defineGetter__) {
+		getter && proto.__defineGetter__(prop, getter);
+		setter && proto.__defineSetter__(prop, setter);
+		return;
+	}
+	if (Object.defineProperty) {
+		var desc = { enumerable: true, configurable: true };
+		getter && (desc.get = getter);
+		setter && (desc.set = setter);
+		Object.defineProperty(proto, prop, desc);
+		return;
+	}
+
+	throw new Error("browser does not support getters");
+}
+
+/**
+ * Common getter setter configuration function
+ * @function
+ * @param {Object} class    A class prototype or an object to config<br/>
+ * @param {String} prop     Property name
+ * @param {function} getter Getter function for the property
+ * @param {function} setter Setter function for the property
+ */
+cc.defineProtoGetterSetter = function (classobj, prop, getter, setter)
+{
+	var proto = classobj.prototype;
+	cc.defineGetterSetter(proto, prop, getter, setter);
+}

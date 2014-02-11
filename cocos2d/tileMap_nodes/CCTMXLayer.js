@@ -102,6 +102,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tempTexture.handleLoadedTexture();
             this._cacheTexture = tempTexture;
             this.setContentSize(locCanvas.width, locCanvas.height);
+	        // This class uses cache, so its default cachedParent should be himself
+	        this._cachedParent = this;
         }
     },
 
@@ -854,11 +856,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     alphaFuncValue = parseFloat(alphaFuncVal);
 
                 if (cc.renderContextType === cc.WEBGL) {
-                    this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST));
-                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.getShaderProgram().getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
+                    this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
+                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.shader.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
                     // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
-                    this.getShaderProgram().use();
-                    this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
+                    this.shader.use();
+                    this.shader.setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
                 }
             } else
                 this._vertexZvalue = parseInt(vertexz, 10);
@@ -871,7 +873,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (cc.renderContextType === cc.WEBGL)
             sprite.setVertexZ(this._vertexZForPos(pos));
         else
-            sprite.setTag(z);
+            sprite.tag = z;
 
         sprite.setAnchorPoint(0,0);
         sprite.setOpacity(this._opacity);
@@ -932,7 +934,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._reusedTile = new cc.Sprite();
             this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
             this._reusedTile.setBatchNode(this);
-            this._reusedTile.setParent(this);
+            this._reusedTile.parent = this;
         }
         return this._reusedTile;
     },
