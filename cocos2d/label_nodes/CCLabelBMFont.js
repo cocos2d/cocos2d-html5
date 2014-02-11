@@ -1228,16 +1228,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {Number} [y] The anchor point.y of labelBMFont.
      */
     setAnchorPoint:function (point, y) {
-        var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            cc.Node.prototype.setAnchorPoint.call(this, point, y);
-        } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            cc.Node.prototype.setAnchorPoint.call(this, point);
-        }
+	    cc.Node.prototype.setAnchorPoint.call(this, point, y);
         this.updateLabel();
     },
 
@@ -1284,7 +1275,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
-    if (arguments.length == 0) {
+    if (str === undefined) {
         if (ret && ret.init())
             return ret;
         return null;

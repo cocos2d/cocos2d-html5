@@ -252,14 +252,14 @@ ccs.DisplayManager = ccs.Class.extend({
         }
     },
 
-    containPoint:function (/*point|x,y*/) {
+    containPoint: function (point, y) {
         var p = cc.p(0, 0);
-        if (arguments.length == 1) {
-            p.x = arguments[0].x;
-            p.y = arguments[0].y;
-        } else if (arguments.length == 2) {
-            p.x = arguments[0];
-            p.y = arguments[1];
+        if (y === undefined) {
+            p.x = point.x;
+            p.y = point.y;
+        } else {
+            p.x = point;
+            p.y = y;
         }
         if (!this._visible || this._displayIndex < 0) {
             return false;

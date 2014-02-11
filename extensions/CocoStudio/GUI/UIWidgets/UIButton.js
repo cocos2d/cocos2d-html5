@@ -485,19 +485,18 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      * @param {Number} [y] The anchor point.y of UIButton.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this,point, y);
-            this._buttonNormalRenderer.setAnchorPoint(point, y);
-            this._buttonClickedRenderer.setAnchorPoint(point, y);
-            this._buttonDisableRenderer.setAnchorPoint(point, y);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._buttonNormalRenderer.setAnchorPoint(point);
+	        this._buttonClickedRenderer.setAnchorPoint(point);
+	        this._buttonDisableRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this,point);
-            this._buttonNormalRenderer.setAnchorPoint(point);
-            this._buttonClickedRenderer.setAnchorPoint(point);
-            this._buttonDisableRenderer.setAnchorPoint(point);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._buttonNormalRenderer.setAnchorPoint(point, y);
+	        this._buttonClickedRenderer.setAnchorPoint(point, y);
+	        this._buttonDisableRenderer.setAnchorPoint(point, y);
         }
+	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
     },
 
     onSizeChanged: function () {

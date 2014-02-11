@@ -552,12 +552,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
-        if (arguments.length == 2) {
-            locPosition._x = newPosOrxValue;
-            locPosition._y = yValue;
-        } else if (arguments.length == 1) {
+        if (yValue === undefined) {
             locPosition._x = newPosOrxValue.x;
             locPosition._y = newPosOrxValue.y;
+        }
+	    else {
+	        locPosition._x = newPosOrxValue;
+	        locPosition._y = yValue;
         }
         this.setNodeDirty();
     },
@@ -671,16 +672,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point;
-            locAnchorPoint._y = y;
+        if (y === undefined) {
+	        if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
+		        return;
+	        locAnchorPoint._x = point.x;
+	        locAnchorPoint._y = point.y;
         } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point.x;
-            locAnchorPoint._y = point.y;
+	        if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
+		        return;
+	        locAnchorPoint._x = point;
+	        locAnchorPoint._y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
         locAPP._x = locSize._width * locAnchorPoint._x;
@@ -722,16 +723,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if (arguments.length === 2) {
-            if ((size === locContentSize._width) && (height === locContentSize._height))
-                return;
-            locContentSize._width = size;
-            locContentSize._height = height;
+        if (height === undefined) {
+	        if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
+		        return;
+	        locContentSize._width = size.width;
+	        locContentSize._height = size.height;
         } else {
-            if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
-                return;
-            locContentSize._width = size.width;
-            locContentSize._height = size.height;
+	        if ((size === locContentSize._width) && (height === locContentSize._height))
+		        return;
+	        locContentSize._width = size;
+	        locContentSize._height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
         locAPP._x = locContentSize._width * locAnchorPoint._x;

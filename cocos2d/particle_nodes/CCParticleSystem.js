@@ -1345,7 +1345,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             if (this._blendFunc != src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();

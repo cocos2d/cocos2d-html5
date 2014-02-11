@@ -340,7 +340,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1){
+        if (dst === undefined){
             this._blendFunc.src = src.src;
             this._blendFunc.dst = src.dst;
         } else{

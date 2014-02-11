@@ -61,12 +61,11 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     _initLayer:function () {
-        this.anchorX = 0.5;
-	    this.anchorY = 0.5;
+        this.setAnchorPoint(0.5, 0.5);
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
-        this.size = director.getWinSize();
+        this.setContentSize(director.getWinSize());
     },
 
     /**
@@ -928,7 +927,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -947,7 +946,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             return false;
 
         if(cc.renderContextType !== cc.CANVAS)
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
 
         var winSize = cc.Director.getInstance().getWinSize();
         color = color || new cc.Color4B(0, 0, 0, 255);
@@ -982,21 +981,19 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     _setContentSizeForWebGL:function (size, height) {
         var locSquareVertices = this._squareVertices;
-        if(arguments.length === 2){
-            locSquareVertices[1].x = size;
-            locSquareVertices[2].y = height;
-            locSquareVertices[3].x = size;
-            locSquareVertices[3].y = height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size, height);
-        }else{
-            locSquareVertices[1].x = size.width;
-            locSquareVertices[2].y = size.height;
-            locSquareVertices[3].x = size.width;
-            locSquareVertices[3].y = size.height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size);
+        if (height === undefined) {
+	        locSquareVertices[1].x = size.width;
+	        locSquareVertices[2].y = size.height;
+	        locSquareVertices[3].x = size.width;
+	        locSquareVertices[3].y = size.height;
+        } else {
+	        locSquareVertices[1].x = size;
+	        locSquareVertices[2].y = height;
+	        locSquareVertices[3].x = size;
+	        locSquareVertices[3].y = height;
         }
+	    this._bindLayerVerticesBufferData();
+	    cc.Layer.prototype.setContentSize.call(this, size, height);
     },
 
     _updateColor:null,
@@ -1180,10 +1177,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-        if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this, size, height);
-        else
-            cc.LayerColor.prototype.setContentSize.call(this, size);
+	    cc.LayerColor.prototype.setContentSize.call(this,size, height);
         this._updateColor();
     },
 
