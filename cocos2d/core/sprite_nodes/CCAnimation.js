@@ -199,7 +199,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
     addSpriteFrameWithFile:function (fileName) {
         var texture = cc.TextureCache.getInstance().addImage(fileName);
         var rect = cc.RectZero();
-        rect._size = texture.getContentSize();
+        rect._size = texture.size;
         var frame = cc.SpriteFrame.createWithTexture(texture, rect);
         this.addSpriteFrame(frame);
     },

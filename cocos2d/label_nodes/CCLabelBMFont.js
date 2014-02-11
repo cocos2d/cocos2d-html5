@@ -535,7 +535,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
-            var size = this.getContentSize();
+            var size = this.size;
             var pos = cc.p(0 | ( -this._anchorPointInPoints._x), 0 | ( -this._anchorPointInPoints._y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
             cc.drawingUtil.setDrawColor4B(0,255,0,255);
@@ -667,7 +667,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             return;
         }
         var locElement, locTexture = this.getTexture();
-        if (locTexture && locTexture.getContentSize().width>0) {
+        if (locTexture && locTexture.width > 0) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;
@@ -883,7 +883,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         tmpSize.width = longestLine;
         tmpSize.height = totalHeight;
-        this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(tmpSize));
+        this.size = cc.SIZE_PIXELS_TO_POINTS(tmpSize);
     },
 
     /**
@@ -1091,15 +1091,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar.x + lastChar.getContentSize().width / 2;
+                    lineWidth = lastChar.x + lastChar.width / 2;
 
                     var shift = 0;
                     switch (this._alignment) {
                         case cc.TEXT_ALIGNMENT_CENTER:
-                            shift = this.getContentSize().width / 2 - lineWidth / 2;
+                            shift = this.width / 2 - lineWidth / 2;
                             break;
                         case cc.TEXT_ALIGNMENT_RIGHT:
-                            shift = this.getContentSize().width - lineWidth;
+                            shift = this.width - lineWidth;
                             break;
                         default:
                             break;
@@ -1260,11 +1260,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.x * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.getAnchorPoint().x);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.x * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.getAnchorPoint().x);
     }
 });
 
@@ -1301,7 +1301,7 @@ delete proto;
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
-    if (arguments.length == 0) {
+    if (str === undefined) {
         if (ret && ret.init())
             return ret;
         return null;

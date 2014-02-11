@@ -847,27 +847,31 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     /**
      * change width and height in Points
+     * @deprecated
      * @param {Number} w width
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(w, h);
+        this.width = w;
+	    this.height = h;
     },
 
     /**
      * change width in Points
+     * @deprecated
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(w, this._contentSize._height);
+        this.width = w;
     },
 
     /**
      * change height in Points
+     * @deprecated
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(this._contentSize._width, h);
+        this.height = h;
     },
 
     /**
@@ -935,7 +939,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -958,8 +962,8 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
         var winSize = cc.Director.getInstance().getWinSize();
         color = color || new cc.Color4B(0, 0, 0, 255);
-        width = width || winSize.width;
-        height = height || winSize.height;
+	    this.width = width || winSize.width;
+        this.height = height || winSize.height;
 
         var locDisplayedColor = this._displayedColor;
         locDisplayedColor.r = color.r;
@@ -974,7 +978,6 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         this._displayedOpacity = color.a;
         this._realOpacity = color.a;
 
-        this.setContentSize(width, height);
         this._updateColor();
         return true;
     },
@@ -989,21 +992,20 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     _setContentSizeForWebGL:function (size, height) {
         var locSquareVertices = this._squareVertices;
-        if(arguments.length === 2){
-            locSquareVertices[1].x = size;
-            locSquareVertices[2].y = height;
-            locSquareVertices[3].x = size;
-            locSquareVertices[3].y = height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size, height);
-        }else{
-            locSquareVertices[1].x = size.width;
-            locSquareVertices[2].y = size.height;
-            locSquareVertices[3].x = size.width;
-            locSquareVertices[3].y = size.height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size);
+
+        if (height === undefined) {
+	        locSquareVertices[1].x = size.width;
+	        locSquareVertices[2].y = size.height;
+	        locSquareVertices[3].x = size.width;
+	        locSquareVertices[3].y = size.height;
+        } else {
+	        locSquareVertices[1].x = size;
+	        locSquareVertices[2].y = height;
+	        locSquareVertices[3].x = size;
+	        locSquareVertices[3].y = height;
         }
+	    this._bindLayerVerticesBufferData();
+	    cc.Layer.prototype.setContentSize.call(this, size, height);
     },
 
 	_setWidthForWebGL:function (width) {
@@ -1069,13 +1071,12 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        var locContentSize = this.getContentSize(), locEGLViewer = cc.EGLView.getInstance();
-
+        var locEGLViewer = cc.EGLView.getInstance();
         var locDisplayedColor = this._displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
             + (0 | locDisplayedColor.b) + "," + this._displayedOpacity / 255 + ")";
-        context.fillRect(0, 0, locContentSize.width * locEGLViewer.getScaleX(), -locContentSize.height * locEGLViewer.getScaleY());
+        context.fillRect(0, 0, this.width * locEGLViewer.getScaleX(), -this.height * locEGLViewer.getScaleY());
 
         cc.g_NumberOfDraws++;
     },
@@ -1214,7 +1215,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-        cc.LayerColor.prototype.setContentSize.call(this, size, height);
+	    cc.LayerColor.prototype.setContentSize.call(this,size, height);
         this._updateColor();
     },
 
@@ -1376,8 +1377,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         context.save();
         var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
-        var tWidth = this.getContentSize().width * locEGLViewer.getScaleX();
-        var tHeight = this.getContentSize().height * locEGLViewer.getScaleY();
+        var tWidth = this.width * locEGLViewer.getScaleX();
+        var tHeight = this.height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
             this._gradientEndPoint.x, this._gradientEndPoint.y);
         var locDisplayedColor = this._displayedColor;
@@ -1397,8 +1398,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _updateColor:function () {
         var locAlongVector = this._alongVector;
         if (cc.renderContextType === cc.CANVAS) {
-            var tWidth = this.getContentSize().width * 0.5;
-            var tHeight = this.getContentSize().height * 0.5;
+            var tWidth = this.width * 0.5;
+            var tHeight = this.height * 0.5;
 
             this._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
             this._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;

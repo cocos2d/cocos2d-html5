@@ -267,7 +267,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         if (label) {
             this.addChild(label);
             label.setAnchorPoint(0, 0);
-            this.size = label.getContentSize();
+            this.size = label.size;
         }
 
         if (this._label) {
@@ -345,7 +345,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      */
     setString:function (label) {
         this._label.setString(label);
-        this.size = this._label.getContentSize();
+        this.size = this._label.size;
     },
 
     /**
@@ -640,12 +640,12 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
 
         this._normalImage = normalImage;
-        this.size = this._normalImage.getContentSize();
+        this.size = this._normalImage.size;
         this._updateImagesVisibility();
 
         if (normalImage.textureLoaded && !normalImage.textureLoaded()) {
             normalImage.addLoadedEventListener(function (sender) {
-                this.size = sender.getContentSize();
+                this.size = sender.size;
             }, this);
         }
     },
@@ -718,11 +718,11 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this.setDisabledImage(disabledSprite);
         var locNormalImage = this._normalImage;
         if (locNormalImage) {
-            this.size = locNormalImage.getContentSize();
+            this.size = locNormalImage.size;
 
             if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
                 locNormalImage.addLoadedEventListener(function (sender) {
-                    this.size = sender.getContentSize();
+                    this.size = sender.size;
                     this.setCascadeColorEnabled(true);
                     this.setCascadeOpacityEnabled(true);
                 }, this);
@@ -972,13 +972,13 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'disabled.png', gameScene.run, gameScene)
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
-    if (arguments.length == 0) {
+    if (normalImage === undefined) {
         return cc.MenuItemImage.create(null, null, null, null, null);
     }
-    if (arguments.length == 3)  {
+    else if (four === undefined)  {
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, null);
     }
-    if (arguments.length == 4) {
+    else if (five === undefined) {
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, four);
     }
     var ret = new cc.MenuItemImage();

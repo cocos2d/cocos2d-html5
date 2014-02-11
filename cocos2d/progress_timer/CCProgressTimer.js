@@ -277,14 +277,14 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = this._sprite.getContentSize();
+            this.size = this._sprite.size;
         }
     },
 
     _setSpriteForWebGL:function (sprite) {
         if (sprite && this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = sprite.getContentSize();
+            this.size = sprite.size;
 
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
@@ -791,7 +791,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _updateProgressForCanvas:function () {
         var locSprite = this._sprite;
-        var spriteSize = locSprite.getContentSize();
+        var spriteSize = locSprite.size;
         var locMidPoint = this._midPoint;
 
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
@@ -907,7 +907,7 @@ if(cc.Browser.supportWebGL) {
     proto.setReverseDirection = proto._setReverseDirectionForCanvas;
     proto.initWithSprite = proto._initWithSpriteForCanvas;
     proto.draw = proto._drawForCanvas;
-    proto._updateProgress = proto._updateProgressForCanvas;
+    proto._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
 }
 
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);

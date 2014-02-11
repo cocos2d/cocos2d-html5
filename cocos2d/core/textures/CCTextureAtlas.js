@@ -514,7 +514,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} newIndex
      */
     moveQuadsFromIndex: function (oldIndex, amount, newIndex) {
-        if (arguments.length == 2) {
+        if (newIndex === undefined) {
             newIndex = amount;
             amount = this._totalQuads - oldIndex;
             if((newIndex + (this._totalQuads - oldIndex)) > this._capacity)
