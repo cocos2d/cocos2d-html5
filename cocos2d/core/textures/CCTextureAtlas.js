@@ -630,23 +630,23 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     }
 });
 
-proto = cc.TextureAtlas.prototype;
+cc.temp = cc.TextureAtlas.prototype;
 /** @expose */
-proto.totalQuads;
-cc.defineGetterSetter(proto, "totalQuads", proto.getTotalQuads);
+cc.temp.totalQuads;
+cc.defineGetterSetter(cc.temp, "totalQuads", cc.temp.getTotalQuads);
 /** @expose */
-proto.capacity;
-cc.defineGetterSetter(proto, "capacity", proto.getCapacity);
+cc.temp.capacity;
+cc.defineGetterSetter(cc.temp, "capacity", cc.temp.getCapacity);
 /** @expose */
-proto.texture;
-cc.defineGetterSetter(proto, "texture", proto.getTexture, proto.setTexture);
+cc.temp.texture;
+cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
 /** @expose */
-proto.dirty;
-cc.defineGetterSetter(proto, "dirty", proto.isDirty, proto.setDirty);
+cc.temp.dirty;
+cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
 /** @expose */
-//proto.quads;
-//cc.defineGetterSetter(proto, "quads", proto.getQuads, proto.setQuads);
-delete proto;
+//cc.temp.quads;
+//cc.defineGetterSetter(cc.temp, "quads", cc.temp.getQuads, cc.temp.setQuads);
+delete cc.temp;
 
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />

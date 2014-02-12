@@ -340,20 +340,20 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     }
 });
 
-proto = cc.LabelAtlas.prototype;
+cc.temp = cc.LabelAtlas.prototype;
 if(cc.Browser.supportWebGL){
-    proto.updateAtlasValues =  proto._updateAtlasValuesForWebGL;
-    proto.setString =  proto._setStringForWebGL;
-    proto.setOpacity =  proto._setOpacityForWebGL;
+    cc.temp.updateAtlasValues =  cc.temp._updateAtlasValuesForWebGL;
+    cc.temp.setString =  cc.temp._setStringForWebGL;
+    cc.temp.setOpacity =  cc.temp._setOpacityForWebGL;
 } else {
-    proto.updateAtlasValues =  proto._updateAtlasValuesForCanvas;
-    proto.setString =  proto._setStringForCanvas;
-    proto.setOpacity =  proto._setOpacityForCanvas;
+    cc.temp.updateAtlasValues =  cc.temp._updateAtlasValuesForCanvas;
+    cc.temp.setString =  cc.temp._setStringForCanvas;
+    cc.temp.setOpacity =  cc.temp._setOpacityForCanvas;
 }
 
-cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
-cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
-delete proto;
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * <p>

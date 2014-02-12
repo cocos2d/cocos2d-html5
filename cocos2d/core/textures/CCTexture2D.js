@@ -1304,30 +1304,30 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
-proto = cc.Texture2D.prototype;
+cc.temp = cc.Texture2D.prototype;
 /** @expose */
-proto.name;
-cc.defineGetterSetter(proto, "name", proto.getName);
+cc.temp.name;
+cc.defineGetterSetter(cc.temp, "name", cc.temp.getName);
 /** @expose */
-proto.pixelFormat;
-cc.defineGetterSetter(proto, "pixelFormat", proto.getPixelFormat);
+cc.temp.pixelFormat;
+cc.defineGetterSetter(cc.temp, "pixelFormat", cc.temp.getPixelFormat);
 /** @expose */
-proto.pixelsWidth;
-cc.defineGetterSetter(proto, "pixelsWidth", proto.getPixelsWide);
+cc.temp.pixelsWidth;
+cc.defineGetterSetter(cc.temp, "pixelsWidth", cc.temp.getPixelsWide);
 /** @expose */
-proto.pixelsHeight;
-cc.defineGetterSetter(proto, "pixelsHeight", proto.getPixelsHigh);
-cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
-cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
-cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
-cc.defineGetterSetter(proto, "shaderProgram", proto.getShaderProgram, proto.setShaderProgram);
+cc.temp.pixelsHeight;
+cc.defineGetterSetter(cc.temp, "pixelsHeight", cc.temp.getPixelsHigh);
+cc.defineGetterSetter(cc.temp, "size", cc.temp.getContentSize, cc.temp.setContentSize);
+cc.defineGetterSetter(cc.temp, "width", cc.temp._getWidth, cc.temp._setWidth);
+cc.defineGetterSetter(cc.temp, "height", cc.temp._getHeight, cc.temp._setHeight);
+cc.defineGetterSetter(cc.temp, "shaderProgram", cc.temp.getShaderProgram, cc.temp.setShaderProgram);
 /** @expose */
-proto.maxS;
-cc.defineGetterSetter(proto, "maxS", proto.getMaxS, proto.setMaxS);
+cc.temp.maxS;
+cc.defineGetterSetter(cc.temp, "maxS", cc.temp.getMaxS, cc.temp.setMaxS);
 /** @expose */
-proto.maxT;
-cc.defineGetterSetter(proto, "maxT", proto.getMaxT, proto.setMaxT);
-delete proto;
+cc.temp.maxT;
+cc.defineGetterSetter(cc.temp, "maxT", cc.temp.getMaxT, cc.temp.setMaxT);
+delete cc.temp;
 
 /**
  * <p>

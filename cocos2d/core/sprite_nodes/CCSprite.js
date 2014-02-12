@@ -421,22 +421,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * return the SpriteBatchNode of the cc.Sprite
-     * @return {cc.SpriteBatchNode}
-     */
-    getSpriteBatchNode:function () {
-        return this._batchNode;
-    },
-
-    /**
-     * set the SpriteBatchNode of the cc.Sprite
-     * @param {cc.SpriteBatchNode} spriteBatchNode
-     */
-    setSpriteBatchNode:function (spriteBatchNode) {
-        this._batchNode = spriteBatchNode;
-    },
-
-    /**
      * Gets the offset position of the sprite. Calculated automatically by editors like Zwoptex.
      * @return {cc.Point}
      */
@@ -2030,54 +2014,54 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     }
 });
 
-proto = cc.Sprite.prototype;
+cc.temp = cc.Sprite.prototype;
 if(cc.Browser.supportWebGL){
-	proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForWebGL;
-	proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForWebGL;
-	proto.updateDisplayedOpacity = proto._updateDisplayedOpacityForWebGL;
-	proto.ctor = proto._ctorForWebGL;
-    proto.setBlendFunc = proto._setBlendFuncForWebGL;
-    proto.init = proto._initForWebGL;
-    proto.initWithTexture = proto._initWithTextureForWebGL;
-    proto._textureLoadedCallback = proto._textureLoadedCallbackForWebGL;
-    proto.setTextureRect = proto._setTextureRectForWebGL;
-    proto.updateTransform = proto._updateTransformForWebGL;
-    proto.addChild = proto._addChildForWebGL;
-    proto.setOpacity = proto._setOpacityForWebGL;
-    proto.setColor = proto._setColorForWebGL;
-    proto.updateDisplayedColor = proto._updateDisplayedColorForWebGL;
-    proto.setDisplayFrame = proto._setDisplayFrameForWebGL;
-    proto.isFrameDisplayed = proto._isFrameDisplayedForWebGL;
-    proto.setBatchNode = proto._setBatchNodeForWebGL;
-    proto.setTexture = proto._setTextureForWebGL;
-    proto.draw = proto._drawForWebGL;
+	cc.temp._spriteFrameLoadedCallback = cc.temp._spriteFrameLoadedCallbackForWebGL;
+	cc.temp.setOpacityModifyRGB = cc.temp._setOpacityModifyRGBForWebGL;
+	cc.temp.updateDisplayedOpacity = cc.temp._updateDisplayedOpacityForWebGL;
+	cc.temp.ctor = cc.temp._ctorForWebGL;
+    cc.temp.setBlendFunc = cc.temp._setBlendFuncForWebGL;
+    cc.temp.init = cc.temp._initForWebGL;
+    cc.temp.initWithTexture = cc.temp._initWithTextureForWebGL;
+    cc.temp._textureLoadedCallback = cc.temp._textureLoadedCallbackForWebGL;
+    cc.temp.setTextureRect = cc.temp._setTextureRectForWebGL;
+    cc.temp.updateTransform = cc.temp._updateTransformForWebGL;
+    cc.temp.addChild = cc.temp._addChildForWebGL;
+    cc.temp.setOpacity = cc.temp._setOpacityForWebGL;
+    cc.temp.setColor = cc.temp._setColorForWebGL;
+    cc.temp.updateDisplayedColor = cc.temp._updateDisplayedColorForWebGL;
+    cc.temp.setDisplayFrame = cc.temp._setDisplayFrameForWebGL;
+    cc.temp.isFrameDisplayed = cc.temp._isFrameDisplayedForWebGL;
+    cc.temp.setBatchNode = cc.temp._setBatchNodeForWebGL;
+    cc.temp.setTexture = cc.temp._setTextureForWebGL;
+    cc.temp.draw = cc.temp._drawForWebGL;
 }else{
-    proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForCanvas;
-    proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForCanvas;
-    proto.updateDisplayedOpacity = proto._updateDisplayedOpacityForCanvas;
-    proto.ctor = proto._ctorForCanvas;
-    proto.setBlendFunc = proto._setBlendFuncForCanvas;
-    proto.init = proto._initForCanvas;
-    proto.initWithTexture = proto._initWithTextureForCanvas;
-    proto._textureLoadedCallback = proto._textureLoadedCallbackForCanvas;
-    proto.setTextureRect = proto._setTextureRectForCanvas;
-    proto.updateTransform = proto._updateTransformForCanvas;
-    proto.addChild = proto._addChildForCanvas;
-    proto.setOpacity = proto._setOpacityForCanvas;
-    proto.setColor = proto._setColorForCanvas;
-    proto.updateDisplayedColor = proto._updateDisplayedColorForCanvas;
-    proto.setDisplayFrame = proto._setDisplayFrameForCanvas;
-    proto.isFrameDisplayed = proto._isFrameDisplayedForCanvas;
-    proto.setBatchNode = proto._setBatchNodeForCanvas;
-    proto.setTexture = proto._setTextureForCanvas;
-    proto.draw = proto._drawForCanvas;
+    cc.temp._spriteFrameLoadedCallback = cc.temp._spriteFrameLoadedCallbackForCanvas;
+    cc.temp.setOpacityModifyRGB = cc.temp._setOpacityModifyRGBForCanvas;
+    cc.temp.updateDisplayedOpacity = cc.temp._updateDisplayedOpacityForCanvas;
+    cc.temp.ctor = cc.temp._ctorForCanvas;
+    cc.temp.setBlendFunc = cc.temp._setBlendFuncForCanvas;
+    cc.temp.init = cc.temp._initForCanvas;
+    cc.temp.initWithTexture = cc.temp._initWithTextureForCanvas;
+    cc.temp._textureLoadedCallback = cc.temp._textureLoadedCallbackForCanvas;
+    cc.temp.setTextureRect = cc.temp._setTextureRectForCanvas;
+    cc.temp.updateTransform = cc.temp._updateTransformForCanvas;
+    cc.temp.addChild = cc.temp._addChildForCanvas;
+    cc.temp.setOpacity = cc.temp._setOpacityForCanvas;
+    cc.temp.setColor = cc.temp._setColorForCanvas;
+    cc.temp.updateDisplayedColor = cc.temp._updateDisplayedColorForCanvas;
+    cc.temp.setDisplayFrame = cc.temp._setDisplayFrameForCanvas;
+    cc.temp.isFrameDisplayed = cc.temp._isFrameDisplayedForCanvas;
+    cc.temp.setBatchNode = cc.temp._setBatchNodeForCanvas;
+    cc.temp.setTexture = cc.temp._setTextureForCanvas;
+    cc.temp.draw = cc.temp._drawForCanvas;
 }
 
-cc.defineGetterSetter(proto, "ignoreAnchor", proto.isIgnoreAnchorPointForPosition, proto.ignoreAnchorPointForPosition);
-cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
-cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
-cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
-delete proto;
+cc.defineGetterSetter(cc.temp, "ignoreAnchor", cc.temp.isIgnoreAnchorPointForPosition, cc.temp.ignoreAnchorPointForPosition);
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * <p>

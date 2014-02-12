@@ -375,28 +375,28 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     }
 });
 
-proto = cc.AtlasNode.prototype;
+cc.temp = cc.AtlasNode.prototype;
 if(cc.Browser.supportWebGL){
-    proto.initWithTexture = proto._initWithTextureForWebGL;
-    proto.draw = proto._drawForWebGL;
-    proto.setColor = proto._setColorForWebGL;
-    proto.setOpacity = proto._setOpacityForWebGL;
-    proto.getTexture = proto._getTextureForWebGL;
-    proto.setTexture = proto._setTextureForWebGL;
-    proto._calculateMaxItems = proto._calculateMaxItemsForWebGL;
+	cc.temp.initWithTexture = cc.temp._initWithTextureForWebGL;
+	cc.temp.draw = cc.temp._drawForWebGL;
+	cc.temp.setColor = cc.temp._setColorForWebGL;
+	cc.temp.setOpacity = cc.temp._setOpacityForWebGL;
+	cc.temp.getTexture = cc.temp._getTextureForWebGL;
+	cc.temp.setTexture = cc.temp._setTextureForWebGL;
+	cc.temp._calculateMaxItems = cc.temp._calculateMaxItemsForWebGL;
 } else {
-    proto.initWithTexture = proto._initWithTextureForCanvas;
-    proto.draw = cc.Node.prototype.draw;
-    proto.setColor = proto._setColorForCanvas;
-    proto.setOpacity = proto._setOpacityForCanvas;
-    proto.getTexture = proto._getTextureForCanvas;
-    proto.setTexture = proto._setTextureForCanvas;
-    proto._calculateMaxItems = proto._calculateMaxItemsForCanvas;
+    cc.temp.initWithTexture = cc.temp._initWithTextureForCanvas;
+    cc.temp.draw = cc.Node.prototype.draw;
+    cc.temp.setColor = cc.temp._setColorForCanvas;
+    cc.temp.setOpacity = cc.temp._setOpacityForCanvas;
+    cc.temp.getTexture = cc.temp._getTextureForCanvas;
+    cc.temp.setTexture = cc.temp._setTextureForCanvas;
+    cc.temp._calculateMaxItems = cc.temp._calculateMaxItemsForCanvas;
 }
 
-cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
-cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
-delete proto;
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
  * @param {String} tile
