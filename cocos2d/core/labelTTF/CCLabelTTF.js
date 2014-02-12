@@ -940,8 +940,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (!tex)
             return;
 
-        var atlasWidth = tex.getPixelsWide();
-        var atlasHeight = tex.getPixelsHigh();
+        var atlasWidth = tex.pixelsWidth;
+        var atlasHeight = tex.pixelsHeight;
 
         var left, right, top, bottom, tempSwap, locQuad = this._quad;
         if (this._rectRotated) {

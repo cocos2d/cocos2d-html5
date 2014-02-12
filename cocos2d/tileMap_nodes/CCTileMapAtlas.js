@@ -201,8 +201,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         var row = (value.r % this._itemsPerRow);
         var col = (value.r / this._itemsPerRow);
 
-        var textureWide = locTextureAtlas.getTexture().getPixelsWide();
-        var textureHigh = locTextureAtlas.getTexture().getPixelsHigh();
+        var tex = locTextureAtlas.getTexture(), textureWide = tex.pixelsWidth, textureHigh = tex.pixelsHeight;
 
         var locItemWidth = this._itemWidth;
         var locItemHeight = this._itemHeight;

@@ -213,8 +213,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locTextureAtlas = this._textureAtlas;
 
         var texture = locTextureAtlas.getTexture();
-        var textureWide = texture.getPixelsWide();
-        var textureHigh = texture.getPixelsHigh();
+        var textureWide = texture.pixelsWidth;
+        var textureHigh = texture.pixelsHeight;
         var itemWidthInPixels = this._itemWidth;
         var itemHeightInPixels = this._itemHeight;
         if (!this._ignoreContentScaleFactor) {

@@ -432,8 +432,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var high = pointRect.height;
 
         if (this._texture) {
-            wide = this._texture.getPixelsWide();
-            high = this._texture.getPixelsHigh();
+            wide = this._texture.pixelsWidth;
+            high = this._texture.pixelsHeight;
         }
 
         if(cc.renderContextType === cc.CANVAS)
