@@ -171,7 +171,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // if we're going beyond the current TextureAtlas's capacity,
         // all the previously initialized sprites will need to redo their texture coords
         // this is likely computationally expensive
-        var locCapacity = this._textureAtlas.getCapacity();
+        var locCapacity = this._textureAtlas.capacity;
         var quantity = Math.floor((locCapacity + 1) * 4 / 3);
 
         cc.log("cocos2d: CCSpriteBatchNode: resizing TextureAtlas capacity from " + locCapacity + " to " + quantity + ".");
@@ -427,8 +427,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         // make needed room
-        var locCapacity = this._textureAtlas.getCapacity();
-        while (index >= locCapacity || locCapacity == this._textureAtlas.getTotalQuads()) {
+        var locCapacity = this._textureAtlas.capacity;
+        while (index >= locCapacity || locCapacity == this._textureAtlas.totalQuads) {
             this.increaseAtlasCapacity();
         }
 
@@ -501,7 +501,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // make needed room
         var locTextureAtlas = this._textureAtlas;
-        while (index >= locTextureAtlas.getCapacity() || locTextureAtlas.getCapacity() === locTextureAtlas.getTotalQuads())
+        while (index >= locTextureAtlas.capacity || locTextureAtlas.capacity === locTextureAtlas.totalQuads)
             this.increaseAtlasCapacity();
 
         //
@@ -626,7 +626,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setDirty(true);
 
         var locTextureAtlas = this._textureAtlas;
-        if (locTextureAtlas.getTotalQuads() >= locTextureAtlas.getCapacity())
+        if (locTextureAtlas.totalQuads >= locTextureAtlas.capacity)
             this.increaseAtlasCapacity();
 
         locTextureAtlas.insertQuad(sprite.getQuad(), index);
@@ -683,7 +683,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setAtlasIndex(index);
 
         var locTextureAtlas = this._textureAtlas;
-        if (locTextureAtlas.getTotalQuads() == locTextureAtlas.getCapacity())
+        if (locTextureAtlas.totalQuads == locTextureAtlas.capacity)
             this.increaseAtlasCapacity();
         locTextureAtlas.insertQuad(sprite.getQuad(), index);
 
@@ -992,7 +992,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _drawForWebGL:function () {
         // Optimization: Fast Dispatch
-        if (this._textureAtlas.getTotalQuads() === 0)
+        if (this._textureAtlas.totalQuads === 0)
             return;
 
         //cc.NODE_DRAW_SETUP(this);

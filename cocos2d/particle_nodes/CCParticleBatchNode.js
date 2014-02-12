@@ -160,7 +160,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     insertChild:function (pSystem, index) {
         var totalParticles = pSystem.getTotalParticles();
         var locTextureAtlas = this._textureAtlas;
-        var totalQuads = locTextureAtlas.getTotalQuads();
+        var totalQuads = locTextureAtlas.totalQuads;
         pSystem.setAtlasIndex(index);
         if (totalQuads + totalParticles > locTextureAtlas.getCapacity()) {
             this._increaseAtlasCapacityTo(totalQuads + totalParticles);
@@ -200,7 +200,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         locTextureAtlas.removeQuadsAtIndex(child.getAtlasIndex(), child.getTotalParticles());
 
         // after memmove of data, empty the quads at the end of array
-        locTextureAtlas.fillWithEmptyQuadsFromIndex(locTextureAtlas.getTotalQuads(), child.getTotalParticles());
+        locTextureAtlas.fillWithEmptyQuadsFromIndex(locTextureAtlas.totalQuads, child.getTotalParticles());
 
         // paticle could be reused for self rendering
         child.setBatchNode(null);
@@ -301,7 +301,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (cc.renderContextType === cc.CANVAS)
             return;
 
-        if (this._textureAtlas.getTotalQuads() == 0)
+        if (this._textureAtlas.totalQuads == 0)
             return;
 
         cc.NODE_DRAW_SETUP(this);

@@ -275,7 +275,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
         if (n > 0) {
             locTextureAtlas.setDirty(true);
-            var totalQuads = locTextureAtlas.getTotalQuads();
+            var totalQuads = locTextureAtlas.totalQuads;
             if (n > totalQuads)
                 locTextureAtlas.increaseTotalQuadsWith(n - totalQuads);
         }
@@ -310,7 +310,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _setStringForWebGL: function (label) {
         label = String(label);
         var len = label.length;
-        if (len > this._textureAtlas.getTotalQuads())
+        if (len > this._textureAtlas.totalQuads)
             this._textureAtlas.resizeCapacity(len);
 
         this._string = label;

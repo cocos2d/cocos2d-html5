@@ -251,7 +251,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         quad.bl.colors = color;
 
         locTextureAtlas.setDirty(true);
-        var totalQuads = locTextureAtlas.getTotalQuads();
+        var totalQuads = locTextureAtlas.totalQuads;
         if (index + 1 > totalQuads)
             locTextureAtlas.increaseTotalQuadsWith(index + 1 - totalQuads);
     },
