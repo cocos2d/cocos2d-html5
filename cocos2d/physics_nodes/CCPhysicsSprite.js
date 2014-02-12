@@ -256,6 +256,7 @@
 	cc.defineGetterSetter(cc.temp, "x", cc.temp.getPositionX, cc.temp.setPositionX);
 	cc.defineGetterSetter(cc.temp, "y", cc.temp.getPositionY, cc.temp.setPositionY);
 	cc.defineGetterSetter(cc.temp, "rotation", cc.temp.getRotation, cc.temp.setRotation);
+	cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
 	delete cc.temp;
 
     /**

@@ -2057,10 +2057,50 @@ if(cc.Browser.supportWebGL){
     cc.temp.draw = cc.temp._drawForCanvas;
 }
 
+// Override properties
 cc.defineGetterSetter(cc.temp, "ignoreAnchor", cc.temp.isIgnoreAnchorPointForPosition, cc.temp.ignoreAnchorPointForPosition);
 cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
 cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
 cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+
+// Exclusive properties
+/** @expose */
+cc.temp.dirty;
+cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
+/** @expose */
+cc.temp.flipX;
+cc.defineGetterSetter(cc.temp, "flipX", cc.temp.isFlippedX, cc.temp.setFlippedX);
+/** @expose */
+cc.temp.flipY;
+cc.defineGetterSetter(cc.temp, "flipY", cc.temp.isFlippedY, cc.temp.setFlippedY);
+/** @expose */
+cc.temp.offset;
+cc.defineGetterSetter(cc.temp, "offset", cc.temp.getOffsetPosition);
+/** @expose */
+cc.temp.atlasIndex;
+cc.defineGetterSetter(cc.temp, "atlasIndex", cc.temp.getAtlasIndex, cc.temp.setAtlasIndex);
+/** @expose */
+cc.temp.texture;
+cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
+/** @expose */
+cc.temp.textureRect;
+cc.defineGetterSetter(cc.temp, "textureRect", cc.temp.getTextureRect, cc.temp.setTextureRect);
+/** @expose */
+cc.temp.textureRectRotated;
+cc.defineGetterSetter(cc.temp, "textureRectRotated", cc.temp.isTextureRectRotated);
+/** @expose */
+cc.temp.textureAtlas;
+cc.defineGetterSetter(cc.temp, "textureAtlas", cc.temp.getTextureAtlas, cc.temp.setTextureAtlas);
+/** @expose */
+cc.temp.batchNode;
+cc.defineGetterSetter(cc.temp, "batchNode", cc.temp.getBatchNode, cc.temp.setBatchNode);
+/** @expose */
+cc.temp.quad;
+cc.defineGetterSetter(cc.temp, "quad", cc.temp.getQuad);
+/** @expose */
+cc.temp.blendFunc;
+cc.defineGetterSetter(cc.temp, "blendFunc", cc.temp.getBlendFunc, cc.temp.setBlendFunc);
+
 delete cc.temp;
 
 /**
