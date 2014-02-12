@@ -256,7 +256,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         this._sprite = cc.Sprite.createWithTexture(locTexture);
         var locSprite = this._sprite;
-        locSprite.setScaleY(-1);
+        locSprite.scaleY = -1;
         locSprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
         gl.bindRenderbuffer(gl.RENDERBUFFER, oldRBO);

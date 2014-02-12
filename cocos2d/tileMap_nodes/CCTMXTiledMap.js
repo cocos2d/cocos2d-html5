@@ -249,9 +249,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
                     var child = this._parseLayer(layerInfo, mapInfo);
                     this.addChild(child, idx, idx);
                     // update content size with the max size
-                    var childSize = child.getContentSize();
-	                this.width = Math.max(this.width, childSize.width);
-	                this.height = Math.max(this.height, childSize.height);
+	                this.width = Math.max(this.width, child.width);
+	                this.height = Math.max(this.height, child.height);
                     idx++;
                 }
             }

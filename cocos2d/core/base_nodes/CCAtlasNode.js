@@ -109,7 +109,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -215,8 +215,8 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this._quadsToDraw = itemsToRender;
 
         //shader stuff
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
-        this._uniformColor = cc.renderContext.getUniformLocation(this.shader.getProgram(), "u_color");
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
+        this._uniformColor = cc.renderContext.getUniformLocation(this.shaderProgram.getProgram(), "u_color");
         return true;
     },
 
@@ -343,7 +343,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItemsForCanvas:function () {
         var selTexture = this.getTexture();
-        var size = selTexture.getContentSize();
+        var size = selTexture.size;
 
         this._itemsPerColumn = 0 | (size.height / this._itemHeight);
         this._itemsPerRow = 0 | (size.width / this._itemWidth);
@@ -351,7 +351,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItemsForWebGL:function () {
         var selTexture = this.getTexture();
-        var size = selTexture.getContentSize();
+        var size = selTexture.size;
         if(this._ignoreContentScaleFactor)
             size = selTexture.getContentSizeInPixels();
 
@@ -375,23 +375,28 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     }
 });
 
+cc.temp = cc.AtlasNode.prototype;
 if(cc.Browser.supportWebGL){
-    cc.AtlasNode.prototype.initWithTexture = cc.AtlasNode.prototype._initWithTextureForWebGL;
-    cc.AtlasNode.prototype.draw = cc.AtlasNode.prototype._drawForWebGL;
-    cc.AtlasNode.prototype.setColor = cc.AtlasNode.prototype._setColorForWebGL;
-    cc.AtlasNode.prototype.setOpacity = cc.AtlasNode.prototype._setOpacityForWebGL;
-    cc.AtlasNode.prototype.getTexture = cc.AtlasNode.prototype._getTextureForWebGL;
-    cc.AtlasNode.prototype.setTexture = cc.AtlasNode.prototype._setTextureForWebGL;
-    cc.AtlasNode.prototype._calculateMaxItems = cc.AtlasNode.prototype._calculateMaxItemsForWebGL;
+	cc.temp.initWithTexture = cc.temp._initWithTextureForWebGL;
+	cc.temp.draw = cc.temp._drawForWebGL;
+	cc.temp.setColor = cc.temp._setColorForWebGL;
+	cc.temp.setOpacity = cc.temp._setOpacityForWebGL;
+	cc.temp.getTexture = cc.temp._getTextureForWebGL;
+	cc.temp.setTexture = cc.temp._setTextureForWebGL;
+	cc.temp._calculateMaxItems = cc.temp._calculateMaxItemsForWebGL;
 } else {
-    cc.AtlasNode.prototype.initWithTexture = cc.AtlasNode.prototype._initWithTextureForCanvas;
-    cc.AtlasNode.prototype.draw = cc.Node.prototype.draw;
-    cc.AtlasNode.prototype.setColor = cc.AtlasNode.prototype._setColorForCanvas;
-    cc.AtlasNode.prototype.setOpacity = cc.AtlasNode.prototype._setOpacityForCanvas;
-    cc.AtlasNode.prototype.getTexture = cc.AtlasNode.prototype._getTextureForCanvas;
-    cc.AtlasNode.prototype.setTexture = cc.AtlasNode.prototype._setTextureForCanvas;
-    cc.AtlasNode.prototype._calculateMaxItems = cc.AtlasNode.prototype._calculateMaxItemsForCanvas;
+    cc.temp.initWithTexture = cc.temp._initWithTextureForCanvas;
+    cc.temp.draw = cc.Node.prototype.draw;
+    cc.temp.setColor = cc.temp._setColorForCanvas;
+    cc.temp.setOpacity = cc.temp._setOpacityForCanvas;
+    cc.temp.getTexture = cc.temp._getTextureForCanvas;
+    cc.temp.setTexture = cc.temp._setTextureForCanvas;
+    cc.temp._calculateMaxItems = cc.temp._calculateMaxItemsForCanvas;
 }
+
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
  * @param {String} tile

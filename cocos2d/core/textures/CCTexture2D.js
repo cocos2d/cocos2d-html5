@@ -194,7 +194,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     /**
-     * hight in pixels
+     * height in pixels
      * @return {Number}
      */
     getPixelsHigh:function () {
@@ -216,6 +216,13 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     getContentSize:function () {
         return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
     },
+
+	_getWidth:function () {
+		return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+	},
+	_getHeight:function () {
+		return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+	},
 
     getContentSizeInPixels:function () {
         return this._contentSize;
@@ -366,7 +373,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         this._hasPremultipliedAlpha = false;
         this._hasMipmaps = false;
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
 
         this._isLoaded = true;
 
@@ -508,7 +515,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
         cc.glBindTexture2D(null);
 
         var pixelsWide = this._htmlElementObj.width;
@@ -1100,6 +1107,11 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         //support only in WebGl rendering mode
     },
 
+	getPixelFormat:function () {
+		//support only in WebGl rendering mode
+		return null;
+	},
+
     /**
      * return shader program used by drawAtPoint and drawInRect
      * @return {cc.GLProgram}
@@ -1291,6 +1303,31 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 });
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
+
+cc.temp = cc.Texture2D.prototype;
+/** @expose */
+cc.temp.name;
+cc.defineGetterSetter(cc.temp, "name", cc.temp.getName);
+/** @expose */
+cc.temp.pixelFormat;
+cc.defineGetterSetter(cc.temp, "pixelFormat", cc.temp.getPixelFormat);
+/** @expose */
+cc.temp.pixelsWidth;
+cc.defineGetterSetter(cc.temp, "pixelsWidth", cc.temp.getPixelsWide);
+/** @expose */
+cc.temp.pixelsHeight;
+cc.defineGetterSetter(cc.temp, "pixelsHeight", cc.temp.getPixelsHigh);
+cc.defineGetterSetter(cc.temp, "size", cc.temp.getContentSize, cc.temp.setContentSize);
+cc.defineGetterSetter(cc.temp, "width", cc.temp._getWidth, cc.temp._setWidth);
+cc.defineGetterSetter(cc.temp, "height", cc.temp._getHeight, cc.temp._setHeight);
+cc.defineGetterSetter(cc.temp, "shaderProgram", cc.temp.getShaderProgram, cc.temp.setShaderProgram);
+/** @expose */
+cc.temp.maxS;
+cc.defineGetterSetter(cc.temp, "maxS", cc.temp.getMaxS, cc.temp.setMaxS);
+/** @expose */
+cc.temp.maxT;
+cc.defineGetterSetter(cc.temp, "maxT", cc.temp.getMaxT, cc.temp.setMaxT);
+delete cc.temp;
 
 /**
  * <p>

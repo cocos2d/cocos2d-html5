@@ -101,7 +101,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tempTexture.initWithElement(tmpCanvas);
             tempTexture.handleLoadedTexture();
             this._cacheTexture = tempTexture;
-            this.setContentSize(locCanvas.width, locCanvas.height);
+            this.width = locCanvas.width;
+	        this.height = locCanvas.height;
 	        // This class uses cache, so its default cachedParent should be himself
 	        this._cachedParent = this;
         }
@@ -115,15 +116,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if(arguments.length === 2){
-            if((size === locContentSize._width) && (height === locContentSize._height))
-                return;
-            cc.Node.prototype.setContentSize.call(this, size, height);
-        } else {
-            if((size.width === locContentSize._width) && (size.height === locContentSize._height))
-                return;
-            cc.Node.prototype.setContentSize.call(this, size);
-        }
+	    cc.Node.prototype.setContentSize.call(this, size, height);
 
         if(cc.renderContextType === cc.CANVAS){
             var locCanvas = this._cacheCanvas;
@@ -384,11 +377,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             // offset (after layer orientation is set);
             var offset = this._calculateLayerOffset(layerInfo.offset);
-            this.setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
+            this.pos = cc.POINT_PIXELS_TO_POINTS(offset);
 
             this._atlasIndexArray = [];
-            this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
-                this._layerSize.height * this._mapTileSize.height)));
+            this.size = cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
+                this._layerSize.height * this._mapTileSize.height));
             this._useAutomaticVertexZ = false;
             this._vertexZvalue = 0;
             return true;
@@ -446,9 +439,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile = new cc.Sprite();
             tile.initWithTexture(this.getTexture(), rect);
             tile.setBatchNode(this);
-            tile.setPosition(this.getPositionAt(pos));
-            tile.setVertexZ(this._vertexZForPos(pos));
-            tile.setAnchorPoint(0,0);
+            tile.pos = this.getPositionAt(pos);
+            tile.vertexZ = this._vertexZForPos(pos);
+            tile.anchorX = 0;
+	        tile.anchorY = 0;
             tile.setOpacity(this._opacity);
 
             var indexForZ = this._atlasIndexForExistantZ(z);
@@ -856,11 +850,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     alphaFuncValue = parseFloat(alphaFuncVal);
 
                 if (cc.renderContextType === cc.WEBGL) {
-                    this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
-                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.shader.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
+                    this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
+                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.shaderProgram.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
                     // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
-                    this.shader.use();
-                    this.shader.setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
+                    this.shaderProgram.use();
+                    this.shaderProgram.setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
                 }
             } else
                 this._vertexZvalue = parseInt(vertexz, 10);
@@ -869,16 +863,17 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _setupTileSprite:function (sprite, pos, gid) {
         var z = pos.x + pos.y * this._layerSize.width;
-        sprite.setPosition(this.getPositionAt(pos));
+        sprite.pos = this.getPositionAt(pos);
         if (cc.renderContextType === cc.WEBGL)
-            sprite.setVertexZ(this._vertexZForPos(pos));
+            sprite.vertexZ = this._vertexZForPos(pos);
         else
             sprite.tag = z;
 
-        sprite.setAnchorPoint(0,0);
+        sprite.anchorX = 0;
+	    sprite.anchorY = 0;
         sprite.setOpacity(this._opacity);
         if (cc.renderContextType === cc.WEBGL) {
-            sprite.setRotation(0.0);
+            sprite.rotation = 0.0;
         }
 
         sprite.setFlippedX(false);
@@ -887,21 +882,22 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
-            sprite.setAnchorPoint(0.5, 0.5);
-            sprite.setPosition(this.getPositionAt(pos).x + sprite.getContentSize().height / 2,
-                this.getPositionAt(pos).y + sprite.getContentSize().width / 2);
+            sprite.anchorX = 0.5;
+	        sprite.anchorY = 0.5;
+            sprite.x = this.getPositionAt(pos).x + sprite.width / 2;
+	        sprite.y = this.getPositionAt(pos).y + sprite.height / 2;
 
             var flag = (gid & (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG) >>> 0) >>> 0;
             // handle the 4 diagonally flipped states.
             if (flag == cc.TMX_TILE_HORIZONTAL_FLAG)
-                sprite.setRotation(90);
+                sprite.rotation = 90;
             else if (flag == cc.TMX_TILE_VERTICAL_FLAG)
-                sprite.setRotation(270);
+                sprite.rotation = 270;
             else if (flag == (cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
-                sprite.setRotation(90);
+                sprite.rotation = 90;
                 sprite.setFlippedX(true);
             } else {
-                sprite.setRotation(270);
+                sprite.rotation = 270;
                 sprite.setFlippedX(true);
             }
         } else {
@@ -973,7 +969,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     break;
             }
         }
-        if(!item)
+        if(typeof item != "number")
             cc.log("cc.TMXLayer._atlasIndexForExistantZ(): TMX atlas index not found. Shall not happen");
         return i;
     },

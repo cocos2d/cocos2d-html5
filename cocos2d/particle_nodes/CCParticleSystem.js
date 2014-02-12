@@ -1296,8 +1296,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
             //set the texture coord
             if(this._texture){
-                var size = this._texture.getContentSize();
-                this.initTexCoordsWithRect(cc.rect(0, 0, size.width, size.height));
+                this.initTexCoordsWithRect(cc.rect(0, 0, this._texture.width, this._texture.height));
             }
         } else
             this._totalParticles = tp;
@@ -1318,14 +1317,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setTexture:function (texture) {
         if(texture.isLoaded()){
-            var  size = texture.getContentSize();
-            this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
+            this.setTextureWithRect(texture, cc.rect(0, 0, texture.width, texture.height));
         } else {
             this._textureLoaded = false;
             texture.addLoadedEventListener(function(sender){
                 this._textureLoaded = true;
-                var  size = sender.getContentSize();
-                this.setTextureWithRect(sender, cc.rect(0, 0, size.width, size.height));
+                this.setTextureWithRect(sender, cc.rect(0, 0, sender.width, sender.height));
             }, this);
         }
     },
@@ -1345,7 +1342,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             if (this._blendFunc != src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();
@@ -1362,7 +1359,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * does the alpha value modify color getter
      * @return {Boolean}
      */
-    getOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
         return this._opacityModifyRGB;
     },
 
@@ -1747,7 +1744,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             //else
             this._setupVBO();
 
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         }
 
         return true;
@@ -2645,6 +2642,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         return true;
     }
 });
+
+cc.temp = cc.ParticleSystem.prototype;
+cc.defineGetterSetter(cc.temp, "rotation", cc.temp.getRotation, cc.temp.setRotation);
+cc.defineGetterSetter(cc.temp, "scale", cc.temp.getScale, cc.temp.setScale);
+cc.defineGetterSetter(cc.temp, "scaleX", cc.temp.getScaleX, cc.temp.setScaleX);
+cc.defineGetterSetter(cc.temp, "scaleY", cc.temp.getScaleY, cc.temp.setScaleY);
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+delete cc.temp;
 
 /**
  * <p> return the string found by key in dict. <br/>

@@ -204,15 +204,16 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var height = -padding, locChildren = this._children, len, i, locScaleY, locHeight, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
-                height += locChildren[i].getContentSize().height * locChildren[i].getScaleY() + padding;
+                height += locChildren[i].height * locChildren[i].scaleY + padding;
 
             var y = height / 2.0;
 
             for (i = 0, len = locChildren.length; i < len; i++) {
                 locChild = locChildren[i];
-                locHeight = locChild.getContentSize().height;
-                locScaleY = locChild.getScaleY();
-                locChild.setPosition(0, y - locHeight * locScaleY / 2);
+                locHeight = locChild.height;
+                locScaleY = locChild.scaleY;
+                locChild.x = 0;
+	            locChild.y = y - locHeight * locScaleY / 2;
                 y -= locHeight * locScaleY + padding;
             }
         }
@@ -233,15 +234,16 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var width = -padding, locChildren = this._children, i, len, locScaleX, locWidth, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
-                width += locChildren[i].getContentSize().width * locChildren[i].getScaleX() + padding;
+                width += locChildren[i].width * locChildren[i].scaleX + padding;
 
             var x = -width / 2.0;
 
             for (i = 0, len = locChildren.length; i < len; i++) {
                 locChild = locChildren[i];
-                locScaleX = locChild.getScaleX();
-                locWidth =  locChildren[i].getContentSize().width;
-                locChild.setPosition(x + locWidth * locScaleX / 2, 0);
+                locScaleX = locChild.scaleX;
+                locWidth =  locChildren[i].width;
+                locChild.x = x + locWidth * locScaleX / 2;
+	            locChild.y = 0;
                 x += locWidth * locScaleX + padding;
             }
         }
@@ -279,7 +281,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 if(!rowColumns)
                     continue;
 
-                tmp = locChildren[i].getContentSize().height;
+                tmp = locChildren[i].height;
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
 
                 ++columnsOccupied;
@@ -312,9 +314,10 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                     x = w;
                 }
 
-                tmp = child.getContentSize().height;
+                tmp = child.height;
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
-                child.setPosition(x - winSize.width / 2, y - tmp / 2);
+                child.x = x - winSize.width / 2;
+	            child.y = y - tmp / 2;
 
                 x += w;
                 ++columnsOccupied;
@@ -352,7 +355,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var column = 0;
         var columnWidth = 0;
         var rowsOccupied = 0;
-        var columnRows, child, len, tmp, locContentSize;
+        var columnRows, child, len, tmp;
 
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
@@ -368,11 +371,10 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                     continue;
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
-                locContentSize = child.getContentSize();
-                tmp = locContentSize.width;
+                tmp = child.width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
-                columnHeight += (locContentSize.height + 5);
+                columnHeight += (child.height + 5);
                 ++rowsOccupied;
 
                 if (rowsOccupied >= columnRows) {
@@ -406,13 +408,13 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 }
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
-                locContentSize = child.getContentSize();
-                tmp = locContentSize.width;
+                tmp = child.width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
-                child.setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
+                child.x = x + columnWidths[column] / 2;
+	            child.y = y - winSize.height / 2;
 
-                y -= locContentSize.height + 10;
+                y -= child.height + 10;
                 ++rowsOccupied;
 
                 if (rowsOccupied >= columnRows) {
@@ -569,6 +571,12 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         cc.Director.getInstance().getTouchDispatcher().setPriority(newPriority, this);
     }
 });
+
+cc.temp = cc.Menu.prototype;
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * create a new menu

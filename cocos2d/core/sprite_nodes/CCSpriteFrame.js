@@ -244,14 +244,14 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                     }
                     var locRect = this._rect;
                     if(locRect.width === 0 && locRect.height === 0){
-                        var locContentSize = sender.getContentSize();
-                        this._rect.width = locContentSize.width;
-                        this._rect.height = locContentSize.height;
+                        var locSize = sender.size;
+                        this._rect.width = locSize.width;
+                        this._rect.height = locSize.height;
                         this._rectInPixels = cc.RECT_POINTS_TO_PIXELS(this._rect);
                         this._originalSizeInPixels._width = this._rectInPixels.width;
                         this._originalSizeInPixels._height = this._rectInPixels.height;
-                        this._originalSize._width =  locContentSize.width;
-                        this._originalSize._height =  locContentSize.height;
+                        this._originalSize._width =  locSize.width;
+                        this._originalSize._height =  locSize.height;
                     }
                     this._callLoadedEventCallbacks();
                 }, this);

@@ -277,14 +277,14 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = this._sprite.getContentSize();
+            this.size = this._sprite.size;
         }
     },
 
     _setSpriteForWebGL:function (sprite) {
         if (sprite && this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = sprite.getContentSize();
+            this.size = sprite.size;
 
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
@@ -408,7 +408,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this.setSprite(sprite);
 
         //shader program
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -791,7 +791,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _updateProgressForCanvas:function () {
         var locSprite = this._sprite;
-        var spriteSize = locSprite.getContentSize();
+        var spriteSize = locSprite.size;
         var locMidPoint = this._midPoint;
 
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
@@ -889,25 +889,31 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     }
 });
 
+cc.temp = cc.ProgressTimer.prototype;
 if(cc.Browser.supportWebGL) {
-    cc.ProgressTimer.prototype.ctor = cc.ProgressTimer.prototype._ctorForWebGL;
-    cc.ProgressTimer.prototype.setReverseProgress = cc.ProgressTimer.prototype._setReverseProgressForWebGL;
-    cc.ProgressTimer.prototype.setSprite = cc.ProgressTimer.prototype._setSpriteForWebGL;
-    cc.ProgressTimer.prototype.setType = cc.ProgressTimer.prototype._setTypeForWebGL;
-    cc.ProgressTimer.prototype.setReverseDirection = cc.ProgressTimer.prototype._setReverseDirectionForWebGL;
-    cc.ProgressTimer.prototype.initWithSprite = cc.ProgressTimer.prototype._initWithSpriteForWebGL;
-    cc.ProgressTimer.prototype.draw = cc.ProgressTimer.prototype._drawForWebGL;
-    cc.ProgressTimer.prototype._updateProgress = cc.ProgressTimer.prototype._updateProgressForWebGL;
+    cc.temp.ctor = cc.temp._ctorForWebGL;
+    cc.temp.setReverseProgress = cc.temp._setReverseProgressForWebGL;
+    cc.temp.setSprite = cc.temp._setSpriteForWebGL;
+    cc.temp.setType = cc.temp._setTypeForWebGL;
+    cc.temp.setReverseDirection = cc.temp._setReverseDirectionForWebGL;
+    cc.temp.initWithSprite = cc.temp._initWithSpriteForWebGL;
+    cc.temp.draw = cc.temp._drawForWebGL;
+    cc.temp._updateProgress = cc.temp._updateProgressForWebGL;
 } else {
-    cc.ProgressTimer.prototype.ctor = cc.ProgressTimer.prototype._ctorForCanvas;
-    cc.ProgressTimer.prototype.setReverseProgress = cc.ProgressTimer.prototype._setReverseProgressForCanvas;
-    cc.ProgressTimer.prototype.setSprite = cc.ProgressTimer.prototype._setSpriteForCanvas;
-    cc.ProgressTimer.prototype.setType = cc.ProgressTimer.prototype._setTypeForCanvas;
-    cc.ProgressTimer.prototype.setReverseDirection = cc.ProgressTimer.prototype._setReverseDirectionForCanvas;
-    cc.ProgressTimer.prototype.initWithSprite = cc.ProgressTimer.prototype._initWithSpriteForCanvas;
-    cc.ProgressTimer.prototype.draw = cc.ProgressTimer.prototype._drawForCanvas;
-    cc.ProgressTimer.prototype._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
+    cc.temp.ctor = cc.temp._ctorForCanvas;
+    cc.temp.setReverseProgress = cc.temp._setReverseProgressForCanvas;
+    cc.temp.setSprite = cc.temp._setSpriteForCanvas;
+    cc.temp.setType = cc.temp._setTypeForCanvas;
+    cc.temp.setReverseDirection = cc.temp._setReverseDirectionForCanvas;
+    cc.temp.initWithSprite = cc.temp._initWithSpriteForCanvas;
+    cc.temp.draw = cc.temp._drawForCanvas;
+    cc.temp._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
 }
+
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage

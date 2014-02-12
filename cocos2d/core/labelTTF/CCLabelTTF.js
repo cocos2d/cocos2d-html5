@@ -347,7 +347,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return false;
 
         // shader program
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
 
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);
@@ -787,7 +787,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
             }
         }
-        this.setContentSize(locSize);
+        this.size = locSize;
         this._strokeShadowOffsetX = locStrokeShadowOffsetX;
         this._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
@@ -802,6 +802,17 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._updateTTF();
         return cc.Sprite.prototype.getContentSize.call(this);
     },
+
+	_getWidth:function(){
+		if(this._needUpdateTexture)
+			this._updateTTF();
+		return cc.Sprite.prototype._getWidth.call(this);
+	},
+	_getHeight:function(){
+		if(this._needUpdateTexture)
+			this._updateTTF();
+		return cc.Sprite.prototype._getHeight.call(this);
+	},
 
     _updateTexture:function () {
         var locContext = this._getLabelContext(), locLabelCanvas = this._labelCanvas;
@@ -899,7 +910,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._rectRotated = rotated || false;
         untrimmedSize = untrimmedSize || rect._size;
 
-        this.setContentSize(untrimmedSize);
+        this.size = untrimmedSize;
         this.setVertexRect(rect);
 
         var locTextureCoordRect = this._textureRect_Canvas;
@@ -1004,27 +1015,35 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     }
 });
 
+cc.temp = cc.LabelTTF.prototype;
 if(cc.Browser.supportWebGL){
-    cc.LabelTTF.prototype.setColor = cc.Sprite.prototype.setColor;
-    cc.LabelTTF.prototype._setColorsString = cc.LabelTTF.prototype._setColorsStringForWebGL;
-    cc.LabelTTF.prototype.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
-    cc.LabelTTF.prototype.setOpacity = cc.Sprite.prototype.setOpacity;
-    cc.LabelTTF.prototype.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
-    cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForWebGL;
-    cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForWebGL;
-    cc.LabelTTF.prototype.draw = cc.LabelTTF.prototype._drawForWebGL;
-    cc.LabelTTF.prototype.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
+	cc.temp.setColor = cc.Sprite.prototype.setColor;
+    cc.temp._setColorsString = cc.temp._setColorsStringForWebGL;
+    cc.temp.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
+    cc.temp.setOpacity = cc.Sprite.prototype.setOpacity;
+    cc.temp.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
+    cc.temp.initWithStringAndTextDefinition = cc.temp._initWithStringAndTextDefinitionForWebGL;
+    cc.temp.setFontFillColor = cc.temp._setFontFillColorForWebGL;
+    cc.temp.draw = cc.temp._drawForWebGL;
+    cc.temp.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
 } else {
-    cc.LabelTTF.prototype.setColor = cc.LabelTTF.prototype._setColorForCanvas;
-    cc.LabelTTF.prototype._setColorsString = cc.LabelTTF.prototype._setColorsStringForCanvas;
-    cc.LabelTTF.prototype.updateDisplayedColor = cc.LabelTTF.prototype._updateDisplayedColorForCanvas;
-    cc.LabelTTF.prototype.setOpacity = cc.LabelTTF.prototype._setOpacityForCanvas;
-    cc.LabelTTF.prototype.updateDisplayedOpacity = cc.LabelTTF.prototype._updateDisplayedOpacityForCanvas;
-    cc.LabelTTF.prototype.initWithStringAndTextDefinition = cc.LabelTTF.prototype._initWithStringAndTextDefinitionForCanvas;
-    cc.LabelTTF.prototype.setFontFillColor = cc.LabelTTF.prototype._setFontFillColorForCanvas;
-    cc.LabelTTF.prototype.draw = cc.Sprite.prototype.draw;
-    cc.LabelTTF.prototype.setTextureRect = cc.LabelTTF.prototype._setTextureRectForCanvas;
+    cc.temp.setColor = cc.temp._setColorForCanvas;
+    cc.temp._setColorsString = cc.temp._setColorsStringForCanvas;
+    cc.temp.updateDisplayedColor = cc.temp._updateDisplayedColorForCanvas;
+    cc.temp.setOpacity = cc.temp._setOpacityForCanvas;
+    cc.temp.updateDisplayedOpacity = cc.temp._updateDisplayedOpacityForCanvas;
+    cc.temp.initWithStringAndTextDefinition = cc.temp._initWithStringAndTextDefinitionForCanvas;
+    cc.temp.setFontFillColor = cc.temp._setFontFillColorForCanvas;
+    cc.temp.draw = cc.Sprite.prototype.draw;
+    cc.temp.setTextureRect = cc.temp._setTextureRectForCanvas;
 }
+
+cc.defineGetterSetter(cc.temp, "size", cc.temp.getContentSize, cc.temp.setContentSize);
+cc.defineGetterSetter(cc.temp, "width", cc.temp._getWidth, cc.temp._setWidth);
+cc.defineGetterSetter(cc.temp, "height", cc.temp._getHeight, cc.temp._setHeight);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+delete cc.temp;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 

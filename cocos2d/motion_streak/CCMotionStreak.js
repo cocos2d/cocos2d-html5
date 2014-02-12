@@ -129,9 +129,9 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             this._blendFunc = src;
-        } else if (arguments.length == 2) {
+        } else {
             this._blendFunc.src = src;
             this._blendFunc.dst = dst;
         }
@@ -233,7 +233,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
 
         // shader program
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
         this.setTexture(texture);
         this.setColor(color);
@@ -279,7 +279,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      */
     setPosition:function (position, yValue) {
         this._startingPositionInitialized = true;
-        if(arguments.length === 1){
+        if(yValue === undefined){
             this._positionR._x = position.x;
             this._positionR._y = position.y;
         } else {
@@ -448,6 +448,11 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._nuPoints = locNuPoints;
     }
 });
+
+cc.temp = cc.MotionStreak.prototype;
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+delete cc.temp;
 
 /**
  * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture

@@ -560,12 +560,12 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._textFieldRender.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._textFieldRender.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._textFieldRender.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._textFieldRender.setAnchorPoint(point, y);
         }
     },
 

@@ -155,7 +155,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     draw:function (ctx) {
         cc.AtlasNode.prototype.draw.call(this,ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
-            var s = this.getContentSize();
+            var s = this.size;
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
                 cc.p(s.width, s.height), cc.p(0, s.height)];
             cc.drawingUtil.drawPoly(vertices, 4, true);
@@ -198,11 +198,12 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     // reusing fonts
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
-                    fontChar.setVisible(true);
+                    fontChar.visible = true;
                     fontChar.setOpacity(this._displayedOpacity);
                 }
             }
-            fontChar.setPosition(i * locItemWidth + locItemWidth / 2, locItemHeight / 2);
+            fontChar.x = i * locItemWidth + locItemWidth / 2;
+	        fontChar.y = locItemHeight / 2;
         }
     },
 
@@ -290,14 +291,15 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         label = String(label);
         var len = label.length;
         this._string = label;
-        this.setContentSize(len * this._itemWidth, this._itemHeight);
+        this.width = len * this._itemWidth;
+	    this.height = this._itemHeight;
         if (this._children) {
             var locChildren = this._children;
             len = locChildren.length;
             for (var i = 0; i < len; i++) {
                 var node = locChildren[i];
                 if (node)
-                    node.setVisible(false);
+                    node.visible = false;
             }
         }
 
@@ -312,7 +314,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             this._textureAtlas.resizeCapacity(len);
 
         this._string = label;
-        this.setContentSize(len * this._itemWidth, this._itemHeight);
+        this.width = len * this._itemWidth;
+	    this.height = this._itemHeight;
 
         this.updateAtlasValues();
         this._quadsToDraw = len;
@@ -337,15 +340,20 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     }
 });
 
+cc.temp = cc.LabelAtlas.prototype;
 if(cc.Browser.supportWebGL){
-    cc.LabelAtlas.prototype.updateAtlasValues =  cc.LabelAtlas.prototype._updateAtlasValuesForWebGL;
-    cc.LabelAtlas.prototype.setString =  cc.LabelAtlas.prototype._setStringForWebGL;
-    cc.LabelAtlas.prototype.setOpacity =  cc.LabelAtlas.prototype._setOpacityForWebGL;
+    cc.temp.updateAtlasValues =  cc.temp._updateAtlasValuesForWebGL;
+    cc.temp.setString =  cc.temp._setStringForWebGL;
+    cc.temp.setOpacity =  cc.temp._setOpacityForWebGL;
 } else {
-    cc.LabelAtlas.prototype.updateAtlasValues =  cc.LabelAtlas.prototype._updateAtlasValuesForCanvas;
-    cc.LabelAtlas.prototype.setString =  cc.LabelAtlas.prototype._setStringForCanvas;
-    cc.LabelAtlas.prototype.setOpacity =  cc.LabelAtlas.prototype._setOpacityForCanvas;
+    cc.temp.updateAtlasValues =  cc.temp._updateAtlasValuesForCanvas;
+    cc.temp.setString =  cc.temp._setStringForCanvas;
+    cc.temp.setOpacity =  cc.temp._setOpacityForCanvas;
 }
+
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * <p>

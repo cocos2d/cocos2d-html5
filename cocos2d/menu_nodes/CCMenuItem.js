@@ -198,6 +198,10 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     }
 });
 
+cc.temp = cc.MenuItem.prototype;
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+delete cc.temp;
+
 /**
  * creates an empty menu item with target and callback<br/>
  * Not recommended to use the base class, should use more defined menu item classes
@@ -262,8 +266,9 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     setLabel:function (label) {
         if (label) {
             this.addChild(label);
-            label.setAnchorPoint(0, 0);
-            this.size = label.getContentSize();
+            label.anchorX = 0;
+	        label.anchorY = 0;
+            this.size = label.size;
         }
 
         if (this._label) {
@@ -341,7 +346,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      */
     setString:function (label) {
         this._label.setString(label);
-        this.size = this._label.getContentSize();
+        this.size = this._label.size;
     },
 
     /**
@@ -350,7 +355,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     activate:function () {
         if (this._isEnabled) {
             this.stopAllActions();
-            this.setScale(this._originalScale);
+            this.scale = this._originalScale;
             cc.MenuItem.prototype.activate.call(this);
         }
     },
@@ -366,7 +371,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             if (action)
                 this.stopAction(action);
              else
-                this._originalScale = this.getScale();
+                this._originalScale = this.scale;
 
             var zoomAction = cc.ScaleTo.create(0.1, this._originalScale * 1.2);
             zoomAction.setTag(cc.ZOOM_ACTION_TAG);
@@ -387,6 +392,11 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         }
     }
 });
+
+cc.temp = cc.MenuItemLabel.prototype;
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * @param {cc.Node} label
@@ -624,19 +634,20 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
         if (normalImage) {
             this.addChild(normalImage, 0, cc.NORMAL_TAG);
-            normalImage.setAnchorPoint(0, 0);
+            normalImage.anchorX = 0;
+	        normalImage.anchorY = 0;
         }
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
         }
 
         this._normalImage = normalImage;
-        this.size = this._normalImage.getContentSize();
+        this.size = this._normalImage.size;
         this._updateImagesVisibility();
 
         if (normalImage.textureLoaded && !normalImage.textureLoaded()) {
             normalImage.addLoadedEventListener(function (sender) {
-                this.size = sender.getContentSize();
+                this.size = sender.size;
             }, this);
         }
     },
@@ -657,7 +668,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (selectedImage) {
             this.addChild(selectedImage, 0, cc.SELECTED_TAG);
-            selectedImage.setAnchorPoint(0, 0);
+            selectedImage.anchorX = 0;
+	        selectedImage.anchorY = 0;
         }
 
         if (this._selectedImage) {
@@ -684,7 +696,8 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (disabledImage) {
             this.addChild(disabledImage, 0, cc.DISABLE_TAG);
-            disabledImage.setAnchorPoint(0, 0);
+            disabledImage.anchorX = 0;
+	        disabledImage.anchorY = 0;
         }
 
         if (this._disabledImage)
@@ -709,11 +722,11 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this.setDisabledImage(disabledSprite);
         var locNormalImage = this._normalImage;
         if (locNormalImage) {
-            this.size = locNormalImage.getContentSize();
+            this.size = locNormalImage.size;
 
             if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
                 locNormalImage.addLoadedEventListener(function (sender) {
-                    this.size = sender.getContentSize();
+                    this.size = sender.size;
                     this.setCascadeColorEnabled(true);
                     this.setCascadeOpacityEnabled(true);
                 }, this);
@@ -771,13 +784,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         cc.MenuItem.prototype.selected.call(this);
         if (this._normalImage) {
             if (this._disabledImage)
-                this._disabledImage.setVisible(false);
+                this._disabledImage.visible = false;
 
             if (this._selectedImage) {
-                this._normalImage.setVisible(false);
-                this._selectedImage.setVisible(true);
+                this._normalImage.visible = false;
+                this._selectedImage.visible = true;
             } else
-                this._normalImage.setVisible(true);
+                this._normalImage.visible = true;
         }
     },
 
@@ -787,13 +800,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     unselected:function () {
         cc.MenuItem.prototype.unselected.call(this);
         if (this._normalImage) {
-            this._normalImage.setVisible(true);
+            this._normalImage.visible = true;
 
             if (this._selectedImage)
-                this._selectedImage.setVisible(false);
+                this._selectedImage.visible = false;
 
             if (this._disabledImage)
-                this._disabledImage.setVisible(false);
+                this._disabledImage.visible = false;
         }
     },
 
@@ -811,28 +824,33 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         var locNormalImage = this._normalImage, locSelImage = this._selectedImage, locDisImage = this._disabledImage;
         if (this._isEnabled) {
             if (locNormalImage)
-                locNormalImage.setVisible(true);
+                locNormalImage.visible = true;
             if (locSelImage)
-                locSelImage.setVisible(false);
+                locSelImage.visible = false;
             if (locDisImage)
-                locDisImage.setVisible(false);
+                locDisImage.visible = false;
         } else {
             if (locDisImage) {
                 if (locNormalImage)
-                    locNormalImage.setVisible(false);
+                    locNormalImage.visible = false;
                 if (locSelImage)
-                    locSelImage.setVisible(false);
+                    locSelImage.visible = false;
                 if (locDisImage)
-                    locDisImage.setVisible(true);
+                    locDisImage.visible = true;
             } else {
                 if (locNormalImage)
-                    locNormalImage.setVisible(true);
+                    locNormalImage.visible = true;
                 if (locSelImage)
-                    locSelImage.setVisible(false);
+                    locSelImage.visible = false;
             }
         }
     }
 });
+
+cc.temp = cc.MenuItemSprite.prototype;
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * create a menu item from sprite
@@ -958,13 +976,13 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'disabled.png', gameScene.run, gameScene)
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
-    if (arguments.length == 0) {
+    if (normalImage === undefined) {
         return cc.MenuItemImage.create(null, null, null, null, null);
     }
-    if (arguments.length == 3)  {
+    else if (four === undefined)  {
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, null);
     }
-    if (arguments.length == 4) {
+    else if (five === undefined) {
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, four);
     }
     var ret = new cc.MenuItemImage();
@@ -1053,7 +1071,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this.addChild(item, 0, cc.CURRENT_ITEM);
             var s = item.size;
             this.size = s;
-            item.setPosition(s.width / 2, s.height / 2);
+            item.x = s.width / 2;
+	        item.y = s.height / 2;
         }
     },
 
@@ -1168,6 +1187,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         this.setSelectedIndex(this._selectedIndex);
     }
 });
+
+cc.temp = cc.MenuItemToggle.prototype;
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * create a simple container class that "toggles" it's inner items<br/>

@@ -514,7 +514,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} newIndex
      */
     moveQuadsFromIndex: function (oldIndex, amount, newIndex) {
-        if (arguments.length == 2) {
+        if (newIndex === undefined) {
             newIndex = amount;
             amount = this._totalQuads - oldIndex;
             if((newIndex + (this._totalQuads - oldIndex)) > this._capacity)
@@ -629,6 +629,24 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             gl.deleteBuffer(this._quadsWebBuffer);
     }
 });
+
+cc.temp = cc.TextureAtlas.prototype;
+/** @expose */
+cc.temp.totalQuads;
+cc.defineGetterSetter(cc.temp, "totalQuads", cc.temp.getTotalQuads);
+/** @expose */
+cc.temp.capacity;
+cc.defineGetterSetter(cc.temp, "capacity", cc.temp.getCapacity);
+/** @expose */
+cc.temp.texture;
+cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
+/** @expose */
+cc.temp.dirty;
+cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
+/** @expose */
+//cc.temp.quads;
+//cc.defineGetterSetter(cc.temp, "quads", cc.temp.getQuads, cc.temp.setQuads);
+delete cc.temp;
 
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />

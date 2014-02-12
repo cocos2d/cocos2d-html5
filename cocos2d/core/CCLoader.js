@@ -435,13 +435,14 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         // bg
         this._bgLayer = cc.LayerColor.create(cc.c4(32, 32, 32, 255));
-        this._bgLayer.setPosition(0, 0);
+        this._bgLayer.x = 0;
+	    this._bgLayer.y = 0;
         this.addChild(this._bgLayer, 0);
 
         //loading percent
         this._label = cc.LabelTTF.create("Loading... 0%", "Arial", 14);
         this._label.setColor(cc.c3(180, 180, 180));
-        this._label.setPosition(cc.pAdd(centerPos, cc.p(0, -logoHeight / 2 - 10)));
+        this._label.pos = cc.pAdd(centerPos, cc.p(0, -logoHeight / 2 - 10));
         this._bgLayer.addChild(this._label, 10);
     },
 
@@ -450,8 +451,8 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         this._texture2d.initWithElement(this._logoTexture);
         this._texture2d.handleLoadedTexture();
         this._logo = cc.Sprite.createWithTexture(this._texture2d);
-        this._logo.setScale(cc.CONTENT_SCALE_FACTOR());
-        this._logo.setPosition(centerPos);
+        this._logo.scale = cc.CONTENT_SCALE_FACTOR();
+        this._logo.pos = centerPos;
         this._bgLayer.addChild(this._logo, 10);
     },
 

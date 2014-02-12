@@ -463,7 +463,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for(var i = 0; i< locChildren.length;i++){
                 var selNode = locChildren[i];
                 if(selNode)
-                    selNode.setVisible(false);
+                    selNode.visible = false;
             }
         }
         if(this._textureLoaded){
@@ -535,7 +535,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
-            var size = this.getContentSize();
+            var size = this.size;
             var pos = cc.p(0 | ( -this._anchorPointInPoints._x), 0 | ( -this._anchorPointInPoints._y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
             cc.drawingUtil.setDrawColor4B(0,255,0,255);
@@ -667,7 +667,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             return;
         }
         var locElement, locTexture = this.getTexture();
-        if (locTexture && locTexture.getContentSize().width>0) {
+        if (locTexture && locTexture.width > 0) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;
@@ -759,7 +759,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._contentSize._width = 0;
             this._contentSize._height = 0;
 
-            this.setAnchorPoint(0.5, 0.5);
+            this.anchorX = 0.5;
+	        this.anchorY = 0.5;
 
             if (cc.renderContextType === cc.WEBGL) {
                 var locTexture = this._textureAtlas.getTexture();
@@ -853,7 +854,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     // updating previous sprite
                     fontChar.setTextureRect(rect, false, rect._size);
                     // restore to default in case they were modified
-                    fontChar.setVisible(true);
+                    fontChar.visible = true;
                 }
             }
             // Apply label properties
@@ -871,7 +872,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
                 nextFontPositionY + yOffset - rect.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
-            fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
+            fontChar.pos = cc.POINT_PIXELS_TO_POINTS(fontPos);
 
             // update kerning
             nextFontPositionX += fontDef.xAdvance + kerningAmount;
@@ -883,7 +884,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         tmpSize.width = longestLine;
         tmpSize.height = totalHeight;
-        this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(tmpSize));
+        this.size = cc.SIZE_PIXELS_TO_POINTS(tmpSize);
     },
 
     /**
@@ -896,7 +897,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for (var i = 0; i < locChildren.length; i++) {
                 var node = locChildren[i];
                 if (node)
-                    node.setVisible(false);
+                    node.visible = false;
             }
         }
         if (this._configuration)
@@ -1091,15 +1092,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar.getPositionX() + lastChar.getContentSize().width / 2;
+                    lineWidth = lastChar.x + lastChar.width / 2;
 
                     var shift = 0;
                     switch (this._alignment) {
                         case cc.TEXT_ALIGNMENT_CENTER:
-                            shift = this.getContentSize().width / 2 - lineWidth / 2;
+                            shift = this.width / 2 - lineWidth / 2;
                             break;
                         case cc.TEXT_ALIGNMENT_RIGHT:
-                            shift = this.getContentSize().width - lineWidth;
+                            shift = this.width - lineWidth;
                             break;
                         default:
                             break;
@@ -1111,7 +1112,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                             if (index < 0) continue;
                             characterSprite = this.getChildByTag(index);
                             if (characterSprite)
-                                characterSprite.setPosition(cc.pAdd(characterSprite.getPosition(), cc.p(shift, 0)));
+	                            characterSprite.x += shift;
                         }
                     }
 
@@ -1228,18 +1229,22 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {Number} [y] The anchor point.y of labelBMFont.
      */
     setAnchorPoint:function (point, y) {
-        var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            cc.Node.prototype.setAnchorPoint.call(this, point, y);
-        } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            cc.Node.prototype.setAnchorPoint.call(this, point);
-        }
+	    cc.Node.prototype.setAnchorPoint.call(this, point, y);
         this.updateLabel();
     },
+
+	_setAnchor: function(p) {
+		cc.Node.prototype._setAnchor.call(this, p);
+		this.updateLabel();
+	},
+	_setAnchorX: function(x) {
+		cc.Node.prototype._setAnchorX.call(this, x);
+		this.updateLabel();
+	},
+	_setAnchorY: function(y) {
+		cc.Node.prototype._setAnchorY.call(this, y);
+		this.updateLabel();
+	},
 
     _atlasNameFromFntFile:function (fntFile) {
     },
@@ -1256,13 +1261,26 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.getPositionX() * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.anchorX);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.getPositionX() * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.anchorY);
     }
 });
+
+cc.temp = cc.LabelBMFont.prototype;
+cc.defineGetterSetter(cc.temp, "anchor", cc.temp._getAnchor, cc.temp._setAnchor);
+cc.defineGetterSetter(cc.temp, "anchorX", cc.temp._getAnchorX, cc.temp._setAnchorX);
+cc.defineGetterSetter(cc.temp, "anchorY", cc.temp._getAnchorY, cc.temp._setAnchorY);
+cc.defineGetterSetter(cc.temp, "scale", cc.temp.getScale, cc.temp.setScale);
+cc.defineGetterSetter(cc.temp, "scaleX", cc.temp.getScaleX, cc.temp.setScaleX);
+cc.defineGetterSetter(cc.temp, "scaleY", cc.temp.getScaleY, cc.temp.setScaleY);
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "cascadeOpacity", cc.temp.isCascadeOpacityEnabled, cc.temp.setCascadeOpacityEnabled);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file
@@ -1284,7 +1302,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
-    if (arguments.length == 0) {
+    if (str === undefined) {
         if (ret && ret.init())
             return ret;
         return null;
