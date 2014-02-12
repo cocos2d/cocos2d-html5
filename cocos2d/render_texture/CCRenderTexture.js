@@ -176,7 +176,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var texture = new cc.Texture2D();
         texture.initWithElement(locCacheCanvas);
         texture.handleLoadedTexture();
-        this._sprite = cc.Sprite.createWithTexture(texture);
+        this._sprite = cc.Sprite.create(texture);
         return true;
     },
 
@@ -254,7 +254,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         locTexture.setAliasTexParameters();
 
-        this._sprite = cc.Sprite.createWithTexture(locTexture);
+        this._sprite = cc.Sprite.create(locTexture);
         var locSprite = this._sprite;
         locSprite.setScaleY(-1);
         locSprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);

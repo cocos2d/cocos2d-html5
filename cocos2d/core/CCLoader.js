@@ -449,7 +449,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         this._texture2d = new cc.Texture2D();
         this._texture2d.initWithElement(this._logoTexture);
         this._texture2d.handleLoadedTexture();
-        this._logo = cc.Sprite.createWithTexture(this._texture2d);
+        this._logo = cc.Sprite.create(this._texture2d);
         this._logo.setScale(cc.CONTENT_SCALE_FACTOR());
         this._logo.setPosition(centerPos);
         this._bgLayer.addChild(this._logo, 10);

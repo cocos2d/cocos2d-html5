@@ -315,7 +315,7 @@
      * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
      *
      * //create a sprite with a sprite frame
-     * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
+     * var sprite = cc.Sprite.create(spriteFrame);
      */
     cc.PhysicsSprite.createWithSpriteFrame = function (spriteFrame) {
         var sprite = new cc.PhysicsSprite();
