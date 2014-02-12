@@ -449,7 +449,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     }
 });
 
-var proto = cc.MotionStreak.prototype;
+proto = cc.MotionStreak.prototype;
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 delete proto;

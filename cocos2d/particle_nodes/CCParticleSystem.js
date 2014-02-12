@@ -2643,7 +2643,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-var proto = cc.ParticleSystem.prototype;
+proto = cc.ParticleSystem.prototype;
 cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
 cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
 cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);

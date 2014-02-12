@@ -198,7 +198,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     }
 });
 
-var proto = cc.MenuItem.prototype;
+proto = cc.MenuItem.prototype;
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 delete proto;
 
@@ -393,7 +393,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     }
 });
 
-var proto = cc.MenuItemLabel.prototype;
+proto = cc.MenuItemLabel.prototype;
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;
@@ -847,7 +847,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     }
 });
 
-var proto = cc.MenuItemSprite.prototype;
+proto = cc.MenuItemSprite.prototype;
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;
@@ -1188,7 +1188,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     }
 });
 
-var proto = cc.MenuItemToggle.prototype;
+proto = cc.MenuItemToggle.prototype;
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
 delete proto;

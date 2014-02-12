@@ -340,7 +340,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     }
 });
 
-var proto = cc.LabelAtlas.prototype;
+proto = cc.LabelAtlas.prototype;
 if(cc.Browser.supportWebGL){
     proto.updateAtlasValues =  proto._updateAtlasValuesForWebGL;
     proto.setString =  proto._setStringForWebGL;

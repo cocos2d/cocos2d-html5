@@ -194,7 +194,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     /**
-     * hight in pixels
+     * height in pixels
      * @return {Number}
      */
     getPixelsHigh:function () {
@@ -1304,7 +1304,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
-var proto = cc.Texture2D.prototype;
+proto = cc.Texture2D.prototype;
 /** @expose */
 proto.name;
 cc.defineGetterSetter(proto, "name", proto.getName);

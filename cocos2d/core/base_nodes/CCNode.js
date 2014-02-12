@@ -2177,7 +2177,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     }
 });
 
-var proto = cc.Node.prototype;
+proto = cc.Node.prototype;
 
 cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
 cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
@@ -2295,7 +2295,6 @@ if(cc.Browser.supportWebGL){
     proto.nodeToParentTransform = proto._nodeToParentTransformForCanvas;
 }
 
-delete temp;
 delete proto;
 
 /**
@@ -2564,7 +2563,7 @@ cc.NodeRGBA.create = function () {
     return res;
 };
 
-var proto = cc.NodeRGBA.prototype;
+proto = cc.NodeRGBA.prototype;
 /** @expose */
 proto.opacity;
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
