@@ -572,7 +572,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     }
 });
 
-var proto = cc.Menu.prototype;
+proto = cc.Menu.prototype;
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);

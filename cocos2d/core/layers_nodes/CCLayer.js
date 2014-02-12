@@ -817,7 +817,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
-var proto = cc.LayerRGBA.prototype;
+proto = cc.LayerRGBA.prototype;
 cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
 cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
 cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
@@ -1117,7 +1117,7 @@ if(cc.Browser.supportWebGL){
     cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForCanvas;
 }
 
-var proto = cc.LayerColor.prototype;
+proto = cc.LayerColor.prototype;
 cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
 cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
 cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);
@@ -1452,7 +1452,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     }
 });
 
-var proto = cc.LayerGradient.prototype;
+proto = cc.LayerGradient.prototype;
 cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
 cc.defineGetterSetter(proto, "width", proto._getWidth, proto._setWidth);
 cc.defineGetterSetter(proto, "height", proto._getHeight, proto._setHeight);

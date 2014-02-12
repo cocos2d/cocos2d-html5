@@ -1269,7 +1269,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     }
 });
 
-var proto = cc.LabelBMFont.prototype;
+proto = cc.LabelBMFont.prototype;
 cc.defineGetterSetter(proto, "anchor", proto._getAnchor, proto._setAnchor);
 cc.defineGetterSetter(proto, "anchorX", proto._getAnchorX, proto._setAnchorX);
 cc.defineGetterSetter(proto, "anchorY", proto._getAnchorY, proto._setAnchorY);

@@ -630,7 +630,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     }
 });
 
-var proto = cc.TextureAtlas.prototype;
+proto = cc.TextureAtlas.prototype;
 /** @expose */
 proto.totalQuads;
 cc.defineGetterSetter(proto, "totalQuads", proto.getTotalQuads);

@@ -639,7 +639,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 	 * @override
 	 */
 	setNodeDirty: function(norecursive) {
-		this._super();
+		cc.Node.prototype.setNodeDirty.call(this);
 		// Lazy set dirty
 		if (!norecursive && this._batchNode && !this._recursiveDirty) {
 			if (this._hasChildren)
@@ -2030,7 +2030,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     }
 });
 
-var proto = cc.Sprite.prototype;
+proto = cc.Sprite.prototype;
 if(cc.Browser.supportWebGL){
 	proto._spriteFrameLoadedCallback = proto._spriteFrameLoadedCallbackForWebGL;
 	proto.setOpacityModifyRGB = proto._setOpacityModifyRGBForWebGL;

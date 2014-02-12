@@ -1015,7 +1015,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     }
 });
 
-var proto = cc.LabelTTF.prototype;
+proto = cc.LabelTTF.prototype;
 if(cc.Browser.supportWebGL){
 	proto.setColor = cc.Sprite.prototype.setColor;
     proto._setColorsString = proto._setColorsStringForWebGL;

@@ -248,7 +248,7 @@
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
 
-	var proto = cc.PhysicsSprite.prototype;
+	proto = cc.PhysicsSprite.prototype;
 	/** @expose */
 	proto.body;
 	cc.defineGetterSetter(proto, "body", proto.getBody, proto.setBody);
@@ -256,6 +256,7 @@
 	cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
 	cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
 	cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
+	delete proto;
 
     /**
      * Create a PhysicsSprite with filename and rect
