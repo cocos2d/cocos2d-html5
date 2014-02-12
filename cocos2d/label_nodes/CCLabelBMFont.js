@@ -1269,18 +1269,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     }
 });
 
-proto = cc.LabelBMFont.prototype;
-cc.defineGetterSetter(proto, "anchor", proto._getAnchor, proto._setAnchor);
-cc.defineGetterSetter(proto, "anchorX", proto._getAnchorX, proto._setAnchorX);
-cc.defineGetterSetter(proto, "anchorY", proto._getAnchorY, proto._setAnchorY);
-cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
-cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
-cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
-cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
-cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
-cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
-cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
-delete proto;
+cc.temp = cc.LabelBMFont.prototype;
+cc.defineGetterSetter(cc.temp, "anchor", cc.temp._getAnchor, cc.temp._setAnchor);
+cc.defineGetterSetter(cc.temp, "anchorX", cc.temp._getAnchorX, cc.temp._setAnchorX);
+cc.defineGetterSetter(cc.temp, "anchorY", cc.temp._getAnchorY, cc.temp._setAnchorY);
+cc.defineGetterSetter(cc.temp, "scale", cc.temp.getScale, cc.temp.setScale);
+cc.defineGetterSetter(cc.temp, "scaleX", cc.temp.getScaleX, cc.temp.setScaleX);
+cc.defineGetterSetter(cc.temp, "scaleY", cc.temp.getScaleY, cc.temp.setScaleY);
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
+cc.defineGetterSetter(cc.temp, "cascadeOpacity", cc.temp.isCascadeOpacityEnabled, cc.temp.setCascadeOpacityEnabled);
+cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+delete cc.temp;
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file

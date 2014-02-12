@@ -2643,13 +2643,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-proto = cc.ParticleSystem.prototype;
-cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
-cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
-cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
-cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
-cc.defineGetterSetter(proto, "opacityModifyRGB", proto.isOpacityModifyRGB, proto.setOpacityModifyRGB);
-delete proto;
+cc.temp = cc.ParticleSystem.prototype;
+cc.defineGetterSetter(cc.temp, "rotation", cc.temp.getRotation, cc.temp.setRotation);
+cc.defineGetterSetter(cc.temp, "scale", cc.temp.getScale, cc.temp.setScale);
+cc.defineGetterSetter(cc.temp, "scaleX", cc.temp.getScaleX, cc.temp.setScaleX);
+cc.defineGetterSetter(cc.temp, "scaleY", cc.temp.getScaleY, cc.temp.setScaleY);
+cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
+delete cc.temp;
 
 /**
  * <p> return the string found by key in dict. <br/>
