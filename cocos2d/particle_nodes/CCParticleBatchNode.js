@@ -258,7 +258,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
                 child.updateWithNoTime();
             }
         }
-        child._setZOrder(zOrder);
+        child._setLocalZOrder(zOrder);
     },
 
     /**
@@ -484,7 +484,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
         this._children = cc.ArrayAppendObjectToIndex(this._children, child, pos);
         child.tag = aTag;
-        child._setZOrder(z);
+        child._setLocalZOrder(z);
         child.parent = this;
         if (this._running) {
             child.onEnter();

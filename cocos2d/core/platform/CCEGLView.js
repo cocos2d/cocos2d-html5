@@ -367,7 +367,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
-     * Get the visible area size of opengl viewport.
+     * Get the visible area size of OpenGL view port.
      * @return {cc.Size}
      */
     getVisibleSize: function () {
@@ -375,7 +375,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
-     * Get the visible origin povar of opengl viewport.
+     * Get the visible origin of OpenGL view port.
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
@@ -837,7 +837,6 @@ cc.EGLView.getInstance = function () {
     if (!this._instance) {
 	    // First init director
 	    cc.Director.getInstance();
-
         this._instance = this._instance || new cc.EGLView();
         this._instance.initialize();
     }
@@ -875,8 +874,8 @@ cc.ContainerStrategy = cc.Class.extend({
     },
 
     /**
-     * Manipulation after appling the strategy
-     * @param {cc.EGLView} The target view
+     * Manipulation after applying the strategy
+     * @param {cc.EGLView} view  The target view
      */
     postApply: function (view) {
 
@@ -969,8 +968,8 @@ cc.ContentStrategy = cc.Class.extend({
     },
 
     /**
-     * Manipulation before appling the strategy
-     * @param {cc.EGLView} The target view
+     * Manipulation before applying the strategy
+     * @param {cc.EGLView} view The target view
      */
     preApply: function (view) {
     },
@@ -978,7 +977,7 @@ cc.ContentStrategy = cc.Class.extend({
     /**
      * Function to apply this strategy
      * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
-     * The target view can then apply these value to itself, it's prefered not to modify directly its private variables
+     * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
      * @param {cc.EGLView} view
      * @param {cc.Size} designedResolution
      * @return {object} scaleAndViewportRect
@@ -988,8 +987,8 @@ cc.ContentStrategy = cc.Class.extend({
     },
 
     /**
-     * Manipulation after appling the strategy
-     * @param {cc.EGLView} The target view
+     * Manipulation after applying the strategy
+     * @param {cc.EGLView} view The target view
      */
     postApply: function (view) {
     }
@@ -1165,8 +1164,8 @@ cc.ResolutionPolicy = cc.Class.extend({
     },
 
     /**
-     * Manipulation before appling the resolution policy
-     * @param {cc.EGLView} The target view
+     * Manipulation before applying the resolution policy
+     * @param {cc.EGLView} view The target view
      */
     preApply: function (view) {
         this._containerStrategy.preApply(view);
@@ -1176,9 +1175,9 @@ cc.ResolutionPolicy = cc.Class.extend({
     /**
      * Function to apply this resolution policy
      * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
-     * The target view can then apply these value to itself, it's prefered not to modify directly its private variables
-     * @param {cc.EGLView} The target view
-     * @param {cc.Size} The user defined design resolution
+     * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
+     * @param {cc.EGLView} view The target view
+     * @param {cc.Size} designedResolution The user defined design resolution
      * @return {object} An object contains the scale X/Y values and the viewport rect
      */
     apply: function (view, designedResolution) {
@@ -1187,8 +1186,8 @@ cc.ResolutionPolicy = cc.Class.extend({
     },
 
     /**
-     * Manipulation after appling the strategy
-     * @param {cc.EGLView} The target view
+     * Manipulation after appyling the strategy
+     * @param {cc.EGLView} view The target view
      */
     postApply: function (view) {
         this._containerStrategy.postApply(view);

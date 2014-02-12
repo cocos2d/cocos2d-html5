@@ -1229,7 +1229,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _insertChild:function (child, z) {
         this._reorderChildDirty = true;
         this._children.push(child);
-        child._setZOrder(z);
+        child._setLocalZOrder(z);
     },
 
     /** Reorders a child according to a new z value. <br/>
@@ -1242,8 +1242,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             throw "cc.Node.reorderChild(): child must be non-null";
         this._reorderChildDirty = true;
         child.arrivalOrder = cc.s_globalOrderOfArrival;
-	    cc.s_globalOrderOfArrival++
-        child._setZOrder(zOrder);
+	    cc.s_globalOrderOfArrival++;
+        child._setLocalZOrder(zOrder);
         this.setNodeDirty();
     },
 
