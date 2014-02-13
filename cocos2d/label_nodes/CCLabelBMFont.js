@@ -1269,18 +1269,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     }
 });
 
-cc.temp = cc.LabelBMFont.prototype;
-cc.defineGetterSetter(cc.temp, "anchor", cc.temp._getAnchor, cc.temp._setAnchor);
-cc.defineGetterSetter(cc.temp, "anchorX", cc.temp._getAnchorX, cc.temp._setAnchorX);
-cc.defineGetterSetter(cc.temp, "anchorY", cc.temp._getAnchorY, cc.temp._setAnchorY);
-cc.defineGetterSetter(cc.temp, "scale", cc.temp.getScale, cc.temp.setScale);
-cc.defineGetterSetter(cc.temp, "scaleX", cc.temp.getScaleX, cc.temp.setScaleX);
-cc.defineGetterSetter(cc.temp, "scaleY", cc.temp.getScaleY, cc.temp.setScaleY);
-cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "cascadeOpacity", cc.temp.isCascadeOpacityEnabled, cc.temp.setCascadeOpacityEnabled);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+window._proto = cc.LabelBMFont.prototype;
+cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
+cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
+cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
+cc.defineGetterSetter(_proto, "scale", _proto.getScale, _proto.setScale);
+cc.defineGetterSetter(_proto, "scaleX", _proto.getScaleX, _proto.setScaleX);
+cc.defineGetterSetter(_proto, "scaleY", _proto.getScaleY, _proto.setScaleY);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file

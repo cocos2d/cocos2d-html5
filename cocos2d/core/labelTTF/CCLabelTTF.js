@@ -1015,35 +1015,35 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     }
 });
 
-cc.temp = cc.LabelTTF.prototype;
+window._proto = cc.LabelTTF.prototype;
 if(cc.Browser.supportWebGL){
-	cc.temp.setColor = cc.Sprite.prototype.setColor;
-    cc.temp._setColorsString = cc.temp._setColorsStringForWebGL;
-    cc.temp.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
-    cc.temp.setOpacity = cc.Sprite.prototype.setOpacity;
-    cc.temp.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
-    cc.temp.initWithStringAndTextDefinition = cc.temp._initWithStringAndTextDefinitionForWebGL;
-    cc.temp.setFontFillColor = cc.temp._setFontFillColorForWebGL;
-    cc.temp.draw = cc.temp._drawForWebGL;
-    cc.temp.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
+	_proto.setColor = cc.Sprite.prototype.setColor;
+    _proto._setColorsString = _proto._setColorsStringForWebGL;
+    _proto.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
+    _proto.setOpacity = cc.Sprite.prototype.setOpacity;
+    _proto.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
+    _proto.initWithStringAndTextDefinition = _proto._initWithStringAndTextDefinitionForWebGL;
+    _proto.setFontFillColor = _proto._setFontFillColorForWebGL;
+    _proto.draw = _proto._drawForWebGL;
+    _proto.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
 } else {
-    cc.temp.setColor = cc.temp._setColorForCanvas;
-    cc.temp._setColorsString = cc.temp._setColorsStringForCanvas;
-    cc.temp.updateDisplayedColor = cc.temp._updateDisplayedColorForCanvas;
-    cc.temp.setOpacity = cc.temp._setOpacityForCanvas;
-    cc.temp.updateDisplayedOpacity = cc.temp._updateDisplayedOpacityForCanvas;
-    cc.temp.initWithStringAndTextDefinition = cc.temp._initWithStringAndTextDefinitionForCanvas;
-    cc.temp.setFontFillColor = cc.temp._setFontFillColorForCanvas;
-    cc.temp.draw = cc.Sprite.prototype.draw;
-    cc.temp.setTextureRect = cc.temp._setTextureRectForCanvas;
+    _proto.setColor = _proto._setColorForCanvas;
+    _proto._setColorsString = _proto._setColorsStringForCanvas;
+    _proto.updateDisplayedColor = _proto._updateDisplayedColorForCanvas;
+    _proto.setOpacity = _proto._setOpacityForCanvas;
+    _proto.updateDisplayedOpacity = _proto._updateDisplayedOpacityForCanvas;
+    _proto.initWithStringAndTextDefinition = _proto._initWithStringAndTextDefinitionForCanvas;
+    _proto.setFontFillColor = _proto._setFontFillColorForCanvas;
+    _proto.draw = cc.Sprite.prototype.draw;
+    _proto.setTextureRect = _proto._setTextureRectForCanvas;
 }
 
-cc.defineGetterSetter(cc.temp, "size", cc.temp.getContentSize, cc.temp.setContentSize);
-cc.defineGetterSetter(cc.temp, "width", cc.temp._getWidth, cc.temp._setWidth);
-cc.defineGetterSetter(cc.temp, "height", cc.temp._getHeight, cc.temp._setHeight);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-delete cc.temp;
+cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+delete window._proto;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 

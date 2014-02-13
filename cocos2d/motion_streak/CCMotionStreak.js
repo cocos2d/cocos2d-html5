@@ -449,10 +449,10 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     }
 });
 
-cc.temp = cc.MotionStreak.prototype;
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
-delete cc.temp;
+window._proto = cc.MotionStreak.prototype;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+delete window._proto;
 
 /**
  * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture
