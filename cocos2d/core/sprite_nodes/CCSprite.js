@@ -288,12 +288,18 @@ if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
  * @class
  * @extends cc.NodeRGBA
  *
+ * @property {Boolean}  dirty   - Indicates whether the sprite needs to be updated
+ *
  * @example
  * var aSprite = new cc.Sprite();
  * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
 cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     RGBAProtocol:true,
+
+	/** @public */
+	dirty:false,
+
     //
     // Data used when the sprite is rendered using a CCSpriteSheet
     //
@@ -301,7 +307,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _atlasIndex:0,
     _batchNode:null,
-    _dirty:false, //Whether the sprite needs to be updated
     _recursiveDirty:null, //Whether all of the sprite's children needs to be updated
     _hasChildren:null, //Whether the sprite contains children
     _shouldBeHidden:false, //should not be drawn because one of the ancestors is not visible
@@ -360,7 +365,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {Boolean} true if the sprite needs to be updated in the Atlas, false otherwise.
      */
     isDirty:function () {
-        return this._dirty;
+        return this.dirty;
     },
 
     /**
@@ -368,7 +373,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} bDirty
      */
     setDirty:function (bDirty) {
-        this._dirty = bDirty;
+        this.dirty = bDirty;
     },
 
     /**
@@ -608,7 +613,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 	 */
 	setDirtyRecursively:function (value) {
 		this._recursiveDirty = value;
-		this._dirty = value;
+		this.dirty = value;
 		// recursively set dirty
 		var locChildren = this._children, child, l = locChildren ? locChildren.length : 0;
 		for (var i = 0; i < l; i++) {
@@ -630,7 +635,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 				this.setDirtyRecursively(true);
 			else {
 				this._recursiveDirty = true;
-				this._dirty = true;
+				this.dirty = true;
 			}
 		}
 	},
@@ -921,7 +926,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             return this.initWithFile(arguments[0], arguments[1]);
 
         cc.NodeRGBA.prototype.init.call(this);
-        this._dirty = this._recursiveDirty = false;
+        this.dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
 
         this._blendFunc.src = cc.BLEND_SRC;
@@ -961,7 +966,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             return this.initWithFile(arguments[0], arguments[1]);
 
         cc.NodeRGBA.prototype.init.call(this);
-        this._dirty = this._recursiveDirty = false;
+        this.dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
 
         this._blendFunc.src = cc.BLEND_SRC;
@@ -1045,7 +1050,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         this._batchNode = null;
         this._recursiveDirty = false;
-        this._dirty = false;
+        this.dirty = false;
         this._opacityModifyRGB = true;
 
         this._blendFunc.src = cc.BLEND_SRC;
@@ -1113,7 +1118,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._batchNode = null;
 
         this._recursiveDirty = false;
-        this._dirty = false;
+        this.dirty = false;
         this._opacityModifyRGB = true;
 
         this._blendFunc.src = cc.BLEND_SRC;
@@ -1239,9 +1244,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // rendering using batch node
         if (this._batchNode) {
-            // update dirty_, don't update recursiveDirty_
-            //this.setDirty(true);
-            this._dirty = true;
+            // update dirty, don't update _recursiveDirty
+            this.dirty = true;
         } else {
             // self rendering
             // Atlas: Vertex
@@ -1284,9 +1288,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // rendering using batch node
         if (this._batchNode) {
-            // update dirty_, don't update recursiveDirty_
-            //this.setDirty(true);
-            this._dirty = true;
+            // update dirty, don't update _recursiveDirty
+            this.dirty = true;
         }
     },
 
@@ -1300,7 +1303,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
-        if (this.isDirty()) {
+        if (this.dirty) {
             var locQuad = this._quad, locParent = this._parent;
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!this._visible || ( locParent && locParent != this._batchNode && locParent._shouldBeHidden)) {
@@ -1356,7 +1359,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             }
             this._textureAtlas.updateQuad(locQuad, this._atlasIndex);
             this._recursiveDirty = false;
-            this.setDirty(false);
+            this.dirty = false;
         }
 
         // recursively iterate over children
@@ -1379,7 +1382,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
-        if (this._dirty) {
+        if (this.dirty) {
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             var locParent = this._parent;
             if (!this._visible || ( locParent && locParent != this._batchNode && locParent._shouldBeHidden)) {
@@ -1395,7 +1398,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 }
             }
             this._recursiveDirty = false;
-            this._dirty = false;
+            this.dirty = false;
         }
 
         // recursively iterate over children
@@ -1477,8 +1480,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
-                //this.setDirty(true);
-                this._dirty = true;
+                this.dirty = true;
             }
         }
         // self render
@@ -1664,7 +1666,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
             this.setTextureAtlas(null);
             this._recursiveDirty = false;
-            this.setDirty(false);
+            this.dirty = false;
 
             var x1 = this._offsetPosition._x;
             var y1 = this._offsetPosition._y;
@@ -1692,7 +1694,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
             this.setTextureAtlas(null);
             this._recursiveDirty = false;
-            this.setDirty(false);
+            this.dirty = false;
         } else {
             // using batch
             this._transformToBatch = cc.AffineTransformIdentity();
@@ -2067,7 +2069,6 @@ cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendF
 // Extended properties
 /** @expose */
 _proto.dirty;
-cc.defineGetterSetter(_proto, "dirty", _proto.isDirty, _proto.setDirty);
 /** @expose */
 _proto.flipX;
 cc.defineGetterSetter(_proto, "flipX", _proto.isFlippedX, _proto.setFlippedX);

@@ -413,7 +413,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setBatchNode(this);
         sprite.setAtlasIndex(index);
 
-        sprite.setDirty(true);
+        sprite.dirty = true;
         // UpdateTransform updates the textureAtlas quad
         sprite.updateTransform();
     },
@@ -438,7 +438,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setBatchNode(this);
         sprite.setAtlasIndex(index);
 
-        sprite.setDirty(true);
+        sprite.dirty = true;
         // UpdateTransform updates the textureAtlas quad
         sprite.updateTransform();
     },
@@ -486,7 +486,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // XXX: updateTransform will update the textureAtlas too, using updateQuad.
         // XXX: so, it should be AFTER the insertQuad
-        sprite.setDirty(true);
+        sprite.dirty = true;
         sprite.updateTransform();
         this._children = cc.ArrayAppendObjectToIndex(this._children, sprite, index);
     },
@@ -513,7 +513,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // XXX: updateTransform will update the textureAtlas too, using updateQuad.
         // XXX: so, it should be AFTER the insertQuad
-        sprite.setDirty(true);
+        sprite.dirty = true;
         sprite.updateTransform();
     },
 
@@ -623,7 +623,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     insertChild:function (sprite, index) {
         sprite.setBatchNode(this);
         sprite.setAtlasIndex(index);
-        sprite.setDirty(true);
+        sprite.dirty = true;
 
         var locTextureAtlas = this._textureAtlas;
         if (locTextureAtlas.totalQuads >= locTextureAtlas.capacity)
@@ -661,7 +661,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _appendChildForCanvas:function (sprite) {
         this._reorderChildDirty = true;
         sprite.setBatchNode(this);
-        sprite.setDirty(true);
+        sprite.dirty = true;
 
         this._descendants.push(sprite);
         var index = this._descendants.length - 1;
@@ -676,7 +676,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _appendChildForWebGL:function (sprite) {
         this._reorderChildDirty = true;
         sprite.setBatchNode(this);
-        sprite.setDirty(true);
+        sprite.dirty = true;
 
         this._descendants.push(sprite);
         var index = this._descendants.length - 1;

@@ -1934,7 +1934,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if (this._batchNode) {
             var batchQuads = this._batchNode.getTextureAtlas().getQuads();
             quad = batchQuads[this._atlasIndex + particle.atlasIndex];
-            this._batchNode.getTextureAtlas()._dirty = true;
+            this._batchNode.getTextureAtlas().dirty = true;
         } else
             quad = this._quads[this._particleIdx];
 

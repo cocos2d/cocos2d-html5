@@ -830,7 +830,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // get atlas index
         var indexForZ = this._atlasIndexForExistantZ(z);
         tile.setAtlasIndex(indexForZ);
-        tile.setDirty(true);
+        tile.dirty = true;
         tile.updateTransform();
         this._tiles[z] = gid;
 

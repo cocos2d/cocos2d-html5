@@ -196,7 +196,7 @@
         },
 
         _nodeToParentTransformForCanvas: function () {
-            if (this.isDirty()) {
+            if (this.dirty) {
                 var t = this._transform;// quick reference
                 // base position
                 var locBody = this._body, locScaleX = this._scaleX, locScaleY = this._scaleY, locAnchorPIP = this._anchorPointInPoints;

@@ -35,13 +35,15 @@
  * The TextureAtlas capacity can be increased or decreased in runtime.</p>
  * @class
  * @extends cc.Class
+ * @property {Boolean}  dirty   - Indicates whether or not the array buffer of the VBO needs to be updated
  */
 cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
+	/** @public */
+	dirty:false,
+
     _indices:null,
     //0: vertex  1: indices
     _buffersVBO:null,
-    //indicates whether or not the array buffer of the VBO needs to be updated
-    _dirty:false,
     _capacity:0,
     _texture:null,
 
@@ -91,7 +93,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Boolean} dirty
      */
     setDirty:function (dirty) {
-        this._dirty = dirty;
+        this.dirty = dirty;
     },
 
     /**
@@ -99,7 +101,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @returns {boolean}
      */
     isDirty:function () {
-        return this._dirty;
+        return this.dirty;
     },
 
     /**
@@ -257,7 +259,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         this._setupIndices();
         this._setupVBO();
-        this._dirty = true;
+        this.dirty = true;
         return true;
     },
 
@@ -274,7 +276,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             throw "cc.TextureAtlas.updateQuad(): Invalid index";
         this._totalQuads = Math.max(index + 1, this._totalQuads);
         this._setQuadToArray(quad, index);
-        this._dirty = true;
+        this.dirty = true;
     },
 
     /**
@@ -301,7 +303,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + quadSize);
 
         this._setQuadToArray(quad, index);
-        this._dirty = true;
+        this.dirty = true;
     },
 
     /**
@@ -339,7 +341,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         for(i = 0; i < amount; i++)
             this._setQuadToArray(quads[i], index + i);
 
-        this._dirty = true;
+        this.dirty = true;
     },
 
     /**
@@ -372,7 +374,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             locQuadsReader.set(locQuadsReader.subarray(startOffset, startOffset + moveLength),startOffset - quadSize);
             locQuadsReader.set(sourceArr, newIndex * quadSize);
         }
-        this._dirty = true;
+        this.dirty = true;
     },
 
     /**
@@ -392,7 +394,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             var moveLength = (this._totalQuads - index) * quadSize;
             this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset - quadSize);
         }
-        this._dirty = true;
+        this.dirty = true;
     },
 
     removeQuadsAtIndex:function (index, amount) {
@@ -408,7 +410,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             var dstOffset = index * quadSize;
             this._quadsReader.set(this._quadsReader.subarray(srcOffset,srcOffset + moveLength),dstOffset);
         }
-        this._dirty = true;
+        this.dirty = true;
     },
 
     /**
@@ -422,7 +424,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     _setDirty:function(dirty){
-        this._dirty = dirty;
+        this.dirty = dirty;
     },
 
     /**
@@ -494,7 +496,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         this._setupIndices();
         this._mapBuffers();
-        this._dirty = true;
+        this.dirty = true;
         return true;
     },
 
@@ -548,7 +550,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             locQuadsReader.set(locQuadsReader.subarray(moveStart, moveStart + moveLength), srcOffset);
         }
         locQuadsReader.set(sourceArr, dstOffset);
-        this._dirty = true;
+        this.dirty = true;
     },
 
     /**
@@ -589,15 +591,15 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
-        if (this._dirty)
+        if (this.dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
 
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
 
-        if (this._dirty)
-            this._dirty = false;
+        if (this.dirty)
+            this.dirty = false;
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
 
@@ -642,7 +644,6 @@ _proto.texture;
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 /** @expose */
 _proto.dirty;
-cc.defineGetterSetter(_proto, "dirty", _proto.isDirty, _proto.setDirty);
 /** @expose */
 _proto.quads;
 cc.defineGetterSetter(_proto, "quads", _proto.getQuads, _proto.setQuads);

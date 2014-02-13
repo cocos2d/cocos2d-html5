@@ -931,7 +931,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         // rendering using batch node
         if (this._batchNode) {
-            this._dirty = true;
+            this.dirty = true;
         }
     },
 

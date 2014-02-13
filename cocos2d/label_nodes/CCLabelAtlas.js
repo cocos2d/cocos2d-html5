@@ -274,7 +274,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             locQuadBR.colors = curColor;
         }
         if (n > 0) {
-            locTextureAtlas.setDirty(true);
+            locTextureAtlas.dirty = true;
             var totalQuads = locTextureAtlas.totalQuads;
             if (n > totalQuads)
                 locTextureAtlas.increaseTotalQuadsWith(n - totalQuads);
