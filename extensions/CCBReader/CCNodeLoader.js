@@ -484,7 +484,7 @@ cc.NodeLoader = cc.Class.extend({
 
                 var locContentSize = texture.getContentSize();
                 var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
-                spriteFrame = cc.SpriteFrame.createWithTexture(texture, bounds);
+                spriteFrame = cc.SpriteFrame.create(texture, bounds);
             } else {
                 var frameCache = cc.SpriteFrameCache.getInstance();
                 spriteSheet = ccbReader.getCCBRootPath() + spriteSheet;

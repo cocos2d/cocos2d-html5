@@ -1768,7 +1768,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {cc.SpriteFrame}
      */
     displayFrame: function () {
-        return cc.SpriteFrame.createWithTexture(this._texture,
+        return cc.SpriteFrame.create(this._texture,
             cc.RECT_POINTS_TO_PIXELS(this._rect),
             this._rectRotated,
             cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),

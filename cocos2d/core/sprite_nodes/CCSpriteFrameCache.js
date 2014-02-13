@@ -93,7 +93,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     ow = Math.abs(ow);
                     oh = Math.abs(oh);
                     // create frame
-                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, cc.rect(x, y, w, h), false, cc.p(ox, oy), cc.size(ow, oh));
+                    spriteFrame = cc.SpriteFrame.create(texture, cc.rect(x, y, w, h), false, cc.p(ox, oy), cc.size(ow, oh));
                 }
                 else if (format == 1 || format == 2) {
                     var frame = cc.RectFromString(frameDict["frame"]);
@@ -106,7 +106,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var offset = cc.PointFromString(frameDict["offset"]);
                     var sourceSize = cc.SizeFromString(frameDict["sourceSize"]);
                     // create frame
-                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, frame, rotated, offset, sourceSize);
+                    spriteFrame = cc.SpriteFrame.create(texture, frame, rotated, offset, sourceSize);
                 }
                 else if (format == 3) {
                     // get values
@@ -132,7 +132,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                         textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                     }
                     //create frame
-                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, textureRect, textureRotated, spriteOffset, spriteSourceSize);
+                    spriteFrame = cc.SpriteFrame.create(texture, textureRect, textureRotated, spriteOffset, spriteSourceSize);
                 }
                 else {
                     var filename = frameDict["filename"], tmpFrame = frameDict["frame"], tmpSourceSize = frameDict["sourceSize"];
@@ -141,7 +141,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var jsonOffset = cc.p(0, 0);
                     var jsonSourceSize = cc.size(tmpSourceSize.w, tmpSourceSize.h);
                     // create frame
-                    spriteFrame = cc.SpriteFrame.createWithTexture(texture, jsonFrame, jsonRotated, jsonOffset, jsonSourceSize);
+                    spriteFrame = cc.SpriteFrame.create(texture, jsonFrame, jsonRotated, jsonOffset, jsonSourceSize);
                 }
 
                 if (cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()) {
