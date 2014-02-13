@@ -876,8 +876,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             sprite.rotation = 0.0;
         }
 
-        sprite.setFlippedX(false);
-        sprite.setFlippedY(false);
+        sprite.flipX = false;
+        sprite.flipY = false;
 
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
@@ -895,17 +895,17 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 sprite.rotation = 270;
             else if (flag == (cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
                 sprite.rotation = 90;
-                sprite.setFlippedX(true);
+	            sprite.flipX = true;
             } else {
                 sprite.rotation = 270;
-                sprite.setFlippedX(true);
+	            sprite.flipX = true;
             }
         } else {
             if ((gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0)
-                sprite.setFlippedX(true);
+                sprite.flipX = true;
 
             if ((gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0)
-                sprite.setFlippedY(true);
+                sprite.filpY = true;
         }
     },
 
