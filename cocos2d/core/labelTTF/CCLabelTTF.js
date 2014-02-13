@@ -1037,8 +1037,8 @@ cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
 
 /**
  * creates a cc.LabelTTF from a font name, alignment, dimension and font size
- * @param {String} label
- * @param {String} fontName
+ * @param {String} text
+ * @param {String|cc.FontDefinition} fontName
  * @param {Number} fontSize
  * @param {cc.Size} [dimensions=cc.SIZE_ZERO]
  * @param {Number} [hAlignment=]
@@ -1046,27 +1046,25 @@ cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
  * @return {cc.LabelTTF|Null}
  * @example
  * // Example
+ * 1.
  * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
+ * 2.
+ * var fontDef = new cc.FontDefinition();
+ * fontDef.fontName = "Arial";
+ * fontDef.fontSize = "32";
+ * var myLabel = cc.LabelTTF.create('label text',  fontDef);
  */
-cc.LabelTTF.create = function (label, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
     var ret = new cc.LabelTTF();
-    if (ret.initWithString(label, fontName, fontSize, dimensions, hAlignment, vAlignment))
+    if (fontName && fontName instanceof cc.FontDefinition) {
+        if (ret.initWithStringAndTextDefinition(text, fontName))
+            return ret;
+    }
+    if (ret.initWithString(text, fontName, fontSize, dimensions, hAlignment, vAlignment))
         return ret;
     return null;
 };
 
-/**
- * Create a label with string and a font definition
- * @param {String} text
- * @param {cc.FontDefinition} textDefinition
- * @return {cc.LabelTTF|Null}
- */
-cc.LabelTTF.createWithFontDefinition = function(text, textDefinition){
-    var ret = new cc.LabelTTF();
-    if(ret && ret.initWithStringAndTextDefinition(text, textDefinition))
-        return ret;
-    return null;
-};
 
 if(cc.USE_LA88_LABELS)
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;
