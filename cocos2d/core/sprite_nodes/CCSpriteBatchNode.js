@@ -1005,47 +1005,49 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     }
 });
 
-cc.temp = cc.SpriteBatchNode.prototype;
+window._proto = cc.SpriteBatchNode.prototype;
 
 if(cc.Browser.supportWebGL){
-    cc.SpriteBatchNode.prototype.ctor = cc.SpriteBatchNode.prototype._ctorForWebGL;
-    cc.SpriteBatchNode.prototype.updateQuadFromSprite = cc.SpriteBatchNode.prototype._updateQuadFromSpriteForWebGL;
-    cc.SpriteBatchNode.prototype.insertQuadFromSprite = cc.SpriteBatchNode.prototype._insertQuadFromSpriteForWebGL;
-    cc.SpriteBatchNode.prototype.initWithTexture = cc.SpriteBatchNode.prototype._initWithTextureForWebGL;
-    cc.SpriteBatchNode.prototype.appendChild = cc.SpriteBatchNode.prototype._appendChildForWebGL;
-    cc.SpriteBatchNode.prototype.removeSpriteFromAtlas = cc.SpriteBatchNode.prototype._removeSpriteFromAtlasForWebGL;
-    cc.SpriteBatchNode.prototype.getTexture = cc.SpriteBatchNode.prototype._getTextureForWebGL;
-    cc.SpriteBatchNode.prototype.setTexture = cc.SpriteBatchNode.prototype._setTextureForWebGL;
-    cc.SpriteBatchNode.prototype.visit = cc.SpriteBatchNode.prototype._visitForWebGL;
-    cc.SpriteBatchNode.prototype.addChild = cc.SpriteBatchNode.prototype._addChildForWebGL;
-    cc.SpriteBatchNode.prototype.removeAllChildren = cc.SpriteBatchNode.prototype._removeAllChildrenForWebGL;
-    cc.SpriteBatchNode.prototype.sortAllChildren = cc.SpriteBatchNode.prototype._sortAllChildrenForWebGL;
-    cc.SpriteBatchNode.prototype.draw = cc.SpriteBatchNode.prototype._drawForWebGL;
+    _proto.ctor = _proto._ctorForWebGL;
+    _proto.updateQuadFromSprite = _proto._updateQuadFromSpriteForWebGL;
+    _proto.insertQuadFromSprite = _proto._insertQuadFromSpriteForWebGL;
+    _proto.initWithTexture = _proto._initWithTextureForWebGL;
+    _proto.appendChild = _proto._appendChildForWebGL;
+    _proto.removeSpriteFromAtlas = _proto._removeSpriteFromAtlasForWebGL;
+    _proto.getTexture = _proto._getTextureForWebGL;
+    _proto.setTexture = _proto._setTextureForWebGL;
+    _proto.visit = _proto._visitForWebGL;
+    _proto.addChild = _proto._addChildForWebGL;
+    _proto.removeAllChildren = _proto._removeAllChildrenForWebGL;
+    _proto.sortAllChildren = _proto._sortAllChildrenForWebGL;
+    _proto.draw = _proto._drawForWebGL;
 } else {
-    cc.SpriteBatchNode.prototype.ctor = cc.SpriteBatchNode.prototype._ctorForCanvas;
-    cc.SpriteBatchNode.prototype.updateQuadFromSprite = cc.SpriteBatchNode.prototype._updateQuadFromSpriteForCanvas;
-    cc.SpriteBatchNode.prototype.insertQuadFromSprite = cc.SpriteBatchNode.prototype._insertQuadFromSpriteForCanvas;
-    cc.SpriteBatchNode.prototype.initWithTexture = cc.SpriteBatchNode.prototype._initWithTextureForCanvas;
-    cc.SpriteBatchNode.prototype.appendChild = cc.SpriteBatchNode.prototype._appendChildForCanvas;
-    cc.SpriteBatchNode.prototype.removeSpriteFromAtlas = cc.SpriteBatchNode.prototype._removeSpriteFromAtlasForCanvas;
-    cc.SpriteBatchNode.prototype.getTexture = cc.SpriteBatchNode.prototype._getTextureForCanvas;
-    cc.SpriteBatchNode.prototype.setTexture = cc.SpriteBatchNode.prototype._setTextureForCanvas;
-    cc.SpriteBatchNode.prototype.visit = cc.SpriteBatchNode.prototype._visitForCanvas;
-    cc.SpriteBatchNode.prototype.removeAllChildren = cc.SpriteBatchNode.prototype._removeAllChildrenForCanvas;
-    cc.SpriteBatchNode.prototype.addChild = cc.SpriteBatchNode.prototype._addChildForCanvas;
-    cc.SpriteBatchNode.prototype.sortAllChildren = cc.SpriteBatchNode.prototype._sortAllChildrenForCanvas;
-    cc.SpriteBatchNode.prototype.draw = cc.Node.prototype.draw;
+    _proto.ctor = _proto._ctorForCanvas;
+    _proto.updateQuadFromSprite = _proto._updateQuadFromSpriteForCanvas;
+    _proto.insertQuadFromSprite = _proto._insertQuadFromSpriteForCanvas;
+    _proto.initWithTexture = _proto._initWithTextureForCanvas;
+    _proto.appendChild = _proto._appendChildForCanvas;
+    _proto.removeSpriteFromAtlas = _proto._removeSpriteFromAtlasForCanvas;
+    _proto.getTexture = _proto._getTextureForCanvas;
+    _proto.setTexture = _proto._setTextureForCanvas;
+    _proto.visit = _proto._visitForCanvas;
+    _proto.removeAllChildren = _proto._removeAllChildrenForCanvas;
+    _proto.addChild = _proto._addChildForCanvas;
+    _proto.sortAllChildren = _proto._sortAllChildrenForCanvas;
+    _proto.draw = cc.Node.prototype.draw;
 }
 
 // Override properties
-cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
-cc.defineGetterSetter(cc.temp, "textureAtlas", cc.temp.getTextureAtlas, cc.temp.setTextureAtlas);
-cc.defineGetterSetter(cc.temp, "blendFunc", cc.temp.getBlendFunc, cc.temp.setBlendFunc);
+cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+cc.defineGetterSetter(_proto, "textureAtlas", _proto.getTextureAtlas, _proto.setTextureAtlas);
+cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 // Extended properties
 /** @expose */
-cc.temp.descendants;
-cc.defineGetterSetter(cc.temp, "descendants", cc.temp.getDescendants);
+_proto.descendants;
+cc.defineGetterSetter(_proto, "descendants", _proto.getDescendants);
+
+delete window._proto;
 
 /**
  * <p>
