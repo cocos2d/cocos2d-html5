@@ -375,28 +375,28 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     }
 });
 
-cc.temp = cc.AtlasNode.prototype;
+window._proto = cc.AtlasNode.prototype;
 if(cc.Browser.supportWebGL){
-	cc.temp.initWithTexture = cc.temp._initWithTextureForWebGL;
-	cc.temp.draw = cc.temp._drawForWebGL;
-	cc.temp.setColor = cc.temp._setColorForWebGL;
-	cc.temp.setOpacity = cc.temp._setOpacityForWebGL;
-	cc.temp.getTexture = cc.temp._getTextureForWebGL;
-	cc.temp.setTexture = cc.temp._setTextureForWebGL;
-	cc.temp._calculateMaxItems = cc.temp._calculateMaxItemsForWebGL;
+	_proto.initWithTexture = _proto._initWithTextureForWebGL;
+	_proto.draw = _proto._drawForWebGL;
+	_proto.setColor = _proto._setColorForWebGL;
+	_proto.setOpacity = _proto._setOpacityForWebGL;
+	_proto.getTexture = _proto._getTextureForWebGL;
+	_proto.setTexture = _proto._setTextureForWebGL;
+	_proto._calculateMaxItems = _proto._calculateMaxItemsForWebGL;
 } else {
-    cc.temp.initWithTexture = cc.temp._initWithTextureForCanvas;
-    cc.temp.draw = cc.Node.prototype.draw;
-    cc.temp.setColor = cc.temp._setColorForCanvas;
-    cc.temp.setOpacity = cc.temp._setOpacityForCanvas;
-    cc.temp.getTexture = cc.temp._getTextureForCanvas;
-    cc.temp.setTexture = cc.temp._setTextureForCanvas;
-    cc.temp._calculateMaxItems = cc.temp._calculateMaxItemsForCanvas;
+    _proto.initWithTexture = _proto._initWithTextureForCanvas;
+    _proto.draw = cc.Node.prototype.draw;
+    _proto.setColor = _proto._setColorForCanvas;
+    _proto.setOpacity = _proto._setOpacityForCanvas;
+    _proto.getTexture = _proto._getTextureForCanvas;
+    _proto.setTexture = _proto._setTextureForCanvas;
+    _proto._calculateMaxItems = _proto._calculateMaxItemsForCanvas;
 }
 
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
  * @param {String} tile

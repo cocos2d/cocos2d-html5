@@ -198,9 +198,9 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     }
 });
 
-cc.temp = cc.MenuItem.prototype;
-cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
-delete cc.temp;
+window._proto = cc.MenuItem.prototype;
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+delete window._proto;
 
 /**
  * creates an empty menu item with target and callback<br/>
@@ -393,10 +393,10 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     }
 });
 
-cc.temp = cc.MenuItemLabel.prototype;
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+window._proto = cc.MenuItemLabel.prototype;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * @param {cc.Node} label
@@ -847,10 +847,10 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     }
 });
 
-cc.temp = cc.MenuItemSprite.prototype;
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+window._proto = cc.MenuItemSprite.prototype;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * create a menu item from sprite
@@ -1188,10 +1188,10 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     }
 });
 
-cc.temp = cc.MenuItemToggle.prototype;
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+window._proto = cc.MenuItemToggle.prototype;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * create a simple container class that "toggles" it's inner items<br/>

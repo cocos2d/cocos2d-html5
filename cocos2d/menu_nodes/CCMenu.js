@@ -572,11 +572,11 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     }
 });
 
-cc.temp = cc.Menu.prototype;
-cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+window._proto = cc.Menu.prototype;
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * create a new menu

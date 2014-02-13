@@ -817,12 +817,12 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
-cc.temp = cc.LayerRGBA.prototype;
-cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "cascadeOpacity", cc.temp.isCascadeOpacityEnabled, cc.temp.setCascadeOpacityEnabled);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+window._proto = cc.LayerRGBA.prototype;
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * <p>
@@ -1101,30 +1101,30 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     }
 });
 
-cc.temp = cc.LayerColor.prototype;
+window._proto = cc.LayerColor.prototype;
 if(cc.Browser.supportWebGL){
-    cc.temp.ctor = cc.temp._ctorForWebGL;
-    cc.temp.setContentSize = cc.temp._setContentSizeForWebGL;
-	cc.temp._setWidth = cc.temp._setWidthForWebGL;
-	cc.temp._setHeight = cc.temp._setHeightForWebGL;
-    cc.temp._updateColor = cc.temp._updateColorForWebGL;
-    cc.temp.draw = cc.temp._drawForWebGL;
+    _proto.ctor = _proto._ctorForWebGL;
+    _proto.setContentSize = _proto._setContentSizeForWebGL;
+	_proto._setWidth = _proto._setWidthForWebGL;
+	_proto._setHeight = _proto._setHeightForWebGL;
+    _proto._updateColor = _proto._updateColorForWebGL;
+    _proto.draw = _proto._drawForWebGL;
 } else {
-    cc.temp.ctor = cc.temp._ctorForCanvas;
-    cc.temp.setContentSize = cc.LayerRGBA.prototype.setContentSize;
-	cc.temp._setWidth = cc.LayerRGBA.prototype._setWidth;
-	cc.temp._setHeight = cc.LayerRGBA.prototype._setHeight;
-    cc.temp._updateColor = cc.temp._updateColorForCanvas;
-    cc.temp.draw = cc.temp._drawForCanvas;
+    _proto.ctor = _proto._ctorForCanvas;
+    _proto.setContentSize = cc.LayerRGBA.prototype.setContentSize;
+	_proto._setWidth = cc.LayerRGBA.prototype._setWidth;
+	_proto._setHeight = cc.LayerRGBA.prototype._setHeight;
+    _proto._updateColor = _proto._updateColorForCanvas;
+    _proto.draw = _proto._drawForCanvas;
 }
 
-cc.defineGetterSetter(cc.temp, "size", cc.temp.getContentSize, cc.temp.setContentSize);
-cc.defineGetterSetter(cc.temp, "width", cc.temp._getWidth, cc.temp._setWidth);
-cc.defineGetterSetter(cc.temp, "height", cc.temp._getHeight, cc.temp._setHeight);
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.getOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
-delete cc.temp;
+cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.getOpacityModifyRGB, _proto.setOpacityModifyRGB);
+delete window._proto;
 
 /**
  * creates a cc.Layer with color, width and height in Points
@@ -1452,11 +1452,11 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     }
 });
 
-cc.temp = cc.LayerGradient.prototype;
-cc.defineGetterSetter(cc.temp, "size", cc.temp.getContentSize, cc.temp.setContentSize);
-cc.defineGetterSetter(cc.temp, "width", cc.temp._getWidth, cc.temp._setWidth);
-cc.defineGetterSetter(cc.temp, "height", cc.temp._getHeight, cc.temp._setHeight);
-delete cc.temp;
+window._proto = cc.LayerGradient.prototype;
+cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+delete window._proto;
 
 /**
  * creates a gradient layer
