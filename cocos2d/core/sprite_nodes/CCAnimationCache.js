@@ -170,7 +170,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                 cc.log("cocos2d: cc.AnimationCache: An animation in your dictionary refers to a frame which is not in the cc.SpriteFrameCache." +
                     " Some or all of the frames for the animation '" + key + "' may be missing.");
             }
-            animation = cc.Animation.createWithAnimationFrames(frames, delay, 1);
+            animation = cc.Animation.create(frames, delay, 1);
             cc.AnimationCache.getInstance().addAnimation(animation, key);
         }
     },

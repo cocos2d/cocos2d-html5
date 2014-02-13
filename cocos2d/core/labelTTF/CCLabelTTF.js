@@ -1047,7 +1047,7 @@ cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
  * @example
  * // Example
  * 1.
- * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
+ * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(320,32), cc.TEXT_ALIGNMENT_LEFT);
  * 2.
  * var fontDef = new cc.FontDefinition();
  * fontDef.fontName = "Arial";

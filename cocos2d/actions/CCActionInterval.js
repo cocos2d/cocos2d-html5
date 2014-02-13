@@ -2430,7 +2430,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
                 newArray.push(element.clone());
             }
         }
-        var newAnim = cc.Animation.createWithAnimationFrames(newArray, locAnimation.getDelayPerUnit(), locAnimation.getLoops());
+        var newAnim = cc.Animation.create(newArray, locAnimation.getDelayPerUnit(), locAnimation.getLoops());
         newAnim.setRestoreOriginalFrame(locAnimation.getRestoreOriginalFrame());
         return cc.Animate.create(newAnim);
     },
