@@ -2213,7 +2213,6 @@ if(cc.Browser.supportWebGL){
  *
  */
 cc.Sprite.create = function (fileName, rect) {
-    var arg0 = arguments[0];
     var sprite = new cc.Sprite();
 
     if (arguments.length == 0) {
@@ -2221,29 +2220,29 @@ cc.Sprite.create = function (fileName, rect) {
         return sprite;
     }
 
-    if (typeof(arg0) === "string") {
-        if (arg0[5] === "#") {
+    if (typeof(fileName) === "string") {
+        if (fileName[5] === "#") {
             //init with a sprite frame name
-            var frameName = arg0.substr(6, arg0.length - 1);
+            var frameName = fileName.substr(6, fileName.length - 1);
             var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(frameName);
             if (sprite.initWithSpriteFrame(spriteFrame))
                 return sprite;
         } else {
             //init  with filename and rect
-            if (cc.Sprite.prototype.init.apply(sprite, arguments))
+            if (sprite.init(fileName, rect))
                 return  sprite;
         }
         return null;
     }
 
-    if (typeof(arg0) === "object") {
-        if (arg0 instanceof cc.Texture2D) {
+    if (typeof(fileName) === "object") {
+        if (fileName instanceof cc.Texture2D) {
             //init  with texture and rect
-            if (cc.Sprite.prototype.initWithTexture.apply(sprite, arguments))
+            if (sprite.initWithTexture(fileName, rect))
                 return  sprite;
-        } else if (arg0 instanceof cc.SpriteFrame) {
+        } else if (fileName instanceof cc.SpriteFrame) {
             //init with a sprite frame
-            if (sprite.initWithSpriteFrame(arg0))
+            if (sprite.initWithSpriteFrame(fileName))
                 return sprite;
         }
         return null;
