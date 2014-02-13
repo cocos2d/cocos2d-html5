@@ -394,8 +394,24 @@ if(cc.Browser.supportWebGL){
     cc.temp._calculateMaxItems = cc.temp._calculateMaxItemsForCanvas;
 }
 
+// Override properties
 cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
 cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+
+// Extended properties
+/** @expose */
+cc.temp.texture;
+cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
+/** @expose */
+cc.temp.textureAtlas;
+cc.defineGetterSetter(cc.temp, "textureAtlas", cc.temp.getTextureAtlas, cc.temp.setTextureAtlas);
+/** @expose */
+cc.temp.quads;
+cc.defineGetterSetter(cc.temp, "quads", cc.temp.getQuadsToDraw, cc.temp.setQuadsToDraw);
+/** @expose */
+cc.temp.blendFunc;
+cc.defineGetterSetter(cc.temp, "blendFunc", cc.temp.getBlendFunc, cc.temp.setBlendFunc);
+
 delete cc.temp;
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render

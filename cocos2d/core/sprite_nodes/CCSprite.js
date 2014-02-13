@@ -2062,8 +2062,9 @@ cc.defineGetterSetter(cc.temp, "ignoreAnchor", cc.temp.isIgnoreAnchorPointForPos
 cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
 cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
 cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
+cc.defineGetterSetter(cc.temp, "blendFunc", cc.temp.getBlendFunc, cc.temp.setBlendFunc);
 
-// Exclusive properties
+// Extended properties
 /** @expose */
 cc.temp.dirty;
 cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
@@ -2097,9 +2098,6 @@ cc.defineGetterSetter(cc.temp, "batchNode", cc.temp.getBatchNode, cc.temp.setBat
 /** @expose */
 cc.temp.quad;
 cc.defineGetterSetter(cc.temp, "quad", cc.temp.getQuad);
-/** @expose */
-cc.temp.blendFunc;
-cc.defineGetterSetter(cc.temp, "blendFunc", cc.temp.getBlendFunc, cc.temp.setBlendFunc);
 
 delete cc.temp;
 

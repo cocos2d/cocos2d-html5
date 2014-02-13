@@ -644,8 +644,8 @@ cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture
 cc.temp.dirty;
 cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
 /** @expose */
-//cc.temp.quads;
-//cc.defineGetterSetter(cc.temp, "quads", cc.temp.getQuads, cc.temp.setQuads);
+cc.temp.quads;
+cc.defineGetterSetter(cc.temp, "quads", cc.temp.getQuads, cc.temp.setQuads);
 delete cc.temp;
 
 /**

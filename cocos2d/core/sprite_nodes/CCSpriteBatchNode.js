@@ -1005,6 +1005,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     }
 });
 
+cc.temp = cc.SpriteBatchNode.prototype;
+
 if(cc.Browser.supportWebGL){
     cc.SpriteBatchNode.prototype.ctor = cc.SpriteBatchNode.prototype._ctorForWebGL;
     cc.SpriteBatchNode.prototype.updateQuadFromSprite = cc.SpriteBatchNode.prototype._updateQuadFromSpriteForWebGL;
@@ -1034,6 +1036,16 @@ if(cc.Browser.supportWebGL){
     cc.SpriteBatchNode.prototype.sortAllChildren = cc.SpriteBatchNode.prototype._sortAllChildrenForCanvas;
     cc.SpriteBatchNode.prototype.draw = cc.Node.prototype.draw;
 }
+
+// Override properties
+cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
+cc.defineGetterSetter(cc.temp, "textureAtlas", cc.temp.getTextureAtlas, cc.temp.setTextureAtlas);
+cc.defineGetterSetter(cc.temp, "blendFunc", cc.temp.getBlendFunc, cc.temp.setBlendFunc);
+
+// Extended properties
+/** @expose */
+cc.temp.descendants;
+cc.defineGetterSetter(cc.temp, "descendants", cc.temp.getDescendants);
 
 /**
  * <p>
