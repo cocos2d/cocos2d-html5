@@ -630,23 +630,23 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     }
 });
 
-cc.temp = cc.TextureAtlas.prototype;
+window._proto = cc.TextureAtlas.prototype;
 /** @expose */
-cc.temp.totalQuads;
-cc.defineGetterSetter(cc.temp, "totalQuads", cc.temp.getTotalQuads);
+_proto.totalQuads;
+cc.defineGetterSetter(_proto, "totalQuads", _proto.getTotalQuads);
 /** @expose */
-cc.temp.capacity;
-cc.defineGetterSetter(cc.temp, "capacity", cc.temp.getCapacity);
+_proto.capacity;
+cc.defineGetterSetter(_proto, "capacity", _proto.getCapacity);
 /** @expose */
-cc.temp.texture;
-cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
+_proto.texture;
+cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 /** @expose */
-cc.temp.dirty;
-cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
+_proto.dirty;
+cc.defineGetterSetter(_proto, "dirty", _proto.isDirty, _proto.setDirty);
 /** @expose */
-cc.temp.quads;
-cc.defineGetterSetter(cc.temp, "quads", cc.temp.getQuads, cc.temp.setQuads);
-delete cc.temp;
+_proto.quads;
+cc.defineGetterSetter(_proto, "quads", _proto.getQuads, _proto.setQuads);
+delete window._proto;
 
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />

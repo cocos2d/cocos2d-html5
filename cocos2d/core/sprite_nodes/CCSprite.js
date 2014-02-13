@@ -2014,92 +2014,92 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     }
 });
 
-cc.temp = cc.Sprite.prototype;
+window._proto = cc.Sprite.prototype;
 if(cc.Browser.supportWebGL){
-	cc.temp._spriteFrameLoadedCallback = cc.temp._spriteFrameLoadedCallbackForWebGL;
-	cc.temp.setOpacityModifyRGB = cc.temp._setOpacityModifyRGBForWebGL;
-	cc.temp.updateDisplayedOpacity = cc.temp._updateDisplayedOpacityForWebGL;
-	cc.temp.ctor = cc.temp._ctorForWebGL;
-    cc.temp.setBlendFunc = cc.temp._setBlendFuncForWebGL;
-    cc.temp.init = cc.temp._initForWebGL;
-    cc.temp.initWithTexture = cc.temp._initWithTextureForWebGL;
-    cc.temp._textureLoadedCallback = cc.temp._textureLoadedCallbackForWebGL;
-    cc.temp.setTextureRect = cc.temp._setTextureRectForWebGL;
-    cc.temp.updateTransform = cc.temp._updateTransformForWebGL;
-    cc.temp.addChild = cc.temp._addChildForWebGL;
-    cc.temp.setOpacity = cc.temp._setOpacityForWebGL;
-    cc.temp.setColor = cc.temp._setColorForWebGL;
-    cc.temp.updateDisplayedColor = cc.temp._updateDisplayedColorForWebGL;
-    cc.temp.setDisplayFrame = cc.temp._setDisplayFrameForWebGL;
-    cc.temp.isFrameDisplayed = cc.temp._isFrameDisplayedForWebGL;
-    cc.temp.setBatchNode = cc.temp._setBatchNodeForWebGL;
-    cc.temp.setTexture = cc.temp._setTextureForWebGL;
-    cc.temp.draw = cc.temp._drawForWebGL;
+	_proto._spriteFrameLoadedCallback = _proto._spriteFrameLoadedCallbackForWebGL;
+	_proto.setOpacityModifyRGB = _proto._setOpacityModifyRGBForWebGL;
+	_proto.updateDisplayedOpacity = _proto._updateDisplayedOpacityForWebGL;
+	_proto.ctor = _proto._ctorForWebGL;
+    _proto.setBlendFunc = _proto._setBlendFuncForWebGL;
+    _proto.init = _proto._initForWebGL;
+    _proto.initWithTexture = _proto._initWithTextureForWebGL;
+    _proto._textureLoadedCallback = _proto._textureLoadedCallbackForWebGL;
+    _proto.setTextureRect = _proto._setTextureRectForWebGL;
+    _proto.updateTransform = _proto._updateTransformForWebGL;
+    _proto.addChild = _proto._addChildForWebGL;
+    _proto.setOpacity = _proto._setOpacityForWebGL;
+    _proto.setColor = _proto._setColorForWebGL;
+    _proto.updateDisplayedColor = _proto._updateDisplayedColorForWebGL;
+    _proto.setDisplayFrame = _proto._setDisplayFrameForWebGL;
+    _proto.isFrameDisplayed = _proto._isFrameDisplayedForWebGL;
+    _proto.setBatchNode = _proto._setBatchNodeForWebGL;
+    _proto.setTexture = _proto._setTextureForWebGL;
+    _proto.draw = _proto._drawForWebGL;
 }else{
-    cc.temp._spriteFrameLoadedCallback = cc.temp._spriteFrameLoadedCallbackForCanvas;
-    cc.temp.setOpacityModifyRGB = cc.temp._setOpacityModifyRGBForCanvas;
-    cc.temp.updateDisplayedOpacity = cc.temp._updateDisplayedOpacityForCanvas;
-    cc.temp.ctor = cc.temp._ctorForCanvas;
-    cc.temp.setBlendFunc = cc.temp._setBlendFuncForCanvas;
-    cc.temp.init = cc.temp._initForCanvas;
-    cc.temp.initWithTexture = cc.temp._initWithTextureForCanvas;
-    cc.temp._textureLoadedCallback = cc.temp._textureLoadedCallbackForCanvas;
-    cc.temp.setTextureRect = cc.temp._setTextureRectForCanvas;
-    cc.temp.updateTransform = cc.temp._updateTransformForCanvas;
-    cc.temp.addChild = cc.temp._addChildForCanvas;
-    cc.temp.setOpacity = cc.temp._setOpacityForCanvas;
-    cc.temp.setColor = cc.temp._setColorForCanvas;
-    cc.temp.updateDisplayedColor = cc.temp._updateDisplayedColorForCanvas;
-    cc.temp.setDisplayFrame = cc.temp._setDisplayFrameForCanvas;
-    cc.temp.isFrameDisplayed = cc.temp._isFrameDisplayedForCanvas;
-    cc.temp.setBatchNode = cc.temp._setBatchNodeForCanvas;
-    cc.temp.setTexture = cc.temp._setTextureForCanvas;
-    cc.temp.draw = cc.temp._drawForCanvas;
+    _proto._spriteFrameLoadedCallback = _proto._spriteFrameLoadedCallbackForCanvas;
+    _proto.setOpacityModifyRGB = _proto._setOpacityModifyRGBForCanvas;
+    _proto.updateDisplayedOpacity = _proto._updateDisplayedOpacityForCanvas;
+    _proto.ctor = _proto._ctorForCanvas;
+    _proto.setBlendFunc = _proto._setBlendFuncForCanvas;
+    _proto.init = _proto._initForCanvas;
+    _proto.initWithTexture = _proto._initWithTextureForCanvas;
+    _proto._textureLoadedCallback = _proto._textureLoadedCallbackForCanvas;
+    _proto.setTextureRect = _proto._setTextureRectForCanvas;
+    _proto.updateTransform = _proto._updateTransformForCanvas;
+    _proto.addChild = _proto._addChildForCanvas;
+    _proto.setOpacity = _proto._setOpacityForCanvas;
+    _proto.setColor = _proto._setColorForCanvas;
+    _proto.updateDisplayedColor = _proto._updateDisplayedColorForCanvas;
+    _proto.setDisplayFrame = _proto._setDisplayFrameForCanvas;
+    _proto.isFrameDisplayed = _proto._isFrameDisplayedForCanvas;
+    _proto.setBatchNode = _proto._setBatchNodeForCanvas;
+    _proto.setTexture = _proto._setTextureForCanvas;
+    _proto.draw = _proto._drawForCanvas;
 }
 
 // Override properties
-cc.defineGetterSetter(cc.temp, "ignoreAnchor", cc.temp.isIgnoreAnchorPointForPosition, cc.temp.ignoreAnchorPointForPosition);
-cc.defineGetterSetter(cc.temp, "opacityModifyRGB", cc.temp.isOpacityModifyRGB, cc.temp.setOpacityModifyRGB);
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-cc.defineGetterSetter(cc.temp, "blendFunc", cc.temp.getBlendFunc, cc.temp.setBlendFunc);
+cc.defineGetterSetter(_proto, "ignoreAnchor", _proto.isIgnoreAnchorPointForPosition, _proto.ignoreAnchorPointForPosition);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 // Extended properties
 /** @expose */
-cc.temp.dirty;
-cc.defineGetterSetter(cc.temp, "dirty", cc.temp.isDirty, cc.temp.setDirty);
+_proto.dirty;
+cc.defineGetterSetter(_proto, "dirty", _proto.isDirty, _proto.setDirty);
 /** @expose */
-cc.temp.flipX;
-cc.defineGetterSetter(cc.temp, "flipX", cc.temp.isFlippedX, cc.temp.setFlippedX);
+_proto.flipX;
+cc.defineGetterSetter(_proto, "flipX", _proto.isFlippedX, _proto.setFlippedX);
 /** @expose */
-cc.temp.flipY;
-cc.defineGetterSetter(cc.temp, "flipY", cc.temp.isFlippedY, cc.temp.setFlippedY);
+_proto.flipY;
+cc.defineGetterSetter(_proto, "flipY", _proto.isFlippedY, _proto.setFlippedY);
 /** @expose */
-cc.temp.offset;
-cc.defineGetterSetter(cc.temp, "offset", cc.temp.getOffsetPosition);
+_proto.offset;
+cc.defineGetterSetter(_proto, "offset", _proto.getOffsetPosition);
 /** @expose */
-cc.temp.atlasIndex;
-cc.defineGetterSetter(cc.temp, "atlasIndex", cc.temp.getAtlasIndex, cc.temp.setAtlasIndex);
+_proto.atlasIndex;
+cc.defineGetterSetter(_proto, "atlasIndex", _proto.getAtlasIndex, _proto.setAtlasIndex);
 /** @expose */
-cc.temp.texture;
-cc.defineGetterSetter(cc.temp, "texture", cc.temp.getTexture, cc.temp.setTexture);
+_proto.texture;
+cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 /** @expose */
-cc.temp.textureRect;
-cc.defineGetterSetter(cc.temp, "textureRect", cc.temp.getTextureRect, cc.temp.setTextureRect);
+_proto.textureRect;
+cc.defineGetterSetter(_proto, "textureRect", _proto.getTextureRect, _proto.setTextureRect);
 /** @expose */
-cc.temp.textureRectRotated;
-cc.defineGetterSetter(cc.temp, "textureRectRotated", cc.temp.isTextureRectRotated);
+_proto.textureRectRotated;
+cc.defineGetterSetter(_proto, "textureRectRotated", _proto.isTextureRectRotated);
 /** @expose */
-cc.temp.textureAtlas;
-cc.defineGetterSetter(cc.temp, "textureAtlas", cc.temp.getTextureAtlas, cc.temp.setTextureAtlas);
+_proto.textureAtlas;
+cc.defineGetterSetter(_proto, "textureAtlas", _proto.getTextureAtlas, _proto.setTextureAtlas);
 /** @expose */
-cc.temp.batchNode;
-cc.defineGetterSetter(cc.temp, "batchNode", cc.temp.getBatchNode, cc.temp.setBatchNode);
+_proto.batchNode;
+cc.defineGetterSetter(_proto, "batchNode", _proto.getBatchNode, _proto.setBatchNode);
 /** @expose */
-cc.temp.quad;
-cc.defineGetterSetter(cc.temp, "quad", cc.temp.getQuad);
+_proto.quad;
+cc.defineGetterSetter(_proto, "quad", _proto.getQuad);
 
-delete cc.temp;
+delete window._proto;
 
 /**
  * <p>

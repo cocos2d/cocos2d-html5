@@ -1304,30 +1304,30 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
-cc.temp = cc.Texture2D.prototype;
+window._proto = cc.Texture2D.prototype;
 /** @expose */
-cc.temp.name;
-cc.defineGetterSetter(cc.temp, "name", cc.temp.getName);
+_proto.name;
+cc.defineGetterSetter(_proto, "name", _proto.getName);
 /** @expose */
-cc.temp.pixelFormat;
-cc.defineGetterSetter(cc.temp, "pixelFormat", cc.temp.getPixelFormat);
+_proto.pixelFormat;
+cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
 /** @expose */
-cc.temp.pixelsWidth;
-cc.defineGetterSetter(cc.temp, "pixelsWidth", cc.temp.getPixelsWide);
+_proto.pixelsWidth;
+cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
 /** @expose */
-cc.temp.pixelsHeight;
-cc.defineGetterSetter(cc.temp, "pixelsHeight", cc.temp.getPixelsHigh);
-cc.defineGetterSetter(cc.temp, "size", cc.temp.getContentSize, cc.temp.setContentSize);
-cc.defineGetterSetter(cc.temp, "width", cc.temp._getWidth, cc.temp._setWidth);
-cc.defineGetterSetter(cc.temp, "height", cc.temp._getHeight, cc.temp._setHeight);
-cc.defineGetterSetter(cc.temp, "shaderProgram", cc.temp.getShaderProgram, cc.temp.setShaderProgram);
+_proto.pixelsHeight;
+cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
+cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
 /** @expose */
-cc.temp.maxS;
-cc.defineGetterSetter(cc.temp, "maxS", cc.temp.getMaxS, cc.temp.setMaxS);
+_proto.maxS;
+cc.defineGetterSetter(_proto, "maxS", _proto.getMaxS, _proto.setMaxS);
 /** @expose */
-cc.temp.maxT;
-cc.defineGetterSetter(cc.temp, "maxT", cc.temp.getMaxT, cc.temp.setMaxT);
-delete cc.temp;
+_proto.maxT;
+cc.defineGetterSetter(_proto, "maxT", _proto.getMaxT, _proto.setMaxT);
+delete window._proto;
 
 /**
  * <p>

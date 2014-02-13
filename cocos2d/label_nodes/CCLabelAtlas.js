@@ -340,20 +340,20 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     }
 });
 
-cc.temp = cc.LabelAtlas.prototype;
+window._proto = cc.LabelAtlas.prototype;
 if(cc.Browser.supportWebGL){
-    cc.temp.updateAtlasValues =  cc.temp._updateAtlasValuesForWebGL;
-    cc.temp.setString =  cc.temp._setStringForWebGL;
-    cc.temp.setOpacity =  cc.temp._setOpacityForWebGL;
+    _proto.updateAtlasValues =  _proto._updateAtlasValuesForWebGL;
+    _proto.setString =  _proto._setStringForWebGL;
+    _proto.setOpacity =  _proto._setOpacityForWebGL;
 } else {
-    cc.temp.updateAtlasValues =  cc.temp._updateAtlasValuesForCanvas;
-    cc.temp.setString =  cc.temp._setStringForCanvas;
-    cc.temp.setOpacity =  cc.temp._setOpacityForCanvas;
+    _proto.updateAtlasValues =  _proto._updateAtlasValuesForCanvas;
+    _proto.setString =  _proto._setStringForCanvas;
+    _proto.setOpacity =  _proto._setOpacityForCanvas;
 }
 
-cc.defineGetterSetter(cc.temp, "opacity", cc.temp.getOpacity, cc.temp.setOpacity);
-cc.defineGetterSetter(cc.temp, "color", cc.temp.getColor, cc.temp.setColor);
-delete cc.temp;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * <p>
