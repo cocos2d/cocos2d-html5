@@ -170,7 +170,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _updateAtlasValuesForCanvas: function () {
         var locString = this._string;
         var n = locString.length;
-        var texture = this.getTexture();
+        var texture = this.texture;
         var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight ;     //needn't multiply cc.CONTENT_SCALE_FACTOR(), because sprite's draw will do this
 
         for (var i = 0; i < n; i++) {
@@ -210,9 +210,9 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _updateAtlasValuesForWebGL: function () {
         var locString = this._string;
         var n = locString.length;
-        var locTextureAtlas = this._textureAtlas;
+        var locTextureAtlas = this.textureAtlas;
 
-        var texture = locTextureAtlas.getTexture();
+        var texture = locTextureAtlas.texture;
         var textureWide = texture.pixelsWidth;
         var textureHigh = texture.pixelsHeight;
         var itemWidthInPixels = this._itemWidth;
@@ -310,8 +310,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _setStringForWebGL: function (label) {
         label = String(label);
         var len = label.length;
-        if (len > this._textureAtlas.totalQuads)
-            this._textureAtlas.resizeCapacity(len);
+        if (len > this.textureAtlas.totalQuads)
+            this.textureAtlas.resizeCapacity(len);
 
         this._string = label;
         this.width = len * this._itemWidth;

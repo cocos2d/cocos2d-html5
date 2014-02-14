@@ -36,16 +36,19 @@
  * @class
  * @extends cc.Class
  * @property {Boolean}  dirty   - Indicates whether or not the array buffer of the VBO needs to be updated
+ * @property {Image}    texture - Image texture for cc.TextureAtlas
  */
 cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 	/** @public */
 	dirty:false,
 
+	/** @public */
+	texture:null,
+
     _indices:null,
     //0: vertex  1: indices
     _buffersVBO:null,
     _capacity:0,
-    _texture:null,
 
     _quads:null,
     _quadsArrayBuffer:null,
@@ -78,14 +81,14 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @return {Image}
      */
     getTexture:function () {
-        return this._texture;
+        return this.texture;
     },
 
     /**
      * @param {Image} texture
      */
     setTexture:function (texture) {
-        this._texture = texture;
+        this.texture = texture;
     },
 
     /**
@@ -641,7 +644,6 @@ _proto.capacity;
 cc.defineGetterSetter(_proto, "capacity", _proto.getCapacity);
 /** @expose */
 _proto.texture;
-cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 /** @expose */
 _proto.dirty;
 /** @expose */

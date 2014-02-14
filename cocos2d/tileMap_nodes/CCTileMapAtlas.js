@@ -191,7 +191,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * @private
      */
     _updateAtlasValueAt:function (pos, value, index) {
-        var locTextureAtlas = this._textureAtlas;
+        var locTextureAtlas = this.textureAtlas;
         if(index < 0 && index >= locTextureAtlas.getCapacity())
             throw "cc.TileMapAtlas._updateAtlasValueAt(): Invalid index";
         var quad = locTextureAtlas.getQuads()[index];
@@ -201,7 +201,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         var row = (value.r % this._itemsPerRow);
         var col = (value.r / this._itemsPerRow);
 
-        var tex = locTextureAtlas.getTexture(), textureWide = tex.pixelsWidth, textureHigh = tex.pixelsHeight;
+        var tex = locTextureAtlas.texture, textureWide = tex.pixelsWidth, textureHigh = tex.pixelsHeight;
 
         var locItemWidth = this._itemWidth;
         var locItemHeight = this._itemHeight;

@@ -725,7 +725,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             var locCanvas = document.createElement("canvas");
             var labelTexture = new cc.Texture2D();
             labelTexture.initWithElement(locCanvas);
-            this.setTexture(labelTexture);
+            this.texture = labelTexture;
             this._labelCanvas = locCanvas;
         }
         this._labelContext = this._labelCanvas.getContext("2d");
@@ -936,7 +936,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _setTextureCoords:function (rect) {
-        var tex = this._batchNode ? this._textureAtlas.getTexture() : this._texture;
+        var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
         if (!tex)
             return;
 

@@ -34,8 +34,14 @@
  * - opacity and RGB colors </p>
  * @class
  * @extends cc.NodeRGBA
+ *
+ * @property {cc.TextureAtlas}  textureAtlas    - Texture atlas for cc.AtlasNode
+ *
  */
 cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
+	/** @public */
+	textureAtlas:null,
+
     RGBAProtocol:true,
     //! chars per row
     _itemsPerRow:0,
@@ -47,7 +53,6 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _itemHeight:0,
 
     _colorUnmodified:null,
-    _textureAtlas:null,
 
     // protocol variables
     _opacityModifyRGB:false,
@@ -119,14 +124,14 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {cc.TextureAtlas} value
      */
     setTextureAtlas:function (value) {
-        this._textureAtlas = value;
+        this.textureAtlas = value;
     },
 
     /**
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas:function () {
-        return this._textureAtlas;
+        return this.textureAtlas;
     },
 
     /**
@@ -201,10 +206,10 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
         var locRealColor = this._realColor;
         this._colorF32Array = new Float32Array([locRealColor.r / 255.0, locRealColor.g / 255.0, locRealColor.b / 255.0, this._realOpacity / 255.0]);
-        this._textureAtlas = new cc.TextureAtlas();
-        this._textureAtlas.initWithTexture(texture, itemsToRender);
+        this.textureAtlas = new cc.TextureAtlas();
+        this.textureAtlas.initWithTexture(texture, itemsToRender);
 
-        if (!this._textureAtlas) {
+        if (!this.textureAtlas) {
             cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
             return false;
         }
@@ -230,7 +235,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         cc.NODE_DRAW_SETUP(this);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.uniform4fv(this._uniformColor, this._colorF32Array);
-        this._textureAtlas.drawNumberOfQuads(this._quadsToDraw, 0);
+        this.textureAtlas.drawNumberOfQuads(this._quadsToDraw, 0);
     },
 
     /**
@@ -253,7 +258,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         }
         cc.NodeRGBA.prototype.setColor.call(this, color3);
 
-        if (this.getTexture()) {
+        if (this.texture) {
             var element = this._originalTexture.getHtmlElementObj();
             if(!element)
                 return;
@@ -264,7 +269,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
                 var locTexture = new cc.Texture2D();
                 locTexture.initWithElement(element);
                 locTexture.handleLoadedTexture();
-                this.setTexture(locTexture);
+                this.texture = locTexture;
             }
         }
     },
@@ -321,7 +326,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     _getTextureForWebGL: function () {
-        return  this._textureAtlas.getTexture();
+        return  this.textureAtlas.texture;
     },
 
     /** sets a new texture. it will be retained
@@ -334,7 +339,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     _setTextureForWebGL: function (texture) {
-        this._textureAtlas.setTexture(texture);
+        this.textureAtlas.texture = texture;
         this._updateBlendFunc();
         this._updateOpacityModifyRGB();
     },
@@ -342,7 +347,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _calculateMaxItems:null,
 
     _calculateMaxItemsForCanvas:function () {
-        var selTexture = this.getTexture();
+        var selTexture = this.texture;
         var size = selTexture.size;
 
         this._itemsPerColumn = 0 | (size.height / this._itemHeight);
@@ -350,7 +355,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     _calculateMaxItemsForWebGL:function () {
-        var selTexture = this.getTexture();
+        var selTexture = this.texture;
         var size = selTexture.size;
         if(this._ignoreContentScaleFactor)
             size = selTexture.getContentSizeInPixels();
@@ -360,14 +365,14 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     _updateBlendFunc:function () {
-        if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
+        if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
             this._blendFunc.src = gl.SRC_ALPHA;
             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
         }
     },
 
     _updateOpacityModifyRGB:function () {
-        this._opacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
+        this._opacityModifyRGB = this.textureAtlas.texture.hasPremultipliedAlpha();
     },
 
     _setIgnoreContentScaleFactor:function(ignoreContentScaleFactor){
@@ -404,7 +409,6 @@ _proto.texture;
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 /** @expose */
 _proto.textureAtlas;
-cc.defineGetterSetter(_proto, "textureAtlas", _proto.getTextureAtlas, _proto.setTextureAtlas);
 /** @expose */
 _proto.quads;
 cc.defineGetterSetter(_proto, "quads", _proto.getQuadsToDraw, _proto.setQuadsToDraw);

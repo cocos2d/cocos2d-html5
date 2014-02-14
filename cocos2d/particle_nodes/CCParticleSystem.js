@@ -460,7 +460,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var quads;
         var start = 0, end = 0;
         if (this._batchNode) {
-            quads = this._batchNode.getTextureAtlas().getQuads();
+            quads = this._batchNode.textureAtlas.getQuads();
             start = this._atlasIndex;
             end = this._atlasIndex + this._totalParticles;
         } else {
@@ -525,7 +525,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             } else if (!oldBatch) {
                 // OLD: was it self render cleanup  ?
                 // copy current state to batch
-                this._batchNode.getTextureAtlas()._copyQuadsToTextureAtlas(this._quads, this._atlasIndex);
+                this._batchNode.textureAtlas._copyQuadsToTextureAtlas(this._quads, this._atlasIndex);
 
                 //delete buffer
                 cc.renderContext.deleteBuffer(this._buffersVBO[1]);     //where is re-bindBuffer code?
@@ -1932,9 +1932,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     updateQuadWithParticle:function (particle, newPosition) {
         var quad = null;
         if (this._batchNode) {
-            var batchQuads = this._batchNode.getTextureAtlas().getQuads();
+            var batchQuads = this._batchNode.textureAtlas.getQuads();
             quad = batchQuads[this._atlasIndex + particle.atlasIndex];
-            this._batchNode.getTextureAtlas().dirty = true;
+            this._batchNode.textureAtlas.dirty = true;
         } else
             quad = this._quads[this._particleIdx];
 

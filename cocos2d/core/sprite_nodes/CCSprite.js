@@ -288,7 +288,9 @@ if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
  * @class
  * @extends cc.NodeRGBA
  *
- * @property {Boolean}  dirty   - Indicates whether the sprite needs to be updated
+ * @property {Boolean}          dirty           - Indicates whether the sprite needs to be updated..
+ * @property {Number}           atlasIndex      - The index used on the TextureAtlas.
+ * @property {cc.TextureAtlas}  textureAtlas    - The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
  *
  * @example
  * var aSprite = new cc.Sprite();
@@ -300,12 +302,15 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 	/** @public */
 	dirty:false,
 
-    //
-    // Data used when the sprite is rendered using a CCSpriteSheet
-    //
-    _textureAtlas:null, //cc.SpriteBatchNode texture atlas
+	/** @public */
+	atlasIndex:0,
 
-    _atlasIndex:0,
+	/**
+	 * @public
+	 * The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
+	 */
+    textureAtlas:null,
+
     _batchNode:null,
     _recursiveDirty:null, //Whether all of the sprite's children needs to be updated
     _hasChildren:null, //Whether the sprite contains children
@@ -389,7 +394,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {Number}
      */
     getAtlasIndex:function () {
-        return this._atlasIndex;
+        return this.atlasIndex;
     },
 
     /**
@@ -398,7 +403,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {Number} atlasIndex
      */
     setAtlasIndex:function (atlasIndex) {
-        this._atlasIndex = atlasIndex;
+        this.atlasIndex = atlasIndex;
     },
 
     /**
@@ -414,7 +419,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas:function () {
-        return this._textureAtlas;
+        return this.textureAtlas;
     },
 
     /**
@@ -422,7 +427,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.TextureAtlas} textureAtlas
      */
     setTextureAtlas:function (textureAtlas) {
-        this._textureAtlas = textureAtlas;
+        this.textureAtlas = textureAtlas;
     },
 
     /**
@@ -504,7 +509,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteBatchNode} batchNode
      */
     useBatchNode:function (batchNode) {
-        this._textureAtlas = batchNode.getTextureAtlas(); // weak ref
+        this.textureAtlas = batchNode.textureAtlas; // weak ref
         this._batchNode = batchNode;
     },
 
@@ -933,7 +938,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._blendFunc.dst = cc.BLEND_DST;
 
         // update texture (calls _updateBlendFunc)
-        this.setTexture(null);
+        this.texture = null;
         this._textureLoaded = true;
         this._flippedX = this._flippedY = false;
 
@@ -973,7 +978,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._blendFunc.dst = cc.BLEND_DST;
 
         // update texture (calls _updateBlendFunc)
-        this.setTexture(null);
+        this.texture = null;
         this._textureLoaded = true;
         this._flippedX = this._flippedY = false;
 
@@ -1095,7 +1100,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             var locSize1 = texture.size;
             rect = cc.rect(0, 0, locSize1.width, locSize1.height);
         }
-        this.setTexture(texture);
+        this.texture = texture;
         this.setTextureRect(rect, rotated, rect._size);
 
         // by default use "Self Render".
@@ -1156,7 +1161,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
         this._originalTexture = texture;
 
-        this.setTexture(texture);
+        this.texture = texture;
         this.setTextureRect(rect, rotated, rect._size);
 
         // by default use "Self Render".
@@ -1182,7 +1187,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             locRect.height = locSize2.height;
         }
 
-        this.setTexture(sender);
+        this.texture = sender;
         this.setTextureRect(locRect, this._rectRotated, locRect._size);
 
         // by default use "Self Render".
@@ -1208,7 +1213,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
         this._originalTexture = sender;
 
-        this.setTexture(sender);
+        this.texture = sender;
         this.setTextureRect(locRect, this._rectRotated, locRect._size);
 
         // by default use "Self Render".
@@ -1357,7 +1362,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 locQuad.tl.vertices = {x: cc.RENDER_IN_SUBPIXEL(dx), y: cc.RENDER_IN_SUBPIXEL(dy), z: locVertexZ};
                 locQuad.tr.vertices = {x: cc.RENDER_IN_SUBPIXEL(cx), y: cc.RENDER_IN_SUBPIXEL(cy), z: locVertexZ};
             }
-            this._textureAtlas.updateQuad(locQuad, this._atlasIndex);
+            this.textureAtlas.updateQuad(locQuad, this.atlasIndex);
             this._recursiveDirty = false;
             this.dirty = false;
         }
@@ -1428,7 +1433,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 cc.log("cc.Sprite.addChild(): cc.Sprite only supports cc.Sprites as children when using cc.SpriteBatchNode");
                 return;
             }
-            if(child.getTexture()._webTextureObj !== this._textureAtlas.getTexture()._webTextureObj)
+            if(child.texture._webTextureObj !== this.textureAtlas.texture._webTextureObj)
                 cc.log("cc.Sprite.addChild(): cc.Sprite only supports a sprite using same texture as children when using cc.SpriteBatchNode");
 
             //put it in descendants array of batch node
@@ -1475,8 +1480,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // renders using Sprite Manager
         if (this._batchNode) {
-            if (this._atlasIndex != cc.SPRITE_INDEX_NOT_INITIALIZED) {
-                this._textureAtlas.updateQuad(locQuad, this._atlasIndex)
+            if (this.atlasIndex != cc.SPRITE_INDEX_NOT_INITIALIZED) {
+                this.textureAtlas.updateQuad(locQuad, this.atlasIndex)
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
@@ -1563,7 +1568,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 this._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
-                    this.setTexture(locNewTexture);
+                    this.texture = locNewTexture;
                 this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
 
                 this._callLoadedEventCallbacks();
@@ -1571,7 +1576,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
         // update texture before updating texture rect
         if (pNewTexture != this._texture)
-            this.setTexture(pNewTexture);
+            this.texture = pNewTexture;
 
         // update rect
         this._rectRotated = newFrame.isRotated();
@@ -1596,14 +1601,14 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 this._textureLoaded = true;
                 var locNewTexture = sender.getTexture();
                 if (locNewTexture != this._texture)
-                    this.setTexture(locNewTexture);
+                    this.texture = locNewTexture;
                 this.setTextureRect(sender.getRect(), sender.isRotated(), sender.getOriginalSize());
                 this._callLoadedEventCallbacks();
             }, this);
         }
         // update texture before updating texture rect
         if (pNewTexture != this._texture)
-            this.setTexture(pNewTexture);
+            this.texture = pNewTexture;
 
         if (this._rectRotated)
             this._originalTexture = pNewTexture;
@@ -1652,7 +1657,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteBatchNode|null} spriteBatchNode
      * @example
      *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
-     *  var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.rect(0, 0, 57, 57));
+     *  var sprite = cc.Sprite.createWithTexture(batch.texture, cc.rect(0, 0, 57, 57));
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */
@@ -1663,8 +1668,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // self render
         if (!this._batchNode) {
-            this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
-            this.setTextureAtlas(null);
+            this.atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
+            this.textureAtlas = null;
             this._recursiveDirty = false;
             this.dirty = false;
 
@@ -1682,7 +1687,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         } else {
             // using batch
             this._transformToBatch = cc.AffineTransformIdentity();
-            this.setTextureAtlas(this._batchNode.getTextureAtlas()); // weak ref
+            this.textureAtlas = this._batchNode.textureAtlas; // weak ref
         }
     },
 
@@ -1691,14 +1696,14 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // self render
         if (!this._batchNode) {
-            this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
-            this.setTextureAtlas(null);
+            this.atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
+            this.textureAtlas = null;
             this._recursiveDirty = false;
             this.dirty = false;
         } else {
             // using batch
             this._transformToBatch = cc.AffineTransformIdentity();
-            this.setTextureAtlas(this._batchNode.getTextureAtlas()); // weak ref
+            this.textureAtlas = this._batchNode.textureAtlas; // weak ref
         }
     },
 
@@ -1712,11 +1717,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setTextureForWebGL: function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
         if(texture && !(texture instanceof cc.Texture2D))
-            throw "cc.Sprite.setTexture(): setTexture expects a CCTexture2D. Invalid argument";
+            throw "Invalid argument: cc.Sprite.texture setter expects a CCTexture2D.";
 
         // If batchnode, then texture id should be the same
-        if(this._batchNode && this._batchNode.getTexture() != texture) {
-            cc.log("cc.Sprite.setTexture(): Batched sprites should use the same texture as the batchnode");
+        if(this._batchNode && this._batchNode.texture != texture) {
+            cc.log("cc.Sprite.texture setter: Batched sprites should use the same texture as the batchnode");
             return;
         }
 
@@ -1734,7 +1739,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setTextureForCanvas: function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
         if(texture && !(texture instanceof cc.Texture2D))
-            throw "cc.Sprite.setTexture(): setTexture expects a CCTexture2D. Invalid argument";
+            throw "Invalid argument: cc.Sprite texture setter expects a CCTexture2D.";
 
         if (this._texture != texture) {
             if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
@@ -1781,7 +1786,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
-                    this.setTexture(locTexture);
+                    this.texture = locTexture;
                 }
             }
         }
@@ -1790,7 +1795,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setTextureCoords:function (rect) {
         rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
-        var tex = this._batchNode ? this._textureAtlas.getTexture() : this._texture;
+        var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
         if (!tex)
             return;
 
@@ -2080,19 +2085,14 @@ _proto.offset;
 cc.defineGetterSetter(_proto, "offset", _proto.getOffsetPosition);
 /** @expose */
 _proto.atlasIndex;
-cc.defineGetterSetter(_proto, "atlasIndex", _proto.getAtlasIndex, _proto.setAtlasIndex);
 /** @expose */
 _proto.texture;
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
-/** @expose */
-_proto.textureRect;
-cc.defineGetterSetter(_proto, "textureRect", _proto.getTextureRect, _proto.setTextureRect);
 /** @expose */
 _proto.textureRectRotated;
 cc.defineGetterSetter(_proto, "textureRectRotated", _proto.isTextureRectRotated);
 /** @expose */
 _proto.textureAtlas;
-cc.defineGetterSetter(_proto, "textureAtlas", _proto.getTextureAtlas, _proto.setTextureAtlas);
 /** @expose */
 _proto.batchNode;
 cc.defineGetterSetter(_proto, "batchNode", _proto.getBatchNode, _proto.setBatchNode);

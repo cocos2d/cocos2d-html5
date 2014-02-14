@@ -35,13 +35,19 @@
  * is vertically aligned along the streak segment.
  * @class
  * @extends cc.NodeRGBA
+ *
+ * @property {cc.Texture2D}  texture    - Texture used for the motion streak.
  */
 cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
+	/**
+	 * @public
+	 * texture used for the motion streak
+	 */
+	texture:null,
+
     _fastMode:false,
     _startingPositionInitialized:false,
 
-    /** texture used for the motion streak */
-    _texture:null,
     _blendFunc:null,
     _positionR:null,
 
@@ -78,7 +84,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._fastMode = false;
         this._startingPositionInitialized = false;
 
-        this._texture = null;
+        this.texture = null;
 
         this._stroke = 0;
         this._fadeDelta = 0;
@@ -106,15 +112,15 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @return {cc.Texture2D}
      */
     getTexture:function () {
-        return this._texture;
+        return this.texture;
     },
 
     /**
      * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
-        if (this._texture != texture)
-            this._texture = texture;
+        if (this.texture != texture)
+            this.texture = texture;
     },
 
     /**
@@ -235,7 +241,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         // shader program
         this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
-        this.setTexture(texture);
+        this.texture = texture;
         this.setColor(color);
         this.scheduleUpdate();
 
@@ -296,13 +302,13 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         if (this._nuPoints <= 1)
             return;
 
-        if(this._texture && this._texture.isLoaded()){
+        if(this.texture && this.texture.isLoaded()){
             ctx = ctx || cc.renderContext;
             cc.NODE_DRAW_SETUP(this);
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
-            cc.glBindTexture2D(this._texture);
+            cc.glBindTexture2D(this.texture);
 
             //position
             ctx.bindBuffer(ctx.ARRAY_BUFFER, this._verticesBuffer);

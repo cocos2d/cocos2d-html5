@@ -666,7 +666,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if(cc.Browser.supportWebGL){
             return;
         }
-        var locElement, locTexture = this.getTexture();
+        var locElement, locTexture = this.texture;
         if (locTexture && locTexture.width > 0) {
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
@@ -680,7 +680,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     locTexture = new cc.Texture2D();
                     locTexture.initWithElement(locElement);
                     locTexture.handleLoadedTexture();
-                    this.setTexture(locTexture);
+                    this.texture = locTexture;
                 }
             }
         }
@@ -763,7 +763,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 	        this.anchorY = 0.5;
 
             if (cc.renderContextType === cc.WEBGL) {
-                var locTexture = this._textureAtlas.getTexture();
+                var locTexture = this._textureAtlas.texture;
                 this._opacityModifyRGB = locTexture.hasPremultipliedAlpha();
 
                 this._reusedChar = new cc.Sprite();
@@ -781,7 +781,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     createFontChars:function () {
         var locContextType = cc.renderContextType;
-        var locTexture = (locContextType === cc.CANVAS) ? this.getTexture() : this._textureAtlas.getTexture();
+        var locTexture = (locContextType === cc.CANVAS) ? this.texture : this._textureAtlas.texture;
 
         var nextFontPositionX = 0;
         var prev = -1;
@@ -1197,13 +1197,13 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
             var locIsLoaded = texture.isLoaded();
             this._textureLoaded = locIsLoaded;
-            this.setTexture(texture);
+            this.texture = texture;
             if (cc.renderContextType === cc.CANVAS)
-                this._originalTexture = this.getTexture();
+                this._originalTexture = this.texture;
             if(!locIsLoaded){
                 texture.addLoadedEventListener(function(sender){
                     this._textureLoaded = true;
-                    this.setTexture(sender);
+                    this.texture = sender;
                     this.createFontChars();
                     this._changeTextureColor();
                     this.updateLabel();

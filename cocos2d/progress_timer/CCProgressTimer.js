@@ -354,7 +354,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         var max = cc.p(quad.tr.texCoords.u, quad.tr.texCoords.v);
 
         //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
-        if (locSprite.isTextureRectRotated()) {
+        if (locSprite.textureRectRotated) {
             var temp = alpha.x;
             alpha.x = alpha.y;
             alpha.y = temp;
@@ -496,10 +496,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-        if (this._sprite.getTexture())
-            cc.glBindTexture2D(this._sprite.getTexture());
-        else
-            cc.glBindTexture2D(null);
+        cc.glBindTexture2D(this._sprite.texture);
 
         context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
         if(this._vertexDataDirty){
