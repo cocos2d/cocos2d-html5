@@ -30,34 +30,51 @@
  * @type Object
  */
 cc.RESOURCE_TYPE = {
-    "IMAGE": ["png", "jpg", "bmp","jpeg","gif"],
+    "IMAGE": ["png", "jpg", "bmp", "jpeg", "gif"],
     "SOUND": ["mp3", "ogg", "wav", "mp4", "m4a"],
     "XML": ["plist", "xml", "fnt", "tmx", "tsx"],
     "BINARY": ["ccbi"],
     "FONT": "FONT",
-    "TEXT":["txt", "vsh", "fsh","json", "ExportJson"],
+    "TEXT": ["txt", "vsh", "fsh", "json", "ExportJson"],
     "UNKNOW": []
 };
 
 /**
- * A class to pre-load resources before engine start game main loop.
+ * resource structure
+ * @param resList
+ * @param selector
+ * @param target
+ * @constructor
+ */
+cc.ResData = function (resList, selector, target) {
+    this.resList = resList || [];
+    this.selector = selector;
+    this.target = target;
+    this.curNumber = 0;
+    this.loadedNumber = 0;
+    this.totalNumber = this.resList.length;
+};
+
+/**
+ * A class to preload resources async
  * @class
- * @extends cc.Scene
+ * @extends cc.Class
  */
 cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
-    _curNumber: 0,
-    _totalNumber: 0,
-    _loadedNumber: 0,
-    _resouces: null,
+    _curData: null,
+    _resQueue: null,
     _animationInterval: 1 / 60,
     _interval: null,
     _isAsync: false,
+    _scheduler: null,
+    _running: false,
 
     /**
      * Constructor
      */
     ctor: function () {
-        this._resouces = [];
+        this._scheduler = cc.Director.getInstance().getScheduler();
+        this._resQueue = [];
     },
 
     /**
@@ -67,30 +84,12 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * @param {Object} target
      */
     initWithResources: function (resources, selector, target) {
-        if(!resources){
-            cc.log("resources should not null");
+        if (!resources) {
+            cc.log("cocos2d:resources should not null");
             return;
         }
 
-        if (selector) {
-            this._selector = selector;
-            this._target = target;
-        }
-
-        if ((resources != this._resouces) || (this._curNumber == 0)) {
-            this._curNumber = 0;
-            this._loadedNumber = 0;
-            if (resources[0] instanceof Array) {
-                for (var i = 0; i < resources.length; i++) {
-                    var each = resources[i];
-                    this._resouces = this._resouces.concat(each);
-                }
-            } else
-                this._resouces = resources;
-            this._totalNumber = this._resouces.length;
-        }
-
-        //load resources
+        this._resQueue.push(new cc.ResData(resources, selector, target));
         this._schedulePreload();
     },
 
@@ -105,7 +104,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * cc.Loader.getInstance().onResLoaded();
      */
     onResLoadingErr: function (name) {
-        this._loadedNumber++;
+        this._curData.loadedNumber++;
         cc.log("cocos2d:Failed loading resource: " + name);
     },
 
@@ -116,7 +115,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * cc.Loader.getInstance().onResLoaded();
      */
     onResLoaded: function () {
-        this._loadedNumber++;
+        this._curData.loadedNumber++;
     },
 
     /**
@@ -127,11 +126,14 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * cc.log(cc.Loader.getInstance().getPercentage() + "%");
      */
     getPercentage: function () {
-        var percent = 0;
-        if (this._totalNumber == 0) {
+        var percent = 0, curData = this._curData;
+        if (!curData) {
+            percent = 0;
+        }
+        else if (curData.totalNumber == 0) {
             percent = 100;
         } else {
-            percent = (0 | (this._loadedNumber / this._totalNumber * 100));
+            percent = (0 | (curData.loadedNumber / curData.totalNumber * 100));
         }
         return percent;
     },
@@ -151,14 +153,14 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             for (var i = 0; i < resources.length; i++) {
                 resInfo = resources[i];
                 path = typeof resInfo == "string" ? resInfo : resInfo.src;
-                type = this._getResType(resInfo,path);
+                type = this._getResType(resInfo, path);
 
                 switch (type) {
                     case "IMAGE":
                         sharedTextureCache.removeTextureForKey(path);
                         break;
                     case "SOUND":
-                        if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
+                        if (!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
                         sharedEngine.unloadEffect(path);
                         break;
                     case "XML":
@@ -191,28 +193,33 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             }
         }
 
-        if (this._curNumber < this._totalNumber) {
-            this._loadOneResource();
-            this._curNumber++;
+        var curData = this._curData;
+        if (!curData && this._resQueue.length > 0) {
+            this._curData = this._resQueue.shift();
+        }
+
+        if (curData && curData.curNumber < curData.totalNumber) {
+            this._loadRes();
+            curData.curNumber++;
         }
     },
 
-    _loadOneResource: function () {
+    _loadRes: function () {
         var sharedTextureCache = cc.TextureCache.getInstance(),
             sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null,
             sharedParser = cc.SAXParser.getInstance(),
             sharedFileUtils = cc.FileUtils.getInstance();
 
-        var resInfo = this._resouces[this._curNumber],
-            path = typeof resInfo == "string" ? resInfo : resInfo.src,
-            type = this._getResType(resInfo,path);
+        var resInfo = this._curData.resList.shift(),
+            path = this._getResPath(resInfo),
+            type = this._getResType(resInfo, path);
 
         switch (type) {
             case "IMAGE":
                 sharedTextureCache.addImage(path);
                 break;
             case "SOUND":
-                if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
+                if (!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
                 sharedEngine.preloadSound(path);
                 break;
             case "XML":
@@ -234,17 +241,22 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _schedulePreload: function () {
-        var _self = this;
-        this._interval = setInterval(function () {
-            _self._preload();
-        }, this._animationInterval * 1000);
+        if (!this._running) {
+            this._running = true;
+            this._scheduler.scheduleCallbackForTarget(this, this._preload);
+        }
     },
 
     _unschedulePreload: function () {
-        clearInterval(this._interval);
+        this._running = false;
+        this._scheduler.unscheduleCallbackForTarget(this, this._preload);
     },
 
-    _getResType: function (resInfo,path) {
+    _getResPath: function (resInfo) {
+        return typeof resInfo == "string" ? resInfo : resInfo.src;
+    },
+
+    _getResType: function (resInfo, path) {
         var isFont = resInfo.fontName;
         if (isFont != null) {
             return cc.RESOURCE_TYPE["FONT"];
@@ -253,7 +265,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             var ext = path.substring(path.lastIndexOf(".") + 1, path.length);
 
             var index = ext.indexOf("?");
-            if(index > 0) ext = ext.substring(0, index);
+            if (index > 0) ext = ext.substring(0, index);
 
             for (var resType in cc.RESOURCE_TYPE) {
                 if (cc.RESOURCE_TYPE[resType].indexOf(ext) != -1) {
@@ -274,17 +286,19 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _complete: function () {
-        if (this._target && (typeof(this._selector) == "string")) {
-            this._target[this._selector](this);
-        } else if (this._target && (typeof(this._selector) == "function")) {
-            this._selector.call(this._target, this);
+        var _target = this._curData.target, _selector = this._curData.selector;
+        if (_target && (typeof(_selector) == "string")) {
+            _target[_selector](this);
+        } else if (_target && (typeof(_selector) == "function")) {
+            _selector.call(_target, this);
         } else {
-            this._selector(this);
+            _selector(this);
         }
 
-        this._curNumber = 0;
-        this._loadedNumber = 0;
-        this._totalNumber = 0;
+        this._curData = null;
+        if (this._resQueue.length > 0) {
+            this._schedulePreload();
+        }
     },
 
     _registerFaceFont: function (fontRes) {
@@ -410,7 +424,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     _texture2d: null,
     _bgLayer: null,
     _label: null,
-    _winSize:null,
+    _winSize: null,
 
     /**
      * Constructor
@@ -419,7 +433,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         cc.Scene.prototype.ctor.call(this);
         this._winSize = cc.Director.getInstance().getWinSize();
     },
-    init:function(){
+    init: function () {
         cc.Scene.prototype.init.call(this);
 
         //logo
@@ -429,7 +443,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         this._logoTexture = new Image();
         var _this = this, handler;
-        this._logoTexture.addEventListener("load", handler = function() {
+        this._logoTexture.addEventListener("load", handler = function () {
             _this._initStage(centerPos);
             this.removeEventListener('load', handler, false);
         });
