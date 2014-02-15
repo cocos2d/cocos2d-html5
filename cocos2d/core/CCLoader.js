@@ -142,31 +142,33 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      */
     releaseResources: function (resources) {
         if (resources && resources.length > 0) {
-            var sharedTextureCache = cc.TextureCache.getInstance();
-            var sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null;
-            var sharedParser = cc.SAXParser.getInstance();
-            var sharedFileUtils = cc.FileUtils.getInstance();
+            var sharedTextureCache = cc.TextureCache.getInstance(),
+                sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null,
+                sharedParser = cc.SAXParser.getInstance(),
+                sharedFileUtils = cc.FileUtils.getInstance();
 
-            var resInfo;
+            var resInfo, path, type;
             for (var i = 0; i < resources.length; i++) {
                 resInfo = resources[i];
-                var type = this._getResType(resInfo);
+                path = typeof resInfo == "string" ? resInfo : resInfo.src;
+                type = this._getResType(resInfo,path);
+
                 switch (type) {
                     case "IMAGE":
-                        sharedTextureCache.removeTextureForKey(resInfo.src);
+                        sharedTextureCache.removeTextureForKey(path);
                         break;
                     case "SOUND":
                         if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
-                        sharedEngine.unloadEffect(resInfo.src);
+                        sharedEngine.unloadEffect(path);
                         break;
                     case "XML":
-                        sharedParser.unloadPlist(resInfo.src);
+                        sharedParser.unloadPlist(path);
                         break;
                     case "BINARY":
-                        sharedFileUtils.unloadBinaryFileData(resInfo.src);
+                        sharedFileUtils.unloadBinaryFileData(path);
                         break;
                     case "TEXT":
-                        sharedFileUtils.unloadTextFileData(resInfo.src);
+                        sharedFileUtils.unloadTextFileData(path);
                         break;
                     case "FONT":
                         this._unregisterFaceFont(resInfo);
@@ -207,20 +209,20 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
         switch (type) {
             case "IMAGE":
-                sharedTextureCache.addImage(resInfo.src);
+                sharedTextureCache.addImage(path);
                 break;
             case "SOUND":
                 if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
-                sharedEngine.preloadSound(resInfo.src);
+                sharedEngine.preloadSound(path);
                 break;
             case "XML":
-                sharedParser.preloadPlist(resInfo.src);
+                sharedParser.preloadPlist(path);
                 break;
             case "BINARY":
-                sharedFileUtils.preloadBinaryFileData(resInfo.src);
+                sharedFileUtils.preloadBinaryFileData(path);
                 break;
             case "TEXT" :
-                sharedFileUtils.preloadTextFileData(resInfo.src);
+                sharedFileUtils.preloadTextFileData(path);
                 break;
             case "FONT":
                 this._registerFaceFont(resInfo);
