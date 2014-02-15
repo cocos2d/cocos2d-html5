@@ -460,7 +460,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var quads;
         var start = 0, end = 0;
         if (this._batchNode) {
-            quads = this._batchNode.textureAtlas.getQuads();
+            quads = this._batchNode.textureAtlas.quads;
             start = this._atlasIndex;
             end = this._atlasIndex + this._totalParticles;
         } else {
@@ -1932,7 +1932,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     updateQuadWithParticle:function (particle, newPosition) {
         var quad = null;
         if (this._batchNode) {
-            var batchQuads = this._batchNode.textureAtlas.getQuads();
+            var batchQuads = this._batchNode.textureAtlas.quads;
             quad = batchQuads[this._atlasIndex + particle.atlasIndex];
             this._batchNode.textureAtlas.dirty = true;
         } else

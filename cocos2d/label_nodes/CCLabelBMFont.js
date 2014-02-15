@@ -768,7 +768,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
                 this._reusedChar = new cc.Sprite();
                 this._reusedChar.initWithTexture(locTexture, cc.rect(0, 0, 0, 0), false);
-                this._reusedChar.setBatchNode(this);
+                this._reusedChar.batchNode = this;
             }
             this.setString(theString,true);
             return true;

@@ -36,11 +36,18 @@
  * @extends cc.NodeRGBA
  *
  * @property {cc.TextureAtlas}  textureAtlas    - Texture atlas for cc.AtlasNode
+ * @property {Number}           quadsToDraw     - Number of quads to draw
  *
  */
 cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 	/** @public */
 	textureAtlas:null,
+
+	/**
+	 * @public
+	 * Number of quads to draw
+	 */
+	quadsToDraw:0,
 
     RGBAProtocol:true,
     //! chars per row
@@ -58,8 +65,6 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _opacityModifyRGB:false,
     _blendFunc:null,
 
-    // quads to draw
-    _quadsToDraw:0,
     _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
 
     ctor:function () {
@@ -138,14 +143,14 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @return {Number}
      */
     getQuadsToDraw:function () {
-        return this._quadsToDraw;
+        return this.quadsToDraw;
     },
 
     /**
      * @param {Number} quadsToDraw
      */
     setQuadsToDraw:function (quadsToDraw) {
-        this._quadsToDraw = quadsToDraw;
+        this.quadsToDraw = quadsToDraw;
     },
 
     _textureForCanvas:null,
@@ -191,7 +196,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this._textureForCanvas = this._originalTexture;
         this._calculateMaxItems();
 
-        this._quadsToDraw = itemsToRender;
+        this.quadsToDraw = itemsToRender;
         return true;
     },
 
@@ -217,7 +222,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this._updateBlendFunc();
         this._updateOpacityModifyRGB();
         this._calculateMaxItems();
-        this._quadsToDraw = itemsToRender;
+        this.quadsToDraw = itemsToRender;
 
         //shader stuff
         this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
@@ -235,7 +240,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         cc.NODE_DRAW_SETUP(this);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.uniform4fv(this._uniformColor, this._colorF32Array);
-        this.textureAtlas.drawNumberOfQuads(this._quadsToDraw, 0);
+        this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
     },
 
     /**
@@ -410,8 +415,7 @@ cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 /** @expose */
 _proto.textureAtlas;
 /** @expose */
-_proto.quads;
-cc.defineGetterSetter(_proto, "quads", _proto.getQuadsToDraw, _proto.setQuadsToDraw);
+_proto.quadsToDraw;
 /** @expose */
 _proto.blendFunc;
 cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);

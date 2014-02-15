@@ -223,7 +223,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
         if(n > locTextureAtlas.getCapacity())
             cc.log("cc.LabelAtlas._updateAtlasValues(): Invalid String length");
-        var quads = locTextureAtlas.getQuads();
+        var quads = locTextureAtlas.quads;
         var locDisplayedColor = this._displayedColor;
         var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._displayedOpacity};
         var locItemWidth = this._itemWidth;

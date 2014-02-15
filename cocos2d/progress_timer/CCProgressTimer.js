@@ -349,7 +349,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!locSprite) {
             return {u:0, v:0}; //new cc.Tex2F(0, 0);
         }
-        var quad = locSprite.getQuad();
+        var quad = locSprite.quad;
         var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
         var max = cc.p(quad.tr.texCoords.u, quad.tr.texCoords.v);
 
@@ -366,7 +366,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!this._sprite) {
             return {x: 0, y: 0};
         }
-        var quad = this._sprite.getQuad();
+        var quad = this._sprite.quad;
         var min = cc.p(quad.bl.vertices.x, quad.bl.vertices.y);
         var max = cc.p(quad.tr.vertices.x, quad.tr.vertices.y);
         return {x: min.x * (1 - alpha.x) + max.x * alpha.x, y: min.y * (1 - alpha.y) + max.y * alpha.y};
@@ -777,7 +777,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!this._sprite || !this._vertexData)
             return;
 
-        var sc = this._sprite.getQuad().tl.colors;
+        var sc = this._sprite.quad.tl.colors;
         var locVertexData = this._vertexData;
         for (var i = 0, len = this._vertexDataCount; i < len; ++i)
             locVertexData[i].colors = sc;

@@ -293,7 +293,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} particleIndex
      */
     disableParticle:function (particleIndex) {
-        var quad = ((this.textureAtlas.getQuads())[particleIndex]);
+        var quad = this.textureAtlas.quads[particleIndex];
         quad.br.vertices.x = quad.br.vertices.y = quad.tr.vertices.x = quad.tr.vertices.y =
             quad.tl.vertices.x = quad.tl.vertices.y = quad.bl.vertices.x = quad.bl.vertices.y = 0.0;
         this.textureAtlas._setDirty(true);

@@ -410,7 +410,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         //
         // update the quad directly. Don't add the sprite to the scene graph
         //
-        sprite.setBatchNode(this);
+        sprite.batchNode = this;
         sprite.atlasIndex = index;
 
         sprite.dirty = true;
@@ -435,7 +435,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         //
         // update the quad directly. Don't add the sprite to the scene graph
         //
-        sprite.setBatchNode(this);
+        sprite.batchNode = this;
         sprite.atlasIndex = index;
 
         sprite.dirty = true;
@@ -446,7 +446,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _swap:function (oldIndex, newIndex) {
         var locDescendants = this._descendants;
         var locTextureAtlas = this.textureAtlas;
-        var quads = locTextureAtlas.getQuads();
+        var quads = locTextureAtlas.quads;
         var tempItem = locDescendants[oldIndex];
         var tempIteQuad = cc.V3F_C4B_T2F_QuadCopy(quads[oldIndex]);
 
@@ -481,7 +481,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         //
         // update the quad directly. Don't add the sprite to the scene graph
         //
-        sprite.setBatchNode(this);
+        sprite.batchNode = this;
         sprite.atlasIndex = index;
 
         // XXX: updateTransform will update the textureAtlas too, using updateQuad.
@@ -507,9 +507,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         //
         // update the quad directly. Don't add the sprite to the scene graph
         //
-        sprite.setBatchNode(this);
+        sprite.batchNode = this;
         sprite.atlasIndex = index;
-        locTextureAtlas.insertQuad(sprite.getQuad(), index);
+        locTextureAtlas.insertQuad(sprite.quad, index);
 
         // XXX: updateTransform will update the textureAtlas too, using updateQuad.
         // XXX: so, it should be AFTER the insertQuad
@@ -621,7 +621,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} index
      */
     insertChild:function (sprite, index) {
-        sprite.setBatchNode(this);
+        sprite.batchNode = this;
         sprite.atlasIndex = index;
         sprite.dirty = true;
 
@@ -629,7 +629,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (locTextureAtlas.totalQuads >= locTextureAtlas.capacity)
             this.increaseAtlasCapacity();
 
-        locTextureAtlas.insertQuad(sprite.getQuad(), index);
+        locTextureAtlas.insertQuad(sprite.quad, index);
         this._descendants = cc.ArrayAppendObjectToIndex(this._descendants, sprite, index);
 
         // update indices
@@ -660,7 +660,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _appendChildForCanvas:function (sprite) {
         this._reorderChildDirty = true;
-        sprite.setBatchNode(this);
+        sprite.batchNode = this;
         sprite.dirty = true;
 
         this._descendants.push(sprite);
@@ -675,7 +675,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _appendChildForWebGL:function (sprite) {
         this._reorderChildDirty = true;
-        sprite.setBatchNode(this);
+        sprite.batchNode = this;
         sprite.dirty = true;
 
         this._descendants.push(sprite);
@@ -685,7 +685,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         var locTextureAtlas = this.textureAtlas;
         if (locTextureAtlas.totalQuads == locTextureAtlas.capacity)
             this.increaseAtlasCapacity();
-        locTextureAtlas.insertQuad(sprite.getQuad(), index);
+        locTextureAtlas.insertQuad(sprite.quad, index);
 
         // add children recursively
         var children = sprite.children;
@@ -701,7 +701,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _removeSpriteFromAtlasForCanvas:function (sprite) {
         // Cleanup sprite. It might be reused (issue #569)
-        sprite.setBatchNode(null);
+        sprite.batchNode = null;
         var locDescendants = this._descendants;
         var index = cc.ArrayGetIndexOfObject(locDescendants, sprite);
         if (index != -1) {
@@ -727,7 +727,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this.textureAtlas.removeQuadAtIndex(sprite.atlasIndex);   // remove from TextureAtlas
 
         // Cleanup sprite. It might be reused (issue #569)
-        sprite.setBatchNode(null);
+        sprite.batchNode = null;
 
         var locDescendants = this._descendants;
         var index = cc.ArrayGetIndexOfObject(locDescendants, sprite);
@@ -897,7 +897,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (locDescendants && locDescendants.length > 0) {
             for (var i = 0, len = locDescendants.length; i < len; i++) {
                 if (locDescendants[i])
-                    locDescendants[i].setBatchNode(null);
+                    locDescendants[i].batchNode = null;
             }
         }
 
@@ -912,7 +912,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (locDescendants && locDescendants.length > 0) {
             for (var i = 0, len = locDescendants.length; i < len; i++) {
                 if (locDescendants[i])
-                    locDescendants[i].setBatchNode(null);
+                    locDescendants[i].batchNode = null;
             }
         }
         cc.Node.prototype.removeAllChildren.call(this, cleanup);

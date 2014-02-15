@@ -194,7 +194,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         var locTextureAtlas = this.textureAtlas;
         if(index < 0 && index >= locTextureAtlas.getCapacity())
             throw "cc.TileMapAtlas._updateAtlasValueAt(): Invalid index";
-        var quad = locTextureAtlas.getQuads()[index];
+        var quad = locTextureAtlas.quads[index];
 
         var x = pos.x;
         var y = pos.y;

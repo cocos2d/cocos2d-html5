@@ -438,7 +438,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             tile = new cc.Sprite();
             tile.initWithTexture(this.texture, rect);
-            tile.setBatchNode(this);
+            tile.batchNode = this;
             tile.pos = this.getPositionAt(pos);
             tile.vertexZ = this._vertexZForPos(pos);
             tile.anchorX = 0;
@@ -914,22 +914,22 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             if (!this._reusedTile) {
                 this._reusedTile = new cc.Sprite();
                 this._reusedTile.initWithTexture(this.texture, rect, false);
-                this._reusedTile.setBatchNode(this);
+                this._reusedTile.batchNode = this;
             } else {
                 // XXX HACK: Needed because if "batch node" is nil,
                 // then the Sprite'squad will be reset
-                this._reusedTile.setBatchNode(null);
+                this._reusedTile.batchNode = null;
 
                 // Re-init the sprite
                 this._reusedTile.setTextureRect(rect, false, rect._size);
 
                 // restore the batch node
-                this._reusedTile.setBatchNode(this);
+                this._reusedTile.batchNode = this;
             }
         } else {
             this._reusedTile = new cc.Sprite();
             this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
-            this._reusedTile.setBatchNode(this);
+            this._reusedTile.batchNode = this;
             this._reusedTile.parent = this;
         }
         return this._reusedTile;
