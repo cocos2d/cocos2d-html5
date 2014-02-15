@@ -423,6 +423,10 @@ cc.FileUtils = cc.Class.extend({
      * @return {String} full path for a given filename.
      */
     fullPathForFilename:function (filename) {
+        if (filename.indexOf("://") > 0) {
+            return filename;
+        }
+
         var found = false;
 
         var newFileName = this._getNewFilename(filename);
