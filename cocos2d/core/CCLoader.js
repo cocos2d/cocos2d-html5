@@ -68,7 +68,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      */
     initWithResources: function (resources, selector, target) {
         if(!resources){
-            console.log("resources should not null");
+            cc.log("resources should not null");
             return;
         }
 
@@ -196,13 +196,15 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _loadOneResource: function () {
-        var sharedTextureCache = cc.TextureCache.getInstance();
-        var sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null;
-        var sharedParser = cc.SAXParser.getInstance();
-        var sharedFileUtils = cc.FileUtils.getInstance();
+        var sharedTextureCache = cc.TextureCache.getInstance(),
+            sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null,
+            sharedParser = cc.SAXParser.getInstance(),
+            sharedFileUtils = cc.FileUtils.getInstance();
 
-        var resInfo = this._resouces[this._curNumber];
-        var type = this._getResType(resInfo);
+        var resInfo = this._resouces[this._curNumber],
+            path = typeof resInfo == "string" ? resInfo : resInfo.src,
+            type = this._getResType(resInfo,path);
+
         switch (type) {
             case "IMAGE":
                 sharedTextureCache.addImage(resInfo.src);
@@ -240,13 +242,13 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         clearInterval(this._interval);
     },
 
-    _getResType: function (resInfo) {
+    _getResType: function (resInfo,path) {
         var isFont = resInfo.fontName;
         if (isFont != null) {
             return cc.RESOURCE_TYPE["FONT"];
-        } else {
-            var src = resInfo.src;
-            var ext = src.substring(src.lastIndexOf(".") + 1, src.length);
+        }
+        else {
+            var ext = path.substring(path.lastIndexOf(".") + 1, path.length);
 
             var index = ext.indexOf("?");
             if(index > 0) ext = ext.substring(0, index);
