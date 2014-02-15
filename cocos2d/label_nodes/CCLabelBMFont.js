@@ -763,7 +763,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 	        this.anchorY = 0.5;
 
             if (cc.renderContextType === cc.WEBGL) {
-                var locTexture = this._textureAtlas.texture;
+                var locTexture = this.textureAtlas.texture;
                 this._opacityModifyRGB = locTexture.hasPremultipliedAlpha();
 
                 this._reusedChar = new cc.Sprite();
@@ -781,7 +781,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     createFontChars:function () {
         var locContextType = cc.renderContextType;
-        var locTexture = (locContextType === cc.CANVAS) ? this.texture : this._textureAtlas.texture;
+        var locTexture = (locContextType === cc.CANVAS) ? this.texture : this.textureAtlas.texture;
 
         var nextFontPositionX = 0;
         var prev = -1;

@@ -49,13 +49,18 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
  * </p>
  * @class
  * @extends cc.Node
+ *
+ * @property {cc.TextureAtlas}  textureAtlas    - The texture atlas
+ *
  * @example
  * //create a SpriteBatchNode
  * var parent2 = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
  */
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
+	/** @public */
     textureAtlas:null,
-    _blendFunc:null,
+
+	_blendFunc:null,
     // all descendants: chlidren, gran children, etc...
     _descendants:null,
 

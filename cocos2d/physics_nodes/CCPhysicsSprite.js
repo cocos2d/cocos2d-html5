@@ -256,7 +256,7 @@
 	cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
 	cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 	cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
-	cc.defineGetterSetter(_proto, "dirty", _proto.isDirty, _proto.setDirty);
+	cc.defineGetterSetter(_proto, "dirty", _proto.isDirty);
 	delete window._proto;
 
     /**

@@ -244,7 +244,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._totalQuads = 0;
 
         // retained in property
-        this._texture = texture;
+        this.texture = texture;
 
         // Re-initialization is not allowed
         this._quads = [];
@@ -579,11 +579,11 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     drawNumberOfQuads:function (n, start) {
         start = start || 0;
-        if (0 === n || !this._texture || !this._texture.isLoaded())
+        if (0 === n || !this.texture || !this.texture.isLoaded())
             return;
 
         var gl = cc.renderContext;
-        cc.glBindTexture2D(this._texture);
+        cc.glBindTexture2D(this.texture);
 
         //
         // Using VBO without VAO

@@ -587,7 +587,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, true);           //this.removeChild(sprite, true);
             else {
                 if(cc.renderContextType === cc.WEBGL)
-                    this._textureAtlas.removeQuadAtIndex(atlasIndex);
+                    this.textureAtlas.removeQuadAtIndex(atlasIndex);
 
                 // update possible children
                 if (this._children) {
@@ -645,14 +645,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (cc.renderContextType === cc.CANVAS) {
             this._tileSet.imageSize = this._originalTexture.getContentSizeInPixels();
         } else {
-            this._tileSet.imageSize = this._textureAtlas.texture.getContentSizeInPixels();
+            this._tileSet.imageSize = this.textureAtlas.texture.getContentSizeInPixels();
 
             // By default all the tiles are aliased
             // pros:
             //  - easier to render
             // cons:
             //  - difficult to scale / rotate / etc.
-            this._textureAtlas.texture.setAliasTexParameters();
+            this.textureAtlas.texture.setAliasTexParameters();
         }
 
         // Parse cocos2d properties
@@ -876,8 +876,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             sprite.rotation = 0.0;
         }
 
-        sprite.flipX = false;
-        sprite.flipY = false;
+        sprite.setFlippedX(false);
+        sprite.setFlippedY(false);
 
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
@@ -895,17 +895,19 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 sprite.rotation = 270;
             else if (flag == (cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
                 sprite.rotation = 90;
-	            sprite.flipX = true;
+	            sprite.setFlippedX(true);
             } else {
                 sprite.rotation = 270;
-	            sprite.flipX = true;
+	            sprite.setFlippedX(true);
             }
         } else {
-            if ((gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0)
-                sprite.flipX = true;
+            if ((gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
+                sprite.setFlippedX(true);
+            }
 
-            if ((gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0)
-                sprite.filpY = true;
+            if ((gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0) {
+                sprite.setFlippedY(true);
+            }
         }
     },
 
