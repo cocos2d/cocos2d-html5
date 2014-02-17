@@ -530,7 +530,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._nextScene = null;
 
         // remove all objects, but don't release it.
-        // runWithScene might be executed after 'end'.
+        // runScene might be executed after 'end'.
         this._scenesStack.length = 0;
 
         this.stopAnimation();
@@ -579,7 +579,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * Replaces the running scene with a new one. The running scene is terminated. ONLY call it if there is a running scene.
+     * Run a scene. Replaces the running scene with a new one when the  scene is running.
      * @param {cc.Scene} scene
      */
     runScene:function(scene){
@@ -620,24 +620,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         this._paused = false;
         this._deltaTime = 0;
-    },
-
-    /**
-     * <p>
-     *    Enters the Director's main loop with the given Scene.<br/>
-     *    Call it to run only your FIRST scene.<br/>
-     *    Don't call it if there is already a running scene.
-     * </p>
-     * @param {cc.Scene} scene
-     */
-    runWithScene:function (scene) {
-        if(!scene)
-            throw "This command can only be used to start the CCDirector. There is already a scene present.";
-        if(this._runningScene)
-            throw "_runningScene should be null";
-
-        this.pushScene(scene);
-        this.startAnimation();
     },
 
     /**
