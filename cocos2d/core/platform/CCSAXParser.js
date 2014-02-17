@@ -172,7 +172,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * Preload plist file
      * @param {String} filePath
      */
-    preloadPlist: function (filePath) {
+    preloadPlist: function (filePath, selector, target) {
         filePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
 
         if (window.XMLHttpRequest) {
@@ -186,12 +186,11 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.responseText) {
-                        cc.Loader.getInstance().onResLoaded();
+                        cc.doCallback(selector, target);
                         that._xmlDict[filePath] = xmlhttp.responseText;
                         xmlhttp = null;
                     } else {
-                        cc.Loader.getInstance().onResLoaded();
-                        cc.log("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
+                        cc.doCallback(selector, target, filePath);
                     }
                 }
             };

@@ -295,7 +295,6 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
 
     // Use same function for all load image error event callback
     _loadErrorHandler: function(path, textureCache, removeFrom) {
-        cc.Loader.getInstance().onResLoadingErr(path);
         //remove from cache
         if (removeFrom[path])
             delete removeFrom[path];
@@ -318,12 +317,10 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             texture.handleLoadedTexture();
         else if(textureCache._textures[texture])
             textureCache._textures[texture].handleLoadedTexture();
-        cc.Loader.getInstance().onResLoaded();
         this.removeEventListener('load', textureCache._addAsyncLoadHandler, false);
     },
 
     _beforeRendererLoadHandler: function (path, textureCache) {
-        cc.Loader.getInstance().onResLoaded();
         var loading = textureCache._loadingTexturesBefore;
         if(loading[path]) {
             textureCache._loadedTexturesBefore[path] = loading[path];
@@ -335,14 +332,14 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     /**
      *  Loading the images asynchronously
      * @param {String} path
-     * @param {cc.Node} target
      * @param {Function} selector
+     * @param {Object} target
      * @return {cc.Texture2D}
      * @example
      * //example
      * cc.TextureCache.getInstance().addImageAsync("hello.png", this, this.loadingCallBack);
      */
-    addImageAsync:function (path, target, selector) {
+    addImageAsync:function (path, selector, target) {
         if(!path)
             throw "cc.TextureCache.addImageAsync(): path should be non-null";
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
@@ -404,9 +401,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         var texture = this._textures[path];
         var image;
         if (texture) {
-            if (texture.isLoaded()) {
-                cc.Loader.getInstance().onResLoaded();
-            } else {
+            if (!texture.isLoaded()) {
                 image = texture.getHtmlElementObj();
                 image.addEventListener("load", this._preloadHandler.bind(image, texture, this));
             }

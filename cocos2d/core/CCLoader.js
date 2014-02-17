@@ -30,34 +30,50 @@
  * @type Object
  */
 cc.RESOURCE_TYPE = {
-    "IMAGE": ["png", "jpg", "bmp","jpeg","gif"],
+    "IMAGE": ["png", "jpg", "bmp", "jpeg", "gif"],
     "SOUND": ["mp3", "ogg", "wav", "mp4", "m4a"],
     "XML": ["plist", "xml", "fnt", "tmx", "tsx"],
     "BINARY": ["ccbi"],
     "FONT": "FONT",
-    "TEXT":["txt", "vsh", "fsh","json", "ExportJson"],
+    "TEXT": ["txt", "vsh", "fsh", "json", "ExportJson"],
     "UNKNOW": []
 };
 
 /**
- * A class to pre-load resources before engine start game main loop.
+ * resource structure
+ * @param resList
+ * @param selector
+ * @param target
+ * @constructor
+ */
+cc.ResData = function (resList, selector, target) {
+    this.resList = resList || [];
+    this.selector = selector;
+    this.target = target;
+    this.curNumber = 0;
+    this.loadedNumber = 0;
+    this.totalNumber = this.resList.length;
+};
+
+/**
+ * A class to preload resources async
  * @class
- * @extends cc.Scene
+ * @extends cc.Class
  */
 cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
-    _curNumber: 0,
-    _totalNumber: 0,
-    _loadedNumber: 0,
-    _resouces: null,
-    _animationInterval: 1 / 60,
-    _interval: null,
+    _curData: null,
+    _resQueue: null,
     _isAsync: false,
+    _scheduler: null,
+    _running: false,
+    _regisiterLoader: false,
 
     /**
      * Constructor
      */
     ctor: function () {
-        this._resouces = [];
+        this._scheduler = cc.Director.getInstance().getScheduler();
+        this._resQueue = [];
     },
 
     /**
@@ -67,31 +83,19 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * @param {Object} target
      */
     initWithResources: function (resources, selector, target) {
-        if(!resources){
-            console.log("resources should not null");
+        if (!resources) {
+            cc.log("cocos2d:resources should not null");
             return;
         }
+        var res = resources.concat([]);
+        var data = new cc.ResData(res, selector, target);
+        this._resQueue.push(data);
 
-        if (selector) {
-            this._selector = selector;
-            this._target = target;
+        if (!this._running) {
+            this._running = true;
+            this._curData = this._resQueue.shift();
+            this._scheduler.scheduleUpdateForTarget(this);
         }
-
-        if ((resources != this._resouces) || (this._curNumber == 0)) {
-            this._curNumber = 0;
-            this._loadedNumber = 0;
-            if (resources[0] instanceof Array) {
-                for (var i = 0; i < resources.length; i++) {
-                    var each = resources[i];
-                    this._resouces = this._resouces.concat(each);
-                }
-            } else
-                this._resouces = resources;
-            this._totalNumber = this._resouces.length;
-        }
-
-        //load resources
-        this._schedulePreload();
     },
 
     setAsync: function (isAsync) {
@@ -99,24 +103,14 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     /**
-     * Callback when a resource file load failed.
-     * @example
-     * //example
-     * cc.Loader.getInstance().onResLoaded();
-     */
-    onResLoadingErr: function (name) {
-        this._loadedNumber++;
-        cc.log("cocos2d:Failed loading resource: " + name);
-    },
-
-    /**
      * Callback when a resource file loaded.
-     * @example
-     * //example
-     * cc.Loader.getInstance().onResLoaded();
      */
-    onResLoaded: function () {
-        this._loadedNumber++;
+    onResLoaded: function (err) {
+        if(err != null){
+            cc.log("cocos2d:Failed loading resource: " + err);
+        }
+
+        this._curData.loadedNumber++;
     },
 
     /**
@@ -127,11 +121,12 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      * cc.log(cc.Loader.getInstance().getPercentage() + "%");
      */
     getPercentage: function () {
-        var percent = 0;
-        if (this._totalNumber == 0) {
+        var percent = 0, curData = this._curData;
+        if (curData.totalNumber == 0) {
             percent = 100;
-        } else {
-            percent = (0 | (this._loadedNumber / this._totalNumber * 100));
+        }
+        else {
+            percent = (0 | (curData.loadedNumber / curData.totalNumber * 100));
         }
         return percent;
     },
@@ -142,31 +137,33 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      */
     releaseResources: function (resources) {
         if (resources && resources.length > 0) {
-            var sharedTextureCache = cc.TextureCache.getInstance();
-            var sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null;
-            var sharedParser = cc.SAXParser.getInstance();
-            var sharedFileUtils = cc.FileUtils.getInstance();
+            var sharedTextureCache = cc.TextureCache.getInstance(),
+                sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null,
+                sharedParser = cc.SAXParser.getInstance(),
+                sharedFileUtils = cc.FileUtils.getInstance();
 
-            var resInfo;
+            var resInfo, path, type;
             for (var i = 0; i < resources.length; i++) {
                 resInfo = resources[i];
-                var type = this._getResType(resInfo);
+                path = typeof resInfo == "string" ? resInfo : resInfo.src;
+                type = this._getResType(resInfo, path);
+
                 switch (type) {
                     case "IMAGE":
-                        sharedTextureCache.removeTextureForKey(resInfo.src);
+                        sharedTextureCache.removeTextureForKey(path);
                         break;
                     case "SOUND":
-                        if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
-                        sharedEngine.unloadEffect(resInfo.src);
+                        if (!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
+                        sharedEngine.unloadEffect(path);
                         break;
                     case "XML":
-                        sharedParser.unloadPlist(resInfo.src);
+                        sharedParser.unloadPlist(path);
                         break;
                     case "BINARY":
-                        sharedFileUtils.unloadBinaryFileData(resInfo.src);
+                        sharedFileUtils.unloadBinaryFileData(path);
                         break;
                     case "TEXT":
-                        sharedFileUtils.unloadTextFileData(resInfo.src);
+                        sharedFileUtils.unloadTextFileData(path);
                         break;
                     case "FONT":
                         this._unregisterFaceFont(resInfo);
@@ -179,8 +176,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-    _preload: function () {
-        this._updatePercent();
+    update: function () {
         if (this._isAsync) {
             var frameRate = cc.Director.getInstance()._frameRate;
             if (frameRate != null && frameRate < 20) {
@@ -189,39 +185,55 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             }
         }
 
-        if (this._curNumber < this._totalNumber) {
-            this._loadOneResource();
-            this._curNumber++;
+        var curData = this._curData;
+        if (curData && curData.curNumber < curData.totalNumber) {
+            this._loadRes();
+            curData.curNumber++;
+        }
+
+        var percent = this.getPercentage();
+        if(percent >= 100){
+            this._complete();
+            if (this._resQueue.length > 0) {
+                this._running = true;
+                this._curData = this._resQueue.shift();
+            }
+            else{
+                this._running = false;
+                this._scheduler.unscheduleUpdateForTarget(this);
+            }
         }
     },
 
-    _loadOneResource: function () {
-        var sharedTextureCache = cc.TextureCache.getInstance();
-        var sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null;
-        var sharedParser = cc.SAXParser.getInstance();
-        var sharedFileUtils = cc.FileUtils.getInstance();
+    _loadRes: function () {
+        var sharedTextureCache = cc.TextureCache.getInstance(),
+            sharedEngine = cc.AudioEngine ? cc.AudioEngine.getInstance() : null,
+            sharedParser = cc.SAXParser.getInstance(),
+            sharedFileUtils = cc.FileUtils.getInstance();
 
-        var resInfo = this._resouces[this._curNumber];
-        var type = this._getResType(resInfo);
+        var resInfo = this._curData.resList.shift(),
+            path = this._getResPath(resInfo),
+            type = this._getResType(resInfo, path);
+
         switch (type) {
             case "IMAGE":
-                sharedTextureCache.addImage(resInfo.src);
+                sharedTextureCache.addImageAsync(path, this.onResLoaded, this);
                 break;
             case "SOUND":
-                if(!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
-                sharedEngine.preloadSound(resInfo.src);
+                if (!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
+                sharedEngine.preloadSound(path, this.onResLoaded, this);
                 break;
             case "XML":
-                sharedParser.preloadPlist(resInfo.src);
+                sharedParser.preloadPlist(path, this.onResLoaded, this);
                 break;
             case "BINARY":
-                sharedFileUtils.preloadBinaryFileData(resInfo.src);
+                sharedFileUtils.preloadBinaryFileData(path, this.onResLoaded, this);
                 break;
             case "TEXT" :
-                sharedFileUtils.preloadTextFileData(resInfo.src);
+                sharedFileUtils.preloadTextFileData(path, this.onResLoaded, this);
                 break;
             case "FONT":
-                this._registerFaceFont(resInfo);
+                this._registerFaceFont(resInfo, this.onResLoaded, this);
                 break;
             default:
                 throw "cocos2d:unknown filename extension: " + type;
@@ -229,27 +241,19 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-    _schedulePreload: function () {
-        var _self = this;
-        this._interval = setInterval(function () {
-            _self._preload();
-        }, this._animationInterval * 1000);
+    _getResPath: function (resInfo) {
+        return typeof resInfo == "string" ? resInfo : resInfo.src;
     },
 
-    _unschedulePreload: function () {
-        clearInterval(this._interval);
-    },
-
-    _getResType: function (resInfo) {
+    _getResType: function (resInfo, path) {
         var isFont = resInfo.fontName;
         if (isFont != null) {
             return cc.RESOURCE_TYPE["FONT"];
-        } else {
-            var src = resInfo.src;
-            var ext = src.substring(src.lastIndexOf(".") + 1, src.length);
-
+        }
+        else {
+            var ext = path.substring(path.lastIndexOf(".") + 1, path.length);
             var index = ext.indexOf("?");
-            if(index > 0) ext = ext.substring(0, index);
+            if (index > 0) ext = ext.substring(0, index);
 
             for (var resType in cc.RESOURCE_TYPE) {
                 if (cc.RESOURCE_TYPE[resType].indexOf(ext) != -1) {
@@ -260,24 +264,11 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-    _updatePercent: function () {
-        var percent = this.getPercentage();
-
-        if (percent >= 100) {
-            this._unschedulePreload();
-            this._complete();
-        }
-    },
-
     _complete: function () {
-        cc.doCallback(this._selector, this._target);
-
-        this._curNumber = 0;
-        this._loadedNumber = 0;
-        this._totalNumber = 0;
+        cc.doCallback(this._curData.selector,this._curData.target);
     },
 
-    _registerFaceFont: function (fontRes) {
+    _registerFaceFont: function (fontRes,seletor,target) {
         var srcArr = fontRes.src;
         var fileUtils = cc.FileUtils.getInstance();
         if (srcArr && srcArr.length > 0) {
@@ -302,7 +293,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             preloadDiv.style.top = "-100px";
             document.body.appendChild(preloadDiv);
         }
-        cc.Loader.getInstance().onResLoaded();
+        cc.doCallback(seletor,target);
     },
 
     _unregisterFaceFont: function (fontRes) {
@@ -400,7 +391,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     _texture2d: null,
     _bgLayer: null,
     _label: null,
-    _winSize:null,
+    _winSize: null,
 
     /**
      * Constructor
@@ -409,7 +400,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         cc.Scene.prototype.ctor.call(this);
         this._winSize = cc.Director.getInstance().getWinSize();
     },
-    init:function(){
+    init: function () {
         cc.Scene.prototype.init.call(this);
 
         //logo
@@ -419,7 +410,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         this._logoTexture = new Image();
         var _this = this, handler;
-        this._logoTexture.addEventListener("load", handler = function() {
+        this._logoTexture.addEventListener("load", handler = function () {
             _this._initStage(centerPos);
             this.removeEventListener('load', handler, false);
         });
