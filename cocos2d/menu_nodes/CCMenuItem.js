@@ -345,9 +345,13 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * @param {String} label
      */
     setString:function (label) {
-        this._label.setString(label);
+        this._label.string = label;
         this.size = this._label.size;
     },
+
+	_getString: function () {
+		return this._label.string;
+	},
 
     /**
      * activate the menu item
@@ -394,8 +398,16 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 });
 
 window._proto = cc.MenuItemLabel.prototype;
+
+// Override properties
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+
+// Extended properties
+/** @expose */
+_proto.string;
+cc.defineGetterSetter(_proto, "string", _proto._getString, _proto.setString);
+
 delete window._proto;
 
 /**
@@ -529,8 +541,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     },
 
     _recreateLabel:function () {
-        var label = cc.LabelTTF.create(this._label.getString(),
-            this._fontName, this._fontSize);
+        var label = cc.LabelTTF.create(this._label.string, this._fontName, this._fontSize);
         this.setLabel(label);
     }
 });
@@ -562,6 +573,18 @@ cc.MenuItemFont.setFontName = function (name) {
     cc._globalFontName = name;
     cc._globalFontNameRelease = true;
 };
+
+window._proto = cc.MenuItemLabel.prototype;
+
+// Extended properties
+/** @expose */
+_proto.fontSize;
+cc.defineGetterSetter(_proto, "fontSize", _proto.fontSize, _proto.setFontSize);
+/** @expose */
+_proto.fontName;
+cc.defineGetterSetter(_proto, "fontName", _proto.fontName, _proto.setFontName);
+
+delete window._proto;
 
 /**
  * a shared function to get the font name for menuitem font

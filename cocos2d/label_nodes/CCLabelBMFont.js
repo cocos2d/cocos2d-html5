@@ -931,6 +931,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._setString(newString, needUpdateLabel);
     },
 
+	_setStringForSetter: function (newString) {
+		this.setString(newString, false);
+	},
+
     /**
      * @deprecated
      * @param label
@@ -943,7 +947,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      *  update Label
      */
     updateLabel:function () {
-        this.setString(this._initialString, false);
+        this.string = this._initialString;
 
         // Step 1: Make multiline
         if (this._width > 0) {
@@ -1294,7 +1298,7 @@ cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 // Extended properties
 /** @expose */
 _proto.string;
-cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto._setStringForSetter);
 /** @expose */
 _proto.boundingWidth;
 cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto.setBoundingWidth);

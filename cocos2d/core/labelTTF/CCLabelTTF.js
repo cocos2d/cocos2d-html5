@@ -312,7 +312,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
-            this.setString(strInfo);
+            this.string = strInfo;
             this._setColorsString();
             this._updateTexture();
             this._needUpdateTexture = false;
@@ -337,7 +337,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._updateWithTextDefinition(textDefinition, false);
 
         // set the string
-        this.setString(text);
+        this.string = text;
 
         return true;
     },
@@ -353,7 +353,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._updateWithTextDefinition(textDefinition, false);
 
         // set the string
-        this.setString(text);
+        this.string = text;
 
         return true;
     },
@@ -604,7 +604,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this.enableStroke(textDefinition.strokeColor, textDefinition.strokeSize, false);
 
         // fill color
-        this.setFontFillColor(textDefinition.fontFillColor, false);
+        this.fillStyle = textDefinition.fontFillColor;
 
         this._updateTexture();
     },

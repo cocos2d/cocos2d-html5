@@ -122,13 +122,13 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         if(!locLoaded){
             texture.addLoadedEventListener(function(sender){
                 this.initWithTexture(texture, width, height, label.length);
-                this.setString(label);
+                this.string = label;
                 this._callLoadedEventCallbacks();
             },this);
         }
         if (this.initWithTexture(texture, width, height, label.length)) {
             this._mapStartChar = startChar;
-            this.setString(label);
+            this.string = label;
             return true;
         }
         return false;
