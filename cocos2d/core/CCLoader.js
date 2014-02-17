@@ -88,7 +88,8 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             return;
         }
         var res = resources.concat([]);
-        this._resQueue.push(new cc.ResData(res, selector, target));
+        var data = new cc.ResData(res, selector, target);
+        this._resQueue.push(data);
 
         if (!this._running) {
             this._running = true;
@@ -101,39 +102,14 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         this._isAsync = isAsync;
     },
 
-    registerWithType:function(arrType, loader){
-        if(arrType instanceof Array){
-            for (var i = 0; i < arrType.length; i++) {
-                var type = arrType[i];
-                this._regisiterLoader[type] = loader;
-            }
-        }
-        else if(typeof arrType == 'string'){
-            this._regisiterLoader[arrType] = loader;
-        }
-        else {
-            cc.log("cocos2d:unkown loader type:" + arrType);
-        }
-    },
-
-    /**
-     * Callback when a resource file load failed.
-     * @example
-     * //example
-     * cc.Loader.getInstance().onResLoaded();
-     */
-    onResLoadingErr: function (name) {
-        this._curData.loadedNumber++;
-        cc.log("cocos2d:Failed loading resource: " + name);
-    },
-
     /**
      * Callback when a resource file loaded.
-     * @example
-     * //example
-     * cc.Loader.getInstance().onResLoaded();
      */
-    onResLoaded: function () {
+    onResLoaded: function (err) {
+        if(err != null){
+            cc.log("cocos2d:Failed loading resource: " + err);
+        }
+
         this._curData.loadedNumber++;
     },
 
@@ -216,9 +192,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
 
         var percent = this.getPercentage();
-        console.log(percent)
         if(percent >= 100){
-            console.log("complete")
             this._complete();
             if (this._resQueue.length > 0) {
                 this._running = true;
@@ -239,28 +213,27 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
         var resInfo = this._curData.resList.shift(),
             path = this._getResPath(resInfo),
-            type = this._getResType(resInfo, path),
-            cb = this.onResLoaded.bind(this);
+            type = this._getResType(resInfo, path);
 
         switch (type) {
             case "IMAGE":
-                sharedTextureCache.addImageAsync(path, cb);
+                sharedTextureCache.addImageAsync(path, this.onResLoaded, this);
                 break;
             case "SOUND":
                 if (!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
-                sharedEngine.preloadSound(path, cb);
+                sharedEngine.preloadSound(path, this.onResLoaded, this);
                 break;
             case "XML":
-                sharedParser.preloadPlist(path, cb);
+                sharedParser.preloadPlist(path, this.onResLoaded, this);
                 break;
             case "BINARY":
-                sharedFileUtils.preloadBinaryFileData(path, cb);
+                sharedFileUtils.preloadBinaryFileData(path, this.onResLoaded, this);
                 break;
             case "TEXT" :
-                sharedFileUtils.preloadTextFileData(path, cb);
+                sharedFileUtils.preloadTextFileData(path, this.onResLoaded, this);
                 break;
             case "FONT":
-                this._registerFaceFont(resInfo, cb);
+                this._registerFaceFont(resInfo, this.onResLoaded, this);
                 break;
             default:
                 throw "cocos2d:unknown filename extension: " + type;
@@ -293,15 +266,10 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _complete: function () {
-        cc.doCallback(this._selector, this._target);
-
-        this._curData = null;
-        if (this._resQueue.length > 0) {
-            this._schedulePreload();
-        }
+        cc.doCallback(this._curData.selector,this._curData.target);
     },
 
-    _registerFaceFont: function (fontRes) {
+    _registerFaceFont: function (fontRes,seletor,target) {
         var srcArr = fontRes.src;
         var fileUtils = cc.FileUtils.getInstance();
         if (srcArr && srcArr.length > 0) {
@@ -326,7 +294,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             preloadDiv.style.top = "-100px";
             document.body.appendChild(preloadDiv);
         }
-        cc.Loader.getInstance().onResLoaded();
+        cc.doCallback(seletor,target);
     },
 
     _unregisterFaceFont: function (fontRes) {
@@ -395,12 +363,6 @@ cc.Loader.preloadAsync = function (resources, selector, target) {
 cc.Loader.purgeCachedData = function (resources) {
     if (this._instance) {
         this._instance.releaseResources(resources);
-    }
-};
-
-cc.Loader.register = function(typeArr, loader){
-    if (this._instance) {
-        this._instance.registerWithType(typeArr, loader);
     }
 };
 
