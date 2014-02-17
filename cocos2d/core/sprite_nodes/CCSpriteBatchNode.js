@@ -703,30 +703,30 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _removeSpriteFromAtlasForCanvas:function (sprite) {
         // Cleanup sprite. It might be reused (issue #569)
+        var delIndex = sprite.getAtlasIndex();
         sprite.setBatchNode(null);
         var locDescendants = this._descendants;
         var index = cc.ArrayGetIndexOfObject(locDescendants, sprite);
-        if (index != -1) {
+        if (index != -1)
             cc.ArrayRemoveObjectAtIndex(locDescendants, index);
-
-            // update all sprites beyond this one
-            var len = locDescendants.length;
-            for (; index < len; ++index) {
-                var s = locDescendants[index];
-                s.setAtlasIndex(s.getAtlasIndex() - 1);
-            }
+        var curChildren = this._children, i, selSprite;
+        for(i = 0; i < curChildren.length; i++){
+            selSprite = curChildren[i];
+            if(selSprite.getAtlasIndex() > delIndex)
+                selSprite.setAtlasIndex(selSprite.getAtlasIndex() - 1);
         }
 
         // remove children recursively
         var children = sprite.getChildren();
         if (children && children.length > 0) {
-            for (var i = 0; i < children.length; i++)
+            for (i = 0; i < children.length; i++)
                 if (children[i])
                     this.removeSpriteFromAtlas(children[i]);
         }
     },
 
     _removeSpriteFromAtlasForWebGL:function (sprite) {
+        var delIndex = sprite.getAtlasIndex();
         this._textureAtlas.removeQuadAtIndex(sprite.getAtlasIndex());   // remove from TextureAtlas
 
         // Cleanup sprite. It might be reused (issue #569)
@@ -734,22 +734,19 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         var locDescendants = this._descendants;
         var index = cc.ArrayGetIndexOfObject(locDescendants, sprite);
-        if (index != -1) {
+        if (index != -1)
             cc.ArrayRemoveObjectAtIndex(locDescendants, index);
-
-            // update all sprites beyond this one
-
-            var len = locDescendants.length;
-            for (; index < len; ++index) {
-                var s = locDescendants[index];
-                s.setAtlasIndex(s.getAtlasIndex() - 1);
-            }
+        var curChildren = this._children, i, selSprite;
+        for(i = 0; i < curChildren.length; i++){
+            selSprite = curChildren[i];
+            if(selSprite.getAtlasIndex() > delIndex)
+                selSprite.setAtlasIndex(selSprite.getAtlasIndex() - 1);
         }
 
         // remove children recursively
         var children = sprite.getChildren();
         if (children && children.length > 0) {
-            for (var i = 0; i < children.length; i++)
+            for (i = 0; i < children.length; i++)
                 if (children[i])
                     this.removeSpriteFromAtlas(children[i]);
         }
