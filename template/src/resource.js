@@ -4,9 +4,9 @@ var s_CloseSelected = "CloseSelected.png";
 
 var g_resources = [
     //image
-    {src:s_HelloWorld},
-    {src:s_CloseNormal},
-    {src:s_CloseSelected}
+    s_HelloWorld,
+    s_CloseNormal,
+    s_CloseSelected
 
     //plist
 
