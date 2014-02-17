@@ -83,7 +83,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._isMultiLine = false;
 
         this._shadowEnabled = false;
-        this._shadowOffset = cc.p(0, 0);
+        this._shadowOffset = cc._pConst(0, 0);
         this._shadowOpacity = 0;
         this._shadowBlur = 0;
         this._shadowColorStr = "rgba(128, 128, 128, 0.5)";
@@ -387,9 +387,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._shadowEnabled = true;
 
         var locShadowOffset = this._shadowOffset;
-        if (locShadowOffset && (locShadowOffset._x != shadowOffset._x) || (locShadowOffset._y != shadowOffset._y)) {
-            locShadowOffset._x  = shadowOffset._x;
-            locShadowOffset._y = shadowOffset._y;
+        if (locShadowOffset && (locShadowOffset._x != shadowOffset.x) || (locShadowOffset._y != shadowOffset.y)) {
+            locShadowOffset._x  = shadowOffset.x;
+            locShadowOffset._y = shadowOffset.y;
         }
 
         if (this._shadowOpacity != shadowOpacity ){
@@ -436,9 +436,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 		if (false === this._shadowEnabled)
 			this._shadowEnabled = true;
 
-		if (this._shadowOffset._x != offset._x || this._shadowOffset._y != offset._y) {
-			this._shadowOffset._x = offset._x;
-			this._shadowOffset._y = offset._y;
+		if (this._shadowOffset._x != offset.x || this._shadowOffset._y != offset.y) {
+			this._shadowOffset._x = offset.x;
+			this._shadowOffset._y = offset.y;
 			this._needUpdateTexture = true;
 		}
 	},
@@ -578,7 +578,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 	},
 
     //set the text definition for this label
-    _updateWithTextDefinition:function(textDefinition){
+    _updateWithTextDefinition:function(textDefinition, mustUpdateTexture){
         if(textDefinition.fontDimensions){
             this._dimensions.width = textDefinition.fontDimensions.width;
             this._dimensions.height = textDefinition.fontDimensions.height;
@@ -604,9 +604,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this.enableStroke(textDefinition.strokeColor, textDefinition.strokeSize, false);
 
         // fill color
-        this.fillStyle = textDefinition.fontFillColor;
+        this.setFontFillColor(textDefinition.fontFillColor);
 
-        this._updateTexture();
+	    if (mustUpdateTexture)
+	        this._updateTexture();
     },
 
     _prepareTextDefinition:function(adjustForResolution){
