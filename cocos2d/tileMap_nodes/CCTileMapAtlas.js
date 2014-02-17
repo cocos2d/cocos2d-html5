@@ -191,18 +191,17 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * @private
      */
     _updateAtlasValueAt:function (pos, value, index) {
-        var locTextureAtlas = this._textureAtlas;
+        var locTextureAtlas = this.textureAtlas;
         if(index < 0 && index >= locTextureAtlas.getCapacity())
             throw "cc.TileMapAtlas._updateAtlasValueAt(): Invalid index";
-        var quad = locTextureAtlas.getQuads()[index];
+        var quad = locTextureAtlas.quads[index];
 
         var x = pos.x;
         var y = pos.y;
         var row = (value.r % this._itemsPerRow);
         var col = (value.r / this._itemsPerRow);
 
-        var textureWide = locTextureAtlas.getTexture().getPixelsWide();
-        var textureHigh = locTextureAtlas.getTexture().getPixelsHigh();
+        var tex = locTextureAtlas.texture, textureWide = tex.pixelsWidth, textureHigh = tex.pixelsHeight;
 
         var locItemWidth = this._itemWidth;
         var locItemHeight = this._itemHeight;
@@ -251,8 +250,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         quad.br.colors = color;
         quad.bl.colors = color;
 
-        locTextureAtlas.setDirty(true);
-        var totalQuads = locTextureAtlas.getTotalQuads();
+        locTextureAtlas.dirty = true;
+        var totalQuads = locTextureAtlas.totalQuads;
         if (index + 1 > totalQuads)
             locTextureAtlas.increaseTotalQuadsWith(index + 1 - totalQuads);
     },

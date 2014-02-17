@@ -725,7 +725,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             var locCanvas = document.createElement("canvas");
             var labelTexture = new cc.Texture2D();
             labelTexture.initWithElement(locCanvas);
-            this.setTexture(labelTexture);
+            this.texture = labelTexture;
             this._labelCanvas = locCanvas;
         }
         this._labelContext = this._labelCanvas.getContext("2d");
@@ -898,7 +898,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             var drawSizeG2 = this.getTextureRect()._size;
-            var offsetPixG2 = this.getOffsetPosition();
+            var offsetPixG2 = this.offset;
             var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
@@ -931,17 +931,17 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         // rendering using batch node
         if (this._batchNode) {
-            this._dirty = true;
+            this.dirty = true;
         }
     },
 
     _setTextureCoords:function (rect) {
-        var tex = this._batchNode ? this._textureAtlas.getTexture() : this._texture;
+        var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
         if (!tex)
             return;
 
-        var atlasWidth = tex.getPixelsWide();
-        var atlasHeight = tex.getPixelsHigh();
+        var atlasWidth = tex.pixelsWidth;
+        var atlasHeight = tex.pixelsHeight;
 
         var left, right, top, bottom, tempSwap, locQuad = this._quad;
         if (this._rectRotated) {

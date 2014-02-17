@@ -196,7 +196,7 @@
         },
 
         _nodeToParentTransformForCanvas: function () {
-            if (this.isDirty()) {
+            if (this.dirty) {
                 var t = this._transform;// quick reference
                 // base position
                 var locBody = this._body, locScaleX = this._scaleX, locScaleY = this._scaleY, locAnchorPIP = this._anchorPointInPoints;
@@ -256,6 +256,7 @@
 	cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
 	cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 	cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
+	cc.defineGetterSetter(_proto, "dirty", _proto.isDirty);
 	delete window._proto;
 
     /**

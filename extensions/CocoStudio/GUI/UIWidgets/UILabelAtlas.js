@@ -35,7 +35,7 @@ ccs.UICCLabelAtlas = cc.LabelAtlas.extend({
     },
 
     draw: function () {
-        if (!this._textureAtlas) {
+        if (!this.textureAtlas) {
             return;
         }
 

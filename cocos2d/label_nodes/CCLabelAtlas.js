@@ -170,7 +170,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _updateAtlasValuesForCanvas: function () {
         var locString = this._string;
         var n = locString.length;
-        var texture = this.getTexture();
+        var texture = this.texture;
         var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight ;     //needn't multiply cc.CONTENT_SCALE_FACTOR(), because sprite's draw will do this
 
         for (var i = 0; i < n; i++) {
@@ -210,11 +210,11 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _updateAtlasValuesForWebGL: function () {
         var locString = this._string;
         var n = locString.length;
-        var locTextureAtlas = this._textureAtlas;
+        var locTextureAtlas = this.textureAtlas;
 
-        var texture = locTextureAtlas.getTexture();
-        var textureWide = texture.getPixelsWide();
-        var textureHigh = texture.getPixelsHigh();
+        var texture = locTextureAtlas.texture;
+        var textureWide = texture.pixelsWidth;
+        var textureHigh = texture.pixelsHeight;
         var itemWidthInPixels = this._itemWidth;
         var itemHeightInPixels = this._itemHeight;
         if (!this._ignoreContentScaleFactor) {
@@ -223,7 +223,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
         if(n > locTextureAtlas.getCapacity())
             cc.log("cc.LabelAtlas._updateAtlasValues(): Invalid String length");
-        var quads = locTextureAtlas.getQuads();
+        var quads = locTextureAtlas.quads;
         var locDisplayedColor = this._displayedColor;
         var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._displayedOpacity};
         var locItemWidth = this._itemWidth;
@@ -274,8 +274,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             locQuadBR.colors = curColor;
         }
         if (n > 0) {
-            locTextureAtlas.setDirty(true);
-            var totalQuads = locTextureAtlas.getTotalQuads();
+            locTextureAtlas.dirty = true;
+            var totalQuads = locTextureAtlas.totalQuads;
             if (n > totalQuads)
                 locTextureAtlas.increaseTotalQuadsWith(n - totalQuads);
         }
@@ -310,8 +310,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _setStringForWebGL: function (label) {
         label = String(label);
         var len = label.length;
-        if (len > this._textureAtlas.getTotalQuads())
-            this._textureAtlas.resizeCapacity(len);
+        if (len > this.textureAtlas.totalQuads)
+            this.textureAtlas.resizeCapacity(len);
 
         this._string = label;
         this.width = len * this._itemWidth;
