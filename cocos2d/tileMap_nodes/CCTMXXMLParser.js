@@ -449,11 +449,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     /**
      * Initializes a TMX format with a  tmx file
      * @param {String} tmxFile
-     * @param {String} resourcePath
      * @return {Element}
      */
-    initWithTMXFile:function (tmxFile, resourcePath) {
-        this._internalInit(tmxFile, resourcePath);
+    initWithTMXFile:function (tmxFile) {
+        this._internalInit(tmxFile, null);
         return this.parseXMLFile(this._TMXFileName);
         //return this.parseXMLFile(cc.FileUtils.getInstance().fullPathForFilename(this._TMXFileName));
     },
@@ -834,27 +833,29 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 });
 
 /**
- * Creates a TMX Format with a tmx file
- * @param {String} tmxFile
- * @param {String} resourcePath
+ * Creates a TMX Format with a tmx file or content string
+ * @param {String} tmxFile fileName or content string
+ * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXMapInfo}
+ * @example
+ * 1.
+ * //create a TMXMapInfo with file name
+ * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
+ * 2.
+ * //create a TMXMapInfo with content string and resource path
+ * var resources = "res/TileMaps";
+ * var filePath = "res/TileMaps/orthogonal-test1.tmx";
+ * var xmlStr = cc.FileUtils.getInstance().getStringFromFile(filePath);
+ * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
  */
 cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
     var ret = new cc.TMXMapInfo();
-    if (ret.initWithTMXFile(tmxFile, resourcePath))
-        return ret;
-    return null;
-};
-
-/**
- * creates a TMX Format with an XML string and a TMX resource path
- * @param {String} tmxString
- * @param {String} resourcePath
- * @return {cc.TMXMapInfo}
- */
-cc.TMXMapInfo.createWithXML = function (tmxString, resourcePath) {
-    var ret = new cc.TMXMapInfo();
-    if (ret.initWithXML(tmxString, resourcePath))
-        return ret;
+    if (resourcePath) {
+        if (ret.initWithXML(tmxFile, resourcePath))
+            return ret;
+    } else {
+        if (ret.initWithTMXFile(tmxFile))
+            return ret;
+    }
     return null;
 };

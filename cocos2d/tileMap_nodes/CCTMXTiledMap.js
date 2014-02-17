@@ -196,19 +196,18 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
     /**
      * @param {String} tmxFile
-     * @param {String} [resourcePath=]
      * @return {Boolean}
      * @example
      * //example
      * var map = new cc.TMXTiledMap()
      * map.initWithTMXFile("hello.tmx");
      */
-    initWithTMXFile:function (tmxFile,resourcePath) {
+    initWithTMXFile:function (tmxFile) {
         if(!tmxFile || tmxFile.length == 0)
             throw "cc.TMXTiledMap.initWithTMXFile(): tmxFile should be non-null or non-empty string.";
 	    this.width = 0;
 	    this.height = 0;
-        var mapInfo = cc.TMXMapInfo.create(tmxFile,resourcePath);
+        var mapInfo = cc.TMXMapInfo.create(tmxFile);
         if (!mapInfo)
             return false;
 
@@ -223,7 +222,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         this.width = 0;
 	    this.height = 0;
 
-        var mapInfo = cc.TMXMapInfo.createWithXML(tmxString, resourcePath);
+        var mapInfo = cc.TMXMapInfo.create(tmxString, resourcePath);
         var locTilesets = mapInfo.getTilesets();
         if(!locTilesets || locTilesets.length === 0)
             cc.log("cc.TMXTiledMap.initWithXML(): Map not found. Please check the filename.");
@@ -365,32 +364,32 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 });
 
 /**
- * Creates a TMX Tiled Map with a TMX file.
+ * Creates a TMX Tiled Map with a TMX file  or content string.
  * Implementation cc.TMXTiledMap
- * @param {String} tmxFile
- * @param {String} resourcePath
+ * @param {String} tmxFile tmxFile fileName or content string
+ * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXTiledMap|undefined}
  * @example
  * //example
- * var map = cc.TMXTiledMap.create("hello.tmx");
+ * 1.
+ * //create a TMXTiledMap with file name
+ * var tmxTiledMap = cc.TMXTiledMap.create("res/orthogonal-test1.tmx");
+ * 2.
+ * //create a TMXTiledMap with content string and resource path
+ * var resources = "res/TileMaps";
+ * var filePath = "res/TileMaps/orthogonal-test1.tmx";
+ * var xmlStr = cc.FileUtils.getInstance().getStringFromFile(filePath);
+ * var tmxTiledMap = cc.TMXTiledMap.create(xmlStr, resources);
  */
-cc.TMXTiledMap.create = function (tmxFile, resourcePath) {
-    var ret = new cc.TMXTiledMap();
-    if (ret.initWithTMXFile(tmxFile,resourcePath)) {
-        return ret;
-    }
-    return null;
-};
-
-/**
- * initializes a TMX Tiled Map with a TMX formatted XML string and a path to TMX resources
- * @param {String} tmxString
- * @param {String} resourcePath
- * @return {cc.TMXTiledMap|undefined}
- */
-cc.TMXTiledMap.createWithXML = function(tmxString, resourcePath){
+cc.TMXTiledMap.create = function (tmxFile,resourcePath) {
     var tileMap = new cc.TMXTiledMap();
-    if(tileMap.initWithXML(tmxString,resourcePath))
-        return tileMap;
+    if(resourcePath){
+        if(tileMap.initWithXML(tmxFile,resourcePath))
+            return tileMap;
+    }else{
+        if (tileMap.initWithTMXFile(tmxFile)) {
+            return tileMap;
+        }
+    }
     return null;
 };
