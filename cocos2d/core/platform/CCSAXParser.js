@@ -173,7 +173,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} filePath
      */
     preloadPlist: function (filePath, selector, target) {
-        filePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
+        var fullfilePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
 
         if (window.XMLHttpRequest) {
             var xmlhttp = new XMLHttpRequest();
@@ -187,7 +187,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.responseText) {
                         cc.doCallback(selector, target);
-                        that._xmlDict[filePath] = xmlhttp.responseText;
+                        that._xmlDict[fullfilePath] = xmlhttp.responseText;
                         xmlhttp = null;
                     } else {
                         cc.doCallback(selector, target, filePath);
@@ -195,7 +195,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                 }
             };
             // load xml
-            xmlhttp.open("GET", filePath, true);
+            xmlhttp.open("GET", fullfilePath, true);
             xmlhttp.send(null);
         } else
             throw "cocos2d:Your browser does not support XMLHTTP.";
