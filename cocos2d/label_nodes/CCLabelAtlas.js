@@ -351,8 +351,15 @@ if(cc.Browser.supportWebGL){
     _proto.setOpacity =  _proto._setOpacityForCanvas;
 }
 
+// Override properties
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+
+// Extended properties
+/** @expose */
+_proto.string;
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+
 delete window._proto;
 
 /**

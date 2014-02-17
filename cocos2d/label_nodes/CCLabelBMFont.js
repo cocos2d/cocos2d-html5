@@ -1128,7 +1128,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * Set text vertical alignment
+     * Set text alignment
      * @param {Number} alignment
      */
     setAlignment:function (alignment) {
@@ -1136,13 +1136,21 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.updateLabel();
     },
 
+	_getAlignment: function () {
+		return this._alignment;
+	},
+
     /**
      * @param {Number} width
      */
-    setWidth:function (width) {
+    setBoundingWidth:function (width) {
         this._width = width;
         this.updateLabel();
     },
+
+	_getBoundingWidth: function () {
+		return this._width;
+	},
 
     /**
      * @param {Boolean}  breakWithoutSpace
@@ -1270,6 +1278,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 });
 
 window._proto = cc.LabelBMFont.prototype;
+
+// Override properties
 cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
 cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
 cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
@@ -1280,6 +1290,18 @@ cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _pr
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+
+// Extended properties
+/** @expose */
+_proto.string;
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+/** @expose */
+_proto.boundingWidth;
+cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto.setBoundingWidth);
+/** @expose */
+_proto.textAlign;
+cc.defineGetterSetter(_proto, "textAlign", _proto._getAlignment, _proto.setAlignment);
+
 delete window._proto;
 
 /**

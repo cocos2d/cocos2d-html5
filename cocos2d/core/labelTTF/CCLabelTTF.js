@@ -1232,7 +1232,6 @@ cc.defineGetterSetter(_proto, "shadowOpacity", _proto._getShadowOpacity, _proto.
 _proto.shadowBlur;
 cc.defineGetterSetter(_proto, "shadowBlur", _proto._getShadowBlur, _proto._setShadowBlur);
 
-
 delete window._proto;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
