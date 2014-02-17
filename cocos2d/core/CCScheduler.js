@@ -316,10 +316,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
     },
 
     _callSelector:function(){
-        if (typeof(this._selector) == "string")
-            this._target[this._selector](this._elapsed);
-         else // if (typeof(this._selector) == "function") {
-            this._selector.call(this._target, this._elapsed);
+        cc.doCallback(this._selector, this._target,this._elapsed);
     },
 
     /**
