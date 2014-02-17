@@ -85,7 +85,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         // Before replacing, save the "send cleanup to scene"
         var director = cc.Director.getInstance();
         this._isSendCleanupToScene = director.isSendCleanupToScene();
-        director.replaceScene(this._inScene);
+        director.runScene(this._inScene);
 
         // enable events while transitions
         if(cc.TouchDispatcher)

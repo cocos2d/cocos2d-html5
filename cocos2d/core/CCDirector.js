@@ -582,21 +582,25 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * Replaces the running scene with a new one. The running scene is terminated. ONLY call it if there is a running scene.
      * @param {cc.Scene} scene
      */
-    replaceScene:function (scene) {
-        if(!this._runningScene)
-            throw "Use runWithScene: instead to start the director";
+    runScene:function(scene){
         if(!scene)
             throw "the scene should not be null";
-
-        var i = this._scenesStack.length;
-        if(i === 0){
-            this._sendCleanupToScene = true;
-            this._scenesStack[i] = scene;
-            this._nextScene = scene;
-        } else {
-            this._sendCleanupToScene = true;
-            this._scenesStack[i - 1] = scene;
-            this._nextScene = scene;
+        if(!this._runningScene){
+            //start scene
+            this.pushScene(scene);
+            this.startAnimation();
+        }else{
+            //replace scene
+            var i = this._scenesStack.length;
+            if(i === 0){
+                this._sendCleanupToScene = true;
+                this._scenesStack[i] = scene;
+                this._nextScene = scene;
+            } else {
+                this._sendCleanupToScene = true;
+                this._scenesStack[i - 1] = scene;
+                this._nextScene = scene;
+            }
         }
     },
 

@@ -535,9 +535,9 @@ cc.LoaderScene.preload = function (resources, selector, target) {
 
     var director = cc.Director.getInstance();
     if (director.getRunningScene()) {
-        director.replaceScene(this._instance);
+        director.runScene(this._instance);
     } else {
-        director.runWithScene(this._instance);
+        director.runScene(this._instance);
     }
 
     return this._instance;
