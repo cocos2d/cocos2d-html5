@@ -252,7 +252,6 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
         else {
             var ext = path.substring(path.lastIndexOf(".") + 1, path.length);
-
             var index = ext.indexOf("?");
             if (index > 0) ext = ext.substring(0, index);
 
