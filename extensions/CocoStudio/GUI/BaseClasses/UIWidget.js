@@ -308,16 +308,17 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {ccs.Widget}
      */
     getChildByName: function (name) {
-        var arrayChildren = this._widgetChildren;
-        var childrenCount = arrayChildren.length;
-        for (var i = 0; i < childrenCount; i++) {
-            var child = arrayChildren[i];
-            if (child.getName() == name) {
-                return child;
-            }
-        }
+        return ccs.UIHelper.seekWidgetByName(this, name);
     },
 
+    /**
+     * Gets a child from the container with its tag
+     * @param {number} tag
+     * @returns {ccs.Widget}
+     */
+    getChildByTag: function (tag) {
+        return ccs.UIHelper.seekWidgetByTag(this, tag);
+    },
     /**
      * initializes renderer of widget.
      */
