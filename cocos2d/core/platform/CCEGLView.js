@@ -94,7 +94,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _supportTouch: false,
     _contentTranslateLeftTop: null,
 
-    _menu: null,
     // Parent node that contains cc.container and cc.canvas
     _frame: null,
     _frameZoomFactor: 1.0,
@@ -228,33 +227,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _resetScale: function () {
         this._scaleX = this._originalScaleX;
         this._scaleY = this._originalScaleY;
-    },
-
-    _getUnUsedIndex: function () {
-        var i;
-        var temp = this._indexBitsUsed;
-
-        for (i = 0; i < this._maxTouches; i++) {
-            if (!(temp & 0x00000001)) {
-                this._indexBitsUsed |= (1 << i);
-                return i;
-            }
-
-            temp >>= 1;
-        }
-
-        // all bits are used
-        return -1;
-    },
-
-    _removeUsedIndexBit: function (index) {
-        if (index < 0 || index >= this._maxTouches) {
-            return;
-        }
-
-        var temp = 1 << index;
-        temp = ~temp;
-        this._indexBitsUsed &= temp;
     },
 
     // Useless, just make sure the compatibility temporarily, should be removed
@@ -610,11 +582,49 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         return this._devicePixelRatio;
     },
 
+    //TODO move to inputManager
+    _getUnUsedIndex: function () {
+        var i;
+        var temp = this._indexBitsUsed;
+
+        for (i = 0; i < this._maxTouches; i++) {
+            if (!(temp & 0x00000001)) {
+                this._indexBitsUsed |= (1 << i);
+                return i;
+            }
+
+            temp >>= 1;
+        }
+
+        // all bits are used
+        return -1;
+    },
+
+    _removeUsedIndexBit: function (index) {
+        if (index < 0 || index >= this._maxTouches) {
+            return;
+        }
+
+        var temp = 1 << index;
+        temp = ~temp;
+        this._indexBitsUsed &= temp;
+    },
+
     /**
      * Get the real location in view
      */
     convertToLocationInView: function (tx, ty, relatedPos) {
         return {x: this._devicePixelRatio * (tx - relatedPos.left), y: this._devicePixelRatio * (relatedPos.top + relatedPos.height - ty)};
+    },
+
+    _convertTouchesWithScale: function(touches){
+        var locViewPortRect = this._viewPortRect, locScaleX = this._scaleX, locScaleY = this._scaleY, selTouch, selPoint;
+        for( var i = 0; i < touches.length; i ++){
+            selTouch = touches[i];
+            selPoint = selTouch._point;
+            selTouch._setPoint((selPoint.x - locViewPortRect.x) / locScaleX,
+                (selPoint.y - locViewPortRect.y) / locScaleY);
+        }
     },
 
     /**
@@ -659,9 +669,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * @param {Number} num
-     * @param {Number} ids
-     * @param {Number} xs
-     * @param {Number} ys
+     * @param {Array} ids
+     * @param {Array} xs
+     * @param {Array} ys
      */
     handleTouchesMove: function (num, ids, xs, ys) {
         var arr = [];
@@ -682,8 +692,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 touch.setTouchInfo(index, (x - locViewPortX) / locScaleX,
                     (y - locViewPortY) / locScaleY);
                 arr.push(touch);
-            }
-            else {
+            } else {
                 // It is error, should return.
                 //cc.log("Moving touches with id: " + id + " error");
                 return;
@@ -700,9 +709,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * @param {Number} num
-     * @param {Number} ids
-     * @param {Number} xs
-     * @param {Number} ys
+     * @param {Array} ids
+     * @param {Array} xs
+     * @param {Array} ys
      */
     handleTouchesEnd: function (num, ids, xs, ys) {
         var arr = [];
@@ -712,9 +721,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     /**
      * @param {Number} num
-     * @param {Number} ids
-     * @param {Number} xs
-     * @param {Number} ys
+     * @param {Array} ids
+     * @param {Array} xs
+     * @param {Array} ys
      */
     handleTouchesCancel: function (num, ids, xs, ys) {
         var arr = [];
@@ -725,9 +734,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     /**
      * @param {Array} arr
      * @param {Number} num
-     * @param {Number} ids
-     * @param {Number} xs
-     * @param {Number} ys
+     * @param {Array} ids
+     * @param {Array} xs
+     * @param {Array} ys
      */
     getSetOfTouchesEndOrCancel: function (arr, num, ids, xs, ys) {
         var locScaleX = this._scaleX, locScaleY = this._scaleY, locViewPortRect = this._viewPortRect;
@@ -738,8 +747,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
             var index = cc.TouchesIntergerDict[id];
             if (index == null) {
-                //cc.log("if the index doesn't exist, it is an error");
-                continue;
+                continue;   //cc.log("if the index doesn't exist, it is an error");
             }
             /* Add to the set to send to the director */
             var touch = cc.Touches[index];
@@ -832,17 +840,16 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     }
 });
 
-
 cc.EGLView.getInstance = function () {
     if (!this._instance) {
 	    // First init director
 	    cc.Director.getInstance();
         this._instance = this._instance || new cc.EGLView();
+        cc.inputManager.registerSystemEvent(cc.canvas);
         this._instance.initialize();
     }
     return this._instance;
 };
-
 
 /**
  * <p>cc.ContainerStrategy class is the root strategy class of container's scale strategy,
@@ -851,7 +858,6 @@ cc.EGLView.getInstance = function () {
  * @class
  * @extends cc.Class
  */
-
 cc.ContainerStrategy = cc.Class.extend({
     // Adjust canvas's size for retina display
     _adjustRetina: false,
@@ -941,7 +947,6 @@ cc.ContainerStrategy = cc.Class.extend({
  * @class
  * @extends cc.Class
  */
-
 cc.ContentStrategy = cc.Class.extend({
 
     _result: {

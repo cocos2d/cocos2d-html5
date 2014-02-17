@@ -212,7 +212,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                     selListener = listenerVector[i];
                     selListener._setRegistered(false);
                     if (selListener._getSceneGraphPriority() != null)
-                        this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), l);
+                        selPointer._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
 
                     if (selPointer._inDispatch == 0)
                         cc.ArrayRemoveObject(listenerVector, selListener);

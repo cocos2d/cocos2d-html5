@@ -146,7 +146,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _landscape:false,
     _nextDeltaTimeZero:false,
     _paused:false,
-    _purgeDirecotorInNextLoop:false,
+    _purgeDirectorInNextLoop:false,
     _sendCleanupToScene:false,
     _animationInterval:0.0,
     _oldAnimationInterval:0.0,
@@ -234,7 +234,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._paused = false;
 
         //purge?
-        this._purgeDirecotorInNextLoop = false;
+        this._purgeDirectorInNextLoop = false;
 
         this._winSizeInPoints = cc._sizeConst(0, 0);
 
@@ -417,7 +417,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * end director
      */
     end:function () {
-        this._purgeDirecotorInNextLoop = true;
+        this._purgeDirectorInNextLoop = true;
     },
 
     /**
@@ -511,8 +511,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if(!this._runningScene)
             throw "running scene should not null";
 
-        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
-
         this._scenesStack.pop();
         var c = this._scenesStack.length;
 
@@ -566,20 +564,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
         cc.TextureCache.purgeSharedTextureCache();
 
-        //CCShaderCache::purgeSharedShaderCache();
-        //CCFileUtils::purgeFileUtils();
-        //CCConfiguration::purgeConfiguration();
-        //extension::CCNotificationCenter::purgeNotificationCenter();
-        //extension::CCTextureWatcher::purgeTextureWatcher();
-        //extension::CCNodeLoaderLibrary::purgeSharedCCNodeLoaderLibrary();
-        //cc.UserDefault.purgeSharedUserDefault();
-        //ccGLInvalidateStateCache();
-
         cc.CHECK_GL_ERROR_DEBUG();
-
-        // OpenGL view
-        //this._openGLView.end();
-        //this._openGLView = null;
     },
 
     /**
@@ -1080,10 +1065,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
     },
 
-    getEventDispatcher:function () {
+    getEventDispatcher: function () {
         return this._eventDispatcher;
     },
-    setEventDispatcher:function (eventDispatcher) {
+
+    setEventDispatcher: function (eventDispatcher) {
         if (this._eventDispatcher != eventDispatcher) {
             this._eventDispatcher = eventDispatcher;
         }
@@ -1265,8 +1251,8 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
      * main loop of director
      */
     mainLoop:function () {
-        if (this._purgeDirecotorInNextLoop) {
-            this._purgeDirecotorInNextLoop = false;
+        if (this._purgeDirectorInNextLoop) {
+            this._purgeDirectorInNextLoop = false;
             this.purgeDirector();
         }
         else if (!this.invalid) {

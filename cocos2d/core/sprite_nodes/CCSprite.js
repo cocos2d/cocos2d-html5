@@ -1542,8 +1542,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _addChildForWebGL:function (child, localZOrder, tag) {
         if(!child)
             throw "cc.Sprite.addChild(): child should be non-null";
-        if (zOrder == null)
-            zOrder = child._localZOrder;
+        if (localZOrder == null)
+            localZOrder = child._localZOrder;
         if (tag == null)
             tag = child._tag;
 

@@ -48,6 +48,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * @return {cc.Point}
      */
     getLocation:function () {
+        //TODO
         return cc.Director.getInstance().convertToGL(this._point);
     },
 
@@ -56,6 +57,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * @return {cc.Point}
      */
     getPreviousLocation:function () {
+        //TODO
         return cc.Director.getInstance().convertToGL(this._prevPoint);
     },
 
@@ -64,6 +66,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * @returns {cc.Point}
      */
     getStartLocation: function() {
+        //TODO
         return cc.Director.getInstance().convertToGL(this._startPoint);
     },
 
@@ -127,6 +130,11 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
             this._startPoint = cc.p(this._point);
             this._startPointCaptured = true;
         }
+    },
+
+    _setPoint: function(x, y){
+        this._point.x = x;
+        this._point.y = y;
     },
 
     _setPrevPoint:function (x, y) {
