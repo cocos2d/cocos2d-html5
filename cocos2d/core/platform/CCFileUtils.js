@@ -177,7 +177,7 @@ cc.FileUtils = cc.Class.extend({
             delete this._fileDataCache[fileUrl];
     },
 
-    preloadBinaryFileData:function (fileUrl) {
+    preloadBinaryFileData:function (fileUrl, selector, target) {
         fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
@@ -193,9 +193,9 @@ cc.FileUtils = cc.Class.extend({
                         if (fileContents)
                             selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
                     } else {
-                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                        cc.doCallback(selector, target, fileUrl);
                     }
-                    cc.Loader.getInstance().onResLoaded();
+                    cc.doCallback(selector, target);
                 }
             };
         } else {
@@ -207,9 +207,9 @@ cc.FileUtils = cc.Class.extend({
                 if (fileContents) {
                     selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
                 } else {
-                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                    cc.doCallback(selector, target, fileUrl);
                 }
-                cc.Loader.getInstance().onResLoaded();
+                cc.doCallback(selector, target);
             };
         }
         xhr.send(null);
@@ -264,7 +264,7 @@ cc.FileUtils = cc.Class.extend({
             delete this._textFileCache[fileUrl];
     },
 
-    preloadTextFileData:function (fileUrl) {
+    preloadTextFileData:function (fileUrl, selector, target) {
         fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
@@ -280,9 +280,9 @@ cc.FileUtils = cc.Class.extend({
                         if (fileContents)
                             selfPointer._textFileCache[fileUrl] = fileContents;
                     } else {
-                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                        cc.doCallback(selector, target,fileUrl);
                     }
-                    cc.Loader.getInstance().onResLoaded();
+                    cc.doCallback(selector, target);
                 }
             };
         } else {
@@ -292,9 +292,9 @@ cc.FileUtils = cc.Class.extend({
                 if (xhr.responseText) {
                     selfPointer._textFileCache[fileUrl] = xhr.responseText;
                 } else {
-                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                    cc.doCallback(selector, target,fileUrl);
                 }
-                cc.Loader.getInstance().onResLoaded();
+                cc.doCallback(selector, target);
             };
         }
         xhr.send(null);

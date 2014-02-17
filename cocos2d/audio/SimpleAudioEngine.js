@@ -123,17 +123,21 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     /**
      * Preload music resource.
      * @param {String} path
+     * @param {Function} selector
+     * @param {Object} target
      */
-    preloadMusic:function(path){
-        this.preloadSound(path);
+    preloadMusic:function(path, selector, target){
+        this.preloadSound(path, selector, target);
     },
 
     /**
      * Preload effect resource.
      * @param {String} path
+     * @param {Function} selector
+     * @param {Object} target
      */
-    preloadEffect:function(path){
-        this.preloadSound(path);
+    preloadEffect:function(path, selector, target){
+        this.preloadSound(path, selector, target);
     },
 
     /**
@@ -221,8 +225,10 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the music file with filename extension.
+     * @param {Function} selector
+     * @param {Object} target
      */
-    preloadSound:function (path) {
+    preloadSound:function (path, selector, target) {
         if (this._soundSupported) {
             var realPath = this._resPath + path;
             var extName = this._getExtFromFullPath(path);
@@ -234,12 +240,12 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                     sfxCache.audio = new Audio(realPath);
                     sfxCache.audio.preload = 'auto';
                     var soundPreloadCanplayHandler = function () {
-                        cc.Loader.getInstance().onResLoaded();
+                        cc.doCallback(selector, target);
                         this.removeEventListener('canplaythrough', soundPreloadCanplayHandler, false);
                         this.removeEventListener('error', soundPreloadErrorHandler, false);
                     };
                     var soundPreloadErrorHandler = function (e) {
-                        cc.Loader.getInstance().onResLoadingErr(e.srcElement.src);
+                        cc.doCallback(selector, target,e.srcElement.src);
                         this.removeEventListener('canplaythrough', soundPreloadCanplayHandler, false);
                         this.removeEventListener('error', soundPreloadErrorHandler, false);
                     };
@@ -252,7 +258,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
                 }
             }
         }
-        cc.Loader.getInstance().onResLoaded();
+        cc.doCallback(selector, target);
     },
 
     /**
@@ -1309,8 +1315,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the music file with filename extension.
+     * @param {Function} selector
+     * @param {Object} target
      */
-    preloadSound: function(path) {
+    preloadSound: function(path, selector, target) {
         if (!this._soundSupported)
             return;
 
@@ -1319,7 +1327,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         // not supported, already loaded, already loading
         if (this._audioData[keyName] || this._audiosLoading[keyName] || !this.isFormatSupported(extName)) {
-            cc.Loader.getInstance().onResLoaded();
+            cc.doCallback(selector, target);
             return;
         }
 
@@ -1329,11 +1337,11 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             // resource fetched, in @param buffer
             engine._audioData[keyName] = buffer;
             delete engine._audiosLoading[keyName];
-            cc.Loader.getInstance().onResLoaded();
+            cc.doCallback(selector, target);
         }, function() {
             // resource fetching failed
             delete engine._audiosLoading[keyName];
-            cc.Loader.getInstance().onResLoadingErr(path);
+            cc.doCallback(selector, target, path);
         });
     },
 
