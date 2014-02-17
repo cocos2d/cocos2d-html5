@@ -555,3 +555,21 @@ cc.SizeFromString = function (content) {
 	if(!result) return cc.SizeZero();
 	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
 };
+
+/**
+ *
+ * @param {Function} selector
+ * @param {cc.Node} target
+ * @param {Object|Number|String} data
+ */
+cc.doCallback = function (selector, target, data) {
+    if(!selector)
+        return ;
+    if (target && (typeof(selector) == "string")) {
+        target[selector](data);
+    } else if (target && (typeof(selector) == "function")) {
+        selector.call(target, data);
+    } else {
+        selector(data);
+    }
+};

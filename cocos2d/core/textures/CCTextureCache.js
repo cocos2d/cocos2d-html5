@@ -97,11 +97,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     _addImageAsyncCallBack:function (target, selector) {
-        if (target && (typeof(selector) === "string")) {
-            target[selector]();
-        } else if (target && (typeof(selector) === "function")) {
-            selector.call(target);
-        }
+        cc.doCallback(selector, target);
     },
 
     _initializingRenderer : function(){

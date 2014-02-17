@@ -63,11 +63,10 @@ cc.ResData = function (resList, selector, target) {
 cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     _curData: null,
     _resQueue: null,
-    _animationInterval: 1 / 60,
-    _interval: null,
     _isAsync: false,
     _scheduler: null,
     _running: false,
+    _regisiterLoader: false,
 
     /**
      * Constructor
@@ -88,13 +87,33 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
             cc.log("cocos2d:resources should not null");
             return;
         }
+        var res = resources.concat([]);
+        this._resQueue.push(new cc.ResData(res, selector, target));
 
-        this._resQueue.push(new cc.ResData(resources, selector, target));
-        this._schedulePreload();
+        if (!this._running) {
+            this._running = true;
+            this._curData = this._resQueue.shift();
+            this._scheduler.scheduleUpdateForTarget(this);
+        }
     },
 
     setAsync: function (isAsync) {
         this._isAsync = isAsync;
+    },
+
+    registerWithType:function(arrType, loader){
+        if(arrType instanceof Array){
+            for (var i = 0; i < arrType.length; i++) {
+                var type = arrType[i];
+                this._regisiterLoader[type] = loader;
+            }
+        }
+        else if(typeof arrType == 'string'){
+            this._regisiterLoader[arrType] = loader;
+        }
+        else {
+            cc.log("cocos2d:unkown loader type:" + arrType);
+        }
     },
 
     /**
@@ -127,12 +146,10 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
      */
     getPercentage: function () {
         var percent = 0, curData = this._curData;
-        if (!curData) {
-            percent = 0;
-        }
-        else if (curData.totalNumber == 0) {
+        if (curData.totalNumber == 0) {
             percent = 100;
-        } else {
+        }
+        else {
             percent = (0 | (curData.loadedNumber / curData.totalNumber * 100));
         }
         return percent;
@@ -183,8 +200,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-    _preload: function () {
-        this._updatePercent();
+    update: function () {
         if (this._isAsync) {
             var frameRate = cc.Director.getInstance()._frameRate;
             if (frameRate != null && frameRate < 20) {
@@ -194,13 +210,24 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
 
         var curData = this._curData;
-        if (!curData && this._resQueue.length > 0) {
-            this._curData = this._resQueue.shift();
-        }
-
         if (curData && curData.curNumber < curData.totalNumber) {
             this._loadRes();
             curData.curNumber++;
+        }
+
+        var percent = this.getPercentage();
+        console.log(percent)
+        if(percent >= 100){
+            console.log("complete")
+            this._complete();
+            if (this._resQueue.length > 0) {
+                this._running = true;
+                this._curData = this._resQueue.shift();
+            }
+            else{
+                this._running = false;
+                this._scheduler.unscheduleUpdateForTarget(this);
+            }
         }
     },
 
@@ -212,44 +239,33 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
         var resInfo = this._curData.resList.shift(),
             path = this._getResPath(resInfo),
-            type = this._getResType(resInfo, path);
+            type = this._getResType(resInfo, path),
+            cb = this.onResLoaded.bind(this);
 
         switch (type) {
             case "IMAGE":
-                sharedTextureCache.addImage(path);
+                sharedTextureCache.addImageAsync(path, cb);
                 break;
             case "SOUND":
                 if (!sharedEngine) throw "Can not find AudioEngine! Install it, please.";
-                sharedEngine.preloadSound(path);
+                sharedEngine.preloadSound(path, cb);
                 break;
             case "XML":
-                sharedParser.preloadPlist(path);
+                sharedParser.preloadPlist(path, cb);
                 break;
             case "BINARY":
-                sharedFileUtils.preloadBinaryFileData(path);
+                sharedFileUtils.preloadBinaryFileData(path, cb);
                 break;
             case "TEXT" :
-                sharedFileUtils.preloadTextFileData(path);
+                sharedFileUtils.preloadTextFileData(path, cb);
                 break;
             case "FONT":
-                this._registerFaceFont(resInfo);
+                this._registerFaceFont(resInfo, cb);
                 break;
             default:
                 throw "cocos2d:unknown filename extension: " + type;
                 break;
         }
-    },
-
-    _schedulePreload: function () {
-        if (!this._running) {
-            this._running = true;
-            this._scheduler.scheduleCallbackForTarget(this, this._preload);
-        }
-    },
-
-    _unschedulePreload: function () {
-        this._running = false;
-        this._scheduler.unscheduleCallbackForTarget(this, this._preload);
     },
 
     _getResPath: function (resInfo) {
@@ -276,24 +292,8 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-    _updatePercent: function () {
-        var percent = this.getPercentage();
-
-        if (percent >= 100) {
-            this._unschedulePreload();
-            this._complete();
-        }
-    },
-
     _complete: function () {
-        var _target = this._curData.target, _selector = this._curData.selector;
-        if (_target && (typeof(_selector) == "string")) {
-            _target[_selector](this);
-        } else if (_target && (typeof(_selector) == "function")) {
-            _selector.call(_target, this);
-        } else {
-            _selector(this);
-        }
+        cc.doCallback(this._selector, this._target);
 
         this._curData = null;
         if (this._resQueue.length > 0) {
@@ -395,6 +395,12 @@ cc.Loader.preloadAsync = function (resources, selector, target) {
 cc.Loader.purgeCachedData = function (resources) {
     if (this._instance) {
         this._instance.releaseResources(resources);
+    }
+};
+
+cc.Loader.register = function(typeArr, loader){
+    if (this._instance) {
+        this._instance.registerWithType(typeArr, loader);
     }
 };
 
