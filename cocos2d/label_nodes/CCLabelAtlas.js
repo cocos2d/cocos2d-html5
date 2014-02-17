@@ -304,7 +304,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
 
         this.updateAtlasValues();
-        this._quadsToDraw = len;
+        this.quadsToDraw = len;
     },
 
     _setStringForWebGL: function (label) {
@@ -318,7 +318,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 	    this.height = this._itemHeight;
 
         this.updateAtlasValues();
-        this._quadsToDraw = len;
+        this.quadsToDraw = len;
     },
 
     setOpacity: null,
