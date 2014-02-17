@@ -1390,7 +1390,7 @@ cc.FontDefinition = function(){
     this.strokeSize = 1;
 
     this.shadowEnabled = false;
-    this.shadowOffset = cc.size(0,0);
+    this.shadowOffset = cc.p(0, 0);
     this.shadowBlur = 0;
     this.shadowOpacity = 1.0;
 };
