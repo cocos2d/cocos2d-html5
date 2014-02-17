@@ -68,7 +68,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locListeners = this._loadedEventListeners;
         for(var i = 0, len = locListeners.length;  i < len; i++){
             var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
+            cc.doCallback(selCallback.eventCallback, selCallback.eventTarget, this);
         }
         locListeners.length = 0;
     },

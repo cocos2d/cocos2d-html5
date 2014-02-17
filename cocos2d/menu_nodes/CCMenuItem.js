@@ -184,15 +184,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      */
     activate:function () {
         if (this._isEnabled) {
-            var locTarget = this._target, locCallback = this._callback;
-            if(!locCallback)
-                return ;
-            if (locTarget && (typeof(locCallback) == "string")) {
-                locTarget[locCallback](this);
-            } else if (locTarget && (typeof(locCallback) == "function")) {
-                locCallback.call(locTarget, this);
-            } else
-                locCallback(this);
+            cc.doCallback(this._callback, this._target,this);
         }
     }
 });

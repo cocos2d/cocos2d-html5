@@ -270,13 +270,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _complete: function () {
-        if (this._target && (typeof(this._selector) == "string")) {
-            this._target[this._selector](this);
-        } else if (this._target && (typeof(this._selector) == "function")) {
-            this._selector.call(this._target, this);
-        } else {
-            this._selector(this);
-        }
+        cc.doCallback(this._selector, this._target);
 
         this._curNumber = 0;
         this._loadedNumber = 0;
