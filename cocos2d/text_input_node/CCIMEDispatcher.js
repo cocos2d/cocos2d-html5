@@ -31,8 +31,8 @@
  * @param {Number} duration the soft keyboard animation duration
  */
 cc.IMEKeyboardNotificationInfo = function (begin, end, duration) {
-    this.begin = begin || cc.RectZero();
-    this.end = end || cc.RectZero();
+    this.begin = begin || cc.rect(0, 0, 0, 0);
+    this.end = end || cc.rect(0, 0, 0, 0);
     this.duration = duration || 0;
 };
 

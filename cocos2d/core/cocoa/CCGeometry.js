@@ -288,78 +288,38 @@ cc.sizeEqualToSize = function (size1, size2) {
 
 /**
  * @class
- * @param {Number|cc.Point|cc.Rect} [x1] a Number value as x or a cc.Point object as origin or a cc.Rect clone object
- * @param {Number|cc.Size} [y1] x1 a Number value as y or a cc.Size object as size
- * @param {Number} [width1]
- * @param {Number} [height1]
- * Constructor
- */
-cc.Rect = function (x1, y1, width1, height1) {
-    var argLen =arguments.length;
-    if(argLen === 4){
-        this._origin = new cc.Point(x1 || 0, y1 || 0);
-        this._size = new cc.Size(width1 || 0, height1 || 0);
-        return;
-    }
-    if(argLen === 1) {
-        this._origin = new cc.Point(x1._origin.x, x1._origin.y);
-        this._size = new cc.Size(x1._size.width, x1._size.height);
-        return;
-    }
-    if(argLen === 0) {
-        this._origin = new cc.Point(0, 0);
-        this._size = new cc.Size(0,0);
-        return;
-    }
-    if(argLen === 2) {
-        this._origin = new cc.Point(x1.x, x1.y);
-        this._size = new cc.Size(y1.width,y1.height);
-        return;
-    }
-    throw "unknown argument type";
-};
-
-/**
- * @function
- * @param {Number} x
- * @param {Number} y
+ * @param {Number} x a Number value as x
+ * @param {Number} y  a Number value as y
  * @param {Number} width
  * @param {Number} height
- * @return {cc.Rect}
+ * Constructor
  */
-cc.RectMake = function (x, y, width, height) {
-    cc.log("cc.RectMake will be deprecated sooner or later. Use cc.rect instead.");
-    return cc.rect(x, y, width, height);
+cc.Rect = function (x, y, width, height) {
+    this.x = x||0;
+    this.y = y||0;
+    this.width = width||0;
+    this.height = height||0;
 };
-
-// backward compatible
-cc.rect = function (x, y, w, h) {
-    var argLen =arguments.length;
-    if(argLen === 0)
-        return new cc.Rect(0,0,0,0);
-
-    if(argLen === 1)
-        return new cc.Rect(x.x, x.y, x.width, x.height);
-
-    if(argLen === 2)
-        return new cc.Rect(x.x, x.y, y.width, y.height);
-
-    if(argLen === 4)
-        return new cc.Rect(x,y,w,h);
-
-    throw "unknown argument type";
-};
-
-// JSB compatbility: in JSB, cc._rect reuses objects instead of creating new ones
-cc._rect = cc.rect;
 
 /**
- * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
- * @function
- * @return {cc.Rect}
+ * Return a new Rect
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} w
+ * @param {Number} h
+ * @returns {Rect}
+ * @example
+ * var rect1 = cc.rect();
+ * var rect2 = cc.rect(100,100,100,100);
  */
-cc.RectZero = function () {
-    return cc.rect(0, 0, 0, 0);
+cc.rect = function (x, y, w, h) {
+    var argLen = arguments.length;
+    if (argLen === 0)
+        return new cc.Rect(0, 0, 0, 0);
+    if (argLen === 4)
+        return new cc.Rect(x, y, w, h);
+
+    throw "unknown argument type";
 };
 
 /**
@@ -371,8 +331,7 @@ cc.RectZero = function () {
 cc.rectEqualToRect = function (rect1, rect2) {
     if(!rect1 || !rect2)
         return false;
-    return ((cc.pointEqualToPoint(rect1._origin, rect2._origin)) &&
-        (cc.sizeEqualToSize(rect1._size, rect2._size)));
+    return (rect1.x === rect2.x) && (rect1.y === rect2.x) && (rect1.width === rect2.width) && (rect1.height === rect2.height);
 };
 
 cc._rectEqualToZero = function(rect){
@@ -526,94 +485,4 @@ cc.rectIntersection = function (rectA, rectB) {
     return intersection;
 };
 
-//
-// Rect JSB compatibility
-// JSB uses:
-//   rect.x, rect.y, rect.width and rect.height
-// while HTML5 uses:
-//   rect.origin, rect.size
-//
-cc.Rect.prototype.getX = function() {
-    return this._origin.x;
-};
-cc.Rect.prototype.setX = function(x) {
-    this._origin.x = x;
-};
-cc.Rect.prototype.getY = function() {
-    return this._origin.y;
-};
-cc.Rect.prototype.setY = function(y) {
-    this._origin.y = y;
-};
-cc.Rect.prototype.getWidth = function(){
-    return this._size.width;
-};
-cc.Rect.prototype.setWidth = function(w){
-    this._size.width = w;
-};
-cc.Rect.prototype.getHeight = function(){
-    return this._size.height;
-};
-cc.Rect.prototype.setHeight = function(h){
-    this._size.height = h;
-};
-
-Object.defineProperties(cc.Rect.prototype,
-    {
-        "x": {
-            get: function () {
-                return this.getX();
-            },
-            set: function (newValue) {
-                this.setX(newValue);
-            },
-            enumerable: true,
-            configurable: true
-        },
-        "y": {
-            get: function () {
-                return this.getY();
-            },
-            set: function (newValue) {
-                this.setY(newValue);
-            },
-            enumerable: true,
-            configurable: true
-        },
-        "width": {
-            get: function () {
-                return this.getWidth();
-            },
-            set: function (newValue) {
-                this.setWidth(newValue);
-            },
-            enumerable: true,
-            configurable: true
-        },
-        "height": {
-            get: function () {
-                return this.getHeight();
-            },
-            set: function (newValue) {
-                this.setHeight(newValue);
-            },
-            enumerable: true,
-            configurable: true
-        }
-    }
-);
-
-// Deprecated
-/*cc.Rect.CCRectEqualToRect = cc.rectEqualToRect;
-cc.Rect.CCRectContainsRect = cc.rectContainsRect;
-cc.Rect.CCRectGetMaxX = cc.rectGetMaxX;
-cc.Rect.CCRectGetMidX = cc.rectGetMidX;
-cc.Rect.CCRectGetMinX = cc.rectGetMinX;
-cc.Rect.CCRectGetMaxY = cc.rectGetMaxY;
-cc.Rect.CCRectGetMidY = cc.rectGetMidY;
-cc.Rect.CCRectGetMinY = cc.rectGetMinY;
-cc.Rect.CCRectContainsPoint = cc.rectContainsPoint;
-cc.Rect.CCRectIntersectsRect = cc.rectIntersectsRect;
-cc.Rect.CCRectUnion = cc.rectUnion;
-cc.Rect.CCRectIntersection = cc.rectIntersection;*/
 

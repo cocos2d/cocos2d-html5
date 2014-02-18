@@ -543,7 +543,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     var rect = this._tileSet.rectForGID(gid);
                     rect = cc.RECT_PIXELS_TO_POINTS(rect);
 
-                    sprite.setTextureRect(rect, false, rect._size);
+                    sprite.setTextureRect(rect, false);
                     if (flags != null)
                         this._setupTileSprite(sprite, pos, gidAndFlags);
 
@@ -923,7 +923,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 this._reusedTile.batchNode = null;
 
                 // Re-init the sprite
-                this._reusedTile.setTextureRect(rect, false, rect._size);
+                this._reusedTile.setTextureRect(rect, false);
 
                 // restore the batch node
                 this._reusedTile.batchNode = this;

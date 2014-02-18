@@ -101,8 +101,12 @@ cc.ControlButton = cc.Control.extend({
             locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Get the title label size
-        var titleLabelSize = label ? label.getBoundingBox()._size : cc.size(0, 0);
-
+        var titleLabelSize = cc.size(0, 0);
+        if(label){
+            var boundingBox = label.getBoundingBox();
+            titleLabelSize.width = boundingBox.width;
+            titleLabelSize.height = boundingBox.height;
+        }
         // Adjust the background image if necessary
         if (this._doesAdjustBackgroundImage) {
             // Add the margins

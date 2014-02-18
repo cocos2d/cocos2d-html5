@@ -387,7 +387,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._buffersVBO = [0, 0];
         this._quads = [];
         this._indices = [];
-        this._pointRect = cc.RectZero();
+        this._pointRect = cc.rect(0, 0, 0, 0);
         this._textureLoaded = true;
 
         if (cc.renderContextType === cc.WEBGL) {

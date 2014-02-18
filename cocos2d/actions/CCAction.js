@@ -426,7 +426,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         this.rightBoundary = 0.0;
         this.topBoundary = 0.0;
         this.bottomBoundary = 0.0;
-        this._worldRect = cc.RectZero();
+        this._worldRect = cc.rect(0, 0, 0, 0);
     },
 
     clone:function () {
@@ -461,7 +461,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         if(!followedNode)
             throw "cc.Follow.initWithAction(): followedNode must be non nil";
 
-        rect = rect || cc.RectZero();
+        rect = rect || cc.rect(0, 0, 0, 0);
         this._followedNode = followedNode;
         this._worldRect = rect;
 
@@ -551,7 +551,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * this.runAction(followAction);
  */
 cc.Follow.create = function (followedNode, rect) {
-    rect = rect || new cc.RectZero();
+    rect = rect || cc.rect(0, 0, 0, 0);
     var ret = new cc.Follow();
     if (rect != null && ret && ret.initWithTarget(followedNode, rect))
         return ret;

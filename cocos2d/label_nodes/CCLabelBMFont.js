@@ -842,7 +842,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (!fontChar) {
                 fontChar = new cc.Sprite();
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
-                    fontChar.initWithTexture(locTexture, cc.RectZero(), false);
+                    fontChar.initWithTexture(locTexture, cc.rect(0, 0, 0, 0), false);
                 } else
                     fontChar.initWithTexture(locTexture, rect, false);
                 fontChar._newTextureWhenChangeColor = true;
@@ -852,7 +852,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.setTextureRect(rect, false, cc.SizeZero());
                 } else {
                     // updating previous sprite
-                    fontChar.setTextureRect(rect, false, rect._size);
+                    fontChar.setTextureRect(rect, false);
                     // restore to default in case they were modified
                     fontChar.visible = true;
                 }

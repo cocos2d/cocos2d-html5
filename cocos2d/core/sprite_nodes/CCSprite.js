@@ -962,7 +962,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
-        this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
+        this.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.SizeZero());
         return true;
     },
 
@@ -993,7 +993,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
-        this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
+        this.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.SizeZero());
         return true;
     },
 
@@ -1101,7 +1101,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             rect = cc.rect(0, 0, locSize1.width, locSize1.height);
         }
         this.texture = texture;
-        this.setTextureRect(rect, rotated, rect._size);
+        this.setTextureRect(rect, rotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1162,7 +1162,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._originalTexture = texture;
 
         this.texture = texture;
-        this.setTextureRect(rect, rotated, rect._size);
+        this.setTextureRect(rect, rotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1188,7 +1188,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         this.texture = sender;
-        this.setTextureRect(locRect, this._rectRotated, locRect._size);
+        this.setTextureRect(locRect, this._rectRotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1214,7 +1214,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._originalTexture = sender;
 
         this.texture = sender;
-        this.setTextureRect(locRect, this._rectRotated, locRect._size);
+        this.setTextureRect(locRect, this._rectRotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1232,7 +1232,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForWebGL:function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-	    this.size = untrimmedSize || rect._size;
+	    this.size = untrimmedSize || rect;
 
         this.setVertexRect(rect);
         this._setTextureCoords(rect);
@@ -1272,7 +1272,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-	    this.size = untrimmedSize || rect._size;
+	    this.size = untrimmedSize || rect;
 
         this.setVertexRect(rect);
 
@@ -1331,12 +1331,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 // calculate the Quad based on the Affine Matrix
                 //
                 var locTransformToBatch = this._transformToBatch;
-                var size = this._rect._size;
+                var rect = this._rect;
                 var x1 = this._offsetPosition._x;
                 var y1 = this._offsetPosition._y;
 
-                var x2 = x1 + size.width;
-                var y2 = y1 + size.height;
+                var x2 = x1 + rect.width;
+                var y2 = y1 + rect.height;
                 var x = locTransformToBatch.tx;
                 var y = locTransformToBatch.ty;
 
@@ -1939,10 +1939,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             cc.drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
-            var drawSizeG2 = this.getTextureRect()._size;
+            var drawRectG2 = this.getTextureRect();
             var offsetPixG2 = this.getOffsetPosition();
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
+            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
+                cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
     },
@@ -2009,10 +2009,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             context.strokeStyle = "rgba(0,255,0,1)";
-            var drawSize = this._rect._size;
+            var drawRect = this._rect;
             flipYOffset = -flipYOffset;
-            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawSize.width, flipYOffset),
-                cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];
+            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset),
+                cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
             cc.drawingUtil.drawPoly(vertices2, 4, true);
         }
         if (this._flippedX || this._flippedY)

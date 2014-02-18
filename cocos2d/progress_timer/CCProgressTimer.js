@@ -194,7 +194,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this._endAngle = 270;
         this._radius = 0;
         this._counterClockWise = false;
-        this._barRect = cc.RectZero();
+        this._barRect = cc.rect(0, 0, 0, 0);
     },
 
     _ctorForWebGL: function () {
