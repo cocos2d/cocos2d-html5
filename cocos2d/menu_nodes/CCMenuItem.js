@@ -73,13 +73,9 @@ cc.DISABLE_TAG = 8803;
  * Subclass cc.MenuItem (or any subclass) to create your custom cc.MenuItem objects.
  * @class
  * @extends cc.NodeRGBA
- *
- * @property {Boolean}  enabled - Indicates whether or not the menu item is enabled
  */
 cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
-	/** @public */
-	enabled:false,
-
+	_enabled:false,
     _target:null,
     _callback:null,
     _isSelected:false,
@@ -89,7 +85,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
         this._target = null;
         this._callback = null;
         this._isSelected = false;
-        this.enabled = false;
+        this._enabled = false;
     },
 
     /**
@@ -123,7 +119,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @return {Boolean}
      */
     isEnabled:function () {
-        return this.enabled;
+        return this._enabled;
     },
 
     /**
@@ -131,7 +127,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * @param {Boolean} enable
      */
     setEnabled:function (enable) {
-        this.enabled = enable;
+        this._enabled = enable;
     },
 
     /**
@@ -144,7 +140,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
 	    this.anchorY = 0.5;
         this._target = target;
         this._callback = callback;
-        this.enabled = true;
+        this._enabled = true;
         this._isSelected = false;
         return true;
     },
@@ -188,7 +184,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      * call the selector with target
      */
     activate:function () {
-        if (this.enabled) {
+        if (this._enabled) {
             var locTarget = this._target, locCallback = this._callback;
             if(!locCallback)
                 return ;
@@ -208,6 +204,7 @@ cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _pr
 // Extended properties
 /** @expose */
 _proto.enabled;
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
 delete window._proto;
 
 /**
@@ -290,7 +287,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * @param {Boolean} enabled
      */
     setEnabled:function (enabled) {
-        if (this.enabled != enabled) {
+        if (this._enabled != enabled) {
             var locLabel = this._label;
             if (!enabled) {
                 this._colorBackup = locLabel.color;
@@ -365,7 +362,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * activate the menu item
      */
     activate:function () {
-        if (this.enabled) {
+        if (this._enabled) {
             this.stopAllActions();
             this.scale = this._originalScale;
             cc.MenuItem.prototype.activate.call(this);
@@ -376,7 +373,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * menu item is selected (runs callback)
      */
     selected:function () {
-        if (this.enabled) {
+        if (this._enabled) {
             cc.MenuItem.prototype.selected.call(this);
 
             var action = this.getActionByTag(cc.ZOOM_ACTION_TAG);
@@ -395,7 +392,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * menu item goes back to unselected state
      */
     unselected:function () {
-        if (this.enabled) {
+        if (this._enabled) {
             cc.MenuItem.prototype.unselected.call(this);
             this.stopActionByTag(cc.ZOOM_ACTION_TAG);
             var zoomAction = cc.ScaleTo.create(0.1, this._originalScale);
@@ -848,7 +845,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {Boolean} bEnabled
      */
     setEnabled:function (bEnabled) {
-        if (this.enabled != bEnabled) {
+        if (this._enabled != bEnabled) {
             cc.MenuItem.prototype.setEnabled.call(this, bEnabled);
             this._updateImagesVisibility();
         }
@@ -856,7 +853,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
     _updateImagesVisibility:function () {
         var locNormalImage = this._normalImage, locSelImage = this._selectedImage, locDisImage = this._disabledImage;
-        if (this.enabled) {
+        if (this._enabled) {
             if (locNormalImage)
                 locNormalImage.visible = true;
             if (locSelImage)
@@ -1181,7 +1178,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      */
     activate:function () {
         // update index
-        if (this.enabled) {
+        if (this._enabled) {
             var newIndex = (this._selectedIndex + 1) % this.subItems.length;
             this.setSelectedIndex(newIndex);
         }
@@ -1208,7 +1205,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {Boolean} enabled
      */
     setEnabled:function (enabled) {
-        if (this.enabled != enabled) {
+        if (this._enabled != enabled) {
             cc.MenuItem.prototype.setEnabled.call(this, enabled);
             var locItems = this.subItems;
             if (locItems && locItems.length > 0) {
