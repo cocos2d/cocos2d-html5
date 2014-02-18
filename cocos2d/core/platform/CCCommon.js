@@ -545,14 +545,14 @@ cc.PointFromString = function (content) {
  * The w and h values can be integer or float values. <br/>
  * The string is not localized, so items are always separated with a comma.<br/>
  * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
- * If the string is not well-formed, the function returns cc.SizeZero.
+ * If the string is not well-formed, the function returns cc.size(0,0).
  * @example
  * // example
  * var size = cc.SizeFromString("{3.0,2.5}");
  */
 cc.SizeFromString = function (content) {
 	var result = CCNS_REG1.exec(content);
-	if(!result) return cc.SizeZero();
+	if(!result) return cc.size(0, 0);
 	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
 };
 

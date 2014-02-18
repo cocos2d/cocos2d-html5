@@ -230,7 +230,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //purge?
         this._purgeDirecotorInNextLoop = false;
 
-        this._winSizeInPoints = cc._sizeConst(0, 0);
+        this._winSizeInPoints = cc.size(0, 0);
 
         this._openGLView = null;
         this._contentScaleFactor = 1.0;
@@ -455,7 +455,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._openGLView) {
             return this._openGLView.getVisibleOrigin();
         } else {
-            return cc.POINT_ZERO;
+            return cc.p(0,0);
         }
     },
 
@@ -757,8 +757,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setOpenGLView:function (openGLView) {
         // set size
-        this._winSizeInPoints.setWidth(cc.canvas.width);      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.setHeight(cc.canvas.height);
+        this._winSizeInPoints.width = cc.canvas.width;      //this._openGLView.getDesignResolutionSize();
+        this._winSizeInPoints.height = cc.canvas.height;
         this._openGLView = openGLView || cc.EGLView.getInstance();
 
         if (cc.renderContextType === cc.CANVAS)

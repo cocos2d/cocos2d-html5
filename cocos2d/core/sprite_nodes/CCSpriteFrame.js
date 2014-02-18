@@ -55,9 +55,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     ctor:function () {
         this._offset = cc._pConst(0, 0);
         this._offsetInPixels = cc._pConst(0, 0);
-        this._originalSize = cc._sizeConst(0, 0);
+        this._originalSize = cc.size(0, 0);
         this._rotated = false;
-        this._originalSizeInPixels = cc._sizeConst(0, 0);
+        this._originalSizeInPixels = cc.size(0, 0);
         this._textureFilename = "";
         this._texture = null;
         this._textureLoaded = false;
@@ -181,8 +181,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Size} sizeInPixels
      */
     setOriginalSizeInPixels:function (sizeInPixels) {
-        this._originalSizeInPixels._width = sizeInPixels.width;
-        this._originalSizeInPixels._height = sizeInPixels.height;
+        this._originalSizeInPixels.width = sizeInPixels.width;
+        this._originalSizeInPixels.height = sizeInPixels.height;
     },
 
     /**
@@ -199,8 +199,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Size} sizeInPixels
      */
     setOriginalSize:function (sizeInPixels) {
-        this._originalSize._width = sizeInPixels.width;
-        this._originalSize._height = sizeInPixels.height;
+        this._originalSize.width = sizeInPixels.width;
+        this._originalSize.height = sizeInPixels.height;
     },
 
     /**
@@ -248,10 +248,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                         this._rect.width = locSize.width;
                         this._rect.height = locSize.height;
                         this._rectInPixels = cc.RECT_POINTS_TO_PIXELS(this._rect);
-                        this._originalSizeInPixels._width = this._rectInPixels.width;
-                        this._originalSizeInPixels._height = this._rectInPixels.height;
-                        this._originalSize._width =  locSize.width;
-                        this._originalSize._height =  locSize.height;
+                        this._originalSizeInPixels.width = this._rectInPixels.width;
+                        this._originalSizeInPixels.height = this._rectInPixels.height;
+                        this._originalSize.width =  locSize.width;
+                        this._originalSize.height =  locSize.height;
                     }
                     this._callLoadedEventCallbacks();
                 }, this);
@@ -321,8 +321,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offsetInPixels._x = offset.x;
         this._offsetInPixels._y = offset.y;
         cc._POINT_PIXELS_TO_POINTS_OUT(offset, this._offset);
-        this._originalSizeInPixels._width = originalSize.width;
-        this._originalSizeInPixels._height = originalSize.height;
+        this._originalSizeInPixels.width = originalSize.width;
+        this._originalSizeInPixels.height = originalSize.height;
         cc._SIZE_PIXELS_TO_POINTS_OUT(originalSize, this._originalSize);
         this._rotated = rotated || false;
         return true;
@@ -354,8 +354,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offsetInPixels._x = offset.x;
         this._offsetInPixels._y = offset.y;
         cc._POINT_PIXELS_TO_POINTS_OUT(offset, this._offset);
-        this._originalSizeInPixels._width = originalSize.width;
-        this._originalSizeInPixels._height = originalSize.height;
+        this._originalSizeInPixels.width = originalSize.width;
+        this._originalSizeInPixels.height = originalSize.height;
         cc._SIZE_PIXELS_TO_POINTS_OUT(originalSize, this._originalSize);
         return true;
     }
@@ -428,8 +428,8 @@ cc.SpriteFrame._frameWithTextureForCanvas = function (texture, rect, rotated, of
     spriteFrame._offsetInPixels._x = offset.x;
     spriteFrame._offsetInPixels._y = offset.y;
     cc._POINT_PIXELS_TO_POINTS_OUT(spriteFrame._offsetInPixels, spriteFrame._offset);
-    spriteFrame._originalSizeInPixels._width = originalSize.width;
-    spriteFrame._originalSizeInPixels._height = originalSize.height;
+    spriteFrame._originalSizeInPixels.width = originalSize.width;
+    spriteFrame._originalSizeInPixels.height = originalSize.height;
     cc._SIZE_PIXELS_TO_POINTS_OUT(spriteFrame._originalSizeInPixels, spriteFrame._originalSize);
     spriteFrame._rotated = rotated;
     return spriteFrame;

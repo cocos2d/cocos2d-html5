@@ -149,68 +149,18 @@ cc.pointEqualToPoint = function (point1, point2) {
 
 /**
  * @class
- * @param {Number|cc.Size} _width
+ * @param {Number|cc.Size} width
  * @param {Number} _height
  * Constructor
  */
-cc.Size = function (_width, _height) {
-    if(_width !== undefined && _height === undefined){
-        this.width = _width.width;
-        this.height = _width.height;
+cc.Size = function (width, height) {
+    if(width !== undefined && height === undefined){
+        this.width = width.width;
+        this.height = width.height;
     } else {
-        this.width = _width || 0;
-        this.height = _height || 0;
+        this.width = width || 0;
+        this.height = height || 0;
     }
-};
-
-cc._SizeConst = function (width, height) {
-    this._width = width || 0;
-    this._height = height || 0;
-
-    this.setWidth = function (width) {
-        this._width = width;
-    };
-    this.setHeight = function (height) {
-        this._height = height;
-    }
-};
-
-cc._sizeConst = function (width, height) {
-    return new cc._SizeConst(width, height);
-};
-
-Object.defineProperties(cc._SizeConst.prototype, {
-    width: {
-        get: function () {
-            return this._width;
-        },
-        set: function () {
-            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    },
-
-    height: {
-        get: function () {
-            return this._height;
-        },
-        set: function () {
-            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    }
-});
-
-/**
- * @function
- * @param {Number} width
- * @param {Number} height
- * @return {cc.Size}
- * @deprecated
- */
-cc.SizeMake = function (width, height) {
-    cc.log("cc.SizeMake will be deprecated sooner or later. Use cc.size instead.");
-    return cc.size(width, height);
 };
 
 /**
@@ -222,48 +172,15 @@ cc.SizeMake = function (width, height) {
 cc.size = function (w, h) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
     // memory usage and overall performance drastically
-    //return new cc.Size(w, h);
+    //return cc.size(w, h);
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
-    // note: we have tested this item on Chrome and firefox, it is faster than new cc.Size(w, h)
+    // note: we have tested this item on Chrome and firefox, it is faster than cc.size(w, h)
     if(w !== undefined && h === undefined)
         return { width: w.width, height: w.height};
     else
         return { width: w || 0, height: h || 0};
 };
-
-// JSB compatbility: in JSB, cc._size reuses objects instead of creating new ones
-cc._size = cc.size;
-
-/**
- * The "zero" size -- equivalent to cc.size(0, 0).
- * @function
- * @return {cc.Size}
- */
-cc.SizeZero = function () {
-    return cc.size(0, 0);
-};
-
-cc._zeroConsts = {pointZero: cc._pConst(0,0), sizeZero: cc._sizeConst(0,0)};
-
-Object.defineProperties(cc, {
-    POINT_ZERO:{
-        get:function () {
-            return cc._zeroConsts.pointZero;
-        }
-    },
-    SIZE_ZERO:{
-        get:function () {
-            return cc._zeroConsts.sizeZero;
-        }
-    },
-    RECT_ZERO:{
-        get:function () {
-            return cc.rect(0, 0, 0, 0);
-        }
-    }
-});
-
 
 /**
  * @function
@@ -277,8 +194,6 @@ cc.sizeEqualToSize = function (size1, size2) {
     return ((size1.width == size2.width) && (size1.height == size2.height));
 };
 
-// deprecated
-//cc.Size.CCSizeEqualToSize = cc.sizeEqualToSize;
 
 //--------------------------------------------------------
 //

@@ -756,8 +756,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._cascadeOpacityEnabled = true;
             this._cascadeColorEnabled = true;
 
-            this._contentSize._width = 0;
-            this._contentSize._height = 0;
+            this._contentSize.width = 0;
+            this._contentSize.height = 0;
 
             this.anchorX = 0.5;
 	        this.anchorY = 0.5;
@@ -787,7 +787,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var prev = -1;
         var kerningAmount = 0;
 
-        var tmpSize = cc.SizeZero();
+        var tmpSize = cc.size(0, 0);
 
         var longestLine = 0;
 
@@ -849,7 +849,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 this.addChild(fontChar, 0, i);
             } else {
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
-                    fontChar.setTextureRect(rect, false, cc.SizeZero());
+                    fontChar.setTextureRect(rect, false, cc.size(0, 0));
                 } else {
                     // updating previous sprite
                     fontChar.setTextureRect(rect, false);

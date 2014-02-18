@@ -98,7 +98,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._endColor = cc.white();
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
-        this._backGroundImageTextureSize = cc.SizeZero();
+        this._backGroundImageTextureSize = cc.size(0, 0);
         this._layoutType = ccs.LayoutType.absolute;
         this._widgetType = ccs.WidgetType.container;
         this._doLayoutDirty = false;
@@ -117,7 +117,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             this.setCascadeColorEnabled(false);
             this.setCascadeOpacityEnabled(false);
             this.ignoreContentAdaptWithSize(false);
-            this.setSize(cc.SizeZero());
+            this.setSize(cc.size(0, 0));
             this.setBright(true);
             this.setAnchorPoint(0, 0);
             this.initStencil();
@@ -715,7 +715,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
-        this._backGroundImageTextureSize = cc.SizeZero();
+        this._backGroundImageTextureSize = cc.size(0, 0);
     },
 
     /**

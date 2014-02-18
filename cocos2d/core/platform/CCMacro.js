@@ -281,8 +281,8 @@ cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
 
 cc._SIZE_PIXELS_TO_POINTS_OUT = function (sizeInPixels, outSize) {
     var scale = cc.CONTENT_SCALE_FACTOR();
-    outSize._width = sizeInPixels.width / scale;
-    outSize._height = sizeInPixels.height / scale;
+    outSize.width = sizeInPixels.width / scale;
+    outSize.height = sizeInPixels.height / scale;
 };
 
 /**

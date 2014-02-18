@@ -91,7 +91,7 @@ cc.ScrollView = cc.Layer.extend({
         this._scrollDistance = new cc.Point(0, 0);
         this._touchPoint = new cc.Point(0, 0);
         this._touches = [];
-        this._viewSize = new cc.Size(0, 0);
+        this._viewSize = cc.size(0, 0);
         this._parentScissorRect = new cc.Rect(0,0,0,0);
         this._tmpViewRect = new cc.Rect(0,0,0,0);
     },

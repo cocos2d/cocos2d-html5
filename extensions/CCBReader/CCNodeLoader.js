@@ -403,7 +403,7 @@ cc.NodeLoader = cc.Class.extend({
                 break;
         }
 
-        return new cc.Size(width, height);
+        return cc.size(width, height);
     },
 
     parsePropTypeScaleLock:function (node, parent, ccbReader, propertyName) {

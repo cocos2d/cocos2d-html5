@@ -212,8 +212,8 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
     imageSize:null,
 
     ctor:function () {
-        this._tileSize = cc.SizeZero();
-        this.imageSize = cc.SizeZero();
+        this._tileSize = cc.size(0, 0);
+        this.imageSize = cc.size(0, 0);
     },
 
     /**
@@ -271,8 +271,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _currentFirstGID:0,
 
     ctor:function () {
-        this._mapSize = cc.SizeZero();
-        this._tileSize = cc.SizeZero();
+        this._mapSize = cc.size(0, 0);
+        this._tileSize = cc.size(0, 0);
         this._layers = [];
         this._tileSets = [];
         this._objectGroups = [];
