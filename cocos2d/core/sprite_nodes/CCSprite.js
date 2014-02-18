@@ -2069,7 +2069,6 @@ cc.defineGetterSetter(_proto, "ignoreAnchor", _proto.isIgnoreAnchorPointForPosit
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 // Extended properties
 /** @expose */
@@ -2099,6 +2098,9 @@ cc.defineGetterSetter(_proto, "batchNode", _proto.getBatchNode, _proto.setBatchN
 /** @expose */
 _proto.quad;
 cc.defineGetterSetter(_proto, "quad", _proto.getQuad);
+/** @expose */
+_proto.blendFunc;
+cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 delete window._proto;
 
