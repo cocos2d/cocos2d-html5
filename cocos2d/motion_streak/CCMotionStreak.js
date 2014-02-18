@@ -242,7 +242,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
         this.texture = texture;
-        this.setColor(color);
+        this.color = color;
         this.scheduleUpdate();
 
         //bind buffer
@@ -258,17 +258,17 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 
     /**
      * color used for the tint
-     * @param {cc.Color3B} colors
+     * @param {cc.Color3B} color
      */
-    tintWithColor:function (colors) {
-        this.setColor(colors);
+    tintWithColor:function (color) {
+        this.color = color;
 
         // Fast assignation
         var locColorPointer = this._colorPointer;
         for (var i = 0, len = this._nuPoints * 2; i < len; i++) {
-            locColorPointer[i * 4] = colors.r;
-            locColorPointer[i * 4 + 1] = colors.g;
-            locColorPointer[i * 4 + 2] = colors.b;
+            locColorPointer[i * 4] = color.r;
+            locColorPointer[i * 4 + 1] = color.g;
+            locColorPointer[i * 4 + 2] = color.b;
         }
     },
 

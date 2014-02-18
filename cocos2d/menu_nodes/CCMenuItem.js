@@ -285,10 +285,10 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         if (this._isEnabled != enabled) {
             var locLabel = this._label;
             if (!enabled) {
-                this._colorBackup = locLabel.getColor();
-                locLabel.setColor(this._disabledColor);
+                this._colorBackup = locLabel.color;
+                locLabel.color = this._disabledColor;
             } else {
-                locLabel.setColor(this._colorBackup);
+                locLabel.color = this._colorBackup;
             }
         }
         cc.MenuItem.prototype.setEnabled.call(this, enabled);
@@ -298,28 +298,28 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * @param {Number} opacity from 0-255
      */
     setOpacity:function (opacity) {
-        this._label.setOpacity(opacity);
+        this._label.opacity = opacity;
     },
 
     /**
      * @return {Number}
      */
     getOpacity:function () {
-        return this._label.getOpacity();
+        return this._label.opacity;
     },
 
     /**
      * @param {cc.Color3B} color
      */
     setColor:function (color) {
-        this._label.setColor(color);
+        this._label.color = color;
     },
 
     /**
      * @return {cc.Color3B}
      */
     getColor:function () {
-        return this._label.getColor();
+        return this._label.color;
     },
 
     /**
@@ -764,40 +764,40 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {cc.Color3B} color
      */
     setColor:function (color) {
-        this._normalImage.setColor(color);
+        this._normalImage.color = color;
 
         if (this._selectedImage)
-            this._selectedImage.setColor(color);
+            this._selectedImage.color = color;
 
         if (this._disabledImage)
-            this._disabledImage.setColor(color);
+            this._disabledImage.color = color;
     },
 
     /**
      * @return {cc.Color3B}
      */
     getColor:function () {
-        return this._normalImage.getColor();
+        return this._normalImage.color;
     },
 
     /**
      * @param {Number} opacity 0 - 255
      */
     setOpacity:function (opacity) {
-        this._normalImage.setOpacity(opacity);
+        this._normalImage.opacity = opacity;
 
         if (this._selectedImage)
-            this._selectedImage.setOpacity(opacity);
+            this._selectedImage.opacity = opacity;
 
         if (this._disabledImage)
-            this._disabledImage.setOpacity(opacity);
+            this._disabledImage.opacity = opacity;
     },
 
     /**
      * @return {Number} opacity from 0 - 255
      */
     getOpacity:function () {
-        return this._normalImage.getOpacity();
+        return this._normalImage.opacity;
     },
 
     /**
@@ -1043,13 +1043,13 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     },
 
     /**
-     * @param {Number} Opacity
+     * @param {Number} opacity
      */
-    setOpacity:function (Opacity) {
-        this._opacity = Opacity;
+    setOpacity:function (opacity) {
+        this._opacity = opacity;
         if (this._subItems && this._subItems.length > 0) {
             for (var it = 0; it < this._subItems.length; it++) {
-                this._subItems[it].setOpacity(Opacity);
+                this._subItems[it].opacity = opacity;
             }
         }
     },
@@ -1064,11 +1064,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     /**
      * @param {cc.Color3B} Color
      */
-    setColor:function (Color) {
-        this._color = Color;
+    setColor:function (color) {
+        this._color = color;
         if (this._subItems && this._subItems.length > 0) {
             for (var it = 0; it < this._subItems.length; it++) {
-                this._subItems[it].setColor(Color);
+                this._subItems[it].color = color;
             }
         }
     },

@@ -480,7 +480,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _spriteFrameLoadedCallbackForCanvas:function(spriteFrame){
         this.setNodeDirty(true);
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
-        var curColor = this.getColor();
+        var curColor = this.color;
         if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
             this._changeTextureColor();
 
@@ -1521,7 +1521,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _setColorForCanvas: function (color3) {
-        var curColor = this.getColor();
+        var curColor = this.color;
         if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
             return;
 
@@ -1538,7 +1538,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _updateDisplayedColorForCanvas: function (parentColor) {
-        var oldColor = this.getColor();
+        var oldColor = this.color;
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
         var newColor = this._displayedColor;
         if ((oldColor.r === newColor.r) && (oldColor.g === newColor.g) && (oldColor.b === newColor.b))
@@ -1616,7 +1616,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
         this._colorized = false;
         if (locTextureLoaded) {
-            var curColor = this.getColor();
+            var curColor = this.color;
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
                 this._changeTextureColor();
         }
@@ -1760,11 +1760,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
             this._blendFunc.src = gl.SRC_ALPHA;
             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-            this.setOpacityModifyRGB(false);
+            this.opacityModifyRGB = false;
         } else {
             this._blendFunc.src = cc.BLEND_SRC;
             this._blendFunc.dst = cc.BLEND_DST;
-            this.setOpacityModifyRGB(true);
+            this.opacityModifyRGB = true;
         }
     },
 
@@ -1990,7 +1990,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
         } else if (locContentSize._width !== 0) {
-            var curColor = this.getColor();
+            var curColor = this.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
             context.fillRect(flipXOffset, flipYOffset, locContentSize._width * locEGL_ScaleX, locContentSize._height * locEGL_ScaleY);
         }

@@ -643,7 +643,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this._displayedOpacity = this._realOpacity = opacity;
 
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -690,7 +690,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     _enableCascadeOpacity:function(){
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -1137,7 +1137,7 @@ cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.getOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 
 /** @expose */
 _proto.blendFunc;
@@ -1264,7 +1264,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
-        this.setColor(color);
+        this.color = color;
     },
 
     /**

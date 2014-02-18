@@ -2375,7 +2375,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this._displayedOpacity = this._realOpacity = opacity;
 
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -2421,7 +2421,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     _enableCascadeOpacity:function(){
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
