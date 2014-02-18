@@ -35,6 +35,7 @@
  * The TextureAtlas capacity can be increased or decreased in runtime.</p>
  * @class
  * @extends cc.Class
+ *
  * @property {Boolean}  dirty   - Indicates whether or not the array buffer of the VBO needs to be updated
  * @property {Image}    texture - Image texture for cc.TextureAtlas
  */
