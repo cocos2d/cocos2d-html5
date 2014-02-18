@@ -1044,7 +1044,6 @@ if(cc.Browser.supportWebGL){
 
 // Override properties
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 // Extended properties
 /** @expose */

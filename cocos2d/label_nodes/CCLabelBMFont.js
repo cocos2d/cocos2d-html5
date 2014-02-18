@@ -558,7 +558,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if(this._cascadeColorEnabled){
                 var parentColor = cc.white();
                 var locParent = this._parent;
-                if(locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+                if(locParent && locParent.RGBAProtocol && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
                 this.updateDisplayedColor(parentColor);
             }
@@ -583,7 +583,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for (var i = 0; i < locChildren.length; i++) {
                 var node = locChildren[i];
                 if (node && node.RGBAProtocol)
-                    node.setOpacityModifyRGB(this._opacityModifyRGB);
+                    node.opacityModifyRGB = this._opacityModifyRGB;
             }
         }
     },
@@ -605,7 +605,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if(this._cascadeOpacityEnabled){
             var parentOpacity = 255;
             var locParent = this._parent;
-            if(locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            if(locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
                parentOpacity = locParent.getDisplayedOpacity();
             this.updateDisplayedOpacity(parentOpacity);
         }
@@ -858,7 +858,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
             }
             // Apply label properties
-            fontChar.setOpacityModifyRGB(this._opacityModifyRGB);
+            fontChar.opacityModifyRGB = this._opacityModifyRGB;
             // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
             if (cc.Browser.supportWebGL) {
                 fontChar.updateDisplayedColor(this._displayedColor);
@@ -1294,6 +1294,7 @@ cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _pr
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
 
 // Extended properties
 /** @expose */
