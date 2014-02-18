@@ -199,7 +199,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
                     fontChar.visible = true;
-                    fontChar.setOpacity(this._displayedOpacity);
+                    fontChar.opacity = this._displayedOpacity;
                 }
             }
             fontChar.x = i * locItemWidth + locItemWidth / 2;
@@ -329,7 +329,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             var locChildren = this._children;
             for (var i = 0, len = locChildren.length; i < len; i++) {
                 if (locChildren[i])
-                    locChildren[i].setOpacity(opacity);
+                    locChildren[i].opacity = opacity;
             }
         }
     },

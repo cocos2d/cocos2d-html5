@@ -441,7 +441,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         //loading percent
         this._label = cc.LabelTTF.create("Loading... 0%", "Arial", 14);
-        this._label.setColor(cc.c3(180, 180, 180));
+        this._label.color = cc.c3(180, 180, 180);
         this._label.pos = cc.pAdd(centerPos, cc.p(0, -logoHeight / 2 - 10));
         this._bgLayer.addChild(this._label, 10);
     },

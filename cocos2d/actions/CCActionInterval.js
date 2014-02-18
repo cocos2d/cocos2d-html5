@@ -1861,7 +1861,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     update:function (time) {
         if (this._target.RGBAProtocol) {
             var fromOpacity = this._fromOpacity;
-            this._target.setOpacity((fromOpacity + (this._toOpacity - fromOpacity) * time));
+            this._target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
         }
     },
 
@@ -1871,7 +1871,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         if(this._target.RGBAProtocol){
-            this._fromOpacity = target.getOpacity();
+            this._fromOpacity = target.opacity;
         }
     }
 });
@@ -2030,7 +2030,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         if (this._target.RGBAProtocol) {
-            this._from = this._target.getColor();
+            this._from = this._target.color;
         }
     },
 
@@ -2040,8 +2040,9 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     update:function (time) {
         var locFrom = this._from, locTo = this._to;
         if (this._target.RGBAProtocol) {
-            this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
-                (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+            this._target.color = cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
+                                        locFrom.g + (locTo.g - locFrom.g) * time,
+	                                    locFrom.b + (locTo.b - locFrom.b) * time);
         }
     }
 });
@@ -2119,7 +2120,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         if (target.RGBAProtocol) {
-            var color = target.getColor();
+            var color = target.color;
             this._fromR = color.r;
             this._fromG = color.g;
             this._fromB = color.b;
@@ -2131,9 +2132,9 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      */
     update:function (time) {
         if (this._target.RGBAProtocol) {
-            this._target.setColor(cc.c3b((this._fromR + this._deltaR * time),
-                (this._fromG + this._deltaG * time),
-                (this._fromB + this._deltaB * time)));
+            this._target.color = cc.c3b(this._fromR + this._deltaR * time,
+                                        this._fromG + this._deltaG * time,
+                                        this._fromB + this._deltaB * time);
         }
     },
 

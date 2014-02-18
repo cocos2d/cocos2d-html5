@@ -443,7 +443,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile.vertexZ = this._vertexZForPos(pos);
             tile.anchorX = 0;
 	        tile.anchorY = 0;
-            tile.setOpacity(this._opacity);
+            tile.opacity = this._opacity;
 
             var indexForZ = this._atlasIndexForExistantZ(z);
             this.addSpriteWithoutQuad(tile, indexForZ, z);
@@ -871,7 +871,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         sprite.anchorX = 0;
 	    sprite.anchorY = 0;
-        sprite.setOpacity(this._opacity);
+        sprite.opacity = this._opacity;
         if (cc.renderContextType === cc.WEBGL) {
             sprite.rotation = 0.0;
         }

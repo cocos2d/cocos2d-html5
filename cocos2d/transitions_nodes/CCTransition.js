@@ -1385,8 +1385,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         layer.addChild(outTexture);
 
         // initial opacity:
-        inTexture.getSprite().setOpacity(255);
-        outTexture.getSprite().setOpacity(255);
+        inTexture.getSprite().opacity = 255;
+        outTexture.getSprite().opacity = 255;
 
         // create the blend action
         var layerAction = cc.Sequence.create(
