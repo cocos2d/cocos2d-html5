@@ -75,7 +75,13 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._initLayer();
         return true;
     },
+    /**
+     * use for jsb
+     * @param enable
+     */
+    setKeypadEnabled:function(enable){
 
+    },
     /**
      * If isTouchEnabled, this method is called onEnter.
      */
