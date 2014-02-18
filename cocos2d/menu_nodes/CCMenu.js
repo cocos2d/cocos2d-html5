@@ -171,8 +171,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             this._state = cc.MENU_STATE_WAITING;
 
             // enable cascade color and opacity on menus
-            this.setCascadeColorEnabled(true);
-            this.setCascadeOpacityEnabled(true);
+            this.cascadeColor = true;
+            this.cascadeOpacity = true;
             return true;
         }
         return false;

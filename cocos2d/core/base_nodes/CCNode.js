@@ -2465,7 +2465,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         locDisplayedColor.b = locRealColor.b = color.b;
 
         var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -2516,7 +2516,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     _enableCascadeColor: function(){
         var parentColor , locParent =  this._parent;
-        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -2578,4 +2578,7 @@ cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, 
 /** @expose */
 _proto.color;
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+/** @expose */
+_proto.cascadeColor;
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
 delete window._proto;

@@ -558,7 +558,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if(this._cascadeColorEnabled){
                 var parentColor = cc.white();
                 var locParent = this._parent;
-                if(locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+                if(locParent && locParent.RGBAProtocol && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
                 this.updateDisplayedColor(parentColor);
             }
@@ -1294,6 +1294,7 @@ cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _pr
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
 
 // Extended properties
 /** @expose */

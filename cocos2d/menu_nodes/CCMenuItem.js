@@ -335,8 +335,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this._disabledColor = cc.c3b(126, 126, 126);
         this.setLabel(label);
 
-        this.setCascadeColorEnabled(true);
-        this.setCascadeOpacityEnabled(true);
+	    this.cascadeColor = true;
+	    this.cascadeOpacity = true;
 
         return true;
     },
@@ -750,13 +750,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
                 locNormalImage.addLoadedEventListener(function (sender) {
                     this.size = sender.size;
-                    this.setCascadeColorEnabled(true);
-                    this.setCascadeOpacityEnabled(true);
+	                this.cascadeColor = true;
+	                this.cascadeOpacity = true;
                 }, this);
             }
         }
-        this.setCascadeColorEnabled(true);
-        this.setCascadeOpacityEnabled(true);
+	    this.cascadeColor = true;
+	    this.cascadeOpacity = true;
         return true;
     },
 
@@ -1142,8 +1142,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);
 
-        this.setCascadeColorEnabled(true);
-        this.setCascadeOpacityEnabled(true);
+        this.cascadeColor = true;
+        this.cascadeOpacity = true;
 
         return true;
     },
