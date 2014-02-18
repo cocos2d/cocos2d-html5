@@ -2098,9 +2098,6 @@ cc.defineGetterSetter(_proto, "batchNode", _proto.getBatchNode, _proto.setBatchN
 /** @expose */
 _proto.quad;
 cc.defineGetterSetter(_proto, "quad", _proto.getQuad);
-/** @expose */
-_proto.blendFunc;
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 delete window._proto;
 

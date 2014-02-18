@@ -146,9 +146,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      */
     initWithArray:function (arrayOfItems) {
         if (this.init()) {
-            this.setTouchPriority(cc.MENU_HANDLER_PRIORITY);
-            this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
-            this.setTouchEnabled(true);
+            this.touchPriority = cc.MENU_HANDLER_PRIORITY;
+            this.touchMode = cc.TOUCH_ONE_BY_ONE;
+            this.touchEnabled = true;
             this._enabled = true;
 
             // menu in the center of the screen
@@ -432,7 +432,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
+        cc.registerTargetedDelegate(this.touchPriority, true, this);
     },
 
     /**

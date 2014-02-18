@@ -116,8 +116,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._mousePriority = priority;
             // Update touch priority with handler
             if (this._isMouseEnabled) {
-                this.setMouseEnabled(false);
-                this.setMouseEnabled(true);
+                this.mouseEnabled = false;
+                this.mouseEnabled = true;
             }
         }
     },
@@ -172,8 +172,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchPriority = priority;
             // Update touch priority with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+	            this.touchEnabled = false;
+	            this.touchEnabled = true;
             }
         }
     },
@@ -193,8 +193,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchMode = mode;
             // update the mode with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+                this.touchEnabled = false;
+                this.touchEnabled = true;
             }
         }
     },
@@ -1138,10 +1138,6 @@ cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-
-/** @expose */
-_proto.blendFunc;
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 delete window._proto;
 

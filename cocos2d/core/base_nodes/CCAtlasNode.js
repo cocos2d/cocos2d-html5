@@ -417,9 +417,6 @@ cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 _proto.textureAtlas;
 /** @expose */
 _proto.quadsToDraw;
-/** @expose */
-_proto.blendFunc;
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 delete window._proto;
 
