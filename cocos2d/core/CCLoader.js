@@ -464,7 +464,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     onExit: function () {
         cc.Node.prototype.onExit.call(this);
         var tmpStr = "Loading... 0%";
-        this._label.setString(tmpStr);
+        this._label.string = tmpStr;
     },
 
     /**
@@ -488,7 +488,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     _updatePercent: function () {
         var percent = cc.Loader.getInstance().getPercentage();
         var tmpStr = "Loading... " + percent + "%";
-        this._label.setString(tmpStr);
+        this._label.string = tmpStr;
 
         if (percent >= 100)
             this.unschedule(this._updatePercent);
