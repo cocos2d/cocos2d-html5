@@ -138,13 +138,17 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     init: function () {
         if (ccs.Layout.prototype.init.call(this)) {
-            this.setUpdateEnabled(true);
             this.setTouchEnabled(true);
             this.setClippingEnabled(true);
             this._innerContainer.setTouchEnabled(false);
             return true;
         }
         return false;
+    },
+
+    onEnter:function(){
+        ccs.Layout.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
@@ -262,8 +266,38 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         return this._innerContainer.removeChild(child);
     },
 
+    /**
+     * get inner children
+     * @returns {Array}
+     */
     getChildren: function () {
         return this._innerContainer.getChildren();
+    },
+
+    /**
+     * get the count of inner children
+     * @returns {Number}
+     */
+    getChildrenCount: function () {
+        return this._innerContainer.getChildrenCount();
+    },
+
+    /**
+     * Gets a child from the container given its tag
+     * @param {Number} tag
+     * @returns {ccs.Widget}
+     */
+    getChildByTag: function (tag) {
+        return this._innerContainer.getChildByTag(tag);
+    },
+
+    /**
+     * Gets a child from the container given its name
+     * @param {String} name
+     * @returns {ccs.Widget}
+     */
+    getChildByName: function (name) {
+        return this._innerContainer.getChildByName(name);
     },
 
     moveChildren: function (offsetX, offsetY) {

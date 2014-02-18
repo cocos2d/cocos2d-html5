@@ -48,3 +48,19 @@ CSSProperties.prototype.alpha;
 
 var gl = gl || {};
 CSSProperties.prototype.gl;
+
+CSSProperties.prototype.AudioContext;
+CSSProperties.prototype.webkitAudioContext;
+CSSProperties.prototype.mozAudioContext;
+CSSProperties.prototype.createBufferSource;
+CSSProperties.prototype.createGain;
+CSSProperties.prototype.createGainNode;
+CSSProperties.prototype.destination;
+CSSProperties.prototype.decodeAudioData;
+CSSProperties.prototype.gain;
+CSSProperties.prototype.connect;
+CSSProperties.prototype.playbackState;
+CSSProperties.prototype.noteGrainOn;
+CSSProperties.prototype.noteOn;
+
+

@@ -73,7 +73,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
             if (frameDict) {
                 var spriteFrame = this._spriteFrames[key];
                 if (spriteFrame) {
-                    continue;
+	                continue;
                 }
 
                 if (format == 0) {
@@ -122,12 +122,13 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var frameKey = key.toString();
 
                     for (var aliasKey in aliases) {
-                        if (this._spriteFramesAliases.hasOwnProperty(aliases[aliasKey])) {
+	                    var alias = aliases[aliasKey];
+                        if (this._spriteFramesAliases[alias]) {
                             cc.log("cocos2d: WARNING: an alias with name " + aliasKey + " already exists");
                         }
-                        this._spriteFramesAliases[aliases[aliasKey]] = frameKey;
+                        this._spriteFramesAliases[alias] = frameKey;
                     }
-                    if (frameDict.hasOwnProperty("spriteSize")) {
+                    if (frameDict["spriteSize"] !== undefined) {
                         textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                     }
                     //create frame
@@ -188,8 +189,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         if (ext == "plist") {
             var fullPath = fileUtils.fullPathForFilename(filePath);
             dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
-        }
-        else {
+        } else {
             dict = JSON.parse(fileUtils.getTextFileData(filePath));
         }
 
@@ -206,7 +206,6 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     if (texturePath != "") {
                         // build texture path relative to plist file
                         texturePath = fileUtils.fullPathFromRelativeFile(texturePath, filePath);
-
                     } else {
                         // build texture path by replacing file extension
                         texturePath = filePath;
@@ -220,14 +219,18 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
 
                     var getTexture = cc.TextureCache.getInstance().addImage(texturePath);
-                    if (getTexture)
+                    if (getTexture){
                         this._addSpriteFramesWithDictionary(dict, getTexture);
-                    else
+                        this._loadedFileNames.push(filePath);
+                    } else
                         cc.log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
                 }
                 break;
             case 2:
                 if (texture instanceof cc.Texture2D) {
+	                if(this._loadedFileNames.indexOf(filePath) === -1) {
+		                this._checkConflict(dict);
+	                }
                     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames. */
                     this._addSpriteFramesWithDictionary(dict, texture);
                 } else {
@@ -240,6 +243,10 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var gTexture = cc.TextureCache.getInstance().addImage(textureFileName);
 
                     if (gTexture) {
+	                    if(this._loadedFileNames.indexOf(filePath) === -1) {
+		                    this._checkConflict(dict);
+		                    this._loadedFileNames.push(filePath);
+	                    }
                         this._addSpriteFramesWithDictionary(dict, gTexture);
                     } else {
                         cc.log("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found " + textureFileName);
@@ -250,6 +257,17 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 throw "Argument must be non-nil ";
         }
     },
+
+	// Function to check if frames to add exists already, if so there may be name conflit that must be solved
+	_checkConflict: function (dictionary) {
+		var framesDict = dictionary["frames"];
+
+		for (var key in framesDict) {
+			if (this._spriteFrames[key]) {
+				cc.log("cocos2d: WARNING: Sprite frame: "+key+" has already been added by another source, please fix name conflit");
+			}
+		}
+	},
 
     /**
      * <p>
@@ -273,9 +291,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * </p>
      */
     removeSpriteFrames: function () {
-        this._spriteFrames = [];
-        this._spriteFramesAliases = [];
-        this._loadedFileNames = {};
+        this._spriteFrames = {};
+        this._spriteFramesAliases = {};
+        this._loadedFileNames.length = 0;
     },
 
     /**
@@ -289,14 +307,14 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         }
 
         // Is this an alias ?
-        if (this._spriteFramesAliases.hasOwnProperty(name)) {
+        if (this._spriteFramesAliases[name]) {
             delete(this._spriteFramesAliases[name]);
         }
-        if (this._spriteFrames.hasOwnProperty(name)) {
+        if (this._spriteFrames[name]) {
             delete(this._spriteFrames[name]);
         }
         // XXX. Since we don't know the .plist file that originated the frame, we must remove all .plist from the cache
-        this._loadedFileNames = {};
+        this._loadedFileNames.length = 0;
     },
 
     /**
@@ -316,7 +334,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
         //remove it from the cache
         if (cc.ArrayContainsObject(this._loadedFileNames, plist)) {
-            cc.ArrayRemoveObject(plist);
+            cc.ArrayRemoveObject(this._loadedFileNames, plist);
         }
     },
 
@@ -328,7 +346,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         var framesDict = dictionary["frames"];
 
         for (var key in framesDict) {
-            if (this._spriteFrames.hasOwnProperty(key)) {
+            if (this._spriteFrames[key]) {
                 delete(this._spriteFrames[key]);
             }
         }
@@ -364,19 +382,20 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      */
     getSpriteFrame: function (name) {
         var frame;
-        if (this._spriteFrames.hasOwnProperty(name)) {
+        if (this._spriteFrames[name]) {
             frame = this._spriteFrames[name];
         }
 
         if (!frame) {
             // try alias dictionary
             var key;
-            if (this._spriteFramesAliases.hasOwnProperty(name)) {
+            if (this._spriteFramesAliases[name]) {
                 key = this._spriteFramesAliases[name];
             }
             if (key) {
-                if (this._spriteFrames.hasOwnProperty(key.toString())) {
-                    frame = this._spriteFrames[key.toString()];
+	            var keystr = key.toString();
+                if (this._spriteFrames[keystr]) {
+                    frame = this._spriteFrames[keystr];
                 }
                 if (!frame) {
                     cc.log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");

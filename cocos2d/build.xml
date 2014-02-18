@@ -6,9 +6,9 @@
 
     <target name="compile_Canvas">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="../lib/Cocos2d-html5-v2.2.2.min.js"
-                sourceMapOutputFile="sourcemap"
-                sourceMapFormat="V3">
+                debug="false" output="../lib/Cocos2d-html5-v2.2.2.min.js">
+                <!--sourceMapOutputFile="sourcemap"
+                sourceMapFormat="V3">-->
             <externs dir="${basedir}">
                 <file name="core/cocos2d_externs.js"/>
             </externs>
@@ -25,7 +25,6 @@
                 <file name="core/platform/CCEGLView.js"/>
                 <file name="core/platform/CCScreen.js"/>
                 <file name="core/platform/CCVisibleRect.js"/>
-                <file name="core/cocoa/CCNS.js"/>
                 <file name="core/cocoa/CCAffineTransform.js"/>
                 <file name="core/support/CCPointExtension.js"/>
                 <file name="core/support/CCVertex.js"/>
@@ -48,6 +47,7 @@
                 <file name="core/CCCamera.js"/>
                 <file name="core/CCScheduler.js"/>
                 <file name="core/CCLoader.js"/>
+                <file name="core/CCDrawingPrimitives.js"/>
                 <file name="core/platform/CCApplication.js"/>
                 <file name="core/platform/CCSAXParser.js"/>
                 <file name="core/platform/AppControl.js"/>
@@ -102,6 +102,8 @@
                 <file name="particle_nodes/CCParticleSystem.js"/>
                 <file name="particle_nodes/CCParticleExamples.js"/>
                 <file name="particle_nodes/CCParticleBatchNode.js"/>
+                <file name="physics_nodes/CCPhysicsDebugNode.js"/>
+                <file name="physics_nodes/CCPhysicsSprite.js"/>
                 <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
                 <file name="touch_dispatcher/CCTouchHandler.js"/>
                 <file name="touch_dispatcher/CCTouchDispatcher.js"/>
@@ -111,7 +113,6 @@
                 <file name="accelerometer/CCAccelerometer.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
-                <file name="CCDrawingPrimitives.js"/>
                 <file name="menu_nodes/CCMenuItem.js"/>
                 <file name="menu_nodes/CCMenu.js"/>
                 <file name="tileMap_nodes/CCTGAlib.js"/>
@@ -206,6 +207,10 @@
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js"/>
+                <file name="CocoStudio/Trigger/ObjectFactory.js"/>
+                <file name="CocoStudio/Trigger/TriggerBase.js"/>
+                <file name="CocoStudio/Trigger/TriggerMng.js"/>
+                <file name="CocoStudio/Trigger/TriggerObj.js"/>
                 <file name="CocoStudio/Reader/GUIReader.js"/>
                 <file name="CocoStudio/Reader/SceneReader.js"/>
             </sources>

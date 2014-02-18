@@ -67,7 +67,7 @@ ccs.DisplayManager = ccs.Class.extend({
         //! if changed display index is current display index, then change current display to the new display
         if (index == this._displayIndex) {
             this._displayIndex = -1;
-            this.changeDisplayByIndex(index, false);
+            this.changeDisplayWithIndex(index, false);
         }
     },
 
@@ -128,7 +128,7 @@ ccs.DisplayManager = ccs.Class.extend({
         return this._decoDisplayList;
     },
 
-    changeDisplayByIndex:function (index, force) {
+    changeDisplayWithIndex:function (index, force) {
         if (index >= this._decoDisplayList.length) {
             cc.log("the index value is out of range");
             return;
@@ -160,10 +160,10 @@ ccs.DisplayManager = ccs.Class.extend({
         this.setCurrentDecorativeDisplay(decoDisplay);
     },
 
-    changeDisplayByName: function (name, force) {
+    changeDisplayWithName: function (name, force) {
         for (var i = 0; i < this._decoDisplayList.length; i++) {
             if (this._decoDisplayList[i].getDisplayData().displayName == name) {
-                this.changeDisplayByIndex(i, force);
+                this.changeDisplayWithIndex(i, force);
                 break;
             }
         }
@@ -252,14 +252,14 @@ ccs.DisplayManager = ccs.Class.extend({
         }
     },
 
-    containPoint:function (/*point|x,y*/) {
+    containPoint: function (point, y) {
         var p = cc.p(0, 0);
-        if (arguments.length == 1) {
-            p.x = arguments[0].x;
-            p.y = arguments[0].y;
-        } else if (arguments.length == 2) {
-            p.x = arguments[0];
-            p.y = arguments[1];
+        if (y === undefined) {
+            p.x = point.x;
+            p.y = point.y;
+        } else {
+            p.x = point;
+            p.y = y;
         }
         if (!this._visible || this._displayIndex < 0) {
             return false;

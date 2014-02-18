@@ -216,12 +216,12 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
      * @param {Number} [y] The anchor point.y of UIImageView.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._imageRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._imageRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._imageRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._imageRenderer.setAnchorPoint(point, y);
         }
     },
 

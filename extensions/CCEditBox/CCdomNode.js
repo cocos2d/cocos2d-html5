@@ -43,16 +43,17 @@ cc.DOM.addMethods = function (x) {
 cc.DOM.methods = /** @lends cc.DOM# */{
     /**
      * Replace the set position of ccNode
-     * @param {object|Number} x
+     * @param {cc.Point|Number} x
      * @param {Number} y
      */
     setPosition:function (x, y) {
-        if (arguments.length == 2) {
-            this._position._x = x;
-            this._position._y = y;
-            //this._position = cc.p(newPosOrxValue,yValue);
+        if (y === undefined) {
+	        this._position._x = x.x;
+	        this._position._y = x.y;
         } else {
-            this._position = x;
+	        this._position._x = x;
+	        this._position._y = y;
+	        //this._position = cc.p(newPosOrxValue,yValue);
         }
         this.setNodeDirty();
         this.dom.translates(this._position._x, -this._position._y);
@@ -122,16 +123,16 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point;
-            locAnchorPoint._y = y;
+        if (y === undefined) {
+	        if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
+		        return;
+	        locAnchorPoint._x = point.x;
+	        locAnchorPoint._y = point.y;
         } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point.x;
-            locAnchorPoint._y = point.y;
+	        if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
+		        return;
+	        locAnchorPoint._x = point;
+	        locAnchorPoint._y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
         locAPP._x = locSize._width * locAnchorPoint._x;
@@ -155,16 +156,16 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if (arguments.length === 2) {
-            if ((size === locContentSize._width) && (height === locContentSize._height))
-                return;
-            locContentSize._width = size;
-            locContentSize._height = height;
+        if (height === undefined) {
+	        if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
+		        return;
+	        locContentSize._width = size.width;
+	        locContentSize._height = size.height;
         } else {
-            if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
-                return;
-            locContentSize._width = size.width;
-            locContentSize._height = size.height;
+	        if ((size === locContentSize._width) && (height === locContentSize._height))
+		        return;
+	        locContentSize._width = size;
+	        locContentSize._height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
         locAPP._x = locContentSize._width * locAnchorPoint._x;
@@ -332,10 +333,9 @@ cc.DOM._resetEGLViewDiv = function(){
             designSizeHeight = screenSize.height;
         }
 
-        var viewPortWidth = viewPortRect._size.width, viewPortHeight = viewPortRect._size.height;
+        var viewPortWidth = viewPortRect._size.width;
         if((viewPortRect._size.width === 0) && (viewPortRect._size.height === 0)){
             viewPortWidth = screenSize.width;
-            viewPortHeight = screenSize.height;
         }
 
         eglViewDiv.style.position = 'absolute';
@@ -346,18 +346,8 @@ cc.DOM._resetEGLViewDiv = function(){
 
         eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
 
-        if (viewPortWidth < screenSize.width) {
-            eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-                + (screenSize.width - viewPortWidth ) / 2) + "px";
-        } else {
-            eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-        }
-
-        if (viewPortHeight < screenSize.height) {
-            eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
-        } else {
-            eglViewDiv.style.bottom = "0px";
-        }
+        eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+        eglViewDiv.style.bottom = "0px";
     }
 };
 
@@ -403,10 +393,9 @@ cc.DOM.parentDOM = function (x) {
                     designSizeHeight = screenSize.height;
                 }
 
-                var viewPortWidth = viewPortRect._size.width, viewPortHeight = viewPortRect._size.height;
+                var viewPortWidth = viewPortRect._size.width;
                 if ((viewPortRect._size.width === 0) && (viewPortRect._size.height === 0)) {
                     viewPortWidth = screenSize.width;
-                    viewPortHeight = screenSize.height;
                 }
 
                 eglViewDiv.style.position = 'absolute';
@@ -416,19 +405,8 @@ cc.DOM.parentDOM = function (x) {
                 eglViewDiv.style.margin = 0;
 
                 eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
-
-                if (viewPortWidth < screenSize.width) {
-                    eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-                        + (screenSize.width - viewPortWidth ) / 2) + "px";
-                } else {
-                    eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-                }
-
-                if (viewPortHeight < screenSize.height) {
-                    eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
-                } else {
-                    eglViewDiv.style.bottom = "0px";
-                }
+                eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+                eglViewDiv.style.bottom = "0px";
 
                 p.dom.appendTo(eglViewDiv);
                 eglViewDiv.appendTo(cc.container);

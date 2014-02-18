@@ -86,7 +86,7 @@ ccs.PositionType = {
  * var uiLayer = ccs.UILayer.create();
  * uiLayer.addWidget(uiWidget);
  * @class
- * @extends ccs.Class
+ * @extends ccs.NodeRGBA
  */
 ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _enabled: true,            ///< Highest control of widget
@@ -119,7 +119,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _positionPercent: null,
     _reorderWidgetChildDirty: false,
     _hitted: false,
-
+    _nodes: null,
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._enabled = true;
@@ -149,6 +149,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._positionPercent = cc.PointZero();
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
+        this._nodes = [];
     },
 
     /**
@@ -182,14 +183,15 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Adds a child to the container.
-     * @param {ccs.Widget||cc.Node} child
-     * @returns {boolean}
+     * @param {ccs.Widget} child
      */
     addChild: function (child, zOrder, tag) {
-        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
-        if (child instanceof ccs.Widget) {
-            this._widgetChildren.push(child);
+        if(!(child instanceof ccs.Widget)){
+            cc.log("Widget only supports Widgets as children");
+            return;
         }
+        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
+        this._widgetChildren.push(child);
     },
 
     sortAllChildren: function () {
@@ -320,6 +322,78 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * initializes renderer of widget.
      */
     initRenderer: function () {
+    },
+
+    /**
+     * add node for widget
+     * @param {cc.Node} node
+     * @param {Number} zOrder
+     * @param {Number} tag
+     */
+    addNode: function (node, zOrder, tag) {
+        if (node instanceof ccs.Widget) {
+            cc.log("Widget only supports Nodes as renderer");
+            return;
+        }
+        cc.NodeRGBA.prototype.addChild.call(this, node, zOrder, tag);
+        this._nodes.push(node);
+    },
+
+    /**
+     * get node by tag
+     * @param {Number} tag
+     * @returns {cc.Node}
+     */
+    getNodeByTag: function (tag) {
+        for (var i = 0; i < this._nodes.length; i++) {
+            var node = this._nodes[i];
+            if (node && node.getTag() == tag) {
+                return node;
+            }
+        }
+        return null;
+    },
+
+    /**
+     * get all node
+     * @returns {Array}
+     */
+    getNodes: function () {
+        return this._nodes;
+    },
+
+    /**
+     * remove node
+     * @param {cc.Node} node
+     */
+    removeNode: function (node) {
+        cc.NodeRGBA.prototype.removeChild.call(this, node);
+        cc.ArrayRemoveObject(this._nodes, node);
+    },
+
+    /**
+     *  remove node by tag
+     * @param tag
+     */
+    removeNodeByTag: function (tag) {
+        var node = this.getNodeByTag(tag);
+        if (!node) {
+            cc.log("cocos2d: removeNodeByTag(tag = %d): child not found!", tag);
+        }
+        else {
+            this.removeNode(node);
+        }
+    },
+
+    /**
+     * remove all node
+     */
+    removeAllNodes: function () {
+        for (var i = 0; i < this._nodes.length; i++) {
+            var node = this._nodes[i];
+            cc.NodeRGBA.prototype.removeChild.call(this, node);
+        }
+        this._nodes = [];
     },
 
     /**
@@ -1105,7 +1179,9 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         var widgetChildren = model.getChildren();
         for (var i = 0; i < widgetChildren.length; i++) {
             var locChild = widgetChildren[i];
-            this.addChild(locChild.clone());
+            if(locChild instanceof ccs.Widget){
+                this.addChild(locChild.clone());
+            }
         }
     },
 
@@ -1125,13 +1201,13 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.setName(widget.getName());
         this.setActionTag(widget.getActionTag());
         this._ignoreSize = widget._ignoreSize;
-        this._size = widget._size;
-        this._customSize = widget._customSize;
+        this._size = cc.size(widget._size.width, widget._size.height);
+        this._customSize = cc.size(widget._customSize.width, widget._customSize.height);
         this.copySpecialProperties(widget);
         this._sizeType = widget.getSizeType();
-        this._sizePercent = widget._sizePercent;
+        this._sizePercent = cc.p(widget._sizePercent.x, widget._sizePercent.y);
         this._positionType = widget._positionType;
-        this._positionPercent = widget._positionPercent;
+        this._positionPercent = cc.p(widget._positionPercent.x, widget._positionPercent.y);
         this.setPosition(widget.getPosition());
         this.setAnchorPoint(widget.getAnchorPoint());
         this.setScaleX(widget.getScaleX());
@@ -1145,6 +1221,11 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.setOpacity(widget.getOpacity());
         this.setCascadeOpacityEnabled(widget.isCascadeOpacityEnabled());
         this.setCascadeColorEnabled(widget.isCascadeColorEnabled());
+        for (var key in widget._layoutParameterDictionary) {
+            var parameter = widget._layoutParameterDictionary[key];
+            if (parameter)
+                this.setLayoutParameter(parameter.clone());
+        }
         this.onSizeChanged();
     },
     

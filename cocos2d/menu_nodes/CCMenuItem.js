@@ -184,15 +184,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      */
     activate:function () {
         if (this._isEnabled) {
-            var locTarget = this._target, locCallback = this._callback;
-            if(!locCallback)
-                return ;
-            if (locTarget && (typeof(locCallback) == "string")) {
-                locTarget[locCallback](this);
-            } else if (locTarget && (typeof(locCallback) == "function")) {
-                locCallback.call(locTarget, this);
-            } else
-                locCallback(this);
+            cc.doCallback(this._callback, this._target,this);
         }
     }
 });
@@ -389,8 +381,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 
 /**
  * @param {cc.Node} label
- * @param {function|String|Null} selector
- * @param {cc.Node|Null} target
+ * @param {function|String|Null} [selector=]
+ * @param {cc.Node|Null} [target=]
  * @return {cc.MenuItemLabel}
  */
 cc.MenuItemLabel.create = function (label, selector, target) {
@@ -957,13 +949,13 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'disabled.png', gameScene.run, gameScene)
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
-    if (arguments.length == 0) {
+    if (normalImage === undefined) {
         return cc.MenuItemImage.create(null, null, null, null, null);
     }
-    if (arguments.length == 3)  {
+    else if (four === undefined)  {
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, null);
     }
-    if (arguments.length == 4) {
+    else if (five === undefined) {
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, four);
     }
     var ret = new cc.MenuItemImage();
@@ -1090,10 +1082,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this.initWithCallback(null, null);
         }
 
-        this._subItems = [];
+        var locSubItems = this._subItems;
+        locSubItems.length = 0;
         for (var i = 0; i < l; i++) {
             if (args[i])
-                this._subItems.push(args[i]);
+                locSubItems.push(args[i]);
         }
         this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);

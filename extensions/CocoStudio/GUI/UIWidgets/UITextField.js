@@ -271,12 +271,9 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this._deleteBackwardSelector = null;
     },
 
-    init: function () {
-        if (ccs.Widget.prototype.init.call(this)) {
-            this.setUpdateEnabled(true);
-            return true;
-        }
-        return false;
+    onEnter:function(){
+        ccs.Widget.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
@@ -302,6 +299,17 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     setText: function (text) {
         if (!text) {
             return;
+        }
+        text = String(text);
+        if (this.isMaxLengthEnabled()) {
+            text = text.substr(0, this.getMaxLength());
+        }
+        if (this.isPasswordEnabled()) {
+            this._textFieldRender.setPasswordText(text);
+            this._textFieldRender.insertText(text, text.length);
+        }
+        else {
+            this._textFieldRender.setString(text);
         }
         this._textFieldRender.setString(text);
         this.textfieldRendererScaleChangedWithSize();
@@ -552,12 +560,12 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._textFieldRender.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._textFieldRender.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._textFieldRender.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._textFieldRender.setAnchorPoint(point, y);
         }
     },
 

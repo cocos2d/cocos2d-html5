@@ -268,12 +268,13 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             var displayIndex = keyFrameData.displayIndex;
             var displayManager = locBone.getDisplayManager();
             if (!displayManager.getForceChangeDisplay()) {
-                displayManager.changeDisplayByIndex(displayIndex, false);
-
+                displayManager.changeDisplayWithIndex(displayIndex, false);
+                var locRenderNode = displayManager.getDisplayRenderNode();
+                if(locRenderNode)
+                    locRenderNode.setBlendFunc(keyFrameData.blendFunc);
             }
             this._tweenData.zOrder = keyFrameData.zOrder;
             locBone.updateZOrder();
-            locBone.setBlendFunc(keyFrameData.blendFunc);
             var childAramture = locBone.getChildArmature();
             if (childAramture) {
                 if (keyFrameData.movement != "") {

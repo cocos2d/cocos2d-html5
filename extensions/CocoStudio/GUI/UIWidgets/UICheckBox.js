@@ -146,6 +146,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._updateDisplay();
 
         if(!bgBoxRenderer.textureLoaded()){
+            this._backGroundBoxRenderer.setContentSize(this._customSize);
             bgBoxRenderer.addLoadedEventListener(function(){
                 this.backGroundTextureScaleChangedWithSize();
             },this);
@@ -388,20 +389,20 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
      * @param {Number} [y] The anchor point.y of UICheckBox.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._backGroundBoxRenderer.setAnchorPoint(point, y);
-            this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
-            this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
-            this._frontCrossRenderer.setAnchorPoint(point, y);
-            this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._backGroundBoxRenderer.setAnchorPoint(point);
+	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
+	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
+	        this._frontCrossRenderer.setAnchorPoint(point);
+	        this._frontCrossDisabledRenderer.setAnchorPoint(point);
         }else{
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._backGroundBoxRenderer.setAnchorPoint(point);
-            this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
-            this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
-            this._frontCrossRenderer.setAnchorPoint(point);
-            this._frontCrossDisabledRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._backGroundBoxRenderer.setAnchorPoint(point, y);
+	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
+	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
+	        this._frontCrossRenderer.setAnchorPoint(point, y);
+	        this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
         }
     },
 

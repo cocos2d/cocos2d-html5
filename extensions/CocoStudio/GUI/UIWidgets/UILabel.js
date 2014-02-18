@@ -36,6 +36,9 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     _fontSize: 0,
     _onSelectedScaleOffset: 0,
     _labelRenderer: "",
+    _textAreaSize:null,
+    _textVerticalAlignment:0,
+    _textHorizontalAlignment:0,
     ctor: function () {
         ccs.Widget.prototype.ctor.call(this);
         this._touchScaleChangeEnabled = false;
@@ -45,6 +48,9 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this._fontSize = 10;
         this._onSelectedScaleOffset = 0.5;
         this._labelRenderer = "";
+        this._textAreaSize = cc.size(0, 0);
+        this._textVerticalAlignment = 0;
+        this._textHorizontalAlignment = 0;
     },
 
     init: function () {
@@ -110,6 +116,8 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      * @param {cc.Size} size
      */
     setTextAreaSize: function (size) {
+        this._textAreaSize.width = size.width;
+        this._textAreaSize.height = size.height;
         this._labelRenderer.setDimensions(size);
         this.labelScaleChangedWithSize();
     },
@@ -119,6 +127,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
      */
     setTextHorizontalAlignment: function (alignment) {
+        this._textHorizontalAlignment = alignment;
         this._labelRenderer.setHorizontalAlignment(alignment);
         this.labelScaleChangedWithSize();
     },
@@ -128,6 +137,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
      */
     setTextVerticalAlignment: function (alignment) {
+        this._textVerticalAlignment = alignment;
         this._labelRenderer.setVerticalAlignment(alignment);
         this.labelScaleChangedWithSize();
     },
@@ -154,8 +164,8 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      */
     setTouchScaleChangeEnabled: function (enable) {
         this._touchScaleChangeEnabled = enable;
-        this._normalScaleValueX = this.getScaleX();
-        this._normalScaleValueY = this.getScaleY();
+        //this._normalScaleValueX = this.getScaleX();
+        //this._normalScaleValueY = this.getScaleY();
     },
 
     /**
@@ -177,7 +187,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         if (!this._touchScaleChangeEnabled) {
             return;
         }
-        this.clickScale(this._normalScaleValueX + this._onSelectedScaleOffset,this._normalScaleValueY + this._onSelectedScaleOffset);
+        ccs.Widget.prototype.setScale.call(this, this._normalScaleValueX + this._onSelectedScaleOffset,this._normalScaleValueY + this._onSelectedScaleOffset);
     },
 
     onPressStateChangedToDisabled: function () {
@@ -253,12 +263,12 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      * @param {Number} [y] The anchor point.y of UILabel.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._labelRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._labelRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._labelRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._labelRenderer.setAnchorPoint(point, y);
         }
     },
 
@@ -301,7 +311,6 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
             this._labelRenderer.setScaleX(scaleX);
             this._labelRenderer.setScaleY(scaleY);
         }
-
     },
 
     /**
@@ -321,6 +330,9 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.setFontSize(uiLabel._labelRenderer.getFontSize());
         this.setText(uiLabel.getStringValue());
         this.setTouchScaleChangeEnabled(uiLabel._touchScaleChangeEnabled);
+        this.setTextAreaSize(uiLabel._size);
+        this.setTextHorizontalAlignment(uiLabel._textHorizontalAlignment);
+        this.setTextVerticalAlignment(uiLabel._textVerticalAlignment);
     }
 });
 /**

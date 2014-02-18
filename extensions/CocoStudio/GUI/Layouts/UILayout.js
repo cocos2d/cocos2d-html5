@@ -93,9 +93,9 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._bgImageTexType = ccs.TextureResType.local;
         this._colorRender = null;
         this._gradientRender = null;
-        this._color = cc.WHITE;
-        this._startColor = cc.WHITE;
-        this._endColor = cc.WHITE;
+        this._color = cc.white();
+        this._startColor = cc.white();
+        this._endColor = cc.white();
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.SizeZero();
@@ -159,12 +159,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      * @param {ccs.Widget} locChild
      * @param {Number} zOrder
      * @param {Number} tag
-     * @returns {boolean}
      */
     addChild: function (child, zOrder, tag) {
+        if(!(child instanceof ccs.Widget))
+            return;
         this.supplyTheLayoutParameterLackToChild(child);
+        ccs.Widget.prototype.addChild.call(this, child, zOrder, tag);
         this._doLayoutDirty = true;
-        ccs.Widget.prototype.addChild.call(this, child, zOrder, tag)
     },
 
     /**
@@ -379,7 +380,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
             context.save();
             // Draw everything first using node visit function
-            this._super(context);
+            cc.Node.prototype.visit.call(this, context);
 
             context.globalCompositeOperation = "destination-in";
 
@@ -783,12 +784,17 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      */
     setBackGroundColor: function (color, endColor) {
         if (!endColor) {
-            this._color = color;
+            this._color.r = color.r;
+            this._color.g = color.g;
+            this._color.b = color.b;
             if (this._colorRender) {
                 this._colorRender.setColor(color);
             }
         } else {
-            this._startColor = color;
+            this._startColor.r = color.r;
+            this._startColor.g = color.g;
+            this._startColor.b = color.b;
+
             if (this._gradientRender) {
                 this._gradientRender.setStartColor(color);
             }
@@ -824,7 +830,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      * @param {cc.Point} vector
      */
     setBackGroundColorVector: function (vector) {
-        this._alongVector = vector;
+        this._alongVector.x = vector.x;
+        this._alongVector.y = vector.y;
         if (this._gradientRender) {
             this._gradientRender.setVector(vector);
         }
@@ -844,7 +851,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      */
     setLayoutType: function (type) {
         this._layoutType = type;
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var locChild = null;
         for (var i = 0; i < layoutChildrenArray.length; i++) {
             locChild = layoutChildrenArray[i];
@@ -861,8 +868,15 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         return this._layoutType;
     },
 
+    /**
+     * request do layout
+     */
+    requestDoLayout: function () {
+        this._doLayoutDirty = true;
+    },
+
     doLayout_LINEAR_VERTICAL: function () {
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var layoutSize = this.getSize();
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
@@ -897,7 +911,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
     },
     doLayout_LINEAR_HORIZONTAL: function () {
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var layoutSize = this.getSize();
         var leftBoundary = 0;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
@@ -932,7 +946,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
     },
     doLayout_RELATIVE: function () {
-        var layoutChildrenArray = this.getChildren();
+        var layoutChildrenArray = this._widgetChildren;
         var length = layoutChildrenArray.length;
         var unlayoutChildCount = length;
         var layoutSize = this.getSize();

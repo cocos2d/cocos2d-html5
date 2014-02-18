@@ -114,7 +114,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
                         break;
                     }
                     bone.getTweenData().copy(frameData);
-                    bone.changeDisplayByIndex(frameData.displayIndex, false);
+                    bone.changeDisplayWithIndex(frameData.displayIndex, false);
                 } while (0);
             }
             this.update(0);
@@ -171,7 +171,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         }
 
         bone.setBoneData(boneData);
-        bone.getDisplayManager().changeDisplayByIndex(-1, false);
+        bone.getDisplayManager().changeDisplayWithIndex(-1, false);
         return bone;
     },
 
@@ -465,7 +465,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
      * @return {cc.rect}
      */
     boundingBox:function () {
-        var minx, miny, maxx, maxy = 0;
+        var minx = 0, miny = 0, maxx = 0, maxy = 0;
         var first = true;
         var boundingBox = cc.rect(0, 0, 0, 0);
         for (var i = 0; i < this._children.length; i++) {

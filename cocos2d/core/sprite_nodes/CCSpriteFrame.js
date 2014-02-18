@@ -80,7 +80,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         if (!locListeners) return;
         for(var i = 0, len = locListeners.length;  i < len; i++){
             var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
+            cc.doCallback(selCallback.eventCallback, selCallback.eventTarget, this);
         }
         locListeners.length = 0;
     },

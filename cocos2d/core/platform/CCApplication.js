@@ -260,11 +260,9 @@ cc.setup = function (el, width, height) {
         var audioEngine = cc.AudioEngine.getInstance();
         if (!document[hidden]){
             cc.Director.getInstance()._resetLastUpdate();
-            audioEngine.resumeAllEffects();
-            audioEngine.resumeMusic();
+            audioEngine._resumePlaying();
         } else{
-            audioEngine.pauseAllEffects();
-            audioEngine.pauseMusic();
+            audioEngine._pausePlaying();
         }
     }
 
@@ -273,15 +271,11 @@ cc.setup = function (el, width, height) {
         cc.isAddedHiddenEvent = false;
         window.addEventListener("focus", function () {
             if(!cc.AudioEngine) return;
-            var audioEngine = cc.AudioEngine.getInstance();
-            audioEngine.resumeAllEffects();
-            audioEngine.resumeMusic();
+            cc.AudioEngine.getInstance()._resumePlaying();
         }, false);
         window.addEventListener("blur", function () {
             if(!cc.AudioEngine) return;
-            var audioEngine = cc.AudioEngine.getInstance();
-            audioEngine.pauseAllEffects();
-            audioEngine.pauseMusic();
+            cc.AudioEngine.getInstance()._pausePlaying();
         }, false);
     } else {
         cc.isAddedHiddenEvent = true;

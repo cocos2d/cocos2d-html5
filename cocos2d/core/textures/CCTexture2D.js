@@ -170,7 +170,6 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._isLoaded = false;
         this._htmlElementObj = null;
         this._webTextureObj = null;
-        this._loadedEventListeners = [];
     },
 
     releaseTexture:function () {
@@ -399,7 +398,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             point.x, height + point.y, 0.0,
             width + point.x, height + point.y, 0.0 ];
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
 
@@ -428,7 +427,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             rect.x, rect.y + rect.height, /*0.0,*/
             rect.x + rect.width, rect.y + rect.height        /*0.0*/ ];
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
 
@@ -910,10 +909,14 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     addLoadedEventListener: function (callback, target) {
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
     },
 
     removeLoadedEventListener:function(target){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0;  i < locListeners.length; i++){
             var selCallback = locListeners[i];
@@ -924,10 +927,12 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     _callLoadedEventCallbacks: function () {
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for (var i = 0, len = locListeners.length; i < len; i++) {
             var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
+            cc.doCallback(selCallback.eventCallback, selCallback.eventTarget, this);
         }
         locListeners.length = 0;
     }
@@ -954,7 +959,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._contentSize = cc._sizeConst(0,0);
         this._isLoaded = false;
         this._htmlElementObj = null;
-        this._loadedEventListeners = [];
     },
 
     /**
@@ -1257,10 +1261,14 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
     },
 
     removeLoadedEventListener:function(target){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0;  i < locListeners.length; i++){
             var selCallback = locListeners[i];
@@ -1271,10 +1279,12 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0, len = locListeners.length;  i < len; i++){
             var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
+            cc.doCallback(selCallback.eventCallback, selCallback.eventTarget, this);
         }
         locListeners.length = 0;
     }

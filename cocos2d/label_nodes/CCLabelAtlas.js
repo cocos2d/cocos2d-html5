@@ -40,7 +40,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
     ctor:function(){
         cc.AtlasNode.prototype.ctor.call(this);
-        this._loadedEventListeners = [];
     },
 
     /**
@@ -57,15 +56,19 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {Object} target
      */
     addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
     },
 
     _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
         this._textureLoaded = true;
         var locListeners = this._loadedEventListeners;
         for(var i = 0, len = locListeners.length;  i < len; i++){
             var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
+            cc.doCallback(selCallback.eventCallback, selCallback.eventTarget, this);
         }
         locListeners.length = 0;
     },
@@ -168,12 +171,12 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locString = this._string;
         var n = locString.length;
         var texture = this.getTexture();
-        var locItemWidth = this._itemWidth, locItemHeight = this._itemHeight;
-        var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight ;     //needn't multiply cc.CONTENT_SCALE_FACTOR(), because sprite's draw will do this
+
         for (var i = 0; i < n; i++) {
             var a = locString.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._itemsPerRow, 10) * locScaleFactor;
-            var col = parseInt(a / this._itemsPerRow, 10) * locScaleFactor;
+            var row = parseInt(a % this._itemsPerRow, 10);
+            var col = parseInt(a / this._itemsPerRow, 10);
 
             var rect = cc.rect(row * locItemWidth, col * locItemHeight, locItemWidth, locItemHeight);
             var c = locString.charCodeAt(i);

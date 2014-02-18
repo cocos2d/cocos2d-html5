@@ -1269,8 +1269,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             var locQuadsArrayBuffer = new ArrayBuffer(tp * quadSize);
             //TODO need fix
             // Assign pointers
-            var locParticles = [];
-            var locQuads = [];
+            var locParticles = this._particles;
+            locParticles.length = 0;
+            var locQuads = this._quads;
+            locQuads.length = 0;
             for (var j = 0; j < tp; j++) {
                 locParticles[j] = new cc.Particle();
                 locQuads[j] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, locQuadsArrayBuffer, j * quadSize);
@@ -1284,9 +1286,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     locParticles[i].atlasIndex = i;
             }
 
-            this._particles = locParticles;
             this._quadsArrayBuffer = locQuadsArrayBuffer;
-            this._quads = locQuads;
 
             this.initIndices();
             //if (cc.TEXTURE_ATLAS_USE_VAO)
@@ -1345,7 +1345,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             if (this._blendFunc != src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();
@@ -1697,13 +1697,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     initWithTotalParticles:function (numberOfParticles) {
         this._totalParticles = numberOfParticles;
 
-        var i;
-        this._particles = [];
+        var i, locParticles = this._particles;
+        locParticles.length = 0;
         for(i = 0; i< numberOfParticles; i++){
-            this._particles[i] = new cc.Particle();
+            locParticles[i] = new cc.Particle();
         }
 
-        if (!this._particles) {
+        if (!locParticles) {
             cc.log("Particle system: not enough memory");
             return false;
         }
@@ -1711,7 +1711,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (this._batchNode)
             for (i = 0; i < this._totalParticles; i++)
-                this._particles[i].atlasIndex = i;
+                locParticles[i].atlasIndex = i;
 
         // default, active
         this._isActive = true;
@@ -1730,10 +1730,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         // XXX: not used
         //  colorModulate = YES;
         this._isAutoRemoveOnFinish = false;
-
-        // Optimization: compile udpateParticle method
-        //updateParticleSel = @selector(updateQuadWithParticle:newPosition:);
-        //updateParticleImp = (CC_UPDATE_PARTICLE_IMP) [self methodForSelector:updateParticleSel];
 
         //for batchNode
         this._transformSystemDirty = false;
@@ -2543,7 +2539,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         //
         // Using VBO without VAO
         //
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
@@ -2634,7 +2630,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         var totalParticles = this._totalParticles;
-        var locQuads = [];
+        var locQuads = this._quads;
+        locQuads.length = 0;
         this._indices = new Uint16Array(totalParticles * 6);
         var locQuadsArrayBuffer = new ArrayBuffer(quadSize * totalParticles);
 
@@ -2644,7 +2641,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             cc.log("cocos2d: Particle system: not enough memory");
             return false;
         }
-        this._quads = locQuads;
         this._quadsArrayBuffer = locQuadsArrayBuffer;
         return true;
     }

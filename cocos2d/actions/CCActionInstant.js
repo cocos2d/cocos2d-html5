@@ -399,10 +399,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      * execute the function.
      */
     execute:function () {
-        if (this._callFunc != null)         //CallFunc, N, ND
-            this._callFunc.call(this._selectorTarget, this._target, this._data);
-        else if(this._function)
-            this._function.call(null, this._target);
+        cc.doCallback(this._callFunc, this._selectorTarget,this._data);
     },
 
     /**
@@ -466,7 +463,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
  */
 cc.CallFunc.create = function (selector, selectorTarget, data) {
     var ret = new cc.CallFunc();
-    if(arguments.length == 1){
+    if(selectorTarget === undefined){
         if (ret && ret.initWithFunction(selector)) {
             return ret;
         }

@@ -77,7 +77,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._textureAtlas.initWithTexture(texture, capacity);
 
         // no lazy alloc in this node
-        this._children = [];
+        this._children.length = 0;
 
         if (cc.renderContextType === cc.WEBGL)
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
@@ -340,7 +340,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1){
+        if (dst === undefined){
             this._blendFunc.src = src.src;
             this._blendFunc.dst = src.dst;
         } else{

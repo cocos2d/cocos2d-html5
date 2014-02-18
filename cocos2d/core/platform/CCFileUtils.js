@@ -147,7 +147,7 @@ cc.FileUtils = cc.Class.extend({
      * </p>
      */
     purgeCachedEntries:function(){
-        this._searchPathArray = [];
+        this._searchPathArray.length = 0;
     },
     /**
      * Get Byte Array from file
@@ -159,7 +159,7 @@ cc.FileUtils = cc.Class.extend({
      */
     getByteArrayFromFile:function (fileName, mode, size) {
         fileName = this.fullPathForFilename(fileName);
-        if (this._fileDataCache.hasOwnProperty(fileName))
+        if (this._fileDataCache[fileName])
             return this._fileDataCache[fileName];
         return this._loadBinaryFileData(fileName);
     },
@@ -173,11 +173,11 @@ cc.FileUtils = cc.Class.extend({
     },
 
     unloadBinaryFileData:function (fileUrl) {
-        if (this._fileDataCache.hasOwnProperty(fileUrl))
+        if (this._fileDataCache[fileUrl])
             delete this._fileDataCache[fileUrl];
     },
 
-    preloadBinaryFileData:function (fileUrl) {
+    preloadBinaryFileData:function (fileUrl, selector, target) {
         fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
@@ -193,9 +193,9 @@ cc.FileUtils = cc.Class.extend({
                         if (fileContents)
                             selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
                     } else {
-                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                        cc.doCallback(selector, target, fileUrl);
                     }
-                    cc.Loader.getInstance().onResLoaded();
+                    cc.doCallback(selector, target);
                 }
             };
         } else {
@@ -207,9 +207,9 @@ cc.FileUtils = cc.Class.extend({
                 if (fileContents) {
                     selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
                 } else {
-                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                    cc.doCallback(selector, target, fileUrl);
                 }
-                cc.Loader.getInstance().onResLoaded();
+                cc.doCallback(selector, target);
             };
         }
         xhr.send(null);
@@ -222,8 +222,10 @@ cc.FileUtils = cc.Class.extend({
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             req.setRequestHeader("Accept-Charset", "x-user-defined");
             req.send(null);
-            if (req.status != 200)
+            if (req.status != 200) {
+                cc.log("cocos2d: Unable to load file: " + fileUrl);
                 return null;
+            }
 
             var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
             if (fileContents) {
@@ -234,8 +236,10 @@ cc.FileUtils = cc.Class.extend({
             if (req.overrideMimeType)
                 req.overrideMimeType('text\/plain; charset=x-user-defined');
             req.send(null);
-            if (req.status != 200)
+            if (req.status != 200) {
+                cc.log("cocos2d: Unable to load file: " + fileUrl);
                 return null;
+            }
 
             arrayInfo = this._stringConvertToArray(req.responseText);
             this._fileDataCache[fileUrl] = arrayInfo;
@@ -256,11 +260,11 @@ cc.FileUtils = cc.Class.extend({
 
     unloadTextFileData:function (fileUrl) {
         fileUrl = this.fullPathForFilename(fileUrl);
-        if (this._textFileCache.hasOwnProperty(fileUrl))
+        if (this._textFileCache[fileUrl])
             delete this._textFileCache[fileUrl];
     },
 
-    preloadTextFileData:function (fileUrl) {
+    preloadTextFileData:function (fileUrl, selector, target) {
         fileUrl = this.fullPathForFilename(fileUrl);
         var selfPointer = this;
 
@@ -276,9 +280,9 @@ cc.FileUtils = cc.Class.extend({
                         if (fileContents)
                             selfPointer._textFileCache[fileUrl] = fileContents;
                     } else {
-                        cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                        cc.doCallback(selector, target,fileUrl);
                     }
-                    cc.Loader.getInstance().onResLoaded();
+                    cc.doCallback(selector, target);
                 }
             };
         } else {
@@ -288,9 +292,9 @@ cc.FileUtils = cc.Class.extend({
                 if (xhr.responseText) {
                     selfPointer._textFileCache[fileUrl] = xhr.responseText;
                 } else {
-                    cc.Loader.getInstance().onResLoadingErr(fileUrl);
+                    cc.doCallback(selector, target,fileUrl);
                 }
-                cc.Loader.getInstance().onResLoaded();
+                cc.doCallback(selector, target);
             };
         }
         xhr.send(null);
@@ -324,7 +328,7 @@ cc.FileUtils = cc.Class.extend({
      */
     getTextFileData:function (fileUrl) {
         fileUrl = this.fullPathForFilename(fileUrl);
-        if (this._textFileCache.hasOwnProperty(fileUrl))
+        if (this._textFileCache[fileUrl])
             return this._textFileCache[fileUrl];
         return this._loadTextFileData(fileUrl);
     },
@@ -419,6 +423,10 @@ cc.FileUtils = cc.Class.extend({
      * @return {String} full path for a given filename.
      */
     fullPathForFilename:function (filename) {
+        if (filename.indexOf("://") > 0) {
+            return filename;
+        }
+
         var found = false;
 
         var newFileName = this._getNewFilename(filename);
@@ -736,7 +744,8 @@ cc.FileUtils = cc.Class.extend({
     setSearchPaths:function (searchPaths) {
         var existDefaultRootPath = false;
 
-        this._searchPathArray = [];
+        var locPathArray = this._searchPathArray;
+        locPathArray.length = 0;
         for (var i = 0; i < searchPaths.length; i++) {
             var iter = searchPaths[i];
 
@@ -752,14 +761,13 @@ cc.FileUtils = cc.Class.extend({
             if (!existDefaultRootPath && path == this._defaultResRootPath) {
                 existDefaultRootPath = true;
             }
-            this._searchPathArray.push(path);
+            locPathArray.push(path);
         }
 
         if (!existDefaultRootPath) {
             //cc.log("Default root path doesn't exist, adding it.");
-            this._searchPathArray.push(this._defaultResRootPath);
+            locPathArray.push(this._defaultResRootPath);
         }
-
     },
 
     /**

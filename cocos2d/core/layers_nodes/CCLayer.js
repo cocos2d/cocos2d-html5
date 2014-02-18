@@ -46,6 +46,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _touchMode:cc.TOUCH_ALL_AT_ONCE,
     _isMouseEnabled:false,
     _mousePriority:0,
+	// This is only useful in mode TOUCH_ONE_BY_ONE
+	_swallowTouch:true,
 
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
@@ -89,7 +91,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
             cc.registerStandardDelegate(this,this._touchPriority);
         else
-            cc.registerTargetedDelegate(this._touchPriority, true, this);
+            cc.registerTargetedDelegate(this._touchPriority, this._swallowTouch, this);
     },
 
     isMouseEnabled:function () {
@@ -142,10 +144,12 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * Enable touch events
      * @param {Boolean} enabled
+     * @param {Boolean} [swallow=true] if the event listener will swallow touch after been triggered
      */
-    setTouchEnabled:function (enabled) {
+    setTouchEnabled:function (enabled, swallow) {
         if (this._isTouchEnabled !== enabled) {
             this._isTouchEnabled = enabled;
+	        this._swallowTouch = (swallow === false ? false : true);
 
             if (this._running) {
                 if (enabled) {
@@ -366,34 +370,32 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     /**
-     * Touches is the same as Touch, except this one can handle multi-touch
-     * @param {cc.Touch} touch
+     * Touches is the same as onTouchBegan, except this one can handle multi-touch
+     * @param {array} touches
      * @param {event} event
      */
-    onTouchesBegan:function (touch, event) {
+    onTouchesBegan:function (touches, event) {
     },
 
     /**
-     * when a touch moved
-     * @param {cc.Touch} touch
+     * @param {array} touches
      * @param {event} event
      */
-    onTouchesMoved:function (touch, event) {
+    onTouchesMoved:function (touches, event) {
     },
 
     /**
-     * when a touch finished
-     * @param {cc.Touch} touch
+     * @param {array} touches
      * @param {event} event
      */
-    onTouchesEnded:function (touch, event) {
+    onTouchesEnded:function (touches, event) {
     },
 
     /**
-     * @param touch
+     * @param {array} touches
      * @param event
      */
-    onTouchesCancelled:function (touch, event) {
+    onTouchesCancelled:function (touches, event) {
     },
 
     // ---------------------CCMouseEventDelegate interface------------------------------
@@ -401,40 +403,40 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p>called when the "mouseDown" event is received. <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseDown:function (event) {
+    onMouseDown:function (mouse) {
         return false;
     },
 
     /**
      * <p>called when the "mouseDragged" event is received.         <br/>
      * Return YES to avoid propagating the event to other delegates.</p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseDragged:function (event) {
+    onMouseDragged:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "mouseMoved" event is received.            <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseMoved:function (event) {
+    onMouseMoved:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "mouseUp" event is received.               <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseUp:function (event) {
+    onMouseUp:function (mouse) {
         return false;
     },
 
@@ -442,30 +444,30 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p> called when the "rightMouseDown" event is received.        <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onRightMouseDown:function (event) {
+    onRightMouseDown:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "rightMouseDragged" event is received.    <br/>
      * Return YES to avoid propagating the event to other delegates. </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onRightMouseDragged:function (event) {
+    onRightMouseDragged:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "rightMouseUp" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onRightMouseUp:function (event) {
+    onRightMouseUp:function (mouse) {
         return false;
     },
 
@@ -473,30 +475,30 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p>called when the "otherMouseDown" event is received.         <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onOtherMouseDown:function (event) {
+    onOtherMouseDown:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "otherMouseDragged" event is received.     <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onOtherMouseDragged:function (event) {
+    onOtherMouseDragged:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "otherMouseUp" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onOtherMouseUp:function (event) {
+    onOtherMouseUp:function (mouse) {
         return false;
     },
 
@@ -504,10 +506,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * <p> called when the "scrollWheel" event is received.           <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onScrollWheel:function (event) {
+    onScrollWheel:function (mouse) {
         return false;
     },
 
@@ -515,20 +517,20 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      *  <p> called when the "mouseEntered" event is received.         <br/>
      *  Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseEntered:function (theEvent) {
+    onMouseEntered:function (mouse) {
         return false;
     },
 
     /**
      * <p> called when the "mouseExited" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
+     * @param {cc.Mouse} mouse
      * @return {Boolean}
      */
-    onMouseExited:function (theEvent) {
+    onMouseExited:function (mouse) {
         return false;
     },
 
@@ -610,16 +612,16 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     /**
-     *
-     * @returns {number}
+     * Get the opacity of Layer
+     * @returns {number} opacity
      */
     getOpacity: function () {
         return this._realOpacity;
     },
 
     /**
-     *
-     * @returns {number}
+     * Get the displayed opacity of Layer
+     * @returns {number} displayed opacity
      */
     getDisplayedOpacity: function () {
         return this._displayedOpacity;
@@ -639,7 +641,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     /**
-     *
+     * Update displayed opacity of Layer
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
@@ -655,10 +657,18 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade opacity.
+     * @returns {boolean}
+     */
     isCascadeOpacityEnabled: function () {
         return this._cascadeOpacityEnabled;
     },
 
+    /**
+     * Enable or disable cascade opacity
+     * @param {boolean} cascadeOpacityEnabled
+     */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
         if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
             return;
@@ -687,16 +697,28 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * Get the color of Layer
+     * @returns {cc.Color3B}
+     */
     getColor: function () {
         var locRealColor = this._realColor;
         return cc.c3b(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
+    /**
+     * Get the displayed color of Layer
+     * @returns {cc.Color3B}
+     */
     getDisplayedColor: function () {
         var locDisplayedColor = this._displayedColor;
         return cc.c3b(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
     },
 
+    /**
+     * Set the color of Layer
+     * @param {cc.Color3B} color
+     */
     setColor: function (color) {
         var locDisplayed = this._displayedColor, locRealColor = this._realColor;
         locDisplayed.r = locRealColor.r = color.r;
@@ -711,6 +733,10 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this.updateDisplayedColor(parentColor);
     },
 
+    /**
+     * update the displayed color of Node
+     * @param {cc.Color3B} parentColor
+     */
     updateDisplayedColor: function (parentColor) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
         locDisplayedColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
@@ -727,10 +753,18 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade color.
+     * @returns {boolean}
+     */
     isCascadeColorEnabled: function () {
         return this._cascadeColorEnabled;
     },
 
+    /**
+     * Enable or disable cascade color
+     * @param {boolean} cascadeColorEnabled
+     */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
         if(this._cascadeColorEnabled === cascadeColorEnabled)
             return;
@@ -764,6 +798,13 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * add a child to layer
+     * @overried
+     * @param {cc.Node} child  A child node
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
+     */
     addChild:function(child, zOrder, tag){
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
 
@@ -789,7 +830,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
  * <li>RGB colors</li></ul>                                                                 <br/>
  * </p>
  * @class
- * @extends cc.Layer
+ * @extends cc.LayerRGBA
  */
 cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _blendFunc:null,
@@ -892,7 +933,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -946,21 +987,19 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     _setContentSizeForWebGL:function (size, height) {
         var locSquareVertices = this._squareVertices;
-        if(arguments.length === 2){
-            locSquareVertices[1].x = size;
-            locSquareVertices[2].y = height;
-            locSquareVertices[3].x = size;
-            locSquareVertices[3].y = height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size, height);
-        }else{
-            locSquareVertices[1].x = size.width;
-            locSquareVertices[2].y = size.height;
-            locSquareVertices[3].x = size.width;
-            locSquareVertices[3].y = size.height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this,size);
+        if (height === undefined) {
+	        locSquareVertices[1].x = size.width;
+	        locSquareVertices[2].y = size.height;
+	        locSquareVertices[3].x = size.width;
+	        locSquareVertices[3].y = size.height;
+        } else {
+	        locSquareVertices[1].x = size;
+	        locSquareVertices[2].y = height;
+	        locSquareVertices[3].x = size;
+	        locSquareVertices[3].y = height;
         }
+	    this._bindLayerVerticesBufferData();
+	    cc.Layer.prototype.setContentSize.call(this, size, height);
     },
 
     _updateColor:null,
@@ -1144,10 +1183,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-        if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this,size, height);
-        else
-            cc.LayerColor.prototype.setContentSize.call(this,size);
+	    cc.LayerColor.prototype.setContentSize.call(this,size, height);
         this._updateColor();
     },
 

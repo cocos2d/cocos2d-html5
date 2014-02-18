@@ -135,7 +135,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         }
 
         var size = this._contentSize;
-        var locTopLeft = this._topLeft, locTopRight = this._topRight, locBottomRight = this._bottomRight;
+        var locTopLeft = this._topLeft, locTopRight = this._topRight, locBottomRight = this._bottomRight, locBottomLeft = this._bottomLeft;
         var locCenter = this._centre, locCenterContentSize = this._centre.getContentSize();
         var locTopLeftContentSize = locTopLeft.getContentSize();
         var locBottomLeftContentSize = locBottomLeft.getContentSize();
@@ -147,7 +147,6 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         var rescaledWidth = locCenterContentSize.width * horizontalScale;
         var rescaledHeight = locCenterContentSize.height * verticalScale;
 
-        var locBottomLeft = this._bottomLeft;
         var leftWidth = locBottomLeftContentSize.width;
         var bottomHeight = locBottomLeftContentSize.height;
 
@@ -351,10 +350,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
      * @param {Number} [height] The untransformed size's height of the Scale9Sprite.
      */
     setContentSize: function (size, height) {
-        if(arguments.length === 2)
-            cc.Node.prototype.setContentSize.call(this, size, height);
-        else
-            cc.Node.prototype.setContentSize.call(this, size);
+	    cc.Node.prototype.setContentSize.call(this, size, height);
         this._positionsAreDirty = true;
     },
 
@@ -371,7 +367,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     initWithBatchNode: function (batchNode, rect, rotated, capInsets) {
-        if (arguments.length === 3) {
+        if (capInsets === undefined) {
             capInsets = rotated;
             rotated = false;
         }

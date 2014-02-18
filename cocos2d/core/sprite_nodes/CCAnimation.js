@@ -225,11 +225,13 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
 
         this._delayPerUnit = delayPerUnit;
         this._loops = loops;
+        this._totalDelayUnits = 0;
 
-        this.setFrames([]);
+        var locFrames = this._frames;
+        locFrames.length = 0;
         for (var i = 0; i < arrayOfAnimationFrames.length; i++) {
             var animFrame = arrayOfAnimationFrames[i];
-            this._frames.push(animFrame);
+            locFrames.push(animFrame);
             this._totalDelayUnits += animFrame.getDelayUnits();
         }
 
@@ -338,22 +340,23 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
         this._loops = 1;
         delay = delay || 0;
         this._delayPerUnit = delay;
+        this._totalDelayUnits = 0;
 
-        var tempFrames = [];
-        this.setFrames(tempFrames);
+        var locFrames = this._frames;
+        locFrames.length = 0;
         if (frames) {
             for (var i = 0; i < frames.length; i++) {
                 var frame = frames[i];
                 var animFrame = new cc.AnimationFrame();
                 animFrame.initWithSpriteFrame(frame, 1, null);
-                this._frames.push(animFrame);
-                this._totalDelayUnits++;
+                locFrames.push(animFrame);
             }
+            this._totalDelayUnits += frames.length;
         }
         return true;
     },
     /**
-     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
      * This is a hack, and should be removed once JSB fixes the retain/release bug
      */

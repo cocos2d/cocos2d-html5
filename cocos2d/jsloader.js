@@ -39,7 +39,6 @@
         'core/platform/CCEGLView.js',
         'core/platform/CCScreen.js',
         'core/platform/CCVisibleRect.js',
-        'core/cocoa/CCNS.js',
         'core/cocoa/CCAffineTransform.js',
         'core/support/CCPointExtension.js',
         'core/support/CCVertex.js',
@@ -62,12 +61,12 @@
         'core/CCCamera.js',
         'core/CCScheduler.js',
         'core/CCLoader.js',
+        'core/CCDrawingPrimitives.js',
         'core/platform/CCApplication.js',
         'core/platform/CCSAXParser.js',
         'core/platform/AppControl.js',
         'core/labelTTF/CCLabelTTF.js',
         'core/CCActionManager.js',
-
         'kazmath/utility.js',
         'kazmath/vec2.js',
         'kazmath/vec3.js',
@@ -126,7 +125,6 @@
         'accelerometer/CCAccelerometer.js',
         'text_input_node/CCIMEDispatcher.js',
         'text_input_node/CCTextFieldTTF.js',
-        'CCDrawingPrimitives.js',
         'menu_nodes/CCMenuItem.js',
         'menu_nodes/CCMenu.js',
         'tileMap_nodes/CCTGAlib.js',
@@ -210,6 +208,11 @@
             '../extensions/CocoStudio/Components/CCComAudio.js',
             '../extensions/CocoStudio/Components/CCComController.js',
             '../extensions/CocoStudio/Components/CCComRender.js',
+            // CocoStudio Trigger
+            '../extensions/CocoStudio/Trigger/ObjectFactory.js',
+            '../extensions/CocoStudio/Trigger/TriggerBase.js',
+            '../extensions/CocoStudio/Trigger/TriggerMng.js',
+            '../extensions/CocoStudio/Trigger/TriggerObj.js',
             // CocoStudio GUI
             '../extensions/CocoStudio/GUI/BaseClasses/UIWidget.js',
             '../extensions/CocoStudio/GUI/Layouts/UILayout.js',
@@ -245,8 +248,8 @@
             '../extensions/PluginX/protocols/PluginUtils.js',
             '../extensions/PluginX/protocols/PluginProtocol.js',
             '../extensions/PluginX/protocols/ProtocolSocial.js',
-            //'../extensions/PluginX/protocols/ProtocolAds.js',
-            //'../extensions/PluginX/protocols/ProtocolAnalytics.js',
+            '../extensions/PluginX/protocols/ProtocolAds.js',
+            '../extensions/PluginX/protocols/ProtocolAnalytics.js',
             //'../extensions/PluginX/protocols/ProtocolIAP.js',
             '../extensions/PluginX/protocols/PluginFactory.js',
             '../extensions/PluginX/protocols/PluginManager.js',
@@ -256,8 +259,9 @@
             '../extensions/PluginX/plugins/SocialQQWeibo.js',
             '../extensions/PluginX/plugins/SocialQzone.js',
             '../extensions/PluginX/plugins/SocialTwitter.js',
-            '../extensions/PluginX/plugins/SocialFacebook.js'
-            //'../extensions/PluginX/plugins/AdsGoogle.js'
+            '../extensions/PluginX/plugins/SocialFacebook.js',
+            //'../extensions/PluginX/plugins/AdsGoogle.js',
+            '../extensions/PluginX/plugins/AnalyticsFlurry.js'
         ]);
     }
 
@@ -309,23 +313,32 @@
     var que = engine.concat(c.appFiles);
     que.push('main.js');
 
+
+    var loadHandlerIE = function (loaded){
+        loadNext();
+        updateLoading(loaded / que.length);
+        this.removeEventListener('load', loadHandlerIE, false);
+    };
+    var loadNext = function () {
+        i++;
+        if (i < que.length) {
+            var f = d.createElement('script');
+            f.src = que[i];
+            f.addEventListener('load', loadHandlerIE.bind(f, loaded), false);
+            d.body.appendChild(f);
+        }
+        updateLoading(i / (que.length - 1));
+    };
+    var loadHandler = function (){
+        loaded++;
+        updateLoading(loaded / que.length);
+        this.removeEventListener('load', loadHandler, false);
+    };
+
     if (navigator.userAgent.indexOf("Trident/5") > -1) {
         //ie9
         var i = -1;
-        var loadNext = function () {
-            i++;
-            if (i < que.length) {
-                var f = d.createElement('script');
-                f.src = que[i];
-                f.addEventListener('load',function(){
-                    loadNext();
-                    updateLoading(loaded / que.length);
-                    this.removeEventListener('load', arguments.callee, false);
-                },false);
-                d.body.appendChild(f);
-            }
-            updateLoading(i / (que.length - 1));
-        };
+
         loadNext();
     }
     else {
@@ -333,11 +346,7 @@
             var s = d.createElement('script');
             s.async = false;
             s.src = f;
-            s.addEventListener('load',function(){
-                loaded++;
-                updateLoading(loaded / que.length);
-                this.removeEventListener('load', arguments.callee, false);
-            },false);
+            s.addEventListener('load', loadHandler, false);
             d.body.appendChild(s);
         });
     }
