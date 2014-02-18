@@ -97,14 +97,24 @@ cc.TMX_ORIENTATION_ISO = 2;
  * object.getProperty(name_of_the_property);</p>
  * @class
  * @extends cc.Node
+ *
+ * @property {Array}    properties      - Properties from the map. They can be added using tilemap editors
+ * @property {Number}   mapOrientation  - Map orientation
+ * @property {Array}    objectGroups    - Object groups of the map
  */
 cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
+	/** @public */
+	properties:null,
+
+	/** @public */
+	mapOrientation:null,
+
+	/** @public */
+	objectGroups:null,
+
     //the map's size property measured in tiles
     _mapSize:null,
     _tileSize:null,
-    _properties:null,
-    _objectGroups:null,
-    _mapOrientation:null,
     //tile properties
     _tileProperties:null,
 
@@ -112,9 +122,9 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         cc.Node.prototype.ctor.call(this);
         this._mapSize = cc.SizeZero();
         this._tileSize = cc.SizeZero();
-        this._properties = null;
-        this._objectGroups = null;
-        this._mapOrientation = null;
+        this.properties = null;
+        this.objectGroups = null;
+        this.mapOrientation = null;
 
         this._tileProperties = null;
     },
@@ -134,6 +144,19 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         this._mapSize.height = Var.height;
     },
 
+	_getMapWidth: function () {
+		return this._mapSize.width;
+	},
+	_setMapWidth: function (width) {
+		this._mapSize.width = width;
+	},
+	_getMapHeight: function () {
+		return this._mapSize.height;
+	},
+	_setMapHeight: function (height) {
+		this._mapSize.height = height;
+	},
+
     /**
      * @return {cc.Size}
      */
@@ -149,19 +172,32 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         this._tileSize.height = Var.height;
     },
 
+	_getTileWidth: function () {
+		return this._tileSize.width;
+	},
+	_setTileWidth: function (width) {
+		this._tileSize.width = width;
+	},
+	_getTileHeight: function () {
+		return this._tileSize.height;
+	},
+	_setTileHeight: function (height) {
+		this._tileSize.height = height;
+	},
+
     /**
      * map orientation
      * @return {Number}
      */
     getMapOrientation:function () {
-        return this._mapOrientation;
+        return this.mapOrientation;
     },
 
     /**
      * @param {Number} Var
      */
     setMapOrientation:function (Var) {
-        this._mapOrientation = Var;
+        this.mapOrientation = Var;
     },
 
     /**
@@ -169,14 +205,14 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
      * @return {Array}
      */
     getObjectGroups:function () {
-        return this._objectGroups;
+        return this.objectGroups;
     },
 
     /**
      * @param {Array} Var
      */
     setObjectGroups:function (Var) {
-        this._objectGroups = Var;
+        this.objectGroups = Var;
     },
 
     /**
@@ -184,14 +220,14 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
      * @return {object}
      */
     getProperties:function () {
-        return this._properties;
+        return this.properties;
     },
 
     /**
      * @param {object} Var
      */
     setProperties:function (Var) {
-        this._properties = Var;
+        this.properties = Var;
     },
 
     /**
@@ -234,9 +270,9 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     _buildWithMapInfo:function (mapInfo) {
         this._mapSize = mapInfo.getMapSize();
         this._tileSize = mapInfo.getTileSize();
-        this._mapOrientation = mapInfo.getOrientation();
-        this._objectGroups = mapInfo.getObjectGroups();
-        this._properties = mapInfo.getProperties();
+        this.mapOrientation = mapInfo.orientation;
+        this.objectGroups = mapInfo.getObjectGroups();
+        this.properties = mapInfo.properties;
         this._tileProperties = mapInfo.getTileProperties();
 
         var idx = 0;
@@ -278,7 +314,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         var locChildren = this._children;
         for (var i = 0; i < locChildren.length; i++) {
             var layer = locChildren[i];
-            if (layer && layer.getLayerName() == layerName)
+            if (layer && layer.layerName == layerName)
                 return layer;
         }
         // layer not found
@@ -293,10 +329,10 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     getObjectGroup:function (groupName) {
         if(!groupName || groupName.length === 0)
             throw "cc.TMXTiledMap.getObjectGroup(): groupName should be non-null or non-empty string.";
-        if (this._objectGroups) {
-            for (var i = 0; i < this._objectGroups.length; i++) {
-                var objectGroup = this._objectGroups[i];
-                if (objectGroup && objectGroup.getGroupName() == groupName) {
+        if (this.objectGroups) {
+            for (var i = 0; i < this.objectGroups.length; i++) {
+                var objectGroup = this.objectGroups[i];
+                if (objectGroup && objectGroup.groupName == groupName) {
                     return objectGroup;
                 }
             }
@@ -311,7 +347,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
      * @return {String}
      */
     getProperty:function (propertyName) {
-        return this._properties[propertyName.toString()];
+        return this.properties[propertyName.toString()];
     },
 
     /**
@@ -362,6 +398,15 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
         return null;
     }
 });
+
+window._proto = cc.TMXTiledMap.prototype;
+
+cc.defineGetterSetter(_proto, "mapWidth", _proto._getMapWidth, _proto._setMapWidth);
+cc.defineGetterSetter(_proto, "mapHeight", _proto._getMapHeight, _proto._setMapHeight);
+cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);
+cc.defineGetterSetter(_proto, "tileHeight", _proto._getTileHeight, _proto._setTileHeight);
+
+delete window._proto;
 
 /**
  * Creates a TMX Tiled Map with a TMX file.
