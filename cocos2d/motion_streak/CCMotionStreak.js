@@ -36,7 +36,9 @@
  * @class
  * @extends cc.NodeRGBA
  *
- * @property {cc.Texture2D}  texture    - Texture used for the motion streak.
+ * @property {cc.Texture2D} texture                         - Texture used for the motion streak.
+ * @property {Boolean}      fastMode                        - Indicate whether use fast mode.
+ * @property {Boolean}      startingPositionInitialized     - Indicate whether starting position initialized.
  */
 cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 	/**
@@ -45,11 +47,13 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 	 */
 	texture:null,
 
-    _fastMode:false,
-    _startingPositionInitialized:false,
+	/** @public */
+	fastMode:false,
+
+	/** @public */
+    startingPositionInitialized:false,
 
     _blendFunc:null,
-    _positionR:null,
 
     _stroke:0,
     _fadeDelta:0,
@@ -81,8 +85,8 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         this._vertexWebGLBuffer = cc.renderContext.createBuffer();
 
-        this._fastMode = false;
-        this._startingPositionInitialized = false;
+        this.fastMode = false;
+        this.startingPositionInitialized = false;
 
         this.texture = null;
 
@@ -170,7 +174,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     },
 
     isFastMode:function () {
-        return this._fastMode;
+        return this.fastMode;
     },
 
     /**
@@ -178,15 +182,15 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {Boolean} fastMode
      */
     setFastMode:function (fastMode) {
-        this._fastMode = fastMode;
+        this.fastMode = fastMode;
     },
 
     isStartingPositionInitialized:function () {
-        return this._startingPositionInitialized;
+        return this.startingPositionInitialized;
     },
 
     setStartingPositionInitialized:function (startingPositionInitialized) {
-        this._startingPositionInitialized = startingPositionInitialized;
+        this.startingPositionInitialized = startingPositionInitialized;
     },
 
     /**
@@ -209,9 +213,9 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this.anchorX = 0;
 	    this.anchorY = 0;
         this.ignoreAnchor = true;
-        this._startingPositionInitialized = false;
+        this.startingPositionInitialized = false;
 
-        this._fastMode = true;
+        this.fastMode = true;
         this._minSeg = (minSeg == -1.0) ? (stroke / 5.0) : minSeg;
         this._minSeg *= this._minSeg;
 
@@ -284,7 +288,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {cc.Point} position
      */
     setPosition:function (position, yValue) {
-        this._startingPositionInitialized = true;
+        this.startingPositionInitialized = true;
         if(yValue === undefined){
             this._positionR._x = position.x;
             this._positionR._y = position.y;
@@ -293,6 +297,38 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             this._positionR._y = yValue;
         }
     },
+
+	/**
+	 * @return {Number}
+	 */
+	getPositionX:function () {
+		return this._positionR._x;
+	},
+
+	/**
+	 * @param {Number} x
+	 */
+	setPositionX:function (x) {
+		this._positionR._x = x;
+		if(!this.startingPositionInitialized)
+			this.startingPositionInitialized = true;
+	},
+
+	/**
+	 * @return {Number}
+	 */
+	getPositionY:function () {
+		return  this._positionR._y;
+	},
+
+	/**
+	 * @param {Number} y
+	 */
+	setPositionY:function (y) {
+		this._positionR._y = y;
+		if(!this.startingPositionInitialized)
+			this.startingPositionInitialized = true;
+	},
 
     /**
      * @override
@@ -335,7 +371,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {Number} delta
      */
     update:function (delta) {
-        if (!this._startingPositionInitialized)
+        if (!this.startingPositionInitialized)
             return;
 
         delta *= this._fadeDelta;
@@ -424,7 +460,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             locColorPointer[offset + 7] = 255;
 
             // Generate polygon
-            if (locNuPoints > 0 && this._fastMode) {
+            if (locNuPoints > 0 && this.fastMode) {
                 if (locNuPoints > 1)
                     cc.vertexLineToPolygon(locPointVertexes, this._stroke, this._vertices, locNuPoints, 1);
                 else
@@ -433,7 +469,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             locNuPoints++;
         }
 
-        if (!this._fastMode)
+        if (!this.fastMode)
             cc.vertexLineToPolygon(locPointVertexes, this._stroke, this._vertices, 0, locNuPoints);
 
         // Updated Tex Coords only if they are different than previous step
@@ -456,12 +492,11 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 });
 
 window._proto = cc.MotionStreak.prototype;
+
+cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
+cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-
-/** @expose */
-_proto.blendFunc;
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 delete window._proto;
 
