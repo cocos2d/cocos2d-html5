@@ -1058,32 +1058,24 @@ delete window._proto;
  *    The capacity will be increased in 33% in runtime if it run out of space.<br/>
  *    The file will be loaded using the TextureMgr.<br/>
  * </p>
- * @param {String} fileImage
+ * @param {String|cc.Texture2D} fileImage
  * @param {Number} capacity
  * @return {cc.SpriteBatchNode}
  * @example
- * //create a SpriteBatchNode
- * var parent2 = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
+ * 1.
+ * //create a SpriteBatchNode with image path
+ * var spriteBatchNode = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
+ * 2.
+ * //create a SpriteBatchNode with texture
+ * var texture = cc.TextureCache.getInstance().addImage("res/animations/grossini.png");
+ * var spriteBatchNode = cc.SpriteBatchNode.create(texture,50);
  */
 cc.SpriteBatchNode.create = function (fileImage, capacity) {
     capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
     var batchNode = new cc.SpriteBatchNode();
-    batchNode.init(fileImage, capacity);
-    return batchNode;
-};
-
-/**
- * <p>
- *   creates a cc.SpriteBatchNodeCanvas with a texture2d and a default capacity of 29 children.   <br/>
- *   The capacity will be increased in 33% in runtime if it run out of space.               <br/>
- * </p>
- * @param {cc.Texture2D} texture
- * @param {Number} [capacity]
- * @return {cc.SpriteBatchNode}
- */
-cc.SpriteBatchNode.createWithTexture = function (texture, capacity) {
-    capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
-    var batchNode = new cc.SpriteBatchNode();
-    batchNode.initWithTexture(texture, capacity);
+    if (typeof(fileImage) == "string")
+        batchNode.init(fileImage, capacity);
+    else if (fileImage instanceof cc.Texture2D)
+        batchNode.initWithTexture(fileImage, capacity);
     return batchNode;
 };

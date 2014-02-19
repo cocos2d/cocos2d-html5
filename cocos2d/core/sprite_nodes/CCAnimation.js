@@ -200,7 +200,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
         var texture = cc.TextureCache.getInstance().addImage(fileName);
         var rect = cc.RectZero();
         rect._size = texture.size;
-        var frame = cc.SpriteFrame.createWithTexture(texture, rect);
+        var frame = cc.SpriteFrame.create(texture, rect);
         this.addSpriteFrame(frame);
     },
 
@@ -210,7 +210,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      * @param {cc.Rect} rect
      */
     addSpriteFrameWithTexture:function (texture, rect) {
-        var pFrame = cc.SpriteFrame.createWithTexture(texture, rect);
+        var pFrame = cc.SpriteFrame.create(texture, rect);
         this.addSpriteFrame(pFrame);
     },
 
@@ -373,43 +373,44 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
  * @param {Number} loops
  * @return {cc.Animation}
  * @example
- * //Creates an animation
+ * 1.
+ * //Creates an empty animation
  * var animation1 = cc.Animation.create();
  *
- * //Create an animation with sprite frames
- * var animFrames = [];
+ * 2.
+ * //Create an animation with sprite frames , delay and loops.
+ * var spriteFrames = [];
  * var frame = cache.getSpriteFrame("grossini_dance_01.png");
- * animFrames.push(frame);
- * var animation2 = cc.Animation.create(animFrames);
+ * spriteFrames.push(frame);
+ * var animation1 = cc.Animation.create(spriteFrames);
+ * var animation2 = cc.Animation.create(spriteFrames, 0.2);
  *
- * //Create an animation with sprite frames and delay
- * var animation3 = cc.Animation.create(animFrames, 0.2);
+ * 3.
+ * //Create an animation with animation frames , delay and loops.
+ * var animationFrames = [];
+ * var frame =  new cc.AnimationFrame();
+ * animationFrames.push(frame);
+ * var animation1 = cc.Animation.create(animationFrames);
+ * var animation2 = cc.Animation.create(animationFrames, 0.2);
+ * var animation3 = cc.Animation.create(animationFrames, 0.2,2);
+ *
  */
 cc.Animation.create = function (frames, delay, loops) {
     var len = arguments.length;
     var animation = new cc.Animation();
     if (len == 0) {
         animation.initWithSpriteFrames(null, 0);
-    } else if (len == 2) {
-        /** with frames and a delay between frames */
-        delay = delay || 0;
-        animation.initWithSpriteFrames(frames, delay);
-    } else if (len == 3) {
-        animation.initWithAnimationFrames(frames, delay, loops);
+    } else {
+        var frame0 = frames[0];
+        if(frame0){
+            if (frame0 instanceof cc.SpriteFrame) {
+                //init with sprite frames , delay and loops.
+                animation.initWithSpriteFrames(frames, delay);
+            }else if(frame0 instanceof cc.AnimationFrame) {
+                //init with sprite frames , delay and loops.
+                animation.initWithAnimationFrames(frames, delay, loops);
+            }
+        }
     }
     return animation;
 };
-
-/**
- * Creates an animation with an array of cc.AnimationFrame, the delay per units in seconds and and how many times it should be executed.
- * @param {Array} arrayOfAnimationFrameNames
- * @param {Number} delayPerUnit
- * @param {Number} loops
- * @return {cc.Animation}
- */
-cc.Animation.createWithAnimationFrames = function (arrayOfAnimationFrameNames, delayPerUnit, loops) {
-    var animation = new cc.Animation();
-    animation.initWithAnimationFrames(arrayOfAnimationFrameNames, delayPerUnit, loops);
-    return animation;
-};
-
