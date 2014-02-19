@@ -1351,7 +1351,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         if (null == inTexture)
             return;
 
-        inTexture.getSprite().anchor = cc.p(0.5, 0.5);
+        inTexture.sprite.anchor = cc.p(0.5, 0.5);
         inTexture.attr({
 	        x: winSize.width / 2,
 	        y: winSize.height / 2,
@@ -1366,7 +1366,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create the second render texture for outScene
         var outTexture = cc.RenderTexture.create(winSize.width, winSize.height);
-        outTexture.getSprite().anchor = cc.p(0.5, 0.5);
+        outTexture.sprite.anchor = cc.p(0.5, 0.5);
         outTexture.x = winSize.width / 2;
 	    outTexture.y = winSize.height / 2;
         outTexture.anchorX = 0.5;
@@ -1377,16 +1377,16 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         this._outScene.visit();
         outTexture.end();
 
-        inTexture.getSprite().setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
-        outTexture.getSprite().setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
+        inTexture.sprite.setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
+        outTexture.sprite.setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
 
         // add render textures to the layer
         layer.addChild(inTexture);
         layer.addChild(outTexture);
 
         // initial opacity:
-        inTexture.getSprite().opacity = 255;
-        outTexture.getSprite().opacity = 255;
+        inTexture.sprite.opacity = 255;
+        outTexture.sprite.opacity = 255;
 
         // create the blend action
         var layerAction = cc.Sequence.create(
@@ -1395,7 +1395,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         );
 
         // run the blend action
-        outTexture.getSprite().runAction(layerAction);
+        outTexture.sprite.runAction(layerAction);
 
         // add the layer (which contains our two rendertextures) to the scene
         this.addChild(layer, 2, cc.SCENE_FADE);
