@@ -357,14 +357,14 @@ cc.NodeLoader = cc.Class.extend({
         var x = ccbReader.readFloat();
         var y = ccbReader.readFloat();
 
-        return new cc.Point(x, y);
+        return cc.p(x, y);
     },
 
     parsePropTypePointLock:function (node, parent, ccbReader) {
         var x = ccbReader.readFloat();
         var y = ccbReader.readFloat();
 
-        return new cc.Point(x, y);
+        return cc.p(x, y);
     },
 
     parsePropTypeSize:function (node, parent, ccbReader) {

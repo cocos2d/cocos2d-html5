@@ -147,7 +147,7 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
         this.ownTiles = true;
         this._minGID = 100000;
         this._maxGID = 0;
-        this.offset = cc.PointZero();
+        this.offset = cc.p(0,0);
     },
 
     /**

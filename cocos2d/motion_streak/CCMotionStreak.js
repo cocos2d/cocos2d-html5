@@ -77,7 +77,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      */
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
-        this._positionR = cc._pConst(0, 0);
+        this._positionR = cc.p(0, 0);
         this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         this._vertexWebGLBuffer = cc.renderContext.createBuffer();
 
@@ -205,7 +205,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         if (typeof(texture) === "string")
             texture = cc.TextureCache.getInstance().addImage(texture);
 
-        cc.Node.prototype.setPosition.call(this, cc.PointZero());
+        cc.Node.prototype.setPosition.call(this, cc.p(0,0));
         this.anchorX = 0;
 	    this.anchorY = 0;
         this.ignoreAnchor = true;
@@ -286,11 +286,11 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     setPosition:function (position, yValue) {
         this._startingPositionInitialized = true;
         if(yValue === undefined){
-            this._positionR._x = position.x;
-            this._positionR._y = position.y;
+            this._positionR.x = position.x;
+            this._positionR.y = position.y;
         } else {
-            this._positionR._x = position;
-            this._positionR._y = yValue;
+            this._positionR.x = position;
+            this._positionR.y = yValue;
         }
     },
 
@@ -403,8 +403,8 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         }
 
         if (appendNewPoint) {
-            locPointVertexes[locNuPoints * 2] = this._positionR._x;
-            locPointVertexes[locNuPoints * 2 + 1] = this._positionR._y;
+            locPointVertexes[locNuPoints * 2] = this._positionR.x;
+            locPointVertexes[locNuPoints * 2 + 1] = this._positionR.y;
             locPointState[locNuPoints] = 1.0;
 
             // Color assignment

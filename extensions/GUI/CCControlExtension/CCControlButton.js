@@ -50,7 +50,7 @@ cc.ControlButton = cc.Control.extend({
     ctor:function () {
         cc.Control.prototype.ctor.call(this);
         this._preferredSize = cc.size(0, 0);
-        this._labelAnchorPoint = new cc.Point(0, 0);
+        this._labelAnchorPoint = cc.p(0, 0);
         this._currentTitle = "";
         this._currentTitleColor = cc.white();
         this._titleDispatchTable = {};
@@ -195,7 +195,7 @@ cc.ControlButton = cc.Control.extend({
             this._marginH = 24;
             this._marginV = 12;
 
-            this._labelAnchorPoint = new cc.Point(0.5, 0.5);
+            this._labelAnchorPoint = cc.p(0.5, 0.5);
 
             this.setPreferredSize(cc.size(0, 0));
 

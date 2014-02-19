@@ -100,7 +100,7 @@ cc.ControlColourPicker = cc.Control.extend({
             this._hsv = new cc.HSV(0, 0, 0);
 
             // Add image
-            this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("menuColourPanelBackground.png", spriteSheet, cc.PointZero(), cc.p(0.5, 0.5));
+            this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("menuColourPanelBackground.png", spriteSheet, cc.p(0,0), cc.p(0.5, 0.5));
 
             var backgroundPointZero = cc.pSub(this._background.getPosition(),
                 cc.p(this._background.getContentSize().width / 2, this._background.getContentSize().height / 2));

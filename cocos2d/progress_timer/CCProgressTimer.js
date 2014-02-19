@@ -160,7 +160,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             else
                 return cc.p((locProTextCoords >> ((index << 1) + 1)) & 1, (locProTextCoords >> (index << 1)) & 1);
         }
-        return cc.PointZero();
+        return cc.p(0,0);
     },
 
     _origin:null,
@@ -189,7 +189,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
         this._sprite = null;
 
-        this._origin = cc.PointZero();
+        this._origin = cc.p(0,0);
         this._startAngle = 270;
         this._endAngle = 270;
         this._radius = 0;

@@ -151,8 +151,8 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
      */
     rect:function () {
         var locPosition = this._position, locContentSize = this._contentSize, locAnchorPoint = this._anchorPoint;
-        return cc.rect(locPosition._x - locContentSize.width * locAnchorPoint._x,
-            locPosition._y - locContentSize.height * locAnchorPoint._y,
+        return cc.rect(locPosition.x - locContentSize.width * locAnchorPoint.x,
+            locPosition.y - locContentSize.height * locAnchorPoint.y,
             locContentSize.width, locContentSize.height);
     },
 

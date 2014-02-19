@@ -31,98 +31,31 @@
 //--------------------------------------------------------
 /**
  * @class
- * @param {Number|cc.Point} _x
- * @param {Number} _y
- * Constructor
- */
-cc.Point = function (_x, _y) {
-    if(_x !== undefined && _y === undefined){
-        this.x = _x.x;
-        this.y = _x.y;
-    } else {
-        this.x = _x || 0;
-        this.y = _y || 0;
-    }
-};
-
-cc._PointConst = function (x, y) {
-    this._x = x || 0;
-    this._y = y || 0;
-
-    this.setX = function (x) {
-        this._x = x;
-    };
-    this.setY = function (y) {
-        this._y = y;
-    }
-};
-
-cc._pConst = function (x, y) {
-    return new cc._PointConst(x, y);
-};
-
-Object.defineProperties(cc._PointConst.prototype, {
-    x: {
-        get: function () {
-            return this._x;
-        },
-        set: function () {
-            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    },
-
-    y: {
-        get: function () {
-            return this._y;
-        },
-        set: function () {
-            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    }
-});
-
-/**
- * @function
  * @param {Number} x
  * @param {Number} y
- * @return {cc.Point}
- * @deprecated
+ * Constructor
  */
-cc.PointMake = function (x, y) {
-    cc.log("cc.PointMake will be deprecated sooner or later. Use cc.p instead.");
-    return new cc.Point(x, y);
+cc.Point = function (x, y) {
+    this.x = x || 0;
+    this.y = y || 0;
 };
 
 /**
  * Helper macro that creates a cc.Point.
- * @param {Number|cc.Point} x
+ * @param {Number} x
  * @param {Number} y
+ * @return {cc.Point}
+ * @example
+ * var point = cc.p(100,100,100,100);
  */
 cc.p = function (x, y) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
     // memory usage and overall performance drastically
-    // return new cc.Point(x, y);
+    // return cc.p(x, y);
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT,
-    // note: we have tested this item on Chrome and firefox, it is faster than new cc.Point(x, y)
-    if(x !== undefined && y === undefined)
-        return {x: x.x, y: x.y};
-    else
-        return {x: x || 0, y: y || 0};
-};
-
-// JSB compatbility: in JSB, cc._p reuses objects instead of creating new ones
-cc._p = cc.p;
-
-/**
- * The "left bottom" point -- equivalent to cc.p(0, 0).
- * @function
- * @return {cc.Point}
- */
-cc.PointZero = function () {
-    return cc.p(0, 0);
+    // note: we have tested this item on Chrome and firefox, it is faster than cc.p(x, y)
+    return {x: x || 0, y: y || 0};
 };
 
 /**
@@ -137,9 +70,6 @@ cc.pointEqualToPoint = function (point1, point2) {
     return ((point1.x === point2.x) && (point1.y === point2.y));
 };
 
-// deprecated
-//cc.Point.CCPointEqualToPoint = cc.pointEqualToPoint;
-
 
 //--------------------------------------------------------
 //
@@ -149,25 +79,22 @@ cc.pointEqualToPoint = function (point1, point2) {
 
 /**
  * @class
- * @param {Number|cc.Size} width
- * @param {Number} _height
+ * @param {Number} width
+ * @param {Number} height
  * Constructor
  */
 cc.Size = function (width, height) {
-    if(width !== undefined && height === undefined){
-        this.width = width.width;
-        this.height = width.height;
-    } else {
-        this.width = width || 0;
-        this.height = height || 0;
-    }
+    this.width = width || 0;
+    this.height = height || 0;
 };
 
 /**
  * @function
- * @param {Number|cc.Size} w width or a size object
+ * @param {Number} w width or a size object
  * @param {Number} h height
  * @return {cc.Size}
+ * @example
+ * var size = cc.size(100,100,100,100);
  */
 cc.size = function (w, h) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
@@ -176,10 +103,7 @@ cc.size = function (w, h) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
     // note: we have tested this item on Chrome and firefox, it is faster than cc.size(w, h)
-    if(w !== undefined && h === undefined)
-        return { width: w.width, height: w.height};
-    else
-        return { width: w || 0, height: h || 0};
+    return { width: w || 0, height: h || 0};
 };
 
 /**
@@ -224,17 +148,10 @@ cc.Rect = function (x, y, width, height) {
  * @param {Number} h
  * @returns {Rect}
  * @example
- * var rect1 = cc.rect();
- * var rect2 = cc.rect(100,100,100,100);
+ * var rect = cc.rect(100,100,100,100);
  */
 cc.rect = function (x, y, w, h) {
-    var argLen = arguments.length;
-    if (argLen === 0)
-        return new cc.Rect(0, 0, 0, 0);
-    if (argLen === 4)
-        return new cc.Rect(x, y, w, h);
-
-    throw "unknown argument type";
+    return {x: x || 0, y: y || 0, width: w || 0, height: h || 0};
 };
 
 /**

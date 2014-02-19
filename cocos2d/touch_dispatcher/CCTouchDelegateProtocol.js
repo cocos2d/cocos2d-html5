@@ -31,7 +31,7 @@
  */
 cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     _point:null,
-    _prevPoint:cc.PointZero(),
+    _prevPoint:cc.p(0,0),
     _id:0,
 
     /**

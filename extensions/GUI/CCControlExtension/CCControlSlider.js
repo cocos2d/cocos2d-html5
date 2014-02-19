@@ -213,7 +213,7 @@ cc.ControlSlider = cc.Control.extend({
         this.sliderMoved(location);
     },
     onTouchEnded:function (touch, event) {
-        this.sliderEnded(cc.PointZero());
+        this.sliderEnded(cc.p(0,0));
     },
     needsLayout:function(){
         var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);

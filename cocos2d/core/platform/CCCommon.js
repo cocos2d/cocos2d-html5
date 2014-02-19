@@ -525,7 +525,7 @@ cc.RectFromString = function (content) {
  * The x and y values can represent integer or float values. <br/>
  * The string is not localized, so items are always separated with a comma.<br/>
  * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
- * If the string is not well-formed, the function returns cc.PointZero.
+ * If the string is not well-formed, the function returns cc.p(0,0).
  * Constructor
  * @example
  * //example
@@ -533,7 +533,7 @@ cc.RectFromString = function (content) {
  */
 cc.PointFromString = function (content) {
 	var result = CCNS_REG1.exec(content);
-	if(!result) return cc.PointZero();
+	if(!result) return cc.p(0,0);
 	return cc.p(parseFloat(result[1]), parseFloat(result[2]));
 };
 
