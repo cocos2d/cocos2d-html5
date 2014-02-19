@@ -114,29 +114,36 @@ cc.DrawConstraint = function (constraint, renderer) {
 cc.CONSTRAINT_COLOR = cc.c4f(0, 1, 0, 0.5);
 
 /**
- A Node that draws the components of a physics engine.
- Supported physics engines:
- - Chipmunk
- - Objective-Chipmunk
+ * <p>A Node that draws the components of a physics engine.<br/>
+ * Supported physics engines:<br/>
+ * - Chipmunk<br/>
+ * - Objective-Chipmunk</p>
+ *
+ * @class
+ * @extends cc.DrawNode
+ *
+ * @property {cp.Space}     Physic world space
  */
 cc.PhysicsDebugNode = cc.DrawNode.extend({
+	/** @public */
+	space:null,
+
     _spaceObj:null,
-    _spacePtr:null,
 
     getSpace:function () {
-        return this._spacePtr;
+        return this.space;
     },
 
     setSpace:function (space) {
-        this._spacePtr = space;
+        this.space = space;
     },
 
     draw:function (context) {
-        if (!this._spacePtr)
+        if (!this.space)
             return;
 
-        this._spacePtr.eachShape(cc.DrawShape.bind(this));
-        this._spacePtr.eachConstraint(cc.DrawConstraint.bind(this));
+        this.space.eachShape(cc.DrawShape.bind(this));
+        this.space.eachConstraint(cc.DrawConstraint.bind(this));
         cc.DrawNode.prototype.draw.call(this);
         this.clear();
     }
@@ -147,7 +154,7 @@ cc.PhysicsDebugNode.debugNodeForChipmunkSpace = function (space) {
     var node = new cc.PhysicsDebugNode();
     if (node.init()) {
         node._spaceObj = space;
-        node._spacePtr = space.space;
+        node.space = space.space;
         return node;
     }
     return null;
@@ -157,7 +164,7 @@ cc.PhysicsDebugNode.debugNodeForChipmunkSpace = function (space) {
 cc.PhysicsDebugNode.debugNodeForCPSpace = function (space) {
     var node = new cc.PhysicsDebugNode();
     if (node.init()) {
-        node._spacePtr = space;
+        node.space = space;
         return node;
     }
     return null;

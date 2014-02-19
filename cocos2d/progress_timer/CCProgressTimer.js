@@ -55,6 +55,7 @@ cc.PROGRESS_TEXTURE_COORDS = 0x4b;
  * The progress can be Radial, Horizontal or vertical.
  * @class
  * @extends cc.NodeRGBA
+ *
  */
 cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _type:null,
@@ -77,7 +78,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      *  @return {cc.Point}
      */
     getMidpoint:function () {
-        return cc.p(this._midPoint.x, this._midPoint);
+        return cc.p(this._midPoint.x, this._midPoint.y);
     },
 
     /**
@@ -380,21 +381,21 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     initWithSprite:null,
 
     _initWithSpriteForCanvas:function (sprite) {
-        this.setPercentage(0);
+        this.percentage = 0;
         this.anchorX = 0.5;
 	    this.anchorY = 0.5;
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
-        this.setMidpoint(cc.p(0.5, 0.5));
-        this.setBarChangeRate(cc.p(1, 1));
-        this.setSprite(sprite);
+	    this.midPoint = cc.p(0.5, 0.5);
+	    this.barChangeRate = cc.p(1, 1);
+	    this.sprite = sprite;
 
         return true;
     },
 
     _initWithSpriteForWebGL:function (sprite) {
-        this.setPercentage(0);
+        this.percentage = 0;
         this._vertexData = null;
         this._vertexArrayBuffer = null;
         this._vertexDataCount = 0;
@@ -403,9 +404,9 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
-        this.setMidpoint(cc.p(0.5, 0.5));
-        this.setBarChangeRate(cc.p(1, 1));
-        this.setSprite(sprite);
+        this.midPoint = cc.p(0.5, 0.5);
+        this.barChangeRate = cc.p(1, 1);
+        this.sprite = sprite;
 
         //shader program
         this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
@@ -907,9 +908,18 @@ if(cc.Browser.supportWebGL) {
     _proto._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
 }
 
+// Override properties
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "midPoint", _proto.getMidpoint, _proto.setMidpoint);
+cc.defineGetterSetter(_proto, "barChangeRate", _proto.getBarChangeRate, _proto.setBarChangeRate);
+cc.defineGetterSetter(_proto, "type", _proto.getType, _proto.setType);
+cc.defineGetterSetter(_proto, "percentage", _proto.getPercentage, _proto.setPercentage);
+cc.defineGetterSetter(_proto, "sprite", _proto.getSprite, _proto.setSprite);
+cc.defineGetterSetter(_proto, "reverseDir", _proto.isReverseDirection, _proto.setReverseDirection);
 delete window._proto;
 
 /**
