@@ -94,9 +94,9 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {Boolean} value
      */
     setOpacityModifyRGB:function (value) {
-        var oldColor = this.getColor();
+        var oldColor = this.color;
         this._opacityModifyRGB = value;
-        this.setColor(oldColor);
+        this.color = oldColor;
     },
 
     /**
@@ -303,7 +303,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
         // special opacity for premultiplied textures
         if (this._opacityModifyRGB) {
-            this.setColor(this._colorUnmodified);
+            this.color = this._colorUnmodified;
         }
     },
 
@@ -311,7 +311,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
         // special opacity for premultiplied textures
         if (this._opacityModifyRGB) {
-            this.setColor(this._colorUnmodified);
+            this.color = this._colorUnmodified;
         } else {
             var locDisplayedColor = this._displayedColor;
             this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
@@ -406,6 +406,7 @@ if(cc.Browser.supportWebGL){
 
 // Override properties
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 
 // Extended properties
@@ -416,9 +417,6 @@ cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 _proto.textureAtlas;
 /** @expose */
 _proto.quadsToDraw;
-/** @expose */
-_proto.blendFunc;
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 delete window._proto;
 

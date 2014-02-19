@@ -116,8 +116,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._mousePriority = priority;
             // Update touch priority with handler
             if (this._isMouseEnabled) {
-                this.setMouseEnabled(false);
-                this.setMouseEnabled(true);
+                this.mouseEnabled = false;
+                this.mouseEnabled = true;
             }
         }
     },
@@ -172,8 +172,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchPriority = priority;
             // Update touch priority with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+	            this.touchEnabled = false;
+	            this.touchEnabled = true;
             }
         }
     },
@@ -193,8 +193,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchMode = mode;
             // update the mode with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+                this.touchEnabled = false;
+                this.touchEnabled = true;
             }
         }
     },
@@ -552,6 +552,19 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     }
 });
 
+window._proto = cc.Layer.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "mouseEnabled", _proto.isMouseEnabled, _proto.setMouseEnabled);
+cc.defineGetterSetter(_proto, "mousePriority", _proto.getMousePriority, _proto.setMousePriority);
+cc.defineGetterSetter(_proto, "touchEnabled", _proto.isTouchEnabled, _proto.setTouchEnabled);
+cc.defineGetterSetter(_proto, "touchPriority", _proto.getTouchPriority, _proto.setTouchPriority);
+cc.defineGetterSetter(_proto, "touchMode", _proto.getTouchMode, _proto.setTouchMode);
+cc.defineGetterSetter(_proto, "accelerometerEnabled", _proto.isAccelerometerEnabled, _proto.setAccelerometerEnabled);
+cc.defineGetterSetter(_proto, "keyboardEnabled", _proto.isKeyboardEnabled, _proto.setKeyboardEnabled);
+
+delete window._proto;
+
 /**
  * creates a layer
  * @example
@@ -599,8 +612,8 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     init: function () {
         if(cc.Layer.prototype.init.call(this)){
-            this.setCascadeOpacityEnabled(false);
-            this.setCascadeColorEnabled(false);
+            this.cascadeOpacity = false;
+            this.cascadeColor = false;
             return true;
         }
         return false;
@@ -630,7 +643,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this._displayedOpacity = this._realOpacity = opacity;
 
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -677,7 +690,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     _enableCascadeOpacity:function(){
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -721,7 +734,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayed.b = locRealColor.b = color.b;
 
         var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -772,7 +785,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     _enableCascadeColor: function(){
         var parentColor , locParent =  this._parent;
-        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -822,6 +835,7 @@ cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _pr
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
 delete window._proto;
 
 /**
@@ -1123,7 +1137,8 @@ cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.getOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+
 delete window._proto;
 
 /**
@@ -1245,7 +1260,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
-        this.setColor(color);
+        this.color = color;
     },
 
     /**
@@ -1453,9 +1468,19 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 });
 
 window._proto = cc.LayerGradient.prototype;
+
 cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "startColor", _proto.getStartColor, _proto.setStartColor);
+cc.defineGetterSetter(_proto, "endColor", _proto.getEndColor, _proto.setEndColor);
+cc.defineGetterSetter(_proto, "startOpacity", _proto.getStartOpacity, _proto.setStartOpacity);
+cc.defineGetterSetter(_proto, "endOpacity", _proto.getEndOpacity, _proto.setEndOpacity);
+cc.defineGetterSetter(_proto, "vector", _proto.getVector, _proto.setVector);
+cc.defineGetterSetter(_proto, "compresseInterpolation", _proto.isCompressedInterpolation, _proto.setCompressedInterpolation);
+
 delete window._proto;
 
 /**

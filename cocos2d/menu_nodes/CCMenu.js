@@ -51,10 +51,14 @@ cc.DEFAULT_PADDING = 5;
  *  - But the only accepted children are MenuItem objects</p>
  * @class
  * @extends cc.LayerRGBA
+ *
+ * @property {Boolean}  enabled - Indicates whether or not the menu is enabled
  */
 cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
+	/** @public */
+	enabled:false,
+
     _color:null,
-    _enabled:false,
     _opacity:0,
     _selectedItem:null,
     _state:-1,
@@ -62,7 +66,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     ctor:function(){
         cc.LayerRGBA.prototype.ctor.call(this);
         this._color = cc.white();
-        this._enabled = false;
+        this.enabled = false;
         this._opacity = 255;
         this._selectedItem = null;
         this._state = -1;
@@ -83,7 +87,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
             for (var i = 0; i < locChildren.length; i++)
-                locChildren[i].setColor(color);
+                locChildren[i].color = color;
         }
     },
 
@@ -102,7 +106,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
             for (var i = 0; i < locChildren.length; i++)
-                locChildren[i].setOpacity(opa);
+                locChildren[i].opacity = opa;
         }
     },
 
@@ -111,7 +115,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     isEnabled:function () {
-        return this._enabled;
+        return this.enabled;
     },
 
     /**
@@ -119,7 +123,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Boolean} enabled
      */
     setEnabled:function (enabled) {
-        this._enabled = enabled;
+        this.enabled = enabled;
     },
 
     /**
@@ -146,10 +150,10 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      */
     initWithArray:function (arrayOfItems) {
         if (this.init()) {
-            this.setTouchPriority(cc.MENU_HANDLER_PRIORITY);
-            this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
-            this.setTouchEnabled(true);
-            this._enabled = true;
+            this.touchPriority = cc.MENU_HANDLER_PRIORITY;
+            this.touchMode = cc.TOUCH_ONE_BY_ONE;
+            this.touchEnabled = true;
+            this.enabled = true;
 
             // menu in the center of the screen
             var winSize = cc.Director.getInstance().getWinSize();
@@ -171,8 +175,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             this._state = cc.MENU_STATE_WAITING;
 
             // enable cascade color and opacity on menus
-            this.setCascadeColorEnabled(true);
-            this.setCascadeOpacityEnabled(true);
+            this.cascadeColor = true;
+            this.cascadeOpacity = true;
             return true;
         }
         return false;
@@ -432,7 +436,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
+        cc.registerTargetedDelegate(this.touchPriority, true, this);
     },
 
     /**
@@ -458,7 +462,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     onTouchBegan:function (touch, e) {
-        if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this._enabled)
+        if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this.enabled)
             return false;
 
         for (var c = this.parent; c != null; c = c.parent) {
@@ -576,6 +580,10 @@ window._proto = cc.Menu.prototype;
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+
+// Extended properties
+/** @expose */
+_proto.enabled;
 delete window._proto;
 
 /**

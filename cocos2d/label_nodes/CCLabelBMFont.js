@@ -558,7 +558,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if(this._cascadeColorEnabled){
                 var parentColor = cc.white();
                 var locParent = this._parent;
-                if(locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+                if(locParent && locParent.RGBAProtocol && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
                 this.updateDisplayedColor(parentColor);
             }
@@ -583,7 +583,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for (var i = 0; i < locChildren.length; i++) {
                 var node = locChildren[i];
                 if (node && node.RGBAProtocol)
-                    node.setOpacityModifyRGB(this._opacityModifyRGB);
+                    node.opacityModifyRGB = this._opacityModifyRGB;
             }
         }
     },
@@ -605,7 +605,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if(this._cascadeOpacityEnabled){
             var parentOpacity = 255;
             var locParent = this._parent;
-            if(locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+            if(locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
                parentOpacity = locParent.getDisplayedOpacity();
             this.updateDisplayedOpacity(parentOpacity);
         }
@@ -858,7 +858,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
             }
             // Apply label properties
-            fontChar.setOpacityModifyRGB(this._opacityModifyRGB);
+            fontChar.opacityModifyRGB = this._opacityModifyRGB;
             // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
             if (cc.Browser.supportWebGL) {
                 fontChar.updateDisplayedColor(this._displayedColor);
@@ -931,6 +931,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._setString(newString, needUpdateLabel);
     },
 
+	_setStringForSetter: function (newString) {
+		this.setString(newString, false);
+	},
+
     /**
      * @deprecated
      * @param label
@@ -943,7 +947,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      *  update Label
      */
     updateLabel:function () {
-        this.setString(this._initialString, false);
+        this.string = this._initialString;
 
         // Step 1: Make multiline
         if (this._width > 0) {
@@ -1128,7 +1132,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * Set text vertical alignment
+     * Set text alignment
      * @param {Number} alignment
      */
     setAlignment:function (alignment) {
@@ -1136,13 +1140,21 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.updateLabel();
     },
 
+	_getAlignment: function () {
+		return this._alignment;
+	},
+
     /**
      * @param {Number} width
      */
-    setWidth:function (width) {
+    setBoundingWidth:function (width) {
         this._width = width;
         this.updateLabel();
     },
+
+	_getBoundingWidth: function () {
+		return this._width;
+	},
 
     /**
      * @param {Boolean}  breakWithoutSpace
@@ -1270,6 +1282,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 });
 
 window._proto = cc.LabelBMFont.prototype;
+
+// Override properties
 cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
 cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
 cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
@@ -1280,6 +1294,19 @@ cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _pr
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
+
+// Extended properties
+/** @expose */
+_proto.string;
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto._setStringForSetter);
+/** @expose */
+_proto.boundingWidth;
+cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto.setBoundingWidth);
+/** @expose */
+_proto.textAlign;
+cc.defineGetterSetter(_proto, "textAlign", _proto._getAlignment, _proto.setAlignment);
+
 delete window._proto;
 
 /**

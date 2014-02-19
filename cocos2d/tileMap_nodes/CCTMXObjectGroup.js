@@ -28,21 +28,27 @@
  * cc.TMXObjectGroup represents the TMX object group.
  * @class
  * @extends cc.Class
+ *
+ * @property {Array}    properties  - Properties from the group. They can be added using tilemap editors
+ * @property {String}   groupName   - Name of the group
  */
 cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
-    //name of the group
-    _groupName:null,
+	/** @public */
+	properties:null,
+
+	/** @public */
+	groupName:null,
+
     _positionOffset:null,
-    _properties:null,
     _objects:null,
 
     /**
      *  Constructor
      */
     ctor:function () {
-        this._groupName = "";
+        this.groupName = "";
         this._positionOffset = cc._pConst(0,0);
-        this._properties = [];
+        this.properties = [];
         this._objects = [];
     },
 
@@ -67,28 +73,28 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      * @return {Array}
      */
     getProperties:function () {
-        return this._properties;
+        return this.properties;
     },
 
     /**
      * @param {object} Var
      */
     setProperties:function (Var) {
-        this._properties.push(Var);
+        this.properties.push(Var);
     },
 
     /**
      * @return {String}
      */
     getGroupName:function () {
-        return this._groupName.toString();
+        return this.groupName.toString();
     },
 
     /**
      * @param {String} groupName
      */
     setGroupName:function (groupName) {
-        this._groupName = groupName;
+        this.groupName = groupName;
     },
 
     /**
@@ -97,7 +103,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      * @return {object}
      */
     propertyNamed:function (propertyName) {
-        return this._properties[propertyName];
+        return this.properties[propertyName];
     },
 
     /**

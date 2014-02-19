@@ -122,13 +122,13 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         if(!locLoaded){
             texture.addLoadedEventListener(function(sender){
                 this.initWithTexture(texture, width, height, label.length);
-                this.setString(label);
+                this.string = label;
                 this._callLoadedEventCallbacks();
             },this);
         }
         if (this.initWithTexture(texture, width, height, label.length)) {
             this._mapStartChar = startChar;
-            this.setString(label);
+            this.string = label;
             return true;
         }
         return false;
@@ -199,7 +199,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
                     fontChar.visible = true;
-                    fontChar.setOpacity(this._displayedOpacity);
+                    fontChar.opacity = this._displayedOpacity;
                 }
             }
             fontChar.x = i * locItemWidth + locItemWidth / 2;
@@ -304,7 +304,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
 
         this.updateAtlasValues();
-        this._quadsToDraw = len;
+        this.quadsToDraw = len;
     },
 
     _setStringForWebGL: function (label) {
@@ -318,7 +318,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 	    this.height = this._itemHeight;
 
         this.updateAtlasValues();
-        this._quadsToDraw = len;
+        this.quadsToDraw = len;
     },
 
     setOpacity: null,
@@ -329,7 +329,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             var locChildren = this._children;
             for (var i = 0, len = locChildren.length; i < len; i++) {
                 if (locChildren[i])
-                    locChildren[i].setOpacity(opacity);
+                    locChildren[i].opacity = opacity;
             }
         }
     },
@@ -351,8 +351,15 @@ if(cc.Browser.supportWebGL){
     _proto.setOpacity =  _proto._setOpacityForCanvas;
 }
 
+// Override properties
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+
+// Extended properties
+/** @expose */
+_proto.string;
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+
 delete window._proto;
 
 /**
