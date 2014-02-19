@@ -450,7 +450,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         this._texture2d = new cc.Texture2D();
         this._texture2d.initWithElement(this._logoTexture);
         this._texture2d.handleLoadedTexture();
-        this._logo = cc.Sprite.createWithTexture(this._texture2d);
+        this._logo = cc.Sprite.create(this._texture2d);
         this._logo.scale = cc.CONTENT_SCALE_FACTOR();
         this._logo.pos = centerPos;
         this._bgLayer.addChild(this._logo, 10);
@@ -535,9 +535,9 @@ cc.LoaderScene.preload = function (resources, selector, target) {
 
     var director = cc.Director.getInstance();
     if (director.getRunningScene()) {
-        director.replaceScene(this._instance);
+        director.runScene(this._instance);
     } else {
-        director.runWithScene(this._instance);
+        director.runScene(this._instance);
     }
 
     return this._instance;

@@ -1541,7 +1541,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * this.addChild(batch);
      *
      * // create two sprites, spriteA will be added to batchNode, they are using different textures.
-     * var spriteA = cc.Sprite.createWithTexture(batch->getTexture());
+     * var spriteA = cc.Sprite.create(batch->getTexture());
      * var spriteB = cc.Sprite.create("Icon-72.png");
      *
      * batch.addChild(spriteA);

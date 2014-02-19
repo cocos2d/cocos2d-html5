@@ -2656,7 +2656,7 @@ delete window._proto;
  *    This plist files can be create manually or with Particle Designer:<br/>
  *    http://particledesigner.71squared.com/<br/>
  * </p>
- * @param {String} plistFile
+ * @param {String|Number} plistFile
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
@@ -2670,19 +2670,6 @@ cc.ParticleSystem.create = function (plistFile) {
 
     if (ret && ret.initWithFile(plistFile))
         return ret;
-    return null;
-};
-
-/**
- * create a system with a fixed number of particles
- * @param {Number} number_of_particles
- * @return {cc.ParticleSystem}
- */
-cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    //emitter.initWithTotalParticles(number_of_particles);
-    var particle = new cc.ParticleSystem();
-    if (particle && particle.initWithTotalParticles(number_of_particles))
-        return particle;
     return null;
 };
 

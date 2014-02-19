@@ -456,7 +456,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 this._callLoadedEventCallbacks();
             },this);
         }
-        var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
+        var batchNode = cc.SpriteBatchNode.create(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
         return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, capInsets);
     },
@@ -836,7 +836,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     setSpriteFrame: function (spriteFrame) {
-        var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
+        var batchNode = cc.SpriteBatchNode.create(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
         var locLoaded = spriteFrame.textureLoaded();
         this._textureLoaded = locLoaded;
