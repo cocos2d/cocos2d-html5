@@ -874,6 +874,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 break;
         }
         this._projection = projection;
+        this._eventDispatcher.dispatchEvent(this._eventProjectionChanged);
         cc.setProjectionMatrixDirty();
     },
 

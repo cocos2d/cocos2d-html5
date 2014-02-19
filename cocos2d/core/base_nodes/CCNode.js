@@ -1029,6 +1029,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.stopAllActions();
         this.unscheduleAllCallbacks();
 
+        // event
+        this._eventDispatcher._cleanTarget(this);
+
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },

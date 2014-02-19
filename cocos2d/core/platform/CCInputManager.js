@@ -67,6 +67,7 @@ cc.inputManager = {
 
     _glView: null,
     _eventDispatcher: null,
+    _delegate: null,
 
     /**
      * Touch events are handled by default; if you want to customize your handlers, please override these functions:
@@ -93,8 +94,12 @@ cc.inputManager = {
         }
         if(handleTouches.length > 0){
             this._glView._convertTouchesWithScale(handleTouches);
-            this._delegate.touchesBegan(handleTouches, event);
-        }
+            this._delegate.touchesBegan(handleTouches, event);    //TODO
+            var touchEvent = new cc.EventTouch(handleTouches);
+            touchEvent._eventCode = cc.EventTouch.EventCode.BEGAN;
+            this._eventDispatcher.dispatchEvent(touchEvent);
+        } else
+            cc.log("touchesBegan: size = 0");
     },
 
     handleTouchesMove: function(touches, event){
@@ -108,14 +113,20 @@ cc.inputManager = {
                 //cc.log("if the index doesn't exist, it is an error");
                 continue;
             }
-            if(locTouches[index])
+            if(locTouches[index]){
+                locTouches[index]._setPoint(selTouch._point);
+                locTouches[index]._setPrevPoint(selTouch._prevPoint);
                 handleTouches.push(locTouches[index]);
-
+            }
         }
         if(handleTouches.length > 0){
             this._glView._convertTouchesWithScale(handleTouches);
             this._delegate.touchesMoved(handleTouches, event);
-        }
+            var touchEvent = new cc.EventTouch(handleTouches);
+            touchEvent._eventCode = cc.EventTouch.EventCode.MOVED;
+            this._eventDispatcher.dispatchEvent(touchEvent);
+        } else
+            cc.log("touchesMoved: size = 0");
     },
 
     handleTouchesEnd: function(touches, event){
@@ -123,7 +134,11 @@ cc.inputManager = {
         if(handleTouches.length > 0) {
             this._glView._convertTouchesWithScale(handleTouches);
             this._delegate.touchesEnded(handleTouches, event);
-        }
+            var touchEvent = new cc.EventTouch(handleTouches);
+            touchEvent._eventCode = cc.EventTouch.EventCode.ENDED;
+            this._eventDispatcher.dispatchEvent(touchEvent);
+        } else
+            cc.log("touchesEnded: size = 0");
     },
 
     handleTouchesCancel: function(touches, event){
@@ -131,7 +146,11 @@ cc.inputManager = {
         if(handleTouches.length > 0) {
             this._glView._convertTouchesWithScale(handleTouches);
             this._delegate.touchesCancelled(handleTouches, event);
-        }
+            var touchEvent = new cc.EventTouch(handleTouches);
+            touchEvent._eventCode = cc.EventTouch.EventCode.CANCELLED;
+            this._eventDispatcher.dispatchEvent(touchEvent);
+        } else
+            cc.log("touchesCanceled: size = 0");
     },
 
     getSetOfTouchesEndOrCancel: function(touches) {
@@ -145,6 +164,8 @@ cc.inputManager = {
                 continue;  //cc.log("if the index doesn't exist, it is an error");
             }
             if(locTouches[index]){
+                locTouches[index]._setPoint(selTouch._point);
+                locTouches[index]._setPrevPoint(selTouch._prevPoint);         //TODO
                 handleTouches.push(locTouches[index]);
                 this._removeUsedIndexBit(index);
                 delete locTouchesIntDict[touchID];
@@ -272,6 +293,7 @@ cc.inputManager = {
 
         var locView = this._glView = cc.EGLView.getInstance();
         this._eventDispatcher = cc.Director.getInstance().getEventDispatcher();
+        this._delegate = cc.Director.getInstance().getTouchDispatcher();
         var selfPointer = this;
 
         //register touch event
@@ -286,20 +308,20 @@ cc.inputManager = {
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
                 if (!cc.rectContainsPoint(new cc.Rect(pos.left, pos.top, pos.width, pos.height), location))
-                    locView.touchesEnded([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
+                    selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
             });
 
             //register canvas mouse event
             element.addEventListener("mousedown", function (event) {
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
-                locView.touchesBegan([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
+                selfPointer.handleTouchesBegin([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
             });
 
             element.addEventListener("mouseup", function (event) {
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
-                locView.touchesEnded([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
+                selfPointer.handleTouchesEnd([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
             });
 
             element.addEventListener("mousemove", function (event) {
@@ -308,14 +330,14 @@ cc.inputManager = {
 
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
-                locView.touchesMoved([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
+                selfPointer.handleTouchesMove([selfPointer.getTouchByXY(location.x, location.y, pos)], event);
             });
         } else if(window.navigator.msPointerEnabled){
             var _pointerEventsMap = {
-                "MSPointerDown"     : "touchesBegan",
-                "MSPointerMove"     : "touchesMoved",
-                "MSPointerUp"       : "touchesEnded",
-                "MSPointerCancel"   : "touchesCancelled"
+                "MSPointerDown"     : "handleTouchesBegin",
+                "MSPointerMove"     : "handleTouchesMove",
+                "MSPointerUp"       : "handleTouchesEnd",
+                "MSPointerCancel"   : "handleTouchesCancel"
             };
 
             for(var eventName in _pointerEventsMap){
@@ -325,7 +347,7 @@ cc.inputManager = {
                         pos.left -= document.body.scrollLeft;
                         pos.top -= document.body.scrollTop;
 
-                        locView[_touchEvent]([selfPointer.getTouchByXY(event.clientX, event.clientY, pos)], event);
+                        selfPointer[_touchEvent]([selfPointer.getTouchByXY(event.clientX, event.clientY, pos)], event);
                         event.stopPropagation();
                         event.preventDefault();
                     }, false);
@@ -379,6 +401,9 @@ cc.inputManager = {
         }
 
         //register mouse event
+        if(!cc.Browser.isMobile){
+
+        }
 
         //register keyboard event
 

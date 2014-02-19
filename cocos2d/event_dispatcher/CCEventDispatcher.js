@@ -77,6 +77,29 @@ cc._EventListenerVector = cc.Class.extend({
     }
 });
 
+cc.__getListenerID = function(event){
+    var eventType = cc.Event.Type;
+    switch(event.getType()){
+        case eventType.ACCELERATION:
+                return cc.EventListenerAcceleration.LISTENER_ID;
+        case eventType.CUSTOM:
+            return event.getEventName();
+        case eventType.KEYBOARD:
+            return cc.EventListenerKeyboard.LISTENER_ID;
+        case eventType.MOUSE:
+            return cc.EventListenerMouse.LISTENER_ID;
+        case eventType.TOUCH:
+        // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
+        // return UNKNOWN instead.
+            cc.log("Don't call this method if the event is for touch.");
+            return "";
+        default:
+            cc.log("Invalid event type!");
+            return "";
+
+    }
+};
+
 /**
  * <p>
  *  This class manages event listener subscriptions and event dispatching.                                      <br/>
@@ -108,6 +131,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
 
         this._toAddedListeners = [];
         this._dirtyNodes = [];
+        this._isEnabled = true;
     },
 
     _setDirtyForNode: function (node) {
@@ -272,7 +296,11 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
 
         // After sort: priority < 0, > 0
         var sceneGraphListeners = listeners.getSceneGraphPriorityListeners();
-        sceneGraphListeners.sort(this._sortEventListenersOfSceneGraphPriorityDes);
+        var selfPointer = this;
+        var sortEventListenersOfSceneGraphPriorityDes = function(l1,l2){
+            return selfPointer._nodePriorityMap[l2._getSceneGraphPriority()] - selfPointer._nodePriorityMap[l1._getSceneGraphPriority()];
+        };
+        sceneGraphListeners.sort(sortEventListenersOfSceneGraphPriorityDes);
     },
 
     _sortEventListenersOfSceneGraphPriorityDes: function (l1, l2) {
@@ -305,9 +333,10 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
     },
 
     _updateListeners: function (event) {
+        var selfPointer = this;
         //TODO
         var onUpdateListeners = function (listenerID) {
-            var listeners = this._listenersMap[listenerID];
+            var listeners = selfPointer._listenersMap[listenerID];
             if (!listeners)
                 return;
 
@@ -318,7 +347,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             if (sceneGraphPriorityListeners) {
                 for (i = 0; i < sceneGraphPriorityListeners.length;) {
                     selListener = sceneGraphPriorityListeners[i];
-                    if (selListener._isRegistered()) {
+                    if (!selListener._isRegistered()) {
                         cc.ArrayRemoveObject(sceneGraphPriorityListeners, selListener);
                     } else {
                         ++i;
@@ -329,7 +358,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             if (fixedPriorityListeners) {
                 for (i = 0; i < fixedPriorityListeners.length;) {
                     selListener = fixedPriorityListeners[i];
-                    if (selListener._isRegistered())
+                    if (!selListener._isRegistered())
                         cc.ArrayRemoveObject(fixedPriorityListeners, selListener);
                     else
                         ++i;
@@ -343,17 +372,16 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                 listeners.clearFixedListeners();
 
             if (listeners.empty()) {
-                delete this._priorityDirtyFlagMap[listenerID];
-                delete this._listenersMap[listenerID] ;
+                delete selfPointer._priorityDirtyFlagMap[listenerID];
+                delete selfPointer._listenersMap[listenerID] ;
             }
         };
 
-        if (event.getType() == Event.Type.TOUCH) {
+        if (event.getType() == cc.Event.Type.TOUCH) {
             onUpdateListeners(cc.EventListenerTouchOneByOne.LISTENER_ID);
             onUpdateListeners(cc.EventListenerTouchAllAtOnce.LISTENER_ID);
         } else {
-            //TODO
-            onUpdateListeners(this.__getListenerID(event));
+            onUpdateListeners(cc.__getListenerID(event));
         }
 
         var locToAddedListeners = this._toAddedListeners;
@@ -362,6 +390,13 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                 this._forceAddEventListener(locToAddedListeners[i]);
             this._toAddedListeners.length = 0;
         }
+    },
+
+    _copyArray: function(arr){
+        var i, len = arr.length, arr_clone = new Array(len);
+        for (i = 0; i < len; i += 1)
+            arr_clone[i] = arr[i];
+        return arr_clone;
     },
 
     _dispatchTouchEvent: function (event) {
@@ -377,21 +412,20 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
 
         var isNeedsMutableSet = (oneByOneListeners && allAtOnceListeners);
 
-        var originalTouches = event.getTouches();
-        //TODO
-        var mutableTouches = cc.clone(originalTouches);
+        var originalTouches = event.getTouches(), selfPointer = this;
+        var mutableTouches = this._copyArray(originalTouches);
         var eventCode = cc.EventTouch.EventCode;
         //
         // process the target handlers 1st
         //
         if (oneByOneListeners) {
-            var selMutableTouch = mutableTouches[0];
             var selTouch = originalTouches[0];
 
             for(var i = 0; i< originalTouches.length; i++){
                 var isSwallowed = false;
 
                 var onTouchEvent = function (listener) { // Return true to break
+
                     // Skip if the listener was removed.
                     if (!listener._isRegistered)
                         return false;
@@ -401,8 +435,8 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                     var isClaimed = false;
                     var removedIdx;
 
-                    var eventCode = event.getEventCode();
-                    if (eventCode == eventCode.BEGAN) {
+                    var getCode = event.getEventCode();
+                    if (getCode == eventCode.BEGAN) {
                         if (listener.onTouchBegan) {
                             isClaimed = listener.onTouchBegan(selTouch, event);
                             if (isClaimed && listener._registered)
@@ -411,7 +445,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                     } else if (listener._claimedTouches.length > 0
                         && ((removedIdx = listener._claimedTouches.indexOf(selTouch)) != -1)) {
                         isClaimed = true;
-                        switch (eventCode) {
+                        switch (getCode) {
                             case eventCode.MOVED:
                                 if (listener.onTouchMoved)
                                     listener.onTouchMoved(selTouch, event);
@@ -420,31 +454,30 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                                 if (listener.onTouchEnded)
                                     listener.onTouchEnded(selTouch, event);
                                 if (listener._registered)
-                                    cc.ArrayRemoveObjectAtIndex(removedIdx);
+                                    cc.ArrayRemoveObjectAtIndex(listener._claimedTouches, removedIdx);
                                 break;
                             case eventCode.CANCELLED:
                                 if (listener.onTouchCancelled)
                                     listener.onTouchCancelled(selTouch, event);
                                 if (listener._registered)
-                                    cc.ArrayRemoveObjectAtIndex(removedIdx);
+                                    cc.ArrayRemoveObjectAtIndex(listener._claimedTouches, removedIdx);
                                 break;
                             default:
-                                cc.assert(false, "The event code is invalid.");
+                                cc.log("The event code is invalid.");
                                 break;
                         }
                     }
 
                     // If the event was stopped, return directly.
                     if (event.isStopped()) {
-                        this._updateListeners(event);
+                        selfPointer._updateListeners(event);
                         return true;
                     }
 
-                    cc.assert(selTouch.getID() == selMutableTouch.getID(), " ");
+                    //TODO cc.Assert(selTouch.getID() == selMutableTouch.getID(), " ");
                     if (isClaimed && listener._registered && listener._needSwallow) {
                         if (isNeedsMutableSet) {
-                            //TODO
-                            mutableTouchesIter = mutableTouches.erase(mutableTouchesIter);
+                            cc.ArrayRemoveObjectAtIndex(mutableTouches,selTouch);
                             isSwallowed = true;
                         }
                         return true;
@@ -452,13 +485,10 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                     return false;
                 };
 
-                //TODO
+                //TODO need to delete the closure
                 this._dispatchEventToListeners(oneByOneListeners, onTouchEvent);
                 if (event.isStopped())
                     return;
-
-                if (!isSwallowed)
-                    ++mutableTouchesIter;
             }
         }
 
@@ -497,7 +527,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
 
                 // If the event was stopped, return directly.
                 if (event.isStopped()) {
-                    this._updateListeners(event);
+                    selfPointer._updateListeners(event);
                     return true;
                 }
 
@@ -508,7 +538,6 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             if (event.isStopped())
                 return;
         }
-
         this._updateListeners(event);
     },
 
@@ -541,7 +570,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             var isEmpty = fixedPriorityListeners.length === 0;
             for (; !isEmpty && i < listeners.getGt0Index(); ++i) {
                 selListener = fixedPriorityListeners[i];
-                if (!selListener.isPaused() && selListener._isRegistered() && onEvent(selListener)) {
+                if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener)) {
                     shouldStopPropagation = true;
                     break;
                 }
@@ -552,7 +581,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             // priority == 0, scene graph priority
             for (j = 0, len = sceneGraphPriorityListeners.length; j < len; j++) {
                 selListener = sceneGraphPriorityListeners[j];
-                if (!selListener.isPaused() && selListener._isRegistered() && onEvent(selListener)) {
+                if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener)) {
                     shouldStopPropagation = true;
                     break;
                 }
@@ -564,7 +593,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             var size = fixedPriorityListeners.length;
             for (; i < size; ++i) {
                 selListener = fixedPriorityListeners[i];
-                if (!selListener.isPaused() && selListener._isRegistered() && onEvent(selListener)) {
+                if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener)) {
                     shouldStopPropagation = true;
                     break;
                 }
@@ -591,15 +620,12 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             // visit children zOrder < 0
             for (; i < childrenCount; i++) {
                 child = children[i];
-
-                //TODO
                 if (child && child.getLocalZOrder() < 0)
                     this._visitTarget(child, false);
                 else
                     break;
             }
 
-            //TODO
             if (this._nodeListenersMap[node.__instanceId] != null)
                 locGlobalZOrderNodeMap[node.getGlobalZOrder()] = node;
 
@@ -705,8 +731,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
         if (listener == null)
             return;
 
-        var isFound = false;
-
+        var isFound = false, selfPointer = this;
         var removeListenerInVector = function (listeners) {
             if (listeners == null)
                 return;
@@ -716,7 +741,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                 if (selListener == listener) {
                     selListener._setRegistered(false);
                     if (selListener._getSceneGraphPriority() != null)
-                        this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
+                        selfPointer._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
 
                     if (this._inDispatch == 0)
                         cc.ArrayRemoveObject(listeners, selListener);
@@ -858,8 +883,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             return;
         }
 
-        //TODO
-        var listenerID = this.__getListenerID(event);
+        var listenerID = cc.__getListenerID(event);
 
         this._sortEventListeners(listenerID);
         var selListeners = this._listenersMap[listenerID];

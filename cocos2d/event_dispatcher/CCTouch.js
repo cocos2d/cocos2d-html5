@@ -49,7 +49,8 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     getLocation:function () {
         //TODO
-        return cc.Director.getInstance().convertToGL(this._point);
+        //return cc.Director.getInstance().convertToGL(this._point);
+        return this._point;
     },
 
     /**
@@ -58,7 +59,8 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     getPreviousLocation:function () {
         //TODO
-        return cc.Director.getInstance().convertToGL(this._prevPoint);
+        //return cc.Director.getInstance().convertToGL(this._prevPoint);
+        return this._prevPoint;
     },
 
     /**
@@ -67,7 +69,8 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     getStartLocation: function() {
         //TODO
-        return cc.Director.getInstance().convertToGL(this._startPoint);
+        //return cc.Director.getInstance().convertToGL(this._startPoint);
+        return this._startPoint;
     },
 
     /**
@@ -133,12 +136,20 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     _setPoint: function(x, y){
-        this._point.x = x;
-        this._point.y = y;
+        if(y === undefined){
+            this._point.x = x.x;
+            this._point.y = x.y;
+        }else{
+            this._point.x = x;
+            this._point.y = y;
+        }
     },
 
     _setPrevPoint:function (x, y) {
-        this._prevPoint = cc.p(x || 0, y || 0);
+        if(y === undefined)
+            this._prevPoint = cc.p(x.x, x.y);
+        else
+            this._prevPoint = cc.p(x || 0, y || 0);
     }
 });
 

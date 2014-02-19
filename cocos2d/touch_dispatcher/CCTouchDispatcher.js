@@ -363,11 +363,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                         claimed = true;
                         switch (helper.type) {
                             case cc.TOUCH_MOVED:
-                                if (cc.Browser.isMobile) {
-                                    if (handler.getDelegate().onTouchMoved) handler.getDelegate().onTouchMoved(touch, event);
-                                } else {
-                                    if (this._mousePressed && handler.getDelegate().onTouchMoved) handler.getDelegate().onTouchMoved(touch, event);
-                                }
+                                if (handler.getDelegate().onTouchMoved) handler.getDelegate().onTouchMoved(touch, event);
                                 break;
                             case cc.TOUCH_ENDED:
                                 if (handler.getDelegate().onTouchEnded) handler.getDelegate().onTouchEnded(touch, event);
@@ -411,11 +407,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                         break;
                     case cc.TOUCH_MOVED:
                         if (mutableTouches.length > 0) {
-                            if (cc.Browser.isMobile) {
-                                if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
-                            } else {
-                                if (this._mousePressed && handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
-                            }
+                            if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
                         }
                         break;
                     case cc.TOUCH_ENDED:
