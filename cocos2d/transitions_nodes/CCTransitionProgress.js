@@ -144,12 +144,12 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().flipY = true;
-        pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
+            pNode.sprite.flipY = true;
+        pNode.type = cc.PROGRESS_TIMER_TYPE_RADIAL;
 
         //    Return the radial type that we want to use
-        pNode.setReverseDirection(false);
-        pNode.setPercentage(100);
+        pNode.reverseDir = false;
+        pNode.percentage = 100;
         this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
@@ -185,12 +185,12 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().flipY = true;
-        pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
+            pNode.sprite.flipY = true;
+        pNode.type = cc.PROGRESS_TIMER_TYPE_RADIAL;
 
         //    Return the radial type that we want to use
-        pNode.setReverseDirection(true);
-        pNode.setPercentage(100);
+        pNode.reverseDir = true;
+        pNode.percentage = 100;
         this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
@@ -226,13 +226,13 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().flipY = true;
-        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
+            pNode.sprite.flipY = true;
+        pNode.type = cc.PROGRESS_TIMER_TYPE_BAR;
 
-        pNode.setMidpoint(cc.p(1, 0));
-        pNode.setBarChangeRate(cc.p(1, 0));
+        pNode.midPoint = cc.p(1, 0);
+        pNode.barChangeRate = cc.p(1, 0);
 
-        pNode.setPercentage(100);
+        pNode.percentage = 100;
         this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
@@ -263,17 +263,17 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.getInstance().getWinSize();
 
-        var pNode = cc.ProgressTimer.create(texture.getSprite());
+        var pNode = cc.ProgressTimer.create(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().flipY = true;
-        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
+            pNode.sprite.flipY = true;
+        pNode.type = cc.PROGRESS_TIMER_TYPE_BAR;
 
-        pNode.setMidpoint(cc.p(0, 0));
-        pNode.setBarChangeRate(cc.p(0, 1));
+        pNode.midPoint = cc.p(0, 0);
+        pNode.barChangeRate = cc.p(0, 1);
 
-        pNode.setPercentage(100);
+        pNode.percentage = 100;
         this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
@@ -303,17 +303,17 @@ cc.TransitionProgressVertical.create = function (t, scene) {
 cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressInOut# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.getInstance().getWinSize();
-        var pNode = cc.ProgressTimer.create(texture.getSprite());
+        var pNode = cc.ProgressTimer.create(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().flipY = true;
-        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
+            pNode.sprite.flipY = true;
+        pNode.type = cc.PROGRESS_TIMER_TYPE_BAR;
 
-        pNode.setMidpoint(cc.p(0.5, 0.5));
-        pNode.setBarChangeRate(cc.p(1, 1));
+        pNode.midPoint = cc.p(0.5, 0.5);
+        pNode.barChangeRate = cc.p(1, 1);
 
-        pNode.setPercentage(0);
+        pNode.percentage = 0;
         this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
@@ -351,17 +351,17 @@ cc.TransitionProgressInOut.create = function (t, scene) {
 cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressOutIn# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.getInstance().getWinSize();
-        var pNode = cc.ProgressTimer.create(texture.getSprite());
+        var pNode = cc.ProgressTimer.create(texture.sprite);
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().flipY = true;
-        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
+            pNode.sprite.flipY = true;
+        pNode.type = cc.PROGRESS_TIMER_TYPE_BAR;
 
-        pNode.setMidpoint(cc.p(0.5, 0.5));
-        pNode.setBarChangeRate(cc.p(1, 1));
+        pNode.midPoint = cc.p(0.5, 0.5);
+        pNode.barChangeRate = cc.p(1, 1);
 
-        pNode.setPercentage(100);
+        pNode.percentage = 100;
         this._setAttrs(pNode, winSize.width / 2, winSize.height / 2);
 
         return pNode;
