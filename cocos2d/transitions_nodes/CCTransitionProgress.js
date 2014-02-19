@@ -63,7 +63,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
         // create the second render texture for outScene
         var texture = cc.RenderTexture.create(winSize.width, winSize.height);
-        texture.getSprite().setAnchorPoint(0.5, 0.5);
+        texture.getSprite().anchor = cc.p(0.5, 0.5);
         this._setAttrs(texture, winSize.width / 2, winSize.height / 2);
 
         // render outScene to its texturebuffer
@@ -144,7 +144,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().setFlippedY(true);
+            pNode.getSprite().flipY = true;
         pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 
         //    Return the radial type that we want to use
@@ -185,7 +185,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().setFlippedY(true);
+            pNode.getSprite().flipY = true;
         pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 
         //    Return the radial type that we want to use
@@ -226,7 +226,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().setFlippedY(true);
+            pNode.getSprite().flipY = true;
         pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.p(1, 0));
@@ -267,7 +267,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().setFlippedY(true);
+            pNode.getSprite().flipY = true;
         pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.p(0, 0));
@@ -307,7 +307,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().setFlippedY(true);
+            pNode.getSprite().flipY = true;
         pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.p(0.5, 0.5));
@@ -355,7 +355,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
 
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType === cc.WEBGL)
-            pNode.getSprite().setFlippedY(true);
+            pNode.getSprite().flipY = true;
         pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.p(0.5, 0.5));

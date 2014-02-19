@@ -552,12 +552,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
-        if (arguments.length == 2) {
-            locPosition._x = newPosOrxValue;
-            locPosition._y = yValue;
-        } else if (arguments.length == 1) {
+        if (yValue === undefined) {
             locPosition._x = newPosOrxValue.x;
             locPosition._y = newPosOrxValue.y;
+        }
+	    else {
+	        locPosition._x = newPosOrxValue;
+	        locPosition._y = yValue;
         }
         this.setNodeDirty();
     },
@@ -671,22 +672,56 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point;
-            locAnchorPoint._y = y;
+        if (y === undefined) {
+	        if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
+		        return;
+	        locAnchorPoint._x = point.x;
+	        locAnchorPoint._y = point.y;
         } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point.x;
-            locAnchorPoint._y = point.y;
+	        if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
+		        return;
+	        locAnchorPoint._x = point;
+	        locAnchorPoint._y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
         locAPP._x = locSize._width * locAnchorPoint._x;
         locAPP._y = locSize._height * locAnchorPoint._y;
         this.setNodeDirty();
     },
+
+	_getAnchor: function() {
+		return this._anchorPoint;
+	},
+	_setAnchor: function(p) {
+		var x = p.x, y = p.y;
+		if(this._anchorPoint._x !== x) {
+			this._anchorPoint._x = x;
+			this._anchorPointInPoints._x = this._contentSize._width * x;
+		}
+		if(this._anchorPoint._y !== y) {
+			this._anchorPoint._y = y;
+			this._anchorPointInPoints._y = this._contentSize._height * y;
+		}
+		this.setNodeDirty();
+	},
+	_getAnchorX: function() {
+		return this._anchorPoint._x;
+	},
+	_setAnchorX: function(x) {
+		if(this._anchorPoint._x === x) return;
+		this._anchorPoint._x = x;
+		this._anchorPointInPoints._x = this._contentSize._width * x;
+		this.setNodeDirty();
+	},
+	_getAnchorY: function() {
+		return this._anchorPoint._y;
+	},
+	_setAnchorY: function(y) {
+		if(this._anchorPoint._y === y) return;
+		this._anchorPoint._y = y;
+		this._anchorPointInPoints._y = this._contentSize._height * y;
+		this.setNodeDirty();
+	},
 
     /**
      *  The anchorPoint in absolute pixels.  <br/>
@@ -698,6 +733,23 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getAnchorPointInPoints:function () {
         return this._anchorPointInPoints;
     },
+
+	_getWidth: function() {
+		return this._contentSize._width;
+	},
+	_setWidth: function(width) {
+		this._contentSize._width = width;
+		this._anchorPointInPoints._x = width * this._anchorPoint._x;
+		this.setNodeDirty();
+	},
+	_getHeight: function() {
+		return this._contentSize._height;
+	},
+	_setHeight: function(height) {
+		this._contentSize._height = height;
+		this._anchorPointInPoints._y = height * this._anchorPoint._y;
+		this.setNodeDirty();
+	},
 
     /**
      * <p>The untransformed size of the node. <br/>
@@ -722,16 +774,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if (arguments.length === 2) {
-            if ((size === locContentSize._width) && (height === locContentSize._height))
-                return;
-            locContentSize._width = size;
-            locContentSize._height = height;
+        if (height === undefined) {
+	        if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
+		        return;
+	        locContentSize._width = size.width;
+	        locContentSize._height = size.height;
         } else {
-            if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
-                return;
-            locContentSize._width = size.width;
-            locContentSize._height = size.height;
+	        if ((size === locContentSize._width) && (height === locContentSize._height))
+		        return;
+	        locContentSize._width = size;
+	        locContentSize._height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
         locAPP._x = locContentSize._width * locAnchorPoint._x;
@@ -2127,174 +2179,125 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     }
 });
 
-var temp = {
-	getWidth: function() {
-		return this._contentSize._width;
-	},
-	setWidth: function(width) {
-		this._contentSize._width = width;
-		this.setNodeDirty();
-	},
-	getHeight: function() {
-		return this._contentSize._height;
-	},
-	setHeight: function(height) {
-		this._contentSize._height = height;
-		this.setNodeDirty();
-	},
-	getAnchor: function() {
-		return this._anchorPoint;
-	},
-	setAnchor: function(p) {
-		var x = p.x, y = p.y;
-		if(this._anchorPoint._x !== x) {
-			this._anchorPoint._x = x;
-			this._anchorPointInPoints._x = this._contentSize._width * x;
-		}
-		if(this._anchorPoint._y !== y) {
-			this._anchorPoint._y = y;
-			this._anchorPointInPoints._y = this._contentSize._height * y;
-		}
-		this.setNodeDirty();
-	},
-	getAnchorX: function() {
-		return this._anchorPoint._x;
-	},
-	setAnchorX: function(x) {
-		if(this._anchorPoint._x === x) return;
-		this._anchorPoint._x = x;
-		this._anchorPointInPoints._x = this._contentSize._width * x;
-		this.setNodeDirty();
-	},
-	getAnchorY: function() {
-		return this._anchorPoint._y;
-	},
-	setAnchorY: function(y) {
-		if(this._anchorPoint._y === y) return;
-		this._anchorPoint._y = y;
-		this._anchorPointInPoints._y = this._contentSize._height * y;
-		this.setNodeDirty();
-	}
-};
-var proto = cc.Node.prototype;
-
-cc.defineGetterSetter(proto, "x", proto.getPositionX, proto.setPositionX);
-cc.defineGetterSetter(proto, "y", proto.getPositionY, proto.setPositionY);
-/** @expose */
-proto.pos;
-cc.defineGetterSetter(proto, "pos", proto.getPosition, proto.setPosition);
-/** @expose */
-proto.width;
-cc.defineGetterSetter(proto, "width", temp.getWidth, temp.setWidth);
-/** @expose */
-proto.height;
-cc.defineGetterSetter(proto, "height", temp.getHeight, temp.setHeight);
-/** @expose */
-proto.size;
-cc.defineGetterSetter(proto, "size", proto.getContentSize, proto.setContentSize);
-/** @expose */
-proto.anchor;
-cc.defineGetterSetter(proto, "anchor", temp.getAnchor, temp.setAnchor);
-/** @expose */
-proto.anchorX;
-cc.defineGetterSetter(proto, "anchorX", temp.getAnchorX, temp.setAnchorX);
-/** @expose */
-proto.anchorY;
-cc.defineGetterSetter(proto, "anchorY", temp.getAnchorY, temp.setAnchorY);
-/** @expose */
-proto.skewX;
-cc.defineGetterSetter(proto, "skewX", proto.getSkewX, proto.setSkewX);
-/** @expose */
-proto.skewY;
-cc.defineGetterSetter(proto, "skewY", proto.getSkewY, proto.getSkewY);
-/** @expose */
-proto.zIndex;
-cc.defineGetterSetter(proto, "zIndex", proto.getZOrder, proto.setZOrder);
-/** @expose */
-proto.vertexZ;
-cc.defineGetterSetter(proto, "vertexZ", proto.getVertexZ, proto.setVertexZ);
-/** @expose */
-proto.rotation;
-cc.defineGetterSetter(proto, "rotation", proto.getRotation, proto.setRotation);
-/** @expose */
-proto.rotationX;
-cc.defineGetterSetter(proto, "rotationX", proto.getRotationX, proto.setRotationX);
-/** @expose */
-proto.rotationY;
-cc.defineGetterSetter(proto, "rotationY", proto.getRotationY, proto.setRotationY);
-/** @expose */
-proto.scale;
-cc.defineGetterSetter(proto, "scale", proto.getScale, proto.setScale);
-/** @expose */
-proto.scaleX;
-cc.defineGetterSetter(proto, "scaleX", proto.getScaleX, proto.setScaleX);
-/** @expose */
-proto.scaleY;
-cc.defineGetterSetter(proto, "scaleY", proto.getScaleY, proto.setScaleY);
-/** @expose */
-proto.children;
-cc.defineGetterSetter(proto, "children", proto.getChildren);
-/** @expose */
-proto.childrenCount;
-cc.defineGetterSetter(proto, "childrenCount", proto.getChildrenCount);
-/** @expose */
-proto.parent;
-cc.defineGetterSetter(proto, "parent", proto.getParent, proto.setParent);
-/** @expose */
-proto.visible;
-cc.defineGetterSetter(proto, "visible", proto.isVisible, proto.setVisible);
-/** @expose */
-proto.running;
-cc.defineGetterSetter(proto, "running", proto.isRunning);
-/** @expose */
-proto.ignoreAnchor;
-cc.defineGetterSetter(proto, "ignoreAnchor", proto.isIgnoreAnchorPointForPosition, proto.ignoreAnchorPointForPosition);
-/** @expose */
-proto.tag;
-cc.defineGetterSetter(proto, "tag", proto.getTag, proto.setTag);
-/** @expose */
-proto.userData;
-cc.defineGetterSetter(proto, "userData", proto.getUserData, proto.setUserData);
-/** @expose */
-proto.userObject;
-cc.defineGetterSetter(proto, "userObject", proto.getUserObject, proto.setUserObject);
-/** @expose */
-proto.arrivalOrder;
-cc.defineGetterSetter(proto, "arrivalOrder", proto.getOrderOfArrival, proto.setOrderOfArrival);
-/** @expose */
-proto.actionManager;
-cc.defineGetterSetter(proto, "actionManager", proto.getActionManager, proto.setActionManager);
-/** @expose */
-proto.scheduler;
-cc.defineGetterSetter(proto, "scheduler", proto.getScheduler, proto.setScheduler);
-//cc.defineGetterSetter(proto, "boundingBox", proto.getBoundingBox);
-/** @expose */
-proto.grid;
-cc.defineGetterSetter(proto, "grid", proto.getGrid, proto.setGrid);
-/** @expose */
-proto.shader;
-cc.defineGetterSetter(proto, "shader", proto.getShaderProgram, proto.setShaderProgram);
-/** @expose */
-proto.glServerState;
-cc.defineGetterSetter(proto, "glServerState", proto.getGLServerState, proto.setGLServerState);
-
-delete temp;
+window._proto = cc.Node.prototype;
 
 if(cc.Browser.supportWebGL){
-    //WebGL
-    cc.Node.prototype.ctor = cc.Node.prototype._ctorForWebGL;
-    cc.Node.prototype.setNodeDirty = cc.Node.prototype._setNodeDirtyForWebGL;
-    cc.Node.prototype.visit = cc.Node.prototype._visitForWebGL;
-    cc.Node.prototype.transform = cc.Node.prototype._transformForWebGL;
-    cc.Node.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
+	//WebGL
+	_proto.ctor = _proto._ctorForWebGL;
+	_proto.setNodeDirty = _proto._setNodeDirtyForWebGL;
+	_proto.visit = _proto._visitForWebGL;
+	_proto.transform = _proto._transformForWebGL;
+	_proto.nodeToParentTransform = _proto._nodeToParentTransformForWebGL;
 }else{
-    //Canvas
-    cc.Node.prototype.ctor = cc.Node.prototype._ctorForCanvas;
-    cc.Node.prototype.setNodeDirty = cc.Node.prototype._setNodeDirtyForCanvas;
-    cc.Node.prototype.visit = cc.Node.prototype._visitForCanvas;
-    cc.Node.prototype.transform = cc.Node.prototype._transformForCanvas;
-    cc.Node.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForCanvas;
+	//Canvas
+	_proto.ctor = _proto._ctorForCanvas;
+	_proto.setNodeDirty = _proto._setNodeDirtyForCanvas;
+	_proto.visit = _proto._visitForCanvas;
+	_proto.transform = _proto._transformForCanvas;
+	_proto.nodeToParentTransform = _proto._nodeToParentTransformForCanvas;
 }
+
+cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
+cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
+/** @expose */
+_proto.pos;
+cc.defineGetterSetter(_proto, "pos", _proto.getPosition, _proto.setPosition);
+/** @expose */
+_proto.width;
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+/** @expose */
+_proto.height;
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+/** @expose */
+_proto.size;
+cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+/** @expose */
+_proto.anchor;
+cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
+/** @expose */
+_proto.anchorX;
+cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
+/** @expose */
+_proto.anchorY;
+cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
+/** @expose */
+_proto.skewX;
+cc.defineGetterSetter(_proto, "skewX", _proto.getSkewX, _proto.setSkewX);
+/** @expose */
+_proto.skewY;
+cc.defineGetterSetter(_proto, "skewY", _proto.getSkewY, _proto.setSkewY);
+/** @expose */
+_proto.zIndex;
+cc.defineGetterSetter(_proto, "zIndex", _proto.getZOrder, _proto.setZOrder);
+/** @expose */
+_proto.vertexZ;
+cc.defineGetterSetter(_proto, "vertexZ", _proto.getVertexZ, _proto.setVertexZ);
+/** @expose */
+_proto.rotation;
+cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
+/** @expose */
+_proto.rotationX;
+cc.defineGetterSetter(_proto, "rotationX", _proto.getRotationX, _proto.setRotationX);
+/** @expose */
+_proto.rotationY;
+cc.defineGetterSetter(_proto, "rotationY", _proto.getRotationY, _proto.setRotationY);
+/** @expose */
+_proto.scale;
+cc.defineGetterSetter(_proto, "scale", _proto.getScale, _proto.setScale);
+/** @expose */
+_proto.scaleX;
+cc.defineGetterSetter(_proto, "scaleX", _proto.getScaleX, _proto.setScaleX);
+/** @expose */
+_proto.scaleY;
+cc.defineGetterSetter(_proto, "scaleY", _proto.getScaleY, _proto.setScaleY);
+/** @expose */
+_proto.children;
+cc.defineGetterSetter(_proto, "children", _proto.getChildren);
+/** @expose */
+_proto.childrenCount;
+cc.defineGetterSetter(_proto, "childrenCount", _proto.getChildrenCount);
+/** @expose */
+_proto.parent;
+cc.defineGetterSetter(_proto, "parent", _proto.getParent, _proto.setParent);
+/** @expose */
+_proto.visible;
+cc.defineGetterSetter(_proto, "visible", _proto.isVisible, _proto.setVisible);
+/** @expose */
+_proto.running;
+cc.defineGetterSetter(_proto, "running", _proto.isRunning);
+/** @expose */
+_proto.ignoreAnchor;
+cc.defineGetterSetter(_proto, "ignoreAnchor", _proto.isIgnoreAnchorPointForPosition, _proto.ignoreAnchorPointForPosition);
+/** @expose */
+_proto.tag;
+cc.defineGetterSetter(_proto, "tag", _proto.getTag, _proto.setTag);
+/** @expose */
+_proto.userData;
+cc.defineGetterSetter(_proto, "userData", _proto.getUserData, _proto.setUserData);
+/** @expose */
+_proto.userObject;
+cc.defineGetterSetter(_proto, "userObject", _proto.getUserObject, _proto.setUserObject);
+/** @expose */
+_proto.arrivalOrder;
+cc.defineGetterSetter(_proto, "arrivalOrder", _proto.getOrderOfArrival, _proto.setOrderOfArrival);
+/** @expose */
+_proto.actionManager;
+cc.defineGetterSetter(_proto, "actionManager", _proto.getActionManager, _proto.setActionManager);
+/** @expose */
+_proto.scheduler;
+cc.defineGetterSetter(_proto, "scheduler", _proto.getScheduler, _proto.setScheduler);
+//cc.defineGetterSetter(_proto, "boundingBox", _proto.getBoundingBox);
+/** @expose */
+_proto.grid;
+cc.defineGetterSetter(_proto, "grid", _proto.getGrid, _proto.setGrid);
+/** @expose */
+_proto.shaderProgram;
+cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
+/** @expose */
+_proto.glServerState;
+cc.defineGetterSetter(_proto, "glServerState", _proto.getGLServerState, _proto.setGLServerState);
+
+delete window._proto;
 
 /**
  * allocates and initializes a node.
@@ -2372,7 +2375,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this._displayedOpacity = this._realOpacity = opacity;
 
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -2418,7 +2421,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     _enableCascadeOpacity:function(){
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -2462,7 +2465,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         locDisplayedColor.b = locRealColor.b = color.b;
 
         var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -2513,7 +2516,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     _enableCascadeColor: function(){
         var parentColor , locParent =  this._parent;
-        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -2562,7 +2565,20 @@ cc.NodeRGBA.create = function () {
     return res;
 };
 
-proto = cc.NodeRGBA.prototype;
-cc.defineGetterSetter(proto, "opacity", proto.getOpacity, proto.setOpacity);
-cc.defineGetterSetter(proto, "cascadeOpacity", proto.isCascadeOpacityEnabled, proto.setCascadeOpacityEnabled);
-cc.defineGetterSetter(proto, "color", proto.getColor, proto.setColor);
+window._proto = cc.NodeRGBA.prototype;
+/** @expose */
+_proto.opacity;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+/** @expose */
+_proto.opacityModifyRGB;
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+/** @expose */
+_proto.cascadeOpacity;
+cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+/** @expose */
+_proto.color;
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+/** @expose */
+_proto.cascadeColor;
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
+delete window._proto;

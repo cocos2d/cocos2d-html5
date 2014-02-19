@@ -350,10 +350,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
      * @param {Number} [height] The untransformed size's height of the Scale9Sprite.
      */
     setContentSize: function (size, height) {
-        if(arguments.length === 2)
-            cc.Node.prototype.setContentSize.call(this, size, height);
-        else
-            cc.Node.prototype.setContentSize.call(this, size);
+	    cc.Node.prototype.setContentSize.call(this, size, height);
         this._positionsAreDirty = true;
     },
 
@@ -370,7 +367,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     },
 
     initWithBatchNode: function (batchNode, rect, rotated, capInsets) {
-        if (arguments.length === 3) {
+        if (capInsets === undefined) {
             capInsets = rotated;
             rotated = false;
         }

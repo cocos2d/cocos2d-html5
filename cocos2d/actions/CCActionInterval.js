@@ -760,7 +760,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
         // Calculate X
-        var locStartAngleX = target.getRotationX() % 360.0;
+        var locStartAngleX = target.rotationX % 360.0;
         var locDiffAngleX = this._dstAngleX - locStartAngleX;
         if (locDiffAngleX > 180)
             locDiffAngleX -= 360;
@@ -770,13 +770,13 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
         this._diffAngleX = locDiffAngleX;
 
         // Calculate Y  It's duplicated from calculating X since the rotation wrap should be the same
-        this._startAngleY = target.getRotationY() % 360.0;
+        this._startAngleY = target.rotationY % 360.0;
         var locDiffAngleY = this._dstAngleY - this._startAngleY;
         if (locDiffAngleY > 180)
             locDiffAngleY -= 360;
         if (locDiffAngleY < -180)
             locDiffAngleY += 360;
-        this._diffAngleY = locDiffAngleY
+        this._diffAngleY = locDiffAngleY;
     },
 
     /**
@@ -791,8 +791,8 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      */
     update:function (time) {
         if (this._target) {
-            this._target.setRotationX(this._startAngleX + this._diffAngleX * time);
-            this._target.setRotationY(this._startAngleY + this._diffAngleY * time);
+            this._target.rotationX = this._startAngleX + this._diffAngleX * time;
+            this._target.rotationY = this._startAngleY + this._diffAngleY * time;
         }
     }
 });
@@ -862,8 +862,8 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startAngleX = target.getRotationX();
-        this._startAngleY = target.getRotationY();
+        this._startAngleX = target.rotationX;
+        this._startAngleY = target.rotationY;
     },
 
     /**
@@ -871,8 +871,8 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      */
     update:function (time) {
         if (this._target) {
-            this._target.setRotationX(this._startAngleX + this._angleX * time);
-            this._target.setRotationY(this._startAngleY + this._angleY * time);
+            this._target.rotationX = this._startAngleX + this._angleX * time;
+            this._target.rotationY = this._startAngleY + this._angleY * time;
         }
     },
 
@@ -952,8 +952,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target.getPositionX();
-        var locPosY = target.getPositionY();
+        var locPosX = target.x;
+        var locPosY = target.y;
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -969,20 +969,19 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
             var y = this._positionDelta.y * time;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target.getPositionX();
-                var targetY = this._target.getPositionY();
+                var targetX = this._target.x;
+                var targetY = this._target.y;
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
                 x = x + locStartPosition.x;
                 y = y + locStartPosition.y;
-
-                this._target.setPosition(x, y);
-                locPreviousPosition.x = x;
-                locPreviousPosition.y = y;
+	            this._target.x = locPreviousPosition.x = x;
+	            this._target.y = locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.x = locStartPosition.x + x;
+	            this._target.y = locStartPosition.y + y;
             }
         }
     },
@@ -1053,8 +1052,8 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     startWithTarget:function (target) {
         cc.MoveBy.prototype.startWithTarget.call(this, target);
-        this._positionDelta.x = this._endPosition.x - target.getPositionX();
-        this._positionDelta.y = this._endPosition.y - target.getPositionY();
+        this._positionDelta.x = this._endPosition.x - target.x;
+        this._positionDelta.y = this._endPosition.y - target.y;
     }
 });
 /**
@@ -1130,14 +1129,14 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
-        this._startSkewX = target.getSkewX() % 180;
+        this._startSkewX = target.skewX % 180;
         this._deltaX = this._endSkewX - this._startSkewX;
         if (this._deltaX > 180)
             this._deltaX -= 360;
         if (this._deltaX < -180)
             this._deltaX += 360;
 
-        this._startSkewY = target.getSkewY() % 360;
+        this._startSkewY = target.skewY % 360;
         this._deltaY = this._endSkewY - this._startSkewY;
         if (this._deltaY > 180)
             this._deltaY -= 360;
@@ -1149,8 +1148,8 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
      * @param {Number} t time in seconds
      */
     update:function (t) {
-        this._target.setSkewX(this._startSkewX + this._deltaX * t);
-        this._target.setSkewY(this._startSkewY + this._deltaY * t);
+        this._target.skewX = this._startSkewX + this._deltaX * t;
+        this._target.skewY = this._startSkewY + this._deltaY * t;
     }
 });
 /**
@@ -1287,8 +1286,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target.getPositionX();
-        var locPosY = target.getPositionY();
+        var locPosX = target.x;
+        var locPosY = target.y;
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -1307,20 +1306,19 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
             var x = this._delta.x * time;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target.getPositionX();
-                var targetY = this._target.getPositionY();
+                var targetX = this._target.x;
+                var targetY = this._target.y;
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
                 x = x + locStartPosition.x;
                 y = y + locStartPosition.y;
-
-                this._target.setPosition(x, y);
-                locPreviousPosition.x = x;
-                locPreviousPosition.y = y;
+	            this._target.x = locPreviousPosition.x = x;
+	            this._target.y = locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.x = locStartPosition.x + x;
+	            this._target.y = locStartPosition.y + y;
             }
         }
     },
@@ -1457,8 +1455,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target.getPositionX();
-        var locPosY = target.getPositionY();
+        var locPosX = target.x;
+        var locPosY = target.y;
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -1486,19 +1484,19 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target.getPositionX();
-                var targetY = this._target.getPositionY();
+                var targetX = this._target.x;
+                var targetY = this._target.y;
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
                 x = x + locStartPosition.x;
                 y = y + locStartPosition.y;
-                this._target.setPosition(x, y);
-                locPreviousPosition.x = x;
-                locPreviousPosition.y = y;
+	            this._target.x = locPreviousPosition.x = x;
+	            this._target.y = locPreviousPosition.y = y;
             } else {
-                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.x = locStartPosition.x + x;
+	            this._target.y = locStartPosition.y + y;
             }
         }
     },
@@ -1655,8 +1653,8 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startScaleX = target.getScaleX();
-        this._startScaleY = target.getScaleY();
+        this._startScaleX = target.scaleX;
+        this._startScaleY = target.scaleY;
         this._deltaX = this._endScaleX - this._startScaleX;
         this._deltaY = this._endScaleY - this._startScaleY;
     },
@@ -1665,8 +1663,10 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      * @param {Number} time
      */
     update:function (time) {
-        if (this._target)
-            this._target.setScale(this._startScaleX + this._deltaX * time, this._startScaleY + this._deltaY * time);
+        if (this._target) {
+            this._target.scaleX = this._startScaleX + this._deltaX * time;
+	        this._target.scaleY = this._startScaleY + this._deltaY * time;
+        }
     }
 });
 /**
@@ -1782,17 +1782,17 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
         if (this._target && !this.isDone()) {
             var slice = 1.0 / this._times;
             var m = time % slice;
-            this._target.setVisible(m > (slice / 2));
+            this._target.visible = (m > (slice / 2));
         }
     },
 
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._originalState = target.isVisible();
+        this._originalState = target.visible;
     },
 
     stop:function () {
-        this._target.setVisible(this._originalState);
+        this._target.visible = this._originalState;
         cc.ActionInterval.prototype.stop.call(this);
     },
 
@@ -1815,99 +1815,6 @@ cc.Blink.create = function (duration, blinks) {
     var blink = new cc.Blink();
     blink.initWithDuration(duration, blinks);
     return blink;
-};
-
-/** Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.<br/>
- * The "reverse" of this action is FadeOut
- * @class
- * @extends cc.ActionInterval
- */
-cc.FadeIn = cc.ActionInterval.extend(/** @lends cc.FadeIn# */{
-    /**
-     * @param {Number} time time in seconds
-     */
-    update:function (time) {
-        if (this._target.RGBAProtocol) {
-            this._target.setOpacity(255 * time);
-        }
-    },
-
-    /**
-     * @return {cc.ActionInterval}
-     */
-    reverse:function () {
-        return cc.FadeOut.create(this._duration);
-    },
-
-    /**
-     * returns a new clone of the action
-     * @returns {cc.FadeIn}
-     */
-    clone:function () {
-        var action = new cc.FadeIn();
-        action.initWithDuration(this._duration);
-        return action;
-    }
-});
-
-/**
- * @param {Number} duration duration in seconds
- * @return {cc.FadeIn}
- * @example
- * //example
- * var action = cc.FadeIn.create(1.0);
- */
-cc.FadeIn.create = function (duration) {
-    var action = new cc.FadeIn();
-    action.initWithDuration(duration);
-    return action;
-};
-
-
-/** Fades Out an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 255 to 0.
- * The "reverse" of this action is FadeIn
- * @class
- * @extends cc.ActionInterval
- */
-cc.FadeOut = cc.ActionInterval.extend(/** @lends cc.FadeOut# */{
-    /**
-     * @param {Number} time  time in seconds
-     */
-    update:function (time) {
-        if (this._target.RGBAProtocol) {
-            this._target.setOpacity(255 * (1 - time));
-        }
-    },
-
-    /**
-     * @return {cc.ActionInterval}
-     */
-    reverse:function () {
-        return cc.FadeIn.create(this._duration);
-    },
-
-    /**
-     * returns a new clone of the action
-     * @returns {cc.FadeOut}
-     */
-    clone:function () {
-        var action = new cc.FadeOut();
-        action.initWithDuration(this._duration);
-        return action;
-    }
-});
-
-/**
- * @param {Number} d  duration in seconds
- * @return {cc.FadeOut}
- * @example
- * // example
- * var action = cc.FadeOut.create(1.0);
- */
-cc.FadeOut.create = function (d) {
-    var action = new cc.FadeOut();
-    action.initWithDuration(d);
-    return action;
 };
 
 /** Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
@@ -1953,7 +1860,8 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      */
     update:function (time) {
         if (this._target.RGBAProtocol) {
-            this._target.setOpacity((this._fromOpacity + (this._toOpacity - this._fromOpacity) * time));
+            var fromOpacity = this._fromOpacity;
+            this._target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
         }
     },
 
@@ -1963,7 +1871,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         if(this._target.RGBAProtocol){
-            this._fromOpacity = target.getOpacity();
+            this._fromOpacity = target.opacity;
         }
     }
 });
@@ -1980,6 +1888,99 @@ cc.FadeTo.create = function (duration, opacity) {
     var fadeTo = new cc.FadeTo();
     fadeTo.initWithDuration(duration, opacity);
     return fadeTo;
+};
+
+/** Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.<br/>
+ * The "reverse" of this action is FadeOut
+ * @class
+ * @extends cc.FadeTo
+ */
+cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
+    _reverseAction: null,
+    /**
+     * @return {cc.ActionInterval}
+     */
+    reverse:function () {
+        var action = new cc.FadeOut();
+        action.initWithDuration(this._duration, 0);
+        return action;
+    },
+
+    /**
+     * returns a new clone of the action
+     * @returns {cc.FadeIn}
+     */
+    clone:function () {
+        var action = new cc.FadeIn();
+        action.initWithDuration(this._duration, this._toOpacity);
+        return action;
+    },
+
+    /**
+     * @param {cc.Sprite} target
+     */
+    startWithTarget:function (target) {
+        if(this._reverseAction)
+            this._toOpacity = this._reverseAction._fromOpacity;
+        cc.FadeTo.prototype.startWithTarget.call(this, target);
+    }
+});
+
+/**
+ * @param {Number} duration duration in seconds
+ * @param {Number} [toOpacity] to opacity
+ * @return {cc.FadeIn}
+ * @example
+ * //example
+ * var action = cc.FadeIn.create(1.0);
+ */
+cc.FadeIn.create = function (duration, toOpacity) {
+    if(toOpacity == null)
+        toOpacity = 255;
+    var action = new cc.FadeIn();
+    action.initWithDuration(duration, toOpacity);
+    return action;
+};
+
+
+/** Fades Out an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 255 to 0.
+ * The "reverse" of this action is FadeIn
+ * @class
+ * @extends cc.FadeTo
+ */
+cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
+    /**
+     * @return {cc.ActionInterval}
+     */
+    reverse:function () {
+        var action = new cc.FadeIn();
+        action._reverseAction = this;
+        action.initWithDuration(this._duration, 255);
+        return action;
+    },
+
+    /**
+     * returns a new clone of the action
+     * @returns {cc.FadeOut}
+     */
+    clone:function () {
+        var action = new cc.FadeOut();
+        action.initWithDuration(this._duration, this._toOpacity);
+        return action;
+    }
+});
+
+/**
+ * @param {Number} d  duration in seconds
+ * @return {cc.FadeOut}
+ * @example
+ * // example
+ * var action = cc.FadeOut.create(1.0);
+ */
+cc.FadeOut.create = function (d) {
+    var action = new cc.FadeOut();
+    action.initWithDuration(d, 0);
+    return action;
 };
 
 /** Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
@@ -2029,7 +2030,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         if (this._target.RGBAProtocol) {
-            this._from = this._target.getColor();
+            this._from = this._target.color;
         }
     },
 
@@ -2039,8 +2040,9 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     update:function (time) {
         var locFrom = this._from, locTo = this._to;
         if (this._target.RGBAProtocol) {
-            this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
-                (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+            this._target.color = cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
+                                        locFrom.g + (locTo.g - locFrom.g) * time,
+	                                    locFrom.b + (locTo.b - locFrom.b) * time);
         }
     }
 });
@@ -2118,7 +2120,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         if (target.RGBAProtocol) {
-            var color = target.getColor();
+            var color = target.color;
             this._fromR = color.r;
             this._fromG = color.g;
             this._fromB = color.b;
@@ -2130,9 +2132,9 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      */
     update:function (time) {
         if (this._target.RGBAProtocol) {
-            this._target.setColor(cc.c3b((this._fromR + this._deltaR * time),
-                (this._fromG + this._deltaG * time),
-                (this._fromB + this._deltaB * time)));
+            this._target.color = cc.c3b(this._fromR + this._deltaR * time,
+                                        this._fromG + this._deltaG * time,
+                                        this._fromB + this._deltaB * time);
         }
     },
 

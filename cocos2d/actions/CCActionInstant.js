@@ -70,7 +70,7 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setVisible(true);
+        this._target.visible = true;
     },
 
     /**
@@ -104,7 +104,7 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setVisible(false);
+        this._target.visible = false;
     },
 
     /**
@@ -138,7 +138,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setVisible(!this._target.isVisible());
+        this._target.visible = !this._target.visible;
     },
 
     /**
@@ -221,7 +221,7 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setFlippedX(this._flippedX);
+        this._target.flipX = this._flippedX;
     },
 
     /**
@@ -275,7 +275,7 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
      */
     update:function (time) {
         //this._super();
-        this._target.setFlippedY(this._flippedY);
+        this._target.flipY = this._flippedY;
     },
 
     /**
@@ -331,7 +331,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setPosition(this._position);
+        this._target.pos = this._position;
     },
 
     clone:function(){
@@ -466,7 +466,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
  */
 cc.CallFunc.create = function (selector, selectorTarget, data) {
     var ret = new cc.CallFunc();
-    if(arguments.length == 1){
+    if(selectorTarget === undefined){
         if (ret && ret.initWithFunction(selector)) {
             return ret;
         }

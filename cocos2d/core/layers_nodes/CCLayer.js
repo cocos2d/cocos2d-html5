@@ -116,8 +116,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._mousePriority = priority;
             // Update touch priority with handler
             if (this._isMouseEnabled) {
-                this.setMouseEnabled(false);
-                this.setMouseEnabled(true);
+                this.mouseEnabled = false;
+                this.mouseEnabled = true;
             }
         }
     },
@@ -172,8 +172,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchPriority = priority;
             // Update touch priority with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+	            this.touchEnabled = false;
+	            this.touchEnabled = true;
             }
         }
     },
@@ -193,8 +193,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchMode = mode;
             // update the mode with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+                this.touchEnabled = false;
+                this.touchEnabled = true;
             }
         }
     },
@@ -552,6 +552,19 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     }
 });
 
+window._proto = cc.Layer.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "mouseEnabled", _proto.isMouseEnabled, _proto.setMouseEnabled);
+cc.defineGetterSetter(_proto, "mousePriority", _proto.getMousePriority, _proto.setMousePriority);
+cc.defineGetterSetter(_proto, "touchEnabled", _proto.isTouchEnabled, _proto.setTouchEnabled);
+cc.defineGetterSetter(_proto, "touchPriority", _proto.getTouchPriority, _proto.setTouchPriority);
+cc.defineGetterSetter(_proto, "touchMode", _proto.getTouchMode, _proto.setTouchMode);
+cc.defineGetterSetter(_proto, "accelerometerEnabled", _proto.isAccelerometerEnabled, _proto.setAccelerometerEnabled);
+cc.defineGetterSetter(_proto, "keyboardEnabled", _proto.isKeyboardEnabled, _proto.setKeyboardEnabled);
+
+delete window._proto;
+
 /**
  * creates a layer
  * @example
@@ -599,8 +612,8 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     init: function () {
         if(cc.Layer.prototype.init.call(this)){
-            this.setCascadeOpacityEnabled(false);
-            this.setCascadeColorEnabled(false);
+            this.cascadeOpacity = false;
+            this.cascadeColor = false;
             return true;
         }
         return false;
@@ -630,7 +643,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this._displayedOpacity = this._realOpacity = opacity;
 
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -677,7 +690,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     _enableCascadeOpacity:function(){
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -721,7 +734,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayed.b = locRealColor.b = color.b;
 
         var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -772,7 +785,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     _enableCascadeColor: function(){
         var parentColor , locParent =  this._parent;
-        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.white();
@@ -817,6 +830,14 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
+window._proto = cc.LayerRGBA.prototype;
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
+delete window._proto;
+
 /**
  * <p>
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
@@ -840,27 +861,31 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     /**
      * change width and height in Points
+     * @deprecated
      * @param {Number} w width
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(w, h);
+        this.width = w;
+	    this.height = h;
     },
 
     /**
      * change width in Points
+     * @deprecated
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(w, this._contentSize._height);
+        this.width = w;
     },
 
     /**
      * change height in Points
+     * @deprecated
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(this._contentSize._width, h);
+        this.height = h;
     },
 
     /**
@@ -928,7 +953,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -947,12 +972,12 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             return false;
 
         if(cc.renderContextType !== cc.CANVAS)
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         var winSize = cc.Director.getInstance().getWinSize();
         color = color || new cc.Color4B(0, 0, 0, 255);
-        width = width || winSize.width;
-        height = height || winSize.height;
+	    this.width = width || winSize.width;
+        this.height = height || winSize.height;
 
         var locDisplayedColor = this._displayedColor;
         locDisplayedColor.r = color.r;
@@ -967,7 +992,6 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         this._displayedOpacity = color.a;
         this._realOpacity = color.a;
 
-        this.setContentSize(width, height);
         this._updateColor();
         return true;
     },
@@ -982,22 +1006,36 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     _setContentSizeForWebGL:function (size, height) {
         var locSquareVertices = this._squareVertices;
-        if(arguments.length === 2){
-            locSquareVertices[1].x = size;
-            locSquareVertices[2].y = height;
-            locSquareVertices[3].x = size;
-            locSquareVertices[3].y = height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size, height);
-        }else{
-            locSquareVertices[1].x = size.width;
-            locSquareVertices[2].y = size.height;
-            locSquareVertices[3].x = size.width;
-            locSquareVertices[3].y = size.height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size);
+
+        if (height === undefined) {
+	        locSquareVertices[1].x = size.width;
+	        locSquareVertices[2].y = size.height;
+	        locSquareVertices[3].x = size.width;
+	        locSquareVertices[3].y = size.height;
+        } else {
+	        locSquareVertices[1].x = size;
+	        locSquareVertices[2].y = height;
+	        locSquareVertices[3].x = size;
+	        locSquareVertices[3].y = height;
         }
+	    this._bindLayerVerticesBufferData();
+	    cc.Layer.prototype.setContentSize.call(this, size, height);
     },
+
+	_setWidthForWebGL:function (width) {
+		var locSquareVertices = this._squareVertices;
+		locSquareVertices[1].x = width;
+		locSquareVertices[3].x = width;
+		this._bindLayerVerticesBufferData();
+		cc.Layer.prototype._setWidth.call(this, width);
+	},
+	_setHeightForWebGL:function (height) {
+		var locSquareVertices = this._squareVertices;
+		locSquareVertices[2].y = height;
+		locSquareVertices[3].y = height;
+		this._bindLayerVerticesBufferData();
+		cc.Layer.prototype._setHeight.call(this, height);
+	},
 
     _updateColor:null,
 
@@ -1047,13 +1085,12 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        var locContentSize = this.getContentSize(), locEGLViewer = cc.EGLView.getInstance();
-
+        var locEGLViewer = cc.EGLView.getInstance();
         var locDisplayedColor = this._displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
             + (0 | locDisplayedColor.b) + "," + this._displayedOpacity / 255 + ")";
-        context.fillRect(0, 0, locContentSize.width * locEGLViewer.getScaleX(), -locContentSize.height * locEGLViewer.getScaleY());
+        context.fillRect(0, 0, this.width * locEGLViewer.getScaleX(), -this.height * locEGLViewer.getScaleY());
 
         cc.g_NumberOfDraws++;
     },
@@ -1078,18 +1115,31 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     }
 });
 
+window._proto = cc.LayerColor.prototype;
 if(cc.Browser.supportWebGL){
-    cc.LayerColor.prototype.ctor = cc.LayerColor.prototype._ctorForWebGL;
-    cc.LayerColor.prototype.setContentSize = cc.LayerColor.prototype._setContentSizeForWebGL;
-    cc.LayerColor.prototype._updateColor = cc.LayerColor.prototype._updateColorForWebGL;
-    cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForWebGL;
+    _proto.ctor = _proto._ctorForWebGL;
+    _proto.setContentSize = _proto._setContentSizeForWebGL;
+	_proto._setWidth = _proto._setWidthForWebGL;
+	_proto._setHeight = _proto._setHeightForWebGL;
+    _proto._updateColor = _proto._updateColorForWebGL;
+    _proto.draw = _proto._drawForWebGL;
 } else {
-    cc.LayerColor.prototype.ctor = cc.LayerColor.prototype._ctorForCanvas;
-    cc.LayerColor.prototype.setContentSize = cc.LayerRGBA.prototype.setContentSize;
-    cc.LayerColor.prototype._updateColor = cc.LayerColor.prototype._updateColorForCanvas;
-    cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForCanvas;
+    _proto.ctor = _proto._ctorForCanvas;
+    _proto.setContentSize = cc.LayerRGBA.prototype.setContentSize;
+	_proto._setWidth = cc.LayerRGBA.prototype._setWidth;
+	_proto._setHeight = cc.LayerRGBA.prototype._setHeight;
+    _proto._updateColor = _proto._updateColorForCanvas;
+    _proto.draw = _proto._drawForCanvas;
 }
 
+cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+
+delete window._proto;
 
 /**
  * creates a cc.Layer with color, width and height in Points
@@ -1180,12 +1230,18 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-        if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this, size, height);
-        else
-            cc.LayerColor.prototype.setContentSize.call(this, size);
+	    cc.LayerColor.prototype.setContentSize.call(this,size, height);
         this._updateColor();
     },
+
+	_setWidth:function(width){
+		cc.LayerColor.prototype._setWidth.call(this, width);
+		this._updateColor();
+	},
+	_setHeight:function(height){
+		cc.LayerColor.prototype._setHeight.call(this, height);
+		this._updateColor();
+	},
 
     /**
      * get the starting color
@@ -1204,7 +1260,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
-        this.setColor(color);
+        this.color = color;
     },
 
     /**
@@ -1336,8 +1392,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         context.save();
         var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
-        var tWidth = this.getContentSize().width * locEGLViewer.getScaleX();
-        var tHeight = this.getContentSize().height * locEGLViewer.getScaleY();
+        var tWidth = this.width * locEGLViewer.getScaleX();
+        var tHeight = this.height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
             this._gradientEndPoint.x, this._gradientEndPoint.y);
         var locDisplayedColor = this._displayedColor;
@@ -1357,8 +1413,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _updateColor:function () {
         var locAlongVector = this._alongVector;
         if (cc.renderContextType === cc.CANVAS) {
-            var tWidth = this.getContentSize().width * 0.5;
-            var tHeight = this.getContentSize().height * 0.5;
+            var tWidth = this.width * 0.5;
+            var tHeight = this.height * 0.5;
 
             this._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
             this._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;
@@ -1410,6 +1466,22 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         }
     }
 });
+
+window._proto = cc.LayerGradient.prototype;
+
+cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "startColor", _proto.getStartColor, _proto.setStartColor);
+cc.defineGetterSetter(_proto, "endColor", _proto.getEndColor, _proto.setEndColor);
+cc.defineGetterSetter(_proto, "startOpacity", _proto.getStartOpacity, _proto.setStartOpacity);
+cc.defineGetterSetter(_proto, "endOpacity", _proto.getEndOpacity, _proto.setEndOpacity);
+cc.defineGetterSetter(_proto, "vector", _proto.getVector, _proto.setVector);
+cc.defineGetterSetter(_proto, "compresseInterpolation", _proto.isCompressedInterpolation, _proto.setCompressedInterpolation);
+
+delete window._proto;
 
 /**
  * creates a gradient layer

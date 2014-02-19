@@ -876,14 +876,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._accumDt += this._deltaTime;
         if (this._FPSLabel && this._SPFLabel && this._drawsLabel) {
             if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
-                this._SPFLabel.setString(this._secondsPerFrame.toFixed(3));
+                this._SPFLabel.string = this._secondsPerFrame.toFixed(3);
 
                 this._frameRate = this._frames / this._accumDt;
                 this._frames = 0;
                 this._accumDt = 0;
 
-                this._FPSLabel.setString(this._frameRate.toFixed(1));
-                this._drawsLabel.setString((0 | cc.g_NumberOfDraws).toString());
+                this._FPSLabel.string = this._frameRate.toFixed(1);
+                this._drawsLabel.string = (0 | cc.g_NumberOfDraws).toString();
             }
             this._FPSLabel.visit();
             this._SPFLabel.visit();
@@ -1138,25 +1138,25 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         var tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("00.0", texture, 12, 32 , '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._FPSLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("0.000", texture, 12, 32, '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._SPFLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("000", texture, 12, 32, '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(cc.pAdd(cc.p(0, 34 * factor), locStatsPosition));
-        this._SPFLabel.setPosition(cc.pAdd(cc.p(0, 17 * factor), locStatsPosition));
-        this._FPSLabel.setPosition(locStatsPosition);
+        this._drawsLabel.pos = cc.pAdd(cc.p(0, 34 * factor), locStatsPosition);
+        this._SPFLabel.pos = cc.pAdd(cc.p(0, 17 * factor), locStatsPosition);
+        this._FPSLabel.pos = locStatsPosition;
     },
 
     _createStatsLabelForCanvas:function(){
@@ -1171,12 +1171,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        var contentSize = this._drawsLabel.getContentSize();
-        this._drawsLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height * 5 / 2), locStatsPosition));
-        contentSize = this._SPFLabel.getContentSize();
-        this._SPFLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height * 3 / 2), locStatsPosition));
-        contentSize = this._FPSLabel.getContentSize();
-        this._FPSLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height / 2), locStatsPosition));
+        this._drawsLabel.pos = cc.pAdd(cc.p(this._drawsLabel.width / 2, this._drawsLabel.height * 5 / 2), locStatsPosition);
+        this._SPFLabel.pos = cc.pAdd(cc.p(this._SPFLabel.width / 2, this._SPFLabel.height * 3 / 2), locStatsPosition);
+        this._FPSLabel.pos = cc.pAdd(cc.p(this._FPSLabel.width / 2, this._FPSLabel.height / 2), locStatsPosition);
     },
 
     _calculateMPF: function () {

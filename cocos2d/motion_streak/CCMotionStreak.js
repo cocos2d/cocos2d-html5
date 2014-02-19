@@ -35,13 +35,19 @@
  * is vertically aligned along the streak segment.
  * @class
  * @extends cc.NodeRGBA
+ *
+ * @property {cc.Texture2D}  texture    - Texture used for the motion streak.
  */
 cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
+	/**
+	 * @public
+	 * texture used for the motion streak
+	 */
+	texture:null,
+
     _fastMode:false,
     _startingPositionInitialized:false,
 
-    /** texture used for the motion streak */
-    _texture:null,
     _blendFunc:null,
     _positionR:null,
 
@@ -78,7 +84,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._fastMode = false;
         this._startingPositionInitialized = false;
 
-        this._texture = null;
+        this.texture = null;
 
         this._stroke = 0;
         this._fadeDelta = 0;
@@ -106,15 +112,15 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @return {cc.Texture2D}
      */
     getTexture:function () {
-        return this._texture;
+        return this.texture;
     },
 
     /**
      * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
-        if (this._texture != texture)
-            this._texture = texture;
+        if (this.texture != texture)
+            this.texture = texture;
     },
 
     /**
@@ -129,9 +135,9 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             this._blendFunc = src;
-        } else if (arguments.length == 2) {
+        } else {
             this._blendFunc.src = src;
             this._blendFunc.dst = dst;
         }
@@ -233,10 +239,10 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
 
         // shader program
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
-        this.setTexture(texture);
-        this.setColor(color);
+        this.texture = texture;
+        this.color = color;
         this.scheduleUpdate();
 
         //bind buffer
@@ -252,17 +258,17 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 
     /**
      * color used for the tint
-     * @param {cc.Color3B} colors
+     * @param {cc.Color3B} color
      */
-    tintWithColor:function (colors) {
-        this.setColor(colors);
+    tintWithColor:function (color) {
+        this.color = color;
 
         // Fast assignation
         var locColorPointer = this._colorPointer;
         for (var i = 0, len = this._nuPoints * 2; i < len; i++) {
-            locColorPointer[i * 4] = colors.r;
-            locColorPointer[i * 4 + 1] = colors.g;
-            locColorPointer[i * 4 + 2] = colors.b;
+            locColorPointer[i * 4] = color.r;
+            locColorPointer[i * 4 + 1] = color.g;
+            locColorPointer[i * 4 + 2] = color.b;
         }
     },
 
@@ -279,7 +285,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      */
     setPosition:function (position, yValue) {
         this._startingPositionInitialized = true;
-        if(arguments.length === 1){
+        if(yValue === undefined){
             this._positionR._x = position.x;
             this._positionR._y = position.y;
         } else {
@@ -296,13 +302,13 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         if (this._nuPoints <= 1)
             return;
 
-        if(this._texture && this._texture.isLoaded()){
+        if(this.texture && this.texture.isLoaded()){
             ctx = ctx || cc.renderContext;
             cc.NODE_DRAW_SETUP(this);
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
-            cc.glBindTexture2D(this._texture);
+            cc.glBindTexture2D(this.texture);
 
             //position
             ctx.bindBuffer(ctx.ARRAY_BUFFER, this._verticesBuffer);
@@ -448,6 +454,16 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._nuPoints = locNuPoints;
     }
 });
+
+window._proto = cc.MotionStreak.prototype;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+
+/** @expose */
+_proto.blendFunc;
+cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
+
+delete window._proto;
 
 /**
  * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture

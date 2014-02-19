@@ -432,8 +432,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var high = pointRect.height;
 
         if (this._texture) {
-            wide = this._texture.getPixelsWide();
-            high = this._texture.getPixelsHigh();
+            wide = this._texture.pixelsWidth;
+            high = this._texture.pixelsHeight;
         }
 
         if(cc.renderContextType === cc.CANVAS)
@@ -460,7 +460,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var quads;
         var start = 0, end = 0;
         if (this._batchNode) {
-            quads = this._batchNode.getTextureAtlas().getQuads();
+            quads = this._batchNode.textureAtlas.quads;
             start = this._atlasIndex;
             end = this._atlasIndex + this._totalParticles;
         } else {
@@ -525,7 +525,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             } else if (!oldBatch) {
                 // OLD: was it self render cleanup  ?
                 // copy current state to batch
-                this._batchNode.getTextureAtlas()._copyQuadsToTextureAtlas(this._quads, this._atlasIndex);
+                this._batchNode.textureAtlas._copyQuadsToTextureAtlas(this._quads, this._atlasIndex);
 
                 //delete buffer
                 cc.renderContext.deleteBuffer(this._buffersVBO[1]);     //where is re-bindBuffer code?
@@ -1296,8 +1296,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
             //set the texture coord
             if(this._texture){
-                var size = this._texture.getContentSize();
-                this.initTexCoordsWithRect(cc.rect(0, 0, size.width, size.height));
+                this.initTexCoordsWithRect(cc.rect(0, 0, this._texture.width, this._texture.height));
             }
         } else
             this._totalParticles = tp;
@@ -1318,14 +1317,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setTexture:function (texture) {
         if(texture.isLoaded()){
-            var  size = texture.getContentSize();
-            this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
+            this.setTextureWithRect(texture, cc.rect(0, 0, texture.width, texture.height));
         } else {
             this._textureLoaded = false;
             texture.addLoadedEventListener(function(sender){
                 this._textureLoaded = true;
-                var  size = sender.getContentSize();
-                this.setTextureWithRect(sender, cc.rect(0, 0, size.width, size.height));
+                this.setTextureWithRect(sender, cc.rect(0, 0, sender.width, sender.height));
             }, this);
         }
     },
@@ -1345,7 +1342,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             if (this._blendFunc != src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();
@@ -1362,7 +1359,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * does the alpha value modify color getter
      * @return {Boolean}
      */
-    getOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
         return this._opacityModifyRGB;
     },
 
@@ -1747,7 +1744,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             //else
             this._setupVBO();
 
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         }
 
         return true;
@@ -1935,9 +1932,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     updateQuadWithParticle:function (particle, newPosition) {
         var quad = null;
         if (this._batchNode) {
-            var batchQuads = this._batchNode.getTextureAtlas().getQuads();
+            var batchQuads = this._batchNode.textureAtlas.quads;
             quad = batchQuads[this._atlasIndex + particle.atlasIndex];
-            this._batchNode.getTextureAtlas()._dirty = true;
+            this._batchNode.textureAtlas.dirty = true;
         } else
             quad = this._quads[this._particleIdx];
 
@@ -2645,6 +2642,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         return true;
     }
 });
+
+window._proto = cc.ParticleSystem.prototype;
+cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
+cc.defineGetterSetter(_proto, "scale", _proto.getScale, _proto.setScale);
+cc.defineGetterSetter(_proto, "scaleX", _proto.getScaleX, _proto.setScaleX);
+cc.defineGetterSetter(_proto, "scaleY", _proto.getScaleY, _proto.setScaleY);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+delete window._proto;
 
 /**
  * <p> return the string found by key in dict. <br/>

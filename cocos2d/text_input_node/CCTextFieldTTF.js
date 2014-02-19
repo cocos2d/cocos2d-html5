@@ -228,12 +228,12 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         }
 
         // draw placeholder
-        var color = this.getColor();
-        this.setColor(this._ColorSpaceHolder);
+        var color = this.color;
+        this.color = this._ColorSpaceHolder;
         if(cc.renderContextType === cc.CANVAS)
             this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
-        this.setColor(color);
+        this.color = color;
     },
 
     //////////////////////////////////////////////////////////////////////////
@@ -307,7 +307,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
 
         // set new input text
         var sText = this._inputText.substring(0, strLen - deleteLen);
-        this.setString(sText);
+        this.string = sText;
     },
 
     /**
@@ -338,7 +338,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
 
             var sText = this._inputText + sInsert;
             this._charCount = sText.length;
-            this.setString(sText);
+            this.string = sText;
         }
 
         if (pos == -1)
@@ -370,6 +370,10 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     keyboardDidHide:function (info) {
     }
 });
+
+window._proto = cc.TextFieldTTF.prototype;
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+delete window._proto;
 
 /**
  *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size

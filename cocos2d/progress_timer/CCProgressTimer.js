@@ -219,7 +219,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Color3B} color
      */
     setColor:function (color) {
-        this._sprite.setColor(color);
+        this._sprite.color = color;
         this._updateColor();
     },
 
@@ -228,7 +228,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @param {Number} opacity
      */
     setOpacity:function (opacity) {
-        this._sprite.setOpacity(opacity);
+        this._sprite.opacity = opacity;
         this._updateColor();
     },
 
@@ -237,7 +237,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @return {cc.Color3B}
      */
     getColor:function () {
-        return this._sprite.getColor();
+        return this._sprite.color;
     },
 
     /**
@@ -245,7 +245,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @return {Number}
      */
     getOpacity:function () {
-        return this._sprite.getOpacity();
+        return this._sprite.opacity;
     },
 
     /**
@@ -277,14 +277,14 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = this._sprite.getContentSize();
+            this.size = this._sprite.size;
         }
     },
 
     _setSpriteForWebGL:function (sprite) {
         if (sprite && this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = sprite.getContentSize();
+            this.size = sprite.size;
 
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
@@ -349,12 +349,12 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!locSprite) {
             return {u:0, v:0}; //new cc.Tex2F(0, 0);
         }
-        var quad = locSprite.getQuad();
+        var quad = locSprite.quad;
         var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
         var max = cc.p(quad.tr.texCoords.u, quad.tr.texCoords.v);
 
         //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
-        if (locSprite.isTextureRectRotated()) {
+        if (locSprite.textureRectRotated) {
             var temp = alpha.x;
             alpha.x = alpha.y;
             alpha.y = temp;
@@ -366,7 +366,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!this._sprite) {
             return {x: 0, y: 0};
         }
-        var quad = this._sprite.getQuad();
+        var quad = this._sprite.quad;
         var min = cc.p(quad.bl.vertices.x, quad.bl.vertices.y);
         var max = cc.p(quad.tr.vertices.x, quad.tr.vertices.y);
         return {x: min.x * (1 - alpha.x) + max.x * alpha.x, y: min.y * (1 - alpha.y) + max.y * alpha.y};
@@ -408,7 +408,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this.setSprite(sprite);
 
         //shader program
-        this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -476,7 +476,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
         } else if (locContentSize.width !== 0) {
-            var curColor = this.getColor();
+            var curColor = this.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
             context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }
@@ -496,10 +496,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-        if (this._sprite.getTexture())
-            cc.glBindTexture2D(this._sprite.getTexture());
-        else
-            cc.glBindTexture2D(null);
+        cc.glBindTexture2D(this._sprite.texture);
 
         context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
         if(this._vertexDataDirty){
@@ -780,7 +777,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!this._sprite || !this._vertexData)
             return;
 
-        var sc = this._sprite.getQuad().tl.colors;
+        var sc = this._sprite.quad.tl.colors;
         var locVertexData = this._vertexData;
         for (var i = 0, len = this._vertexDataCount; i < len; ++i)
             locVertexData[i].colors = sc;
@@ -791,7 +788,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _updateProgressForCanvas:function () {
         var locSprite = this._sprite;
-        var spriteSize = locSprite.getContentSize();
+        var spriteSize = locSprite.size;
         var locMidPoint = this._midPoint;
 
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
@@ -889,25 +886,31 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     }
 });
 
+window._proto = cc.ProgressTimer.prototype;
 if(cc.Browser.supportWebGL) {
-    cc.ProgressTimer.prototype.ctor = cc.ProgressTimer.prototype._ctorForWebGL;
-    cc.ProgressTimer.prototype.setReverseProgress = cc.ProgressTimer.prototype._setReverseProgressForWebGL;
-    cc.ProgressTimer.prototype.setSprite = cc.ProgressTimer.prototype._setSpriteForWebGL;
-    cc.ProgressTimer.prototype.setType = cc.ProgressTimer.prototype._setTypeForWebGL;
-    cc.ProgressTimer.prototype.setReverseDirection = cc.ProgressTimer.prototype._setReverseDirectionForWebGL;
-    cc.ProgressTimer.prototype.initWithSprite = cc.ProgressTimer.prototype._initWithSpriteForWebGL;
-    cc.ProgressTimer.prototype.draw = cc.ProgressTimer.prototype._drawForWebGL;
-    cc.ProgressTimer.prototype._updateProgress = cc.ProgressTimer.prototype._updateProgressForWebGL;
+    _proto.ctor = _proto._ctorForWebGL;
+    _proto.setReverseProgress = _proto._setReverseProgressForWebGL;
+    _proto.setSprite = _proto._setSpriteForWebGL;
+    _proto.setType = _proto._setTypeForWebGL;
+    _proto.setReverseDirection = _proto._setReverseDirectionForWebGL;
+    _proto.initWithSprite = _proto._initWithSpriteForWebGL;
+    _proto.draw = _proto._drawForWebGL;
+    _proto._updateProgress = _proto._updateProgressForWebGL;
 } else {
-    cc.ProgressTimer.prototype.ctor = cc.ProgressTimer.prototype._ctorForCanvas;
-    cc.ProgressTimer.prototype.setReverseProgress = cc.ProgressTimer.prototype._setReverseProgressForCanvas;
-    cc.ProgressTimer.prototype.setSprite = cc.ProgressTimer.prototype._setSpriteForCanvas;
-    cc.ProgressTimer.prototype.setType = cc.ProgressTimer.prototype._setTypeForCanvas;
-    cc.ProgressTimer.prototype.setReverseDirection = cc.ProgressTimer.prototype._setReverseDirectionForCanvas;
-    cc.ProgressTimer.prototype.initWithSprite = cc.ProgressTimer.prototype._initWithSpriteForCanvas;
-    cc.ProgressTimer.prototype.draw = cc.ProgressTimer.prototype._drawForCanvas;
-    cc.ProgressTimer.prototype._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
+    _proto.ctor = _proto._ctorForCanvas;
+    _proto.setReverseProgress = _proto._setReverseProgressForCanvas;
+    _proto.setSprite = _proto._setSpriteForCanvas;
+    _proto.setType = _proto._setTypeForCanvas;
+    _proto.setReverseDirection = _proto._setReverseDirectionForCanvas;
+    _proto.initWithSprite = _proto._initWithSpriteForCanvas;
+    _proto.draw = _proto._drawForCanvas;
+    _proto._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
 }
+
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+delete window._proto;
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage

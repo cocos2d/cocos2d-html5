@@ -121,15 +121,24 @@
         },
 
         setPosition:function (newPosOrxValue, yValue) {
-            if(arguments.length==2){
-                this._body.p.x = newPosOrxValue;
-                this._body.p.y = yValue;
-            }else{
-                this._body.p.x = newPosOrxValue.x;
-                this._body.p.y = newPosOrxValue.y;
+            if (yValue === undefined) {
+	            this._body.p.x = newPosOrxValue.x;
+	            this._body.p.y = newPosOrxValue.y;
+            } else {
+	            this._body.p.x = newPosOrxValue;
+	            this._body.p.y = yValue;
             }
             //this._syncPosition();
         },
+	    setPositionX:function (xValue) {
+		    this._body.p.x = xValue;
+		    //this._syncPosition();
+	    },
+	    setPositionY:function (yValue) {
+		    this._body.p.y = yValue;
+		    //this._syncPosition();
+	    },
+
         _syncPosition:function () {
             var locPosition = this._position, locBody = this._body;
             if (locPosition._x != locBody.p.x || locPosition._y != locBody.p.y) {
@@ -187,7 +196,7 @@
         },
 
         _nodeToParentTransformForCanvas: function () {
-            if (this.isDirty()) {
+            if (this.dirty) {
                 var t = this._transform;// quick reference
                 // base position
                 var locBody = this._body, locScaleX = this._scaleX, locScaleY = this._scaleY, locAnchorPIP = this._anchorPointInPoints;
@@ -238,6 +247,17 @@
 
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
+
+	window._proto = cc.PhysicsSprite.prototype;
+	/** @expose */
+	_proto.body;
+	cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
+	cc.defineGetterSetter(_proto, "pos", _proto.getPosition, _proto.setPosition);
+	cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
+	cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
+	cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
+	cc.defineGetterSetter(_proto, "dirty", _proto.isDirty);
+	delete window._proto;
 
     /**
      * Create a PhysicsSprite with filename and rect

@@ -486,11 +486,11 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             var selTexture = locTextures[key];
             count++;
             if (selTexture.getHtmlElementObj() instanceof  HTMLImageElement)
-                cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
+                cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
             else {
-                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
+                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
             }
-            totalBytes += selTexture.getPixelsWide() * selTexture.getPixelsHigh() * 4;
+            totalBytes += selTexture.pixelsWidth * selTexture.pixelsHeight * 4;
         }
 
         var locTextureColorsCache = this._textureColorsCache;

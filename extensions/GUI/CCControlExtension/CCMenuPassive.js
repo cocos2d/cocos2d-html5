@@ -369,7 +369,7 @@ cc.MenuPassive = cc.Layer.extend({
 
 /** creates an empty CCMenu */
 cc.MenuPassive.create = function (item) {
-    if (arguments.length == 0) {
+    if (!item) {
         item = null;
     }
 

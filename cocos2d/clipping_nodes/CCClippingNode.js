@@ -28,9 +28,9 @@
 cc.stencilBits = -1;
 
 cc.setProgram = function (node, program) {
-    node.shader = program;
+    node.shaderProgram = program;
 
-    var children = node.getChildren();
+    var children = node.children;
     if (!children)
         return;
 
@@ -125,7 +125,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // return fast (draw nothing, or draw everything if in inverted mode) if:
         // - nil stencil node
         // - or stencil node invisible:
-        if (!this._stencil || !this._stencil.isVisible()) {
+        if (!this._stencil || !this._stencil.visible) {
             if (this._inverted)
                 cc.Node.prototype.visit.call(this, ctx);   // draw everything
             return;
@@ -285,7 +285,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // return fast (draw nothing, or draw everything if in inverted mode) if:
         // - nil stencil node
         // - or stencil node invisible:
-        if (!this._stencil || !this._stencil.isVisible()) {
+        if (!this._stencil || !this._stencil.visible) {
             if (this._inverted)
                 cc.Node.prototype.visit.call(this, ctx);   // draw everything
             return;
