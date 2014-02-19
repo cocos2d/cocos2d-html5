@@ -524,6 +524,12 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     }
 });
 
+window._proto = cc.ParticleBatchNode.prototype;
+
+cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+
+delete window._proto;
+
 /**
  * initializes the particle system with cc.Texture2D, a capacity of particles, which particle system to use
  * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture
