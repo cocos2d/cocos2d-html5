@@ -530,7 +530,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._nextScene = null;
 
         // remove all objects, but don't release it.
-        // runWithScene might be executed after 'end'.
+        // runScene might be executed after 'end'.
         this._scenesStack.length = 0;
 
         this.stopAnimation();
@@ -579,24 +579,28 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * Replaces the running scene with a new one. The running scene is terminated. ONLY call it if there is a running scene.
+     * Run a scene. Replaces the running scene with a new one when the  scene is running.
      * @param {cc.Scene} scene
      */
-    replaceScene:function (scene) {
-        if(!this._runningScene)
-            throw "Use runWithScene: instead to start the director";
+    runScene:function(scene){
         if(!scene)
             throw "the scene should not be null";
-
-        var i = this._scenesStack.length;
-        if(i === 0){
-            this._sendCleanupToScene = true;
-            this._scenesStack[i] = scene;
-            this._nextScene = scene;
-        } else {
-            this._sendCleanupToScene = true;
-            this._scenesStack[i - 1] = scene;
-            this._nextScene = scene;
+        if(!this._runningScene){
+            //start scene
+            this.pushScene(scene);
+            this.startAnimation();
+        }else{
+            //replace scene
+            var i = this._scenesStack.length;
+            if(i === 0){
+                this._sendCleanupToScene = true;
+                this._scenesStack[i] = scene;
+                this._nextScene = scene;
+            } else {
+                this._sendCleanupToScene = true;
+                this._scenesStack[i - 1] = scene;
+                this._nextScene = scene;
+            }
         }
     },
 
@@ -616,24 +620,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         this._paused = false;
         this._deltaTime = 0;
-    },
-
-    /**
-     * <p>
-     *    Enters the Director's main loop with the given Scene.<br/>
-     *    Call it to run only your FIRST scene.<br/>
-     *    Don't call it if there is already a running scene.
-     * </p>
-     * @param {cc.Scene} scene
-     */
-    runWithScene:function (scene) {
-        if(!scene)
-            throw "This command can only be used to start the CCDirector. There is already a scene present.";
-        if(this._runningScene)
-            throw "_runningScene should be null";
-
-        this.pushScene(scene);
-        this.startAnimation();
     },
 
     /**
@@ -1154,9 +1140,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.pos = cc.pAdd(cc.p(0, 34 * factor), locStatsPosition);
-        this._SPFLabel.pos = cc.pAdd(cc.p(0, 17 * factor), locStatsPosition);
-        this._FPSLabel.pos = locStatsPosition;
+        this._drawsLabel.x = locStatsPosition.x;
+	    this._drawsLabel.y = 34 * factor + locStatsPosition.y;
+        this._SPFLabel.x = locStatsPosition.x;
+	    this._SPFLabel.y = 17 * factor + locStatsPosition.y;
+        this._FPSLabel.x = locStatsPosition.x;
+	    this._FPSLabel.y = locStatsPosition.y;
     },
 
     _createStatsLabelForCanvas:function(){
@@ -1171,9 +1160,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.pos = cc.pAdd(cc.p(this._drawsLabel.width / 2, this._drawsLabel.height * 5 / 2), locStatsPosition);
-        this._SPFLabel.pos = cc.pAdd(cc.p(this._SPFLabel.width / 2, this._SPFLabel.height * 3 / 2), locStatsPosition);
-        this._FPSLabel.pos = cc.pAdd(cc.p(this._FPSLabel.width / 2, this._FPSLabel.height / 2), locStatsPosition);
+        this._drawsLabel.x = this._drawsLabel.width / 2 + locStatsPosition.x;
+	    this._drawsLabel.y = this._drawsLabel.height * 5 / 2 + locStatsPosition.y;
+        this._SPFLabel.x = this._SPFLabel.width / 2 + locStatsPosition.x;
+	    this._SPFLabel.y = this._SPFLabel.height * 3 / 2 + locStatsPosition.y;
+        this._FPSLabel.x = this._FPSLabel.width / 2 + locStatsPosition.x;
+	    this._FPSLabel.y = this._FPSLabel.height / 2 + locStatsPosition.y;
     },
 
     _calculateMPF: function () {

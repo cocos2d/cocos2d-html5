@@ -872,7 +872,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
                 nextFontPositionY + yOffset - rect.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
-            fontChar.pos = cc.POINT_PIXELS_TO_POINTS(fontPos);
+            fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
 
             // update kerning
             nextFontPositionX += fontDef.xAdvance + kerningAmount;
