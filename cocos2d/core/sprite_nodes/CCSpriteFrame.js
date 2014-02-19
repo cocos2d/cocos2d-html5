@@ -37,7 +37,7 @@
  *
  * @example
  * var texture = cc.TextureCache.getInstance().addImage(s_dragon_animation);
- * var frame0 = cc.SpriteFrame.createWithTexture(texture, cc.rect(132 * 0, 132 * 0, 132, 132));
+ * var frame0 = cc.SpriteFrame.create(texture, cc.rect(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _offset:null,
@@ -301,7 +301,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 
     /**
      * Initializes SpriteFrame with Texture, rect, rotated, offset and originalSize in pixels.
-     * @param {cc.Texture2D} texture
+     * @param {String|cc.Texture2D} texture
      * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
      * @param {Boolean} [rotated=false]
      * @param {cc.Point} [offset=cc.p(0,0)]
@@ -314,8 +314,15 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 
         offset = offset || cc.p(0, 0);
         originalSize = originalSize || rect;
+        rotated = rotated || false;
 
-        this.setTexture(texture);
+        if (typeof(texture) == "string"){
+            this._texture = null;
+            this._textureFilename = texture;
+        } else if (texture instanceof cc.Texture2D){
+            this.setTexture(texture);
+        }
+
         this._rectInPixels = rect;
         this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
         this._offsetInPixels.x = offset.x;
@@ -324,39 +331,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._originalSizeInPixels.width = originalSize.width;
         this._originalSizeInPixels.height = originalSize.height;
         cc._SIZE_PIXELS_TO_POINTS_OUT(originalSize, this._originalSize);
-        this._rotated = rotated || false;
-        return true;
-    },
-
-    /**
-     * <p>
-     *    Initializes a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.<br/>
-     *    The originalSize is the size in pixels of the frame before being trimmed.
-     * </p>
-     * @param {string} filename
-     * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
-     * @param {Boolean} rotated
-     * @param {cc.Point} [offset=cc.p(0,0)]
-     * @param {cc.Size} [originalSize=rect.size]
-     */
-    initWithTextureFilename:function (filename, rect, rotated, offset, originalSize) {
-        if(arguments.length === 2)
-            rect = cc.RECT_POINTS_TO_PIXELS(rect);
-
-        offset = offset || cc.p(0, 0);
-        originalSize = originalSize || rect;
-
-        this._texture = null;
-        this._textureFilename = filename;
-        this._rectInPixels = rect;
-        this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
-        this._rotated = rotated || false;
-        this._offsetInPixels.x = offset.x;
-        this._offsetInPixels.y = offset.y;
-        cc._POINT_PIXELS_TO_POINTS_OUT(offset, this._offset);
-        this._originalSizeInPixels.width = originalSize.width;
-        this._originalSizeInPixels.height = originalSize.height;
-        cc._SIZE_PIXELS_TO_POINTS_OUT(originalSize, this._originalSize);
+        this._rotated = rotated;
         return true;
     }
 });
@@ -366,52 +341,31 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
  *    Create a cc.SpriteFrame with a texture filename, rect, rotated, offset and originalSize in pixels.<br/>
  *    The originalSize is the size in pixels of the frame before being trimmed.
  * </p>
- * @param {string} filename
+ * @param {String|cc.Texture2D} filename
  * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
  * @param {Boolean} rotated
  * @param {cc.Point} offset
  * @param {cc.Size} originalSize
  * @return {cc.SpriteFrame}
+ * @example
+ * 1.
+ * //Create a cc.SpriteFrame with image path
+ * var frame1 = cc.SpriteFrame.create("res/grossini_dance.png",cc.rect(0,0,90,128));
+ * var frame2 = cc.SpriteFrame.create("res/grossini_dance.png",cc.rect(0,0,90,128),false,0,cc.size(90,128));
+ *
+ * 2.
+ * //Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
+ * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
+ * var frame1 = cc.SpriteFrame.create(texture, cc.rect(0,0,90,128));
+ * var frame2 = cc.SpriteFrame.create(texture, cc.rect(0,0,90,128),false,0,cc.size(90,128));
  */
 cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize) {
     var spriteFrame = new cc.SpriteFrame();
     switch (arguments.length) {
         case 2:
-            spriteFrame.initWithTextureFilename(filename, rect);
-            break;
+            spriteFrame.initWithTexture(filename, rect);
         case 5:
-            spriteFrame.initWithTextureFilename(filename, rect, rotated, offset, originalSize);
-            break;
-        default:
-            throw "Argument must be non-nil ";
-            break;
-    }
-    return spriteFrame;
-};
-
-/**
- * Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
- * @param {cc.Texture2D} texture
- * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
- * @param {Boolean} [rotated=]
- * @param {cc.Point} [offset=]
- * @param {cc.Size} [originalSize=]
- * @return {cc.SpriteFrame}
- * @example
- * //Create a cc.SpriteFrame with a texture, rect in texture.
- * var frame1 = cc.SpriteFrame.createWithTexture("grossini_dance.png",cc.rect(0,0,90,128));
- *
- * //Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
- * var frame2 = cc.SpriteFrame.createWithTexture(texture, frameRect, rotated, offset, sourceSize);
- */
-cc.SpriteFrame.createWithTexture = function (texture, rect, rotated, offset, originalSize) {
-    var spriteFrame = new cc.SpriteFrame();
-    switch (arguments.length) {
-        case 2:
-            spriteFrame.initWithTexture(texture, rect);
-            break;
-        case 5:
-            spriteFrame.initWithTexture(texture, rect, rotated, offset, originalSize);
+            spriteFrame.initWithTexture(filename, rect, rotated, offset, originalSize);
             break;
         default:
             throw "Argument must be non-nil ";

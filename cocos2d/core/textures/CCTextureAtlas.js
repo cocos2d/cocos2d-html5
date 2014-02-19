@@ -35,6 +35,7 @@
  * The TextureAtlas capacity can be increased or decreased in runtime.</p>
  * @class
  * @extends cc.Class
+ *
  * @property {Boolean}  dirty   - Indicates whether or not the array buffer of the VBO needs to be updated
  * @property {Image}    texture - Image texture for cc.TextureAtlas
  */
@@ -654,34 +655,28 @@ delete window._proto;
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
  * The TextureAtlas capacity can be increased in runtime. </p>
- * @param {String} file
+ * @param {String|cc.Texture2D} fileName
  * @param {Number} capacity
  * @return {cc.TextureAtlas|Null}
  * @example
- * //example
- * var textureAtlas = cc.TextureAtlas.create("hello.png", 3);
- */
-cc.TextureAtlas.create = function (file, capacity) {
-    var textureAtlas = new cc.TextureAtlas();
-    if (textureAtlas && textureAtlas.initWithFile(file, capacity))
-        return textureAtlas;
-    return null;
-};
-
-/**
- * <p>Creates a TextureAtlas with a previously initialized Texture2D object, and with an initial capacity for n Quads.
- * The TextureAtlas capacity can be increased in runtime.</p>
- * @param {Image|cc.Texture2D} texture
- * @param {Number} capacity
- * @return {cc.TextureAtlas}
- * @example
- * //example
+ * 1.
+ * //creates a TextureAtlas with  filename
+ * var textureAtlas = cc.TextureAtlas.create("res/hello.png", 3);
+ * 2.
+ * //creates a TextureAtlas with texture
  * var texture = cc.TextureCache.getInstance().addImage("hello.png");
- * var textureAtlas = cc.TextureAtlas.createWithTexture(texture, 3);
+ * var textureAtlas = cc.TextureAtlas.create(texture, 3);
  */
-cc.TextureAtlas.createWithTexture = function (texture, capacity) {
+cc.TextureAtlas.create = function (fileName, capacity) {
     var textureAtlas = new cc.TextureAtlas();
-    if (textureAtlas && textureAtlas.initWithTexture(texture, capacity))
-        return textureAtlas;
+    if (typeof(fileName) == "string"){
+        if(textureAtlas.initWithFile(fileName, capacity))
+            return textureAtlas;
+    }
+    else if (fileName instanceof cc.Texture2D){
+        if(textureAtlas.initWithTexture(file, capacity))
+            return textureAtlas;
+    }
+
     return null;
 };

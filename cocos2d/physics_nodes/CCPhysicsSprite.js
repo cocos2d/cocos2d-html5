@@ -262,86 +262,65 @@
     /**
      * Create a PhysicsSprite with filename and rect
      * @constructs
-     * @param {String} fileName
+     * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
      * @param {cc.Rect} rect
-     * @return {cc.Sprite}
+     * @return {cc.PhysicsSprite}
      * @example
-     * //create a sprite with filename
-     * var sprite1 = cc.Sprite.create("HelloHTML5World.png");
      *
-     * //create a sprite with filename and rect
-     * var sprite2 = cc.PhysicsSprite.create("HelloHTML5World.png",cc.rect(0,0,480,320));
+     * 1.Create a sprite with image path and rect
+     * var physicsSprite1 = cc.PhysicsSprite.create("res/HelloHTML5World.png");
+     * var physicsSprite2 = cc.PhysicsSprite.create("res/HelloHTML5World.png",cc.rect(0,0,480,320));
+     *
+     * 2.Create a sprite with a sprite frame name. Must add "#" before fame name.
+     * var physicsSprite = cc.PhysicsSprite.create('#grossini_dance_01.png');
+     *
+     * 3.Create a sprite with a sprite frame
+     * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
+     * var physicsSprite = cc.PhysicsSprite.create(spriteFrame);
+     *
+     * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
+     *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
+     * var texture = cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
+     * var physicsSprite1 = cc.PhysicsSprite.create(texture);
+     * var physicsSprite2 = cc.PhysicsSprite.create(texture, cc.rect(0,0,480,320));
+     *
      */
     cc.PhysicsSprite.create = function (fileName, rect) {
-        var argnum = arguments.length;
         var sprite = new cc.PhysicsSprite();
-        if (argnum === 0) {
-            if (sprite.init())
-                return sprite;
-            return null;
-        } else if (argnum < 2) {
-            /** Creates an sprite with an image filename.
-             The rect used will be the size of the image.
-             The offset will be (0,0).
-             */
-            if (sprite && sprite.initWithFile(fileName)) {
-                return sprite;
-            }
-            return null;
-        } else {
-            /** Creates an sprite with an CCBatchNode and a rect
-             */
-            if (sprite && sprite.initWithFile(fileName, rect)) {
-                return sprite;
-            }
-            return null;
-        }
-    };
 
-    /**
-     * Creates a PhysicsSprite with a sprite frame name
-     * @param {String} spriteFrameName
-     * @return {cc.Sprite}
-     * @example
-     *
-     * //create a PhysicsSprite with a sprite frame
-     * var sprite = cc.PhysicsSprite.createWithSpriteFrameName('grossini_dance_01.png');
-     */
-    cc.PhysicsSprite.createWithSpriteFrameName = function (spriteFrameName) {
-        var spriteFrame = null;
-        if (typeof(spriteFrameName) == 'string') {
-            spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
-            if (!spriteFrame) {
-                cc.log("Invalid spriteFrameName: " + spriteFrameName);
-                return null;
-            }
-        } else {
-            cc.log("Invalid argument. Expecting string.");
-            return null;
-        }
-        var sprite = new cc.PhysicsSprite();
-        if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
+        if (arguments.length == 0) {
+            sprite.init();
             return sprite;
         }
-        return null;
-    };
 
-    /**
-     * Creates a sprite with a sprite frame.
-     * @param {cc.SpriteFrame} spriteFrame
-     * @return {cc.Sprite}
-     * @example
-     * //get a sprite frame
-     * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
-     *
-     * //create a sprite with a sprite frame
-     * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
-     */
-    cc.PhysicsSprite.createWithSpriteFrame = function (spriteFrame) {
-        var sprite = new cc.PhysicsSprite();
-        if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
-            return sprite;
+        if (typeof(fileName) === "string") {
+            if (fileName[5] === "#") {
+                //init with a sprite frame name
+                var frameName = fileName.substr(6, fileName.length - 1);
+                var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(frameName);
+                if (sprite.initWithSpriteFrame(spriteFrame))
+                    return sprite;
+            } else {
+                //init  with filename and rect
+                if (sprite.init(fileName, rect))
+                    return  sprite;
+            }
+            return null;
         }
+
+        if (typeof(fileName) === "object") {
+            if (fileName instanceof cc.Texture2D) {
+                //init  with texture and rect
+                if (sprite.initWithTexture(fileName, rect))
+                    return  sprite;
+            } else if (fileName instanceof cc.SpriteFrame) {
+                //init with a sprite frame
+                if (sprite.initWithSpriteFrame(fileName))
+                    return sprite;
+            }
+            return null;
+        }
+
         return null;
     };
 })();

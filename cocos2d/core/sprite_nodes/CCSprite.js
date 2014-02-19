@@ -480,7 +480,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _spriteFrameLoadedCallbackForCanvas:function(spriteFrame){
         this.setNodeDirty(true);
         this.setTextureRect(spriteFrame.getRect(), spriteFrame.isRotated(), spriteFrame.getOriginalSize());
-        var curColor = this.getColor();
+        var curColor = this.color;
         if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
             this._changeTextureColor();
 
@@ -1521,7 +1521,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _setColorForCanvas: function (color3) {
-        var curColor = this.getColor();
+        var curColor = this.color;
         if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
             return;
 
@@ -1538,7 +1538,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _updateDisplayedColorForCanvas: function (parentColor) {
-        var oldColor = this.getColor();
+        var oldColor = this.color;
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
         var newColor = this._displayedColor;
         if ((oldColor.r === newColor.r) && (oldColor.g === newColor.g) && (oldColor.b === newColor.b))
@@ -1616,7 +1616,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
         this._colorized = false;
         if (locTextureLoaded) {
-            var curColor = this.getColor();
+            var curColor = this.color;
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
                 this._changeTextureColor();
         }
@@ -1645,7 +1645,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {cc.SpriteFrame}
      */
     displayFrame: function () {
-        return cc.SpriteFrame.createWithTexture(this._texture,
+        return cc.SpriteFrame.create(this._texture,
             cc.RECT_POINTS_TO_PIXELS(this._rect),
             this._rectRotated,
             cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),
@@ -1657,7 +1657,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteBatchNode|null} spriteBatchNode
      * @example
      *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
-     *  var sprite = cc.Sprite.createWithTexture(batch.texture, cc.rect(0, 0, 57, 57));
+     *  var sprite = cc.Sprite.create(batch.texture, cc.rect(0, 0, 57, 57));
      *  batch.addChild(sprite);
      *  layer.addChild(batch);
      */
@@ -1760,11 +1760,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
             this._blendFunc.src = gl.SRC_ALPHA;
             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-            this.setOpacityModifyRGB(false);
+            this.opacityModifyRGB = false;
         } else {
             this._blendFunc.src = cc.BLEND_SRC;
             this._blendFunc.dst = cc.BLEND_DST;
-            this.setOpacityModifyRGB(true);
+            this.opacityModifyRGB = true;
         }
     },
 
@@ -1990,7 +1990,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
         } else if (locContentSize.width !== 0) {
-            var curColor = this.getColor();
+            var curColor = this.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
             context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }
@@ -2069,7 +2069,6 @@ cc.defineGetterSetter(_proto, "ignoreAnchor", _proto.isIgnoreAnchorPointForPosit
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "blendFunc", _proto.getBlendFunc, _proto.setBlendFunc);
 
 // Extended properties
 /** @expose */
@@ -2103,137 +2102,66 @@ cc.defineGetterSetter(_proto, "quad", _proto.getQuad);
 delete window._proto;
 
 /**
- * <p>
- *     Creates a sprite with an exsiting texture contained in a CCTexture2D object                           <br/>
- *     After creation, the rect will be the size of the texture, and the offset will be (0,0).
- * </p>
+ * Create a sprite with image path or frame name or texture or spriteFrame.
  * @constructs
- * @param {cc.Texture2D} texture  A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
- * @param {cc.Rect} rect Only the contents inside the rect of this texture will be applied for this sprite.
- * @return {cc.Sprite} A valid sprite object
- * @example
- * //get an image
- * var img = cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
- *
- * //create a sprite with texture
- * var sprite1 = cc.Sprite.createWithTexture(img);
- *
- * //create a sprite with texture and rect
- * var sprite2 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320));
- *
- */
-cc.Sprite.createWithTexture = function (texture, rect) {
-    var argnum = arguments.length;
-    var sprite = new cc.Sprite();
-    switch (argnum) {
-        case 1:
-            /** Creates an sprite with a texture.
-             The rect used will be the size of the texture.
-             The offset will be (0,0).
-             */
-            if (sprite && sprite.initWithTexture(texture))
-                return sprite;
-            return null;
-            break;
-
-        case 2:
-            /** Creates an sprite with a texture and a rect.
-             The offset will be (0,0).
-             */
-            if (sprite && sprite.initWithTexture(texture, rect))
-                return sprite;
-            return null;
-            break;
-
-        default:
-            throw "Sprite.createWithTexture(): Argument must be non-nil ";
-            break;
-    }
-};
-
-/**
- * Create a sprite with filename and rect
- * @constructs
- * @param {String} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
+ * @param {String|cc.Texture2D|cc.SpriteFrame} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
  * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
  * @return {cc.Sprite} A valid sprite object
  * @example
- * //create a sprite with filename
- * var sprite1 = cc.Sprite.create("HelloHTML5World.png");
  *
- * //create a sprite with filename and rect
- * var sprite2 = cc.Sprite.create("HelloHTML5World.png",cc.rect(0,0,480,320));
+ * 1.Create a sprite with image path and rect
+ * var sprite1 = cc.Sprite.create("res/HelloHTML5World.png");
+ * var sprite2 = cc.Sprite.create("res/HelloHTML5World.png",cc.rect(0,0,480,320));
+ *
+ * 2.Create a sprite with a sprite frame name. Must add "#" before fame name.
+ * var sprite = cc.Sprite.create('#grossini_dance_01.png');
+ *
+ * 3.Create a sprite with a sprite frame
+ * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
+ * var sprite = cc.Sprite.create(spriteFrame);
+ *
+ * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
+ *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
+ * var texture = cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
+ * var sprite1 = cc.Sprite.create(texture);
+ * var sprite2 = cc.Sprite.create(texture, cc.rect(0,0,480,320));
+ *
  */
 cc.Sprite.create = function (fileName, rect) {
-    var argnum = arguments.length;
     var sprite = new cc.Sprite();
-    if (argnum === 0) {
-        if (sprite.init())
-            return sprite;
-    } else {
-        /** Creates an sprite with an image filename.
-         If the rect equal undefined, the rect used will be the size of the image.
-         The offset will be (0,0).
-         */
-        if (sprite && sprite.init(fileName, rect))
-            return sprite;
-    }
-    return null;
-};
 
-/**
- * <p>
- *     Creates a sprite with a sprite frame.                                                                  <br/>
- *                                                                                                            <br/>
- *    A CCSpriteFrame will be fetched from the CCSpriteFrameCache by pszSpriteFrameName param.                <br/>
- *    If the CCSpriteFrame doesn't exist it will raise an exception.
- * </p>
- * @param {String} spriteFrameName A sprite frame which involves a texture and a rect
- * @return {cc.Sprite} A valid sprite object
- * @example
- *
- * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameName('grossini_dance_01.png');
- */
-cc.Sprite.createWithSpriteFrameName = function (spriteFrameName) {
-    var spriteFrame = null;
-    if (typeof(spriteFrameName) == 'string') {
-        spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
-        if (!spriteFrame) {
-            cc.log("Invalid spriteFrameName: " + spriteFrameName);
-            return null;
+    if (arguments.length == 0) {
+        sprite.init();
+        return sprite;
+    }
+
+    if (typeof(fileName) === "string") {
+        if (fileName[5] === "#") {
+            //init with a sprite frame name
+            var frameName = fileName.substr(6, fileName.length - 1);
+            var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(frameName);
+            if (sprite.initWithSpriteFrame(spriteFrame))
+                return sprite;
+        } else {
+            //init  with filename and rect
+            if (sprite.init(fileName, rect))
+                return  sprite;
         }
-    } else {
-        cc.log("Invalid argument. Expecting string.");
         return null;
     }
-    var sprite = new cc.Sprite();
-    if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
-        return sprite;
-    }
-    return null;
-};
 
-/**
- * <p>
- *     Creates a sprite with a sprite frame.                                                                  <br/>
- *                                                                                                            <br/>
- *    A CCSpriteFrame will be fetched from the CCSpriteFrameCache by pszSpriteFrameName param.                <br/>
- *    If the CCSpriteFrame doesn't exist it will raise an exception.
- * </p>
- * @param {cc.SpriteFrame} spriteFrame A sprite frame which involves a texture and a rect
- * @return {cc.Sprite} A valid sprite object
- * @example
- * //get a sprite frame
- * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
- *
- * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrame(spriteFrame);
- */
-cc.Sprite.createWithSpriteFrame = function (spriteFrame) {
-    var sprite = new cc.Sprite();
-    if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
-        return sprite;
+    if (typeof(fileName) === "object") {
+        if (fileName instanceof cc.Texture2D) {
+            //init  with texture and rect
+            if (sprite.initWithTexture(fileName, rect))
+                return  sprite;
+        } else if (fileName instanceof cc.SpriteFrame) {
+            //init with a sprite frame
+            if (sprite.initWithSpriteFrame(fileName))
+                return sprite;
+        }
+        return null;
     }
+
     return null;
 };

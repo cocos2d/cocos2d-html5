@@ -219,7 +219,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Color3B} color
      */
     setColor:function (color) {
-        this._sprite.setColor(color);
+        this._sprite.color = color;
         this._updateColor();
     },
 
@@ -228,7 +228,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @param {Number} opacity
      */
     setOpacity:function (opacity) {
-        this._sprite.setOpacity(opacity);
+        this._sprite.opacity = opacity;
         this._updateColor();
     },
 
@@ -237,7 +237,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @return {cc.Color3B}
      */
     getColor:function () {
-        return this._sprite.getColor();
+        return this._sprite.color;
     },
 
     /**
@@ -245,7 +245,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
      * @return {Number}
      */
     getOpacity:function () {
-        return this._sprite.getOpacity();
+        return this._sprite.opacity;
     },
 
     /**
@@ -476,7 +476,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
         } else if (locContentSize.width !== 0) {
-            var curColor = this.getColor();
+            var curColor = this.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
             context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }

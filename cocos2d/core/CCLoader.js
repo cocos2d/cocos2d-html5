@@ -441,7 +441,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
 
         //loading percent
         this._label = cc.LabelTTF.create("Loading... 0%", "Arial", 14);
-        this._label.setColor(cc.c3(180, 180, 180));
+        this._label.color = cc.c3(180, 180, 180);
         this._label.pos = cc.pAdd(centerPos, cc.p(0, -logoHeight / 2 - 10));
         this._bgLayer.addChild(this._label, 10);
     },
@@ -450,7 +450,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         this._texture2d = new cc.Texture2D();
         this._texture2d.initWithElement(this._logoTexture);
         this._texture2d.handleLoadedTexture();
-        this._logo = cc.Sprite.createWithTexture(this._texture2d);
+        this._logo = cc.Sprite.create(this._texture2d);
         this._logo.scale = cc.CONTENT_SCALE_FACTOR();
         this._logo.pos = centerPos;
         this._bgLayer.addChild(this._logo, 10);
@@ -464,7 +464,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     onExit: function () {
         cc.Node.prototype.onExit.call(this);
         var tmpStr = "Loading... 0%";
-        this._label.setString(tmpStr);
+        this._label.string = tmpStr;
     },
 
     /**
@@ -488,7 +488,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     _updatePercent: function () {
         var percent = cc.Loader.getInstance().getPercentage();
         var tmpStr = "Loading... " + percent + "%";
-        this._label.setString(tmpStr);
+        this._label.string = tmpStr;
 
         if (percent >= 100)
             this.unschedule(this._updatePercent);
