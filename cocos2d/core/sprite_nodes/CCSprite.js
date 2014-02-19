@@ -234,26 +234,6 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     return nCanvas;
 };
 
-/**
- * a Values object for transform
- * @Class
- * @Construct
- * @param {cc.Point} pos position x and y
- * @param {cc.Point} scale scale x and y
- * @param {Number} rotation
- * @param {cc.Point} skew skew x and y
- * @param {cc.Point} ap anchor point in pixels
- * @param {Boolean} visible
- */
-cc.TransformValues = function (pos, scale, rotation, skew, ap, visible) {
-    this.pos = pos;		// position x and y
-    this.scale = scale;		// scale x and y
-    this.rotation = rotation;
-    this.skew = skew;		// skew x and y
-    this.ap = ap;			// anchor point in pixels
-    this.visible = visible;
-};
-
 cc.RENDER_IN_SUBPIXEL = function (A) {
     return (0 | A);
 };

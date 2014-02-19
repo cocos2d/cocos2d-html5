@@ -419,20 +419,6 @@ cc.tex2 = function (u, v) {
 };
 
 /**
- * Point Sprite component
- * @Class
- * @Construct
- * @param {cc.Vertex2F} pos1
- * @param {cc.Color4B} color1
- * @param {Number} size1
- */
-cc.PointSprite = function (pos1, color1, size1) {
-    this.pos = pos1 || new cc.Vertex2F(0, 0);
-    this.color = color1 || new cc.Color4B(0, 0, 0, 0);
-    this.size = size1 || 0;
-};
-
-/**
  * A 2D Quad. 4 * 2 floats
  * @Class
  * @Construct
