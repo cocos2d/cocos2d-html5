@@ -47,18 +47,25 @@ cc.setProgram = function (node, program) {
  * </p>
  * @class
  * @extends cc.Node
+ *
+ * @property {Number}   alphaThreshold  - Threshold for alpha value.
+ * @property {Boolean}  inverted        - Indicate whether in inverted mode.
  */
 cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
+	/** @public */
+	alphaThreshold: 0,
+
+	/** @public */
+	inverted: false,
+
     _stencil: null,
-    _alphaThreshold: 0,
-    _inverted: false,
     _godhelpme: false,
 
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._stencil = null;
-        this._alphaThreshold = 0;
-        this._inverted = false;
+        this.alphaThreshold = 0;
+        this.inverted = false;
     },
 
     /**
@@ -71,8 +78,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _initForWebGL: function (stencil) {
         this._stencil = stencil;
 
-        this._alphaThreshold = 1;
-        this._inverted = false;
+        this.alphaThreshold = 1;
+        this.inverted = false;
         // get (only once) the number of bits of the stencil buffer
         cc.ClippingNode._init_once = true;
         if (cc.ClippingNode._init_once) {
@@ -86,8 +93,8 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _initForCanvas: function (stencil) {
         this._stencil = stencil;
-        this._alphaThreshold = 1;
-        this._inverted = false;
+        this.alphaThreshold = 1;
+        this.inverted = false;
     },
 
     onEnter: function () {
@@ -126,7 +133,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // - nil stencil node
         // - or stencil node invisible:
         if (!this._stencil || !this._stencil.visible) {
-            if (this._inverted)
+            if (this.inverted)
                 cc.Node.prototype.visit.call(this, ctx);   // draw everything
             return;
         }
@@ -204,7 +211,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         //     if not in inverted mode: set the current layer value to 0 in the stencil buffer
         //     if in inverted mode: set the current layer value to 1 in the stencil buffer
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(!this._inverted ? gl.ZERO : gl.REPLACE, gl.KEEP, gl.KEEP);
+        gl.stencilOp(!this.inverted ? gl.ZERO : gl.REPLACE, gl.KEEP, gl.KEEP);
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
@@ -219,16 +226,16 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         //     if not in inverted mode: set the current layer value to 1 in the stencil buffer
         //     if in inverted mode: set the current layer value to 0 in the stencil buffer
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
-        gl.stencilOp(!this._inverted ? gl.REPLACE : gl.ZERO, gl.KEEP, gl.KEEP);
+        gl.stencilOp(!this.inverted ? gl.REPLACE : gl.ZERO, gl.KEEP, gl.KEEP);
 
-        if (this._alphaThreshold < 1) {
+        if (this.alphaThreshold < 1) {
             // since glAlphaTest do not exists in OES, use a shader that writes
             // pixel only if greater than an alpha threshold
             var program = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
             var alphaValueLocation = gl.getUniformLocation(program.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
             // set our alphaThreshold
             cc.glUseProgram(program.getProgram());
-            program.setUniformLocationWith1f(alphaValueLocation, this._alphaThreshold);
+            program.setUniformLocationWith1f(alphaValueLocation, this.alphaThreshold);
             // we need to recursively apply this shader to all the nodes in the stencil node
             // XXX: we should have a way to apply shader to all nodes without having to do this
             cc.setProgram(this._stencil, program);
@@ -242,7 +249,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         cc.kmGLPopMatrix();
 
         // restore alpha test state
-        //if (this._alphaThreshold < 1) {
+        //if (this.alphaThreshold < 1) {
         // XXX: we need to find a way to restore the shaders of the stencil node and its childs
         //}
 
@@ -286,7 +293,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // - nil stencil node
         // - or stencil node invisible:
         if (!this._stencil || !this._stencil.visible) {
-            if (this._inverted)
+            if (this.inverted)
                 cc.Node.prototype.visit.call(this, ctx);   // draw everything
             return;
         }
@@ -306,7 +313,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             // Draw everything first using node visit function
             this._super(context);
 
-            context.globalCompositeOperation = this._inverted ? "destination-out" : "destination-in";
+            context.globalCompositeOperation = this.inverted ? "destination-out" : "destination-in";
 
             this.transform(context);
             this._stencil.visit();
@@ -407,7 +414,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @return {Number}
      */
     getAlphaThreshold: function () {
-        return this._alphaThreshold;
+        return this.alphaThreshold;
     },
 
     /**
@@ -415,7 +422,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {Number} alphaThreshold
      */
     setAlphaThreshold: function (alphaThreshold) {
-        this._alphaThreshold = alphaThreshold;
+        this.alphaThreshold = alphaThreshold;
     },
 
     /**
@@ -427,7 +434,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @return {Boolean}
      */
     isInverted: function () {
-        return this._inverted;
+        return this.inverted;
     },
 
 
@@ -436,7 +443,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {Boolean} inverted
      */
     setInverted: function (inverted) {
-        this._inverted = inverted;
+        this.inverted = inverted;
     },
 
     _cangodhelpme: function (godhelpme) {
@@ -446,16 +453,22 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     }
 });
 
+window._proto = cc.ClippingNode.prototype;
+
 if (cc.Browser.supportWebGL) {
     //WebGL
-    cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForWebGL;
-    cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForWebGL;
-    cc.ClippingNode.prototype.setStencil = cc.ClippingNode.prototype._setStencilForWebGL;
+    _proto.init = _proto._initForWebGL;
+    _proto.visit = _proto._visitForWebGL;
+    _proto.setStencil = _proto._setStencilForWebGL;
 } else {
-    cc.ClippingNode.prototype.init = cc.ClippingNode.prototype._initForCanvas;
-    cc.ClippingNode.prototype.visit = cc.ClippingNode.prototype._visitForCanvas;
-    cc.ClippingNode.prototype.setStencil = cc.ClippingNode.prototype._setStencilForCanvas;
+    _proto.init = _proto._initForCanvas;
+    _proto.visit = _proto._visitForCanvas;
+    _proto.setStencil = _proto._setStencilForCanvas;
 }
+
+cc.defineGetterSetter(_proto, "stencil", _proto.getStencil, _proto.setStencil);
+
+delete window._proto;
 
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;
