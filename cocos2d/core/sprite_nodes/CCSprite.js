@@ -819,8 +819,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _ctorForWebGL: function (fileName) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._shouldBeHidden = false;
-        this._offsetPosition = cc._pConst(0, 0);
-        this._unflippedOffsetPositionFromCenter = cc._pConst(0, 0);
+        this._offsetPosition = cc.p(0, 0);
+        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._rect = cc.rect(0,0,0,0);
 
@@ -852,8 +852,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _ctorForCanvas: function (fileName) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._shouldBeHidden = false;
-        this._offsetPosition = cc._pConst(0, 0);
-        this._unflippedOffsetPositionFromCenter = cc._pConst(0, 0);
+        this._offsetPosition = cc.p(0, 0);
+        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._rect = cc.rect(0, 0, 0, 0);
 
@@ -947,8 +947,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 	    this.anchorY = 0.5;
 
         // zwoptex default values
-        this._offsetPosition._x = 0;
-        this._offsetPosition._y = 0;
+        this._offsetPosition.x = 0;
+        this._offsetPosition.y = 0;
 
         this._hasChildren = false;
 
@@ -962,7 +962,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
-        this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
+        this.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.size(0, 0));
         return true;
     },
 
@@ -987,13 +987,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 	    this.anchorY = 0.5;
 
         // zwoptex default values
-        this._offsetPosition._x = 0;
-        this._offsetPosition._y = 0;
+        this._offsetPosition.x = 0;
+        this._offsetPosition.y = 0;
         this._hasChildren = false;
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
-        this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
+        this.setTextureRect(cc.rect(0, 0, 0, 0), false, cc.size(0, 0));
         return true;
     },
 
@@ -1068,8 +1068,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 	    this.anchorY = 0.5;
 
         // zwoptex default values
-        this._offsetPosition._x = 0;
-        this._offsetPosition._y = 0;
+        this._offsetPosition.x = 0;
+        this._offsetPosition.y = 0;
         this._hasChildren = false;
 
         // Atlas: Color
@@ -1101,7 +1101,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             rect = cc.rect(0, 0, locSize1.width, locSize1.height);
         }
         this.texture = texture;
-        this.setTextureRect(rect, rotated, rect._size);
+        this.setTextureRect(rect, rotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1136,8 +1136,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 	    this.anchorY = 0.5;
 
         // zwoptex default values
-        this._offsetPosition._x = 0;
-        this._offsetPosition._y = 0;
+        this._offsetPosition.x = 0;
+        this._offsetPosition.y = 0;
         this._hasChildren = false;
 
         var locTextureLoaded = texture.isLoaded();
@@ -1162,7 +1162,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._originalTexture = texture;
 
         this.texture = texture;
-        this.setTextureRect(rect, rotated, rect._size);
+        this.setTextureRect(rect, rotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1188,7 +1188,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         this.texture = sender;
-        this.setTextureRect(locRect, this._rectRotated, locRect._size);
+        this.setTextureRect(locRect, this._rectRotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1214,7 +1214,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._originalTexture = sender;
 
         this.texture = sender;
-        this.setTextureRect(locRect, this._rectRotated, locRect._size);
+        this.setTextureRect(locRect, this._rectRotated);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
@@ -1232,20 +1232,20 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForWebGL:function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-	    this.size = untrimmedSize || rect._size;
+	    this.size = untrimmedSize || rect;
 
         this.setVertexRect(rect);
         this._setTextureCoords(rect);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
-            relativeOffset._x = -relativeOffset._x;
+            relativeOffset.x = -relativeOffset.x;
         if (this._flippedY)
-            relativeOffset._y = -relativeOffset._y;
+            relativeOffset.y = -relativeOffset.y;
 
         var locRect = this._rect;
-        this._offsetPosition._x = relativeOffset._x + (this._contentSize._width - locRect.width) / 2;
-        this._offsetPosition._y = relativeOffset._y + (this._contentSize._height - locRect.height) / 2;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - locRect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - locRect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1254,8 +1254,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         } else {
             // self rendering
             // Atlas: Vertex
-            var x1 = 0 + this._offsetPosition._x;
-            var y1 = 0 + this._offsetPosition._y;
+            var x1 = 0 + this._offsetPosition.x;
+            var y1 = 0 + this._offsetPosition.y;
             var x2 = x1 + locRect.width;
             var y2 = y1 + locRect.height;
 
@@ -1272,7 +1272,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-	    this.size = untrimmedSize || rect._size;
+	    this.size = untrimmedSize || rect;
 
         this.setVertexRect(rect);
 
@@ -1285,11 +1285,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
-            relativeOffset._x = -relativeOffset._x;
+            relativeOffset.x = -relativeOffset.x;
         if (this._flippedY)
-            relativeOffset._y = -relativeOffset._y;
-        this._offsetPosition._x = relativeOffset._x + (this._contentSize._width - this._rect.width) / 2;
-        this._offsetPosition._y = relativeOffset._y + (this._contentSize._height - this._rect.height) / 2;
+            relativeOffset.y = -relativeOffset.y;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1331,12 +1331,12 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 // calculate the Quad based on the Affine Matrix
                 //
                 var locTransformToBatch = this._transformToBatch;
-                var size = this._rect._size;
-                var x1 = this._offsetPosition._x;
-                var y1 = this._offsetPosition._y;
+                var rect = this._rect;
+                var x1 = this._offsetPosition.x;
+                var y1 = this._offsetPosition.y;
 
-                var x2 = x1 + size.width;
-                var y2 = y1 + size.height;
+                var x2 = x1 + rect.width;
+                var y2 = y1 + rect.height;
                 var x = locTransformToBatch.tx;
                 var y = locTransformToBatch.ty;
 
@@ -1557,8 +1557,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setDisplayFrameForWebGL: function (newFrame) {
         this.setNodeDirty(true);
         var frameOffset = newFrame.getOffset();
-        this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
-        this._unflippedOffsetPositionFromCenter._y = frameOffset.y;
+        this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
+        this._unflippedOffsetPositionFromCenter.y = frameOffset.y;
 
         var pNewTexture = newFrame.getTexture();
         var locTextureLoaded = newFrame.textureLoaded();
@@ -1587,8 +1587,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this.setNodeDirty(true);
 
         var frameOffset = newFrame.getOffset();
-        this._unflippedOffsetPositionFromCenter._x = frameOffset.x;
-        this._unflippedOffsetPositionFromCenter._y = frameOffset.y;
+        this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
+        this._unflippedOffsetPositionFromCenter.y = frameOffset.y;
 
         // update rect
         this._rectRotated = newFrame.isRotated();
@@ -1673,8 +1673,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             this._recursiveDirty = false;
             this.dirty = false;
 
-            var x1 = this._offsetPosition._x;
-            var y1 = this._offsetPosition._y;
+            var x1 = this._offsetPosition.x;
+            var y1 = this._offsetPosition.y;
             var x2 = x1 + this._rect.width;
             var y2 = y1 + this._rect.height;
             var locQuad = this._quad;
@@ -1939,10 +1939,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             cc.drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
-            var drawSizeG2 = this.getTextureRect()._size;
+            var drawRectG2 = this.getTextureRect();
             var offsetPixG2 = this.getOffsetPosition();
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
+            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
+                cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
     },
@@ -1959,18 +1959,18 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition, locDrawSizeCanvas = this._drawSize_Canvas;
-        var flipXOffset = 0 | (locOffsetPosition._x), flipYOffset = -locOffsetPosition._y - locRect.height, locTextureCoord = this._textureRect_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height, locTextureCoord = this._textureRect_Canvas;
         locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
         locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
 
         if (this._flippedX || this._flippedY) {
             context.save();
             if (this._flippedX) {
-                flipXOffset = -locOffsetPosition._x - locRect.width;
+                flipXOffset = -locOffsetPosition.x - locRect.width;
                 context.scale(-1, 1);
             }
             if (this._flippedY) {
-                flipYOffset = locOffsetPosition._y;
+                flipYOffset = locOffsetPosition.y;
                 context.scale(1, -1);
             }
         }
@@ -1989,10 +1989,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
-        } else if (locContentSize._width !== 0) {
+        } else if (locContentSize.width !== 0) {
             var curColor = this.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize._width * locEGL_ScaleX, locContentSize._height * locEGL_ScaleY);
+            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
@@ -2009,10 +2009,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             context.strokeStyle = "rgba(0,255,0,1)";
-            var drawSize = this._rect._size;
+            var drawRect = this._rect;
             flipYOffset = -flipYOffset;
-            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawSize.width, flipYOffset),
-                cc.p(flipXOffset + drawSize.width, flipYOffset - drawSize.height), cc.p(flipXOffset, flipYOffset - drawSize.height)];
+            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset),
+                cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
             cc.drawingUtil.drawPoly(vertices2, 4, true);
         }
         if (this._flippedX || this._flippedY)

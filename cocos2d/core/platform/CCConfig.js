@@ -38,8 +38,8 @@ cc.ENGINE_VERSION = "Cocos2d-html5-v2.2.2";
 /**
  * <p>
  *   If enabled, the texture coordinates will be calculated by using this formula: <br/>
- *      - texCoord.left = (rect.origin.x*2+1) / (texture.wide*2);                  <br/>
- *      - texCoord.right = texCoord.left + (rect.size.width*2-2)/(texture.wide*2); <br/>
+ *      - texCoord.left = (rect.x*2+1) / (texture.wide*2);                  <br/>
+ *      - texCoord.right = texCoord.left + (rect.width*2-2)/(texture.wide*2); <br/>
  *                                                                                 <br/>
  *  The same for bottom and top.                                                   <br/>
  *                                                                                 <br/>

@@ -98,7 +98,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         hsvTemp.v = 1;
 
         var rgb = cc.ControlUtils.RGBfromHSV(hsvTemp);
-        this._background.setColor(cc.c3(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
+        this._background.setColor(cc.c3b(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
     },
     updateDraggerWithHSV:function (hsv) {
         // Set the position of the slider to the correct saturation and brightness

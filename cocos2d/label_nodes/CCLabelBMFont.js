@@ -478,7 +478,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     ctor:function () {
         cc.SpriteBatchNode.prototype.ctor.call(this);
-        this._imageOffset = cc.PointZero();
+        this._imageOffset = cc.p(0,0);
         this._string = "";
         this._initialString = "";
         this._alignment = cc.TEXT_ALIGNMENT_CENTER;
@@ -536,7 +536,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
             var size = this.size;
-            var pos = cc.p(0 | ( -this._anchorPointInPoints._x), 0 | ( -this._anchorPointInPoints._y));
+            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
             cc.drawingUtil.setDrawColor4B(0,255,0,255);
             cc.drawingUtil.drawPoly(vertices, 4, true);
@@ -747,7 +747,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
-            this._imageOffset = imageOffset || cc.PointZero();
+            this._imageOffset = imageOffset || cc.p(0,0);
             this._width = (width == null) ? -1 : width;
 
             this._displayedOpacity = this._realOpacity = 255;
@@ -756,8 +756,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._cascadeOpacityEnabled = true;
             this._cascadeColorEnabled = true;
 
-            this._contentSize._width = 0;
-            this._contentSize._height = 0;
+            this._contentSize.width = 0;
+            this._contentSize.height = 0;
 
             this.anchorX = 0.5;
 	        this.anchorY = 0.5;
@@ -787,7 +787,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var prev = -1;
         var kerningAmount = 0;
 
-        var tmpSize = cc.SizeZero();
+        var tmpSize = cc.size(0, 0);
 
         var longestLine = 0;
 
@@ -842,17 +842,17 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             if (!fontChar) {
                 fontChar = new cc.Sprite();
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
-                    fontChar.initWithTexture(locTexture, cc.RectZero(), false);
+                    fontChar.initWithTexture(locTexture, cc.rect(0, 0, 0, 0), false);
                 } else
                     fontChar.initWithTexture(locTexture, rect, false);
                 fontChar._newTextureWhenChangeColor = true;
                 this.addChild(fontChar, 0, i);
             } else {
                 if ((key === 32) && (locContextType === cc.CANVAS)) {
-                    fontChar.setTextureRect(rect, false, cc.SizeZero());
+                    fontChar.setTextureRect(rect, false, cc.size(0, 0));
                 } else {
                     // updating previous sprite
-                    fontChar.setTextureRect(rect, false, rect._size);
+                    fontChar.setTextureRect(rect, false);
                     // restore to default in case they were modified
                     fontChar.visible = true;
                 }
@@ -1325,7 +1325,7 @@ delete window._proto;
  * var label2 = cc.LabelBMFont.create("test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
  *
  * // Example 03
- * var label3 = cc.LabelBMFont.create("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
+ * var label3 = cc.LabelBMFont.create("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();

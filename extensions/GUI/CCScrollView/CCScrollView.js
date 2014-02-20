@@ -85,13 +85,13 @@ cc.ScrollView = cc.Layer.extend({
 
     ctor:function () {
         cc.Layer.prototype.ctor.call(this);
-        this._contentOffset = new cc.Point(0,0);
-        this._maxInset = new cc.Point(0, 0);
-        this._minInset = new cc.Point(0, 0);
-        this._scrollDistance = new cc.Point(0, 0);
-        this._touchPoint = new cc.Point(0, 0);
+        this._contentOffset = cc.p(0,0);
+        this._maxInset = cc.p(0, 0);
+        this._minInset = cc.p(0, 0);
+        this._scrollDistance = cc.p(0, 0);
+        this._touchPoint = cc.p(0, 0);
         this._touches = [];
-        this._viewSize = new cc.Size(0, 0);
+        this._viewSize = cc.size(0, 0);
         this._parentScissorRect = new cc.Rect(0,0,0,0);
         this._tmpViewRect = new cc.Rect(0,0,0,0);
     },
@@ -801,7 +801,7 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     _getViewRect:function(){
-        var screenPos = this.convertToWorldSpace(cc.PointZero());
+        var screenPos = this.convertToWorldSpace(cc.p(0,0));
         var locViewSize = this._viewSize;
 
         var scaleX = this.getScaleX();

@@ -102,8 +102,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.SpriteBatchNode.prototype.ctor.call(this);
         this._descendants = [];
 
-        this._layerSize = cc.SizeZero();
-        this._mapTileSize = cc.SizeZero();
+        this._layerSize = cc.size(0, 0);
+        this._mapTileSize = cc.size(0, 0);
 
         if(cc.renderContextType === cc.CANVAS){
             var locCanvas = cc.canvas;
@@ -136,13 +136,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if(cc.renderContextType === cc.CANVAS){
             var locCanvas = this._cacheCanvas;
             var scaleFactor = cc.CONTENT_SCALE_FACTOR();
-            locCanvas.width = 0 | (locContentSize._width * 1.5 * scaleFactor);
-            locCanvas.height = 0 | (locContentSize._height * 1.5 * scaleFactor);
+            locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
+            locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
             this._cacheContext.translate(0, locCanvas.height);
             var locTexContentSize = this._cacheTexture._contentSize;
-            locTexContentSize._width = locCanvas.width;
-            locTexContentSize._height = locCanvas.height;
+            locTexContentSize.width = locCanvas.width;
+            locTexContentSize.height = locCanvas.height;
 
             // Init sub caches if needed
             var totalPixel = locCanvas.width * locCanvas.height;
@@ -208,7 +208,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
             locCacheContext.clearRect(0, 0, locCacheCanvas.width, -locCacheCanvas.height);
             locCacheContext.save();
-            locCacheContext.translate(this._anchorPointInPoints._x, -(this._anchorPointInPoints._y));
+            locCacheContext.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y));
             if (locChildren) {
                 this.sortAllChildren();
                 for (i = 0; i < locChildren.length; i++) {
@@ -243,7 +243,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
         //context.globalAlpha = this._opacity / 255;
-        var posX = 0 | ( -this._anchorPointInPoints._x), posY = 0 | ( -this._anchorPointInPoints._y);
+        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
         var eglViewer = cc.EGLView.getInstance();
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
@@ -584,7 +584,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     var rect = this.tileset.rectForGID(gid);
                     rect = cc.RECT_PIXELS_TO_POINTS(rect);
 
-                    sprite.setTextureRect(rect, false, rect._size);
+                    sprite.setTextureRect(rect, false);
                     if (flags != null)
                         this._setupTileSprite(sprite, pos, gidAndFlags);
 
@@ -652,7 +652,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @return {cc.Point}
      */
     getPositionAt:function (pos) {
-        var ret = cc.PointZero();
+        var ret = cc.p(0,0);
         switch (this.layerOrientation) {
             case cc.TMX_ORIENTATION_ORTHO:
                 ret = this._positionForOrthoAt(pos);
@@ -788,7 +788,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _calculateLayerOffset:function (pos) {
-        var ret = cc.PointZero();
+        var ret = cc.p(0,0);
         switch (this.layerOrientation) {
             case cc.TMX_ORIENTATION_ORTHO:
                 ret = cc.p(pos.x * this._mapTileSize.width, -pos.y * this._mapTileSize.height);
@@ -964,7 +964,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 this._reusedTile.batchNode = null;
 
                 // Re-init the sprite
-                this._reusedTile.setTextureRect(rect, false, rect._size);
+                this._reusedTile.setTextureRect(rect, false);
 
                 // restore the batch node
                 this._reusedTile.batchNode = this;

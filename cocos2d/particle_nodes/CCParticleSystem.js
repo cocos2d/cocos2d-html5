@@ -131,8 +131,8 @@ cc.PARTICLE_TYPE_GROUPED = 2;
  * Structure that contains the values of each particle
  * @Class
  * @Construct
- * @param {cc.Point} [pos=cc.PointZero()] Position of particle
- * @param {cc.Point} [startPos=cc.PointZero()]
+ * @param {cc.Point} [pos=cc.p(0,0)] Position of particle
+ * @param {cc.Point} [startPos=cc.p(0,0)]
  * @param {cc.Color4F} [color= cc.Color4F(0, 0, 0, 1)]
  * @param {cc.Color4F} [deltaColor=cc.Color4F(0, 0, 0, 1)]
  * @param {cc.Size} [size=0]
@@ -145,8 +145,8 @@ cc.PARTICLE_TYPE_GROUPED = 2;
  * @param {cc.Particle.ModeA} [modeB=]
  */
 cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, atlasIndex, modeA, modeB) {
-    this.pos = pos ? pos : cc.PointZero();
-    this.startPos = startPos ? startPos : cc.PointZero();
+    this.pos = pos ? pos : cc.p(0,0);
+    this.startPos = startPos ? startPos : cc.p(0,0);
     this.color = color ? color : new cc.Color4F(0, 0, 0, 1);
     this.deltaColor = deltaColor ? deltaColor : new cc.Color4F(0, 0, 0, 1);
     this.size = size || 0;
@@ -170,7 +170,7 @@ cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotat
  * @param {Number} tangentialAccel
  */
 cc.Particle.ModeA = function (dir, radialAccel, tangentialAccel) {
-    this.dir = dir ? dir : cc.PointZero();
+    this.dir = dir ? dir : cc.p(0,0);
     this.radialAccel = radialAccel || 0;
     this.tangentialAccel = tangentialAccel || 0;
 };
@@ -340,8 +340,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
 
         this._particles = [];
-        this._sourcePosition = new cc.Point(0, 0);
-        this._posVar = new cc.Point(0, 0);
+        this._sourcePosition = cc.p(0, 0);
+        this._posVar = cc.p(0, 0);
 
         this._startColor = new cc.Color4F(1, 1, 1, 1);
         this._startColorVar = new cc.Color4F(1, 1, 1, 1);
@@ -387,7 +387,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._buffersVBO = [0, 0];
         this._quads = [];
         this._indices = [];
-        this._pointRect = cc.RectZero();
+        this._pointRect = cc.rect(0, 0, 0, 0);
         this._textureLoaded = true;
 
         if (cc.renderContextType === cc.WEBGL) {
@@ -2188,8 +2188,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     // translate newPos to correct position, since matrix transform isn't performed in batchnode
                     // don't update the particle with the new position information, it will interfere with the radius and tangential calculations
                     if (this._batchNode) {
-                        newPos.x += this._position._x;
-                        newPos.y += this._position._y;
+                        newPos.x += this._position.x;
+                        newPos.y += this._position.y;
                     }
 
                     if (cc.renderContextType == cc.WEBGL) {
@@ -2323,8 +2323,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             retParticle.endSizeVar = this.endSizeVar;
 
             // position
-            retParticle.x = this._position._x;
-	        retParticle.y = this._position._y;
+            retParticle.x = this._position.x;
+	        retParticle.y = this._position.y;
             retParticle._posVar.x = this._posVar.x;
             retParticle._posVar.y = this._posVar.y;
 
@@ -2717,7 +2717,7 @@ cc.ParticleSystem.create = function (plistFile) {
  */
 cc.ParticleSystem.ModeA = function (gravity, speed, speedVar, tangentialAccel, tangentialAccelVar, radialAccel, radialAccelVar, rotationIsDir) {
     /** Gravity value. Only available in 'Gravity' mode. */
-    this.gravity = gravity ? gravity : cc.PointZero();
+    this.gravity = gravity ? gravity : cc.p(0,0);
     /** speed of each particle. Only available in 'Gravity' mode.  */
     this.speed = speed || 0;
     /** speed variance of each particle. Only available in 'Gravity' mode. */

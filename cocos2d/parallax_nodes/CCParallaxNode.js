@@ -145,7 +145,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      * @param {cc.Point} offset
      * @example
      * //example
-     * voidNode.addChild(background, -1, cc.p(0.4, 0.5), cc.PointZero());
+     * voidNode.addChild(background, -1, cc.p(0.4, 0.5), cc.p(0,0));
      */
     addChild:function (child, z, ratio, offset) {
         if (arguments.length === 3) {
@@ -158,8 +158,8 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
         obj.setChild(child);
         this.parallaxArray.push(obj);
 
-	    child.x = this._position._x * ratio.x + offset.x;
-	    child.y = this._position._y * ratio.y + offset.y;
+	    child.x = this._position.x * ratio.x + offset.x;
+	    child.y = this._position.y * ratio.y + offset.y;
 
         cc.NodeRGBA.prototype.addChild.call(this, child, z, child.tag);
     },
