@@ -42,7 +42,7 @@ cc.ControlColourPicker = cc.Control.extend({
 
         // Update the value
         var rgb = cc.ControlUtils.RGBfromHSV(this._hsv);
-        cc.Control.prototype.setColor.call(this,cc.c3(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
+        cc.Control.prototype.setColor.call(this,cc.c3b(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
 
         // Send CCControl callback
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
@@ -56,7 +56,7 @@ cc.ControlColourPicker = cc.Control.extend({
 
         // Update the value
         var rgb = cc.ControlUtils.RGBfromHSV(this._hsv);
-        cc.Control.prototype.setColor.call(this,cc.c3(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
+        cc.Control.prototype.setColor.call(this,cc.c3b(0 | (rgb.r * 255), 0 | (rgb.g * 255), 0 | (rgb.b * 255)));
 
         // Send CCControl callback
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);

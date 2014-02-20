@@ -246,7 +246,7 @@ cc.EditBox = cc.ControlButton.extend({
             if (this.value == selfPointer._placeholderText) {
                 this.value = "";
                 this.style.fontSize = selfPointer._edFontSize + "px" ;
-                this.style.color = cc.convertColor3BtoHexString(selfPointer._textColor);
+                this.style.color = cc.colorToHex(selfPointer._textColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
                 selfPointer._delegate.editBoxEditingDidBegin(selfPointer);
@@ -255,7 +255,7 @@ cc.EditBox = cc.ControlButton.extend({
             if (this.value == "") {
                 this.value = selfPointer._placeholderText;
                 this.style.fontSize = selfPointer._placeholderFontSize + "px" ;
-                this.style.color = cc.convertColor3BtoHexString(selfPointer._placeholderColor);
+                this.style.color = cc.colorToHex(selfPointer._placeholderColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidEnd)
                 selfPointer._delegate.editBoxEditingDidEnd(selfPointer);
@@ -319,10 +319,10 @@ cc.EditBox = cc.ControlButton.extend({
         if (text != null) {
             if (text == "") {
                 this._edTxt.value = this._placeholderText;
-                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeholderColor);
+                this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
             } else {
                 this._edTxt.value = text;
-                this._edTxt.style.color = cc.convertColor3BtoHexString(this._textColor);
+                this._edTxt.style.color = cc.colorToHex(this._textColor);
             }
         }
     },
@@ -334,7 +334,7 @@ cc.EditBox = cc.ControlButton.extend({
     setFontColor: function (color) {
         this._textColor = color;
         if (this._edTxt.value != this._placeholderText) {
-            this._edTxt.style.color = cc.convertColor3BtoHexString(color);
+            this._edTxt.style.color = cc.colorToHex(color);
         }
     },
 
@@ -370,7 +370,7 @@ cc.EditBox = cc.ControlButton.extend({
             this._placeholderText = text;
             if (this._edTxt.value == oldPlaceholderText) {
                 this._edTxt.value = text;
-                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeholderColor);
+                this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
                 this._setPlaceholderFontToEditText();
             }
         }
@@ -419,7 +419,7 @@ cc.EditBox = cc.ControlButton.extend({
     setPlaceholderFontColor: function (color) {
         this._placeholderColor = color;
         if (this._edTxt.value == this._placeholderText) {
-            this._edTxt.style.color = cc.convertColor3BtoHexString(color);
+            this._edTxt.style.color = cc.colorToHex(color);
         }
     },
 
@@ -531,7 +531,7 @@ cc.EditBox = cc.ControlButton.extend({
         this.dom.style.width = this._edWidth.toString() + "px";
         this._edHeight = size.height;
         this.dom.style.height = this._edHeight.toString() + "px";
-        this.dom.style.backgroundColor = cc.convertColor3BtoHexString(bgColor);
+        this.dom.style.backgroundColor = cc.colorToHex(bgColor);
     }
 });
 
