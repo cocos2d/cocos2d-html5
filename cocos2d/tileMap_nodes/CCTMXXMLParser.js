@@ -259,6 +259,10 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
  * @property {Boolean}  storingCharacters   - Is reading storing characters stream.
  * @property {String}   tmxFileName         - TMX file name.
  * @property {String}   currentString       - Current string stored from characters stream.
+ * @property {Number}   mapWidth            - Width of the map
+ * @property {Number}   mapHeight           - Height of the map
+ * @property {Number}   tileWidth           - Width of a tile
+ * @property {Number}   tileHeight          - Height of a tile
  */
 cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 	/** @public */
@@ -886,6 +890,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
 window._proto = cc.TMXMapInfo.prototype;
 
+// Extended properties
 cc.defineGetterSetter(_proto, "mapWidth", _proto._getMapWidth, _proto._setMapWidth);
 cc.defineGetterSetter(_proto, "mapHeight", _proto._getMapHeight, _proto._setMapHeight);
 cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);

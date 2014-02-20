@@ -31,6 +31,23 @@
  * Consider using cc.LabelAtlas or cc.LabelBMFont instead.<br/>
  * @class
  * @extends cc.Sprite
+ *
+ * @property {String}       string          - Content string of label
+ * @property {enum}         textAlign       - Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {enum}         verticalAlign   - Vertical Alignment of cc.LabelTTF, cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
+ * @property {Number}       fontSize        - Font size of label
+ * @property {String}       fontName        - Font name of label
+ * @property {String}       font            - Font style string of label
+ * @property {Number}       boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
+ * @property {Number}       boundingHeight  - Height of the bounding box of label, the real content height is limited by boundingHeight
+ * @property {cc.Color}     fillStyle       - The fill color
+ * @property {cc.Color}     strokeStyle     - The stroke color
+ * @property {Number}       lineWidth       - The line width for stroke
+ * @property {Number}       shadowOffsetX   - The x axis offset of shadow
+ * @property {Number}       shadowOffsetY   - The y axis offset of shadow
+ * @property {Number}       shadowOpacity   - The opacity of shadow
+ * @property {Number}       shadowBlur      - The blur size of shadow
+ *
  */
 cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _dimensions:null,
@@ -1033,9 +1050,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             var drawSizeG2 = this.getTextureRect()._size;
-            var offsetPixG2 = this.offset;
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
+            var offsetPixG2X = this.offsetX, offsetPixG2Y = this.offsetY;
+            var verticesG2 = [cc.p(offsetPixG2X, offsetPixG2Y), cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y),
+                cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y + drawSizeG2.height), cc.p(offsetPixG2X, offsetPixG2Y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.g_NumberOfDraws++;

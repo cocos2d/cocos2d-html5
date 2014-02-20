@@ -96,6 +96,39 @@ cc.s_globalOrderOfArrival = 1;
  -# The grid will render the captured screen <br/></P>
  * @class
  * @extends cc.Class
+ *
+ * @property {Number}               x               - x axis position of node
+ * @property {Number}               y               - y axis position of node
+ * @property {Number}               width           - Width of node
+ * @property {Number}               height          - Height of node
+ * @property {Number}               anchorX         - Anchor point's position on x axis
+ * @property {Number}               anchorY         - Anchor point's position on y axis
+ * @property {Number}               skewX           - Skew x
+ * @property {Number}               skewY           - Skew y
+ * @property {Number}               zIndex          - Z order in depth which stands for the drawing order
+ * @property {Number}               vertexZ         - WebGL Z vertex of this node, z order works OK if all the nodes uses the same openGL Z vertex
+ * @property {Number}               rotation        - Rotation of node
+ * @property {Number}               rotationX       - Rotation on x axis
+ * @property {Number}               rotationY       - Rotation on y axis
+ * @property {Number}               scale           - Scale of node
+ * @property {Number}               scaleX          - Scale on x axis
+ * @property {Number}               scaleY          - Scale on y axis
+ * @property {Array}                children        - <@readonly> All children nodes
+ * @property {Number}               childrenCount   - <@readonly> Number of children
+ * @property {cc.Node}              parent          - Parent node
+ * @property {Boolean}              visible         - Indicate whether node is visible or not
+ * @property {Boolean}              running         - <@readonly> Indicate whether node is running or not
+ * @property {Boolean}              ignoreAnchor    - Indicate whether ignore the anchor point property for positionning
+ * @property {Number}               tag             - Tag of node
+ * @property {object}               userData        - Custom user data
+ * @property {object}               userData        - User assigned CCObject, similar to userData, but instead of holding a void* it holds an id
+ * @property {Number}               arrivalOrder    - The arrival order, indicates which children is added previously
+ * @property {cc.ActionManager}     actionManager   - The CCActionManager object that is used by all actions.
+ * @property {cc.Scheduler}         scheduler       - cc.Scheduler used to schedule all "updates" and timers.
+ * @property {cc.GridBase}          grid            - grid object that is used when applying effects
+ * @property {cc.GLProgram}         shaderProgram   - The shader program currently used for this node
+ * @property {Number}               glServerState   - The state of OpenGL server side
+ *
  * @example
  * // example
  * cc.Sprite = cc.Node.extend({});
@@ -2250,11 +2283,7 @@ cc.defineGetterSetter(_proto, "scaleX", _proto.getScaleX, _proto.setScaleX);
 /** @expose */
 _proto.scaleY;
 cc.defineGetterSetter(_proto, "scaleY", _proto.getScaleY, _proto.setScaleY);
-/** @expose */
-_proto.children;
 cc.defineGetterSetter(_proto, "children", _proto.getChildren);
-/** @expose */
-_proto.childrenCount;
 cc.defineGetterSetter(_proto, "childrenCount", _proto.getChildrenCount);
 /** @expose */
 _proto.parent;
@@ -2262,8 +2291,6 @@ cc.defineGetterSetter(_proto, "parent", _proto.getParent, _proto.setParent);
 /** @expose */
 _proto.visible;
 cc.defineGetterSetter(_proto, "visible", _proto.isVisible, _proto.setVisible);
-/** @expose */
-_proto.running;
 cc.defineGetterSetter(_proto, "running", _proto.isRunning);
 /** @expose */
 _proto.ignoreAnchor;
@@ -2331,6 +2358,12 @@ cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDi
  *
  * @class
  * @extends cc.Node
+ *
+ * @property {Number}       opacity             - Opacity of node
+ * @property {Boolean}      opacityModifyRGB    - Indicate whether or not the opacity modify color
+ * @property {Boolean}      cascadeOpacity      - Indicate whether or not it will set cascade opacity
+ * @property {cc.Color}     color               - Color of node
+ * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
  */
 cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     RGBAProtocol:true,

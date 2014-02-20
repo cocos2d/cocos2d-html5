@@ -28,6 +28,8 @@
  * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont
  * @class
  * @extends cc.AtlasNode
+ *
+ * @property {String}   string  - Content string of label
  */
 cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     // string to render

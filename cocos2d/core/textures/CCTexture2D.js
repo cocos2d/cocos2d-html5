@@ -130,6 +130,16 @@ cc._texParams = function (minFilter, magFilter, wrapS, wrapT) {
  * Be aware that the content of the generated textures will be upside-down! </p>
  * @class
  * @extends cc.Class
+ *
+ * @property {WebGLTexture}     name            - <@readonly> WebGLTexture Object
+ * @property {Number}           pixelFormat     - <@readonly> Pixel format of the texture
+ * @property {Number}           pixelsWidth     - <@readonly> Width in pixels
+ * @property {Number}           pixelsHeight    - <@readonly> Height in pixels
+ * @property {Number}           width           - Content width in points
+ * @property {Number}           height          - Content height in points
+ * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
+ * @property {Number}           maxS            - Texture max S
+ * @property {Number}           maxT            - Texture max T
  */
 cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
@@ -954,6 +964,16 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
  * Be aware that the content of the generated textures will be upside-down! </p>
  * @class
  * @extends cc.Class
+ *
+ * @property {WebGLTexture}     name            - WebGLTexture Object
+ * @property {Number}           pixelFormat     - Pixel format of the texture
+ * @property {Number}           pixelsWidth     - Width in pixels
+ * @property {Number}           pixelsHeight    - Height in pixels
+ * @property {Number}           width           - Content width in points
+ * @property {Number}           height          - Content height in points
+ * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
+ * @property {Number}           maxS            - Texture max S
+ * @property {Number}           maxT            - Texture max T
  */
 cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     _contentSize:null,
@@ -1305,27 +1325,15 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
 window._proto = cc.Texture2D.prototype;
-/** @expose */
-_proto.name;
 cc.defineGetterSetter(_proto, "name", _proto.getName);
-/** @expose */
-_proto.pixelFormat;
 cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
-/** @expose */
-_proto.pixelsWidth;
 cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
-/** @expose */
-_proto.pixelsHeight;
 cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
 cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
-/** @expose */
-_proto.maxS;
 cc.defineGetterSetter(_proto, "maxS", _proto.getMaxS, _proto.setMaxS);
-/** @expose */
-_proto.maxT;
 cc.defineGetterSetter(_proto, "maxT", _proto.getMaxT, _proto.setMaxT);
 delete window._proto;
 

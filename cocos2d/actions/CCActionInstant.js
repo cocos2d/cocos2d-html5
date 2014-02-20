@@ -221,7 +221,7 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.flipX = this._flippedX;
+        this._target.flippedX = this._flippedX;
     },
 
     /**
@@ -275,7 +275,7 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
      */
     update:function (time) {
         //this._super();
-        this._target.flipY = this._flippedY;
+        this._target.flippedY = this._flippedY;
     },
 
     /**

@@ -56,6 +56,19 @@ cc.PROGRESS_TEXTURE_COORDS = 0x4b;
  * @class
  * @extends cc.NodeRGBA
  *
+ * @property {cc.Point}     midPoint        <p>- Midpoint is used to modify the progress start position.<br/>
+ *                                          If you're using radials type then the midpoint changes the center point<br/>
+ *                                          If you're using bar type the the midpoint changes the bar growth<br/>
+ *                                              it expands from the center but clamps to the sprites edge so:<br/>
+ *                                              you want a left to right then set the midpoint all the way to cc.p(0,y)<br/>
+ *                                              you want a right to left then set the midpoint all the way to cc.p(1,y)<br/>
+ *                                              you want a bottom to top then set the midpoint all the way to cc.p(x,0)<br/>
+ *                                              you want a top to bottom then set the midpoint all the way to cc.p(x,1)</p>
+ * @property {cc.Point}     barChangeRate   - This allows the bar type to move the component at a specific rate.
+ * @property {enum}         type            - Type of the progress timer: cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR.
+ * @property {Number}       percentage      - Percentage to change progress, from 0 to 100.
+ * @property {cc.Sprite}    sprite          - The sprite to show the progress percentage.
+ * @property {Boolean}      reverseDir      - Indicate whether the direction is reversed.
  */
 cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _type:null,

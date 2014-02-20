@@ -35,6 +35,7 @@
  * @class
  * @extends cc.NodeRGBA
  *
+ * @property {cc.Texture2D}     texture         - Current used texture
  * @property {cc.TextureAtlas}  textureAtlas    - Texture atlas for cc.AtlasNode
  * @property {Number}           quadsToDraw     - Number of quads to draw
  *

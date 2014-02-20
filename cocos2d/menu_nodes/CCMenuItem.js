@@ -73,6 +73,8 @@ cc.DISABLE_TAG = 8803;
  * Subclass cc.MenuItem (or any subclass) to create your custom cc.MenuItem objects.
  * @class
  * @extends cc.NodeRGBA
+ *
+ * @property {Boolean}  enabled     - Indicate whether item is enabled
  */
 cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
 	_enabled:false,
@@ -228,6 +230,10 @@ cc.MenuItem.create = function (callback, target) {
  * - cc.LabelTTF<br/>
  * @class
  * @extends cc.MenuItem
+ *
+ * @property {String}   string          - Content string of label item
+ * @property {cc.Node}  label           - Label of label item
+ * @property {cc.Color} disabledColor   - Color of label when it's diabled
  */
 cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _disabledColor: null,
@@ -486,6 +492,9 @@ cc.MenuItemAtlasFont.create = function (value, charMapFile, itemWidth, itemHeigh
  * Helper class that creates a CCMenuItemLabel class with a Label
  * @class
  * @extends cc.MenuItemLabel
+ *
+ * @property {Number}   fontSize    - Font size of font item
+ * @property {String}   fontName    - Font name of font item
  */
 cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     _fontSize:null,
@@ -636,6 +645,10 @@ cc.MenuItemFont.create = function (value, callback, target) {
  *   - disabled image<br/>
  * @class
  * @extends cc.MenuItem
+ *
+ * @property {cc.Sprite}    normalImage     - Sprite in normal state
+ * @property {cc.Sprite}    selectedImage     - Sprite in selected state
+ * @property {cc.Sprite}    disabledImage     - Sprite in disabled state
  */
 cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     _normalImage:null,
@@ -1035,7 +1048,8 @@ cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, fiv
  * @class
  * @extends cc.MenuItem
  *
- * @property {Array}    subItems    - Sub items
+ * @property {Array}    subItems        - Sub items
+ * @property {Number}   selectedIndex   - Index of selected sub item
  */
 cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
 	/** @public */

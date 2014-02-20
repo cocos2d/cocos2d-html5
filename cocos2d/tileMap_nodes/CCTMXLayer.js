@@ -50,6 +50,10 @@
  * @property {Number}               layerOrientation    - Layer orientation
  * @property {Array}                properties          - Properties from the layer. They can be added using tilemap editors
  * @property {String}               layerName           - Name of the layer
+ * @property {Number}               layerWidth          - Width of the layer
+ * @property {Number}               layerHeight         - Height of the layer
+ * @property {Number}               tileWidth           - Width of a tile
+ * @property {Number}               tileHeight          - Height of a tile
  */
 cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 	/** @public */
@@ -1041,6 +1045,8 @@ if(cc.Browser.supportWebGL){
 }
 
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+
+// Extended properties
 cc.defineGetterSetter(_proto, "layerWidth", _proto._getLayerWidth, _proto._setLayerWidth);
 cc.defineGetterSetter(_proto, "layerHeight", _proto._getLayerHeight, _proto._setLayerHeight);
 cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);

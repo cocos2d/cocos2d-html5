@@ -50,6 +50,7 @@ cc.setProgram = function (node, program) {
  *
  * @property {Number}   alphaThreshold  - Threshold for alpha value.
  * @property {Boolean}  inverted        - Indicate whether in inverted mode.
+ * @property {cc.Node}  stencil         - he cc.Node to use as a stencil to do the clipping.
  */
 cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 	/** @public */

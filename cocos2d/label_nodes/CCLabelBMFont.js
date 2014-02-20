@@ -416,6 +416,10 @@ cc.BMFontConfiguration.create = function (FNTfile) {
  * http://www.angelcode.com/products/bmfont/ (Free, Windows only)</p>
  * @class
  * @extends cc.SpriteBatchNode
+ *
+ * @property {String}   string          - Content string of label
+ * @property {enum}     textAlign       - Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {Number}   boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     RGBAProtocol:true,
