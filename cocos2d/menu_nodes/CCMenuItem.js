@@ -1131,8 +1131,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             var item = this.subItems[this._selectedIndex];
             this.addChild(item, 0, cc.CURRENT_ITEM);
             var w = item.width, h = item.height;
-            this.w = w;
-	        this.h = h;
+            this.width = w;
+	        this.height = h;
             item.x = w / 2;
 	        item.y = h / 2;
         }
