@@ -425,8 +425,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this.setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
 
             this._atlasIndexArray = [];
-            this.size = cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
-                this._layerSize.height * this._mapTileSize.height));
+            this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
+                this._layerSize.height * this._mapTileSize.height)));
             this._useAutomaticVertexZ = false;
             this._vertexZvalue = 0;
             return true;

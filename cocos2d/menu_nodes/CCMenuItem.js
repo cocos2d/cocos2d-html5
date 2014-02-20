@@ -279,7 +279,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             this.addChild(label);
             label.anchorX = 0;
 	        label.anchorY = 0;
-            this.size = label.size;
+	        this.width = label.width;
+	        this.height = label.height;
         }
 
         if (this._label) {
@@ -357,7 +358,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      */
     setString:function (label) {
         this._label.string = label;
-        this.size = this._label.size;
+	    this.width = this._label.width;
+        this.height = this._label.height;
     },
 
 	_getString: function () {
@@ -686,12 +688,14 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
 
         this._normalImage = normalImage;
-        this.size = this._normalImage.size;
+        this.width = this._normalImage.width;
+	    this.height = this._normalImage.height;
         this._updateImagesVisibility();
 
         if (normalImage.textureLoaded && !normalImage.textureLoaded()) {
             normalImage.addLoadedEventListener(function (sender) {
-                this.size = sender.size;
+                this.width = sender.width;
+	            this.height = sender.height;
             }, this);
         }
     },
@@ -766,11 +770,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this.setDisabledImage(disabledSprite);
         var locNormalImage = this._normalImage;
         if (locNormalImage) {
-            this.size = locNormalImage.size;
+	        this.width = locNormalImage.width;
+	        this.height = locNormalImage.height;
 
             if (locNormalImage.textureLoaded && !locNormalImage.textureLoaded()) {
                 locNormalImage.addLoadedEventListener(function (sender) {
-                    this.size = sender.size;
+                    this.width = sender.width;
+	                this.height = sender.height;
 	                this.cascadeColor = true;
 	                this.cascadeOpacity = true;
                 }, this);
@@ -1124,10 +1130,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
 
             var item = this.subItems[this._selectedIndex];
             this.addChild(item, 0, cc.CURRENT_ITEM);
-            var s = item.size;
-            this.size = s;
-            item.x = s.width / 2;
-	        item.y = s.height / 2;
+            var w = item.width, h = item.height;
+            this.w = w;
+	        this.h = h;
+            item.x = w / 2;
+	        item.y = h / 2;
         }
     },
 

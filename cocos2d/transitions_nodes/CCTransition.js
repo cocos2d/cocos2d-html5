@@ -1351,7 +1351,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         if (null == inTexture)
             return;
 
-        inTexture.sprite.anchor = cc.p(0.5, 0.5);
+        inTexture.sprite.anchorX = 0.5;
+	    inTexture.sprite.anchorY = 0.5;
         inTexture.attr({
 	        x: winSize.width / 2,
 	        y: winSize.height / 2,
@@ -1366,11 +1367,10 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create the second render texture for outScene
         var outTexture = cc.RenderTexture.create(winSize.width, winSize.height);
-        outTexture.sprite.anchor = cc.p(0.5, 0.5);
         outTexture.x = winSize.width / 2;
 	    outTexture.y = winSize.height / 2;
-        outTexture.anchorX = 0.5;
-	    outTexture.anchorY = 0.5;
+	    outTexture.sprite.anchorX = outTexture.anchorX = 0.5;
+	    outTexture.sprite.anchorY = outTexture.anchorY = 0.5;
 
         // render outScene to its texturebuffer
         outTexture.begin();

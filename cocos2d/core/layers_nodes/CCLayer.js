@@ -74,7 +74,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
-        this.size = director.getWinSize();
+        this.setContentSize(director.getWinSize());
     },
 
     /**

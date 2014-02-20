@@ -939,7 +939,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
             }
         }
-        this.size = locSize;
+        this.setContentSize(locSize);
         this._strokeShadowOffsetX = locStrokeShadowOffsetX;
         this._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
@@ -1062,7 +1062,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._rectRotated = rotated || false;
         untrimmedSize = untrimmedSize || rect;
 
-        this.size = untrimmedSize;
+        this.setContentSize(untrimmedSize);
 
         this.setVertexRect(rect);
 

@@ -2233,8 +2233,8 @@ if(cc.Browser.supportWebGL){
 cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
 cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 /** @expose */
-_proto.pos;
-cc.defineGetterSetter(_proto, "pos", _proto.getPosition, _proto.setPosition);
+//_proto.pos;
+//cc.defineGetterSetter(_proto, "pos", _proto.getPosition, _proto.setPosition);
 /** @expose */
 _proto.width;
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
@@ -2242,11 +2242,11 @@ cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 _proto.height;
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 /** @expose */
-_proto.size;
-cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+//_proto.size;
+//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
 /** @expose */
-_proto.anchor;
-cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
+//_proto.anchor;
+//cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
 /** @expose */
 _proto.anchorX;
 cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
