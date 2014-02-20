@@ -49,8 +49,8 @@ cc.ControlButton = cc.Control.extend({
 
     ctor:function () {
         cc.Control.prototype.ctor.call(this);
-        this._preferredSize = new cc.Size(0, 0);
-        this._labelAnchorPoint = new cc.Point(0, 0);
+        this._preferredSize = cc.size(0, 0);
+        this._labelAnchorPoint = cc.p(0, 0);
         this._currentTitle = "";
         this._currentTitleColor = cc.white();
         this._titleDispatchTable = {};
@@ -101,8 +101,12 @@ cc.ControlButton = cc.Control.extend({
             locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Get the title label size
-        var titleLabelSize = label ? label.getBoundingBox()._size : cc.size(0, 0);
-
+        var titleLabelSize = cc.size(0, 0);
+        if(label){
+            var boundingBox = label.getBoundingBox();
+            titleLabelSize.width = boundingBox.width;
+            titleLabelSize.height = boundingBox.height;
+        }
         // Adjust the background image if necessary
         if (this._doesAdjustBackgroundImage) {
             // Add the margins
@@ -191,9 +195,9 @@ cc.ControlButton = cc.Control.extend({
             this._marginH = 24;
             this._marginV = 12;
 
-            this._labelAnchorPoint = new cc.Point(0.5, 0.5);
+            this._labelAnchorPoint = cc.p(0.5, 0.5);
 
-            this.setPreferredSize(cc.SizeZero());
+            this.setPreferredSize(cc.size(0, 0));
 
             // Layout update
             this.needsLayout();

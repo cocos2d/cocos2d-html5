@@ -79,8 +79,8 @@ cc.ControlSlider = cc.Control.extend({
         touchLocation = this.getParent().convertToNodeSpace(touchLocation);
 
         var rect = this.getBoundingBox();
-        rect._size.width += this._thumbSprite.getContentSize().width;
-        rect._origin.x -= this._thumbSprite.getContentSize().width / 2;
+        rect.width += this._thumbSprite.getContentSize().width;
+        rect.x -= this._thumbSprite.getContentSize().width / 2;
 
         return cc.rectContainsPoint(rect, touchLocation);
     },
@@ -213,7 +213,7 @@ cc.ControlSlider = cc.Control.extend({
         this.sliderMoved(location);
     },
     onTouchEnded:function (touch, event) {
-        this.sliderEnded(cc.PointZero());
+        this.sliderEnded(cc.p(0,0));
     },
     needsLayout:function(){
         var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
@@ -222,7 +222,7 @@ cc.ControlSlider = cc.Control.extend({
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
         textureRect = cc.rect(textureRect.x, textureRect.y, this._thumbSprite.getPositionX(), textureRect.height);
-        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect._size);
+        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated());
     },
     /** Returns the value for the given location. */
     valueForLocation:function (location) {

@@ -72,9 +72,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._disabledFileName = "";
         this._prevIgnoreSize = true;
         this._scale9Enabled = false;
-        this._capInsetsNormal = cc.RectZero();
-        this._capInsetsPressed = cc.RectZero();
-        this._capInsetsDisabled = cc.RectZero();
+        this._capInsetsNormal = cc.rect(0, 0, 0, 0);
+        this._capInsetsPressed = cc.rect(0, 0, 0, 0);
+        this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
         this._normalTexType = ccs.TextureResType.local;
         this._pressedTexType = ccs.TextureResType.local;
         this._disabledTexType = ccs.TextureResType.local;
@@ -496,7 +496,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 	        this._buttonClickedRenderer.setAnchorPoint(point, y);
 	        this._buttonDisableRenderer.setAnchorPoint(point, y);
         }
-	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
     },
 
     onSizeChanged: function () {

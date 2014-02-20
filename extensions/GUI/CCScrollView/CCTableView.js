@@ -123,7 +123,7 @@ cc.TableViewDataSource = cc.Class.extend({
      * @return {cc.Size} cell size
      */
     cellSizeForTable:function (table) {
-        return cc.SIZE_ZERO;
+        return cc.size(0,0);
     },
 
     /**
@@ -266,7 +266,7 @@ cc.TableView = cc.ScrollView.extend({
     },
 
     _updateContentSize:function () {
-        var size = cc.SizeZero();
+        var size = cc.size(0, 0);
 
         var cellsCount = this._dataSource.numberOfCellsInTableView(this);
 

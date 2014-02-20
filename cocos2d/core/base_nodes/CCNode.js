@@ -188,10 +188,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationRadiansY:0,
 
     _initNode:function () {
-        this._anchorPoint = cc._pConst(0, 0);
-        this._anchorPointInPoints = cc._pConst(0, 0);
-        this._contentSize = cc._sizeConst(0, 0);
-        this._position = cc._pConst(0, 0);
+        this._anchorPoint = cc.p(0, 0);
+        this._anchorPointInPoints = cc.p(0, 0);
+        this._contentSize = cc.size(0, 0);
+        this._position = cc.p(0, 0);
         this._children = [];
         this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
@@ -586,12 +586,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (yValue === undefined) {
-            locPosition._x = newPosOrxValue.x;
-            locPosition._y = newPosOrxValue.y;
+            locPosition.x = newPosOrxValue.x;
+            locPosition.y = newPosOrxValue.y;
         }
 	    else {
-	        locPosition._x = newPosOrxValue;
-	        locPosition._y = yValue;
+	        locPosition.x = newPosOrxValue;
+	        locPosition.y = yValue;
         }
         this.setNodeDirty();
     },
@@ -609,14 +609,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getPositionX:function () {
-        return this._position._x;
+        return this._position.x;
     },
 
     /**
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this._position._x = x;
+        this._position.x = x;
         this.setNodeDirty();
     },
 
@@ -624,14 +624,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getPositionY:function () {
-        return  this._position._y;
+        return  this._position.y;
     },
 
     /**
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this._position._y = y;
+        this._position.y = y;
         this.setNodeDirty();
     },
 
@@ -706,19 +706,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (y === undefined) {
-	        if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
+	        if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
 		        return;
-	        locAnchorPoint._x = point.x;
-	        locAnchorPoint._y = point.y;
+	        locAnchorPoint.x = point.x;
+	        locAnchorPoint.y = point.y;
         } else {
-	        if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
+	        if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
 		        return;
-	        locAnchorPoint._x = point;
-	        locAnchorPoint._y = y;
+	        locAnchorPoint.x = point;
+	        locAnchorPoint.y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP._x = locSize._width * locAnchorPoint._x;
-        locAPP._y = locSize._height * locAnchorPoint._y;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
         this.setNodeDirty();
     },
 
@@ -727,32 +727,32 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 	},
 	_setAnchor: function(p) {
 		var x = p.x, y = p.y;
-		if(this._anchorPoint._x !== x) {
-			this._anchorPoint._x = x;
-			this._anchorPointInPoints._x = this._contentSize._width * x;
+		if(this._anchorPoint.x !== x) {
+			this._anchorPoint.x = x;
+			this._anchorPointInPoints.x = this._contentSize.width * x;
 		}
-		if(this._anchorPoint._y !== y) {
-			this._anchorPoint._y = y;
-			this._anchorPointInPoints._y = this._contentSize._height * y;
+		if(this._anchorPoint.y !== y) {
+			this._anchorPoint.y = y;
+			this._anchorPointInPoints.y = this._contentSize.height * y;
 		}
 		this.setNodeDirty();
 	},
 	_getAnchorX: function() {
-		return this._anchorPoint._x;
+		return this._anchorPoint.x;
 	},
 	_setAnchorX: function(x) {
-		if(this._anchorPoint._x === x) return;
-		this._anchorPoint._x = x;
-		this._anchorPointInPoints._x = this._contentSize._width * x;
+		if(this._anchorPoint.x === x) return;
+		this._anchorPoint.x = x;
+		this._anchorPointInPoints.x = this._contentSize.width * x;
 		this.setNodeDirty();
 	},
 	_getAnchorY: function() {
-		return this._anchorPoint._y;
+		return this._anchorPoint.y;
 	},
 	_setAnchorY: function(y) {
-		if(this._anchorPoint._y === y) return;
-		this._anchorPoint._y = y;
-		this._anchorPointInPoints._y = this._contentSize._height * y;
+		if(this._anchorPoint.y === y) return;
+		this._anchorPoint.y = y;
+		this._anchorPointInPoints.y = this._contentSize.height * y;
 		this.setNodeDirty();
 	},
 
@@ -768,19 +768,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
 	_getWidth: function() {
-		return this._contentSize._width;
+		return this._contentSize.width;
 	},
 	_setWidth: function(width) {
-		this._contentSize._width = width;
-		this._anchorPointInPoints._x = width * this._anchorPoint._x;
+		this._contentSize.width = width;
+		this._anchorPointInPoints.x = width * this._anchorPoint.x;
 		this.setNodeDirty();
 	},
 	_getHeight: function() {
-		return this._contentSize._height;
+		return this._contentSize.height;
 	},
 	_setHeight: function(height) {
-		this._contentSize._height = height;
-		this._anchorPointInPoints._y = height * this._anchorPoint._y;
+		this._contentSize.height = height;
+		this._anchorPointInPoints.y = height * this._anchorPoint.y;
 		this.setNodeDirty();
 	},
 
@@ -808,19 +808,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if (height === undefined) {
-	        if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
+	        if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
 		        return;
-	        locContentSize._width = size.width;
-	        locContentSize._height = size.height;
+	        locContentSize.width = size.width;
+	        locContentSize.height = size.height;
         } else {
-	        if ((size === locContentSize._width) && (height === locContentSize._height))
+	        if ((size === locContentSize.width) && (height === locContentSize.height))
 		        return;
-	        locContentSize._width = size;
-	        locContentSize._height = height;
+	        locContentSize.width = size;
+	        locContentSize.height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP._x = locContentSize._width * locAnchorPoint._x;
-        locAPP._y = locContentSize._height * locAnchorPoint._y;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
         this.setNodeDirty();
     },
 
@@ -1046,7 +1046,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
@@ -1932,7 +1932,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
-            var apx = this._anchorPointInPoints._x, apy = this._anchorPointInPoints._y;
+            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
@@ -1955,8 +1955,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             var t = this._transform;// quick reference
 
             // base position
-            t.tx = this._position._x;
-            t.ty = this._position._y;
+            t.tx = this._position.x;
+            t.ty = this._position.y;
 
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
@@ -1971,7 +1971,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             t.c = Sin;
 
             var lScaleX = this._scaleX, lScaleY = this._scaleY;
-            var appX = this._anchorPointInPoints._x, appY = this._anchorPointInPoints._y;
+            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
 
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
@@ -2024,10 +2024,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _nodeToParentTransformForWebGL:function () {
         if (this._transformDirty) {
             // Translate values
-            var x = this._position._x;
-            var y = this._position._y;
-            var apx = this._anchorPointInPoints._x, napx = -apx;
-            var apy = this._anchorPointInPoints._y, napy = -apy;
+            var x = this._position.x;
+            var y = this._position.y;
+            var apx = this._anchorPointInPoints.x, napx = -apx;
+            var apy = this._anchorPointInPoints.y, napy = -apy;
             var scx = this._scaleX, scy = this._scaleY;
 
             if (this._ignoreAnchorPointForPosition) {
@@ -2169,7 +2169,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
@@ -2191,7 +2191,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
         rect = cc.RectApplyAffineTransform(rect, trans);
 

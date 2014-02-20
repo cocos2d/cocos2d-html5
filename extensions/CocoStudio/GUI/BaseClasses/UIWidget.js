@@ -129,24 +129,24 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._focus = false;
         this._brightStyle = ccs.BrightStyle.none;
         this._updateEnabled = false;
-        this._touchStartPos = cc.PointZero();
-        this._touchMovePos = cc.PointZero();
-        this._touchEndPos = cc.PointZero();
+        this._touchStartPos = cc.p(0,0);
+        this._touchMovePos = cc.p(0,0);
+        this._touchEndPos = cc.p(0,0);
         this._touchEventListener = null;
         this._touchEventSelector = null;
         this._name = "default";
         this._widgetType = ccs.WidgetType.widget;
         this._actionTag = 0;
-        this._size = cc.SizeZero();
-        this._customSize = cc.SizeZero();
+        this._size = cc.size(0, 0);
+        this._customSize = cc.size(0, 0);
         this._layoutParameterDictionary = {};
         this._ignoreSize = false;
         this._widgetChildren = [];
         this._affectByClipping = false;
         this._sizeType = ccs.SizeType.absolute;
-        this._sizePercent = cc.PointZero();
+        this._sizePercent = cc.p(0,0);
         this._positionType = ccs.PositionType.absolute;
-        this._positionPercent = cc.PointZero();
+        this._positionPercent = cc.p(0,0);
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
         this._nodes = [];
@@ -619,7 +619,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {cc.Point}
      */
     getWorldPosition: function () {
-        return this.convertToWorldSpace(cc.PointZero());
+        return this.convertToWorldSpace(cc.p(0,0));
     },
 
     /**

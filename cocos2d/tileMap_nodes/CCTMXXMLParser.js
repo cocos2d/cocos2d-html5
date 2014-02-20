@@ -151,7 +151,7 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
         this.ownTiles = true;
         this._minGID = 100000;
         this._maxGID = 0;
-        this.offset = cc.PointZero();
+        this.offset = cc.p(0,0);
     },
 
     /**
@@ -216,8 +216,8 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
     imageSize:null,
 
     ctor:function () {
-        this._tileSize = cc.SizeZero();
-        this.imageSize = cc.SizeZero();
+        this._tileSize = cc.size(0, 0);
+        this.imageSize = cc.size(0, 0);
     },
 
     /**
@@ -225,13 +225,14 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
      * @return {cc.Rect}
      */
     rectForGID:function (gid) {
-        var rect = cc.RectZero();
-        rect._size = this._tileSize;
+        var rect = cc.rect(0, 0, 0, 0);
+        rect.width = this._tileSize.width;
+        rect.height = this._tileSize.height;
         gid &= cc.TMX_TILE_FLIPPED_MASK;
         gid = gid - parseInt(this.firstGid, 10);
         var max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing), 10);
-        rect._origin.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin, 10);
-        rect._origin.y = parseInt(parseInt(gid / max_x, 10) * (this._tileSize.height + this.spacing) + this.margin, 10);
+        rect.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin, 10);
+        rect.y = parseInt(parseInt(gid / max_x, 10) * (this._tileSize.height + this.spacing) + this.margin, 10);
         return rect;
     }
 });
@@ -300,8 +301,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _currentFirstGID:0,
 
     ctor:function () {
-        this._mapSize = cc.SizeZero();
-        this._tileSize = cc.SizeZero();
+        this._mapSize = cc.size(0, 0);
+        this._tileSize = cc.size(0, 0);
         this._layers = [];
         this._tilesets = [];
         this._objectGroups = [];

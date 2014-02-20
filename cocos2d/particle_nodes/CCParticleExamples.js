@@ -261,7 +261,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
             var winSize = cc.Director.getInstance().getWinSize();
             this.x = winSize.width / 2
 	        this.y = winSize.height / 2;
-            this.setPosVar(cc.PointZero());
+            this.setPosVar(cc.p(0,0));
 
             // life of particles
             this.setLife(1);
@@ -357,7 +357,7 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
             var winSize = cc.Director.getInstance().getWinSize();
             this.x = winSize.width / 2;
 	        this.y = winSize.height / 2;
-            this.setPosVar(cc.PointZero());
+            this.setPosVar(cc.p(0,0));
 
             // life of particles
             this.setLife(4);
@@ -452,7 +452,7 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
             var winSize = cc.Director.getInstance().getWinSize();
             this.x = winSize.width / 2;
 	        this.y = winSize.height / 2;
-            this.setPosVar(cc.PointZero());
+            this.setPosVar(cc.p(0,0));
 
             // life of particles
             this.setLife(4);
@@ -549,7 +549,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
             var winSize = cc.Director.getInstance().getWinSize();
             this.x = winSize.width / 2
 	        this.y = winSize.height / 2;
-            this.setPosVar(cc.PointZero());
+            this.setPosVar(cc.p(0,0));
 
             // life of particles
             this.setLife(2);
@@ -645,7 +645,7 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
             var winSize = cc.Director.getInstance().getWinSize();
             this.x = winSize.width / 2;
 	        this.y = winSize.height / 2;
-            this.setPosVar(cc.PointZero());
+            this.setPosVar(cc.p(0,0));
 
             // life of particles
             this.setLife(12);
@@ -741,7 +741,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
             var winSize = cc.Director.getInstance().getWinSize();
             this.x = winSize.width / 2;
 	        this.y = winSize.height / 2;
-            this.setPosVar(cc.PointZero());
+            this.setPosVar(cc.p(0,0));
 
             // life of particles
             this.setLife(5.0);

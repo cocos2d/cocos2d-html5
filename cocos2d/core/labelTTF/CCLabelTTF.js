@@ -91,7 +91,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
 
-        this._dimensions = cc.SizeZero();
+        this._dimensions = cc.size(0, 0);
         this._hAlignment = cc.TEXT_ALIGNMENT_LEFT;
         this._vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         this._opacityModifyRGB = false;
@@ -100,7 +100,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._isMultiLine = false;
 
         this._shadowEnabled = false;
-        this._shadowOffset = cc._pConst(0, 0);
+        this._shadowOffset = cc.p(0,0);
         this._shadowOpacity = 0;
         this._shadowBlur = 0;
         this._shadowColorStr = "rgba(128, 128, 128, 0.5)";
@@ -799,7 +799,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (!context)
             return;
         var locStrokeShadowOffsetX = this._strokeShadowOffsetX, locStrokeShadowOffsetY = this._strokeShadowOffsetY;
-        var locContentSizeHeight = this._contentSize._height - locStrokeShadowOffsetY, locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
+        var locContentSizeHeight = this._contentSize.height - locStrokeShadowOffsetY, locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
             locFontHeight = this._fontClientHeight, locStrokeSize = this._strokeSize;
 
         context.setTransform(1, 0, 0, 1, 0 + locStrokeShadowOffsetX * 0.5 , locContentSizeHeight + locStrokeShadowOffsetY * 0.5);
@@ -829,7 +829,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
         context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
 
-        var locContentWidth = this._contentSize._width - locStrokeShadowOffsetX;
+        var locContentWidth = this._contentSize.width - locStrokeShadowOffsetX;
         if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
             xOffset += locContentWidth;
         else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
@@ -945,8 +945,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         // need computing _anchorPointInPoints
         var locAP = this._anchorPoint;
-        this._anchorPointInPoints._x = (locStrokeShadowOffsetX * 0.5) + ((locSize.width - locStrokeShadowOffsetX) * locAP._x);
-        this._anchorPointInPoints._y = (locStrokeShadowOffsetY * 0.5) + ((locSize.height - locStrokeShadowOffsetY) * locAP._y);
+        this._anchorPointInPoints.x = (locStrokeShadowOffsetX * 0.5) + ((locSize.width - locStrokeShadowOffsetX) * locAP.x);
+        this._anchorPointInPoints.y = (locStrokeShadowOffsetY * 0.5) + ((locSize.height - locStrokeShadowOffsetY) * locAP.y);
     },
 
     getContentSize:function(){
@@ -972,15 +972,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if(this._string.length === 0){
             locLabelCanvas.width = 1;
-            locLabelCanvas.height = locContentSize._height;
-            this.setTextureRect(cc.rect(0, 0, 1, locContentSize._height));
+            locLabelCanvas.height = locContentSize.height;
+            this.setTextureRect(cc.rect(0, 0, 1, locContentSize.height));
             return true;
         }
 
         //set size for labelCanvas
         locContext.font = this._fontStyleStr;
         this._updateTTF();
-        var width = locContentSize._width, height = locContentSize._height;
+        var width = locContentSize.width, height = locContentSize.height;
         var flag = locLabelCanvas.width == width && locLabelCanvas.height == height;
         locLabelCanvas.width = width;
         locLabelCanvas.height = height;
@@ -1060,9 +1060,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-        untrimmedSize = untrimmedSize || rect._size;
+        untrimmedSize = untrimmedSize || rect;
 
         this.size = untrimmedSize;
+
         this.setVertexRect(rect);
 
         var locTextureCoordRect = this._textureRect_Canvas;
@@ -1075,11 +1076,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
         if (this._flippedX)
-            relativeOffset._x = -relativeOffset._x;
+            relativeOffset.x = -relativeOffset.x;
         if (this._flippedY)
-            relativeOffset._y = -relativeOffset._y;
-        this._offsetPosition._x = relativeOffset.x + (this._contentSize._width - this._rect.width) / 2;
-        this._offsetPosition._y = relativeOffset.y + (this._contentSize._height - this._rect.height) / 2;
+            relativeOffset.y = -relativeOffset.y;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1269,7 +1270,7 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
  * @param {String} text
  * @param {String|cc.FontDefinition} fontName
  * @param {Number} fontSize
- * @param {cc.Size} [dimensions=cc.SIZE_ZERO]
+ * @param {cc.Size} [dimensions=cc.size(0,0)]
  * @param {Number} [hAlignment=]
  * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
  * @return {cc.LabelTTF|Null}
