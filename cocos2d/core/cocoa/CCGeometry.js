@@ -42,11 +42,13 @@ cc.Point = function (x, y) {
 
 /**
  * Helper macro that creates a cc.Point.
- * @param {Number} x
+ * @param {Number|cc.Point} x a Number or a size object
  * @param {Number} y
  * @return {cc.Point}
  * @example
- * var point = cc.p(100,100,100,100);
+ * var point1 = cc.p();
+ * var point2 = cc.p(100,100,100,100);
+ * var point3 = cc.p(point2);
  */
 cc.p = function (x, y) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
@@ -55,7 +57,11 @@ cc.p = function (x, y) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT,
     // note: we have tested this item on Chrome and firefox, it is faster than cc.p(x, y)
-    return {x: x || 0, y: y || 0};
+    if (x == undefined)
+        return {x: 0, y: 0};
+    if (y == undefined)
+        return {x: x.x, y: x.y};
+    return {x: x, y: y};
 };
 
 /**
@@ -90,11 +96,13 @@ cc.Size = function (width, height) {
 
 /**
  * @function
- * @param {Number} w width or a size object
+ * @param {Number|cc.Size} w width or a size object
  * @param {Number} h height
  * @return {cc.Size}
  * @example
- * var size = cc.size(100,100,100,100);
+ * var size1 = cc.size();
+ * var size2 = cc.size(100,100,100,100);
+ * var size3 = cc.size(size2);
  */
 cc.size = function (w, h) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
@@ -103,7 +111,11 @@ cc.size = function (w, h) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
     // note: we have tested this item on Chrome and firefox, it is faster than cc.size(w, h)
-    return { width: w || 0, height: h || 0};
+    if (w === undefined)
+        return {width: 0, height: 0};
+    if (h === undefined)
+        return {width: w.width, height: w.height};
+    return {width: w, height: h};
 };
 
 /**
@@ -142,16 +154,22 @@ cc.Rect = function (x, y, width, height) {
 
 /**
  * Return a new Rect
- * @param {Number} x
+ * @param {Number|cc.Rect} x a number or a rect object
  * @param {Number} y
  * @param {Number} w
  * @param {Number} h
- * @returns {Rect}
+ * @returns {cc.Rect}
  * @example
- * var rect = cc.rect(100,100,100,100);
+ * var rect1 = cc.rect();
+ * var rect2 = cc.rect(100,100,100,100);
+ * var rect3 = cc.rect(rect2);
  */
 cc.rect = function (x, y, w, h) {
-    return {x: x || 0, y: y || 0, width: w || 0, height: h || 0};
+    if (x === undefined)
+        return {x: 0, y: 0, width: 0, height: 0};
+    if (y === undefined)
+        return {x: x.x, y: x.y, width: x.width, height: x.height};
+    return {x: x, y: y, width: w, height: h };
 };
 
 /**
