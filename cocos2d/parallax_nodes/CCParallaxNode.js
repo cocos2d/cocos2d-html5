@@ -216,7 +216,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
         var cn = this;
         while (cn.parent != null) {
             cn = cn.parent;
-            ret = cc.pAdd(ret, cn.pos);
+            ret = cc.pAdd(ret, cn.getPosition());
         }
         return ret;
     }
