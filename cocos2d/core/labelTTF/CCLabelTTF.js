@@ -786,7 +786,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 	_setFont: function (fontStyle) {
 		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
 		if(res) {
-			this._fontSize = res[1];
+			this._fontSize = parseInt(res[1]);
 			this._fontName = res[2];
 			this._fontStyleStr = fontStyle;
 			this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, this._fontSize);

@@ -603,7 +603,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
-     * override "getContentSize" method of widget.
+     * override "getVirtualRenderer" method of widget.
      * @returns {cc.Node}
      */
     getVirtualRenderer: function () {

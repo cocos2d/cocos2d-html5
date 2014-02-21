@@ -286,6 +286,15 @@ cc.EditBox = cc.ControlButton.extend({
         this._setFontToEditBox();
     },
 
+	_setFont: function (fontStyle) {
+		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
+		if(res) {
+			this._edFontSize = parseInt(res[1]);
+			this._edFontName = res[2];
+			this._setFontToEditBox();
+		}
+	},
+
     /**
      * set fontName
      * @param {String} fontName
@@ -386,6 +395,14 @@ cc.EditBox = cc.ControlButton.extend({
         this._placeholderFontSize = fontSize;
         this._setPlaceholderFontToEditText();
     },
+	_setPlaceholderFont: function (fontStyle) {
+		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
+		if(res) {
+			this._placeholderFontName = res[2];
+			this._placeholderFontSize = parseInt(res[1]);
+			this._setPlaceholderFontToEditText();
+		}
+	},
 
     /**
      * Set the placeholder's fontName.
@@ -451,11 +468,13 @@ cc.EditBox = cc.ControlButton.extend({
      */
     initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
         if (this.initWithBackgroundSprite(normal9SpriteBg)) {
-            this._domInputSprite.setPosition(3, 3);
+            this._domInputSprite.x = 3;
+	        this._domInputSprite.y = 3;
 
             this.setZoomOnTouchDown(false);
             this.setPreferredSize(size);
-            this.setPosition(0, 0);
+            this.x = 0;
+	        this.y = 0;
             this._addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
             return true;
         }
@@ -534,6 +553,37 @@ cc.EditBox = cc.ControlButton.extend({
         this.dom.style.backgroundColor = cc.colorToHex(bgColor);
     }
 });
+
+window._proto = cc.EditBox.prototype;
+
+// Extended properties
+/** @expose */
+_proto.font;
+cc.defineGetterSetter(_proto, "font", null, _proto._setFont);
+/** @expose */
+_proto.fontName;
+cc.defineGetterSetter(_proto, "fontName", null, _proto.setFontName);
+/** @expose */
+_proto.fontSize;
+cc.defineGetterSetter(_proto, "fontSize", null, _proto.setFontSize);
+/** @expose */
+_proto.fontColor;
+cc.defineGetterSetter(_proto, "fontColor", null, _proto.setFontColor);
+/** @expose */
+_proto.string;
+cc.defineGetterSetter(_proto, "string", _proto.getText, _proto.setText);
+cc.defineGetterSetter(_proto, "maxLength", _proto.getMaxLength, _proto.setMaxLength);
+cc.defineGetterSetter(_proto, "placeHolder", _proto.getPlaceHolder, _proto.setPlaceHolder);
+cc.defineGetterSetter(_proto, "placeHolderFont", null, _proto._setPlaceholderFont);
+cc.defineGetterSetter(_proto, "placeHolderFontName", null, _proto.setPlaceholderFontName);
+cc.defineGetterSetter(_proto, "placeHolderFontSize", null, _proto.setPlaceholderFontSize);
+cc.defineGetterSetter(_proto, "placeHolderFontColor", null, _proto.setPlaceholderFontColor);
+cc.defineGetterSetter(_proto, "inputFlag", null, _proto.setInputFlag);
+cc.defineGetterSetter(_proto, "delegate", null, _proto.setDelegate);
+cc.defineGetterSetter(_proto, "inputMode", null, _proto.setInputMode);
+cc.defineGetterSetter(_proto, "returnType", null, _proto.setReturnType);
+
+delete window._proto;
 
 cc.EditBox.getRect = function (node) {
     var contentSize = node.getContentSize();
