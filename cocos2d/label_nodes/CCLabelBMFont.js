@@ -301,12 +301,10 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         this.commonHeight = parseInt(/lineHeight=(\d+)/gi.exec(line)[1]);
 
         if (cc.renderContextType === cc.WEBGL) {
+            var texSize = cc.Configuration.getInstance().getMaxTextureSize();
             var scaleW = parseInt(/scaleW=(\d+)/gi.exec(line)[1]);
-            if(scaleW > cc.Configuration.getInstance().getMaxTextureSize())
-                cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");
-
             var scaleH = parseInt(/scaleH=(\d+)/gi.exec(line)[1]);
-            if(scaleH > cc.Configuration.getInstance().getMaxTextureSize())
+            if(scaleW > texSize.width || scaleH > texSize.height)
                 cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");
         }
 
