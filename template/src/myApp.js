@@ -36,43 +36,46 @@ var MyLayer = cc.Layer.extend({
         //////////////////////////////
         // 1. super init first
         this._super();
+ 
 
-        /////////////////////////////
-        // 2. add a menu item with "X" image, which is clicked to quit the program
-        //    you may modify it.
-        // ask director the window size
-        var size = cc.Director.getInstance().getWinSize();
+        var pBg = cc.Sprite.create("HelloWorld.jpg");
+        pBg.setPosition(cc.p(240, 160));
+        this.addChild(pBg);
 
-        // add a "close" icon to exit the progress. it's an autorelease object
-        var closeItem = cc.MenuItemImage.create(
-            s_CloseNormal,
-            s_CloseSelected,
-            function () {
-                cc.log("close");
-            },this);
-        closeItem.setAnchorPoint(0.5, 0.5);
+        var gridView = ccs.GridView.create(
+            cc.size(240, 160),
+            cc.size(240 / 10, 160 / 10),
+            100, this,this.gridviewDataSource);
+        gridView.setTouchEnabled(true);
+        gridView.setDirection(ccs.ScrollViewDir.vertical);
+        gridView.setSize(cc.size(240, 160));
+        gridView.setBackGroundColorType(ccs.LayoutBackGroundColorType.solid);
+        gridView.setBackGroundColor(cc.c3b(111,111,111));
+        gridView.setColumns(6);
+        gridView.reloadData();
 
-        var menu = cc.Menu.create(closeItem);
-        menu.setPosition(0, 0);
-        this.addChild(menu, 1);
-        closeItem.setPosition(size.width - 20, 20);
+        var uiLayer = ccs.UILayer.create();
+        uiLayer.setPosition(cc.p(100,100));
+        uiLayer.addWidget(gridView);
+        this.addChild(uiLayer);
+    },
+    gridviewDataSource:function(convertView, idx){
+        var cell = convertView;
+        var pButton;
 
-        /////////////////////////////
-        // 3. add your codes below...
-        // add a label shows "Hello World"
-        // create and initialize a label
-        this.helloLabel = cc.LabelTTF.create("Hello World", "Impact", 38);
-        // position the label on the center of the screen
-        this.helloLabel.setPosition(size.width / 2, size.height - 40);
-        // add the label as a child to this layer
-        this.addChild(this.helloLabel, 5);
+        if(!cell){
+            cell = new ccs.GridViewCell();
+            pButton = cc.LabelTTF.create("0", "Arial", 12);
+            pButton.setAnchorPoint(0,0);
+            pButton.setTag(1);
+            cell.addNode(pButton);
+        }
+        else{
+            pButton = cell.getChildByTag(1);
+        }
 
-        // add "Helloworld" splash screen"
-        this.sprite = cc.Sprite.create(s_HelloWorld);
-        this.sprite.setAnchorPoint(0.5, 0.5);
-        this.sprite.setPosition(size.width / 2, size.height / 2);
-        this.sprite.setScale(size.height/this.sprite.getContentSize().height);
-        this.addChild(this.sprite, 0);
+        pButton.setString(idx);
+        return cell;
     }
 });
 
