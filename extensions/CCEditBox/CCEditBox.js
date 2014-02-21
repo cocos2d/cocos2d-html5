@@ -176,9 +176,27 @@ cc.EditBoxDelegate = cc.Class.extend({
 });
 
 /**
- * brief Class for edit box.
+ * <p>cc.EditBox is a brief Class for edit box.<br/>
+ * You can use this widget to gather small amounts of text from the user.</p>
  *
- * You can use this widget to gather small amounts of text from the user.
+ * @class
+ * @extends cc.ControlButton
+ *
+ * @property {String}   string                  - Content string of edit box
+ * @property {String}   maxLength               - Max length of the content string
+ * @property {String}   font                    - <@writeonly> Config font of edit box
+ * @property {String}   fontName                - <@writeonly> Config font name of edit box
+ * @property {Number}   fontSize                - <@writeonly> Config font size of edit box
+ * @property {cc.Color} fontColor               - <@writeonly> Config font color of edit box
+ * @property {String}   placeHolder             - Place holder of edit box
+ * @property {String}   placeHolderFont         - <@writeonly> Config font of place holder
+ * @property {String}   placeHolderFontName     - <@writeonly> Config font name of place holder
+ * @property {Number}   placeHolderFontSize     - <@writeonly> Config font size of place holder
+ * @property {cc.Color} placeHolderFontColor    - <@writeonly> Config font color of place holder
+ * @property {Number}   inputFlag               - <@writeonly> Input flag of edit box, one of the EditBoxInputFlag constants. e.g.cc.EDITBOX_INPUT_FLAG_PASSWORD
+ * @property {Object}   delegate                - <@writeonly> Delegate of edit box
+ * @property {Number}   inputMode               - <@writeonly> Input mode of the edit box. Value should be one of the EditBoxInputMode constants.
+ * @property {Number}   returnType              - <@writeonly> Return type of edit box, value should be one of the KeyboardReturnType constants.
  *
  */
 cc.EditBox = cc.ControlButton.extend({
