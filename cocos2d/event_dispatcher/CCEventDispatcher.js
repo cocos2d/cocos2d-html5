@@ -77,6 +77,13 @@ cc._EventListenerVector = cc.Class.extend({
     }
 });
 
+cc._copyArray = function(arr){
+    var i, len = arr.length, arr_clone = new Array(len);
+    for (i = 0; i < len; i += 1)
+        arr_clone[i] = arr[i];
+    return arr_clone;
+};
+
 cc.__getListenerID = function(event){
     var eventType = cc.Event.Type;
     switch(event.getType()){
@@ -207,9 +214,9 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
         if (this._dirtyNodes.length == 0)
             return;
 
-        var locDirtyNodes = this._dirtyNodes, selListeners, selListener;
+        var locDirtyNodes = this._dirtyNodes, selListeners, selListener, locNodeListenersMap = this._nodeListenersMap;
         for (var i = 0, len = locDirtyNodes.length; i < len; i++) {
-            selListeners = locDirtyNodes[i];
+            selListeners = locNodeListenersMap[locDirtyNodes[i].__instanceId];
             if (selListeners) {
                 for (var j = 0, listenersLen = selListeners.length; j < listenersLen; j++) {
                     selListener = selListeners[j];
@@ -298,14 +305,9 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
         var sceneGraphListeners = listeners.getSceneGraphPriorityListeners();
         var selfPointer = this;
         var sortEventListenersOfSceneGraphPriorityDes = function(l1,l2){
-            return selfPointer._nodePriorityMap[l2._getSceneGraphPriority()] - selfPointer._nodePriorityMap[l1._getSceneGraphPriority()];
+            return selfPointer._nodePriorityMap[l2._getSceneGraphPriority().__instanceId] - selfPointer._nodePriorityMap[l1._getSceneGraphPriority().__instanceId];
         };
         sceneGraphListeners.sort(sortEventListenersOfSceneGraphPriorityDes);
-    },
-
-    _sortEventListenersOfSceneGraphPriorityDes: function (l1, l2) {
-        //TODO need to test
-        return this._nodePriorityMap[l2._getSceneGraphPriority()] - this._nodePriorityMap[l1._getSceneGraphPriority()];
     },
 
     _sortEventListenersOfFixedPriority: function (listenerID) {
@@ -392,13 +394,6 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
         }
     },
 
-    _copyArray: function(arr){
-        var i, len = arr.length, arr_clone = new Array(len);
-        for (i = 0; i < len; i += 1)
-            arr_clone[i] = arr[i];
-        return arr_clone;
-    },
-
     _dispatchTouchEvent: function (event) {
         this._sortEventListeners(cc.EventListenerTouchOneByOne.LISTENER_ID);
         this._sortEventListeners(cc.EventListenerTouchAllAtOnce.LISTENER_ID);
@@ -413,7 +408,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
         var isNeedsMutableSet = (oneByOneListeners && allAtOnceListeners);
 
         var originalTouches = event.getTouches(), selfPointer = this;
-        var mutableTouches = this._copyArray(originalTouches);
+        var mutableTouches = cc._copyArray(originalTouches);
         var eventCode = cc.EventTouch.EventCode;
         //
         // process the target handlers 1st
@@ -613,7 +608,7 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
         var i = 0;
         var children = node.getChildren();
         var childrenCount = children.length;
-        var locGlobalZOrderNodeMap = this._globalZOrderNodeMap;
+        var locGlobalZOrderNodeMap = this._globalZOrderNodeMap, locNodeListenersMap = this._nodeListenersMap;
 
         if (childrenCount > 0) {
             var child;
@@ -626,8 +621,11 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                     break;
             }
 
-            if (this._nodeListenersMap[node.__instanceId] != null)
-                locGlobalZOrderNodeMap[node.getGlobalZOrder()] = node;
+            if (locNodeListenersMap[node.__instanceId] != null){
+                if(!locGlobalZOrderNodeMap[node.getGlobalZOrder()])
+                    locGlobalZOrderNodeMap[node.getGlobalZOrder()] = [];
+                locGlobalZOrderNodeMap[node.getGlobalZOrder()].push(node.__instanceId);
+            }
 
             for (; i < childrenCount; i++) {
                 child = children[i];
@@ -635,8 +633,10 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
                     this._visitTarget(child, false);
             }
         } else {
-            if (this._nodeListenersMap[node.__instanceId] != null) {
-                locGlobalZOrderNodeMap[node.getGlobalZOrder()] = node;
+            if (locNodeListenersMap[node.__instanceId] != null) {
+                if(!locGlobalZOrderNodeMap[node.getGlobalZOrder()])
+                    locGlobalZOrderNodeMap[node.getGlobalZOrder()] = [];
+                locGlobalZOrderNodeMap[node.getGlobalZOrder()].push(node.__instanceId);
             }
         }
 
@@ -651,11 +651,11 @@ cc.EventDispatcher = cc.Class.extend(/** @lends cc.EventDispatcher# */{
             };
             globalZOrders.sort(sortNumberAsc);
 
-            var zOrdersLen = globalZOrders.length, selZOrders, j;
+            var zOrdersLen = globalZOrders.length, selZOrders, j, locNodePriorityMap = this._nodePriorityMap;
             for (i = 0; i < zOrdersLen; i++) {
                 selZOrders = locGlobalZOrderNodeMap[globalZOrders[i]];
                 for (j = 0; j < selZOrders.length; j++)
-                    this._nodePriorityMap[selZOrders[j]] = ++this._nodePriorityIndex;
+                    locNodePriorityMap[selZOrders[j]] = ++this._nodePriorityIndex;
             }
 
             this._globalZOrderNodeMap = {};

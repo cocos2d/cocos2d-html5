@@ -981,6 +981,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
+    getEventDispatcher: function(){
+        return this._eventDispatcher;
+    },
+
+    setEventDispatcher: function(dispatcher){
+        if(this._eventDispatcher != dispatcher){
+            this._eventDispatcher._cleanTarget(this);
+            this._eventDispatcher = dispatcher;
+        }
+    },
+
     /**
      * <p>
      *   cc.Scheduler used to schedule all "updates" and timers.<br/>
@@ -1522,19 +1533,41 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Resumes all scheduled selectors and actions.<br/>
      * This method is called internally by onEnter
+     * @deprecated
      */
     resumeSchedulerAndActions:function () {
+        cc.log("resumeSchedulerAndActions is deprecated, please use resume instead.");
+        this.resume();
+    },
+
+    /**
+     * Resumes all scheduled selectors and actions.<br/>
+     * This method is called internally by onEnter
+     */
+    resume: function() {
         this.scheduler.resumeTarget(this);
         this.actionManager.resumeTarget(this);
+        this._eventDispatcher._resumeTarget(this);
+    },
+
+    /**
+     * Pauses all scheduled selectors and actions.<br/>
+     * This method is called internally by onExit
+     * @deprecated
+     */
+    pauseSchedulerAndActions:function () {
+        cc.log("pauseSchedulerAndActions is deprecated, please use pause instead.");
+        this.pause();
     },
 
     /**
      * Pauses all scheduled selectors and actions.<br/>
      * This method is called internally by onExit
      */
-    pauseSchedulerAndActions:function () {
+    pause: function(){
         this.scheduler.pauseTarget(this);
         this.actionManager.pauseTarget(this);
+        this._eventDispatcher._pauseTarget(this);
     },
 
     /**

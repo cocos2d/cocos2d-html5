@@ -306,6 +306,7 @@ cc.EventListenerTouchOneByOne = cc.EventListener.extend({
         eventListener.onTouchMoved = this.onTouchMoved;
         eventListener.onTouchEnded = this.onTouchEnded;
         eventListener.onTouchCancelled = this.onTouchCancelled;
+        eventListener._needSwallow = this._needSwallow;
         return eventListener;
     },
 
