@@ -57,6 +57,11 @@ ccs.BACKGROUNDCOLORRENDERERZ = -2;
  * Base class for ccs.Layout
  * @class
  * @extends ccs.Widget
+ *
+ * @property {Boolean}                  clippingEnabled - Indicate whether clipping is enabled
+ * @property {ccs.LayoutClippingType}   clippingType    - The clipping type: ccs.LayoutClippingType.stencil | ccs.LayoutClippingType.scissor
+ * @property {ccs.LayoutType}           layoutType      - The layout type: ccs.LayoutType.absolute | ccs.LayoutType.linearVertical | ccs.LayoutType.linearHorizontal | ccs.LayoutType.relative
+ *
  */
 ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _clippingEnabled: null,
@@ -1402,6 +1407,16 @@ if (cc.Browser.supportWebGL) {
 ccs.Layout._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 };
+
+window._proto = ccs.Layout.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "clippingEnabled", _proto.isClippingEnabled, _proto.setClippingEnabled);
+cc.defineGetterSetter(_proto, "clippingType", null, _proto.setClippingType);
+cc.defineGetterSetter(_proto, "layoutType", _proto.getLayoutType, _proto.setLayoutType);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UILayout.
  * @constructs

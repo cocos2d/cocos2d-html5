@@ -33,11 +33,11 @@
  * @extends cc.Sprite
  *
  * @property {String}       string          - Content string of label
- * @property {enum}         textAlign       - Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
- * @property {enum}         verticalAlign   - Vertical Alignment of cc.LabelTTF, cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
+ * @property {enum}         textAlign       - Horizontal Alignment of label: cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {enum}         verticalAlign   - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
  * @property {Number}       fontSize        - Font size of label
  * @property {String}       fontName        - Font name of label
- * @property {String}       font            - Font style string of label
+ * @property {String}       font            - The label font with a style string: e.g. "18px Verdana"
  * @property {Number}       boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
  * @property {Number}       boundingHeight  - Height of the bounding box of label, the real content height is limited by boundingHeight
  * @property {cc.Color}     fillStyle       - The fill color
