@@ -24,7 +24,7 @@ ccs.GridViewCell = ccs.Layout.extend({
 /**
  * @type {ccs.NodeRGBA.extend|*}
  */
-ccs.GridView = ccs.Layout.extend({
+ccs.GridView = ccs.ScrollView.extend({
     _cellsSize: null,
     _cellsCount: 0,
     _columns: 0,
@@ -40,7 +40,7 @@ ccs.GridView = ccs.Layout.extend({
     _dataSourceAdapterHandler: null,
 
     _RELOCATE_SPPED: 350,
-    init: function (cellSize, col, row, selector, target) {
+    init: function (viewSize, cellSize, cellCount, target, selector) {
         this._super();
 
         this._cellsSize = cc.size(0, 0);
@@ -49,17 +49,15 @@ ccs.GridView = ccs.Layout.extend({
         this._cellsFreed = [];
         this._positions = [];
 
-        this.setColumns(col);
-        this.setRows(row);
+        this.setSize(viewSize);
         this.setSizeOfCell(cellSize);
-        this.setCountOfCell(row * col);
-
-        this.addEventListenerGridView(selector, target);
+        this.setCountOfCell(cellCount);
+        this.setDataSourceAdapter(target, selector);
     },
 
-    addEventListenerGridView: function (selector, target) {
-        this._dataSourceAdapterHandler = selector;
+    setDataSourceAdapter: function (target, selector) {
         this._dataSourceAdapterListener = target;
+        this._dataSourceAdapterHandler = selector;
     },
 
     executeDataSourceAdapterHandler: function (convertCell, idx) {
@@ -92,10 +90,6 @@ ccs.GridView = ccs.Layout.extend({
         return this._columns;
     },
 
-    setRows: function (rows) {
-        this._rows = rows;
-    },
-
     getRows: function () {
         return this._rows;
     },
@@ -126,22 +120,53 @@ ccs.GridView = ccs.Layout.extend({
         cc.Assert(this._cellsSize.width != 0 && this._cellsSize.height != 0, "reloadData");
         cc.Assert(this._columns != 0, "reloadData");
 
-        this.removeAllFromUsed();
+        for (var i = 0; i < this._cellsUsed.length; i++) {
+            var obj = this._cellsUsed.pop();
+            obj.reset();
+            this._cellsFreed.push(obj);
+            this.removeChild(obj, true);
+        }
+
         this._indices = {};
         this._positions.length = 0;
         this.updatePositions();
-        this.updateData();
+        this.jumpToTop();
+        this.onScrolling();
+        this.addEventListenerScrollView(this.onScrolling, this);
+
+//        this.relocateContainer();
+
+        window.test = this;
     },
 
-    updateData: function (offset, target) {
-        var beginRow = !offset ? 0 : this.cellBeginRowFromOffset(offset, target),
-            endRow = !offset? this._rows : this.cellEndRowFromOffset(offset, target);
+    onScrolling: function () {
+        //getContentOffset
+        var offset = this.getInnerContainer().getPosition();
+        var beginRow = this.cellBeginRowFromOffset(offset),
+            endRow = this.cellEndRowFromOffset(offset),
+            beginColumn = this.cellBeginColumnFromOffset(offset),
+            endColumn = this.cellEndColumnFromOffset(offset);
+
+        var cellsUsed = this._cellsUsed;
+        if (cellsUsed.length > 0) {
+            var cell, row,column, idx;
+            for (var i = 0; i < cellsUsed.length; i++) {
+                cell = cellsUsed[i], row = cell.getRow(), idx = cell.getIdx(), column = (row == 0) ? 0 : idx % row;
+
+                if (row < beginRow || (row > endRow && row < this._rows) || column < beginColumn || (column > endColumn && column < this._columns)) {
+                    //console.log(1)
+                    cell.reset();
+                    this.removeChild(cell, true);
+                    cellsUsed.splice(i,1);
+                    this._indices[idx] = false;
+                    this._cellsFreed.push(cell);
+                }
+            }
+        }
 
         for (var i = beginRow; i <= endRow && i < this._rows; ++i) {
             var cellBeginIndex = this.cellFirstIndexFromRow(i),
                 cellEndIndex = cellBeginIndex + this._columns;
-
-            console.log(cellBeginIndex, cellEndIndex,this._columns)
 
             for (var idx = cellBeginIndex; idx < cellEndIndex && idx < this._cellsCount; ++idx) {
                 if (!this._indices[idx]) {
@@ -153,12 +178,7 @@ ccs.GridView = ccs.Layout.extend({
 
     removeAllFromUsed: function () {
         if (this._cellsUsed.length != 0) {
-            for (var i = 0; i < this._cellsUsed.length; i++) {
-                var obj = this._cellsUsed.pop();
-                obj.reset();
-                this._cellsFreed.push(obj);
-                this.removeChild(obj, true);
-            }
+            this._cellsUsed.length = 0;
             this._indices = {};
         }
     },
@@ -175,8 +195,8 @@ ccs.GridView = ccs.Layout.extend({
             this._cellsUsed.push(cell);
         }
         else {
-            var obj, i;
-            for (i = 0; i < this._cellsUsed.length; i++) {
+            var obj;
+            for (var i = 0; i < this._cellsUsed.length; i++) {
                 obj = this._cellsUsed[i];
                 if (obj.getIdx() > idx) {
                     this._cellsUsed.splice(i, 0, cell);
@@ -191,10 +211,10 @@ ccs.GridView = ccs.Layout.extend({
         if (this._cellsCount == 0)
             return;
 
-        var width = this._columns * this._cellsSize.width,
-            height = this._rows * this._cellsSize.height;
-        this.setSize(cc.size(width, height));
-//        this.setContentSize(cc.size(width, height));
+        this._rows = Math.ceil(this._cellsCount / this._columns);
+        var width = Math.max(this._columns * this._cellsSize.width, this.getContentSize().width),
+            height = Math.max(this._rows * this._cellsSize.height, this.getContentSize().height);
+        this.setInnerContainerSize(cc.size(width, height));
 
         var x = 0,y = height;
         for (var i = 0; i < this._cellsCount; ++i) {
@@ -229,27 +249,27 @@ ccs.GridView = ccs.Layout.extend({
         return this._positions[idx];
     },
 
-    cellBeginRowFromOffset: function (offset, target) {
-        var ofy = offset.y + target.getInnerContainerSize().height,
-            xos = ofy - target.getContentSize().height,
+    cellBeginRowFromOffset: function (offset) {
+        var ofy = offset.y + this.getInnerContainerSize().height,
+            xos = ofy - this.getContentSize().height,
             row = 0 | (xos / this._cellsSize.height);
 
         return Math.min(this._rows - 1, Math.max(row, 0));
     },
 
-    cellEndRowFromOffset: function (offset,target) {
-        var ofy = offset.y + target.getInnerContainerSize().height,
+    cellEndRowFromOffset: function (offset) {
+        var ofy = offset.y + this.getInnerContainerSize().height,
             row = 0 | (ofy / this._cellsSize.height);
         return Math.min(this._rows - 1, Math.max(row, 0));
     },
 
-    cellBeginColumnFromOffset: function (offset,target) {
+    cellBeginColumnFromOffset: function (offset) {
         var column = 0 | (offset.x / this._cellsSize.width);
         return Math.abs(column);
     },
 
-    cellEndColumnFromOffset: function (offset,target) {
-        var ofx = Math.abs(offset.x) + target.getContentSize().width,
+    cellEndColumnFromOffset: function (offset) {
+        var ofx = Math.abs(offset.x) + this.getContentSize().width,
             column = 0 | (ofx / this._cellsSize.width);
         return column;
     },
@@ -259,8 +279,8 @@ ccs.GridView = ccs.Layout.extend({
     }
 });
 
-ccs.GridView.create = function (cellSize, col, row, selector, target) {
+ccs.GridView.create = function (viewSize, cellSize, cellCount, target, selector) {
     var view = new ccs.GridView();
-    view.init(cellSize, col, row, selector, target);
+    view.init(viewSize, cellSize, cellCount, target, selector);
     return view;
 };

@@ -39,6 +39,8 @@
         //SingleEngineFile:'',
         appFiles:[
             'src/UIGridView.js',
+            'src/UIPageIndex.js',
+            'src/UIGridPageView.js',
             'src/resource.js',
             'src/myApp.js'//add your own files in order here
         ]

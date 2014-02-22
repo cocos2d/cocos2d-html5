@@ -42,21 +42,25 @@ var MyLayer = cc.Layer.extend({
         pBg.setPosition(cc.p(240, 160));
         this.addChild(pBg);
 
-        var gridView = ccs.GridView.create(
-            cc.size(240, 160),
-            cc.size(240 / 10, 160 / 10),
-            100, this,this.gridviewDataSource);
+        /*var gridView = ccs.GridView.create(cc.size(240 / 10, 160 / 10),24,this.gridviewDataSource, this);
+//        gridView.addEventListenerGridView(this.gridviewDataSource, this);
         gridView.setTouchEnabled(true);
-        gridView.setDirection(ccs.ScrollViewDir.vertical);
-        gridView.setSize(cc.size(240, 160));
         gridView.setBackGroundColorType(ccs.LayoutBackGroundColorType.solid);
         gridView.setBackGroundColor(cc.c3b(111,111,111));
         gridView.setColumns(6);
-        gridView.reloadData();
+        gridView.reloadData();*/
+
+
+
+        var gridPageView = ccs.GridPageView.create(cc.size(240,240), cc.size(240 / 10, 240 / 10), 10,5,
+            this.gridviewDataSource, this);
+        gridPageView.setTouchEnabled(true);
+        gridPageView.setBackGroundColorType(ccs.LayoutBackGroundColorType.solid);
+        gridPageView.setBackGroundColor(cc.c3b(222,111,111));
 
         var uiLayer = ccs.UILayer.create();
         uiLayer.setPosition(cc.p(100,100));
-        uiLayer.addWidget(gridView);
+        uiLayer.addWidget(gridPageView);
         this.addChild(uiLayer);
     },
     gridviewDataSource:function(convertView, idx){
