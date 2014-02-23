@@ -423,11 +423,11 @@ cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto.
 cc.defineGetterSetter(_proto, "boundingHeight", _proto._getBoundingHeight, _proto._setBoundingHeight);
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
 cc.defineGetterSetter(_proto, "stringLength", _proto.getStringLength);
-cc.defineGetterSetter(_proto, "font", proto._getFont, _proto._setFont);
-cc.defineGetterSetter(_proto, "fontSize", proto._getFontSize, _proto.setFontSize);
-cc.defineGetterSetter(_proto, "fontName", proto._getFontName, _proto.setFontName);
-cc.defineGetterSetter(_proto, "textAlign", proto._getHorizontalAlignment, _proto.setTextHorizontalAlignment);
-cc.defineGetterSetter(_proto, "verticalAlign", proto._getVerticalAlignment, _proto.setTextVerticalAlignment);
+cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
+cc.defineGetterSetter(_proto, "fontSize", _proto._getFontSize, _proto.setFontSize);
+cc.defineGetterSetter(_proto, "fontName", _proto._getFontName, _proto.setFontName);
+cc.defineGetterSetter(_proto, "textAlign", _proto._getHorizontalAlignment, _proto.setTextHorizontalAlignment);
+cc.defineGetterSetter(_proto, "verticalAlign", _proto._getVerticalAlignment, _proto.setTextVerticalAlignment);
 
 delete window._proto;
 
