@@ -35,6 +35,8 @@ ccs.SLIDBALLRENDERERZ = -1;
  * Base class for ccs.Slider
  * @class
  * @extends ccs.Widget
+ *
+ * @property {Number}   percent     - The current progress of loadingbar
  */
 ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     _barRenderer: null,
@@ -471,6 +473,12 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         var locContentSize = this._barRenderer.getContentSize();
         return cc.size(locContentSize.width,locContentSize.height);
     },
+	_getWidth: function () {
+		return this._barRenderer._getWidth();
+	},
+	_getHeight: function () {
+		return this._barRenderer._getHeight();
+	},
 
     /**
      * override "getContentSize" method of widget.
@@ -579,6 +587,18 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this.setPercent(slider.getPercent());
     }
 });
+
+window._proto = ccs.Slider.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UISlider.
  * @constructs

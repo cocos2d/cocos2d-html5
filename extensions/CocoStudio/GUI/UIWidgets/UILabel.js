@@ -32,11 +32,11 @@ ccs.LABELRENDERERZ = -1;
  * @property {Number}   boundingHeight      - Height of the bounding area of label, the real content height is limited by boundingHeight
  * @property {String}   string              - The content string of the label
  * @property {Number}   stringLength        - <@readonly> The content string length of the label
- * @property {String}   font                - <@writeonly> Set the label font with a style string: e.g. "18px Verdana"
- * @property {String}   fontName            - <@writeonly> Set the label font name
- * @property {Number}   fontSize            - <@writeonly> Set the label font size
- * @property {Number}   textAlign           - <@writeonly> Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
- * @property {Number}   verticalAlign       - <@writeonly> Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
+ * @property {String}   font                - The label font with a style string: e.g. "18px Verdana"
+ * @property {String}   fontName            - The label font name
+ * @property {Number}   fontSize            - The label font size
+ * @property {Number}   textAlign           - Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {Number}   verticalAlign       - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
  * @property {Boolean}  touchScaleEnabled   - Indicate whether the label will scale when touching
  */
 ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
@@ -112,6 +112,10 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.labelScaleChangedWithSize();
     },
 
+	_getFontSize: function () {
+		this._labelRenderer.getFontSize();
+	},
+
     /**
      * set fontName
      * @param {String} name
@@ -122,6 +126,10 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.labelScaleChangedWithSize();
     },
 
+	_getFontName: function () {
+		this._labelRenderer.getFontName();
+	},
+
 	_setFont: function (font) {
 		var res = cc.LabelTTF._fontStyleRE.exec(font);
 		if(res) {
@@ -130,6 +138,9 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
 			this._labelRenderer._setFont(font);
 			this.labelScaleChangedWithSize();
 		}
+	},
+	_getFont: function () {
+		return this._labelRenderer._getFont();
 	},
 
     /**
@@ -152,6 +163,12 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
 		this._labelRenderer._setBoundingHeight(value);
 		this.labelScaleChangedWithSize();
 	},
+	_getBoundingWidth: function () {
+		return this._textAreaSize.width;
+	},
+	_getBoundingHeight: function () {
+		return this._textAreaSize.height;
+	},
 
     /**
      * set Horizontal Alignment of cc.LabelTTF
@@ -163,6 +180,10 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.labelScaleChangedWithSize();
     },
 
+	_getHorizontalAlignment: function () {
+		return this._textHorizontalAlignment;
+	},
+
     /**
      * set Vertical Alignment of cc.LabelTTF
      * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
@@ -172,6 +193,10 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this._labelRenderer.setVerticalAlignment(alignment);
         this.labelScaleChangedWithSize();
     },
+
+	_getVerticalAlignment: function () {
+		return this._textVerticalAlignment;
+	},
 
     /**
      * Sets the touch scale enabled of label.
@@ -398,11 +423,11 @@ cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto.
 cc.defineGetterSetter(_proto, "boundingHeight", _proto._getBoundingHeight, _proto._setBoundingHeight);
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
 cc.defineGetterSetter(_proto, "stringLength", _proto.getStringLength);
-cc.defineGetterSetter(_proto, "font", null, _proto._setFont);
-cc.defineGetterSetter(_proto, "fontSize", null, _proto.setFontSize);
-cc.defineGetterSetter(_proto, "fontName", null, _proto.setFontName);
-cc.defineGetterSetter(_proto, "textAlign", null, _proto.setTextHorizontalAlignment);
-cc.defineGetterSetter(_proto, "verticalAlign", null, _proto.setTextVerticalAlignment);
+cc.defineGetterSetter(_proto, "font", proto._getFont, _proto._setFont);
+cc.defineGetterSetter(_proto, "fontSize", proto._getFontSize, _proto.setFontSize);
+cc.defineGetterSetter(_proto, "fontName", proto._getFontName, _proto.setFontName);
+cc.defineGetterSetter(_proto, "textAlign", proto._getHorizontalAlignment, _proto.setTextHorizontalAlignment);
+cc.defineGetterSetter(_proto, "verticalAlign", proto._getVerticalAlignment, _proto.setTextVerticalAlignment);
 
 delete window._proto;
 
