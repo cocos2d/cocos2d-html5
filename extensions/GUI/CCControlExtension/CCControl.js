@@ -57,6 +57,11 @@ cc.CONTROL_STATE_INITIAL = 1 << 3;
  * To use the CCControl you have to subclass it.
  * @class
  * @extends cc.LayerRGBA
+ *
+ * @property {Number}   state       - <@readonly> The current control state: cc.CONTROL_STATE_NORMAL | cc.CONTROL_STATE_HIGHLIGHTED | cc.CONTROL_STATE_DISABLED | cc.CONTROL_STATE_SELECTED | cc.CONTROL_STATE_INITIAL
+ * @property {Boolean}  enabled     - Indicate whether the control node is enbaled
+ * @property {Boolean}  selected    - Indicate whether the control node is selected
+ * @property {Boolean}  highlighted - Indicate whether the control node is highlighted
  */
 cc.Control = cc.LayerRGBA.extend({
     _isOpacityModifyRGB:false,
@@ -340,6 +345,19 @@ cc.Control = cc.LayerRGBA.extend({
     needsLayout:function () {
     }
 });
+
+window._proto = cc.Control.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "state", _proto.getState);
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
+cc.defineGetterSetter(_proto, "selected", _proto.isSelected, _proto.setSelected);
+cc.defineGetterSetter(_proto, "highlighted", _proto.isHighlighted, _proto.setHighlighted);
+
+delete window._proto;
 
 cc.Control.create = function () {
     var retControl = new cc.Control();

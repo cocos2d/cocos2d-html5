@@ -30,6 +30,13 @@
  * converted to Javascript / cocos2d-x by Angus C
  */
 
+/**
+ * ControlColourPicker: color picker ui component.
+ * @class
+ * @extends cc.Control
+ *
+ * @property {cc.Sprite}  background   - <@readonly> The background sprite
+ */
 cc.ControlColourPicker = cc.Control.extend({
     _hsv:null,
     _colourPicker:null,
@@ -153,6 +160,17 @@ cc.ControlColourPicker = cc.Control.extend({
         return false;
     }
 });
+
+window._proto = cc.ControlColourPicker.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "background", _proto.getBackground);
+
+delete window._proto;
 
 cc.ControlColourPicker.create = function () {
     var pRet = new cc.ControlColourPicker();

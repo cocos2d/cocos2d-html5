@@ -45,7 +45,14 @@ cc.POSITIONS_BOTTOMLEFT = 8;
  *
  * @see http://yannickloriot.com/library/ios/cccontrolextension/Classes/CCScale9Sprite.html
  * @class
- * @extends cc.Sprite
+ * @extends cc.NodeRGBA
+ *
+ * @property {cc.Size}  preferredSize   - The preferred size of the 9-slice sprite
+ * @property {cc.Rect}  capInsets       - The cap insets of the 9-slice sprite
+ * @property {Number}   insetLeft       - The left inset of the 9-slice sprite
+ * @property {Number}   insetTop        - The top inset of the 9-slice sprite
+ * @property {Number}   insetRight      - The right inset of the 9-slice sprite
+ * @property {Number}   insetBottom     - The bottom inset of the 9-slice sprite
  */
 cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     RGBAProtocol: true,
@@ -221,10 +228,24 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     getPreferredSize: function () {
         return this._preferredSize;
     },
+	_getPreferredWidth: function () {
+		return this._preferredSize.width;
+	},
+	_getPreferredHeight: function () {
+		return this._preferredSize.height;
+	},
     setPreferredSize: function (preferredSize) {
         this.setContentSize(preferredSize);
         this._preferredSize = preferredSize;
     },
+	_setPreferredWidth: function (value) {
+		this._setWidth(value);
+		this._preferredSize.width = value;
+	},
+	_setPreferredHeight: function (value) {
+		this._setHeight(value);
+		this._preferredSize.height = value;
+	},
 
     /** Opacity: conforms to CCRGBAProtocol protocol */
     getOpacity: function () {
@@ -353,6 +374,14 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 	    cc.Node.prototype.setContentSize.call(this, size, height);
         this._positionsAreDirty = true;
     },
+	_setWidth: function (value) {
+		cc.Node.prototype._setWidth.call(this, value);
+		this._positionsAreDirty = true;
+	},
+	_setHeight: function (value) {
+		cc.Node.prototype._setHeight.call(this, value);
+		this._positionsAreDirty = true;
+	},
 
     visit: function (ctx) {
         if (this._positionsAreDirty) {
@@ -859,6 +888,25 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._insetBottom = 0;
     }
 });
+
+window._proto = cc.Scale9Sprite.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "preferredSize", _proto.getPreferredSize, _proto.setPreferredSize);
+cc.defineGetterSetter(_proto, "capInsets", _proto.getCapInsets, _proto.setCapInsets);
+cc.defineGetterSetter(_proto, "insetLeft", _proto.getInsetLeft, _proto.setInsetLeft);
+cc.defineGetterSetter(_proto, "insetTop", _proto.getInsetTop, _proto.setInsetTop);
+cc.defineGetterSetter(_proto, "insetRight", _proto.getInsetRight, _proto.setInsetRight);
+cc.defineGetterSetter(_proto, "insetBottom", _proto.getInsetBottom, _proto.setInsetBottom);
+
+delete window._proto;
 
 /**
  * Creates a 9-slice sprite with a texture file, a delimitation zone and
