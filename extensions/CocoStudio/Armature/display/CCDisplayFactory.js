@@ -195,7 +195,7 @@ ccs.DisplayFactory.createParticleDisplay = function (bone, decoDisplay) {
 ccs.DisplayFactory.updateParticleDisplay = function (bone, particleSystem, dt) {
     var node = new ccs.BaseData();
     ccs.TransformHelp.matrixToNode(bone.nodeToArmatureTransform(), node);
-    particleSystem.setPosition(node.x, node.y);
+    particleSystem._setPosition(node.x, node.y);
     particleSystem.setScaleX(node.scaleX);
     particleSystem.setScaleY(node.scaleY);
     particleSystem.update(dt);

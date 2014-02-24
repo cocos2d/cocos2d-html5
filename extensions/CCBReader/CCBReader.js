@@ -806,7 +806,7 @@ cc.BuilderReader = cc.Class.extend({
         var isCCBFileNode = node instanceof cc.BuilderFile;
         if (isCCBFileNode) {
             var embeddedNode = node.getCCBFileNode();
-            embeddedNode.setPosition(node.getPosition());
+            embeddedNode._setPosition(node._getPosition());
             embeddedNode.setRotation(node.getRotation());
             embeddedNode.setScaleX(node.getScaleX());
             embeddedNode.setScaleY(node.getScaleY());

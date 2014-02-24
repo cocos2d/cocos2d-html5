@@ -142,7 +142,7 @@ cc.ScrollView = cc.Layer.extend({
 
             //this._container.setContentSize(CCSizeZero);
             this._direction = cc.SCROLLVIEW_DIRECTION_BOTH;
-            this._container.setPosition(pZero);
+            this._container._setPosition(pZero);
             this._touchLength = 0.0;
 
             this.addChild(this._container);
@@ -171,7 +171,7 @@ cc.ScrollView = cc.Layer.extend({
             offset.y = Math.max(minOffset.y, Math.min(maxOffset.y, offset.y));
         }
 
-        this._container.setPosition(offset);
+        this._container._setPosition(offset);
         var locDelegate = this._delegate;
         if (locDelegate != null && locDelegate.scrollViewDidScroll) {
             locDelegate.scrollViewDidScroll(this);
@@ -180,7 +180,7 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     getContentOffset:function () {
-        var locPos = this._container.getPosition();
+        var locPos = this._container._getPosition();
         return cc.p(locPos.x, locPos.y);
     },
 
@@ -229,7 +229,7 @@ cc.ScrollView = cc.Layer.extend({
             var offset = cc.pSub(center, newCenter);
             if (this._delegate && this._delegate.scrollViewDidZoom)
                 this._delegate.scrollViewDidZoom(this);
-            this.setContentOffset(cc.pAdd(locContainer.getPosition(), offset));
+            this.setContentOffset(cc.pAdd(locContainer._getPosition(), offset));
         }
     },
 
@@ -383,7 +383,7 @@ cc.ScrollView = cc.Layer.extend({
     onTouchBegan:function (touch, event) {
         if (!this.isVisible())
             return false;
-        //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());
+        //var frameOriginal = this.getParent().convertToWorldSpace(this._getPosition());
         //var frame = cc.rect(frameOriginal.x, frameOriginal.y, this._viewSize.width, this._viewSize.height);
         var frame = this._getViewRect();
 
@@ -422,7 +422,7 @@ cc.ScrollView = cc.Layer.extend({
         //if (cc.ArrayContainsObject(this._touches, touch)) {
         if (this._touches.length === 1 && this._dragging) { // scrolling
             this._touchMoved = true;
-            //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());
+            //var frameOriginal = this.getParent().convertToWorldSpace(this._getPosition());
             //var frame = cc.rect(frameOriginal.x, frameOriginal.y, this._viewSize.width, this._viewSize.height);
             var frame = this._getViewRect();
 
@@ -463,7 +463,7 @@ cc.ScrollView = cc.Layer.extend({
                         break;
                 }
 
-                var locPosition = this._container.getPosition();
+                var locPosition = this._container._getPosition();
                 var newX = locPosition.x + moveDistance.x;
                 var newY = locPosition.y + moveDistance.y;
 
@@ -669,7 +669,7 @@ cc.ScrollView = cc.Layer.extend({
         var max = this._getMaxContainerOffset();
         var locDirection = this._direction;
 
-        var oldPoint = this._container.getPosition();
+        var oldPoint = this._container._getPosition();
         var newX = oldPoint.x;
         var newY = oldPoint.y;
         if (locDirection === cc.SCROLLVIEW_DIRECTION_BOTH || locDirection === cc.SCROLLVIEW_DIRECTION_HORIZONTAL) {
@@ -699,9 +699,9 @@ cc.ScrollView = cc.Layer.extend({
         }
 
         var maxInset, minInset;
-        var oldPosition = this._container.getPosition();
+        var oldPosition = this._container._getPosition();
         var locScrollDistance = this._scrollDistance;
-        this._container.setPosition(oldPosition.x + locScrollDistance.x , oldPosition.y + locScrollDistance.y);
+        this._container._setPosition(oldPosition.x + locScrollDistance.x , oldPosition.y + locScrollDistance.y);
         if (this._bounceable) {
             maxInset = this._maxInset;
             minInset = this._minInset;
@@ -711,14 +711,14 @@ cc.ScrollView = cc.Layer.extend({
         }
 
         //check to see if offset lies within the inset bounds
-        /*var newX = Math.min(this._container.getPosition().x, maxInset.x);
+        /*var newX = Math.min(this._container._getPositionX(), maxInset.x);
          newX = Math.max(newX, minInset.x);
-         var newY = Math.min(this._container.getPosition().y, maxInset.y);
+         var newY = Math.min(this._container._getPositionY(), maxInset.y);
          newY = Math.max(newY, minInset.y);*/
-        var newX = this._container.getPositionX();
+        var newX = this._container._getPositionX();
         var newY = this._container.getPositionY();
 
-        //this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(newX - this._container.getPosition().x, newY - this._container.getPosition().y));
+        //this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(newX - this._container._getPositionX(), newY - this._container._getPositionY()));
         //= this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(0, 0)); = do nothing
 
         //this._scrollDistance = cc.pMult(this._scrollDistance, SCROLL_DEACCEL_RATE);

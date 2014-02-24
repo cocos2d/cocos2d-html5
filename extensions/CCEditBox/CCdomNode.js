@@ -41,7 +41,7 @@ cc.DOM.addMethods = function (node) {
     }
 
 	// Redefine getter setter
-	cc.defineGetterSetter(node, "x", node.getPositionX, node.setPositionX);
+	cc.defineGetterSetter(node, "x", node._getPositionX, node._setPositionX);
 	cc.defineGetterSetter(node, "y", node.getPositionY, node.setPositionY);
 	cc.defineGetterSetter(node, "width", node._getWidth, node._setWidth);
 	cc.defineGetterSetter(node, "height", node._getHeight, node._setHeight);
@@ -89,7 +89,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * replace set Position X of ccNode
      * @param {Number} x
      */
-    setPositionX:function (x) {
+    _setPositionX:function (x) {
         this._position.x = x;
         this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
@@ -546,8 +546,8 @@ cc.DOM.setTransform = function (x) {
         }
     }
     if (x.dom) {
-        x.dom.position.x = x.getPosition().x;
-        x.dom.position.y = -x.getPosition().y;
+        x.dom.position.x = x._getPositionX();
+        x.dom.position.y = -x.getPositionY();
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};

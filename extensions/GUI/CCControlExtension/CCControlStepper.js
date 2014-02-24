@@ -104,23 +104,23 @@ cc.ControlStepper = cc.Control.extend({
 
             // Add the minus components
             this.setMinusSprite(minusSprite);
-            this._minusSprite.setPosition(minusSprite.getContentSize().width / 2, minusSprite.getContentSize().height / 2);
+            this._minusSprite._setPosition(minusSprite.getContentSize().width / 2, minusSprite.getContentSize().height / 2);
             this.addChild(this._minusSprite);
 
             this.setMinusLabel(cc.LabelTTF.create("-", cc.CONTROL_STEPPER_LABELFONT, 40, cc.size(40, 40), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_CENTER));
             this._minusLabel.setColor(cc.CONTROL_STEPPER_LABELCOLOR_DISABLED);
-            this._minusLabel.setPosition(this._minusSprite.getContentSize().width / 2, this._minusSprite.getContentSize().height / 2);
+            this._minusLabel._setPosition(this._minusSprite.getContentSize().width / 2, this._minusSprite.getContentSize().height / 2);
             this._minusSprite.addChild(this._minusLabel);
 
             // Add the plus components
             this.setPlusSprite(plusSprite);
-            this._plusSprite.setPosition(minusSprite.getContentSize().width + plusSprite.getContentSize().width / 2,
+            this._plusSprite._setPosition(minusSprite.getContentSize().width + plusSprite.getContentSize().width / 2,
                 minusSprite.getContentSize().height / 2);
             this.addChild(this._plusSprite);
 
             this.setPlusLabel(cc.LabelTTF.create("+", cc.CONTROL_STEPPER_LABELFONT, 40, cc.size(40, 40), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_CENTER));
             this._plusLabel.setColor(cc.CONTROL_STEPPER_LABELCOLOR_ENABLED);
-            this._plusLabel.setPosition(this._plusSprite.getContentSize().width / 2, this._plusSprite.getContentSize().height / 2);
+            this._plusLabel._setPosition(this._plusSprite.getContentSize().width / 2, this._plusSprite.getContentSize().height / 2);
             this._plusSprite.addChild(this._plusLabel);
 
             // Defines the content size

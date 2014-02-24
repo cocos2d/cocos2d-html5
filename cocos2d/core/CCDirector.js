@@ -1140,12 +1140,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.x = locStatsPosition.x;
-	    this._drawsLabel.y = 34 * factor + locStatsPosition.y;
-        this._SPFLabel.x = locStatsPosition.x;
-	    this._SPFLabel.y = 17 * factor + locStatsPosition.y;
-        this._FPSLabel.x = locStatsPosition.x;
-	    this._FPSLabel.y = locStatsPosition.y;
+        this._drawsLabel._setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
+	    this._SPFLabel._setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
+        this._FPSLabel._setPosition(locStatsPosition);
     },
 
     _createStatsLabelForCanvas:function(){
@@ -1160,12 +1157,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.x = this._drawsLabel.width / 2 + locStatsPosition.x;
-	    this._drawsLabel.y = this._drawsLabel.height * 5 / 2 + locStatsPosition.y;
-        this._SPFLabel.x = this._SPFLabel.width / 2 + locStatsPosition.x;
-	    this._SPFLabel.y = this._SPFLabel.height * 3 / 2 + locStatsPosition.y;
-        this._FPSLabel.x = this._FPSLabel.width / 2 + locStatsPosition.x;
-	    this._FPSLabel.y = this._FPSLabel.height / 2 + locStatsPosition.y;
+        this._drawsLabel._setPosition(this._drawsLabel.width / 2 + locStatsPosition.x, this._drawsLabel.height * 5 / 2 + locStatsPosition.y);
+        this._SPFLabel._setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
+        this._FPSLabel._setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
     },
 
     _calculateMPF: function () {

@@ -567,7 +567,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                 break;
         }
         this.onSizeChanged();
-        var absPos = this.getPosition();
+        var absPos = this._getPosition();
         switch (this.positionType) {
             case ccs.PositionType.absolute:
                 var widgetParent = this.getWidgetParent();
@@ -598,7 +598,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             default:
                 break;
         }
-        this.setPosition(absPos);
+        this._setPosition(absPos);
     },
 
     /**
@@ -1019,7 +1019,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @param {cc.Point||Number} pos
      * @param {Number} posY
      */
-    setPosition: function (pos, posY) {
+    _setPosition: function (pos, posY) {
         if (this._running) {
             var widgetParent = this.getWidgetParent();
             if (widgetParent) {
@@ -1040,10 +1040,10 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             }
         }
 
-        cc.NodeRGBA.prototype.setPosition.apply(this,arguments);
+        cc.NodeRGBA.prototype._setPosition.apply(this,arguments);
     },
 
-	setPositionX: function (x) {
+	_setPositionX: function (x) {
 		if (this._running) {
 			var widgetParent = this.getWidgetParent();
 			if (widgetParent) {
@@ -1055,7 +1055,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionX.apply(this, x);
+		cc.NodeRGBA.prototype._setPositionX.apply(this, x);
 	},
 	setPositionY: function (y) {
 		if (this._running) {
@@ -1082,8 +1082,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             var widgetParent = this.getWidgetParent();
             if(widgetParent){
                 var parentSize = widgetParent.getSize();
-                var absPos = cc.p(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y);
-                this.setPosition(absPos);
+                this._setPosition(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y);
             }
         }
     },
@@ -1093,7 +1092,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			var widgetParent = this.getWidgetParent();
 			if(widgetParent){
 				var absX = widgetParent.width * percent;
-				this.setPositionX(absX);
+				this._setPositionX(absX);
 			}
 		}
 	},
@@ -1176,7 +1175,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {number}
      */
     getLeftInParent: function () {
-        return this.getPosition().x - this.getAnchorPoint().x * this._size.width;
+        return this._getPositionX() - this._getAnchorX() * this._size.width;
     },
 
     /**
@@ -1184,7 +1183,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {number}
      */
     getBottomInParent: function () {
-        return this.getPosition().y - this.getAnchorPoint().y * this._size.height;
+        return this.getPositionY() - this._getAnchorY() * this._size.height;
     },
 
     /**
@@ -1320,7 +1319,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._sizePercent = cc.p(widget._sizePercent.x, widget._sizePercent.y);
         this.positionType = widget.positionType;
         this._positionPercent = cc.p(widget._positionPercent.x, widget._positionPercent.y);
-        this.setPosition(widget.getPosition());
+        this._setPosition(widget._getPosition());
         this.setAnchorPoint(widget.getAnchorPoint());
         this.setScaleX(widget.getScaleX());
         this.setScaleY(widget.getScaleY());
@@ -1354,7 +1353,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 window._proto = ccs.Widget.prototype;
 
 // Override properties
-cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
+cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
 cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);

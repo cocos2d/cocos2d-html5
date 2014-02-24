@@ -583,7 +583,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *    var size = cc.Director.getInstance().getWinSize();
      *    node.setPosition(size.width/2, size.height/2);
      */
-    setPosition:function (newPosOrxValue, yValue) {
+    _setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (yValue === undefined) {
             locPosition.x = newPosOrxValue.x;
@@ -601,21 +601,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @const
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
-    getPosition:function () {
+    _getPosition:function () {
         return this._position;
     },
 
     /**
      * @return {Number}
      */
-    getPositionX:function () {
+    _getPositionX:function () {
         return this._position.x;
     },
 
     /**
      * @param {Number} x
      */
-    setPositionX:function (x) {
+    _setPositionX:function (x) {
         this._position.x = x;
         this.setNodeDirty();
     },
@@ -2230,7 +2230,7 @@ if(cc.Browser.supportWebGL){
 	_proto.nodeToParentTransform = _proto._nodeToParentTransformForCanvas;
 }
 
-cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
+cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
 cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 /** @expose */
 //_proto.pos;

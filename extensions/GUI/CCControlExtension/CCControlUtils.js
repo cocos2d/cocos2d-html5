@@ -49,7 +49,7 @@ cc.ControlUtils.addSpriteToTargetWithPosAndAnchor = function(spriteName,target,p
     if (!sprite)
         return null;
 
-    sprite.setPosition(pos);
+    sprite._setPosition(pos);
     sprite.setAnchorPoint(anchor);
     target.addChild(sprite);
     return sprite;

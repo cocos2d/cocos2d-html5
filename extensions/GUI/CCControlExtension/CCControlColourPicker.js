@@ -109,7 +109,7 @@ cc.ControlColourPicker = cc.Control.extend({
             // Add image
             this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("menuColourPanelBackground.png", spriteSheet, cc.p(0,0), cc.p(0.5, 0.5));
 
-            var backgroundPointZero = cc.pSub(this._background.getPosition(),
+            var backgroundPointZero = cc.pSub(this._background._getPosition(),
                 cc.p(this._background.getContentSize().width / 2, this._background.getContentSize().height / 2));
 
             // Setup panels . currently hard-coded...

@@ -101,13 +101,13 @@ cc.ControlButton = cc.Control.extend({
 
         var locContentSize = this.getContentSize();
         if(label)
-            label.setPosition(locContentSize.width / 2, locContentSize.height / 2);
+            label._setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Update the background sprite
         this._backgroundSprite = this.getBackgroundSpriteForState(locState);
         var locBackgroundSprite = this._backgroundSprite;
         if(locBackgroundSprite)
-            locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
+            locBackgroundSprite._setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Get the title label size
         var titleLabelSize = cc.size(0, 0);
@@ -142,11 +142,11 @@ cc.ControlButton = cc.Control.extend({
         this.setContentSize(maxRect.width, maxRect.height);
         locContentSize = this.getContentSize();
         if(label){
-            label.setPosition(locContentSize.width / 2, locContentSize.height / 2);
+            label._setPosition(locContentSize.width / 2, locContentSize.height / 2);
             label.setVisible(true);
         }
         if(locBackgroundSprite){
-            locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
+            locBackgroundSprite._setPosition(locContentSize.width / 2, locContentSize.height / 2);
             locBackgroundSprite.setVisible(true);
         }
     },

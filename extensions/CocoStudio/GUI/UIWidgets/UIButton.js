@@ -503,7 +503,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 	        this._buttonClickedRenderer.setAnchorPoint(point, y);
 	        this._buttonDisableRenderer.setAnchorPoint(point, y);
         }
-	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
+	    this._titleRenderer._setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
     },
 	_setAnchorX: function (value) {
 		ccs.Widget.prototype._setAnchorX.call(this, value);
@@ -511,7 +511,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 		this._buttonClickedRenderer._setAnchorX(value);
 		this._buttonDisableRenderer._setAnchorX(value);
 
-		this._titleRenderer.setPositionX(this._size.width * (0.5 - this._anchorPoint.x));
+		this._titleRenderer._setPositionX(this._size.width * (0.5 - this._anchorPoint.x));
 	},
 	_setAnchorY: function (value) {
 		ccs.Widget.prototype._setAnchorY.call(this, value);

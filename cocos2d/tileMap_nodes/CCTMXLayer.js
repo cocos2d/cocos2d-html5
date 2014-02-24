@@ -422,7 +422,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             // offset (after layer orientation is set);
             var offset = this._calculateLayerOffset(layerInfo.offset);
-            this.setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
+            this._setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
 
             this._atlasIndexArray = [];
             this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
@@ -484,7 +484,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile = new cc.Sprite();
             tile.initWithTexture(this.texture, rect);
             tile.batchNode = this;
-            tile.setPosition(this.getPositionAt(pos));
+            tile._setPosition(this.getPositionAt(pos));
             tile.vertexZ = this._vertexZForPos(pos);
             tile.anchorX = 0;
 	        tile.anchorY = 0;
@@ -908,7 +908,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _setupTileSprite:function (sprite, pos, gid) {
         var z = pos.x + pos.y * this._layerSize.width;
-        sprite.setPosition(this.getPositionAt(pos));
+        sprite._setPosition(this.getPositionAt(pos));
         if (cc.renderContextType === cc.WEBGL)
             sprite.vertexZ = this._vertexZForPos(pos);
         else
