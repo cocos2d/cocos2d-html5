@@ -37,6 +37,14 @@ cc.TOUCH_ONE_BY_ONE = 1;
  * It can receive Accelerometer input
  * @class
  * @extends cc.Node
+ *
+ * @property {Boolean}  mouseEnabled            - Indicate whether mouse event is enabled for layer
+ * @property {Number}   mousePriority           - The priority of mouse event for the current layer
+ * @property {Boolean}  touchEnabled            - Indicate whether touch event is enabled for layer
+ * @property {Number}   touchPriority           - The priority of touch event for the current layer
+ * @property {Number}   touchMode               - the touch mode: cc.TOUCH_ALL_AT_ONCE | cc.TOUCH_ONE_BY_ONE
+ * @property {Boolean}  accelerometerEnabled    - Indicate whether accelerometer event is enabled for layer
+ * @property {Boolean}  keyboardEnabled         - Indicate whether keyboard event is enabled for layer
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isTouchEnabled:false,
@@ -66,7 +74,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
-        this.size = director.getWinSize();
+        this.setContentSize(director.getWinSize());
     },
 
     /**
@@ -1196,6 +1204,13 @@ cc.LayerColor.create = function (color, width, height) {
  * </p>
  * @class
  * @extends cc.LayerColor
+ *
+ * @property {cc.Color} startColor              - Start color of the color gradient
+ * @property {cc.Color} endColor                - End color of the color gradient
+ * @property {Number}   startOpacity            - Start opacity of the color gradient
+ * @property {Number}   endOpacity              - End opacity of the color gradient
+ * @property {Number}   vector                  - Direction vector of the color gradient
+ * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _startColor:null,

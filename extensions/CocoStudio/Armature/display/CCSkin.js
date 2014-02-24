@@ -26,17 +26,22 @@
  * Base class for ccs.Skin
  * @class
  * @extends ccs.Sprite
+ *
+ * @property {Object}   skinData    - The data of the skin
+ * @property {ccs.Bone} bone        - The bone of the skin
+ * @property {String}   displayName - <@readonly> The displayed name of skin
+ *
  */
 ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _skinData:null,
-    _bone:null,
+    bone:null,
     _skinTransform:null,
     _displayName:"",
     _armature:null,
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
-        this._bone = null;
+        this.bone = null;
         this._displayName = "";
         this._skinTransform = cc.AffineTransformIdentity();
         this._armature = null;
@@ -76,15 +81,15 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     setBone:function (bone) {
-        this._bone = bone;
+        this.bone = bone;
     },
 
     getBone:function () {
-        return this._bone;
+        return this.bone;
     },
 
     updateArmatureTransform:function () {
-        this._transform = cc.AffineTransformConcat(this._skinTransform, this._bone.nodeToArmatureTransform());
+        this._transform = cc.AffineTransformConcat(this._skinTransform, this.bone.nodeToArmatureTransform());
         var locTransform = this._transform;
         var locArmature = this._armature;
         if (locArmature && locArmature.getBatchNode()) {
@@ -118,7 +123,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     },
 
     nodeToWorldTransform: function () {
-        return cc.AffineTransformConcat(this._transform, this._bone.getArmature().nodeToWorldTransform());
+        return cc.AffineTransformConcat(this._transform, this.bone.getArmature().nodeToWorldTransform());
     },
 
 
@@ -130,10 +135,18 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         displayTransform.tx = anchorPoint.x;
         displayTransform.ty = anchorPoint.y;
 
-        return cc.AffineTransformConcat(displayTransform, this._bone.getArmature().nodeToWorldTransform());
+        return cc.AffineTransformConcat(displayTransform, this.bone.getArmature().nodeToWorldTransform());
     }
 });
 ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
+
+window._proto = ccs.Skin.prototype;
+
+cc.defineGetterSetter(_proto, "skinData", _proto.getSkinData, _proto.setSkinData);
+cc.defineGetterSetter(_proto, "displayName", _proto.getDisplayName);
+
+delete window._proto;
+
 /**
  * allocates and initializes a skin.
  * @param {String} fileName

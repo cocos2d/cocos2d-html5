@@ -30,6 +30,17 @@
  * converted to Javascript / cocos2d-x by Angus C
  */
 
+/**
+ * ControlHuePicker: HUE picker ui component.
+ * @class
+ * @extends cc.Control
+ *
+ * @property {Number}       hue         - The hue value
+ * @property {Number}       huePercent  - The hue value in percentage
+ * @property {cc.Sprite}    background  - <@readonly> The background sprite
+ * @property {cc.Sprite}    slider      - <@readonly> The slider sprite
+ * @property {cc.Point}     startPos    - <@readonly> The start position of the picker
+ */
 cc.ControlHuePicker = cc.Control.extend({
     _hue:0,
     _huePercentage:0,
@@ -162,6 +173,20 @@ cc.ControlHuePicker = cc.Control.extend({
         this._checkSliderPosition(touchLocation);
     }
 });
+
+window._proto = cc.ControlHuePicker.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "hue", _proto.getHue, _proto.setHue);
+cc.defineGetterSetter(_proto, "huePercent", _proto.getHuePercentage, _proto.setHuePercentage);
+cc.defineGetterSetter(_proto, "background", _proto.getBackground);
+cc.defineGetterSetter(_proto, "slider", _proto.getSlider);
+cc.defineGetterSetter(_proto, "startPos", _proto.getStartPos);
+
+delete window._proto;
 
 cc.ControlHuePicker.create = function (target, pos) {
     var pRet = new cc.ControlHuePicker();

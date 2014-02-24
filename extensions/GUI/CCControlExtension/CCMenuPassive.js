@@ -38,6 +38,11 @@ cc.Spacer.horizontalSpacer = function (space) {
     return pRet;
 };
 
+/**
+ * MenuPassive: The menu passive ui component
+ * @class
+ * @extend cc.Layer
+ */
 cc.MenuPassive = cc.Layer.extend({
     RGBAProtocol:true,
 
@@ -366,6 +371,15 @@ cc.MenuPassive = cc.Layer.extend({
         return false;
     }
 });
+
+window._proto = cc.MenuPassive.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+
+delete window._proto;
 
 /** creates an empty CCMenu */
 cc.MenuPassive.create = function (item) {

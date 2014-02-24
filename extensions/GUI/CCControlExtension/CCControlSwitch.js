@@ -24,7 +24,11 @@
  * THE SOFTWARE.
  */
 
-/** @class CCControlSwitch Switch control for Cocos2D. */
+/**
+ * CCControlSwitch: Switch control ui component
+ * @class
+ * @extend cc.Control
+ */
 cc.ControlSwitch = cc.Control.extend({
     /** Sprite which represents the view. */
     _switchSprite:null,
@@ -149,6 +153,12 @@ cc.ControlSwitch = cc.Control.extend({
     }
 });
 
+window._proto = cc.ControlSwitch.prototype;
+
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
+
+delete window._proto;
+
 /** Creates a switch with a mask sprite, on/off sprites for on/off states and a thumb sprite. */
 cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
     var pRet = new cc.ControlSwitch();
@@ -158,6 +168,25 @@ cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite
     return null;
 };
 
+/**
+ * ControlSwitchSprite: Sprite switch control ui component
+ * @class
+ * @extend cc.Sprite
+ *
+ * @property {Number}           sliderX         - Slider's x position
+ * @property {cc.Point}         onPos           - The position of slider when switch is on
+ * @property {cc.Point}         offPos          - The position of slider when switch is off
+ * @property {cc.Texture2D}     maskTexture     - The texture of the mask
+ * @property {cc.Point}         texturePos      - The position of the texture
+ * @property {cc.Point}         maskPos         - The position of the mask
+ * @property {cc.Sprite}        onSprite        - The sprite of switch on
+ * @property {cc.Sprite}        offSprite       - The sprite of switch off
+ * @property {cc.Sprite}        thumbSprite     - The thumb sprite of the switch control
+ * @property {cc.LabelTTF}      onLabel         - The sprite of switch on
+ * @property {cc.LabelTTF}      offLabel        - The sprite of switch off
+ * @property {Number}           onSideWidth     - <@readonly> The width of the on side of the switch control
+ * @property {Number}           offSideWidth    - <@readonly> The width of the off side of the switch control
+ */
 cc.ControlSwitchSprite = cc.Sprite.extend({
     _sliderXPosition:0,
     _onPosition:0,
@@ -274,11 +303,11 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         return this._sliderXPosition;
     },
 
-    onSideWidth:function () {
+    _getOnSideWidth:function () {
         return this._onSprite.getContentSize().width;
     },
 
-    offSideWidth:function () {
+    _getOffSideWidth:function () {
         return this._offSprite.getContentSize().height;
     },
 
@@ -357,3 +386,20 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         return this._offLabel;
     }
 });
+
+window._proto = cc.ControlSwitchSprite.prototype;
+
+cc.defineGetterSetter(_proto, "sliderX", _proto.getSliderXPosition, _proto.setSliderXPosition);
+cc.defineGetterSetter(_proto, "onPos", _proto.getOnPosition, _proto.setOnPosition);
+cc.defineGetterSetter(_proto, "offPos", _proto.getOffPosition, _proto.setOffPosition);
+cc.defineGetterSetter(_proto, "maskTexture", _proto.getMaskTexture, _proto.setMaskTexture);
+cc.defineGetterSetter(_proto, "maskPos", _proto.getMaskLocation, _proto.setMaskLocation);
+cc.defineGetterSetter(_proto, "onSprite", _proto.getOnSprite, _proto.setOnSprite);
+cc.defineGetterSetter(_proto, "offSprite", _proto.getOffSprite, _proto.setOffSprite);
+cc.defineGetterSetter(_proto, "thumbSprite", _proto.getThumbSprite, _proto.setThumbSprite);
+cc.defineGetterSetter(_proto, "onLabel", _proto.getOnLabel, _proto.setOnLabel);
+cc.defineGetterSetter(_proto, "offLabel", _proto.getOffLabel, _proto.setOffLabel);
+cc.defineGetterSetter(_proto, "onSideWidth", _proto._getOnSideWidth);
+cc.defineGetterSetter(_proto, "offSideWidth", _proto._getOffSideWidth);
+
+delete window._proto;

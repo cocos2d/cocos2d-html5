@@ -51,6 +51,7 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
  * @extends cc.Node
  *
  * @property {cc.TextureAtlas}  textureAtlas    - The texture atlas
+ * @property {Array}            descendants     - <@readonly> Descendants of sprite batch node
  *
  * @example
  * //create a SpriteBatchNode
@@ -1046,8 +1047,6 @@ if(cc.Browser.supportWebGL){
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 
 // Extended properties
-/** @expose */
-_proto.descendants;
 cc.defineGetterSetter(_proto, "descendants", _proto.getDescendants);
 
 delete window._proto;

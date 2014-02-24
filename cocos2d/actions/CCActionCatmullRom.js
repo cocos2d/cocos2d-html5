@@ -236,7 +236,8 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
-        this._target.pos = newPos;
+        this._target.x = newPos.x;
+	    this._target.y = newPos.y;
         this._previousPosition = newPos;
     },
 

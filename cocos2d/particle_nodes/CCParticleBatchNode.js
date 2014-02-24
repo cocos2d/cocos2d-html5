@@ -55,7 +55,8 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  * @class
  * @extends cc.ParticleSystem
  *
- * @property {cc.TextureAtlas}  textureAtlas    - The texture atlas used for drawing the quads
+ * @property {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}  texture         - The used texture
+ * @property {cc.TextureAtlas}                                  textureAtlas    - The texture atlas used for drawing the quads
  */
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 	/**
@@ -526,6 +527,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
 window._proto = cc.ParticleBatchNode.prototype;
 
+// Extended properties
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 
 delete window._proto;

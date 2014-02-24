@@ -241,6 +241,32 @@ cc.Particle.TemporaryPoints = [
  * @class
  * @extends cc.Node
  *
+ * @property {Boolean}              opacityModifyRGB    - Indicate whether the alpha value modify color.
+ * @property {cc.SpriteBatchNode}   batchNode           - Weak reference to the sprite batch node.
+ * @property {Boolean}              active              - <@readonly> Indicate whether the particle system is activated.
+ * @property {cc.Point}             sourcePos           - Source position of the emitter.
+ * @property {cc.Point}             posVar              - Variation of source position.
+ * @property {cc.Point}             gravity             - Gravity of the emitter.
+ * @property {cc.Point}             speed               - Speed of the emitter.
+ * @property {cc.Point}             speedVar            - Variation of the speed.
+ * @property {Number}               tangentialAccel     - Tangential acceleration of each particle. Only available in 'Gravity' mode.
+ * @property {Number}               tangentialAccelVar  - Variation of the tangential acceleration.
+ * @property {Number}               tangentialAccel     - Radial acceleration of each particle. Only available in 'Gravity' mode.
+ * @property {Number}               tangentialAccelVar  - Variation of the radial acceleration.
+ * @property {Boolean}              rotationIsDir       - Indicate whether the rotation of each particle equals to its direction. Only available in 'Gravity' mode.
+ * @property {Number}               startRadius         - Starting radius of the particles. Only available in 'Radius' mode.
+ * @property {Number}               startRadiusVar      - Variation of the starting radius.
+ * @property {Number}               endRadius           - Ending radius of the particles. Only available in 'Radius' mode.
+ * @property {Number}               endRadiusVar        - Variation of the ending radius.
+ * @property {Number}               rotatePerS          - Number of degress to rotate a particle around the source pos per second. Only available in 'Radius' mode.
+ * @property {Number}               rotatePerSVar       - Variation of the degress to rotate a particle around the source pos per second.
+ * @property {cc.Color}             startColor          - Start color of each particle.
+ * @property {cc.Color}             startColorVar       - Variation of the start color.
+ * @property {cc.Color}             endColor            - Ending color of each particle.
+ * @property {cc.Color}             endColorVar         - Variation of the end color.
+ * @property {Number}               totalParticles      - Maximum particles of the system.
+ * @property {cc.Texture2D}         texture             - Texture of Particle System.
+ *
  * @example
  *  emitter.radialAccel = 15;
  *  emitter.startSpin = 0;

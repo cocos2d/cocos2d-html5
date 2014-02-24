@@ -56,6 +56,19 @@ cc.PROGRESS_TEXTURE_COORDS = 0x4b;
  * @class
  * @extends cc.NodeRGBA
  *
+ * @property {cc.Point}     midPoint        <p>- Midpoint is used to modify the progress start position.<br/>
+ *                                          If you're using radials type then the midpoint changes the center point<br/>
+ *                                          If you're using bar type the the midpoint changes the bar growth<br/>
+ *                                              it expands from the center but clamps to the sprites edge so:<br/>
+ *                                              you want a left to right then set the midpoint all the way to cc.p(0,y)<br/>
+ *                                              you want a right to left then set the midpoint all the way to cc.p(1,y)<br/>
+ *                                              you want a bottom to top then set the midpoint all the way to cc.p(x,0)<br/>
+ *                                              you want a top to bottom then set the midpoint all the way to cc.p(x,1)</p>
+ * @property {cc.Point}     barChangeRate   - This allows the bar type to move the component at a specific rate.
+ * @property {enum}         type            - Type of the progress timer: cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR.
+ * @property {Number}       percentage      - Percentage to change progress, from 0 to 100.
+ * @property {cc.Sprite}    sprite          - The sprite to show the progress percentage.
+ * @property {Boolean}      reverseDir      - Indicate whether the direction is reversed.
  */
 cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _type:null,
@@ -278,14 +291,16 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _setSpriteForCanvas:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = this._sprite.size;
+            this.width = this._sprite.width;
+	        this.height = this._sprite.height;
         }
     },
 
     _setSpriteForWebGL:function (sprite) {
         if (sprite && this._sprite != sprite) {
             this._sprite = sprite;
-            this.size = sprite.size;
+            this.width = sprite.width;
+	        this.height = sprite.height;
 
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
@@ -789,14 +804,14 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _updateProgressForCanvas:function () {
         var locSprite = this._sprite;
-        var spriteSize = locSprite.size;
+        var sw = locSprite.width, sh = locSprite.height;
         var locMidPoint = this._midPoint;
 
         if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
-            this._radius = Math.round(Math.sqrt(spriteSize.width * spriteSize.width + spriteSize.height * spriteSize.height));
+            this._radius = Math.round(Math.sqrt(sw * sw + sh * sh));
             var locStartAngle, locEndAngle, locCounterClockWise = false, locOrigin = this._origin;
-            locOrigin.x = spriteSize.width * locMidPoint.x;
-            locOrigin.y = -spriteSize.height * locMidPoint.y;
+            locOrigin.x = sw * locMidPoint.x;
+            locOrigin.y = -sh * locMidPoint.y;
 
             if (this._reverseDirection) {
                 locEndAngle = 270;
@@ -807,7 +822,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             }
 
             if (locSprite._flippedX) {
-                locOrigin.x -= spriteSize.width * (this._midPoint.x * 2);
+                locOrigin.x -= sw * (this._midPoint.x * 2);
                 locStartAngle= -locStartAngle;
                 locEndAngle= -locEndAngle;
                 locStartAngle -= 180;
@@ -815,7 +830,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
                 locCounterClockWise = !locCounterClockWise;
             }
             if (locSprite._flippedY) {
-                locOrigin.y+=spriteSize.height*(this._midPoint.y*2);
+                locOrigin.y+=sh*(this._midPoint.y*2);
                 locCounterClockWise = !locCounterClockWise;
                 locStartAngle= -locStartAngle;
                 locEndAngle= -locEndAngle;
@@ -829,23 +844,23 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             var percentageF = this._percentage / 100;
             var locBarRect = this._barRect;
 
-            var drawedSize = cc.size((spriteSize.width * (1 - locBarChangeRate.x)), (spriteSize.height * (1 - locBarChangeRate.y)));
-            var drawingSize = cc.size((spriteSize.width - drawedSize.width) * percentageF, (spriteSize.height - drawedSize.height) * percentageF);
+            var drawedSize = cc.size((sw * (1 - locBarChangeRate.x)), (sh * (1 - locBarChangeRate.y)));
+            var drawingSize = cc.size((sw - drawedSize.width) * percentageF, (sh - drawedSize.height) * percentageF);
             var currentDrawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
 
-            var startPoint = cc.p(spriteSize.width * locMidPoint.x, spriteSize.height * locMidPoint.y);
+            var startPoint = cc.p(sw * locMidPoint.x, sh * locMidPoint.y);
 
             var needToLeft = startPoint.x - currentDrawSize.width / 2;
             if (locMidPoint.x > 0.5) {
-                if (currentDrawSize.width / 2 >= spriteSize.width - startPoint.x) {
-                    needToLeft = spriteSize.width - currentDrawSize.width;
+                if (currentDrawSize.width / 2 >= sw - startPoint.x) {
+                    needToLeft = sw - currentDrawSize.width;
                 }
             }
 
             var needToTop = startPoint.y - currentDrawSize.height / 2;
             if (locMidPoint.y > 0.5) {
-                if (currentDrawSize.height / 2 >= spriteSize.height - startPoint.y) {
-                    needToTop = spriteSize.height - currentDrawSize.height;
+                if (currentDrawSize.height / 2 >= sh - startPoint.y) {
+                    needToTop = sh - currentDrawSize.height;
                 }
             }
 

@@ -30,6 +30,19 @@
  * converted to Javascript / cocos2d-x by Angus C
  */
 
+/**
+ * ControlSaturationBrightnessPicker: Saturation brightness picker ui component.
+ * @class
+ * @extends cc.Control
+ *
+ * @property {Number}       saturation  - <@readonly> Saturation value of the picker
+ * @property {Number}       brightness  - <@readonly> Brightness value of the picker
+ * @property {cc.Sprite}    background  - <@readonly> The background sprite
+ * @property {cc.Sprite}    overlay     - <@readonly> The overlay sprite
+ * @property {cc.Sprite}    shadow      - <@readonly> The shadow sprite
+ * @property {cc.Sprite}    slider      - <@readonly> The slider sprite
+ * @property {cc.Point}     startPos    - <@readonly> The start position of the picker
+ */
 cc.ControlSaturationBrightnessPicker = cc.Control.extend({
     _saturation:0,
     _brightness:0,
@@ -194,6 +207,22 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         this._checkSliderPosition(touchLocation);
     }
 });
+
+window._proto = cc.ControlSaturationBrightnessPicker.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "saturation", _proto.getSaturation);
+cc.defineGetterSetter(_proto, "brightness", _proto.getBrightness);
+cc.defineGetterSetter(_proto, "background", _proto.getBackground);
+cc.defineGetterSetter(_proto, "overlay", _proto.getOverlay);
+cc.defineGetterSetter(_proto, "shadow", _proto.getShadow);
+cc.defineGetterSetter(_proto, "slider", _proto.getSlider);
+cc.defineGetterSetter(_proto, "startPos", _proto.getStartPos);
+
+delete window._proto;
 
 cc.ControlSaturationBrightnessPicker.create = function (target, pos) {
     var pRet = new cc.ControlSaturationBrightnessPicker();

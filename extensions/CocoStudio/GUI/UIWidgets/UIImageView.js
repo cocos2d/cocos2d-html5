@@ -224,6 +224,15 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
 	        this._imageRenderer.setAnchorPoint(point, y);
         }
     },
+	_setAnchorX: function (value) {
+		ccs.Widget.prototype._setAnchorX.call(this, value);
+		this._imageRenderer._setAnchorX(value);
+	},
+	_setAnchorY: function (value) {
+		ccs.Widget.prototype._setAnchorY.call(this, value);
+		this._imageRenderer._setAnchorY(value);
+	},
+
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
@@ -237,6 +246,12 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     getContentSize: function () {
         return this._imageTextureSize;
     },
+	_getWidth: function () {
+		return this._imageTextureSize.width;
+	},
+	_getHeight: function () {
+		return this._imageTextureSize.height;
+	},
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -291,6 +306,19 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     }
 
 });
+
+window._proto = ccs.ImageView.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
+cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
+cc.defineGetterSetter(_proto, "flippedX", _proto.isFlippedX, _proto.setFlippedX);
+cc.defineGetterSetter(_proto, "flippedY", _proto.isFlippedY, _proto.setFlippedY);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UIImageView.
  * @constructs

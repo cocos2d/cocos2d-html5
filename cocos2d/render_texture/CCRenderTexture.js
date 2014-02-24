@@ -69,11 +69,12 @@ cc.NextPOT = function (x) {
  * @class
  * @extends cc.Node
  *
- * @property {cc.Sprite}    sprite          - The sprite
- * @property {Number}       clearFlags      - Code for "auto" update
- * @property {Number}       clearDepthVal   - Clear depth value
- * @property {Number}       clearStencilVal - Clear stencil value
- * @property {Boolean}      autoDraw        - Indicate auto draw mode activate or not
+ * @property {cc.Sprite}    sprite          - The sprite.
+ * @property {Number}       clearFlags      - Code for "auto" update.
+ * @property {Number}       clearDepthVal   - Clear depth value.
+ * @property {Number}       clearStencilVal - Clear stencil value.
+ * @property {cc.Color}     clearColorVal   - Clear color value, valid only when "autoDraw" is true.
+ * @property {Boolean}      autoDraw        - Indicate auto draw mode activate or not.
  */
 cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 	/** @public */

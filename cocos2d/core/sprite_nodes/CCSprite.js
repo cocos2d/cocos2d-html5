@@ -234,26 +234,6 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     return nCanvas;
 };
 
-/**
- * a Values object for transform
- * @Class
- * @Construct
- * @param {cc.Point} pos position x and y
- * @param {cc.Point} scale scale x and y
- * @param {Number} rotation
- * @param {cc.Point} skew skew x and y
- * @param {cc.Point} ap anchor point in pixels
- * @param {Boolean} visible
- */
-cc.TransformValues = function (pos, scale, rotation, skew, ap, visible) {
-    this.pos = pos;		// position x and y
-    this.scale = scale;		// scale x and y
-    this.rotation = rotation;
-    this.skew = skew;		// skew x and y
-    this.ap = ap;			// anchor point in pixels
-    this.visible = visible;
-};
-
 cc.RENDER_IN_SUBPIXEL = function (A) {
     return (0 | A);
 };
@@ -288,9 +268,17 @@ if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
  * @class
  * @extends cc.NodeRGBA
  *
- * @property {Boolean}          dirty           - Indicates whether the sprite needs to be updated..
- * @property {Number}           atlasIndex      - The index used on the TextureAtlas.
- * @property {cc.TextureAtlas}  textureAtlas    - The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
+ * @property {Boolean}              dirty               - Indicates whether the sprite needs to be updated.
+ * @property {Boolean}              flippedX            - Indicates whether or not the spirte is flipped on x axis.
+ * @property {Boolean}              flippedY            - Indicates whether or not the spirte is flipped on y axis.
+ * @property {Number}               offsetX             - <@readonly> The offset position on x axis of the sprite in texture. Calculated automatically by editors like Zwoptex.
+ * @property {Number}               offsetY             - <@readonly> The offset position on x axis of the sprite in texture. Calculated automatically by editors like Zwoptex.
+ * @property {Number}               atlasIndex          - The index used on the TextureAtlas.
+ * @property {cc.Texture2D}         texture             - Texture used to render the sprite.
+ * @property {Boolean}              textureRectRotated  - <@readonly> Indicate whether the texture rectangle is rotated.
+ * @property {cc.TextureAtlas}      textureAtlas        - The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode.
+ * @property {cc.SpriteBatchNode}   batchNode           - The batch node object if this sprite is rendered by cc.SpriteBatchNode.
+ * @property {cc.V3F_C4B_T2F_Quad}  quad                - <@readonly> The quad (tex coords, vertex coords and color) information.
  *
  * @example
  * var aSprite = new cc.Sprite();
@@ -437,6 +425,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     getOffsetPosition:function () {
         return this._offsetPosition;
     },
+
+	_getOffsetX: function () {
+		return this._offsetPosition.x;
+	},
+	_getOffsetY: function () {
+		return this._offsetPosition.y;
+	},
 
     /**
      * conforms to cc.TextureProtocol protocol
@@ -1022,7 +1017,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             return this.initWithTexture(texture, rect);
         } else {
             if (!rect) {
-                var size = texture.size;
+                var size = texture.getContentSize();
                 rect = cc.rect(0, 0, size.width, size.height);
             }
             return this.initWithTexture(texture, rect);
@@ -1097,8 +1092,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (!rect) {
-            var locSize1 = texture.size;
-            rect = cc.rect(0, 0, locSize1.width, locSize1.height);
+            rect = cc.rect(0, 0, texture.width, texture.height);
         }
         this.texture = texture;
         this.setTextureRect(rect, rotated);
@@ -1156,8 +1150,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (!rect) {
-            var locSize1 = texture.size;
-            rect = cc.rect(0, 0, locSize1.width, locSize1.height);
+            rect = cc.rect(0, 0, texture.width, texture.height);
         }
         this._originalTexture = texture;
 
@@ -1179,12 +1172,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
-            var locSize1 = sender.size;
-            locRect = cc.rect(0, 0, locSize1.width, locSize1.height);
+            locRect = cc.rect(0, 0, sender.width, sender.height);
         } else if (cc._rectEqualToZero(locRect)) {
-            var locSize2 = sender.size;
-            locRect.width = locSize2.width;
-            locRect.height = locSize2.height;
+            locRect.width = sender.width;
+            locRect.height = sender.height;
         }
 
         this.texture = sender;
@@ -1204,12 +1195,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._textureLoaded = true;
         var locRect = this._rect;
         if (!locRect) {
-            var locSize1 = sender.size;
-            locRect = cc.rect(0, 0, locSize1.width, locSize1.height);
+            locRect = cc.rect(0, 0, sender.width, sender.height);
         } else if (cc._rectEqualToZero(locRect)) {
-            var locSize2 = sender.size;
-            locRect.width = locSize2.width;
-            locRect.height = locSize2.height;
+            locRect.width = sender.width;
+            locRect.height = sender.height;
         }
         this._originalTexture = sender;
 
@@ -1232,7 +1221,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForWebGL:function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-	    this.size = untrimmedSize || rect;
+	    this.setContentSize(untrimmedSize || rect);
 
         this.setVertexRect(rect);
         this._setTextureCoords(rect);
@@ -1272,7 +1261,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
         this._rectRotated = rotated || false;
-	    this.size = untrimmedSize || rect;
+	    this.setContentSize(untrimmedSize || rect);
 
         this.setVertexRect(rect);
 
@@ -2074,29 +2063,24 @@ cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 /** @expose */
 _proto.dirty;
 /** @expose */
-_proto.flipX;
-cc.defineGetterSetter(_proto, "flipX", _proto.isFlippedX, _proto.setFlippedX);
+_proto.flippedX;
+cc.defineGetterSetter(_proto, "flippedX", _proto.isFlippedX, _proto.setFlippedX);
 /** @expose */
-_proto.flipY;
-cc.defineGetterSetter(_proto, "flipY", _proto.isFlippedY, _proto.setFlippedY);
-/** @expose */
-_proto.offset;
-cc.defineGetterSetter(_proto, "offset", _proto.getOffsetPosition);
+_proto.flippedY;
+cc.defineGetterSetter(_proto, "flippedY", _proto.isFlippedY, _proto.setFlippedY);
+cc.defineGetterSetter(_proto, "offsetX", _proto._getOffsetX);
+cc.defineGetterSetter(_proto, "offsetY", _proto._getOffsetY);
 /** @expose */
 _proto.atlasIndex;
 /** @expose */
 _proto.texture;
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
-/** @expose */
-_proto.textureRectRotated;
 cc.defineGetterSetter(_proto, "textureRectRotated", _proto.isTextureRectRotated);
 /** @expose */
 _proto.textureAtlas;
 /** @expose */
 _proto.batchNode;
 cc.defineGetterSetter(_proto, "batchNode", _proto.getBatchNode, _proto.setBatchNode);
-/** @expose */
-_proto.quad;
 cc.defineGetterSetter(_proto, "quad", _proto.getQuad);
 
 delete window._proto;

@@ -26,9 +26,16 @@
  */
 
 /**
- * CCControlPotentiometer Potentiometer control for Cocos2D.
+ * CCControlPotentiometer: Potentiometer control for Cocos2D.
  * @class
  * @extends cc.Control
+ *
+ * @property {Number}           value           - The current value of the potentionmeter
+ * @property {Number}           minValue        - The minimum value of the potentionmeter
+ * @property {Number}           maxValue        - The maximum value of the potentionmeter
+ * @property {cc.ProgressTimer} progressTimer   - The progress timer of the potentionmeter
+ * @property {cc.Sprite}        thumbSprite     - The thumb sprite of the potentionmeter
+ * @property {cc.Point}         prevLocation    - The previous location of the potentionmeter
  */
 cc.ControlPotentiometer = cc.Control.extend({
     _thumbSprite:null,
@@ -239,6 +246,21 @@ cc.ControlPotentiometer = cc.Control.extend({
         return this._previousLocation;
     }
 });
+
+window._proto = cc.ControlPotentiometer.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
+cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);
+cc.defineGetterSetter(_proto, "maxValue", _proto.getMaximumValue, _proto.setMaximumValue);
+cc.defineGetterSetter(_proto, "progressTimer", _proto.getProgressTimer, _proto.setProgressTimer);
+cc.defineGetterSetter(_proto, "thumbSprite", _proto.getThumbSprite, _proto.setThumbSprite);
+cc.defineGetterSetter(_proto, "prevLocation", _proto.getPreviousLocation, _proto.setPreviousLocation);
+
+delete window._proto;
 
 cc.ControlPotentiometer.create = function (backgroundFile, progressFile, thumbFile) {
     var pRet = new cc.ControlPotentiometer();

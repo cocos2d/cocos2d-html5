@@ -31,6 +31,23 @@
  * Consider using cc.LabelAtlas or cc.LabelBMFont instead.<br/>
  * @class
  * @extends cc.Sprite
+ *
+ * @property {String}       string          - Content string of label
+ * @property {enum}         textAlign       - Horizontal Alignment of label: cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {enum}         verticalAlign   - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
+ * @property {Number}       fontSize        - Font size of label
+ * @property {String}       fontName        - Font name of label
+ * @property {String}       font            - The label font with a style string: e.g. "18px Verdana"
+ * @property {Number}       boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
+ * @property {Number}       boundingHeight  - Height of the bounding box of label, the real content height is limited by boundingHeight
+ * @property {cc.Color}     fillStyle       - The fill color
+ * @property {cc.Color}     strokeStyle     - The stroke color
+ * @property {Number}       lineWidth       - The line width for stroke
+ * @property {Number}       shadowOffsetX   - The x axis offset of shadow
+ * @property {Number}       shadowOffsetY   - The y axis offset of shadow
+ * @property {Number}       shadowOpacity   - The opacity of shadow
+ * @property {Number}       shadowBlur      - The blur size of shadow
+ *
  */
 cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _dimensions:null,
@@ -769,7 +786,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 	_setFont: function (fontStyle) {
 		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
 		if(res) {
-			this._fontSize = res[1];
+			this._fontSize = parseInt(res[1]);
 			this._fontName = res[2];
 			this._fontStyleStr = fontStyle;
 			this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, this._fontSize);
@@ -922,7 +939,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 locSize = cc.size(0 | (locDimensionsWidth + locStrokeShadowOffsetX), 0 | (this._dimensions.height + locStrokeShadowOffsetY));
             }
         }
-        this.size = locSize;
+        this.setContentSize(locSize);
         this._strokeShadowOffsetX = locStrokeShadowOffsetX;
         this._strokeShadowOffsetY = locStrokeShadowOffsetY;
 
@@ -1032,10 +1049,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             cc.drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
-            var drawRectG2 = this.getTextureRect();
-            var offsetPixG2 = this.offset;
-            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
-                cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
+            var drawSizeG2 = this.getTextureRect()._size;
+            var offsetPixG2X = this.offsetX, offsetPixG2Y = this.offsetY;
+            var verticesG2 = [cc.p(offsetPixG2X, offsetPixG2Y), cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y),
+                cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y + drawSizeG2.height), cc.p(offsetPixG2X, offsetPixG2Y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.g_NumberOfDraws++;
@@ -1045,7 +1062,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._rectRotated = rotated || false;
         untrimmedSize = untrimmedSize || rect;
 
-        this.size = untrimmedSize;
+        this.setContentSize(untrimmedSize);
 
         this.setVertexRect(rect);
 

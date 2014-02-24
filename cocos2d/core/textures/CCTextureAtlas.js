@@ -36,8 +36,11 @@
  * @class
  * @extends cc.Class
  *
- * @property {Boolean}  dirty   - Indicates whether or not the array buffer of the VBO needs to be updated
- * @property {Image}    texture - Image texture for cc.TextureAtlas
+ * @property {Boolean}  dirty           - Indicates whether or not the array buffer of the VBO needs to be updated.
+ * @property {Image}    texture         - Image texture for cc.TextureAtlas.
+ * @property {Number}   capacity        - <@readonly> Quantity of quads that can be stored with the current texture atlas size.
+ * @property {Number}   totalQuads      - <@readonly> Quantity of quads that are going to be drawn.
+ * @property {Array}    quads           - <@readonly> Quads that are going to be rendered
  */
 cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 	/** @public */
@@ -637,18 +640,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 });
 
 window._proto = cc.TextureAtlas.prototype;
-/** @expose */
-_proto.totalQuads;
 cc.defineGetterSetter(_proto, "totalQuads", _proto.getTotalQuads);
-/** @expose */
-_proto.capacity;
 cc.defineGetterSetter(_proto, "capacity", _proto.getCapacity);
-/** @expose */
-_proto.texture;
-/** @expose */
-_proto.dirty;
-/** @expose */
-_proto.quads;
 cc.defineGetterSetter(_proto, "quads", _proto.getQuads, _proto.setQuads);
 delete window._proto;
 
