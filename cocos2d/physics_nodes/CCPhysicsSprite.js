@@ -116,7 +116,7 @@
             return this._body.p.x;
         },
 
-        getPositionY:function () {
+        _getPositionY:function () {
             return this._body.p.y;
         },
 
@@ -134,7 +134,7 @@
 		    this._body.p.x = xValue;
 		    //this._syncPosition();
 	    },
-	    setPositionY:function (yValue) {
+	    _setPositionY:function (yValue) {
 		    this._body.p.y = yValue;
 		    //this._syncPosition();
 	    },
@@ -253,7 +253,7 @@
 	_proto.body;
 	cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
 	cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
-	cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
+	cc.defineGetterSetter(_proto, "y", _proto._getPositionY, _proto._setPositionY);
 	cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
 	cc.defineGetterSetter(_proto, "dirty", _proto.isDirty);
 	delete window._proto;

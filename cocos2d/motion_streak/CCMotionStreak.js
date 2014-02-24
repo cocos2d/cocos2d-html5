@@ -317,14 +317,14 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 	/**
 	 * @return {Number}
 	 */
-	getPositionY:function () {
+	_getPositionY:function () {
 		return  this._positionR._y;
 	},
 
 	/**
 	 * @param {Number} y
 	 */
-	setPositionY:function (y) {
+	_setPositionY:function (y) {
 		this._positionR._y = y;
 		if(!this.startingPositionInitialized)
 			this.startingPositionInitialized = true;
@@ -494,7 +494,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 window._proto = cc.MotionStreak.prototype;
 
 cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
-cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
+cc.defineGetterSetter(_proto, "y", _proto._getPositionY, _proto._setPositionY);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 

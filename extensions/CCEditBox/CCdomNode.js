@@ -42,7 +42,7 @@ cc.DOM.addMethods = function (node) {
 
 	// Redefine getter setter
 	cc.defineGetterSetter(node, "x", node._getPositionX, node._setPositionX);
-	cc.defineGetterSetter(node, "y", node.getPositionY, node.setPositionY);
+	cc.defineGetterSetter(node, "y", node._getPositionY, node._setPositionY);
 	cc.defineGetterSetter(node, "width", node._getWidth, node._setWidth);
 	cc.defineGetterSetter(node, "height", node._getHeight, node._setHeight);
 	cc.defineGetterSetter(node, "anchorX", node._getAnchorX, node._setAnchorX);
@@ -79,7 +79,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * replace set Position Y of ccNode
      * @param {Number} y
      */
-    setPositionY:function (y) {
+    _setPositionY:function (y) {
         this._position.y = y;
         this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
@@ -547,7 +547,7 @@ cc.DOM.setTransform = function (x) {
     }
     if (x.dom) {
         x.dom.position.x = x._getPositionX();
-        x.dom.position.y = -x.getPositionY();
+        x.dom.position.y = -x._getPositionY();
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};

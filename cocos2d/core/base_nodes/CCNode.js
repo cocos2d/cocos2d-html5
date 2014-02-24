@@ -623,14 +623,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * @return {Number}
      */
-    getPositionY:function () {
+    _getPositionY:function () {
         return  this._position.y;
     },
 
     /**
      * @param {Number} y
      */
-    setPositionY:function (y) {
+    _setPositionY:function (y) {
         this._position.y = y;
         this.setNodeDirty();
     },
@@ -2231,7 +2231,7 @@ if(cc.Browser.supportWebGL){
 }
 
 cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
-cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
+cc.defineGetterSetter(_proto, "y", _proto._getPositionY, _proto._setPositionY);
 /** @expose */
 //_proto.pos;
 //cc.defineGetterSetter(_proto, "pos", _proto.getPosition, _proto.setPosition);

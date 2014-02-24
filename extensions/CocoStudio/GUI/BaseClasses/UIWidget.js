@@ -1057,7 +1057,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
 		cc.NodeRGBA.prototype._setPositionX.apply(this, x);
 	},
-	setPositionY: function (y) {
+	_setPositionY: function (y) {
 		if (this._running) {
 			var widgetParent = this.getWidgetParent();
 			if (widgetParent) {
@@ -1069,7 +1069,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionY.apply(this, y);
+		cc.NodeRGBA.prototype._setPositionY.apply(this, y);
 	},
 
     /**
@@ -1102,7 +1102,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			var widgetParent = this.getWidgetParent();
 			if(widgetParent){
 				var absY = widgetParent.height * percent;
-				this.setPositionY(absY);
+				this._setPositionY(absY);
 			}
 		}
 	},
@@ -1183,7 +1183,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {number}
      */
     getBottomInParent: function () {
-        return this.getPositionY() - this._getAnchorY() * this._size.height;
+        return this._getPositionY() - this._getAnchorY() * this._size.height;
     },
 
     /**
@@ -1354,7 +1354,7 @@ window._proto = ccs.Widget.prototype;
 
 // Override properties
 cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
-cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
+cc.defineGetterSetter(_proto, "y", _proto._getPositionY, _proto._setPositionY);
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 cc.defineGetterSetter(_proto, "flippedX", _proto.isFlippedX, _proto.setFlippedX);

@@ -1134,11 +1134,11 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     scrollToLeft: function (time, attenuated) {
-        this.startAutoScrollChildrenWithDestination(cc.p(0, this._innerContainer.getPositionY()), time, attenuated);
+        this.startAutoScrollChildrenWithDestination(cc.p(0, this._innerContainer._getPositionY()), time, attenuated);
     },
 
     scrollToRight: function (time, attenuated) {
-        this.startAutoScrollChildrenWithDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._innerContainer.getPositionY()), time, attenuated);
+        this.startAutoScrollChildrenWithDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._innerContainer._getPositionY()), time, attenuated);
     },
 
     scrollToTopLeft: function (time, attenuated) {
@@ -1181,7 +1181,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     scrollToPercentHorizontal: function (percent, time, attenuated) {
         var w = this._innerContainer.getSize().width - this._size.width;
-        this.startAutoScrollChildrenWithDestination(cc.p(-(percent * w / 100), this._innerContainer.getPositionY()), time, attenuated);
+        this.startAutoScrollChildrenWithDestination(cc.p(-(percent * w / 100), this._innerContainer._getPositionY()), time, attenuated);
     },
 
     scrollToPercentBothDirection: function (percent, time, attenuated) {
@@ -1203,11 +1203,11 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     jumpToLeft: function () {
-        this.jumpToDestination(cc.p(0, this._innerContainer.getPositionY()));
+        this.jumpToDestination(cc.p(0, this._innerContainer._getPositionY()));
     },
 
     jumpToRight: function () {
-        this.jumpToDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._innerContainer.getPositionY()));
+        this.jumpToDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._innerContainer._getPositionY()));
     },
 
     jumpToTopLeft: function () {
@@ -1250,7 +1250,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     jumpToPercentHorizontal: function (percent) {
         var w = this._innerContainer.getSize().width - this._size.width;
-        this.jumpToDestination(cc.p(-(percent * w / 100), this._innerContainer.getPositionY()));
+        this.jumpToDestination(cc.p(-(percent * w / 100), this._innerContainer._getPositionY()));
     },
 
     jumpToPercentBothDirection: function (percent) {

@@ -716,7 +716,7 @@ cc.ScrollView = cc.Layer.extend({
          var newY = Math.min(this._container._getPositionY(), maxInset.y);
          newY = Math.max(newY, minInset.y);*/
         var newX = this._container._getPositionX();
-        var newY = this._container.getPositionY();
+        var newY = this._container._getPositionY();
 
         //this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(newX - this._container._getPositionX(), newY - this._container._getPositionY()));
         //= this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(0, 0)); = do nothing
