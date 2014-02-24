@@ -35,7 +35,7 @@ ccs.UICCLabelAtlas = cc.LabelAtlas.extend({
     },
 
     draw: function () {
-        if (!this._textureAtlas) {
+        if (!this.textureAtlas) {
             return;
         }
 
@@ -58,6 +58,8 @@ ccs.UICCLabelAtlas.create = function () {
  * Base class for ccs.LabelAtlas
  * @class
  * @extends ccs.Widget
+ *
+ * @property {String}   string  - Content string of the label
  */
 ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
     _labelAtlasRenderer: null,
@@ -134,6 +136,14 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
 	        this._labelAtlasRenderer.setAnchorPoint(point, y);
         }
     },
+	_setAnchorX: function (value) {
+		ccs.Widget.prototype._setAnchorX.call(this, value);
+		this._labelAtlasRenderer._setAnchorX(value);
+	},
+	_setAnchorY: function (value) {
+		ccs.Widget.prototype._setAnchorY.call(this, value);
+		this._labelAtlasRenderer._setAnchorY(value);
+	},
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
@@ -147,6 +157,12 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
     getContentSize: function () {
         return this._labelAtlasRenderer.getContentSize();
     },
+	_getWidth: function () {
+		return this._labelAtlasRenderer._getWidth();
+	},
+	_getHeight: function () {
+		return this._labelAtlasRenderer._getHeight();
+	},
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -192,6 +208,20 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
         this.setProperty(labelAtlas._stringValue, labelAtlas._charMapFileName, labelAtlas._itemWidth, labelAtlas._itemHeight, labelAtlas._startCharMap);
     }
 });
+
+window._proto = ccs.LabelAtlas.prototype;
+
+// Override properties
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
+cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
+
+// Extended properties
+cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UILabelAtlas.
  * @constructs

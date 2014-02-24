@@ -638,7 +638,7 @@ cc.BuilderReader = cc.Class.extend({
         } else if (type == CCB_PROPTYPE_BYTE) {
             value = this.readByte();
         } else if (type == CCB_PROPTYPE_COLOR3) {
-            var c = cc.c3(this.readByte(), this.readByte(), this.readByte());
+            var c = cc.c3b(this.readByte(), this.readByte(), this.readByte());
             value = cc.Color3BWapper.create(c);
         } else if (type == CCB_PROPTYPE_FLOATXY) {
             value = [this.readFloat(), this.readFloat()];
@@ -655,7 +655,7 @@ cc.BuilderReader = cc.Class.extend({
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var locContentSize = texture.getContentSize();
                 var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
-                value = cc.SpriteFrame.createWithTexture(texture, bounds);
+                value = cc.SpriteFrame.create(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;
                 var frameCache = cc.SpriteFrameCache.getInstance();

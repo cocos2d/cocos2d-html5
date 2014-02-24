@@ -57,6 +57,11 @@ ccs.BACKGROUNDCOLORRENDERERZ = -2;
  * Base class for ccs.Layout
  * @class
  * @extends ccs.Widget
+ *
+ * @property {Boolean}                  clippingEnabled - Indicate whether clipping is enabled
+ * @property {ccs.LayoutClippingType}   clippingType    - The clipping type: ccs.LayoutClippingType.stencil | ccs.LayoutClippingType.scissor
+ * @property {ccs.LayoutType}           layoutType      - The layout type: ccs.LayoutType.absolute | ccs.LayoutType.linearVertical | ccs.LayoutType.linearHorizontal | ccs.LayoutType.relative
+ *
  */
 ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _clippingEnabled: null,
@@ -88,7 +93,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._backGroundScale9Enabled = false;
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
-        this._backGroundImageCapInsets = cc.RectZero();
+        this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
         this._colorType = ccs.LayoutBackGroundColorType.none;
         this._bgImageTexType = ccs.TextureResType.local;
         this._colorRender = null;
@@ -98,7 +103,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._endColor = cc.white();
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
-        this._backGroundImageTextureSize = cc.SizeZero();
+        this._backGroundImageTextureSize = cc.size(0, 0);
         this._layoutType = ccs.LayoutType.absolute;
         this._widgetType = ccs.WidgetType.container;
         this._doLayoutDirty = false;
@@ -117,7 +122,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             this.setCascadeColorEnabled(false);
             this.setCascadeOpacityEnabled(false);
             this.ignoreContentAdaptWithSize(false);
-            this.setSize(cc.SizeZero());
+            this.setSize(cc.size(0, 0));
             this.setBright(true);
             this.setAnchorPoint(0, 0);
             this.initStencil();
@@ -298,7 +303,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.PointZero(), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -714,7 +719,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
-        this._backGroundImageTextureSize = cc.SizeZero();
+        this._backGroundImageTextureSize = cc.size(0, 0);
     },
 
     /**
@@ -1401,6 +1406,16 @@ if (cc.Browser.supportWebGL) {
 ccs.Layout._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 };
+
+window._proto = ccs.Layout.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "clippingEnabled", _proto.isClippingEnabled, _proto.setClippingEnabled);
+cc.defineGetterSetter(_proto, "clippingType", null, _proto.setClippingType);
+cc.defineGetterSetter(_proto, "layoutType", _proto.getLayoutType, _proto.setLayoutType);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UILayout.
  * @constructs

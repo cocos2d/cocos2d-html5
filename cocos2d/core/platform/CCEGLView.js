@@ -343,7 +343,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Size}
      */
     getVisibleSize: function () {
-        return this._visibleRect._size;
+        return cc.size(this._visibleRect.width,this._visibleRect.height);
     },
 
     /**
@@ -351,7 +351,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Point}
      */
     getVisibleOrigin: function () {
-        return this._visibleRect._origin;
+        return cc.p(this._visibleRect.x,this._visibleRect.y);
     },
 
     canSetContentScaleFactor: function () {
@@ -443,10 +443,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
         if (result.viewport instanceof cc.Rect) {
             var vp = this._viewPortRect = result.viewport, visible = this._visibleRect;
-            visible._size.width = cc.canvas.width / this._scaleX;
-            visible._size.height = cc.canvas.height / this._scaleY;
-            visible._origin.x = -vp.x / this._scaleX;
-            visible._origin.y = -vp.y / this._scaleY;
+            visible.width = cc.canvas.width / this._scaleX;
+            visible.height = cc.canvas.height / this._scaleY;
+            visible.x = -vp.x / this._scaleX;
+            visible.y = -vp.y / this._scaleY;
         }
 
         // reset director's member variables to fit visible rect

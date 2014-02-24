@@ -28,6 +28,11 @@ cc.TABLEVIEW_FILL_BOTTOMUP = 1;
 
 /**
  * Abstract class for SWTableView cell node
+ * @class
+ * @abstract
+ * @extend cc.Node
+ *
+ * @property {Number}   objectId    - The index used internally by SWTableView and its subclasses
  */
 cc.TableViewCell = cc.Node.extend({
     _idx:0,
@@ -56,6 +61,12 @@ cc.TableViewCell = cc.Node.extend({
         return this._idx;
     }
 });
+
+window._proto = cc.TableViewCell.prototype;
+
+cc.defineGetterSetter(_proto, "objectId", _proto.getObjectID, _proto.setObjectID);
+
+delete window._proto;
 
 /**
  * Sole purpose of this delegate is to single touch event in this version.
@@ -123,7 +134,7 @@ cc.TableViewDataSource = cc.Class.extend({
      * @return {cc.Size} cell size
      */
     cellSizeForTable:function (table) {
-        return cc.SIZE_ZERO;
+        return cc.size(0,0);
     },
 
     /**
@@ -148,8 +159,14 @@ cc.TableViewDataSource = cc.Class.extend({
 
 /**
  * UITableView counterpart for cocos2d for iphone.
- *
  * this is a very basic, minimal implementation to bring UITableView-like component into cocos2d world.
+ *
+ * @class
+ * @extend cc.ScrollView
+ *
+ * @property {cc.TableViewDataSource}   dataSource          - The data source of the table view
+ * @property {cc.TableViewDelegate}     delegate            - The event delegate of the table view
+ * @property {Number}                   verticalFillOrder   - The index to determine how cell is ordered and filled in the view
  *
  */
 cc.TableView = cc.ScrollView.extend({
@@ -266,7 +283,7 @@ cc.TableView = cc.ScrollView.extend({
     },
 
     _updateContentSize:function () {
-        var size = cc.SizeZero();
+        var size = cc.size(0, 0);
 
         var cellsCount = this._dataSource.numberOfCellsInTableView(this);
 
@@ -288,7 +305,7 @@ cc.TableView = cc.ScrollView.extend({
             if (this._direction == cc.SCROLLVIEW_DIRECTION_HORIZONTAL) {
                 this.setContentOffset(cc.p(0, 0));
             } else {
-                this.setContentOffset(cc.p(0, this.minContainerOffset().y));
+                this.setContentOffset(cc.p(0, this._getMinContainerOffset().y));
             }
             this._oldDirection = this._direction;
         }
@@ -643,6 +660,14 @@ cc.TableView = cc.ScrollView.extend({
         }
     }
 });
+
+window._proto = cc.TableView.prototype;
+
+cc.defineGetterSetter(_proto, "dataSource", _proto.getDataSource, _proto.setDataSource);
+cc.defineGetterSetter(_proto, "delegate", _proto.getDelegate, _proto.setDelegate);
+cc.defineGetterSetter(_proto, "verticalFillOrder", _proto.getVerticalFillOrder, _proto.setVerticalFillOrder);
+
+delete window._proto;
 
 /**
  * An initialized table view object

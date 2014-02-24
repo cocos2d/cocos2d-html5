@@ -235,7 +235,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //purge?
         this._purgeDirectorInNextLoop = false;
 
-        this._winSizeInPoints = cc._sizeConst(0, 0);
+        this._winSizeInPoints = cc.size(0, 0);
 
         this._openGLView = null;
         this._contentScaleFactor = 1.0;
@@ -476,7 +476,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._openGLView) {
             return this._openGLView.getVisibleOrigin();
         } else {
-            return cc.POINT_ZERO;
+            return cc.p(0,0);
         }
     },
 
@@ -549,7 +549,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._nextScene = null;
 
         // remove all objects, but don't release it.
-        // runWithScene might be executed after 'end'.
+        // runScene might be executed after 'end'.
         this._scenesStack.length = 0;
 
         this.stopAnimation();
@@ -585,24 +585,28 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * Replaces the running scene with a new one. The running scene is terminated. ONLY call it if there is a running scene.
+     * Run a scene. Replaces the running scene with a new one when the  scene is running.
      * @param {cc.Scene} scene
      */
-    replaceScene:function (scene) {
-        if(!this._runningScene)
-            throw "Use runWithScene: instead to start the director";
+    runScene:function(scene){
         if(!scene)
             throw "the scene should not be null";
-
-        var i = this._scenesStack.length;
-        if(i === 0){
-            this._sendCleanupToScene = true;
-            this._scenesStack[i] = scene;
-            this._nextScene = scene;
-        } else {
-            this._sendCleanupToScene = true;
-            this._scenesStack[i - 1] = scene;
-            this._nextScene = scene;
+        if(!this._runningScene){
+            //start scene
+            this.pushScene(scene);
+            this.startAnimation();
+        }else{
+            //replace scene
+            var i = this._scenesStack.length;
+            if(i === 0){
+                this._sendCleanupToScene = true;
+                this._scenesStack[i] = scene;
+                this._nextScene = scene;
+            } else {
+                this._sendCleanupToScene = true;
+                this._scenesStack[i - 1] = scene;
+                this._nextScene = scene;
+            }
         }
     },
 
@@ -622,24 +626,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         this._paused = false;
         this._deltaTime = 0;
-    },
-
-    /**
-     * <p>
-     *    Enters the Director's main loop with the given Scene.<br/>
-     *    Call it to run only your FIRST scene.<br/>
-     *    Don't call it if there is already a running scene.
-     * </p>
-     * @param {cc.Scene} scene
-     */
-    runWithScene:function (scene) {
-        if(!scene)
-            throw "This command can only be used to start the CCDirector. There is already a scene present.";
-        if(this._runningScene)
-            throw "_runningScene should be null";
-
-        this.pushScene(scene);
-        this.startAnimation();
     },
 
     /**
@@ -777,8 +763,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setOpenGLView:function (openGLView) {
         // set size
-        this._winSizeInPoints.setWidth(cc.canvas.width);      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.setHeight(cc.canvas.height);
+        this._winSizeInPoints.width = cc.canvas.width;      //this._openGLView.getDesignResolutionSize();
+        this._winSizeInPoints.height = cc.canvas.height;
         this._openGLView = openGLView || cc.EGLView.getInstance();
 
         if (cc.renderContextType === cc.CANVAS)
@@ -884,14 +870,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._accumDt += this._deltaTime;
         if (this._FPSLabel && this._SPFLabel && this._drawsLabel) {
             if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
-                this._SPFLabel.setString(this._secondsPerFrame.toFixed(3));
+                this._SPFLabel.string = this._secondsPerFrame.toFixed(3);
 
                 this._frameRate = this._frames / this._accumDt;
                 this._frames = 0;
                 this._accumDt = 0;
 
-                this._FPSLabel.setString(this._frameRate.toFixed(1));
-                this._drawsLabel.setString((0 | cc.g_NumberOfDraws).toString());
+                this._FPSLabel.string = this._frameRate.toFixed(1);
+                this._drawsLabel.string = (0 | cc.g_NumberOfDraws).toString();
             }
             this._FPSLabel.visit();
             this._SPFLabel.visit();
@@ -1146,25 +1132,28 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         var tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("00.0", texture, 12, 32 , '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._FPSLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("0.000", texture, 12, 32, '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._SPFLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("000", texture, 12, 32, '.');
-        tmpLabel.setScale(factor);
+        tmpLabel.scale = factor;
         this._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(cc.pAdd(cc.p(0, 34 * factor), locStatsPosition));
-        this._SPFLabel.setPosition(cc.pAdd(cc.p(0, 17 * factor), locStatsPosition));
-        this._FPSLabel.setPosition(locStatsPosition);
+        this._drawsLabel.x = locStatsPosition.x;
+	    this._drawsLabel.y = 34 * factor + locStatsPosition.y;
+        this._SPFLabel.x = locStatsPosition.x;
+	    this._SPFLabel.y = 17 * factor + locStatsPosition.y;
+        this._FPSLabel.x = locStatsPosition.x;
+	    this._FPSLabel.y = locStatsPosition.y;
     },
 
     _createStatsLabelForCanvas:function(){
@@ -1179,12 +1168,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        var contentSize = this._drawsLabel.getContentSize();
-        this._drawsLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height * 5 / 2), locStatsPosition));
-        contentSize = this._SPFLabel.getContentSize();
-        this._SPFLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height * 3 / 2), locStatsPosition));
-        contentSize = this._FPSLabel.getContentSize();
-        this._FPSLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height / 2), locStatsPosition));
+        this._drawsLabel.x = this._drawsLabel.width / 2 + locStatsPosition.x;
+	    this._drawsLabel.y = this._drawsLabel.height * 5 / 2 + locStatsPosition.y;
+        this._SPFLabel.x = this._SPFLabel.width / 2 + locStatsPosition.x;
+	    this._SPFLabel.y = this._SPFLabel.height * 3 / 2 + locStatsPosition.y;
+        this._FPSLabel.x = this._FPSLabel.width / 2 + locStatsPosition.x;
+	    this._FPSLabel.y = this._FPSLabel.height / 2 + locStatsPosition.y;
     },
 
     _calculateMPF: function () {

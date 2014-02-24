@@ -54,12 +54,20 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  * </p>
  * @class
  * @extends cc.ParticleSystem
+ *
+ * @property {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}  texture         - The used texture
+ * @property {cc.TextureAtlas}                                  textureAtlas    - The texture atlas used for drawing the quads
  */
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
+	/**
+	 * @public
+	 * The texture atlas used for drawing the quads
+	 */
+	textureAtlas:null,
+
     TextureProtocol:true,
     //the blend function used for drawing the quads
     _blendFunc:null,
-    _textureAtlas:null,
 
     ctor:function () {
         cc.Node.prototype.ctor.call(this);
@@ -73,14 +81,14 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     initWithTexture:function (texture, capacity) {
-        this._textureAtlas = new cc.TextureAtlas();
-        this._textureAtlas.initWithTexture(texture, capacity);
+        this.textureAtlas = new cc.TextureAtlas();
+        this.textureAtlas.initWithTexture(texture, capacity);
 
         // no lazy alloc in this node
         this._children.length = 0;
 
         if (cc.renderContextType === cc.WEBGL)
-            this.shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -120,7 +128,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         zOrder = (zOrder == null) ? child.zIndex : zOrder;
         tag = (tag == null) ? child.tag : tag;
 
-        if(child.getTexture() != this._textureAtlas.getTexture())
+        if(child.getTexture() != this.textureAtlas.texture)
             throw "cc.ParticleSystem.addChild() : the child is not using the same texture id";
 
         // If this is the 1st children, then copy blending function
@@ -159,8 +167,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     insertChild:function (pSystem, index) {
         var totalParticles = pSystem.getTotalParticles();
-        var locTextureAtlas = this._textureAtlas;
-        var totalQuads = locTextureAtlas.getTotalQuads();
+        var locTextureAtlas = this.textureAtlas;
+        var totalQuads = locTextureAtlas.totalQuads;
         pSystem.setAtlasIndex(index);
         if (totalQuads + totalParticles > locTextureAtlas.getCapacity()) {
             this._increaseAtlasCapacityTo(totalQuads + totalParticles);
@@ -195,12 +203,12 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
         cc.Node.prototype.removeChild.call(this, child, cleanup);
 
-        var locTextureAtlas = this._textureAtlas;
+        var locTextureAtlas = this.textureAtlas;
         // remove child helper
         locTextureAtlas.removeQuadsAtIndex(child.getAtlasIndex(), child.getTotalParticles());
 
         // after memmove of data, empty the quads at the end of array
-        locTextureAtlas.fillWithEmptyQuadsFromIndex(locTextureAtlas.getTotalQuads(), child.getTotalParticles());
+        locTextureAtlas.fillWithEmptyQuadsFromIndex(locTextureAtlas.totalQuads, child.getTotalParticles());
 
         // paticle could be reused for self rendering
         child.setBatchNode(null);
@@ -253,7 +261,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
                 }
 
                 // reorder textureAtlas quads
-                this._textureAtlas.moveQuadsFromIndex(oldAtlasIndex, child.getTotalParticles(), newAtlasIndex);
+                this.textureAtlas.moveQuadsFromIndex(oldAtlasIndex, child.getTotalParticles(), newAtlasIndex);
 
                 child.updateWithNoTime();
             }
@@ -278,7 +286,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             locChildren[i].setBatchNode(null);
         }
         cc.Node.prototype.removeAllChildren.call(this, doCleanup);
-        this._textureAtlas.removeAllQuads();
+        this.textureAtlas.removeAllQuads();
     },
 
     /**
@@ -286,10 +294,10 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} particleIndex
      */
     disableParticle:function (particleIndex) {
-        var quad = ((this._textureAtlas.getQuads())[particleIndex]);
+        var quad = this.textureAtlas.quads[particleIndex];
         quad.br.vertices.x = quad.br.vertices.y = quad.tr.vertices.x = quad.tr.vertices.y =
             quad.tl.vertices.x = quad.tl.vertices.y = quad.bl.vertices.x = quad.bl.vertices.y = 0.0;
-        this._textureAtlas._setDirty(true);
+        this.textureAtlas._setDirty(true);
     },
 
     /**
@@ -301,12 +309,12 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (cc.renderContextType === cc.CANVAS)
             return;
 
-        if (this._textureAtlas.getTotalQuads() == 0)
+        if (this.textureAtlas.totalQuads == 0)
             return;
 
         cc.NODE_DRAW_SETUP(this);
         cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
-        this._textureAtlas.drawQuads();
+        this.textureAtlas.drawQuads();
 
         //cc.PROFILER_STOP("CCParticleBatchNode - draw");
     },
@@ -316,7 +324,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}
      */
     getTexture:function () {
-        return this._textureAtlas.getTexture();
+        return this.textureAtlas.texture;
     },
 
     /**
@@ -324,7 +332,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture
      */
     setTexture:function (texture) {
-        this._textureAtlas.setTexture(texture);
+        this.textureAtlas.texture = texture;
 
         // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
         var locBlendFunc = this._blendFunc;
@@ -400,10 +408,10 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     },
 
     _increaseAtlasCapacityTo:function (quantity) {
-        cc.log("cocos2d: cc.ParticleBatchNode: resizing TextureAtlas capacity from [" + this._textureAtlas.getCapacity()
+        cc.log("cocos2d: cc.ParticleBatchNode: resizing TextureAtlas capacity from [" + this.textureAtlas.getCapacity()
             + "] to [" + quantity + "].");
 
-        if (!this._textureAtlas.resizeCapacity(quantity)) {
+        if (!this.textureAtlas.resizeCapacity(quantity)) {
             // serious problems
             cc.log("cc.ParticleBatchNode._increaseAtlasCapacityTo() : WARNING: Not enough memory to resize the atlas");
         }
@@ -494,7 +502,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     },
 
     _updateBlendFunc:function () {
-        if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
+        if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
             this._blendFunc.src = gl.SRC_ALPHA;
             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
         }
@@ -505,7 +513,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {cc.TextureAtlas}
      */
     getTextureAtlas:function () {
-        return this._textureAtlas;
+        return this.textureAtlas;
     },
 
     /**
@@ -513,32 +521,38 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {cc.TextureAtlas} textureAtlas
      */
     setTextureAtlas:function (textureAtlas) {
-        this._textureAtlas = textureAtlas;
+        this.textureAtlas = textureAtlas;
     }
 });
 
-/**
- * initializes the particle system with cc.Texture2D, a capacity of particles, which particle system to use
- * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture
- * @param {Number} capacity
- * @return {cc.ParticleBatchNode}
- */
-cc.ParticleBatchNode.createWithTexture = function (texture, capacity) {
-    var ret = new cc.ParticleBatchNode();
-    if (ret && ret.initWithTexture(texture, capacity))
-        return ret;
-    return null;
-};
+window._proto = cc.ParticleBatchNode.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+
+delete window._proto;
 
 /**
  * initializes the particle system with the name of a file on disk (for a list of supported formats look at the cc.Texture2D class), a capacity of particles
- * @param {String} fileImage
- * @param capacity
+ * @param {String|cc.Texture2D} fileImage
+ * @param {Number} capacity
  * @return {cc.ParticleBatchNode}
+ * @example
+ * 1.
+ * //Create a cc.ParticleBatchNode with image path  and capacity
+ * var particleBatchNode = cc.ParticleBatchNode.create("res/grossini_dance.png",30);
+ *
+ * 2.
+ * //Create a cc.ParticleBatchNode with a texture and capacity
+ * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
+ * var particleBatchNode = cc.ParticleBatchNode.create(texture, 30);
  */
 cc.ParticleBatchNode.create = function (fileImage, capacity) {
     var ret = new cc.ParticleBatchNode();
-    if (ret && ret.init(fileImage, capacity))
-        return ret;
-    return null;
+    if (typeof(fileImage) == "string") {
+        ret.init(fileImage, capacity);
+    } else if (fileImage instanceof cc.Texture2D) {
+        ret.initWithTexture(fileImage, capacity);
+    }
+    return ret;
 };

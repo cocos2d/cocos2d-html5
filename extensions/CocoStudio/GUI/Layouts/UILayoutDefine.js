@@ -76,7 +76,7 @@ ccs.Margin = ccs.Class.extend(/** @lends ccs.Margin# */{
     right: 0,
     bottom: 0,
     ctor: function (margin, top, right, bottom) {
-        if (top === undefined) {
+        if (margin && top === undefined) {
             this.left = margin.left;
             this.top = margin.top;
             this.right = margin.right;

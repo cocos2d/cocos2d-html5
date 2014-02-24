@@ -500,7 +500,7 @@ var CCNS_REG2 = /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*
 /**
  * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
  * The string is not localized, so items are always separated with a comma. <br/>
- * If the string is not well-formed, the function returns cc.RectZero.
+ * If the string is not well-formed, the function returns cc.rect(0, 0, 0, 0).
  * @function
  * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
  * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
@@ -513,7 +513,7 @@ var CCNS_REG2 = /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*
  */
 cc.RectFromString = function (content) {
 	var result = CCNS_REG2.exec(content);
-	if(!result) return cc.RectZero();
+	if(!result) return cc.rect(0, 0, 0, 0);
 	return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
 };
 
@@ -525,7 +525,7 @@ cc.RectFromString = function (content) {
  * The x and y values can represent integer or float values. <br/>
  * The string is not localized, so items are always separated with a comma.<br/>
  * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
- * If the string is not well-formed, the function returns cc.PointZero.
+ * If the string is not well-formed, the function returns cc.p(0,0).
  * Constructor
  * @example
  * //example
@@ -533,7 +533,7 @@ cc.RectFromString = function (content) {
  */
 cc.PointFromString = function (content) {
 	var result = CCNS_REG1.exec(content);
-	if(!result) return cc.PointZero();
+	if(!result) return cc.p(0,0);
 	return cc.p(parseFloat(result[1]), parseFloat(result[2]));
 };
 
@@ -545,14 +545,14 @@ cc.PointFromString = function (content) {
  * The w and h values can be integer or float values. <br/>
  * The string is not localized, so items are always separated with a comma.<br/>
  * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
- * If the string is not well-formed, the function returns cc.SizeZero.
+ * If the string is not well-formed, the function returns cc.size(0,0).
  * @example
  * // example
  * var size = cc.SizeFromString("{3.0,2.5}");
  */
 cc.SizeFromString = function (content) {
 	var result = CCNS_REG1.exec(content);
-	if(!result) return cc.SizeZero();
+	if(!result) return cc.size(0, 0);
 	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
 };
 

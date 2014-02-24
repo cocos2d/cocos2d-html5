@@ -193,14 +193,14 @@ cc.ShatteredTiles3D.create = function (duration, gridSize, range, shatterZ) {
  * A Tile composed of position, startPosition and delta
  * @Class
  * @constructor
- * @param {cc.Point} [position=cc.Point_ZERO]
- * @param {cc.Point} [startPosition=cc.Point_ZERO]
- * @param {cc.Size} [delta=cc.Point_ZERO]
+ * @param {cc.Point} [position=cc.p(0,0)]
+ * @param {cc.Point} [startPosition=cc.p(0,0)]
+ * @param {cc.Size} [delta=cc.p(0,0)]
  */
 cc.Tile = function (position, startPosition, delta) {
-    this.position = position || cc.POINT_ZERO;
-    this.startPosition = startPosition || cc.POINT_ZERO;
-    this.delta = delta || cc.POINT_ZERO;
+    this.position = position || cc.p(0,0);
+    this.startPosition = startPosition || cc.p(0,0);
+    this.delta = delta || cc.p(0,0);
 };
 
 /**

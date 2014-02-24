@@ -35,9 +35,20 @@ cc.AUTOREPEAT_DELTATIME = 0.15;
 cc.AUTOREPEAT_INCREASETIME_INCREMENT = 12;
 
 /**
- * ControlStepper  control for Cocos2D.
+ * ControlStepper: Stepper ui component.
  * @class
  * @extends cc.Control
+ *
+ * @property {Boolean}      wraps       - Indicate whether the stepper wraps
+ * @property {Number}       value       - The value of the stepper control
+ * @property {Number}       minValue    - The minimum value of the stepper control
+ * @property {Number}       maxValue    - The maximum value of the stepper control
+ * @property {Number}       stepValue   - The interval value for each step of the stepper control
+ * @property {Boolean}      continuous  - <@readonly> Indicate whether the stepper value is continuous
+ * @property {cc.Sprite}    minusSprite - The sprite for minus button of the stepper control
+ * @property {cc.Sprite}    plusSprite  - The sprite for plus button of the stepper control
+ * @property {cc.LabelTTF}  minusLabel  - The label for minus button of the stepper control
+ * @property {cc.LabelTTF}  plusSLabel  - The label for plus button of the stepper control
  */
 cc.ControlStepper = cc.Control.extend({
     _minusSprite:null,
@@ -114,7 +125,7 @@ cc.ControlStepper = cc.Control.extend({
 
             // Defines the content size
             var maxRect = cc.ControlUtils.CCRectUnion(this._minusSprite.getBoundingBox(), this._plusSprite.getBoundingBox());
-            this.setContentSize(this._minusSprite.getContentSize().width + this._plusSprite.getContentSize().height, maxRect._size.height);
+            this.setContentSize(this._minusSprite.getContentSize().width + this._plusSprite.getContentSize().height, maxRect.height);
             return true;
         }
         return false;
@@ -122,7 +133,7 @@ cc.ControlStepper = cc.Control.extend({
 
 //#pragma mark Properties
 
-    setWraps:function (wraps) {
+    setWraps: function (wraps) {
         this._wraps = wraps;
 
         if (this._wraps) {
@@ -133,6 +144,10 @@ cc.ControlStepper = cc.Control.extend({
         this.setValue(this._value);
     },
 
+	getWraps: function () {
+		return this._wraps;
+	},
+
     setMinimumValue:function (minimumValue) {
         if (minimumValue >= this._maximumValue)
             throw "cc.ControlStepper.setMinimumValue(): minimumValue should be numerically less than maximumValue.";
@@ -140,6 +155,9 @@ cc.ControlStepper = cc.Control.extend({
         this._minimumValue = minimumValue;
         this.setValue(this._value);
     },
+	getMinimumValue: function () {
+		return this._minimumValue;
+	},
 
     setMaximumValue:function (maximumValue) {
         if (maximumValue <= this._minimumValue)
@@ -148,6 +166,9 @@ cc.ControlStepper = cc.Control.extend({
         this._maximumValue = maximumValue;
         this.setValue(this._value);
     },
+	getMaximumValue: function () {
+		return this._maximumValue;
+	},
 
     setValue:function (value) {
         this.setValueWithSendingEvent(value, true);
@@ -162,6 +183,10 @@ cc.ControlStepper = cc.Control.extend({
             throw "cc.ControlStepper.setMaximumValue(): stepValue should be numerically greater than 0.";
         this._stepValue = stepValue;
     },
+
+	getStepValue:function () {
+		return this._stepValue;
+	},
 
     isContinuous:function () {
         return this._continuous;
@@ -309,6 +334,21 @@ cc.ControlStepper = cc.Control.extend({
         return this._plusLabel;
     }
 });
+
+window._proto = cc.ControlStepper.prototype;
+
+cc.defineGetterSetter(_proto, "wraps", _proto.getWraps, _proto.setWraps);
+cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
+cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);
+cc.defineGetterSetter(_proto, "maxValue", _proto.getMaximumValue, _proto.setMaximumValue);
+cc.defineGetterSetter(_proto, "stepValue", _proto.getStepValue, _proto.setStepValue);
+cc.defineGetterSetter(_proto, "continuous", _proto.isContinuous);
+cc.defineGetterSetter(_proto, "minusSprite", _proto.getMinusSprite, _proto.setMinusSprite);
+cc.defineGetterSetter(_proto, "plusSprite", _proto.getPlusSprite, _proto.setPlusSprite);
+cc.defineGetterSetter(_proto, "minusLabel", _proto.getMinusLabel, _proto.setMinusLabel);
+cc.defineGetterSetter(_proto, "plusLabel", _proto.getPlusLabel, _proto.setPlusLabel);
+
+delete window._proto;
 
 cc.ControlStepper.create = function (minusSprite, plusSprite) {
     var pRet = new cc.ControlStepper();

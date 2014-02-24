@@ -93,8 +93,28 @@ cc.integerToColor3B = function (intValue) {
     return retColor;
 };
 
-// compatibility
-cc.c3 = cc.c3b;
+
+
+cc.Color = function (r, g, b, a) {
+    this.r = r || 0;
+    this.g = g || 0;
+    this.b = b || 0;
+    this.a = a || 0;
+};
+
+/**
+ *
+ * @param {Number} r
+ * @param {Number} g
+ * @param {Number} b
+ * @param {Number} a
+ * @returns {cc.Color}
+ */
+cc.color = function (r, g, b, a) {
+    if (typeof r === "string")
+        return cc.hexToColor(r);
+    return  {r: r || 0, g: g || 0, b: b || 0, a: a || 255};
+};
 
 /**
  * returns true if both ccColor3B are equal. Otherwise it returns false.
@@ -106,73 +126,32 @@ cc.c3BEqual = function(color1, color2){
     return color1.r === color2.r && color1.g === color2.g && color1.b === color2.b;
 };
 
-//ccColor3B predefined colors
-Object.defineProperties(cc, {
-    WHITE: {
-        get: function () {
-            return cc.c3b(255, 255, 255);
-        }
-    },
-    YELLOW: {
-        get: function () {
-            return cc.c3b(255, 255, 0);
-        }
-    },
-    BLUE: {
-        get: function () {
-            return cc.c3b(0, 0, 255);
-        }
-    },
-    GREEN: {
-        get: function () {
-            return cc.c3b(0, 255, 0);
-        }
-    },
-    RED: {
-        get: function () {
-            return cc.c3b(255, 0, 0);
-        }
-    },
-    MAGENTA: {
-        get: function () {
-            return cc.c3b(255, 0, 255);
-        }
-    },
-    BLACK: {
-        get: function () {
-            return cc.c3b(0, 0, 0);
-        }
-    },
-    ORANGE: {
-        get: function () {
-            return cc.c3b(255, 127, 0);
-        }
-    },
-    GRAY: {
-        get: function () {
-            return cc.c3b(166, 166, 166);
-        }
-    }
-});
 
 /**
- *  White color (255,255,255)
- * @constant
- * @type {Number,Number,Number}
+ * White color (255,255,0)
+ * @returns {cc.Color}
+ * @private
  */
-cc.white = function () {
-    return new cc.Color3B(255, 255, 255);
+cc.color._getWhite = function(){
+    return cc.color(255, 255, 255);
 };
+cc.white = function(){
+    return cc.color(255, 255, 255);
+};
+cc.defineGetterSetter(cc.color, "white", cc.color._getWhite);
 
 /**
  *  Yellow color (255,255,0)
- * @constant
- * @type {Number,Number,Number}
+ * @returns {cc.Color}
+ * @private
  */
-cc.yellow = function () {
+cc.color._getYellow = function () {
     return new cc.Color3B(255, 255, 0);
 };
-
+cc.yellow = function(){
+    return cc.color(255, 255, 0);
+};
+cc.defineGetterSetter(cc.color, "yellow", cc.color._getYellow);
 /**
  *  Blue color (0,0,255)
  * @constant
@@ -416,20 +395,6 @@ cc.Tex2F = function (u1, v1) {
  */
 cc.tex2 = function (u, v) {
     return new cc.Tex2F(u, v);
-};
-
-/**
- * Point Sprite component
- * @Class
- * @Construct
- * @param {cc.Vertex2F} pos1
- * @param {cc.Color4B} color1
- * @param {Number} size1
- */
-cc.PointSprite = function (pos1, color1, size1) {
-    this.pos = pos1 || new cc.Vertex2F(0, 0);
-    this.color = color1 || new cc.Color4B(0, 0, 0, 0);
-    this.size = size1 || 0;
 };
 
 /**
@@ -701,7 +666,7 @@ cc.AnimationFrameData = function(texCoords, delay, size){
  * @param clr
  * @return {String}
  */
-cc.convertColor3BtoHexString = function (clr) {
+cc.colorToHex = function (clr) {
     var hR = clr.r.toString(16);
     var hG = clr.g.toString(16);
     var hB = clr.b.toString(16);
@@ -1244,14 +1209,15 @@ if(cc.Browser.supportWebGL){
  * convert a string of color for style to Color3B.
  * e.g. "#ff06ff"  to : Color3B(255,6,255)
  * @param {String} clrSt
- * @return {cc.Color3B}
+ * @return {cc.Color}
  */
-cc.convertHexNumToColor3B = function (clrSt) {
-    var nAr = clrSt.substr(1).split("");
-    var r = parseInt("0x" + nAr[0] + nAr[1]);
-    var g = parseInt("0x" + nAr[2] + nAr[3]);
-    var b = parseInt("0x" + nAr[4] + nAr[5]);
-    return new cc.Color3B(r, g, b);
+cc.hexToColor = function (hex) {
+    hex = hex.replace(/^#?/, "0x");
+    var c = parseInt(hex);
+    var r = c >> 16;
+    var g = (c >> 8) % 256;
+    var b = c % 256;
+    return {r: r, g: g, b: b};
 };
 
 
@@ -1390,7 +1356,7 @@ cc.FontDefinition = function(){
     this.strokeSize = 1;
 
     this.shadowEnabled = false;
-    this.shadowOffset = cc.size(0,0);
+    this.shadowOffset = cc.p(0, 0);
     this.shadowBlur = 0;
     this.shadowOpacity = 1.0;
 };

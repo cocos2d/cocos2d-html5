@@ -426,7 +426,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         this.rightBoundary = 0.0;
         this.topBoundary = 0.0;
         this.bottomBoundary = 0.0;
-        this._worldRect = cc.RectZero();
+        this._worldRect = cc.rect(0, 0, 0, 0);
     },
 
     clone:function () {
@@ -461,7 +461,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         if(!followedNode)
             throw "cc.Follow.initWithAction(): followedNode must be non nil";
 
-        rect = rect || cc.RectZero();
+        rect = rect || cc.rect(0, 0, 0, 0);
         this._followedNode = followedNode;
         this._worldRect = rect;
 
@@ -500,8 +500,8 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      * @param {Number} dt
      */
     step:function (dt) {
-        var tempPosX = this._followedNode.getPositionX();
-        var tempPosY = this._followedNode.getPositionY();
+        var tempPosX = this._followedNode.x;
+        var tempPosY = this._followedNode.y;
         tempPosX = this._halfScreenSize.x - tempPosX;
         tempPosY = this._halfScreenSize.y - tempPosY;
 
@@ -510,10 +510,11 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
             if (this._boundaryFullyCovered)
                 return;
 
-            this._target.setPosition(cc.clampf(tempPosX, this.leftBoundary, this.rightBoundary),
-                cc.clampf(tempPosY, this.bottomBoundary, this.topBoundary));
+	        this._target.x = cc.clampf(tempPosX, this.leftBoundary, this.rightBoundary);
+	        this._target.y = cc.clampf(tempPosY, this.bottomBoundary, this.topBoundary);
         } else {
-            this._target.setPosition(tempPosX, tempPosY);
+            this._target.x = tempPosX;
+	        this._target.y = tempPosY;
         }
     },
 
@@ -550,7 +551,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * this.runAction(followAction);
  */
 cc.Follow.create = function (followedNode, rect) {
-    rect = rect || new cc.RectZero();
+    rect = rect || cc.rect(0, 0, 0, 0);
     var ret = new cc.Follow();
     if (rect != null && ret && ret.initWithTarget(followedNode, rect))
         return ret;
