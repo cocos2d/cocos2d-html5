@@ -488,8 +488,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.white();
-        this._realColor = cc.white();
+        this._displayedColor = cc.color(255, 255, 255, 255);
+        this._realColor = cc.color(255, 255, 255, 255);
         this._cascadeColorEnabled = true;
         this._cascadeOpacityEnabled = true;
         this._opacityModifyRGB = false;
@@ -556,7 +556,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         if(this._textureLoaded){
             if(this._cascadeColorEnabled){
-                var parentColor = cc.white();
+                var parentColor = cc.color.white;
                 var locParent = this._parent;
                 if(locParent && locParent.RGBAProtocol && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
@@ -751,8 +751,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._width = (width == null) ? -1 : width;
 
             this._displayedOpacity = this._realOpacity = 255;
-            this._displayedColor = cc.white();
-            this._realColor = cc.white();
+            this._displayedColor = cc.color(255, 255, 255, 255);
+            this._realColor = cc.color(255, 255, 255, 255);
             this._cascadeOpacityEnabled = true;
             this._cascadeColorEnabled = true;
 

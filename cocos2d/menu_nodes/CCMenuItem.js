@@ -336,7 +336,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     initWithLabel:function (label, selector, target) {
         this.initWithCallback(selector, target);
         this._originalScale = 1.0;
-        this._colorBackup = cc.white();
+        this._colorBackup = cc.color.white;
         this._disabledColor = cc.c3b(126, 126, 126);
         this.setLabel(label);
 
@@ -1050,7 +1050,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         this._selectedIndex = 0;
         this.subItems = [];
         this._opacity = 0;
-        this._color = cc.white();
+        this._color = cc.color.white;
     },
 
     /**

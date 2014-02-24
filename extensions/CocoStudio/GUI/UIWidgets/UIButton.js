@@ -83,7 +83,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
         this._disabledTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedActionEnabled = false;
-        this._titleColor = cc.white();
+        this._titleColor = cc.color.white;
         this._normalTextureScaleXInSize = 1;
         this._normalTextureScaleYInSize = 1;
         this._pressedTextureScaleXInSize = 1;
@@ -389,9 +389,11 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
                 this._buttonDisableRenderer.runAction(zoomAction2);
             }
         } else {
-            this._buttonNormalRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
-            this._buttonNormalRenderer.runAction(zoomAction);
+            //todo
+//            this._buttonNormalRenderer.stopAllActions();
+//            var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
+//            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
         }
     },
 
@@ -415,9 +417,11 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             this._buttonNormalRenderer.setVisible(true);
             this._buttonClickedRenderer.setVisible(true);
             this._buttonDisableRenderer.setVisible(false);
-            this._buttonNormalRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
-            this._buttonNormalRenderer.runAction(zoomAction);
+            //todo
+//            this._buttonNormalRenderer.stopAllActions();
+//            var zoomAction = cc.ScaleTo.create(0.05, this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
+//            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
         }
     },
 

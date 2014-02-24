@@ -65,7 +65,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
     ctor:function(){
         cc.LayerRGBA.prototype.ctor.call(this);
-        this._color = cc.white();
+        this._color = cc.color.white;
         this.enabled = false;
         this._opacity = 255;
         this._selectedItem = null;

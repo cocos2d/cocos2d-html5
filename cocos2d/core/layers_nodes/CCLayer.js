@@ -604,8 +604,8 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this.RGBAProtocol = true;
         this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.white();
-        this._realColor = cc.white();
+        this._displayedColor = cc.color(255, 255, 255, 255);
+        this._realColor = cc.color(255, 255, 255, 255);
         this._cascadeOpacityEnabled = false;
         this._cascadeColorEnabled = false;
     },
@@ -737,7 +737,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
     },
 
@@ -788,7 +788,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
     },
 
@@ -798,7 +798,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children, whiteColor = cc.white();
+        var selChildren = this._children, whiteColor = cc.color.white;
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
             if(item && item.RGBAProtocol)

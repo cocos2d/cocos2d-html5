@@ -85,7 +85,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         this._loadTGAfile(mapFile);
         this._calculateItemsToRender();
         if (cc.AtlasNode.prototype.initWithTileFile.call(this, tile, tileWidth, tileHeight, this._itemsToRender)) {
-            this._color = cc.white();
+            this._color = cc.color.white;
             this._posToAtlasIndex = {};
             this._updateAtlasValues();
             this.width = this.tgaInfo.width * this._itemWidth;

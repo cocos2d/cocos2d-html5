@@ -93,9 +93,9 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._bgImageTexType = ccs.TextureResType.local;
         this._colorRender = null;
         this._gradientRender = null;
-        this._color = cc.white();
-        this._startColor = cc.white();
-        this._endColor = cc.white();
+        this._color = cc.color(255, 255, 255, 255);
+        this._startColor = cc.color(255, 255, 255, 255);
+        this._endColor = cc.color(255, 255, 255, 255);
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
@@ -579,6 +579,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
+        this.setContentSize(this._size);
         this.setStencilClippingSize(this._size);
         this._doLayoutDirty = true;
 

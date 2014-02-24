@@ -109,7 +109,7 @@ cc.ControlSwitch = cc.Control.extend({
 
         this._initialTouchXPosition = location.x - this._switchSprite.getSliderXPosition();
 
-        this._switchSprite.getThumbSprite().setColor(cc.gray());
+        this._switchSprite.getThumbSprite().setColor(cc.color.gray);
         this._switchSprite.needsLayout();
 
         return true;
@@ -127,7 +127,7 @@ cc.ControlSwitch = cc.Control.extend({
     onTouchEnded:function (touch, event) {
         var location = this.locationFromTouch(touch);
 
-        this._switchSprite.getThumbSprite().setColor(cc.white());
+        this._switchSprite.getThumbSprite().setColor(cc.color.white);
 
         if (this.hasMoved()) {
             this.setOn(!(location.x < this._switchSprite.getContentSize().width / 2), true);
@@ -139,7 +139,7 @@ cc.ControlSwitch = cc.Control.extend({
     onTouchCancelled:function (touch, event) {
         var location = this.locationFromTouch(touch);
 
-        this._switchSprite.getThumbSprite().setColor(cc.white());
+        this._switchSprite.getThumbSprite().setColor(cc.color.white);
 
         if (this.hasMoved()) {
             this.setOn(!(location.x < this._switchSprite.getContentSize().width / 2), true);

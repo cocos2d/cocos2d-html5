@@ -111,9 +111,11 @@ cc.Color = function (r, g, b, a) {
  * @returns {cc.Color}
  */
 cc.color = function (r, g, b, a) {
+    if (r === undefined)
+        return {r: 0, g: 0, b: 0, a: 255};
     if (typeof r === "string")
         return cc.hexToColor(r);
-    return  {r: r || 0, g: g || 0, b: b || 0, a: a || 255};
+    return  {r: r, g: g, b: b, a: a };
 };
 
 /**
@@ -128,92 +130,114 @@ cc.c3BEqual = function(color1, color2){
 
 
 /**
- * White color (255,255,0)
+ * White color (255, 255, 255, 255)
  * @returns {cc.Color}
  * @private
  */
 cc.color._getWhite = function(){
-    return cc.color(255, 255, 255);
+    return cc.color(255, 255, 255, 255);
 };
-cc.white = function(){
-    return cc.color(255, 255, 255);
-};
-cc.defineGetterSetter(cc.color, "white", cc.color._getWhite);
 
 /**
- *  Yellow color (255,255,0)
+ *  Yellow color (255, 255, 0, 255)
  * @returns {cc.Color}
  * @private
  */
 cc.color._getYellow = function () {
-    return new cc.Color3B(255, 255, 0);
-};
-cc.yellow = function(){
-    return cc.color(255, 255, 0);
-};
-cc.defineGetterSetter(cc.color, "yellow", cc.color._getYellow);
-/**
- *  Blue color (0,0,255)
- * @constant
- * @type {Number,Number,Number}
- */
-cc.blue = function () {
-    return new cc.Color3B(0, 0, 255);
+    return cc.color(255, 255, 0, 255);
 };
 
 /**
- *  Green Color (0,255,0)
- * @constant
- * @type {Number,Number,Number}
+ *  Blue color (0, 0, 255, 255)
+ * @type {cc.Color}
+ * @private
  */
-cc.green = function () {
-    return new cc.Color3B(0, 255, 0);
+cc.color._getBlue = function () {
+    return  cc.color(0, 0, 255, 255);
 };
 
 /**
- *  Red Color (255,0,0,)
- * @constant
- * @type {Number,Number,Number}
+ *  Green Color (0, 255, 0, 255)
+ * @type {cc.Color}
+ * @private
  */
-cc.red = function () {
-    return new cc.Color3B(255, 0, 0);
+cc.color._getGreen = function () {
+    return cc.color(0, 255, 0, 255);
 };
 
 /**
- *  Magenta Color (255,0,255)
- * @constant
- * @type {Number,Number,Number}
+ *  Red Color (255, 0, 0, 255)
+ * @type {cc.Color}
+ * @private
  */
-cc.magenta = function () {
-    return new cc.Color3B(255, 0, 255);
+cc.color._getRed = function () {
+    return cc.color(255, 0, 0, 255);
 };
 
 /**
- *  Black Color (0,0,0)
- * @constant
- * @type {Number,Number,Number}
+ *  Magenta Color (255, 0, 255, 255)
+ * @type {cc.Color}
+ * @private
  */
-cc.black = function () {
-    return new cc.Color3B(0, 0, 0);
+cc.color._getMagenta = function () {
+    return cc.color(255, 0, 255, 255);
 };
 
 /**
- *  Orange Color (255,127,0)
- * @constant
- * @type {Number,Number,Number}
+ *  Black Color (0, 0, 0, 255)
+ * @type {cc.Color}
+ * @private
  */
-cc.orange = function () {
-    return new cc.Color3B(255, 127, 0);
+cc.color._getBlack = function () {
+    return cc.color(0, 0, 0, 255);
 };
 
 /**
- *  Gray Color (166,166,166)
- * @constant
- * @type {Number,Number,Number}
+ *  Orange Color (255, 127, 0, 255)
+ * @type {cc.Color}
+ * @private
  */
-cc.gray = function () {
-    return new cc.Color3B(166, 166, 166);
+cc.color._getOrange = function () {
+    return cc.color(255, 127, 0, 255);
 };
+
+/**
+ *  Gray Color (166, 166, 166, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getGray = function () {
+    return cc.color(166, 166, 166, 255);
+};
+window._proto = cc.color;
+/** @expose */
+_proto.white;
+cc.defineGetterSetter(_proto, "white", _proto._getWhite);
+/** @expose */
+_proto.yellow;
+cc.defineGetterSetter(_proto, "yellow", _proto._getYellow);
+/** @expose */
+_proto.blue;
+cc.defineGetterSetter(_proto, "blue", _proto._getBlue);
+/** @expose */
+_proto.green;
+cc.defineGetterSetter(_proto, "green", _proto._getGreen);
+/** @expose */
+_proto.red;
+cc.defineGetterSetter(_proto, "red", _proto._getRed);
+/** @expose */
+_proto.magenta;
+cc.defineGetterSetter(_proto, "magenta", _proto._getMagenta);
+/** @expose */
+_proto.black;
+cc.defineGetterSetter(_proto, "black", _proto._getBlack);
+/** @expose */
+_proto.orange;
+cc.defineGetterSetter(_proto, "orange", _proto._getOrange);
+/** @expose */
+_proto.gray;
+cc.defineGetterSetter(_proto, "gray", _proto._getGray);
+delete window._proto;
 
 /**
  * RGBA color composed of 4 bytes
@@ -1362,11 +1386,11 @@ cc.FontDefinition = function(){
     this.fontSize = 12;
     this.fontAlignmentH = cc.TEXT_ALIGNMENT_CENTER;
     this.fontAlignmentV = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-    this.fontFillColor = cc.white();
+    this.fontFillColor = cc.color(255, 255, 255, 255);
     this.fontDimensions = cc.size(0,0);
 
     this.strokeEnabled = false;
-    this.strokeColor = cc.white();
+    this.strokeColor = cc.color(255, 255, 255, 255);
     this.strokeSize = 1;
 
     this.shadowEnabled = false;
