@@ -962,7 +962,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * @param {cc.Color4B} [color=]
+     * @param {cc.Color} [color=]
      * @param {Number} [width=]
      * @param {Number} [height=]
      * @return {Boolean}
@@ -975,7 +975,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         var winSize = cc.Director.getInstance().getWinSize();
-        color = color || new cc.Color4B(0, 0, 0, 255);
+        color = color || new cc.Color(0, 0, 0, 255);
 	    this.width = width || winSize.width;
         this.height = height || winSize.height;
 
@@ -1143,7 +1143,7 @@ delete window._proto;
 
 /**
  * creates a cc.Layer with color, width and height in Points
- * @param {cc.Color4B} color
+ * @param {cc.Color} color
  * @param {Number|Null} [width=]
  * @param {Number|Null} [height=]
  * @return {cc.LayerColor}
@@ -1351,8 +1351,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * @param {cc.Color4B} start starting color
-     * @param {cc.Color4B} end
+     * @param {cc.Color} start starting color
+     * @param {cc.Color} end
      * @param {cc.Point|Null} v
      * @return {Boolean}
      */

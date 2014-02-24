@@ -765,7 +765,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
-                this._gradientRender = cc.LayerGradient.create(cc.c4b(255, 0, 0, 255), cc.c4b(0, 255, 0, 255));
+                this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
                 this._gradientRender.setContentSize(this._size);
                 this._gradientRender.setOpacity(this._opacity);
                 this._gradientRender.setStartColor(this._startColor);

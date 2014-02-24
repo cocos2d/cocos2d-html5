@@ -481,7 +481,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draw a star
      * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
-     * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
+     * @param {cc.Color3B|cc.Color|cc.Color4F} color
      */
     drawStar:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
@@ -522,7 +522,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draw a color ball
      * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
-     * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
+     * @param {cc.Color3B|cc.Color|cc.Color4F} color
      */
     drawColorBall:function (ctx, radius, color) {
         var context = ctx || this._renderContext;

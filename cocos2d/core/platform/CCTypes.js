@@ -130,116 +130,6 @@ cc.c3BEqual = function(color1, color2){
 
 
 /**
- * White color (255, 255, 255, 255)
- * @returns {cc.Color}
- * @private
- */
-cc.color._getWhite = function(){
-    return cc.color(255, 255, 255, 255);
-};
-
-/**
- *  Yellow color (255, 255, 0, 255)
- * @returns {cc.Color}
- * @private
- */
-cc.color._getYellow = function () {
-    return cc.color(255, 255, 0, 255);
-};
-
-/**
- *  Blue color (0, 0, 255, 255)
- * @type {cc.Color}
- * @private
- */
-cc.color._getBlue = function () {
-    return  cc.color(0, 0, 255, 255);
-};
-
-/**
- *  Green Color (0, 255, 0, 255)
- * @type {cc.Color}
- * @private
- */
-cc.color._getGreen = function () {
-    return cc.color(0, 255, 0, 255);
-};
-
-/**
- *  Red Color (255, 0, 0, 255)
- * @type {cc.Color}
- * @private
- */
-cc.color._getRed = function () {
-    return cc.color(255, 0, 0, 255);
-};
-
-/**
- *  Magenta Color (255, 0, 255, 255)
- * @type {cc.Color}
- * @private
- */
-cc.color._getMagenta = function () {
-    return cc.color(255, 0, 255, 255);
-};
-
-/**
- *  Black Color (0, 0, 0, 255)
- * @type {cc.Color}
- * @private
- */
-cc.color._getBlack = function () {
-    return cc.color(0, 0, 0, 255);
-};
-
-/**
- *  Orange Color (255, 127, 0, 255)
- * @type {cc.Color}
- * @private
- */
-cc.color._getOrange = function () {
-    return cc.color(255, 127, 0, 255);
-};
-
-/**
- *  Gray Color (166, 166, 166, 255)
- * @type {cc.Color}
- * @private
- */
-cc.color._getGray = function () {
-    return cc.color(166, 166, 166, 255);
-};
-window._proto = cc.color;
-/** @expose */
-_proto.white;
-cc.defineGetterSetter(_proto, "white", _proto._getWhite);
-/** @expose */
-_proto.yellow;
-cc.defineGetterSetter(_proto, "yellow", _proto._getYellow);
-/** @expose */
-_proto.blue;
-cc.defineGetterSetter(_proto, "blue", _proto._getBlue);
-/** @expose */
-_proto.green;
-cc.defineGetterSetter(_proto, "green", _proto._getGreen);
-/** @expose */
-_proto.red;
-cc.defineGetterSetter(_proto, "red", _proto._getRed);
-/** @expose */
-_proto.magenta;
-cc.defineGetterSetter(_proto, "magenta", _proto._getMagenta);
-/** @expose */
-_proto.black;
-cc.defineGetterSetter(_proto, "black", _proto._getBlack);
-/** @expose */
-_proto.orange;
-cc.defineGetterSetter(_proto, "orange", _proto._getOrange);
-/** @expose */
-_proto.gray;
-cc.defineGetterSetter(_proto, "gray", _proto._getGray);
-delete window._proto;
-
-/**
  * RGBA color composed of 4 bytes
  * @Class
  * @Construct
@@ -249,9 +139,9 @@ delete window._proto;
  * @param {Number} a1 Alpha value (0 to 255)
  * @example
  * //create a red color
- * var redColor = new cc.Color4B(255,0,0,255);
+ * var redColor = new cc.Color(255,0,0,255);
  */
-cc.Color4B = function (r1, g1, b1, a1) {
+cc.Color = function (r1, g1, b1, a1) {
     this.r = 0 | r1;
     this.g = 0 | g1;
     this.b = 0 | b1;
@@ -268,7 +158,7 @@ cc.Color4B = function (r1, g1, b1, a1) {
  * @return {Number,Number,Number,Number}
  */
 cc.c4b = function (r, g, b, a) {
-    return new cc.Color4B(r, g, b, a);
+    return new cc.Color(r, g, b, a);
 };
 
 // backwards compatibility
@@ -321,9 +211,9 @@ cc.c4FFromccc3B = function (c) {
 };
 
 /**
- * Returns a cc.Color4F from a cc.Color4B.
+ * Returns a cc.Color4F from a cc.Color.
  * @function
- * @param {cc.Color4B} c Color
+ * @param {cc.Color} c Color
  * @return {cc.Color4F}
  */
 cc.c4FFromccc4B = function (c) {
@@ -331,12 +221,12 @@ cc.c4FFromccc4B = function (c) {
 };
 
 /**
- * Returns a cc.Color4B from a cc.Color4F.
+ * Returns a cc.Color from a cc.Color4F.
  * @param {cc.Color4F} c
- * @return {cc.Color4B}
+ * @return {cc.Color}
  */
 cc.c4BFromccc4F = function (c) {
-    return new cc.Color4B(0 | (c.r * 255), 0 | (c.g * 255), 0 | (c.b * 255), 0 | (c.a * 255));
+    return new cc.Color(0 | (c.r * 255), 0 | (c.g * 255), 0 | (c.b * 255), 0 | (c.a * 255));
 };
 
 /**
@@ -426,12 +316,12 @@ cc.tex2 = function (u, v) {
  * @Class
  * @Construct
  * @param {cc.Vertex2F} pos1
- * @param {cc.Color4B} color1
+ * @param {cc.Color} color1
  * @param {Number} size1
  */
 cc.PointSprite = function (pos1, color1, size1) {
     this.pos = pos1 || new cc.Vertex2F(0, 0);
-    this.color = color1 || new cc.Color4B(0, 0, 0, 0);
+    this.color = color1 || new cc.Color(0, 0, 0, 0);
     this.size = size1 || 0;
 };
 
@@ -497,12 +387,12 @@ cc.g = function (x, y) {
  * @Class
  * @Construct
  * @param {cc.Vertex2F} vertices1
- * @param {cc.Color4B} colors1
+ * @param {cc.Color} colors1
  * @param {cc.Tex2F} texCoords1
  */
 cc.V2F_C4B_T2F = function (vertices1, colors1, texCoords1) {
     this.vertices = vertices1 || new cc.Vertex2F(0, 0);
-    this.colors = colors1 || new cc.Color4B(0, 0, 0, 0);
+    this.colors = colors1 || new cc.Color(0, 0, 0, 0);
     this.texCoords = texCoords1 || new cc.Tex2F(0, 0);
 };
 
@@ -525,12 +415,12 @@ cc.V2F_C4F_T2F = function (vertices1, colors1, texCoords1) {
  * @Class
  * @Construct
  * @param {cc.Vertex3F} vertices1
- * @param {cc.Color4B} colors1
+ * @param {cc.Color} colors1
  * @param {cc.Tex2F} texCoords1
  */
 cc.V3F_C4B_T2F = function (vertices1, colors1, texCoords1) {
     this.vertices = vertices1 || new cc.Vertex3F(0, 0, 0);
-    this.colors = colors1 || new cc.Color4B(0, 0, 0, 0);
+    this.colors = colors1 || new cc.Color(0, 0, 0, 0);
     this.texCoords = texCoords1 || new cc.Tex2F(0, 0);
 };
 
@@ -571,10 +461,10 @@ cc.V2F_C4B_T2F_Quad = function (bl1, br1, tl1, tr1) {
  */
 cc.V2F_C4B_T2F_QuadZero = function () {
     return new cc.V2F_C4B_T2F_Quad(
-        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)),
-        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)),
-        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)),
-        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0))
+        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0)),
+        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0)),
+        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0)),
+        new cc.V2F_C4B_T2F(new cc.Vertex2F(0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0))
     );
 };
 
@@ -601,10 +491,10 @@ cc.V3F_C4B_T2F_Quad = function (tl1, bl1, tr1, br1) {
  */
 cc.V3F_C4B_T2F_QuadZero = function () {
     return new cc.V3F_C4B_T2F_Quad(
-        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)),
-        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)),
-        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)),
-        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)));
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color(0, 0, 0, 255), new cc.Tex2F(0, 0)));
 };
 
 cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
@@ -613,16 +503,16 @@ cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
     var tl = sourceQuad.tl, bl = sourceQuad.bl, tr = sourceQuad.tr, br = sourceQuad.br;
     return new cc.V3F_C4B_T2F_Quad(
         new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.tl.vertices.x, sourceQuad.tl.vertices.y, sourceQuad.tl.vertices.z),
-            new cc.Color4B(sourceQuad.tl.colors.r, sourceQuad.tl.colors.g, sourceQuad.tl.colors.b, sourceQuad.tl.colors.a),
+            new cc.Color(sourceQuad.tl.colors.r, sourceQuad.tl.colors.g, sourceQuad.tl.colors.b, sourceQuad.tl.colors.a),
             new cc.Tex2F(sourceQuad.tl.texCoords.u, sourceQuad.tl.texCoords.v)),
         new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.bl.vertices.x, sourceQuad.bl.vertices.y, sourceQuad.bl.vertices.z),
-            new cc.Color4B(sourceQuad.bl.colors.r, sourceQuad.bl.colors.g, sourceQuad.bl.colors.b, sourceQuad.bl.colors.a),
+            new cc.Color(sourceQuad.bl.colors.r, sourceQuad.bl.colors.g, sourceQuad.bl.colors.b, sourceQuad.bl.colors.a),
             new cc.Tex2F(sourceQuad.bl.texCoords.u, sourceQuad.bl.texCoords.v)),
         new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.tr.vertices.x, sourceQuad.tr.vertices.y, sourceQuad.tr.vertices.z),
-            new cc.Color4B(sourceQuad.tr.colors.r, sourceQuad.tr.colors.g, sourceQuad.tr.colors.b, sourceQuad.tr.colors.a),
+            new cc.Color(sourceQuad.tr.colors.r, sourceQuad.tr.colors.g, sourceQuad.tr.colors.b, sourceQuad.tr.colors.a),
             new cc.Tex2F(sourceQuad.tr.texCoords.u, sourceQuad.tr.texCoords.v)),
         new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.br.vertices.x, sourceQuad.br.vertices.y, sourceQuad.br.vertices.z),
-            new cc.Color4B(sourceQuad.br.colors.r, sourceQuad.br.colors.g, sourceQuad.br.colors.b, sourceQuad.br.colors.a),
+            new cc.Color(sourceQuad.br.colors.r, sourceQuad.br.colors.g, sourceQuad.br.colors.b, sourceQuad.br.colors.a),
             new cc.Tex2F(sourceQuad.br.texCoords.u, sourceQuad.br.texCoords.v)));
 };
 
@@ -714,10 +604,16 @@ cc.colorToHex = function (clr) {
 
 if(cc.Browser.supportWebGL){
     //redefine some types with ArrayBuffer for WebGL
-
-    //redefine cc.Color4B
-    cc.Color4B = function (r, g, b, a, arrayBuffer, offset) {
-        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Color4B.BYTES_PER_ELEMENT);
+    cc.color = function (r, g, b, a) {
+        if (r === undefined)
+            return new cc.Color(0,0,0,255);
+        if (typeof r === "string")
+            return cc.hexToColor(r);
+        return  new cc.Color(r, g, b, a);
+    };
+    //redefine cc.Color
+    cc.Color = function (r, g, b, a, arrayBuffer, offset) {
+        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.Color.BYTES_PER_ELEMENT);
         this._offset = offset || 0;
 
         var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = Uint8Array.BYTES_PER_ELEMENT;
@@ -731,8 +627,8 @@ if(cc.Browser.supportWebGL){
         this._bU8[0] = b || 0;
         this._aU8[0] = a || 0;
     };
-    cc.Color4B.BYTES_PER_ELEMENT = 4;
-    Object.defineProperties(cc.Color4B.prototype, {
+    cc.Color.BYTES_PER_ELEMENT = 4;
+    Object.defineProperties(cc.Color.prototype, {
         r: {
             get: function () {
                 return this._rU8[0];
@@ -997,10 +893,10 @@ if(cc.Browser.supportWebGL){
         var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex3F.BYTES_PER_ELEMENT;
         this._vertices = vertices ? new cc.Vertex3F(vertices.x, vertices.y, vertices.z, locArrayBuffer, locOffset) :
             new cc.Vertex3F(0, 0, 0, locArrayBuffer, locOffset);
-        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
-            new cc.Color4B(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
-        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT) :
-            new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT);
+        this._colors = colors ? new cc.Color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
+            new cc.Color(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
+        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
+            new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
     };
     cc.V3F_C4B_T2F.BYTES_PER_ELEMENT = 24;
     Object.defineProperties(cc.V3F_C4B_T2F.prototype, {
@@ -1147,10 +1043,10 @@ if(cc.Browser.supportWebGL){
         var locArrayBuffer = this._arrayBuffer, locOffset = this._offset, locElementLen = cc.Vertex2F.BYTES_PER_ELEMENT;
         this._vertices = vertices ? new cc.Vertex2F(vertices.x, vertices.y, locArrayBuffer, locOffset) :
             new cc.Vertex2F(0, 0, locArrayBuffer, locOffset);
-        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
-            new cc.Color4B(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
-        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT) :
-            new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color4B.BYTES_PER_ELEMENT);
+        this._colors = colors ? new cc.Color(colors.r, colors.g, colors.b, colors.a, locArrayBuffer, locOffset + locElementLen) :
+            new cc.Color(0, 0, 0, 0, locArrayBuffer, locOffset + locElementLen);
+        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT) :
+            new cc.Tex2F(0, 0, locArrayBuffer, locOffset + locElementLen + cc.Color.BYTES_PER_ELEMENT);
     };
     cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20;
     Object.defineProperties(cc.V2F_C4B_T2F.prototype, {
@@ -1398,3 +1294,114 @@ cc.FontDefinition = function(){
     this.shadowBlur = 0;
     this.shadowOpacity = 1.0;
 };
+
+
+/**
+ * White color (255, 255, 255, 255)
+ * @returns {cc.Color}
+ * @private
+ */
+cc.color._getWhite = function(){
+    return cc.color(255, 255, 255, 255);
+};
+
+/**
+ *  Yellow color (255, 255, 0, 255)
+ * @returns {cc.Color}
+ * @private
+ */
+cc.color._getYellow = function () {
+    return cc.color(255, 255, 0, 255);
+};
+
+/**
+ *  Blue color (0, 0, 255, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getBlue = function () {
+    return  cc.color(0, 0, 255, 255);
+};
+
+/**
+ *  Green Color (0, 255, 0, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getGreen = function () {
+    return cc.color(0, 255, 0, 255);
+};
+
+/**
+ *  Red Color (255, 0, 0, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getRed = function () {
+    return cc.color(255, 0, 0, 255);
+};
+
+/**
+ *  Magenta Color (255, 0, 255, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getMagenta = function () {
+    return cc.color(255, 0, 255, 255);
+};
+
+/**
+ *  Black Color (0, 0, 0, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getBlack = function () {
+    return cc.color(0, 0, 0, 255);
+};
+
+/**
+ *  Orange Color (255, 127, 0, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getOrange = function () {
+    return cc.color(255, 127, 0, 255);
+};
+
+/**
+ *  Gray Color (166, 166, 166, 255)
+ * @type {cc.Color}
+ * @private
+ */
+cc.color._getGray = function () {
+    return cc.color(166, 166, 166, 255);
+};
+window._proto = cc.color;
+/** @expose */
+_proto.white;
+cc.defineGetterSetter(_proto, "white", _proto._getWhite);
+/** @expose */
+_proto.yellow;
+cc.defineGetterSetter(_proto, "yellow", _proto._getYellow);
+/** @expose */
+_proto.blue;
+cc.defineGetterSetter(_proto, "blue", _proto._getBlue);
+/** @expose */
+_proto.green;
+cc.defineGetterSetter(_proto, "green", _proto._getGreen);
+/** @expose */
+_proto.red;
+cc.defineGetterSetter(_proto, "red", _proto._getRed);
+/** @expose */
+_proto.magenta;
+cc.defineGetterSetter(_proto, "magenta", _proto._getMagenta);
+/** @expose */
+_proto.black;
+cc.defineGetterSetter(_proto, "black", _proto._getBlack);
+/** @expose */
+_proto.orange;
+cc.defineGetterSetter(_proto, "orange", _proto._getOrange);
+/** @expose */
+_proto.gray;
+cc.defineGetterSetter(_proto, "gray", _proto._getGray);
+delete window._proto;

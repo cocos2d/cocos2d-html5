@@ -109,7 +109,7 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * color setter
-     * @param {cc.Color4B} color
+     * @param {cc.Color} color
      */
     setColor:function(color){
         this.r = color.r;
@@ -120,10 +120,10 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
 
     /**
      * color getter
-     * @returns {cc.Color4B}
+     * @returns {cc.Color}
      */
     getColor:function(){
-        return cc.c4b(this.r, this.g, this.b, this.a);
+        return cc.color(this.r, this.g, this.b, this.a);
     },
 
     /**

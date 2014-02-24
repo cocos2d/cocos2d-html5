@@ -1073,7 +1073,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._hasChildren = false;
 
         // Atlas: Color
-        var tmpColor = new cc.Color4B(255, 255, 255, 255);
+        var tmpColor = new cc.Color(255, 255, 255, 255);
         var locQuad = this._quad;
         locQuad.bl.colors = tmpColor;
         locQuad.br.colors = tmpColor;
