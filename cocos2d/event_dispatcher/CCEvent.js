@@ -76,7 +76,12 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
     }
 });
 
-cc.Event.Type = {TOUCH: 0, KEYBOARD: 1, ACCELERATION: 2, MOUSE: 3, CUSTOM: 4};
+//event type
+cc.Event.TOUCH = 0;
+cc.Event.KEYBOARD = 1;
+cc.Event.ACCELERATION = 2;
+cc.Event.MOUSE = 3;
+cc.Event.CUSTOM = 4;
 
 /**
  * The acceleration event
@@ -86,7 +91,7 @@ cc.Event.Type = {TOUCH: 0, KEYBOARD: 1, ACCELERATION: 2, MOUSE: 3, CUSTOM: 4};
 cc.EventAcceleration = cc.Event.extend(/** @lends cc.EventAcceleration# */{
     _acc: null,
     ctor: function (acc) {
-        cc.Event.prototype.ctor.call(this, cc.Event.Type.ACCELERATION);
+        cc.Event.prototype.ctor.call(this, cc.Event.ACCELERATION);
         this._acc = acc;
     }
 });
@@ -100,7 +105,7 @@ cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
     _eventName: null,
     _userData: null,                                 // User data
     ctor: function (eventName) {
-        cc.Event.prototype.ctor.call(this, cc.Event.Type.CUSTOM);
+        cc.Event.prototype.ctor.call(this, cc.Event.CUSTOM);
         this._eventName = eventName;
     },
 
@@ -139,7 +144,7 @@ cc.EventKeyboard = cc.Event.extend(/** @lends cc.EventKeyboard# */{
     _isPressed: false,
 
     ctor: function (keyCode, isPressed) {
-        cc.Event.prototype.ctor.call(this, cc.Event.Type.KEYBOARD);
+        cc.Event.prototype.ctor.call(this, cc.Event.KEYBOARD);
         this._keyCode = keyCode;
         this._isPressed = isPressed;
     }
@@ -159,7 +164,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     _scrollY: 0,
 
     ctor: function (eventType) {
-        cc.Event.prototype.ctor.call(this, cc.Event.Type.MOUSE);
+        cc.Event.prototype.ctor.call(this, cc.Event.MOUSE);
         this._eventType = eventType;
     },
 
@@ -305,7 +310,7 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
     _touches: null,
 
     ctor: function (arr) {
-        cc.Event.prototype.ctor.call(this, cc.Event.Type.TOUCH);
+        cc.Event.prototype.ctor.call(this, cc.Event.TOUCH);
         this._touches = arr || [];
     },
 
@@ -319,7 +324,7 @@ cc.EventTouch = cc.Event.extend(/** @lends cc.EventTouch# */{
 
     /**
      * Get touches of event
-     * @returns {array}
+     * @returns {Array}
      */
     getTouches: function () {
         return this._touches;

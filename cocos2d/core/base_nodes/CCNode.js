@@ -167,7 +167,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
-        this._eventDispatcher = director.getEventDispatcher();
+        this._eventDispatcher = cc.eventManager;
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         if(cc.ComponentContainer){
@@ -273,7 +273,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 	 *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
 	 *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
 	 *  </p>
-	 * @param {Object}attrs Attributes to be set to node
+	 * @param {Object} attrs Attributes to be set to node
 	 */
 	attr: function(attrs) {
 		for(var key in attrs) {
@@ -981,17 +981,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
-    getEventDispatcher: function(){
-        return this._eventDispatcher;
-    },
-
-    setEventDispatcher: function(dispatcher){
-        if(this._eventDispatcher != dispatcher){
-            this._eventDispatcher._cleanTarget(this);
-            this._eventDispatcher = dispatcher;
-        }
-    },
-
     /**
      * <p>
      *   cc.Scheduler used to schedule all "updates" and timers.<br/>
@@ -1337,7 +1326,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
-        this.resumeSchedulerAndActions();
+        this.resume();
     },
 
     /**
@@ -1370,7 +1359,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     onExit:function () {
         this._running = false;
-        this.pauseSchedulerAndActions();
+        this.pause();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
         if(this._componentContainer){
             this._componentContainer.removeAll();

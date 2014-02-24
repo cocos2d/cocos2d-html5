@@ -180,7 +180,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _scheduler:null,
     _actionManager:null,
-    _eventDispatcher: null,
     _eventProjectionChanged: null,
     _eventAfterDraw: null,
     _eventAfterVisit: null,
@@ -247,7 +246,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._actionManager = new cc.ActionManager();
         this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.PRIORITY_SYSTEM, false);
 
-        this._eventDispatcher = new cc.EventDispatcher();
         this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
         this._eventAfterDraw.setUserData(this);
         this._eventAfterVisit = new cc.EventCustom(cc.Director.EVENT_AFTER_VISIT);
@@ -356,7 +354,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //tick before glClear: issue #533
         if (!this._paused) {
             this._scheduler.update(this._deltaTime);
-            this._eventDispatcher.dispatchEvent(this._eventAfterUpdate);
+            cc.eventManager.dispatchEvent(this._eventAfterUpdate);
         }
 
         this._clear();
@@ -372,7 +370,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // draw the scene
         if (this._runningScene) {
             this._runningScene.visit();
-            this._eventDispatcher.dispatchEvent(this._eventAfterVisit);
+            cc.eventManager.dispatchEvent(this._eventAfterVisit);
         }
 
         // draw the notifications node
@@ -385,7 +383,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._afterVisitScene) this._afterVisitScene();
 
         //TODO
-        this._eventDispatcher.dispatchEvent(this._eventAfterDraw);
+        cc.eventManager.dispatchEvent(this._eventAfterDraw);
         this._totalFrames++;
 
         if (this._displayStats)
@@ -830,7 +828,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         if (cc.renderContextType === cc.CANVAS) {
             this._projection = projection;
-            this._eventDispatcher.dispatchEvent(this._eventProjectionChanged);
+            cc.eventManager.dispatchEvent(this._eventProjectionChanged);
             return;
         }
 
@@ -874,7 +872,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 break;
         }
         this._projection = projection;
-        this._eventDispatcher.dispatchEvent(this._eventProjectionChanged);
+        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
         cc.setProjectionMatrixDirty();
     },
 
@@ -1063,16 +1061,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setActionManager:function (actionManager) {
         if (this._actionManager != actionManager) {
             this._actionManager = actionManager;
-        }
-    },
-
-    getEventDispatcher: function () {
-        return this._eventDispatcher;
-    },
-
-    setEventDispatcher: function (eventDispatcher) {
-        if (this._eventDispatcher != eventDispatcher) {
-            this._eventDispatcher = eventDispatcher;
         }
     },
 

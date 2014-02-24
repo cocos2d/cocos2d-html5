@@ -47,7 +47,7 @@
         'event_dispatcher/CCTouch.js',
         'event_dispatcher/CCEvent.js',
         'event_dispatcher/CCEventListener.js',
-        'event_dispatcher/CCEventDispatcher.js',
+        'event_dispatcher/CCEventManager.js',
         'core/base_nodes/CCNode.js',
         'core/base_nodes/CCAtlasNode.js',
         'core/textures/CCTexture2D.js',

@@ -292,7 +292,7 @@ cc.inputManager = {
         if(this._isRegisterEvent) return;
 
         var locView = this._glView = cc.EGLView.getInstance();
-        this._eventDispatcher = cc.Director.getInstance().getEventDispatcher();
+        this._eventDispatcher = cc.eventManager;
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
         var selfPointer = this;
 
