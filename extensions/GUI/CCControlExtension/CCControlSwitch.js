@@ -53,7 +53,6 @@ cc.ControlSwitch = cc.Control.extend({
         if(!thumbSprite)
             throw "cc.ControlSwitch.initWithMaskSprite(): thumbSprite should be non-null.";
         if (this.init()) {
-            this.setTouchEnabled(true);
             this._on = true;
 
             this._switchSprite = new cc.ControlSwitchSprite();

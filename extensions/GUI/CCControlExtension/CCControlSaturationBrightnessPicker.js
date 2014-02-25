@@ -82,7 +82,6 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
 
     initWithTargetAndPos:function (target, pos) {
         if (cc.Control.prototype.init.call(this)) {
-            this.setTouchEnabled(true);
             // Add background and slider sprites
             this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("colourPickerBackground.png", target, pos, cc.p(0.0, 0.0));
             this._overlay = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("colourPickerOverlay.png", target, pos, cc.p(0.0, 0.0));

@@ -146,7 +146,6 @@ cc.ControlSlider = cc.Control.extend({
     initWithSprites:function (backgroundSprite, progressSprite, thumbSprite) {
         if (cc.Control.prototype.init.call(this)) {
             this.ignoreAnchorPointForPosition(false);
-            this.setTouchEnabled(true);
 
             this._backgroundSprite = backgroundSprite;
             this._progressSprite = progressSprite;

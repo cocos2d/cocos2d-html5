@@ -153,8 +153,6 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     }
 });
 
-/**
- * how the touches are dispatched
- * @type {{ALL_AT_ONCE: number, ONE_BY_ONE: number}}
- */
-cc.Touch.DISPATCH_MODE = {ALL_AT_ONCE: 0, ONE_BY_ONE: 1};
+//how the touches are dispatched
+cc.Touch.ALL_AT_ONCE = 0;
+cc.Touch.ONE_BY_ONE = 1;

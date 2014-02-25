@@ -625,7 +625,7 @@ cc.eventManager = {
      * if the parameter "nodeOrPriority" is a node, it means to add a event listener for a specified event with the priority of scene graph.                   <br/>
      * if the parameter "nodeOrPriority" is a Number, it means to add a event listener for a specified event with the fixed priority.                          <br/>
      * </p>
-     * @param {cc.EventListener} listener The listener of a specified event.
+     * @param {cc.EventListener|Object} listener The listener of a specified event or a object of some event parameters.
      * @param {cc.Node|Number} nodeOrPriority The priority of the listener is based on the draw order of this node or fixedPriority The fixed priority of the listener.
      * @note  The priority of scene graph will be fixed value 0. So the order of listener item in the vector will be ' <0, scene graph (0 priority), >0'.
      *         A lower priority will be called before the ones that have a higher value. 0 priority is forbidden for fixed priority since it's used for scene graph based priority.
@@ -633,8 +633,13 @@ cc.eventManager = {
     addListener: function (listener, nodeOrPriority) {
         if (!listener || !nodeOrPriority)
             throw "Invalid parameters.";
-        if (listener._isRegistered())
-            throw "The listener has been registered.";
+
+        if(!(listener instanceof cc.EventListener))
+            listener = cc.EventListener.create(listener);
+        else{
+            if (listener._isRegistered())
+                throw "The listener has been registered.";
+        }
 
         if (!listener.checkAvailable())
             return;
@@ -671,12 +676,17 @@ cc.eventManager = {
     },
 
     /**
-     * Remove a listener
-     * @param {cc.EventListener} listener
+     * Remove a listener or remove all listeners of a target
+     * @param {cc.EventListener|cc.Node} listener an event listener or a registered node target
      */
     removeListener: function (listener) {
         if (listener == null)
             return;
+
+        if(listener instanceof cc.Node){
+            this._cleanTarget(listener);
+            return;
+        }
 
         var isFound, locListener = this._listenersMap;
         for (var selKey in locListener) {

@@ -90,8 +90,6 @@ cc.ControlStepper = cc.Control.extend({
             throw "cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Plus sprite should be non-null.";
 
         if (this.init()) {
-            this.setTouchEnabled(true);
-
             // Set the default values
             this._autorepeat = true;
             this._continuous = true;

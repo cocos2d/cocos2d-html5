@@ -66,8 +66,7 @@ cc.inputManager = {
     },
 
     _glView: null,
-    _eventDispatcher: null,
-    _delegate: null,
+
 
     /**
      * Touch events are handled by default; if you want to customize your handlers, please override these functions:
@@ -94,10 +93,9 @@ cc.inputManager = {
         }
         if(handleTouches.length > 0){
             this._glView._convertTouchesWithScale(handleTouches);
-            this._delegate.touchesBegan(handleTouches, event);    //TODO
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.BEGAN;
-            this._eventDispatcher.dispatchEvent(touchEvent);
+            cc.eventManager.dispatchEvent(touchEvent);
         } else
             cc.log("touchesBegan: size = 0");
     },
@@ -121,10 +119,9 @@ cc.inputManager = {
         }
         if(handleTouches.length > 0){
             this._glView._convertTouchesWithScale(handleTouches);
-            this._delegate.touchesMoved(handleTouches, event);
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.MOVED;
-            this._eventDispatcher.dispatchEvent(touchEvent);
+            cc.eventManager.dispatchEvent(touchEvent);
         } else
             cc.log("touchesMoved: size = 0");
     },
@@ -133,10 +130,9 @@ cc.inputManager = {
         var handleTouches = this.getSetOfTouchesEndOrCancel(touches);
         if(handleTouches.length > 0) {
             this._glView._convertTouchesWithScale(handleTouches);
-            this._delegate.touchesEnded(handleTouches, event);
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.ENDED;
-            this._eventDispatcher.dispatchEvent(touchEvent);
+            cc.eventManager.dispatchEvent(touchEvent);
         } else
             cc.log("touchesEnded: size = 0");
     },
@@ -145,10 +141,9 @@ cc.inputManager = {
         var handleTouches = this.getSetOfTouchesEndOrCancel(touches);
         if(handleTouches.length > 0) {
             this._glView._convertTouchesWithScale(handleTouches);
-            this._delegate.touchesCancelled(handleTouches, event);
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.CANCELLED;
-            this._eventDispatcher.dispatchEvent(touchEvent);
+            cc.eventManager.dispatchEvent(touchEvent);
         } else
             cc.log("touchesCanceled: size = 0");
     },
@@ -292,8 +287,6 @@ cc.inputManager = {
         if(this._isRegisterEvent) return;
 
         var locView = this._glView = cc.EGLView.getInstance();
-        this._eventDispatcher = cc.eventManager;
-        this._delegate = cc.Director.getInstance().getTouchDispatcher();
         var selfPointer = this;
 
         //register touch event
