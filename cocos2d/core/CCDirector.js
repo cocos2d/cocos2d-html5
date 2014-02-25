@@ -544,8 +544,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.TextureCache.purgeSharedTextureCache();
 
         //CCShaderCache::purgeSharedShaderCache();
-        //CCFileUtils::purgeFileUtils();
-        //CCConfiguration::purgeConfiguration();
         //extension::CCNotificationCenter::purgeNotificationCenter();
         //extension::CCTextureWatcher::purgeTextureWatcher();
         //extension::CCNodeLoaderLibrary::purgeSharedCCNodeLoaderLibrary();
@@ -1209,7 +1207,6 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
     startAnimation:function () {
         this._nextDeltaTimeZero = true;
         this.invalid = false;
-        cc.Application.getInstance().setAnimationInterval(this._animationInterval);
     },
 
     /**

@@ -149,60 +149,6 @@ cc.tgaLoadImageData = function (buffer, bufSize, psInfo) {
 };
 
 /**
- * this is the function to call when we want to load an image
- * @param filename
- * @return {cc.ImageTGA}
- */
-cc.tgaLoad = function (filename) {
-    var buffer = cc.FileUtils.getInstance().getFileData(filename, "rb");
-    var size = buffer.length;
-
-    if (buffer == null)
-        return null;
-
-    var info = new cc.ImageTGA();
-    // get the file header info
-    if (!cc.tgaLoadHeader(buffer, size, info)) {
-        info.status = cc.TGA_ERROR_MEMORY;
-        return info;
-    }
-
-    // check if the image is color indexed
-    if (info.type === 1) {
-        info.status = cc.TGA_ERROR_INDEXED_COLOR;
-        return info;
-    }
-
-    // check for other types (compressed images)
-    if ((info.type != 2) && (info.type != 3) && (info.type != 10)) {
-        info.status = cc.TGA_ERROR_COMPRESSED_FILE;
-        return info;
-    }
-
-    var bLoadImage = false;
-    // finally load the image pixels
-    if (info.type == 10)
-        bLoadImage = cc.tgaLoadRLEImageData(buffer, size, info);
-    else
-        bLoadImage = cc.tgaLoadImageData(buffer, size, info);
-
-    // check for errors when reading the pixels
-    if (!bLoadImage) {
-        info.status = cc.TGA_ERROR_READING_FILE;
-        return info;
-    }
-
-    info.status = cc.TGA_OK;
-    if (info.flipped) {
-        cc.tgaFlipImage(info);
-        if (info.flipped)
-            info.status = cc.TGA_ERROR_MEMORY;
-    }
-    buffer = null;
-    return info;
-};
-
-/**
  * converts RGB to grayscale
  * @param {cc.ImageTGA} psInfo
  */

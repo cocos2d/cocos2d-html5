@@ -94,10 +94,9 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
             var spriteFrameCache = cc.SpriteFrameCache.getInstance();
-            var fileUtils = cc.FileUtils.getInstance(), path;
+            var path = cc.path;
             for (var i = 0; i < spritesheets.length; i++) {
-                path = fileUtils.fullPathFromRelativeFile(spritesheets[i], plist);
-                spriteFrameCache.addSpriteFrames(path);
+                spriteFrameCache.addSpriteFrames(path.changeBasename(plist, spritesheets[i]));
             }
         }
 
@@ -124,9 +123,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
     addAnimations:function (plist) {
         if(!plist)
             throw "cc.AnimationCache.addAnimations(): Invalid texture file name";
-        var fileUtils = cc.FileUtils.getInstance();
-        var path = fileUtils.fullPathForFilename(plist);
-        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
+        var dict = cc.loader.getRes(plist);
 
         if(!dict){
             cc.log("cc.AnimationCache.addAnimations(): File could not be found");

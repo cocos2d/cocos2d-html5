@@ -44,22 +44,13 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
      * @returns {cc.Node}
      */
     createNodeWithSceneFile: function (pszFileName) {
-        var data = 0;
-        do {
-            var pos = pszFileName.lastIndexOf("/");
-            if(pos>-1){
-                this._baseBath =pszFileName.substr(0,pos+1);
-            }
-            data = cc.FileUtils.getInstance().getTextFileData(pszFileName);
+        this._baseBath = cc.path.dirname(pszFileName)
+        var jsonDict = cc.loader.getRes(pszFileName);
 
-            if (!data)
-                break;
+        if (!jsonDict) throw "Please load the resource first : " + pszFileName;
 
-            var jsonDict = JSON.parse(data);
-            this._node = this.createObject(jsonDict, null);
-            ccs.TriggerMng.getInstance().parse(jsonDict["Triggers"]||[]);
-        } while (0);
-        this._baseBath = "";
+        this._node = this.createObject(jsonDict, null);
+        ccs.TriggerMng.getInstance().parse(jsonDict["Triggers"]||[]);
         return this._node;
     },
 
@@ -93,9 +84,8 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                 var comName = subDict["name"];
 
                 var fileData = subDict["fileData"];
-                var path = "",fullPath = "",plistFile = "",fullPlistFile = "";
+                var path = "", plistFile = "";
                 var resType = 0;
-                path +=this._baseBath;
                 if (fileData != null) {
                     if(fileData["resourceType"] !== undefined){
                         resType = fileData["resourceType"]
@@ -103,34 +93,24 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         resType =-1;
                     }
 
-                    path += fileData["path"];
-                    plistFile += fileData["plistFile"];
-
-                    fullPath = cc.FileUtils.getInstance().fullPathForFilename(path);
-                    fullPlistFile = cc.FileUtils.getInstance().fullPathForFilename(plistFile);
+                    path = cc.path.joinPath(this._baseBath, fileData["path"]);
+                    plistFile = fileData["plistFile"];
                 }
+
+                var pathExtname = cc.path.extname(path);
 
                 if (className == "CCSprite") {
                     var sprite = null;
 
                     if (resType == 0) {
-                        var startPos = path.lastIndexOf(".png");
-                        if (startPos <= -1) {
-                            continue;
-                        }
+                        if (pathExtname != ".png") continue;
                         sprite = cc.Sprite.create(path);
                     }
                     else if (resType == 1) {
-                        var startPos = plistFile.lastIndexOf(".plist");
-                        if (startPos <= -1) {
-                            continue;
-                        }
-                        var startPos = plistFile.lastIndexOf(".", plistFile.length);
-                        var pngFile = plistFile.substr(0, startPos);
-                        pngFile = pngFile + ".png";
+                        if (pathExtname != ".plist") continue;
 
-                        plistFile = this._baseBath + plistFile;
-                        pngFile = this._baseBath + pngFile;
+                        plistFile = cc.path.joinPath(this._baseBath, plistFile);
+                        var pngFile = cc.path.changeExtname(plistFile, ".png");
                         cc.SpriteFrameCache.getInstance().addSpriteFrames(plistFile, pngFile);
                         sprite = cc.Sprite.create("frame#" + fileData["path"]);
                     }
@@ -149,10 +129,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                 else if (className == "CCTMXTiledMap") {
                     var tmx = null;
                     if (resType == 0) {
-                        var startPos = path.lastIndexOf(".tmx");
-                        if (startPos <= -1) {
-                            continue;
-                        }
+                        if (pathExtname != ".tmx") continue;
                         tmx = cc.TMXTiledMap.create(path);
                     }
                     else {
@@ -167,10 +144,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     this._callSelector(tmx, subDict);
                 }
                 else if (className == "CCParticleSystemQuad") {
-                    var startPos = path.lastIndexOf(".plist");
-                    if (startPos <= -1) {
-                        continue;
-                    }
+                    if (pathExtname != ".plist") continue;
 
                     var particle = null;
                     if (resType == 0) {
@@ -178,6 +152,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     }
                     else {
                         cc.log("unknown resourcetype on CCParticleSystemQuad!");
+                        continue;
                     }
 
                     particle.setPosition(0, 0);
@@ -192,18 +167,8 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     if (resType != 0) {
                         continue;
                     }
-                    var reDir = path;
-                    var file_path = "";
-                    var pos = reDir.lastIndexOf('/');
-                    if (pos != -1) {
-                        file_path = reDir.substr(0, pos + 1);
-                    }
-                    var des = cc.FileUtils.getInstance().getTextFileData(path);
-                    if (!des) {
-                        cc.log("read json file[%s] error!\n", path);
-                        continue;
-                    }
-                    var jsonDict = JSON.parse(des);
+                    var jsonDict = cc.loader.getRes(path);
+                    if (!jsonDict) cc.log("Please load the resource [%s] first!", path);
                     var armature_data = jsonDict["armature_data"];
                     var subData = armature_data[0];
                     var name = subData["name"];
@@ -223,7 +188,6 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     }
                     jsonDict = null;
                     subData = null;
-                    des = null;
                     this._callSelector(armature, subDict);
                 }
                 else if (className == "CCComAudio") {
@@ -245,9 +209,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     var attribute = null;
                     if (resType == 0) {
                         attribute = ccs.ComAttribute.create();
-                        if (this._baseBath != path) {
-                            attribute.parse(path);
-                        }
+                        if (path != "") attribute.parse(path);
                     }
                     else {
                         cc.log("unknown resourcetype on CCComAttribute!");
