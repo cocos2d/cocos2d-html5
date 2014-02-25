@@ -588,7 +588,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._doLayoutDirty = true;
 
         if (this._backGroundImage) {
-            this._backGroundImage._setPosition(this._size.width / 2.0, this._size.height / 2.0);
+            this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
             if (this._backGroundScale9Enabled) {
                 if (this._backGroundImage instanceof cc.Scale9Sprite) {
                     this._backGroundImage.setPreferredSize(this._size);
@@ -656,7 +656,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._backGroundImage.setColor(this.getColor());
         this._backGroundImage.setOpacity(this.getOpacity());
         this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
-        this._backGroundImage._setPosition(this._size.width / 2.0, this._size.height / 2.0);
+        this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
     /**
@@ -707,7 +707,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             this._backGroundImage = cc.Sprite.create();
         }
         cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
-        this._backGroundImage._setPosition(this._size.width / 2.0, this._size.height / 2.0);
+        this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
     /**
@@ -910,7 +910,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild._setPosition(locFinalPosX, locFinalPosY);
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 topBoundary = locChild.getBottomInParent() - locMargin.bottom;
             }
         }
@@ -945,7 +945,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild._setPosition(locFinalPosX, locFinalPosY);
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 leftBoundary = locChild.getRightInParent() + locMargin.right;
             }
         }
@@ -1330,7 +1330,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                         default:
                             break;
                     }
-                    locChild._setPosition(locFinalPosX, locFinalPosY);
+                    locChild.setPosition(locFinalPosX, locFinalPosY);
                     locLayoutParameter._put = true;
                     unlayoutChildCount--;
                 }

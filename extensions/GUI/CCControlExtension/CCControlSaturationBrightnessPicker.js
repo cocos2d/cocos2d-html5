@@ -147,7 +147,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         }
 
         // Set the position of the dragger
-        this._slider._setPosition(sliderPosition);
+        this._slider.setPosition(sliderPosition);
 
 
         // Clamp the position within the virtual box for colour selection

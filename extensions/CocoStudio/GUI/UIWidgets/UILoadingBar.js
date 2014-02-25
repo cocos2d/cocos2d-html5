@@ -83,14 +83,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         switch (this._barType) {
             case ccs.LoadingBarType.left:
                 this._barRenderer.setAnchorPoint(0.0, 0.5);
-                this._barRenderer._setPosition(-this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
             case ccs.LoadingBarType.right:
                 this._barRenderer.setAnchorPoint(1.0, 0.5);
-                this._barRenderer._setPosition(this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(true);
                 }
@@ -323,10 +323,10 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         }
         switch (this._barType) {
             case ccs.LoadingBarType.left:
-                this._barRenderer._setPosition(-this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
                 break;
             case ccs.LoadingBarType.right:
-                this._barRenderer._setPosition(this._totalLength * 0.5, 0.0);
+                this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
                 break;
             default:
                 break;

@@ -343,7 +343,7 @@ cc.NodeLoader = cc.Class.extend({
 
         var containerSize = ccbReader.getAnimationManager().getContainerSize(parent);
         var pt = cc._getAbsolutePosition(x,y,type,containerSize,propertyName);
-        node._setPosition(cc.getAbsolutePosition(pt,type,containerSize,propertyName));   //different to -x    node._setPosition(pt);
+        node.setPosition(cc.getAbsolutePosition(pt,type,containerSize,propertyName));   //different to -x    node.setPosition(pt);
 
         if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
             var baseValue = [x,y,type];
@@ -753,7 +753,7 @@ cc.NodeLoader = cc.Class.extend({
 
     onHandlePropTypePosition:function (node, parent, propertyName, position, ccbReader) {
         if (propertyName === PROPERTY_POSITION) {
-            node._setPosition(position);
+            node.setPosition(position);
         } else {
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
         }

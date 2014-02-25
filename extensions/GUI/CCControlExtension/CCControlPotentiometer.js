@@ -63,7 +63,7 @@ cc.ControlPotentiometer = cc.Control.extend({
 
             this.setProgressTimer(progressTimer);
             this.setThumbSprite(thumbSprite);
-            this._thumbSprite._setPosition(progressTimer._getPosition());
+            this._thumbSprite.setPosition(progressTimer.getPosition());
 
             this.addChild(thumbSprite, 2);
             this.addChild(progressTimer, 1);
@@ -142,7 +142,7 @@ cc.ControlPotentiometer = cc.Control.extend({
     isTouchInside:function (touch) {
         var touchLocation = this.getTouchLocation(touch);
 
-        var distance = this.distanceBetweenPointAndPoint(this._progressTimer._getPosition(), touchLocation);
+        var distance = this.distanceBetweenPointAndPoint(this._progressTimer.getPosition(), touchLocation);
 
         return distance < Math.min(this.getContentSize().width / 2, this.getContentSize().height / 2);
     },
@@ -208,7 +208,7 @@ cc.ControlPotentiometer = cc.Control.extend({
     },
 
     potentiometerMoved:function (location) {
-        var angle = this.angleInDegreesBetweenLineFromPoint_toPoint_toLineFromPoint_toPoint(this._progressTimer._getPosition(), location, this._progressTimer._getPosition(), this._previousLocation);
+        var angle = this.angleInDegreesBetweenLineFromPoint_toPoint_toLineFromPoint_toPoint(this._progressTimer.getPosition(), location, this._progressTimer.getPosition(), this._previousLocation);
 
         // fix value, if the 12 o'clock position is between location and previousLocation
         if (angle > 180) {

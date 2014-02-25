@@ -49,12 +49,12 @@
         getPTMRatio:function () {
             return this._PTMRatio;
         },
-        _getPosition:function () {
+        getPosition:function () {
             var pos = this._body.GetPosition();
             var locPTMRatio =this._PTMRatio;
             return cc.p(pos.x * locPTMRatio, pos.y * locPTMRatio);
         },
-        _setPosition:function (p) {
+        setPosition:function (p) {
             var angle = this._body.GetAngle();
             var locPTMRatio =this._PTMRatio;
             this._body.setTransform(Box2D.b2Vec2(p.x / locPTMRatio, p.y / locPTMRatio), angle);
@@ -107,20 +107,20 @@
         getBody:function () {
             return this._body;
         },
-        _getPosition:function () {
+        getPosition:function () {
             var locBody = this._body;
             return {x:locBody.p.x, y:locBody.p.y};
         },
 
-        _getPositionX:function () {
+        getPositionX:function () {
             return this._body.p.x;
         },
 
-        _getPositionY:function () {
+        getPositionY:function () {
             return this._body.p.y;
         },
 
-        _setPosition:function (newPosOrxValue, yValue) {
+        setPosition:function (newPosOrxValue, yValue) {
             if (yValue === undefined) {
 	            this._body.p.x = newPosOrxValue.x;
 	            this._body.p.y = newPosOrxValue.y;
@@ -130,11 +130,11 @@
             }
             //this._syncPosition();
         },
-	    _setPositionX:function (xValue) {
+	    setPositionX:function (xValue) {
 		    this._body.p.x = xValue;
 		    //this._syncPosition();
 	    },
-	    _setPositionY:function (yValue) {
+	    setPositionY:function (yValue) {
 		    this._body.p.y = yValue;
 		    //this._syncPosition();
 	    },
@@ -142,7 +142,7 @@
         _syncPosition:function () {
             var locPosition = this._position, locBody = this._body;
             if (locPosition.x != locBody.p.x || locPosition.y != locBody.p.y) {
-                cc.Sprite.prototype._setPosition.call(this, locBody.p.x, locBody.p.y);
+                cc.Sprite.prototype.setPosition.call(this, locBody.p.x, locBody.p.y);
             }
         },
         getRotation:function () {
@@ -252,8 +252,8 @@
 	/** @expose */
 	_proto.body;
 	cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
-	cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
-	cc.defineGetterSetter(_proto, "y", _proto._getPositionY, _proto._setPositionY);
+	cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
+	cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 	cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
 	cc.defineGetterSetter(_proto, "dirty", _proto.isDirty);
 	delete window._proto;

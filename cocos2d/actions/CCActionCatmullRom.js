@@ -175,7 +175,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         // Issue #1441 from cocos2d-iphone
         this._deltaT = 1 / (this._points.length - 1);
-        this._previousPosition = cc.p(this._target._getPositionX(), this._target._getPositionY());
+        this._previousPosition = cc.p(this._target.getPositionX(), this._target.getPositionY());
         this._accumulatedDiff = cc.p(0, 0);
     },
 
@@ -207,8 +207,8 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
         if (cc.ENABLE_STACKABLE_ACTIONS) {
             var tempX, tempY;
-            tempX = this._target._getPositionX() - this._previousPosition.x;
-            tempY = this._target._getPositionY() - this._previousPosition.y;
+            tempX = this._target.getPositionX() - this._previousPosition.x;
+            tempY = this._target.getPositionY() - this._previousPosition.y;
             if (tempX != 0 || tempY != 0) {
                 var locAccDiff = this._accumulatedDiff;
                 tempX = locAccDiff.x + tempX;
@@ -236,7 +236,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
-        this._target._setPosition(newPos);
+        this._target.setPosition(newPos);
         this._previousPosition = newPos;
     },
 
@@ -302,8 +302,8 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      */
     startWithTarget:function (target) {
         cc.CardinalSplineTo.prototype.startWithTarget.call(this, target);
-        this._startPosition.x = target._getPositionX();
-        this._startPosition.y = target._getPositionY();
+        this._startPosition.x = target.getPositionX();
+        this._startPosition.y = target.getPositionY();
     },
 
     /**
@@ -356,7 +356,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
         var posY = newPos.y + pos.y;
 	    this._previousPosition.x = posX;
 	    this._previousPosition.y = posY;
-	    this._target._setPosition(posX, posY);
+	    this._target.setPosition(posX, posY);
     },
 
     /**

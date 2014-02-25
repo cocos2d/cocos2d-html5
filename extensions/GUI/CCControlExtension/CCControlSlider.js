@@ -158,16 +158,16 @@ cc.ControlSlider = cc.Control.extend({
 
             // Add the slider background
             this._backgroundSprite.setAnchorPoint(0.5, 0.5);
-            this._backgroundSprite._setPosition(maxRect.width / 2, maxRect.height / 2);
+            this._backgroundSprite.setPosition(maxRect.width / 2, maxRect.height / 2);
             this.addChild(this._backgroundSprite);
 
             // Add the progress bar
             this._progressSprite.setAnchorPoint(0.0, 0.5);
-            this._progressSprite._setPosition(0, maxRect.height / 2);
+            this._progressSprite.setPosition(0, maxRect.height / 2);
             this.addChild(this._progressSprite);
 
             // Add the slider thumb
-            this._thumbSprite._setPosition(0, maxRect.height / 2);
+            this._thumbSprite.setPosition(0, maxRect.height / 2);
             this.addChild(this._thumbSprite);
 
             // Init default values
@@ -196,7 +196,7 @@ cc.ControlSlider = cc.Control.extend({
     },
     sliderEnded:function (location) {
         if (this.isSelected()) {
-            this.setValue(this.valueForLocation(this._thumbSprite._getPosition()));
+            this.setValue(this.valueForLocation(this._thumbSprite.getPosition()));
         }
         this._thumbSprite.setColor(cc.white());
         this.setSelected(false);
@@ -231,11 +231,11 @@ cc.ControlSlider = cc.Control.extend({
     },
     needsLayout:function(){
         var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
-        this._thumbSprite._setPositionX(percent * this._backgroundSprite.getContentSize().width);
+        this._thumbSprite.setPositionX(percent * this._backgroundSprite.getContentSize().width);
 
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.rect(textureRect.x, textureRect.y, this._thumbSprite._getPositionX(), textureRect.height);
+        textureRect = cc.rect(textureRect.x, textureRect.y, this._thumbSprite.getPositionX(), textureRect.height);
         this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated());
     },
     /** Returns the value for the given location. */

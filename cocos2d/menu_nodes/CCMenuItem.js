@@ -1133,7 +1133,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             var w = item.width, h = item.height;
             this.width = w;
 	        this.height = h;
-            item._setPosition(w / 2, h / 2);
+            item.setPosition(w / 2, h / 2);
         }
     },
 

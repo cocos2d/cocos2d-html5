@@ -876,7 +876,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
                 nextFontPositionY + yOffset - rect.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
-            fontChar._setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
+            fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
 
             // update kerning
             nextFontPositionX += fontDef.xAdvance + kerningAmount;
@@ -1100,7 +1100,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar._getPositionX() + lastChar._getWidth() / 2;
+                    lineWidth = lastChar.getPositionX() + lastChar._getWidth() / 2;
 
                     var shift = 0;
                     switch (this._alignment) {
@@ -1277,11 +1277,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp._getPositionX() * this._scaleX + (sp._getWidth() * this._scaleX * sp._getAnchorX());
+        return sp.getPositionX() * this._scaleX + (sp._getWidth() * this._scaleX * sp._getAnchorX());
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp._getPositionX() * this._scaleX - (sp._getWidth() * this._scaleX * sp._getAnchorX());
+        return sp.getPositionX() * this._scaleX - (sp._getWidth() * this._scaleX * sp._getAnchorX());
     }
 });
 

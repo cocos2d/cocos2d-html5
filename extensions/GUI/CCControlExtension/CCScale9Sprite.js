@@ -186,23 +186,23 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         locCenter.setAnchorPoint(tempAP);
 
         // Position corners
-        locBottomLeft._setPosition(0, 0);
-        locBottomRight._setPosition(leftWidth + rescaledWidth, 0);
-        locTopLeft._setPosition(0, bottomHeight + rescaledHeight);
-        locTopRight._setPosition(leftWidth + rescaledWidth, bottomHeight + rescaledHeight);
+        locBottomLeft.setPosition(0, 0);
+        locBottomRight.setPosition(leftWidth + rescaledWidth, 0);
+        locTopLeft.setPosition(0, bottomHeight + rescaledHeight);
+        locTopRight.setPosition(leftWidth + rescaledWidth, bottomHeight + rescaledHeight);
 
         // Scale and position borders
-        locLeft._setPosition(0, bottomHeight);
+        locLeft.setPosition(0, bottomHeight);
         locLeft.setScaleY(verticalScale);
-        locRight._setPosition(leftWidth + rescaledWidth, bottomHeight);
+        locRight.setPosition(leftWidth + rescaledWidth, bottomHeight);
         locRight.setScaleY(verticalScale);
-        locBottom._setPosition(leftWidth, 0);
+        locBottom.setPosition(leftWidth, 0);
         locBottom.setScaleX(horizontalScale);
-        locTop._setPosition(leftWidth, bottomHeight + rescaledHeight);
+        locTop.setPosition(leftWidth, bottomHeight + rescaledHeight);
         locTop.setScaleX(horizontalScale);
 
         // Position centre
-        locCenter._setPosition(leftWidth, bottomHeight);
+        locCenter.setPosition(leftWidth, bottomHeight);
     },
 
     ctor: function () {

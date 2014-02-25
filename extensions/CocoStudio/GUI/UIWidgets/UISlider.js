@@ -380,7 +380,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             return;
         }
         var dis = this._barLength * (percent / 100.0);
-        this._slidBallRenderer._setPosition(-this._barLength / 2.0 + dis, 0.0);
+        this._slidBallRenderer.setPosition(-this._barLength / 2.0 + dis, 0.0);
         if (this._scale9Enabled) {
             this._progressBarRenderer.setPreferredSize(cc.size(dis, this._progressBarTextureSize.height));
         }
@@ -413,7 +413,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._touchMovePos.x = touchPoint.x;
         this._touchMovePos.y = touchPoint.y;
         var nsp = this.convertToNodeSpace(touchPoint);
-        this._slidBallRenderer._setPosition(nsp.x, 0);
+        this._slidBallRenderer.setPosition(nsp.x, 0);
         this.setPercent(this.getPercentWithBallPos(nsp.x));
         this.percentChangedEvent();
     },
@@ -542,7 +542,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
                 this._progressBarRenderer.setScaleY(pscaleY);
             }
         }
-        this._progressBarRenderer._setPosition(-this._barLength * 0.5, 0.0);
+        this._progressBarRenderer.setPosition(-this._barLength * 0.5, 0.0);
         this.setPercent(this._percent);
     },
 

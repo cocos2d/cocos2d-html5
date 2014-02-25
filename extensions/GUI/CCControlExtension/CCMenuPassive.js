@@ -98,7 +98,7 @@ cc.MenuPassive = cc.Layer.extend({
             this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(winSize);
 
-            this._setPosition(winSize.width / 2, winSize.height / 2);
+            this.setPosition(winSize.width / 2, winSize.height / 2);
             var z = 0;
 
             if (item) {
@@ -141,7 +141,7 @@ cc.MenuPassive = cc.Layer.extend({
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
                     width = Math.max(width, this._children[i].getContentSize().width);
-                    this._children[i]._setPosition(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2.0);
+                    this._children[i].setPosition(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2.0);
                     y -= this._children[i].getContentSize().height * this._children[i].getScaleY() + padding;
                 }
             }
@@ -174,7 +174,7 @@ cc.MenuPassive = cc.Layer.extend({
             for (i = 0; i < this._children.length; i++) {
                 if (this._children[i]) {
                     height = Math.max(height, this._children[i].getContentSize().height);
-                    this._children[i]._setPosition(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2.0, 0);
+                    this._children[i].setPosition(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2.0, 0);
                     x += this._children[i].getContentSize().width * this._children[i].getScaleX() + padding;
                 }
             }
@@ -250,7 +250,7 @@ cc.MenuPassive = cc.Layer.extend({
                     tmp = this._children[i].getContentSize().height;
                     rowHeight = 0 | ((rowHeight >= tmp || (tmp == null)) ? rowHeight : tmp);
 
-                    this._children[i]._setPosition(x - winSize.width / 2,
+                    this._children[i].setPosition(x - winSize.width / 2,
                         y - this._children[i].getContentSize().height / 2);
 
                     x += w;
@@ -347,7 +347,7 @@ cc.MenuPassive = cc.Layer.extend({
                     tmp = this._children[i].getContentSize().width;
                     columnWidth = 0 | ((columnWidth >= tmp || (tmp == null)) ? columnWidth : tmp);
 
-                    this._children[i]._setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
+                    this._children[i].setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
 
                     y -= this._children[i].getContentSize().height + 10;
                     ++rowsOccupied;

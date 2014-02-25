@@ -327,7 +327,7 @@ cc.TableView = cc.ScrollView.extend({
 
     _setIndexForCell:function (index, cell) {
         cell.setAnchorPoint(0, 0);
-        cell._setPosition(this._offsetFromIndex(index));
+        cell.setPosition(this._offsetFromIndex(index));
         cell.setIdx(index);
     },
 

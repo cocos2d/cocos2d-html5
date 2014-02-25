@@ -63,7 +63,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.setScaleY(skinData.scaleY);
         this.setRotationX(cc.RADIANS_TO_DEGREES(skinData.skewX));
         this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
-        this._setPosition(skinData.x, skinData.y);
+        this.setPosition(skinData.x, skinData.y);
 
         var localTransform = this.nodeToParentTransform();
         var skinTransform = this._skinTransform;

@@ -209,7 +209,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         if (typeof(texture) === "string")
             texture = cc.TextureCache.getInstance().addImage(texture);
 
-        cc.Node.prototype._setPosition.call(this, cc.p(0,0));
+        cc.Node.prototype.setPosition.call(this, cc.p(0,0));
         this.anchorX = 0;
 	    this.anchorY = 0;
         this.ignoreAnchor = true;
@@ -287,7 +287,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @override
      * @param {cc.Point} position
      */
-    _setPosition:function (position, yValue) {
+    setPosition:function (position, yValue) {
         this.startingPositionInitialized = true;
         if(yValue === undefined){
             this._positionR.x = position.x;
@@ -301,14 +301,14 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 	/**
 	 * @return {Number}
 	 */
-	_getPositionX:function () {
+	getPositionX:function () {
 		return this._positionR._x;
 	},
 
 	/**
 	 * @param {Number} x
 	 */
-	_setPositionX:function (x) {
+	setPositionX:function (x) {
 		this._positionR._x = x;
 		if(!this.startingPositionInitialized)
 			this.startingPositionInitialized = true;
@@ -317,14 +317,14 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 	/**
 	 * @return {Number}
 	 */
-	_getPositionY:function () {
+	getPositionY:function () {
 		return  this._positionR._y;
 	},
 
 	/**
 	 * @param {Number} y
 	 */
-	_setPositionY:function (y) {
+	setPositionY:function (y) {
 		this._positionR._y = y;
 		if(!this.startingPositionInitialized)
 			this.startingPositionInitialized = true;
@@ -493,8 +493,8 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 
 window._proto = cc.MotionStreak.prototype;
 
-cc.defineGetterSetter(_proto, "x", _proto._getPositionX, _proto._setPositionX);
-cc.defineGetterSetter(_proto, "y", _proto._getPositionY, _proto._setPositionY);
+cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
+cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 

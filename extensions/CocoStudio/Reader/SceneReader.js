@@ -180,7 +180,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         cc.log("unknown resourcetype on CCParticleSystemQuad!");
                     }
 
-                    particle._setPosition(0, 0);
+                    particle.setPosition(0, 0);
                     var render = ccs.ComRender.create(particle, "CCParticleSystemQuad");
                     if (comName != null) {
                         render.setName(comName);
@@ -350,7 +350,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
     setPropertyFromJsonDict: function (node, dict) {
         var x = (typeof dict["x"] === 'undefined')?0:dict["x"];
         var y = (typeof dict["y"] === 'undefined')?0:dict["y"];
-        node._setPosition(x, y);
+        node.setPosition(x, y);
 
         var bVisible = Boolean((typeof dict["visible"] === 'undefined')?1:dict["visible"]);
         node.setVisible(bVisible);

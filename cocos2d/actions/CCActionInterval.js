@@ -952,8 +952,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target._getPositionX();
-        var locPosY = target._getPositionY();
+        var locPosX = target.getPositionX();
+        var locPosY = target.getPositionY();
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -969,8 +969,8 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
             var y = this._positionDelta.y * time;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target._getPositionX();
-                var targetY = this._target._getPositionY();
+                var targetX = this._target.getPositionX();
+                var targetY = this._target.getPositionY();
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
@@ -979,9 +979,9 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
                 y = y + locStartPosition.y;
 	            locPreviousPosition.x = x;
 	            locPreviousPosition.y = y;
-	            this._target._setPosition(x, y);
+	            this._target.setPosition(x, y);
             } else {
-                this._target._setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -1052,8 +1052,8 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     startWithTarget:function (target) {
         cc.MoveBy.prototype.startWithTarget.call(this, target);
-        this._positionDelta.x = this._endPosition.x - target._getPositionX();
-        this._positionDelta.y = this._endPosition.y - target._getPositionY();
+        this._positionDelta.x = this._endPosition.x - target.getPositionX();
+        this._positionDelta.y = this._endPosition.y - target.getPositionY();
     }
 });
 /**
@@ -1286,8 +1286,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target._getPositionX();
-        var locPosY = target._getPositionY();
+        var locPosX = target.getPositionX();
+        var locPosY = target.getPositionY();
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -1306,8 +1306,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
             var x = this._delta.x * time;
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target._getPositionX();
-                var targetY = this._target._getPositionY();
+                var targetX = this._target.getPositionX();
+                var targetY = this._target.getPositionY();
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
@@ -1316,9 +1316,9 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
                 y = y + locStartPosition.y;
 	            locPreviousPosition.x = x;
 	            locPreviousPosition.y = y;
-	            this._target._setPosition(x, y);
+	            this._target.setPosition(x, y);
             } else {
-                this._target._setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -1455,8 +1455,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var locPosX = target._getPositionX();
-        var locPosY = target._getPositionY();
+        var locPosX = target.getPositionX();
+        var locPosY = target.getPositionY();
         this._previousPosition.x = locPosX;
         this._previousPosition.y = locPosY;
         this._startPosition.x = locPosX;
@@ -1484,8 +1484,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this._target._getPositionX();
-                var targetY = this._target._getPositionY();
+                var targetX = this._target.getPositionX();
+                var targetY = this._target.getPositionY();
                 var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
@@ -1494,9 +1494,9 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
                 y = y + locStartPosition.y;
 	            locPreviousPosition.x = x;
 	            locPreviousPosition.y = y;
-	            this._target._setPosition(x, y);
+	            this._target.setPosition(x, y);
             } else {
-                this._target._setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this._target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },

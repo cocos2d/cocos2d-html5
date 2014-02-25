@@ -1589,7 +1589,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this.endSizeVar = parseFloat(locValueForKey("finishParticleSizeVariance", dictionary));
 
             // position
-            this._setPosition(parseFloat(locValueForKey("sourcePositionx", dictionary)),
+            this.setPosition(parseFloat(locValueForKey("sourcePositionx", dictionary)),
                               parseFloat(locValueForKey("sourcePositiony", dictionary)));
             this._posVar.x = parseFloat(locValueForKey("sourcePositionVariancex", dictionary));
             this._posVar.y = parseFloat(locValueForKey("sourcePositionVariancey", dictionary));
