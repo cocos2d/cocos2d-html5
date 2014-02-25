@@ -561,26 +561,30 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         this.startAutoScrollChildrenWithOriginalSpeed(dir, orSpeed, attenuated, acceleration);
     },
 
-    jumpToDestination: function (des) {
-        var finalOffsetX = des.x;
-        var finalOffsetY = des.y;
+    jumpToDestination: function (dstX, dstY) {
+	    if(dstX.x !== undefined) {
+		    dstY = dstX.y;
+		    dstX = dstX.x;
+	    }
+        var finalOffsetX = dstX;
+        var finalOffsetY = dstY;
         switch (this.direction) {
             case ccs.ScrollViewDir.vertical:
-                if (des.y <= 0) {
-                    finalOffsetY = Math.max(des.y, this._size.height - this._innerContainer.getSize().height);
+                if (dstY <= 0) {
+                    finalOffsetY = Math.max(dstY, this._size.height - this._innerContainer.getSize().height);
                 }
                 break;
             case ccs.ScrollViewDir.horizontal:
-                if (des.x <= 0) {
-                    finalOffsetX = Math.max(des.x, this._size.width - this._innerContainer.getSize().width);
+                if (dstX <= 0) {
+                    finalOffsetX = Math.max(dstX, this._size.width - this._innerContainer.getSize().width);
                 }
                 break;
             case ccs.ScrollViewDir.both:
-                if (des.y <= 0) {
-                    finalOffsetY = Math.max(des.y, this._size.height - this._innerContainer.getSize().height);
+                if (dstY <= 0) {
+                    finalOffsetY = Math.max(dstY, this._size.height - this._innerContainer.getSize().height);
                 }
-                if (des.x <= 0) {
-                    finalOffsetX = Math.max(des.x, this._size.width - this._innerContainer.getSize().width);
+                if (dstX <= 0) {
+                    finalOffsetX = Math.max(dstX, this._size.width - this._innerContainer.getSize().width);
                 }
                 break;
             default:
@@ -1195,19 +1199,19 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     jumpToBottom: function () {
-        this.jumpToDestination(cc.p(this._innerContainer._getPositionX(), 0));
+        this.jumpToDestination(this._innerContainer._getPositionX(), 0);
     },
 
     jumpToTop: function () {
-        this.jumpToDestination(cc.p(this._innerContainer._getPositionX(), this._size.height - this._innerContainer.getSize().height));
+        this.jumpToDestination(this._innerContainer._getPositionX(), this._size.height - this._innerContainer.getSize().height);
     },
 
     jumpToLeft: function () {
-        this.jumpToDestination(cc.p(0, this._innerContainer._getPositionY()));
+        this.jumpToDestination(0, this._innerContainer._getPositionY());
     },
 
     jumpToRight: function () {
-        this.jumpToDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._innerContainer._getPositionY()));
+        this.jumpToDestination(this._size.width - this._innerContainer.getSize().width, this._innerContainer._getPositionY());
     },
 
     jumpToTopLeft: function () {
@@ -1215,7 +1219,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
             cc.log("Scroll diretion is not both!");
             return;
         }
-        this.jumpToDestination(cc.p(0, this._size.height - this._innerContainer.getSize().height));
+        this.jumpToDestination(0, this._size.height - this._innerContainer.getSize().height);
     },
 
     jumpToTopRight: function () {
@@ -1223,7 +1227,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
             cc.log("Scroll diretion is not both!");
             return;
         }
-        this.jumpToDestination(cc.p(this._size.width - this._innerContainer.getSize().width, this._size.height - this._innerContainer.getSize().height));
+        this.jumpToDestination(this._size.width - this._innerContainer.getSize().width, this._size.height - this._innerContainer.getSize().height);
     },
 
     jumpToBottomLeft: function () {
@@ -1231,7 +1235,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
             cc.log("Scroll diretion is not both!");
             return;
         }
-        this.jumpToDestination(cc.p(0, 0));
+        this.jumpToDestination(0, 0);
     },
 
     jumpToBottomRight: function () {
@@ -1239,18 +1243,18 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
             cc.log("Scroll diretion is not both!");
             return;
         }
-        this.jumpToDestination(cc.p(this._size.width - this._innerContainer.getSize().width, 0));
+        this.jumpToDestination(this._size.width - this._innerContainer.getSize().width, 0);
     },
 
     jumpToPercentVertical: function (percent) {
         var minY = this._size.height - this._innerContainer.getSize().height;
         var h = -minY;
-        this.jumpToDestination(cc.p(this._innerContainer._getPositionX(), minY + percent * h / 100));
+        this.jumpToDestination(this._innerContainer._getPositionX(), minY + percent * h / 100);
     },
 
     jumpToPercentHorizontal: function (percent) {
         var w = this._innerContainer.getSize().width - this._size.width;
-        this.jumpToDestination(cc.p(-(percent * w / 100), this._innerContainer._getPositionY()));
+        this.jumpToDestination(-(percent * w / 100), this._innerContainer._getPositionY());
     },
 
     jumpToPercentBothDirection: function (percent) {
@@ -1260,7 +1264,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         var minY = this._size.height - this._innerContainer.getSize().height;
         var h = -minY;
         var w = this._innerContainer.getSize().width - this._size.width;
-        this.jumpToDestination(cc.p(-(percent.x * w / 100), minY + percent.y * h / 100));
+        this.jumpToDestination(-(percent.x * w / 100), minY + percent.y * h / 100);
     },
 
     startRecordSlidAction: function () {
