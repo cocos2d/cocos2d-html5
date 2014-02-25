@@ -336,8 +336,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         if (this.dom)
             this.dom.style.display = (x) ? 'block' : 'none';
     },
-    _setZOrder:function (z) {
-        this._zOrder = z
+    _setLocalZOrder:function (z) {
+        this._localZOrder = z
         this.setNodeDirty();
         if (this.dom)
             this.dom.zIndex = z;

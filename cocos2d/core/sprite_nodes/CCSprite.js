@@ -534,8 +534,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 tempChild =  locChildren[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  locChildren[j];
@@ -1403,17 +1403,17 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     /**
      * Add child to sprite (override cc.Node )
      * @param {cc.Sprite} child
-     * @param {Number} zOrder  child's zOrder
+     * @param {Number} localZOrder  child's zOrder
      * @param {String} tag child's tag
      * @override
      */
     addChild: null,
 
-    _addChildForWebGL:function (child, zOrder, tag) {
+    _addChildForWebGL:function (child, localZOrder, tag) {
         if(!child)
             throw "cc.Sprite.addChild(): child should be non-null";
-        if (zOrder == null)
-            zOrder = child._zOrder;
+        if (localZOrder == null)
+            localZOrder = child._localZOrder;
         if (tag == null)
             tag = child._tag;
 
@@ -1432,20 +1432,20 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
+        cc.NodeRGBA.prototype.addChild.call(this, child, localZOrder, tag);
         this._hasChildren = true;
     },
 
-    _addChildForCanvas: function (child, zOrder, tag) {
+    _addChildForCanvas: function (child, localZOrder, tag) {
         if(!child)
             throw "cc.Sprite.addChild(): child should be non-null";
-        if (zOrder == null)
-            zOrder = child._zOrder;
+        if (localZOrder == null)
+            localZOrder = child._localZOrder;
         if (tag == null)
             tag = child._tag;
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
+        cc.NodeRGBA.prototype.addChild.call(this, child, localZOrder, tag);
         this._hasChildren = true;
     },
 

@@ -148,28 +148,26 @@ cc.Control = cc.LayerRGBA.extend({
 
     init:function () {
         if (cc.LayerRGBA.prototype.init.call(this)) {
-            //this.setTouchEnabled(true);
-            //m_bIsTouchEnabled=true;
             // Initialise instance variables
             this._state = cc.CONTROL_STATE_NORMAL;
             this._enabled = true;
             this._selected = false;
             this._highlighted = false;
 
-            // Set the touch dispatcher priority by default to 1
-            this._defaultTouchPriority = 1;
-            this.setTouchPriority(1);
-            // Initialise the tables
-            //this._dispatchTable = {};
-            //dispatchTable.autorelease();
-            //   dispatchTable_ = [[NSMutableDictionary alloc] initWithCapacity:1];
+            var listener = cc.EventListenerTouchOneByOne.create();
+            if(this.onTouchBegan)
+                listener.onTouchBegan = this.onTouchBegan.bind(this);
+            if(this.onTouchMoved)
+                listener.onTouchMoved = this.onTouchMoved.bind(this);
+            if(this.onTouchEnded)
+                listener.onTouchEnded = this.onTouchEnded.bind(this);
+            if(this.onTouchCancelled)
+                listener.onTouchCancelled = this.onTouchCancelled.bind(this);
+            cc.eventManager.addListener(listener, this);
+
             return true;
         } else
             return false;
-    },
-
-    registerWithTouchDispatcher:function () {
-        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
     },
 
     /**
