@@ -419,9 +419,11 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         var locW = this._customSize.width = size.width;
         var locH = this._customSize.height = size.height;
         if (this._ignoreSize) {
-	        this._size.width = locW = this.width;
-	        this._size.height = locH = this.height;
+	        locW = this.width;
+	        locH = this.height;
         }
+	    this._size.width = locW;
+	    this._size.height = locH;
 
         if(this._running){
             var  widgetParent = this.getWidgetParent();
@@ -439,7 +441,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     },
 	_setWidth: function (w) {
 		var locW = this._customSize.width = w;
-		this._ignoreSize && (this._size.width = locW = this.width);
+		this._ignoreSize && (locW = this.width);
+		this._size.width = locW;
 
 		if(this._running){
 			var  widgetParent = this.getWidgetParent();
@@ -450,7 +453,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 	},
 	_setHeight: function (h) {
 		var locH = this._customSize.height = h;
-		this._ignoreSize && (this._size.height = locH = this.height);
+		this._ignoreSize && (locH = this.height);
+		this._size.height = locH;
 
 		if(this._running){
 			var  widgetParent = this.getWidgetParent();
@@ -1040,7 +1044,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             }
         }
 
-        cc.NodeRGBA.prototype.setPosition.apply(this,arguments);
+        cc.NodeRGBA.prototype.setPosition.apply(this, arguments);
     },
 
 	setPositionX: function (x) {
@@ -1055,7 +1059,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionX.apply(this, x);
+		cc.NodeRGBA.prototype.setPositionX.call(this, x);
 	},
 	setPositionY: function (y) {
 		if (this._running) {
@@ -1069,7 +1073,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionY.apply(this, y);
+		cc.NodeRGBA.prototype.setPositionY.call(this, y);
 	},
 
     /**
