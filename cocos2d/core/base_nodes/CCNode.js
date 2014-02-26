@@ -174,7 +174,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     //since 2.0 api
     _reorderChildDirty:false,
     _shaderProgram:null,
-    orderOfArrival:0,
+    arrivalOrder:0,
 
     _actionManager:null,
     _scheduler:null,
@@ -1023,7 +1023,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number} The arrival order.
      */
     getOrderOfArrival:function () {
-        return this.orderOfArrival;
+        return this.arrivalOrder;
     },
 
     /**
@@ -1037,7 +1037,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival:function (Var) {
-        this.orderOfArrival = Var;
+        this.arrivalOrder = Var;
     },
 
     /**
@@ -1354,7 +1354,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.orderOfArrival < tempChild.orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     _children[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  _children[j];
@@ -1923,7 +1923,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         } else
             this.draw(context);
 
-        this.orderOfArrival = 0;
+        this.arrivalOrder = 0;
         context.restore();
     },
 
@@ -1966,7 +1966,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         } else
             this.draw(context);
 
-        this.orderOfArrival = 0;
+        this.arrivalOrder = 0;
         if (locGrid && locGrid._active)
             locGrid.afterDraw(this);
 

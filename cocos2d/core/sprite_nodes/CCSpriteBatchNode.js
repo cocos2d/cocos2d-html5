@@ -940,7 +940,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.orderOfArrival < tempChild.orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  locChildren[j];
@@ -969,7 +969,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.orderOfArrival < tempChild.orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     childrenArr[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  childrenArr[j];

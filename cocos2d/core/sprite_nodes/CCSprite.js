@@ -523,7 +523,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.orderOfArrival < tempChild.orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  locChildren[j];

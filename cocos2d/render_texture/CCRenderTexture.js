@@ -554,7 +554,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         ctx.restore();
 
-        this.orderOfArrival = 0;
+        this.arrivalOrder = 0;
     },
 
     _visitForWebGL:function (ctx) {
@@ -580,7 +580,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         cc.kmGLPopMatrix();
 
-        this.orderOfArrival = 0;
+        this.arrivalOrder = 0;
     },
 
     draw:null,

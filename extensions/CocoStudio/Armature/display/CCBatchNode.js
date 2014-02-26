@@ -53,7 +53,7 @@ cc.BatchNode = cc.Node.extend({
         this.sortAllChildren();
         this.draw();
         // reset for next frame
-        this.orderOfArrival = 0;
+        this.arrivalOrder = 0;
         if (this.grid && this.grid.isActive()) {
             this.grid.afterDraw(this);
         }
