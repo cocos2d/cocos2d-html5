@@ -427,7 +427,7 @@ delete window._proto;
  * //create a TMXTiledMap with content string and resource path
  * var resources = "res/TileMaps";
  * var filePath = "res/TileMaps/orthogonal-test1.tmx";
- * var xmlStr = cc.FileUtils.getInstance().getStringFromFile(filePath);
+ * var xmlStr = cc.loader.getRes(filePath);
  * var tmxTiledMap = cc.TMXTiledMap.create(xmlStr, resources);
  */
 cc.TMXTiledMap.create = function (tmxFile,resourcePath) {

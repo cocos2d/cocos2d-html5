@@ -215,6 +215,40 @@ cc.BuilderReader = cc.Class.extend({
         return true;
     },
 
+    _loadBinarySync : function(url){
+        var self = this;
+        var req = this.getXMLHttpRequest();
+        var errInfo = "load " + url + " failed!";
+        req.open('GET', url, false);
+        var arrayInfo = null;
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            req.setRequestHeader("Accept-Charset", "x-user-defined");
+            req.send(null);
+            if (req.status != 200) {
+                cc.log(errInfo);
+                return null;
+            }
+
+            var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
+            if (fileContents) {
+                arrayInfo = this._stringConvertToArray(fileContents);
+                this._fileDataCache[url] = arrayInfo;
+            }
+        } else {
+            if (req.overrideMimeType)
+                req.overrideMimeType('text\/plain; charset=x-user-defined');
+            req.send(null);
+            if (req.status != 200) {
+                cc.log(errInfo);
+                return null;
+            }
+
+            arrayInfo = this._stringConvertToArray(req.responseText);
+            this._fileDataCache[url] = arrayInfo;
+        }
+        return arrayInfo;
+    },
+
     readNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
         if (parentSize == null) {
             parentSize = cc.Director.getInstance().getWinSize();
@@ -222,9 +256,13 @@ cc.BuilderReader = cc.Class.extend({
             animationManager = parentSize;
             parentSize = cc.Director.getInstance().getWinSize();
         }
-        var fileUtils = cc.FileUtils.getInstance();
-        var path = fileUtils.fullPathFromRelativePath(ccbFileName);
-        var data = fileUtils.getByteArrayFromFile(path);
+
+        var data = cc.loader.getRes(ccbFileName);
+        if(!data){
+            var realUrl = cc.loader.getUrl(ccbFileName);
+            data = cc.loader.loadBinarySync(realUrl);
+            cc.loader.cache[ccbFileName] = data;
+        }
 
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
     },

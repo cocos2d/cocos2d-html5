@@ -359,9 +359,10 @@ cc.GLProgram = cc.Class.extend({
      * @return {Boolean}
      */
     initWithVertexShaderFilename: function (vShaderFilename, fShaderFileName) {
-        var fileUtils = cc.FileUtils.getInstance();
-        var vertexSource = fileUtils.getTextFileData(vShaderFilename);
-        var fragmentSource = fileUtils.getTextFileData(fShaderFileName);
+        var vertexSource = cc.loader.getRes(vShaderFilename);
+        if(!vertexSource) throw "Please load the resource firset : " + vShaderFilename;
+        var fragmentSource = cc.loader.getRes(fShaderFileName);
+        if(!fragmentSource) throw "Please load the resource firset : " + fShaderFileName;
         return this.initWithVertexShaderByteArray(vertexSource, fragmentSource);
     },
 

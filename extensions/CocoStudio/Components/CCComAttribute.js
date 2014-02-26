@@ -183,10 +183,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @param path
      */
     parse:function(path){
-        var data = cc.FileUtils.getInstance().getTextFileData(path);
-        if (data) {
-            this._jsonDict = JSON.parse(data);
-        }
+        this._jsonDict = cc.loader.getRes(path);
     }
 });
 /**

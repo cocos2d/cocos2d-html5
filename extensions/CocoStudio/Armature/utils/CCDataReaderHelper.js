@@ -158,35 +158,28 @@ ccs.DataReaderHelper.purge = function () {
 };
 
 ccs.DataReaderHelper.addDataFromFile = function (filePath,isLoadSpriteFrame) {
-    var fileUtils = cc.FileUtils.getInstance();
-    var fullFilePath = fileUtils.fullPathForFilename(filePath);
-
-    if (cc.ArrayContainsObject(this._configFileList, fullFilePath)) {
+    if (cc.ArrayContainsObject(this._configFileList, filePath)) {
         return;
     }
-    this._configFileList.push(fullFilePath);
+    this._configFileList.push(filePath);
 
     this._initBaseFilePath(filePath);
 
-    var startPos = fullFilePath.lastIndexOf(".");
-    var str = fullFilePath.substring(startPos, fullFilePath.length);
+    var str = cc.path.extname(filePath).toLowerCase();
 
     var  dataInfo = new ccs.DataInfo();
     dataInfo.filename = filePath;
     dataInfo.basefilePath = this._initBaseFilePath(filePath);
     if (str == ".xml") {
-        this.addDataFromXML(fullFilePath,dataInfo);
+        this.addDataFromXML(filePath,dataInfo);
     }
-    else if (str == ".json" || str == ".ExportJson") {
+    else if (str == ".json" || str == ".exportjson") {
         this.addDataFromJson(filePath,dataInfo,isLoadSpriteFrame);
     }
 };
 
 ccs.DataReaderHelper.addDataFromFileAsync = function (filePath,target,selector,isLoadSpriteFrame) {
-    var fileUtils = cc.FileUtils.getInstance();
-    var fullFilePath = fileUtils.fullPathForFilename(filePath);
-
-    if (cc.ArrayContainsObject(this._configFileList, fullFilePath)) {
+    if (cc.ArrayContainsObject(this._configFileList, filePath)) {
         if (target && selector) {
             if (this._asyncRefTotalCount == 0 && this._asyncRefCount == 0)
                 this._asyncCallBack(target, selector, 1);
@@ -233,7 +226,9 @@ ccs.DataReaderHelper.addDataFromXML = function (xml,dataInfo) {
     /*
      *  Need to get the full path of the xml file, or the Tiny XML can't find the xml at IOS
      */
-    var skeletonXML = cc.SAXParser.getInstance().tmxParse(xml);
+    var xmlStr = cc.loader.getRes(xml);
+    if(!xmlStr) throw "Please load the resource first : " + xml;
+    var skeletonXML = cc.SAXParser.getInstance().parse(xmlStr);
     var skeleton = skeletonXML.documentElement;
     if (skeleton) {
         this.addDataFromCache(skeleton,dataInfo);
@@ -660,11 +655,10 @@ ccs.DataReaderHelper.decodeContour = function (contourXML, dataInfo) {
 };
 
 ccs.DataReaderHelper.addDataFromJson = function (filePath,dataInfo,isLoadSpriteFrame) {
-    var fileContent = cc.FileUtils.getInstance().getTextFileData(filePath);
+    var fileContent = cc.loader.getRes(filePath);
     this.addDataFromJsonCache(fileContent,dataInfo,isLoadSpriteFrame);
 };
-ccs.DataReaderHelper.addDataFromJsonCache = function (content,dataInfo,isLoadSpriteFrame) {
-    var dic = JSON.parse(content);
+ccs.DataReaderHelper.addDataFromJsonCache = function (dic,dataInfo,isLoadSpriteFrame) {
     dataInfo.contentScale = dic[ccs.CONST_CONTENT_SCALE]||1;
     var armatureDataArr = dic[ccs.CONST_ARMATURE_DATA] || [];
     var armatureData;
