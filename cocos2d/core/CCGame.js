@@ -1177,7 +1177,7 @@ cc.game = {
      * @constant
      * @type String
      */
-    CONFIG_PATH : "config.json",
+    CONFIG_PATH : "project.json",
     /**
      * Default config
      * @constant

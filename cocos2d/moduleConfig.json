@@ -1,8 +1,8 @@
 {
     "module" : {
         "core" : [
-            "core/CCLoaders.js",
             "core/platform/CCClass.js",
+            "core/CCLoaders.js",
             "core/cocoa/CCGeometry.js",
             "core/platform/Sys.js",
             "core/platform/CCConfig.js",
@@ -13,10 +13,15 @@
             "core/platform/CCEGLView.js",
             "core/platform/CCScreen.js",
             "core/platform/CCVisibleRect.js",
+            "core/platform/CCInputManager.js",
             "core/cocoa/CCAffineTransform.js",
             "core/support/CCPointExtension.js",
             "core/support/CCVertex.js",
             "core/support/TransformUtils.js",
+            "event_dispatcher/CCTouch.js",
+            "event_dispatcher/CCEvent.js",
+            "event_dispatcher/CCEventListener.js",
+            "event_dispatcher/CCEventManager.js",
             "core/base_nodes/CCNode.js",
             "core/base_nodes/CCAtlasNode.js",
             "core/textures/CCTexture2D.js",
@@ -88,10 +93,6 @@
             "particle_nodes/CCParticleSystem.js",
             "particle_nodes/CCParticleExamples.js",
             "particle_nodes/CCParticleBatchNode.js",
-            "touch_dispatcher/CCTouchDelegateProtocol.js",
-            "touch_dispatcher/CCTouchHandler.js",
-            "touch_dispatcher/CCTouchDispatcher.js",
-            "touch_dispatcher/CCMouseDispatcher.js",
             "keyboard_dispatcher/CCKeyboardDelegate.js",
             "keyboard_dispatcher/CCKeyboardDispatcher.js",
             "accelerometer/CCAccelerometer.js",
@@ -106,6 +107,7 @@
             "tileMap_nodes/CCTMXLayer.js",
             "parallax_nodes/CCParallaxNode.js",
             "audio/CCAudio.js",
+
             "CCUserDefault.js",
             "CCImage.js"
         ],

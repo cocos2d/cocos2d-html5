@@ -41,41 +41,49 @@ cc.PVRHaveAlphaPremultiplied_ = false;
  * Be aware that the content of the generated textures will be upside-down! </p>
  * @class
  * @extends cc.Class
+ *
+ * @property {WebGLTexture}     name            - <@readonly> WebGLTexture Object
+ * @property {Number}           pixelFormat     - <@readonly> Pixel format of the texture
+ * @property {Number}           pixelsWidth     - <@readonly> Width in pixels
+ * @property {Number}           pixelsHeight    - <@readonly> Height in pixels
+ * @property {Number}           width           - Content width in points
+ * @property {Number}           height          - Content height in points
+ * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
+ * @property {Number}           maxS            - Texture max S
+ * @property {Number}           maxT            - Texture max T
  */
 cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
-
-    _contentSize:null,
-    _isLoaded:false,
-    _htmlElementObj:null,
-    _loadedEventListeners:null,
-
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
     _pVRHaveAlphaPremultiplied:true,
     _pixelFormat:null,
     _pixelsWide:0,
     _pixelsHigh:0,
     _name:"",
-    _maxS:0,
-    _maxT:0,
+    _contentSize:null,
+    maxS:0,
+    maxT:0,
     _hasPremultipliedAlpha:false,
     _hasMipmaps:false,
-    _shaderProgram:null,
+
+    shaderProgram:null,
+
+    _isLoaded:false,
+    _htmlElementObj:null,
     _webTextureObj:null,
 
     url : null,
+    _loadedEventListeners:null,
 
     /*public:*/
     ctor:function () {
         this._contentSize = cc.size(0, 0);
-        this._isLoaded = false;
-        this._htmlElementObj = null;
         this._pixelFormat = cc.Texture2D.PIXEL_FORMAT.DEFAULT;
     },
 
     releaseTexture:function () {
         if (this._webTextureObj)
             cc.renderContext.deleteTexture(this._webTextureObj);
-        cc.loader.release(self.url);
+        cc.loader.release(this.url);
     },
 
     /**
@@ -95,7 +103,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     /**
-     * hight in pixels
+     * height in pixels
      * @return {Number}
      */
     getPixelsHigh:function () {
@@ -118,12 +126,12 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
     },
 
-	_getWidth:function () {
-		return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
-	},
-	_getHeight:function () {
-		return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
-	},
+    _getWidth:function () {
+        return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+    },
+    _getHeight:function () {
+        return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+    },
 
     getContentSizeInPixels:function () {
         return this._contentSize;
@@ -131,20 +139,20 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
     /** texture max S */
     getMaxS:function () {
-        return this._maxS;
+        return this.maxS;
     },
 
     setMaxS:function (maxS) {
-        this._maxS = maxS;
+        this.maxS = maxS;
     },
 
     /** texture max T */
     getMaxT:function () {
-        return this._maxT;
+        return this.maxT;
     },
 
     setMaxT:function (maxT) {
-        this._maxT = maxT;
+        this.maxT = maxT;
     },
 
     /**
@@ -152,7 +160,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {cc.GLProgram}
      */
     getShaderProgram:function () {
-        return this._shaderProgram;
+        return this.shaderProgram;
     },
 
     /**
@@ -160,7 +168,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param {cc.GLProgram} shaderProgram
      */
     setShaderProgram:function (shaderProgram) {
-        this._shaderProgram = shaderProgram;
+        this.shaderProgram = shaderProgram;
     },
 
     /**
@@ -177,7 +185,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
     description:function () {
         return "<cc.Texture2D | Name = " + this._name + " | Dimensions = " + this._pixelsWide + " x " + this._pixelsHigh
-            + " | Coordinates = (" + this._maxS + ", " + this._maxT + ")>";
+            + " | Coordinates = (" + this.maxS + ", " + this.maxT + ")>";
     },
 
     /**
@@ -262,8 +270,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         self._pixelsWide = pixelsWide;
         self._pixelsHigh = pixelsHigh;
         self._pixelFormat = pixelFormat;
-        self._maxS = contentSize.width / pixelsWide;
-        self._maxT = contentSize.height / pixelsHigh;
+        self.maxS = contentSize.width / pixelsWide;
+        self.maxT = contentSize.height / pixelsHigh;
 
         self._hasPremultipliedAlpha = false;
         self._hasMipmaps = false;
@@ -286,13 +294,13 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     drawAtPoint:function (point) {
         var self = this;
         var coordinates = [
-            0.0, self._maxT,
-            self._maxS, self._maxT,
+            0.0, self.maxT,
+            self.maxS, self.maxT,
             0.0, 0.0,
-            self._maxS, 0.0 ];
+            self.maxS, 0.0 ];
 
-        var width = self._pixelsWide * self._maxS,
-            height = self._pixelsHigh * self._maxT;
+        var width = self._pixelsWide * self.maxS,
+            height = self._pixelsHigh * self.maxT;
 
         var vertices = [
             point.x, point.y, 0.0,
@@ -300,7 +308,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             point.x, height + point.y, 0.0,
             width + point.x, height + point.y, 0.0 ];
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         self._shaderProgram.use();
         self._shaderProgram.setUniformsForBuiltins();
 
@@ -320,17 +328,17 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     drawInRect:function (rect) {
         var self = this;
         var coordinates = [
-            0.0, self._maxT,
-            self._maxS, self._maxT,
+            0.0, self.maxT,
+            self.maxS, self.maxT,
             0.0, 0.0,
-            self._maxS, 0.0];
+            self.maxS, 0.0];
 
         var vertices = [    rect.x, rect.y, /*0.0,*/
             rect.x + rect.width, rect.y, /*0.0,*/
             rect.x, rect.y + rect.height, /*0.0,*/
             rect.x + rect.width, rect.y + rect.height        /*0.0*/ ];
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         self._shaderProgram.use();
         self._shaderProgram.setUniformsForBuiltins();
 
@@ -427,8 +435,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         self._pixelsWide = self._contentSize.width = pixelsWide;
         self._pixelsHigh = self._contentSize.height = pixelsHigh;
         self._pixelFormat = cc.Texture2D.PIXEL_FORMAT.RGBA8888;
-        self._maxS = 1;
-        self._maxT = 1;
+        self.maxS = 1;
+        self.maxT = 1;
 
         self._hasPremultipliedAlpha = false;
         self._hasMipmaps = false;
@@ -787,7 +795,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     _loadedEventListeners:null,
 
     url : null,
-
     /*public:*/
     ctor:function () {
         this._contentSize = cc.size(0,0);
@@ -942,10 +949,10 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         //support only in WebGl rendering mode
     },
 
-	getPixelFormat:function () {
-		//support only in WebGl rendering mode
-		return null;
-	},
+    getPixelFormat:function () {
+        //support only in WebGl rendering mode
+        return null;
+    },
 
     /**
      * return shader program used by drawAtPoint and drawInRect
@@ -1144,7 +1151,7 @@ cc.defineGetterSetter(_proto, "name", _proto.getName);
 cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
 cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
 cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
-cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);

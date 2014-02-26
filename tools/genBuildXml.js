@@ -6,14 +6,14 @@
 var fs = require("fs");
 var path = require("path");
 
-var config = require("../config.json");
-var engineDir = config.engineDir;
+var projectJson = require("../project.json");
+var engineDir = projectJson.engineDir;
 var moduleConfig = require(path.join("../", engineDir, "moduleConfig.json"));
 var ccModuleMap = moduleConfig.module;
-var modules = config.modules;
+var modules = projectJson.modules;
 
 var ccJsList = ccModuleMap.core;
-var userJsList = config.jsList;
+var userJsList = projectJson.jsList;
 
 for(var i = 0, li = modules.length; i < li; i++){
     var tempJsList = ccModuleMap[modules[i]];
@@ -27,7 +27,8 @@ for(var i = 0, li = ccJsList.length; i < li; i++){
     if(i < li - 1) ccJsListStr += '\r\n';
 }
 
-if(fs.existsSync(path.join(__dirname, "../main.js"))) userJsList.push("main.js")
+if(fs.existsSync(path.join(__dirname, "../main.js"))) userJsList.push("main.js");
+else if(fs.existsSync(path.join(__dirname, "../src/main.js"))) userJsList.push("src/main.js");
 var userJsListStr = "";
 for(var i = 0, li = userJsList.length; i < li; i++){
     var jsPath = userJsList[i];

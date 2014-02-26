@@ -13,23 +13,27 @@
                 <file name="core/cocos2d_externs.js"/>
             </externs>
             <sources dir="${basedir}/../cocos2d">
-                <file name="core/CCLoaders.js"/>
                 <file name="core/platform/CCClass.js"/>
+                <file name="core/CCLoaders.js"/>
                 <file name="core/cocoa/CCGeometry.js"/>
                 <file name="core/platform/Sys.js"/>
                 <file name="core/platform/CCConfig.js"/>
                 <file name="core/platform/miniFramework.js"/>
                 <file name="core/platform/CCCommon.js"/>
                 <file name="core/platform/CCMacro.js"/>
-                <file name="core/platform/CCFileUtils.js"/>
                 <file name="core/platform/CCTypes.js"/>
                 <file name="core/platform/CCEGLView.js"/>
                 <file name="core/platform/CCScreen.js"/>
                 <file name="core/platform/CCVisibleRect.js"/>
+                <file name="core/platform/CCInputManager.js"/>
                 <file name="core/cocoa/CCAffineTransform.js"/>
                 <file name="core/support/CCPointExtension.js"/>
                 <file name="core/support/CCVertex.js"/>
                 <file name="core/support/TransformUtils.js"/>
+                <file name="event_dispatcher/CCTouch.js"/>
+                <file name="event_dispatcher/CCEvent.js"/>
+                <file name="event_dispatcher/CCEventListener.js"/>
+                <file name="event_dispatcher/CCEventManager.js"/>
                 <file name="core/base_nodes/CCNode.js"/>
                 <file name="core/base_nodes/CCAtlasNode.js"/>
                 <file name="core/textures/CCTexture2D.js"/>
@@ -101,10 +105,6 @@
                 <file name="particle_nodes/CCParticleSystem.js"/>
                 <file name="particle_nodes/CCParticleExamples.js"/>
                 <file name="particle_nodes/CCParticleBatchNode.js"/>
-                <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
-                <file name="touch_dispatcher/CCTouchHandler.js"/>
-                <file name="touch_dispatcher/CCTouchDispatcher.js"/>
-                <file name="touch_dispatcher/CCMouseDispatcher.js"/>
                 <file name="keyboard_dispatcher/CCKeyboardDelegate.js"/>
                 <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
                 <file name="accelerometer/CCAccelerometer.js"/>
@@ -230,7 +230,7 @@
             <sources dir="${basedir}">
               <file name="src/resource.js"/>
               <file name="src/myApp.js"/>
-              <file name="main.js"/>
+              <file name="src/main.js"/>
             </sources>
         </jscomp>
     </target>
