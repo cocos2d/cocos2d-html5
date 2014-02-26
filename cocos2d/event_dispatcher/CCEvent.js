@@ -237,12 +237,12 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     }
 });
 
-/**
- * Different types of MouseEvent
- * @constant
- * @type {Object}
- */
-cc.EventMouse.EventType = {NONE: 0, DOWN: 1, UP: 2, MOVE: 3, SCROLL: 4};
+//Different types of MouseEvent
+cc.EventMouse.NONE = 0;
+cc.EventMouse.DOWN = 1;
+cc.EventMouse.UP = 2;
+cc.EventMouse.MOVE = 3;
+cc.EventMouse.SCROLL = 4;
 
 /**
  * The tag of Mouse left button
@@ -252,18 +252,18 @@ cc.EventMouse.EventType = {NONE: 0, DOWN: 1, UP: 2, MOVE: 3, SCROLL: 4};
 cc.EventMouse.BUTTON_LEFT = 0;
 
 /**
- * The tag of Mouse right button
+ * The tag of Mouse right button  (The right button number is 2 on browser)
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_RIGHT = 1;
+cc.EventMouse.BUTTON_RIGHT = 2;
 
 /**
- * The tag of Mouse middle button
+ * The tag of Mouse middle button  (The right button number is 1 on browser)
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_MIDDLE = 2;
+cc.EventMouse.BUTTON_MIDDLE = 1;
 
 /**
  * The tag of Mouse button 4

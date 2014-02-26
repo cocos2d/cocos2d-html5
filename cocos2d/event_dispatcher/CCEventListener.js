@@ -245,7 +245,7 @@ cc.EventListenerMouse = cc.EventListener.extend({
     ctor: function () {
         var selfPointer = this;
         var listener = function (event) {
-            var eventType = cc.EventMouse.EventType;
+            var eventType = cc.EventMouse;
             switch (event._eventType) {
                 case eventType.DOWN:
                     if (selfPointer.onMouseDown)
@@ -387,8 +387,10 @@ cc.EventListener.create = function(argObj){
         delete argObj.callback;
     } else if(listenerType === cc.EventListener.KEYBOARD)
         listener = new cc.EventListenerKeyboard();
-    else if(listenerType === cc.EventListener.ACCELERATION)
-        listener = new cc.EventListenerAcceleration();
+    else if(listenerType === cc.EventListener.ACCELERATION){
+        listener = new cc.EventListenerAcceleration(argObj.callback);
+        delete argObj.callback;
+    }
 
     for(var key in argObj) {
         listener[key] = argObj[key];
