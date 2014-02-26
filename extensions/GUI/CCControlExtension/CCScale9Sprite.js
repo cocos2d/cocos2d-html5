@@ -210,10 +210,10 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
 
-        this._colorUnmodified = cc.white();
+        this._colorUnmodified = cc.color(255, 255, 255, 255);
         this._originalSize = cc.size(0, 0);
         this._preferredSize = cc.size(0, 0);
-        this._color = cc.white();
+        this._color = cc.color(255, 255, 255, 255);
         this._opacity = 255;
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._loadedEventListeners = [];

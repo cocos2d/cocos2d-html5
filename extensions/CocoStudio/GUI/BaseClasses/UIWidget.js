@@ -529,7 +529,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                 this._size.width = locSize.width;
                 this._size.height = locSize.height;
 
-                var pSize,spx=spy=0;
+                var pSize, spx = 0, spy = 0;
                 var widgetParent = this.getWidgetParent();
                 if (widgetParent){
                     pSize = widgetParent.getSize();

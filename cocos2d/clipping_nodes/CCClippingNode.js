@@ -216,7 +216,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL

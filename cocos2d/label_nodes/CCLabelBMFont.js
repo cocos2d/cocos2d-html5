@@ -132,8 +132,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var self = this;
         cc.SpriteBatchNode.prototype.ctor.call(self);
         self._imageOffset = cc.p(0,0);
-        self._displayedColor = cc.white();
-        self._realColor = cc.white();
+        self._displayedColor = cc.color(255, 255, 255, 255);
+        self._realColor = cc.color(255, 255, 255, 255);
         self._reusedChar = [];
     },
     /**
@@ -177,7 +177,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var size = this.getContentSize();
             var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
-            cc.drawingUtil.setDrawColor4B(0,255,0,255);
+            cc.drawingUtil.setDrawColor(0,255,0,255);
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
     },
@@ -185,7 +185,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     //TODO
     /**
      * tint this label
-     * @param {cc.Color3B} color3
+     * @param {cc.Color} color3
      */
     setColor:function (color3) {
         if (((this._realColor.r == color3.r) && (this._realColor.g == color3.g) && (this._realColor.b == color3.b)))
@@ -195,7 +195,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         if(this._textureLoaded){
             if(this._cascadeColorEnabled){
-                var parentColor = cc.white();
+                var parentColor = cc.color.white;
                 var locParent = this._parent;
                 if(locParent && locParent.RGBAProtocol && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
@@ -392,8 +392,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             self._width = (width == null) ? -1 : width;
 
             self._displayedOpacity = self._realOpacity = 255;
-            self._displayedColor = cc.white();
-            self._realColor = cc.white();
+            self._displayedColor = cc.color(255, 255, 255, 255);
+            self._realColor = cc.color(255, 255, 255, 255);
             self._cascadeOpacityEnabled = true;
             self._cascadeColorEnabled = true;
 
@@ -403,7 +403,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             self.setAnchorPoint(0.5, 0.5);
 
             if (cc.renderContextType === cc.WEBGL) {
-                var locTexture = self._textureAtlas.texture;
+                var locTexture = self.textureAtlas.texture;
                 self._opacityModifyRGB = locTexture.hasPremultipliedAlpha();
 
                 var reusedChar = self._reusedChar = new cc.Sprite();

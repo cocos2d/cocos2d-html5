@@ -115,7 +115,7 @@ cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCa
  * Everywhere else transparency is displayed.
  * @function
  * @param {HTMLImageElement} texture
- * @param {cc.Color3B|cc.Color4F} color
+ * @param {cc.Color} color
  * @param {cc.Rect} rect
  * @return {HTMLCanvasElement}
  */
@@ -123,12 +123,6 @@ cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
         rect = cc.rect(0, 0, texture.width, texture.height);
         rect = cc.RECT_PIXELS_TO_POINTS(rect);
-    }
-    var selColor;
-    if (color instanceof cc.Color4F) {
-        selColor = cc.c4b(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
-    } else {
-        selColor = cc.c4b(color.r, color.g, color.b, 50);//color;
     }
 
     var buff = document.createElement("canvas");
@@ -141,8 +135,8 @@ cc.generateTintImage2 = function (texture, color, rect) {
     ctx.drawImage(texture, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
 
     ctx.globalCompositeOperation = "source-in";
-    ctx.globalAlpha = selColor.a / 255.0;
-    ctx.fillStyle = "rgb(" + selColor.r + "," + selColor.g + "," + selColor.b + ")";
+    ctx.globalAlpha = color.a / 255.0;
+    ctx.fillStyle = "rgb(" + color.r + "," + color.g + "," + color.b + ")";
     ctx.fillRect(0, 0, rect.width, rect.height);
     ctx.restore();
 
@@ -156,7 +150,7 @@ cc.generateTintImage2 = function (texture, color, rect) {
  * @function
  * @param {HTMLImageElement} texture
  * @param {Array} tintedImgCache
- * @param {cc.Color3B|cc.Color4F} color
+ * @param {cc.Color} color
  * @param {cc.Rect} rect
  * @param {HTMLCanvasElement} [renderCanvas]
  * @return {HTMLCanvasElement}
@@ -165,13 +159,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
     if (!rect)
         rect = cc.rect(0, 0, texture.width, texture.height);
 
-    var selColor;
-    if (color.a == null) {
-        // Optimization for the particle system which mainly uses c4f colors
-        selColor = cc.c4f(color.r / 255.0, color.g / 255.0, color.b / 255, 1);
-    } else {
-        selColor = color;
-    }
+    var selColor = cc.color(color.r / 255.0, color.g / 255.0, color.b / 255, 1);
 
     var w = Math.min(rect.width, tintedImgCache[0].width);
     var h = Math.min(rect.height, tintedImgCache[0].height);
@@ -1068,7 +1056,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._hasChildren = false;
 
         // Atlas: Color
-        var tmpColor = new cc.Color4B(255, 255, 255, 255);
+        var tmpColor = cc.color(255, 255, 255, 255);
         var locQuad = this._quad;
         locQuad.bl.colors = tmpColor;
         locQuad.br.colors = tmpColor;
@@ -1500,7 +1488,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * color setter
-     * @param {cc.Color3B} color3
+     * @param {cc.Color} color3
      */
     setColor: null,
 
@@ -2097,14 +2085,14 @@ delete window._proto;
  * var sprite1 = cc.Sprite.create("res/HelloHTML5World.png");
  * var sprite2 = cc.Sprite.create("res/HelloHTML5World.png",cc.rect(0,0,480,320));
  *
- * 2.Create a sprite with a sprite frame name. Must add "#" before fame name.
+ * 2.Create a sprite with a sprite frame name. Must add "#" before frame name.
  * var sprite = cc.Sprite.create('#grossini_dance_01.png');
  *
  * 3.Create a sprite with a sprite frame
  * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
  * var sprite = cc.Sprite.create(spriteFrame);
  *
- * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
+ * 4.Create a sprite with an exsiting texture contained in a CCTexture2D object
  *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
  * var texture = cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
  * var sprite1 = cc.Sprite.create(texture);

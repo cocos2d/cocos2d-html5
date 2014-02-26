@@ -108,7 +108,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * draws a solid rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidRect:function (origin, destination, color) {
         cc.log("DrawingPrimitive.drawSolidRect() not implement!");
@@ -129,7 +129,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
      * @param {Array} poli
      * @param {Number} numberOfPoints
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidPoly:function (poli, numberOfPoints, color) {
         cc.log("DrawingPrimitive.drawSolidPoly() not implement!");
@@ -269,7 +269,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draws a solid rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidRect:function (origin, destination, color) {
         var vertices = [
@@ -319,10 +319,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draws a solid polygon given a pointer to CGPoint coordinates, the number of vertices measured in points, and a color.
      * @param {Array} polygons
      * @param {Number} numberOfPoints
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidPoly:function (polygons, numberOfPoints, color) {
-        this.setDrawColor4F(color.r, color.g, color.b, color.a);
+        this.setDrawColor(color.r, color.g, color.b, color.a);
         this.drawPoly(polygons, numberOfPoints, true, true);
     },
 
@@ -481,14 +481,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draw a star
      * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
-     * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawStar:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
         radius *= cc.EGLView.getInstance().getScaleX();
-        if (color instanceof cc.Color4F)
-            color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
-        var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
+        var colorStr = "rgba(" + (0 | color.r) + "," + (0 | color.g) + "," + (0 | color.b);
         context.fillStyle = colorStr + ",1)";
         var subRadius = radius / 10;
 
@@ -522,14 +520,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draw a color ball
      * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
-     * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawColorBall:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
         radius *= cc.EGLView.getInstance().getScaleX();
-        if (color instanceof cc.Color4F)
-            color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
-        var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
+        var colorStr = "rgba(" +(0|color.r) + "," + (0|color.g) + "," + (0|color.b);
         var subRadius = radius / 10;
 
         var g1 = context.createRadialGradient(0, 0, subRadius, 0, 0, radius);
@@ -563,21 +559,9 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {Number} b blue value (0 to 255)
      * @param {Number} a Alpha value (0 to 255)
      */
-    setDrawColor4B:function (r, g, b, a) {
+    setDrawColor:function (r, g, b, a) {
         this._renderContext.fillStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
         this._renderContext.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
-    },
-
-    /**
-     * set the drawing color with 4 floats
-     * @param {Number} r red value (0 to 1)
-     * @param {Number} g green value (0 to 1)
-     * @param {Number} b blue value (0 to 1)
-     * @param {Number} a Alpha value (0 to 1)
-     */
-    setDrawColor4F:function (r, g, b, a) {
-        this._renderContext.fillStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
-        this._renderContext.strokeStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
     },
 
     /**
@@ -605,10 +589,9 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     _initialized:false,
     _shader: null,
     _colorLocation:-1,
-    _color: null,
+    _colorArray: null,
     _pointSizeLocation:-1,
     _pointSize:-1,
-
     ctor:function (ctx) {
         if (ctx == null)
             ctx = cc.renderContext;
@@ -617,7 +600,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";
 
         cc.DrawingPrimitive.prototype.ctor.call(this, ctx);
-        this._color = new cc.Color4F(1.0, 1.0, 1.0, 1.0);
+        this._colorArray = new Float32Array([1.0, 1.0, 1.0, 1.0]);
     },
 
     lazy_init:function () {
@@ -648,13 +631,13 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     drawPoint:function (point) {
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
         this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array([point.x, point.y]), glContext.STATIC_DRAW);
@@ -677,13 +660,13 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
 
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
         this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray(points), glContext.STATIC_DRAW);
@@ -712,12 +695,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     drawLine:function (origin, destination) {
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray([origin, destination]), glContext.STATIC_DRAW);
@@ -745,7 +728,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * draws a solid rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidRect:function (origin, destination, color) {
         var vertices = [
@@ -767,12 +750,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     drawPoly:function (vertices, numOfVertices, closePolygon) {
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray(vertices), glContext.STATIC_DRAW);
@@ -791,19 +774,19 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
      * @param {Array} poli
      * @param {Number} numberOfPoints
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidPoly:function (poli, numberOfPoints, color) {
         this.lazy_init();
-        if (!color)
-            color = this._color;
+        if (color)
+            this.setDrawColor(color.r, color.g, color.b, color.a);
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray(poli), glContext.STATIC_DRAW);
@@ -846,12 +829,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         vertices[(segments + 1) * 2] = center.x;
         vertices[(segments + 1) * 2 + 1] = center.y;
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -884,12 +867,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         vertices[segments * 2] = destination.x;
         vertices[segments * 2 + 1] = destination.y;
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -923,12 +906,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         vertices[segments * 2] = destination.x;
         vertices[segments * 2 + 1] = destination.y;
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -983,12 +966,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             vertices[i * 2 + 1] = newPos.y;
         }
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -1006,25 +989,11 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * @param {Number} b blue value (0 to 255)
      * @param {Number} a Alpha value (0 to 255)
      */
-    setDrawColor4B:function (r, g, b, a) {
-        this._color.r = r / 255.0;
-        this._color.g = g / 255.0;
-        this._color.b = b / 255.0;
-        this._color.a = a / 255.0;
-    },
-
-    /**
-     * set the drawing color with 4 floats
-     * @param {Number} r red value (0 to 1)
-     * @param {Number} g green value (0 to 1)
-     * @param {Number} b blue value (0 to 1)
-     * @param {Number} a Alpha value (0 to 1)
-     */
-    setDrawColor4F:function (r, g, b, a) {
-        this._color.r = r;
-        this._color.g = g;
-        this._color.b = b;
-        this._color.a = a;
+    setDrawColor:function (r, g, b, a) {
+        this._colorArray[0] = r / 255.0;
+        this._colorArray[1] = g / 255.0;
+        this._colorArray[2] = b / 255.0;
+        this._colorArray[3] = a / 255.0;
     },
 
     /**

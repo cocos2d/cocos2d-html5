@@ -230,7 +230,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      * set color of sprite
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor:function (color) {
         this._sprite.color = color;
@@ -248,7 +248,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      * return color of sprite
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getColor:function () {
         return this._sprite.color;
