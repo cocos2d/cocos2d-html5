@@ -148,14 +148,14 @@ cc.path = {
     /**
      * Join strings to be a path.
      * @example
-         cc.path.joinPath("a", "b.png");//-->"a/b.png"
-         cc.path.joinPath("a", "b", "c.png");//-->"a/b/c.png"
-         cc.path.joinPath("a", "b");//-->"a/b"
-         cc.path.joinPath("a", "b", "/");//-->"a/b/"
-         cc.path.joinPath("a", "b/", "/");//-->"a/b/"
+         cc.path.join("a", "b.png");//-->"a/b.png"
+         cc.path.join("a", "b", "c.png");//-->"a/b/c.png"
+         cc.path.join("a", "b");//-->"a/b"
+         cc.path.join("a", "b", "/");//-->"a/b/"
+         cc.path.join("a", "b/", "/");//-->"a/b/"
      * @returns {string}
      */
-    joinPath : function(){
+    join : function(){
         var l = arguments.length;
         var result = "";
         for(var i = 0; i < l; i++) {
@@ -374,7 +374,7 @@ cc.loader = {
             self._loadJs4Dependency(args[0], args[1], 0, args[2]);
         } else {
             cc.async.map(args[1], function(item, index, cb1){
-                var jsPath = cc.path.joinPath(args[0], item);
+                var jsPath = cc.path.join(args[0], item);
                 if(localJsCache[jsPath]) return cb1(null);
                 self._createScript(jsPath, false, cb1);
             }, args[2]);
@@ -415,7 +415,7 @@ cc.loader = {
             return;
         }
         var self = this;
-        self._createScript(cc.path.joinPath(baseDir, jsList[index]), false, function(err){
+        self._createScript(cc.path.join(baseDir, jsList[index]), false, function(err){
             if(err) return cb(err);
             self._loadJs4Dependency(baseDir, jsList, index+1, cb);
         });
@@ -626,7 +626,7 @@ cc.loader = {
             if(!loader) basePath = self.resPath;
             else basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
         }
-        url = cc.path.joinPath(basePath || "", url)
+        url = cc.path.join(basePath || "", url)
         if(url.match(/[\/(\\\\)]lang[\/(\\\\)]/i)){
             if(langPathCache[url]) return langPathCache[url];
             var extname = path.extname(url) || "";
@@ -799,8 +799,8 @@ cc.loader = {
             self._loadDep(arr, item, is3rdPartyArr[index], cb1);
         }, function(err){
             if(err) return cb(err);
-            arr.push(path.joinPath(depPath, self.JS_RES_JS_PATH));
-            arr.push(path.joinPath(depPath, self.RES_CFG_JS_PATH));
+            arr.push(path.join(depPath, self.JS_RES_JS_PATH));
+            arr.push(path.join(depPath, self.RES_CFG_JS_PATH));
             cb();
         });
     },
@@ -817,9 +817,9 @@ cc.loader = {
         var self = this, path = cc.path, engineDir = cc.game.config[cc.game.CONFIG_KEY.engineDir],
             locDeps = self._deps, locDepsOf3rdParty = self._depsOf3rdParty;
         if(locDeps.indexOf(name) >= 0 || locDepsOf3rdParty.indexOf(name) >= 0) cb();//has loaded
-        var depPath = path.joinPath((is3rdParty ? self.NODE_MODULE_PATH : engineDir), name);
+        var depPath = path.join((is3rdParty ? self.NODE_MODULE_PATH : engineDir), name);
         cc.async.map([cc.game.CONFIG_PATH, cc.game.PACKAGE_PATH], function(item, index, cb1){
-            self.loadJson(path.joinPath(depPath, item), cb1);
+            self.loadJson(path.join(depPath, item), cb1);
         }, function(err, results){
             if(err) return cb(err);
             if(locDeps.indexOf(name) >= 0 || locDepsOf3rdParty.indexOf(name) >= 0) cb();//has loaded
@@ -868,8 +868,8 @@ cc.loader = {
             if(results && results.length > 0){
                 var moduleName = results[0].substring(2, results[0].length - 2);
                 var repStr = "";
-                if(self._deps.indexOf(moduleName) >= 0) repStr = cc.path.joinPath(cc.game.config[cc.game.CONFIG_KEY.engineDir], moduleName, "/");
-                else if(self._depsOf3rdParty.indexOf(moduleName) >= 0) repStr = cc.path.joinPath(self.NODE_MODULE_PATH, moduleName, "/");
+                if(self._deps.indexOf(moduleName) >= 0) repStr = cc.path.join(cc.game.config[cc.game.CONFIG_KEY.engineDir], moduleName, "/");
+                else if(self._depsOf3rdParty.indexOf(moduleName) >= 0) repStr = cc.path.join(self.NODE_MODULE_PATH, moduleName, "/");
                 cfgName = cfgName.replace(/\[\%[\w_\d\-]+\%\]/, repStr);//replace module name with path
             }
             result.jsArr.push(cfgName);
@@ -1390,7 +1390,7 @@ cc.game = {
                     });
                 }else{
                     //load cc's jsList first
-                    var ccModulesPath = cc.path.joinPath(engineDir, "moduleConfig.json");
+                    var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
                     loader.loadJson(ccModulesPath, function(err, modulesJson){
                         if(err) throw err;
                         var modules = config["modules"] || [];

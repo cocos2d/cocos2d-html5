@@ -54,7 +54,6 @@ cc.plistLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadTxt(realUrl, function(err, txt){
             if(err) return cb(err);
-            console.log(txt);
             cb(null, cc.PlistParser.getInstance().parse(txt));
         });
     }
@@ -109,7 +108,7 @@ cc.pkgJsonLoader = {
             if(err) return cb(err);
             var dir = cc.path.dirname(url);
             for (var key in pkg) {
-                var filePath = cc.path.joinPath(dir, key);
+                var filePath = cc.path.join(dir, key);
                 cache[filePath] = self._parse(pkg[key]);
             }
             cb(null, true);

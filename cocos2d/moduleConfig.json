@@ -9,7 +9,6 @@
             "core/platform/miniFramework.js",
             "core/platform/CCCommon.js",
             "core/platform/CCMacro.js",
-            "core/platform/CCFileUtils.js",
             "core/platform/CCTypes.js",
             "core/platform/CCEGLView.js",
             "core/platform/CCScreen.js",

@@ -93,7 +93,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         resType =-1;
                     }
 
-                    path = cc.path.joinPath(this._baseBath, fileData["path"]);
+                    path = cc.path.join(this._baseBath, fileData["path"]);
                     plistFile = fileData["plistFile"];
                 }
 
@@ -109,7 +109,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     else if (resType == 1) {
                         if (pathExtname != ".plist") continue;
 
-                        plistFile = cc.path.joinPath(this._baseBath, plistFile);
+                        plistFile = cc.path.join(this._baseBath, plistFile);
                         var pngFile = cc.path.changeExtname(plistFile, ".png");
                         cc.SpriteFrameCache.getInstance().addSpriteFrames(plistFile, pngFile);
                         sprite = cc.Sprite.create("frame#" + fileData["path"]);

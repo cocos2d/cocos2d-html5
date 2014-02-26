@@ -1094,11 +1094,13 @@ cc.fntLoader = {
         }
 
         //kerning
-        var kerningLines = fntStr.match(self.KERNING_EXP);
         var kerningDict = fnt.kerningDict = {};
-        for(var i = 0, li = kerningLines.length; i < li; i++){
-            var kerningObj = self._parseStrToObj(kerningLines[i]);
-            kerningDict[(kerningObj["first"] << 16) | (kerningObj["second"] & 0xffff)] = kerningObj["amount"];
+        var kerningLines = fntStr.match(self.KERNING_EXP);
+        if(kerningLines){
+            for(var i = 0, li = kerningLines.length; i < li; i++){
+                var kerningObj = self._parseStrToObj(kerningLines[i]);
+                kerningDict[(kerningObj["first"] << 16) | (kerningObj["second"] & 0xffff)] = kerningObj["amount"];
+            }
         }
         return fnt;
     },

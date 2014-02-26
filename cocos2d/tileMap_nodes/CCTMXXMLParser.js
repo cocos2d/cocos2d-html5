@@ -590,7 +590,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             var tsxName = selTileset.getAttribute('source');
             if (tsxName) {
                 //this._currentFirstGID = parseInt(selTileset.getAttribute('firstgid'));
-                var tsxPath = isXmlString ? cc.path.joinPath(this._resources, tsxName) : cc.path.changeBasename(tmxFile, tsxName);
+                var tsxPath = isXmlString ? cc.path.join(this._resources, tsxName) : cc.path.changeBasename(tmxFile, tsxName);
                 this.parseXMLFile(tsxPath);
             } else {
                 var tileset = new cc.TMXTilesetInfo();
