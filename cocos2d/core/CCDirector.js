@@ -196,13 +196,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * Constructor
      */
     ctor:function () {
-        this._lastUpdate = Date.now();
-        if (!cc.isAddedHiddenEvent) {
-            var selfPointer = this;
-            window.addEventListener("focus", function () {
-                selfPointer._lastUpdate = Date.now();
-            }, false);
-        }
+        var self = this;
+        self._lastUpdate = Date.now();
+        cc.winEvents.shows.push(function(){
+            self._lastUpdate = Date.now();
+        });
     },
 
     _resetLastUpdate:function () {
