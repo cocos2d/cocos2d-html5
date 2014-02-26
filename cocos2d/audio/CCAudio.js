@@ -985,7 +985,7 @@ cc.audioLoader = {
     },
     _load : function(realUrl, url, res, count, tryArr, audio, cb){
         var self = this, locLoader = cc.loader, path = cc.path;
-        var types = locLoader._supportedAudioTypes;
+        var types = this._supportedAudioTypes;
         var extname = "";
         if(types.length == 0) return cb("can not support audio!");
         if(count == -1){
