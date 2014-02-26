@@ -109,6 +109,7 @@ cc.LoaderScene = cc.Scene.extend({
         var count = self._count;
         var length = self._length;
         var percent = (count / length * 100) | 0;
+        percent = Math.min(percent, 100);
         self._label.setString("Loading... " + percent + "%");
         if(count >= length) self.unschedule(self._updatePercent);
     }
