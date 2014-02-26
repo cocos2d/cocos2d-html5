@@ -55,7 +55,7 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
      * @param {String} pszFilePath
      */
     preloadBackgroundMusic: function (pszFilePath) {
-        cc.AudioEngine.getInstance().preloadMusic(pszFilePath);
+        cc.loader.load(pszFilePath);
     },
 
     /**
@@ -212,7 +212,7 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
      * @param {String} pszFilePath
      */
     preloadEffect: function (pszFilePath) {
-        cc.AudioEngine.getInstance().preloadEffect(pszFilePath);
+        cc.loader.loadRes(pszFilePath);
         this.setFile(pszFilePath);
         this.setLoop(false);
     },

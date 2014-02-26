@@ -722,13 +722,14 @@ cc.NodeLoader = cc.Class.extend({
         var ccbFileWithoutPathExtension = cc.BuilderReader.deletePathExtension(ccbFileName);
         ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
 
-        //load sub file
-        var fileUtils = cc.FileUtils.getInstance();
-        var path = fileUtils.fullPathFromRelativePath(ccbFileName);
         var myCCBReader = new cc.BuilderReader(ccbReader);
 
-        var size ;
-        var bytes = fileUtils.getByteArrayFromFile(path,"rb", size);
+        var bytes = cc.loader.getRes(ccbFileName);
+        if(!bytes){
+            var realUrl = cc.loader.getUrl(ccbFileName);
+            bytes = cc.loader.loadBinarySync(realUrl);
+            cc.loader.cache[ccbFileName] = bytes;
+        }
 
         myCCBReader.initWithData(bytes,ccbReader.getOwner());
         myCCBReader.getAnimationManager().setRootContainerSize(parent.getContentSize());

@@ -82,7 +82,6 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * tmpAtlas.initWithTileFile("hello.png", "hello.tga", 16, 16);
      */
     initWithTileFile:function (tile, mapFile, tileWidth, tileHeight) {
-        this._loadTGAfile(mapFile);
         this._calculateItemsToRender();
         if (cc.AtlasNode.prototype.initWithTileFile.call(this, tile, tileWidth, tileHeight, this._itemsToRender)) {
             this._color = cc.color.white;
@@ -155,21 +154,6 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             cc.tgaDestroy(this.tgaInfo);
         }
         this.tgaInfo = null;
-    },
-
-    _loadTGAfile:function (file) {
-        if(!file)
-            throw "cc.TileMapAtlas._loadTGAfile(): file should be non-null";
-
-        //	//Find the path of the file
-        //	NSBundle *mainBndl = [cc.Director sharedDirector].loadingBundle;
-        //	cc.String *resourcePath = [mainBndl resourcePath];
-        //	cc.String * path = [resourcePath stringByAppendingPathComponent:file];
-
-        this.tgaInfo = cc.tgaLoad(cc.FileUtils.getInstance().fullPathForFilename(file));
-        if (this.tgaInfo.status != cc.TGA_OK) {
-            cc.log("TileMapAtlasLoadTGA : TileMapAtlas cannot load TGA file");
-        }
     },
 
     _calculateItemsToRender:function () {

@@ -102,15 +102,8 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
      * @returns {ccs.Widget}
      */
     widgetFromJsonFile: function (fileName) {
-        var jsonPath = fileName || "";
-        var pos = jsonPath.lastIndexOf('/');
-        this._filePath = jsonPath.substr(0, pos + 1);
-        var des = cc.FileUtils.getInstance().getTextFileData(jsonPath);
-        if (!des) {
-            cc.log("read json file[" + fileName + "] error!");
-            return null;
-        }
-        var jsonDict = JSON.parse(des);
+        var jsonDict = cc.loader.getRes(fileName);
+        if(!jsonDict) throw "Please load the resource first : " + fileName;
 
         var fileVersion = jsonDict["version"];
         var pReader, widget;
@@ -132,7 +125,6 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
             this._olderVersion = true;
         }
         jsonDict = null;
-        des = null;
         return widget;
     }
 });
