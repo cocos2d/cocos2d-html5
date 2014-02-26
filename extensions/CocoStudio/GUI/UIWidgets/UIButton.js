@@ -537,10 +537,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         return this._normalTextureSize;
     },
 	_getWidth: function () {
-		return this._normalTextureSize.width;
+		return this._scale9Enabled ? this._size.width : this._normalTextureSize.width;
 	},
 	_getHeight: function () {
-		return this._normalTextureSize.height;
+		return this._scale9Enabled ? this._size.height : this._normalTextureSize.height;
 	},
 
     /**

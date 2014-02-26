@@ -68,7 +68,7 @@ ccs.ActionNode = ccs.Class.extend({
                 var positionY = actionFrameDic["positiony"];
                 var actionFrame = new ccs.ActionMoveFrame();
                 actionFrame.setFrameIndex(frameInex);
-                actionFrame.setPosition(cc.p(positionX, positionY));
+                actionFrame.setPosition(positionX, positionY);
                 var actionArray = this._frameArray[ccs.FrameType.move];
                 actionArray.push(actionFrame);
             }
