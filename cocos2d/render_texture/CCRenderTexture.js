@@ -554,7 +554,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         ctx.restore();
 
-        this._orderOfArrival = 0;
+        this.orderOfArrival = 0;
     },
 
     _visitForWebGL:function (ctx) {
@@ -565,7 +565,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         cc.kmGLPushMatrix();
 
-        var locGrid = this._grid;
+        var locGrid = this.grid;
         if (locGrid && locGrid.isActive()) {
             locGrid.beforeDraw();
             this.transformAncestors();
@@ -580,7 +580,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         cc.kmGLPopMatrix();
 
-        this._orderOfArrival = 0;
+        this.orderOfArrival = 0;
     },
 
     draw:null,

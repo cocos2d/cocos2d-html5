@@ -584,7 +584,7 @@ cc.ScrollView = cc.Layer.extend({
             context.restore();
         } else {
             cc.kmGLPushMatrix();
-            var locGrid = this._grid;
+            var locGrid = this.grid;
             if (locGrid && locGrid.isActive()) {
                 locGrid.beforeDraw();
                 this.transformAncestors();

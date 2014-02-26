@@ -383,16 +383,16 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             return;
 
         cc.kmGLPushMatrix();
-        if (this._grid && this._grid.isActive()) {
-            this._grid.beforeDraw();
+        if (this.grid && this.grid.isActive()) {
+            this.grid.beforeDraw();
             this.transformAncestors();
         }
 
         this.transform(ctx);
         this.draw(ctx);
 
-        if (this._grid && this._grid.isActive())
-            this._grid.afterDraw(this);
+        if (this.grid && this.grid.isActive())
+            this.grid.afterDraw(this);
 
         cc.kmGLPopMatrix();
     },

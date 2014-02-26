@@ -224,7 +224,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.orderOfArrival < tempChild.orderOfArrival ))) {
                     _children[j + 1] = tempChild;
                     j = j - 1;
                     tempChild = _children[j];

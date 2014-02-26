@@ -272,7 +272,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     placeTile:function (pos, tile) {
         var coords = this.originalTile(pos);
 
-        var step = this._target.getGrid().getStep();
+        var step = this._target.grid.getStep();
         var locPosition = tile.position;
         coords.bl.x += (locPosition.x * step.x);
         coords.bl.y += (locPosition.y * step.y);
@@ -396,7 +396,7 @@ cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */
      */
     transformTile:function (pos, distance) {
         var coords = this.originalTile(pos);
-        var step = this._target.getGrid().getStep();
+        var step = this._target.grid.getStep();
 
         coords.bl.x += (step.x / 2) * (1.0 - distance);
         coords.bl.y += (step.y / 2) * (1.0 - distance);
@@ -493,7 +493,7 @@ cc.FadeOutUpTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutUpTiles# */{
 
     transformTile:function (pos, distance) {
         var coords = this.originalTile(pos);
-        var step = this._target.getGrid().getStep();
+        var step = this._target.grid.getStep();
 
         coords.bl.y += (step.y / 2) * (1.0 - distance);
         coords.br.y += (step.y / 2) * (1.0 - distance);
@@ -827,7 +827,7 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
         var sinz2 = (Math.sin(Math.PI * (time * this._jumps * 2 + 1)) * this._amplitude * this._amplitudeRate );
 
         var locGridSize = this._gridSize;
-        var locGrid = this._target.getGrid();
+        var locGrid = this._target.grid;
         var coords, locPos = cc.p(0, 0);
         for (var i = 0; i < locGridSize.width; i++) {
             for (var j = 0; j < locGridSize.height; j++) {

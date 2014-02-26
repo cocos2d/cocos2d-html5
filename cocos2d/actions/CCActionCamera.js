@@ -153,7 +153,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
      */
     sphericalRadius:function () {
         var newRadius, zenith, azimuth;
-        var camera = this._target.getCamera();
+        var camera = this.target.getCamera();
         var eyeXYZ = camera.getEye();
         var centerXYZ = camera.getCenter();
 
@@ -208,7 +208,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
         var j = Math.sin(za) * Math.sin(xa) * r + this._centerYOrig;
         var k = Math.cos(za) * r + this._centerZOrig;
 
-        this._target.getCamera().setEye(i, j, k);
+        this.target.getCamera().setEye(i, j, k);
     }
 });
 
