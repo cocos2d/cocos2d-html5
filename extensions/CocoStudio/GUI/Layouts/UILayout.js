@@ -371,10 +371,9 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
             return;
         }
-
+        var context = ctx || cc.renderContext;
         // Composition mode, costy but support texture stencil
         if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
-            var context = ctx || cc.renderContext;
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
             var canvas = context.canvas;
             var locCache = ccs.Layout._getSharedCache();
@@ -403,7 +402,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         // Clip mode, fast, but only support cc.DrawNode
         else {
-            var context = ctx || cc.renderContext, i, children = this._children, locChild;
+            var i, children = this._children, locChild;
 
             context.save();
             this.transform(context);
@@ -419,7 +418,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 // draw children zOrder < 0
                 for (i = 0; i < len; i++) {
                     locChild = children[i];
-                    if (locChild._zOrder < 0)
+                    if (locChild._localZOrder < 0)
                         locChild.visit(context);
                     else
                         break;

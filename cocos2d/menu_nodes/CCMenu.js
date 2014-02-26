@@ -150,9 +150,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      */
     initWithArray:function (arrayOfItems) {
         if (this.init()) {
-            this.touchPriority = cc.MENU_HANDLER_PRIORITY;
-            this.touchMode = cc.TOUCH_ONE_BY_ONE;
-            this.touchEnabled = true;
             this.enabled = true;
 
             // menu in the center of the screen
@@ -177,6 +174,18 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             // enable cascade color and opacity on menus
             this.cascadeColor = true;
             this.cascadeOpacity = true;
+
+            //add touch event listener
+            var touchListener = cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                swallowTouches: true,
+                onTouchBegan: this._onTouchBegan,
+                onTouchMoved: this._onTouchMoved,
+                onTouchEnded: this._onTouchEnded,
+                onTouchCancelled: this._onTouchCancelled
+            });
+            cc.eventManager.addListener(touchListener,this);
+
             return true;
         }
         return false;
@@ -433,13 +442,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     },
 
     /**
-     * make the menu clickable
-     */
-    registerWithTouchDispatcher:function () {
-        cc.registerTargetedDelegate(this.touchPriority, true, this);
-    },
-
-    /**
      * @param {cc.Node} child
      * @param {boolean} cleanup
      */
@@ -456,74 +458,62 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
-    /**
-     * @param {cc.Touch} touch
-     * @param {Object} e
-     * @return {Boolean}
-     */
-    onTouchBegan:function (touch, e) {
-        if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this.enabled)
+    _onTouchBegan:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if (target._state != cc.MENU_STATE_WAITING || !target._visible || !target.enabled)
             return false;
 
-        for (var c = this.parent; c != null; c = c.parent) {
+        for (var c = target.parent; c != null; c = c.parent) {
             if (!c.isVisible())
                 return false;
         }
 
-        this._selectedItem = this._itemForTouch(touch);
-        if (this._selectedItem) {
-            this._state = cc.MENU_STATE_TRACKING_TOUCH;
-            this._selectedItem.selected();
+        target._selectedItem = target._itemForTouch(touch);
+        if (target._selectedItem) {
+            target._state = cc.MENU_STATE_TRACKING_TOUCH;
+            target._selectedItem.selected();
             return true;
         }
         return false;
     },
 
-    /**
-     * when a touch ended
-     */
-    onTouchEnded:function (touch, e) {
-        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+    _onTouchEnded:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
             cc.log("cc.Menu.onTouchEnded(): invalid state");
             return;
         }
-        if (this._selectedItem) {
-            this._selectedItem.unselected();
-            this._selectedItem.activate();
+        if (target._selectedItem) {
+            target._selectedItem.unselected();
+            target._selectedItem.activate();
         }
-        this._state = cc.MENU_STATE_WAITING;
+        target._state = cc.MENU_STATE_WAITING;
     },
 
-    /**
-     * touch cancelled
-     */
-    onTouchCancelled:function (touch, e) {
-        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+    _onTouchCancelled:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
             cc.log("cc.Menu.onTouchCancelled(): invalid state");
             return;
         }
         if (this._selectedItem)
-            this._selectedItem.unselected();
-        this._state = cc.MENU_STATE_WAITING;
+            target._selectedItem.unselected();
+        target._state = cc.MENU_STATE_WAITING;
     },
 
-    /**
-     * touch moved
-     * @param {cc.Touch} touch
-     * @param {Object} e
-     */
-    onTouchMoved:function (touch, e) {
-        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+    _onTouchMoved:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
             cc.log("cc.Menu.onTouchMoved(): invalid state");
             return;
         }
-        var currentItem = this._itemForTouch(touch);
-        if (currentItem != this._selectedItem) {
-            if (this._selectedItem)
-                this._selectedItem.unselected();
-            this._selectedItem = currentItem;
-            if (this._selectedItem)
-                this._selectedItem.selected();
+        var currentItem = target._itemForTouch(touch);
+        if (currentItem != target._selectedItem) {
+            if (target._selectedItem)
+                target._selectedItem.unselected();
+            target._selectedItem = currentItem;
+            if (target._selectedItem)
+                target._selectedItem.selected();
         }
     },
 

@@ -165,7 +165,6 @@ cc.ControlButton = cc.Control.extend({
             this._titleLabelDispatchTable = {};
             this._backgroundSpriteDispatchTable = {};
 
-            this.setTouchEnabled(true);
             this._isPushed = false;
             this.zoomOnTouchDown = true;
 

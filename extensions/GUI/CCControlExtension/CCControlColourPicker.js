@@ -88,7 +88,6 @@ cc.ControlColourPicker = cc.Control.extend({
 
     init:function () {
         if (cc.Control.prototype.init.call(this)) {
-            this.setTouchEnabled(true);
             // Cache the sprites
             cc.SpriteFrameCache.getInstance().addSpriteFrames(res.CCControlColourPickerSpriteSheet_plist);
 

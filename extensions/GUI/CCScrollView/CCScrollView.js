@@ -93,6 +93,7 @@ cc.ScrollView = cc.Layer.extend({
 
     // cache object
     _tmpViewRect:null,
+    _touchListener: null,
 
     ctor:function () {
         cc.Layer.prototype.ctor.call(this);
@@ -109,10 +110,6 @@ cc.ScrollView = cc.Layer.extend({
 
     init:function () {
         return this.initWithViewSize(cc.size(200, 200), null);
-    },
-
-    registerWithTouchDispatcher:function () {
-        cc.registerTargetedDelegate(this.getTouchPriority(), false, this);
     },
 
     /**
@@ -567,7 +564,7 @@ cc.ScrollView = cc.Layer.extend({
                 // draw children zOrder < 0
                 for (i = 0; i < childrenLen; i++) {
                     selChild = locChildren[i];
-                    if (selChild && selChild._zOrder < 0)
+                    if (selChild && selChild._localZOrder < 0)
                         selChild.visit(context);
                     else
                         break;
@@ -600,7 +597,7 @@ cc.ScrollView = cc.Layer.extend({
                 // draw children zOrder < 0
                 for (i = 0; i < childrenLen; i++) {
                     selChild = locChildren[i];
-                    if (selChild && selChild._zOrder < 0)
+                    if (selChild && selChild._localZOrder < 0)
                         selChild.visit();
                     else
                         break;
@@ -640,12 +637,30 @@ cc.ScrollView = cc.Layer.extend({
         }
     },
 
+    isTouchEnabled: function(){
+        return this._touchListener != null;
+    },
+
     setTouchEnabled:function (e) {
-        cc.Layer.prototype.setTouchEnabled.call(this, e);
+        if(this._touchListener)
+            cc.eventManager.removeListener(this._touchListener);
+        this._touchListener = null;
         if (!e) {
             this._dragging = false;
             this._touchMoved = false;
             this._touches.length = 0;
+        } else {
+            var listener = cc.EventListenerTouchOneByOne.create();
+            if(this.onTouchBegan)
+                listener.onTouchBegan = this.onTouchBegan.bind(this);
+            if(this.onTouchMoved)
+                listener.onTouchMoved = this.onTouchMoved.bind(this);
+            if(this.onTouchEnded)
+                listener.onTouchEnded = this.onTouchEnded.bind(this);
+            if(this.onTouchCancelled)
+                listener.onTouchCancelled = this.onTouchCancelled.bind(this);
+            this._touchListener = listener;
+            cc.eventManager.addListener(listener, this);
         }
     },
 
@@ -711,17 +726,9 @@ cc.ScrollView = cc.Layer.extend({
         }
 
         //check to see if offset lies within the inset bounds
-        /*var newX = Math.min(this._container.getPosition().x, maxInset.x);
-         newX = Math.max(newX, minInset.x);
-         var newY = Math.min(this._container.getPosition().y, maxInset.y);
-         newY = Math.max(newY, minInset.y);*/
         var newX = this._container.getPositionX();
         var newY = this._container.getPositionY();
 
-        //this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(newX - this._container.getPosition().x, newY - this._container.getPosition().y));
-        //= this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(0, 0)); = do nothing
-
-        //this._scrollDistance = cc.pMult(this._scrollDistance, SCROLL_DEACCEL_RATE);
         locScrollDistance.x = locScrollDistance.x * SCROLL_DEACCEL_RATE;
         locScrollDistance.y = locScrollDistance.y * SCROLL_DEACCEL_RATE;
 

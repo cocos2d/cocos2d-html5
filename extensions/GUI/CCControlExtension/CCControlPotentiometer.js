@@ -59,8 +59,6 @@ cc.ControlPotentiometer = cc.Control.extend({
      */
     initWithTrackSprite_ProgressTimer_ThumbSprite:function (trackSprite, progressTimer, thumbSprite) {
         if (this.init()) {
-            this.setTouchEnabled(true);
-
             this.setProgressTimer(progressTimer);
             this.setThumbSprite(thumbSprite);
             this._thumbSprite.setPosition(progressTimer.getPosition());
