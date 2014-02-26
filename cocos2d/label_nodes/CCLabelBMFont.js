@@ -403,7 +403,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             self.setAnchorPoint(0.5, 0.5);
 
             if (cc.renderContextType === cc.WEBGL) {
-                var locTexture = self._textureAtlas.texture;
+                var locTexture = self.textureAtlas.texture;
                 self._opacityModifyRGB = locTexture.hasPremultipliedAlpha();
 
                 var reusedChar = self._reusedChar = new cc.Sprite();

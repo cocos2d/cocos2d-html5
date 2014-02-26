@@ -168,7 +168,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
             texture = new cc.Texture2D();
             // we only use rgba8888
-            texture.initWithData(data, cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, POTWide, POTHigh, winSize);
+            texture.initWithData(data, cc.Texture2D.PIXEL_FORMAT.RGBA8888, POTWide, POTHigh, winSize);
             if (!texture) {
                 cc.log("cocos2d: CCGrid: error creating texture");
                 return false;
