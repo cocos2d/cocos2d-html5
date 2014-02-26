@@ -31,7 +31,7 @@ cc.LoaderScene = cc.Scene.extend({
     _label : null,
     init : function(){
         var self = this;
-        var winSize = cc.director.getWinSize();//TODO
+        var winSize = cc.Director.getInstance().getWinSize();//TODO
 
 
         //logo
