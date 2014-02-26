@@ -108,7 +108,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * draws a solid rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidRect:function (origin, destination, color) {
         cc.log("DrawingPrimitive.drawSolidRect() not implement!");
@@ -129,7 +129,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
      * @param {Array} poli
      * @param {Number} numberOfPoints
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidPoly:function (poli, numberOfPoints, color) {
         cc.log("DrawingPrimitive.drawSolidPoly() not implement!");
@@ -269,7 +269,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draws a solid rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidRect:function (origin, destination, color) {
         var vertices = [
@@ -319,7 +319,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draws a solid polygon given a pointer to CGPoint coordinates, the number of vertices measured in points, and a color.
      * @param {Array} polygons
      * @param {Number} numberOfPoints
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidPoly:function (polygons, numberOfPoints, color) {
         this.setDrawColor4F(color.r, color.g, color.b, color.a);
@@ -481,14 +481,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draw a star
      * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
-     * @param {cc.Color3B|cc.Color|cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawStar:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
         radius *= cc.EGLView.getInstance().getScaleX();
-        if (color instanceof cc.Color4F)
-            color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
-        var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
+        var colorStr = "rgba(" + (0 | color.r) + "," + (0 | color.g) + "," + (0 | color.b);
         context.fillStyle = colorStr + ",1)";
         var subRadius = radius / 10;
 
@@ -522,14 +520,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * draw a color ball
      * @param {CanvasRenderingContext2D} ctx canvas context
      * @param {Number} radius
-     * @param {cc.Color3B|cc.Color|cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawColorBall:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
         radius *= cc.EGLView.getInstance().getScaleX();
-        if (color instanceof cc.Color4F)
-            color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
-        var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
+        var colorStr = "rgba(" +(0|color.r) + "," + (0|color.g) + "," + (0|color.b);
         var subRadius = radius / 10;
 
         var g1 = context.createRadialGradient(0, 0, subRadius, 0, 0, radius);
@@ -617,7 +613,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";
 
         cc.DrawingPrimitive.prototype.ctor.call(this, ctx);
-        this._color = new cc.Color4F(1.0, 1.0, 1.0, 1.0);
+        this._color = cc.color(255, 255, 255, 255);
     },
 
     lazy_init:function () {
@@ -651,7 +647,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
         this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
 
         var glContext = this._renderContext;
@@ -680,7 +676,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
         this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
 
         var glContext = this._renderContext;
@@ -715,7 +711,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
 
         var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
@@ -745,7 +741,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * draws a solid rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidRect:function (origin, destination, color) {
         var vertices = [
@@ -770,7 +766,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
 
         var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
@@ -791,7 +787,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
      * @param {Array} poli
      * @param {Number} numberOfPoints
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSolidPoly:function (poli, numberOfPoints, color) {
         this.lazy_init();
@@ -801,7 +797,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(color._arrayBuffer,0,4), 1);
 
         var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
@@ -849,7 +845,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
 
         var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
@@ -887,7 +883,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
 
         var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
@@ -926,7 +922,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
 
         var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
@@ -986,7 +982,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
 
         var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
@@ -1007,10 +1003,10 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * @param {Number} a Alpha value (0 to 255)
      */
     setDrawColor4B:function (r, g, b, a) {
-        this._color.r = r / 255.0;
-        this._color.g = g / 255.0;
-        this._color.b = b / 255.0;
-        this._color.a = a / 255.0;
+        this._color.r = r;
+        this._color.g = g;
+        this._color.b = b;
+        this._color.a = a;
     },
 
     /**

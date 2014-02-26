@@ -97,7 +97,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
         cc.Node.prototype.ctor.call(this);
         this._buffer = [];
         this._lineWidth = 1;
-        this._drawColor = new cc.Color4F(255, 255, 255, 255);
+        this._drawColor = cc.color(255, 255, 255, 255);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
 
@@ -128,7 +128,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
 
     /**
      * draw color setter
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     setDrawColor: function (color) {
         this._drawColor.r = color.r;
@@ -139,10 +139,10 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
 
     /**
      * draw color getter
-     * @returns {cc.Color4F}
+     * @returns {cc.Color}
      */
     getDrawColor: function () {
-        return  new cc.Color4F(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a);
+        return  cc.color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a);
     },
     // ----common function end ----
 
@@ -151,9 +151,9 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      * draws a rectangle given the origin and destination point measured in points.
      * @param {cc.Point} origin
      * @param {cc.Point} destination
-     *  @param {cc.Color4F} fillColor
+     *  @param {cc.Color} fillColor
      * @param {Number} lineWidth
-     * @param {cc.Color4F} lineColor
+     * @param {cc.Color} lineColor
      */
     drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
         lineWidth = lineWidth || this._lineWidth;
@@ -187,7 +187,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      * @param {Number} segments
      * @param {Boolean} drawLineToCenter
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawCircle: function (center, radius, angle, segments, drawLineToCenter, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
@@ -222,7 +222,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      * @param {cc.Point} destination
      * @param {Number} segments
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawQuadBezier: function (origin, control, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
@@ -256,7 +256,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      * @param {cc.Point} destination
      * @param {Number} segments
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawCubicBezier: function (origin, control1, control2, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
@@ -287,7 +287,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      * @param {Array} points
      * @param {Number} segments
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawCatmullRom: function (points, segments, lineWidth, color) {
         this.drawCardinalSpline(points, 0.5, segments, lineWidth, color);
@@ -300,7 +300,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      * @param {Number} tension
      * @param {Number} segments
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawCardinalSpline: function (config, tension, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
@@ -345,7 +345,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      *  draw a dot at a position, with a given radius and color
      * @param {cc.Point} pos
      * @param {Number} radius
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawDot: function (pos, radius, color) {
         color = color || this.getDrawColor();
@@ -361,7 +361,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
      * @param {cc.Point} from
      * @param {cc.Point} to
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSegment: function (from, to, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
@@ -379,9 +379,9 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
     /**
      * draw a polygon with a fill color and line color without copying the vertex list
      * @param {Array} verts
-     * @param {cc.Color4F} fillColor
+     * @param {cc.Color} fillColor
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawPoly_: function (verts, fillColor, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
@@ -404,9 +404,9 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
     /**
      * draw a polygon with a fill color and line color, copying the vertex list
      * @param {Array} verts
-     * @param {cc.Color4F} fillColor
+     * @param {cc.Color} fillColor
      * @param {Number} lineWidth
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawPoly: function (verts, fillColor, lineWidth, color) {
         var vertsCopy = [];
@@ -443,7 +443,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
         var locRadius = element.lineWidth;
         var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
 
-        ctx.fillStyle = "rgba(" + (0 | (locColor.r * 255)) + "," + (0 | (locColor.g * 255)) + "," + (0 | (locColor.b * 255)) + "," + locColor.a + ")";
+        ctx.fillStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
         ctx.beginPath();
         ctx.arc(locPos.x * locScaleX, -locPos.y * locScaleY, locRadius * locScaleX, 0, Math.PI * 2, false);
         ctx.closePath();
@@ -458,7 +458,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
         var locLineCap = element.lineCap;
         var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
 
-        ctx.strokeStyle = "rgba(" + (0 | (locColor.r * 255)) + "," + (0 | (locColor.g * 255)) + "," + (0 | (locColor.b * 255)) + "," + locColor.a + ")";
+        ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
         ctx.lineWidth = locLineWidth * locScaleX;
         ctx.beginPath();
         ctx.lineCap = locLineCap;
@@ -485,16 +485,16 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
         ctx.lineCap = locLineCap;
 
         if (locFillColor) {
-            ctx.fillStyle = "rgba(" + (0 | (locFillColor.r * 255)) + "," + (0 | (locFillColor.g * 255)) + ","
-                + (0 | (locFillColor.b * 255)) + "," + locFillColor.a + ")";
+            ctx.fillStyle = "rgba(" + (0 | locFillColor.r) + "," + (0 | locFillColor.g) + ","
+                + (0 | locFillColor.b) + "," + locFillColor.a / 255 + ")";
         }
 
         if (locLineWidth) {
             ctx.lineWidth = locLineWidth * locScaleX;
         }
         if (locLineColor) {
-            ctx.strokeStyle = "rgba(" + (0 | (locLineColor.r * 255)) + "," + (0 | (locLineColor.g * 255)) + ","
-                + (0 | (locLineColor.b * 255)) + "," + locLineColor.a + ")";
+            ctx.strokeStyle = "rgba(" + (0 | locLineColor.r) + "," + (0 | locLineColor.g) + ","
+                + (0 | locLineColor.b) + "," + locLineColor.a / 255 + ")";
         }
         ctx.beginPath();
         ctx.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
@@ -622,10 +622,10 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
      *  draw a dot at a position, with a given radius and color
      * @param {cc.Point} pos
      * @param {Number} radius
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawDot:function (pos, radius, color) {
-        var c4bColor = {r: 0 | (color.r * 255), g: 0 | (color.g * 255), b: 0 | (color.b * 255), a: 0 | (color.a * 255)};
+        var c4bColor = {r: 0 | color.r, g: 0 | color.g, b: 0 | color.b, a: 0 | color.a};
         var a = {vertices: {x: pos.x - radius, y: pos.y - radius}, colors: c4bColor, texCoords: {u: -1.0, v: -1.0}};
         var b = {vertices: {x: pos.x - radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: -1.0, v: 1.0}};
         var c = {vertices: {x: pos.x + radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: 1.0, v: 1.0}};
@@ -640,13 +640,13 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
      * @param {cc.Point} from
      * @param {cc.Point} to
      * @param {Number} radius
-     * @param {cc.Color4F} color
+     * @param {cc.Color} color
      */
     drawSegment:function (from, to, radius, color) {
         var vertexCount = 6*3;
         this._ensureCapacity(vertexCount);
 
-        var c4bColor = {r: 0 | (color.r * 255), g: 0 | (color.g * 255), b: 0 | (color.b * 255), a: 0 | (color.a * 255)};
+        var c4bColor = {r: 0 | color.r, g: 0 | color.g, b: 0 | color.b, a: 0 | color.a};
         var a = cc.__v2f(from);
         var b = cc.__v2f(to);
 
@@ -694,13 +694,13 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
     /**
      * draw a polygon with a fill color and line color
      * @param {Array} verts
-     * @param {cc.Color4F} fillColor
+     * @param {cc.Color} fillColor
      * @param {Number} borderWidth
-     * @param {cc.Color4F} borderColor
+     * @param {cc.Color} borderColor
      */
     drawPoly:function (verts, fillColor, borderWidth, borderColor) {
-        var c4bFillColor = {r: 0 | (fillColor.r * 255), g: 0 | (fillColor.g * 255), b: 0 | (fillColor.b * 255), a: 0 | (fillColor.a * 255)};
-        var c4bBorderColor = {r: 0 | (borderColor.r * 255), g: 0 | (borderColor.g * 255), b: 0 | (borderColor.b * 255), a: 0 | (borderColor.a * 255)};
+        var c4bFillColor = {r: 0 | fillColor.r, g: 0 | fillColor.g, b: 0 | fillColor.b, a: 0 | fillColor.a};
+        var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a};
         var extrude = [], i;
         var v0, v1, v2;
         var count = verts.length;

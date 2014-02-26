@@ -133,8 +133,8 @@ cc.PARTICLE_TYPE_GROUPED = 2;
  * @Construct
  * @param {cc.Point} [pos=cc.p(0,0)] Position of particle
  * @param {cc.Point} [startPos=cc.p(0,0)]
- * @param {cc.Color4F} [color= cc.Color4F(0, 0, 0, 1)]
- * @param {cc.Color4F} [deltaColor=cc.Color4F(0, 0, 0, 1)]
+ * @param {cc.Color} [color= cc.color(0, 0, 0, 255)]
+ * @param {cc.Color} [deltaColor=cc.color(0, 0, 0, 255)]
  * @param {cc.Size} [size=0]
  * @param {cc.Size} [deltaSize=0]
  * @param {Number} [rotation=0]
@@ -147,8 +147,8 @@ cc.PARTICLE_TYPE_GROUPED = 2;
 cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, atlasIndex, modeA, modeB) {
     this.pos = pos ? pos : cc.p(0,0);
     this.startPos = startPos ? startPos : cc.p(0,0);
-    this.color = color ? color : new cc.Color4F(0, 0, 0, 1);
-    this.deltaColor = deltaColor ? deltaColor : new cc.Color4F(0, 0, 0, 1);
+    this.color = color ? color : cc.color(0, 0, 0, 255);
+    this.deltaColor = deltaColor ? deltaColor : cc.color(0, 0, 0, 255);
     this.size = size || 0;
     this.deltaSize = deltaSize || 0;
     this.rotation = rotation || 0;
@@ -343,10 +343,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._sourcePosition = cc.p(0, 0);
         this._posVar = cc.p(0, 0);
 
-        this._startColor = new cc.Color4F(1, 1, 1, 1);
-        this._startColorVar = new cc.Color4F(1, 1, 1, 1);
-        this._endColor = new cc.Color4F(1, 1, 1, 1);
-        this._endColorVar = new cc.Color4F(1, 1, 1, 1);
+        this._startColor = cc.color(255, 255, 255, 255);
+        this._startColorVar = cc.color(255, 255, 255, 255);
+        this._endColor = cc.color(255, 255, 255, 255);
+        this._endColorVar = cc.color(255, 255, 255, 255);
 
         this._plistFile = "";
         this._elapsed = 0;
@@ -1091,7 +1091,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * set start color of each particle
-     * @return {cc.Color4F}
+     * @return {cc.Color}
      */
     getStartColor:function () {
         return this._startColor;
@@ -1099,17 +1099,15 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * get start color of each particle
-     * @param {cc.Color4F} startColor
+     * @param {cc.Color} startColor
      */
     setStartColor:function (startColor) {
-        if (startColor instanceof cc.Color3B)
-            startColor = cc.c4FFromccc3B(startColor);
-        this._startColor = startColor;
+        this._startColor = cc.color(startColor);
     },
 
     /**
      * get start color variance of each particle
-     * @return {cc.Color4F}
+     * @return {cc.Color}
      */
     getStartColorVar:function () {
         return this._startColorVar;
@@ -1117,17 +1115,15 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * set start color variance of each particle
-     * @param {cc.Color4F} startColorVar
+     * @param {cc.Color} startColorVar
      */
     setStartColorVar:function (startColorVar) {
-        if (startColorVar instanceof cc.Color3B)
-            startColorVar = cc.c4FFromccc3B(startColorVar);
-        this._startColorVar = startColorVar;
+        this._startColorVar = cc.color(startColorVar);
     },
 
     /**
      * get end color and end color variation of each particle
-     * @return {cc.Color4F}
+     * @return {cc.Color}
      */
     getEndColor:function () {
         return this._endColor;
@@ -1135,17 +1131,15 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * set end color and end color variation of each particle
-     * @param {cc.Color4F} endColor
+     * @param {cc.Color} endColor
      */
     setEndColor:function (endColor) {
-        if (endColor instanceof cc.Color3B)
-            endColor = cc.c4FFromccc3B(endColor);
-        this._endColor = endColor;
+        this._endColor = cc.color(endColor);
     },
 
     /**
      * get end color variance of each particle
-     * @return {cc.Color4F}
+     * @return {cc.Color}
      */
     getEndColorVar:function () {
         return this._endColorVar;
@@ -1153,12 +1147,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * set end color variance of each particle
-     * @param {cc.Color4F} endColorVar
+     * @param {cc.Color} endColorVar
      */
     setEndColorVar:function (endColorVar) {
-        if (endColorVar instanceof cc.Color3B)
-            endColorVar = cc.c4FFromccc3B(endColorVar);
-        this._endColorVar = endColorVar;
+        this._endColorVar = cc.color(endColorVar);
     },
 
     /**
@@ -1533,28 +1525,28 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
             // color
             var locStartColor = this._startColor;
-            locStartColor.r = parseFloat(locValueForKey("startColorRed", dictionary));
-            locStartColor.g = parseFloat(locValueForKey("startColorGreen", dictionary));
-            locStartColor.b = parseFloat(locValueForKey("startColorBlue", dictionary));
-            locStartColor.a = parseFloat(locValueForKey("startColorAlpha", dictionary));
+            locStartColor.r = parseFloat(locValueForKey("startColorRed", dictionary)) * 255;
+            locStartColor.g = parseFloat(locValueForKey("startColorGreen", dictionary)) * 255;
+            locStartColor.b = parseFloat(locValueForKey("startColorBlue", dictionary)) * 255;
+            locStartColor.a = parseFloat(locValueForKey("startColorAlpha", dictionary)) * 255;
 
             var locStartColorVar = this._startColorVar;
-            locStartColorVar.r = parseFloat(locValueForKey("startColorVarianceRed", dictionary));
-            locStartColorVar.g = parseFloat(locValueForKey("startColorVarianceGreen", dictionary));
-            locStartColorVar.b = parseFloat(locValueForKey("startColorVarianceBlue", dictionary));
-            locStartColorVar.a = parseFloat(locValueForKey("startColorVarianceAlpha", dictionary));
+            locStartColorVar.r = parseFloat(locValueForKey("startColorVarianceRed", dictionary)) * 255;
+            locStartColorVar.g = parseFloat(locValueForKey("startColorVarianceGreen", dictionary)) * 255;
+            locStartColorVar.b = parseFloat(locValueForKey("startColorVarianceBlue", dictionary)) * 255;
+            locStartColorVar.a = parseFloat(locValueForKey("startColorVarianceAlpha", dictionary)) * 255;
 
             var locEndColor = this._endColor;
-            locEndColor.r = parseFloat(locValueForKey("finishColorRed", dictionary));
-            locEndColor.g = parseFloat(locValueForKey("finishColorGreen", dictionary));
-            locEndColor.b = parseFloat(locValueForKey("finishColorBlue", dictionary));
-            locEndColor.a = parseFloat(locValueForKey("finishColorAlpha", dictionary));
+            locEndColor.r = parseFloat(locValueForKey("finishColorRed", dictionary)) * 255;
+            locEndColor.g = parseFloat(locValueForKey("finishColorGreen", dictionary)) * 255;
+            locEndColor.b = parseFloat(locValueForKey("finishColorBlue", dictionary)) * 255;
+            locEndColor.a = parseFloat(locValueForKey("finishColorAlpha", dictionary)) * 255;
 
             var locEndColorVar = this._endColorVar;
-            locEndColorVar.r = parseFloat(locValueForKey("finishColorVarianceRed", dictionary));
-            locEndColorVar.g = parseFloat(locValueForKey("finishColorVarianceGreen", dictionary));
-            locEndColorVar.b = parseFloat(locValueForKey("finishColorVarianceBlue", dictionary));
-            locEndColorVar.a = parseFloat(locValueForKey("finishColorVarianceAlpha", dictionary));
+            locEndColorVar.r = parseFloat(locValueForKey("finishColorVarianceRed", dictionary)) * 255;
+            locEndColorVar.g = parseFloat(locValueForKey("finishColorVarianceGreen", dictionary)) * 255;
+            locEndColorVar.b = parseFloat(locValueForKey("finishColorVarianceBlue", dictionary)) * 255;
+            locEndColorVar.a = parseFloat(locValueForKey("finishColorVarianceAlpha", dictionary)) * 255;
 
             // particle size
             this._startSize = parseFloat(locValueForKey("startParticleSize", dictionary));
@@ -1797,31 +1789,31 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var locStartColor = this._startColor, locStartColorVar = this._startColorVar;
         var locEndColor = this._endColor, locEndColorVar = this._endColorVar;
         if (cc.renderContextType === cc.CANVAS) {
-            start = new cc.Color4F(
-                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 1),
-                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 1),
-                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 1),
-                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 1)
+            start = cc.color(
+                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11() * 255, 0, 255)
             );
-            end = new cc.Color4F(
-                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 1),
-                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 1),
-                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 1),
-                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 1)
+            end = cc.color(
+                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11() * 255, 0, 255)
             );
         } else {
-            start = {
-                r: cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 1),
-                g: cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 1),
-                b: cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 1),
-                a: cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 1)
-            };
-            end = {
-                r: cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 1),
-                g: cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 1),
-                b: cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 1),
-                a: cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 1)
-            };
+            start = cc.color(
+                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11() * 255, 0, 255)
+            );
+            end = cc.color(
+                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11() * 255, 0, 255),
+                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11() * 255, 0, 255)
+            );
         }
 
         particle.color = start;
@@ -1939,16 +1931,16 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             quad = this._quads[this._particleIdx];
 
         var r, g, b, a;
-        if(this._opacityModifyRGB){
-            r = 0 | (particle.color.r * particle.color.a * 255);
-            g = 0 | (particle.color.g * particle.color.a * 255);
-            b = 0 | (particle.color.b * particle.color.a * 255);
-            a = 0 | (particle.color.a * 255);
-        }else{
-            r = 0 | (particle.color.r * 255);
-            g = 0 | (particle.color.g * 255);
-            b = 0 | (particle.color.b * 255);
-            a = 0 | (particle.color.a * 255);
+        if (this._opacityModifyRGB) {
+            r = 0 | (particle.color.r * particle.color.a);
+            g = 0 | (particle.color.g * particle.color.a);
+            b = 0 | (particle.color.b * particle.color.a );
+            a = 0 | (particle.color.a);
+        } else {
+            r = 0 | (particle.color.r );
+            g = 0 | (particle.color.g );
+            b = 0 | (particle.color.b );
+            a = 0 | (particle.color.a );
         }
 
         var locColors = quad.bl.colors;
@@ -2465,7 +2457,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     continue;
 
                 context.save();
-                context.globalAlpha = particle.color.a;
+                context.globalAlpha = particle.color.a / 255;
                 context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
@@ -2503,7 +2495,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
             } else {
                 context.save();
-                context.globalAlpha = particle.color.a;
+                context.globalAlpha = particle.color.a / 255;
 
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
 

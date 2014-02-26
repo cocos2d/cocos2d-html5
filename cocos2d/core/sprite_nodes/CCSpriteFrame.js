@@ -364,6 +364,7 @@ cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize)
     switch (arguments.length) {
         case 2:
             spriteFrame.initWithTexture(filename, rect);
+            break;
         case 5:
             spriteFrame.initWithTexture(filename, rect, rotated, offset, originalSize);
             break;

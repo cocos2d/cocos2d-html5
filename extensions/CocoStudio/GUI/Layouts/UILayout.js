@@ -298,7 +298,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -496,7 +496,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             rect[1] = cc.p(size.width, 0);
             rect[2] = cc.p(size.width, size.height);
             rect[3] = cc.p(0, size.height);
-            var green = cc.c4f(0, 1, 0, 1);
+            var green = cc.color.green;
             this._clippingStencil.clear();
             this._clippingStencil.drawPoly(rect, 4, green, 0, green);
         }

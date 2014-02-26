@@ -1259,7 +1259,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      */
     ctor:function () {
         cc.TransitionScene.prototype.ctor.call(this);
-        this._color = new cc.Color()
+        this._color = cc.color()
     },
 
     /**
@@ -1341,7 +1341,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create a transparent color layer
         // in which we are going to add our rendertextures
-        var color = new cc.Color(0, 0, 0, 0);
+        var color = cc.color(0, 0, 0, 0);
         var winSize = cc.Director.getInstance().getWinSize();
         var layer = cc.LayerColor.create(color);
 

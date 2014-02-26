@@ -931,18 +931,18 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
         this._squareVerticesAB = new ArrayBuffer(32);
-        this._squareColorsAB = new ArrayBuffer(64);
+        this._squareColorsAB = new ArrayBuffer(16);
 
         var locSquareVerticesAB = this._squareVerticesAB, locSquareColorsAB = this._squareColorsAB;
-        var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColor4FLen = cc.Color4F.BYTES_PER_ELEMENT;
+        var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
         this._squareVertices = [new cc.Vertex2F(0, 0, locSquareVerticesAB, 0),
             new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen),
             new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 2),
             new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 3)];
-        this._squareColors = [new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, 0),
-            new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, locColor4FLen),
-            new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, locColor4FLen * 2),
-            new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, locColor4FLen * 3)];
+        this._squareColors = [cc.color(0, 0, 0, 255, locSquareColorsAB, 0),
+            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen),
+            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
+            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
         this._verticesFloat32Buffer = cc.renderContext.createBuffer();
         this._colorsUint8Buffer = cc.renderContext.createBuffer();
     },
@@ -975,7 +975,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         var winSize = cc.Director.getInstance().getWinSize();
-        color = color || new cc.Color(0, 0, 0, 255);
+        color = color ||  cc.color(0, 0, 0, 255);
 	    this.width = width || winSize.width;
         this.height = height || winSize.height;
 
@@ -1046,10 +1046,10 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         var locDisplayedColor = this._displayedColor;
         var locDisplayedOpacity = this._displayedOpacity, locSquareColors = this._squareColors;
         for (var i = 0; i < 4; i++) {
-            locSquareColors[i].r = locDisplayedColor.r / 255;
-            locSquareColors[i].g = locDisplayedColor.g / 255;
-            locSquareColors[i].b = locDisplayedColor.b / 255;
-            locSquareColors[i].a = locDisplayedOpacity / 255;
+            locSquareColors[i].r = locDisplayedColor.r;
+            locSquareColors[i].g = locDisplayedColor.g;
+            locSquareColors[i].b = locDisplayedColor.b;
+            locSquareColors[i].a = locDisplayedOpacity;
         }
         this._bindLayerColorsBufferData();
     },
@@ -1108,7 +1108,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
 
         context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.FLOAT, false, 0, 0);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
 
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
@@ -1150,11 +1150,11 @@ delete window._proto;
  * @example
  * // Example
  * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.c4b(255,255,0,255));
+ * var yellowBackground = cc.LayerColor.create(cc.color(255,255,0,255));
  * //If you didnt pass in width and height, it defaults to the same size as the canvas
  *
  * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColor.create(cc.c4b(255,255,0,255), 200, 200);
+ * var yellowBox = cc.LayerColor.create(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
     var ret = new cc.LayerColor();
@@ -1214,8 +1214,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor:function () {
         cc.LayerColor.prototype.ctor.call(this);
 
-        this._startColor = new cc.Color3B(0, 0, 0);
-        this._endColor = new cc.Color3B(0, 0, 0);
+        this._startColor =  cc.color(0, 0, 0, 255);
+        this._endColor =  cc.color(0, 0, 0, 255);
         this._alongVector = cc.p(0, -1);
         this._startOpacity = 255;
         this._endOpacity = 255;
@@ -1357,8 +1357,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {Boolean}
      */
     init:function (start, end, v) {
-        start = start || cc.c4(0,0,0,255);
-        end = end || cc.c4(0,0,0,255);
+        start = start || cc.color(0,0,0,255);
+        end = end || cc.color(0,0,0,255);
         v = v || cc.p(0, -1);
 
         // Initializes the CCLayer with a gradient between start and end in the direction of v.
@@ -1376,7 +1376,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._alongVector = v;
         this._compressedInterpolation = true;
 
-        cc.LayerColor.prototype.init.call(this,cc.c4b(start.r, start.g, start.b, 255));
+        cc.LayerColor.prototype.init.call(this,cc.color(start.r, start.g, start.b, 255));
         return true;
     },
 
@@ -1436,8 +1436,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
             var opacityf = this._displayedOpacity / 255.0;
             var locDisplayedColor = this._displayedColor, locEndColor = this._endColor;
-            var S = { r: locDisplayedColor.r / 255, g: locDisplayedColor.g / 255, b: locDisplayedColor.b / 255, a: (this._startOpacity * opacityf) / 255};
-            var E = {r: locEndColor.r / 255, g: locEndColor.g / 255, b: locEndColor.b / 255, a: (this._endOpacity * opacityf) / 255};
+            var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._startOpacity * opacityf};
+            var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: this._endOpacity * opacityf};
 
             // (-1, -1)
             var locSquareColors = this._squareColors;

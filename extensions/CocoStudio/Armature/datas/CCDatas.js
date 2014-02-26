@@ -83,7 +83,10 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
         this.scaleY = 1;
         this.tweenRotate = 0;
         this.isUseColorInfo = false;
-        this.color = cc.c4f(1, 1, 1, 1);
+        this.r = 255;
+        this.g = 255;
+        this.b = 255;
+        this.a = 255;
     },
 
 
