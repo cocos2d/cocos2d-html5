@@ -262,7 +262,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 
     /**
      * color used for the tint
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     tintWithColor:function (color) {
         this.color = color;

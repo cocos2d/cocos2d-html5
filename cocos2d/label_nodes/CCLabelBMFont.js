@@ -550,7 +550,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     //TODO
     /**
      * tint this label
-     * @param {cc.Color3B} color3
+     * @param {cc.Color} color3
      */
     setColor:function (color3) {
         if (((this._realColor.r == color3.r) && (this._realColor.g == color3.g) && (this._realColor.b == color3.b)))

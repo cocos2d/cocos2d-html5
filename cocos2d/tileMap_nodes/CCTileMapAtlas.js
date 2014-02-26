@@ -99,7 +99,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * <p>Returns a tile from position x,y.<br />
      * For the moment only channel R is used. </p>
      * @param {cc.Point} position
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getTileAt:function (position) {
         if(!this.tgaInfo){
@@ -111,13 +111,13 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
         var colorPos = 0|(position.x * 3 + position.y * this.tgaInfo.width * 3);
         var locTGAImageData = this.tgaInfo.imageData;
-        return new cc.Color3B(locTGAImageData[colorPos], locTGAImageData[colorPos + 1], locTGAImageData[colorPos + 2]);
+        return cc.color(locTGAImageData[colorPos], locTGAImageData[colorPos + 1], locTGAImageData[colorPos + 2]);
     },
 
     /**
      * Sets a tile at position x,y.
      * For the moment only channel R is used
-     * @param {cc.Color3B} tile
+     * @param {cc.Color} tile
      * @param {cc.Point} position
      */
     setTile:function (tile, position) {
@@ -190,7 +190,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
     /**
      * @param {cc.Point|cc.GridSize} pos
-     * @param {cc.Color3B} value
+     * @param {cc.Color} value
      * @param {Number} index
      * @private
      */
@@ -273,7 +273,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             for (var y = 0; y < locTGAInfoHeight; y++) {
                 if (total < locItemsToRender) {
                     var colorPos = x * 3 + y * locTGAInfoWidth * 3;
-                    var value = new cc.Color3B(locTGAInfo.imageData[colorPos], locTGAInfo.imageData[colorPos + 1], locTGAInfo.imageData[colorPos + 2]);
+                    var value = cc.color(locTGAInfo.imageData[colorPos], locTGAInfo.imageData[colorPos + 1], locTGAInfo.imageData[colorPos + 2]);
                     if (value.r != 0) {
                         this._updateAtlasValueAt(cc.p(x, y), value, total);
                         this._posToAtlasIndex[x + "_" + y] = total;

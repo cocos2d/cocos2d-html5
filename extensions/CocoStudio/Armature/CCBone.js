@@ -248,10 +248,10 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
 
     /**
      * update display color
-     * @param {cc.c3b} color
+     * @param {cc.Color} color
      */
     updateDisplayedColor:function (color) {
-        this._realColor = cc.c3b(255,255,255);
+        this._realColor = cc.color(255,255,255);
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, color);
         this.updateColor();
     },
@@ -268,7 +268,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
 
     /**
      * set display color
-     * @param {cc.c3b} color
+     * @param {cc.Color} color
      */
     setColor: function (color) {
         cc.NodeRGBA.prototype.setColor.call(this, color);
@@ -293,7 +293,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
             var locDisplayedColor = this._displayedColor;
             var locTweenData = this._tweenData;
             var locOpacity = this._displayedOpacity * locTweenData.a / 255;
-            var locColor = cc.c3b(locDisplayedColor.r * locTweenData.r / 255, locDisplayedColor.g * locTweenData.g / 255, locDisplayedColor.b * locTweenData.b / 255);
+            var locColor = cc.color(locDisplayedColor.r * locTweenData.r / 255, locDisplayedColor.g * locTweenData.g / 255, locDisplayedColor.b * locTweenData.b / 255);
             display.setOpacity(locOpacity);
             display.setColor(locColor);
         }

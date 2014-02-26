@@ -784,8 +784,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Sets background color for layout, if color type is LAYOUT_COLOR_SOLID
-     * @param {cc.c3b} color
-     * @param {cc.c3b} endColor
+     * @param {cc.Color} color
+     * @param {cc.Color} endColor
      */
     setBackGroundColor: function (color, endColor) {
         if (!endColor) {

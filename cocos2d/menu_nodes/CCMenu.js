@@ -73,14 +73,14 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     },
 
     /**
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getColor:function () {
         return this._color;
     },
 
     /**
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor:function (color) {
         this._color = color;

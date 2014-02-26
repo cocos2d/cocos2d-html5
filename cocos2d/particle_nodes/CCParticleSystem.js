@@ -1816,29 +1816,29 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var locEndColor = this._endColor, locEndColorVar = this._endColorVar;
         if (cc.renderContextType === cc.CANVAS) {
             start = cc.color(
-                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11() * 255, 0, 255)
+                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 255),
+                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 255),
+                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 255),
+                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 255)
             );
             end = cc.color(
-                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11() * 255, 0, 255)
+                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 255),
+                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 255),
+                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 255),
+                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 255)
             );
         } else {
             start = cc.color(
-                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11() * 255, 0, 255)
+                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 255),
+                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 255),
+                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 255),
+                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 255)
             );
             end = cc.color(
-                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11() * 255, 0, 255),
-                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11() * 255, 0, 255)
+                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 255),
+                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 255),
+                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 255),
+                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 255)
             );
         }
 
@@ -1958,9 +1958,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         var r, g, b, a;
         if (this._opacityModifyRGB) {
-            r = 0 | (particle.color.r * particle.color.a);
-            g = 0 | (particle.color.g * particle.color.a);
-            b = 0 | (particle.color.b * particle.color.a );
+            r = 0 | (particle.color.r * particle.color.a/255);
+            g = 0 | (particle.color.g * particle.color.a/255);
+            b = 0 | (particle.color.b * particle.color.a/255);
             a = 0 | (particle.color.a);
         } else {
             r = 0 | (particle.color.r );

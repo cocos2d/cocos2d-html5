@@ -250,14 +250,14 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     },
 
     /**
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getDisabledColor:function () {
         return this._disabledColor;
     },
 
     /**
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setDisabledColor:function (color) {
         this._disabledColor = color;
@@ -321,14 +321,14 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     },
 
     /**
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor:function (color) {
         this._label.color = color;
     },
 
     /**
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getColor:function () {
         return this._label.color;
@@ -344,7 +344,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this.initWithCallback(selector, target);
         this._originalScale = 1.0;
         this._colorBackup = cc.color.white;
-        this._disabledColor = cc.c3b(126, 126, 126);
+        this._disabledColor = cc.color(126, 126, 126);
         this.setLabel(label);
 
 	    this.cascadeColor = true;
@@ -788,7 +788,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     },
 
     /**
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor:function (color) {
         this._normalImage.color = color;
@@ -801,7 +801,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     },
 
     /**
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getColor:function () {
         return this._normalImage.color;
@@ -1093,14 +1093,14 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     },
 
     /**
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getColor:function () {
         return this._color;
     },
 
     /**
-     * @param {cc.Color3B} Color
+     * @param {cc.Color} Color
      */
     setColor:function (color) {
         this._color = color;

@@ -499,7 +499,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * enable or disable stroke
-     * @param {cc.Color3B} strokeColor
+     * @param {cc.Color} strokeColor
      * @param {Number} strokeSize
      */
     enableStroke:function(strokeColor, strokeSize){
@@ -563,7 +563,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * set text tinting
-     * @param {cc.Color3B} tintColor
+     * @param {cc.Color} tintColor
      */
     setFontFillColor:null,
 
@@ -647,7 +647,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if ( this._strokeEnabled ){
             texDef.strokeEnabled = true;
             var locStrokeColor = this._strokeColor;
-            texDef.strokeColor   = new cc.Color3B(locStrokeColor.r, locStrokeColor.g, locStrokeColor.b);
+            texDef.strokeColor   = cc.color(locStrokeColor.r, locStrokeColor.g, locStrokeColor.b);
             texDef.strokeSize = this._strokeSize;
         }else
             texDef.strokeEnabled = false;
@@ -665,7 +665,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         // text tint
         var locTextFillColor = this._textFillColor;
-        texDef.fontFillColor = new cc.Color3B(locTextFillColor.r, locTextFillColor.g, locTextFillColor.b);
+        texDef.fontFillColor = cc.color(locTextFillColor.r, locTextFillColor.g, locTextFillColor.b);
         return texDef;
     },
 

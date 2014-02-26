@@ -1488,7 +1488,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * color setter
-     * @param {cc.Color3B} color3
+     * @param {cc.Color} color3
      */
     setColor: null,
 

@@ -2546,16 +2546,16 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     /**
      * Get the color of Node
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getColor:function(){
         var locRealColor = this._realColor;
-        return new cc.Color3B(locRealColor.r, locRealColor.g, locRealColor.b);
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
     /**
      * Get the displayed color of Node
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getDisplayedColor:function(){
         return this._displayedColor;
@@ -2563,7 +2563,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     /**
      * Set the color of Node
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor:function(color){
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -2581,7 +2581,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     /**
      * update the displayed color of Node
-     * @param {cc.Color3B} parentColor
+     * @param {cc.Color} parentColor
      */
     updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor, locRealColor = this._realColor;

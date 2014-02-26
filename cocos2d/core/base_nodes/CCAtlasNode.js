@@ -83,7 +83,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     /** cc.AtlasNode - RGBA protocol
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getColor:function () {
         if (this._opacityModifyRGB)
@@ -245,7 +245,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     /**
-     * @param {cc.Color3B} color3
+     * @param {cc.Color} color3
      */
     setColor:null,
 
@@ -253,7 +253,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         var locRealColor = this._realColor;
         if ((locRealColor.r == color3.r) && (locRealColor.g == color3.g) && (locRealColor.b == color3.b))
             return;
-        var temp = new cc.Color3B(color3.r,color3.g,color3.b);
+        var temp = cc.color(color3.r,color3.g,color3.b);
         this._colorUnmodified = color3;
 
         if (this._opacityModifyRGB) {
@@ -281,7 +281,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     _setColorForWebGL:function (color3) {
-        var temp = cc.Color3B(color3.r,color3.g,color3.b);
+        var temp = cc.color(color3.r,color3.g,color3.b);
         this._colorUnmodified = color3;
         var locDisplayedOpacity = this._displayedOpacity;
         if (this._opacityModifyRGB) {

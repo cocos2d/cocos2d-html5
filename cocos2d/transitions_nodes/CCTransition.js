@@ -1287,7 +1287,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      * initializes the transition with a duration and with an RGB color
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      * @return {Boolean}
      */
     initWithDuration:function (t, scene, color) {
@@ -1307,11 +1307,11 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
  * Fade out the outgoing scene and then fade in the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.Color3B} color
+ * @param {cc.Color} color
  * @return {cc.TransitionFade}
  * @example
  * // Example
- * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.c3b(255,0,0))//fade to red
+ * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.color(255,0,0))//fade to red
  */
 cc.TransitionFade.create = function (t, scene, color) {
     var transition = new cc.TransitionFade();

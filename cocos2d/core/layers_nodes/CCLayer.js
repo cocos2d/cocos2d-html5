@@ -205,25 +205,25 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     /**
      * Get the color of Layer
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getColor: function () {
         var locRealColor = this._realColor;
-        return cc.c3b(locRealColor.r, locRealColor.g, locRealColor.b);
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
     /**
      * Get the displayed color of Layer
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getDisplayedColor: function () {
         var locDisplayedColor = this._displayedColor;
-        return cc.c3b(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
+        return cc.color(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
     },
 
     /**
      * Set the color of Layer
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor: function (color) {
         var locDisplayed = this._displayedColor, locRealColor = this._realColor;
@@ -241,7 +241,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     /**
      * update the displayed color of Node
-     * @param {cc.Color3B} parentColor
+     * @param {cc.Color} parentColor
      */
     updateDisplayedColor: function (parentColor) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -750,7 +750,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * get the starting color
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getStartColor:function () {
         return this._realColor;
@@ -758,10 +758,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * set the starting color
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      * @example
      * // Example
-     * myGradientLayer.setStartColor(cc.c3b(255,0,0));
+     * myGradientLayer.setStartColor(cc.color(255,0,0));
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
@@ -770,10 +770,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * set the end gradient color
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      * @example
      * // Example
-     * myGradientLayer.setEndColor(cc.c3b(255,0,0));
+     * myGradientLayer.setEndColor(cc.color(255,0,0));
      * //set the ending gradient to red
      */
     setEndColor:function (color) {
@@ -783,7 +783,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * get the end color
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getEndColor:function () {
         return this._endColor;
@@ -990,8 +990,8 @@ delete window._proto;
 
 /**
  * creates a gradient layer
- * @param {cc.Color3B} start starting color
- * @param {cc.Color3B} end ending color
+ * @param {cc.Color} start starting color
+ * @param {cc.Color} end ending color
  * @param {cc.Point|Null} v
  * @return {cc.LayerGradient}
  */

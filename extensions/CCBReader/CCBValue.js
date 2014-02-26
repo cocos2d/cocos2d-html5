@@ -38,7 +38,7 @@ cc.UNSIGNEDCHAR_VALUE = 4;
 cc.Color3BWapper = cc.Class.extend({
     _color:null,
     ctor:function () {
-        this._color = new cc.Color3B(0, 0, 0);
+        this._color = cc.color(0, 0, 0);
     },
     getColor:function () {
         return this._color;

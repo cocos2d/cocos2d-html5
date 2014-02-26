@@ -675,7 +675,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 
     /**
      * set title color
-     * @param {cc.c3b} color
+     * @param {cc.Color} color
      */
     setTitleColor: function (color) {
         this._titleColor.r = color.r;
@@ -686,7 +686,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 
     /**
      * get title color
-     * @returns {cc.c3b}
+     * @returns {cc.Color}
      */
     getTitleColor: function () {
         return this._titleRenderer.getColor();

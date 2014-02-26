@@ -601,10 +601,9 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     _initialized:false,
     _shader: null,
     _colorLocation:-1,
-    _color: null,
+    _colorArray: null,
     _pointSizeLocation:-1,
     _pointSize:-1,
-
     ctor:function (ctx) {
         if (ctx == null)
             ctx = cc.renderContext;
@@ -613,7 +612,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";
 
         cc.DrawingPrimitive.prototype.ctor.call(this, ctx);
-        this._color = cc.color(255, 255, 255, 255);
+        this._colorArray = new Float32Array([1.0, 1.0, 1.0, 1.0]);
     },
 
     lazy_init:function () {
@@ -644,13 +643,13 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     drawPoint:function (point) {
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
         this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, new Float32Array([point.x, point.y]), glContext.STATIC_DRAW);
@@ -673,13 +672,13 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
 
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
         this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray(points), glContext.STATIC_DRAW);
@@ -708,12 +707,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     drawLine:function (origin, destination) {
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray([origin, destination]), glContext.STATIC_DRAW);
@@ -763,12 +762,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     drawPoly:function (vertices, numOfVertices, closePolygon) {
         this.lazy_init();
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray(vertices), glContext.STATIC_DRAW);
@@ -794,12 +793,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         if (!color)
             color = this._color;
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(color._arrayBuffer,0,4), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray(poli), glContext.STATIC_DRAW);
@@ -842,12 +841,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         vertices[(segments + 1) * 2] = center.x;
         vertices[(segments + 1) * 2 + 1] = center.y;
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -880,12 +879,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         vertices[segments * 2] = destination.x;
         vertices[segments * 2 + 1] = destination.y;
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -919,12 +918,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         vertices[segments * 2] = destination.x;
         vertices[segments * 2 + 1] = destination.y;
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -979,12 +978,12 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             vertices[i * 2 + 1] = newPos.y;
         }
 
+        var glContext = this._renderContext;
         this._shader.use();
         this._shader.setUniformForModelViewAndProjectionMatrixWithMat4();
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
-        this._shader.setUniformLocationWith4iv(this._colorLocation, new Int32Array(this._color._arrayBuffer,0,1), 1);
+        glContext.uniform4fv(this._colorLocation, this._colorArray);
 
-        var glContext = this._renderContext;
         var pointBuffer = glContext.createBuffer();
         glContext.bindBuffer(glContext.ARRAY_BUFFER, pointBuffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
@@ -1003,10 +1002,10 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * @param {Number} a Alpha value (0 to 255)
      */
     setDrawColor4B:function (r, g, b, a) {
-        this._color.r = r;
-        this._color.g = g;
-        this._color.b = b;
-        this._color.a = a;
+        this._colorArray[0] = r / 255.0;
+        this._colorArray[1] = g / 255.0;
+        this._colorArray[2] = b / 255.0;
+        this._colorArray[3] = a / 255.0;
     },
 
     /**
@@ -1017,10 +1016,10 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * @param {Number} a Alpha value (0 to 1)
      */
     setDrawColor4F:function (r, g, b, a) {
-        this._color.r = r;
-        this._color.g = g;
-        this._color.b = b;
-        this._color.a = a;
+        this._colorArray[0] = r ;
+        this._colorArray[1] = g ;
+        this._colorArray[2] = b ;
+        this._colorArray[3] = a ;
     },
 
     /**

@@ -453,7 +453,7 @@ cc.ControlButton = cc.Control.extend({
      * Returns the title color used for a state.
      *
      * @param {Number} state The state that uses the specified color. The values are described in "CCControlState".
-     * @return {cc.Color3B} The color of the title for the specified state.
+     * @return {cc.Color} The color of the title for the specified state.
      */
     getTitleColorForState: function (state) {
         var colorObject = this._titleColorDispatchTable[state];
@@ -468,7 +468,7 @@ cc.ControlButton = cc.Control.extend({
     /**
      * Sets the color of the title to use for the specified state.
      *
-     * @param {cc.Color3B} color The color of the title to use for the specified state.
+     * @param {cc.Color} color The color of the title to use for the specified state.
      * @param {Number} state The state that uses the specified color. The values are described in "CCControlState".
      */
     setTitleColorForState:function (color, state) {

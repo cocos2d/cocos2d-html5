@@ -24,76 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * RGB color composed of bytes 3 bytes
- * @Class
- * @Construct
- * @param {Number|cc.Color3B} r1 red value (0 to 255) or destination color of new color
- * @param {Number} [g1] green value (0 to 255)
- * @param {Number} [b1] blue value (0 to 255)
- * @example
- * //create an empty color
- * var color1 = new cc.Color3B();
- *
- * //create a red color
- * var redColor = new cc.Color3B(255,0,0);
- *
- * //create a new color with color
- * var newColor = new cc.Color3B(redColor);
- */
-cc.Color3B = function (r1, g1, b1) {
-    switch (arguments.length) {
-        case 0:
-            this.r = 0;
-            this.g = 0;
-            this.b = 0;
-            break;
-        case 1:
-            if (r1 && r1 instanceof cc.Color3B) {
-                this.r = (0 | r1.r) || 0;
-                this.g = (0 | r1.g) || 0;
-                this.b = (0 | r1.b) || 0;
-            } else {
-                this.r = 0;
-                this.g = 0;
-                this.b = 0;
-            }
-            break;
-        case 3:
-            this.r = (0 | r1) || 0;
-            this.g = (0 | g1) || 0;
-            this.b = (0 | b1) || 0;
-            break;
-        default:
-            throw "unknown argument type";
-            break;
-    }
-};
-
-/**
- * helper macro that creates an ccColor3B type
- * @function
- * @param {Number} r red value (0 to 255)
- * @param {Number} g green value (0 to 255)
- * @param {Number} b blue value (0 to 255)
- * @return {Number,Number,Number}
- */
-cc.c3b = function (r, g, b) {
-    return new cc.Color3B(r, g, b);
-};
-
-cc.integerToColor3B = function (intValue) {
-    intValue = intValue || 0;
-
-    var offset = 0xff;
-    var retColor = new cc.Color3B();
-    retColor.r = intValue & (offset);
-    retColor.g = (intValue >> 8) & offset;
-    retColor.b = (intValue >> 16) & offset;
-    return retColor;
-};
-
-
 
 cc.Color = function (r, g, b, a) {
     this.r = r || 0;
@@ -122,8 +52,8 @@ cc.color = function (r, g, b, a) {
 
 /**
  * returns true if both ccColor3B are equal. Otherwise it returns false.
- * @param {cc.Color3B} color1
- * @param {cc.Color3B} color2
+ * @param {cc.Color} color1
+ * @param {cc.Color} color2
  * @return {Boolean}  true if both ccColor3B are equal. Otherwise it returns false.
  */
 cc.colorEqual = function(color1, color2){
@@ -201,20 +131,6 @@ cc.Tex2F = function (u1, v1) {
  */
 cc.tex2 = function (u, v) {
     return new cc.Tex2F(u, v);
-};
-
-/**
- * Point Sprite component
- * @Class
- * @Construct
- * @param {cc.Vertex2F} pos1
- * @param {cc.Color4B} color1
- * @param {Number} size1
- */
-cc.PointSprite = function (pos1, color1, size1) {
-    this.pos = pos1 || new cc.Vertex2F(0, 0);
-    this.color = color1 || new cc.Color4B(0, 0, 0, 0);
-    this.size = size1 || 0;
 };
 
 /**
@@ -905,9 +821,9 @@ if(cc.Browser.supportWebGL){
 }
 
 /**
- * convert a string of color for style to Color3B.
- * e.g. "#ff06ff"  to : Color3B(255,6,255)
- * @param {String} clrSt
+ * convert a string of color for style to Color.
+ * e.g. "#ff06ff"  to : cc.color(255,6,255)
+ * @param {String} hex
  * @return {cc.Color}
  */
 cc.hexToColor = function (hex) {
@@ -916,21 +832,21 @@ cc.hexToColor = function (hex) {
     var r = c >> 16;
     var g = (c >> 8) % 256;
     var b = c % 256;
-    return {r: r, g: g, b: b};
+    return cc.color(r, g, b);
 };
 
 /**
- * convert Color3B to a string of color for style.
- * e.g.  Color3B(255,6,255)  to : "#ff06ff"
- * @param clr
+ * convert Color to a string of color for style.
+ * e.g.  cc.color(255,6,255)  to : "#ff06ff"
+ * @param {cc.Color} color
  * @return {String}
  */
-cc.colorToHex = function (clr) {
-    var hR = clr.r.toString(16);
-    var hG = clr.g.toString(16);
-    var hB = clr.b.toString(16);
-    var stClr = "#" + (clr.r < 16 ? ("0" + hR) : hR) + (clr.g < 16 ? ("0" + hG) : hG) + (clr.b < 16 ? ("0" + hB) : hB);
-    return stClr;
+cc.colorToHex = function (color) {
+    var hR = color.r.toString(16);
+    var hG = color.g.toString(16);
+    var hB = color.b.toString(16);
+    var hex = "#" + (color.r < 16 ? ("0" + hR) : hR) + (color.g < 16 ? ("0" + hG) : hG) + (color.b < 16 ? ("0" + hB) : hB);
+    return hex;
 };
 
 /**
