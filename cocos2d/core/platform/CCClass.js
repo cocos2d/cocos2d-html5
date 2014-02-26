@@ -85,7 +85,8 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
-    var releaseMode = (document['ccConfig'] && document['ccConfig']['CLASS_RELEASE_MODE']) ? document['ccConfig']['CLASS_RELEASE_MODE'] : null;
+    var config = cc.game.config;
+    var releaseMode = config[cc.game.CONFIG_KEY.classReleaseMode];
     if(releaseMode) {
         console.log("release Mode");
     }
