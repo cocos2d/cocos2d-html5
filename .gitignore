@@ -5,3 +5,6 @@ build
 aspnet_client
 node_modules
 /tools/jsdoc_toolkit-2.4.0
+/MyTest
+/MyTest/src/3.0/test.js
+/MyTest/res/GUITest/DemoLogin

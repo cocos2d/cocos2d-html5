@@ -55,7 +55,8 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  * @class
  * @extends cc.ParticleSystem
  *
- * @property {cc.TextureAtlas}  textureAtlas    - The texture atlas used for drawing the quads
+ * @property {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}  texture         - The used texture
+ * @property {cc.TextureAtlas}                                  textureAtlas    - The texture atlas used for drawing the quads
  */
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 	/**
@@ -265,7 +266,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
                 child.updateWithNoTime();
             }
         }
-        child._setZOrder(zOrder);
+        child._setLocalZOrder(zOrder);
     },
 
     /**
@@ -491,7 +492,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
         this._children = cc.ArrayAppendObjectToIndex(this._children, child, pos);
         child.tag = aTag;
-        child._setZOrder(z);
+        child._setLocalZOrder(z);
         child.parent = this;
         if (this._running) {
             child.onEnter();
@@ -523,6 +524,13 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this.textureAtlas = textureAtlas;
     }
 });
+
+window._proto = cc.ParticleBatchNode.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+
+delete window._proto;
 
 /**
  * initializes the particle system with the name of a file on disk (for a list of supported formats look at the cc.Texture2D class), a capacity of particles

@@ -35,10 +35,27 @@ cc.DOM = {};
  * @private
  * @param x
  */
-cc.DOM.addMethods = function (x) {
+cc.DOM.addMethods = function (node) {
     for (var funcs in cc.DOM.methods) {
-        x[funcs] = cc.DOM.methods[funcs];
+	    node[funcs] = cc.DOM.methods[funcs];
     }
+
+	// Redefine getter setter
+	cc.defineGetterSetter(node, "x", node.getPositionX, node.setPositionX);
+	cc.defineGetterSetter(node, "y", node.getPositionY, node.setPositionY);
+	cc.defineGetterSetter(node, "width", node._getWidth, node._setWidth);
+	cc.defineGetterSetter(node, "height", node._getHeight, node._setHeight);
+	cc.defineGetterSetter(node, "anchorX", node._getAnchorX, node._setAnchorX);
+	cc.defineGetterSetter(node, "anchorY", node._getAnchorY, node._setAnchorY);
+	cc.defineGetterSetter(node, "scale", node.getScale, node.setScale);
+	cc.defineGetterSetter(node, "scaleX", node.getScaleX, node.setScaleX);
+	cc.defineGetterSetter(node, "scaleY", node.getScaleY, node.getScaleY);
+	cc.defineGetterSetter(node, "rotation", node.getRotation, node.setRotation);
+	cc.defineGetterSetter(node, "skewX", node.getSkewX, node.setSkewX);
+	cc.defineGetterSetter(node, "skewY", node.getSkewY, node.setSkewY);
+	cc.defineGetterSetter(node, "visible", node.isVisible, node.setVisible);
+	cc.defineGetterSetter(node, "parent", node.getParent, node.setParent);
+	cc.defineGetterSetter(node, "opacity", node.getOpacity, node.setOpacity);
 };
 cc.DOM.methods = /** @lends cc.DOM# */{
     /**
@@ -139,7 +156,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         locAPP.y = locSize.height * locAnchorPoint.y;
 
         this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
-        if (this.isIgnoreAnchorPointForPosition()) {
+        if (this.ignoreAnchor) {
             this.dom.style.marginLeft = 0;
             this.dom.style.marginBottom = 0;
         } else {
@@ -148,6 +165,54 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         }
         this.setNodeDirty();
     },
+
+	/**
+	 * replace set anchorpoint x of ccNode
+	 * @param {Number} x The anchor x of node.
+	 */
+	_setAnchorX:function (x) {
+		var locAnchorPoint = this._anchorPoint;
+
+		if (x === locAnchorPoint.x)
+			return;
+		locAnchorPoint.x = x;
+
+		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		locAPP.x = locSize.width * locAnchorPoint.x;
+
+		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
+		if (this.ignoreAnchor) {
+			this.dom.style.marginLeft = 0;
+			this.dom.style.marginBottom = 0;
+		} else {
+			this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP.x + 'px';
+		}
+		this.setNodeDirty();
+	},
+
+	/**
+	 * replace set anchorpoint y of ccNode
+	 * @param {Number} y The anchor y of node.
+	 */
+	_setAnchorY:function (y) {
+		var locAnchorPoint = this._anchorPoint;
+
+		if (y === locAnchorPoint.y)
+			return;
+		locAnchorPoint.y = y;
+
+		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		locAPP.y = locSize.height * locAnchorPoint.y;
+
+		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
+		if (this.ignoreAnchor) {
+			this.dom.style.marginLeft = 0;
+			this.dom.style.marginBottom = 0;
+		} else {
+			this.dom.style.marginBottom = -locAPP.y + 'px';
+		}
+		this.setNodeDirty();
+	},
 
     /**
      * replace set ContentSize of ccNode
@@ -180,6 +245,48 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this.setNodeDirty();
         this.redraw();
     },
+
+	/**
+	 * replace set width of ccNode
+	 * @param {Number} width The untransformed size's width of the node.
+	 */
+	_setWidth:function (width) {
+		var locContentSize = this._contentSize;
+		if (width === locContentSize.width)
+			return;
+		locContentSize.width = width;
+
+		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		locAPP.x = locContentSize.width * locAnchorPoint.x;
+		this.dom.width = locContentSize.width;
+		this.anchorX = locAnchorPoint.x;
+		if (this.canvas) {
+			this.canvas.width = locContentSize.width;
+		}
+		this.setNodeDirty();
+		this.redraw();
+	},
+
+	/**
+	 * replace set height of ccNode
+	 * @param {Number} height The untransformed size's height of the node.
+	 */
+	_setHeight:function (height) {
+		var locContentSize = this._contentSize;
+		if (height === locContentSize.height)
+			return;
+		locContentSize.height = height;
+
+		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		locAPP.y = locContentSize.height * locAnchorPoint.y;
+		this.dom.height = locContentSize.height;
+		this.anchorY = locAnchorPoint.y;
+		if (this.canvas) {
+			this.canvas.height = locContentSize.height;
+		}
+		this.setNodeDirty();
+		this.redraw();
+	},
 
     /**
      * replace set Rotation of ccNode
@@ -229,8 +336,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         if (this.dom)
             this.dom.style.display = (x) ? 'block' : 'none';
     },
-    _setZOrder:function (z) {
-        this._zOrder = z
+    _setLocalZOrder:function (z) {
+        this._localZOrder = z
         this.setNodeDirty();
         if (this.dom)
             this.dom.zIndex = z;
@@ -439,8 +546,8 @@ cc.DOM.setTransform = function (x) {
         }
     }
     if (x.dom) {
-        x.dom.position.x = x.getPosition().x;
-        x.dom.position.y = -x.getPosition().y;
+        x.dom.position.x = x.getPositionX();
+        x.dom.position.y = -x.getPositionY();
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};

@@ -101,6 +101,10 @@ cc.TMX_ORIENTATION_ISO = 2;
  * @property {Array}    properties      - Properties from the map. They can be added using tilemap editors
  * @property {Number}   mapOrientation  - Map orientation
  * @property {Array}    objectGroups    - Object groups of the map
+ * @property {Number}   mapWidth        - Width of the map
+ * @property {Number}   mapHeight       - Height of the map
+ * @property {Number}   tileWidth       - Width of a tile
+ * @property {Number}   tileHeight      - Height of a tile
  */
 cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 	/** @public */
@@ -120,8 +124,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
     ctor:function(){
         cc.Node.prototype.ctor.call(this);
-        this._mapSize = cc.SizeZero();
-        this._tileSize = cc.SizeZero();
+        this._mapSize = cc.size(0, 0);
+        this._tileSize = cc.size(0, 0);
         this.properties = null;
         this.objectGroups = null;
         this.mapOrientation = null;
@@ -400,6 +404,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
 window._proto = cc.TMXTiledMap.prototype;
 
+// Extended properties
 cc.defineGetterSetter(_proto, "mapWidth", _proto._getMapWidth, _proto._setMapWidth);
 cc.defineGetterSetter(_proto, "mapHeight", _proto._getMapHeight, _proto._setMapHeight);
 cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);

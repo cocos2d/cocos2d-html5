@@ -51,6 +51,7 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
  * @extends cc.Node
  *
  * @property {cc.TextureAtlas}  textureAtlas    - The texture atlas
+ * @property {Array}            descendants     - <@readonly> Descendants of sprite batch node
  *
  * @example
  * //create a SpriteBatchNode
@@ -938,8 +939,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 tempChild =  locChildren[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  locChildren[j];
@@ -967,8 +968,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 tempChild =  childrenArr[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
                     childrenArr[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  childrenArr[j];
@@ -1046,8 +1047,6 @@ if(cc.Browser.supportWebGL){
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
 
 // Extended properties
-/** @expose */
-_proto.descendants;
 cc.defineGetterSetter(_proto, "descendants", _proto.getDescendants);
 
 delete window._proto;

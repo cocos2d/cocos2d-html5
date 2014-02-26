@@ -386,7 +386,6 @@ cc.MouseDispatcher = cc.Class.extend(/** @lends cc.MouseDispatcher# */{
         this._mousePressed = false;
         this._rightMousePressed = false;
 
-        cc.MouseDispatcher._registerHtmlElementEvent(cc.canvas);
         return true;
     },
 

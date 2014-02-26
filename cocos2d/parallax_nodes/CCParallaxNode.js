@@ -104,24 +104,27 @@ cc.PointObject.create = function (ratio, offset) {
  * The children will be moved faster / slower than the parent according the the parallax ratio. </p>
  * @class
  * @extends cc.Node
+ *
+ * @property {Array}    parallaxArray   - Parallax nodes array
  */
 cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
+	/** @public */
+	parallaxArray:null,
+
     _lastPosition:null,
-    _parallaxArray:null,
 
     /**
      * @return {Array}
      */
-
     getParallaxArray:function () {
-        return this._parallaxArray;
+        return this.parallaxArray;
     },
 
     /**
      * @param {Array} value
      */
     setParallaxArray:function (value) {
-        this._parallaxArray = value;
+        this.parallaxArray = value;
     },
 
     /**
@@ -129,7 +132,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      */
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
-        this._parallaxArray = [];
+        this.parallaxArray = [];
         this._lastPosition = cc.p(-100, -100);
     },
 
@@ -153,10 +156,9 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
             throw "cc.ParallaxNode.addChild(): child should be non-null";
         var obj = cc.PointObject.create(ratio, offset);
         obj.setChild(child);
-        this._parallaxArray.push(obj);
+        this.parallaxArray.push(obj);
 
-	    child.x = this._position.x * ratio.x + offset.x;
-	    child.y = this._position.y * ratio.y + offset.y;
+	    child.setPosition(this._position.x * ratio.x + offset.x, this._position.y * ratio.y + offset.y);
 
         cc.NodeRGBA.prototype.addChild.call(this, child, z, child.tag);
     },
@@ -170,7 +172,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      * voidNode.removeChild(background,true);
      */
     removeChild:function (child, cleanup) {
-        var locParallaxArray = this._parallaxArray;
+        var locParallaxArray = this.parallaxArray;
         for (var i = 0; i < locParallaxArray.length; i++) {
             var point = locParallaxArray[i];
             if (point.getChild() == child) {
@@ -186,7 +188,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      * @param {Boolean} cleanup
      */
     removeAllChildren:function (cleanup) {
-        this._parallaxArray.length = 0;
+        this.parallaxArray.length = 0;
         cc.NodeRGBA.prototype.removeAllChildren.call(this, cleanup);
     },
 
@@ -196,12 +198,12 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
     visit:function () {
         var pos = this._absolutePosition();
         if (!cc.pointEqualToPoint(pos, this._lastPosition)) {
-            var locParallaxArray = this._parallaxArray;
+            var locParallaxArray = this.parallaxArray;
             for (var i = 0, len = locParallaxArray.length; i < len; i++) {
                 var point = locParallaxArray[i];
 	            var child = point.getChild();
-	            child.x = -pos.x + pos.x * point.getRatio().x + point.getOffset().x;
-	            child.y = -pos.y + pos.y * point.getRatio().y + point.getOffset().y;
+	            child.setPosition(-pos.x + pos.x * point.getRatio().x + point.getOffset().x,
+	                               -pos.y + pos.y * point.getRatio().y + point.getOffset().y);
             }
             this._lastPosition = pos;
         }
@@ -213,7 +215,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
         var cn = this;
         while (cn.parent != null) {
             cn = cn.parent;
-            ret = cc.pAdd(ret, cn.pos);
+            ret = cc.pAdd(ret, cn.getPosition());
         }
         return ret;
     }

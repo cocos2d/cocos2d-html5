@@ -208,12 +208,12 @@ cc.tex2 = function (u, v) {
  * @Class
  * @Construct
  * @param {cc.Vertex2F} pos1
- * @param {cc.Color} color1
+ * @param {cc.Color4B} color1
  * @param {Number} size1
  */
 cc.PointSprite = function (pos1, color1, size1) {
     this.pos = pos1 || new cc.Vertex2F(0, 0);
-    this.color = color1 || cc.color(0, 0, 0, 0);
+    this.color = color1 || new cc.Color4B(0, 0, 0, 0);
     this.size = size1 || 0;
 };
 
@@ -1071,6 +1071,18 @@ cc.FontDefinition = function(){
     this.shadowOffset = cc.p(0, 0);
     this.shadowBlur = 0;
     this.shadowOpacity = 1.0;
+};
+
+
+/**
+ * The device accelerometer reports values for each axis in units of g-force
+ * @constructor
+ */
+cc.Acceleration = function(){
+    this.x = 0;
+    this.y = 0;
+    this.z = 0;
+    this.timestamp = 0;
 };
 
 

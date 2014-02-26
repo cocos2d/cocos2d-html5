@@ -244,14 +244,14 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                     }
                     var locRect = this._rect;
                     if(locRect.width === 0 && locRect.height === 0){
-                        var locSize = sender.size;
-                        this._rect.width = locSize.width;
-                        this._rect.height = locSize.height;
+                        var w = sender.width, h = sender.height;
+                        this._rect.width = w;
+                        this._rect.height = h;
                         this._rectInPixels = cc.RECT_POINTS_TO_PIXELS(this._rect);
                         this._originalSizeInPixels.width = this._rectInPixels.width;
                         this._originalSizeInPixels.height = this._rectInPixels.height;
-                        this._originalSize.width =  locSize.width;
-                        this._originalSize.height =  locSize.height;
+                        this._originalSize.width =  w;
+                        this._originalSize.height =  h;
                     }
                     this._callLoadedEventCallbacks();
                 }, this);

@@ -416,6 +416,10 @@ cc.BMFontConfiguration.create = function (FNTfile) {
  * http://www.angelcode.com/products/bmfont/ (Free, Windows only)</p>
  * @class
  * @extends cc.SpriteBatchNode
+ *
+ * @property {String}   string          - Content string of label
+ * @property {enum}     textAlign       - Horizontal Alignment of label, cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {Number}   boundingWidth   - Width of the bounding box of label, the real content width is limited by boundingWidth
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     RGBAProtocol:true,
@@ -535,7 +539,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
-            var size = this.size;
+            var size = this.getContentSize();
             var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
             cc.drawingUtil.setDrawColor4B(0,255,0,255);
@@ -872,7 +876,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
                 nextFontPositionY + yOffset - rect.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
-            fontChar.pos = cc.POINT_PIXELS_TO_POINTS(fontPos);
+            fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
 
             // update kerning
             nextFontPositionX += fontDef.xAdvance + kerningAmount;
@@ -884,7 +888,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         tmpSize.width = longestLine;
         tmpSize.height = totalHeight;
-        this.size = cc.SIZE_PIXELS_TO_POINTS(tmpSize);
+        this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(tmpSize));
     },
 
     /**
@@ -1096,7 +1100,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar.x + lastChar.width / 2;
+                    lineWidth = lastChar.getPositionX() + lastChar._getWidth() / 2;
 
                     var shift = 0;
                     switch (this._alignment) {
@@ -1273,11 +1277,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.anchorX);
+        return sp.getPositionX() * this._scaleX + (sp._getWidth() * this._scaleX * sp._getAnchorX());
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.anchorY);
+        return sp.getPositionX() * this._scaleX - (sp._getWidth() * this._scaleX * sp._getAnchorX());
     }
 });
 

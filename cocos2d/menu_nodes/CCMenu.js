@@ -150,9 +150,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      */
     initWithArray:function (arrayOfItems) {
         if (this.init()) {
-            this.touchPriority = cc.MENU_HANDLER_PRIORITY;
-            this.touchMode = cc.TOUCH_ONE_BY_ONE;
-            this.touchEnabled = true;
             this.enabled = true;
 
             // menu in the center of the screen
@@ -177,6 +174,18 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             // enable cascade color and opacity on menus
             this.cascadeColor = true;
             this.cascadeOpacity = true;
+
+            //add touch event listener
+            var touchListener = cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                swallowTouches: true,
+                onTouchBegan: this._onTouchBegan,
+                onTouchMoved: this._onTouchMoved,
+                onTouchEnded: this._onTouchEnded,
+                onTouchCancelled: this._onTouchCancelled
+            });
+            cc.eventManager.addListener(touchListener,this);
+
             return true;
         }
         return false;
@@ -216,8 +225,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 locChild = locChildren[i];
                 locHeight = locChild.height;
                 locScaleY = locChild.scaleY;
-                locChild.x = 0;
-	            locChild.y = y - locHeight * locScaleY / 2;
+                locChild.setPosition(0, y - locHeight * locScaleY / 2);
                 y -= locHeight * locScaleY + padding;
             }
         }
@@ -246,8 +254,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 locChild = locChildren[i];
                 locScaleX = locChild.scaleX;
                 locWidth =  locChildren[i].width;
-                locChild.x = x + locWidth * locScaleX / 2;
-	            locChild.y = 0;
+                locChild.setPosition(x + locWidth * locScaleX / 2, 0);
                 x += locWidth * locScaleX + padding;
             }
         }
@@ -318,10 +325,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                     x = w;
                 }
 
-                tmp = child.height;
+                tmp = child._getHeight();
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
-                child.x = x - winSize.width / 2;
-	            child.y = y - tmp / 2;
+                child.setPosition(x - winSize.width / 2, y - tmp / 2);
 
                 x += w;
                 ++columnsOccupied;
@@ -412,11 +418,10 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 }
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
-                tmp = child.width;
+                tmp = child._getWidth();
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
-                child.x = x + columnWidths[column] / 2;
-	            child.y = y - winSize.height / 2;
+                child.setPosition(x + columnWidths[column] / 2, y - winSize.height / 2);
 
                 y -= child.height + 10;
                 ++rowsOccupied;
@@ -430,13 +435,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
                 }
             }
         }
-    },
-
-    /**
-     * make the menu clickable
-     */
-    registerWithTouchDispatcher:function () {
-        cc.registerTargetedDelegate(this.touchPriority, true, this);
     },
 
     /**
@@ -456,74 +454,62 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
-    /**
-     * @param {cc.Touch} touch
-     * @param {Object} e
-     * @return {Boolean}
-     */
-    onTouchBegan:function (touch, e) {
-        if (this._state != cc.MENU_STATE_WAITING || !this._visible || !this.enabled)
+    _onTouchBegan:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if (target._state != cc.MENU_STATE_WAITING || !target._visible || !target.enabled)
             return false;
 
-        for (var c = this.parent; c != null; c = c.parent) {
+        for (var c = target.parent; c != null; c = c.parent) {
             if (!c.isVisible())
                 return false;
         }
 
-        this._selectedItem = this._itemForTouch(touch);
-        if (this._selectedItem) {
-            this._state = cc.MENU_STATE_TRACKING_TOUCH;
-            this._selectedItem.selected();
+        target._selectedItem = target._itemForTouch(touch);
+        if (target._selectedItem) {
+            target._state = cc.MENU_STATE_TRACKING_TOUCH;
+            target._selectedItem.selected();
             return true;
         }
         return false;
     },
 
-    /**
-     * when a touch ended
-     */
-    onTouchEnded:function (touch, e) {
-        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+    _onTouchEnded:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
             cc.log("cc.Menu.onTouchEnded(): invalid state");
             return;
         }
-        if (this._selectedItem) {
-            this._selectedItem.unselected();
-            this._selectedItem.activate();
+        if (target._selectedItem) {
+            target._selectedItem.unselected();
+            target._selectedItem.activate();
         }
-        this._state = cc.MENU_STATE_WAITING;
+        target._state = cc.MENU_STATE_WAITING;
     },
 
-    /**
-     * touch cancelled
-     */
-    onTouchCancelled:function (touch, e) {
-        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+    _onTouchCancelled:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
             cc.log("cc.Menu.onTouchCancelled(): invalid state");
             return;
         }
         if (this._selectedItem)
-            this._selectedItem.unselected();
-        this._state = cc.MENU_STATE_WAITING;
+            target._selectedItem.unselected();
+        target._state = cc.MENU_STATE_WAITING;
     },
 
-    /**
-     * touch moved
-     * @param {cc.Touch} touch
-     * @param {Object} e
-     */
-    onTouchMoved:function (touch, e) {
-        if(this._state !== cc.MENU_STATE_TRACKING_TOUCH){
+    _onTouchMoved:function (touch, event) {
+        var target = event.getCurrentTarget();
+        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
             cc.log("cc.Menu.onTouchMoved(): invalid state");
             return;
         }
-        var currentItem = this._itemForTouch(touch);
-        if (currentItem != this._selectedItem) {
-            if (this._selectedItem)
-                this._selectedItem.unselected();
-            this._selectedItem = currentItem;
-            if (this._selectedItem)
-                this._selectedItem.selected();
+        var currentItem = target._itemForTouch(touch);
+        if (currentItem != target._selectedItem) {
+            if (target._selectedItem)
+                target._selectedItem.unselected();
+            target._selectedItem = currentItem;
+            if (target._selectedItem)
+                target._selectedItem.selected();
         }
     },
 

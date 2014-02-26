@@ -57,6 +57,11 @@ ccs.BACKGROUNDCOLORRENDERERZ = -2;
  * Base class for ccs.Layout
  * @class
  * @extends ccs.Widget
+ *
+ * @property {Boolean}                  clippingEnabled - Indicate whether clipping is enabled
+ * @property {ccs.LayoutClippingType}   clippingType    - The clipping type: ccs.LayoutClippingType.stencil | ccs.LayoutClippingType.scissor
+ * @property {ccs.LayoutType}           layoutType      - The layout type: ccs.LayoutType.absolute | ccs.LayoutType.linearVertical | ccs.LayoutType.linearHorizontal | ccs.LayoutType.relative
+ *
  */
 ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _clippingEnabled: null,
@@ -366,10 +371,9 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
             return;
         }
-
+        var context = ctx || cc.renderContext;
         // Composition mode, costy but support texture stencil
         if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
-            var context = ctx || cc.renderContext;
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
             var canvas = context.canvas;
             var locCache = ccs.Layout._getSharedCache();
@@ -398,7 +402,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         // Clip mode, fast, but only support cc.DrawNode
         else {
-            var context = ctx || cc.renderContext, i, children = this._children, locChild;
+            var i, children = this._children, locChild;
 
             context.save();
             this.transform(context);
@@ -414,7 +418,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 // draw children zOrder < 0
                 for (i = 0; i < len; i++) {
                     locChild = children[i];
-                    if (locChild._zOrder < 0)
+                    if (locChild._localZOrder < 0)
                         locChild.visit(context);
                     else
                         break;
@@ -906,7 +910,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 topBoundary = locChild.getBottomInParent() - locMargin.bottom;
             }
         }
@@ -941,7 +945,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 leftBoundary = locChild.getRightInParent() + locMargin.right;
             }
         }
@@ -1326,7 +1330,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                         default:
                             break;
                     }
-                    locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                    locChild.setPosition(locFinalPosX, locFinalPosY);
                     locLayoutParameter._put = true;
                     unlayoutChildCount--;
                 }
@@ -1403,6 +1407,16 @@ if (cc.Browser.supportWebGL) {
 ccs.Layout._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 };
+
+window._proto = ccs.Layout.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "clippingEnabled", _proto.isClippingEnabled, _proto.setClippingEnabled);
+cc.defineGetterSetter(_proto, "clippingType", null, _proto.setClippingType);
+cc.defineGetterSetter(_proto, "layoutType", _proto.getLayoutType, _proto.setLayoutType);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UILayout.
  * @constructs

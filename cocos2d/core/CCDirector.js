@@ -146,7 +146,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _landscape:false,
     _nextDeltaTimeZero:false,
     _paused:false,
-    _purgeDirecotorInNextLoop:false,
+    _purgeDirectorInNextLoop:false,
     _sendCleanupToScene:false,
     _animationInterval:0.0,
     _oldAnimationInterval:0.0,
@@ -180,6 +180,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _scheduler:null,
     _actionManager:null,
+    _eventProjectionChanged: null,
+    _eventAfterDraw: null,
+    _eventAfterVisit: null,
+    _eventAfterUpdate: null,
+
     _touchDispatcher:null,
     _keyboardDispatcher:null,
     _accelerometer:null,
@@ -228,7 +233,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._paused = false;
 
         //purge?
-        this._purgeDirecotorInNextLoop = false;
+        this._purgeDirectorInNextLoop = false;
 
         this._winSizeInPoints = cc.size(0, 0);
 
@@ -240,6 +245,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //action manager
         this._actionManager = new cc.ActionManager();
         this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.PRIORITY_SYSTEM, false);
+
+        this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
+        this._eventAfterDraw.setUserData(this);
+        this._eventAfterVisit = new cc.EventCustom(cc.Director.EVENT_AFTER_VISIT);
+        this._eventAfterVisit.setUserData(this);
+        this._eventAfterUpdate = new cc.EventCustom(cc.Director.EVENT_AFTER_UPDATE);
+        this._eventAfterUpdate.setUserData(this);
+        this._eventProjectionChanged = new cc.EventCustom(cc.Director.EVENT_PROJECTION_CHANGED);
+        this._eventProjectionChanged.setUserData(this);
+
         //touchDispatcher
         if(cc.TouchDispatcher){
             this._touchDispatcher = new cc.TouchDispatcher();
@@ -337,8 +352,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.calculateDeltaTime();
 
         //tick before glClear: issue #533
-        if (!this._paused)
+        if (!this._paused) {
             this._scheduler.update(this._deltaTime);
+            cc.eventManager.dispatchEvent(this._eventAfterUpdate);
+        }
 
         this._clear();
 
@@ -351,8 +368,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._beforeVisitScene) this._beforeVisitScene();
 
         // draw the scene
-        if (this._runningScene)
+        if (this._runningScene) {
             this._runningScene.visit();
+            cc.eventManager.dispatchEvent(this._eventAfterVisit);
+        }
 
         // draw the notifications node
         if (this._notificationNode)
@@ -363,6 +382,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         if (this._afterVisitScene) this._afterVisitScene();
 
+        //TODO
+        cc.eventManager.dispatchEvent(this._eventAfterDraw);
         this._totalFrames++;
 
         if (this._displayStats)
@@ -394,7 +415,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * end director
      */
     end:function () {
-        this._purgeDirecotorInNextLoop = true;
+        this._purgeDirectorInNextLoop = true;
     },
 
     /**
@@ -488,8 +509,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if(!this._runningScene)
             throw "running scene should not null";
 
-        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
-
         this._scenesStack.pop();
         var c = this._scenesStack.length;
 
@@ -543,20 +562,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
         cc.TextureCache.purgeSharedTextureCache();
 
-        //CCShaderCache::purgeSharedShaderCache();
-        //CCFileUtils::purgeFileUtils();
-        //CCConfiguration::purgeConfiguration();
-        //extension::CCNotificationCenter::purgeNotificationCenter();
-        //extension::CCTextureWatcher::purgeTextureWatcher();
-        //extension::CCNodeLoaderLibrary::purgeSharedCCNodeLoaderLibrary();
-        //cc.UserDefault.purgeSharedUserDefault();
-        //ccGLInvalidateStateCache();
-
         cc.CHECK_GL_ERROR_DEBUG();
-
-        // OpenGL view
-        //this._openGLView.end();
-        //this._openGLView = null;
     },
 
     /**
@@ -803,55 +809,57 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * Sets an OpenGL projection
      * @param {Number} projection
      */
-    setProjection:function (projection) {
+    setProjection: function (projection) {
         var size = this._winSizeInPoints;
 
-        if(cc.renderContextType === cc.WEBGL){
-            this.setViewport();
-
-            switch (projection) {
-                case cc.DIRECTOR_PROJECTION_2D:
-                    cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-                    cc.kmGLLoadIdentity();
-                    var orthoMatrix = new cc.kmMat4();
-                    cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width, 0, size.height, -1024, 1024);
-                    cc.kmGLMultMatrix(orthoMatrix);
-                    cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-                    cc.kmGLLoadIdentity();
-                    break;
-                case cc.DIRECTOR_PROJECTION_3D:
-                    var zeye = this.getZEye();
-                    var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
-                    cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-                    cc.kmGLLoadIdentity();
-
-                    // issue #1334
-                    cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
-                    // kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, 1500);
-
-                    cc.kmGLMultMatrix(matrixPerspective);
-
-                    cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-                    cc.kmGLLoadIdentity();
-                    var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
-                    var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
-                    var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
-                    cc.kmMat4LookAt(matrixLookup, eye, center, up);
-                    cc.kmGLMultMatrix(matrixLookup);
-                    break;
-                case cc.DIRECTOR_PROJECTION_CUSTOM:
-                    if (this._projectionDelegate)
-                        this._projectionDelegate.updateProjection();
-                    break;
-                default:
-                    cc.log("cocos2d: Director: unrecognized projection");
-                    break;
-            }
+        if (cc.renderContextType === cc.CANVAS) {
             this._projection = projection;
-            cc.setProjectionMatrixDirty();
+            cc.eventManager.dispatchEvent(this._eventProjectionChanged);
             return;
         }
+
+        this.setViewport();
+
+        switch (projection) {
+            case cc.DIRECTOR_PROJECTION_2D:
+                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+                cc.kmGLLoadIdentity();
+                var orthoMatrix = new cc.kmMat4();
+                cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width, 0, size.height, -1024, 1024);
+                cc.kmGLMultMatrix(orthoMatrix);
+                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+                cc.kmGLLoadIdentity();
+                break;
+            case cc.DIRECTOR_PROJECTION_3D:
+                var zeye = this.getZEye();
+                var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
+                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+                cc.kmGLLoadIdentity();
+
+                // issue #1334
+                cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
+
+                cc.kmGLMultMatrix(matrixPerspective);
+
+                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+                cc.kmGLLoadIdentity();
+                var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
+                var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
+                var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
+                cc.kmMat4LookAt(matrixLookup, eye, center, up);
+                cc.kmGLMultMatrix(matrixLookup);
+                break;
+            case cc.DIRECTOR_PROJECTION_CUSTOM:
+                if (this._projectionDelegate)
+                    this._projectionDelegate.updateProjection();
+                break;
+            default:
+                cc.log("cocos2d: Director: unrecognized projection");
+                break;
+        }
         this._projection = projection;
+        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
+        cc.setProjectionMatrixDirty();
     },
 
     /**
@@ -1140,9 +1148,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.pos = cc.pAdd(cc.p(0, 34 * factor), locStatsPosition);
-        this._SPFLabel.pos = cc.pAdd(cc.p(0, 17 * factor), locStatsPosition);
-        this._FPSLabel.pos = locStatsPosition;
+        this._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
+	    this._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
+        this._FPSLabel.setPosition(locStatsPosition);
     },
 
     _createStatsLabelForCanvas:function(){
@@ -1157,9 +1165,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.pos = cc.pAdd(cc.p(this._drawsLabel.width / 2, this._drawsLabel.height * 5 / 2), locStatsPosition);
-        this._SPFLabel.pos = cc.pAdd(cc.p(this._SPFLabel.width / 2, this._SPFLabel.height * 3 / 2), locStatsPosition);
-        this._FPSLabel.pos = cc.pAdd(cc.p(this._FPSLabel.width / 2, this._FPSLabel.height / 2), locStatsPosition);
+        this._drawsLabel.setPosition(this._drawsLabel.width / 2 + locStatsPosition.x, this._drawsLabel.height * 5 / 2 + locStatsPosition.y);
+        this._SPFLabel.setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
+        this._FPSLabel.setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
     },
 
     _calculateMPF: function () {
@@ -1177,6 +1185,11 @@ if (cc.Browser.supportWebGL) {
     cc.Director.prototype._clear = cc.Director.prototype._clearCanvas;
     cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForCanvas;
 }
+
+cc.Director.EVENT_PROJECTION_CHANGED = "director_projection_changed";
+cc.Director.EVENT_AFTER_DRAW = "director_after_draw";
+cc.Director.EVENT_AFTER_VISIT = "director_after_visit";
+cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
 
 /***************************************************
  * implementation of DisplayLinkDirector
@@ -1210,8 +1223,8 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
      * main loop of director
      */
     mainLoop:function () {
-        if (this._purgeDirecotorInNextLoop) {
-            this._purgeDirecotorInNextLoop = false;
+        if (this._purgeDirectorInNextLoop) {
+            this._purgeDirectorInNextLoop = false;
             this.purgeDirector();
         }
         else if (!this.invalid) {
@@ -1268,24 +1281,11 @@ Object.defineProperties(cc, {
 });
 
 /**
- * is director first run
- * @type Boolean
- */
-cc.firstRun = true;
-
-/**
  * set default fps to 60
  * @type Number
  */
 cc.defaultFPS = 60;
 
-/*
- window.onfocus = function () {
- if (!cc.firstRun) {
- cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
- }
- };
- */
 cc.Director._fpsImage = new Image();
 cc.Director._fpsImage.addEventListener("load", function () {
     cc.Director._fpsImageLoaded = true;

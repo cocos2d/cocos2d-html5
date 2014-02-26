@@ -35,6 +35,7 @@
  * @class
  * @extends cc.NodeRGBA
  *
+ * @property {cc.Texture2D}     texture         - Current used texture
  * @property {cc.TextureAtlas}  textureAtlas    - Texture atlas for cc.AtlasNode
  * @property {Number}           quadsToDraw     - Number of quads to draw
  *
@@ -353,7 +354,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItemsForCanvas:function () {
         var selTexture = this.texture;
-        var size = selTexture.size;
+        var size = selTexture.getContentSize();
 
         this._itemsPerColumn = 0 | (size.height / this._itemHeight);
         this._itemsPerRow = 0 | (size.width / this._itemWidth);
@@ -361,7 +362,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItemsForWebGL:function () {
         var selTexture = this.texture;
-        var size = selTexture.size;
+        var size = selTexture.getContentSize();
         if(this._ignoreContentScaleFactor)
             size = selTexture.getContentSizeInPixels();
 

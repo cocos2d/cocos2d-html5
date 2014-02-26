@@ -412,8 +412,7 @@ cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.x = -cc.Director.getInstance().getWinSize().width;
-	    this._inScene.y = 0;
+        this._inScene.setPosition(-cc.Director.getInstance().getWinSize().width, 0);
     },
 
     /**
@@ -460,8 +459,7 @@ cc.TransitionMoveInR = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * Init
      */
     initScenes:function () {
-        this._inScene.x = cc.Director.getInstance().getWinSize().width;
-	    this._inScene.y = 0;
+        this._inScene.setPosition(cc.Director.getInstance().getWinSize().width, 0);
     }
 });
 
@@ -493,8 +491,7 @@ cc.TransitionMoveInT = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * init
      */
     initScenes:function () {
-        this._inScene.x = 0;
-	    this._inScene.y = cc.Director.getInstance().getWinSize().height;
+        this._inScene.setPosition(0, cc.Director.getInstance().getWinSize().height);
     }
 });
 
@@ -526,8 +523,7 @@ cc.TransitionMoveInB = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * init
      */
     initScenes:function () {
-        this._inScene.x = 0;
-	    this._inScene.y = -cc.Director.getInstance().getWinSize().height;
+        this._inScene.setPosition(0, -cc.Director.getInstance().getWinSize().height);
     }
 });
 
@@ -588,8 +584,7 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.x = -cc.Director.getInstance().getWinSize().width + cc.ADJUST_FACTOR;
-	    this._inScene.y = 0;
+        this._inScene.setPosition(-cc.Director.getInstance().getWinSize().width + cc.ADJUST_FACTOR, 0);
     },
     /**
      * returns the action that will be performed by the incomming and outgoing scene
@@ -638,8 +633,7 @@ cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.x = cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR;
-	    this._inScene.y = 0;
+        this._inScene.setPosition(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR, 0);
     },
     /**
      *  returns the action that will be performed by the incomming and outgoing scene
@@ -681,8 +675,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.x = 0;
-	    this._inScene.y = cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR;
+        this._inScene.setPosition(0, cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR);
     },
 
     /**
@@ -725,8 +718,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.x = 0;
-	    this._inScene.y = -(cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR);
+        this._inScene.setPosition(0, -(cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR));
     },
 
     /**
@@ -1351,7 +1343,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         if (null == inTexture)
             return;
 
-        inTexture.getSprite().anchor = cc.p(0.5, 0.5);
+        inTexture.sprite.anchorX = 0.5;
+	    inTexture.sprite.anchorY = 0.5;
         inTexture.attr({
 	        x: winSize.width / 2,
 	        y: winSize.height / 2,
@@ -1366,27 +1359,25 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create the second render texture for outScene
         var outTexture = cc.RenderTexture.create(winSize.width, winSize.height);
-        outTexture.getSprite().anchor = cc.p(0.5, 0.5);
-        outTexture.x = winSize.width / 2;
-	    outTexture.y = winSize.height / 2;
-        outTexture.anchorX = 0.5;
-	    outTexture.anchorY = 0.5;
+        outTexture.setPosition(winSize.width / 2, winSize.height / 2);
+	    outTexture.sprite.anchorX = outTexture.anchorX = 0.5;
+	    outTexture.sprite.anchorY = outTexture.anchorY = 0.5;
 
         // render outScene to its texturebuffer
         outTexture.begin();
         this._outScene.visit();
         outTexture.end();
 
-        inTexture.getSprite().setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
-        outTexture.getSprite().setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
+        inTexture.sprite.setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
+        outTexture.sprite.setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
 
         // add render textures to the layer
         layer.addChild(inTexture);
         layer.addChild(outTexture);
 
         // initial opacity:
-        inTexture.getSprite().opacity = 255;
-        outTexture.getSprite().opacity = 255;
+        inTexture.sprite.opacity = 255;
+        outTexture.sprite.opacity = 255;
 
         // create the blend action
         var layerAction = cc.Sequence.create(
@@ -1395,7 +1386,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         );
 
         // run the blend action
-        outTexture.getSprite().runAction(layerAction);
+        outTexture.sprite.runAction(layerAction);
 
         // add the layer (which contains our two rendertextures) to the scene
         this.addChild(layer, 2, cc.SCENE_FADE);

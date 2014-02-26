@@ -50,6 +50,10 @@
  * @property {Number}               layerOrientation    - Layer orientation
  * @property {Array}                properties          - Properties from the layer. They can be added using tilemap editors
  * @property {String}               layerName           - Name of the layer
+ * @property {Number}               layerWidth          - Width of the layer
+ * @property {Number}               layerHeight         - Height of the layer
+ * @property {Number}               tileWidth           - Width of a tile
+ * @property {Number}               tileHeight          - Height of a tile
  */
 cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 	/** @public */
@@ -418,11 +422,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             // offset (after layer orientation is set);
             var offset = this._calculateLayerOffset(layerInfo.offset);
-            this.pos = cc.POINT_PIXELS_TO_POINTS(offset);
+            this.setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
 
             this._atlasIndexArray = [];
-            this.size = cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
-                this._layerSize.height * this._mapTileSize.height));
+            this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
+                this._layerSize.height * this._mapTileSize.height)));
             this._useAutomaticVertexZ = false;
             this._vertexZvalue = 0;
             return true;
@@ -480,7 +484,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             tile = new cc.Sprite();
             tile.initWithTexture(this.texture, rect);
             tile.batchNode = this;
-            tile.pos = this.getPositionAt(pos);
+            tile.setPosition(this.getPositionAt(pos));
             tile.vertexZ = this._vertexZForPos(pos);
             tile.anchorX = 0;
 	        tile.anchorY = 0;
@@ -904,7 +908,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _setupTileSprite:function (sprite, pos, gid) {
         var z = pos.x + pos.y * this._layerSize.width;
-        sprite.pos = this.getPositionAt(pos);
+        sprite.setPosition(this.getPositionAt(pos));
         if (cc.renderContextType === cc.WEBGL)
             sprite.vertexZ = this._vertexZForPos(pos);
         else
@@ -1041,6 +1045,8 @@ if(cc.Browser.supportWebGL){
 }
 
 cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+
+// Extended properties
 cc.defineGetterSetter(_proto, "layerWidth", _proto._getLayerWidth, _proto._setLayerWidth);
 cc.defineGetterSetter(_proto, "layerHeight", _proto._getLayerHeight, _proto._setLayerHeight);
 cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);

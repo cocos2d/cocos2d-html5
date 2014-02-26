@@ -581,7 +581,19 @@ cc.defineGetterSetter = function (proto, prop, getter, setter)
 	}
 
 	throw new Error("browser does not support getters");
-}
+};
+
+/**
+ * copy an array's item to a new array (its performance is better than Array.slice)
+ * @param {Array} arr
+ * @returns {Array}
+ */
+cc.copyArray = function(arr){
+    var i, len = arr.length, arr_clone = new Array(len);
+    for (i = 0; i < len; i += 1)
+        arr_clone[i] = arr[i];
+    return arr_clone;
+};
 
 /**
  * Common getter setter configuration function
@@ -595,4 +607,4 @@ cc.defineProtoGetterSetter = function (classobj, prop, getter, setter)
 {
 	var proto = classobj.prototype;
 	cc.defineGetterSetter(proto, prop, getter, setter);
-}
+};
