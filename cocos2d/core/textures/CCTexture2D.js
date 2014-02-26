@@ -1154,9 +1154,6 @@ cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
 //cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
-cc.defineGetterSetter(_proto, "maxS", _proto.getMaxS, _proto.setMaxS);
-cc.defineGetterSetter(_proto, "maxT", _proto.getMaxT, _proto.setMaxT);
 delete window._proto;
 
 
