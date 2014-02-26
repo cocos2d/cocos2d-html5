@@ -510,8 +510,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      */
     initWithTMXFile:function (tmxFile) {
         this._internalInit(tmxFile, null);
-        return this.parseXMLFile(this.tmxFileName);
-        //return this.parseXMLFile(cc.FileUtils.getInstance().fullPathForFilename(this._TMXFileName));
+        return this.parseXMLFile(tmxFile);
     },
 
     /**
@@ -532,8 +531,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      */
     parseXMLFile:function (tmxFile, isXmlString) {
         isXmlString = isXmlString || false;
-        tmxFile = cc.FileUtils.getInstance().fullPathForFilename(tmxFile);
-        var mapXML = cc.SAXParser.getInstance().tmxParse(tmxFile, isXmlString);
+        var xmlStr = cc.loader.getRes(tmxFile);
+        if(!xmlStr) throw "Please load the resource first : " + tmxFile;
+
+        var mapXML = this._parseXML(xmlStr);
         var i, j;
 
         // PARSE <map>
@@ -586,10 +587,11 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         for (i = 0; i < tilesets.length; i++) {
             var selTileset = tilesets[i];
             // If this is an external tileset then start parsing that
-            var externalTilesetFilename = selTileset.getAttribute('source');
-            if (externalTilesetFilename) {
+            var tsxName = selTileset.getAttribute('source');
+            if (tsxName) {
                 //this._currentFirstGID = parseInt(selTileset.getAttribute('firstgid'));
-                this.parseXMLFile(cc.FileUtils.getInstance().fullPathFromRelativeFile(externalTilesetFilename, isXmlString ? this._resources + "/" : tmxFile));
+                var tsxPath = isXmlString ? cc.path.join(this._resources, tsxName) : cc.path.changeBasename(tmxFile, tsxName);
+                this.parseXMLFile(tsxPath);
             } else {
                 var tileset = new cc.TMXTilesetInfo();
                 tileset.name = selTileset.getAttribute('name') || "";
@@ -871,7 +873,6 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._tilesets.length = 0;
         this._layers.length = 0;
 
-        //this.tmxFileName = cc.FileUtils.getInstance().fullPathForFilename(tmxFileName);
         this.tmxFileName = tmxFileName;
         if (resourcePath)
             this._resources = resourcePath;
@@ -912,7 +913,7 @@ delete window._proto;
  * //create a TMXMapInfo with content string and resource path
  * var resources = "res/TileMaps";
  * var filePath = "res/TileMaps/orthogonal-test1.tmx";
- * var xmlStr = cc.FileUtils.getInstance().getStringFromFile(filePath);
+ * var xmlStr = cc.loader.getRes(filePath);
  * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
  */
 cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
@@ -926,3 +927,6 @@ cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
     }
     return null;
 };
+
+
+cc.loader.register(["tmx", "tsx"], cc.txtLoader);

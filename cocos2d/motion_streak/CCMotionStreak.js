@@ -302,14 +302,14 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 	 * @return {Number}
 	 */
 	getPositionX:function () {
-		return this._positionR._x;
+		return this._positionR.x;
 	},
 
 	/**
 	 * @param {Number} x
 	 */
 	setPositionX:function (x) {
-		this._positionR._x = x;
+		this._positionR.x = x;
 		if(!this.startingPositionInitialized)
 			this.startingPositionInitialized = true;
 	},
@@ -318,14 +318,14 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 	 * @return {Number}
 	 */
 	getPositionY:function () {
-		return  this._positionR._y;
+		return  this._positionR.y;
 	},
 
 	/**
 	 * @param {Number} y
 	 */
 	setPositionY:function (y) {
-		this._positionR._y = y;
+		this._positionR.y = y;
 		if(!this.startingPositionInitialized)
 			this.startingPositionInitialized = true;
 	},

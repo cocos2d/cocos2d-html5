@@ -1510,10 +1510,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     initWithFile:function (plistFile) {
         this._plistFile = plistFile;
-        var fileUtils = cc.FileUtils.getInstance();
-        var fullPath = fileUtils.fullPathForFilename(plistFile);
-
-        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
+        var dict = cc.loader.getRes(plistFile);
         if(!dict){
             cc.log("cc.ParticleSystem.initWithFile(): Particles: file not found");
             return false;
@@ -1589,8 +1586,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this.endSizeVar = parseFloat(locValueForKey("finishParticleSizeVariance", dictionary));
 
             // position
-            this.x = parseFloat(locValueForKey("sourcePositionx", dictionary));
-            this.y = parseFloat(locValueForKey("sourcePositiony", dictionary));
+            this.setPosition(parseFloat(locValueForKey("sourcePositionx", dictionary)),
+                              parseFloat(locValueForKey("sourcePositiony", dictionary)));
             this._posVar.x = parseFloat(locValueForKey("sourcePositionVariancex", dictionary));
             this._posVar.y = parseFloat(locValueForKey("sourcePositionVariancey", dictionary));
 
@@ -1659,8 +1656,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // texture
                 // Try to get the texture from the cache
                 var textureName = locValueForKey("textureFileName", dictionary);
-                var fileUtils = cc.FileUtils.getInstance();
-                var imgPath = fileUtils.fullPathFromRelativeFile(textureName, this._plistFile);
+                var imgPath = cc.path.changeBasename(this._plistFile, textureName);
                 var tex = cc.TextureCache.getInstance().textureForKey(imgPath);
 
                 if (tex) {
@@ -1696,8 +1692,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
 
-                        var imgFullPath = fileUtils.fullPathForFilename(imgPath);
-                        cc.TextureCache.getInstance().cacheImage(imgFullPath, canvasObj);
+                        cc.TextureCache.getInstance().cacheImage(imgPath, canvasObj);
 
                         var addTexture = cc.TextureCache.getInstance().textureForKey(imgPath);
                         if(!addTexture)

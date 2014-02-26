@@ -59,12 +59,6 @@ cc.Browser = {};
  */
 cc.Browser.webglWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari"];
 
-/**
- * Browsers that multiple audio support well
- * @type {Array}
- */
-cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari", "ucbrowser", "qqbrowser", "mqqbrowser"];
-
 (function () {
     var ua = navigator.userAgent;
     cc.Browser.ua = ua.toLowerCase();
@@ -73,7 +67,6 @@ cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome
     cc.Browser.type = (function () {
         var browserTypes = cc.Browser.ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|ie|opera|miuibrowser|firefox/)
             || cc.Browser.ua.match(/chrome|safari/);
-
         if (browserTypes && browserTypes.length > 0) {
             var el = browserTypes[0];
             if (el == 'micromessenger') {
@@ -86,12 +79,9 @@ cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome
     })();
     cc.Browser.mode = cc.Browser.type == 'ie' && document.documentMode;
 
-    if (!document["ccConfig"])
-        document["ccConfig"] = {};
-
-    var c = document["ccConfig"];
+    var c = cc.game.config, CONFIG_KEY = cc.game.CONFIG_KEY;
     // check supportWebGL item
-    cc._userRenderMode = parseInt(c["renderMode"]) || 0;
+    cc._userRenderMode = parseInt(c[CONFIG_KEY.renderMode]);
 
     var notInWhiteList = cc.Browser.webglWhiteList.indexOf(cc.Browser.type) == -1;
     if (cc._userRenderMode === 1 || (cc._userRenderMode === 0 && (cc.Browser.isMobile || notInWhiteList))) {

@@ -92,17 +92,13 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     initWithString:function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
         var label = strText + "", textureFilename, width, height, startChar;
         if (arguments.length === 2) {
-            var fileUtils = cc.FileUtils.getInstance();
-            var pathStr = fileUtils.fullPathForFilename(charMapFile);
-            var relPathStr = pathStr.substr(0, pathStr.lastIndexOf('/')) + '/';
-
-            var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(pathStr);
+            var dict = cc.loader.getRes(charMapFile);
             if(parseInt(dict["version"], 10) !== 1) {
                 cc.log("cc.LabelAtlas.initWithString(): Unsupported version. Upgrade cocos2d version");
                 return false;
             }
 
-            textureFilename = relPathStr + dict["textureFilename"];
+            textureFilename = cc.path.changeBasename(charMapFile, dict["textureFilename"]);
             var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
             width = parseInt(dict["itemWidth"], 10) / locScaleFactor;
             height = parseInt(dict["itemHeight"], 10) / locScaleFactor;
@@ -204,8 +200,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.opacity = this._displayedOpacity;
                 }
             }
-            fontChar.x = i * locItemWidth + locItemWidth / 2;
-	        fontChar.y = locItemHeight / 2;
+            fontChar.setPosition(i * locItemWidth + locItemWidth / 2, locItemHeight / 2);
         }
     },
 
@@ -294,7 +289,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var len = label.length;
         this._string = label;
         this.width = len * this._itemWidth;
-	    this.height = this._itemHeight;
+        this.height = this._itemHeight;
         if (this._children) {
             var locChildren = this._children;
             len = locChildren.length;
@@ -317,7 +312,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
         this._string = label;
         this.width = len * this._itemWidth;
-	    this.height = this._itemHeight;
+        this.height = this._itemHeight;
 
         this.updateAtlasValues();
         this.quadsToDraw = len;

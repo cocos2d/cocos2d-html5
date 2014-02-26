@@ -909,7 +909,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 topBoundary = locChild.getBottomInParent() - locMargin.bottom;
             }
         }
@@ -944,7 +944,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 leftBoundary = locChild.getRightInParent() + locMargin.right;
             }
         }
@@ -1329,7 +1329,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                         default:
                             break;
                     }
-                    locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                    locChild.setPosition(locFinalPosX, locFinalPosY);
                     locLayoutParameter._put = true;
                     unlayoutChildCount--;
                 }

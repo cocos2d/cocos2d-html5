@@ -124,8 +124,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
     ctor:function(){
         cc.Node.prototype.ctor.call(this);
-        this._mapSize = cc.SizeZero();
-        this._tileSize = cc.SizeZero();
+        this._mapSize = cc.size(0, 0);
+        this._tileSize = cc.size(0, 0);
         this.properties = null;
         this.objectGroups = null;
         this.mapOrientation = null;
@@ -427,7 +427,7 @@ delete window._proto;
  * //create a TMXTiledMap with content string and resource path
  * var resources = "res/TileMaps";
  * var filePath = "res/TileMaps/orthogonal-test1.tmx";
- * var xmlStr = cc.FileUtils.getInstance().getStringFromFile(filePath);
+ * var xmlStr = cc.loader.getRes(filePath);
  * var tmxTiledMap = cc.TMXTiledMap.create(xmlStr, resources);
  */
 cc.TMXTiledMap.create = function (tmxFile,resourcePath) {
