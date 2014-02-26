@@ -124,8 +124,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
     ctor:function(){
         cc.Node.prototype.ctor.call(this);
-        this._mapSize = cc.SizeZero();
-        this._tileSize = cc.SizeZero();
+        this._mapSize = cc.size(0, 0);
+        this._tileSize = cc.size(0, 0);
         this.properties = null;
         this.objectGroups = null;
         this.mapOrientation = null;

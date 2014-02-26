@@ -728,7 +728,7 @@ cc.ScrollView = cc.Layer.extend({
         //check to see if offset lies within the inset bounds
         var newX = this._container.getPositionX();
         var newY = this._container.getPositionY();
-
+        
         locScrollDistance.x = locScrollDistance.x * SCROLL_DEACCEL_RATE;
         locScrollDistance.y = locScrollDistance.y * SCROLL_DEACCEL_RATE;
 

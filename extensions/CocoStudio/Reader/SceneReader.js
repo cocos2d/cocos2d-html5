@@ -350,7 +350,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
     setPropertyFromJsonDict: function (node, dict) {
         var x = (typeof dict["x"] === 'undefined')?0:dict["x"];
         var y = (typeof dict["y"] === 'undefined')?0:dict["y"];
-        node.setPosition(cc.p(x, y));
+        node.setPosition(x, y);
 
         var bVisible = Boolean((typeof dict["visible"] === 'undefined')?1:dict["visible"]);
         node.setVisible(bVisible);

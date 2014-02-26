@@ -252,7 +252,6 @@
 	/** @expose */
 	_proto.body;
 	cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
-	cc.defineGetterSetter(_proto, "pos", _proto.getPosition, _proto.setPosition);
 	cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
 	cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
 	cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);

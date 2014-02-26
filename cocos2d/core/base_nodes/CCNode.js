@@ -120,8 +120,8 @@ cc.s_globalOrderOfArrival = 1;
  * @property {Boolean}              running         - <@readonly> Indicate whether node is running or not
  * @property {Boolean}              ignoreAnchor    - Indicate whether ignore the anchor point property for positionning
  * @property {Number}               tag             - Tag of node
- * @property {object}               userData        - Custom user data
- * @property {object}               userData        - User assigned CCObject, similar to userData, but instead of holding a void* it holds an id
+ * @property {Object}               userData        - Custom user data
+ * @property {Object}               userObject      - User assigned CCObject, similar to userData, but instead of holding a void* it holds an id
  * @property {Number}               arrivalOrder    - The arrival order, indicates which children is added previously
  * @property {cc.ActionManager}     actionManager   - The CCActionManager object that is used by all actions.
  * @property {cc.Scheduler}         scheduler       - cc.Scheduler used to schedule all "updates" and timers.
@@ -2394,14 +2394,8 @@ cc.defineGetterSetter(_proto, "actionManager", _proto.getActionManager, _proto.s
 _proto.scheduler;
 cc.defineGetterSetter(_proto, "scheduler", _proto.getScheduler, _proto.setScheduler);
 //cc.defineGetterSetter(_proto, "boundingBox", _proto.getBoundingBox);
-/** @expose */
-_proto.grid;
 cc.defineGetterSetter(_proto, "grid", _proto.getGrid, _proto.setGrid);
-/** @expose */
-_proto.shaderProgram;
 cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
-/** @expose */
-_proto.glServerState;
 cc.defineGetterSetter(_proto, "glServerState", _proto.getGLServerState, _proto.setGLServerState);
 
 delete window._proto;

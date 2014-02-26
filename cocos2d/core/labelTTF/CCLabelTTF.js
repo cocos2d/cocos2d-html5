@@ -33,8 +33,8 @@
  * @extends cc.Sprite
  *
  * @property {String}       string          - Content string of label
- * @property {enum}         textAlign       - Horizontal Alignment of label: cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
- * @property {enum}         verticalAlign   - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
+ * @property {Number}       textAlign       - Horizontal Alignment of label: cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT
+ * @property {Number}       verticalAlign   - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
  * @property {Number}       fontSize        - Font size of label
  * @property {String}       fontName        - Font name of label
  * @property {String}       font            - The label font with a style string: e.g. "18px Verdana"
@@ -1218,8 +1218,8 @@ cc.defineGetterSetter(_proto, "fontName", _proto.getFontName, _proto.setFontName
 _proto.font;
 cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
 /** @expose */
-_proto.boundingSize;
-cc.defineGetterSetter(_proto, "boundingSize", _proto.getDimensions, _proto.setDimensions);
+//_proto.boundingSize;
+//cc.defineGetterSetter(_proto, "boundingSize", _proto.getDimensions, _proto.setDimensions);
 /** @expose */
 _proto.boundingWidth;
 cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto._setBoundingWidth);
@@ -1236,8 +1236,8 @@ cc.defineGetterSetter(_proto, "strokeStyle", _proto._getStrokeStyle, _proto._set
 _proto.lineWidth;
 cc.defineGetterSetter(_proto, "lineWidth", _proto._getLineWidth, _proto._setLineWidth);
 /** @expose */
-_proto.shadowOffset;
-cc.defineGetterSetter(_proto, "shadowOffset", _proto._getShadowOffset, _proto._setShadowOffset);
+//_proto.shadowOffset;
+//cc.defineGetterSetter(_proto, "shadowOffset", _proto._getShadowOffset, _proto._setShadowOffset);
 /** @expose */
 _proto.shadowOffsetX;
 cc.defineGetterSetter(_proto, "shadowOffsetX", _proto._getShadowOffsetX, _proto._setShadowOffsetX);
