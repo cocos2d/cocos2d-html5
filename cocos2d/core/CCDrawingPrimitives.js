@@ -322,7 +322,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {cc.Color} color
      */
     drawSolidPoly:function (polygons, numberOfPoints, color) {
-        this.setDrawColor4F(color.r, color.g, color.b, color.a);
+        this.setDrawColor(color.r, color.g, color.b, color.a);
         this.drawPoly(polygons, numberOfPoints, true, true);
     },
 
@@ -559,21 +559,9 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {Number} b blue value (0 to 255)
      * @param {Number} a Alpha value (0 to 255)
      */
-    setDrawColor4B:function (r, g, b, a) {
+    setDrawColor:function (r, g, b, a) {
         this._renderContext.fillStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
         this._renderContext.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
-    },
-
-    /**
-     * set the drawing color with 4 floats
-     * @param {Number} r red value (0 to 1)
-     * @param {Number} g green value (0 to 1)
-     * @param {Number} b blue value (0 to 1)
-     * @param {Number} a Alpha value (0 to 1)
-     */
-    setDrawColor4F:function (r, g, b, a) {
-        this._renderContext.fillStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
-        this._renderContext.strokeStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
     },
 
     /**
@@ -790,8 +778,8 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      */
     drawSolidPoly:function (poli, numberOfPoints, color) {
         this.lazy_init();
-        if (!color)
-            color = this._color;
+        if (color)
+            this.setDrawColor(color.r, color.g, color.b, color.a);
 
         var glContext = this._renderContext;
         this._shader.use();
@@ -1001,25 +989,11 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * @param {Number} b blue value (0 to 255)
      * @param {Number} a Alpha value (0 to 255)
      */
-    setDrawColor4B:function (r, g, b, a) {
+    setDrawColor:function (r, g, b, a) {
         this._colorArray[0] = r / 255.0;
         this._colorArray[1] = g / 255.0;
         this._colorArray[2] = b / 255.0;
         this._colorArray[3] = a / 255.0;
-    },
-
-    /**
-     * set the drawing color with 4 floats
-     * @param {Number} r red value (0 to 1)
-     * @param {Number} g green value (0 to 1)
-     * @param {Number} b blue value (0 to 1)
-     * @param {Number} a Alpha value (0 to 1)
-     */
-    setDrawColor4F:function (r, g, b, a) {
-        this._colorArray[0] = r ;
-        this._colorArray[1] = g ;
-        this._colorArray[2] = b ;
-        this._colorArray[3] = a ;
     },
 
     /**
