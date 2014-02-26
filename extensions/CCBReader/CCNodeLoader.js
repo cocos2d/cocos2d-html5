@@ -234,9 +234,9 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_COLOR3:
                 {
-                    var color3B = this.parsePropTypeColor3(node, parent, ccbReader, propertyName);
+                    var color = this.parsePropTypeColor3(node, parent, ccbReader, propertyName);
                     if (setProp) {
-                        this.onHandlePropTypeColor3(node, parent, propertyName, color3B, ccbReader);
+                        this.onHandlePropTypeColor3(node, parent, propertyName, color, ccbReader);
                     }
                     break;
                 }

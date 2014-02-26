@@ -1994,8 +1994,8 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
 
     ctor:function () {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._to = cc.c3b(0, 0, 0);
-        this._from = cc.c3b(0, 0, 0);
+        this._to = cc.color(0, 0, 0);
+        this._from = cc.color(0, 0, 0);
     },
 
     /**
@@ -2007,7 +2007,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     initWithDuration:function (duration, red, green, blue) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._to = cc.c3b(red, green, blue);
+            this._to = cc.color(red, green, blue);
             return true;
         }
         return false;
@@ -2040,7 +2040,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     update:function (time) {
         var locFrom = this._from, locTo = this._to;
         if (this._target.RGBAProtocol) {
-            this._target.color = cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
+            this._target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * time,
                                         locFrom.g + (locTo.g - locFrom.g) * time,
 	                                    locFrom.b + (locTo.b - locFrom.b) * time);
         }
@@ -2132,7 +2132,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      */
     update:function (time) {
         if (this._target.RGBAProtocol) {
-            this._target.color = cc.c3b(this._fromR + this._deltaR * time,
+            this._target.color = cc.color(this._fromR + this._deltaR * time,
                                         this._fromG + this._deltaG * time,
                                         this._fromB + this._deltaB * time);
         }

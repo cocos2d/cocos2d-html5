@@ -2452,8 +2452,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         cc.Node.prototype.ctor.call(this);
         this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.white();
-        this._realColor = cc.white();
+        this._displayedColor =  cc.color(255, 255, 255, 255);
+        this._realColor =  cc.color(255, 255, 255, 255);
         this._cascadeColorEnabled = false;
         this._cascadeOpacityEnabled = false;
     },
@@ -2546,16 +2546,16 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     /**
      * Get the color of Node
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getColor:function(){
         var locRealColor = this._realColor;
-        return new cc.Color3B(locRealColor.r, locRealColor.g, locRealColor.b);
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
     /**
      * Get the displayed color of Node
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getDisplayedColor:function(){
         return this._displayedColor;
@@ -2563,7 +2563,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     /**
      * Set the color of Node
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor:function(color){
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -2575,13 +2575,13 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
     },
 
     /**
      * update the displayed color of Node
-     * @param {cc.Color3B} parentColor
+     * @param {cc.Color} parentColor
      */
     updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor, locRealColor = this._realColor;
@@ -2626,7 +2626,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
     },
 
@@ -2636,7 +2636,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children, whiteColor = cc.white();
+        var selChildren = this._children, whiteColor = cc.color.white;
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
             if(item && item.RGBAProtocol)

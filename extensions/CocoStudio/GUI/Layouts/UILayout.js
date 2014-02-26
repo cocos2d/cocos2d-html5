@@ -98,9 +98,9 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._bgImageTexType = ccs.TextureResType.local;
         this._colorRender = null;
         this._gradientRender = null;
-        this._color = cc.white();
-        this._startColor = cc.white();
-        this._endColor = cc.white();
+        this._color = cc.color(255, 255, 255, 255);
+        this._startColor = cc.color(255, 255, 255, 255);
+        this._endColor = cc.color(255, 255, 255, 255);
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
@@ -303,7 +303,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -500,7 +500,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             rect[1] = cc.p(size.width, 0);
             rect[2] = cc.p(size.width, size.height);
             rect[3] = cc.p(0, size.height);
-            var green = cc.c4f(0, 1, 0, 1);
+            var green = cc.color.green;
             this._clippingStencil.clear();
             this._clippingStencil.drawPoly(rect, 4, green, 0, green);
         }
@@ -583,6 +583,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
+        this.setContentSize(this._size);
         this.setStencilClippingSize(this._size);
         this._doLayoutDirty = true;
 
@@ -768,7 +769,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
-                this._gradientRender = cc.LayerGradient.create(cc.c4b(255, 0, 0, 255), cc.c4b(0, 255, 0, 255));
+                this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
                 this._gradientRender.setContentSize(this._size);
                 this._gradientRender.setOpacity(this._opacity);
                 this._gradientRender.setStartColor(this._startColor);
@@ -783,8 +784,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Sets background color for layout, if color type is LAYOUT_COLOR_SOLID
-     * @param {cc.c3b} color
-     * @param {cc.c3b} endColor
+     * @param {cc.Color} color
+     * @param {cc.Color} endColor
      */
     setBackGroundColor: function (color, endColor) {
         if (!endColor) {
