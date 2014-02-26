@@ -120,8 +120,8 @@ cc.s_globalOrderOfArrival = 1;
  * @property {Boolean}              running         - <@readonly> Indicate whether node is running or not
  * @property {Boolean}              ignoreAnchor    - Indicate whether ignore the anchor point property for positionning
  * @property {Number}               tag             - Tag of node
- * @property {object}               userData        - Custom user data
- * @property {object}               userData        - User assigned CCObject, similar to userData, but instead of holding a void* it holds an id
+ * @property {Object}               userData        - Custom user data
+ * @property {Object}               userObject      - User assigned CCObject, similar to userData, but instead of holding a void* it holds an id
  * @property {Number}               arrivalOrder    - The arrival order, indicates which children is added previously
  * @property {cc.ActionManager}     actionManager   - The CCActionManager object that is used by all actions.
  * @property {cc.Scheduler}         scheduler       - cc.Scheduler used to schedule all "updates" and timers.
@@ -136,8 +136,9 @@ cc.s_globalOrderOfArrival = 1;
  * };
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
-    _zOrder:0,
-    _vertexZ:0.0,
+    _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node
+    _globalZOrder: 0,                                    ///< Global order used to sort the node
+    _vertexZ: 0.0,
 
     _rotationX:0,
     _rotationY:0.0,
@@ -177,6 +178,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _actionManager:null,
     _scheduler:null,
+    _eventDispatcher: null,
 
     _initializedNode:false,
     _additionalTransformDirty:false,
@@ -198,6 +200,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
+        this._eventDispatcher = cc.eventManager;
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         if(cc.ComponentContainer){
@@ -303,7 +306,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 	 *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
 	 *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
 	 *  </p>
-	 * @param {Object}attrs Attributes to be set to node
+	 * @param {Object} attrs Attributes to be set to node
 	 */
 	attr: function(attrs) {
 		for(var key in attrs) {
@@ -355,11 +358,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * <p>
-     * Changes the Y skew angle of the node in degrees.
-     *
-     * This angle describes the shear distortion in the Y direction.
-     * Thus, it is the angle between the X axis and the bottom edge of the shape
-     * The default skewY angle is 0. Positive values distort the node in a CCW direction.
+     * Changes the Y skew angle of the node in degrees.                                                        <br/>
+     *                                                                                                         <br/>
+     * This angle describes the shear distortion in the Y direction.                                           <br/>
+     * Thus, it is the angle between the X axis and the bottom edge of the shape                               <br/>
+     * The default skewY angle is 0. Positive values distort the node in a CCW direction.                      <br/>
      * </p>
      * @param {Number} newSkewY  The Y skew angle of the node in degrees.
      */
@@ -369,27 +372,49 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * zOrder getter
-     * @return {Number}
+     * <p> LocalZOrder is the 'key' used to sort the node relative to its siblings.                                    <br/>
+     *                                                                                                                 <br/>
+     * The Node's parent will sort all its children based ont the LocalZOrder value.                                   <br/>
+     * If two nodes have the same LocalZOrder, then the node that was added first to the children's array              <br/>
+     * will be in front of the other node in the array.                                                                <br/>
+     *                                                                                                                 <br/>
+     * Also, the Scene Graph is traversed using the "In-Order" tree traversal algorithm ( http://en.wikipedia.org/wiki/Tree_traversal#In-order )                <br/>
+     * And Nodes that have LocalZOder values < 0 are the "left" subtree                                                 <br/>
+     * While Nodes with LocalZOder >=0 are the "right" subtree.    </p>
+     * @param {Number} localZOrder
      */
-    getZOrder:function () {
-        return this._zOrder;
+    setLocalZOrder: function (localZOrder) {
+        this._localZOrder = localZOrder;
+        if (this._parent)
+            this._parent.reorderChild(this, localZOrder);
+        this._eventDispatcher._setDirtyForNode(this);
     },
 
     /**
-     * <p>
-     *     Sets the z order which stands for the drawing order                                                     <br/>
-     *                                                                                                             <br/>
-     *     This is an internal method. Don't call it outside the framework.                                        <br/>
-     *     The difference between setZOrder(int) and _setOrder(int) is:                                            <br/>
-     *        - _setZOrder(int) is a pure setter for m_nZOrder member variable                                    <br/>
-     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's children array.
-     * </p>
-     * @param {Number} z
+     * Helper function used by `setLocalZOrder`. Don't use it unless you know what you are doing.
+     * @param {Number} localZOrder
      * @private
      */
-    _setZOrder:function (z) {
-        this._zOrder = z;
+    _setLocalZOrder: function (localZOrder) {
+        this._localZOrder = localZOrder;
+    },
+
+    /**
+     * Gets the local Z order of this node.
+     * @returns {Number} The local (relative to its siblings) Z order.
+     */
+    getLocalZOrder: function () {
+        return this._localZOrder;
+    },
+
+    /**
+     * zOrder getter
+     * @return {Number}
+     * @deprecated
+     */
+    getZOrder: function () {
+        cc.log("getZOrder is deprecated. Please use getLocalZOrder instead.");
+        return this.getLocalZOrder();
     },
 
     /**
@@ -402,11 +427,41 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *      Please refer to setVertexZ(float) for the difference.
      * </p>
      * @param {Number} z Z order of this node.
+     * @deprecated
      */
-    setZOrder:function (z) {
-        this._setZOrder(z);
-        if (this._parent)
-            this._parent.reorderChild(this, z);
+    setZOrder: function (z) {
+        cc.log("setZOrder is deprecated. Please use setLocalZOrder instead.");
+        this.setLocalZOrder(z);
+    },
+
+    /**
+     * <p>Defines the oder in which the nodes are renderer.                                                                               <br/>
+     * Nodes that have a Global Z Order lower, are renderer first.                                                                        <br/>
+     *                                                                                                                                    <br/>
+     * In case two or more nodes have the same Global Z Order, the oder is not guaranteed.                                                <br/>
+     * The only exception if the Nodes have a Global Z Order == 0. In that case, the Scene Graph order is used.                           <br/>
+     *                                                                                                                                    <br/>
+     * By default, all nodes have a Global Z Order = 0. That means that by default, the Scene Graph order is used to render the nodes.    <br/>
+     *                                                                                                                                    <br/>
+     * Global Z Order is useful when you need to render nodes in an order different than the Scene Graph order.                           <br/>
+     *                                                                                                                                    <br/>
+     * Limitations: Global Z Order can't be used used by Nodes that have SpriteBatchNode as one of their ancestors.                       <br/>
+     * And if ClippingNode is one of the ancestors, then "global Z order" will be relative to the ClippingNode.   </p>
+     * @param {Number} globalZOrder
+     */
+    setGlobalZOrder: function (globalZOrder) {
+        if (this._globalZOrder != globalZOrder) {
+            this._globalZOrder = globalZOrder;
+            this._eventDispatcher._setDirtyForNode(this);
+        }
+    },
+
+    /**
+     * Returns the Node's Global Z Order.
+     * @returns {number} The node's global Z order
+     */
+    getGlobalZOrder: function () {
+        return this._globalZOrder;
     },
 
     /**
@@ -1058,6 +1113,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.stopAllActions();
         this.unscheduleAllCallbacks();
 
+        // event
+        this._eventDispatcher._cleanTarget(this);
+
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },
@@ -1087,10 +1145,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
      *
      * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [localZOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
-    addChild:function (child, zOrder, tag) {
+    addChild:function (child, localZOrder, tag) {
         if(!child)
             throw "cc.Node.addChild(): child must be non-null";
         if (child === this) {
@@ -1103,7 +1161,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
         }
 
-        var tmpzOrder = (zOrder != null) ? zOrder : child._zOrder;
+        var tmpzOrder = (localZOrder != null) ? localZOrder : child._localZOrder;
         child._tag = (tag != null) ? tag : child._tag;
         this._insertChild(child, tmpzOrder);
         child._parent = this;
@@ -1258,7 +1316,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _insertChild:function (child, z) {
         this._reorderChildDirty = true;
         this._children.push(child);
-        child._setZOrder(z);
+        child._setLocalZOrder(z);
     },
 
     /** Reorders a child according to a new z value. <br/>
@@ -1271,8 +1329,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             throw "cc.Node.reorderChild(): child must be non-null";
         this._reorderChildDirty = true;
         child.arrivalOrder = cc.s_globalOrderOfArrival;
-	    cc.s_globalOrderOfArrival++
-        child._setZOrder(zOrder);
+	    cc.s_globalOrderOfArrival++;
+        child._setLocalZOrder(zOrder);
         this.setNodeDirty();
     },
 
@@ -1295,8 +1353,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 tempChild =  _children[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
                     _children[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  _children[j];
@@ -1352,7 +1410,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
-        this.resumeSchedulerAndActions();
+        this.resume();
     },
 
     /**
@@ -1385,7 +1443,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     onExit:function () {
         this._running = false;
-        this.pauseSchedulerAndActions();
+        this.pause();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
         if(this._componentContainer){
             this._componentContainer.removeAll();
@@ -1548,19 +1606,41 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     /**
      * Resumes all scheduled selectors and actions.<br/>
      * This method is called internally by onEnter
+     * @deprecated
      */
     resumeSchedulerAndActions:function () {
+        cc.log("resumeSchedulerAndActions is deprecated, please use resume instead.");
+        this.resume();
+    },
+
+    /**
+     * Resumes all scheduled selectors and actions.<br/>
+     * This method is called internally by onEnter
+     */
+    resume: function() {
         this.scheduler.resumeTarget(this);
         this.actionManager.resumeTarget(this);
+        this._eventDispatcher._resumeTarget(this);
+    },
+
+    /**
+     * Pauses all scheduled selectors and actions.<br/>
+     * This method is called internally by onExit
+     * @deprecated
+     */
+    pauseSchedulerAndActions:function () {
+        cc.log("pauseSchedulerAndActions is deprecated, please use pause instead.");
+        this.pause();
     },
 
     /**
      * Pauses all scheduled selectors and actions.<br/>
      * This method is called internally by onExit
      */
-    pauseSchedulerAndActions:function () {
+    pause: function(){
         this.scheduler.pauseTarget(this);
         this.actionManager.pauseTarget(this);
+        this._eventDispatcher._pauseTarget(this);
     },
 
     /**
@@ -1831,7 +1911,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             // draw children zOrder < 0
             for (i = 0; i < len; i++) {
                 child = children[i];
-                if (child._zOrder < 0)
+                if (child._localZOrder < 0)
                     child.visit(context);
                 else
                     break;
@@ -1871,7 +1951,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this.sortAllChildren();
             // draw children zOrder < 0
             for (i = 0; i < childLen; i++) {
-                if (locChildren[i] && locChildren[i]._zOrder < 0)
+                if (locChildren[i] && locChildren[i]._localZOrder < 0)
                     locChildren[i].visit();
                 else
                     break;
@@ -2314,14 +2394,8 @@ cc.defineGetterSetter(_proto, "actionManager", _proto.getActionManager, _proto.s
 _proto.scheduler;
 cc.defineGetterSetter(_proto, "scheduler", _proto.getScheduler, _proto.setScheduler);
 //cc.defineGetterSetter(_proto, "boundingBox", _proto.getBoundingBox);
-/** @expose */
-_proto.grid;
 cc.defineGetterSetter(_proto, "grid", _proto.getGrid, _proto.setGrid);
-/** @expose */
-_proto.shaderProgram;
 cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
-/** @expose */
-_proto.glServerState;
 cc.defineGetterSetter(_proto, "glServerState", _proto.getGLServerState, _proto.setGLServerState);
 
 delete window._proto;

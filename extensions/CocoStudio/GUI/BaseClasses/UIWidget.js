@@ -223,8 +223,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                 tempChild = _children[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < tempChild._zOrder ||
-                    ( tempItem._zOrder == tempChild._zOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
                     _children[j + 1] = tempChild;
                     j = j - 1;
                     tempChild = _children[j];
@@ -419,9 +419,11 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         var locW = this._customSize.width = size.width;
         var locH = this._customSize.height = size.height;
         if (this._ignoreSize) {
-	        this._size.width = locW = this.width;
-	        this._size.height = locH = this.height;
+	        locW = this.width;
+	        locH = this.height;
         }
+	    this._size.width = locW;
+	    this._size.height = locH;
 
         if(this._running){
             var  widgetParent = this.getWidgetParent();
@@ -439,7 +441,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     },
 	_setWidth: function (w) {
 		var locW = this._customSize.width = w;
-		this._ignoreSize && (this._size.width = locW = this.width);
+		this._ignoreSize && (locW = this.width);
+		this._size.width = locW;
 
 		if(this._running){
 			var  widgetParent = this.getWidgetParent();
@@ -450,7 +453,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 	},
 	_setHeight: function (h) {
 		var locH = this._customSize.height = h;
-		this._ignoreSize && (this._size.height = locH = this.height);
+		this._ignoreSize && (locH = this.height);
+		this._size.height = locH;
 
 		if(this._running){
 			var  widgetParent = this.getWidgetParent();
@@ -1040,7 +1044,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             }
         }
 
-        cc.NodeRGBA.prototype.setPosition.apply(this,arguments);
+        cc.NodeRGBA.prototype.setPosition.apply(this, arguments);
     },
 
 	setPositionX: function (x) {
@@ -1055,7 +1059,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionX.apply(this, x);
+		cc.NodeRGBA.prototype.setPositionX.call(this, x);
 	},
 	setPositionY: function (y) {
 		if (this._running) {
@@ -1069,7 +1073,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionY.apply(this, y);
+		cc.NodeRGBA.prototype.setPositionY.call(this, y);
 	},
 
     /**
@@ -1082,8 +1086,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             var widgetParent = this.getWidgetParent();
             if(widgetParent){
                 var parentSize = widgetParent.getSize();
-                var absPos = cc.p(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y);
-                this.setPosition(absPos);
+                this.setPosition(parentSize.width * this._positionPercent.x, parentSize.height * this._positionPercent.y);
             }
         }
     },
@@ -1176,7 +1179,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {number}
      */
     getLeftInParent: function () {
-        return this.getPosition().x - this.getAnchorPoint().x * this._size.width;
+        return this.getPositionX() - this._getAnchorX() * this._size.width;
     },
 
     /**
@@ -1184,7 +1187,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {number}
      */
     getBottomInParent: function () {
-        return this.getPosition().y - this.getAnchorPoint().y * this._size.height;
+        return this.getPositionY() - this._getAnchorY() * this._size.height;
     },
 
     /**

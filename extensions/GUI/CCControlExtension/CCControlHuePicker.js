@@ -103,7 +103,6 @@ cc.ControlHuePicker = cc.Control.extend({
 
     initWithTargetAndPos:function (target, pos) {
         if (cc.Control.prototype.init.call(this)) {
-            this.setTouchEnabled(true);
             // Add background and slider sprites
             this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("huePickerBackground.png", target, pos, cc.p(0.0, 0.0));
             this._slider = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("colourPicker.png", target, pos, cc.p(0.5, 0.5));

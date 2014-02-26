@@ -63,7 +63,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {cc.Point|Number} x
      * @param {Number} y
      */
-    _setPosition:function (x, y) {
+    setPosition:function (x, y) {
         if (y === undefined) {
 	        this._position.x = x.x;
 	        this._position.y = x.y;
@@ -336,8 +336,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         if (this.dom)
             this.dom.style.display = (x) ? 'block' : 'none';
     },
-    _setZOrder:function (z) {
-        this._zOrder = z
+    _setLocalZOrder:function (z) {
+        this._localZOrder = z
         this.setNodeDirty();
         if (this.dom)
             this.dom.zIndex = z;
@@ -546,8 +546,8 @@ cc.DOM.setTransform = function (x) {
         }
     }
     if (x.dom) {
-        x.dom.position.x = x.getPosition().x;
-        x.dom.position.y = -x.getPosition().y;
+        x.dom.position.x = x.getPositionX();
+        x.dom.position.y = -x.getPositionY();
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};

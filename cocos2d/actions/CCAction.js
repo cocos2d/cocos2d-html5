@@ -510,11 +510,9 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
             if (this._boundaryFullyCovered)
                 return;
 
-	        this._target.x = cc.clampf(tempPosX, this.leftBoundary, this.rightBoundary);
-	        this._target.y = cc.clampf(tempPosY, this.bottomBoundary, this.topBoundary);
+	        this._target.setPosition(cc.clampf(tempPosX, this.leftBoundary, this.rightBoundary), cc.clampf(tempPosY, this.bottomBoundary, this.topBoundary));
         } else {
-            this._target.x = tempPosX;
-	        this._target.y = tempPosY;
+            this._target.setPosition(tempPosX, tempPosY);
         }
     },
 

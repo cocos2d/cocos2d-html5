@@ -83,7 +83,6 @@ var Helloworld = cc.Layer.extend({
 	        scale: 0.5,
 	        rotation: 180
         });
-
         lazyLayer.addChild(this.sprite, 0);
 
         var rotateToA = cc.RotateTo.create(2, 0);
@@ -92,28 +91,11 @@ var Helloworld = cc.Layer.extend({
         this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
         this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
-        this.setTouchEnabled(true);
         return true;
     },
     // a selector callback
     menuCloseCallback:function (sender) {
         cc.Director.getInstance().end();
-    },
-    onTouchesBegan:function (touches, event) {
-        this.isMouseDown = true;
-    },
-    onTouchesMoved:function (touches, event) {
-        if (this.isMouseDown) {
-            if (touches) {
-                //this.circle.setPosition(touches[0].getLocation().x, touches[0].getLocation().y);
-            }
-        }
-    },
-    onTouchesEnded:function (touches, event) {
-        this.isMouseDown = false;
-    },
-    onTouchesCancelled:function (touches, event) {
-        console.log("onTouchesCancelled");
     }
 });
 

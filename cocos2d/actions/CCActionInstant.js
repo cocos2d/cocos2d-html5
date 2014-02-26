@@ -333,8 +333,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.x = this._x;
-	    this._target.y = this._y;
+        this._target.setPosition(this._x, this._y);
     },
 
     clone:function(){

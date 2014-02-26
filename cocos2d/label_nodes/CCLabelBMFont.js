@@ -729,7 +729,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = self.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-                    lineWidth = lastChar.x + lastChar.width / 2;
+                    lineWidth = lastChar.getPositionX() + lastChar._getWidth() / 2;
 
                     var shift = 0;
                     switch (self._alignment) {
@@ -908,11 +908,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.x * this._scaleX + (sp.width * this._scaleX * sp.anchorX);
+        return sp.getPositionX() * this._scaleX + (sp._getWidth() * this._scaleX * sp._getAnchorX());
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.x * this._scaleX - (sp.width * this._scaleX * sp.anchorY);
+        return sp.getPositionX() * this._scaleX - (sp._getWidth() * this._scaleX * sp._getAnchorX());
     }
 });
 

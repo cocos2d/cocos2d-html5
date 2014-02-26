@@ -53,7 +53,6 @@ cc.ControlSwitch = cc.Control.extend({
         if(!thumbSprite)
             throw "cc.ControlSwitch.initWithMaskSprite(): thumbSprite should be non-null.";
         if (this.init()) {
-            this.setTouchEnabled(true);
             this._on = true;
 
             this._switchSprite = new cc.ControlSwitchSprite();
@@ -261,11 +260,11 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
             this._offSprite.getContentSize().height / 2);
 
         if (this._onLabel) {
-            this._onLabel.setPosition(this._onSprite.getPosition().x - this._thumbSprite.getContentSize().width / 6,
+            this._onLabel.setPosition(this._onSprite.getPositionX() - this._thumbSprite.getContentSize().width / 6,
                 this._onSprite.getContentSize().height / 2);
         }
         if (this._offLabel) {
-            this._offLabel.setPosition(this._offSprite.getPosition().x + this._thumbSprite.getContentSize().width / 6,
+            this._offLabel.setPosition(this._offSprite.getPositionX() + this._thumbSprite.getContentSize().width / 6,
                 this._offSprite.getContentSize().height / 2);
         }
         this._thumbSprite.setPosition(this._onSprite.getContentSize().width + this._sliderXPosition,

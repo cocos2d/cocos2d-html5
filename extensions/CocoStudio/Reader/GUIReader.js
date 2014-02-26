@@ -262,7 +262,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         widget.setName(widgetName);
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(cc.p(x, y));
+        widget.setPosition(x, y);
         if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);
         }
@@ -874,7 +874,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         widget.setName(widgetName);
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(cc.p(x, y));
+        widget.setPosition(x, y);
         if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);
         }
