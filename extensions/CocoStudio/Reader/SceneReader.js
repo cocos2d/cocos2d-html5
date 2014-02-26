@@ -321,7 +321,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
         node.setTag(nTag);
 
         var nZorder = (typeof dict["zorder"] === 'undefined')?0:dict["zorder"];
-        node.setZOrder(nZorder);
+        node.setLocalZOrder(nZorder);
 
         var fScaleX = (typeof dict["scalex"] === 'undefined')?1:dict["scalex"];
         var fScaleY = (typeof dict["scaley"] === 'undefined')?1:dict["scaley"];

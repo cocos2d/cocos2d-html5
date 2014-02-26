@@ -300,7 +300,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * add a child to layer
      * @overried
      * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setLocalZOrder(int)
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild:function(child, zOrder, tag){

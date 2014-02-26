@@ -102,11 +102,11 @@ cc.LayerLoader = cc.NodeLoader.extend({
     },
     onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
         if (propertyName === PROPERTY_TOUCH_ENABLED || propertyName === PROPERTY_IS_TOUCH_ENABLED) {
-            node.setTouchEnabled(check);
+            //node.setTouchEnabled(check);
         } else if (propertyName === PROPERTY_ACCELEROMETER_ENABLED || propertyName === PROPERTY_IS_ACCELEROMETER_ENABLED) {
-            node.setAccelerometerEnabled(check);
+            //node.setAccelerometerEnabled(check);
         } else if (propertyName === PROPERTY_MOUSE_ENABLED || propertyName === PROPERTY_IS_MOUSE_ENABLED ) {
-            node.setMouseEnabled(check);
+            //node.setMouseEnabled(check);
         } else if (propertyName === PROPERTY_KEYBOARD_ENABLED || propertyName === PROPERTY_IS_KEYBOARD_ENABLED) {
             // TODO XXX
             if(node.setKeyboardEnabled && sys.platform === "browser") {

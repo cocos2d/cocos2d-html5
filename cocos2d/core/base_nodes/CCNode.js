@@ -2341,7 +2341,7 @@ _proto.skewY;
 cc.defineGetterSetter(_proto, "skewY", _proto.getSkewY, _proto.setSkewY);
 /** @expose */
 _proto.zIndex;
-cc.defineGetterSetter(_proto, "zIndex", _proto.getZOrder, _proto.setZOrder);
+cc.defineGetterSetter(_proto, "zIndex", _proto.getLocalZOrder, _proto.setLocalZOrder);
 /** @expose */
 _proto.vertexZ;
 cc.defineGetterSetter(_proto, "vertexZ", _proto.getVertexZ, _proto.setVertexZ);
