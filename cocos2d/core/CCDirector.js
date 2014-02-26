@@ -242,7 +242,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._scheduler = new cc.Scheduler();
         //action manager
         this._actionManager = new cc.ActionManager();
-        this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.PRIORITY_SYSTEM, false);
+        this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
 
         this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
         this._eventAfterDraw.setUserData(this);
