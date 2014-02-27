@@ -28,8 +28,8 @@
 cc.CONTROL_STEPPER_PARTMINUS = 0;
 cc.CONTROL_STEPPER_PARTPLUS = 1;
 cc.CONTROL_STEPPER_PARTNONE = 2;
-cc.CONTROL_STEPPER_LABELCOLOR_ENABLED = cc.c3b(55, 55, 55);
-cc.CONTROL_STEPPER_LABELCOLOR_DISABLED = cc.c3b(147, 147, 147);
+cc.CONTROL_STEPPER_LABELCOLOR_ENABLED = cc.color(55, 55, 55);
+cc.CONTROL_STEPPER_LABELCOLOR_DISABLED = cc.color(147, 147, 147);
 cc.CONTROL_STEPPER_LABELFONT = "CourierNewPSMT";
 cc.AUTOREPEAT_DELTATIME = 0.15;
 cc.AUTOREPEAT_INCREASETIME_INCREMENT = 12;
@@ -238,19 +238,19 @@ cc.ControlStepper = cc.Control.extend({
         if (location.x < this._minusSprite.getContentSize().width
             && this._value > this._minimumValue) {
             this._touchedPart = cc.CONTROL_STEPPER_PARTMINUS;
-            this._minusSprite.setColor(cc.gray());
-            this._plusSprite.setColor(cc.white());
+            this._minusSprite.setColor(cc.color.gray);
+            this._plusSprite.setColor(cc.color.white);
 
         } else if (location.x >= this._minusSprite.getContentSize().width
             && this._value < this._maximumValue) {
             this._touchedPart = cc.CONTROL_STEPPER_PARTPLUS;
-            this._minusSprite.setColor(cc.white());
-            this._plusSprite.setColor(cc.gray());
+            this._minusSprite.setColor(cc.color.white);
+            this._plusSprite.setColor(cc.color.gray);
 
         } else {
             this._touchedPart = cc.CONTROL_STEPPER_PARTNONE;
-            this._minusSprite.setColor(cc.white());
-            this._plusSprite.setColor(cc.white());
+            this._minusSprite.setColor(cc.color.white);
+            this._plusSprite.setColor(cc.color.white);
         }
     },
 
@@ -286,8 +286,8 @@ cc.ControlStepper = cc.Control.extend({
         } else {
             this._touchInsideFlag = false;
             this._touchedPart = cc.CONTROL_STEPPER_PARTNONE;
-            this._minusSprite.setColor(cc.white());
-            this._plusSprite.setColor(cc.white());
+            this._minusSprite.setColor(cc.color.white);
+            this._plusSprite.setColor(cc.color.white);
             if (this._autorepeat) {
                 this.stopAutorepeat();
             }
@@ -295,8 +295,8 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     onTouchEnded:function (touch, event) {
-        this._minusSprite.setColor(cc.white());
-        this._plusSprite.setColor(cc.white());
+        this._minusSprite.setColor(cc.color.white);
+        this._plusSprite.setColor(cc.color.white);
 
         if (this._autorepeat) {
             this.stopAutorepeat();

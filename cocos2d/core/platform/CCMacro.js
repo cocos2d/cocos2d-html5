@@ -251,12 +251,6 @@ cc.POINT_POINTS_TO_PIXELS = function (points) {
     return cc.p(points.x * scale, points.y * scale);
 };
 
-cc._POINT_POINTS_TO_PIXELS_OUT = function (points, outPixels) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
-    outPixels.x = points.x * scale;
-    outPixels.y = points.y * scale;
-};
-
 /**
  * Converts a Size in points to pixels
  * @param {cc.Size} sizeInPoints

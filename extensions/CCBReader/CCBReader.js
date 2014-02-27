@@ -566,7 +566,7 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     _cleanUpNodeGraph:function (node) {
-        node.setUserObject(null);
+        node.userObject = null;
         var getChildren = node.getChildren();
         for (var i = 0, len = getChildren.length; i < len; i++) {
             this._cleanUpNodeGraph(getChildren[i]);
@@ -676,7 +676,7 @@ cc.BuilderReader = cc.Class.extend({
         } else if (type == CCB_PROPTYPE_BYTE) {
             value = this.readByte();
         } else if (type == CCB_PROPTYPE_COLOR3) {
-            var c = cc.c3b(this.readByte(), this.readByte(), this.readByte());
+            var c = cc.color(this.readByte(), this.readByte(), this.readByte());
             value = cc.Color3BWapper.create(c);
         } else if (type == CCB_PROPTYPE_FLOATXY) {
             value = [this.readFloat(), this.readFloat()];

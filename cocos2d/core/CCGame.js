@@ -465,7 +465,11 @@ cc.loader = {
 
     loadJson : function(url, cb){
         this.loadTxt(url, function(err, txt){
-            err ? cb(err) : cb(null, JSON.parse(txt));
+            try{
+                err ? cb(err) : cb(null, JSON.parse(txt));
+            }catch(e){
+                cb("load json [" + url + "] failed : " + e);
+            }
         });
     },
 
@@ -594,7 +598,7 @@ cc.loader = {
 
         var obj = self.cache[url];
         if(obj) return cb(null, obj);
-        var loader = self._register[type];
+        var loader = self._register[type.toLowerCase()];
         if(!loader) return cb("loader for [" + type + "] not exists!");
         var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
         var realUrl = self.getUrl(basePath, url);
@@ -654,6 +658,7 @@ cc.loader = {
         }else if(l == 1) option = {};
         else throw "arguments error!";
         option.cb = function(err, results){
+            if(err) cc.log(err);
             if(cb) cb(results);
         };
         if(!(res instanceof Array)) res = [res];
@@ -1303,7 +1308,8 @@ cc.game = {
     _runMainLoop : function(){
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
             win = window, frameRate = config[CONFIG_KEY.frameRate],
-            director = cc.director = cc.director || cc.Director.getInstance();//TODO
+            director = cc.Director.getInstance();
+        director.setDisplayStats(config[CONFIG_KEY.showFPS]);
         if (win.requestAnimFrame && frameRate == 60) {
             callback = function () {
                 if(!self._paused){

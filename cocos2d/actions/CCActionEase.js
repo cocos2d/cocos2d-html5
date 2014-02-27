@@ -64,7 +64,7 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._inner.startWithTarget(this._target);
+        this._inner.startWithTarget(this.target);
     },
 
     /**

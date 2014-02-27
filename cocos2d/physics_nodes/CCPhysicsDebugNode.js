@@ -45,11 +45,11 @@ cc.__convertVerts = function (verts) {
 
 cc.ColorForBody = function (body) {
     if (body.isRogue() || body.isSleeping()) {
-        return cc.c4f(0.5, 0.5, 0.5, 0.5);
+        return cc.color(128, 128, 128, 128);
     } else if (body.nodeIdleTime > body.space.sleepTimeThreshold) {
-        return cc.c4f(0.33, 0.33, 0.33, 0.5);
+        return cc.color(84, 84, 84, 128);
     } else {
-        return cc.c4f(1, 0, 0, 0.5);
+        return cc.color(255, 0, 0, 128);
     }
 };
 
@@ -65,7 +65,7 @@ cc.DrawShape = function (shape, renderer) {
             this.drawSegment(shape.ta, shape.tb, Math.max(shape.r, 2.0), color);
             break;
         case cp.PolyShape.prototype.collisionCode:
-            var line = cc.c4f(color.r, color.g, color.b, cc.lerp(color.a, 1.0, 0.5));
+            var line = cc.color(color.r, color.g, color.b, cc.lerp(color.a, 255, 0.5));
             this.drawPoly(cc.__convertVerts(shape.tVerts), color, 1.0, line);
             break;
         default:
@@ -111,7 +111,7 @@ cc.DrawConstraint = function (constraint, renderer) {
     }
 };
 
-cc.CONSTRAINT_COLOR = cc.c4f(0, 1, 0, 0.5);
+cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
 
 /**
  * <p>A Node that draws the components of a physics engine.<br/>

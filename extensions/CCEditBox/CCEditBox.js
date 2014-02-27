@@ -229,8 +229,8 @@ cc.EditBox = cc.ControlButton.extend({
     ctor: function (boxSize) {
         cc.ControlButton.prototype.ctor.call(this);
 
-        this._textColor = cc.white();
-        this._placeholderColor = cc.gray();
+        this._textColor = cc.color.white;
+        this._placeholderColor = cc.color.gray;
         this.setContentSize(boxSize);
         this._domInputSprite = new cc.Sprite();
         this._domInputSprite.draw = function(){ };                           //redefine draw function
@@ -356,7 +356,7 @@ cc.EditBox = cc.ControlButton.extend({
 
     /**
      * Set the font color of the widget's text.
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setFontColor: function (color) {
         this._textColor = color;
@@ -449,7 +449,7 @@ cc.EditBox = cc.ControlButton.extend({
 
     /**
      * Set the font color of the placeholder text when the edit box is empty.
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setPlaceholderFontColor: function (color) {
         this._placeholderColor = color;
@@ -482,7 +482,7 @@ cc.EditBox = cc.ControlButton.extend({
     /**
      * Init edit box with specified size.
      * @param {cc.Size} size
-     * @param {cc.Color3B | cc.Scale9Sprite} normal9SpriteBg
+     * @param {cc.Color | cc.Scale9Sprite} normal9SpriteBg
      */
     initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
         if (this.initWithBackgroundSprite(normal9SpriteBg)) {
@@ -612,11 +612,11 @@ cc.EditBox.getRect = function (node) {
 /**
  * create a edit box with size and background-color or
  * @param {cc.Size} size
- * @param {cc.Color3B | cc.Scale9Sprite } normal9SpriteBg
+ * @param {cc.Color | cc.Scale9Sprite } normal9SpriteBg
  */
 cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
     var edbox = new cc.EditBox(size);
-    if (normal9SpriteBg instanceof cc.Color3B) {
+    if (normal9SpriteBg instanceof cc.Color) {
         edbox.setBackgroundColor(normal9SpriteBg);
     } else {
         //Todo

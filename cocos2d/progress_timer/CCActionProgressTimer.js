@@ -79,8 +79,8 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this._target  instanceof cc.ProgressTimer)
-            this._target.percentage = this._from + (this._to - this._from) * time;
+        if (this.target  instanceof cc.ProgressTimer)
+            this.target.percentage = this._from + (this._to - this._from) * time;
     }
 });
 
@@ -153,8 +153,8 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this._target  instanceof cc.ProgressTimer)
-            this._target.percentage = this._from + (this._to - this._from) * time;
+        if (this.target  instanceof cc.ProgressTimer)
+            this.target.percentage = this._from + (this._to - this._from) * time;
     }
 });
 

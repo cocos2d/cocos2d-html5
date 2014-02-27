@@ -108,7 +108,7 @@ ccs.ActionNode = ccs.Class.extend({
                 var colorB = actionFrameDic["colorb"];
                 var actionFrame = new ccs.ActionTintFrame();
                 actionFrame.setFrameIndex(frameInex);
-                actionFrame.setColor(cc.c3b(colorR, colorG, colorB));
+                actionFrame.setColor(cc.color(colorR, colorG, colorB));
                 var actionArray = this._frameArray[ccs.FrameType.tint];
                 actionArray.push(actionFrame);
             }

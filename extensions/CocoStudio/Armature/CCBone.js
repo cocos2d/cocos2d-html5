@@ -248,10 +248,10 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
 
     /**
      * update display color
-     * @param {cc.c3b} color
+     * @param {cc.Color} color
      */
     updateDisplayedColor:function (color) {
-        this._realColor = cc.c3b(255,255,255);
+        this._realColor = cc.color(255,255,255);
         cc.NodeRGBA.prototype.updateDisplayedColor.call(this, color);
         this.updateColor();
     },
@@ -268,7 +268,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
 
     /**
      * set display color
-     * @param {cc.c3b} color
+     * @param {cc.Color} color
      */
     setColor: function (color) {
         cc.NodeRGBA.prototype.setColor.call(this, color);
@@ -293,7 +293,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
             var locDisplayedColor = this._displayedColor;
             var locTweenData = this._tweenData;
             var locOpacity = this._displayedOpacity * locTweenData.a / 255;
-            var locColor = cc.c3b(locDisplayedColor.r * locTweenData.r / 255, locDisplayedColor.g * locTweenData.g / 255, locDisplayedColor.b * locTweenData.b / 255);
+            var locColor = cc.color(locDisplayedColor.r * locTweenData.r / 255, locDisplayedColor.g * locTweenData.g / 255, locDisplayedColor.b * locTweenData.b / 255);
             display.setOpacity(locOpacity);
             display.setColor(locColor);
         }
@@ -305,10 +305,10 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     updateZOrder: function () {
         if (this._armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED) {
             var zorder = this._tweenData.zOrder + this._boneData.zOrder;
-            this.setZOrder(zorder);
+            this.setLocalZOrder(zorder);
         }
         else {
-            this.setZOrder(this._tweenData.zOrder);
+            this.setLocalZOrder(this._tweenData.zOrder);
         }
     },
 
@@ -421,9 +421,9 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * zOrder setter
      * @param {Number}
         */
-    setZOrder:function (zOrder) {
+    setLocalZOrder:function (zOrder) {
         if (this._zOrder != zOrder)
-            cc.Node.prototype.setZOrder.call(this, zOrder);
+            cc.Node.prototype.setLocalZOrder.call(this, zOrder);
     },
 
     /**
@@ -665,7 +665,7 @@ window._proto = ccs.Bone.prototype;
 // Override properties
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "zIndex", _proto.getZOrder, _proto.setZOrder);
+cc.defineGetterSetter(_proto, "zIndex", _proto.getLocalZOrder, _proto.setLocalZOrder);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "boneData", _proto.getBoneData, _proto.setBoneData);

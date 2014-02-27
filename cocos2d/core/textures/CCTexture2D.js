@@ -238,6 +238,9 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         // Specify OpenGL texture image
         switch (pixelFormat) {
+	        case PIXEL_FORMAT.RGBA8888:
+		        format = gl.RGBA;
+		        break;
             case PIXEL_FORMAT.RGB888:
                 format = gl.RGB;
                 break;

@@ -224,7 +224,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     _children[j + 1] = tempChild;
                     j = j - 1;
                     tempChild = _children[j];
@@ -529,7 +529,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                 this._size.width = locSize.width;
                 this._size.height = locSize.height;
 
-                var pSize,spx=spy=0;
+                var pSize, spx = 0, spy = 0;
                 var widgetParent = this.getWidgetParent();
                 if (widgetParent){
                     pSize = widgetParent.getSize();
@@ -1310,7 +1310,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.setBright(widget.isBright());
         this.setTouchEnabled(widget.isTouchEnabled());
         this._touchPassedEnabled = false;
-        this.setZOrder(widget.getZOrder());
+        this.setLocalZOrder(widget.getLocalZOrder());
         this.setUpdateEnabled(widget.isUpdateEnabled());
         this.setTag(widget.getTag());
         this.setName(widget.getName());

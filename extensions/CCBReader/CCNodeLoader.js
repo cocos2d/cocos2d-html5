@@ -88,14 +88,14 @@ cc.NodeLoader = cc.Class.extend({
                 if(node.getCCBFileNode() && isExtraProp){
                     node = node.getCCBFileNode();
                     //skip properties that doesn't have a value to override
-                    var getExtraPropsNames = node.getUserObject();
+                    var getExtraPropsNames = node.userObject;
                     setProp = cc.ArrayContainsObject(getExtraPropsNames,propertyName);
                 }
             } else if(isExtraProp && node == ccbReader.getAnimationManager().getRootNode()){
-                var extraPropsNames = node.getUserObject();
+                var extraPropsNames = node.userObject;
                 if(!extraPropsNames){
                     extraPropsNames = [];
-                    node.setUserObject(extraPropsNames);
+                    node.userObject = extraPropsNames;
                 }
                 extraPropsNames.push(propertyName);
             }
@@ -234,9 +234,9 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_COLOR3:
                 {
-                    var color3B = this.parsePropTypeColor3(node, parent, ccbReader, propertyName);
+                    var color = this.parsePropTypeColor3(node, parent, ccbReader, propertyName);
                     if (setProp) {
-                        this.onHandlePropTypeColor3(node, parent, propertyName, color3B, ccbReader);
+                        this.onHandlePropTypeColor3(node, parent, propertyName, color, ccbReader);
                     }
                     break;
                 }

@@ -105,6 +105,9 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
         var jsonDict = cc.loader.getRes(fileName);
         if(!jsonDict) throw "Please load the resource first : " + fileName;
 
+        var tempFilePath = cc.path.dirname(fileName);
+        this._filePath = tempFilePath == "" ? tempFilePath : tempFilePath + "/";
+
         var fileVersion = jsonDict["version"];
         var pReader, widget;
         var versionInteger = this.getVersionInteger(fileVersion);
@@ -137,7 +140,7 @@ ccs.WidgetPropertiesReader = ccs.Class.extend({
 });
 ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     createWidget: function (jsonDict, fullPath, fileName) {
-        this._filePath = fullPath;
+        this._filePath = fullPath == "" ? fullPath : cc.path.join(fullPath, "/");
         var textures = jsonDict["textures"];
         for (var i = 0; i < textures.length; i++) {
             var file = textures[i];
@@ -277,7 +280,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         }
 
         var z = options["ZOrder"];
-        widget.setZOrder(z);
+        widget.setLocalZOrder(z);
     },
 
     setColorPropsForWidgetFromJsonDictionary: function (widget, options) {
@@ -287,7 +290,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var colorR = options["colorR"] !== undefined ? options["colorR"] : 255;
         var colorG = options["colorG"] !== undefined ? options["colorG"] : 255;
         var colorB = options["colorB"] !== undefined ? options["colorB"] : 255;
-        widget.setColor(cc.c3b(colorR, colorG, colorB));
+        widget.setColor(cc.color(colorR, colorG, colorB));
         var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
         var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
         widget.setAnchorPoint(apx, apy);
@@ -352,7 +355,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var cr = options["textColorR"] !== undefined ? options["textColorR"] : 255;
         var cg = options["textColorG"] !== undefined ? options["textColorG"] : 255;
         var cb = options["textColorB"] !== undefined ? options["textColorB"] : 255;
-        var tc = cc.c3b(cr, cg, cb);
+        var tc = cc.color(cr, cg, cb);
         button.setTitleColor(tc);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -504,8 +507,8 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
         var colorType = options["colorType"];
         panel.setBackGroundColorType(colorType);
-        panel.setBackGroundColor(cc.c3b(scr, scg, scb), cc.c3b(ecr, ecg, ecb));
-        panel.setBackGroundColor(cc.c3b(cr, cg, cb));
+        panel.setBackGroundColor(cc.color(scr, scg, scb), cc.color(ecr, ecg, ecb));
+        panel.setBackGroundColor(cc.color(cr, cg, cb));
         panel.setBackGroundColorOpacity(co);
 
         var imageFileName = options["backGroundImage"];
@@ -620,7 +623,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var cr = options["colorR"]
         var cg = options["colorG"];
         var cb = options["colorB"];
-        textArea.setColor(cc.c3b(cr, cg, cb));
+        textArea.setColor(cc.color(cr, cg, cb));
         textArea.setFontName(options["fontName"]);
         if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
@@ -643,7 +646,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var cri = options["textColorR"] !== undefined ? options["textColorR"] : 255;
         var cgi = options["textColorG"] !== undefined ? options["textColorG"] : 255;
         var cbi = options["textColorB"] !== undefined ? options["textColorB"] : 255;
-        textButton.setTitleColor(cc.c3b(cri, cgi, cbi));
+        textButton.setTitleColor(cc.color(cri, cgi, cbi));
         if (options["fontSize"] !== undefined) {
             textButton.setTitleFontSize(options["fontSize"]);
         }
@@ -730,7 +733,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
 ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     createWidget: function (jsonDict, fullPath, fileName) {
-        this._filePath = fullPath;
+        this._filePath = fullPath == "" ? fullPath : cc.path.join(fullPath, "/");
         var textures = jsonDict["textures"];
         for (var i = 0; i < textures.length; i++) {
             var file = textures[i];
@@ -888,7 +891,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             widget.setVisible(options["visible"]);
         }
 
-        widget.setZOrder(options["ZOrder"]);
+        widget.setLocalZOrder(options["ZOrder"]);
         var layoutParameterDic = options["layoutParameter"];
         if (layoutParameterDic) {
             var paramType = layoutParameterDic["type"];
@@ -928,7 +931,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var colorR = options["colorR"] !== undefined ? options["colorR"] : 255;
         var colorG = options["colorG"] !== undefined ? options["colorG"] : 255;
         var colorB = options["colorB"] !== undefined ? options["colorB"] : 255;
-        widget.setColor(cc.c3b(colorR, colorG, colorB));
+        widget.setColor(cc.color(colorR, colorG, colorB));
         var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
         var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
         widget.setAnchorPoint(apx, apy);
@@ -1021,7 +1024,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var cr = options["textColorR"] !== undefined ? options["textColorR"] : 255;
         var cg = options["textColorG"] !== undefined ? options["textColorG"] : 255;
         var cb = options["textColorB"] !== undefined ? options["textColorB"] : 255;
-        var tc = cc.c3b(cr, cg, cb);
+        var tc = cc.color(cr, cg, cb);
         button.setTitleColor(tc);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -1248,8 +1251,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         var colorType = options["colorType"];
         panel.setBackGroundColorType(colorType);
-        panel.setBackGroundColor(cc.c3b(scr, scg, scb), cc.c3b(ecr, ecg, ecb));
-        panel.setBackGroundColor(cc.c3b(cr, cg, cb));
+        panel.setBackGroundColor(cc.color(scr, scg, scb), cc.color(ecr, ecg, ecb));
+        panel.setBackGroundColor(cc.color(cr, cg, cb));
         panel.setBackGroundColorOpacity(co);
 
 
@@ -1424,7 +1427,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var cr = options["colorR"]
         var cg = options["colorG"];
         var cb = options["colorB"];
-        textArea.setColor(cc.c3b(cr, cg, cb));
+        textArea.setColor(cc.color(cr, cg, cb));
         textArea.setFontName(options["fontName"]);
         if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
@@ -1447,7 +1450,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var cri = options["textColorR"] !== undefined ? options["textColorR"] : 255;
         var cgi = options["textColorG"] !== undefined ? options["textColorG"] : 255;
         var cbi = options["textColorB"] !== undefined ? options["textColorB"] : 255;
-        textButton.setTitleColor(cc.c3b(cri, cgi, cbi));
+        textButton.setTitleColor(cc.color(cri, cgi, cbi));
         if (options["fontSize"] !== undefined) {
             textButton.setTitleFontSize(options["fontSize"]);
         }

@@ -41,7 +41,7 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
      */
     ctor:function () {
         this.actions = [];
-        this._target = null;
+        this.target = null;
         this.actionIndex = 0;
         this.currentAction = null; //CCAction
         this.currentActionSalvaged = false;

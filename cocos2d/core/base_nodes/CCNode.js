@@ -158,10 +158,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _parent:null,
     // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
     _ignoreAnchorPointForPosition:false,
-    _tag:cc.NODE_TAG_INVALID,
+    tag:cc.NODE_TAG_INVALID,
     // userData is always inited as nil
-    _userData:null,
-    _userObject:null,
+    userData:null,
+    userObject:null,
     _transformDirty:true,
     _inverseDirty:true,
     _cacheDirty:true,
@@ -174,7 +174,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     //since 2.0 api
     _reorderChildDirty:false,
     _shaderProgram:null,
-    _orderOfArrival:0,
+    arrivalOrder:0,
 
     _actionManager:null,
     _scheduler:null,
@@ -958,7 +958,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * }
      */
     getTag:function () {
-        return this._tag;
+        return this.tag;
     },
 
     /**
@@ -967,7 +967,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var A integer that identifies the node.
      */
     setTag:function (Var) {
-        this._tag = Var;
+        this.tag = Var;
     },
 
     /**
@@ -978,7 +978,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {object}  A custom user data pointer
      */
     getUserData:function () {
-        return this._userData;
+        return this.userData;
     },
 
     /**
@@ -990,7 +990,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {object} Var A custom user data
      */
     setUserData:function (Var) {
-        this._userData = Var;
+        this.userData = Var;
     },
 
     /**
@@ -999,7 +999,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {object} A user assigned CCObject
      */
     getUserObject:function () {
-        return this._userObject;
+        return this.userObject;
     },
 
     /**
@@ -1012,8 +1012,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {object} newValue A user assigned CCObject
      */
     setUserObject:function (newValue) {
-        if (this._userObject != newValue) {
-            this._userObject = newValue;
+        if (this.userObject != newValue) {
+            this.userObject = newValue;
         }
     },
 
@@ -1023,7 +1023,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number} The arrival order.
      */
     getOrderOfArrival:function () {
-        return this._orderOfArrival;
+        return this.arrivalOrder;
     },
 
     /**
@@ -1037,7 +1037,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival:function (Var) {
-        this._orderOfArrival = Var;
+        this.arrivalOrder = Var;
     },
 
     /**
@@ -1131,7 +1131,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (__children != null) {
             for (var i = 0; i < __children.length; i++) {
                 var node = __children[i];
-                if (node && node._tag == aTag)
+                if (node && node.tag == aTag)
                     return node;
             }
         }
@@ -1162,7 +1162,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         var tmpzOrder = (localZOrder != null) ? localZOrder : child._localZOrder;
-        child._tag = (tag != null) ? tag : child._tag;
+        child.tag = (tag != null) ? tag : child.tag;
         this._insertChild(child, tmpzOrder);
         child._parent = this;
 	    this._cachedParent && (child._cachedParent = this._cachedParent);
@@ -1354,7 +1354,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     _children[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  _children[j];
@@ -1864,7 +1864,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _stackMatrix:null,
     _glServerState:null,
     _camera:null,
-    _grid:null,
+    grid:null,
 
     /**
      * Constructor
@@ -1923,7 +1923,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         } else
             this.draw(context);
 
-        this._orderOfArrival = 0;
+        this.arrivalOrder = 0;
         context.restore();
     },
 
@@ -1939,7 +1939,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.kmMat4Assign(this._stackMatrix, currentStack.top);
         currentStack.top = this._stackMatrix;
 
-        var locGrid = this._grid;
+        var locGrid = this.grid;
         if (locGrid && locGrid._active)
             locGrid.beforeDraw();
 
@@ -1966,7 +1966,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         } else
             this.draw(context);
 
-        this._orderOfArrival = 0;
+        this.arrivalOrder = 0;
         if (locGrid && locGrid._active)
             locGrid.afterDraw(this);
 
@@ -2011,7 +2011,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.kmMat4Multiply(topMat4, topMat4, t4x4); // = cc.kmGLMultMatrix(this._transform4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-        if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
+        if (this._camera != null && !(this.grid != null && this.grid.isActive())) {
             var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){
@@ -2195,7 +2195,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.GridBase} A CCGrid object that is used when applying effects
      */
     getGrid:function () {
-        return this._grid;
+        return this.grid;
     },
 
     /**
@@ -2203,7 +2203,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.GridBase} grid A CCGrid object that is used when applying effects
      */
     setGrid:function (grid) {
-        this._grid = grid;
+        this.grid = grid;
     },
 
     /**
@@ -2341,7 +2341,7 @@ _proto.skewY;
 cc.defineGetterSetter(_proto, "skewY", _proto.getSkewY, _proto.setSkewY);
 /** @expose */
 _proto.zIndex;
-cc.defineGetterSetter(_proto, "zIndex", _proto.getZOrder, _proto.setZOrder);
+cc.defineGetterSetter(_proto, "zIndex", _proto.getLocalZOrder, _proto.setLocalZOrder);
 /** @expose */
 _proto.vertexZ;
 cc.defineGetterSetter(_proto, "vertexZ", _proto.getVertexZ, _proto.setVertexZ);
@@ -2377,16 +2377,12 @@ _proto.ignoreAnchor;
 cc.defineGetterSetter(_proto, "ignoreAnchor", _proto.isIgnoreAnchorPointForPosition, _proto.ignoreAnchorPointForPosition);
 /** @expose */
 _proto.tag;
-cc.defineGetterSetter(_proto, "tag", _proto.getTag, _proto.setTag);
 /** @expose */
 _proto.userData;
-cc.defineGetterSetter(_proto, "userData", _proto.getUserData, _proto.setUserData);
 /** @expose */
 _proto.userObject;
-cc.defineGetterSetter(_proto, "userObject", _proto.getUserObject, _proto.setUserObject);
 /** @expose */
 _proto.arrivalOrder;
-cc.defineGetterSetter(_proto, "arrivalOrder", _proto.getOrderOfArrival, _proto.setOrderOfArrival);
 /** @expose */
 _proto.actionManager;
 cc.defineGetterSetter(_proto, "actionManager", _proto.getActionManager, _proto.setActionManager);
@@ -2394,7 +2390,6 @@ cc.defineGetterSetter(_proto, "actionManager", _proto.getActionManager, _proto.s
 _proto.scheduler;
 cc.defineGetterSetter(_proto, "scheduler", _proto.getScheduler, _proto.setScheduler);
 //cc.defineGetterSetter(_proto, "boundingBox", _proto.getBoundingBox);
-cc.defineGetterSetter(_proto, "grid", _proto.getGrid, _proto.setGrid);
 cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
 cc.defineGetterSetter(_proto, "glServerState", _proto.getGLServerState, _proto.setGLServerState);
 
@@ -2452,8 +2447,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         cc.Node.prototype.ctor.call(this);
         this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.white();
-        this._realColor = cc.white();
+        this._displayedColor =  cc.color(255, 255, 255, 255);
+        this._realColor =  cc.color(255, 255, 255, 255);
         this._cascadeColorEnabled = false;
         this._cascadeOpacityEnabled = false;
     },
@@ -2546,16 +2541,16 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     /**
      * Get the color of Node
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getColor:function(){
         var locRealColor = this._realColor;
-        return new cc.Color3B(locRealColor.r, locRealColor.g, locRealColor.b);
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
     /**
      * Get the displayed color of Node
-     * @returns {cc.Color3B}
+     * @returns {cc.Color}
      */
     getDisplayedColor:function(){
         return this._displayedColor;
@@ -2563,7 +2558,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
 
     /**
      * Set the color of Node
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      */
     setColor:function(color){
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -2575,13 +2570,13 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
     },
 
     /**
      * update the displayed color of Node
-     * @param {cc.Color3B} parentColor
+     * @param {cc.Color} parentColor
      */
     updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor, locRealColor = this._realColor;
@@ -2626,7 +2621,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
     },
 
@@ -2636,7 +2631,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children, whiteColor = cc.white();
+        var selChildren = this._children, whiteColor = cc.color.white;
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
             if(item && item.RGBAProtocol)

@@ -133,7 +133,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     },
 
     /**
-     * @param {cc.Color3B} color3
+     * @param {cc.Color} color3
      */
     setColor:function (color3) {
         cc.AtlasNode.prototype.setColor.call(this, color3);
