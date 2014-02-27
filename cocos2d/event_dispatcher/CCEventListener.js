@@ -211,8 +211,7 @@ cc.EventListenerKeyboard = cc.EventListener.extend({
                     selfPointer.onKeyReleased(event._keyCode, event);
             }
         };
-
-        cc.Event.prototype.ctor.call(this, cc.EventListener.KEYBOARD, cc.EventListenerKeyboard.LISTENER_ID, listener);
+        cc.EventListener.prototype.ctor.call(this, cc.EventListener.KEYBOARD, cc.EventListenerKeyboard.LISTENER_ID, listener);
     },
 
     clone: function () {
