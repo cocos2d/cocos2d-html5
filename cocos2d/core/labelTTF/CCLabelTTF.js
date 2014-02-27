@@ -404,9 +404,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._shadowEnabled = true;
 
         var locShadowOffset = this._shadowOffset;
-        if (locShadowOffset && (locShadowOffset._x != shadowOffset.x) || (locShadowOffset._y != shadowOffset.y)) {
-            locShadowOffset._x  = shadowOffset.x;
-            locShadowOffset._y = shadowOffset.y;
+        if (locShadowOffset && (locShadowOffset.x != shadowOffset.x) || (locShadowOffset._y != shadowOffset.y)) {
+            locShadowOffset.x  = shadowOffset.x;
+            locShadowOffset.y = shadowOffset.y;
         }
 
         if (this._shadowOpacity != shadowOpacity ){
@@ -421,14 +421,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
 	_getShadowOffsetX: function () {
-		return this._shadowOffset._x;
+		return this._shadowOffset.x;
 	},
 	_setShadowOffsetX: function (x) {
 		if (false === this._shadowEnabled)
 			this._shadowEnabled = true;
 
-		if (this._shadowOffset._x != x) {
-			this._shadowOffset._x = x;
+		if (this._shadowOffset.x != x) {
+			this._shadowOffset.x = x;
 			this._needUpdateTexture = true;
 		}
 	},
@@ -447,15 +447,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 	},
 
 	_getShadowOffset: function () {
-		return cc.p(this._shadowOffset._x, this._shadowOffset._y);
+		return cc.p(this._shadowOffset.x, this._shadowOffset.y);
 	},
 	_setShadowOffset: function (offset) {
 		if (false === this._shadowEnabled)
 			this._shadowEnabled = true;
 
-		if (this._shadowOffset._x != offset.x || this._shadowOffset._y != offset.y) {
-			this._shadowOffset._x = offset.x;
-			this._shadowOffset._y = offset.y;
+		if (this._shadowOffset.x != offset.x || this._shadowOffset.y != offset.y) {
+			this._shadowOffset.x = offset.x;
+			this._shadowOffset.y = offset.y;
 			this._needUpdateTexture = true;
 		}
 	},
@@ -659,7 +659,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             texDef.shadowOpacity = this._shadowOpacity;
 
             texDef.shadowOffset = adjustForResolution ? cc.POINT_POINTS_TO_PIXELS(this._shadowOffset)
-                : cc.size(this._shadowOffset._x, this._shadowOffset._y);
+                : cc.p(this._shadowOffset.x, this._shadowOffset.y);
         }else
             texDef._shadowEnabled = false;
 
@@ -821,8 +821,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowEnabled) {
             var locShadowOffset = this._shadowOffset;
             context.shadowColor = this._shadowColorStr;
-            context.shadowOffsetX = locShadowOffset._x;
-            context.shadowOffsetY = -locShadowOffset._y;
+            context.shadowOffsetX = locShadowOffset.x;
+            context.shadowOffsetY = -locShadowOffset.y;
             context.shadowBlur = this._shadowBlur;
         }
 
@@ -917,8 +917,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             locStrokeShadowOffsetX = locStrokeShadowOffsetY = this._strokeSize * 2;
         if (this._shadowEnabled) {
             var locOffsetSize = this._shadowOffset;
-            locStrokeShadowOffsetX += Math.abs(locOffsetSize._x) * 2;
-            locStrokeShadowOffsetY += Math.abs(locOffsetSize._y) * 2;
+            locStrokeShadowOffsetX += Math.abs(locOffsetSize.x) * 2;
+            locStrokeShadowOffsetY += Math.abs(locOffsetSize.y) * 2;
         }
 
         //get offset for stroke and shadow
@@ -988,6 +988,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         //draw text to labelCanvas
         this._drawTTFInCanvas(locContext);
+	    this._texture._isLoaded = false;
         this._texture.handleLoadedTexture();
 
         this.setTextureRect(cc.rect(0, 0, width, height));
@@ -1063,7 +1064,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         untrimmedSize = untrimmedSize || rect;
 
         this.setContentSize(untrimmedSize);
-
         this.setVertexRect(rect);
 
         var locTextureCoordRect = this._textureRect_Canvas;
