@@ -1090,24 +1090,34 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
                 this.subItems[it].opacity = opacity;
             }
         }
+        this._color.a = opacity;
     },
 
     /**
      * @return {cc.Color}
      */
     getColor:function () {
-        return this._color;
+        var locColor = this._color;
+        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
 
     /**
      * @param {cc.Color} Color
      */
     setColor:function (color) {
-        this._color = color;
+        var locColor = this._color;
+        locColor.r = color.r;
+        locColor.g = color.g;
+        locColor.b = color.b;
+
         if (this.subItems && this.subItems.length > 0) {
             for (var it = 0; it < this.subItems.length; it++) {
-                this.subItems[it].color = color;
+                this.subItems[it].setColor(color);
             }
+        }
+
+        if (color.a !== undefined && !color.a_undefined) {
+            this.setOpacity(color.a);
         }
     },
 

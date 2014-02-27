@@ -76,18 +76,28 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @return {cc.Color}
      */
     getColor:function () {
-        return this._color;
+        var locColor = this._color;
+        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
 
     /**
      * @param {cc.Color} color
      */
     setColor:function (color) {
-        this._color = color;
+        var locColor = this._color;
+        locColor.r = color.r;
+        locColor.g = color.g;
+        locColor.b = color.b;
+
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
-            for (var i = 0; i < locChildren.length; i++)
-                locChildren[i].color = color;
+            for (var i = 0; i < locChildren.length; i++){
+                locChildren[i].setColor(color);
+            }
+        }
+
+        if (color.a !== undefined && !color.a_undefined) {
+            this.setOpacity(color.a);
         }
     },
 
@@ -106,8 +116,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
             for (var i = 0; i < locChildren.length; i++)
-                locChildren[i].opacity = opa;
+                locChildren[i].setOpacity(opa);
         }
+        this._color.a = opa;
     },
 
     /**

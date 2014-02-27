@@ -378,6 +378,10 @@ if(cc.Browser.supportWebGL){
         this._gU8[0] = g || 0;
         this._bU8[0] = b || 0;
         this._aU8[0] = a || 0;
+
+        if (a === undefined) {
+            this.a_undefined = true;
+        }
     };
     cc.Color.BYTES_PER_ELEMENT = 4;
 

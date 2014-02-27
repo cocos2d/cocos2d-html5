@@ -1499,7 +1499,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setColorForCanvas: function (color3) {
         var curColor = this.color;
-        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
+        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b) && (curColor.a === color3.a))
             return;
 
         cc.NodeRGBA.prototype.setColor.call(this, color3);
@@ -2108,9 +2108,9 @@ cc.Sprite.create = function (fileName, rect) {
     }
 
     if (typeof(fileName) === "string") {
-        if (fileName[5] === "#") {
+        if (fileName[0] === "#") {
             //init with a sprite frame name
-            var frameName = fileName.substr(6, fileName.length - 1);
+            var frameName = fileName.substr(1, fileName.length - 1);
             var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(frameName);
             if (sprite.initWithSpriteFrame(spriteFrame))
                 return sprite;
