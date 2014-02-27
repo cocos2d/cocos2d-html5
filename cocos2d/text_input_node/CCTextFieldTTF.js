@@ -88,7 +88,7 @@ cc.TextFieldDelegate = cc.Class.extend(/** @lends cc.TextFieldDelegate# */{
  * @property {cc.Node}      delegate            - Delegate
  * @property {Number}       charCount           - <@readonly> Characators count
  * @property {String}       placeHolder         - Place holder for the field
- * @property {cc.Color}   colorSpaceHolder
+ * @property {cc.Color}     colorSpaceHolder
  */
 cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
 	/** @public */

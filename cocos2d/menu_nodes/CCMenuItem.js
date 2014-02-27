@@ -362,7 +362,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this.height = this._label.height;
     },
 
-	_getString: function () {
+	getString: function () {
 		return this._label.string;
 	},
 
@@ -420,7 +420,7 @@ cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
 // Extended properties
 /** @expose */
 _proto.string;
-cc.defineGetterSetter(_proto, "string", _proto._getString, _proto.setString);
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
 cc.defineGetterSetter(_proto, "disabledColor", _proto.getDisabledColor, _proto.setDisabledColor);
 cc.defineGetterSetter(_proto, "label", _proto.getLabel, _proto.setLabel);
 
