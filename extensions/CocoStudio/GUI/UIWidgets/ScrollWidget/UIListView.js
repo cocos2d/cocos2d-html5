@@ -419,7 +419,7 @@ ccs.ListView = ccs.ScrollView.extend({
     refreshView: function () {
         for (var i = 0; i < this._items.length; i++) {
             var item = this._items[i];
-            item.setZOrder(i);
+            item.setLocalZOrder(i);
             this.remedyLayoutParameter(item);
         }
         this.updateInnerContainerSize();

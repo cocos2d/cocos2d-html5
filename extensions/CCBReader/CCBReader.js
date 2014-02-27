@@ -566,7 +566,7 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     _cleanUpNodeGraph:function (node) {
-        node.setUserObject(null);
+        node.userObject = null;
         var getChildren = node.getChildren();
         for (var i = 0, len = getChildren.length; i < len; i++) {
             this._cleanUpNodeGraph(getChildren[i]);
