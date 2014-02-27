@@ -506,11 +506,25 @@ cc.inputManager = {
         }
 
         //register keyboard event
+        this._registerKeyboardEvent(element);
 
         //register Accelerometer event
         this._registerAccelerometerEvent();
 
         this._isRegisterEvent = true;
+    },
+
+    _registerKeyboardEvent: function(){
+        //make canvas focusable
+/*        cc.container.setAttribute('tabindex', 1);
+        cc.container.style.outline = 'none';
+        cc.container.style.cursor = 'default';*/
+        document.addEventListener("keydown", function (e) {
+            cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, true));
+        });
+        document.addEventListener("keyup", function (e) {
+            cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, false));
+        });
     },
 
     _registerAccelerometerEvent: function(){
