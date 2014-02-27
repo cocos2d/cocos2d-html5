@@ -1268,13 +1268,8 @@ cc.Director.getInstance = function () {
     return cc.s_SharedDirector;
 };
 
-Object.defineProperties(cc, {
-    windowSize: {
-        get: function () {
-            return  cc.director.getWinSize();
-        },
-        enumerable: true
-    }
+cc.defineGetterSetter(cc, "winSize", function(){
+    return cc.Director.getInstance().getWinSize();
 });
 
 /**

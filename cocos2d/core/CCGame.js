@@ -386,7 +386,7 @@ cc.loader = {
      * @param {array} jsList
      * @param {function} cb
      */
-    loadJsWidthImg : function(baseDir, jsList, cb){
+    loadJsWithImg : function(baseDir, jsList, cb){
         var self = this, jsLoadingImg = self._loadJsImg(),
             args = self._getArgs4Js(arguments);
         this.loadJs(args[0], args[1], function(err){
@@ -749,7 +749,7 @@ cc.loader = {
         self.loadJson(cc.game.PACKAGE_PATH, function(err, pkg){
             self._handleCfgAndPkg("", config, pkg, tempArr, function(err){
                 if(err) return cb(err);
-                self.loadJsWidthImg("", tempArr, function(err1){
+                self.loadJsWithImg("", tempArr, function(err1){
                     if(err1) return cb(err1);
                     var result = {jsArr : [], resArr : []}
                     var deps = self._deps, depsOf3rdParty = self._depsOf3rdParty;
@@ -770,7 +770,7 @@ cc.loader = {
                         result.jsArr = result.jsArr.concat(r.jsArr);
                         result.resArr = result.resArr.concat(r.resArr);
                     }
-                    self.loadJsWidthImg("", result.jsArr, function(err2){
+                    self.loadJsWithImg("", result.jsArr, function(err2){
                         err2 ? cb(err2) : cb(null, result.resArr);
                     });
                 });
@@ -899,7 +899,7 @@ cc.loader = {
             cc.game._baseRes4Npm = null;
         }
         //@MODE_END TEST
-        self.loadJsWidthImg("", r.jsArr, function(){
+        self.loadJsWithImg("", r.jsArr, function(){
             this._isBaseLoaded = true;
             cb(r.resArr);
         });
@@ -1189,8 +1189,7 @@ cc.game = {
      * @type Object
      */
     DEFAULT_CONFIG : {
-        ccJsList : "cocos2d-html5/lib/jsList.js",
-        engineDir : "../COCOS2d-HTML5/cocos2d",
+        engineDir : "libs/cocos2d-html5",
         engineDir4Npm : "../node_modules"
     },
     /**
@@ -1233,11 +1232,6 @@ cc.game = {
      * @type Object
      */
     config : null,
-    /**
-     * User's jsList
-     * @type Array
-     */
-    jsList : null,
 
     /**
      * Callback when the scripts of engine have been load.
@@ -1358,7 +1352,7 @@ cc.game = {
         var self = this, CONFIG_KEY = self.CONFIG_KEY, DEFAULT_CONFIG = self.DEFAULT_CONFIG;
         var _init = function(cfg){
             cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || (cfg[CONFIG_KEY.isNpm] ? DEFAULT_CONFIG.engineDir : DEFAULT_CONFIG.engineDir4Npm);
-            cfg[CONFIG_KEY.COCOS2D_DEBUG] = cfg[CONFIG_KEY.COCOS2D_DEBUG] || 0;
+            cfg[CONFIG_KEY.debugMode] = cfg[CONFIG_KEY.debugMode] || 0;
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
             cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 0;
             return cfg;
@@ -1389,7 +1383,7 @@ cc.game = {
                 var jsList = config[CONFIG_KEY.jsList] || [];
                 if(cc.Class){//is single file
                     //load user's jsList only
-                    loader.loadJsWidthImg("", jsList, function(err){
+                    loader.loadJsWithImg("", jsList, function(err){
                         if(err) throw err;
                         self._prepared = true;
                         if(cb) cb();
@@ -1406,11 +1400,11 @@ cc.game = {
                             var arr = moduleMap[modules[i]];
                             if(arr) newJsList = newJsList.concat(arr);
                         }
-                        cc.loader.loadJsWidthImg(engineDir, newJsList, function(err){
+                        cc.loader.loadJsWithImg(engineDir, newJsList, function(err){
                             if(err) throw err;
                             self._prepared = true;
 
-                            cc.loader.loadJsWidthImg("", jsList, function(err){
+                            cc.loader.loadJsWithImg("", jsList, function(err){
                                 if(err) throw err;
                                 if(cb) cb();
                             });
