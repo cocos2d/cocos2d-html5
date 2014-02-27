@@ -105,6 +105,9 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
         var jsonDict = cc.loader.getRes(fileName);
         if(!jsonDict) throw "Please load the resource first : " + fileName;
 
+        var tempFilePath = cc.path.dirname(fileName);
+        this._filePath = tempFilePath == "" ? tempFilePath : tempFilePath + "/";
+
         var fileVersion = jsonDict["version"];
         var pReader, widget;
         var versionInteger = this.getVersionInteger(fileVersion);
@@ -137,7 +140,7 @@ ccs.WidgetPropertiesReader = ccs.Class.extend({
 });
 ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     createWidget: function (jsonDict, fullPath, fileName) {
-        this._filePath = fullPath;
+        this._filePath = fullPath == "" ? fullPath : cc.path.join(fullPath, "/");
         var textures = jsonDict["textures"];
         for (var i = 0; i < textures.length; i++) {
             var file = textures[i];
@@ -730,7 +733,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
 ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     createWidget: function (jsonDict, fullPath, fileName) {
-        this._filePath = fullPath;
+        this._filePath = fullPath == "" ? fullPath : cc.path.join(fullPath, "/");
         var textures = jsonDict["textures"];
         for (var i = 0; i < textures.length; i++) {
             var file = textures[i];
