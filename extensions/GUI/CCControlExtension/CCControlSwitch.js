@@ -152,12 +152,6 @@ cc.ControlSwitch = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlSwitch.prototype;
-
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-
-delete window._proto;
-
 /** Creates a switch with a mask sprite, on/off sprites for on/off states and a thumb sprite. */
 cc.ControlSwitch.create = function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
     var pRet = new cc.ControlSwitch();

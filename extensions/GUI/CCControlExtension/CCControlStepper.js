@@ -335,6 +335,7 @@ cc.ControlStepper = cc.Control.extend({
 
 window._proto = cc.ControlStepper.prototype;
 
+// Extedned properties
 cc.defineGetterSetter(_proto, "wraps", _proto.getWraps, _proto.setWraps);
 cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
 cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);

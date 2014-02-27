@@ -362,10 +362,6 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
 
 window._proto = ccs.LoadingBar.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "direction", _proto.getDirection, _proto.setDirection);
 cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);

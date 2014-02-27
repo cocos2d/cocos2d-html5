@@ -1192,9 +1192,6 @@ if(cc.Browser.supportWebGL){
 }
 
 // Override properties
-cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 

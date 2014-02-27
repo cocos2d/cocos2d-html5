@@ -590,10 +590,6 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
 
 window._proto = ccs.Slider.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);
 

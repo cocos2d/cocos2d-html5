@@ -325,6 +325,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
 
 window._proto = ccs.ColliderDetector.prototype;
 
+// Extended properties
 cc.defineGetterSetter(_proto, "colliderFilter", _proto.getColliderFilter, _proto.setColliderFilter);
 cc.defineGetterSetter(_proto, "active", _proto.getActive, _proto.setActive);
 cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);

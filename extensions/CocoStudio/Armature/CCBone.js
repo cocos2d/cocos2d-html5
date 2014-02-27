@@ -662,11 +662,6 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
 
 window._proto = ccs.Bone.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "zIndex", _proto.getLocalZOrder, _proto.setLocalZOrder);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "boneData", _proto.getBoneData, _proto.setBoneData);
 cc.defineGetterSetter(_proto, "armature", _proto.getArmature, _proto.setArmature);

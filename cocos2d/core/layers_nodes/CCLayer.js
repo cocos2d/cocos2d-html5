@@ -321,6 +321,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 });
 
 window._proto = cc.LayerRGBA.prototype;
+// Extended properties
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
 cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
@@ -622,12 +623,9 @@ if(cc.Browser.supportWebGL){
     _proto.draw = _proto._drawForCanvas;
 }
 
-cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+// Override properties
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 
 delete window._proto;
 
@@ -965,10 +963,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 });
 
 window._proto = cc.LayerGradient.prototype;
-
-cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "startColor", _proto.getStartColor, _proto.setStartColor);

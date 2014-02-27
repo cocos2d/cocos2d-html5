@@ -2657,11 +2657,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 });
 
 window._proto = cc.ParticleSystem.prototype;
-// Override properties
-cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
-cc.defineGetterSetter(_proto, "scale", _proto.getScale, _proto.setScale);
-cc.defineGetterSetter(_proto, "scaleX", _proto.getScaleX, _proto.setScaleX);
-cc.defineGetterSetter(_proto, "scaleY", _proto.getScaleY, _proto.setScaleY);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);

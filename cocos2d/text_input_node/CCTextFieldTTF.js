@@ -381,7 +381,6 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
 });
 
 window._proto = cc.TextFieldTTF.prototype;
-cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "charCount", _proto.getCharCount);

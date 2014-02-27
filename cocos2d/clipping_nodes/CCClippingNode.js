@@ -467,6 +467,7 @@ if (cc.Browser.supportWebGL) {
     _proto.setStencil = _proto._setStencilForCanvas;
 }
 
+// Extended properties
 cc.defineGetterSetter(_proto, "stencil", _proto.getStencil, _proto.setStencil);
 
 delete window._proto;

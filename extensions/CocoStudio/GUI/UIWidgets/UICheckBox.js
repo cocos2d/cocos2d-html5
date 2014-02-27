@@ -567,14 +567,6 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
 
 window._proto = ccs.CheckBox.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
-cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
-cc.defineGetterSetter(_proto, "flippedX", _proto.isFlippedX, _proto.setFlippedX);
-cc.defineGetterSetter(_proto, "flippedY", _proto.isFlippedY, _proto.setFlippedY);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "selected", _proto.getSelectedState, _proto.setSelectedState);
 

@@ -645,10 +645,6 @@ cc.ControlButton = cc.Control.extend({
 
 window._proto = cc.ControlButton.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "adjustBackground", _proto.getAdjustBackgroundImage, _proto.setAdjustBackgroundImage);
 cc.defineGetterSetter(_proto, "preferredSize", _proto.getPreferredSize, _proto.setPreferredSize);
