@@ -94,7 +94,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      * @param {Number} dt
      */
     update:function (dt) {
-        this._target.updateTweenAction(this.to - this.delta * (1 - dt), this.key);
+        this.target.updateTweenAction(this.to - this.delta * (1 - dt), this.key);
     },
     /**
      * @return {cc.ActionTween}

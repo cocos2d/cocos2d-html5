@@ -37,14 +37,6 @@ cc.TOUCH_ONE_BY_ONE = 1;
  * It can receive Accelerometer input
  * @class
  * @extends cc.Node
- *
- * @property {Boolean}  mouseEnabled            - Indicate whether mouse event is enabled for layer
- * @property {Number}   mousePriority           - The priority of mouse event for the current layer
- * @property {Boolean}  touchEnabled            - Indicate whether touch event is enabled for layer
- * @property {Number}   touchPriority           - The priority of touch event for the current layer
- * @property {Number}   touchMode               - the touch mode: cc.TOUCH_ALL_AT_ONCE | cc.TOUCH_ONE_BY_ONE
- * @property {Boolean}  accelerometerEnabled    - Indicate whether accelerometer event is enabled for layer
- * @property {Boolean}  keyboardEnabled         - Indicate whether keyboard event is enabled for layer
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
@@ -314,7 +306,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * add a child to layer
      * @overried
      * @param {cc.Node} child  A child node
-     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setLocalZOrder(int)
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild:function(child, zOrder, tag){

@@ -46,16 +46,16 @@ cc.BatchNode = cc.Node.extend({
             return;
         }
         this.kmGLPushMatrix();
-        if (this._grid && this._grid.isActive()) {
-            this._grid.beforeDraw();
+        if (this.grid && this.grid.isActive()) {
+            this.grid.beforeDraw();
         }
         this.transform();
         this.sortAllChildren();
         this.draw();
         // reset for next frame
-        this._orderOfArrival = 0;
-        if (this._grid && this._grid.isActive()) {
-            this._grid.afterDraw(this);
+        this.arrivalOrder = 0;
+        if (this.grid && this.grid.isActive()) {
+            this.grid.afterDraw(this);
         }
         this.kmGLPopMatrix();
     },

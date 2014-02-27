@@ -196,13 +196,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * Constructor
      */
     ctor:function () {
-        this._lastUpdate = Date.now();
-        if (!cc.isAddedHiddenEvent) {
-            var selfPointer = this;
-            window.addEventListener("focus", function () {
-                selfPointer._lastUpdate = Date.now();
-            }, false);
-        }
+        var self = this;
+        self._lastUpdate = Date.now();
+        cc.winEvents.shows.push(function(){
+            self._lastUpdate = Date.now();
+        });
     },
 
     _resetLastUpdate:function () {
@@ -244,7 +242,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._scheduler = new cc.Scheduler();
         //action manager
         this._actionManager = new cc.ActionManager();
-        this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.PRIORITY_SYSTEM, false);
+        this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
 
         this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
         this._eventAfterDraw.setUserData(this);

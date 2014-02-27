@@ -301,7 +301,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _currentFirstGID:0,
 
     ctor:function () {
-	    cc.SAXParser.prototype.ctor.apply(this);
+        cc.SAXParser.prototype.ctor.apply(this);
         this._mapSize = cc.size(0, 0);
         this._tileSize = cc.size(0, 0);
         this._layers = [];
@@ -532,7 +532,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      */
     parseXMLFile:function (tmxFile, isXmlString) {
         isXmlString = isXmlString || false;
-        var xmlStr = isXmlString ? tmxFile : cc.loader.getRes(tmxFile);
+        var xmlStr = cc.loader.getRes(tmxFile);
         if(!xmlStr) throw "Please load the resource first : " + tmxFile;
 
         var mapXML = this._parseXML(xmlStr);

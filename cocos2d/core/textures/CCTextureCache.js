@@ -247,17 +247,28 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * //example
      * cc.TextureCache.getInstance().addImage("hello.png");
      */
-    addImage:function (url) {
+    addImage:function (url, target, cb) {
         if(!url)
             throw "cc.Texture.addImage(): path should be non-null";
+        if(arguments.length == 2){
+            cb = target;
+            target = null;
+        }
         var locTexs = this._textures;
         if(cc.renderContextType === cc.WEBGL && !cc._rendererInitialized){
             locTexs = this._loadedTexturesBefore;
         }
         var tex = locTexs[url];
-        if(tex) return tex;
+        if(tex) {
+            if(cb) cb.call(target);
+            return tex;
+        }
 
-        if(!cc.loader.getRes(url)) cc.loader.load(url);
+        if(!cc.loader.getRes(url)){
+            cc.loader.load(url, function(err){
+                if(cb) cb.call(target);
+            });
+        }
 
         tex = locTexs[url] = new cc.Texture2D();
         tex.url = url;

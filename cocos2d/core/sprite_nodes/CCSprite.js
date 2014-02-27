@@ -523,7 +523,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
                 while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem._orderOfArrival < tempChild._orderOfArrival ))) {
+                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
                     locChildren[j + 1] = tempChild;
                     j = j - 1;
                     tempChild =  locChildren[j];
@@ -1403,7 +1403,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (localZOrder == null)
             localZOrder = child._localZOrder;
         if (tag == null)
-            tag = child._tag;
+            tag = child.tag;
 
         if (this._batchNode) {
             if(!(child instanceof cc.Sprite)){
@@ -1430,7 +1430,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (localZOrder == null)
             localZOrder = child._localZOrder;
         if (tag == null)
-            tag = child._tag;
+            tag = child.tag;
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
         cc.NodeRGBA.prototype.addChild.call(this, child, localZOrder, tag);

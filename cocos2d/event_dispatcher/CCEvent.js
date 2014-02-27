@@ -160,6 +160,8 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     _button: 0,
     _x: 0,
     _y: 0,
+    _prevX: 0,
+    _prevY: 0,
     _scrollX: 0,
     _scrollY: 0,
 
@@ -199,9 +201,30 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * @param {number} x
      * @param {number} y
      */
-    setCursorPosition: function (x, y) {
+    setCursor: function (x, y) {
         this._x = x;
         this._y = y;
+    },
+
+    getCursor: function () {
+        return {x: this._x, y: this._y};
+    },
+
+    _setPrevCursor: function (x, y) {
+        this._prevX = x;
+        this._prevY = y;
+    },
+
+    getDelta: function () {
+        return {x: this._x - this._prevX, y: this._y - this._prevY};
+    },
+
+    getDeltaX: function () {
+        return this._x - this._prevX;
+    },
+
+    getDeltaY: function () {
+        return this._y - this._prevY;
     },
 
     /**
@@ -237,12 +260,12 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     }
 });
 
-/**
- * Different types of MouseEvent
- * @constant
- * @type {Object}
- */
-cc.EventMouse.EventType = {NONE: 0, DOWN: 1, UP: 2, MOVE: 3, SCROLL: 4};
+//Different types of MouseEvent
+cc.EventMouse.NONE = 0;
+cc.EventMouse.DOWN = 1;
+cc.EventMouse.UP = 2;
+cc.EventMouse.MOVE = 3;
+cc.EventMouse.SCROLL = 4;
 
 /**
  * The tag of Mouse left button
@@ -252,18 +275,18 @@ cc.EventMouse.EventType = {NONE: 0, DOWN: 1, UP: 2, MOVE: 3, SCROLL: 4};
 cc.EventMouse.BUTTON_LEFT = 0;
 
 /**
- * The tag of Mouse right button
+ * The tag of Mouse right button  (The right button number is 2 on browser)
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_RIGHT = 1;
+cc.EventMouse.BUTTON_RIGHT = 2;
 
 /**
- * The tag of Mouse middle button
+ * The tag of Mouse middle button  (The right button number is 1 on browser)
  * @constant
  * @type {Number}
  */
-cc.EventMouse.BUTTON_MIDDLE = 2;
+cc.EventMouse.BUTTON_MIDDLE = 1;
 
 /**
  * The tag of Mouse button 4
