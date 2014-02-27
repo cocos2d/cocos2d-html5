@@ -515,10 +515,6 @@ cc.inputManager = {
     },
 
     _registerKeyboardEvent: function(){
-        //make canvas focusable
-/*        cc.container.setAttribute('tabindex', 1);
-        cc.container.style.outline = 'none';
-        cc.container.style.cursor = 'default';*/
         document.addEventListener("keydown", function (e) {
             cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, true));
         });
