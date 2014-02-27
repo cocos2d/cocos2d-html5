@@ -2480,6 +2480,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
+
+        this._displayedColor.a = this._realColor.a = opacity;
     },
 
     /**
@@ -2545,7 +2547,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
      */
     getColor:function(){
         var locRealColor = this._realColor;
-        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b);
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
     /**
@@ -2557,8 +2559,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     /**
-     * Set the color of Node
-     * @param {cc.Color} color
+     * Set the color of Node.
+     * @param {cc.Color} color When color not set alpha like cc.color(128,128,128),only change the color. When color set alpha like cc.color(128,128,128,100),then change the color and alpha.
      */
     setColor:function(color){
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
@@ -2572,6 +2574,10 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         else
             parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
+
+        if (color.a !== undefined && !color.a_undefined) {
+            this.setOpacity(color.a);
+        }
     },
 
     /**

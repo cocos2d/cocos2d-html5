@@ -185,13 +185,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     //TODO
     /**
      * tint this label
-     * @param {cc.Color} color3
+     * @param {cc.Color} color
      */
-    setColor:function (color3) {
-        if (((this._realColor.r == color3.r) && (this._realColor.g == color3.g) && (this._realColor.b == color3.b)))
+    setColor:function (color) {
+        var locDisplayed = this._displayedColor, locRealColor = this._realColor;
+        if ((locRealColor.r == color.r) && (locRealColor.g == color.g) && (locRealColor.b == color.b) && (locRealColor.a == color.a))
             return;
-        this._displayedColor = {r:color3.r, g:color3.g, b:color3.b};
-        this._realColor = {r:color3.r, g:color3.g, b:color3.b};
+        locDisplayed.r = locRealColor.r = color.r;
+        locDisplayed.g = locRealColor.g = color.g;
+        locDisplayed.b = locRealColor.b = color.b;
 
         if(this._textureLoaded){
             if(this._cascadeColorEnabled){
@@ -201,6 +203,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     parentColor = locParent.getDisplayedColor();
                 this.updateDisplayedColor(parentColor);
             }
+        }
+
+        if (color.a !== undefined && !color.a_undefined) {
+            this.setOpacity(color.a);
         }
     },
 
@@ -248,6 +254,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                parentOpacity = locParent.getDisplayedOpacity();
             this.updateDisplayedOpacity(parentOpacity);
         }
+
+        this._displayedColor.a = this._realColor.a = opacity;
     },
 
     updateDisplayedOpacity:function(parentOpacity){
@@ -274,7 +282,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     getColor:function(){
-        return this._realColor;
+        var locRealColor = this._realColor;
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
     getDisplayedColor:function(){
