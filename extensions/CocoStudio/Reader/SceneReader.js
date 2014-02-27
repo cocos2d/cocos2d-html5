@@ -112,7 +112,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                         plistFile = cc.path.join(this._baseBath, plistFile);
                         var pngFile = cc.path.changeExtname(plistFile, ".png");
                         cc.SpriteFrameCache.getInstance().addSpriteFrames(plistFile, pngFile);
-                        sprite = cc.Sprite.create("frame#" + fileData["path"]);
+                        sprite = cc.Sprite.create("#" + fileData["path"]);
                     }
                     else {
                         continue;
