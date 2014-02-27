@@ -26,6 +26,68 @@
 
 //CONSTANTS:
 
+/**
+ * Horizontal center and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_CENTER = 0x33;
+
+/**
+ * Horizontal center and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP = 0x13;
+
+/**
+ * Horizontal right and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP_RIGHT = 0x12;
+
+/**
+ * Horizontal right and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_RIGHT = 0x32;
+
+/**
+ * Horizontal right and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM_RIGHT = 0x22;
+
+/**
+ * Horizontal center and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM = 0x23;
+
+/**
+ * Horizontal left and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM_LEFT = 0x21;
+
+/**
+ * Horizontal left and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_LEFT = 0x31;
+
+/**
+ * Horizontal left and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP_LEFT = 0x11;
 //----------------------Possible texture pixel formats----------------------------
 
 
@@ -77,7 +139,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     /*public:*/
     ctor:function () {
         this._contentSize = cc.size(0, 0);
-        this._pixelFormat = cc.Texture2D.PIXEL_FORMAT.DEFAULT;
+        this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_DEFAULT;
     },
 
     releaseTexture:function () {
@@ -211,7 +273,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
-        var self = this, PIXEL_FORMAT = cc.Texture2D.PIXEL_FORMAT;
+        var self = this, tex2d = cc.Texture2D;
         var gl = cc.renderContext;
         var format = gl.RGBA, type = gl.UNSIGNED_BYTE;
 
@@ -238,28 +300,28 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         // Specify OpenGL texture image
         switch (pixelFormat) {
-	        case PIXEL_FORMAT.RGBA8888:
+	        case tex2d.PIXEL_FORMAT_RGBA8888:
 		        format = gl.RGBA;
 		        break;
-            case PIXEL_FORMAT.RGB888:
+            case tex2d.PIXEL_FORMAT_RGB888:
                 format = gl.RGB;
                 break;
-            case PIXEL_FORMAT.RGBA4444:
+            case tex2d.PIXEL_FORMAT_RGBA4444:
                 type = gl.UNSIGNED_SHORT_4_4_4_4;
                 break;
-            case PIXEL_FORMAT.RGB5A1:
+            case tex2d.PIXEL_FORMAT_RGB5A1:
                 type = gl.UNSIGNED_SHORT_5_5_5_1;
                 break;
-            case PIXEL_FORMAT.RGB565:
+            case tex2d.PIXEL_FORMAT_RGB565:
                 type = gl.UNSIGNED_SHORT_5_6_5;
                 break;
-            case PIXEL_FORMAT.AI88:
+            case tex2d.PIXEL_FORMAT_AI88:
                 format = gl.LUMINANCE_ALPHA;
                 break;
-            case PIXEL_FORMAT.A8:
+            case tex2d.PIXEL_FORMAT_A8:
                 format = gl.ALPHA;
                 break;
-            case PIXEL_FORMAT.I8:
+            case tex2d.PIXEL_FORMAT_I8:
                 format = gl.LUMINANCE;
                 break;
             default:
@@ -437,7 +499,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         self._pixelsWide = self._contentSize.width = pixelsWide;
         self._pixelsHigh = self._contentSize.height = pixelsHigh;
-        self._pixelFormat = cc.Texture2D.PIXEL_FORMAT.RGBA8888;
+        self._pixelFormat = cc.Texture2D.PIXEL_FORMAT_RGBA8888;
         self.maxS = 1;
         self.maxT = 1;
 
@@ -476,18 +538,17 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
          }*/
 
         var image = new cc.Image();
-        var ALIGN = cc.Texture2D.ALIGN;
         var eAlign;
 
         if (cc.VERTICAL_TEXT_ALIGNMENT_TOP === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? ALIGN.TOP
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? ALIGN.TOP_LEFT : ALIGN.TOP_RIGHT;
+            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_TOP
+                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_TOP_LEFT : cc.ALIGN_TOP_RIGHT;
         } else if (cc.VERTICAL_TEXT_ALIGNMENT_CENTER === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? ALIGN.CENTER
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? ALIGN.LEFT : ALIGN.RIGHT;
+            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_CENTER
+                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_LEFT : cc.ALIGN_RIGHT;
         } else if (cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? ALIGN.BOTTOM
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? ALIGN.BOTTOM_LEFT : ALIGN.BOTTOM_RIGHT;
+            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_BOTTOM
+                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_BOTTOM_LEFT : cc.ALIGN_BOTTOM_RIGHT;
         } else {
             cc.log("Not supported alignment format!");
             return false;
@@ -638,31 +699,31 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     _initPremultipliedATextureWithImage:function (uiImage, width, height) {
-        var PIXEL_FORMAT = cc.Texture2D.PIXEL_FORMAT;
+        var tex2d = cc.Texture2D;
         var tempData = uiImage.getData();
         var inPixel32 = null;
         var inPixel8 = null;
         var outPixel16 = null;
         var hasAlpha = uiImage.hasAlpha();
         var imageSize = cc.size(uiImage.getWidth(), uiImage.getHeight());
-        var pixelFormat = PIXEL_FORMAT.DEFAULT;
+        var pixelFormat = tex2d.PIXEL_FORMAT_DEFAULT;
         var bpp = uiImage.getBitsPerComponent();
         var i;
 
         // compute pixel format
         if (!hasAlpha) {
             if (bpp >= 8) {
-                pixelFormat = PIXEL_FORMAT.RGB888;
+                pixelFormat = tex2d.PIXEL_FORMAT_RGB888;
             } else {
                 cc.log("cocos2d: cc.Texture2D: Using RGB565 texture since image has no alpha");
-                pixelFormat = PIXEL_FORMAT.RGB565;
+                pixelFormat = tex2d.PIXEL_FORMAT_RGB565;
             }
         }
 
         // Repack the pixel data into the right format
         var length = width * height;
 
-        if (pixelFormat == PIXEL_FORMAT.RGB565) {
+        if (pixelFormat == tex2d.PIXEL_FORMAT_RGB565) {
             if (hasAlpha) {
                 // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGGBBBBB"
                 tempData = new Uint16Array(width * height);
@@ -686,7 +747,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                             (((inPixel8[i] & 0xFF) >> 3) << 0);    // B
                 }
             }
-        } else if (pixelFormat == PIXEL_FORMAT.RGBA4444) {
+        } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGBA4444) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRGGGGBBBBAAAA"
             tempData = new Uint16Array(width * height);
             inPixel32 = uiImage.getData();
@@ -698,7 +759,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                         ((((inPixel32[i] >> 16) & 0xFF) >> 4) << 4) | // B
                         ((((inPixel32[i] >> 24) & 0xFF) >> 4) << 0);  // A
             }
-        } else if (pixelFormat == PIXEL_FORMAT.RGB5A1) {
+        } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGB5A1) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGBBBBBA"
             tempData = new Uint16Array(width * height);
             inPixel32 = uiImage.getData();
@@ -710,7 +771,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                         ((((inPixel32[i] >> 16) & 0xFF) >> 3) << 1) | // B
                         ((((inPixel32[i] >> 24) & 0xFF) >> 7) << 0);  // A
             }
-        } else if (pixelFormat == PIXEL_FORMAT.A8) {
+        } else if (pixelFormat == tex2d.PIXEL_FORMAT_A8) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "AAAAAAAA"
             tempData = new Uint8Array(width * height);
             inPixel32 = uiImage.getData();
@@ -720,7 +781,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             }
         }
 
-        if (hasAlpha && pixelFormat == PIXEL_FORMAT.RGB888) {
+        if (hasAlpha && pixelFormat == tex2d.PIXEL_FORMAT_RGB888) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRRRRGGGGGGGGBBBBBBBB"
             inPixel32 = uiImage.getData();
             tempData = new Uint8Array(width * height * 3);
@@ -1177,167 +1238,109 @@ cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied)
 };
 
 
-window._PIXEL_FORMAT = cc.Texture2D.PIXEL_FORMAT = {
-    /**
-     * 32-bit texture: RGBA8888
-     * @constant
-     * @type {String}
-     */
-    RGBA8888 : 0,
-    /**
-     * 24-bit texture: RGBA888
-     * @constant
-     * @type {String}
-     */
-    RGB888 : 1,
-    /**
-     * 16-bit texture without Alpha channel
-     * @constant
-     * @type {String}
-     */
-    RGB565 : 2,
-    /**
-     * 8-bit textures used as masks
-     * @constant
-     * @type {String}
-     */
-    A8 : 3,
-    /**
-     * 8-bit intensity texture
-     * @constant
-     * @type {String}
-     */
-    I8 : 4,
-    /**
-     * 16-bit textures used as masks
-     * @constant
-     * @type {String}
-     */
-    AI88 : 5,
-    /**
-     * 16-bit textures: RGBA4444
-     * @constant
-     * @type {String}
-     */
-    RGBA4444 : 6,
-    /**
-     * 16-bit textures: RGB5A1
-     * @constant
-     * @type {String}
-     */
-    RGB5A1 : 7,
-    /**
-     * 4-bit PVRTC-compressed texture: PVRTC4
-     * @constant
-     * @type {String}
-     */
-    PVRTC4 : 8,
-    /**
-     * 2-bit PVRTC-compressed texture: PVRTC2
-     * @constant
-     * @type {String}
-     */
-    PVRTC2 : 9
-};
+window._Class = cc.Texture2D;
+
+/**
+ * 32-bit texture: RGBA8888
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGBA8888 = 0;
+
+/**
+ * 24-bit texture: RGBA888
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGB888 = 1;
+
+/**
+ * 16-bit texture without Alpha channel
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGB565 = 2;
+
+/**
+ * 8-bit textures used as masks
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_A8 = 3;
+
+/**
+ * 8-bit intensity texture
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_I8 = 4;
+
+/**
+ * 16-bit textures used as masks
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_AI88 = 5;
+
+/**
+ * 16-bit textures: RGBA4444
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGBA4444 = 6;
+
+/**
+ * 16-bit textures: RGB5A1
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGB5A1 = 7;
+
+/**
+ * 4-bit PVRTC-compressed texture: PVRTC4
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_PVRTC4 = 8;
+
+/**
+ * 2-bit PVRTC-compressed texture: PVRTC2
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_PVRTC2 = 9;
+
 /**
  * Default texture format: RGBA8888
- * If the image has alpha, you can create RGBA8 (32-bit) or RGBA4 (16-bit) or RGB5A1 (16-bit)
- * Default is: RGBA8888 (32-bit textures)
  * @constant
- * @type {String}
+ * @type {Number}
  */
-_PIXEL_FORMAT.DEFAULT = cc.Texture2D.PIXEL_FORMAT.RGBA8888;
+_Class.PIXEL_FORMAT_DEFAULT = _Class.PIXEL_FORMAT_RGBA8888;
 
 window._PIXEL_FORMAT_STR_MAP = cc.Texture2D.PIXEL_FORMAT_STR_MAP = {};
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.RGBA8888] = "RGBA8888";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.RGB888] = "RGB888";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.RGB565] = "RGB565";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.A8] = "A8";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.I8] = "I8";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.AI88] = "AI88";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.RGBA4444] = "RGBA4444";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.RGB5A1] = "RGB5A1";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.PVRTC4] = "PVRTC4";
-_PIXEL_FORMAT_STR_MAP[_PIXEL_FORMAT.PVRTC2] = "PVRTC2";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGBA8888] = "RGBA8888";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB888] = "RGB888";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB565] = "RGB565";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_A8] = "A8";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_I8] = "I8";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_AI88] = "AI88";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGBA4444] = "RGBA4444";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB5A1] = "RGB5A1";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC4] = "PVRTC4";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC2] = "PVRTC2";
 
 window._BITS_PER_PIXEL_FORMAT = cc.Texture2D.BITS_PER_PIXEL_FORMAT = {};
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.RGBA8888] = 32;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.RGB888] = 24;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.RGB565] = 16;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.A8] = 8;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.I8] = 8;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.AI88] = 16;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.RGBA4444] = 16;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.RGB5A1] = 16;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.PVRTC4] = 4;
-_BITS_PER_PIXEL_FORMAT[_PIXEL_FORMAT.PVRTC2] = 3;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGBA8888] = 32;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB888] = 24;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB565] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_A8] = 8;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_I8] = 8;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_AI88] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGBA4444] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB5A1] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC4] = 4;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC2] = 3;
 
-/** @constant */
-cc.Texture2D.ALIGN = {
-    /**
-     * Horizontal center and vertical center.
-     * @constant
-     * @type Number
-     */
-    CENTER : 0x33,
-
-    /**
-     * Horizontal center and vertical top.
-     * @constant
-     * @type Number
-     */
-    TOP : 0x13,
-
-    /**
-     * Horizontal right and vertical top.
-     * @constant
-     * @type Number
-     */
-    TOP_RIGHT : 0x12,
-
-    /**
-     * Horizontal right and vertical center.
-     * @constant
-     * @type Number
-     */
-    RIGHT : 0x32,
-
-    /**
-     * Horizontal right and vertical bottom.
-     * @constant
-     * @type Number
-     */
-    BOTTOM_RIGHT : 0x22,
-
-    /**
-     * Horizontal center and vertical bottom.
-     * @constant
-     * @type Number
-     */
-    BOTTOM : 0x23,
-
-    /**
-     * Horizontal left and vertical bottom.
-     * @constant
-     * @type Number
-     */
-    BOTTOM_LEFT : 0x21,
-
-    /**
-     * Horizontal left and vertical center.
-     * @constant
-     * @type Number
-     */
-    LEFT : 0x31,
-
-    /**
-     * Horizontal left and vertical top.
-     * @constant
-     * @type Number
-     */
-    TOP_LEFT : 0x11
-};
-
-delete window._PIXEL_FORMAT;
+delete window._Class;
 delete window._PIXEL_FORMAT_STR_MAP;
 delete window._BITS_PER_PIXEL_FORMAT;
