@@ -305,10 +305,10 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     updateZOrder: function () {
         if (this._armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED) {
             var zorder = this._tweenData.zOrder + this._boneData.zOrder;
-            this.setZOrder(zorder);
+            this.setLocalZOrder(zorder);
         }
         else {
-            this.setZOrder(this._tweenData.zOrder);
+            this.setLocalZOrder(this._tweenData.zOrder);
         }
     },
 
@@ -421,9 +421,9 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * zOrder setter
      * @param {Number}
         */
-    setZOrder:function (zOrder) {
+    setLocalZOrder:function (zOrder) {
         if (this._zOrder != zOrder)
-            cc.Node.prototype.setZOrder.call(this, zOrder);
+            cc.Node.prototype.setLocalZOrder.call(this, zOrder);
     },
 
     /**
@@ -665,7 +665,7 @@ window._proto = ccs.Bone.prototype;
 // Override properties
 cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "zIndex", _proto.getZOrder, _proto.setZOrder);
+cc.defineGetterSetter(_proto, "zIndex", _proto.getLocalZOrder, _proto.setLocalZOrder);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "boneData", _proto.getBoneData, _proto.setBoneData);

@@ -70,7 +70,7 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.visible = true;
+        this.target.visible = true;
     },
 
     /**
@@ -104,7 +104,7 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.visible = false;
+        this.target.visible = false;
     },
 
     /**
@@ -138,7 +138,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
      * @param {Number} time
      */
     update:function (time) {
-        this._target.visible = !this._target.visible;
+        this.target.visible = !this.target.visible;
     },
 
     /**
@@ -171,7 +171,7 @@ cc.RemoveSelf = cc.ActionInstant.extend({
     },
 
     update:function(time){
-        this._target.removeFromParent(this._isNeedCleanUp);
+        this.target.removeFromParent(this._isNeedCleanUp);
     },
 
     init:function(isNeedCleanUp){
@@ -221,7 +221,7 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.flippedX = this._flippedX;
+        this.target.flippedX = this._flippedX;
     },
 
     /**
@@ -275,7 +275,7 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
      */
     update:function (time) {
         //this._super();
-        this._target.flippedY = this._flippedY;
+        this.target.flippedY = this._flippedY;
     },
 
     /**
@@ -333,7 +333,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
      * @param {Number} time
      */
     update:function (time) {
-        this._target.setPosition(this._x, this._y);
+        this.target.setPosition(this._x, this._y);
     },
 
     clone:function(){
@@ -402,9 +402,9 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      */
     execute:function () {
         if (this._callFunc != null)         //CallFunc, N, ND
-            this._callFunc.call(this._selectorTarget, this._target, this._data);
+            this._callFunc.call(this._selectorTarget, this.target, this._data);
         else if(this._function)
-            this._function.call(null, this._target);
+            this._function.call(null, this.target);
     },
 
     /**

@@ -47,8 +47,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         var newGrid = this.getGrid();
-        var t = this._target;
-        var targetGrid = t.getGrid();
+        var t = this.target;
+        var targetGrid = t.grid;
         if (targetGrid && targetGrid.getReuseGrid() > 0) {
             var locGridSize = targetGrid.getGridSize();
             if (targetGrid.isActive() && (locGridSize.width == this._gridSize.width) && (locGridSize.height == this._gridSize.height))
@@ -56,8 +56,8 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
         } else {
             if (targetGrid && targetGrid.isActive())
                 targetGrid.setActive(false);
-            t.setGrid(newGrid);
-            t.getGrid().setActive(true);
+            t.grid = newGrid;
+            t.grid.setActive(true);
         }
     },
 
@@ -123,7 +123,7 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.GridAction# */{
      * @return {cc.Vertex3F}
      */
     vertex:function (position) {
-        return this._target.getGrid().vertex(position);
+        return this.target.grid.vertex(position);
     },
 
     /**
@@ -132,7 +132,7 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.GridAction# */{
      * @return {*}
      */
     originalVertex:function (position) {
-        return this._target.getGrid().originalVertex(position);
+        return this.target.grid.originalVertex(position);
     },
 
     /**
@@ -141,7 +141,7 @@ cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.GridAction# */{
      * @param {cc.Vertex3F} vertex
      */
     setVertex:function (position, vertex) {
-        this._target.getGrid().setVertex(position, vertex);
+        this.target.grid.setVertex(position, vertex);
     }
 });
 
@@ -169,7 +169,7 @@ cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
      * @return {cc.Quad3}
      */
     tile:function (position) {
-        return this._target.getGrid().tile(position);
+        return this.target.grid.tile(position);
     },
 
     /**
@@ -178,7 +178,7 @@ cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
      * @return {cc.Quad3}
      */
     originalTile:function (position) {
-        return this._target.getGrid().originalTile(position);
+        return this.target.grid.originalTile(position);
     },
 
     /**
@@ -187,7 +187,7 @@ cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
      * @param {cc.Quad3} coords
      */
     setTile:function (position, coords) {
-        this._target.getGrid().setTile(position, coords);
+        this.target.grid.setTile(position, coords);
     },
 
     /**
@@ -224,7 +224,7 @@ cc.TiledGrid3DAction.create = function (duration, gridSize) {
 cc.StopGrid = cc.ActionInstant.extend(/** @lends cc.StopGrid# */{
     startWithTarget:function (target) {
         cc.ActionInstant.prototype.startWithTarget.call(this, target);
-        var grid = this._target.getGrid();
+        var grid = this.target.grid;
         if (grid && grid.isActive())
             grid.setActive(false);
     }
@@ -258,8 +258,8 @@ cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
 
     startWithTarget:function (target) {
         cc.ActionInstant.prototype.startWithTarget.call(this, target);
-        if (this._target.getGrid() && this._target.getGrid().isActive())
-            this._target.getGrid().setReuseGrid(this._target.getGrid().getReuseGrid() + this._times);
+        if (this.target.grid && this.target.grid.isActive())
+            this.target.grid.setReuseGrid(this.target.grid.getReuseGrid() + this._times);
     }
 });
 

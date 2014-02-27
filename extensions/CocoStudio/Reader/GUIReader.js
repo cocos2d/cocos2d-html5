@@ -280,7 +280,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         }
 
         var z = options["ZOrder"];
-        widget.setZOrder(z);
+        widget.setLocalZOrder(z);
     },
 
     setColorPropsForWidgetFromJsonDictionary: function (widget, options) {
@@ -891,7 +891,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             widget.setVisible(options["visible"]);
         }
 
-        widget.setZOrder(options["ZOrder"]);
+        widget.setLocalZOrder(options["ZOrder"]);
         var layoutParameterDic = options["layoutParameter"];
         if (layoutParameterDic) {
             var paramType = layoutParameterDic["type"];
