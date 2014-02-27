@@ -2108,9 +2108,9 @@ cc.Sprite.create = function (fileName, rect) {
     }
 
     if (typeof(fileName) === "string") {
-        if (fileName[5] === "#") {
+        if (fileName[0] === "#") {
             //init with a sprite frame name
-            var frameName = fileName.substr(6, fileName.length - 1);
+            var frameName = fileName.substr(1, fileName.length - 1);
             var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(frameName);
             if (sprite.initWithSpriteFrame(spriteFrame))
                 return sprite;
