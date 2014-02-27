@@ -988,7 +988,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         //draw text to labelCanvas
         this._drawTTFInCanvas(locContext);
-	    this._texture._isLoaded = false;
         this._texture.handleLoadedTexture();
 
         this.setTextureRect(cc.rect(0, 0, width, height));

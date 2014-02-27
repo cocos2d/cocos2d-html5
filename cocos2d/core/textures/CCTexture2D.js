@@ -470,7 +470,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     handleLoadedTexture:function () {
         var self = this;
 	    // Not sure about this ! Some texture need to be updated even after loaded
-        if(!cc._rendererInitialized || self._isLoaded) return;
+        if(!cc._rendererInitialized) return;
         if(!self._htmlElementObj){
             var img = cc.loader.getRes(self.url);
             if(!img) return;
