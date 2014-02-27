@@ -24,24 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.UIInterfaceOrientationLandscapeLeft = -90;
-
-cc.UIInterfaceOrientationLandscapeRight = 90;
-
-cc.UIInterfaceOrientationPortraitUpsideDown = 180;
-
-cc.UIInterfaceOrientationPortrait = 0;
-
-/**
- * he device accelerometer reports values for each axis in units of g-force
- */
-cc.Acceleration = function (x, y, z, timestamp) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
-    this.timestamp = timestamp || 0;
-};
-
 /**
  * @class
  * @extends cc.Class
@@ -148,6 +130,7 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
                 break;
         }
     },
+
     update:function(dt){
         if(this._curTime > this._interval){
             this._curTime -= this._interval;

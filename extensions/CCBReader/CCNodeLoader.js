@@ -89,7 +89,7 @@ cc.NodeLoader = cc.Class.extend({
                     node = node.getCCBFileNode();
                     //skip properties that doesn't have a value to override
                     var getExtraPropsNames = node.userObject;
-                    setProp = cc.ArrayContainsObject(getExtraPropsNames,propertyName);
+                    setProp = getExtraPropsNames.indexOf(propertyName) != -1;
                 }
             } else if(isExtraProp && node == ccbReader.getAnimationManager().getRootNode()){
                 var extraPropsNames = node.userObject;

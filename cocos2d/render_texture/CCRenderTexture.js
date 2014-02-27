@@ -112,7 +112,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _textureCopy:null,
     _uITextureImage:null,
 
-    _pixelFormat:cc.Texture2D.PIXEL_FORMAT.RGBA8888,
+    _pixelFormat:cc.Texture2D.PIXEL_FORMAT_RGBA8888,
 
     _clearColor:null,
     clearStencilVal:0,
@@ -200,7 +200,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _initWithWidthAndHeightForWebGL: function (width, height, format, depthStencilFormat) {
-        if(format == cc.Texture2D.PIXEL_FORMAT.A8)
+        if(format == cc.Texture2D.PIXEL_FORMAT_A8)
             cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
         var gl = cc.renderContext, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
@@ -684,7 +684,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         if(flipImage === null)
             flipImage = true;
-        cc.Assert(this._pixelFormat == cc.Texture2D.PIXEL_FORMAT.RGBA8888, "only RGBA8888 can be saved as image");
+        cc.Assert(this._pixelFormat == cc.Texture2D.PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
 
         if (!this._texture)
             return null;
@@ -887,7 +887,7 @@ delete window._proto;
  * var rt = cc.RenderTexture.create()
  */
 cc.RenderTexture.create = function (width, height, format, depthStencilFormat) {
-    format = format || cc.Texture2D.PIXEL_FORMAT.RGBA8888;
+    format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
     depthStencilFormat = depthStencilFormat || 0;
 
     var ret = new cc.RenderTexture();

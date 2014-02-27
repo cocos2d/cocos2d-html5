@@ -95,7 +95,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                     ++i;
             }
         }
-        this._descendants = cc.ArrayAppendObjectToIndex(locDescendants, child, i);
+        locDescendants.splice(i, 0, child);
 
         // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
         cc.Node.prototype.addChild.call(this, child, z, aTag);
@@ -267,7 +267,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     atlasIndexForChild:function (sprite, nZ) {
 	    var selParent = sprite.parent;
         var brothers = selParent.children;
-        var childIndex = cc.ArrayGetIndexOfObject(brothers, sprite);
+        var childIndex = brothers.indexOf(sprite);
 
         // ignore parent Z if parent is spriteSheet
         var ignoreParent = selParent == this;
@@ -494,7 +494,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // XXX: so, it should be AFTER the insertQuad
         sprite.dirty = true;
         sprite.updateTransform();
-        this._children = cc.ArrayAppendObjectToIndex(this._children, sprite, index);
+        this._children.splice(index, 0, sprite);
     },
 
     _insertQuadFromSpriteForWebGL:function (sprite, index) {
@@ -636,7 +636,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             this.increaseAtlasCapacity();
 
         locTextureAtlas.insertQuad(sprite.quad, index);
-        this._descendants = cc.ArrayAppendObjectToIndex(this._descendants, sprite, index);
+        this._descendants.splice(index, 0, sprite);
 
         // update indices
         var i = index + 1, locDescendant = this._descendants;
@@ -709,9 +709,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // Cleanup sprite. It might be reused (issue #569)
         sprite.batchNode = null;
         var locDescendants = this._descendants;
-        var index = cc.ArrayGetIndexOfObject(locDescendants, sprite);
+        var index = locDescendants.indexOf(sprite);
         if (index != -1) {
-            cc.ArrayRemoveObjectAtIndex(locDescendants, index);
+            locDescendants.splice(index, 1)
 
             // update all sprites beyond this one
             var len = locDescendants.length;
@@ -736,9 +736,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.batchNode = null;
 
         var locDescendants = this._descendants;
-        var index = cc.ArrayGetIndexOfObject(locDescendants, sprite);
+        var index = locDescendants.indexOf(sprite);
         if (index != -1) {
-            cc.ArrayRemoveObjectAtIndex(locDescendants, index);
+            locDescendants.splice(index, 1);
 
             // update all sprites beyond this one
 

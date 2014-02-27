@@ -391,7 +391,6 @@ cc.ScrollView = cc.Layer.extend({
         if (locTouches.length > 2 || this._touchMoved || !cc.rectContainsPoint(frame, locPoint))
             return false;
 
-        //if (!cc.ArrayContainsObject(this._touches, touch)) {
         locTouches.push(touch);
         //}
 
@@ -416,7 +415,6 @@ cc.ScrollView = cc.Layer.extend({
         if (!this.isVisible())
             return;
 
-        //if (cc.ArrayContainsObject(this._touches, touch)) {
         if (this._touches.length === 1 && this._dragging) { // scrolling
             this._touchMoved = true;
             //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());

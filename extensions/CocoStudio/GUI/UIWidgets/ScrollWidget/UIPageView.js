@@ -151,7 +151,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (page.getWidgetType() != ccs.WidgetType.container) {
             return;
         }
-        if (cc.ArrayContainsObject(this._pages, page)) {
+        if (this._pages.indexOf(page) != -1) {
             return;
         }
         var pSize = page.getSize();
@@ -181,7 +181,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (page.getWidgetType() != ccs.WidgetType.container) {
             return;
         }
-        if (cc.ArrayContainsObject(this._pages, page)) {
+        if (this._pages.indexOf(page) != -1) {
             return;
         }
 
@@ -190,7 +190,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
             this.addPage(page);
         }
         else {
-            cc.ArrayAppendObjectToIndex(this._pages, page, idx);
+            this._pages.splice(idx, 0, page);
             page.setPosition(this.getPositionXByIndex(idx), 0);
             this.addChild(page);
             var pSize = page.getSize();
@@ -272,7 +272,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
      * @param {ccs.Widget} child
      */
     removeChild: function (child) {
-        cc.ArrayRemoveObject(this._pages, child);
+        cc.arrayRemoveObject(this._pages, child);
         ccs.Layout.prototype.removeChild.call(this, child);
     },
 
