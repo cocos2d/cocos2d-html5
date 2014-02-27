@@ -325,7 +325,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
             cc.log("child already added. It can't be added again");
             return;
         }
-        if (cc.ArrayGetIndexOfObject(this._childrenBone, child) < 0) {
+        if (this._childrenBone.indexOf(child) < 0) {
             this._childrenBone.push(child);
             child.setParentBone(this);
         }
@@ -347,7 +347,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
                 }
                 bone.setParentBone(null);
                 bone.displayManager.setCurrentDecorativeDisplay(null);
-                cc.ArrayRemoveObject(this._childrenBone, bone);
+                cc.arrayRemoveObject(this._childrenBone, bone);
             }
         }
     },

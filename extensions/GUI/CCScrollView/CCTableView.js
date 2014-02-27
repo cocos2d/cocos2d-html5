@@ -317,7 +317,7 @@ cc.TableView = cc.ScrollView.extend({
 
         this._cellsFreed.addObject(cell);
         this._cellsUsed.removeSortedObject(cell);
-        cc.ArrayRemoveObject(this._indices, cell.getIdx());
+        cc.arrayRemoveObject(this._indices, cell.getIdx());
 
         cell.reset();
         if (cell.getParent() == this.getContainer()) {
@@ -459,7 +459,7 @@ cc.TableView = cc.ScrollView.extend({
 
         //remove first
         this._moveCellOutOfSight(cell);
-        cc.ArrayRemoveObject(this._indices, idx);
+        cc.arrayRemoveObject(this._indices, idx);
         this._updateCellPositions();
 
         for (var i = locCellsUsed.count() - 1; i > newIdx; i--) {

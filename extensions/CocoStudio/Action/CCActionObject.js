@@ -165,7 +165,7 @@ ccs.ActionObject = ccs.Class.extend({
         if (node == null) {
             return;
         }
-        cc.ArrayRemoveObject(this._actionNodeList, node);
+        cc.arrayRemoveObject(this._actionNodeList, node);
     },
 
     /**

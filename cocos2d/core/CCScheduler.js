@@ -39,7 +39,7 @@ cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
  * @return {Boolean}
  * @function
  */
-cc.ArrayVerifyType = function (arr, type) {
+cc.arrayVerifyType = function (arr, type) {
     if (arr && arr.length > 0) {
         for (var i = 0; i < arr.length; i++) {
             if (!(arr[i] instanceof  type)) {
@@ -52,22 +52,12 @@ cc.ArrayVerifyType = function (arr, type) {
 };
 
 /**
- * Removes object at specified index and pushes back all subsequent objects.Behaviour undefined if index outside [0, num-1].
- * @function
- * @param {Array} arr Source Array
- * @param {Number} index index of remove object
- */
-cc.ArrayRemoveObjectAtIndex = function (arr, index) {
-    arr.splice(index, 1);
-};
-
-/**
  * Searches for the first occurance of object and removes it. If object is not found the function has no effect.
  * @function
  * @param {Array} arr Source Array
  * @param {*} delObj  remove object
  */
-cc.ArrayRemoveObject = function (arr, delObj) {
+cc.arrayRemoveObject = function (arr, delObj) {
     for (var i = 0, l = arr.length; i < l; i++) {
         if (arr[i] == delObj) {
             arr.splice(i, 1);
@@ -82,44 +72,10 @@ cc.ArrayRemoveObject = function (arr, delObj) {
  * @param {Array} arr Source Array
  * @param {Array} minusArr minus Array
  */
-cc.ArrayRemoveArray = function (arr, minusArr) {
+cc.arrayRemoveArray = function (arr, minusArr) {
     for (var i = 0, l = minusArr.length; i < l; i++) {
-        cc.ArrayRemoveObject(arr, minusArr[i]);
+        cc.arrayRemoveObject(arr, minusArr[i]);
     }
-};
-
-/**
- * Returns index of first occurence of value, -1 if value not found.
- * @function
- * @param {Array} arr Source Array
- * @param {*} value find value
- * @return {Number} index of first occurence of value
- */
-cc.ArrayGetIndexOfValue = function (arr, value) {
-    return arr.indexOf(value);
-};
-
-/**
- * append an object to array
- * @function
- * @param {Array} arr
- * @param {*} addObj
- */
-cc.ArrayAppendObject = function (arr, addObj) {
-    arr.push(addObj);
-};
-
-/**
- * Inserts an object at index
- * @function
- * @param {Array} arr
- * @param {*} addObj
- * @param {Number} index
- * @return {Array}
- */
-cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
-    arr.splice(index, 0, addObj);
-    return arr;
 };
 
 /**
@@ -130,53 +86,9 @@ cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
  * @param {Number} index
  * @return {Array}
  */
-cc.ArrayAppendObjectsToIndex = function(arr, addObjs,index){
+cc.arrayAppendObjectsToIndex = function(arr, addObjs,index){
     arr.splice.apply(arr, [index, 0].concat(addObjs));
     return arr;
-};
-
-/**
- * Returns index of first occurence of object, -1 if value not found.
- * @function
- * @param {Array} arr Source Array
- * @param {*} findObj find object
- * @return {Number} index of first occurence of value
- */
-cc.ArrayGetIndexOfObject = function (arr, findObj) {
-    for (var i = 0, l = arr.length; i < l; i++) {
-        if (arr[i] == findObj)
-            return i;
-    }
-    return -1;
-};
-
-/**
- * Returns a Boolean value that indicates whether value is present in the array.
- * @function
- * @param {Array} arr
- * @param {*} findObj
- * @return {Boolean}
- */
-cc.ArrayContainsObject = function (arr, findObj) {
-    return arr.indexOf(findObj) != -1;
-};
-
-/**
- * find object from array by target
- * @param {Array} arr source array
- * @param {cc.ListEntry|cc.HashUpdateEntry} findInt find target
- * @return {cc.ListEntry|cc.HashUpdateEntry}
- */
-cc.HASH_FIND_INT = function (arr, findInt) {
-    if (arr == null) {
-        return null;
-    }
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i].target === findInt) {
-            return arr[i];
-        }
-    }
-    return null;
 };
 
 //data structures
@@ -402,7 +314,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     //-----------------------private method----------------------
     _removeHashElement:function (element) {
         delete this._hashForTimers[element.target.__instanceId];
-        cc.ArrayRemoveObject(this._arrayForTimers, element);
+        cc.arrayRemoveObject(this._arrayForTimers, element);
         element.Timer = null;
         element.target = null;
         element = null;
@@ -412,10 +324,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         var self = this, element = self._hashForUpdates[entry.target.__instanceId];
         if (element) {
             //list entry
-            cc.ArrayRemoveObject(element.list, element.entry);
+            cc.arrayRemoveObject(element.list, element.entry);
 
             delete self._hashForUpdates[element.target.__instanceId];
-            cc.ArrayRemoveObject(self._arrayForUpdates, element);
+            cc.arrayRemoveObject(self._arrayForUpdates, element);
             element.entry = null;
 
             //hash entry
