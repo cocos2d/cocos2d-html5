@@ -60,6 +60,15 @@ cc.colorEqual = function(color1, color2){
     return color1.r === color2.r && color1.g === color2.g && color1.b === color2.b;
 };
 
+/**
+ * the device accelerometer reports values for each axis in units of g-force
+ */
+cc.Acceleration = function (x, y, z, timestamp) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
+    this.timestamp = timestamp || 0;
+};
 
 /**
  * A vertex composed of 2 floats: x, y
