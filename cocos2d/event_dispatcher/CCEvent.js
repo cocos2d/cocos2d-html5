@@ -160,6 +160,8 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     _button: 0,
     _x: 0,
     _y: 0,
+    _prevX: 0,
+    _prevY: 0,
     _scrollX: 0,
     _scrollY: 0,
 
@@ -199,9 +201,30 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
      * @param {number} x
      * @param {number} y
      */
-    setCursorPosition: function (x, y) {
+    setCursor: function (x, y) {
         this._x = x;
         this._y = y;
+    },
+
+    getCursor: function () {
+        return {x: this._x, y: this._y};
+    },
+
+    _setPrevCursor: function (x, y) {
+        this._prevX = x;
+        this._prevY = y;
+    },
+
+    getDelta: function () {
+        return {x: this._x - this._prevX, y: this._y - this._prevY};
+    },
+
+    getDeltaX: function () {
+        return this._x - this._prevX;
+    },
+
+    getDeltaY: function () {
+        return this._y - this._prevY;
     },
 
     /**

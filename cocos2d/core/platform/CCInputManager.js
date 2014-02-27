@@ -32,6 +32,7 @@ cc.inputManager = {
     _isRegisterEvent: false,
 
     _preTouchPoint: cc.p(0,0),
+    _prevMousePoint: cc.p(0,0),
 
     _preTouchPool: [],
     _preTouchPoolPointer: 0,
@@ -266,9 +267,13 @@ cc.inputManager = {
     },
 
     getMouseEvent: function(location, pos, eventType){
+        var locPreMouse = this._prevMousePoint;
         this._glView._convertMouseToLocationInView(location, pos);
         var mouseEvent = new cc.EventMouse(eventType);
-        mouseEvent.setCursorPosition(location.x, location.y);
+        mouseEvent.setCursor(location.x, location.y);
+        mouseEvent._setPrevCursor(locPreMouse.x, locPreMouse.y);
+        locPreMouse.x = location.x;
+        locPreMouse.y = location.y;
         return mouseEvent;
     },
 
