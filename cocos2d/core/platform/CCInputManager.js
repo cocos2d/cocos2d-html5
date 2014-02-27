@@ -173,22 +173,6 @@ cc.inputManager = {
         return handleTouches;
     },
 
-    handleMouseDown: function(mouse){
-
-    },
-
-    handleMouseUp: function(mouse){
-
-    },
-
-    handleMouseMove: function(mouse){
-
-    },
-
-    handleMouseScroll: function(mouse){
-
-    },
-
     getHTMLElementPosition: function (element) {
         var docElem = document.documentElement;
         var win = window;
