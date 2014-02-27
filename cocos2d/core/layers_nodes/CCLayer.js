@@ -144,6 +144,8 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
+
+        this._displayedColor.a = this._realColor.a = opacity;
     },
 
     /**
@@ -237,6 +239,10 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         else
             parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
+
+        if (color.a !== undefined) {
+            this.setOpacity(color.a);
+        }
     },
 
     /**

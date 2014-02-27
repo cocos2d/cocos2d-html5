@@ -262,6 +262,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             if (selChild && selChild.RGBAProtocol)
                 selChild.setOpacity(opacity);
         }
+        this._color.a = opacity;
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -272,12 +273,20 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         if(!this._scale9Image){
             return;
         }
-        this._color = color;
+        var locColor = this._color;
+        locColor.r = color.r;
+        locColor.g = color.g;
+        locColor.b = color.b;
+
         var scaleChildren = this._scale9Image.getChildren();
         for (var i = 0; i < scaleChildren.length; i++) {
             var selChild = scaleChildren[i];
             if (selChild && selChild.RGBAProtocol)
                 selChild.setColor(color);
+        }
+
+        if (color.a !== undefined) {
+            this.setOpacity(color.a);
         }
     },
 
