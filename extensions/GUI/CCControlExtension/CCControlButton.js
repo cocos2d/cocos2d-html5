@@ -315,7 +315,8 @@ cc.ControlButton = cc.Control.extend({
     },
 
     getColor:function(){
-      return this._realColor;
+        var locRealColor = this._realColor;
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
 
