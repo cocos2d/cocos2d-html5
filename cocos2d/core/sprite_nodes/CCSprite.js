@@ -1499,7 +1499,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     _setColorForCanvas: function (color3) {
         var curColor = this.color;
-        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
+        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b) && (curColor.a === color3.a))
             return;
 
         cc.NodeRGBA.prototype.setColor.call(this, color3);

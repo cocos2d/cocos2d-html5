@@ -203,7 +203,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      */
     getColor: function () {
         var locRealColor = this._realColor;
-        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b);
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
     /**
@@ -232,7 +232,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
             parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
 
-        if (color.a !== undefined) {
+        if (color.a !== undefined && !color.a_undefined) {
             this.setOpacity(color.a);
         }
     },

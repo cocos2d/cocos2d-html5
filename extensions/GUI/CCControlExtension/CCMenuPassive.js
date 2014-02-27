@@ -54,7 +54,8 @@ cc.MenuPassive = cc.Layer.extend({
 
     /** Color: conforms with CCRGBAProtocol protocol */
     getColor:function () {
-        return this._color;
+        var locColor = this._color;
+        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
     setColor:function (color) {
         var locColor = this._color;
@@ -69,7 +70,7 @@ cc.MenuPassive = cc.Layer.extend({
                 }
             }
         }
-        if (color.a !== undefined) {
+        if (color.a !== undefined && !color.a_undefined) {
             this.setOpacity(color.a);
         }
     },

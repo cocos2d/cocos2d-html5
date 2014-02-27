@@ -267,7 +267,8 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
     /** Color: conforms to CCRGBAProtocol protocol */
     getColor: function () {
-        return this._color;
+        var locColor = this._color;
+        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
     setColor: function (color) {
         if(!this._scale9Image){
@@ -285,7 +286,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 selChild.setColor(color);
         }
 
-        if (color.a !== undefined) {
+        if (color.a !== undefined && !color.a_undefined) {
             this.setOpacity(color.a);
         }
     },

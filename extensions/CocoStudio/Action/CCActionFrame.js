@@ -330,7 +330,8 @@ ccs.ActionTintFrame = ccs.ActionFrame.extend({
      * @returns {cc.Color}
      */
     getColor: function () {
-        return this._color;
+        var locColor = this._color;
+        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
 
     /**

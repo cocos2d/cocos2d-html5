@@ -1097,7 +1097,8 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @return {cc.Color}
      */
     getColor:function () {
-        return this._color;
+        var locColor = this._color;
+        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
 
     /**
@@ -1115,7 +1116,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             }
         }
 
-        if (color.a !== undefined) {
+        if (color.a !== undefined && !color.a_undefined) {
             this.setOpacity(color.a);
         }
     },

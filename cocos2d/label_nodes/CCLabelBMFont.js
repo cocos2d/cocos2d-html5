@@ -205,7 +205,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
         }
 
-        if (color.a !== undefined) {
+        if (color.a !== undefined && !color.a_undefined) {
             this.setOpacity(color.a);
         }
     },
@@ -282,7 +282,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     getColor:function(){
-        return this._realColor;
+        var locRealColor = this._realColor;
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
     getDisplayedColor:function(){
