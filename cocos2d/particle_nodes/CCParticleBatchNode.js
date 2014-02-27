@@ -240,8 +240,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
             if (getIndexes.oldIndex != getIndexes.newIndex) {
                 // reorder m_pChildren.array
-                cc.ArrayRemoveObjectAtIndex(this._children, getIndexes.oldIndex);
-                this._children = cc.ArrayAppendObjectToIndex(this._children, child, getIndexes.newIndex);
+                this._children.splice(getIndexes.oldIndex, 1)
+                this._children.splice(getIndexes.newIndex, 0, child);
 
                 // save old altasIndex
                 var oldAtlasIndex = child.getAtlasIndex();
@@ -490,7 +490,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         //don't use a lazy insert
         var pos = this._searchNewPositionInChildrenForZ(z);
 
-        this._children = cc.ArrayAppendObjectToIndex(this._children, child, pos);
+        this._children.splice(pos, 0, child);
         child.tag = aTag;
         child._setLocalZOrder(z);
         child.parent = this;

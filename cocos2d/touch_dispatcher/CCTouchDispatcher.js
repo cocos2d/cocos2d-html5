@@ -193,7 +193,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
              * Refer issue #752(cocos2d-x)
              */
             if (this._handlersToRemove.indexOf(delegate) != -1) {
-                cc.ArrayRemoveObject(this._handlersToRemove, delegate);
+                cc.arrayRemoveObject(this._handlersToRemove, delegate);
                 return;
             }
 
@@ -216,7 +216,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
              * Refer issue #752(cocos2d-x)
              */
             if (this._handlersToRemove.indexOf(delegate) != -1) {
-                cc.ArrayRemoveObject(this._handlersToRemove, delegate);
+                cc.arrayRemoveObject(this._handlersToRemove, delegate);
                 return;
             }
 
@@ -245,7 +245,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                 }
             }
         }
-        return cc.ArrayAppendObjectToIndex(array, handler, u);
+        array.splice(u, 0, handler);
+        return array;
     },
 
     /**
@@ -274,7 +275,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
              */
             var handler = this.findHandler(this._handlersToAdd, delegate);
             if (handler) {
-                cc.ArrayRemoveObject(this._handlersToAdd, handler);
+                cc.arrayRemoveObject(this._handlersToAdd, handler);
                 return;
             }
 
@@ -368,19 +369,19 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                             case cc.TOUCH_ENDED:
                                 if (handler.getDelegate().onTouchEnded) handler.getDelegate().onTouchEnded(touch, event);
                                 handler.getClaimedTouches().length = 0;
-                                //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
+                                //cc.arrayRemoveObject(handler.getClaimedTouches(),touch);
                                 break;
                             case cc.TOUCH_CANCELLED:
                                 if (handler.getDelegate().onTouchCancelled) handler.getDelegate().onTouchCancelled(touch, event);
                                 handler.getClaimedTouches().length = 0;
-                                //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
+                                //cc.arrayRemoveObject(handler.getClaimedTouches(),touch);
                                 break;
                         }
                     }
 
                     if (claimed && handler.isSwallowsTouches()) {
                         if (needsMutableSet) {
-                            cc.ArrayRemoveObject(mutableTouches, touch);
+                            cc.arrayRemoveObject(mutableTouches, touch);
                         }
                         break;
                     }
@@ -554,7 +555,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         for (var i = 0; i < this._standardHandlers.length; i++) {
             handler = this._standardHandlers[i];
             if (handler && handler.getDelegate() == delegate) {
-                cc.ArrayRemoveObject(this._standardHandlers, handler);
+                cc.arrayRemoveObject(this._standardHandlers, handler);
                 break;
             }
         }
@@ -562,7 +563,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         for (i = 0; i < this._targetedHandlers.length; i++) {
             handler = this._targetedHandlers[i];
             if (handler && handler.getDelegate() == delegate) {
-                cc.ArrayRemoveObject(this._targetedHandlers, handler);
+                cc.arrayRemoveObject(this._targetedHandlers, handler);
                 break;
             }
         }

@@ -1305,7 +1305,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // set parent nil at the end
         child.parent = null;
 
-        cc.ArrayRemoveObject(this._children, child);
+        cc.arrayRemoveObject(this._children, child);
     },
 
     /** helper used by reorderChild & add

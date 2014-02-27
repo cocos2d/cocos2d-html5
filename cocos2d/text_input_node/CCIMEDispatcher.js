@@ -337,7 +337,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             // delegate already in list
             return;
         }
-        this.impl._delegateList = cc.ArrayAppendObjectToIndex(this.impl._delegateList, delegate, 0);
+        this.impl._delegateList.splice(0, 0, delegate);
     },
 
     /**
@@ -455,7 +455,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
                 this.impl._delegateWithIme = null;
             }
         }
-        cc.ArrayRemoveObject(this.impl._delegateList, delegate);
+        cc.arrayRemoveObject(this.impl._delegateList, delegate);
     },
 
     /**

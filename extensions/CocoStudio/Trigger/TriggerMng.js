@@ -64,7 +64,7 @@ ccs.TriggerMng = ccs.Class.extend({
         if (!eventTriggers) {
             eventTriggers = [];
         }
-        if (!cc.ArrayContainsObject(eventTriggers, triggerObj)) {
+        if (eventTriggers.indexOf(triggerObj) == -1) {
             eventTriggers.push(triggerObj);
             this._eventTriggers[event] = eventTriggers;
         }

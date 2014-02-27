@@ -229,7 +229,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
 
         bone.setArmature(null);
         bone.removeFromParent(recursion);
-        cc.ArrayRemoveObject(this._topBoneList, bone);
+        cc.arrayRemoveObject(this._topBoneList, bone);
         delete  this._boneDic[bone.getName()];
         this.removeChild(bone, true);
     },
@@ -255,7 +255,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         }
         var parentBone = bone.getParentBone();
         if(parentBone){
-            cc.ArrayRemoveObject(parentBone.getChildrenBone(), bone);
+            cc.arrayRemoveObject(parentBone.getChildrenBone(), bone);
             bone.setParentBone(null);
         }
 
@@ -263,7 +263,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             var boneParent = this._boneDic[parentName];
             if (boneParent) {
                 boneParent.addChildBone(bone);
-                cc.ArrayRemoveObject(this._topBoneList,bone);
+                cc.arrayRemoveObject(this._topBoneList,bone);
             }else{
                 this._topBoneList.push(bone);
             }
