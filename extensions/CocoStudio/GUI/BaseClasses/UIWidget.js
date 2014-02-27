@@ -277,7 +277,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     removeChild: function (child, cleanup) {
         cc.NodeRGBA.prototype.removeChild.call(this, child, cleanup);
-        cc.ArrayRemoveObject(this._widgetChildren, child);
+        cc.arrayRemoveObject(this._widgetChildren, child);
     },
 
     removeChildByTag: function (tag, cleanup) {
@@ -383,7 +383,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     removeNode: function (node) {
         cc.NodeRGBA.prototype.removeChild.call(this, node);
-        cc.ArrayRemoveObject(this._nodes, node);
+        cc.arrayRemoveObject(this._nodes, node);
     },
 
     /**

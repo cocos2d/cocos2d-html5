@@ -296,7 +296,7 @@ cc.ActionManager = cc.Class.extend({
         if ((action == element.currentAction) && (!element.currentActionSalvaged))
             element.currentActionSalvaged = true;
 
-        cc.ArrayRemoveObjectAtIndex(element.actions,index);
+        element.actions.splice(index, 1);
 
         // update actionIndex in case we are in tick. looping over the actions
         if (element.actionIndex >= index)
@@ -314,7 +314,7 @@ cc.ActionManager = cc.Class.extend({
     _deleteHashElement:function (element) {
         if (element) {
             delete this._hashTargets[element.target.__instanceId];
-            cc.ArrayRemoveObject(this._arrayTargets, element);
+            cc.arrayRemoveObject(this._arrayTargets, element);
             element.actions = null;
             element.target = null;
         }

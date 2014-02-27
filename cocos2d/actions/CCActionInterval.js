@@ -2350,7 +2350,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
             var newUnitOfTimeValue = singleDuration / animation.getTotalDelayUnits();
 
             var frames = animation.getFrames();
-            cc.ArrayVerifyType(frames, cc.AnimationFrame);
+            cc.arrayVerifyType(frames, cc.AnimationFrame);
 
             for (var i = 0; i < frames.length; i++) {
                 var frame = frames[i];
@@ -2423,7 +2423,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         var locAnimation = this._animation;
         var oldArray = locAnimation.getFrames();
         var newArray = [];
-        cc.ArrayVerifyType(oldArray, cc.AnimationFrame);
+        cc.arrayVerifyType(oldArray, cc.AnimationFrame);
         if (oldArray.length > 0) {
             for (var i = oldArray.length - 1; i >= 0; i--) {
                 var element = oldArray[i];

@@ -438,7 +438,8 @@ cc.MouseDispatcher = cc.Class.extend(/** @lends cc.MouseDispatcher# */{
                 }
             }
         }
-        return cc.ArrayAppendObjectToIndex(array, handler, u);
+        array.splice(u, 0, handler);
+        return array;
     },
 
     /**
@@ -452,7 +453,7 @@ cc.MouseDispatcher = cc.Class.extend(/** @lends cc.MouseDispatcher# */{
         for (var i = 0; i < this._mouseDelegateHandlers.length; i++) {
             var handler = this._mouseDelegateHandlers[i];
             if (handler && handler.getDelegate() == delegate) {
-                cc.ArrayRemoveObject(this._mouseDelegateHandlers, handler);
+                cc.arrayRemoveObject(this._mouseDelegateHandlers, handler);
                 break;
             }
         }

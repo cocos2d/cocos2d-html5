@@ -158,7 +158,7 @@ ccs.DataReaderHelper.purge = function () {
 };
 
 ccs.DataReaderHelper.addDataFromFile = function (filePath,isLoadSpriteFrame) {
-    if (cc.ArrayContainsObject(this._configFileList, filePath)) {
+    if (this._configFileList.indexOf(filePath) != -1) {
         return;
     }
     this._configFileList.push(filePath);
@@ -179,7 +179,7 @@ ccs.DataReaderHelper.addDataFromFile = function (filePath,isLoadSpriteFrame) {
 };
 
 ccs.DataReaderHelper.addDataFromFileAsync = function (filePath,target,selector,isLoadSpriteFrame) {
-    if (cc.ArrayContainsObject(this._configFileList, filePath)) {
+    if (this._configFileList.indexOf(filePath) != -1) {
         if (target && selector) {
             if (this._asyncRefTotalCount == 0 && this._asyncRefCount == 0)
                 this._asyncCallBack(target, selector, 1);
@@ -948,5 +948,5 @@ ccs.DataReaderHelper.decodeNodeFromJson = function (node, json, dataInfo) {
 };
 
 ccs.DataReaderHelper.removeConfigFile = function(configFile){
-    cc.ArrayRemoveObject(this._configFileList,configFile);
+    cc.arrayRemoveObject(this._configFileList,configFile);
 };
