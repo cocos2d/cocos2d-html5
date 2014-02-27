@@ -181,11 +181,26 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 
 	        if (isFunc) {
 		        // Override registered getter/setter
+		        var getter, setter, propertyName;
 		        if( this.__getters__ && this.__getters__[name] ) {
-			        cc.defineGetterSetter(prototype, this.__getters__[name], prop[name], null, name);
+			        propertyName = this.__getters__[name];
+			        for (var i in this.__setters__) {
+				        if (this.__setters__[i] == propertyName) {
+					        setter = i;
+				            break;
+				        }
+			        }
+			        cc.defineGetterSetter(prototype, propertyName, prop[name], prop[setter] ? prop[setter] : prototype[setter], name, name);
 		        }
 		        if( this.__setters__ && this.__setters__[name] ) {
-			        cc.defineGetterSetter(prototype, this.__setters__[name], null, prop[name], null, name);
+			        propertyName = this.__setters__[name];
+			        for (var i in this.__getters__) {
+				        if (this.__getters__[i] == propertyName) {
+					        getter = i;
+					        break;
+				        }
+			        }
+			        cc.defineGetterSetter(prototype, propertyName, prop[getter] ? prop[getter] : prototype[getter], prop[name], name, name);
 		        }
 	        }
         }
