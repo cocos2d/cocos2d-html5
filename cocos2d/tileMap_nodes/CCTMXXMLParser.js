@@ -532,7 +532,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      */
     parseXMLFile:function (tmxFile, isXmlString) {
         isXmlString = isXmlString || false;
-        var xmlStr = cc.loader.getRes(tmxFile);
+	    var xmlStr = isXmlString ? tmxFile : cc.loader.getRes(tmxFile);
         if(!xmlStr) throw "Please load the resource first : " + tmxFile;
 
         var mapXML = this._parseXML(xmlStr);
