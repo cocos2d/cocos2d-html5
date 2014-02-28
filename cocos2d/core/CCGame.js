@@ -468,6 +468,7 @@ cc.loader = {
             try{
                 err ? cb(err) : cb(null, JSON.parse(txt));
             }catch(e){
+                throw e;
                 cb("load json [" + url + "] failed : " + e);
             }
         });
@@ -1364,6 +1365,29 @@ cc.game = {
             cb(_init(self.config));
         })
     },
+
+    //cache for js and module that has added into jsList to be loaded.
+    _jsAddedCache : {},
+    _getJsListOfModule : function(moduleMap, moduleName, dir){
+        var jsAddedCache = this._jsAddedCache;
+        if(jsAddedCache[moduleName]) return null;
+        dir = dir || "";
+        var jsList = [];
+        var tempList = moduleMap[moduleName];
+        if(!tempList) throw "can not find module [" + moduleName + "]";
+        var ccPath = cc.path;
+        for(var i = 0, li = tempList.length; i < li; i++){
+            var item = tempList[i];
+            if(jsAddedCache[item]) continue;
+            var extname = ccPath.extname(item);
+            if(!extname) {
+                var arr = this._getJsListOfModule(moduleMap, item, dir);
+                if(arr) jsList = jsList.concat(arr);
+            }else if(extname.toLowerCase() == ".js") jsList.push(ccPath.join(dir, item));
+            jsAddedCache[item] = true;
+        }
+        return jsList;
+    },
     /**
      * Prepare game.
      * @param cb
@@ -1395,19 +1419,17 @@ cc.game = {
                         if(err) throw err;
                         var modules = config["modules"] || [];
                         var moduleMap = modulesJson["module"];
-                        var newJsList = moduleMap["core"];
+                        var newJsList = [];
+                        if(modules.indexOf("core") < 0) modules.splice(0, 0, "core");
                         for(var i = 0, li = modules.length; i < li; i++){
-                            var arr = moduleMap[modules[i]];
+                            var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
                             if(arr) newJsList = newJsList.concat(arr);
                         }
-                        cc.loader.loadJsWithImg(engineDir, newJsList, function(err){
+                        newJsList = newJsList.concat(jsList);
+                        cc.loader.loadJsWithImg(newJsList, function(err){
                             if(err) throw err;
                             self._prepared = true;
-
-                            cc.loader.loadJsWithImg("", jsList, function(err){
-                                if(err) throw err;
-                                if(cb) cb();
-                            });
+                            if(cb) cb();
                         });
                     });
                 }
