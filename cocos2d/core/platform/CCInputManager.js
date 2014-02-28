@@ -283,7 +283,7 @@ cc.inputManager = {
         var locPreMouse = this._prevMousePoint;
         this._glView._convertMouseToLocationInView(location, pos);
         var mouseEvent = new cc.EventMouse(eventType);
-        mouseEvent.setCursor(location.x, location.y);
+        mouseEvent.setLocation(location.x, location.y);
         mouseEvent._setPrevCursor(locPreMouse.x, locPreMouse.y);
         locPreMouse.x = location.x;
         locPreMouse.y = location.y;

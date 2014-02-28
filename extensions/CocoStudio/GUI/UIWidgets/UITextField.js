@@ -37,8 +37,6 @@ ccs.TEXTFIELDRENDERERZ = -1;
  * @property {Boolean}  maxLengthEnabled    - Indicate whether max length limit is enabled
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
- * @property {Boolean}  attachWithIME       - Indicate whether the text field is attached with IME
- * @property {Boolean}  detachWithIME       - Indicate whether the text field is detached with IME
  * @property {Boolean}  insertText          - Indicate whether there is text inserting into the text field
  * @property {Boolean}  deleteBackward      - Indicate whether text is deleting in the text field
  */
@@ -47,8 +45,8 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
     maxLength: 0,
     passwordEnabled: false,
     _passwordStyleText: "",
-    attachWithIME: false,
-    detachWithIME: false,
+    _attachWithIME: false,
+    _detachWithIME: false,
     insertText: false,
     deleteBackward: false,
     ctor: function () {
@@ -57,8 +55,8 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
         this.maxLength = 0;
         this.passwordEnabled = false;
         this._passwordStyleText = "*";
-        this.attachWithIME = false;
-        this.detachWithIME = false;
+        this._attachWithIME = false;
+        this._detachWithIME = false;
         this.insertText = false;
         this.deleteBackward = false;
     },
@@ -196,19 +194,19 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
     },
 
     setAttachWithIME: function (attach) {
-        this.attachWithIME = attach;
+        this._attachWithIME = attach;
     },
 
     getAttachWithIME: function () {
-        return this.attachWithIME;
+        return this._attachWithIME;
     },
 
     setDetachWithIME: function (detach) {
-        this.detachWithIME = detach;
+        this._detachWithIME = detach;
     },
 
     getDetachWithIME: function () {
-        return this.detachWithIME;
+        return this._detachWithIME;
     },
 
     setInsertText: function (insert) {
@@ -252,8 +250,6 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
  * @property {Boolean}  maxLengthEnabled    - Indicate whether max length limit is enabled
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
- * @property {Boolean}  attachWithIME       - Indicate whether the text field is attached with IME
- * @property {Boolean}  detachWithIME       - Indicate whether the text field is detached with IME
  * @property {Boolean}  insertText          - Indicate whether there is text inserting into the text field
  * @property {Boolean}  deleteBackward      - Indicate whether text is deleting in the text field
  */
@@ -709,8 +705,6 @@ cc.defineGetterSetter(_proto, "fontName", _proto._getFontName, _proto.setFontNam
 cc.defineGetterSetter(_proto, "maxLengthEnabled", _proto.isMaxLengthEnabled, _proto.setMaxLengthEnabled);
 cc.defineGetterSetter(_proto, "maxLength", _proto.getMaxLength, _proto.setMaxLength);
 cc.defineGetterSetter(_proto, "passwordEnabled", _proto.isPasswordEnabled, _proto.setPasswordEnabled);
-cc.defineGetterSetter(_proto, "attachWithIME", _proto.getAttachWithIME, _proto.setAttachWithIME);
-cc.defineGetterSetter(_proto, "detachWithIME", _proto.getDetachWithIME, _proto.setDetachWithIME);
 cc.defineGetterSetter(_proto, "insertText", _proto.getInsertText, _proto.setInsertText);
 cc.defineGetterSetter(_proto, "deleteBackward", _proto.getDeleteBackward, _proto.setDeleteBackward);
 
