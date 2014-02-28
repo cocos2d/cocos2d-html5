@@ -525,40 +525,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-        if (arguments.length == 3) {
-            fontName = arguments[1];
-            fontSize = arguments[2];
-            dimensions = cc.size(0, 0);
-            hAlignment = cc.TEXT_ALIGNMENT_CENTER;
-            vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-        }
-
-        /*if (cc.ENABLE_CACHE_TEXTURE_DATA) {
-         // cache the texture data
-         cc.VolatileTexture.addStringTexture(this, text, dimensions, alignment, fontName, fontSize);
-         }*/
-
-        var image = new cc.Image();
-        var eAlign;
-
-        if (cc.VERTICAL_TEXT_ALIGNMENT_TOP === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_TOP
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_TOP_LEFT : cc.ALIGN_TOP_RIGHT;
-        } else if (cc.VERTICAL_TEXT_ALIGNMENT_CENTER === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_CENTER
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_LEFT : cc.ALIGN_RIGHT;
-        } else if (cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_BOTTOM
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_BOTTOM_LEFT : cc.ALIGN_BOTTOM_RIGHT;
-        } else {
-            cc.log("Not supported alignment format!");
-            return false;
-        }
-
-        if (!image.initWithString(text, dimensions.width, dimensions.height, eAlign, fontName, fontSize))
-            return false;
-
-        return this.initWithImage(image);
+        cc.log("initWithString isn't supported on cocos2d-html5");
+        return null;
     },
 
     /**

@@ -670,61 +670,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * creates a new CCImage from with the texture's data. Caller is responsible for releasing it by calling delete.
-     * @return {cc.Image}
+     * @return {*}
      */
-    newCCImage:null,
-
-    _newCCImageForCanvas:function (flipImage) {
-        cc.log("saveToFile isn't supported on Cocos2d-Html5");
+    newCCImage:function(flipImage){
+        cc.log("saveToFile isn't supported on cocos2d-html5");
         return null;
-    },
-
-    _newCCImageForWebGL:function (flipImage) {
-        cc.log("saveToFile isn't supported on Cocos2d-Html5");
-
-        if(flipImage === null)
-            flipImage = true;
-        cc.Assert(this._pixelFormat == cc.Texture2D.PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
-
-        if (!this._texture)
-            return null;
-
-        var size = this._texture.getContentSizeInPixels();
-
-        // to get the image size to save
-        //        if the saving image domain exeeds the buffer texture domain,
-        //        it should be cut
-        var nSavedBufferWidth = size.width;
-        var nSavedBufferHeight = size.height;
-
-        var pImage = new cc.Image();
-        var gl = cc.renderContext;
-
-        var pBuffer = new Uint8Array(nSavedBufferWidth * nSavedBufferHeight * 4);
-        if (!(pBuffer))
-            return pImage;
-
-        var pTempData = new Uint8Array(nSavedBufferWidth * nSavedBufferHeight * 4);
-        if (!(pTempData))
-            return null;
-
-        this.begin();
-        gl.pixelStorei(gl.PACK_ALIGNMENT, 1);
-        gl.readPixels(0, 0, nSavedBufferWidth, nSavedBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pTempData);
-        this.end();
-
-        // to get the actual texture data
-        // #640 the image read from rendertexture is upseted
-        for (var i = 0; i < nSavedBufferHeight; ++i) {
-            this._memcpy(pBuffer, i * nSavedBufferWidth * 4,
-                pTempData, (nSavedBufferHeight - i - 1) * nSavedBufferWidth * 4,
-                nSavedBufferWidth * 4);
-        }
-        pImage.initWithImageData(pBuffer, nSavedBufferWidth * nSavedBufferHeight * 4, cc.FMT_RAWDATA, nSavedBufferWidth, nSavedBufferHeight, 8);
-
-        pBuffer = null;
-        pTempData = null;
-        return pImage;
     },
 
     _memcpy:function (destArr, destIndex, srcArr, srcIndex, size) {
@@ -852,7 +802,6 @@ if(cc.Browser.supportWebGL){
     _proto.clearStencil = _proto._clearStencilForWebGL;
     _proto.visit = _proto._visitForWebGL;
     _proto.draw = _proto._drawForWebGL;
-    _proto.newCCImage = _proto._newCCImageForWebGL;
     _proto.setClearColor = _proto._setClearColorForWebGL;
 } else {
     _proto.ctor = _proto._ctorForCanvas;
@@ -866,7 +815,6 @@ if(cc.Browser.supportWebGL){
     _proto.clearStencil = _proto._clearStencilForCanvas;
     _proto.visit = _proto._visitForCanvas;
     _proto.draw = _proto._drawForCanvas;
-    _proto.newCCImage = _proto._newCCImageForCanvas;
     _proto.setClearColor = _proto._setClearColorForCanvas;
 }
 
