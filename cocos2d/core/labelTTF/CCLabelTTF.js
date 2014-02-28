@@ -725,7 +725,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.Size} dim
      */
     setDimensions:function (dim) {
-        if (dim.width != this._dimensions._width || dim.height != this._dimensions._height) {
+        if (dim.width != this._dimensions.width || dim.height != this._dimensions.height) {
             this._dimensions = dim;
             this._updateString();
             // Force udpate
@@ -734,11 +734,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
 	_getBoundingWidth: function () {
-		return this._dimensions._width;
+		return this._dimensions.width;
 	},
 	_setBoundingWidth: function (width) {
-		if (width != this._dimensions._width) {
-			this._dimensions._width = width;
+		if (width != this._dimensions.width) {
+			this._dimensions.width = width;
 			this._updateString();
 			// Force udpate
 			this._needUpdateTexture = true;
@@ -746,11 +746,11 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 	},
 
 	_getBoundingHeight: function () {
-		return this._dimensions._height;
+		return this._dimensions.height;
 	},
 	_setBoundingHeight: function (height) {
-		if (height != this._dimensions._height) {
-			this._dimensions._height = height;
+		if (height != this._dimensions.height) {
+			this._dimensions.height = height;
 			this._updateString();
 			// Force udpate
 			this._needUpdateTexture = true;
