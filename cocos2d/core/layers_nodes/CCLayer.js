@@ -39,513 +39,19 @@ cc.TOUCH_ONE_BY_ONE = 1;
  * @extends cc.Node
  */
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
-    _isTouchEnabled:false,
-    _isAccelerometerEnabled:false,
-    _isKeyboardEnabled:false,
-    _touchPriority:0,
-    _touchMode:cc.TOUCH_ALL_AT_ONCE,
-    _isMouseEnabled:false,
-    _mousePriority:0,
-
-    ctor: function () {
-        cc.Node.prototype.ctor.call(this);
-        this._isTouchEnabled = false;
-        this._isAccelerometerEnabled = false;
-        this._isKeyboardEnabled = false;
-        this._touchPriority = 0;
-        this._touchMode = cc.TOUCH_ALL_AT_ONCE;
-        this._isMouseEnabled = false;
-        this._mousePriority = 0;
-    },
-
-    _initLayer:function () {
-        this.setAnchorPoint(0.5, 0.5);
-        this._ignoreAnchorPointForPosition = true;
-
-        var director = cc.Director.getInstance();
-        this.setContentSize(director.getWinSize());
-    },
-
     /**
-     *
+     * init layer
      * @return {Boolean}
      */
     init:function () {
         cc.Node.prototype.init.call(this);
-        this._initLayer();
-        return true;
-    },
+        this.anchorX = 0.5;
+        this.anchorY = 0.5;
+        this._ignoreAnchorPointForPosition = true;
 
-    /**
-     * If isTouchEnabled, this method is called onEnter.
-     */
-    registerWithTouchDispatcher:function () {
-        if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
-            cc.registerStandardDelegate(this,this._touchPriority);
-        else
-            cc.registerTargetedDelegate(this._touchPriority, true, this);
-    },
-
-    isMouseEnabled:function () {
-        return this._isMouseEnabled;
-    },
-
-    setMouseEnabled:function (enabled) {
-        if(!cc.MouseDispatcher)
-            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
-
-        if (this._isMouseEnabled != enabled) {
-            this._isMouseEnabled = enabled;
-            if (this._running) {
-                if (enabled)
-                    cc.Director.getInstance().getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
-                else
-                    cc.Director.getInstance().getMouseDispatcher().removeMouseDelegate(this);
-            }
-        }
-    },
-
-    setMousePriority:function (priority) {
-        if(!cc.MouseDispatcher)
-            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
-
-        if (this._mousePriority !== priority) {
-            this._mousePriority = priority;
-            // Update touch priority with handler
-            if (this._isMouseEnabled) {
-                this.setMouseEnabled(false);
-                this.setMouseEnabled(true);
-            }
-        }
-    },
-
-    getMousePriority:function () {
-        return this._mousePriority;
-    },
-
-    /**
-     * whether or not it will receive Touch events.<br/>
-     * You can enable / disable touch events with this property.<br/>
-     * Only the touches of this node will be affected. This "method" is not propagated to it's children.<br/>
-     * @return {Boolean}
-     */
-    isTouchEnabled:function () {
-        return this._isTouchEnabled;
-    },
-
-    /**
-     * Enable touch events
-     * @param {Boolean} enabled
-     */
-    setTouchEnabled:function (enabled) {
-        if (this._isTouchEnabled !== enabled) {
-            this._isTouchEnabled = enabled;
-
-            if (this._running) {
-                if (enabled) {
-                    this.registerWithTouchDispatcher();
-                } else {
-                    // have problems?
-                    cc.unregisterTouchDelegate(this);
-                }
-            }
-        }
-    },
-
-    /** returns the priority of the touch event handler
-     * @return {Number}
-     */
-    getTouchPriority:function () {
-        return this._touchPriority;
-    },
-
-    /** Sets the touch event handler priority. Default is 0.
-     * @param {Number} priority
-     */
-    setTouchPriority:function (priority) {
-        if (this._touchPriority !== priority) {
-            this._touchPriority = priority;
-            // Update touch priority with handler
-            if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
-            }
-        }
-    },
-
-    /** returns the touch mode.
-     * @return {Number}
-     */
-    getTouchMode:function () {
-        return this._touchMode;
-    },
-
-    /** Sets the touch mode.
-     * @param {Number} mode
-     */
-    setTouchMode:function (mode) {
-        if (this._touchMode !== mode) {
-            this._touchMode = mode;
-            // update the mode with handler
-            if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
-            }
-        }
-    },
-
-    /**
-     * whether or not it will receive Accelerometer events<br/>
-     * You can enable / disable accelerometer events with this property.
-     * @return {Boolean}
-     */
-    isAccelerometerEnabled:function () {
-        return this._isAccelerometerEnabled;
-    },
-
-    /**
-     * isAccelerometerEnabled setter
-     * @param {Boolean} enabled
-     */
-    setAccelerometerEnabled:function (enabled) {
-        if(!cc.Accelerometer)
-            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
-        if (enabled !== this._isAccelerometerEnabled) {
-            this._isAccelerometerEnabled = enabled;
-            if (this._running) {
-                var director = cc.Director.getInstance();
-                if (enabled)
-                    director.getAccelerometer().setDelegate(this);
-                else
-                    director.getAccelerometer().setDelegate(null);
-            }
-        }
-    },
-
-    /**
-     * accelerometerInterval setter
-     * @param {Number} interval
-     */
-    setAccelerometerInterval:function (interval) {
-        if (this._isAccelerometerEnabled && cc.Accelerometer)
-            cc.Director.getInstance().getAccelerometer().setAccelerometerInterval(interval);
-    },
-
-    onAccelerometer:function (accelerationValue) {
-        cc.log("onAccelerometer event should be handled.")
-    },
-
-    /**
-     * whether or not it will receive keyboard events<br/>
-     * You can enable / disable accelerometer events with this property.<br/>
-     * it's new in cocos2d-x
-     * @return {Boolean}
-     */
-    isKeyboardEnabled:function () {
-        return this._isKeyboardEnabled;
-    },
-
-    /**
-     * Enable Keyboard interaction
-     * @param {Boolean} enabled
-     */
-    setKeyboardEnabled:function (enabled) {
-        if(!cc.KeyboardDispatcher)
-            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
-
-        if (enabled !== this._isKeyboardEnabled) {
-            this._isKeyboardEnabled = enabled;
-            if (this._running) {
-                var director = cc.Director.getInstance();
-                if (enabled) {
-                    director.getKeyboardDispatcher().addDelegate(this);
-                } else {
-                    director.getKeyboardDispatcher().removeDelegate(this);
-                }
-            }
-        }
-    },
-
-    /**
-     * This is run when ever a layer just become visible
-     */
-    onEnter:function () {
         var director = cc.Director.getInstance();
-        // register 'parent' nodes first
-        // since events are propagated in reverse order
-        if (this._isTouchEnabled)
-            this.registerWithTouchDispatcher();
-
-        // then iterate over all the children
-        cc.Node.prototype.onEnter.call(this);
-
-        // add this layer to concern the Accelerometer Sensor
-        if (this._isAccelerometerEnabled && cc.Accelerometer)
-            director.getAccelerometer().setDelegate(this);
-
-        // add this layer to concern the kaypad msg
-        if (this._isKeyboardEnabled && cc.KeyboardDispatcher)
-            director.getKeyboardDispatcher().addDelegate(this);
-
-        if (this._isMouseEnabled && cc.MouseDispatcher)
-            director.getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
-    },
-
-    /**
-     * @function
-     */
-    onExit:function () {
-        var director = cc.Director.getInstance();
-        if (this._isTouchEnabled)
-            cc.unregisterTouchDelegate(this);
-
-        // remove this layer from the delegates who concern Accelerometer Sensor
-        if (this._isAccelerometerEnabled && cc.Accelerometer)
-            director.getAccelerometer().setDelegate(null);
-
-        // remove this layer from the delegates who concern the kaypad msg
-        if (this._isKeyboardEnabled && cc.KeyboardDispatcher)
-            director.getKeyboardDispatcher().removeDelegate(this);
-
-        if (this._isMouseEnabled && cc.MouseDispatcher)
-            director.getMouseDispatcher().removeMouseDelegate(this);
-
-        cc.Node.prototype.onExit.call(this);
-    },
-
-    /**
-     * this is called when ever a layer is a child of a scene that just finished a transition
-     */
-    onEnterTransitionDidFinish:function () {
-        if (this._isAccelerometerEnabled && cc.Accelerometer)
-            cc.Director.getInstance().getAccelerometer().setDelegate(this);
-        cc.Node.prototype.onEnterTransitionDidFinish.call(this);
-    },
-
-    // ---------------------CCTouchDelegate interface------------------------------
-
-    /**
-     * default implements are used to call script callback if exist<br/>
-     * you must override these touch functions if you wish to utilize them
-     * @param {cc.Touch} touch
-     * @param {event} event
-     * @return {Boolean}
-     */
-    onTouchBegan:function (touch, event) {
-        cc.log("onTouchBegan event should be handled.");
+        this.setContentSize(director.getWinSize());
         return true;
-    },
-
-    /**
-     * callback when a touch event moved
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchMoved:function (touch, event) {
-    },
-
-    /**
-     * callback when a touch event finished
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchEnded:function (touch, event) {
-    },
-
-    /**
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchCancelled:function (touch, event) {
-    },
-
-    /**
-     * Touches is the same as Touch, except this one can handle multi-touch
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchesBegan:function (touch, event) {
-    },
-
-    /**
-     * when a touch moved
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchesMoved:function (touch, event) {
-    },
-
-    /**
-     * when a touch finished
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchesEnded:function (touch, event) {
-    },
-
-    /**
-     * @param touch
-     * @param event
-     */
-    onTouchesCancelled:function (touch, event) {
-    },
-
-    // ---------------------CCMouseEventDelegate interface------------------------------
-
-    /**
-     * <p>called when the "mouseDown" event is received. <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onMouseDown:function (event) {
-        return false;
-    },
-
-    /**
-     * <p>called when the "mouseDragged" event is received.         <br/>
-     * Return YES to avoid propagating the event to other delegates.</p>
-     * @param event
-     * @return {Boolean}
-     */
-    onMouseDragged:function (event) {
-        return false;
-    },
-
-    /**
-     * <p> called when the "mouseMoved" event is received.            <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onMouseMoved:function (event) {
-        return false;
-    },
-
-    /**
-     * <p> called when the "mouseUp" event is received.               <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onMouseUp:function (event) {
-        return false;
-    },
-
-    //right
-    /**
-     * <p> called when the "rightMouseDown" event is received.        <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onRightMouseDown:function (event) {
-        return false;
-    },
-
-    /**
-     * <p> called when the "rightMouseDragged" event is received.    <br/>
-     * Return YES to avoid propagating the event to other delegates. </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onRightMouseDragged:function (event) {
-        return false;
-    },
-
-    /**
-     * <p> called when the "rightMouseUp" event is received.          <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onRightMouseUp:function (event) {
-        return false;
-    },
-
-    //other
-    /**
-     * <p>called when the "otherMouseDown" event is received.         <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onOtherMouseDown:function (event) {
-        return false;
-    },
-
-    /**
-     * <p> called when the "otherMouseDragged" event is received.     <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onOtherMouseDragged:function (event) {
-        return false;
-    },
-
-    /**
-     * <p> called when the "otherMouseUp" event is received.          <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onOtherMouseUp:function (event) {
-        return false;
-    },
-
-    //scroll wheel
-    /**
-     * <p> called when the "scrollWheel" event is received.           <br/>
-     * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
-     * @return {Boolean}
-     */
-    onScrollWheel:function (event) {
-        return false;
-    },
-
-    // enter / exit
-    /**
-     *  <p> called when the "mouseEntered" event is received.         <br/>
-     *  Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
-     * @return {Boolean}
-     */
-    onMouseEntered:function (theEvent) {
-        return false;
-    },
-
-    /**
-     * <p> called when the "mouseExited" event is received.          <br/>
-     * Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
-     * @return {Boolean}
-     */
-    onMouseExited:function (theEvent) {
-        return false;
-    },
-
-    // ---------------------CCKeyboardDelegate interface------------------------------
-
-    /**
-     * Call back when a key is pressed down
-     * @param {Number} keyCode
-     * @example
-     * // example
-     * if(keyCode == cc.KEY.w){}
-     */
-    onKeyDown:function (keyCode) {
-    },
-
-    /**
-     * Call back when a key is released
-     * @param {Number} keyCode
-     * @example
-     * // example
-     * if(keyCode == cc.KEY.w){}
-     */
-    onKeyUp:function (keyCode) {
     }
 });
 
@@ -559,9 +65,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
  */
 cc.Layer.create = function () {
     var ret = new cc.Layer();
-    if (ret && ret.init())
-        return ret;
-    return null;
+    ret.init();
+    return ret;
+
 };
 
 /**
@@ -588,32 +94,32 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this.RGBAProtocol = true;
         this._displayedOpacity = 255;
         this._realOpacity = 255;
-        this._displayedColor = cc.white();
-        this._realColor = cc.white();
+        this._displayedColor = cc.color(255, 255, 255, 255);
+        this._realColor = cc.color(255, 255, 255, 255);
         this._cascadeOpacityEnabled = false;
         this._cascadeColorEnabled = false;
     },
 
     init: function () {
         if(cc.Layer.prototype.init.call(this)){
-            this.setCascadeOpacityEnabled(false);
-            this.setCascadeColorEnabled(false);
+            this.cascadeOpacity = false;
+            this.cascadeColor = false;
             return true;
         }
         return false;
     },
 
     /**
-     *
-     * @returns {number}
+     * Get the opacity of Layer
+     * @returns {number} opacity
      */
     getOpacity: function () {
         return this._realOpacity;
     },
 
     /**
-     *
-     * @returns {number}
+     * Get the displayed opacity of Layer
+     * @returns {number} displayed opacity
      */
     getDisplayedOpacity: function () {
         return this._displayedOpacity;
@@ -627,13 +133,15 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         this._displayedOpacity = this._realOpacity = opacity;
 
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
+
+        this._displayedColor.a = this._realColor.a = opacity;
     },
 
     /**
-     *
+     * Update displayed opacity of Layer
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
@@ -649,10 +157,18 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade opacity.
+     * @returns {boolean}
+     */
     isCascadeOpacityEnabled: function () {
         return this._cascadeOpacityEnabled;
     },
 
+    /**
+     * Enable or disable cascade opacity
+     * @param {boolean} cascadeOpacityEnabled
+     */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
         if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
             return;
@@ -666,7 +182,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     _enableCascadeOpacity:function(){
         var parentOpacity = 255, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeOpacityEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
@@ -681,16 +197,28 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * Get the color of Layer
+     * @returns {cc.Color}
+     */
     getColor: function () {
         var locRealColor = this._realColor;
-        return cc.c3b(locRealColor.r, locRealColor.g, locRealColor.b);
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
+    /**
+     * Get the displayed color of Layer
+     * @returns {cc.Color}
+     */
     getDisplayedColor: function () {
         var locDisplayedColor = this._displayedColor;
-        return cc.c3b(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
+        return cc.color(locDisplayedColor.r, locDisplayedColor.g, locDisplayedColor.b);
     },
 
+    /**
+     * Set the color of Layer
+     * @param {cc.Color} color
+     */
     setColor: function (color) {
         var locDisplayed = this._displayedColor, locRealColor = this._realColor;
         locDisplayed.r = locRealColor.r = color.r;
@@ -698,13 +226,21 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayed.b = locRealColor.b = color.b;
 
         var parentColor, locParent = this._parent;
-        if (locParent && locParent.RGBAProtocol && locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
+
+        if (color.a !== undefined && !color.a_undefined) {
+            this.setOpacity(color.a);
+        }
     },
 
+    /**
+     * update the displayed color of Node
+     * @param {cc.Color} parentColor
+     */
     updateDisplayedColor: function (parentColor) {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
         locDisplayedColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
@@ -721,10 +257,18 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade color.
+     * @returns {boolean}
+     */
     isCascadeColorEnabled: function () {
         return this._cascadeColorEnabled;
     },
 
+    /**
+     * Enable or disable cascade color
+     * @param {boolean} cascadeColorEnabled
+     */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
         if(this._cascadeColorEnabled === cascadeColorEnabled)
             return;
@@ -737,10 +281,10 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 
     _enableCascadeColor: function(){
         var parentColor , locParent =  this._parent;
-        if (locParent && locParent.RGBAProtocol &&  locParent.isCascadeColorEnabled())
+        if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.white();
+            parentColor = cc.color.white;
         this.updateDisplayedColor(parentColor);
     },
 
@@ -750,7 +294,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children, whiteColor = cc.white();
+        var selChildren = this._children, whiteColor = cc.color.white;
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
             if(item && item.RGBAProtocol)
@@ -758,6 +302,13 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         }
     },
 
+    /**
+     * add a child to layer
+     * @overried
+     * @param {cc.Node} child  A child node
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setLocalZOrder(int)
+     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
+     */
     addChild:function(child, zOrder, tag){
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
 
@@ -775,6 +326,15 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
+window._proto = cc.LayerRGBA.prototype;
+// Extended properties
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
+delete window._proto;
+
 /**
  * <p>
  * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.       <br/>
@@ -783,7 +343,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
  * <li>RGB colors</li></ul>                                                                 <br/>
  * </p>
  * @class
- * @extends cc.Layer
+ * @extends cc.LayerRGBA
  */
 cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _blendFunc:null,
@@ -798,27 +358,31 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     /**
      * change width and height in Points
+     * @deprecated
      * @param {Number} w width
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(w, h);
+        this.width = w;
+	    this.height = h;
     },
 
     /**
      * change width in Points
+     * @deprecated
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(w, this._contentSize._height);
+        this.width = w;
     },
 
     /**
      * change height in Points
+     * @deprecated
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(this._contentSize._width, h);
+        this.height = h;
     },
 
     /**
@@ -864,18 +428,18 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
         this._squareVerticesAB = new ArrayBuffer(32);
-        this._squareColorsAB = new ArrayBuffer(64);
+        this._squareColorsAB = new ArrayBuffer(16);
 
         var locSquareVerticesAB = this._squareVerticesAB, locSquareColorsAB = this._squareColorsAB;
-        var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColor4FLen = cc.Color4F.BYTES_PER_ELEMENT;
+        var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
         this._squareVertices = [new cc.Vertex2F(0, 0, locSquareVerticesAB, 0),
             new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen),
             new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 2),
             new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 3)];
-        this._squareColors = [new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, 0),
-            new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, locColor4FLen),
-            new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, locColor4FLen * 2),
-            new cc.Color4F(0, 0, 0, 1, locSquareColorsAB, locColor4FLen * 3)];
+        this._squareColors = [cc.color(0, 0, 0, 255, locSquareColorsAB, 0),
+            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen),
+            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
+            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
         this._verticesFloat32Buffer = cc.renderContext.createBuffer();
         this._colorsUint8Buffer = cc.renderContext.createBuffer();
     },
@@ -886,7 +450,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -895,7 +459,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * @param {cc.Color4B} [color=]
+     * @param {cc.Color} [color=]
      * @param {Number} [width=]
      * @param {Number} [height=]
      * @return {Boolean}
@@ -905,12 +469,12 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             return false;
 
         if(cc.renderContextType !== cc.CANVAS)
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
+            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
 
         var winSize = cc.Director.getInstance().getWinSize();
-        color = color || new cc.Color4B(0, 0, 0, 255);
-        width = width || winSize.width;
-        height = height || winSize.height;
+        color = color ||  cc.color(0, 0, 0, 255);
+	    this.width = width || winSize.width;
+        this.height = height || winSize.height;
 
         var locDisplayedColor = this._displayedColor;
         locDisplayedColor.r = color.r;
@@ -925,7 +489,6 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         this._displayedOpacity = color.a;
         this._realOpacity = color.a;
 
-        this.setContentSize(width, height);
         this._updateColor();
         return true;
     },
@@ -940,22 +503,36 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     _setContentSizeForWebGL:function (size, height) {
         var locSquareVertices = this._squareVertices;
-        if(arguments.length === 2){
-            locSquareVertices[1].x = size;
-            locSquareVertices[2].y = height;
-            locSquareVertices[3].x = size;
-            locSquareVertices[3].y = height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this, size, height);
-        }else{
-            locSquareVertices[1].x = size.width;
-            locSquareVertices[2].y = size.height;
-            locSquareVertices[3].x = size.width;
-            locSquareVertices[3].y = size.height;
-            this._bindLayerVerticesBufferData();
-            cc.Layer.prototype.setContentSize.call(this,size);
+
+        if (height === undefined) {
+	        locSquareVertices[1].x = size.width;
+	        locSquareVertices[2].y = size.height;
+	        locSquareVertices[3].x = size.width;
+	        locSquareVertices[3].y = size.height;
+        } else {
+	        locSquareVertices[1].x = size;
+	        locSquareVertices[2].y = height;
+	        locSquareVertices[3].x = size;
+	        locSquareVertices[3].y = height;
         }
+	    this._bindLayerVerticesBufferData();
+	    cc.Layer.prototype.setContentSize.call(this, size, height);
     },
+
+	_setWidthForWebGL:function (width) {
+		var locSquareVertices = this._squareVertices;
+		locSquareVertices[1].x = width;
+		locSquareVertices[3].x = width;
+		this._bindLayerVerticesBufferData();
+		cc.Layer.prototype._setWidth.call(this, width);
+	},
+	_setHeightForWebGL:function (height) {
+		var locSquareVertices = this._squareVertices;
+		locSquareVertices[2].y = height;
+		locSquareVertices[3].y = height;
+		this._bindLayerVerticesBufferData();
+		cc.Layer.prototype._setHeight.call(this, height);
+	},
 
     _updateColor:null,
 
@@ -966,10 +543,10 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         var locDisplayedColor = this._displayedColor;
         var locDisplayedOpacity = this._displayedOpacity, locSquareColors = this._squareColors;
         for (var i = 0; i < 4; i++) {
-            locSquareColors[i].r = locDisplayedColor.r / 255;
-            locSquareColors[i].g = locDisplayedColor.g / 255;
-            locSquareColors[i].b = locDisplayedColor.b / 255;
-            locSquareColors[i].a = locDisplayedOpacity / 255;
+            locSquareColors[i].r = locDisplayedColor.r;
+            locSquareColors[i].g = locDisplayedColor.g;
+            locSquareColors[i].b = locDisplayedColor.b;
+            locSquareColors[i].a = locDisplayedOpacity;
         }
         this._bindLayerColorsBufferData();
     },
@@ -1005,13 +582,12 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        var locContentSize = this.getContentSize(), locEGLViewer = cc.EGLView.getInstance();
-
+        var locEGLViewer = cc.EGLView.getInstance();
         var locDisplayedColor = this._displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
             + (0 | locDisplayedColor.b) + "," + this._displayedOpacity / 255 + ")";
-        context.fillRect(0, 0, locContentSize.width * locEGLViewer.getScaleX(), -locContentSize.height * locEGLViewer.getScaleY());
+        context.fillRect(0, 0, this.width * locEGLViewer.getScaleX(), -this.height * locEGLViewer.getScaleY());
 
         cc.g_NumberOfDraws++;
     },
@@ -1029,40 +605,50 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
 
         context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.FLOAT, false, 0, 0);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
 
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
     }
 });
 
+window._proto = cc.LayerColor.prototype;
 if(cc.Browser.supportWebGL){
-    cc.LayerColor.prototype.ctor = cc.LayerColor.prototype._ctorForWebGL;
-    cc.LayerColor.prototype.setContentSize = cc.LayerColor.prototype._setContentSizeForWebGL;
-    cc.LayerColor.prototype._updateColor = cc.LayerColor.prototype._updateColorForWebGL;
-    cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForWebGL;
+    _proto.ctor = _proto._ctorForWebGL;
+    _proto.setContentSize = _proto._setContentSizeForWebGL;
+	_proto._setWidth = _proto._setWidthForWebGL;
+	_proto._setHeight = _proto._setHeightForWebGL;
+    _proto._updateColor = _proto._updateColorForWebGL;
+    _proto.draw = _proto._drawForWebGL;
 } else {
-    cc.LayerColor.prototype.ctor = cc.LayerColor.prototype._ctorForCanvas;
-    cc.LayerColor.prototype.setContentSize = cc.LayerRGBA.prototype.setContentSize;
-    cc.LayerColor.prototype._updateColor = cc.LayerColor.prototype._updateColorForCanvas;
-    cc.LayerColor.prototype.draw = cc.LayerColor.prototype._drawForCanvas;
+    _proto.ctor = _proto._ctorForCanvas;
+    _proto.setContentSize = cc.LayerRGBA.prototype.setContentSize;
+	_proto._setWidth = cc.LayerRGBA.prototype._setWidth;
+	_proto._setHeight = cc.LayerRGBA.prototype._setHeight;
+    _proto._updateColor = _proto._updateColorForCanvas;
+    _proto.draw = _proto._drawForCanvas;
 }
 
+// Override properties
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+delete window._proto;
 
 /**
  * creates a cc.Layer with color, width and height in Points
- * @param {cc.Color4B} color
+ * @param {cc.Color} color
  * @param {Number|Null} [width=]
  * @param {Number|Null} [height=]
  * @return {cc.LayerColor}
  * @example
  * // Example
  * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.c4b(255,255,0,255));
+ * var yellowBackground = cc.LayerColor.create(cc.color(255,255,0,255));
  * //If you didnt pass in width and height, it defaults to the same size as the canvas
  *
  * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColor.create(cc.c4b(255,255,0,255), 200, 200);
+ * var yellowBox = cc.LayerColor.create(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
     var ret = new cc.LayerColor();
@@ -1104,6 +690,13 @@ cc.LayerColor.create = function (color, width, height) {
  * </p>
  * @class
  * @extends cc.LayerColor
+ *
+ * @property {cc.Color} startColor              - Start color of the color gradient
+ * @property {cc.Color} endColor                - End color of the color gradient
+ * @property {Number}   startOpacity            - Start opacity of the color gradient
+ * @property {Number}   endOpacity              - End opacity of the color gradient
+ * @property {Number}   vector                  - Direction vector of the color gradient
+ * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _startColor:null,
@@ -1122,8 +715,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor:function () {
         cc.LayerColor.prototype.ctor.call(this);
 
-        this._startColor = new cc.Color3B(0, 0, 0);
-        this._endColor = new cc.Color3B(0, 0, 0);
+        this._startColor =  cc.color(0, 0, 0, 255);
+        this._endColor =  cc.color(0, 0, 0, 255);
         this._alongVector = cc.p(0, -1);
         this._startOpacity = 255;
         this._endOpacity = 255;
@@ -1138,16 +731,22 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
     setContentSize:function(size, height){
-        if(arguments.length === 2)
-            cc.LayerColor.prototype.setContentSize.call(this,size, height);
-        else
-            cc.LayerColor.prototype.setContentSize.call(this,size);
+	    cc.LayerColor.prototype.setContentSize.call(this,size, height);
         this._updateColor();
     },
 
+	_setWidth:function(width){
+		cc.LayerColor.prototype._setWidth.call(this, width);
+		this._updateColor();
+	},
+	_setHeight:function(height){
+		cc.LayerColor.prototype._setHeight.call(this, height);
+		this._updateColor();
+	},
+
     /**
      * get the starting color
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getStartColor:function () {
         return this._realColor;
@@ -1155,22 +754,22 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * set the starting color
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      * @example
      * // Example
-     * myGradientLayer.setStartColor(cc.c3b(255,0,0));
+     * myGradientLayer.setStartColor(cc.color(255,0,0));
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
-        this.setColor(color);
+        this.color = color;
     },
 
     /**
      * set the end gradient color
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      * @example
      * // Example
-     * myGradientLayer.setEndColor(cc.c3b(255,0,0));
+     * myGradientLayer.setEndColor(cc.color(255,0,0));
      * //set the ending gradient to red
      */
     setEndColor:function (color) {
@@ -1180,7 +779,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     /**
      * get the end color
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getEndColor:function () {
         return this._endColor;
@@ -1253,14 +852,14 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * @param {cc.Color4B} start starting color
-     * @param {cc.Color4B} end
+     * @param {cc.Color} start starting color
+     * @param {cc.Color} end
      * @param {cc.Point|Null} v
      * @return {Boolean}
      */
     init:function (start, end, v) {
-        start = start || cc.c4(0,0,0,255);
-        end = end || cc.c4(0,0,0,255);
+        start = start || cc.color(0,0,0,255);
+        end = end || cc.color(0,0,0,255);
         v = v || cc.p(0, -1);
 
         // Initializes the CCLayer with a gradient between start and end in the direction of v.
@@ -1278,7 +877,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._alongVector = v;
         this._compressedInterpolation = true;
 
-        cc.LayerColor.prototype.init.call(this,cc.c4b(start.r, start.g, start.b, 255));
+        cc.LayerColor.prototype.init.call(this,cc.color(start.r, start.g, start.b, 255));
         return true;
     },
 
@@ -1294,8 +893,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         context.save();
         var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
-        var tWidth = this.getContentSize().width * locEGLViewer.getScaleX();
-        var tHeight = this.getContentSize().height * locEGLViewer.getScaleY();
+        var tWidth = this.width * locEGLViewer.getScaleX();
+        var tHeight = this.height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
             this._gradientEndPoint.x, this._gradientEndPoint.y);
         var locDisplayedColor = this._displayedColor;
@@ -1315,8 +914,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _updateColor:function () {
         var locAlongVector = this._alongVector;
         if (cc.renderContextType === cc.CANVAS) {
-            var tWidth = this.getContentSize().width * 0.5;
-            var tHeight = this.getContentSize().height * 0.5;
+            var tWidth = this.width * 0.5;
+            var tHeight = this.height * 0.5;
 
             this._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
             this._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;
@@ -1338,8 +937,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
             var opacityf = this._displayedOpacity / 255.0;
             var locDisplayedColor = this._displayedColor, locEndColor = this._endColor;
-            var S = { r: locDisplayedColor.r / 255, g: locDisplayedColor.g / 255, b: locDisplayedColor.b / 255, a: (this._startOpacity * opacityf) / 255};
-            var E = {r: locEndColor.r / 255, g: locEndColor.g / 255, b: locEndColor.b / 255, a: (this._endOpacity * opacityf) / 255};
+            var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._startOpacity * opacityf};
+            var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: this._endOpacity * opacityf};
 
             // (-1, -1)
             var locSquareColors = this._squareColors;
@@ -1369,10 +968,22 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     }
 });
 
+window._proto = cc.LayerGradient.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "startColor", _proto.getStartColor, _proto.setStartColor);
+cc.defineGetterSetter(_proto, "endColor", _proto.getEndColor, _proto.setEndColor);
+cc.defineGetterSetter(_proto, "startOpacity", _proto.getStartOpacity, _proto.setStartOpacity);
+cc.defineGetterSetter(_proto, "endOpacity", _proto.getEndOpacity, _proto.setEndOpacity);
+cc.defineGetterSetter(_proto, "vector", _proto.getVector, _proto.setVector);
+cc.defineGetterSetter(_proto, "compresseInterpolation", _proto.isCompressedInterpolation, _proto.setCompressedInterpolation);
+
+delete window._proto;
+
 /**
  * creates a gradient layer
- * @param {cc.Color3B} start starting color
- * @param {cc.Color3B} end ending color
+ * @param {cc.Color} start starting color
+ * @param {cc.Color} end ending color
  * @param {cc.Point|Null} v
  * @return {cc.LayerGradient}
  */

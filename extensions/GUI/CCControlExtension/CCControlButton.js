@@ -26,10 +26,19 @@
 
 cc.CONTROL_ZOOM_ACTION_TAG = 0xCCCB0001;
 
-/** @class CCControlButton Button control for Cocos2D. */
+/**
+ * CCControlButton: Button control for Cocos2D.
+ * @class
+ * @extends cc.Control
+ *
+ * @property {Boolean}  adjustBackgroundImage   - Indicate whether the background image will be adjusted
+ * @property {Boolean}  zoomOnTouchDown         - Indicate whether the button will be zoomed while touch down
+ * @property {cc.Size}  preferredSize           - The preferred size of the control button
+ * @property {Boolean}  labelAnchor             - The anchor point for the label of the control button
+ */
 cc.ControlButton = cc.Control.extend({
     _doesAdjustBackgroundImage:false,
-    _zoomOnTouchDown:false,
+    zoomOnTouchDown:false,
     _preferredSize: null,
     _labelAnchorPoint: null,
     _currentTitle: null,
@@ -49,10 +58,10 @@ cc.ControlButton = cc.Control.extend({
 
     ctor:function () {
         cc.Control.prototype.ctor.call(this);
-        this._preferredSize = new cc.Size(0, 0);
-        this._labelAnchorPoint = new cc.Point(0, 0);
+        this._preferredSize = cc.size(0, 0);
+        this._labelAnchorPoint = cc.p(0, 0);
         this._currentTitle = "";
-        this._currentTitleColor = cc.white();
+        this._currentTitleColor = cc.color.white;
         this._titleDispatchTable = {};
         this._titleColorDispatchTable = {};
         this._titleLabelDispatchTable = {};
@@ -101,8 +110,12 @@ cc.ControlButton = cc.Control.extend({
             locBackgroundSprite.setPosition(locContentSize.width / 2, locContentSize.height / 2);
 
         // Get the title label size
-        var titleLabelSize = label ? label.getBoundingBox()._size : cc.size(0, 0);
-
+        var titleLabelSize = cc.size(0, 0);
+        if(label){
+            var boundingBox = label.getBoundingBox();
+            titleLabelSize.width = boundingBox.width;
+            titleLabelSize.height = boundingBox.height;
+        }
         // Adjust the background image if necessary
         if (this._doesAdjustBackgroundImage) {
             // Add the margins
@@ -152,9 +165,8 @@ cc.ControlButton = cc.Control.extend({
             this._titleLabelDispatchTable = {};
             this._backgroundSpriteDispatchTable = {};
 
-            this.setTouchEnabled(true);
             this._isPushed = false;
-            this._zoomOnTouchDown = true;
+            this.zoomOnTouchDown = true;
 
             this._currentTitle = null;
 
@@ -163,7 +175,7 @@ cc.ControlButton = cc.Control.extend({
             this.setPreferredSize(cc.size(0,0));
 
             // Zooming button by default
-            this._zoomOnTouchDown = true;
+            this.zoomOnTouchDown = true;
 
             // Set the default anchor point
             this.ignoreAnchorPointForPosition(false);
@@ -191,9 +203,9 @@ cc.ControlButton = cc.Control.extend({
             this._marginH = 24;
             this._marginV = 12;
 
-            this._labelAnchorPoint = new cc.Point(0.5, 0.5);
+            this._labelAnchorPoint = cc.p(0.5, 0.5);
 
-            this.setPreferredSize(cc.SizeZero());
+            this.setPreferredSize(cc.size(0, 0));
 
             // Layout update
             this.needsLayout();
@@ -228,11 +240,11 @@ cc.ControlButton = cc.Control.extend({
 
     /** Adjust the button zooming on touchdown. Default value is YES. */
     getZoomOnTouchDown:function () {
-        return this._zoomOnTouchDown;
+        return this.zoomOnTouchDown;
     },
 
     setZoomOnTouchDown:function (zoomOnTouchDown) {
-        return this._zoomOnTouchDown = zoomOnTouchDown;
+        return this.zoomOnTouchDown = zoomOnTouchDown;
     },
 
     /** The prefered size of the button, if label is larger it will be expanded. */
@@ -303,7 +315,8 @@ cc.ControlButton = cc.Control.extend({
     },
 
     getColor:function(){
-      return this._realColor;
+        var locRealColor = this._realColor;
+        return cc.color(locRealColor.r, locRealColor.g, locRealColor.b, locRealColor.a);
     },
 
 
@@ -350,7 +363,7 @@ cc.ControlButton = cc.Control.extend({
             this.stopAction(action);
 
         this.needsLayout();
-        if (this._zoomOnTouchDown) {
+        if (this.zoomOnTouchDown) {
             var scaleValue = (this.isHighlighted() && this.isEnabled() && !this.isSelected()) ? 1.1 : 1.0;
             var zoomAction = cc.ScaleTo.create(0.05, scaleValue);
             zoomAction.setTag(cc.CONTROL_ZOOM_ACTION_TAG);
@@ -441,7 +454,7 @@ cc.ControlButton = cc.Control.extend({
      * Returns the title color used for a state.
      *
      * @param {Number} state The state that uses the specified color. The values are described in "CCControlState".
-     * @return {cc.Color3B} The color of the title for the specified state.
+     * @return {cc.Color} The color of the title for the specified state.
      */
     getTitleColorForState: function (state) {
         var colorObject = this._titleColorDispatchTable[state];
@@ -450,13 +463,13 @@ cc.ControlButton = cc.Control.extend({
         colorObject = this._titleColorDispatchTable[cc.CONTROL_STATE_NORMAL];
         if (colorObject)
             return colorObject;
-        return cc.white();
+        return cc.color.white;
     },
 
     /**
      * Sets the color of the title to use for the specified state.
      *
-     * @param {cc.Color3B} color The color of the title to use for the specified state.
+     * @param {cc.Color} color The color of the title to use for the specified state.
      * @param {Number} state The state that uses the specified color. The values are described in "CCControlState".
      */
     setTitleColorForState:function (color, state) {
@@ -476,7 +489,7 @@ cc.ControlButton = cc.Control.extend({
      */
     getTitleLabelForState:function (state) {
         var locTable = this._titleLabelDispatchTable;
-        if (locTable.hasOwnProperty(state) && locTable[state])
+        if (locTable[state])
             return locTable[state];
 
         return locTable[cc.CONTROL_STATE_NORMAL];
@@ -491,7 +504,7 @@ cc.ControlButton = cc.Control.extend({
      */
     setTitleLabelForState:function (titleLabel, state) {
         var locTable = this._titleLabelDispatchTable;
-        if (locTable.hasOwnProperty(state)) {
+        if (locTable[state]) {
             var previousLabel = locTable[state];
             if (previousLabel)
                 this.removeChild(previousLabel, true);
@@ -584,7 +597,7 @@ cc.ControlButton = cc.Control.extend({
      */
     getBackgroundSpriteForState:function (state) {
         var locTable = this._backgroundSpriteDispatchTable;
-        if (locTable.hasOwnProperty(state) && locTable[state]) {
+        if (locTable[state]) {
             return locTable[state];
         }
         return locTable[cc.CONTROL_STATE_NORMAL];
@@ -598,7 +611,7 @@ cc.ControlButton = cc.Control.extend({
      */
     setBackgroundSpriteForState:function (sprite, state) {
         var locTable = this._backgroundSpriteDispatchTable;
-        if (locTable.hasOwnProperty(state)) {
+        if (locTable[state]) {
             var previousSprite = locTable[state];
             if (previousSprite)
                 this.removeChild(previousSprite, true);
@@ -630,6 +643,15 @@ cc.ControlButton = cc.Control.extend({
         this.setBackgroundSpriteForState(sprite, state);
     }
 });
+
+window._proto = cc.ControlButton.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "adjustBackground", _proto.getAdjustBackgroundImage, _proto.setAdjustBackgroundImage);
+cc.defineGetterSetter(_proto, "preferredSize", _proto.getPreferredSize, _proto.setPreferredSize);
+cc.defineGetterSetter(_proto, "labelAnchor", _proto.getLabelAnchorPoint, _proto.setLabelAnchorPoint);
+
+delete window._proto;
 
 cc.ControlButton.create = function(label, backgroundSprite) {
     var controlButton;

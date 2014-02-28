@@ -28,6 +28,8 @@
  * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont
  * @class
  * @extends cc.AtlasNode
+ *
+ * @property {String}   string  - Content string of label
  */
 cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     // string to render
@@ -40,7 +42,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
     ctor:function(){
         cc.AtlasNode.prototype.ctor.call(this);
-        this._loadedEventListeners = [];
     },
 
     /**
@@ -57,10 +58,14 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {Object} target
      */
     addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
     },
 
     _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
         this._textureLoaded = true;
         var locListeners = this._loadedEventListeners;
         for(var i = 0, len = locListeners.length;  i < len; i++){
@@ -87,17 +92,13 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     initWithString:function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
         var label = strText + "", textureFilename, width, height, startChar;
         if (arguments.length === 2) {
-            var fileUtils = cc.FileUtils.getInstance();
-            var pathStr = fileUtils.fullPathForFilename(charMapFile);
-            var relPathStr = pathStr.substr(0, pathStr.lastIndexOf('/')) + '/';
-
-            var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(pathStr);
+            var dict = cc.loader.getRes(charMapFile);
             if(parseInt(dict["version"], 10) !== 1) {
                 cc.log("cc.LabelAtlas.initWithString(): Unsupported version. Upgrade cocos2d version");
                 return false;
             }
 
-            textureFilename = relPathStr + dict["textureFilename"];
+            textureFilename = cc.path.changeBasename(charMapFile, dict["textureFilename"]);
             var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
             width = parseInt(dict["itemWidth"], 10) / locScaleFactor;
             height = parseInt(dict["itemHeight"], 10) / locScaleFactor;
@@ -119,20 +120,20 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         if(!locLoaded){
             texture.addLoadedEventListener(function(sender){
                 this.initWithTexture(texture, width, height, label.length);
-                this.setString(label);
+                this.string = label;
                 this._callLoadedEventCallbacks();
             },this);
         }
         if (this.initWithTexture(texture, width, height, label.length)) {
             this._mapStartChar = startChar;
-            this.setString(label);
+            this.string = label;
             return true;
         }
         return false;
     },
 
     /**
-     * @param {cc.Color3B} color3
+     * @param {cc.Color} color3
      */
     setColor:function (color3) {
         cc.AtlasNode.prototype.setColor.call(this, color3);
@@ -152,7 +153,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     draw:function (ctx) {
         cc.AtlasNode.prototype.draw.call(this,ctx);
         if (cc.LABELATLAS_DEBUG_DRAW) {
-            var s = this.getContentSize();
+            var s = this.size;
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
                 cc.p(s.width, s.height), cc.p(0, s.height)];
             cc.drawingUtil.drawPoly(vertices, 4, true);
@@ -167,7 +168,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _updateAtlasValuesForCanvas: function () {
         var locString = this._string;
         var n = locString.length;
-        var texture = this.getTexture();
+        var texture = this.texture;
         var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight ;     //needn't multiply cc.CONTENT_SCALE_FACTOR(), because sprite's draw will do this
 
         for (var i = 0; i < n; i++) {
@@ -182,7 +183,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                 fontChar = new cc.Sprite();
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.size(0, 0));
                 } else
                     fontChar.initWithTexture(texture, rect);
 
@@ -190,13 +191,13 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             } else {
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.size(0, 0));
                 } else {
                     // reusing fonts
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
-                    fontChar.setVisible(true);
-                    fontChar.setOpacity(this._displayedOpacity);
+                    fontChar.visible = true;
+                    fontChar.opacity = this._displayedOpacity;
                 }
             }
             fontChar.setPosition(i * locItemWidth + locItemWidth / 2, locItemHeight / 2);
@@ -206,11 +207,11 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     _updateAtlasValuesForWebGL: function () {
         var locString = this._string;
         var n = locString.length;
-        var locTextureAtlas = this._textureAtlas;
+        var locTextureAtlas = this.textureAtlas;
 
-        var texture = locTextureAtlas.getTexture();
-        var textureWide = texture.getPixelsWide();
-        var textureHigh = texture.getPixelsHigh();
+        var texture = locTextureAtlas.texture;
+        var textureWide = texture.pixelsWidth;
+        var textureHigh = texture.pixelsHeight;
         var itemWidthInPixels = this._itemWidth;
         var itemHeightInPixels = this._itemHeight;
         if (!this._ignoreContentScaleFactor) {
@@ -219,7 +220,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
         if(n > locTextureAtlas.getCapacity())
             cc.log("cc.LabelAtlas._updateAtlasValues(): Invalid String length");
-        var quads = locTextureAtlas.getQuads();
+        var quads = locTextureAtlas.quads;
         var locDisplayedColor = this._displayedColor;
         var curColor = {r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._displayedOpacity};
         var locItemWidth = this._itemWidth;
@@ -270,8 +271,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             locQuadBR.colors = curColor;
         }
         if (n > 0) {
-            locTextureAtlas.setDirty(true);
-            var totalQuads = locTextureAtlas.getTotalQuads();
+            locTextureAtlas.dirty = true;
+            var totalQuads = locTextureAtlas.totalQuads;
             if (n > totalQuads)
                 locTextureAtlas.increaseTotalQuadsWith(n - totalQuads);
         }
@@ -287,32 +288,34 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         label = String(label);
         var len = label.length;
         this._string = label;
-        this.setContentSize(len * this._itemWidth, this._itemHeight);
+        this.width = len * this._itemWidth;
+        this.height = this._itemHeight;
         if (this._children) {
             var locChildren = this._children;
             len = locChildren.length;
             for (var i = 0; i < len; i++) {
                 var node = locChildren[i];
                 if (node)
-                    node.setVisible(false);
+                    node.visible = false;
             }
         }
 
         this.updateAtlasValues();
-        this._quadsToDraw = len;
+        this.quadsToDraw = len;
     },
 
     _setStringForWebGL: function (label) {
         label = String(label);
         var len = label.length;
-        if (len > this._textureAtlas.getTotalQuads())
-            this._textureAtlas.resizeCapacity(len);
+        if (len > this.textureAtlas.totalQuads)
+            this.textureAtlas.resizeCapacity(len);
 
         this._string = label;
-        this.setContentSize(len * this._itemWidth, this._itemHeight);
+        this.width = len * this._itemWidth;
+        this.height = this._itemHeight;
 
         this.updateAtlasValues();
-        this._quadsToDraw = len;
+        this.quadsToDraw = len;
     },
 
     setOpacity: null,
@@ -323,7 +326,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             var locChildren = this._children;
             for (var i = 0, len = locChildren.length; i < len; i++) {
                 if (locChildren[i])
-                    locChildren[i].setOpacity(opacity);
+                    locChildren[i].opacity = opacity;
             }
         }
     },
@@ -334,15 +337,26 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     }
 });
 
+window._proto = cc.LabelAtlas.prototype;
 if(cc.Browser.supportWebGL){
-    cc.LabelAtlas.prototype.updateAtlasValues =  cc.LabelAtlas.prototype._updateAtlasValuesForWebGL;
-    cc.LabelAtlas.prototype.setString =  cc.LabelAtlas.prototype._setStringForWebGL;
-    cc.LabelAtlas.prototype.setOpacity =  cc.LabelAtlas.prototype._setOpacityForWebGL;
+    _proto.updateAtlasValues =  _proto._updateAtlasValuesForWebGL;
+    _proto.setString =  _proto._setStringForWebGL;
+    _proto.setOpacity =  _proto._setOpacityForWebGL;
 } else {
-    cc.LabelAtlas.prototype.updateAtlasValues =  cc.LabelAtlas.prototype._updateAtlasValuesForCanvas;
-    cc.LabelAtlas.prototype.setString =  cc.LabelAtlas.prototype._setStringForCanvas;
-    cc.LabelAtlas.prototype.setOpacity =  cc.LabelAtlas.prototype._setOpacityForCanvas;
+    _proto.updateAtlasValues =  _proto._updateAtlasValuesForCanvas;
+    _proto.setString =  _proto._setStringForCanvas;
+    _proto.setOpacity =  _proto._setOpacityForCanvas;
 }
+
+// Override properties
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+
+// Extended properties
+/** @expose */
+_proto.string;
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+
+delete window._proto;
 
 /**
  * <p>

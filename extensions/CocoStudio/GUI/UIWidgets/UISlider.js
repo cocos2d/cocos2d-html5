@@ -35,6 +35,8 @@ ccs.SLIDBALLRENDERERZ = -1;
  * Base class for ccs.Slider
  * @class
  * @extends ccs.Widget
+ *
+ * @property {Number}   percent     - The current progress of loadingbar
  */
 ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     _barRenderer: null,
@@ -81,8 +83,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._slidBallNormalTextureFile = "";
         this._slidBallPressedTextureFile = "";
         this._slidBallDisabledTextureFile = "";
-        this._capInsetsBarRenderer = cc.RectZero();
-        this._capInsetsProgressBarRenderer = cc.RectZero();
+        this._capInsetsBarRenderer = cc.rect(0, 0, 0, 0);
+        this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
         this._sliderEventListener = null;
         this._sliderEventSelector = null;
         this._barTexType = ccs.TextureResType.local;
@@ -378,7 +380,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             return;
         }
         var dis = this._barLength * (percent / 100.0);
-        this._slidBallRenderer.setPosition(cc.p(-this._barLength / 2.0 + dis, 0.0));
+        this._slidBallRenderer.setPosition(-this._barLength / 2.0 + dis, 0.0);
         if (this._scale9Enabled) {
             this._progressBarRenderer.setPreferredSize(cc.size(dis, this._progressBarTextureSize.height));
         }
@@ -411,7 +413,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._touchMovePos.x = touchPoint.x;
         this._touchMovePos.y = touchPoint.y;
         var nsp = this.convertToNodeSpace(touchPoint);
-        this._slidBallRenderer.setPosition(cc.p(nsp.x, 0));
+        this._slidBallRenderer.setPosition(nsp.x, 0);
         this.setPercent(this.getPercentWithBallPos(nsp.x));
         this.percentChangedEvent();
     },
@@ -471,6 +473,12 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         var locContentSize = this._barRenderer.getContentSize();
         return cc.size(locContentSize.width,locContentSize.height);
     },
+	_getWidth: function () {
+		return this._barRenderer._getWidth();
+	},
+	_getHeight: function () {
+		return this._barRenderer._getHeight();
+	},
 
     /**
      * override "getContentSize" method of widget.
@@ -534,7 +542,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
                 this._progressBarRenderer.setScaleY(pscaleY);
             }
         }
-        this._progressBarRenderer.setPosition(cc.p(-this._barLength * 0.5, 0.0));
+        this._progressBarRenderer.setPosition(-this._barLength * 0.5, 0.0);
         this.setPercent(this._percent);
     },
 
@@ -579,6 +587,14 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this.setPercent(slider.getPercent());
     }
 });
+
+window._proto = ccs.Slider.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UISlider.
  * @constructs

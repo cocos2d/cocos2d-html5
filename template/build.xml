@@ -25,7 +25,6 @@
                 <file name="core/platform/CCEGLView.js"/>
                 <file name="core/platform/CCScreen.js"/>
                 <file name="core/platform/CCVisibleRect.js"/>
-                <file name="core/cocoa/CCNS.js"/>
                 <file name="core/cocoa/CCAffineTransform.js"/>
                 <file name="core/support/CCPointExtension.js"/>
                 <file name="core/support/CCVertex.js"/>
@@ -98,7 +97,6 @@
                 <file name="compress/base64.js"/>
                 <file name="compress/gzip.js"/>
                 <file name="compress/zlib.min.js"/>
-                <file name="particle_nodes/CCFormatHelper.js"/>
                 <file name="particle_nodes/CCPNGReader.js"/>
                 <file name="particle_nodes/CCTIFFReader.js"/>
                 <file name="particle_nodes/CCParticleSystem.js"/>
@@ -106,13 +104,6 @@
                 <file name="particle_nodes/CCParticleBatchNode.js"/>
                 <file name="physics_nodes/CCPhysicsDebugNode.js"/>
                 <file name="physics_nodes/CCPhysicsSprite.js"/>
-                <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
-                <file name="touch_dispatcher/CCTouchHandler.js"/>
-                <file name="touch_dispatcher/CCTouchDispatcher.js"/>
-                <file name="touch_dispatcher/CCMouseDispatcher.js"/>
-                <file name="keyboard_dispatcher/CCKeyboardDelegate.js"/>
-                <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
-                <file name="accelerometer/CCAccelerometer.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
                 <file name="menu_nodes/CCMenuItem.js"/>

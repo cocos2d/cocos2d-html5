@@ -198,9 +198,10 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      */
     addSpriteFrameWithFile:function (fileName) {
         var texture = cc.TextureCache.getInstance().addImage(fileName);
-        var rect = cc.RectZero();
-        rect._size = texture.getContentSize();
-        var frame = cc.SpriteFrame.createWithTexture(texture, rect);
+        var rect = cc.rect(0, 0, 0, 0);
+        rect.width = texture.width;
+        rect.height = texture.height;
+        var frame = cc.SpriteFrame.create(texture, rect);
         this.addSpriteFrame(frame);
     },
 
@@ -210,7 +211,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      * @param {cc.Rect} rect
      */
     addSpriteFrameWithTexture:function (texture, rect) {
-        var pFrame = cc.SpriteFrame.createWithTexture(texture, rect);
+        var pFrame = cc.SpriteFrame.create(texture, rect);
         this.addSpriteFrame(pFrame);
     },
 
@@ -221,15 +222,17 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      * @param {Number} loops
      */
     initWithAnimationFrames:function (arrayOfAnimationFrames, delayPerUnit, loops) {
-        cc.ArrayVerifyType(arrayOfAnimationFrames, cc.AnimationFrame);
+        cc.arrayVerifyType(arrayOfAnimationFrames, cc.AnimationFrame);
 
         this._delayPerUnit = delayPerUnit;
         this._loops = loops;
+        this._totalDelayUnits = 0;
 
-        this.setFrames([]);
+        var locFrames = this._frames;
+        locFrames.length = 0;
         for (var i = 0; i < arrayOfAnimationFrames.length; i++) {
             var animFrame = arrayOfAnimationFrames[i];
-            this._frames.push(animFrame);
+            locFrames.push(animFrame);
             this._totalDelayUnits += animFrame.getDelayUnits();
         }
 
@@ -334,26 +337,27 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      * @param {Number} delay
      */
     initWithSpriteFrames:function (frames, delay) {
-        cc.ArrayVerifyType(frames, cc.SpriteFrame);
+        cc.arrayVerifyType(frames, cc.SpriteFrame);
         this._loops = 1;
         delay = delay || 0;
         this._delayPerUnit = delay;
+        this._totalDelayUnits = 0;
 
-        var tempFrames = [];
-        this.setFrames(tempFrames);
+        var locFrames = this._frames;
+        locFrames.length = 0;
         if (frames) {
             for (var i = 0; i < frames.length; i++) {
                 var frame = frames[i];
                 var animFrame = new cc.AnimationFrame();
                 animFrame.initWithSpriteFrame(frame, 1, null);
-                this._frames.push(animFrame);
-                this._totalDelayUnits++;
+                locFrames.push(animFrame);
             }
+            this._totalDelayUnits += frames.length;
         }
         return true;
     },
     /**
-     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * Currently JavaScript Bindings (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
      * This is a hack, and should be removed once JSB fixes the retain/release bug
      */
@@ -370,43 +374,44 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
  * @param {Number} loops
  * @return {cc.Animation}
  * @example
- * //Creates an animation
+ * 1.
+ * //Creates an empty animation
  * var animation1 = cc.Animation.create();
  *
- * //Create an animation with sprite frames
- * var animFrames = [];
+ * 2.
+ * //Create an animation with sprite frames , delay and loops.
+ * var spriteFrames = [];
  * var frame = cache.getSpriteFrame("grossini_dance_01.png");
- * animFrames.push(frame);
- * var animation2 = cc.Animation.create(animFrames);
+ * spriteFrames.push(frame);
+ * var animation1 = cc.Animation.create(spriteFrames);
+ * var animation2 = cc.Animation.create(spriteFrames, 0.2);
  *
- * //Create an animation with sprite frames and delay
- * var animation3 = cc.Animation.create(animFrames, 0.2);
+ * 3.
+ * //Create an animation with animation frames , delay and loops.
+ * var animationFrames = [];
+ * var frame =  new cc.AnimationFrame();
+ * animationFrames.push(frame);
+ * var animation1 = cc.Animation.create(animationFrames);
+ * var animation2 = cc.Animation.create(animationFrames, 0.2);
+ * var animation3 = cc.Animation.create(animationFrames, 0.2,2);
+ *
  */
 cc.Animation.create = function (frames, delay, loops) {
     var len = arguments.length;
     var animation = new cc.Animation();
     if (len == 0) {
         animation.initWithSpriteFrames(null, 0);
-    } else if (len == 2) {
-        /** with frames and a delay between frames */
-        delay = delay || 0;
-        animation.initWithSpriteFrames(frames, delay);
-    } else if (len == 3) {
-        animation.initWithAnimationFrames(frames, delay, loops);
+    } else {
+        var frame0 = frames[0];
+        if(frame0){
+            if (frame0 instanceof cc.SpriteFrame) {
+                //init with sprite frames , delay and loops.
+                animation.initWithSpriteFrames(frames, delay);
+            }else if(frame0 instanceof cc.AnimationFrame) {
+                //init with sprite frames , delay and loops.
+                animation.initWithAnimationFrames(frames, delay, loops);
+            }
+        }
     }
     return animation;
 };
-
-/**
- * Creates an animation with an array of cc.AnimationFrame, the delay per units in seconds and and how many times it should be executed.
- * @param {Array} arrayOfAnimationFrameNames
- * @param {Number} delayPerUnit
- * @param {Number} loops
- * @return {cc.Animation}
- */
-cc.Animation.createWithAnimationFrames = function (arrayOfAnimationFrameNames, delayPerUnit, loops) {
-    var animation = new cc.Animation();
-    animation.initWithAnimationFrames(arrayOfAnimationFrameNames, delayPerUnit, loops);
-    return animation;
-};
-

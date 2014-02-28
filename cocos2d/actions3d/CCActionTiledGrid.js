@@ -193,14 +193,14 @@ cc.ShatteredTiles3D.create = function (duration, gridSize, range, shatterZ) {
  * A Tile composed of position, startPosition and delta
  * @Class
  * @constructor
- * @param {cc.Point} [position=cc.Point_ZERO]
- * @param {cc.Point} [startPosition=cc.Point_ZERO]
- * @param {cc.Size} [delta=cc.Point_ZERO]
+ * @param {cc.Point} [position=cc.p(0,0)]
+ * @param {cc.Point} [startPosition=cc.p(0,0)]
+ * @param {cc.Size} [delta=cc.p(0,0)]
  */
 cc.Tile = function (position, startPosition, delta) {
-    this.position = position || cc.POINT_ZERO;
-    this.startPosition = startPosition || cc.POINT_ZERO;
-    this.delta = delta || cc.POINT_ZERO;
+    this.position = position || cc.p(0,0);
+    this.startPosition = startPosition || cc.p(0,0);
+    this.delta = delta || cc.p(0,0);
 };
 
 /**
@@ -232,8 +232,8 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     initWithDuration:function (duration, gridSize, seed) {
         if (cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._seed = seed;
-            this._tilesOrder = null;
-            this._tiles = null;
+            this._tilesOrder.length = 0;
+            this._tiles.length = 0;
             return true;
         }
         return false;
@@ -272,7 +272,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     placeTile:function (pos, tile) {
         var coords = this.originalTile(pos);
 
-        var step = this._target.getGrid().getStep();
+        var step = this.target.grid.getStep();
         var locPosition = tile.position;
         coords.bl.x += (locPosition.x * step.x);
         coords.bl.y += (locPosition.y * step.y);
@@ -298,29 +298,31 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
         var locGridSize = this._gridSize;
 
         this._tilesCount = locGridSize.width * locGridSize.height;
-        this._tilesOrder = [];
+        var locTilesOrder = this._tilesOrder;
+        locTilesOrder.length = 0;
 
         /**
          * Use k to loop. Because m_nTilesCount is unsigned int,
          * and i is used later for int.
          */
         for (var k = 0; k < this._tilesCount; ++k)
-            this._tilesOrder[k] = k;
+            locTilesOrder[k] = k;
+        this.shuffle(locTilesOrder, this._tilesCount);
 
-        this.shuffle(this._tilesOrder, this._tilesCount);
-
-        var locTiles = [];
-        var tileIndex = 0;
+        var locTiles = this._tiles ;
+        locTiles.length = 0;
+        var tileIndex = 0, tempSize = cc.size(0,0);
         for (var i = 0; i < locGridSize.width; ++i) {
             for (var j = 0; j < locGridSize.height; ++j) {
                 locTiles[tileIndex] = new cc.Tile();
                 locTiles[tileIndex].position = cc.p(i, j);
                 locTiles[tileIndex].startPosition = cc.p(i, j);
-                locTiles[tileIndex].delta = this.getDelta(cc.size(i, j));
+                tempSize.width = i;
+                tempSize.height = j;
+                locTiles[tileIndex].delta = this.getDelta(tempSize);
                 ++tileIndex;
             }
         }
-        this._tiles = locTiles;
     },
 
     update:function (time) {
@@ -394,7 +396,7 @@ cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */
      */
     transformTile:function (pos, distance) {
         var coords = this.originalTile(pos);
-        var step = this._target.getGrid().getStep();
+        var step = this.target.grid.getStep();
 
         coords.bl.x += (step.x / 2) * (1.0 - distance);
         coords.bl.y += (step.y / 2) * (1.0 - distance);
@@ -491,7 +493,7 @@ cc.FadeOutUpTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutUpTiles# */{
 
     transformTile:function (pos, distance) {
         var coords = this.originalTile(pos);
-        var step = this._target.getGrid().getStep();
+        var step = this.target.grid.getStep();
 
         coords.bl.y += (step.y / 2) * (1.0 - distance);
         coords.br.y += (step.y / 2) * (1.0 - distance);
@@ -568,7 +570,7 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
     initWithDuration:function (duration, gridSize, seed) {
         if (cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
             this._seed = seed;
-            this._tilesOrder = null;
+            this._tilesOrder.length = 0;
             return true;
         }
         return false;
@@ -608,11 +610,11 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
         cc.TiledGrid3DAction.prototype.startWithTarget.call(this, target);
 
         this._tilesCount = this._gridSize.width * this._gridSize.height;
-        var locTilesOrder = [];
+        var locTilesOrder = this._tilesOrder;
+        locTilesOrder.length = 0;
         for (var i = 0; i < this._tilesCount; ++i)
             locTilesOrder[i] = i;
-        this._tilesOrder = locTilesOrder;
-        this.shuffle(this._tilesOrder, this._tilesCount);
+        this.shuffle(locTilesOrder, this._tilesCount);
     },
 
     /**
@@ -620,9 +622,9 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
      */
     update:function (time) {
         var l = 0 | (time * this._tilesCount), locGridSize = this._gridSize;
-        var t,tilePos = cc.p(0,0);
+        var t,tilePos = cc.p(0,0), locTilesOrder = this._tilesOrder;
         for (var i = 0; i < this._tilesCount; i++) {
-            t = this._tilesOrder[i];
+            t = locTilesOrder[i];
             tilePos.x = 0 | (t / locGridSize.height);
             tilePos.y = t % (0 | locGridSize.height);
             if (i < l)
@@ -825,7 +827,7 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
         var sinz2 = (Math.sin(Math.PI * (time * this._jumps * 2 + 1)) * this._amplitude * this._amplitudeRate );
 
         var locGridSize = this._gridSize;
-        var locGrid = this._target.getGrid();
+        var locGrid = this.target.grid;
         var coords, locPos = cc.p(0, 0);
         for (var i = 0; i < locGridSize.width; i++) {
             for (var j = 0; j < locGridSize.height; j++) {

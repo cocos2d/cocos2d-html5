@@ -71,9 +71,20 @@ CC_ANIMATION_TYPE_MAX = 2;
  * Base class for ccs.ProcessBase objects.
  * @class
  * @extends ccs.Class
+ *
+ * @property {Number}   currentFrameIndex   - <@readonly> The current frame's index
+ * @property {Boolean}  paused              - <@readonly> Indicate whether the process is paused
+ * @property {Boolean}  completed           - <@readonly> Indicate whether the process is done
+ * @property {Number}   currentPercent      - <@readonly> The current percentage of the process
+ * @property {Number}   rawDuration         - <@readonly> The duration
+ * @property {Number}   loop                - <@readonly> The number of loop
+ * @property {Number}   tweenEasing         - <@readonly> The tween easing
+ * @property {Number}   animationInterval   - The animation internal
+ * @property {Number}   processScale        - The process scale
+ * @property {Boolean}  playing             - <@readonly> Indicate whether the process is playing
  */
 ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
-    _processScale:1,
+    processScale:1,
     _isComplete:true,
     _isPause:true,
     _isPlaying:false,
@@ -81,14 +92,14 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     _rawDuration:0,
     _loopType:0,
     _tweenEasing:0,
-    _animationInternal:null,
+    animationInternal:null,
     _currentFrame:0,
     _durationTween:0,
     _nextFrameIndex:0,
     _curFrameIndex:null,
     _isLoopBack:false,
     ctor:function () {
-        this._processScale = 1;
+        this.processScale = 1;
         this._isComplete = true;
         this._isPause = true;
         this._isPlaying = false;
@@ -98,7 +109,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
         this._rawDuration = 0;
         this._loopType = CC_ANIMATION_TYPE_LOOP_BACK;
         this._tweenEasing = ccs.TweenType.linear;
-        this._animationInternal = 1/60;
+        this.animationInternal = 1/60;
         this._curFrameIndex = 0;
         this._durationTween = 0;
         this._isLoopBack = false;
@@ -157,10 +168,10 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
         }else{
             /*
              *  update currentFrame, every update add the frame passed.
-             *  dt/this._animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
+             *  dt/this.animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
              *  animation speed slower or quicker.
              */
-            locCurrentFrame += this._processScale * (dt / this._animationInternal);
+            locCurrentFrame += this.processScale * (dt / this.animationInternal);
 
             this._currentPercent = locCurrentFrame / locNextFrameIndex;
 
@@ -261,7 +272,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @returns {number}
      */
     getAnimationInternal:function () {
-        return this._animationInternal;
+        return this.animationInternal;
     },
 
     /**
@@ -269,7 +280,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @param animationInternal
      */
     setAnimationInternal:function(animationInternal){
-        this._animationInternal = animationInternal;
+        this.animationInternal = animationInternal;
     },
 
     /**
@@ -277,7 +288,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @returns {number}
      */
     getProcessScale:function () {
-        return this._processScale;
+        return this.processScale;
     },
 
     /**
@@ -285,7 +296,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      * @param processScale
      */
     setProcessScale:function (processScale) {
-        this._processScale = processScale;
+        this.processScale = processScale;
     },
 
     /**
@@ -296,3 +307,17 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
         return this._isPlaying;
     }
 });
+
+window._proto = ccs.ProcessBase.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "currentFrameIndex", _proto.getCurrentFrameIndex);
+cc.defineGetterSetter(_proto, "paused", _proto.isPause);
+cc.defineGetterSetter(_proto, "completed", _proto.isComplete);
+cc.defineGetterSetter(_proto, "currentPercent", _proto.getCurrentPercent);
+cc.defineGetterSetter(_proto, "rawDuration", _proto.getRawDuration);
+cc.defineGetterSetter(_proto, "loop", _proto.getLoop);
+cc.defineGetterSetter(_proto, "tweenEasing", _proto.getTweenEasing);
+cc.defineGetterSetter(_proto, "playing", _proto.isPlaying);
+
+delete window._proto;

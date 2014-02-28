@@ -147,7 +147,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
      */
     getCString:function(key, default_value){
        var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return default_value;
     },
@@ -162,7 +162,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
         if(default_value == null)
             default_value = false;
         var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return default_value;
     },
@@ -177,7 +177,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
         if(default_value == null)
             default_value = 0;
         var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return default_value;
     },
@@ -189,7 +189,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
      */
     getObject:function(key){
         var locValueDict = this._valueDict;
-        if(locValueDict.hasOwnProperty(key))
+        if(locValueDict[key])
             return locValueDict[key];
         return null;
     },
@@ -257,19 +257,15 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
 
     /**
      * Loads a config file. If the keys are already present, then they are going to be replaced. Otherwise the new keys are added.
-     * @param {string} filename
+     * @param {string} url
      */
-    loadConfigFile: function( filename){
-        var fileUtils = cc.FileUtils.getInstance();
-        var fullPath = fileUtils.fullPathForFilename(filename);
-        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
-
-        if(dict == null)
-            return;
+    loadConfigFile: function( url){
+        var dict = cc.loader.getRes(url);
+        if(!dict) throw "Please load the resource first : " + url;
 
         var getDatas = dict["data"];
         if(!getDatas){
-            cc.log("Expected 'data' dict, but not found. Config file: " + filename);
+            cc.log("Expected 'data' dict, but not found. Config file: " + url);
             return;
         }
 

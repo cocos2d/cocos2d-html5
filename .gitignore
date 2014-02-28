@@ -4,3 +4,4 @@ lib
 build
 aspnet_client
 node_modules
+/tools/jsdoc_toolkit-2.4.0

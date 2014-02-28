@@ -672,7 +672,7 @@ cc.BuilderSetSpriteFrame = cc.ActionInstant.extend({
         return true;
     },
     update:function (time) {
-        this._target.setDisplayFrame(this._spriteFrame);
+        this.target.setDisplayFrame(this._spriteFrame);
     }
 });
 
@@ -702,12 +702,12 @@ cc.BuilderRotateTo = cc.ActionInterval.extend({
         }
     },
     update:function (time) {
-        this._target.setRotation(this._startAngle + (this._diffAngle * time));
+        this.target.setRotation(this._startAngle + (this._diffAngle * time));
     },
 
     startWithTarget:function (node) {
         cc.ActionInterval.prototype.startWithTarget.call(this, node);
-        this._startAngle = this._target.getRotation();
+        this._startAngle = this.target.getRotation();
         this._diffAngle = this._dstAngle - this._startAngle;
     }
 });

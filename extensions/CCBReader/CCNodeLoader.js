@@ -88,14 +88,14 @@ cc.NodeLoader = cc.Class.extend({
                 if(node.getCCBFileNode() && isExtraProp){
                     node = node.getCCBFileNode();
                     //skip properties that doesn't have a value to override
-                    var getExtraPropsNames = node.getUserObject();
-                    setProp = cc.ArrayContainsObject(getExtraPropsNames,propertyName);
+                    var getExtraPropsNames = node.userObject;
+                    setProp = getExtraPropsNames.indexOf(propertyName) != -1;
                 }
             } else if(isExtraProp && node == ccbReader.getAnimationManager().getRootNode()){
-                var extraPropsNames = node.getUserObject();
+                var extraPropsNames = node.userObject;
                 if(!extraPropsNames){
                     extraPropsNames = [];
-                    node.setUserObject(extraPropsNames);
+                    node.userObject = extraPropsNames;
                 }
                 extraPropsNames.push(propertyName);
             }
@@ -234,9 +234,9 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_COLOR3:
                 {
-                    var color3B = this.parsePropTypeColor3(node, parent, ccbReader, propertyName);
+                    var color = this.parsePropTypeColor3(node, parent, ccbReader, propertyName);
                     if (setProp) {
-                        this.onHandlePropTypeColor3(node, parent, propertyName, color3B, ccbReader);
+                        this.onHandlePropTypeColor3(node, parent, propertyName, color, ccbReader);
                     }
                     break;
                 }
@@ -357,14 +357,14 @@ cc.NodeLoader = cc.Class.extend({
         var x = ccbReader.readFloat();
         var y = ccbReader.readFloat();
 
-        return new cc.Point(x, y);
+        return cc.p(x, y);
     },
 
     parsePropTypePointLock:function (node, parent, ccbReader) {
         var x = ccbReader.readFloat();
         var y = ccbReader.readFloat();
 
-        return new cc.Point(x, y);
+        return cc.p(x, y);
     },
 
     parsePropTypeSize:function (node, parent, ccbReader) {
@@ -403,7 +403,7 @@ cc.NodeLoader = cc.Class.extend({
                 break;
         }
 
-        return new cc.Size(width, height);
+        return cc.size(width, height);
     },
 
     parsePropTypeScaleLock:function (node, parent, ccbReader, propertyName) {
@@ -484,7 +484,7 @@ cc.NodeLoader = cc.Class.extend({
 
                 var locContentSize = texture.getContentSize();
                 var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
-                spriteFrame = cc.SpriteFrame.createWithTexture(texture, bounds);
+                spriteFrame = cc.SpriteFrame.create(texture, bounds);
             } else {
                 var frameCache = cc.SpriteFrameCache.getInstance();
                 spriteSheet = ccbReader.getCCBRootPath() + spriteSheet;
@@ -722,13 +722,14 @@ cc.NodeLoader = cc.Class.extend({
         var ccbFileWithoutPathExtension = cc.BuilderReader.deletePathExtension(ccbFileName);
         ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
 
-        //load sub file
-        var fileUtils = cc.FileUtils.getInstance();
-        var path = fileUtils.fullPathFromRelativePath(ccbFileName);
         var myCCBReader = new cc.BuilderReader(ccbReader);
 
-        var size ;
-        var bytes = fileUtils.getByteArrayFromFile(path,"rb", size);
+        var bytes = cc.loader.getRes(ccbFileName);
+        if(!bytes){
+            var realUrl = cc.loader.getUrl(ccbFileName);
+            bytes = cc.loader.loadBinarySync(realUrl);
+            cc.loader.cache[ccbFileName] = bytes;
+        }
 
         myCCBReader.initWithData(bytes,ccbReader.getOwner());
         myCCBReader.getAnimationManager().setRootContainerSize(parent.getContentSize());

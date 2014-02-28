@@ -27,6 +27,8 @@ ccs.LABELBMFONTRENDERERZ = -1;
  * Base class for ccs.LabelBMFont
  * @class
  * @extends ccs.Widget
+ *
+ * @property {String}   string  - Content string of the label
  */
 ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
     _labelBMFontRenderer: null,
@@ -73,7 +75,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
         if (!value) {
             return;
         }
-        this._strStringValue = value;
+        this._stringValue = value;
         this._labelBMFontRenderer.setString(value);
         this.labelBMFontScaleChangedWithSize();
     },
@@ -83,7 +85,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
      * @returns {String}
      */
     getStringValue: function () {
-        return this._strStringValue;
+        return this._stringValue;
     },
 
     /**
@@ -92,14 +94,22 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
      * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._labelBMFontRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._labelBMFontRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._labelBMFontRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._labelBMFontRenderer.setAnchorPoint(point, y);
         }
     },
+	_setAnchorX: function (value) {
+		ccs.Widget.prototype._setAnchorX.call(this, value);
+		this._labelBMFontRenderer._setAnchorX(value);
+	},
+	_setAnchorY: function (value) {
+		ccs.Widget.prototype._setAnchorY.call(this, value);
+		this._labelBMFontRenderer._setAnchorY(value);
+	},
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
@@ -113,6 +123,12 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
     getContentSize: function () {
         return this._labelBMFontRenderer.getContentSize();
     },
+	_getWidth: function () {
+		return this._labelBMFontRenderer._getWidth();
+	},
+	_getHeight: function () {
+		return this._labelBMFontRenderer._getHeight();
+	},
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -159,6 +175,14 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
         this.setText(labelBMFont._stringValue);
     }
 });
+
+window._proto = ccs.LabelBMFont.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UILabelBMFont.
  * @constructs

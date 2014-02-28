@@ -124,10 +124,14 @@ cc.TMX_TILE_FLIPPED_MASK = (~(cc.TMX_TILE_FLIPPED_ALL)) >>> 0;
  * This information is obtained from the TMX file.</p>
  * @class
  * @extends cc.Class
+ *
+ * @property {Array}    properties  - Properties of the layer info.
  */
 cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
-    _properties:null,
-    name:"",
+	/** @public */
+    properties:null,
+
+	name:"",
     _layerSize:null,
     _tiles:null,
     visible:null,
@@ -138,7 +142,7 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
     offset:null,
 
     ctor:function () {
-        this._properties = [];
+        this.properties = [];
         this.name = "";
         this._layerSize = null;
         this._tiles = [];
@@ -147,21 +151,21 @@ cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
         this.ownTiles = true;
         this._minGID = 100000;
         this._maxGID = 0;
-        this.offset = cc.PointZero();
+        this.offset = cc.p(0,0);
     },
 
     /**
      * @return {Array}
      */
     getProperties:function () {
-        return this._properties;
+        return this.properties;
     },
 
     /**
-     * @param {object} Var
+     * @param {object} value
      */
-    setProperties:function (Var) {
-        this._properties = Var;
+    setProperties:function (value) {
+        this.properties = value;
     }
 });
 
@@ -212,8 +216,8 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
     imageSize:null,
 
     ctor:function () {
-        this._tileSize = cc.SizeZero();
-        this.imageSize = cc.SizeZero();
+        this._tileSize = cc.size(0, 0);
+        this.imageSize = cc.size(0, 0);
     },
 
     /**
@@ -221,13 +225,14 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
      * @return {cc.Rect}
      */
     rectForGID:function (gid) {
-        var rect = cc.RectZero();
-        rect._size = this._tileSize;
+        var rect = cc.rect(0, 0, 0, 0);
+        rect.width = this._tileSize.width;
+        rect.height = this._tileSize.height;
         gid &= cc.TMX_TILE_FLIPPED_MASK;
         gid = gid - parseInt(this.firstGid, 10);
         var max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing), 10);
-        rect._origin.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin, 10);
-        rect._origin.y = parseInt(parseInt(gid / max_x, 10) * (this._tileSize.height + this.spacing) + this.margin, 10);
+        rect.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin, 10);
+        rect.y = parseInt(parseInt(gid / max_x, 10) * (this._tileSize.height + this.spacing) + this.margin, 10);
         return rect;
     }
 });
@@ -246,49 +251,79 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
  * <p>This information is obtained from the TMX file. </p>
  * @class
  * @extends cc.SAXParser
+ *
+ * @property {Array}    properties          - Properties of the map info.
+ * @property {Number}   orientation         - Map orientation.
+ * @property {Object}   parentElement       - Parent element.
+ * @property {Number}   parentGID           - Parent GID.
+ * @property {Object}   layerAttrs        - Layer attributes.
+ * @property {Boolean}  storingCharacters   - Is reading storing characters stream.
+ * @property {String}   tmxFileName         - TMX file name.
+ * @property {String}   currentString       - Current string stored from characters stream.
+ * @property {Number}   mapWidth            - Width of the map
+ * @property {Number}   mapHeight           - Height of the map
+ * @property {Number}   tileWidth           - Width of a tile
+ * @property {Number}   tileHeight          - Height of a tile
  */
 cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
-    // map orientation
-    _orientation:null,
+	/** @public */
+	properties:null,
+
+	/** @public */
+    orientation:null,
+
+	/** @public */
+	parentElement:null,
+
+	/** @public */
+	parentGID:null,
+
+	/** @public */
+	layerAttrs:0,
+
+	/** @public */
+	storingCharacters:false,
+
+	/** @public */
+	tmxFileName:null,
+
+	/** @public */
+	currentString:null,
+
+	_objectGroups:null,
     _mapSize:null,
     _tileSize:null,
     _layers:null,
-    _tileSets:null,
-    _objectGroups:null,
-    _parentElement:null,
-    _parentGID:null,
-    _layerAttribs:0,
-    _storingCharacters:false,
-    _properties:null,
-    // tmx filename
-    _TMXFileName:null,
-    //current string
-    _currentString:null,
+    _tilesets:null,
     // tile properties
     _tileProperties:null,
     _resources:"",
     _currentFirstGID:0,
 
     ctor:function () {
-        this._tileSets = [];
-        this._tileProperties = [];
-        this._properties = [];
-        this._mapSize = cc.SizeZero();
-        this._tileSize = cc.SizeZero();
+        cc.SAXParser.prototype.ctor.apply(this);
+        this._mapSize = cc.size(0, 0);
+        this._tileSize = cc.size(0, 0);
+        this._layers = [];
+        this._tilesets = [];
+        this._objectGroups = [];
+        this.properties = [];
+        this._tileProperties = {};
+
         this._currentFirstGID = 0;
     },
     /**
      * @return {Number}
      */
     getOrientation:function () {
-        return this._orientation;
+        return this.orientation;
     },
 
     /**
-     * @param {Number} Var
+     * @param {Number} value
      */
-    setOrientation:function (Var) {
-        this._orientation = Var;
+    setOrientation:function (value) {
+        this.orientation = value;
     },
 
     /**
@@ -300,12 +335,25 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
-     * @param {cc.Size} Var
+     * @param {cc.Size} value
      */
-    setMapSize:function (Var) {
-        this._mapSize.width = Var.width;
-        this._mapSize.height = Var.height;
+    setMapSize:function (value) {
+        this._mapSize.width = value.width;
+        this._mapSize.height = value.height;
     },
+
+	_getMapWidth: function () {
+		return this._mapSize.width;
+	},
+	_setMapWidth: function (width) {
+		this._mapSize.width = width;
+	},
+	_getMapHeight: function () {
+		return this._mapSize.height;
+	},
+	_setMapHeight: function (height) {
+		this._mapSize.height = height;
+	},
 
     /**
      * Tiles width & height
@@ -316,12 +364,25 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
-     * @param {cc.Size} Var
+     * @param {cc.Size} value
      */
-    setTileSize:function (Var) {
-        this._tileSize.width = Var.width;
-        this._tileSize.height = Var.height;
+    setTileSize:function (value) {
+        this._tileSize.width = value.width;
+        this._tileSize.height = value.height;
     },
+
+	_getTileWidth: function () {
+		return this._tileSize.width;
+	},
+	_setTileWidth: function (width) {
+		this._tileSize.width = width;
+	},
+	_getTileHeight: function () {
+		return this._tileSize.height;
+	},
+	_setTileHeight: function (height) {
+		this._tileSize.height = height;
+	},
 
     /**
      * Layers
@@ -332,10 +393,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
-     * @param {cc.TMXLayerInfo} Var
+     * @param {cc.TMXLayerInfo} value
      */
-    setLayers:function (Var) {
-        this._layers.push(Var);
+    setLayers:function (value) {
+        this._layers.push(value);
     },
 
     /**
@@ -343,14 +404,14 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {Array}
      */
     getTilesets:function () {
-        return this._tileSets;
+        return this._tilesets;
     },
 
     /**
-     * @param {cc.TMXTilesetInfo} Var
+     * @param {cc.TMXTilesetInfo} value
      */
-    setTilesets:function (Var) {
-        this._tileSets.push(Var);
+    setTilesets:function (value) {
+        this._tilesets.push(value);
     },
 
     /**
@@ -362,25 +423,25 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     },
 
     /**
-     * @param {cc.TMXObjectGroup} Var
+     * @param {cc.TMXObjectGroup} value
      */
-    setObjectGroups:function (Var) {
-        this._objectGroups.push(Var);
+    setObjectGroups:function (value) {
+        this._objectGroups.push(value);
     },
 
     /**
      * parent element
-     * @return {Number}
+     * @return {Object}
      */
     getParentElement:function () {
-        return this._parentElement;
+        return this.parentElement;
     },
 
     /**
-     * @param {Number} Var
+     * @param {Object} value
      */
-    setParentElement:function (Var) {
-        this._parentElement = Var;
+    setParentElement:function (value) {
+        this.parentElement = value;
     },
 
     /**
@@ -388,44 +449,44 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {Number}
      */
     getParentGID:function () {
-        return this._parentGID;
+        return this.parentGID;
     },
 
     /**
-     * @param {Number} Var
+     * @param {Number} value
      */
-    setParentGID:function (Var) {
-        this._parentGID = Var;
+    setParentGID:function (value) {
+        this.parentGID = value;
     },
 
     /**
-     *  layer attribute
-     * @return {Number}
+     * Layer attribute
+     * @return {Object}
      */
     getLayerAttribs:function () {
-        return this._layerAttribs;
+        return this.layerAttrs;
     },
 
     /**
-     * @param {Number} Var
+     * @param {Object} value
      */
-    setLayerAttribs:function (Var) {
-        this._layerAttribs = Var;
+    setLayerAttribs:function (value) {
+        this.layerAttrs = value;
     },
 
     /**
-     * is string characters?
+     * Is reading storing characters stream
      * @return {Boolean}
      */
     getStoringCharacters:function () {
-        return this._storingCharacters;
+        return this.storingCharacters;
     },
 
     /**
-     * @param {Boolean} Var
+     * @param {Boolean} value
      */
-    setStoringCharacters:function (Var) {
-        this._storingCharacters = Var;
+    setStoringCharacters:function (value) {
+        this.storingCharacters = value;
     },
 
     /**
@@ -433,26 +494,24 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {Array}
      */
     getProperties:function () {
-        return this._properties;
+        return this.properties;
     },
 
     /**
-     * @param {object} Var
+     * @param {object} value
      */
-    setProperties:function (Var) {
-        this._properties = Var;
+    setProperties:function (value) {
+        this.properties = value;
     },
 
     /**
      * Initializes a TMX format with a  tmx file
      * @param {String} tmxFile
-     * @param {String} resourcePath
      * @return {Element}
      */
-    initWithTMXFile:function (tmxFile, resourcePath) {
-        this._internalInit(tmxFile, resourcePath);
-        return this.parseXMLFile(this._TMXFileName);
-        //return this.parseXMLFile(cc.FileUtils.getInstance().fullPathForFilename(this._TMXFileName));
+    initWithTMXFile:function (tmxFile) {
+        this._internalInit(tmxFile, null);
+        return this.parseXMLFile(tmxFile);
     },
 
     /**
@@ -473,8 +532,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      */
     parseXMLFile:function (tmxFile, isXmlString) {
         isXmlString = isXmlString || false;
-        tmxFile = cc.FileUtils.getInstance().fullPathForFilename(tmxFile);
-        var mapXML = cc.SAXParser.getInstance().tmxParse(tmxFile, isXmlString);
+	    var xmlStr = isXmlString ? tmxFile : cc.loader.getRes(tmxFile);
+        if(!xmlStr) throw "Please load the resource first : " + tmxFile;
+
+        var mapXML = this._parseXML(xmlStr);
         var i, j;
 
         // PARSE <map>
@@ -488,13 +549,13 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 cc.log("cocos2d: TMXFormat: Unsupported TMX version:" + version);
 
             if (orientationStr == "orthogonal")
-                this.setOrientation(cc.TMX_ORIENTATION_ORTHO);
+                this.orientation = cc.TMX_ORIENTATION_ORTHO;
             else if (orientationStr == "isometric")
-                this.setOrientation(cc.TMX_ORIENTATION_ISO);
+                this.orientation = cc.TMX_ORIENTATION_ISO;
             else if (orientationStr == "hexagonal")
-                this.setOrientation(cc.TMX_ORIENTATION_HEX);
+                this.orientation = cc.TMX_ORIENTATION_HEX;
             else if (orientationStr !== null)
-                cc.log("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
+                cc.log("cocos2d: TMXFomat: Unsupported orientation:" + orientationStr);
 
             var mapSize = cc.size(0, 0);
             mapSize.width = parseFloat(map.getAttribute('width'));
@@ -513,7 +574,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 for (i = 0; i < propertyArr.length; i++) {
                     aPropertyDict[propertyArr[i].getAttribute('name')] = propertyArr[i].getAttribute('value');
                 }
-                this.setProperties(aPropertyDict);
+                this.properties = aPropertyDict;
             }
         }
 
@@ -527,10 +588,11 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         for (i = 0; i < tilesets.length; i++) {
             var selTileset = tilesets[i];
             // If this is an external tileset then start parsing that
-            var externalTilesetFilename = selTileset.getAttribute('source');
-            if (externalTilesetFilename) {
+            var tsxName = selTileset.getAttribute('source');
+            if (tsxName) {
                 //this._currentFirstGID = parseInt(selTileset.getAttribute('firstgid'));
-                this.parseXMLFile(cc.FileUtils.getInstance().fullPathFromRelativeFile(externalTilesetFilename, isXmlString ? this._resources + "/" : tmxFile));
+                var tsxPath = isXmlString ? cc.path.join(this._resources, tsxName) : cc.path.changeBasename(tmxFile, tsxName);
+                this.parseXMLFile(tsxPath);
             } else {
                 var tileset = new cc.TMXTilesetInfo();
                 tileset.name = selTileset.getAttribute('name') || "";
@@ -553,10 +615,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 var image = selTileset.getElementsByTagName('image')[0];
                 var imagename = image.getAttribute('source');
                 var num = -1;
-                if(this._TMXFileName)
-                    num  = this._TMXFileName.lastIndexOf("/");
+                if(this.tmxFileName)
+                    num  = this.tmxFileName.lastIndexOf("/");
                 if (num !== -1) {
-                    var dir = this._TMXFileName.substr(0, num + 1);
+                    var dir = this.tmxFileName.substr(0, num + 1);
                     tileset.sourceImage = dir + imagename;
                 } else {
                     tileset.sourceImage = this._resources + (this._resources ? "/" : "") + imagename;
@@ -569,18 +631,17 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         var tiles = map.querySelectorAll('tile');
         if (tiles) {
             for (i = 0; i < tiles.length; i++) {
-                var info = this._tileSets[0];
+                var info = this._tilesets[0];
                 var t = tiles[i];
-                this.setParentGID(parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0));
+                this.parentGID = parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0);
                 var tp = t.querySelectorAll("properties > property");
                 if (tp) {
                     var dict = {};
                     for (j = 0; j < tp.length; j++) {
                         var name = tp[j].getAttribute('name');
-                        var value = tp[j].getAttribute('value');
-                        dict[name] = value;
+                        dict[name] = tp[j].getAttribute('value');
                     }
-                    this._tileProperties[this.getParentGID()] = dict;
+                    this._tileProperties[this.parentGID] = dict;
                 }
             }
         }
@@ -651,7 +712,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         }
                         break;
                     default:
-                        if(this.getLayerAttribs() == cc.TMX_LAYER_ATTRIB_NONE)
+                        if(this.layerAttrs == cc.TMX_LAYER_ATTRIB_NONE)
                             cc.log("cc.TMXMapInfo.parseXMLFile(): Only base64 and/or gzip/zlib maps are supported");
                         break;
                 }
@@ -663,7 +724,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                     for (j = 0; j < layerProps.length; j++) {
                         layerProp[layerProps[j].getAttribute('name')] = layerProps[j].getAttribute('value');
                     }
-                    layer.setProperties(layerProp);
+                    layer.properties = layerProp;
                 }
                 this.setLayers(layer);
             }
@@ -675,7 +736,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             for (i = 0; i < objectGroups.length; i++) {
                 var selGroup = objectGroups[i];
                 var objectGroup = new cc.TMXObjectGroup();
-                objectGroup.setGroupName(selGroup.getAttribute('name'));
+                objectGroup.groupName = selGroup.getAttribute('name');
                 objectGroup.setPositionOffset(cc.p(parseFloat(selGroup.getAttribute('x')) * this.getTileSize().width || 0,
                     parseFloat(selGroup.getAttribute('y')) * this.getTileSize().height || 0));
 
@@ -685,7 +746,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         var groupProp = {};
                         groupProp[groupProps[j].getAttribute('name')] = groupProps[j].getAttribute('value');
                         // Add the property to the layer
-                        objectGroup.setProperties(groupProp);
+                        objectGroup.properties = groupProp;
                     }
                 }
 
@@ -785,77 +846,88 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {String}
      */
     getCurrentString:function () {
-        return this._currentString;
+        return this.currentString;
     },
 
     /**
      * @param {String} currentString
      */
     setCurrentString:function (currentString) {
-        this._currentString = currentString;
+        this.currentString = currentString;
     },
 
     /**
      * @return {String}
      */
     getTMXFileName:function () {
-        return this._TMXFileName;
+        return this.tmxFileName;
     },
 
     /**
      * @param {String} fileName
      */
     setTMXFileName:function (fileName) {
-        this._TMXFileName = fileName;
+        this.tmxFileName = fileName;
     },
 
     _internalInit:function (tmxFileName, resourcePath) {
-        this._tileSets = [];
-        this._layers = [];
+        this._tilesets.length = 0;
+        this._layers.length = 0;
 
-        //this._TMXFileName = cc.FileUtils.getInstance().fullPathForFilename(tmxFileName);
-        this._TMXFileName = tmxFileName;
-
-        if (resourcePath) {
+        this.tmxFileName = tmxFileName;
+        if (resourcePath)
             this._resources = resourcePath;
-        }
 
-        this._objectGroups = [];
-
-        this._properties = [];
-        this._tileProperties = [];
+        this._objectGroups.length = 0;
+        this.properties.length = 0;
+        this._tileProperties.length = 0;
 
         // tmp vars
-        this._currentString = "";
-        this._storingCharacters = false;
-        this._layerAttribs = cc.TMX_LAYER_ATTRIB_NONE;
-        this._parentElement = cc.TMX_PROPERTY_NONE;
+        this.currentString = "";
+        this.storingCharacters = false;
+        this.layerAttrs = cc.TMX_LAYER_ATTRIB_NONE;
+        this.parentElement = cc.TMX_PROPERTY_NONE;
         this._currentFirstGID = 0;
     }
 });
 
+window._proto = cc.TMXMapInfo.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "mapWidth", _proto._getMapWidth, _proto._setMapWidth);
+cc.defineGetterSetter(_proto, "mapHeight", _proto._getMapHeight, _proto._setMapHeight);
+cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);
+cc.defineGetterSetter(_proto, "tileHeight", _proto._getTileHeight, _proto._setTileHeight);
+
+delete window._proto;
+
 /**
- * Creates a TMX Format with a tmx file
- * @param {String} tmxFile
- * @param {String} resourcePath
+ * Creates a TMX Format with a tmx file or content string
+ * @param {String} tmxFile fileName or content string
+ * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
  * @return {cc.TMXMapInfo}
+ * @example
+ * 1.
+ * //create a TMXMapInfo with file name
+ * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
+ * 2.
+ * //create a TMXMapInfo with content string and resource path
+ * var resources = "res/TileMaps";
+ * var filePath = "res/TileMaps/orthogonal-test1.tmx";
+ * var xmlStr = cc.loader.getRes(filePath);
+ * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
  */
 cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
     var ret = new cc.TMXMapInfo();
-    if (ret.initWithTMXFile(tmxFile, resourcePath))
-        return ret;
+    if (resourcePath) {
+        if (ret.initWithXML(tmxFile, resourcePath))
+            return ret;
+    } else {
+        if (ret.initWithTMXFile(tmxFile))
+            return ret;
+    }
     return null;
 };
 
-/**
- * creates a TMX Format with an XML string and a TMX resource path
- * @param {String} tmxString
- * @param {String} resourcePath
- * @return {cc.TMXMapInfo}
- */
-cc.TMXMapInfo.createWithXML = function (tmxString, resourcePath) {
-    var ret = new cc.TMXMapInfo();
-    if (ret.initWithXML(tmxString, resourcePath))
-        return ret;
-    return null;
-};
+
+cc.loader.register(["tmx", "tsx"], cc.txtLoader);

@@ -215,6 +215,40 @@ cc.BuilderReader = cc.Class.extend({
         return true;
     },
 
+    _loadBinarySync : function(url){
+        var self = this;
+        var req = this.getXMLHttpRequest();
+        var errInfo = "load " + url + " failed!";
+        req.open('GET', url, false);
+        var arrayInfo = null;
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            req.setRequestHeader("Accept-Charset", "x-user-defined");
+            req.send(null);
+            if (req.status != 200) {
+                cc.log(errInfo);
+                return null;
+            }
+
+            var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
+            if (fileContents) {
+                arrayInfo = this._stringConvertToArray(fileContents);
+                this._fileDataCache[url] = arrayInfo;
+            }
+        } else {
+            if (req.overrideMimeType)
+                req.overrideMimeType('text\/plain; charset=x-user-defined');
+            req.send(null);
+            if (req.status != 200) {
+                cc.log(errInfo);
+                return null;
+            }
+
+            arrayInfo = this._stringConvertToArray(req.responseText);
+            this._fileDataCache[url] = arrayInfo;
+        }
+        return arrayInfo;
+    },
+
     readNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
         if (parentSize == null) {
             parentSize = cc.Director.getInstance().getWinSize();
@@ -222,9 +256,13 @@ cc.BuilderReader = cc.Class.extend({
             animationManager = parentSize;
             parentSize = cc.Director.getInstance().getWinSize();
         }
-        var fileUtils = cc.FileUtils.getInstance();
-        var path = fileUtils.fullPathFromRelativePath(ccbFileName);
-        var data = fileUtils.getByteArrayFromFile(path);
+
+        var data = cc.loader.getRes(ccbFileName);
+        if(!data){
+            var realUrl = cc.loader.getUrl(ccbFileName);
+            data = cc.loader.loadBinarySync(realUrl);
+            cc.loader.cache[ccbFileName] = data;
+        }
 
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
     },
@@ -528,7 +566,7 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     _cleanUpNodeGraph:function (node) {
-        node.setUserObject(null);
+        node.userObject = null;
         var getChildren = node.getChildren();
         for (var i = 0, len = getChildren.length; i < len; i++) {
             this._cleanUpNodeGraph(getChildren[i]);
@@ -638,7 +676,7 @@ cc.BuilderReader = cc.Class.extend({
         } else if (type == CCB_PROPTYPE_BYTE) {
             value = this.readByte();
         } else if (type == CCB_PROPTYPE_COLOR3) {
-            var c = cc.c3(this.readByte(), this.readByte(), this.readByte());
+            var c = cc.color(this.readByte(), this.readByte(), this.readByte());
             value = cc.Color3BWapper.create(c);
         } else if (type == CCB_PROPTYPE_FLOATXY) {
             value = [this.readFloat(), this.readFloat()];
@@ -655,7 +693,7 @@ cc.BuilderReader = cc.Class.extend({
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var locContentSize = texture.getContentSize();
                 var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
-                value = cc.SpriteFrame.createWithTexture(texture, bounds);
+                value = cc.SpriteFrame.create(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;
                 var frameCache = cc.SpriteFrameCache.getInstance();
@@ -1085,3 +1123,4 @@ cc.BuilderReader.concat = function (stringA, stringB) {
     return stringA + stringB;
 };
 
+cc.loader.register(["ccbi"], cc.binaryLoader);

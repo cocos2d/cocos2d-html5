@@ -31,8 +31,8 @@
  * @param {Number} duration the soft keyboard animation duration
  */
 cc.IMEKeyboardNotificationInfo = function (begin, end, duration) {
-    this.begin = begin || cc.RectZero();
-    this.end = end || cc.RectZero();
+    this.begin = begin || cc.rect(0, 0, 0, 0);
+    this.end = end || cc.rect(0, 0, 0, 0);
     this.duration = duration || 0;
 };
 
@@ -337,7 +337,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             // delegate already in list
             return;
         }
-        this.impl._delegateList = cc.ArrayAppendObjectToIndex(this.impl._delegateList, delegate, 0);
+        this.impl._delegateList.splice(0, 0, delegate);
     },
 
     /**
@@ -386,14 +386,14 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             this.impl._delegateWithIme = delegate;
             delegate.didAttachWithIME();
             //prompt
-            this._currentInputString = delegate.getString ? delegate.getString() : "";
+            this._currentInputString = delegate.string || "";
             var userInput = prompt("please enter your word:", this._currentInputString);
             if(userInput != null)
                 this._processDomInputString(userInput);
             this.dispatchInsertText("\n", 1);
         }else{
             this.impl._delegateWithIme = delegate;
-            this._currentInputString = delegate.getString ? delegate.getString() : "";
+            this._currentInputString = delegate.string || "";
             delegate.didAttachWithIME();
             this._domInputControl.focus();
             this._domInputControl.value = this._currentInputString;
@@ -455,7 +455,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
                 this.impl._delegateWithIme = null;
             }
         }
-        cc.ArrayRemoveObject(this.impl._delegateList, delegate);
+        cc.arrayRemoveObject(this.impl._delegateList, delegate);
     },
 
     /**

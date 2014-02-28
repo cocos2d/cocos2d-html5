@@ -41,10 +41,14 @@
  * Instead, use the newer TMX file format: cc.TMXTiledMap </p>
  * @class
  * @extends cc.AtlasNode
+ *
+ * @property {cc.ImageTGA}  tgaInfo - TGA Info
  */
 cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
-    _TGAInfo:null,
-    indices:null,
+	/** @public */
+    tgaInfo:null,
+
+	indices:null,
     //numbers of tiles to render
     _itemsToRender:0,
     //x,y to altas dictionary
@@ -54,14 +58,14 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * @return {cc.ImageTGA}
      */
     getTGAInfo:function () {
-        return this._TGAInfo;
+        return this.tgaInfo;
     },
 
     /**
      * @param  {cc.ImageTGA} Var
      */
     setTGAInfo:function (Var) {
-        this._TGAInfo = Var;
+        this.tgaInfo = Var;
     },
 
     /**
@@ -78,14 +82,13 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * tmpAtlas.initWithTileFile("hello.png", "hello.tga", 16, 16);
      */
     initWithTileFile:function (tile, mapFile, tileWidth, tileHeight) {
-        this._loadTGAfile(mapFile);
         this._calculateItemsToRender();
         if (cc.AtlasNode.prototype.initWithTileFile.call(this, tile, tileWidth, tileHeight, this._itemsToRender)) {
-            this._color = cc.white();
+            this._color = cc.color.white;
             this._posToAtlasIndex = {};
             this._updateAtlasValues();
-            this.setContentSize((this._TGAInfo.width * this._itemWidth),
-                (this._TGAInfo.height * this._itemHeight));
+            this.width = this.tgaInfo.width * this._itemWidth;
+	        this.height = this.tgaInfo.height * this._itemHeight;
             return true;
         }
         return false;
@@ -95,29 +98,29 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * <p>Returns a tile from position x,y.<br />
      * For the moment only channel R is used. </p>
      * @param {cc.Point} position
-     * @return {cc.Color3B}
+     * @return {cc.Color}
      */
     getTileAt:function (position) {
-        if(!this._TGAInfo){
+        if(!this.tgaInfo){
             cc.log("cc.TileMapAtlas.getTileAt(): tgaInfo must not be null");
             return null;
         }
-        if(position.x >= this._TGAInfo.width || position.y >= this._TGAInfo.height)
+        if(position.x >= this.tgaInfo.width || position.y >= this.tgaInfo.height)
             throw "cc.TileMapAtlas.getTileAt(): Invalid position";
 
-        var colorPos = 0|(position.x * 3 + position.y * this._TGAInfo.width * 3);
-        var locTGAImageData = this._TGAInfo.imageData;
-        return new cc.Color3B(locTGAImageData[colorPos], locTGAImageData[colorPos + 1], locTGAImageData[colorPos + 2]);
+        var colorPos = 0|(position.x * 3 + position.y * this.tgaInfo.width * 3);
+        var locTGAImageData = this.tgaInfo.imageData;
+        return cc.color(locTGAImageData[colorPos], locTGAImageData[colorPos + 1], locTGAImageData[colorPos + 2]);
     },
 
     /**
      * Sets a tile at position x,y.
      * For the moment only channel R is used
-     * @param {cc.Color3B} tile
+     * @param {cc.Color} tile
      * @param {cc.Point} position
      */
     setTile:function (tile, position) {
-        if(!this._TGAInfo){
+        if(!this.tgaInfo){
             cc.log("cc.TileMapAtlas.setTile(): tgaInfo must not be null");
             return;
         }
@@ -125,18 +128,18 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             cc.log("cc.TileMapAtlas.setTile(): posToAtlasIndex must not be null");
             return;
         }
-        if(position.x >= this._TGAInfo.width || position.y >= this._TGAInfo.height)
+        if(position.x >= this.tgaInfo.width || position.y >= this.tgaInfo.height)
             throw "cc.TileMapAtlas.setTile(): Invalid position";
         if(!tile || tile.r == 0)
             throw "cc.TileMapAtlas.setTile(): tile should be non-null and tile.r should be non-nil";
 
-        var colorPos = 0 | (position.x * 3 + position.y * this._TGAInfo.width * 3);
-        if (this._TGAInfo.imageData[colorPos] == 0)
+        var colorPos = 0 | (position.x * 3 + position.y * this.tgaInfo.width * 3);
+        if (this.tgaInfo.imageData[colorPos] == 0)
             cc.log("cocos2d: Value.r must be non 0.");
         else {
-            this._TGAInfo.imageData[colorPos] = tile.r;
-            this._TGAInfo.imageData[colorPos + 1] = tile.g;
-            this._TGAInfo.imageData[colorPos + 2] = tile.b;
+            this.tgaInfo.imageData[colorPos] = tile.r;
+            this.tgaInfo.imageData[colorPos + 1] = tile.g;
+            this.tgaInfo.imageData[colorPos + 2] = tile.b;
 
             var num = this._posToAtlasIndex[position.x + "_" + position.y];
             this._updateAtlasValueAt(position, tile, num);
@@ -147,35 +150,20 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      * Dealloc the map from memory
      */
     releaseMap:function () {
-        if (this._TGAInfo) {
-            cc.tgaDestroy(this._TGAInfo);
+        if (this.tgaInfo) {
+            cc.tgaDestroy(this.tgaInfo);
         }
-        this._TGAInfo = null;
-    },
-
-    _loadTGAfile:function (file) {
-        if(!file)
-            throw "cc.TileMapAtlas._loadTGAfile(): file should be non-null";
-
-        //	//Find the path of the file
-        //	NSBundle *mainBndl = [cc.Director sharedDirector].loadingBundle;
-        //	cc.String *resourcePath = [mainBndl resourcePath];
-        //	cc.String * path = [resourcePath stringByAppendingPathComponent:file];
-
-        this._TGAInfo = cc.tgaLoad(cc.FileUtils.getInstance().fullPathForFilename(file));
-        if (this._TGAInfo.status != cc.TGA_OK) {
-            cc.log("TileMapAtlasLoadTGA : TileMapAtlas cannot load TGA file");
-        }
+        this.tgaInfo = null;
     },
 
     _calculateItemsToRender:function () {
-        if(!this._TGAInfo){
+        if(!this.tgaInfo){
             cc.log("cc.TileMapAtlas._calculateItemsToRender(): tgaInfo must not be null");
             return;
         }
 
         this._itemsToRender = 0;
-        var locWidth = this._TGAInfo.width, locHeight = this._TGAInfo.height, locImageData = this._TGAInfo.imageData;
+        var locWidth = this.tgaInfo.width, locHeight = this.tgaInfo.height, locImageData = this.tgaInfo.imageData;
         for (var x = 0; x < locWidth; x++) {
             for (var y = 0; y < locHeight; y++) {
                 if (locImageData[x * 3 + y * locWidth * 3])
@@ -186,23 +174,22 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
     /**
      * @param {cc.Point|cc.GridSize} pos
-     * @param {cc.Color3B} value
+     * @param {cc.Color} value
      * @param {Number} index
      * @private
      */
     _updateAtlasValueAt:function (pos, value, index) {
-        var locTextureAtlas = this._textureAtlas;
+        var locTextureAtlas = this.textureAtlas;
         if(index < 0 && index >= locTextureAtlas.getCapacity())
             throw "cc.TileMapAtlas._updateAtlasValueAt(): Invalid index";
-        var quad = locTextureAtlas.getQuads()[index];
+        var quad = locTextureAtlas.quads[index];
 
         var x = pos.x;
         var y = pos.y;
         var row = (value.r % this._itemsPerRow);
         var col = (value.r / this._itemsPerRow);
 
-        var textureWide = locTextureAtlas.getTexture().getPixelsWide();
-        var textureHigh = locTextureAtlas.getTexture().getPixelsHigh();
+        var tex = locTextureAtlas.texture, textureWide = tex.pixelsWidth, textureHigh = tex.pixelsHeight;
 
         var locItemWidth = this._itemWidth;
         var locItemHeight = this._itemHeight;
@@ -251,26 +238,26 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         quad.br.colors = color;
         quad.bl.colors = color;
 
-        locTextureAtlas.setDirty(true);
-        var totalQuads = locTextureAtlas.getTotalQuads();
+        locTextureAtlas.dirty = true;
+        var totalQuads = locTextureAtlas.totalQuads;
         if (index + 1 > totalQuads)
             locTextureAtlas.increaseTotalQuadsWith(index + 1 - totalQuads);
     },
 
     _updateAtlasValues:function () {
-        if(!this._TGAInfo){
+        if(!this.tgaInfo){
             cc.log("cc.TileMapAtlas._updateAtlasValues(): tgaInfo must not be null");
             return;
         }
 
         var total = 0;
-        var locTGAInfo = this._TGAInfo;
+        var locTGAInfo = this.tgaInfo;
         var locTGAInfoWidth = locTGAInfo.width, locTGAInfoHeight = locTGAInfo.height, locItemsToRender = this._itemsToRender;
         for (var x = 0; x < locTGAInfoWidth; x++) {
             for (var y = 0; y < locTGAInfoHeight; y++) {
                 if (total < locItemsToRender) {
                     var colorPos = x * 3 + y * locTGAInfoWidth * 3;
-                    var value = new cc.Color3B(locTGAInfo.imageData[colorPos], locTGAInfo.imageData[colorPos + 1], locTGAInfo.imageData[colorPos + 2]);
+                    var value = cc.color(locTGAInfo.imageData[colorPos], locTGAInfo.imageData[colorPos + 1], locTGAInfo.imageData[colorPos + 2]);
                     if (value.r != 0) {
                         this._updateAtlasValueAt(cc.p(x, y), value, total);
                         this._posToAtlasIndex[x + "_" + y] = total;

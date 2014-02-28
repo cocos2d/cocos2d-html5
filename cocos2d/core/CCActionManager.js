@@ -41,7 +41,7 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
      */
     ctor:function () {
         this.actions = [];
-        this._target = null;
+        this.target = null;
         this.actionIndex = 0;
         this.currentAction = null; //CCAction
         this.currentActionSalvaged = false;
@@ -141,7 +141,7 @@ cc.ActionManager = cc.Class.extend({
             if (element.actions.indexOf(element.currentAction) !== -1 && !(element.currentActionSalvaged))
                 element.currentActionSalvaged = true;
 
-            element.actions = [];
+            element.actions.length = 0;
             if (this._currentTarget == element && !forceDelete) {
                 this._currentTargetSalvaged = true;
             } else {
@@ -253,6 +253,7 @@ cc.ActionManager = cc.Class.extend({
 
     /**
      * Pauses all running actions, returning a list of targets whose actions were paused.
+     * @return {Array}  a list of targets whose actions were paused.
      */
     pauseAllRunningActions:function(){
         var idsWithActions = [];
@@ -295,7 +296,7 @@ cc.ActionManager = cc.Class.extend({
         if ((action == element.currentAction) && (!element.currentActionSalvaged))
             element.currentActionSalvaged = true;
 
-        cc.ArrayRemoveObjectAtIndex(element.actions,index);
+        element.actions.splice(index, 1);
 
         // update actionIndex in case we are in tick. looping over the actions
         if (element.actionIndex >= index)
@@ -313,7 +314,7 @@ cc.ActionManager = cc.Class.extend({
     _deleteHashElement:function (element) {
         if (element) {
             delete this._hashTargets[element.target.__instanceId];
-            cc.ArrayRemoveObject(this._arrayTargets, element);
+            cc.arrayRemoveObject(this._arrayTargets, element);
             element.actions = null;
             element.target = null;
         }

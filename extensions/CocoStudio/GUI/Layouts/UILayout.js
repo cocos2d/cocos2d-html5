@@ -57,6 +57,11 @@ ccs.BACKGROUNDCOLORRENDERERZ = -2;
  * Base class for ccs.Layout
  * @class
  * @extends ccs.Widget
+ *
+ * @property {Boolean}                  clippingEnabled - Indicate whether clipping is enabled
+ * @property {ccs.LayoutClippingType}   clippingType    - The clipping type: ccs.LayoutClippingType.stencil | ccs.LayoutClippingType.scissor
+ * @property {ccs.LayoutType}           layoutType      - The layout type: ccs.LayoutType.absolute | ccs.LayoutType.linearVertical | ccs.LayoutType.linearHorizontal | ccs.LayoutType.relative
+ *
  */
 ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _clippingEnabled: null,
@@ -88,17 +93,17 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._backGroundScale9Enabled = false;
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
-        this._backGroundImageCapInsets = cc.RectZero();
+        this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
         this._colorType = ccs.LayoutBackGroundColorType.none;
         this._bgImageTexType = ccs.TextureResType.local;
         this._colorRender = null;
         this._gradientRender = null;
-        this._color = cc.white();
-        this._startColor = cc.white();
-        this._endColor = cc.white();
+        this._color = cc.color(255, 255, 255, 255);
+        this._startColor = cc.color(255, 255, 255, 255);
+        this._endColor = cc.color(255, 255, 255, 255);
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
-        this._backGroundImageTextureSize = cc.SizeZero();
+        this._backGroundImageTextureSize = cc.size(0, 0);
         this._layoutType = ccs.LayoutType.absolute;
         this._widgetType = ccs.WidgetType.container;
         this._doLayoutDirty = false;
@@ -117,7 +122,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             this.setCascadeColorEnabled(false);
             this.setCascadeOpacityEnabled(false);
             this.ignoreContentAdaptWithSize(false);
-            this.setSize(cc.SizeZero());
+            this.setSize(cc.size(0, 0));
             this.setBright(true);
             this.setAnchorPoint(0, 0);
             this.initStencil();
@@ -298,7 +303,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.PointZero(), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -366,10 +371,9 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
             return;
         }
-
+        var context = ctx || cc.renderContext;
         // Composition mode, costy but support texture stencil
         if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
-            var context = ctx || cc.renderContext;
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
             var canvas = context.canvas;
             var locCache = ccs.Layout._getSharedCache();
@@ -380,7 +384,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
             context.save();
             // Draw everything first using node visit function
-            this._super(context);
+            cc.Node.prototype.visit.call(this, context);
 
             context.globalCompositeOperation = "destination-in";
 
@@ -398,7 +402,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         // Clip mode, fast, but only support cc.DrawNode
         else {
-            var context = ctx || cc.renderContext, i, children = this._children, locChild;
+            var i, children = this._children, locChild;
 
             context.save();
             this.transform(context);
@@ -414,7 +418,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 // draw children zOrder < 0
                 for (i = 0; i < len; i++) {
                     locChild = children[i];
-                    if (locChild._zOrder < 0)
+                    if (locChild._localZOrder < 0)
                         locChild.visit(context);
                     else
                         break;
@@ -496,7 +500,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             rect[1] = cc.p(size.width, 0);
             rect[2] = cc.p(size.width, size.height);
             rect[3] = cc.p(0, size.height);
-            var green = cc.c4f(0, 1, 0, 1);
+            var green = cc.color.green;
             this._clippingStencil.clear();
             this._clippingStencil.drawPoly(rect, 4, green, 0, green);
         }
@@ -579,6 +583,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
+        this.setContentSize(this._size);
         this.setStencilClippingSize(this._size);
         this._doLayoutDirty = true;
 
@@ -715,7 +720,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
-        this._backGroundImageTextureSize = cc.SizeZero();
+        this._backGroundImageTextureSize = cc.size(0, 0);
     },
 
     /**
@@ -764,7 +769,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
-                this._gradientRender = cc.LayerGradient.create(cc.c4b(255, 0, 0, 255), cc.c4b(0, 255, 0, 255));
+                this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
                 this._gradientRender.setContentSize(this._size);
                 this._gradientRender.setOpacity(this._opacity);
                 this._gradientRender.setStartColor(this._startColor);
@@ -779,17 +784,22 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Sets background color for layout, if color type is LAYOUT_COLOR_SOLID
-     * @param {cc.c3b} color
-     * @param {cc.c3b} endColor
+     * @param {cc.Color} color
+     * @param {cc.Color} endColor
      */
     setBackGroundColor: function (color, endColor) {
         if (!endColor) {
-            this._color = color;
+            this._color.r = color.r;
+            this._color.g = color.g;
+            this._color.b = color.b;
             if (this._colorRender) {
                 this._colorRender.setColor(color);
             }
         } else {
-            this._startColor = color;
+            this._startColor.r = color.r;
+            this._startColor.g = color.g;
+            this._startColor.b = color.b;
+
             if (this._gradientRender) {
                 this._gradientRender.setStartColor(color);
             }
@@ -825,7 +835,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      * @param {cc.Point} vector
      */
     setBackGroundColorVector: function (vector) {
-        this._alongVector = vector;
+        this._alongVector.x = vector.x;
+        this._alongVector.y = vector.y;
         if (this._gradientRender) {
             this._gradientRender.setVector(vector);
         }
@@ -899,7 +910,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 topBoundary = locChild.getBottomInParent() - locMargin.bottom;
             }
         }
@@ -934,7 +945,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locMargin = locLayoutParameter.getMargin();
                 locFinalPosX += locMargin.left;
                 locFinalPosY -= locMargin.top;
-                locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                locChild.setPosition(locFinalPosX, locFinalPosY);
                 leftBoundary = locChild.getRightInParent() + locMargin.right;
             }
         }
@@ -1319,7 +1330,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                         default:
                             break;
                     }
-                    locChild.setPosition(cc.p(locFinalPosX, locFinalPosY));
+                    locChild.setPosition(locFinalPosX, locFinalPosY);
                     locLayoutParameter._put = true;
                     unlayoutChildCount--;
                 }
@@ -1396,6 +1407,16 @@ if (cc.Browser.supportWebGL) {
 ccs.Layout._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 };
+
+window._proto = ccs.Layout.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "clippingEnabled", _proto.isClippingEnabled, _proto.setClippingEnabled);
+cc.defineGetterSetter(_proto, "clippingType", null, _proto.setClippingType);
+cc.defineGetterSetter(_proto, "layoutType", _proto.getLayoutType, _proto.setLayoutType);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UILayout.
  * @constructs

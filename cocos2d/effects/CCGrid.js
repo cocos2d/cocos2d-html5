@@ -168,7 +168,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
             texture = new cc.Texture2D();
             // we only use rgba8888
-            texture.initWithData(data, cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, POTWide, POTHigh, winSize);
+            texture.initWithData(data, cc.Texture2D.PIXEL_FORMAT_RGBA8888, POTWide, POTHigh, winSize);
             if (!texture) {
                 cc.log("cocos2d: CCGrid: error creating texture");
                 return false;
@@ -183,9 +183,8 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._texture = texture;
         this._isTextureFlipped = flipped;
 
-        var texSize = this._texture.getContentSize();
-        this._step.x = texSize.width / gridSize.width;
-        this._step.y = texSize.height / gridSize.height;
+        this._step.x = this._texture.width / gridSize.width;
+        this._step.y = this._texture.height / gridSize.height;
 
         this._grabber = new cc.Grabber();
         if (!this._grabber)
@@ -346,7 +345,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 
     blit:function () {
         var n = this._gridSize.width * this._gridSize.height;
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
 
@@ -387,8 +386,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     calculateVertexPoints:function () {
         var gl = cc.renderContext;
 
-        var width = this._texture.getPixelsWide();
-        var height = this._texture.getPixelsHigh();
+        var width = this._texture.pixelsWidth;
+        var height = this._texture.pixelsHeight;
         var imageH = this._texture.getContentSizeInPixels().height;
         var locGridSize = this._gridSize;
 
@@ -574,7 +573,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         // Attributes
         //
         var gl = cc.renderContext, locDirty = this._dirty;
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
 
         // position
         gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
@@ -607,8 +606,8 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
     },
 
     calculateVertexPoints:function () {
-        var width = this._texture.getPixelsWide();
-        var height = this._texture.getPixelsHigh();
+        var width = this._texture.pixelsWidth;
+        var height = this._texture.pixelsHeight;
         var imageH = this._texture.getContentSizeInPixels().height;
         var locGridSize = this._gridSize;
 

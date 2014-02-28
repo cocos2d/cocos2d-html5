@@ -53,7 +53,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         if (!name) {
             return;
         }
-        if (this._animations.hasOwnProperty(name)) {
+        if (this._animations[name]) {
             delete this._animations[name];
         }
     },
@@ -68,7 +68,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @return {cc.Animation}
      */
     getAnimation:function (name) {
-        if (this._animations.hasOwnProperty(name))
+        if (this._animations[name])
             return this._animations[name];
         return null;
     },
@@ -94,10 +94,9 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
             var spriteFrameCache = cc.SpriteFrameCache.getInstance();
-            var fileUtils = cc.FileUtils.getInstance(), path;
+            var path = cc.path;
             for (var i = 0; i < spritesheets.length; i++) {
-                path = fileUtils.fullPathFromRelativeFile(spritesheets[i], plist);
-                spriteFrameCache.addSpriteFrames(path);
+                spriteFrameCache.addSpriteFrames(path.changeBasename(plist, spritesheets[i]));
             }
         }
 
@@ -124,9 +123,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
     addAnimations:function (plist) {
         if(!plist)
             throw "cc.AnimationCache.addAnimations(): Invalid texture file name";
-        var fileUtils = cc.FileUtils.getInstance();
-        var path = fileUtils.fullPathForFilename(plist);
-        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
+        var dict = cc.loader.getRes(plist);
 
         if(!dict){
             cc.log("cc.AnimationCache.addAnimations(): File could not be found");
@@ -170,7 +167,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                 cc.log("cocos2d: cc.AnimationCache: An animation in your dictionary refers to a frame which is not in the cc.SpriteFrameCache." +
                     " Some or all of the frames for the animation '" + key + "' may be missing.");
             }
-            animation = cc.Animation.createWithAnimationFrames(frames, delay, 1);
+            animation = cc.Animation.create(frames, delay, 1);
             cc.AnimationCache.getInstance().addAnimation(animation, key);
         }
     },

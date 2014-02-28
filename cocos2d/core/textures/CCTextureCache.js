@@ -31,42 +31,6 @@
 cc.g_sharedTextureCache = null;
 
 /**
- * Load the images to the cache
- * @param {String} imageUrl
- */
-cc.loadImage = function (imageUrl) {
-    // compute image type
-    var imageType = cc.computeImageFormatType(imageUrl);
-    if (imageType == cc.FMT_UNKNOWN) {
-        cc.log("unsupported format:" + imageUrl);
-        return;
-    }
-    var image = new Image();
-    image.src = imageUrl;
-    image.addEventListener('load',function(){
-        cc.TextureCache.getInstance().cacheImage(imageUrl, image);
-        this.removeEventListener('load', arguments.callee, false);
-    },false);
-};
-
-/**
- *  Support image format type
- * @param {String} filename
- * @return {Number}
- */
-cc.computeImageFormatType = function (filename) {
-    if (filename.toLowerCase().indexOf('.jpg') > 0 || filename.toLowerCase().indexOf('.jpeg') > 0) {
-        return cc.FMT_JPG;
-    } else if (filename.toLowerCase().indexOf('.png') > 0) {
-        return cc.FMT_PNG;
-    } else if (filename.toLowerCase().indexOf('.webp') > 0) {
-        return cc.FMT_WEBP;
-    }
-
-    return cc.FMT_UNKNOWN;
-};
-
-/**
  *  Implementation TextureCache
  * @class
  * @extends cc.Class
@@ -74,11 +38,9 @@ cc.computeImageFormatType = function (filename) {
 cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     _textures:null,
     _textureColorsCache:null,
-    _textureKeySeq:null,
+    _textureKeySeq:(0 | Math.random() * 1000),
 
-    _rendererInitialized:false,
     _loadedTexturesBefore:null,
-    _loadingTexturesBefore:null,
 
     /**
      * Constructor
@@ -86,36 +48,34 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     ctor: function () {
         if(cc.g_sharedTextureCache)
             throw "Attempted to allocate a second instance of a singleton.";
-        this._textureKeySeq += (0 | Math.random() * 1000);
         this._textures = {};
         this._textureColorsCache = {};
         if(cc.renderContextType === cc.WEBGL){
             this._loadedTexturesBefore = {};
-            this._loadingTexturesBefore = {};
         }
     },
 
-    _addImageAsyncCallBack:function (target, selector) {
-        if (target && (typeof(selector) === "string")) {
-            target[selector]();
-        } else if (target && (typeof(selector) === "function")) {
-            selector.call(target);
+    handleLoadedTexture : function(url){
+        var locTexs = this._textures;
+        if(cc.renderContextType === cc.WEBGL && !cc._rendererInitialized){
+            locTexs = this._loadedTexturesBefore;
         }
+        var tex = locTexs[url];
+        if(!tex) {
+            tex = locTexs[url] = new cc.Texture2D();
+            tex.url = url;
+        }
+        tex.handleLoadedTexture();
     },
 
     _initializingRenderer : function(){
-        this._rendererInitialized = true;
-
         var selPath;
         //init texture from _loadedTexturesBefore
         var locLoadedTexturesBefore = this._loadedTexturesBefore, locTextures = this._textures;
         for(selPath in locLoadedTexturesBefore){
-            var htmlImage = locLoadedTexturesBefore[selPath];
-
-            var texture2d = new cc.Texture2D();
-            texture2d.initWithElement(htmlImage);
-            texture2d.handleLoadedTexture();
-            locTextures[selPath] = texture2d;
+            var tex2d = locLoadedTexturesBefore[selPath];
+            tex2d.handleLoadedTexture();
+            locTextures[selPath] = tex2d;
         }
         this._loadedTexturesBefore = {};
     },
@@ -166,10 +126,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
      */
     textureForKey:function (textureKeyName) {
-        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
-        if (this._textures.hasOwnProperty(fullPath))
-            return this._textures[fullPath];
-        return null;
+        return this._textures[textureKeyName];
     },
 
     /**
@@ -209,7 +166,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
                 key = this._generalTextureKey();
         }
 
-        if (!this._textureColorsCache.hasOwnProperty(key))
+        if (!this._textureColorsCache[key])
             this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
         return this._textureColorsCache[key];
     },
@@ -222,24 +179,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {cc.Texture2D}
      */
     addPVRImage:function (path) {
-        if(!path)
-            throw "cc.TextureCache.addPVRImage(): path should be non-null";
-
-        path = cc.FileUtils.getInstance().fullPathForFilename(path);
-
-        var key = path;
-
-        if (this._textures[key] != null)
-            return this._textures[key];
-
-        // Split up directory and filename
-        var tex = new cc.Texture2D();
-        if (tex.initWithPVRFile(key)) {
-            this._textures[key] = tex;
-        } else {
-            cc.log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
-        }
-        return tex;
+        cc.log("addPVRImage does not support on HTML5");
     },
 
     /**
@@ -291,87 +231,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     removeTextureForKey:function (textureKeyName) {
         if (textureKeyName == null)
             return;
-        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
-        if (this._textures[fullPath])
-            delete(this._textures[fullPath]);
-    },
-
-    /**
-     *  Loading the images asynchronously
-     * @param {String} path
-     * @param {cc.Node} target
-     * @param {Function} selector
-     * @return {cc.Texture2D}
-     * @example
-     * //example
-     * cc.TextureCache.getInstance().addImageAsync("hello.png", this, this.loadingCallBack);
-     */
-    addImageAsync:function (path, target, selector) {
-        if(!path)
-            throw "cc.TextureCache.addImageAsync(): path should be non-null";
-        path = cc.FileUtils.getInstance().fullPathForFilename(path);
-        var texture = this._textures[path];
-        var image,that;
-        if (texture) {
-            if(texture.isLoaded()){
-                this._addImageAsyncCallBack(target, selector);
-            }else{
-                that = this;
-                image = texture.getHtmlElementObj();
-                image.addEventListener("load", function () {
-                    texture.handleLoadedTexture();
-                    that._addImageAsyncCallBack(target, selector);
-                    this.removeEventListener('load', arguments.callee, false);
-                });
-            }
-        } else {
-            image = new Image();
-            image.crossOrigin = "Anonymous";
-
-            that = this;
-            image.addEventListener("load", function () {
-                if (that._textures.hasOwnProperty(path))
-                    that._textures[path].handleLoadedTexture();
-                that._addImageAsyncCallBack(target, selector);
-                this.removeEventListener('load', arguments.callee, false);
-                this.removeEventListener('error', arguments.callee, false);
-            });
-            image.addEventListener("error", function () {
-                cc.Loader.getInstance().onResLoadingErr(path);
-                //remove from cache
-                if (that._textures.hasOwnProperty(path))
-                    delete that._textures[path];
-
-                this.removeEventListener('error', arguments.callee, false);
-            });
-            image.src = path;
-            var texture2d = new cc.Texture2D();
-            texture2d.initWithElement(image);
-            this._textures[path] = texture2d;
-        }
-        return this._textures[path];
-    },
-
-    _addImageBeforeRenderer:function(path){
-        var texture = new Image();
-        texture.crossOrigin = "Anonymous";
-        var that = this;
-        texture.addEventListener("load", function () {
-            cc.Loader.getInstance().onResLoaded();
-            that._loadedTexturesBefore[path] = texture;
-            delete that._loadingTexturesBefore[path];
-
-            this.removeEventListener('load', arguments.callee, false);
-            this.removeEventListener('error', arguments.callee, false);
-        });
-        texture.addEventListener("error", function () {
-            cc.Loader.getInstance().onResLoadingErr(path);
-            delete that._loadingTexturesBefore[path];
-
-            this.removeEventListener('error', arguments.callee, false);
-        });
-        texture.src = path;
-        this._loadingTexturesBefore[path] = texture;
+        if (this._textures[textureKeyName])
+            delete(this._textures[textureKeyName]);
     },
 
     /**
@@ -380,62 +241,38 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      *  object and it will return it. It will use the filename as a key.<br />
      * Otherwise it will return a reference of a previously loaded image. <br />
      * Supported image extensions: .png, .jpg, .gif</p>
-     * @param {String} path
+     * @param {String} url
      * @return {cc.Texture2D}
      * @example
      * //example
      * cc.TextureCache.getInstance().addImage("hello.png");
      */
-    addImage:function (path) {
-        if(!path)
+    addImage:function (url, target, cb) {
+        if(!url)
             throw "cc.Texture.addImage(): path should be non-null";
-        if(cc.renderContextType === cc.WEBGL){
-            if (!this._rendererInitialized)
-                return this._addImageBeforeRenderer(path);
+        if(arguments.length == 2){
+            cb = target;
+            target = null;
+        }
+        var locTexs = this._textures;
+        if(cc.renderContextType === cc.WEBGL && !cc._rendererInitialized){
+            locTexs = this._loadedTexturesBefore;
+        }
+        var tex = locTexs[url];
+        if(tex) {
+            if(cb) cb.call(target);
+            return tex;
         }
 
-        path = cc.FileUtils.getInstance().fullPathForFilename(path);
-
-        var texture = this._textures[path];
-        var image;
-        if (texture) {
-            if (texture.isLoaded()) {
-                cc.Loader.getInstance().onResLoaded();
-            } else {
-                image = texture.getHtmlElementObj();
-                image.addEventListener("load", function () {
-                    texture.handleLoadedTexture();
-                    cc.Loader.getInstance().onResLoaded();
-                    this.removeEventListener('load', arguments.callee, false);
-                });
-            }
-        } else {
-            image = new Image();
-            image.crossOrigin = "Anonymous";
-
-            var that = this;
-            image.addEventListener("load", function () {
-                cc.Loader.getInstance().onResLoaded();
-                if (that._textures.hasOwnProperty(path))
-                    that._textures[path].handleLoadedTexture();
-                this.removeEventListener('load', arguments.callee, false);
-                this.removeEventListener('error', arguments.callee, false);
+        if(!cc.loader.getRes(url)){
+            cc.loader.load(url, function(err){
+                if(cb) cb.call(target);
             });
-            image.addEventListener("error", function () {
-                cc.Loader.getInstance().onResLoadingErr(path);
-                //remove from cache
-                if (that._textures.hasOwnProperty(path))
-                    delete that._textures[path];
-
-                this.removeEventListener('error', arguments.callee, false);
-            });
-            image.src = path;
-            var texture2d = new cc.Texture2D();
-            texture2d.initWithElement(image);
-            this._textures[path] = texture2d;
         }
 
-        return this._textures[path];
+        tex = locTexs[url] = new cc.Texture2D();
+        tex.url = url;
+        return tex;
     },
 
     /**
@@ -469,7 +306,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             throw "cc.Texture.addUIImage(): image should be non-null";
 
         if (key) {
-            if (this._textures.hasOwnProperty(key) && this._textures[key])
+            if (this._textures[key])
                 return this._textures[key];
         }
 
@@ -495,11 +332,11 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             var selTexture = locTextures[key];
             count++;
             if (selTexture.getHtmlElementObj() instanceof  HTMLImageElement)
-                cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
+                cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
             else {
-                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.getPixelsWide() + " x " + selTexture.getPixelsHigh());
+                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
             }
-            totalBytes += selTexture.getPixelsWide() * selTexture.getPixelsHigh() * 4;
+            totalBytes += selTexture.pixelsWidth * selTexture.pixelsHeight * 4;
         }
 
         var locTextureColorsCache = this._textureColorsCache;

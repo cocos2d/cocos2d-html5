@@ -422,3 +422,227 @@ cc.KEY = {
     quote:222,
     space:32
 };
+
+
+/**
+ * Image Format:JPG
+ * @constant
+ * @type Number
+ */
+cc.FMT_JPG = 0;
+
+/**
+ * Image Format:PNG
+ * @constant
+ * @type Number
+ */
+cc.FMT_PNG = 1;
+
+/**
+ * Image Format:TIFF
+ * @constant
+ * @type Number
+ */
+cc.FMT_TIFF = 2;
+
+/**
+ * Image Format:RAWDATA
+ * @constant
+ * @type Number
+ */
+cc.FMT_RAWDATA = 3;
+
+/**
+ * Image Format:WEBP
+ * @constant
+ * @type Number
+ */
+cc.FMT_WEBP = 4;
+
+/**
+ * Image Format:UNKNOWN
+ * @constant
+ * @type Number
+ */
+cc.FMT_UNKNOWN = 5;
+
+cc.getImageFormatByData = function (imgData) {
+	// if it is a png file buffer.
+	if (imgData.length > 8) {
+		if (imgData[0] == 0x89
+			&& imgData[1] == 0x50
+			&& imgData[2] == 0x4E
+			&& imgData[3] == 0x47
+			&& imgData[4] == 0x0D
+			&& imgData[5] == 0x0A
+			&& imgData[6] == 0x1A
+			&& imgData[7] == 0x0A) {
+			return cc.FMT_PNG;
+		}
+	}
+
+	// if it is a tiff file buffer.
+	if (imgData.length > 2) {
+		if ((imgData[0] == 0x49 && imgData[1] == 0x49)
+			|| (imgData[0] == 0x4d && imgData[1] == 0x4d)
+			|| (imgData[0] == 0xff && imgData[1] == 0xd8)) {
+			return cc.FMT_TIFF;
+		}
+	}
+
+	return cc.FMT_UNKNOWN;
+};
+
+
+
+var CCNS_REG1 = /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/;
+var CCNS_REG2 = /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*\}\s*$/
+/**
+ * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
+ * The string is not localized, so items are always separated with a comma. <br/>
+ * If the string is not well-formed, the function returns cc.rect(0, 0, 0, 0).
+ * @function
+ * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
+ * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
+ * These components can represent integer or float values.
+ * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
+ * Constructor
+ * @example
+ * // example
+ * var rect = cc.RectFromString("{{3,2},{4,5}}");
+ */
+cc.RectFromString = function (content) {
+	var result = CCNS_REG2.exec(content);
+	if(!result) return cc.rect(0, 0, 0, 0);
+	return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
+};
+
+/**
+ * Returns a Core Graphics point structure corresponding to the data in a given string.
+ * @function
+ * @param {String} content   A string object whose contents are of the form "{x,y}",
+ * where x is the x coordinate and y is the y coordinate.<br/>
+ * The x and y values can represent integer or float values. <br/>
+ * The string is not localized, so items are always separated with a comma.<br/>
+ * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
+ * If the string is not well-formed, the function returns cc.p(0,0).
+ * Constructor
+ * @example
+ * //example
+ * var point = cc.PointFromString("{3.0,2.5}");
+ */
+cc.PointFromString = function (content) {
+	var result = CCNS_REG1.exec(content);
+	if(!result) return cc.p(0,0);
+	return cc.p(parseFloat(result[1]), parseFloat(result[2]));
+};
+
+/**
+ * Returns a Core Graphics size structure corresponding to the data in a given string.
+ * @function
+ * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
+ * where w is the width and h is the height.<br/>
+ * The w and h values can be integer or float values. <br/>
+ * The string is not localized, so items are always separated with a comma.<br/>
+ * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
+ * If the string is not well-formed, the function returns cc.size(0,0).
+ * @example
+ * // example
+ * var size = cc.SizeFromString("{3.0,2.5}");
+ */
+cc.SizeFromString = function (content) {
+	var result = CCNS_REG1.exec(content);
+	if(!result) return cc.size(0, 0);
+	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
+};
+
+
+/**
+ * Common getter setter configuration function
+ * @function
+ * @param {Object}   proto      A class prototype or an object to config<br/>
+ * @param {String}   prop       Property name
+ * @param {function} getter     Getter function for the property
+ * @param {function} setter     Setter function for the property
+ * @param {String}   getterName Name of getter function for the property
+ * @param {String}   setterName Name of setter function for the property
+ */
+cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, setterName)
+{
+	if (proto.__defineGetter__) {
+		getter && proto.__defineGetter__(prop, getter);
+		setter && proto.__defineSetter__(prop, setter);
+	}
+	else if (Object.defineProperty) {
+		var desc = { enumerable: false, configurable: true };
+		getter && (desc.get = getter);
+		setter && (desc.set = setter);
+		Object.defineProperty(proto, prop, desc);
+	}
+	else {
+		throw new Error("browser does not support getters");
+		return;
+	}
+
+	if(!getterName && !setterName) {
+		// Lookup getter/setter function
+		var hasGetter = (getter != null), hasSetter = (setter != undefined);
+		var props = Object.getOwnPropertyNames(proto);
+		for (var i = 0; i < props.length; i++) {
+			var name = props[i];
+			if( proto.__lookupGetter__(name) !== undefined || typeof proto[name] !== "function" ) continue;
+			var func = proto[name];
+			if (hasGetter && func === getter) {
+				getterName = name;
+				if(!hasSetter || setterName) break;
+			}
+			if (hasSetter && func === setter) {
+				setterName = name;
+				if(!hasGetter || getterName) break;
+			}
+		}
+	}
+
+	// Found getter/setter
+	var ctor = proto.constructor;
+	if (getterName) {
+		if (!ctor.__getters__) {
+			ctor.__getters__ = {};
+		}
+		ctor.__getters__[getterName] = prop;
+	}
+	if (setterName) {
+		if (!ctor.__setters__) {
+			ctor.__setters__ = {};
+		}
+		ctor.__setters__[setterName] = prop;
+	}
+};
+
+/**
+ * Common getter setter configuration function
+ * @function
+ * @param {Object}   class      A class prototype or an object to config<br/>
+ * @param {String}   prop       Property name
+ * @param {function} getter     Getter function for the property
+ * @param {function} setter     Setter function for the property
+ * @param {String}   getterName Name of getter function for the property
+ * @param {String}   setterName Name of setter function for the property
+ */
+cc.defineProtoGetterSetter = function (classobj, prop, getter, setter, getterName, setterName)
+{
+	var proto = classobj.prototype;
+	cc.defineGetterSetter(proto, prop, getter, setter, getterName, setterName);
+};
+
+/**
+ * copy an array's item to a new array (its performance is better than Array.slice)
+ * @param {Array} arr
+ * @returns {Array}
+ */
+cc.copyArray = function(arr){
+	var i, len = arr.length, arr_clone = new Array(len);
+	for (i = 0; i < len; i += 1)
+		arr_clone[i] = arr[i];
+	return arr_clone;
+};

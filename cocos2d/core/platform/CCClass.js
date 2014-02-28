@@ -34,59 +34,59 @@
 var cc = cc || {};
 
 //
-function ClassManager(){
-    //tells own name
-    return arguments.callee.name || (arguments.callee.toString()).match(/^function ([^(]+)/)[1];
-}
-ClassManager.id=(0|(Math.random()*998));
-ClassManager.instanceId=(0|(Math.random()*998));
-ClassManager.compileSuper=function(func, name, id){
-    //make the func to a string
-    var str = func.toString();
-    //find parameters
-    var pstart = str.indexOf('(');
-    var pend = str.indexOf(')');
-    var params = str.substring(pstart+1, pend);
-    params = params.trim();
+var ClassManager = {
+    id : (0|(Math.random()*998)),
 
-    //find function body
-    var bstart = str.indexOf('{');
-    var bend = str.lastIndexOf('}');
-    var str = str.substring(bstart+1, bend);
+    instanceId : (0|(Math.random()*998)),
 
-    //now we have the content of the function, replace this._super
-    //find this._super
-    while(str.indexOf('this._super')!= -1)
-    {
-        var sp = str.indexOf('this._super');
-        //find the first '(' from this._super)
-        var bp = str.indexOf('(', sp);
+    compileSuper : function(func, name, id){
+        //make the func to a string
+        var str = func.toString();
+        //find parameters
+        var pstart = str.indexOf('(');
+        var pend = str.indexOf(')');
+        var params = str.substring(pstart+1, pend);
+        params = params.trim();
 
-        //find if we are passing params to super
-        var bbp = str.indexOf(')', bp);
-        var superParams = str.substring(bp+1, bbp);
-        superParams = superParams.trim();
-        var coma = superParams? ',':'';
+        //find function body
+        var bstart = str.indexOf('{');
+        var bend = str.lastIndexOf('}');
+        var str = str.substring(bstart+1, bend);
 
-        //find name of ClassManager
-        var Cstr = arguments.callee.ClassManager();
+        //now we have the content of the function, replace this._super
+        //find this._super
+        while(str.indexOf('this._super')!= -1)
+        {
+            var sp = str.indexOf('this._super');
+            //find the first '(' from this._super)
+            var bp = str.indexOf('(', sp);
 
-        //replace this._super
-        str = str.substring(0, sp)+  Cstr+'['+id+'].'+name+'.call(this'+coma+str.substring(bp+1);
+            //find if we are passing params to super
+            var bbp = str.indexOf(')', bp);
+            var superParams = str.substring(bp+1, bbp);
+            superParams = superParams.trim();
+            var coma = superParams? ',':'';
+
+            //replace this._super
+            str = str.substring(0, sp)+  'ClassManager['+id+'].'+name+'.call(this'+coma+str.substring(bp+1);
+        }
+        return Function(params, str);
+    },
+
+    getNewID : function(){
+        return this.id++;
+    },
+
+    getNewInstanceId : function(){
+        return this.instanceId++;
     }
-    return Function(params, str);
 };
 ClassManager.compileSuper.ClassManager = ClassManager;
-ClassManager.getNewID=function(){
-    return this.id++;
-};
-ClassManager.getNewInstanceId=function(){
-    return this.instanceId++;
-};
 
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
-    var releaseMode = (document['ccConfig'] && document['ccConfig']['CLASS_RELEASE_MODE']) ? document['ccConfig']['CLASS_RELEASE_MODE'] : null;
+    var config = cc.game.config;
+    var releaseMode = config[cc.game.CONFIG_KEY.classReleaseMode];
     if(releaseMode) {
         console.log("release Mode");
     }
@@ -118,11 +118,43 @@ ClassManager.getNewInstanceId=function(){
         // 2) for cc.clone and perhaps more. It is also required to make
         // these function properties cacheable in Carakan.
         var desc = { writable: true, enumerable: false, configurable: true };
+
+	    prototype.__instanceId = null;
+
+	    // The dummy Class constructor
+	    function Class() {
+		    this.__instanceId = ClassManager.getNewInstanceId();
+		    // All construction is actually done in the init method
+		    if (this.ctor)
+			    this.ctor.apply(this, arguments);
+	    }
+
+	    Class.id = classId;
+	    // desc = { writable: true, enumerable: false, configurable: true,
+	    //          value: XXX }; Again, we make this non-enumerable.
+	    desc.value = classId;
+	    Object.defineProperty(prototype, '__pid', desc);
+
+	    // Populate our constructed prototype object
+	    Class.prototype = prototype;
+
+	    // Enforce the constructor to be what we expect
+	    desc.value = Class;
+	    Object.defineProperty(Class.prototype, 'constructor', desc);
+
+	    // Copy getter/setter
+	    this.__getters__ && (Class.__getters__ = cc.clone(this.__getters__));
+	    this.__setters__ && (Class.__setters__ = cc.clone(this.__setters__));
+
         for (var name in prop) {
-            if(releaseMode && typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name])) {
+	        var isFunc = (typeof prop[name] === "function");
+	        var override = (typeof _super[name] === "function");
+	        var hasSuperCall = fnTest.test(prop[name]);
+
+            if(releaseMode && isFunc && override && hasSuperCall) {
                 desc.value = ClassManager.compileSuper(prop[name], name, classId);
                 Object.defineProperty(prototype, name, desc);
-            } else if(typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name])){
+            } else if(isFunc && override && hasSuperCall){
                 desc.value = (function (name, fn) {
                     return function () {
                         var tmp = this._super;
@@ -140,38 +172,41 @@ ClassManager.getNewInstanceId=function(){
                     };
                 })(name, prop[name]);
                 Object.defineProperty(prototype, name, desc);
-            } else if(typeof prop[name] == "function") {
+            } else if(isFunc) {
                 desc.value = prop[name];
                 Object.defineProperty(prototype, name, desc);
             } else{
                 prototype[name] = prop[name];
             }
+
+	        if (isFunc) {
+		        // Override registered getter/setter
+		        var getter, setter, propertyName;
+		        if( this.__getters__ && this.__getters__[name] ) {
+			        propertyName = this.__getters__[name];
+			        for (var i in this.__setters__) {
+				        if (this.__setters__[i] == propertyName) {
+					        setter = i;
+				            break;
+				        }
+			        }
+			        cc.defineGetterSetter(prototype, propertyName, prop[name], prop[setter] ? prop[setter] : prototype[setter], name, name);
+		        }
+		        if( this.__setters__ && this.__setters__[name] ) {
+			        propertyName = this.__setters__[name];
+			        for (var i in this.__getters__) {
+				        if (this.__getters__[i] == propertyName) {
+					        getter = i;
+					        break;
+				        }
+			        }
+			        cc.defineGetterSetter(prototype, propertyName, prop[getter] ? prop[getter] : prototype[getter], prop[name], name, name);
+		        }
+	        }
         }
-        prototype.__instanceId = null;
-
-        // The dummy Class constructor
-        function Class() {
-            this.__instanceId = ClassManager.getNewInstanceId();
-            // All construction is actually done in the init method
-            if (this.ctor)
-                this.ctor.apply(this, arguments);
-        }
-
-        Class.id = classId;
-        // desc = { writable: true, enumerable: false, configurable: true,
-        //          value: XXX }; Again, we make this non-enumerable.
-        desc.value = classId;
-        Object.defineProperty(prototype, '__pid', desc);
-
-        // Populate our constructed prototype object
-        Class.prototype = prototype;
-
-        // Enforce the constructor to be what we expect
-        desc.value = Class;
-        Object.defineProperty(Class.prototype, 'constructor', desc);
 
         // And make this Class extendable
-        Class.extend = arguments.callee;
+        Class.extend = cc.Class.extend;
 
         //add implementation method
         Class.implement = function (prop) {
@@ -219,8 +254,7 @@ cc.base = function(me, opt_methodName, var_args) {
 
     var args = Array.prototype.slice.call(arguments, 2);
     var foundCaller = false;
-    for (var ctor = me.constructor;
-        ctor; ctor = ctor.superClass_ && ctor.superClass_.constructor) {
+    for (var ctor = me.constructor; ctor; ctor = ctor.superClass_ && ctor.superClass_.constructor) {
         if (ctor.prototype[opt_methodName] === caller) {
             foundCaller = true;
         } else if (foundCaller) {
@@ -236,8 +270,8 @@ cc.base = function(me, opt_methodName, var_args) {
         return me.constructor.prototype[opt_methodName].apply(me, args);
     } else {
         throw Error(
-                    'cc.base called from a method of one name ' +
-                    'to a method of a different name');
+            'cc.base called from a method of one name ' +
+                'to a method of a different name');
     }
 };
 

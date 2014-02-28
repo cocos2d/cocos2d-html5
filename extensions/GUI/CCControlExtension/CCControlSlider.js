@@ -30,6 +30,20 @@
 cc.SLIDER_MARGIN_H = 24;
 cc.SLIDER_MARGIN_V = 8;
 
+/**
+ * ControlSlider: Slider ui component.
+ * @class
+ * @extends cc.Control
+ *
+ * @property {Number}       value               - The value of the slider
+ * @property {Number}       minValue            - The minimum value of the slider
+ * @property {Number}       maxValue            - The maximum value of the slider
+ * @property {Number}       minAllowedValue     - The minimum allowed value of the slider
+ * @property {Number}       maxAllowedValue     - The maximum allowed value of the slider
+ * @property {Number}       thumbSprite         - <@readonly> Brightness value of the picker
+ * @property {cc.Sprite}    progressSprite      - <@readonly> The background sprite
+ * @property {cc.Sprite}    backgroundSprite    - <@readonly> The overlay sprite
+ */
 cc.ControlSlider = cc.Control.extend({
     _value:0,
     _minimumValue:0,
@@ -79,8 +93,8 @@ cc.ControlSlider = cc.Control.extend({
         touchLocation = this.getParent().convertToNodeSpace(touchLocation);
 
         var rect = this.getBoundingBox();
-        rect._size.width += this._thumbSprite.getContentSize().width;
-        rect._origin.x -= this._thumbSprite.getContentSize().width / 2;
+        rect.width += this._thumbSprite.getContentSize().width;
+        rect.x -= this._thumbSprite.getContentSize().width / 2;
 
         return cc.rectContainsPoint(rect, touchLocation);
     },
@@ -132,7 +146,6 @@ cc.ControlSlider = cc.Control.extend({
     initWithSprites:function (backgroundSprite, progressSprite, thumbSprite) {
         if (cc.Control.prototype.init.call(this)) {
             this.ignoreAnchorPointForPosition(false);
-            this.setTouchEnabled(true);
 
             this._backgroundSprite = backgroundSprite;
             this._progressSprite = progressSprite;
@@ -174,7 +187,7 @@ cc.ControlSlider = cc.Control.extend({
 
     sliderBegan:function (location) {
         this.setSelected(true);
-        this.getThumbSprite().setColor(cc.gray());
+        this.getThumbSprite().setColor(cc.color.gray);
         this.setValue(this.valueForLocation(location));
     },
     sliderMoved:function (location) {
@@ -184,7 +197,7 @@ cc.ControlSlider = cc.Control.extend({
         if (this.isSelected()) {
             this.setValue(this.valueForLocation(this._thumbSprite.getPosition()));
         }
-        this._thumbSprite.setColor(cc.white());
+        this._thumbSprite.setColor(cc.color.white);
         this.setSelected(false);
     },
 
@@ -213,7 +226,7 @@ cc.ControlSlider = cc.Control.extend({
         this.sliderMoved(location);
     },
     onTouchEnded:function (touch, event) {
-        this.sliderEnded(cc.PointZero());
+        this.sliderEnded(cc.p(0,0));
     },
     needsLayout:function(){
         var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
@@ -222,7 +235,7 @@ cc.ControlSlider = cc.Control.extend({
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
         textureRect = cc.rect(textureRect.x, textureRect.y, this._thumbSprite.getPositionX(), textureRect.height);
-        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect._size);
+        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated());
     },
     /** Returns the value for the given location. */
     valueForLocation:function (location) {
@@ -231,6 +244,19 @@ cc.ControlSlider = cc.Control.extend({
     }
 });
 
+window._proto = cc.ControlSlider.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
+cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);
+cc.defineGetterSetter(_proto, "maxValue", _proto.getMaximumValue, _proto.setMaximumValue);
+cc.defineGetterSetter(_proto, "minAllowedValue", _proto.getMinimumAllowedValue, _proto.setMinimumAllowedValue);
+cc.defineGetterSetter(_proto, "maxAllowedValue", _proto.getMaximumAllowedValue, _proto.setMaximumAllowedValue);
+cc.defineGetterSetter(_proto, "thumbSprite", _proto.getThumbSprite);
+cc.defineGetterSetter(_proto, "progressSprite", _proto.getProgressSprite);
+cc.defineGetterSetter(_proto, "backgroundSprite", _proto.getBackgroundSprite);
+
+delete window._proto;
 
 /**
  * Creates a slider with a given background sprite and a progress bar and a

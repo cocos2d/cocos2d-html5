@@ -251,12 +251,6 @@ cc.POINT_POINTS_TO_PIXELS = function (points) {
     return cc.p(points.x * scale, points.y * scale);
 };
 
-cc._POINT_POINTS_TO_PIXELS_OUT = function (points, outPixels) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
-    outPixels._x = points.x * scale;
-    outPixels._y = points.y * scale;
-};
-
 /**
  * Converts a Size in points to pixels
  * @param {cc.Size} sizeInPoints
@@ -281,8 +275,8 @@ cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
 
 cc._SIZE_PIXELS_TO_POINTS_OUT = function (sizeInPixels, outSize) {
     var scale = cc.CONTENT_SCALE_FACTOR();
-    outSize._width = sizeInPixels.width / scale;
-    outSize._height = sizeInPixels.height / scale;
+    outSize.width = sizeInPixels.width / scale;
+    outSize.height = sizeInPixels.height / scale;
 };
 
 /**
@@ -297,8 +291,8 @@ cc.POINT_PIXELS_TO_POINTS = function (pixels) {
 
 cc._POINT_PIXELS_TO_POINTS_OUT = function(pixels, outPoint){
     var scale = cc.CONTENT_SCALE_FACTOR();
-    outPoint._x = pixels.x / scale;
-    outPoint._y = pixels.y / scale;
+    outPoint.x = pixels.x / scale;
+    outPoint.y = pixels.y / scale;
 };
 
 /**

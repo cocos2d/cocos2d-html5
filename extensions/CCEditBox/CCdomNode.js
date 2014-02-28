@@ -35,36 +35,54 @@ cc.DOM = {};
  * @private
  * @param x
  */
-cc.DOM.addMethods = function (x) {
+cc.DOM.addMethods = function (node) {
     for (var funcs in cc.DOM.methods) {
-        x[funcs] = cc.DOM.methods[funcs];
+	    node[funcs] = cc.DOM.methods[funcs];
     }
+
+	// Redefine getter setter
+	cc.defineGetterSetter(node, "x", node.getPositionX, node.setPositionX);
+	cc.defineGetterSetter(node, "y", node.getPositionY, node.setPositionY);
+	cc.defineGetterSetter(node, "width", node._getWidth, node._setWidth);
+	cc.defineGetterSetter(node, "height", node._getHeight, node._setHeight);
+	cc.defineGetterSetter(node, "anchorX", node._getAnchorX, node._setAnchorX);
+	cc.defineGetterSetter(node, "anchorY", node._getAnchorY, node._setAnchorY);
+	cc.defineGetterSetter(node, "scale", node.getScale, node.setScale);
+	cc.defineGetterSetter(node, "scaleX", node.getScaleX, node.setScaleX);
+	cc.defineGetterSetter(node, "scaleY", node.getScaleY, node.getScaleY);
+	cc.defineGetterSetter(node, "rotation", node.getRotation, node.setRotation);
+	cc.defineGetterSetter(node, "skewX", node.getSkewX, node.setSkewX);
+	cc.defineGetterSetter(node, "skewY", node.getSkewY, node.setSkewY);
+	cc.defineGetterSetter(node, "visible", node.isVisible, node.setVisible);
+	cc.defineGetterSetter(node, "parent", node.getParent, node.setParent);
+	cc.defineGetterSetter(node, "opacity", node.getOpacity, node.setOpacity);
 };
 cc.DOM.methods = /** @lends cc.DOM# */{
     /**
      * Replace the set position of ccNode
-     * @param {object|Number} x
+     * @param {cc.Point|Number} x
      * @param {Number} y
      */
     setPosition:function (x, y) {
-        if (arguments.length == 2) {
-            this._position._x = x;
-            this._position._y = y;
-            //this._position = cc.p(newPosOrxValue,yValue);
+        if (y === undefined) {
+	        this._position.x = x.x;
+	        this._position.y = x.y;
         } else {
-            this._position = x;
+	        this._position.x = x;
+	        this._position.y = y;
+	        //this._position = cc.p(newPosOrxValue,yValue);
         }
         this.setNodeDirty();
-        this.dom.translates(this._position._x, -this._position._y);
+        this.dom.translates(this._position.x, -this._position.y);
     },
     /**
      * replace set Position Y of ccNode
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this._position._y = y;
+        this._position.y = y;
         this.setNodeDirty();
-        this.dom.translates(this._position._x, -this._position._y);
+        this.dom.translates(this._position.x, -this._position.y);
     },
 
     /**
@@ -72,9 +90,9 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this._position._x = x;
+        this._position.x = x;
         this.setNodeDirty();
-        this.dom.translates(this._position._x, -this._position._y);
+        this.dom.translates(this._position.x, -this._position.y);
     },
 
     /**
@@ -122,31 +140,79 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point;
-            locAnchorPoint._y = y;
+        if (y === undefined) {
+	        if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+		        return;
+	        locAnchorPoint.x = point.x;
+	        locAnchorPoint.y = point.y;
         } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point.x;
-            locAnchorPoint._y = point.y;
+	        if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+		        return;
+	        locAnchorPoint.x = point;
+	        locAnchorPoint.y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP._x = locSize._width * locAnchorPoint._x;
-        locAPP._y = locSize._height * locAnchorPoint._y;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
 
-        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP._x + 'px ' + -locAPP._y + 'px';
-        if (this.isIgnoreAnchorPointForPosition()) {
+        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
+        if (this.ignoreAnchor) {
             this.dom.style.marginLeft = 0;
             this.dom.style.marginBottom = 0;
         } else {
-            this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP._x + 'px';
-            this.dom.style.marginBottom = -locAPP._y + 'px';
+            this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP.x + 'px';
+            this.dom.style.marginBottom = -locAPP.y + 'px';
         }
         this.setNodeDirty();
     },
+
+	/**
+	 * replace set anchorpoint x of ccNode
+	 * @param {Number} x The anchor x of node.
+	 */
+	_setAnchorX:function (x) {
+		var locAnchorPoint = this._anchorPoint;
+
+		if (x === locAnchorPoint.x)
+			return;
+		locAnchorPoint.x = x;
+
+		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		locAPP.x = locSize.width * locAnchorPoint.x;
+
+		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
+		if (this.ignoreAnchor) {
+			this.dom.style.marginLeft = 0;
+			this.dom.style.marginBottom = 0;
+		} else {
+			this.dom.style.marginLeft = (this.isToggler) ? 0 : -locAPP.x + 'px';
+		}
+		this.setNodeDirty();
+	},
+
+	/**
+	 * replace set anchorpoint y of ccNode
+	 * @param {Number} y The anchor y of node.
+	 */
+	_setAnchorY:function (y) {
+		var locAnchorPoint = this._anchorPoint;
+
+		if (y === locAnchorPoint.y)
+			return;
+		locAnchorPoint.y = y;
+
+		var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
+		locAPP.y = locSize.height * locAnchorPoint.y;
+
+		this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
+		if (this.ignoreAnchor) {
+			this.dom.style.marginLeft = 0;
+			this.dom.style.marginBottom = 0;
+		} else {
+			this.dom.style.marginBottom = -locAPP.y + 'px';
+		}
+		this.setNodeDirty();
+	},
 
     /**
      * replace set ContentSize of ccNode
@@ -155,30 +221,72 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if (arguments.length === 2) {
-            if ((size === locContentSize._width) && (height === locContentSize._height))
-                return;
-            locContentSize._width = size;
-            locContentSize._height = height;
+        if (height === undefined) {
+	        if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
+		        return;
+	        locContentSize.width = size.width;
+	        locContentSize.height = size.height;
         } else {
-            if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
-                return;
-            locContentSize._width = size.width;
-            locContentSize._height = size.height;
+	        if ((size === locContentSize.width) && (height === locContentSize.height))
+		        return;
+	        locContentSize.width = size;
+	        locContentSize.height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP._x = locContentSize._width * locAnchorPoint._x;
-        locAPP._y = locContentSize._height * locAnchorPoint._y;
-        this.dom.width = locContentSize._width;
-        this.dom.height = locContentSize._height;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
+        this.dom.width = locContentSize.width;
+        this.dom.height = locContentSize.height;
         this.setAnchorPoint(this.getAnchorPoint());
         if (this.canvas) {
-            this.canvas.width = locContentSize._width;
-            this.canvas.height = locContentSize._height;
+            this.canvas.width = locContentSize.width;
+            this.canvas.height = locContentSize.height;
         }
         this.setNodeDirty();
         this.redraw();
     },
+
+	/**
+	 * replace set width of ccNode
+	 * @param {Number} width The untransformed size's width of the node.
+	 */
+	_setWidth:function (width) {
+		var locContentSize = this._contentSize;
+		if (width === locContentSize.width)
+			return;
+		locContentSize.width = width;
+
+		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		locAPP.x = locContentSize.width * locAnchorPoint.x;
+		this.dom.width = locContentSize.width;
+		this.anchorX = locAnchorPoint.x;
+		if (this.canvas) {
+			this.canvas.width = locContentSize.width;
+		}
+		this.setNodeDirty();
+		this.redraw();
+	},
+
+	/**
+	 * replace set height of ccNode
+	 * @param {Number} height The untransformed size's height of the node.
+	 */
+	_setHeight:function (height) {
+		var locContentSize = this._contentSize;
+		if (height === locContentSize.height)
+			return;
+		locContentSize.height = height;
+
+		var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
+		locAPP.y = locContentSize.height * locAnchorPoint.y;
+		this.dom.height = locContentSize.height;
+		this.anchorY = locAnchorPoint.y;
+		if (this.canvas) {
+			this.canvas.height = locContentSize.height;
+		}
+		this.setNodeDirty();
+		this.redraw();
+	},
 
     /**
      * replace set Rotation of ccNode
@@ -228,8 +336,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         if (this.dom)
             this.dom.style.display = (x) ? 'block' : 'none';
     },
-    _setZOrder:function (z) {
-        this._zOrder = z
+    _setLocalZOrder:function (z) {
+        this._localZOrder = z
         this.setNodeDirty();
         if (this.dom)
             this.dom.zIndex = z;
@@ -332,10 +440,9 @@ cc.DOM._resetEGLViewDiv = function(){
             designSizeHeight = screenSize.height;
         }
 
-        var viewPortWidth = viewPortRect._size.width, viewPortHeight = viewPortRect._size.height;
-        if((viewPortRect._size.width === 0) && (viewPortRect._size.height === 0)){
+        var viewPortWidth = viewPortRect.width;
+        if((viewPortRect.width === 0) && (viewPortRect.height === 0)){
             viewPortWidth = screenSize.width;
-            viewPortHeight = screenSize.height;
         }
 
         eglViewDiv.style.position = 'absolute';
@@ -346,18 +453,8 @@ cc.DOM._resetEGLViewDiv = function(){
 
         eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
 
-        if (viewPortWidth < screenSize.width) {
-            eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-                + (screenSize.width - viewPortWidth ) / 2) + "px";
-        } else {
-            eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-        }
-
-        if (viewPortHeight < screenSize.height) {
-            eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
-        } else {
-            eglViewDiv.style.bottom = "0px";
-        }
+        eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+        eglViewDiv.style.bottom = "0px";
     }
 };
 
@@ -403,10 +500,9 @@ cc.DOM.parentDOM = function (x) {
                     designSizeHeight = screenSize.height;
                 }
 
-                var viewPortWidth = viewPortRect._size.width, viewPortHeight = viewPortRect._size.height;
-                if ((viewPortRect._size.width === 0) && (viewPortRect._size.height === 0)) {
+                var viewPortWidth = viewPortRect.width;
+                if ((viewPortRect.width === 0) && (viewPortRect.height === 0)) {
                     viewPortWidth = screenSize.width;
-                    viewPortHeight = screenSize.height;
                 }
 
                 eglViewDiv.style.position = 'absolute';
@@ -416,19 +512,8 @@ cc.DOM.parentDOM = function (x) {
                 eglViewDiv.style.margin = 0;
 
                 eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
-
-                if (viewPortWidth < screenSize.width) {
-                    eglViewDiv.style.left = ((viewPortWidth - designSizeWidth) / 2
-                        + (screenSize.width - viewPortWidth ) / 2) + "px";
-                } else {
-                    eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
-                }
-
-                if (viewPortHeight < screenSize.height) {
-                    eglViewDiv.style.bottom = ((screenSize.height - viewPortHeight ) / 2) + "px";
-                } else {
-                    eglViewDiv.style.bottom = "0px";
-                }
+                eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
+                eglViewDiv.style.bottom = "0px";
 
                 p.dom.appendTo(eglViewDiv);
                 eglViewDiv.appendTo(cc.container);
@@ -461,8 +546,8 @@ cc.DOM.setTransform = function (x) {
         }
     }
     if (x.dom) {
-        x.dom.position.x = x.getPosition().x;
-        x.dom.position.y = -x.getPosition().y;
+        x.dom.position.x = x.getPositionX();
+        x.dom.position.y = -x.getPositionY();
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};

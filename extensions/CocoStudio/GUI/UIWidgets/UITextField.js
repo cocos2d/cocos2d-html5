@@ -33,26 +33,34 @@ ccs.TEXTFIELDRENDERERZ = -1;
  * Base class for ccs.UICCTextField
  * @class
  * @extends cc.TextFieldTTF
+ *
+ * @property {Boolean}  maxLengthEnabled    - Indicate whether max length limit is enabled
+ * @property {Number}   maxLength           - The max length of the text field
+ * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
+ * @property {Boolean}  attachWithIME       - Indicate whether the text field is attached with IME
+ * @property {Boolean}  detachWithIME       - Indicate whether the text field is detached with IME
+ * @property {Boolean}  insertText          - Indicate whether there is text inserting into the text field
+ * @property {Boolean}  deleteBackward      - Indicate whether text is deleting in the text field
  */
 ccs.UICCTextField = cc.TextFieldTTF.extend({
-    _maxLengthEnabled: false,
-    _maxLength: 0,
-    _passwordEnabled: false,
+    maxLengthEnabled: false,
+    maxLength: 0,
+    passwordEnabled: false,
     _passwordStyleText: "",
-    _attachWithIME: false,
-    _detachWithIME: false,
-    _insertText: false,
-    _deleteBackward: false,
+    attachWithIME: false,
+    detachWithIME: false,
+    insertText: false,
+    deleteBackward: false,
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
-        this._maxLengthEnabled = false;
-        this._maxLength = 0;
-        this._passwordEnabled = false;
+        this.maxLengthEnabled = false;
+        this.maxLength = 0;
+        this.passwordEnabled = false;
         this._passwordStyleText = "*";
-        this._attachWithIME = false;
-        this._detachWithIME = false;
-        this._insertText = false;
-        this._deleteBackward = false;
+        this.attachWithIME = false;
+        this.detachWithIME = false;
+        this.insertText = false;
+        this.deleteBackward = false;
     },
     onEnter: function () {
         cc.TextFieldTTF.prototype.onEnter.call(this);
@@ -71,8 +79,8 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
             return false;
         }
         this.setInsertText(true);
-        if (this._maxLengthEnabled) {
-            if (cc.TextFieldTTF.prototype.getCharCount.call(this) >= this._maxLength) {
+        if (this.maxLengthEnabled) {
+            if (cc.TextFieldTTF.prototype.getCharCount.call(this) >= this.maxLength) {
                 return true;
             }
         }
@@ -96,23 +104,23 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
         var str_len = locString.length;
         var multiple, header;
         if (text != "\n") {
-            if (this._maxLengthEnabled) {
+            if (this.maxLengthEnabled) {
                 multiple = 1;
                 header = text.charCodeAt(0);
                 if (header < 0 || header > 127) {
                     multiple = 3;
                 }
 
-                if (str_len + len > this._maxLength * multiple) {
-                    str_text = str_text.substr(0, this._maxLength * multiple);
-                    len = this._maxLength * multiple;
+                if (str_len + len > this.maxLength * multiple) {
+                    str_text = str_text.substr(0, this.maxLength * multiple);
+                    len = this.maxLength * multiple;
                 }
             }
         }
         cc.TextFieldTTF.prototype.insertText.call(this,str_text, len);
 
         // password
-        if (this._passwordEnabled) {
+        if (this.passwordEnabled) {
             if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0) {
                 this.setPasswordText(this._inputText);
             }
@@ -124,7 +132,7 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
 
         if (cc.TextFieldTTF.prototype.getCharCount.call(this) > 0) {
             // password
-            if (this._passwordEnabled) {
+            if (this.passwordEnabled) {
                 this.setPasswordText(this._inputText);
             }
         }
@@ -141,19 +149,19 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
         return false;
     },
     setMaxLengthEnabled: function (enable) {
-        this._maxLengthEnabled = enable;
+        this.maxLengthEnabled = enable;
     },
 
     isMaxLengthEnabled: function () {
-        return this._maxLengthEnabled;
+        return this.maxLengthEnabled;
     },
 
     setMaxLength: function (length) {
-        this._maxLength = length;
+        this.maxLength = length;
     },
 
     getMaxLength: function () {
-        return this._maxLength;
+        return this.maxLength;
     },
 
     getCharCount: function () {
@@ -161,11 +169,11 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
     },
 
     setPasswordEnabled: function (enable) {
-        this._passwordEnabled = enable;
+        this.passwordEnabled = enable;
     },
 
     isPasswordEnabled: function () {
-        return this._passwordEnabled;
+        return this.passwordEnabled;
     },
 
     setPasswordStyleText: function (styleText) {
@@ -188,35 +196,35 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
     },
 
     setAttachWithIME: function (attach) {
-        this._attachWithIME = attach;
+        this.attachWithIME = attach;
     },
 
     getAttachWithIME: function () {
-        return this._attachWithIME;
+        return this.attachWithIME;
     },
 
     setDetachWithIME: function (detach) {
-        this._detachWithIME = detach;
+        this.detachWithIME = detach;
     },
 
     getDetachWithIME: function () {
-        return this._detachWithIME;
+        return this.detachWithIME;
     },
 
     setInsertText: function (insert) {
-        this._insertText = insert;
+        this.insertText = insert;
     },
 
     getInsertText: function () {
-        return this._insertText;
+        return this.insertText;
     },
 
     setDeleteBackward: function (deleteBackward) {
-        this._deleteBackward = deleteBackward;
+        this.deleteBackward = deleteBackward;
     },
 
     getDeleteBackward: function () {
-        return this._deleteBackward;
+        return this.deleteBackward;
     }
 });
 
@@ -235,6 +243,19 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
  * Base class for ccs.TextField
  * @class
  * @extends ccs.Widget
+ *
+ * @property {String}   string              - The content string of the label
+ * @property {Number}   placeHolder         - The place holder of the text field
+ * @property {String}   font                - The text field font with a style string: e.g. "18px Verdana"
+ * @property {String}   fontName            - The text field font name
+ * @property {Number}   fontSize            - The text field font size
+ * @property {Boolean}  maxLengthEnabled    - Indicate whether max length limit is enabled
+ * @property {Number}   maxLength           - The max length of the text field
+ * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
+ * @property {Boolean}  attachWithIME       - Indicate whether the text field is attached with IME
+ * @property {Boolean}  detachWithIME       - Indicate whether the text field is detached with IME
+ * @property {Boolean}  insertText          - Indicate whether there is text inserting into the text field
+ * @property {Boolean}  deleteBackward      - Indicate whether text is deleting in the text field
  */
 ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     _textFieldRender: null,
@@ -271,12 +292,9 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this._deleteBackwardSelector = null;
     },
 
-    init: function () {
-        if (ccs.Widget.prototype.init.call(this)) {
-            this.setUpdateEnabled(true);
-            return true;
-        }
-        return false;
+    onEnter:function(){
+        ccs.Widget.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
@@ -303,6 +321,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         if (!text) {
             return;
         }
+        text = String(text);
         if (this.isMaxLengthEnabled()) {
             text = text.substr(0, this.getMaxLength());
         }
@@ -325,6 +344,19 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.textfieldRendererScaleChangedWithSize();
     },
 
+	_getPlaceHolder: function () {
+		return this._textFieldRender.getPlaceHolder();
+	},
+
+	_setFont: function (font) {
+		this._textFieldRender._setFont(font);
+		this.textfieldRendererScaleChangedWithSize();
+	},
+
+	_getFont: function () {
+		return this._textFieldRender._getFont();
+	},
+
     /**
      * @param {cc.Size} size
      */
@@ -333,6 +365,10 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.textfieldRendererScaleChangedWithSize();
     },
 
+	_getFontSize: function () {
+		return this._textFieldRender.getFontSize();
+	},
+
     /**
      * @param {String} name
      */
@@ -340,6 +376,10 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this._textFieldRender.setFontName(name);
         this.textfieldRendererScaleChangedWithSize();
     },
+
+	_getFontName: function () {
+		return this._textFieldRender.getFontName();
+	},
 
     /**
      * detach with IME
@@ -371,7 +411,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      */
     onTouchEnded: function (touchPoint) {
         ccs.Widget.prototype.onTouchEnded.call(this, touchPoint);
-        this._textFieldRender.attachWithIME();
+        this._textFieldRender.attachWithIME = true;
     },
 
     /**
@@ -549,7 +589,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     hitTest: function (pt) {
         var nsp = this.convertToNodeSpace(pt);
         var locSize = this._textFieldRender.getContentSize();
-        var bb = cc.rect(-locSize.width * this._anchorPoint._x, -locSize.height * this._anchorPoint._y, locSize.width, locSize.height);
+        var bb = cc.rect(-locSize.width * this._anchorPoint.x, -locSize.height * this._anchorPoint.y, locSize.width, locSize.height);
         if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
             return true;
         }
@@ -562,14 +602,22 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._textFieldRender.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._textFieldRender.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._textFieldRender.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._textFieldRender.setAnchorPoint(point, y);
         }
     },
+	_setAnchorX: function (value) {
+		ccs.Widget.prototype._setAnchorX.call(this, value);
+		this._textFieldRender._setAnchorX(value);
+	},
+	_setAnchorY: function (value) {
+		ccs.Widget.prototype._setAnchorY.call(this, value);
+		this._textFieldRender._setAnchorY(value);
+	},
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
@@ -603,6 +651,12 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     getContentSize: function () {
         return this._textFieldRender.getContentSize();
     },
+	_getWidth: function () {
+		return this._textFieldRender._getWidth();
+	},
+	_getHeight: function () {
+		return this._textFieldRender._getHeight();
+	},
 
     /**
      * override "getContentSize" method of widget.
@@ -643,6 +697,25 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.setDeleteBackward(textField.getDeleteBackward());
     }
 });
+
+window._proto = ccs.TextField.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
+cc.defineGetterSetter(_proto, "placeHolder", _proto._getPlaceHolder, _proto.setPlaceHolder);
+cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
+cc.defineGetterSetter(_proto, "fontSize", _proto._getFontSize, _proto.setFontSize);
+cc.defineGetterSetter(_proto, "fontName", _proto._getFontName, _proto.setFontName);
+cc.defineGetterSetter(_proto, "maxLengthEnabled", _proto.isMaxLengthEnabled, _proto.setMaxLengthEnabled);
+cc.defineGetterSetter(_proto, "maxLength", _proto.getMaxLength, _proto.setMaxLength);
+cc.defineGetterSetter(_proto, "passwordEnabled", _proto.isPasswordEnabled, _proto.setPasswordEnabled);
+cc.defineGetterSetter(_proto, "attachWithIME", _proto.getAttachWithIME, _proto.setAttachWithIME);
+cc.defineGetterSetter(_proto, "detachWithIME", _proto.getDetachWithIME, _proto.setDetachWithIME);
+cc.defineGetterSetter(_proto, "insertText", _proto.getInsertText, _proto.setInsertText);
+cc.defineGetterSetter(_proto, "deleteBackward", _proto.getDeleteBackward, _proto.setDeleteBackward);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UITextField.
  * @constructs

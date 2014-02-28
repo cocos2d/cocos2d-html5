@@ -102,15 +102,11 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
      * @returns {ccs.Widget}
      */
     widgetFromJsonFile: function (fileName) {
-        var jsonPath = fileName || "";
-        var pos = jsonPath.lastIndexOf('/');
-        this._filePath = jsonPath.substr(0, pos + 1);
-        var des = cc.FileUtils.getInstance().getTextFileData(jsonPath);
-        if (!des) {
-            cc.log("read json file[" + fileName + "] error!");
-            return null;
-        }
-        var jsonDict = JSON.parse(des);
+        var jsonDict = cc.loader.getRes(fileName);
+        if(!jsonDict) throw "Please load the resource first : " + fileName;
+
+        var tempFilePath = cc.path.dirname(fileName);
+        this._filePath = tempFilePath == "" ? tempFilePath : tempFilePath + "/";
 
         var fileVersion = jsonDict["version"];
         var pReader, widget;
@@ -132,7 +128,6 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
             this._olderVersion = true;
         }
         jsonDict = null;
-        des = null;
         return widget;
     }
 });
@@ -145,7 +140,7 @@ ccs.WidgetPropertiesReader = ccs.Class.extend({
 });
 ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     createWidget: function (jsonDict, fullPath, fileName) {
-        this._filePath = fullPath;
+        this._filePath = fullPath == "" ? fullPath : cc.path.join(fullPath, "/");
         var textures = jsonDict["textures"];
         for (var i = 0; i < textures.length; i++) {
             var file = textures[i];
@@ -254,7 +249,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
 
     setPropsForWidgetFromJsonDictionary: function (widget, options) {
-        if (options.hasOwnProperty("ignoreSize")) {
+        if (options["ignoreSize"] !== undefined) {
             widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
         }
 
@@ -270,34 +265,34 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         widget.setName(widgetName);
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(cc.p(x, y));
-        if (options.hasOwnProperty("scaleX")) {
+        widget.setPosition(x, y);
+        if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);
         }
-        if (options.hasOwnProperty("scaleY")) {
+        if (options["scaleY"] !== undefined) {
             widget.setScaleY(options["scaleY"]);
         }
-        if (options.hasOwnProperty("rotation")) {
+        if (options["rotation"] !== undefined) {
             widget.setRotation(options["rotation"]);
         }
-        if (options.hasOwnProperty("visible")) {
+        if (options["visible"] !== undefined) {
             widget.setVisible(options["visible"]);
         }
 
         var z = options["ZOrder"];
-        widget.setZOrder(z);
+        widget.setLocalZOrder(z);
     },
 
     setColorPropsForWidgetFromJsonDictionary: function (widget, options) {
-        if (options.hasOwnProperty("opacity")) {
+        if (options["opacity"] !== undefined) {
             widget.setOpacity(options["opacity"]);
         }
-        var colorR = options.hasOwnProperty("colorR") ? options["colorR"] : 255;
-        var colorG = options.hasOwnProperty("colorG") ? options["colorG"] : 255;
-        var colorB = options.hasOwnProperty("colorB") ? options["colorB"] : 255;
-        widget.setColor(cc.c3b(colorR, colorG, colorB));
-        var apx = options.hasOwnProperty("anchorPointX") ? options["anchorPointX"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
-        var apy = options.hasOwnProperty("anchorPointY") ? options["anchorPointY"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
+        var colorR = options["colorR"] !== undefined ? options["colorR"] : 255;
+        var colorG = options["colorG"] !== undefined ? options["colorG"] : 255;
+        var colorB = options["colorB"] !== undefined ? options["colorB"] : 255;
+        widget.setColor(cc.color(colorR, colorG, colorB));
+        var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
+        var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
         widget.setAnchorPoint(apx, apy);
         var flipX = options["flipX"];
         var flipY = options["flipY"];
@@ -332,7 +327,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
                 button.loadTextures(normalFileName_tp, pressedFileName_tp, disabledFileName_tp);
             }
             //button.setCapInsets(cc.rect(cx, cy, cw, ch));
-            if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
+            if (options["scale9Width"] !== undefined && options["scale9Height"] !== undefined) {
                 var swf = options["scale9Width"];
                 var shf = options["scale9Height"];
                 button.setSize(cc.size(swf, shf));
@@ -346,21 +341,21 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
                 button.loadTextures(normalFileName_tp, pressedFileName_tp, disabledFileName_tp);
             }
         }
-        if (options.hasOwnProperty("text")) {
+        if (options["text"] !== undefined) {
             var text = options["text"] || "";
             if (text)
                 button.setTitleText(text);
         }
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             button.setTitleFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             button.setTitleFontName(options["fontName"]);
         }
-        var cr = options.hasOwnProperty("textColorR") ? options["textColorR"] : 255;
-        var cg = options.hasOwnProperty("textColorG") ? options["textColorG"] : 255;
-        var cb = options.hasOwnProperty("textColorB") ? options["textColorB"] : 255;
-        var tc = cc.c3b(cr, cg, cb);
+        var cr = options["textColorR"] !== undefined ? options["textColorR"] : 255;
+        var cg = options["textColorG"] !== undefined ? options["textColorG"] : 255;
+        var cb = options["textColorB"] !== undefined ? options["textColorB"] : 255;
+        var tc = cc.color(cr, cg, cb);
         button.setTitleColor(tc);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -416,7 +411,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
                 imageView.loadTexture(imageFileName_tp);
             }
 
-            if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
+            if (options["scale9Width"] !== undefined && options["scale9Height"] !== undefined) {
                 var swf = options["scale9Width"];
                 var shf = options["scale9Height"];
                 imageView.setSize(cc.size(swf, shf));
@@ -447,20 +442,20 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         label.setTouchScaleChangeAble(touchScaleChangeAble);
         var text = options["text"];
         label.setText(text);
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             label.setFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             label.setFontName(options["fontName"]);
         }
-        if (options.hasOwnProperty("areaWidth") && options.hasOwnProperty("areaHeight")) {
+        if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
             label.setTextAreaSize(size);
         }
-        if (options.hasOwnProperty("hAlignment")) {
+        if (options["hAlignment"]) {
             label.setTextHorizontalAlignment(options["hAlignment"]);
         }
-        if (options.hasOwnProperty("vAlignment")) {
+        if (options["vAlignment"]) {
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -469,11 +464,11 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForLabelAtlasFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var labelAtlas = widget;
-        var sv = options.hasOwnProperty("stringValue");
-        var cmf = options.hasOwnProperty("charMapFile");
-        var iw = options.hasOwnProperty("itemWidth");
-        var ih = options.hasOwnProperty("itemHeight");
-        var scm = options.hasOwnProperty("startCharMap");
+        var sv = (options["stringValue"] !== undefined);
+        var cmf = (options["charMapFile"] !== undefined);
+        var iw = (options["itemWidth"] !== undefined);
+        var ih = (options["itemHeight"] !== undefined);
+        var scm = (options["startCharMap"] !== undefined);
         if (sv && cmf && iw && ih && scm && options["charMapFile"]) {
             var cmft = options["charMapFile"];
             var cmf_tp = this._filePath + cmft;
@@ -512,8 +507,8 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
         var colorType = options["colorType"];
         panel.setBackGroundColorType(colorType);
-        panel.setBackGroundColor(cc.c3b(scr, scg, scb), cc.c3b(ecr, ecg, ecb));
-        panel.setBackGroundColor(cc.c3b(cr, cg, cb));
+        panel.setBackGroundColor(cc.color(scr, scg, scb), cc.color(ecr, ecg, ecb));
+        panel.setBackGroundColor(cc.color(cr, cg, cb));
         panel.setBackGroundColorOpacity(co);
 
         var imageFileName = options["backGroundImage"];
@@ -567,7 +562,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         slider.setScale9Enabled(barTextureScale9Enable);
         var barLength = options["length"];
         var useMergedTexture = options["useMergedTexture"];
-        var bt = options.hasOwnProperty("barFileName");
+        var bt = (options["barFileName"] !== undefined);
         if (bt) {
             if (barTextureScale9Enable) {
                 var imageFileName = options["barFileName"];
@@ -622,22 +617,22 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textArea = widget;
         textArea.setText(options["text"]);
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             textArea.setFontSize(options["fontSize"]);
         }
         var cr = options["colorR"]
         var cg = options["colorG"];
         var cb = options["colorB"];
-        textArea.setColor(cc.c3b(cr, cg, cb));
+        textArea.setColor(cc.color(cr, cg, cb));
         textArea.setFontName(options["fontName"]);
-        if (options.hasOwnProperty("areaWidth") && options.hasOwnProperty("areaHeight")) {
+        if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
             textArea.setTextAreaSize(size);
         }
-        if (options.hasOwnProperty("hAlignment")) {
+        if (options["hAlignment"]) {
             textArea.setTextHorizontalAlignment(options["hAlignment"]);
         }
-        if (options.hasOwnProperty("vAlignment")) {
+        if (options["vAlignment"]) {
             textArea.setTextVerticalAlignment(options["vAlignment"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -648,14 +643,14 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
         var textButton = widget;
         textButton.setTitleText(options["text"] || "");
-        var cri = options.hasOwnProperty("textColorR") ? options["textColorR"] : 255;
-        var cgi = options.hasOwnProperty("textColorG") ? options["textColorG"] : 255;
-        var cbi = options.hasOwnProperty("textColorB") ? options["textColorB"] : 255;
-        textButton.setTitleColor(cc.c3b(cri, cgi, cbi));
-        if (options.hasOwnProperty("fontSize")) {
+        var cri = options["textColorR"] !== undefined ? options["textColorR"] : 255;
+        var cgi = options["textColorG"] !== undefined ? options["textColorG"] : 255;
+        var cbi = options["textColorB"] !== undefined ? options["textColorB"] : 255;
+        textButton.setTitleColor(cc.color(cri, cgi, cbi));
+        if (options["fontSize"] !== undefined) {
             textButton.setTitleFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             textButton.setTitleFontName(options["fontName"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -664,17 +659,17 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForTextFieldFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textField = widget;
-        if (options.hasOwnProperty("placeHolder")) {
+        if (options["placeHolder"] !== undefined) {
             textField.setPlaceHolder(options["placeHolder"]);
         }
         textField.setText(options["text"]);
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             textField.setFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             textField.setFontName(options["fontName"]);
         }
-        if (options.hasOwnProperty("touchSizeWidth") && options.hasOwnProperty("touchSizeHeight")) {
+        if (options["touchSizeWidth"] !== undefined && options["touchSizeHeight"] !== undefined) {
             textField.setTouchSize(cc.size(options["touchSizeWidth"], options["touchSizeHeight"]));
         }
 
@@ -738,7 +733,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
 ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     createWidget: function (jsonDict, fullPath, fileName) {
-        this._filePath = fullPath;
+        this._filePath = fullPath == "" ? fullPath : cc.path.join(fullPath, "/");
         var textures = jsonDict["textures"];
         for (var i = 0; i < textures.length; i++) {
             var file = textures[i];
@@ -861,7 +856,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
 
     setPropsForWidgetFromJsonDictionary: function (widget, options) {
-        if (options.hasOwnProperty("ignoreSize")) {
+        if (options["ignoreSize"] !== undefined) {
             widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
         }
         widget.setSizeType(options["sizeType"]);
@@ -882,21 +877,21 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         widget.setName(widgetName);
         var x = options["x"];
         var y = options["y"];
-        widget.setPosition(cc.p(x, y));
-        if (options.hasOwnProperty("scaleX")) {
+        widget.setPosition(x, y);
+        if (options["scaleX"] !== undefined) {
             widget.setScaleX(options["scaleX"]);
         }
-        if (options.hasOwnProperty("scaleY")) {
+        if (options["scaleY"] !== undefined) {
             widget.setScaleY(options["scaleY"]);
         }
-        if (options.hasOwnProperty("rotation")) {
+        if (options["rotation"] !== undefined) {
             widget.setRotation(options["rotation"]);
         }
-        if (options.hasOwnProperty("visible")) {
+        if (options["visible"] !== undefined) {
             widget.setVisible(options["visible"]);
         }
 
-        widget.setZOrder(options["ZOrder"]);
+        widget.setLocalZOrder(options["ZOrder"]);
         var layoutParameterDic = options["layoutParameter"];
         if (layoutParameterDic) {
             var paramType = layoutParameterDic["type"];
@@ -930,15 +925,15 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     },
 
     setColorPropsForWidgetFromJsonDictionary: function (widget, options) {
-        if (options.hasOwnProperty("opacity")) {
+        if (options["opacity"] !== undefined) {
             widget.setOpacity(options["opacity"]);
         }
-        var colorR = options.hasOwnProperty("colorR") ? options["colorR"] : 255;
-        var colorG = options.hasOwnProperty("colorG") ? options["colorG"] : 255;
-        var colorB = options.hasOwnProperty("colorB") ? options["colorB"] : 255;
-        widget.setColor(cc.c3b(colorR, colorG, colorB));
-        var apx = options.hasOwnProperty("anchorPointX") ? options["anchorPointX"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
-        var apy = options.hasOwnProperty("anchorPointY") ? options["anchorPointY"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
+        var colorR = options["colorR"] !== undefined ? options["colorR"] : 255;
+        var colorG = options["colorG"] !== undefined ? options["colorG"] : 255;
+        var colorB = options["colorB"] !== undefined ? options["colorB"] : 255;
+        widget.setColor(cc.color(colorR, colorG, colorB));
+        var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
+        var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccs.WidgetType.widget) ? 0.5 : 0);
         widget.setAnchorPoint(apx, apy);
         var flipX = options["flipX"];
         var flipY = options["flipY"];
@@ -1009,27 +1004,27 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             var ch = options["capInsetsHeight"];
 
             button.setCapInsets(cc.rect(cx, cy, cw, ch));
-            if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
+            if (options["scale9Width"] !== undefined && options["scale9Height"] !== undefined) {
                 var swf = options["scale9Width"];
                 var shf = options["scale9Height"];
                 button.setSize(cc.size(swf, shf));
             }
         }
-        if (options.hasOwnProperty("text")) {
+        if (options["text"] !== undefined) {
             var text = options["text"] || "";
             if (text)
                 button.setTitleText(text);
         }
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             button.setTitleFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             button.setTitleFontName(options["fontName"]);
         }
-        var cr = options.hasOwnProperty("textColorR") ? options["textColorR"] : 255;
-        var cg = options.hasOwnProperty("textColorG") ? options["textColorG"] : 255;
-        var cb = options.hasOwnProperty("textColorB") ? options["textColorB"] : 255;
-        var tc = cc.c3b(cr, cg, cb);
+        var cr = options["textColorR"] !== undefined ? options["textColorR"] : 255;
+        var cg = options["textColorG"] !== undefined ? options["textColorG"] : 255;
+        var cb = options["textColorB"] !== undefined ? options["textColorB"] : 255;
+        var tc = cc.color(cr, cg, cb);
         button.setTitleColor(tc);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
@@ -1156,7 +1151,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         imageView.setScale9Enabled(scale9Enable);
 
         if (scale9Enable) {
-            if (options.hasOwnProperty("scale9Width") && options.hasOwnProperty("scale9Height")) {
+            if (options["scale9Width"] !== undefined && options["scale9Height"] !== undefined) {
                 var swf = options["scale9Width"];
                 var shf = options["scale9Height"];
                 imageView.setSize(cc.size(swf, shf));
@@ -1180,20 +1175,20 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         label.setTouchScaleChangeAble(touchScaleChangeAble);
         var text = options["text"];
         label.setText(text);
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             label.setFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             label.setFontName(options["fontName"]);
         }
-        if (options.hasOwnProperty("areaWidth") && options.hasOwnProperty("areaHeight")) {
+        if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
             label.setTextAreaSize(size);
         }
-        if (options.hasOwnProperty("hAlignment")) {
+        if (options["hAlignment"]) {
             label.setTextHorizontalAlignment(options["hAlignment"]);
         }
-        if (options.hasOwnProperty("vAlignment")) {
+        if (options["vAlignment"]) {
             label.setTextVerticalAlignment(options["vAlignment"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -1202,11 +1197,11 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     setPropsForLabelAtlasFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var labelAtlas = widget;
-        var sv = options.hasOwnProperty("stringValue");
-        var cmf = options.hasOwnProperty("charMapFile");
-        var iw = options.hasOwnProperty("itemWidth");
-        var ih = options.hasOwnProperty("itemHeight");
-        var scm = options.hasOwnProperty("startCharMap");
+        var sv = (options["stringValue"] !== undefined);
+        var cmf = (options["charMapFile"] !== undefined);
+        var iw = (options["itemWidth"] !== undefined);
+        var ih = (options["itemHeight"] !== undefined);
+        var scm = (options["startCharMap"] !== undefined);
         if (sv && cmf && iw && ih && scm) {
 
             var cmftDic = options["charMapFileData"];
@@ -1256,8 +1251,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         var colorType = options["colorType"];
         panel.setBackGroundColorType(colorType);
-        panel.setBackGroundColor(cc.c3b(scr, scg, scb), cc.c3b(ecr, ecg, ecb));
-        panel.setBackGroundColor(cc.c3b(cr, cg, cb));
+        panel.setBackGroundColor(cc.color(scr, scg, scb), cc.color(ecr, ecg, ecb));
+        panel.setBackGroundColor(cc.color(cr, cg, cb));
         panel.setBackGroundColorOpacity(co);
 
 
@@ -1309,7 +1304,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var barTextureScale9Enable = options["barTextureScale9Enable"] || false;
         slider.setScale9Enabled(barTextureScale9Enable);
         var barLength = options["length"];
-        var bt = options.hasOwnProperty("barFileName");
+        var bt = (options["barFileName"] !== undefined);
         if (bt) {
             if (barTextureScale9Enable) {
                 var imageFileNameDic = options["barFileNameData"];
@@ -1426,22 +1421,22 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textArea = widget;
         textArea.setText(options["text"]);
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             textArea.setFontSize(options["fontSize"]);
         }
         var cr = options["colorR"]
         var cg = options["colorG"];
         var cb = options["colorB"];
-        textArea.setColor(cc.c3b(cr, cg, cb));
+        textArea.setColor(cc.color(cr, cg, cb));
         textArea.setFontName(options["fontName"]);
-        if (options.hasOwnProperty("areaWidth") && options.hasOwnProperty("areaHeight")) {
+        if (options["areaWidth"] !== undefined && options["areaHeight"] !== undefined) {
             var size = cc.size(options["areaWidth"], options["areaHeight"]);
             textArea.setTextAreaSize(size);
         }
-        if (options.hasOwnProperty("hAlignment")) {
+        if (options["hAlignment"]) {
             textArea.setTextHorizontalAlignment(options["hAlignment"]);
         }
-        if (options.hasOwnProperty("vAlignment")) {
+        if (options["vAlignment"]) {
             textArea.setTextVerticalAlignment(options["vAlignment"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -1452,14 +1447,14 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         var textButton = widget;
         textButton.setTitleText(options["text"] || "");
-        var cri = options.hasOwnProperty("textColorR") ? options["textColorR"] : 255;
-        var cgi = options.hasOwnProperty("textColorG") ? options["textColorG"] : 255;
-        var cbi = options.hasOwnProperty("textColorB") ? options["textColorB"] : 255;
-        textButton.setTitleColor(cc.c3b(cri, cgi, cbi));
-        if (options.hasOwnProperty("fontSize")) {
+        var cri = options["textColorR"] !== undefined ? options["textColorR"] : 255;
+        var cgi = options["textColorG"] !== undefined ? options["textColorG"] : 255;
+        var cbi = options["textColorB"] !== undefined ? options["textColorB"] : 255;
+        textButton.setTitleColor(cc.color(cri, cgi, cbi));
+        if (options["fontSize"] !== undefined) {
             textButton.setTitleFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             textButton.setTitleFontName(options["fontName"]);
         }
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
@@ -1468,17 +1463,17 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     setPropsForTextFieldFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textField = widget;
-        if (options.hasOwnProperty("placeHolder")) {
+        if (options["placeHolder"] !== undefined) {
             textField.setPlaceHolder(options["placeHolder"]);
         }
         textField.setText(options["text"]);
-        if (options.hasOwnProperty("fontSize")) {
+        if (options["fontSize"] !== undefined) {
             textField.setFontSize(options["fontSize"]);
         }
-        if (options.hasOwnProperty("fontName")) {
+        if (options["fontName"] !== undefined) {
             textField.setFontName(options["fontName"]);
         }
-        if (options.hasOwnProperty("touchSizeWidth") && options.hasOwnProperty("touchSizeHeight")) {
+        if (options["touchSizeWidth"] !== undefined && options["touchSizeHeight"] !== undefined) {
             textField.setTouchSize(cc.size(options["touchSizeWidth"], options["touchSizeHeight"]));
         }
 

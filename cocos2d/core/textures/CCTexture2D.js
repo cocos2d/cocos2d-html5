@@ -26,100 +26,73 @@
 
 //CONSTANTS:
 
+/**
+ * Horizontal center and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_CENTER = 0x33;
+
+/**
+ * Horizontal center and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP = 0x13;
+
+/**
+ * Horizontal right and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP_RIGHT = 0x12;
+
+/**
+ * Horizontal right and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_RIGHT = 0x32;
+
+/**
+ * Horizontal right and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM_RIGHT = 0x22;
+
+/**
+ * Horizontal center and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM = 0x23;
+
+/**
+ * Horizontal left and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM_LEFT = 0x21;
+
+/**
+ * Horizontal left and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_LEFT = 0x31;
+
+/**
+ * Horizontal left and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP_LEFT = 0x11;
 //----------------------Possible texture pixel formats----------------------------
-/**
- * 32-bit texture: RGBA8888
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 = 0;
 
-/**
- * 24-bit texture: RGBA888
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB888 = 1;
-
-/**
- * 16-bit texture without Alpha channel
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB565 = 2;
-
-/**
- * 8-bit textures used as masks
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_A8 = 3;
-
-/**
- * 8-bit intensity texture
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_I8 = 4;
-
-/**
- * 16-bit textures used as masks
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_AI88 = 5;
-
-/**
- * 16-bit textures: RGBA4444
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444 = 6;
-
-/**
- * 16-bit textures: RGB5A1
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1 = 7;
-
-/**
- * 4-bit PVRTC-compressed texture: PVRTC4
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC4 = 8;
-
-/**
- * 2-bit PVRTC-compressed texture: PVRTC2
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC2 = 9;
-
-/**
- * Default texture format: RGBA8888
- * @constant
- * @type {Number}
- */
-cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
-
-// If the image has alpha, you can create RGBA8 (32-bit) or RGBA4 (16-bit) or RGB5A1 (16-bit)
-// Default is: RGBA8888 (32-bit textures)
-cc._defaultAlphaPixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT;
 
 // By default PVR images are treated as if they don't have the alpha channel premultiplied
 cc.PVRHaveAlphaPremultiplied_ = false;
-
-/**
- Extension to set the Min / Mag filter
- */
-cc._texParams = function (minFilter, magFilter, wrapS, wrapT) {
-    this.minFilter = minFilter || 0;
-    this.magFilter = magFilter || 0;
-    this.wrapS = wrapS || 0;
-    this.wrapT = wrapT || 0;
-};
 
 /**
  * <p>
@@ -130,52 +103,49 @@ cc._texParams = function (minFilter, magFilter, wrapS, wrapT) {
  * Be aware that the content of the generated textures will be upside-down! </p>
  * @class
  * @extends cc.Class
+ *
+ * @property {WebGLTexture}     name            - <@readonly> WebGLTexture Object
+ * @property {Number}           pixelFormat     - <@readonly> Pixel format of the texture
+ * @property {Number}           pixelsWidth     - <@readonly> Width in pixels
+ * @property {Number}           pixelsHeight    - <@readonly> Height in pixels
+ * @property {Number}           width           - Content width in points
+ * @property {Number}           height          - Content height in points
+ * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
+ * @property {Number}           maxS            - Texture max S
+ * @property {Number}           maxT            - Texture max T
  */
 cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
-    _pVRHaveAlphaPremultiplied:null,
+    _pVRHaveAlphaPremultiplied:true,
     _pixelFormat:null,
-    _pixelsWide:null,
-    _pixelsHigh:null,
-    _name:null,
+    _pixelsWide:0,
+    _pixelsHigh:0,
+    _name:"",
     _contentSize:null,
-    _maxS:null,
-    _maxT:null,
-    _hasPremultipliedAlpha:null,
+    maxS:0,
+    maxT:0,
+    _hasPremultipliedAlpha:false,
     _hasMipmaps:false,
 
-    _shaderProgram:null,
+    shaderProgram:null,
 
     _isLoaded:false,
     _htmlElementObj:null,
     _webTextureObj:null,
 
+    url : null,
     _loadedEventListeners:null,
 
     /*public:*/
     ctor:function () {
-        this._pixelsWide = 0;
-        this._pixelsHigh = 0;
-        this._name = "";
-        this._maxS = 0;
-        this._maxT = 0;
-        this._hasPremultipliedAlpha = false;
-        this._contentSize = cc._sizeConst(0, 0);
-
-        this._hasMipmaps = false;
-        this._pVRHaveAlphaPremultiplied = true;
-        this._pixelFormat = cc.Texture2D.defaultAlphaPixelFormat();
-
-        this._shaderProgram = null;
-        this._isLoaded = false;
-        this._htmlElementObj = null;
-        this._webTextureObj = null;
-        this._loadedEventListeners = [];
+        this._contentSize = cc.size(0, 0);
+        this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_DEFAULT;
     },
 
     releaseTexture:function () {
         if (this._webTextureObj)
             cc.renderContext.deleteTexture(this._webTextureObj);
+        cc.loader.release(this.url);
     },
 
     /**
@@ -195,7 +165,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     /**
-     * hight in pixels
+     * height in pixels
      * @return {Number}
      */
     getPixelsHigh:function () {
@@ -218,26 +188,33 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
     },
 
+    _getWidth:function () {
+        return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+    },
+    _getHeight:function () {
+        return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+    },
+
     getContentSizeInPixels:function () {
         return this._contentSize;
     },
 
     /** texture max S */
     getMaxS:function () {
-        return this._maxS;
+        return this.maxS;
     },
 
     setMaxS:function (maxS) {
-        this._maxS = maxS;
+        this.maxS = maxS;
     },
 
     /** texture max T */
     getMaxT:function () {
-        return this._maxT;
+        return this.maxT;
     },
 
     setMaxT:function (maxT) {
-        this._maxT = maxT;
+        this.maxT = maxT;
     },
 
     /**
@@ -245,7 +222,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {cc.GLProgram}
      */
     getShaderProgram:function () {
-        return this._shaderProgram;
+        return this.shaderProgram;
     },
 
     /**
@@ -253,7 +230,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param {cc.GLProgram} shaderProgram
      */
     setShaderProgram:function (shaderProgram) {
-        this._shaderProgram = shaderProgram;
+        this.shaderProgram = shaderProgram;
     },
 
     /**
@@ -270,7 +247,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
     description:function () {
         return "<cc.Texture2D | Name = " + this._name + " | Dimensions = " + this._pixelsWide + " x " + this._pixelsHigh
-            + " | Coordinates = (" + this._maxS + ", " + this._maxT + ")>";
+            + " | Coordinates = (" + this.maxS + ", " + this.maxT + ")>";
     },
 
     /**
@@ -296,15 +273,11 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
+        var self = this, tex2d = cc.Texture2D;
         var gl = cc.renderContext;
+        var format = gl.RGBA, type = gl.UNSIGNED_BYTE;
 
-        var bitsPerPixel = 0;
-        //Hack: bitsPerPixelForFormat returns wrong number for RGB_888 textures. See function.
-        if (pixelFormat === cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888) {
-            bitsPerPixel = 24;
-        } else {
-            bitsPerPixel = this.bitsPerPixelForFormat(pixelFormat);
-        }
+        var bitsPerPixel = cc.Texture2D.BITS_PER_PIXEL_FORMAT[pixelFormat];
 
         var bytesPerRow = pixelsWide * bitsPerPixel / 8;
         if (bytesPerRow % 8 === 0) {
@@ -317,8 +290,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
         }
 
-        this._webTextureObj = gl.createTexture();
-        cc.glBindTexture2D(this);
+        self._webTextureObj = gl.createTexture();
+        cc.glBindTexture2D(self);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -327,49 +300,49 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         // Specify OpenGL texture image
         switch (pixelFormat) {
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+	        case tex2d.PIXEL_FORMAT_RGBA8888:
+		        format = gl.RGBA;
+		        break;
+            case tex2d.PIXEL_FORMAT_RGB888:
+                format = gl.RGB;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_BYTE, data);
+            case tex2d.PIXEL_FORMAT_RGBA4444:
+                type = gl.UNSIGNED_SHORT_4_4_4_4;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, data);
+            case tex2d.PIXEL_FORMAT_RGB5A1:
+                type = gl.UNSIGNED_SHORT_5_5_5_1;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, data);
+            case tex2d.PIXEL_FORMAT_RGB565:
+                type = gl.UNSIGNED_SHORT_5_6_5;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, data);
+            case tex2d.PIXEL_FORMAT_AI88:
+                format = gl.LUMINANCE_ALPHA;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, pixelsWide, pixelsHigh, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, data);
+            case tex2d.PIXEL_FORMAT_A8:
+                format = gl.ALPHA;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, pixelsWide, pixelsHigh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, data);
-                break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_I8:
-                gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, pixelsWide, pixelsHigh, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, data);
+            case tex2d.PIXEL_FORMAT_I8:
+                format = gl.LUMINANCE;
                 break;
             default:
                 throw "NSInternalInconsistencyException";
-                break;
         }
+        gl.texImage2D(gl.TEXTURE_2D, 0, format, pixelsWide, pixelsHigh, 0, format, type, data);
 
 
-        this._contentSize._width = contentSize.width;
-        this._contentSize._height = contentSize.height;
-        this._pixelsWide = pixelsWide;
-        this._pixelsHigh = pixelsHigh;
-        this._pixelFormat = pixelFormat;
-        this._maxS = contentSize.width / pixelsWide;
-        this._maxT = contentSize.height / pixelsHigh;
+        self._contentSize.width = contentSize.width;
+        self._contentSize.height = contentSize.height;
+        self._pixelsWide = pixelsWide;
+        self._pixelsHigh = pixelsHigh;
+        self._pixelFormat = pixelFormat;
+        self.maxS = contentSize.width / pixelsWide;
+        self.maxT = contentSize.height / pixelsHigh;
 
-        this._hasPremultipliedAlpha = false;
-        this._hasMipmaps = false;
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+        self._hasPremultipliedAlpha = false;
+        self._hasMipmaps = false;
+        self.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
 
-        this._isLoaded = true;
+        self._isLoaded = true;
 
         return true;
     },
@@ -384,14 +357,15 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param {cc.Point} point
      */
     drawAtPoint:function (point) {
+        var self = this;
         var coordinates = [
-            0.0, this._maxT,
-            this._maxS, this._maxT,
+            0.0, self.maxT,
+            self.maxS, self.maxT,
             0.0, 0.0,
-            this._maxS, 0.0 ];
+            self.maxS, 0.0 ];
 
-        var width = this._pixelsWide * this._maxS,
-            height = this._pixelsHigh * this._maxT;
+        var width = self._pixelsWide * self.maxS,
+            height = self._pixelsHigh * self.maxT;
 
         var vertices = [
             point.x, point.y, 0.0,
@@ -399,11 +373,11 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             point.x, height + point.y, 0.0,
             width + point.x, height + point.y, 0.0 ];
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
-        this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
+        self._shaderProgram.use();
+        self._shaderProgram.setUniformsForBuiltins();
 
-        cc.glBindTexture2D(this);
+        cc.glBindTexture2D(self);
 
         var gl = cc.renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
@@ -417,22 +391,23 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param {cc.Rect} rect
      */
     drawInRect:function (rect) {
+        var self = this;
         var coordinates = [
-            0.0, this._maxT,
-            this._maxS, this._maxT,
+            0.0, self.maxT,
+            self.maxS, self.maxT,
             0.0, 0.0,
-            this._maxS, 0.0];
+            self.maxS, 0.0];
 
         var vertices = [    rect.x, rect.y, /*0.0,*/
             rect.x + rect.width, rect.y, /*0.0,*/
             rect.x, rect.y + rect.height, /*0.0,*/
             rect.x + rect.width, rect.y + rect.height        /*0.0*/ ];
 
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
-        this._shaderProgram.use();
-        this._shaderProgram.setUniformsForBuiltins();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
+        self._shaderProgram.use();
+        self._shaderProgram.setUniformsForBuiltins();
 
-        cc.glBindTexture2D(this);
+        cc.glBindTexture2D(self);
 
         var gl = cc.renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
@@ -493,36 +468,44 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     handleLoadedTexture:function () {
-        this._isLoaded = true;
+        var self = this;
+	    // Not sure about this ! Some texture need to be updated even after loaded
+        if(!cc._rendererInitialized) return;
+        if(!self._htmlElementObj){
+            var img = cc.loader.getRes(self.url);
+            if(!img) return;
+            self.initWithElement(img);
+        }
+        self._isLoaded = true;
         //upload image to buffer
         var gl = cc.renderContext;
 
-        cc.glBindTexture2D(this);
+        cc.glBindTexture2D(self);
 
         gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
 
         // Specify OpenGL texture image
-        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._htmlElementObj);
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, self._htmlElementObj);
 
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+        self.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
         cc.glBindTexture2D(null);
 
-        var pixelsWide = this._htmlElementObj.width;
-        var pixelsHigh = this._htmlElementObj.height;
+        var pixelsWide = self._htmlElementObj.width;
+        var pixelsHigh = self._htmlElementObj.height;
 
-        this._pixelsWide = this._contentSize._width = pixelsWide;
-        this._pixelsHigh = this._contentSize._height = pixelsHigh;
-        this._pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
-        this._maxS = 1;
-        this._maxT = 1;
+        self._pixelsWide = self._contentSize.width = pixelsWide;
+        self._pixelsHigh = self._contentSize.height = pixelsHigh;
+        self._pixelFormat = cc.Texture2D.PIXEL_FORMAT_RGBA8888;
+        self.maxS = 1;
+        self.maxT = 1;
 
-        this._hasPremultipliedAlpha = false;
-        this._hasMipmaps = false;
+        self._hasPremultipliedAlpha = false;
+        self._hasMipmaps = false;
 
         this._callLoadedEventCallbacks();
     },
@@ -585,6 +568,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithETCFile:function (file) {
+        cc.log("initWithETCFile does not support on HTML5");
         return false;
     },
 
@@ -594,30 +578,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithPVRFile:function (file) {
-        var ret = false;
-        // nothing to do with cc.Object.init
-
-        var pvr = new cc.TexturePVR;
-        ret = pvr.initWithContentsOfFile(file);
-
-        if (ret) {
-            pvr.setRetainName(true); // don't dealloc texture on release
-
-            this._name = pvr.getName();
-            this._maxS = 1.0;
-            this._maxT = 1.0;
-            this._pixelsWide = pvr.getWidth();
-            this._pixelsHigh = pvr.getHeight();
-            this._contentSize._width = this._pixelsWide;
-            this._contentSize._height = this._pixelsHigh;
-            this._hasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
-            this._pixelFormat = pvr.getFormat();
-
-            this.setAntiAliasTexParameters();
-        } else {
-            cc.log("cocos2d: Couldn't load PVR image " + file);
-        }
-        return ret;
+        cc.log("initWithPVRFile does not support on HTML5");
+        return false;
     },
 
     /**
@@ -636,11 +598,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
-        if (!(cc.Configuration.getInstance().supportsPVRTC())) {
-            cc.log("cocos2d: WARNING: PVRTC images is not supported.");
-            return false;
-        }
-        return true;
+        cc.log("initWithPVRTCData does not support on HTML5");
+        return false;
     },
 
     /**
@@ -725,112 +684,47 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {String}
      */
     stringForFormat:function () {
-        switch (this._pixelFormat) {
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
-                return  "RGBA8888";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
-                return  "RGB888";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
-                return  "RGB565";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
-                return  "RGBA4444";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
-                return  "RGB5A1";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
-                return  "AI88";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
-                return  "A8";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_I8:
-                return  "I8";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC4:
-                return  "PVRTC4";
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC2:
-                return  "PVRTC2";
-
-            default:
-                cc.log("stringForFormat: " + this._pixelFormat + ", cannot give useful result, it's a unrecognized pixel format");
-                break;
-        }
-        return "";
+        return cc.Texture2D.PIXEL_FORMAT_STR_MAP[this._pixelFormat];
     },
 
     /**
      * returns the bits-per-pixel of the in-memory OpenGL texture
      * @return {Number}
      */
-    bitsPerPixelForFormat:function (format) {
+    bitsPerPixelForFormat:function (format) {//TODO I want to delete the format argument, use this._pixelFormat
         format = format || this._pixelFormat;
-        switch (format) {
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
-                return 32;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
-                return 32;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
-                return 16;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
-                return 8;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
-                return 16;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
-                return 16;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC4:
-                return 4;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC2:
-                return 2;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_I8:
-                return 8;
-
-            case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
-                return 16;
-
-            default:
-                cc.log("bitsPerPixelForFormat: " + this._pixelFormat + ", cannot give useful result, it's a illegal pixel format");
-                return -1;
-        }
+        var value = cc.Texture2D.BITS_PER_PIXEL_FORMAT[format];
+        if(value != null) return value;
+        cc.log("bitsPerPixelForFormat: " + format + ", cannot give useful result, it's a illegal pixel format");
+        return -1;
     },
 
     _initPremultipliedATextureWithImage:function (uiImage, width, height) {
+        var tex2d = cc.Texture2D;
         var tempData = uiImage.getData();
         var inPixel32 = null;
         var inPixel8 = null;
         var outPixel16 = null;
         var hasAlpha = uiImage.hasAlpha();
         var imageSize = cc.size(uiImage.getWidth(), uiImage.getHeight());
-        var pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT;
+        var pixelFormat = tex2d.PIXEL_FORMAT_DEFAULT;
         var bpp = uiImage.getBitsPerComponent();
         var i;
 
         // compute pixel format
         if (!hasAlpha) {
             if (bpp >= 8) {
-                pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGB888;
+                pixelFormat = tex2d.PIXEL_FORMAT_RGB888;
             } else {
                 cc.log("cocos2d: cc.Texture2D: Using RGB565 texture since image has no alpha");
-                pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGB565;
+                pixelFormat = tex2d.PIXEL_FORMAT_RGB565;
             }
         }
 
         // Repack the pixel data into the right format
         var length = width * height;
 
-        if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGB565) {
+        if (pixelFormat == tex2d.PIXEL_FORMAT_RGB565) {
             if (hasAlpha) {
                 // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGGBBBBB"
                 tempData = new Uint16Array(width * height);
@@ -854,7 +748,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                             (((inPixel8[i] & 0xFF) >> 3) << 0);    // B
                 }
             }
-        } else if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444) {
+        } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGBA4444) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRGGGGBBBBAAAA"
             tempData = new Uint16Array(width * height);
             inPixel32 = uiImage.getData();
@@ -866,7 +760,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                         ((((inPixel32[i] >> 16) & 0xFF) >> 4) << 4) | // B
                         ((((inPixel32[i] >> 24) & 0xFF) >> 4) << 0);  // A
             }
-        } else if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1) {
+        } else if (pixelFormat == tex2d.PIXEL_FORMAT_RGB5A1) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGBBBBBA"
             tempData = new Uint16Array(width * height);
             inPixel32 = uiImage.getData();
@@ -878,7 +772,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
                         ((((inPixel32[i] >> 16) & 0xFF) >> 3) << 1) | // B
                         ((((inPixel32[i] >> 24) & 0xFF) >> 7) << 0);  // A
             }
-        } else if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_A8) {
+        } else if (pixelFormat == tex2d.PIXEL_FORMAT_A8) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "AAAAAAAA"
             tempData = new Uint8Array(width * height);
             inPixel32 = uiImage.getData();
@@ -888,7 +782,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
             }
         }
 
-        if (hasAlpha && pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGB888) {
+        if (hasAlpha && pixelFormat == tex2d.PIXEL_FORMAT_RGB888) {
             // Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRRRRGGGGGGGGBBBBBBBB"
             inPixel32 = uiImage.getData();
             tempData = new Uint8Array(width * height * 3);
@@ -910,10 +804,14 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     addLoadedEventListener: function (callback, target) {
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
     },
 
     removeLoadedEventListener:function(target){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0;  i < locListeners.length; i++){
             var selCallback = locListeners[i];
@@ -924,6 +822,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     _callLoadedEventCallbacks: function () {
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for (var i = 0, len = locListeners.length; i < len; i++) {
             var selCallback = locListeners[i];
@@ -942,19 +842,29 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
  * Be aware that the content of the generated textures will be upside-down! </p>
  * @class
  * @extends cc.Class
+ *
+ * @property {WebGLTexture}     name            - WebGLTexture Object
+ * @property {Number}           pixelFormat     - Pixel format of the texture
+ * @property {Number}           pixelsWidth     - Width in pixels
+ * @property {Number}           pixelsHeight    - Height in pixels
+ * @property {Number}           width           - Content width in points
+ * @property {Number}           height          - Content height in points
+ * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
+ * @property {Number}           maxS            - Texture max S
+ * @property {Number}           maxT            - Texture max T
  */
 cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     _contentSize:null,
     _isLoaded:false,
     _htmlElementObj:null,
-
     _loadedEventListeners:null,
+
+    url : null,
     /*public:*/
     ctor:function () {
-        this._contentSize = cc._sizeConst(0,0);
+        this._contentSize = cc.size(0,0);
         this._isLoaded = false;
         this._htmlElementObj = null;
-        this._loadedEventListeners = [];
     },
 
     /**
@@ -962,7 +872,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Number}
      */
     getPixelsWide:function () {
-        return this._contentSize._width;
+        return this._contentSize.width;
     },
 
     /**
@@ -970,7 +880,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Number}
      */
     getPixelsHigh:function () {
-        return this._contentSize._height;
+        return this._contentSize.height;
     },
 
     /**
@@ -979,7 +889,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     getContentSize:function () {
         var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
-        return cc.size(this._contentSize._width / locScaleFactor, this._contentSize._height / locScaleFactor);
+        return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
     },
 
     getContentSizeInPixels:function () {
@@ -1005,16 +915,24 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     handleLoadedTexture:function () {
-        this._isLoaded = true;
-        var locElement =  this._htmlElementObj;
-        this._contentSize._width = locElement.width;
-        this._contentSize._height = locElement.height;
+        var self = this
+        if(self._isLoaded) return;
+        if(!self._htmlElementObj){
+            var img = cc.loader.getRes(self.url);
+            if(!img) return;
+            self.initWithElement(img);
+        }
 
-        this._callLoadedEventCallbacks();
+        self._isLoaded = true;
+        var locElement =  self._htmlElementObj;
+        self._contentSize.width = locElement.width;
+        self._contentSize.height = locElement.height;
+
+        self._callLoadedEventCallbacks();
     },
 
     description:function () {
-        return "<cc.Texture2D | width = " + this._contentSize._width + " height " + this._contentSize._height+">";
+        return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height+">";
     },
 
     /**
@@ -1096,6 +1014,11 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         //support only in WebGl rendering mode
     },
 
+    getPixelFormat:function () {
+        //support only in WebGl rendering mode
+        return null;
+    },
+
     /**
      * return shader program used by drawAtPoint and drawInRect
      * @return {cc.GLProgram}
@@ -1169,7 +1092,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithETCFile:function (file) {
-        //support only in WebGl rendering mode
+        cc.log("initWithETCFile does not support on HTML5");
         return false;
     },
 
@@ -1179,7 +1102,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithPVRFile:function (file) {
-        //support only in WebGl rendering mode
+        cc.log("initWithPVRFile does not support on HTML5");
         return false;
     },
 
@@ -1199,8 +1122,8 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
-        //support only in WebGl rendering mode
-        return true;
+        cc.log("initWithPVRTCData does not support on HTML5");
+        return false;
     },
 
     /**
@@ -1253,14 +1176,18 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     bitsPerPixelForFormat:function (format) {
         //support only in WebGl rendering mode
-          return -1;
+        return -1;
     },
 
     addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
     },
 
     removeLoadedEventListener:function(target){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0;  i < locListeners.length; i++){
             var selCallback = locListeners[i];
@@ -1271,6 +1198,8 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
         var locListeners = this._loadedEventListeners;
         for(var i = 0, len = locListeners.length;  i < len; i++){
             var selCallback = locListeners[i];
@@ -1282,38 +1211,20 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
-/**
- * <p>
- *     sets the default pixel format for UIImagescontains alpha channel.                                             <br/>
- *     If the UIImage contains alpha channel, then the options are:                                                  <br/>
- *      - generate 32-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 (default one)                                <br/>
- *      - generate 24-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGB888                                                <br/>
- *      - generate 16-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444                                              <br/>
- *      - generate 16-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1                                                <br/>
- *      - generate 16-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGB565                                                <br/>
- *      - generate 8-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_A8 (only use it if you use just 1 color)               <br/>
- *                                                                                                                   <br/>
- *      How does it work ?                                                                                           <br/>
- *      - If the image is an RGBA (with Alpha) then the default pixel format will be used (it can be a 8-bit, 16-bit or 32-bit texture)      <br/>
- *      - If the image is an RGB (without Alpha) then an RGB565 or RGB888 texture will be used (16-bit texture)      <br/>
- * </p>
- * @param {Number} format
- */
-cc.Texture2D.setDefaultAlphaPixelFormat = function (format) {
-    cc._defaultAlphaPixelFormat = format;
-};
+window._proto = cc.Texture2D.prototype;
 
-/**
- * returns the alpha pixel format
- * @return {Number}
- */
-cc.Texture2D.defaultAlphaPixelFormat = function () {
-    return cc._defaultAlphaPixelFormat;
-};
+// Extended properties
+cc.defineGetterSetter(_proto, "name", _proto.getName);
+cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
+cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
+cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
+//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 
-cc.Texture2D.getDefaultAlphaPixelFormat = function () {
-    return cc._defaultAlphaPixelFormat;
-};
+delete window._proto;
+
+
 
 /**
  * <p>
@@ -1329,3 +1240,111 @@ cc.Texture2D.getDefaultAlphaPixelFormat = function () {
 cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied) {
     cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
 };
+
+
+window._Class = cc.Texture2D;
+
+/**
+ * 32-bit texture: RGBA8888
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGBA8888 = 0;
+
+/**
+ * 24-bit texture: RGBA888
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGB888 = 1;
+
+/**
+ * 16-bit texture without Alpha channel
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGB565 = 2;
+
+/**
+ * 8-bit textures used as masks
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_A8 = 3;
+
+/**
+ * 8-bit intensity texture
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_I8 = 4;
+
+/**
+ * 16-bit textures used as masks
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_AI88 = 5;
+
+/**
+ * 16-bit textures: RGBA4444
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGBA4444 = 6;
+
+/**
+ * 16-bit textures: RGB5A1
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_RGB5A1 = 7;
+
+/**
+ * 4-bit PVRTC-compressed texture: PVRTC4
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_PVRTC4 = 8;
+
+/**
+ * 2-bit PVRTC-compressed texture: PVRTC2
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_PVRTC2 = 9;
+
+/**
+ * Default texture format: RGBA8888
+ * @constant
+ * @type {Number}
+ */
+_Class.PIXEL_FORMAT_DEFAULT = _Class.PIXEL_FORMAT_RGBA8888;
+
+window._PIXEL_FORMAT_STR_MAP = cc.Texture2D.PIXEL_FORMAT_STR_MAP = {};
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGBA8888] = "RGBA8888";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB888] = "RGB888";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB565] = "RGB565";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_A8] = "A8";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_I8] = "I8";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_AI88] = "AI88";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGBA4444] = "RGBA4444";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB5A1] = "RGB5A1";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC4] = "PVRTC4";
+_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC2] = "PVRTC2";
+
+window._BITS_PER_PIXEL_FORMAT = cc.Texture2D.BITS_PER_PIXEL_FORMAT = {};
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGBA8888] = 32;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB888] = 24;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB565] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_A8] = 8;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_I8] = 8;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_AI88] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGBA4444] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB5A1] = 16;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC4] = 4;
+_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC2] = 3;
+
+delete window._Class;
+delete window._PIXEL_FORMAT_STR_MAP;
+delete window._BITS_PER_PIXEL_FORMAT;

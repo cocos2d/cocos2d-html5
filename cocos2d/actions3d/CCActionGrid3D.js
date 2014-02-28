@@ -330,7 +330,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
     ctor:function () {
         cc.GridAction.prototype.ctor.call(this);
 
-        this._position = cc._pConst(0, 0);
+        this._position = cc.p(0, 0);
         this._radius = 0;
         this._lensEffect = 0;
         this._concave = false;
@@ -375,8 +375,8 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
      */
     setPosition:function (position) {
         if (!cc.pointEqualToPoint(position, this._position)) {
-            this._position._x = position.x;
-            this._position._y = position.y;
+            this._position.x = position.x;
+            this._position.y = position.y;
             this._dirty = true;
         }
     },
@@ -473,7 +473,7 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
     ctor:function () {
         cc.GridAction.prototype.ctor.call(this);
 
-        this._position = cc._pConst(0, 0);
+        this._position = cc.p(0, 0);
         this._radius = 0;
         this._waves = 0;
         this._amplitude = 0;
@@ -493,8 +493,8 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
      * @param {cc.Point} position
      */
     setPosition:function (position) {
-        this._position._x = position.x;
-        this._position._y = position.y;
+        this._position.x = position.x;
+        this._position.y = position.y;
     },
 
     /**
@@ -886,7 +886,7 @@ cc.Twirl = cc.Grid3DAction.extend({
     ctor:function () {
         cc.GridAction.prototype.ctor.call(this);
 
-        this._position = cc._pConst(0, 0);
+        this._position = cc.p(0, 0);
         this._twirls = 0;
         this._amplitude = 0;
         this._amplitudeRate = 0;
@@ -905,8 +905,8 @@ cc.Twirl = cc.Grid3DAction.extend({
      * @param {cc.Point} position
      */
     setPosition:function (position) {
-        this._position._x = position.x;
-        this._position._y = position.y;
+        this._position.x = position.x;
+        this._position.y = position.y;
     },
 
     /**

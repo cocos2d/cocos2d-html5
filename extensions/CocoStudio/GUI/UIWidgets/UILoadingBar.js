@@ -33,6 +33,9 @@ ccs.BARRENDERERZ = -1;
  * Base class for ccs.LoadingBar
  * @class
  * @extends ccs.Widget
+ *
+ * @property {ccs.LoadingBarType}   direction   - The progress direction of loadingbar: ccs.LoadingBarType.left | ccs.LoadingBarType.right
+ * @property {Number}               percent     - The current progress of loadingbar
  */
 ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     _barType: null,
@@ -215,7 +218,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     },
 
     /**
-     * Changes the progress direction of loadingbar.
+     * The current progress of loadingbar
      * @param {number} percent
      */
     setPercent: function (percent) {
@@ -277,6 +280,12 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     getContentSize: function () {
         return this._barRendererTextureSize;
     },
+	_getWidth: function () {
+		return this._barRendererTextureSize.width;
+	},
+	_getHeight: function () {
+		return this._barRendererTextureSize.height;
+	},
 
     /**
      * override "getContentSize" method of widget.
@@ -347,8 +356,18 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         this.loadTexture(loadingBar._textureFile, loadingBar._renderBarTexType);
         this.setCapInsets(loadingBar._capInsets);
         this.setPercent(loadingBar._percent);
+        this.setDirection(loadingBar._barType);
     }
 });
+
+window._proto = ccs.LoadingBar.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "direction", _proto.getDirection, _proto.setDirection);
+cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UILoadingBar.
  * @constructs

@@ -38,6 +38,11 @@ cc.Spacer.horizontalSpacer = function (space) {
     return pRet;
 };
 
+/**
+ * MenuPassive: The menu passive ui component
+ * @class
+ * @extend cc.Layer
+ */
 cc.MenuPassive = cc.Layer.extend({
     RGBAProtocol:true,
 
@@ -49,10 +54,14 @@ cc.MenuPassive = cc.Layer.extend({
 
     /** Color: conforms with CCRGBAProtocol protocol */
     getColor:function () {
-        return this._color;
+        var locColor = this._color;
+        return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
     setColor:function (color) {
-        this._color = color;
+        var locColor = this._color;
+        locColor.r = color.r;
+        locColor.g = color.g;
+        locColor.b = color.b;
 
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {
@@ -60,6 +69,9 @@ cc.MenuPassive = cc.Layer.extend({
                     this._children[i].setColor(color);
                 }
             }
+        }
+        if (color.a !== undefined && !color.a_undefined) {
+            this.setOpacity(color.a);
         }
     },
 
@@ -78,6 +90,8 @@ cc.MenuPassive = cc.Layer.extend({
                 }
             }
         }
+
+        this._color.a = opacity;
     },
 
     /** initializes a CCMenu with it's items */
@@ -369,7 +383,7 @@ cc.MenuPassive = cc.Layer.extend({
 
 /** creates an empty CCMenu */
 cc.MenuPassive.create = function (item) {
-    if (arguments.length == 0) {
+    if (!item) {
         item = null;
     }
 

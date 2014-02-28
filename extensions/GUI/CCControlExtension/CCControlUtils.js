@@ -44,7 +44,7 @@ cc.HSV = function(h,s,v){
 cc.ControlUtils = {};
 
 cc.ControlUtils.addSpriteToTargetWithPosAndAnchor = function(spriteName,target,pos,anchor){
-    var sprite =cc.Sprite.createWithSpriteFrameName(spriteName);
+    var sprite =cc.Sprite.create("#" + spriteName);
 
     if (!sprite)
         return null;

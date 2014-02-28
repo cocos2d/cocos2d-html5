@@ -31,6 +31,13 @@ var TITLE_RENDERER_ZORDER = -1;
  * Base class for ccs.Button
  * @class
  * @extends ccs.Widget
+ *
+ * @property {String}   titleText               - The content string of the button title
+ * @property {String}   titleFont               - The content string font of the button title
+ * @property {Number}   titleFontSize           - The content string font size of the button title
+ * @property {String}   titleFontName           - The content string font name of the button title
+ * @property {cc.Color} titleFontColor          - The content string font color of the button title
+ * @property {Boolean}  pressedActionEnabled    - Indicate whether button has zoom effect when clicked
  */
 ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     _buttonNormalRenderer: null,
@@ -52,7 +59,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     _normalTextureSize: null,
     _pressedTextureSize: null,
     _disabledTextureSize: null,
-    _pressedActionEnabled: false,
+    pressedActionEnabled: false,
     _titleColor: null,
     _normalTextureScaleXInSize: 1,
     _normalTextureScaleYInSize: 1,
@@ -72,9 +79,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._disabledFileName = "";
         this._prevIgnoreSize = true;
         this._scale9Enabled = false;
-        this._capInsetsNormal = cc.RectZero();
-        this._capInsetsPressed = cc.RectZero();
-        this._capInsetsDisabled = cc.RectZero();
+        this._capInsetsNormal = cc.rect(0, 0, 0, 0);
+        this._capInsetsPressed = cc.rect(0, 0, 0, 0);
+        this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
         this._normalTexType = ccs.TextureResType.local;
         this._pressedTexType = ccs.TextureResType.local;
         this._disabledTexType = ccs.TextureResType.local;
@@ -82,8 +89,8 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._normalTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
         this._disabledTextureSize = cc.size(locSize.width, locSize.height);
-        this._pressedActionEnabled = false;
-        this._titleColor = cc.white();
+        this.pressedActionEnabled = false;
+        this._titleColor = cc.color.white;
         this._normalTextureScaleXInSize = 1;
         this._normalTextureScaleYInSize = 1;
         this._pressedTextureScaleXInSize = 1;
@@ -377,7 +384,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._buttonClickedRenderer.setVisible(false);
         this._buttonDisableRenderer.setVisible(false);
         if (this._pressedTextureLoaded) {
-            if (this._pressedActionEnabled) {
+            if (this.pressedActionEnabled) {
                 this._buttonNormalRenderer.stopAllActions();
                 this._buttonClickedRenderer.stopAllActions();
                 this._buttonDisableRenderer.stopAllActions();
@@ -389,9 +396,11 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
                 this._buttonDisableRenderer.runAction(zoomAction2);
             }
         } else {
-            this._buttonNormalRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
-            this._buttonNormalRenderer.runAction(zoomAction);
+            //todo
+//            this._buttonNormalRenderer.stopAllActions();
+//            var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
+//            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
         }
     },
 
@@ -400,7 +409,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             this._buttonNormalRenderer.setVisible(false);
             this._buttonClickedRenderer.setVisible(true);
             this._buttonDisableRenderer.setVisible(false);
-            if (this._pressedActionEnabled) {
+            if (this.pressedActionEnabled) {
                 this._buttonNormalRenderer.stopAllActions();
                 this._buttonClickedRenderer.stopAllActions();
                 this._buttonDisableRenderer.stopAllActions();
@@ -415,9 +424,11 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             this._buttonNormalRenderer.setVisible(true);
             this._buttonClickedRenderer.setVisible(true);
             this._buttonDisableRenderer.setVisible(false);
-            this._buttonNormalRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
-            this._buttonNormalRenderer.runAction(zoomAction);
+            //todo
+//            this._buttonNormalRenderer.stopAllActions();
+//            var zoomAction = cc.ScaleTo.create(0.05, this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
+//            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
         }
     },
 
@@ -485,20 +496,35 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      * @param {Number} [y] The anchor point.y of UIButton.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this,point, y);
-            this._buttonNormalRenderer.setAnchorPoint(point, y);
-            this._buttonClickedRenderer.setAnchorPoint(point, y);
-            this._buttonDisableRenderer.setAnchorPoint(point, y);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._buttonNormalRenderer.setAnchorPoint(point);
+	        this._buttonClickedRenderer.setAnchorPoint(point);
+	        this._buttonDisableRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this,point);
-            this._buttonNormalRenderer.setAnchorPoint(point);
-            this._buttonClickedRenderer.setAnchorPoint(point);
-            this._buttonDisableRenderer.setAnchorPoint(point);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._buttonNormalRenderer.setAnchorPoint(point, y);
+	        this._buttonClickedRenderer.setAnchorPoint(point, y);
+	        this._buttonDisableRenderer.setAnchorPoint(point, y);
         }
+	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
     },
+	_setAnchorX: function (value) {
+		ccs.Widget.prototype._setAnchorX.call(this, value);
+		this._buttonNormalRenderer._setAnchorX(value);
+		this._buttonClickedRenderer._setAnchorX(value);
+		this._buttonDisableRenderer._setAnchorX(value);
+
+		this._titleRenderer.setPositionX(this._size.width * (0.5 - this._anchorPoint.x));
+	},
+	_setAnchorY: function (value) {
+		ccs.Widget.prototype._setAnchorY.call(this, value);
+		this._buttonNormalRenderer._setAnchorY(value);
+		this._buttonClickedRenderer._setAnchorY(value);
+		this._buttonDisableRenderer._setAnchorY(value);
+
+		this._titleRenderer.setPositionY(this._size.height * (0.5 - this._anchorPoint.y));
+	},
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
@@ -514,6 +540,12 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     getContentSize: function () {
         return this._normalTextureSize;
     },
+	_getWidth: function () {
+		return this._scale9Enabled ? this._size.width : this._normalTextureSize.width;
+	},
+	_getHeight: function () {
+		return this._scale9Enabled ? this._size.height : this._normalTextureSize.height;
+	},
 
     /**
      * Gets the Virtual Renderer of widget.
@@ -622,7 +654,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      * @param {Boolean} enabled
      */
     setPressedActionEnabled: function (enabled) {
-        this._pressedActionEnabled = enabled;
+        this.pressedActionEnabled = enabled;
     },
 
     /**
@@ -643,16 +675,18 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 
     /**
      * set title color
-     * @param {cc.c3b} color
+     * @param {cc.Color} color
      */
     setTitleColor: function (color) {
-        this._titleColor = color;
+        this._titleColor.r = color.r;
+        this._titleColor.g = color.g;
+        this._titleColor.b = color.b;
         this._titleRenderer.updateDisplayedColor(color);
     },
 
     /**
      * get title color
-     * @returns {cc.c3b}
+     * @returns {cc.Color}
      */
     getTitleColor: function () {
         return this._titleRenderer.getColor();
@@ -690,6 +724,13 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         return this._titleRenderer.getFontName();
     },
 
+	_setTitleFont: function (font) {
+		this._titleRenderer.font = font;
+	},
+	_getTitleFont: function () {
+		return this._titleRenderer.font;
+	},
+
     /**
      * Sets color to widget
      * It default change the color of widget's children.
@@ -725,10 +766,22 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this.setTitleFontName(uiButton.getTitleFontName());
         this.setTitleFontSize(uiButton.getTitleFontSize());
         this.setTitleColor(uiButton.getTitleColor());
-        this.setPressedActionEnabled(uiButton._pressedActionEnabled);
+        this.setPressedActionEnabled(uiButton.pressedActionEnabled);
     }
 
 });
+
+window._proto = ccs.Button.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "titleText", _proto.getTitleText, _proto.setTitleText);
+cc.defineGetterSetter(_proto, "titleFont", _proto._getTitleFont, _proto._setTitleFont);
+cc.defineGetterSetter(_proto, "titleFontSize", _proto.getTitleFontSize, _proto.setTitleFontSize);
+cc.defineGetterSetter(_proto, "titleFontName", _proto.getTitleFontName, _proto.setTitleFontName);
+cc.defineGetterSetter(_proto, "titleColor", _proto.getTitleColor, _proto.setTitleColor);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UIButton.
  * @constructs

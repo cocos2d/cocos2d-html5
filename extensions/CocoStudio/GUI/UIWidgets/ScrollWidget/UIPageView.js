@@ -87,11 +87,15 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (ccs.Layout.prototype.init.call(this)) {
             this._pages = [];
             this.setClippingEnabled(true);
-            this.setUpdateEnabled(true);
             this.setTouchEnabled(true);
             return true;
         }
         return false;
+    },
+
+    onEnter:function(){
+        ccs.Layout.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     /**
@@ -147,7 +151,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (page.getWidgetType() != ccs.WidgetType.container) {
             return;
         }
-        if (cc.ArrayContainsObject(this._pages, page)) {
+        if (this._pages.indexOf(page) != -1) {
             return;
         }
         var pSize = page.getSize();
@@ -156,7 +160,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
             cc.log("page size does not match pageview size, it will be force sized!");
             page.setSize(pvSize);
         }
-        page.setPosition(cc.p(this.getPositionXByIndex(this._pages.length), 0));
+        page.setPosition(this.getPositionXByIndex(this._pages.length), 0);
         this._pages.push(page);
         this.addChild(page);
         this.updateBoundaryPages();
@@ -177,7 +181,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (page.getWidgetType() != ccs.WidgetType.container) {
             return;
         }
-        if (cc.ArrayContainsObject(this._pages, page)) {
+        if (this._pages.indexOf(page) != -1) {
             return;
         }
 
@@ -186,8 +190,8 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
             this.addPage(page);
         }
         else {
-            cc.ArrayAppendObjectToIndex(this._pages, page, idx);
-            page.setPosition(cc.p(this.getPositionXByIndex(idx), 0));
+            this._pages.splice(idx, 0, page);
+            page.setPosition(this.getPositionXByIndex(idx), 0);
             this.addChild(page);
             var pSize = page.getSize();
             var pvSize = this.getSize();
@@ -200,7 +204,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
             for (var i = (idx + 1); i < length; i++) {
                 var behindPage = arrayPages[i];
                 var formerPos = behindPage.getPosition();
-                behindPage.setPosition(cc.p(formerPos.x + this.getSize().width, 0));
+                behindPage.setPosition(formerPos.x + this.getSize().width, 0);
             }
             this.updateBoundaryPages();
         }
@@ -268,7 +272,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
      * @param {ccs.Widget} child
      */
     removeChild: function (child) {
-        cc.ArrayRemoveObject(this._pages, child);
+        cc.arrayRemoveObject(this._pages, child);
         ccs.Layout.prototype.removeChild.call(this, child);
     },
 
@@ -308,7 +312,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         var arrayPages = this._pages;
         for (var i = 0; i < pageCount; i++) {
             var page = arrayPages[i];
-            page.setPosition(cc.p((i - this._curPageIdx) * pageWidth, 0));
+            page.setPosition((i - this._curPageIdx) * pageWidth, 0);
         }
     },
 
@@ -327,7 +331,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         }
         this._curPageIdx = idx;
         var curPage = this._pages[idx];
-        this._autoScrollDistance = -(curPage.getPosition().x);
+        this._autoScrollDistance = -(curPage.getPositionX());
         this._autoScrollSpeed = Math.abs(this._autoScrollDistance) / 0.2;
         this._autoScrollDir = this._autoScrollDistance > 0 ? 1 : 0;
         this._isAutoScrolling = true;
@@ -414,7 +418,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         for (var i = 0; i < length; i++) {
             var child = arrayPages[i];
             var pos = child.getPosition();
-            child.setPosition(cc.p(pos.x + offset, pos.y));
+            child.setPosition(pos.x + offset, pos.y);
         }
     },
 

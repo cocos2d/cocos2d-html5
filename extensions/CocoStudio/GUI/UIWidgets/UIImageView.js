@@ -216,14 +216,23 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
      * @param {Number} [y] The anchor point.y of UIImageView.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._imageRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._imageRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._imageRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._imageRenderer.setAnchorPoint(point, y);
         }
     },
+	_setAnchorX: function (value) {
+		ccs.Widget.prototype._setAnchorX.call(this, value);
+		this._imageRenderer._setAnchorX(value);
+	},
+	_setAnchorY: function (value) {
+		ccs.Widget.prototype._setAnchorY.call(this, value);
+		this._imageRenderer._setAnchorY(value);
+	},
+
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
@@ -237,6 +246,12 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     getContentSize: function () {
         return this._imageTextureSize;
     },
+	_getWidth: function () {
+		return this._imageTextureSize.width;
+	},
+	_getHeight: function () {
+		return this._imageTextureSize.height;
+	},
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -291,6 +306,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     }
 
 });
+
 /**
  * allocates and initializes a UIImageView.
  * @constructs

@@ -26,6 +26,8 @@
  * Base class for ccs.Tween objects.
  * @class
  * @extends ccs.ProcessBase
+ *
+ * @property {ccs.ArmatureAnimation}    animation   - The animation
  */
 ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     _tweenData:null,
@@ -39,7 +41,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
     _totalDuration:0,
     _toIndex:0,
     _fromIndex:0,
-    _animation:null,
+    animation:null,
     _passLastFrame:false,
     ctor:function () {
         ccs.ProcessBase.prototype.ctor.call(this);
@@ -52,7 +54,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._frameTweenEasing = ccs.TweenType.linear;
         this._toIndex = 0;
         this._fromIndex = 0;
-        this._animation = null;
+        this.animation = null;
         this._passLastFrame = false;
     },
 
@@ -69,7 +71,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         this._tweenData = this._bone.getTweenData();
         this._tweenData.displayIndex = -1;
          var armature = bone.getArmature();
-        if (armature) this._animation = armature.getAnimation();
+        if (armature) this.animation = armature.getAnimation();
         return true;
     },
 
@@ -269,11 +271,12 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             var displayManager = locBone.getDisplayManager();
             if (!displayManager.getForceChangeDisplay()) {
                 displayManager.changeDisplayWithIndex(displayIndex, false);
-
+                var locRenderNode = displayManager.getDisplayRenderNode();
+                if(locRenderNode)
+                    locRenderNode.setBlendFunc(keyFrameData.blendFunc);
             }
             this._tweenData.zOrder = keyFrameData.zOrder;
             locBone.updateZOrder();
-            locBone.setBlendFunc(keyFrameData.blendFunc);
             var childAramture = locBone.getChildArmature();
             if (childAramture) {
                 if (keyFrameData.movement != "") {
@@ -369,8 +372,8 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                 to = frames[locToIndex];
 
                 //! Guaranteed to trigger frame event
-                if(from.event&& !this._animation.isIgnoreFrameEvent()){
-                    this._animation.frameEvent(this._bone, from.event,from.frameID, playedTime);
+                if(from.event&& !this.animation.isIgnoreFrameEvent()){
+                    this.animation.frameEvent(this._bone, from.event,from.frameID, playedTime);
                 }
 
                 if (playedTime == from.frameID|| (this._passLastFrame && this._fromIndex == length-1)){
@@ -404,7 +407,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @param {ccs.ArmatureAnimation} animation
      */
     setAnimation:function (animation) {
-        this._animation = animation;
+        this.animation = animation;
     },
 
     /**
@@ -412,7 +415,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
      * @return {ccs.ArmatureAnimation}
      */
     getAnimation:function () {
-        return this._animation;
+        return this.animation;
     },
 
     release:function () {

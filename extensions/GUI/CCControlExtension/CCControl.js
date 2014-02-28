@@ -57,6 +57,11 @@ cc.CONTROL_STATE_INITIAL = 1 << 3;
  * To use the CCControl you have to subclass it.
  * @class
  * @extends cc.LayerRGBA
+ *
+ * @property {Number}   state       - <@readonly> The current control state: cc.CONTROL_STATE_NORMAL | cc.CONTROL_STATE_HIGHLIGHTED | cc.CONTROL_STATE_DISABLED | cc.CONTROL_STATE_SELECTED | cc.CONTROL_STATE_INITIAL
+ * @property {Boolean}  enabled     - Indicate whether the control node is enbaled
+ * @property {Boolean}  selected    - Indicate whether the control node is selected
+ * @property {Boolean}  highlighted - Indicate whether the control node is highlighted
  */
 cc.Control = cc.LayerRGBA.extend({
     _isOpacityModifyRGB:false,
@@ -138,33 +143,31 @@ cc.Control = cc.LayerRGBA.extend({
     ctor:function () {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._dispatchTable = {};
-        this._color = cc.white();
+        this._color = cc.color.white;
     },
 
     init:function () {
         if (cc.LayerRGBA.prototype.init.call(this)) {
-            //this.setTouchEnabled(true);
-            //m_bIsTouchEnabled=true;
             // Initialise instance variables
             this._state = cc.CONTROL_STATE_NORMAL;
             this._enabled = true;
             this._selected = false;
             this._highlighted = false;
 
-            // Set the touch dispatcher priority by default to 1
-            this._defaultTouchPriority = 1;
-            this.setTouchPriority(1);
-            // Initialise the tables
-            //this._dispatchTable = {};
-            //dispatchTable.autorelease();
-            //   dispatchTable_ = [[NSMutableDictionary alloc] initWithCapacity:1];
+            var listener = cc.EventListenerTouchOneByOne.create();
+            if(this.onTouchBegan)
+                listener.onTouchBegan = this.onTouchBegan.bind(this);
+            if(this.onTouchMoved)
+                listener.onTouchMoved = this.onTouchMoved.bind(this);
+            if(this.onTouchEnded)
+                listener.onTouchEnded = this.onTouchEnded.bind(this);
+            if(this.onTouchCancelled)
+                listener.onTouchCancelled = this.onTouchCancelled.bind(this);
+            cc.eventManager.addListener(listener, this);
+
             return true;
         } else
             return false;
-    },
-
-    registerWithTouchDispatcher:function () {
-        cc.registerTargetedDelegate(this.getTouchPriority(), true, this);
     },
 
     /**
@@ -271,7 +274,7 @@ cc.Control = cc.LayerRGBA.extend({
     _dispatchListforControlEvent:function (controlEvent) {
         controlEvent = controlEvent.toString();
         // If the invocation list does not exist for the  dispatch table, we create it
-        if (!this._dispatchTable.hasOwnProperty(controlEvent))
+        if (!this._dispatchTable[controlEvent])
             this._dispatchTable[controlEvent] = [];
         return this._dispatchTable[controlEvent];
     },
@@ -327,7 +330,7 @@ cc.Control = cc.LayerRGBA.extend({
                     shouldBeRemoved = (shouldBeRemoved && (action == invocation.getAction()));
                 // Remove the corresponding invocation object
                 if (shouldBeRemoved)
-                    cc.ArrayRemoveObject(eventInvocationList, invocation);
+                    cc.arrayRemoveObject(eventInvocationList, invocation);
                 else
                     i ++;
             }
@@ -340,6 +343,16 @@ cc.Control = cc.LayerRGBA.extend({
     needsLayout:function () {
     }
 });
+
+window._proto = cc.Control.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "state", _proto.getState);
+cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
+cc.defineGetterSetter(_proto, "selected", _proto.isSelected, _proto.setSelected);
+cc.defineGetterSetter(_proto, "highlighted", _proto.isHighlighted, _proto.setHighlighted);
+
+delete window._proto;
 
 cc.Control.create = function () {
     var retControl = new cc.Control();

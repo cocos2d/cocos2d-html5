@@ -40,6 +40,8 @@ ccs.FRONTCROSSDISABLEDRENDERER = -1;
  * Base class for ccs.CheckBox
  * @class
  * @extends ccs.Widget
+ *
+ * @property {Boolean}  selected    - Indicate whether the check box has been selected
  */
 ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     _backGroundBoxRenderer: null,
@@ -389,22 +391,38 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
      * @param {Number} [y] The anchor point.y of UICheckBox.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._backGroundBoxRenderer.setAnchorPoint(point, y);
-            this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
-            this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
-            this._frontCrossRenderer.setAnchorPoint(point, y);
-            this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._backGroundBoxRenderer.setAnchorPoint(point);
+	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
+	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
+	        this._frontCrossRenderer.setAnchorPoint(point);
+	        this._frontCrossDisabledRenderer.setAnchorPoint(point);
         }else{
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._backGroundBoxRenderer.setAnchorPoint(point);
-            this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
-            this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
-            this._frontCrossRenderer.setAnchorPoint(point);
-            this._frontCrossDisabledRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._backGroundBoxRenderer.setAnchorPoint(point, y);
+	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
+	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
+	        this._frontCrossRenderer.setAnchorPoint(point, y);
+	        this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
         }
     },
+	_setAnchorX: function (value) {
+		ccs.Widget.prototype._setAnchorX.call(this, value);
+		this._backGroundBoxRenderer._setAnchorX(value);
+		this._backGroundSelectedBoxRenderer._setAnchorX(value);
+		this._backGroundBoxDisabledRenderer._setAnchorX(value);
+		this._frontCrossRenderer._setAnchorX(value);
+		this._frontCrossDisabledRenderer._setAnchorX(value);
+	},
+	_setAnchorY: function (value) {
+		ccs.Widget.prototype._setAnchorY.call(this, value);
+		this._backGroundBoxRenderer._setAnchorY(value);
+		this._backGroundSelectedBoxRenderer._setAnchorY(value);
+		this._backGroundBoxDisabledRenderer._setAnchorY(value);
+		this._frontCrossRenderer._setAnchorY(value);
+		this._frontCrossDisabledRenderer._setAnchorY(value);
+	},
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
@@ -422,6 +440,12 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     getContentSize: function () {
         return this._backGroundBoxRenderer.getContentSize();
     },
+	_getWidth: function () {
+		return this._backGroundBoxRenderer._getWidth();
+	},
+	_getHeight: function () {
+		return this._backGroundBoxRenderer._getHeight();
+	},
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -540,6 +564,14 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this.setSelectedState(uiCheckBox._isSelected);
     }
 });
+
+window._proto = ccs.CheckBox.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "selected", _proto.getSelectedState, _proto.setSelectedState);
+
+delete window._proto;
+
 /**
  * allocates and initializes a UICheckBox.
  * @constructs

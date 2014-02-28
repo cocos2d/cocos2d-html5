@@ -85,13 +85,13 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         // Before replacing, save the "send cleanup to scene"
         var director = cc.Director.getInstance();
         this._isSendCleanupToScene = director.isSendCleanupToScene();
-        director.replaceScene(this._inScene);
+        director.runScene(this._inScene);
 
         // enable events while transitions
         if(cc.TouchDispatcher)
             director.getTouchDispatcher().setDispatchEvents(true);
         // issue #267
-        this._outScene.setVisible(true);
+        this._outScene.visible = true;
     },
 
     //protected
@@ -168,8 +168,12 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
         if (this.init()) {
             this._duration = t;
-            this.setAnchorPoint(0, 0);
-            this.setPosition(0, 0);
+            this.attr({
+	            x: 0,
+	            y: 0,
+	            anchorX: 0,
+	            anchorY: 0
+            });
             // retain
             this._inScene = scene;
             this._outScene = cc.Director.getInstance().getRunningScene();
@@ -193,17 +197,23 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      */
     finish:function () {
         // clean up
-        this._inScene.setVisible(true);
-        this._inScene.setPosition(0, 0);
-        this._inScene.setScale(1.0);
-        this._inScene.setRotation(0.0);
+        this._inScene.attr({
+			visible: true,
+	        x: 0,
+	        y: 0,
+	        scale: 1.0,
+	        rotation: 0.0
+        });
         if(cc.renderContextType === cc.WEBGL)
             this._inScene.getCamera().restore();
 
-        this._outScene.setVisible(false);
-        this._outScene.setPosition(0, 0);
-        this._outScene.setScale(1.0);
-        this._outScene.setRotation(0.0);
+        this._outScene.attr({
+	        visible: false,
+	        x: 0,
+	        y: 0,
+	        scale: 1.0,
+	        rotation: 0.0
+        });
         if(cc.renderContextType === cc.WEBGL)
             this._outScene.getCamera().restore();
 
@@ -215,8 +225,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * set hide the out scene and show in scene
      */
     hideOutShowIn:function () {
-        this._inScene.setVisible(true);
-        this._outScene.setVisible(false);
+        this._inScene.visible = true;
+        this._outScene.visible = false;
     }
 });
 /**
@@ -288,12 +298,17 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
 
-        this._inScene.setScale(0.001);
-        this._outScene.setScale(1.0);
-
-        this._inScene.setAnchorPoint(0.5, 0.5);
-        this._outScene.setAnchorPoint(0.5, 0.5);
-
+	    this._inScene.attr({
+		    scale: 0.001,
+		    anchorX: 0.5,
+		    anchorY: 0.5
+	    });
+	    this._outScene.attr({
+		    scale: 1.0,
+		    anchorX: 0.5,
+		    anchorY: 0.5
+	    });
+	    
         var rotoZoom = cc.Sequence.create(
             cc.Spawn.create(cc.ScaleBy.create(this._duration / 2, 0.001),
                 cc.RotateBy.create(this._duration / 2, 360 * 2)),
@@ -336,10 +351,15 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZo
         cc.TransitionScene.prototype.onEnter.call(this);
         var winSize = cc.Director.getInstance().getWinSize();
 
-        this._inScene.setScale(0.5);
-        this._inScene.setPosition(winSize.width, 0);
-        this._inScene.setAnchorPoint(0.5, 0.5);
-        this._outScene.setAnchorPoint(0.5, 0.5);
+	    this._inScene.attr({
+		    scale: 0.5,
+		    x: winSize.width,
+		    y: 0,
+		    anchorX: 0.5,
+		    anchorY: 0.5
+	    });
+        this._outScene.anchorX = 0.5;
+	    this._outScene.anchorY = 0.5;
 
         var jump = cc.JumpBy.create(this._duration / 4, cc.p(-winSize.width, 0), winSize.width / 4, 2);
         var scaleIn = cc.ScaleTo.create(this._duration / 4, 1.0);
@@ -564,7 +584,7 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(-(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR), 0);
+        this._inScene.setPosition(-cc.Director.getInstance().getWinSize().width + cc.ADJUST_FACTOR, 0);
     },
     /**
      * returns the action that will be performed by the incomming and outgoing scene
@@ -740,11 +760,16 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
 
-        this._inScene.setScale(0.001);
-        this._outScene.setScale(1.0);
-
-        this._inScene.setAnchorPoint(2 / 3.0, 0.5);
-        this._outScene.setAnchorPoint(1 / 3.0, 0.5);
+	    this._inScene.attr({
+		    scale: 0.001,
+		    anchorX: 2 / 3.0,
+		    anchorY: 0.5
+	    });
+	    this._outScene.attr({
+		    scale: 1.0,
+		    anchorX: 1 / 3.0,
+		    anchorY: 0.5
+	    });
 
         var scaleOut = cc.ScaleTo.create(this._duration, 0.01);
         var scaleIn = cc.ScaleTo.create(this._duration, 1.0);
@@ -796,7 +821,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -866,7 +891,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -935,7 +960,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -1005,7 +1030,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -1036,7 +1061,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
             cc.DelayTime.create(this._duration / 2)
         );
 
-        this._inScene.setScale(0.5);
+        this._inScene.scale = 0.5;
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
     }
@@ -1081,7 +1106,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
@@ -1110,7 +1135,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
                 cc.ScaleTo.create(this._duration / 2, 0.5)),
             cc.Hide.create(), cc.DelayTime.create(this._duration / 2));
 
-        this._inScene.setScale(0.5);
+        this._inScene.scale = 0.5;
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
     }
@@ -1155,7 +1180,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var inA, outA;
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
         if (this._orientation === cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
@@ -1183,7 +1208,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
                 cc.ScaleTo.create(this._duration / 2, 0.5)),
             cc.Hide.create(), cc.DelayTime.create(this._duration / 2));
 
-        this._inScene.setScale(0.5);
+        this._inScene.scale = 0.5;
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
     }
@@ -1226,7 +1251,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      */
     ctor:function () {
         cc.TransitionScene.prototype.ctor.call(this);
-        this._color = new cc.Color4B()
+        this._color = cc.color()
     },
 
     /**
@@ -1236,7 +1261,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
         cc.TransitionScene.prototype.onEnter.call(this);
 
         var l = cc.LayerColor.create(this._color);
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         this.addChild(l, 2, cc.SCENE_FADE);
         var f = this.getChildByTag(cc.SCENE_FADE);
@@ -1262,11 +1287,11 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      * initializes the transition with a duration and with an RGB color
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
-     * @param {cc.Color3B} color
+     * @param {cc.Color} color
      * @return {Boolean}
      */
     initWithDuration:function (t, scene, color) {
-        color = color || cc.black();
+        color = color || cc.color.black;
         if (cc.TransitionScene.prototype.initWithDuration.call(this, t, scene)) {
             this._color.r = color.r;
             this._color.g = color.g;
@@ -1282,11 +1307,11 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
  * Fade out the outgoing scene and then fade in the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.Color3B} color
+ * @param {cc.Color} color
  * @return {cc.TransitionFade}
  * @example
  * // Example
- * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.c3b(255,0,0))//fade to red
+ * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.color(255,0,0))//fade to red
  */
 cc.TransitionFade.create = function (t, scene, color) {
     var transition = new cc.TransitionFade();
@@ -1308,7 +1333,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create a transparent color layer
         // in which we are going to add our rendertextures
-        var color = new cc.Color4B(0, 0, 0, 0);
+        var color = cc.color(0, 0, 0, 0);
         var winSize = cc.Director.getInstance().getWinSize();
         var layer = cc.LayerColor.create(color);
 
@@ -1318,9 +1343,14 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         if (null == inTexture)
             return;
 
-        inTexture.getSprite().setAnchorPoint(0.5, 0.5);
-        inTexture.setPosition(winSize.width / 2, winSize.height / 2);
-        inTexture.setAnchorPoint(0.5, 0.5);
+        inTexture.sprite.anchorX = 0.5;
+	    inTexture.sprite.anchorY = 0.5;
+        inTexture.attr({
+	        x: winSize.width / 2,
+	        y: winSize.height / 2,
+	        anchorX: 0.5,
+	        anchorY: 0.5
+        });
 
         // render inScene to its texturebuffer
         inTexture.begin();
@@ -1329,25 +1359,25 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create the second render texture for outScene
         var outTexture = cc.RenderTexture.create(winSize.width, winSize.height);
-        outTexture.getSprite().setAnchorPoint(0.5, 0.5);
         outTexture.setPosition(winSize.width / 2, winSize.height / 2);
-        outTexture.setAnchorPoint(0.5, 0.5);
+	    outTexture.sprite.anchorX = outTexture.anchorX = 0.5;
+	    outTexture.sprite.anchorY = outTexture.anchorY = 0.5;
 
         // render outScene to its texturebuffer
         outTexture.begin();
         this._outScene.visit();
         outTexture.end();
 
-        inTexture.getSprite().setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
-        outTexture.getSprite().setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
+        inTexture.sprite.setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
+        outTexture.sprite.setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
 
         // add render textures to the layer
         layer.addChild(inTexture);
         layer.addChild(outTexture);
 
         // initial opacity:
-        inTexture.getSprite().setOpacity(255);
-        outTexture.getSprite().setOpacity(255);
+        inTexture.sprite.opacity = 255;
+        outTexture.sprite.opacity = 255;
 
         // create the blend action
         var layerAction = cc.Sequence.create(
@@ -1356,7 +1386,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         );
 
         // run the blend action
-        outTexture.getSprite().runAction(layerAction);
+        outTexture.sprite.runAction(layerAction);
 
         // add the layer (which contains our two rendertextures) to the scene
         this.addChild(layer, 2, cc.SCENE_FADE);
@@ -1455,7 +1485,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
-        this._inScene.setVisible(false);
+        this._inScene.visible = false;
 
         var split = this.action();
         var seq = cc.Sequence.create(
