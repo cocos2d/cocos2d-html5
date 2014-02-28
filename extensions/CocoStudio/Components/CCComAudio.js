@@ -47,7 +47,7 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
     },
 
     end: function () {
-        cc.AudioEngine.end();
+        cc.AudioEngine.getInstance().end();
     },
 
     /**
