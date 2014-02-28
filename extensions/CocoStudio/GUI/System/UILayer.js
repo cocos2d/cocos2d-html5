@@ -52,14 +52,18 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
     },
 
     onEnter: function () {
-        this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
-        this.setTouchEnabled(true);
+        var listener1 = cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: this.onTouchBegan.bind(this),
+            onTouchMoved: this.onTouchMoved.bind(this),
+            onTouchEnded: this.onTouchEnded.bind(this)
+        });
+        cc.eventManager.addListener(listener1, this);
         cc.Layer.prototype.onEnter.call(this);
-
     },
 
     onExit: function () {
-        this.setTouchEnabled(false);
         cc.Layer.prototype.onExit.call(this);
     },
 
