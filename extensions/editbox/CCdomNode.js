@@ -70,7 +70,6 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         } else {
 	        this._position.x = x;
 	        this._position.y = y;
-	        //this._position = cc.p(newPosOrxValue,yValue);
         }
         this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
@@ -141,13 +140,9 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (y === undefined) {
-	        if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
-		        return;
 	        locAnchorPoint.x = point.x;
 	        locAnchorPoint.y = point.y;
         } else {
-	        if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
-		        return;
 	        locAnchorPoint.x = point;
 	        locAnchorPoint.y = y;
         }
@@ -222,13 +217,9 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if (height === undefined) {
-	        if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
-		        return;
 	        locContentSize.width = size.width;
 	        locContentSize.height = size.height;
         } else {
-	        if ((size === locContentSize.width) && (height === locContentSize.height))
-		        return;
 	        locContentSize.width = size;
 	        locContentSize.height = height;
         }
