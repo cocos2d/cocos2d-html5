@@ -109,13 +109,6 @@
                 <include name="particle_nodes/CCParticleSystem.js"/>
                 <include name="particle_nodes/CCParticleExamples.js"/>
                 <include name="particle_nodes/CCParticleBatchNode.js"/>
-                <include name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
-                <include name="touch_dispatcher/CCTouchHandler.js"/>
-                <include name="touch_dispatcher/CCTouchDispatcher.js"/>
-                <include name="touch_dispatcher/CCMouseDispatcher.js"/>
-                <include name="keyboard_dispatcher/CCKeyboardDelegate.js"/>
-                <include name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
-                <include name="accelerometer/CCAccelerometer.js"/>
                 <include name="text_input_node/CCIMEDispatcher.js"/>
                 <include name="text_input_node/CCTextFieldTTF.js"/>
                 <include name="menu_nodes/CCMenuItem.js"/>
