@@ -105,9 +105,6 @@
                 <file name="particle_nodes/CCParticleSystem.js"/>
                 <file name="particle_nodes/CCParticleExamples.js"/>
                 <file name="particle_nodes/CCParticleBatchNode.js"/>
-                <file name="keyboard_dispatcher/CCKeyboardDelegate.js"/>
-                <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
-                <file name="accelerometer/CCAccelerometer.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
                 <file name="menu_nodes/CCMenuItem.js"/>

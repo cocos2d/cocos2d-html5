@@ -104,13 +104,6 @@
                 <file name="particle_nodes/CCParticleBatchNode.js"/>
                 <file name="physics_nodes/CCPhysicsDebugNode.js"/>
                 <file name="physics_nodes/CCPhysicsSprite.js"/>
-                <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
-                <file name="touch_dispatcher/CCTouchHandler.js"/>
-                <file name="touch_dispatcher/CCTouchDispatcher.js"/>
-                <file name="touch_dispatcher/CCMouseDispatcher.js"/>
-                <file name="keyboard_dispatcher/CCKeyboardDelegate.js"/>
-                <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
-                <file name="accelerometer/CCAccelerometer.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
                 <file name="menu_nodes/CCMenuItem.js"/>

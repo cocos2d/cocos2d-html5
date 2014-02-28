@@ -773,15 +773,6 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 
 window._proto = ccs.Button.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
-cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
-cc.defineGetterSetter(_proto, "flippedX", _proto.isFlippedX, _proto.setFlippedX);
-cc.defineGetterSetter(_proto, "flippedY", _proto.isFlippedY, _proto.setFlippedY);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "titleText", _proto.getTitleText, _proto.setTitleText);
 cc.defineGetterSetter(_proto, "titleFont", _proto._getTitleFont, _proto._setTitleFont);

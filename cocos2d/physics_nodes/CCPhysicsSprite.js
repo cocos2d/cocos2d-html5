@@ -249,13 +249,10 @@
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
 
 	window._proto = cc.PhysicsSprite.prototype;
+	// Extended properties
 	/** @expose */
 	_proto.body;
 	cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
-	cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
-	cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
-	cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
-	cc.defineGetterSetter(_proto, "dirty", _proto.isDirty);
 	delete window._proto;
 
     /**

@@ -574,9 +574,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 });
 
 window._proto = cc.Menu.prototype;
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
 
 // Extended properties
 /** @expose */

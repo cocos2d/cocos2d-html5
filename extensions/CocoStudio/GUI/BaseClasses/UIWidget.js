@@ -277,7 +277,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     removeChild: function (child, cleanup) {
         cc.NodeRGBA.prototype.removeChild.call(this, child, cleanup);
-        cc.ArrayRemoveObject(this._widgetChildren, child);
+        cc.arrayRemoveObject(this._widgetChildren, child);
     },
 
     removeChildByTag: function (tag, cleanup) {
@@ -383,7 +383,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     removeNode: function (node) {
         cc.NodeRGBA.prototype.removeChild.call(this, node);
-        cc.ArrayRemoveObject(this._nodes, node);
+        cc.arrayRemoveObject(this._nodes, node);
     },
 
     /**
@@ -1355,16 +1355,6 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 });
 
 window._proto = ccs.Widget.prototype;
-
-// Override properties
-cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
-cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-cc.defineGetterSetter(_proto, "flippedX", _proto.isFlippedX, _proto.setFlippedX);
-cc.defineGetterSetter(_proto, "flippedY", _proto.isFlippedY, _proto.setFlippedY);
-cc.defineGetterSetter(_proto, "children", _proto.getChildren);
-cc.defineGetterSetter(_proto, "childrenCount", _proto.getChildrenCount);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "xPercent", _proto._getXPercent, _proto._setXPercent);

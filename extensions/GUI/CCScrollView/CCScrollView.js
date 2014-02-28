@@ -391,7 +391,6 @@ cc.ScrollView = cc.Layer.extend({
         if (locTouches.length > 2 || this._touchMoved || !cc.rectContainsPoint(frame, locPoint))
             return false;
 
-        //if (!cc.ArrayContainsObject(this._touches, touch)) {
         locTouches.push(touch);
         //}
 
@@ -416,7 +415,6 @@ cc.ScrollView = cc.Layer.extend({
         if (!this.isVisible())
             return;
 
-        //if (cc.ArrayContainsObject(this._touches, touch)) {
         if (this._touches.length === 1 && this._dragging) { // scrolling
             this._touchMoved = true;
             //var frameOriginal = this.getParent().convertToWorldSpace(this.getPosition());
@@ -866,10 +864,6 @@ cc.ScrollView = cc.Layer.extend({
 });
 
 window._proto = cc.ScrollView.prototype;
-
-// Override properties
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "minOffset", _proto._getMinContainerOffset);

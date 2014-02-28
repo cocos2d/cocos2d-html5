@@ -226,7 +226,7 @@ ccs.ActionNode = ccs.Class.extend({
         }
         var frameType = frame.getFrameType();
         var array = this._frameArray[frameType];
-        cc.ArrayRemoveObject(array, frame);
+        cc.arrayRemoveObject(array, frame);
     },
 
     /**

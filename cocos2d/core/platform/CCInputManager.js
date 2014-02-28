@@ -23,11 +23,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc.UIInterfaceOrientationLandscapeLeft = -90;
+
+cc.UIInterfaceOrientationLandscapeRight = 90;
+
+cc.UIInterfaceOrientationPortraitUpsideDown = 180;
+
+cc.UIInterfaceOrientationPortrait = 0;
+
 cc.inputManager = {
     _mousePressed: false,
-    mousePressed: function(){
-        return this._mousePressed;
-    },
 
     _isRegisterEvent: false,
 
@@ -43,8 +48,32 @@ cc.inputManager = {
     _indexBitsUsed: 0,
     _maxTouches: 5,
 
+    _accelEnabled: false,
+    _accelInterval: 1/30,
+    _accelMinus: 1,
+    _accelCurTime: 0,
+    _acceleration: null,
+    _accelDeviceEvent: null,
+
     setAccelerometerEnabled: function(isEnable){
-       //TODO
+        if(this._accelEnabled === isEnable)
+            return;
+
+        this._accelEnabled = isEnable;
+        var scheduler = cc.Director.getInstance().getScheduler();
+        if(this._accelEnabled){
+            this._accelCurTime = 0;
+            scheduler.scheduleUpdateForTarget(this);
+        } else {
+            this._accelCurTime = 0;
+            scheduler.unscheduleUpdateForTarget(this);
+        }
+    },
+
+    setAccelerometerInterval: function(interval){
+        if (this._accelInterval !== interval) {
+            this._accelInterval = interval;
+        }
     },
 
     _getUnUsedIndex: function () {
@@ -273,7 +302,7 @@ cc.inputManager = {
     getTouchesByEvent: function(event, pos){
         var touchArr = [], locView = this._glView;
         var touch_event, touch, preLocation;
-        var locPreTouch = cc.EGLView._preTouchPoint;
+        var locPreTouch = this._preTouchPoint;
 
         var length = event.changedTouches.length;
         for (var i = 0; i < length; i++) {
@@ -361,7 +390,7 @@ cc.inputManager = {
             }, false);
 
             element.addEventListener("mousemove", function (event) {
-                if(!selfPointer.mousePressed())
+                if(!selfPointer._mousePressed)
                     return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
@@ -477,7 +506,85 @@ cc.inputManager = {
         }
 
         //register keyboard event
+        this._registerKeyboardEvent(element);
+
+        //register Accelerometer event
+        this._registerAccelerometerEvent();
 
         this._isRegisterEvent = true;
+    },
+
+    _registerKeyboardEvent: function(){
+        document.addEventListener("keydown", function (e) {
+            cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, true));
+        });
+        document.addEventListener("keyup", function (e) {
+            cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, false));
+        });
+    },
+
+    _registerAccelerometerEvent: function(){
+        this._acceleration = new cc.Acceleration();
+        var w = window;
+        this._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
+
+        //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
+        if (cc.Browser.type == "mqqbrowser")
+            this._accelDeviceEvent = window.DeviceOrientationEvent;
+
+        var _deviceEventType = (this._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
+        var ua = navigator.userAgent;
+        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.Browser.type == "ucbrowser")) {
+            this._minus = -1;
+        }
+
+        w.addEventListener(_deviceEventType, this.didAccelerate.bind(this), false);
+    },
+
+    didAccelerate: function (eventData) {
+        if (!this._accelEnabled)
+            return;
+
+        var mAcceleration = this._acceleration;
+        if (this._accelDeviceEvent == window.DeviceMotionEvent) {
+            var eventAcceleration = eventData.accelerationIncludingGravity;
+            mAcceleration.x = this._accelMinus * eventAcceleration.x * 0.1;
+            mAcceleration.y = this._accelMinus * eventAcceleration.y * 0.1;
+            mAcceleration.z = eventAcceleration.z * 0.1;
+        } else {
+            mAcceleration.x = (eventData.gamma / 90) * 0.981;
+            mAcceleration.y = -(eventData.beta / 90) * 0.981;
+            mAcceleration.z = (eventData.alpha / 90) * 0.981;
+        }
+        mAcceleration.timestamp = eventData.timeStamp || Date.now();
+
+        var tmpX = mAcceleration.x;
+        switch (window.orientation) {
+            case cc.UIInterfaceOrientationLandscapeRight://-90
+                mAcceleration.x = -mAcceleration.y;
+                mAcceleration.y = tmpX;
+                break;
+
+            case cc.UIInterfaceOrientationLandscapeLeft://90
+                mAcceleration.x = mAcceleration.y;
+                mAcceleration.y = -tmpX;
+                break;
+
+            case cc.UIInterfaceOrientationPortraitUpsideDown://180
+                mAcceleration.x = -mAcceleration.x;
+                mAcceleration.y = -mAcceleration.y;
+                break;
+
+            case cc.UIInterfaceOrientationPortrait://0
+                break;
+        }
+    },
+
+    update:function(dt){
+        if(this._accelCurTime > this._accelInterval){
+            this._accelCurTime -= this._accelInterval;
+            cc.eventManager.dispatchEvent(new cc.EventAcceleration(this._acceleration));
+        }
+        this._accelCurTime += dt;
     }
 };

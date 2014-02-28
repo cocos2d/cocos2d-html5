@@ -118,7 +118,7 @@ ccs.DisplayManager = ccs.Class.extend({
     },
 
     removeDisplay:function (index) {
-        cc.ArrayRemoveObjectAtIndex(this._decoDisplayList, index);
+        this._decoDisplayList.splice(index, 1);
         if (index == this._displayIndex) {
             this.setCurrentDecorativeDisplay(null);
         }

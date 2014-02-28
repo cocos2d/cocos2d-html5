@@ -330,7 +330,7 @@ cc.Control = cc.LayerRGBA.extend({
                     shouldBeRemoved = (shouldBeRemoved && (action == invocation.getAction()));
                 // Remove the corresponding invocation object
                 if (shouldBeRemoved)
-                    cc.ArrayRemoveObject(eventInvocationList, invocation);
+                    cc.arrayRemoveObject(eventInvocationList, invocation);
                 else
                     i ++;
             }
@@ -345,9 +345,6 @@ cc.Control = cc.LayerRGBA.extend({
 });
 
 window._proto = cc.Control.prototype;
-
-// Override properties
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "state", _proto.getState);

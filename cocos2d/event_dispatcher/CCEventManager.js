@@ -217,7 +217,7 @@ cc.eventManager = {
                 this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
 
             if (this._inDispatch == 0)
-                cc.ArrayRemoveObject(listenerVector, selListener);
+                cc.arrayRemoveObject(listenerVector, selListener);
             else
                 ++i;
         }
@@ -243,7 +243,7 @@ cc.eventManager = {
         for (i = 0; i < locToAddedListeners.length;) {
             listener = locToAddedListeners[i];
             if (listener && listener._getListenerID == listenerID)
-                cc.ArrayRemoveObject(locToAddedListeners, listener);
+                cc.arrayRemoveObject(locToAddedListeners, listener);
             else
                 ++i;
         }
@@ -322,7 +322,7 @@ cc.eventManager = {
             for (i = 0; i < sceneGraphPriorityListeners.length;) {
                 selListener = sceneGraphPriorityListeners[i];
                 if (!selListener._isRegistered()) {
-                    cc.ArrayRemoveObject(sceneGraphPriorityListeners, selListener);
+                    cc.arrayRemoveObject(sceneGraphPriorityListeners, selListener);
                 } else
                     ++i;
             }
@@ -332,7 +332,7 @@ cc.eventManager = {
             for (i = 0; i < fixedPriorityListeners.length;) {
                 selListener = fixedPriorityListeners[i];
                 if (!selListener._isRegistered())
-                    cc.ArrayRemoveObject(fixedPriorityListeners, selListener);
+                    cc.arrayRemoveObject(fixedPriorityListeners, selListener);
                 else
                     ++i;
             }
@@ -393,13 +393,13 @@ cc.eventManager = {
                     if (listener.onTouchEnded)
                         listener.onTouchEnded(selTouch, event);
                     if (listener._registered)
-                        cc.ArrayRemoveObjectAtIndex(listener._claimedTouches, removedIdx);
+                        listener._claimedTouches.splice(removedIdx, 1);
                     break;
                 case eventCode.CANCELLED:
                     if (listener.onTouchCancelled)
                         listener.onTouchCancelled(selTouch, event);
                     if (listener._registered)
-                        cc.ArrayRemoveObjectAtIndex(listener._claimedTouches, removedIdx);
+                        listener._claimedTouches.splice(removedIdx, 1)
                     break;
                 default:
                     cc.log("The event code is invalid.");
@@ -415,7 +415,7 @@ cc.eventManager = {
 
         if (isClaimed && listener._registered && listener.swallowTouches) {
             if (argsObj.needsMutableSet)
-                cc.ArrayRemoveObjectAtIndex(argsObj.touches, selTouch);
+                argsObj.touches.splice(selTouch, 1)
             return true;
         }
         return false;
@@ -508,7 +508,7 @@ cc.eventManager = {
     _dissociateNodeAndEventListener: function (node, listener) {
         var listeners = this._nodeListenersMap[node.__instanceId];
         if (listeners) {
-            cc.ArrayRemoveObject(listeners, listener);
+            cc.arrayRemoveObject(listeners, listener);
             if (listeners.length === 0)
                 delete this._nodeListenersMap[node.__instanceId];
         }
@@ -533,7 +533,7 @@ cc.eventManager = {
         }
 
         if (sceneGraphPriorityListeners && !shouldStopPropagation) {    // priority == 0, scene graph priority
-            for (j = 0, len = sceneGraphPriorityListeners.length; j < len; j++) {
+            for (j = 0; j < sceneGraphPriorityListeners.length; j++) {
                 selListener = sceneGraphPriorityListeners[j];
                 if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
                     shouldStopPropagation = true;
@@ -543,8 +543,7 @@ cc.eventManager = {
         }
 
         if (fixedPriorityListeners && !shouldStopPropagation) {    // priority > 0
-            var size = fixedPriorityListeners.length;
-            for (; i < size; ++i) {
+            for (; i < fixedPriorityListeners.length; ++i) {
                 selListener = fixedPriorityListeners[i];
                 if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
                     shouldStopPropagation = true;
@@ -712,7 +711,7 @@ cc.eventManager = {
             for (var i = 0, len = locToAddedListeners.length; i < len; i++) {
                 var selListener = locToAddedListeners[i];
                 if (selListener == listener) {
-                    cc.ArrayRemoveObject(locToAddedListeners, selListener);
+                    cc.arrayRemoveObject(locToAddedListeners, selListener);
                     break;
                 }
             }
@@ -731,7 +730,7 @@ cc.eventManager = {
                     this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
 
                 if (this._inDispatch == 0)
-                    cc.ArrayRemoveObject(listeners, selListener);
+                    cc.arrayRemoveObject(listeners, selListener);
                 return true;
             }
         }

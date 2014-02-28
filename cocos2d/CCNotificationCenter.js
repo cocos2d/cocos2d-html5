@@ -77,7 +77,7 @@ cc.NotificationCenter = cc.Class.extend({
             if(selObserver.getTarget() == target)
                 removes.push(selObserver);
         }
-        cc.ArrayRemoveArray(this._observers, removes);
+        cc.arrayRemoveArray(this._observers, removes);
         return removes.length;
     },
 

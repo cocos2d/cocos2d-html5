@@ -927,19 +927,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
 window._proto = cc.LabelBMFont.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
-cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
-cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
-cc.defineGetterSetter(_proto, "scale", _proto.getScale, _proto.setScale);
-cc.defineGetterSetter(_proto, "scaleX", _proto.getScaleX, _proto.setScaleX);
-cc.defineGetterSetter(_proto, "scaleY", _proto.getScaleY, _proto.setScaleY);
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
-
 // Extended properties
 /** @expose */
 _proto.string;

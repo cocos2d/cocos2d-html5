@@ -201,7 +201,6 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
 });
 
 window._proto = cc.MenuItem.prototype;
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
 
 // Extended properties
 /** @expose */
@@ -362,7 +361,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this.height = this._label.height;
     },
 
-	_getString: function () {
+	getString: function () {
 		return this._label.string;
 	},
 
@@ -412,15 +411,10 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 
 window._proto = cc.MenuItemLabel.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-
 // Extended properties
 /** @expose */
 _proto.string;
-cc.defineGetterSetter(_proto, "string", _proto._getString, _proto.setString);
+cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
 cc.defineGetterSetter(_proto, "disabledColor", _proto.getDisabledColor, _proto.setDisabledColor);
 cc.defineGetterSetter(_proto, "label", _proto.getLabel, _proto.setLabel);
 
@@ -898,9 +892,6 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 });
 
 window._proto = cc.MenuItemSprite.prototype;
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "normalImage", _proto.getNormalImage, _proto.setNormalImage);
@@ -1260,9 +1251,6 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
 });
 
 window._proto = cc.MenuItemToggle.prototype;
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
 
 // Extended properties
 cc.defineGetterSetter(_proto, "selectedIndex", _proto.getSelectedIndex, _proto.setSelectedIndex);
