@@ -407,7 +407,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      */
     onTouchEnded: function (touchPoint) {
         ccs.Widget.prototype.onTouchEnded.call(this, touchPoint);
-        this._textFieldRender.attachWithIME();
+        this._textFieldRender.attachWithIME = true;
     },
 
     /**

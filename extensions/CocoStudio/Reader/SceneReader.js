@@ -365,7 +365,7 @@ ccs.SceneReader.getInstance = function () {
  */
 ccs.SceneReader.purge = function () {
     ccs.TriggerMng.getInstance().destroyInstance();
-    cc.AudioEngine.end();
+    cc.AudioEngine.getInstance().end();
     this._instance = null;
 };
 ccs.SceneReader.sceneReaderVersion = function () {
