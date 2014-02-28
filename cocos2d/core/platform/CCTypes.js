@@ -984,20 +984,22 @@ cc._Dictionary = cc.Class.extend({
     }
 });
 
-cc.FontDefinition = function(){
+cc.FontDefinition = function () {
     this.fontName = "Arial";
     this.fontSize = 12;
-    this.fontAlignmentH = cc.TEXT_ALIGNMENT_CENTER;
-    this.fontAlignmentV = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-    this.fontFillColor = cc.color(255, 255, 255, 255);
-    this.fontDimensions = cc.size(0,0);
+    this.textAlign = cc.TEXT_ALIGNMENT_CENTER;
+    this.verticalAlign = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+    this.fillStyle = cc.color(255, 255, 255, 255);
+    this.boundingWidth = 0;
+	this.boundingHeight = 0;
 
     this.strokeEnabled = false;
-    this.strokeColor = cc.color(255, 255, 255, 255);
-    this.strokeSize = 1;
+    this.strokeStyle = cc.color(255, 255, 255, 255);
+    this.lineWidth = 1;
 
     this.shadowEnabled = false;
-    this.shadowOffset = cc.p(0, 0);
+    this.shadowOffsetX = 0;
+	this.shadowOffsetY = 0;
     this.shadowBlur = 0;
     this.shadowOpacity = 1.0;
 };
