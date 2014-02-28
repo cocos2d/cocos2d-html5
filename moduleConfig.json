@@ -93,8 +93,6 @@
             "cocos2d/particle_nodes/CCParticleSystem.js",
             "cocos2d/particle_nodes/CCParticleExamples.js",
             "cocos2d/particle_nodes/CCParticleBatchNode.js",
-            "cocos2d/keyboard_dispatcher/CCKeyboardDelegate.js",
-            "cocos2d/keyboard_dispatcher/CCKeyboardDispatcher.js",
             "cocos2d/text_input_node/CCIMEDispatcher.js",
             "cocos2d/text_input_node/CCTextFieldTTF.js",
             "cocos2d/menu_nodes/CCMenuItem.js",
