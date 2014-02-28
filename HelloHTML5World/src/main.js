@@ -26,6 +26,7 @@
  ****************************************************************************/
 
 cc.game.onEnter = function(){
+	cc.EGLView.getInstance().setDesignResolutionSize(800, 450, cc.RESOLUTION_POLICY.SHOW_ALL);
     //load resources
     cc.LoaderScene.preload(g_resources, function () {
         cc.Director.getInstance().runScene(new HelloWorldScene());

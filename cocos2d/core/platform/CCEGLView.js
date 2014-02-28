@@ -441,7 +441,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             this._scaleX = result.scale[0];
             this._scaleY = result.scale[1];
         }
-        if (result.viewport instanceof cc.Rect) {
+        if (result.viewport) {
             var vp = this._viewPortRect = result.viewport, visible = this._visibleRect;
             visible.width = cc.canvas.width / this._scaleX;
             visible.height = cc.canvas.height / this._scaleY;
