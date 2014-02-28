@@ -1,6 +1,8 @@
 {
     "module" : {
         "actions" : [
+            "core",
+
             "cocos2d/actions/CCAction.js",
             "cocos2d/actions/CCActionInterval.js",
             "cocos2d/actions/CCActionInstant.js",
@@ -10,18 +12,26 @@
             "cocos2d/actions/CCActionTween.js"
         ],
         "actions3d" : [
+            "core", "kazmath", "shaders", "actions", "effects", "render-texture",
+
             "cocos2d/actions3d/CCActionGrid.js",
             "cocos2d/actions3d/CCActionGrid3D.js",
             "cocos2d/actions3d/CCActionTiledGrid.js",
             "cocos2d/actions3d/CCActionPageTurn3D.js"
         ],
         "audio" : [
+            "core",
+
             "cocos2d/audio/CCAudio.js"
         ],
         "clipping-nodes" : [
+            "core", "shape-nodes",
+
             "cocos2d/clipping-nodes/CCClippingNode.js"
         ],
         "compression" : [
+            "core",
+
             "cocos2d/compression/ZipUtils.js",
             "cocos2d/compression/base64.js",
             "cocos2d/compression/gzip.js",
@@ -73,10 +83,14 @@
             "cocos2d/core/CCActionManager.js"
         ],
         "effects" : [
+            "core",
+
             "cocos2d/effects/CCGrid.js",
             "cocos2d/effects/CCGrabber.js"
         ],
         "kazmath" : [
+            "core",
+
             "cocos2d/kazmath/utility.js",
             "cocos2d/kazmath/vec2.js",
             "cocos2d/kazmath/vec3.js",
@@ -91,20 +105,30 @@
             "cocos2d/kazmath/gl/matrix.js"
         ],
         "labels" : [
+            "core",
+
             "cocos2d/labels/CCLabelAtlas.js",
             "cocos2d/labels/CCLabelBMFont.js"
         ],
         "menus" : [
+            "core", "actions",
+
             "cocos2d/menus/CCMenuItem.js",
             "cocos2d/menus/CCMenu.js"
         ],
         "motion-streak" : [
+            "core", "shaders", "kazmath", "labels",
+
             "cocos2d/motion-streak/CCMotionStreak.js"
         ],
         "parallax" : [
+            "core",
+
             "cocos2d/parallax/CCParallaxNode.js"
         ],
         "particle" : [
+            "core", "compression",
+
             "cocos2d/particle/CCPNGReader.js",
             "cocos2d/particle/CCTIFFReader.js",
             "cocos2d/particle/CCParticleSystem.js",
@@ -112,30 +136,44 @@
             "cocos2d/particle/CCParticleBatchNode.js"
         ],
         "physics" : [
+            "core", "shape-nodes",
+
             "cocos2d/physics/CCPhysicsSprite.js",
             "cocos2d/physics/CCPhysicsDebugNode.js"
         ],
         "progress-timer" : [
+            "core", "actions",
+
             "cocos2d/progress-timer/CCProgressTimer.js",
             "cocos2d/progress-timer/CCActionProgressTimer.js"
         ],
         "render-texture" : [
+            "core",
+
             "cocos2d/render-texture/CCRenderTexture.js"
         ],
         "shaders" : [
+            "core", "kazmath",
+
             "cocos2d/shaders/CCShaders.js",
             "cocos2d/shaders/CCShaderCache.js",
             "cocos2d/shaders/CCGLProgram.js",
             "cocos2d/shaders/CCGLStateCache.js"
         ],
         "shape-nodes" : [
+            "core",
+
             "cocos2d/shape-nodes/CCDrawNode.js"
         ],
         "text-input" : [
+            "core",
+
             "cocos2d/text-input/CCIMEDispatcher.js",
             "cocos2d/text-input/CCTextFieldTTF.js"
         ],
         "tilemap" : [
+            "core", "compression",
+
             "cocos2d/tilemap/CCTGAlib.js",
             "cocos2d/tilemap/CCTMXTiledMap.js",
             "cocos2d/tilemap/CCTMXXMLParser.js",
@@ -143,6 +181,8 @@
             "cocos2d/tilemap/CCTMXLayer.js"
         ],
         "transitions" : [
+            "core", "actions", "render-texture", "progress-timer",
+
             "cocos2d/transitions/CCTransition.js",
             "cocos2d/transitions/CCTransitionProgress.js",
             "cocos2d/transitions/CCTransitionPageTurn.js"
@@ -157,6 +197,8 @@
 
 
         "ccbreader" : [
+            "core", "audio", "gui", "menus", "particle", "actions", "labels",
+
             "extensions/ccb-reader/CCNodeLoader.js",
             "extensions/ccb-reader/CCBReaderUtil.js",
             "extensions/ccb-reader/CCControlLoader.js",
@@ -170,10 +212,14 @@
             "extensions/ccb-reader/CCBAnimationManager.js"
         ],
         "editbox" : [
+            "core", "gui",
+
             "extensions/editbox/CCdomNode.js",
             "extensions/editbox/CCEditBox.js"
         ],
         "cocostudio" : [
+            "core", "gui", "actions", "labels", "text-input", "tilemap", "clipping-nodes", "particle", "shape-nodes",
+
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
             "extensions/cocostudio/CocoStudio.js",
@@ -237,6 +283,8 @@
             "extensions/cocostudio/reader/SceneReader.js"
         ],
         "gui" : [
+            "core", "clipping-nodes", "render-texture", "actions", "progress-timer",
+
             "extensions/gui/control-extension/CCControl.js",
             "extensions/gui/control-extension/CCControlButton.js",
             "extensions/gui/control-extension/CCControlUtils.js",
@@ -256,6 +304,8 @@
         ],
 
         "pluginx" : [
+            "core",
+
             "extensions/pluginx/protocols/Config.js",
             "extensions/pluginx/protocols/PluginUtils.js",
             "extensions/pluginx/protocols/PluginProtocol.js",
@@ -279,12 +329,12 @@
 
 
         "box2d" : [
-            "physics",
+            "core", "physics",
 
             "external/box2d/box2d.js"
         ],
         "chipmunk" : [
-            "physics",
+            "core", "physics",
 
             "external/chipmunk/chipmunk.js"
         ],
