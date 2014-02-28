@@ -451,7 +451,6 @@ cc.DOM.forSprite = function (x) {
     x.dom = cc.$new('div');
     x.canvas = cc.$new('canvas');
     var locContentSize = x.getContentSize();
-    console.log("Width" + locContentSize.width + "    height:" + locContentSize.height);
     x.canvas.width = locContentSize.width;
     x.canvas.height = locContentSize.height;
     x.dom.style.position = 'absolute';
