@@ -190,7 +190,7 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 				            break;
 				        }
 			        }
-			        cc.defineGetterSetter(prototype, propertyName, prop[name], prop[setter] ? prop[setter] : prototype[setter], name, name);
+			        cc.defineGetterSetter(prototype, propertyName, prop[name], prop[setter] ? prop[setter] : prototype[setter], name, setter);
 		        }
 		        if( this.__setters__ && this.__setters__[name] ) {
 			        propertyName = this.__setters__[name];
@@ -200,7 +200,7 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 					        break;
 				        }
 			        }
-			        cc.defineGetterSetter(prototype, propertyName, prop[getter] ? prop[getter] : prototype[getter], prop[name], name, name);
+			        cc.defineGetterSetter(prototype, propertyName, prop[getter] ? prop[getter] : prototype[getter], prop[name], getter, name);
 		        }
 	        }
         }

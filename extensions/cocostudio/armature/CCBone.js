@@ -124,7 +124,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
         }
         this._boneData = boneData;
         this.name = this._boneData.name;
-        this._zOrder = this._boneData.zOrder;
+        this.setLocalZOrder(this._boneData.zOrder);
         this.displayManager.initDisplayList(boneData);
     },
 

@@ -197,18 +197,30 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * Sets cursor position
+     * Set cursor location
      * @param {number} x
      * @param {number} y
      */
-    setCursor: function (x, y) {
+    setLocation: function (x, y) {
         this._x = x;
         this._y = y;
     },
 
-    getCursor: function () {
+	/**
+	 * Get cursor location
+	 * @return {cc.Point} location
+	 */
+    getLocation: function () {
         return {x: this._x, y: this._y};
     },
+
+	/**
+	 * returns the current touch location in screen coordinates
+	 * @return {cc.Point}
+	 */
+	getLocationInView: function() {
+		return {x: this._x, y: cc.EGLView.getInstance()._designResolutionSize.height - this._y};
+	},
 
     _setPrevCursor: function (x, y) {
         this._prevX = x;
@@ -244,18 +256,18 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
     },
 
     /**
-     * gets cursorX data
+     * gets location X axis data
      * @returns {number}
      */
-    getCursorX: function () {
+    getLocationX: function () {
         return this._x;
     },
 
     /**
-     * gets cursorY data
+     * gets location Y axis data
      * @returns {number}
      */
-    getCursorY: function () {
+    getLocationY: function () {
         return this._y;
     }
 });
