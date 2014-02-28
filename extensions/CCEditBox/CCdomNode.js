@@ -53,7 +53,6 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         } else {
 	        this._position._x = x;
 	        this._position._y = y;
-	        //this._position = cc.p(newPosOrxValue,yValue);
         }
         this.setNodeDirty();
         this.dom.translates(this._position._x, -this._position._y);
@@ -124,13 +123,9 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (y === undefined) {
-	        if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-		        return;
 	        locAnchorPoint._x = point.x;
 	        locAnchorPoint._y = point.y;
         } else {
-	        if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-		        return;
 	        locAnchorPoint._x = point;
 	        locAnchorPoint._y = y;
         }
@@ -157,13 +152,9 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if (height === undefined) {
-	        if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
-		        return;
 	        locContentSize._width = size.width;
 	        locContentSize._height = size.height;
         } else {
-	        if ((size === locContentSize._width) && (height === locContentSize._height))
-		        return;
 	        locContentSize._width = size;
 	        locContentSize._height = height;
         }
@@ -460,6 +451,7 @@ cc.DOM.forSprite = function (x) {
     x.dom = cc.$new('div');
     x.canvas = cc.$new('canvas');
     var locContentSize = x.getContentSize();
+    console.log("Width" + locContentSize.width + "    height:" + locContentSize.height);
     x.canvas.width = locContentSize.width;
     x.canvas.height = locContentSize.height;
     x.dom.style.position = 'absolute';
