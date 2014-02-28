@@ -159,7 +159,9 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
     if (!rect)
         rect = cc.rect(0, 0, texture.width, texture.height);
 
-    var selColor = cc.color(color.r / 255.0, color.g / 255.0, color.b / 255, 1);
+    var r = color.r / 255;
+    var g = color.g / 255;
+    var b = color.b / 255;
 
     var w = Math.min(rect.width, tintedImgCache[0].width);
     var h = Math.min(rect.height, tintedImgCache[0].height);
@@ -182,20 +184,20 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
 
     // Make sure to keep the renderCanvas alpha in mind in case of overdraw
     var a = ctx.globalAlpha;
-    if (selColor.r > 0) {
-        ctx.globalAlpha = selColor.r * a;
+    if (r > 0) {
+        ctx.globalAlpha = r * a;
         ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
     }
-    if (selColor.g > 0) {
-        ctx.globalAlpha = selColor.g * a;
+    if (g > 0) {
+        ctx.globalAlpha = g * a;
         ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
     }
-    if (selColor.b > 0) {
-        ctx.globalAlpha = selColor.b * a;
+    if (b > 0) {
+        ctx.globalAlpha = b * a;
         ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
     }
 
-    if (selColor.r + selColor.g + selColor.b < 1) {
+    if (r + g + b < 1) {
         ctx.globalAlpha = a;
         ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
     }
