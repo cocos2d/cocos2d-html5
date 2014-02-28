@@ -142,6 +142,7 @@ ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransf
 
 window._proto = ccs.Skin.prototype;
 
+// Extended properties
 cc.defineGetterSetter(_proto, "skinData", _proto.getSkinData, _proto.setSkinData);
 cc.defineGetterSetter(_proto, "displayName", _proto.getDisplayName);
 

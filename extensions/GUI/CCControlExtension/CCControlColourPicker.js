@@ -162,10 +162,6 @@ cc.ControlColourPicker = cc.Control.extend({
 
 window._proto = cc.ControlColourPicker.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "background", _proto.getBackground);
 

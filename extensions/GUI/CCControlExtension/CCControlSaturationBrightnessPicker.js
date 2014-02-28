@@ -209,9 +209,6 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
 
 window._proto = cc.ControlSaturationBrightnessPicker.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "saturation", _proto.getSaturation);
 cc.defineGetterSetter(_proto, "brightness", _proto.getBrightness);

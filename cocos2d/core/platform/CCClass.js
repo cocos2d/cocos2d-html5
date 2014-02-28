@@ -118,11 +118,43 @@ ClassManager.compileSuper.ClassManager = ClassManager;
         // 2) for cc.clone and perhaps more. It is also required to make
         // these function properties cacheable in Carakan.
         var desc = { writable: true, enumerable: false, configurable: true };
+
+	    prototype.__instanceId = null;
+
+	    // The dummy Class constructor
+	    function Class() {
+		    this.__instanceId = ClassManager.getNewInstanceId();
+		    // All construction is actually done in the init method
+		    if (this.ctor)
+			    this.ctor.apply(this, arguments);
+	    }
+
+	    Class.id = classId;
+	    // desc = { writable: true, enumerable: false, configurable: true,
+	    //          value: XXX }; Again, we make this non-enumerable.
+	    desc.value = classId;
+	    Object.defineProperty(prototype, '__pid', desc);
+
+	    // Populate our constructed prototype object
+	    Class.prototype = prototype;
+
+	    // Enforce the constructor to be what we expect
+	    desc.value = Class;
+	    Object.defineProperty(Class.prototype, 'constructor', desc);
+
+	    // Copy getter/setter
+	    this.__getters__ && (Class.__getters__ = cc.clone(this.__getters__));
+	    this.__setters__ && (Class.__setters__ = cc.clone(this.__setters__));
+
         for (var name in prop) {
-            if(releaseMode && typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name])) {
+	        var isFunc = (typeof prop[name] === "function");
+	        var override = (typeof _super[name] === "function");
+	        var hasSuperCall = fnTest.test(prop[name]);
+
+            if(releaseMode && isFunc && override && hasSuperCall) {
                 desc.value = ClassManager.compileSuper(prop[name], name, classId);
                 Object.defineProperty(prototype, name, desc);
-            } else if(typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name])){
+            } else if(isFunc && override && hasSuperCall){
                 desc.value = (function (name, fn) {
                     return function () {
                         var tmp = this._super;
@@ -140,35 +172,38 @@ ClassManager.compileSuper.ClassManager = ClassManager;
                     };
                 })(name, prop[name]);
                 Object.defineProperty(prototype, name, desc);
-            } else if(typeof prop[name] == "function") {
+            } else if(isFunc) {
                 desc.value = prop[name];
                 Object.defineProperty(prototype, name, desc);
             } else{
                 prototype[name] = prop[name];
             }
+
+	        if (isFunc) {
+		        // Override registered getter/setter
+		        var getter, setter, propertyName;
+		        if( this.__getters__ && this.__getters__[name] ) {
+			        propertyName = this.__getters__[name];
+			        for (var i in this.__setters__) {
+				        if (this.__setters__[i] == propertyName) {
+					        setter = i;
+				            break;
+				        }
+			        }
+			        cc.defineGetterSetter(prototype, propertyName, prop[name], prop[setter] ? prop[setter] : prototype[setter], name, name);
+		        }
+		        if( this.__setters__ && this.__setters__[name] ) {
+			        propertyName = this.__setters__[name];
+			        for (var i in this.__getters__) {
+				        if (this.__getters__[i] == propertyName) {
+					        getter = i;
+					        break;
+				        }
+			        }
+			        cc.defineGetterSetter(prototype, propertyName, prop[getter] ? prop[getter] : prototype[getter], prop[name], name, name);
+		        }
+	        }
         }
-        prototype.__instanceId = null;
-
-        // The dummy Class constructor
-        function Class() {
-            this.__instanceId = ClassManager.getNewInstanceId();
-            // All construction is actually done in the init method
-            if (this.ctor)
-                this.ctor.apply(this, arguments);
-        }
-
-        Class.id = classId;
-        // desc = { writable: true, enumerable: false, configurable: true,
-        //          value: XXX }; Again, we make this non-enumerable.
-        desc.value = classId;
-        Object.defineProperty(prototype, '__pid', desc);
-
-        // Populate our constructed prototype object
-        Class.prototype = prototype;
-
-        // Enforce the constructor to be what we expect
-        desc.value = Class;
-        Object.defineProperty(Class.prototype, 'constructor', desc);
 
         // And make this Class extendable
         Class.extend = cc.Class.extend;

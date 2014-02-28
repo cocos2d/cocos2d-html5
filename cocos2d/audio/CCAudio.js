@@ -34,25 +34,6 @@
  */
 
 if (cc.Browser.supportWebAudio) {
-    //TODO cc.defineGetterSetter will be deleted when merge the version that already has
-    cc.defineGetterSetter = function (proto, prop, getter, setter)
-    {
-        if (proto.__defineGetter__) {
-            getter && proto.__defineGetter__(prop, getter);
-            setter && proto.__defineSetter__(prop, setter);
-            return;
-        }
-        if (Object.defineProperty) {
-            var desc = { enumerable: true, configurable: true };
-            getter && (desc.get = getter);
-            setter && (desc.set = setter);
-            Object.defineProperty(proto, prop, desc);
-            return;
-        }
-
-        throw new Error("browser does not support getters");
-    }
-
     var _ctx = cc.webAudioContext = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
     /**
      * A class of Web Audio.

@@ -246,9 +246,6 @@ cc.ControlSlider = cc.Control.extend({
 
 window._proto = cc.ControlSlider.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
 cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);

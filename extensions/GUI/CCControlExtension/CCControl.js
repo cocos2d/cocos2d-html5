@@ -346,9 +346,6 @@ cc.Control = cc.LayerRGBA.extend({
 
 window._proto = cc.Control.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "state", _proto.getState);
 cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);

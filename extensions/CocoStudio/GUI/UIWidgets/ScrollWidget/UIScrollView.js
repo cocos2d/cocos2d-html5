@@ -1593,11 +1593,6 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
 window._proto = ccs.ScrollView.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "children", _proto.getChildren);
-cc.defineGetterSetter(_proto, "childrenCount", _proto.getChildrenCount);
-cc.defineGetterSetter(_proto, "layoutType", _proto.getLayoutType, _proto.setLayoutType);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "innerWidth", _proto._getInnerWidth, _proto._setInnerWidth);
 cc.defineGetterSetter(_proto, "innerHeight", _proto._getInnerHeight, _proto._setInnerHeight);

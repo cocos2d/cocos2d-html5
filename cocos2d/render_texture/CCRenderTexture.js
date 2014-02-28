@@ -870,6 +870,7 @@ if(cc.Browser.supportWebGL){
     _proto.setClearColor = _proto._setClearColorForCanvas;
 }
 
+// Extended properties
 cc.defineGetterSetter(_proto, "clearColorVal", _proto.getClearColor, _proto.setClearColor);
 
 delete window._proto;

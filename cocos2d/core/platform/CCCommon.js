@@ -560,27 +560,79 @@ cc.SizeFromString = function (content) {
 /**
  * Common getter setter configuration function
  * @function
- * @param {Object} proto    A class prototype or an object to config<br/>
- * @param {String} prop     Property name
- * @param {function} getter Getter function for the property
- * @param {function} setter Setter function for the property
+ * @param {Object}   proto      A class prototype or an object to config<br/>
+ * @param {String}   prop       Property name
+ * @param {function} getter     Getter function for the property
+ * @param {function} setter     Setter function for the property
+ * @param {String}   getterName Name of getter function for the property
+ * @param {String}   setterName Name of setter function for the property
  */
-cc.defineGetterSetter = function (proto, prop, getter, setter)
+cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, setterName)
 {
 	if (proto.__defineGetter__) {
 		getter && proto.__defineGetter__(prop, getter);
 		setter && proto.__defineSetter__(prop, setter);
-		return;
 	}
-	if (Object.defineProperty) {
-		var desc = { enumerable: true, configurable: true };
+	else if (Object.defineProperty) {
+		var desc = { enumerable: false, configurable: true };
 		getter && (desc.get = getter);
 		setter && (desc.set = setter);
 		Object.defineProperty(proto, prop, desc);
+	}
+	else {
+		throw new Error("browser does not support getters");
 		return;
 	}
 
-	throw new Error("browser does not support getters");
+	if(!getterName && !setterName) {
+		// Lookup getter/setter function
+		var hasGetter = (getter != null), hasSetter = (setter != undefined);
+		var props = Object.getOwnPropertyNames(proto);
+		for (var i = 0; i < props.length; i++) {
+			var name = props[i];
+			if( proto.__lookupGetter__(name) !== undefined || typeof proto[name] !== "function" ) continue;
+			var func = proto[name];
+			if (hasGetter && func === getter) {
+				getterName = name;
+				if(!hasSetter || setterName) break;
+			}
+			if (hasSetter && func === setter) {
+				setterName = name;
+				if(!hasGetter || getterName) break;
+			}
+		}
+	}
+
+	// Found getter/setter
+	var ctor = proto.constructor;
+	if (getterName) {
+		if (!ctor.__getters__) {
+			ctor.__getters__ = {};
+		}
+		ctor.__getters__[getterName] = prop;
+	}
+	if (setterName) {
+		if (!ctor.__setters__) {
+			ctor.__setters__ = {};
+		}
+		ctor.__setters__[setterName] = prop;
+	}
+};
+
+/**
+ * Common getter setter configuration function
+ * @function
+ * @param {Object}   class      A class prototype or an object to config<br/>
+ * @param {String}   prop       Property name
+ * @param {function} getter     Getter function for the property
+ * @param {function} setter     Setter function for the property
+ * @param {String}   getterName Name of getter function for the property
+ * @param {String}   setterName Name of setter function for the property
+ */
+cc.defineProtoGetterSetter = function (classobj, prop, getter, setter, getterName, setterName)
+{
+	var proto = classobj.prototype;
+	cc.defineGetterSetter(proto, prop, getter, setter, getterName, setterName);
 };
 
 /**
@@ -589,22 +641,8 @@ cc.defineGetterSetter = function (proto, prop, getter, setter)
  * @returns {Array}
  */
 cc.copyArray = function(arr){
-    var i, len = arr.length, arr_clone = new Array(len);
-    for (i = 0; i < len; i += 1)
-        arr_clone[i] = arr[i];
-    return arr_clone;
-};
-
-/**
- * Common getter setter configuration function
- * @function
- * @param {Object} class    A class prototype or an object to config<br/>
- * @param {String} prop     Property name
- * @param {function} getter Getter function for the property
- * @param {function} setter Setter function for the property
- */
-cc.defineProtoGetterSetter = function (classobj, prop, getter, setter)
-{
-	var proto = classobj.prototype;
-	cc.defineGetterSetter(proto, prop, getter, setter);
+	var i, len = arr.length, arr_clone = new Array(len);
+	for (i = 0; i < len; i += 1)
+		arr_clone[i] = arr[i];
+	return arr_clone;
 };

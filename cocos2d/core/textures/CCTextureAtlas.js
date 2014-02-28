@@ -640,9 +640,12 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 });
 
 window._proto = cc.TextureAtlas.prototype;
+
+// Extended properties
 cc.defineGetterSetter(_proto, "totalQuads", _proto.getTotalQuads);
 cc.defineGetterSetter(_proto, "capacity", _proto.getCapacity);
 cc.defineGetterSetter(_proto, "quads", _proto.getQuads, _proto.setQuads);
+
 delete window._proto;
 
 /**

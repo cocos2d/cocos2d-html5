@@ -865,10 +865,6 @@ cc.ScrollView = cc.Layer.extend({
 
 window._proto = cc.ScrollView.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "minOffset", _proto._getMinContainerOffset);
 cc.defineGetterSetter(_proto, "maxOffset", _proto._getMaxContainerOffset);

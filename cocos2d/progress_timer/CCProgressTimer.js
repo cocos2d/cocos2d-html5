@@ -923,11 +923,6 @@ if(cc.Browser.supportWebGL) {
     _proto._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
 }
 
-// Override properties
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "midPoint", _proto.getMidpoint, _proto.setMidpoint);
 cc.defineGetterSetter(_proto, "barChangeRate", _proto.getBarChangeRate, _proto.setBarChangeRate);

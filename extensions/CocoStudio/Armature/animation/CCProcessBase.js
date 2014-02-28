@@ -310,6 +310,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
 
 window._proto = ccs.ProcessBase.prototype;
 
+// Extended properties
 cc.defineGetterSetter(_proto, "currentFrameIndex", _proto.getCurrentFrameIndex);
 cc.defineGetterSetter(_proto, "paused", _proto.isPause);
 cc.defineGetterSetter(_proto, "completed", _proto.isComplete);

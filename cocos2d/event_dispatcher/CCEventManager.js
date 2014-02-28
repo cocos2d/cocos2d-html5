@@ -533,7 +533,7 @@ cc.eventManager = {
         }
 
         if (sceneGraphPriorityListeners && !shouldStopPropagation) {    // priority == 0, scene graph priority
-            for (j = 0, len = sceneGraphPriorityListeners.length; j < len; j++) {
+            for (j = 0; j < sceneGraphPriorityListeners.length; j++) {
                 selListener = sceneGraphPriorityListeners[j];
                 if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
                     shouldStopPropagation = true;
@@ -543,8 +543,7 @@ cc.eventManager = {
         }
 
         if (fixedPriorityListeners && !shouldStopPropagation) {    // priority > 0
-            var size = fixedPriorityListeners.length;
-            for (; i < size; ++i) {
+            for (; i < fixedPriorityListeners.length; ++i) {
                 selListener = fixedPriorityListeners[i];
                 if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
                     shouldStopPropagation = true;

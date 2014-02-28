@@ -175,9 +175,6 @@ cc.ControlHuePicker = cc.Control.extend({
 
 window._proto = cc.ControlHuePicker.prototype;
 
-// Override properties
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-
 // Extended properties
 cc.defineGetterSetter(_proto, "hue", _proto.getHue, _proto.setHue);
 cc.defineGetterSetter(_proto, "huePercent", _proto.getHuePercentage, _proto.setHuePercentage);

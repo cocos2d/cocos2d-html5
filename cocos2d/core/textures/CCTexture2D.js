@@ -468,8 +468,9 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     handleLoadedTexture:function () {
-        var self = this
-        if(!cc._rendererInitialized || self._isLoaded) return;
+        var self = this;
+	    // Not sure about this ! Some texture need to be updated even after loaded
+        if(!cc._rendererInitialized) return;
         if(!self._htmlElementObj){
             var img = cc.loader.getRes(self.url);
             if(!img) return;
@@ -1211,6 +1212,8 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
 window._proto = cc.Texture2D.prototype;
+
+// Extended properties
 cc.defineGetterSetter(_proto, "name", _proto.getName);
 cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
 cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
@@ -1218,6 +1221,7 @@ cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
 //cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
 cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
 cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
 delete window._proto;
 
 
