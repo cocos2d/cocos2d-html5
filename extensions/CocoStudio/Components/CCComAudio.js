@@ -212,7 +212,7 @@ ccs.ComAudio = ccs.Component.extend(/** @lends ccs.ComAudio# */{
      * @param {String} pszFilePath
      */
     preloadEffect: function (pszFilePath) {
-        cc.loader.loadRes(pszFilePath);
+        cc.loader.getRes(pszFilePath);
         this.setFile(pszFilePath);
         this.setLoop(false);
     },
