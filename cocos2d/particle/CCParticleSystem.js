@@ -244,8 +244,24 @@ cc.Particle.TemporaryPoints = [
  * @property {Boolean}              opacityModifyRGB    - Indicate whether the alpha value modify color.
  * @property {cc.SpriteBatchNode}   batchNode           - Weak reference to the sprite batch node.
  * @property {Boolean}              active              - <@readonly> Indicate whether the particle system is activated.
+ * @property {Number}               shapeType           - ShapeType of ParticleSystem : cc.PARTICLE_BALL_SHAPE | cc.PARTICLE_STAR_SHAPE.
+ * @property {Number}               atlasIndex          - Index of system in batch node array.
+ * @property {Number}               particleCount       - Current quantity of particles that are being simulated.
+ * @property {Number}               duration            - How many seconds the emitter wil run. -1 means 'forever'
  * @property {cc.Point}             sourcePos           - Source position of the emitter.
  * @property {cc.Point}             posVar              - Variation of source position.
+ * @property {Number}               life                - Life of each particle setter.
+ * @property {Number}               lifeVar             - Variation of life.
+ * @property {Number}               angle               - Angle of each particle setter.
+ * @property {Number}               angleVar            - Variation of angle of each particle setter.
+ * @property {Number}               startSize           - Start size in pixels of each particle.
+ * @property {Number}               startSizeVar        - Variation of start size in pixels.
+ * @property {Number}               endSize             - End size in pixels of each particle.
+ * @property {Number}               endSizeVar          - Variation of end size in pixels.
+ * @property {Number}               startSpin           - Start angle of each particle.
+ * @property {Number}               startSpinVar        - Variation of start angle.
+ * @property {Number}               endSpin             - End angle of each particle.
+ * @property {Number}               endSpinVar          - Variation of end angle.
  * @property {cc.Point}             gravity             - Gravity of the emitter.
  * @property {cc.Point}             speed               - Speed of the emitter.
  * @property {cc.Point}             speedVar            - Variation of the speed.
@@ -264,7 +280,11 @@ cc.Particle.TemporaryPoints = [
  * @property {cc.Color}             startColorVar       - Variation of the start color.
  * @property {cc.Color}             endColor            - Ending color of each particle.
  * @property {cc.Color}             endColorVar         - Variation of the end color.
+ * @property {Number}               emissionRate        - Emission rate of the particles.
+ * @property {Number}               emitterMode         - Emitter modes: CCPARTICLE_MODE_GRAVITY: uses gravity, speed, radial and tangential acceleration; CCPARTICLE_MODE_RADIUS: uses radius movement + rotation.
+ * @property {Number}               positionType        - Particles movement type: cc.PARTICLE_TYPE_FREE | cc.PARTICLE_TYPE_GROUPED.
  * @property {Number}               totalParticles      - Maximum particles of the system.
+ * @property {Boolean}              autoRemoveOnFinish  - Indicate whether the node will be auto-removed when it has no particles left.
  * @property {cc.Texture2D}         texture             - Texture of Particle System.
  *
  * @example

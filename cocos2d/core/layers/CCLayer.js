@@ -79,6 +79,12 @@ cc.Layer.create = function () {
  * </p>
  * @class
  * @extends cc.Layer
+ *
+ * @property {Number}       opacity             - Opacity of layer
+ * @property {Boolean}      opacityModifyRGB    - Indicate whether or not the opacity modify color
+ * @property {Boolean}      cascadeOpacity      - Indicate whether or not it will set cascade opacity
+ * @property {cc.Color}     color               - Color of layer
+ * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
  */
 cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     RGBAProtocol:true,
