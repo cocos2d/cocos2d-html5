@@ -25,9 +25,8 @@
  ****************************************************************************/
 
 /**
- * Singleton that stores manages GL shaders
- * @class
- * @extends cc.Class
+ * Singleton object that stores manages GL shaders
+ * @Object
  */
 cc.shaderCache = {
 
@@ -86,7 +85,7 @@ cc.shaderCache = {
 	 */
 	TYPE_MAX: 8,
 
-    _programs: null,
+    _programs: {},
 
     _init: function () {
         this.loadDefaultShaders();
@@ -154,14 +153,6 @@ cc.shaderCache = {
         program.updateUniforms();
 
         //cc.CHECK_GL_ERROR_DEBUG();
-    },
-
-    /**
-     * Constructor
-     * @override
-     */
-    ctor: function () {
-        this._programs = {};
     },
 
     /**

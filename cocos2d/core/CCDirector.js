@@ -556,9 +556,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.LabelBMFont.purgeCachedData();
 
         // purge all managers
-        cc.AnimationCache.purgeSharedAnimationCache();
-        cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
-        cc.TextureCache.purgeSharedTextureCache();
+        cc.animationCache.purgeSharedAnimationCache();
+        cc.spriteFrameCache.purgeSharedSpriteFrameCache();
+        cc.textureCache.purgeSharedTextureCache();
 
         cc.CHECK_GL_ERROR_DEBUG();
     },
