@@ -213,7 +213,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         // textures must be power of two squared
         var powW , powH;
 
-        if (cc.Configuration.getInstance().supportsNPOT()) {
+        if (cc.configuration.supportsNPOT()) {
             powW = width;
             powH = height;
         } else {
@@ -240,7 +240,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         var oldRBO = gl.getParameter(gl.RENDERBUFFER_BINDING);
 
-        if (cc.Configuration.getInstance().checkForGLExtension("GL_QCOM")) {
+        if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             this._textureCopy = new cc.Texture2D();
             if (!this._textureCopy) {
                 return false;
@@ -296,7 +296,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _beginForCanvas: function () {
         cc.renderContext = this._cacheContext;
-        cc.EGLView.getInstance()._setScaleXYForRenderTexture();
+        cc.view._setScaleXYForRenderTexture();
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -312,13 +312,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
         cc.kmGLPushMatrix();
 
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         director.setProjection(director.getProjection());
 
         var texSize = this._texture.getContentSizeInPixels();
 
         // Calculate the adjustment ratios based on the old and new projections
-        var size = cc.Director.getInstance().getWinSizeInPixels();
+        var size = cc.director.getWinSizeInPixels();
         var widthRatio = size.width / texSize.width;
         var heightRatio = size.height / texSize.height;
 
@@ -340,7 +340,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
          *   Create a temporary texture to overcome this. At the end of CCRenderTexture::begin(), switch the attached texture to the second one, call glClear,
          *   and then switch back to the original texture. This solution is unnecessary for other devices as they don't have the same issue with switching frame buffers.
          */
-        if (cc.Configuration.getInstance().checkForGLExtension("GL_QCOM")) {
+        if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             // -- bind a temporary texture so we can clear the render buffer without losing our texture
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
             //cc.CHECK_GL_ERROR_DEBUG();
@@ -432,7 +432,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _endForCanvas: function () {
         cc.renderContext = cc.mainRenderContextBackup;
-        cc.EGLView.getInstance()._resetScale();
+        cc.view._resetScale();
 
         //TODO
         /*//restore viewport
@@ -445,7 +445,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _endForWebGL: function () {
         var gl = cc.renderContext;
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
 
         //restore viewport

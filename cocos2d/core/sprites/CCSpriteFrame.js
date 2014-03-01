@@ -36,7 +36,7 @@
  * @extends cc.Class
  *
  * @example
- * var texture = cc.TextureCache.getInstance().addImage(s_dragon_animation);
+ * var texture = cc.textureCache.addImage(s_dragon_animation);
  * var frame0 = cc.SpriteFrame.create(texture, cc.rect(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
@@ -211,7 +211,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         if (this._texture)
             return this._texture;
         if (this._textureFilename !== "") {
-            var locTexture = cc.TextureCache.getInstance().addImage(this._textureFilename);
+            var locTexture = cc.textureCache.addImage(this._textureFilename);
             if (locTexture)
                 this._textureLoaded = locTexture.isLoaded();
             return locTexture;
@@ -355,7 +355,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
  *
  * 2.
  * //Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
- * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
+ * var texture = cc.textureCache.addImage("res/grossini_dance.png");
  * var frame1 = cc.SpriteFrame.create(texture, cc.rect(0,0,90,128));
  * var frame2 = cc.SpriteFrame.create(texture, cc.rect(0,0,90,128),false,0,cc.size(90,128));
  */

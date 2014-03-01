@@ -40,7 +40,7 @@ var Helloworld = cc.Layer.extend({
         // 2. add a menu item with "X" image, which is clicked to quit the program
         //    you may modify it.
         // ask director the window size
-        var size = cc.Director.getInstance().getWinSize();
+        var size = cc.director.getWinSize();
 
         // add a "close" icon to exit the progress. it's an autorelease object
         var closeItem = cc.MenuItemImage.create(
@@ -95,7 +95,7 @@ var Helloworld = cc.Layer.extend({
     },
     // a selector callback
     menuCloseCallback:function (sender) {
-        cc.Director.getInstance().end();
+        cc.director.end();
     }
 });
 

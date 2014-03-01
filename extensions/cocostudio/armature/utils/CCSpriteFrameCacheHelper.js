@@ -30,7 +30,7 @@ ccs.SpriteFrameCacheHelper = ccs.Class.extend({
         this._imagePaths = [];
     },
     addSpriteFrameFromFile:function (plistPath, imagePath) {
-        cc.SpriteFrameCache.getInstance().addSpriteFrames(plistPath, imagePath);
+        cc.spriteFrameCache.addSpriteFrames(plistPath, imagePath);
     },
 
     getTexureAtlasWithTexture:function (texture) {

@@ -445,9 +445,9 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         if(!file)
             throw "cc.Scale9Sprite.initWithFile(): file should be non-null";
 
-        var texture = cc.TextureCache.getInstance().textureForKey(file);
+        var texture = cc.textureCache.textureForKey(file);
         if (!texture) {
-            texture = cc.TextureCache.getInstance().addImage(file);
+            texture = cc.textureCache.addImage(file);
             var locLoaded = texture.isLoaded();
             this._textureLoaded = locLoaded;
             if(!locLoaded){
@@ -515,7 +515,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             throw "cc.Scale9Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
         capInsets = capInsets || cc.rect(0, 0, 0, 0);
 
-        var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
+        var frame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
         if (frame == null) {
             cc.log("cc.Scale9Sprite.initWithSpriteFrameName(): can't find the sprite frame by spriteFrameName");
             return false;

@@ -480,13 +480,13 @@ cc.NodeLoader = cc.Class.extend({
         if(spriteFile != null && spriteFile.length != 0){
             if(spriteSheet.length == 0){
                 spriteFile = ccbReader.getCCBRootPath() + spriteFile;
-                var texture = cc.TextureCache.getInstance().addImage(spriteFile);
+                var texture = cc.textureCache.addImage(spriteFile);
 
                 var locContentSize = texture.getContentSize();
                 var bounds = cc.rect(0, 0, locContentSize.width, locContentSize.height);
                 spriteFrame = cc.SpriteFrame.create(texture, bounds);
             } else {
-                var frameCache = cc.SpriteFrameCache.getInstance();
+                var frameCache = cc.spriteFrameCache;
                 spriteSheet = ccbReader.getCCBRootPath() + spriteSheet;
                 //load the sprite sheet only if it is not loaded
                 if(ccbReader.getLoadedSpriteSheet().indexOf(spriteSheet) == -1){
@@ -518,7 +518,7 @@ cc.NodeLoader = cc.Class.extend({
         animationFile = cc.BuilderReader.lastPathComponent(animationFile);
 
         if (animation != null && animation != "") {
-            var animationCache = cc.AnimationCache.getInstance();
+            var animationCache = cc.animationCache;
             animationCache.addAnimations(animationFile);
 
             ccAnimation = animationCache.getAnimation(animation);
@@ -530,7 +530,7 @@ cc.NodeLoader = cc.Class.extend({
         var spriteFile = ccbReader.getCCBRootPath() + ccbReader.readCachedString();
 
         if(spriteFile != "")
-            return cc.TextureCache.getInstance().addImage(spriteFile);
+            return cc.textureCache.addImage(spriteFile);
         return null;
     },
 

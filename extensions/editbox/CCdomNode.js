@@ -421,7 +421,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 cc.DOM._resetEGLViewDiv = function(){
     var eglViewDiv = cc.$("#EGLViewDiv");
     if(eglViewDiv){
-        var eglViewer = cc.EGLView.getInstance();
+        var eglViewer = cc.view;
         var designSize = eglViewer.getDesignResolutionSize();
         var viewPortRect = eglViewer.getViewPortRect();
         var screenSize = eglViewer.getFrameSize();
@@ -481,7 +481,7 @@ cc.DOM.parentDOM = function (x) {
                 eglViewDiv = cc.$new("div");
                 eglViewDiv.id = "EGLViewDiv";
 
-                var eglViewer = cc.EGLView.getInstance();
+                var eglViewer = cc.view;
                 var designSize = eglViewer.getDesignResolutionSize();
                 var viewPortRect = eglViewer.getViewPortRect();
                 var screenSize = eglViewer.getFrameSize();
@@ -583,8 +583,8 @@ cc.DOM.placeHolder = function (x) {
     x.dom.style.position = 'absolute';
     x.dom.style.bottom = 0;
     //x.dom.style.display='block';
-    x.dom.style.width = (x.getContentSize().width || cc.Director.getInstance().getWinSize().width) + "px";
-    x.dom.style.maxHeight = (x.getContentSize().height || cc.Director.getInstance().getWinSize().height) + "px";
+    x.dom.style.width = (x.getContentSize().width || cc.director.getWinSize().width) + "px";
+    x.dom.style.maxHeight = (x.getContentSize().height || cc.director.getWinSize().height) + "px";
     x.dom.style.margin = 0;
     cc.DOM.setTransform(x);
     x.dom.transforms();

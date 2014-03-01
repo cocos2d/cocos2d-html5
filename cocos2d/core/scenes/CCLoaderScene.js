@@ -31,7 +31,7 @@ cc.LoaderScene = cc.Scene.extend({
     _label : null,
     init : function(){
         var self = this;
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
 
         //logo
@@ -124,6 +124,6 @@ cc.LoaderScene.preload = function(resources, cb){
     }
     _cc.loaderScene.initWithResources(resources, cb);
 
-    cc.Director.getInstance().runScene(_cc.loaderScene);
+    cc.director.runScene(_cc.loaderScene);
     return _cc.loaderScene;
 };

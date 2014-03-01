@@ -271,12 +271,12 @@
      * var physicsSprite = cc.PhysicsSprite.create('#grossini_dance_01.png');
      *
      * 3.Create a sprite with a sprite frame
-     * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
+     * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
      * var physicsSprite = cc.PhysicsSprite.create(spriteFrame);
      *
      * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
      *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
-     * var texture = cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
+     * var texture = cc.textureCache.addImage("HelloHTML5World.png");
      * var physicsSprite1 = cc.PhysicsSprite.create(texture);
      * var physicsSprite2 = cc.PhysicsSprite.create(texture, cc.rect(0,0,480,320));
      *
@@ -293,7 +293,7 @@
             if (fileName[0] === "#") {
                 //init with a sprite frame name
                 var frameName = fileName.substr(1, fileName.length - 1);
-                var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(frameName);
+                var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
                 if (sprite.initWithSpriteFrame(spriteFrame))
                     return sprite;
             } else {

@@ -142,7 +142,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             this.animation.setAnimationData(animationData);
         }
         if (cc.renderContextType === cc.WEBGL) {
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
+            this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         }
 
         this.setCascadeOpacityEnabled(true);

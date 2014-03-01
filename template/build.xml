@@ -14,11 +14,11 @@
             </externs>
             <sources dir="${basedir}/../cocos2d">
                 <file name="core/platform/CCClass.js"/>
+                <file name="core/platform/CCCommon.js"/>
                 <file name="core/cocoa/CCGeometry.js"/>
                 <file name="core/platform/Sys.js"/>
                 <file name="core/platform/CCConfig.js"/>
                 <file name="core/platform/miniFramework.js"/>
-                <file name="core/platform/CCCommon.js"/>
                 <file name="core/platform/CCMacro.js"/>
                 <file name="core/platform/CCFileUtils.js"/>
                 <file name="core/platform/CCTypes.js"/>

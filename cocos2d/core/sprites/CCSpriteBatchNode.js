@@ -143,9 +143,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Boolean}
      */
     initWithFile:function (fileImage, capacity) {
-        var texture2D = cc.TextureCache.getInstance().textureForKey(fileImage);
+        var texture2D = cc.textureCache.textureForKey(fileImage);
         if (!texture2D)
-            texture2D = cc.TextureCache.getInstance().addImage(fileImage);
+            texture2D = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(texture2D, capacity);
     },
 
@@ -164,9 +164,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Boolean}
      */
     init:function (fileImage, capacity) {
-        var texture2D = cc.TextureCache.getInstance().textureForKey(fileImage);
+        var texture2D = cc.textureCache.textureForKey(fileImage);
         if (!texture2D)
-            texture2D = cc.TextureCache.getInstance().addImage(fileImage);
+            texture2D = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(texture2D, capacity);
     },
 
@@ -617,7 +617,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this.textureAtlas = new cc.TextureAtlas();
         this.textureAtlas.initWithTexture(tex, capacity);
         this._updateBlendFunc();
-        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -1066,7 +1066,7 @@ delete window._proto;
  * var spriteBatchNode = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
  * 2.
  * //create a SpriteBatchNode with texture
- * var texture = cc.TextureCache.getInstance().addImage("res/animations/grossini.png");
+ * var texture = cc.textureCache.addImage("res/animations/grossini.png");
  * var spriteBatchNode = cc.SpriteBatchNode.create(texture,50);
  */
 cc.SpriteBatchNode.create = function (fileImage, capacity) {
