@@ -1135,7 +1135,7 @@ cc.setup = function (el, width, height) {
     cc.gameDiv = localContainer;
 
     cc.log(cc.ENGINE_VERSION);
-    cc.Configuration.getInstance();
+    //cc.configuration.getInstance();
 
     cc.setContextMenuEnable(false);
 

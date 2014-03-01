@@ -77,7 +77,7 @@ cc.FileUtils.getInstance().setSearchResolutionsOrder(resDirOrders);
 
 director.setContentScaleFactor(resourceSize.width / designSize.width);
 
-//cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
+//cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.ResolutionPolicy.SHOW_ALL);
 
 
 director.setDisplayStats(true);

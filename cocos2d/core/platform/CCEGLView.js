@@ -24,30 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.RESOLUTION_POLICY = {
-    // The entire application is visible in the specified area without trying to preserve the original aspect ratio.
-    // Distortion can occur, and the application may appear stretched or compressed.
-    EXACT_FIT: 0,
-    // The entire application fills the specified area, without distortion but possibly with some cropping,
-    // while maintaining the original aspect ratio of the application.
-    NO_BORDER: 1,
-    // The entire application is visible in the specified area without distortion while maintaining the original
-    // aspect ratio of the application. Borders can appear on two sides of the application.
-    SHOW_ALL: 2,
-    // The application takes the height of the design resolution size and modifies the width of the internal
-    // canvas so that it fits the aspect ratio of the device
-    // no distortion will occur however you must make sure your application works on different
-    // aspect ratios
-    FIXED_HEIGHT: 3,
-    // The application takes the width of the design resolution size and modifies the height of the internal
-    // canvas so that it fits the aspect ratio of the device
-    // no distortion will occur however you must make sure your application works on different
-    // aspect ratios
-    FIXED_WIDTH: 4,
-
-    UNKNOWN: 5
-};
-
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
@@ -377,19 +353,19 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         // Ensure compatibility with JSB
         else {
             switch (resolutionPolicy) {
-                case cc.RESOLUTION_POLICY.EXACT_FIT:
+                case cc.ResolutionPolicy.EXACT_FIT:
                     this._resolutionPolicy = this._rpExactFit;
                     break;
-                case cc.RESOLUTION_POLICY.SHOW_ALL:
+                case cc.ResolutionPolicy.SHOW_ALL:
                     this._resolutionPolicy = this._rpShowAll;
                     break;
-                case cc.RESOLUTION_POLICY.NO_BORDER:
+                case cc.ResolutionPolicy.NO_BORDER:
                     this._resolutionPolicy = this._rpNoBorder;
                     break;
-                case cc.RESOLUTION_POLICY.FIXED_HEIGHT:
+                case cc.ResolutionPolicy.FIXED_HEIGHT:
                     this._resolutionPolicy = this._rpFixedHeight;
                     break;
-                case cc.RESOLUTION_POLICY.FIXED_WIDTH:
+                case cc.ResolutionPolicy.FIXED_WIDTH:
                     this._resolutionPolicy = this._rpFixedWidth;
                     break;
             }
@@ -616,6 +592,10 @@ cc.EGLView.getInstance = function () {
     }
     return this._instance;
 };
+
+cc.defineGetterSetter(cc, "view", function() {
+	return cc.EGLView._instance ? cc.EGLView._instance : cc.EGLView.getInstance();
+});
 
 /**
  * <p>cc.ContainerStrategy class is the root strategy class of container's scale strategy,
@@ -926,6 +906,57 @@ cc.ContentStrategy = cc.Class.extend({
  * @extends cc.Class
  */
 cc.ResolutionPolicy = cc.Class.extend({
+	/*
+	 * @public
+	 * @const
+	 * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
+	 * Distortion can occur, and the application may appear stretched or compressed.
+	 */
+	EXACT_FIT: 0,
+
+	/*
+	 * @public
+	 * @const
+	 * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
+	 * while maintaining the original aspect ratio of the application.
+	 */
+	NO_BORDER: 1,
+
+	/*
+	 * @public
+	 * @const
+	 * The entire application is visible in the specified area without distortion while maintaining the original<br/>
+	 * aspect ratio of the application. Borders can appear on two sides of the application.
+	 */
+	SHOW_ALL: 2,
+
+	/*
+	 * @public
+	 * @const
+	 * The application takes the height of the design resolution size and modifies the width of the internal<br/>
+	 * canvas so that it fits the aspect ratio of the device<br/>
+	 * no distortion will occur however you must make sure your application works on different<br/>
+	 * aspect ratios
+	 */
+	FIXED_HEIGHT: 3,
+
+	/*
+	 * @public
+	 * @const
+	 * The application takes the width of the design resolution size and modifies the height of the internal<br/>
+	 * canvas so that it fits the aspect ratio of the device<br/>
+	 * no distortion will occur however you must make sure your application works on different<br/>
+	 * aspect ratios
+	 */
+	FIXED_WIDTH: 4,
+
+	/*
+	 * @public
+	 * @const
+	 * Unknow policy
+	 */
+	UNKNOWN: 5,
+
     _containerStrategy: null,
     _contentStrategy: null,
 

@@ -769,7 +769,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             return;
 
         // Configuration. Gather GPU info
-        var conf = cc.Configuration.getInstance();
+        var conf = cc.configuration;
         conf.gatherGPUInfo();
         conf.dumpInfo();
 
@@ -1249,9 +1249,8 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
     }
 });
 
-cc.s_SharedDirector = null;
-
-cc.firstUseDirector = true;
+cc.Director.sharedDirector = null;
+cc.Director.firstUseDirector = true;
 
 /**
  * returns a shared instance of the director
@@ -1259,17 +1258,21 @@ cc.firstUseDirector = true;
  * @return {cc.Director}
  */
 cc.Director.getInstance = function () {
-    if (cc.firstUseDirector) {
-        cc.firstUseDirector = false;
-        cc.s_SharedDirector = new cc.DisplayLinkDirector();
-        cc.s_SharedDirector.init();
-        cc.s_SharedDirector.setOpenGLView(cc.EGLView.getInstance());
+    if (cc.Director.firstUseDirector) {
+        cc.Director.firstUseDirector = false;
+        cc.Director.sharedDirector = new cc.DisplayLinkDirector();
+        cc.Director.sharedDirector.init();
+        cc.Director.sharedDirector.setOpenGLView(cc.EGLView.getInstance());
     }
-    return cc.s_SharedDirector;
+    return cc.Director.sharedDirector;
 };
 
+cc.defineGetterSetter(cc, "director", function() {
+	return cc.Director.firstUseDirector ? cc.Director.getInstance() : cc.Director.sharedDirector;
+});
+
 cc.defineGetterSetter(cc, "winSize", function(){
-    return cc.Director.getInstance().getWinSize();
+    return cc.director._winSizeInPoints;
 });
 
 /**

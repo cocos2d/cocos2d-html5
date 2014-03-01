@@ -213,7 +213,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         // textures must be power of two squared
         var powW , powH;
 
-        if (cc.Configuration.getInstance().supportsNPOT()) {
+        if (cc.configuration.supportsNPOT()) {
             powW = width;
             powH = height;
         } else {
@@ -240,7 +240,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         var oldRBO = gl.getParameter(gl.RENDERBUFFER_BINDING);
 
-        if (cc.Configuration.getInstance().checkForGLExtension("GL_QCOM")) {
+        if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             this._textureCopy = new cc.Texture2D();
             if (!this._textureCopy) {
                 return false;
@@ -340,7 +340,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
          *   Create a temporary texture to overcome this. At the end of CCRenderTexture::begin(), switch the attached texture to the second one, call glClear,
          *   and then switch back to the original texture. This solution is unnecessary for other devices as they don't have the same issue with switching frame buffers.
          */
-        if (cc.Configuration.getInstance().checkForGLExtension("GL_QCOM")) {
+        if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             // -- bind a temporary texture so we can clear the render buffer without losing our texture
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
             //cc.CHECK_GL_ERROR_DEBUG();

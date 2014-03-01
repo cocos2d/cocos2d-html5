@@ -956,6 +956,10 @@ cc.AudioEngine.getInstance = function () {
     return this._instance;
 };
 
+cc.defineGetterSetter(cc, "audioEngine", function() {
+	return cc.AudioEngine._instance ? cc.AudioEngine._instance : cc.AudioEngine.getInstance();
+});
+
 /**
  * Resource loader for audio.
  */

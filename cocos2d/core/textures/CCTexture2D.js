@@ -435,9 +435,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var imageWidth = uiImage.getWidth();
         var imageHeight = uiImage.getHeight();
 
-        var conf = cc.Configuration.getInstance();
-
-        var maxTextureSize = conf.getMaxTextureSize();
+        var maxTextureSize = cc.configuration.getMaxTextureSize();
         if (imageWidth > maxTextureSize || imageHeight > maxTextureSize) {
             cc.log("cocos2d: WARNING: Image (" + imageWidth + " x " + imageHeight + ") is bigger than the supported " + maxTextureSize + " x " + maxTextureSize);
             return false;

@@ -1064,7 +1064,7 @@ cc.fntLoader = {
         var commonObj = self._parseStrToObj(fntStr.match(self.COMMON_EXP)[0]);
         fnt.commonHeight = commonObj["lineHeight"];
         if (cc.renderContextType === cc.WEBGL) {
-            var texSize = cc.Configuration.getInstance().getMaxTextureSize();
+            var texSize = cc.configuration.getMaxTextureSize();
             if(commonObj["scaleW"] > texSize.width || commonObj["scaleH"] > texSize.height)
                 cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");
         }
