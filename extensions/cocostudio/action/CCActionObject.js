@@ -45,7 +45,7 @@ ccs.ActionObject = ccs.Class.extend({
         this._unitTime = 0.1;
         this._currentTime = 0;
         this._scheduler = new cc.Scheduler();
-        cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this._scheduler, 0, false);
+        cc.director.getScheduler().scheduleUpdateForTarget(this._scheduler, 0, false);
     },
 
     /**

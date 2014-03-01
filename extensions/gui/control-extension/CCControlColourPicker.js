@@ -89,7 +89,7 @@ cc.ControlColourPicker = cc.Control.extend({
     init:function () {
         if (cc.Control.prototype.init.call(this)) {
             // Cache the sprites
-            cc.SpriteFrameCache.getInstance().addSpriteFrames(res.CCControlColourPickerSpriteSheet_plist);
+            cc.spriteFrameCache.addSpriteFrames(res.CCControlColourPickerSpriteSheet_plist);
 
             // Create the sprite batch node
             var spriteSheet = cc.SpriteBatchNode.create(res.CCControlColourPickerSpriteSheet_png);

@@ -270,7 +270,7 @@ cc.eventManager = {
         if (!listeners)
             return;
 
-        var rootNode = cc.Director.getInstance().getRunningScene();
+        var rootNode = cc.director.getRunningScene();
         // Reset priority index
         this._nodePriorityIndex = 0;
         this._nodePriorityMap = {};

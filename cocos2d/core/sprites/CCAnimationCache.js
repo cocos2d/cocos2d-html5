@@ -29,13 +29,14 @@
  *     Singleton that manages the Animations.<br/>
  *     It saves in a cache the animations. You should use this class if you want to save your animations in a cache.<br/>
  * </p>
- * @class
- * @extends cc.Class
+ * @Object
  *
  * @example
- * cc.AnimationCache.getInstance().addAnimation(animation,"animation1");
+ * cc.animationCache.addAnimation(animation,"animation1");
  */
-cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
+cc.animationCache = /** @lends cc.AnimationCache# */{
+	_animations: {},
+
     /**
      * Adds a cc.Animation with a name.
      * @param {cc.Animation} animation
@@ -93,7 +94,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         if (properties) {
             version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
-            var spriteFrameCache = cc.SpriteFrameCache.getInstance();
+            var spriteFrameCache = cc.spriteFrameCache;
             var path = cc.path;
             for (var i = 0; i < spritesheets.length; i++) {
                 spriteFrameCache.addSpriteFrames(path.changeBasename(plist, spritesheets[i]));
@@ -134,7 +135,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
     },
 
     _parseVersion1:function (animations) {
-        var frameCache = cc.SpriteFrameCache.getInstance();
+        var frameCache = cc.spriteFrameCache;
 
         for (var key in animations) {
             var animationDict = animations[key];
@@ -168,12 +169,12 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                     " Some or all of the frames for the animation '" + key + "' may be missing.");
             }
             animation = cc.Animation.create(frames, delay, 1);
-            cc.AnimationCache.getInstance().addAnimation(animation, key);
+            cc.animationCache.addAnimation(animation, key);
         }
     },
 
     _parseVersion2:function (animations) {
-        var frameCache = cc.SpriteFrameCache.getInstance();
+        var frameCache = cc.spriteFrameCache;
 
         for (var key in animations) {
             var animationDict = animations[key];
@@ -212,42 +213,14 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             var animation = new cc.Animation();
             animation.initWithAnimationFrames(arr, delayPerUnit, loops);
             animation.setRestoreOriginalFrame(restoreOriginalFrame);
-            cc.AnimationCache.getInstance().addAnimation(animation, key);
+            cc.animationCache.addAnimation(animation, key);
         }
     },
 
-    /**
-     * initialize cc.AnimationCache
-     * @return {Boolean}
-     */
-    init:function () {
-        this._animations = {};
-        return true;
-    },
-
-    _animations:null
-});
-
-/**
- * Purges the cache. It releases all the cc.Animation objects and the shared instance.
- */
-cc.AnimationCache.purgeSharedAnimationCache = function () {
-    if (cc.s_sharedAnimationCache) {
-        cc.s_sharedAnimationCache._animations = null;
-        cc.s_sharedAnimationCache = null;
-    }
+	/**
+	 * Purges the cache. It releases all the cc.Animation objects.
+	 */
+	purgeSharedAnimationCache: function () {
+		this._animations = {};
+	}
 };
-
-/**
- * Retruns ths shared instance of the Animation cache
- * @return {cc.AnimationCache}
- */
-cc.AnimationCache.getInstance = function () {
-    if (cc.s_sharedAnimationCache === null) {
-        cc.s_sharedAnimationCache = new cc.AnimationCache();
-        cc.s_sharedAnimationCache.init();
-    }
-    return cc.s_sharedAnimationCache;
-};
-
-cc.s_sharedAnimationCache = null;

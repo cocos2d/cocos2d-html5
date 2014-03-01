@@ -436,7 +436,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteFrame} spriteFrame A CCSpriteFrame object. It should includes a valid texture and a rect
      * @return {Boolean}  true if the sprite is initialized properly, false otherwise.
      * @example
-     * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
+     * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
      * var sprite = new cc.Sprite();
      * sprite.initWithSpriteFrame(spriteFrame);
      */
@@ -485,7 +485,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     initWithSpriteFrameName:function (spriteFrameName) {
         if(!spriteFrameName)
             throw "cc.Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
-        var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
+        var frame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
         return this.initWithSpriteFrame(frame);
     },
 
@@ -748,7 +748,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
         if(!animationName)
             throw "cc.Sprite.setDisplayFrameWithAnimationName(): animationName must be non-null";
-        var cache = cc.AnimationCache.getInstance().getAnimation(animationName);
+        var cache = cc.animationCache.getAnimation(animationName);
         if(!cache){
             cc.log("cc.Sprite.setDisplayFrameWithAnimationName(): Frame not found");
             return;
@@ -817,7 +817,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (fileName) {
             if (typeof(fileName) === "string") {
-                var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(fileName);
+                var frame = cc.spriteFrameCache.getSpriteFrame(fileName);
                 this.initWithSpriteFrame(frame);
             } else if (typeof(fileName) === "object") {
                 if (fileName instanceof cc.SpriteFrame) {
@@ -849,7 +849,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         if (fileName) {
             if (typeof(fileName) === "string") {
-                var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(fileName);
+                var frame = cc.spriteFrameCache.getSpriteFrame(fileName);
                 this.initWithSpriteFrame(frame);
             } else if (typeof(fileName) === "object") {
                 if (fileName instanceof cc.SpriteFrame) {
@@ -1001,9 +1001,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if(!filename)
             throw "cc.Sprite.initWithFile(): filename should be non-null";
 
-        var texture = cc.TextureCache.getInstance().textureForKey(filename);
+        var texture = cc.textureCache.textureForKey(filename);
         if (!texture) {
-            texture = cc.TextureCache.getInstance().addImage(filename);
+            texture = cc.textureCache.addImage(filename);
             return this.initWithTexture(texture, rect);
         } else {
             if (!rect) {
@@ -1022,7 +1022,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
      * @return {Boolean} true if the sprite is initialized properly, false otherwise.
      * @example
-     * var img =cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
+     * var img =cc.textureCache.addImage("HelloHTML5World.png");
      * var mySprite = new cc.Sprite();
      * mySprite.initWithTexture(img,cc.rect(0,0,480,320));
      */
@@ -1705,9 +1705,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         }
 
         if (texture)
-            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         else
-            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
         if (!this._batchNode && this._texture != texture) {
             this._texture = texture;
@@ -1754,7 +1754,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             if (!locElement)
                 return;
 
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
             if (cacheTextureForColor) {
                 this._colorized = true;
                 //generate color texture cache
@@ -1934,7 +1934,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (this._isLighterMode)
             context.globalCompositeOperation = 'lighter';
 
-        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 
         context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition, locDrawSizeCanvas = this._drawSize_Canvas;
@@ -2090,12 +2090,12 @@ delete window._proto;
  * var sprite = cc.Sprite.create('#grossini_dance_01.png');
  *
  * 3.Create a sprite with a sprite frame
- * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
+ * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
  * var sprite = cc.Sprite.create(spriteFrame);
  *
  * 4.Create a sprite with an exsiting texture contained in a CCTexture2D object
  *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
- * var texture = cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
+ * var texture = cc.textureCache.addImage("HelloHTML5World.png");
  * var sprite1 = cc.Sprite.create(texture);
  * var sprite2 = cc.Sprite.create(texture, cc.rect(0,0,480,320));
  *
@@ -2112,7 +2112,7 @@ cc.Sprite.create = function (fileName, rect) {
         if (fileName[0] === "#") {
             //init with a sprite frame name
             var frameName = fileName.substr(1, fileName.length - 1);
-            var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(frameName);
+            var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
             if (sprite.initWithSpriteFrame(spriteFrame))
                 return sprite;
         } else {

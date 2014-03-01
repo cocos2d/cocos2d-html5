@@ -181,7 +181,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             this.enabled = true;
 
             // menu in the center of the screen
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
 	        this.attr({
 		        x: winSize.width / 2,
 		        y: winSize.height / 2,
@@ -324,7 +324,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         }
         // check if too many rows/columns for available menu items
         //cc.Assert(!columnsOccupied, "");    //?
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
         row = 0;
         rowHeight = 0;
@@ -418,7 +418,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         }
         // check if too many rows/columns for available menu items.
         //cc.Assert(!rowsOccupied, "");
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
         column = 0;
         columnWidth = 0;

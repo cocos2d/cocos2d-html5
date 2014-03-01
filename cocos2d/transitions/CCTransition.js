@@ -83,7 +83,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
     _setNewScene:function (dt) {
         this.unschedule(this._setNewScene);
         // Before replacing, save the "send cleanup to scene"
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         this._isSendCleanupToScene = director.isSendCleanupToScene();
         director.runScene(this._inScene);
 
@@ -174,7 +174,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
             });
             // retain
             this._inScene = scene;
-            this._outScene = cc.Director.getInstance().getRunningScene();
+            this._outScene = cc.director.getRunningScene();
             if (!this._outScene) {
                 this._outScene = cc.Scene.create();
                 this._outScene.init();
@@ -347,7 +347,7 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZo
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
 	    this._inScene.attr({
 		    scale: 0.5,
@@ -410,7 +410,7 @@ cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(-cc.Director.getInstance().getWinSize().width, 0);
+        this._inScene.setPosition(-cc.director.getWinSize().width, 0);
     },
 
     /**
@@ -457,7 +457,7 @@ cc.TransitionMoveInR = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * Init
      */
     initScenes:function () {
-        this._inScene.setPosition(cc.Director.getInstance().getWinSize().width, 0);
+        this._inScene.setPosition(cc.director.getWinSize().width, 0);
     }
 });
 
@@ -489,7 +489,7 @@ cc.TransitionMoveInT = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * init
      */
     initScenes:function () {
-        this._inScene.setPosition(0, cc.Director.getInstance().getWinSize().height);
+        this._inScene.setPosition(0, cc.director.getWinSize().height);
     }
 });
 
@@ -521,7 +521,7 @@ cc.TransitionMoveInB = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * init
      */
     initScenes:function () {
-        this._inScene.setPosition(0, -cc.Director.getInstance().getWinSize().height);
+        this._inScene.setPosition(0, -cc.director.getWinSize().height);
     }
 });
 
@@ -582,14 +582,14 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(-cc.Director.getInstance().getWinSize().width + cc.ADJUST_FACTOR, 0);
+        this._inScene.setPosition(-cc.director.getWinSize().width + cc.ADJUST_FACTOR, 0);
     },
     /**
      * returns the action that will be performed by the incomming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR, 0));
+        return cc.MoveBy.create(this._duration, cc.p(cc.director.getWinSize().width - cc.ADJUST_FACTOR, 0));
     },
 
     /**
@@ -631,14 +631,14 @@ cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR, 0);
+        this._inScene.setPosition(cc.director.getWinSize().width - cc.ADJUST_FACTOR, 0);
     },
     /**
      *  returns the action that will be performed by the incomming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(-(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR), 0));
+        return cc.MoveBy.create(this._duration, cc.p(-(cc.director.getWinSize().width - cc.ADJUST_FACTOR), 0));
     }
 });
 
@@ -673,7 +673,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(0, cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR);
+        this._inScene.setPosition(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR);
     },
 
     /**
@@ -681,7 +681,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(0, -(cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR)));
+        return cc.MoveBy.create(this._duration, cc.p(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR)));
     }
 });
 
@@ -716,7 +716,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        this._inScene.setPosition(0, -(cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR));
+        this._inScene.setPosition(0, -(cc.director.getWinSize().height - cc.ADJUST_FACTOR));
     },
 
     /**
@@ -724,7 +724,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        return cc.MoveBy.create(this._duration, cc.p(0, cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR));
+        return cc.MoveBy.create(this._duration, cc.p(0, cc.director.getWinSize().height - cc.ADJUST_FACTOR));
     }
 });
 
@@ -1332,7 +1332,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         // create a transparent color layer
         // in which we are going to add our rendertextures
         var color = cc.color(0, 0, 0, 0);
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
         var layer = cc.LayerColor.create(color);
 
         // create the first render texture for inScene
@@ -1436,7 +1436,7 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTu
      */
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
         var aspect = winSize.width / winSize.height;
         var x = 0 | (12 * aspect);
         var y = 12;
@@ -1574,7 +1574,7 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
     onEnter:function () {
         cc.TransitionScene.prototype.onEnter.call(this);
 
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
         var aspect = winSize.width / winSize.height;
         var x = 0 | (12 * aspect);
         var y = 12;

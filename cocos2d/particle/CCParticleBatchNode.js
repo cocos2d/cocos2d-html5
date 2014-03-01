@@ -88,7 +88,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._children.length = 0;
 
         if (cc.renderContextType === cc.WEBGL)
-            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -99,7 +99,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     initWithFile:function (fileImage, capacity) {
-        var tex = cc.TextureCache.getInstance().addImage(fileImage);
+        var tex = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
 

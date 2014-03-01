@@ -75,7 +75,7 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
         }
         for (var i = 0; i < data.plistFiles.length; i++) {
             var obj = data.plistFiles[i];
-            cc.SpriteFrameCache.getInstance().removeSpriteFramesFromFile(obj);
+            cc.spriteFrameCache.removeSpriteFramesFromFile(obj);
         }
         delete this._relativeDatas[configFilePath];
         ccs.DataReaderHelper.removeConfigFile(configFilePath);

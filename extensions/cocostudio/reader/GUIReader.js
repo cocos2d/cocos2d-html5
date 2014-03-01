@@ -146,13 +146,13 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             var file = textures[i];
             var tp = fullPath;
             tp += file;
-            cc.SpriteFrameCache.getInstance().addSpriteFrames(tp);
+            cc.spriteFrameCache.addSpriteFrames(tp);
         }
         var fileDesignWidth = jsonDict["designWidth"];
         var fileDesignHeight = jsonDict["designHeight"];
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0) {
             cc.log("Read design size error!");
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             ccs.GUIReader.getInstance().storeFileDesignSize(fileName, winSize);
         }
         else {
@@ -739,13 +739,13 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             var file = textures[i];
             var tp = fullPath;
             tp += file;
-            cc.SpriteFrameCache.getInstance().addSpriteFrames(tp);
+            cc.spriteFrameCache.addSpriteFrames(tp);
         }
         var fileDesignWidth = jsonDict["designWidth"];
         var fileDesignHeight = jsonDict["designHeight"];
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0) {
             cc.log("Read design size error!");
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             ccs.GUIReader.getInstance().storeFileDesignSize(fileName, winSize);
         }
         else {

@@ -49,7 +49,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     getLocation:function () {
         //TODO
-        //return cc.Director.getInstance().convertToGL(this._point);
+        //return cc.director.convertToGL(this._point);
         return this._point;
     },
 
@@ -75,7 +75,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     getPreviousLocation:function () {
         //TODO
-        //return cc.Director.getInstance().convertToGL(this._prevPoint);
+        //return cc.director.convertToGL(this._prevPoint);
         return this._prevPoint;
     },
 
@@ -85,7 +85,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     getStartLocation: function() {
         //TODO
-        //return cc.Director.getInstance().convertToGL(this._startPoint);
+        //return cc.director.convertToGL(this._startPoint);
         return this._startPoint;
     },
 

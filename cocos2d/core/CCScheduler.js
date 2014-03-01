@@ -253,7 +253,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 }
 
                 if (self._timesExecuted > self._repeat)
-                    cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget(locTarget, locCallback);
+                    cc.director.getScheduler().unscheduleCallbackForTarget(locTarget, locCallback);
             }
         }
     }
@@ -275,7 +275,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
  *
  * @example
  * //register a schedule to scheduler
- * cc.Director.getInstance().getScheduler().scheduleSelector(callback, this, interval, !this._isRunning);
+ * cc.director.getScheduler().scheduleSelector(callback, this, interval, !this._isRunning);
  */
 cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _timeScale:1.0,
@@ -471,7 +471,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register a schedule to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(this, function, interval, repeat, delay, !this._isRunning );
+     * cc.director.getScheduler().scheduleCallbackForTarget(this, function, interval, repeat, delay, !this._isRunning );
      */
     scheduleCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
         if(!callback_fn)
@@ -525,7 +525,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register this object to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
+     * cc.director.getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
         var self = this, locUpdates = self._updates;
@@ -558,7 +558,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {function} callback_fn
      * @example
      * //unschedule a callback of target
-     * cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget(function, this);
+     * cc.director.getScheduler().unscheduleCallbackForTarget(function, this);
      */
     unscheduleCallbackForTarget:function (target, callback_fn) {
         // explicity handle nil arguments when removing an object
@@ -599,7 +599,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      * @example
      * //unschedules the "update" method.
-     * cc.Director.getInstance().getScheduler().unscheduleUpdateForTarget(this);
+     * cc.director.getScheduler().unscheduleUpdateForTarget(this);
      */
     unscheduleUpdateForTarget:function (target) {
         if (target == null) {

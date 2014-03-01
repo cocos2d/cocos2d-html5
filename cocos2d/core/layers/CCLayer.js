@@ -49,7 +49,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this.anchorY = 0.5;
         this._ignoreAnchorPointForPosition = true;
 
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         this.setContentSize(director.getWinSize());
         return true;
     }
@@ -79,6 +79,12 @@ cc.Layer.create = function () {
  * </p>
  * @class
  * @extends cc.Layer
+ *
+ * @property {Number}       opacity             - Opacity of layer
+ * @property {Boolean}      opacityModifyRGB    - Indicate whether or not the opacity modify color
+ * @property {Boolean}      cascadeOpacity      - Indicate whether or not it will set cascade opacity
+ * @property {cc.Color}     color               - Color of layer
+ * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
  */
 cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     RGBAProtocol:true,
@@ -469,9 +475,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             return false;
 
         if(cc.renderContextType !== cc.CANVAS)
-            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
         color = color ||  cc.color(0, 0, 0, 255);
 	    this.width = width || winSize.width;
         this.height = height || winSize.height;
@@ -582,7 +588,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        var locEGLViewer = cc.EGLView.getInstance();
+        var locEGLViewer = cc.view;
         var locDisplayedColor = this._displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
@@ -892,7 +898,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
+        var locEGLViewer = cc.view, opacityf = this._displayedOpacity / 255.0;
         var tWidth = this.width * locEGLViewer.getScaleX();
         var tHeight = this.height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,

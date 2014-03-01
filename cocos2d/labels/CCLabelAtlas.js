@@ -114,7 +114,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         if(textureFilename instanceof cc.Texture2D)
             texture = textureFilename;
         else
-            texture = cc.TextureCache.getInstance().addImage(textureFilename);
+            texture = cc.textureCache.addImage(textureFilename);
         var locLoaded = texture.isLoaded();
         this._textureLoaded = locLoaded;
         if(!locLoaded){
