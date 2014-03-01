@@ -1669,7 +1669,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // Try to get the texture from the cache
                 var textureName = locValueForKey("textureFileName", dictionary);
                 var imgPath = cc.path.changeBasename(this._plistFile, textureName);
-                var tex = cc.TextureCache.getInstance().textureForKey(imgPath);
+                var tex = cc.textureCache.textureForKey(imgPath);
 
                 if (tex) {
                     this.setTexture(tex);
@@ -1677,7 +1677,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     var textureData = locValueForKey("textureImageData", dictionary);
 
                     if (textureData && textureData.length == 0) {
-                        tex = cc.TextureCache.getInstance().addImage(imgPath);
+                        tex = cc.textureCache.addImage(imgPath);
                         if (!tex)
                             return false;
                         this.setTexture(tex);
@@ -1704,9 +1704,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
 
-                        cc.TextureCache.getInstance().cacheImage(imgPath, canvasObj);
+                        cc.textureCache.cacheImage(imgPath, canvasObj);
 
-                        var addTexture = cc.TextureCache.getInstance().textureForKey(imgPath);
+                        var addTexture = cc.textureCache.textureForKey(imgPath);
                         if(!addTexture)
                             cc.log("cc.ParticleSystem.initWithDictionary() : error loading the texture");
                         this.setTexture(addTexture);
@@ -2517,7 +2517,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
                 if (particle.isChangeColor) {
 
-                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+                    var cacheTextureForColor = cc.textureCache.getTextureColors(element);
                     if (cacheTextureForColor) {
                         // Create another cache for the tinted version
                         // This speeds up things by a fair bit

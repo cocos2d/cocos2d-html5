@@ -170,7 +170,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     initWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
         if(!tile)
             throw "cc.AtlasNode.initWithTileFile(): title should not be null";
-        var texture = cc.TextureCache.getInstance().addImage(tile);
+        var texture = cc.textureCache.addImage(tile);
         return this.initWithTexture(texture, tileWidth, tileHeight, itemsToRender);
     },
 
@@ -268,7 +268,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
             var element = this._originalTexture.getHtmlElementObj();
             if(!element)
                 return;
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(element);
+            var cacheTextureForColor = cc.textureCache.getTextureColors(element);
             if (cacheTextureForColor) {
                 var textureRect = cc.rect(0, 0, element.width, element.height);
                 element = cc.generateTintImage(element, cacheTextureForColor, this._realColor, textureRect);

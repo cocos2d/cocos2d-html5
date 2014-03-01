@@ -103,7 +103,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * @return {cc.Texture2D|Null}
      * @example
      * //example
-     * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
+     * var key = cc.textureCache.textureForKey("hello.png");
      */
     textureForKey:function (textureKeyName) {
         return this._textures[textureKeyName];
@@ -114,7 +114,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * @return {String|Null}
      * @example
      * //example
-     * var key = cc.TextureCache.getInstance().getKeyByTexture(texture);
+     * var key = cc.textureCache.getKeyByTexture(texture);
      */
     getKeyByTexture:function (texture) {
         for (var key in this._textures) {
@@ -135,7 +135,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * @return {Array}
      * @example
      * //example
-     * var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(texture);
+     * var cacheTextureForColor = cc.textureCache.getTextureColors(texture);
      */
     getTextureColors:function (texture) {
         var key = this.getKeyByTexture(texture);
@@ -170,7 +170,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * In the long term: it will be the same</p>
      * @example
      * //example
-     * cc.TextureCache.getInstance().removeAllTextures();
+     * cc.textureCache.removeAllTextures();
      */
     removeAllTextures:function () {
         var locTextures = this._textures;
@@ -186,7 +186,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * @param {Image} texture
      * @example
      * //example
-     * cc.TextureCache.getInstance().removeTexture(texture);
+     * cc.textureCache.removeTexture(texture);
      */
     removeTexture:function (texture) {
         if (!texture)
@@ -206,7 +206,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * @param {String} textureKeyName
      * @example
      * //example
-     * cc.TextureCache.getInstance().removeTexture("hello.png");
+     * cc.textureCache.removeTexture("hello.png");
      */
     removeTextureForKey:function (textureKeyName) {
         if (textureKeyName == null)
@@ -225,7 +225,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * @return {cc.Texture2D}
      * @example
      * //example
-     * cc.TextureCache.getInstance().addImage("hello.png");
+     * cc.textureCache.addImage("hello.png");
      */
     addImage:function (url, target, cb) {
         if(!url)

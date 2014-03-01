@@ -99,7 +99,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     initWithFile:function (fileImage, capacity) {
-        var tex = cc.TextureCache.getInstance().addImage(fileImage);
+        var tex = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
 

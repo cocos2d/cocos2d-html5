@@ -319,7 +319,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
             if (cacheTextureForColor) {
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
                     cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
@@ -375,7 +375,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             self._config = newConf;
             self._fntFile = fntFile;
-            texture = cc.TextureCache.getInstance().addImage(newConf.atlasName);
+            texture = cc.textureCache.addImage(newConf.atlasName);
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             if(!locIsLoaded){
@@ -849,7 +849,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             self._fntFile = fntFile;
             self._config = newConf;
 
-            var texture = cc.TextureCache.getInstance().addImage(newConf.atlasName);
+            var texture = cc.textureCache.addImage(newConf.atlasName);
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             self.texture = texture;

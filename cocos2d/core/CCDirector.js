@@ -523,7 +523,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     purgeCachedData:function () {
         cc.LabelBMFont.purgeCachedData();
-        //cc.TextureCache.getInstance().removeUnusedTextures();
+        //cc.textureCache.removeUnusedTextures();
     },
 
     /**

@@ -207,7 +207,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             throw "cc.MotionStreak.initWithFade(): Invalid filename or texture";
 
         if (typeof(texture) === "string")
-            texture = cc.TextureCache.getInstance().addImage(texture);
+            texture = cc.textureCache.addImage(texture);
 
         cc.Node.prototype.setPosition.call(this, cc.p(0,0));
         this.anchorX = 0;

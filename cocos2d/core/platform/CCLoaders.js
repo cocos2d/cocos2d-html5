@@ -42,7 +42,7 @@ cc.imgLoader = {
     load : function(realUrl, url, res, cb){
         var image = cc.loader.loadImg(realUrl, function(err, img){
             if(err) return cb(err);
-            cc.TextureCache.getInstance().handleLoadedTexture(url);
+            cc.textureCache.handleLoadedTexture(url);
             cb(null, img);
         });
         cc.loader.cache[url] = image;

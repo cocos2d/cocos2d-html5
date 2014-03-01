@@ -123,8 +123,8 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
      * @param {HTMLImageElement|cc.Texture2D|string} texture
      * @example
      * // add SpriteFrames to SpriteFrameCache With File
-     * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
-     * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniJson);
+     * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);
+     * cc.spriteFrameCache.addSpriteFrames(s_grossiniJson);
      */
     addSpriteFrames: function (url, texture) {
         if (!url)
@@ -136,11 +136,11 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
         var frames = frameConfig.frames, meta = frameConfig.meta;
         if(!texture){
             var texturePath = cc.path.changeBasename(url, meta.image || ".png");
-            texture = cc.TextureCache.getInstance().addImage(texturePath);
+            texture = cc.textureCache.addImage(texturePath);
         }else if(texture instanceof cc.Texture2D){
             //do nothing
         }else if(typeof texture == "string"){//string
-            texture = cc.TextureCache.getInstance().addImage(texture);
+            texture = cc.textureCache.addImage(texture);
         }else throw "Argument must be non-nil"
 
         //create sprite frames
@@ -290,7 +290,7 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
      * @return {cc.SpriteFrame}
      * @example
      * //get a SpriteFrame by name
-     * var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
+     * var frame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
      */
     getSpriteFrame: function (name) {
         var self = this, frame = self._spriteFrames[name];

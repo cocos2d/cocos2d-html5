@@ -400,7 +400,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var capacity = totalNumberOfTiles * 0.35 + 1; // 35 percent is occupied ?
         var texture;
         if (tilesetInfo)
-            texture = cc.TextureCache.getInstance().addImage(tilesetInfo.sourceImage);
+            texture = cc.textureCache.addImage(tilesetInfo.sourceImage);
 
         if (this.initWithTexture(texture, capacity)) {
             // layerInfo

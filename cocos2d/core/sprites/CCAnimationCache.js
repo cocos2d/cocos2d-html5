@@ -94,7 +94,7 @@ cc.animationCache = /** @lends cc.AnimationCache# */{
         if (properties) {
             version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
-            var spriteFrameCache = cc.SpriteFrameCache.getInstance();
+            var spriteFrameCache = cc.spriteFrameCache;
             var path = cc.path;
             for (var i = 0; i < spritesheets.length; i++) {
                 spriteFrameCache.addSpriteFrames(path.changeBasename(plist, spritesheets[i]));
@@ -135,7 +135,7 @@ cc.animationCache = /** @lends cc.AnimationCache# */{
     },
 
     _parseVersion1:function (animations) {
-        var frameCache = cc.SpriteFrameCache.getInstance();
+        var frameCache = cc.spriteFrameCache;
 
         for (var key in animations) {
             var animationDict = animations[key];
@@ -169,12 +169,12 @@ cc.animationCache = /** @lends cc.AnimationCache# */{
                     " Some or all of the frames for the animation '" + key + "' may be missing.");
             }
             animation = cc.Animation.create(frames, delay, 1);
-            cc.AnimationCache.getInstance().addAnimation(animation, key);
+            cc.animationCache.addAnimation(animation, key);
         }
     },
 
     _parseVersion2:function (animations) {
-        var frameCache = cc.SpriteFrameCache.getInstance();
+        var frameCache = cc.spriteFrameCache;
 
         for (var key in animations) {
             var animationDict = animations[key];
@@ -213,7 +213,7 @@ cc.animationCache = /** @lends cc.AnimationCache# */{
             var animation = new cc.Animation();
             animation.initWithAnimationFrames(arr, delayPerUnit, loops);
             animation.setRestoreOriginalFrame(restoreOriginalFrame);
-            cc.AnimationCache.getInstance().addAnimation(animation, key);
+            cc.animationCache.addAnimation(animation, key);
         }
     },
 

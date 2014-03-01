@@ -146,7 +146,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             var file = textures[i];
             var tp = fullPath;
             tp += file;
-            cc.SpriteFrameCache.getInstance().addSpriteFrames(tp);
+            cc.spriteFrameCache.addSpriteFrames(tp);
         }
         var fileDesignWidth = jsonDict["designWidth"];
         var fileDesignHeight = jsonDict["designHeight"];
@@ -739,7 +739,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
             var file = textures[i];
             var tp = fullPath;
             tp += file;
-            cc.SpriteFrameCache.getInstance().addSpriteFrames(tp);
+            cc.spriteFrameCache.addSpriteFrames(tp);
         }
         var fileDesignWidth = jsonDict["designWidth"];
         var fileDesignHeight = jsonDict["designHeight"];
