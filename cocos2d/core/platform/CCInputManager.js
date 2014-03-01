@@ -341,7 +341,11 @@ cc.inputManager = {
             }, false);
 
             window.addEventListener('mouseup', function (event) {
+                var savePressed = selfPointer._mousePressed;
                 selfPointer._mousePressed = false;
+
+                if(!savePressed)
+                    return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
@@ -506,7 +510,7 @@ cc.inputManager = {
         }
 
         //register keyboard event
-        this._registerKeyboardEvent(element);
+        this._registerKeyboardEvent();
 
         //register Accelerometer event
         this._registerAccelerometerEvent();

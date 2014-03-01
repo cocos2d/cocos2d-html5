@@ -185,11 +185,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _eventAfterVisit: null,
     _eventAfterUpdate: null,
 
-    _touchDispatcher:null,
-    _keyboardDispatcher:null,
-    _accelerometer:null,
-    _mouseDispatcher:null,
-
     _isBlur:false,
 
     /**
@@ -252,26 +247,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._eventAfterUpdate.setUserData(this);
         this._eventProjectionChanged = new cc.EventCustom(cc.Director.EVENT_PROJECTION_CHANGED);
         this._eventProjectionChanged.setUserData(this);
-
-        //touchDispatcher
-        if(cc.TouchDispatcher){
-            this._touchDispatcher = new cc.TouchDispatcher();
-            this._touchDispatcher.init();
-        }
-
-        //KeyboardDispatcher
-        if(cc.KeyboardDispatcher)
-            this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
-
-        //accelerometer
-        if(cc.Accelerometer)
-            this._accelerometer = new cc.Accelerometer();
-
-        //MouseDispatcher
-        if(cc.MouseDispatcher){
-            this._mouseDispatcher = new cc.MouseDispatcher();
-            this._mouseDispatcher.init();
-        }
 
         return true;
     },
@@ -535,7 +510,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         // don't release the event handlers
         // They are needed in case the director is run again
-        if(this._touchDispatcher)this._touchDispatcher.removeAllDelegates();
 
         if (this._runningScene) {
             this._runningScene.onExitTransitionDidStart();
@@ -789,7 +763,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          this.updateContentScaleFactor();
          }*/
 
-        if(this._touchDispatcher)this._touchDispatcher.setDispatchEvents(true);
         //}
     },
 
@@ -1048,53 +1021,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
     },
 
-    getTouchDispatcher:function () {
-        return this._touchDispatcher;
-    },
-    setTouchDispatcher:function (touchDispatcher) {
-        if (this._touchDispatcher != touchDispatcher) {
-            this._touchDispatcher = touchDispatcher;
-        }
-    },
-
-    getKeyboardDispatcher:function () {
-        if(!cc.KeyboardDispatcher)
-            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
-        return this._keyboardDispatcher;
-    },
-    setKeyboardDispatcher:function (keyboardDispatcher) {
-        if(!cc.KeyboardDispatcher)
-            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
-        this._keyboardDispatcher = keyboardDispatcher;
-    },
-
-    getAccelerometer:function () {
-        if(!cc.Accelerometer)
-            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
-        return this._accelerometer;
-    },
-    setAccelerometer:function (accelerometer) {
-        if(!cc.Accelerometer)
-            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
-        if (this._accelerometer != accelerometer)
-            this._accelerometer = accelerometer;
-    },
-
     getDeltaTime:function(){
         return this._deltaTime;
-    },
-
-    getMouseDispatcher:function () {
-        if(!cc.MouseDispatcher)
-            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
-        return this._mouseDispatcher;
-    },
-
-    setMouseDispatcher:function (mouseDispatcher) {
-        if(!cc.MouseDispatcher)
-            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
-        if (this._mouseDispatcher != mouseDispatcher)
-            this._mouseDispatcher = mouseDispatcher;
     },
 
     _createStatsLabel: null,

@@ -66,7 +66,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _wnd: null,
     _hDC: null,
     _hRC: null,
-    _accelerometerKeyHook: null,
     _supportTouch: false,
     _contentTranslateLeftTop: null,
 
@@ -86,7 +85,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._originalDesignResolutionSize = cc.size(w, h);
         this._viewPortRect = cc.rect(0, 0, w, h);
         this._visibleRect = cc.rect(0, 0, w, h);
-        this._delegate = cc.director.getTouchDispatcher();
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
 
@@ -310,10 +308,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     centerWindow: function () {
     },
 
-    setAccelerometerKeyHook: function (accelerometerKeyHook) {
-        this._accelerometerKeyHook = accelerometerKeyHook;
-    },
-
     /**
      * Get the visible area size of OpenGL view port.
      * @return {cc.Size}
@@ -454,14 +448,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      */
     getDesignResolutionSize: function () {
         return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
-    },
-
-    /**
-     * set touch delegate
-     * @param {cc.TouchDispatcher} delegate
-     */
-    setTouchDelegate: function (delegate) {
-        this._delegate = delegate;
     },
 
     /**
