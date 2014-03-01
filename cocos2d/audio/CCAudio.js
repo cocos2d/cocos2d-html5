@@ -662,7 +662,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 });
 
 
-if (!cc.sys.supportWebAudio && cc.sys.MULTIPLE_AUDIO_WHITE_LIST.indexOf(cc.browser.type) < 0){
+if (!cc.sys.supportWebAudio && cc.sys.MULTIPLE_AUDIO_WHITE_LIST.indexOf(cc.sys.browserType) < 0){
     /**
      * AudioEngine for single audio mode.
      * @class

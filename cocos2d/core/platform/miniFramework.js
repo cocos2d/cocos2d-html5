@@ -551,7 +551,7 @@ cc.$ = function (x) {
     return el;
 };
 //getting the prefix and css3 3d support
-switch (cc.browser.type) {
+switch (cc.sys.type) {
     case "firefox":
         cc.$.pfx = "Moz";
         cc.$.hd = true;

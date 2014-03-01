@@ -164,7 +164,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             else vp = elems[0];
 
 	        // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
-	        if (cc.sys.isMobile && cc.browser.type == "firefox") {
+	        if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
 		        vp.content = "initial-scale:1";
 		        return;
 	        }

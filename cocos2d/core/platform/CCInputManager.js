@@ -533,12 +533,12 @@ cc.inputManager = {
         this._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
 
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
-        if (cc.browser.type == "mqqbrowser")
+        if (cc.sys.browserType == cc.sys.BROWSER_TYPE_MOBILE_QQ)
             this._accelDeviceEvent = window.DeviceOrientationEvent;
 
         var _deviceEventType = (this._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
         var ua = navigator.userAgent;
-        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.browser.type == "ucbrowser")) {
+        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.sys.browserType == cc.BROWSER_TYPE_UC)) {
             this._minus = -1;
         }
 
