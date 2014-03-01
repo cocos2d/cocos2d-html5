@@ -1700,7 +1700,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
                         } else {
-                            var myTIFFObj = cc.TIFFReader.getInstance();
+                            var myTIFFObj = cc.tiffReader;
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
 

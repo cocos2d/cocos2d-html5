@@ -643,7 +643,7 @@ cc.ContainerStrategy = cc.Class.extend({
         var frame = view._frame;
         if (cc.Browser.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
-            cc.Screen.getInstance().autoFullScreen(frame);
+            cc.screen.autoFullScreen(frame);
         }
 
         var locCanvasElement = cc.canvas, locContainer = cc.container;
