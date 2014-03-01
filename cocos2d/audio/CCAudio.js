@@ -249,6 +249,7 @@ if (cc.sys.supportWebAudio) {
     });
     delete window._proto;
 }
+
 /**
  * A simple Audio Engine engine API.
  * @class
@@ -290,7 +291,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @return {Number}
      * @example
      * //example
-     * var effectVolume = cc.AudioEngine.getInstance().getEffectsVolume();
+     * var effectVolume = cc.audioEngine.getEffectsVolume();
      */
     getEffectsVolume: function() {
         return this._effectsVolume;
@@ -303,7 +304,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {Boolean} loop Whether the music loop or not.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().playMusic(path, false);
+     * cc.audioEngine.playMusic(path, false);
      */
     playMusic : function (url, loop) {
         var self = this;
@@ -344,7 +345,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {Boolean} releaseData If release the music data or not.As default value is false.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().stopMusic();
+     * cc.audioEngine.stopMusic();
      */
     stopMusic : function (releaseData) {
         if(this._musicPlayState > 0){
@@ -373,7 +374,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * Pause playing music.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().pauseMusic();
+     * cc.audioEngine.pauseMusic();
      */
     pauseMusic:function () {
         if(this._musicPlayState == 2){
@@ -386,7 +387,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * Resume playing music.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().resumeMusic();
+     * cc.audioEngine.resumeMusic();
      */
     resumeMusic:function () {
         if(this._musicPlayState == 1){
@@ -406,7 +407,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * Rewind playing music.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().rewindMusic();
+     * cc.audioEngine.rewindMusic();
      */
     rewindMusic:function () {
         if(this._currMusic) this._playMusic(this._currMusic);
@@ -417,7 +418,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @return {Number}
      * @example
      * //example
-     * var volume = cc.AudioEngine.getInstance().getMusicVolume();
+     * var volume = cc.audioEngine.getMusicVolume();
      */
     getMusicVolume:function () {
         return this._musicPlayState == 0 ? 0 : this._currMusic.volume;
@@ -428,7 +429,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {Number} volume Volume must be in 0.0~1.0 .
      * @example
      * //example
-     * cc.AudioEngine.getInstance().setMusicVolume(0.5);
+     * cc.audioEngine.setMusicVolume(0.5);
      */
     setMusicVolume:function (volume) {
         if(this._musicPlayState > 0){
@@ -440,7 +441,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @return {Boolean} If is playing return true,or return false.
      * @example
      * //example
-     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
+     *  if (cc.audioEngine.isMusicPlaying()) {
      *      cc.log("music is playing");
      *  }
      *  else {
@@ -493,7 +494,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @return {Number|null} the audio id
      * @example
      * //example
-     * var soundId = cc.AudioEngine.getInstance().playEffect(path);
+     * var soundId = cc.audioEngine.playEffect(path);
      */
     playEffect: function (url, loop) {
         var audio = this._getEffect(url);
@@ -510,7 +511,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {Number} volume Volume must be in 0.0~1.0 .
      * @example
      * //example
-     * cc.AudioEngine.getInstance().setEffectsVolume(0.5);
+     * cc.audioEngine.setEffectsVolume(0.5);
      */
     setEffectsVolume:function (volume) {
         volume = this._effectsVolume = Math.min(Math.max(volume, 0), 1);
@@ -525,7 +526,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().pauseEffect(audioID);
+     * cc.audioEngine.pauseEffect(audioID);
      */
     pauseEffect:function (audioID) {
         var audio = this._effects[audioID];
@@ -538,7 +539,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * Pause all playing sound effect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().pauseAllEffects();
+     * cc.audioEngine.pauseAllEffects();
      */
     pauseAllEffects:function () {
         var effects = this._effects;
@@ -553,7 +554,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {Number} effectId The return value of function playEffect.
      * @audioID
      * //example
-     * cc.AudioEngine.getInstance().resumeEffect(audioID);
+     * cc.audioEngine.resumeEffect(audioID);
      */
     resumeEffect:function (effectId) {
         this._resumeAudio(this._effects[effectId])
@@ -563,7 +564,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * Resume all playing sound effect
      * @example
      * //example
-     * cc.AudioEngine.getInstance().resumeAllEffects();
+     * cc.audioEngine.resumeAllEffects();
      */
     resumeAllEffects:function () {
         var effects = this._effects;
@@ -577,7 +578,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {Number} effectId The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().stopEffect(audioID);
+     * cc.audioEngine.stopEffect(audioID);
      */
     stopEffect:function (effectId) {
         this._stopAudio(this._effects[effectId]);
@@ -588,7 +589,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * Stop all playing sound effects.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().stopAllEffects();
+     * cc.audioEngine.stopAllEffects();
      */
     stopAllEffects:function () {
         var effects = this._effects;
@@ -603,7 +604,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {String} url
      * @example
      * //example
-     * cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
+     * cc.audioEngine.unloadEffect(EFFECT_FILE);
      */
     unloadEffect:function (url) {
         var locLoader = cc.loader, locEffects = this._effects, effectList = this._getEffectList(url);
@@ -943,7 +944,7 @@ if (!cc.sys.supportWebAudio && cc.sys.MULTIPLE_AUDIO_WHITE_LIST.indexOf(cc.brows
  * Get the shared Engine object, it will new one when first time be called.
  * @return {cc.AudioEngine}
  */
-cc.AudioEngine.getInstance = function () {
+cc.AudioEngine._getInstance = function () {
     if(!this._instance){
         var ae = this._instance = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
         cc.winEvents.hiddens.push(function(){
@@ -955,6 +956,16 @@ cc.AudioEngine.getInstance = function () {
     }
     return this._instance;
 };
+
+/**
+ * The shared Engine object
+ * @Object
+ * @type {cc.AudioEngine}
+ */
+cc.audioEngine;
+cc.defineGetterSetter(cc, "audioEngine", function() {
+	return cc.AudioEngine._instance ? cc.AudioEngine._instance : cc.AudioEngine._getInstance();
+});
 
 /**
  * Resource loader for audio.

@@ -270,7 +270,7 @@ cc.eventManager = {
         if (!listeners)
             return;
 
-        var rootNode = cc.Director.getInstance().getRunningScene();
+        var rootNode = cc.director.getRunningScene();
         // Reset priority index
         this._nodePriorityIndex = 0;
         this._nodePriorityMap = {};
@@ -791,10 +791,10 @@ cc.eventManager = {
             if (fixedPriorityListeners) {
                 var found = fixedPriorityListeners.indexOf(listener);
                 if (found != -1) {
-                    cc.assert(listener._getSceneGraphPriority() == null, "Can't set fixed priority with scene graph based listener.");
+                    cc.Assert(listener._getSceneGraphPriority() == null, "Can't set fixed priority with scene graph based listener.");
                     if (listener._getFixedPriority() !== fixedPriority) {
                         listener._setFixedPriority(fixedPriority);
-                        this.setDirty(listener._getListenerID(), this.DIRTY_FIXED_PRIORITY);
+                        this._setDirty(listener._getListenerID(), this.DIRTY_FIXED_PRIORITY);
                     }
                     return;
                 }

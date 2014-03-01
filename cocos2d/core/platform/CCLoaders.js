@@ -42,7 +42,7 @@ cc.imgLoader = {
     load : function(realUrl, url, res, cb){
         var image = cc.loader.loadImg(realUrl, function(err, img){
             if(err) return cb(err);
-            cc.TextureCache.getInstance().handleLoadedTexture(url);
+            cc.textureCache.handleLoadedTexture(url);
             cb(null, img);
         });
         cc.loader.cache[url] = image;
@@ -54,7 +54,7 @@ cc.plistLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadTxt(realUrl, function(err, txt){
             if(err) return cb(err);
-            cb(null, cc.PlistParser.getInstance().parse(txt));
+            cb(null, cc.plistParser.parse(txt));
         });
     }
 }

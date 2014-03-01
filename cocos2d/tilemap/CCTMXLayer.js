@@ -206,7 +206,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if (this._cacheDirty) {
             //
-            var eglViewer = cc.EGLView.getInstance();
+            var eglViewer = cc.view;
             eglViewer._setScaleXYForRenderTexture();
             //add dirty region
             var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
@@ -248,7 +248,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var context = ctx || cc.renderContext;
         //context.globalAlpha = this._opacity / 255;
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
-        var eglViewer = cc.EGLView.getInstance();
+        var eglViewer = cc.view;
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
         if (locCacheCanvas) {
@@ -400,7 +400,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var capacity = totalNumberOfTiles * 0.35 + 1; // 35 percent is occupied ?
         var texture;
         if (tilesetInfo)
-            texture = cc.TextureCache.getInstance().addImage(tilesetInfo.sourceImage);
+            texture = cc.textureCache.addImage(tilesetInfo.sourceImage);
 
         if (this.initWithTexture(texture, capacity)) {
             // layerInfo
@@ -411,7 +411,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._maxGID = layerInfo._maxGID;
             this._opacity = layerInfo._opacity;
             this.properties = layerInfo.properties;
-            this._contentScaleFactor = cc.Director.getInstance().getContentScaleFactor();
+            this._contentScaleFactor = cc.director.getContentScaleFactor();
 
             // tilesetInfo
             this.tileset = tilesetInfo;
@@ -895,7 +895,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     alphaFuncValue = parseFloat(alphaFuncVal);
 
                 if (cc.renderContextType === cc.WEBGL) {
-                    this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
+                    this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
                     var alphaValueLocation = cc.renderContext.getUniformLocation(this.shaderProgram.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
                     // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
                     this.shaderProgram.use();

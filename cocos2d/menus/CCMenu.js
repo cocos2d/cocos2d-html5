@@ -62,6 +62,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     _opacity:0,
     _selectedItem:null,
     _state:-1,
+    _touchListener: null,
 
     ctor:function(){
         cc.LayerRGBA.prototype.ctor.call(this);
@@ -70,6 +71,22 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         this._opacity = 255;
         this._selectedItem = null;
         this._state = -1;
+
+        this._touchListener = cc.EventListener.create({
+            event: cc.EventListener.TOUCH_ONE_BY_ONE,
+            swallowTouches: true,
+            onTouchBegan: this._onTouchBegan,
+            onTouchMoved: this._onTouchMoved,
+            onTouchEnded: this._onTouchEnded,
+            onTouchCancelled: this._onTouchCancelled
+        });
+    },
+
+    onEnter: function(){
+        var locListener = this._touchListener;
+        if(!locListener._isRegistered())
+            cc.eventManager.addListener(locListener, this);
+        cc.Node.prototype.onEnter.call(this);
     },
 
     /**
@@ -164,7 +181,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             this.enabled = true;
 
             // menu in the center of the screen
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
 	        this.attr({
 		        x: winSize.width / 2,
 		        y: winSize.height / 2,
@@ -185,17 +202,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             // enable cascade color and opacity on menus
             this.cascadeColor = true;
             this.cascadeOpacity = true;
-
-            //add touch event listener
-            var touchListener = cc.EventListener.create({
-                event: cc.EventListener.TOUCH_ONE_BY_ONE,
-                swallowTouches: true,
-                onTouchBegan: this._onTouchBegan,
-                onTouchMoved: this._onTouchMoved,
-                onTouchEnded: this._onTouchEnded,
-                onTouchCancelled: this._onTouchCancelled
-            });
-            cc.eventManager.addListener(touchListener,this);
 
             return true;
         }
@@ -318,7 +324,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         }
         // check if too many rows/columns for available menu items
         //cc.Assert(!columnsOccupied, "");    //?
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
         row = 0;
         rowHeight = 0;
@@ -412,7 +418,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         }
         // check if too many rows/columns for available menu items.
         //cc.Assert(!rowsOccupied, "");
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
         column = 0;
         columnWidth = 0;
@@ -535,7 +541,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             }
             this._state = cc.MENU_STATE_WAITING;
         }
-        cc.Layer.prototype.onExit.call(this);
+        cc.Node.prototype.onExit.call(this);
     },
 
     setOpacityModifyRGB:function (value) {
@@ -562,14 +568,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             }
         }
         return null;
-    },
-
-    /**
-     * set event handler priority. By default it is: kCCMenuTouchPriority
-     * @param {Number} newPriority
-     */
-    setHandlerPriority:function (newPriority) {
-        cc.Director.getInstance().getTouchDispatcher().setPriority(newPriority, this);
     }
 });
 

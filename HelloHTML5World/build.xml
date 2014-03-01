@@ -14,13 +14,13 @@
             </externs>
             <sources dir="${basedir}/../">
                 <file name="cocos2d/core/platform/CCClass.js"/>
+                <file name="cocos2d/core/platform/CCCommon.js"/>
                 <file name="cocos2d/core/cocoa/CCGeometry.js"/>
                 <file name="cocos2d/core/platform/CCSAXParser.js"/>
                 <file name="cocos2d/core/platform/CCLoaders.js"/>
                 <file name="cocos2d/core/platform/Sys.js"/>
                 <file name="cocos2d/core/platform/CCConfig.js"/>
                 <file name="cocos2d/core/platform/miniFramework.js"/>
-                <file name="cocos2d/core/platform/CCCommon.js"/>
                 <file name="cocos2d/core/platform/CCMacro.js"/>
                 <file name="cocos2d/core/platform/CCTypes.js"/>
                 <file name="cocos2d/core/platform/CCEGLView.js"/>

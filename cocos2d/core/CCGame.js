@@ -1122,7 +1122,8 @@ cc.setup = function (el, width, height) {
         win.gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc._rendererInitialized = true;
-        cc.TextureCache.getInstance()._initializingRenderer();
+        cc.textureCache._initializingRenderer();
+	    cc.shaderCache._init();
     } else {
         cc.renderContext = localCanvas.getContext("2d");
         cc.mainRenderContextBackup = cc.renderContext;
@@ -1135,7 +1136,7 @@ cc.setup = function (el, width, height) {
     cc.gameDiv = localContainer;
 
     cc.log(cc.ENGINE_VERSION);
-    cc.Configuration.getInstance();
+    //cc.configuration.getInstance();
 
     cc.setContextMenuEnable(false);
 
@@ -1303,7 +1304,7 @@ cc.game = {
     _runMainLoop : function(){
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
             win = window, frameRate = config[CONFIG_KEY.frameRate],
-            director = cc.Director.getInstance();
+            director = cc.director;
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
         if (win.requestAnimFrame && frameRate == 60) {
             callback = function () {

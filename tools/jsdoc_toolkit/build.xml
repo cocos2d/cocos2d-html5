@@ -21,11 +21,11 @@
         <jsdoctoolkit jsdochome="${jsdoc.dir}/" template="WouterBos-Codeview-a091d81" outputdir="${out.dir}" includeprivate="false">
             <fileset dir="${src.dir}">
                 <include name="core/platform/CCClass.js"/>
+                <include name="core/platform/CCCommon.js"/>
                 <include name="core/cocoa/CCGeometry.js"/>
                 <include name="core/platform/Sys.js"/>
                 <include name="core/platform/CCConfig.js"/>
                 <include name="core/platform/miniFramework.js"/>
-                <include name="core/platform/CCCommon.js"/>
                 <include name="core/platform/CCMacro.js"/>
                 <include name="core/platform/CCFileUtils.js"/>
                 <include name="core/platform/CCTypes.js"/>

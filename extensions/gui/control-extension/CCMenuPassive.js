@@ -100,7 +100,7 @@ cc.MenuPassive = cc.Layer.extend({
             //this.m_bIsTouchEnabled = false;
 
             // menu in the center of the screen
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
 
             // Set the default anchor point
             this.ignoreAnchorPointForPosition(true);
@@ -239,7 +239,7 @@ cc.MenuPassive = cc.Layer.extend({
         // check if too many rows/columns for available menu items
         //cc.Assert(!columnsOccupied, "");            //?
 
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
         row = 0;
         rowHeight = 0;
@@ -337,7 +337,7 @@ cc.MenuPassive = cc.Layer.extend({
         // check if too many rows/columns for available menu items.
         //cc.Assert(!rowsOccupied, "");      //?
 
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
 
         column = 0;
         columnWidth = 0;

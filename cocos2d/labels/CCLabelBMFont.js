@@ -319,7 +319,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             locElement = locTexture.getHtmlElementObj();
             if (!locElement)
                 return;
-            var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture.getHtmlElementObj());
+            var cacheTextureForColor = cc.textureCache.getTextureColors(this._originalTexture.getHtmlElementObj());
             if (cacheTextureForColor) {
                 if (locElement instanceof HTMLCanvasElement && !this._rectRotated)
                     cc.generateTintImage(locElement, cacheTextureForColor, this._displayedColor, null, locElement);
@@ -375,7 +375,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             self._config = newConf;
             self._fntFile = fntFile;
-            texture = cc.TextureCache.getInstance().addImage(newConf.atlasName);
+            texture = cc.textureCache.addImage(newConf.atlasName);
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             if(!locIsLoaded){
@@ -849,7 +849,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             self._fntFile = fntFile;
             self._config = newConf;
 
-            var texture = cc.TextureCache.getInstance().addImage(newConf.atlasName);
+            var texture = cc.textureCache.addImage(newConf.atlasName);
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             self.texture = texture;
@@ -1064,7 +1064,7 @@ cc.fntLoader = {
         var commonObj = self._parseStrToObj(fntStr.match(self.COMMON_EXP)[0]);
         fnt.commonHeight = commonObj["lineHeight"];
         if (cc.renderContextType === cc.WEBGL) {
-            var texSize = cc.Configuration.getInstance().getMaxTextureSize();
+            var texSize = cc.configuration.getMaxTextureSize();
             if(commonObj["scaleW"] > texSize.width || commonObj["scaleH"] > texSize.height)
                 cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");
         }

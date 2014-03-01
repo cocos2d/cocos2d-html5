@@ -207,7 +207,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             throw "cc.MotionStreak.initWithFade(): Invalid filename or texture";
 
         if (typeof(texture) === "string")
-            texture = cc.TextureCache.getInstance().addImage(texture);
+            texture = cc.textureCache.addImage(texture);
 
         cc.Node.prototype.setPosition.call(this, cc.p(0,0));
         this.anchorX = 0;
@@ -243,7 +243,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
 
         // shader program
-        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
         this.texture = texture;
         this.color = color;

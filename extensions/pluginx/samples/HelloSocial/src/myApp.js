@@ -48,14 +48,14 @@ var MyLayer = cc.Layer.extend({
         this._super();
 
 
-        var size = cc.Director.getInstance().getVisibleSize();
+        var size = cc.director.getVisibleSize();
 
         var bg = cc.Sprite.create(s_Background);
         bg.x = size.width / 2;
 	    bg.y = size.height / 2;
         this.addChild(bg);
 
-        var eglView = cc.EGLView.getInstance();
+        var eglView = cc.view;
         var posBR = cc.p(eglView.getVisibleOrigin().x + eglView.getVisibleSize().width, eglView.getVisibleOrigin().y);
         var posBC = cc.p(eglView.getVisibleOrigin().x + eglView.getVisibleSize().width / 2, eglView.getVisibleOrigin().y);
         var posTL = cc.p(eglView.getVisibleOrigin().x, eglView.getVisibleOrigin().y + eglView.getVisibleSize().height);
