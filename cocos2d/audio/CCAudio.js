@@ -249,6 +249,7 @@ if (cc.Browser.supportWebAudio) {
     });
     delete window._proto;
 }
+
 /**
  * A simple Audio Engine engine API.
  * @class
@@ -943,7 +944,7 @@ if (!cc.Browser.supportWebAudio && cc.AudioEngine.multipleAudioWhiteList.indexOf
  * Get the shared Engine object, it will new one when first time be called.
  * @return {cc.AudioEngine}
  */
-cc.AudioEngine.getInstance = function () {
+cc.AudioEngine._getInstance = function () {
     if(!this._instance){
         var ae = this._instance = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
         cc.winEvents.hiddens.push(function(){
@@ -956,8 +957,14 @@ cc.AudioEngine.getInstance = function () {
     return this._instance;
 };
 
+/**
+ * The shared Engine object
+ * @Object
+ * @type {cc.AudioEngine}
+ */
+cc.audioEngine;
 cc.defineGetterSetter(cc, "audioEngine", function() {
-	return cc.AudioEngine._instance ? cc.AudioEngine._instance : cc.AudioEngine.getInstance();
+	return cc.AudioEngine._instance ? cc.AudioEngine._instance : cc.AudioEngine._getInstance();
 });
 
 /**

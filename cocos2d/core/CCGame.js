@@ -1122,7 +1122,8 @@ cc.setup = function (el, width, height) {
         win.gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc._rendererInitialized = true;
-        cc.TextureCache.getInstance()._initializingRenderer();
+        cc.textureCache._initializingRenderer();
+	    cc.shaderCache._init();
     } else {
         cc.renderContext = localCanvas.getContext("2d");
         cc.mainRenderContextBackup = cc.renderContext;

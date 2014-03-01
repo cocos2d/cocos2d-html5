@@ -2221,7 +2221,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * </p>
      * @param {cc.GLProgram} newShaderProgram The shader program which fetchs from CCShaderCache.
      * @example
-     *  node.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+     *  node.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
     setShaderProgram:function (newShaderProgram) {
         this._shaderProgram = newShaderProgram;

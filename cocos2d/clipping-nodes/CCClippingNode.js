@@ -232,7 +232,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         if (this.alphaThreshold < 1) {
             // since glAlphaTest do not exists in OES, use a shader that writes
             // pixel only if greater than an alpha threshold
-            var program = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
+            var program = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
             var alphaValueLocation = gl.getUniformLocation(program.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
             // set our alphaThreshold
             cc.glUseProgram(program.getProgram());

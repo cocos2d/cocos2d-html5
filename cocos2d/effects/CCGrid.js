@@ -190,7 +190,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         if (!this._grabber)
             return false;
         this._grabber.grab(this._texture);
-        this._shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
         this.calculateVertexPoints();
         return true;
     },

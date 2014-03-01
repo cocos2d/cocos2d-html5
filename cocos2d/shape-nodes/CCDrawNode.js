@@ -25,7 +25,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/*
+/**
  * Code copied & pasted from SpacePatrol game https://github.com/slembcke/SpacePatrol
  *
  * Renamed and added some changes for cocos2d
@@ -554,7 +554,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
 
     init:function () {
         if (cc.Node.prototype.init.call(this)) {
-            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR);
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR);
             this._ensureCapacity(512);
             this._trianglesWebBuffer = cc.renderContext.createBuffer();
             this._dirty = true;

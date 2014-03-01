@@ -1257,20 +1257,37 @@ cc.Director.firstUseDirector = true;
  * @function
  * @return {cc.Director}
  */
-cc.Director.getInstance = function () {
+cc.Director._getInstance = function () {
     if (cc.Director.firstUseDirector) {
         cc.Director.firstUseDirector = false;
         cc.Director.sharedDirector = new cc.DisplayLinkDirector();
         cc.Director.sharedDirector.init();
-        cc.Director.sharedDirector.setOpenGLView(cc.EGLView.getInstance());
+        cc.Director.sharedDirector.setOpenGLView(cc.view);
     }
     return cc.Director.sharedDirector;
 };
 
+/**
+ * <p>
+ *   cc.director is a DisplayLinkDirector type Director that synchronizes timers with the refresh rate of the display.<br/>
+ *   Features and Limitations:<br/>
+ *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
+ *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
+ * </p>
+ * @Object
+ * @type {cc.Director}
+ */
+cc.director;
 cc.defineGetterSetter(cc, "director", function() {
-	return cc.Director.firstUseDirector ? cc.Director.getInstance() : cc.Director.sharedDirector;
+	return cc.Director.firstUseDirector ? cc.Director._getInstance() : cc.Director.sharedDirector;
 });
 
+/**
+ * <p>
+ * An alias for cc.director.getWinSize()
+ * </p>
+ * @type {cc.Size}
+ */
 cc.defineGetterSetter(cc, "winSize", function(){
     return cc.director._winSizeInPoints;
 });

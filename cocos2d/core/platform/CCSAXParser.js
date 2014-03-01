@@ -66,12 +66,22 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
  * @function
  * @return {cc.SAXParser}
  */
-cc.SAXParser.getInstance = function () {
+cc.SAXParser._getInstance = function () {
     if (!this._instance) {
         this._instance = new cc.SAXParser();
     }
     return this._instance;
 };
+
+/**
+ * A SAX Parser
+ * @Object
+ * @type {cc.SAXParser}
+ */
+cc.saxParser;
+cc.defineGetterSetter(cc, "saxParser", function() {
+	return cc.SAXParser._instance ? cc.SAXParser._instance : cc.SAXParser._getInstance();
+});
 
 /**
  * a plist Parser
@@ -163,9 +173,18 @@ cc.PlistParser = cc.SAXParser.extend({
  * @function
  * @return {cc.SAXParser}
  */
-cc.PlistParser.getInstance = function () {
+cc.PlistParser._getInstance = function () {
     if (!this._instance) {
         this._instance = new cc.PlistParser();
     }
     return this._instance;
 };
+
+/**
+ * A Plist Parser
+ * @Object
+ * @type {cc.PlistParser}
+ */
+cc.defineGetterSetter(cc, "plistParser", function() {
+	return cc.PlistParser._instance ? cc.PlistParser._instance : new cc.PlistParser();
+});

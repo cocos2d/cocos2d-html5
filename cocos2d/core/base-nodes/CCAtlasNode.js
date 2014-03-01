@@ -226,7 +226,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this.quadsToDraw = itemsToRender;
 
         //shader stuff
-        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
+        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
         this._uniformColor = cc.renderContext.getUniformLocation(this.shaderProgram.getProgram(), "u_color");
         return true;
     },

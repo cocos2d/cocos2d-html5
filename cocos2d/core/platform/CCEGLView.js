@@ -582,7 +582,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     }
 });
 
-cc.EGLView.getInstance = function () {
+cc.EGLView._getInstance = function () {
     if (!this._instance) {
 	    // First init director
 	    cc.Director.getInstance();
@@ -593,8 +593,14 @@ cc.EGLView.getInstance = function () {
     return this._instance;
 };
 
+/**
+ * The shared EGLView
+ * @Object
+ * @type {cc.EGLView}
+ */
+cc.view;
 cc.defineGetterSetter(cc, "view", function() {
-	return cc.EGLView._instance ? cc.EGLView._instance : cc.EGLView.getInstance();
+	return cc.EGLView._instance ? cc.EGLView._instance : cc.EGLView._getInstance();
 });
 
 /**

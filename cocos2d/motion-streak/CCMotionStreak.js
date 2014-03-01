@@ -243,7 +243,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
 
         // shader program
-        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
 
         this.texture = texture;
         this.color = color;

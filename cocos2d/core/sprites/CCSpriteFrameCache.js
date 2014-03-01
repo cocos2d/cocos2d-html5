@@ -26,27 +26,16 @@
 
 /**
  * Singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.
- * @class
- * @extends cc.Class
+ * @Object
+ *
  * @example
- * // add SpriteFrames to SpriteFrameCache With File
- * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
+ * // add SpriteFrames to spriteFrameCache With File
+ * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);
  */
-cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
-    _spriteFrames: null,
-    _spriteFramesAliases: null,
-
-    _frameConfigCache : null,
-
-    /**
-     * Constructor
-     */
-    ctor: function () {
-        this._spriteFrames = {};
-        this._spriteFramesAliases = {};
-        this._frameConfigCache = {};
-    },
-
+cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
+    _spriteFrames: {},
+    _spriteFramesAliases: {},
+    _frameConfigCache : {},
 
     /**
      * Get the real data structure of frame used by engine.
@@ -315,25 +304,14 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         }
         if (!frame) cc.log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
         return frame;
-    }
-});
+    },
 
-cc.s_sharedSpriteFrameCache = null;
-
-/**
- * Returns the shared instance of the Sprite Frame cache
- * @return {cc.SpriteFrameCache}
- */
-cc.SpriteFrameCache.getInstance = function () {
-    if (!cc.s_sharedSpriteFrameCache) {
-        cc.s_sharedSpriteFrameCache = new cc.SpriteFrameCache();
-    }
-    return cc.s_sharedSpriteFrameCache;
-};
-
-/**
- * Purges the cache. It releases all the Sprite Frames and the retained instance.
- */
-cc.SpriteFrameCache.purgeSharedSpriteFrameCache = function () {
-    cc.s_sharedSpriteFrameCache = null;
+	/**
+	 * Purges the cache. It releases all cache objects.
+	 */
+	purgeSharedSpriteFrameCache: function () {
+		this._spriteFrames = {};
+		this._spriteFramesAliases = {};
+		this._frameConfigCache = {};
+	}
 };

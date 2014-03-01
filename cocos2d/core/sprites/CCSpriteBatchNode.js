@@ -617,7 +617,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this.textureAtlas = new cc.TextureAtlas();
         this.textureAtlas.initWithTexture(tex, capacity);
         this._updateBlendFunc();
-        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
