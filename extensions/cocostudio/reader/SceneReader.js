@@ -222,13 +222,10 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     this._callSelector(attribute, subDict);
                 }
                 else if (className == "CCBackgroundAudio") {
-                    var audio = null;
-                    if (resType == 0) {
-                        audio = ccs.ComAudio.create();
-                    }
-                    else {
-                        continue;
-                    }
+                    if(!pathExtname) continue;
+                    if(resType!=0) continue;
+
+                    var audio  = ccs.ComAudio.create();
                     audio.preloadBackgroundMusic(path);
                     audio.setFile(path);
                     var bLoop = Boolean(subDict["loop"] || 0);
