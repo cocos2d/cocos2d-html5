@@ -263,7 +263,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var locChildren = this._children;
         for(var i = 0; i< locChildren.length; i++){
             var locChild = locChildren[i];
-            if(cc.Browser.supportWebGL){
+            if(cc.sys.supportWebGL){
                 locChild.updateDisplayedOpacity(this._displayedOpacity);
             }else{
                 cc.NodeRGBA.prototype.updateDisplayedOpacity.call(locChild, this._displayedOpacity);
@@ -300,7 +300,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var locChildren = this._children;
         for(var i = 0;i < locChildren.length;i++){
             var locChild = locChildren[i];
-            if(cc.Browser.supportWebGL){
+            if(cc.sys.supportWebGL){
                 locChild.updateDisplayedColor(this._displayedColor);
             }else{
                 cc.NodeRGBA.prototype.updateDisplayedColor.call(locChild, this._displayedColor);
@@ -311,7 +311,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _changeTextureColor:function(){
-        if(cc.Browser.supportWebGL){
+        if(cc.sys.supportWebGL){
             return;
         }
         var locElement, locTexture = this.texture;
@@ -501,7 +501,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             // Apply label properties
             fontChar.opacityModifyRGB = self._opacityModifyRGB;
             // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
-            if (cc.Browser.supportWebGL) {
+            if (cc.sys.supportWebGL) {
                 fontChar.updateDisplayedColor(self._displayedColor);
                 fontChar.updateDisplayedOpacity(self._displayedOpacity);
             } else {

@@ -27,7 +27,7 @@ plugin.SocialQQWeibo = cc.Class.extend({
             }
         }
         urlstring = urlstring.substr(0, urlstring.length - 1);
-        cc.Browser.openURL("http://share.v.t.qq.com/index.php?c=share&a=index&" + urlstring);
+        cc.openURL("http://share.v.t.qq.com/index.php?c=share&a=index&" + urlstring);
 
     },
     setDebugMode: function (debug) {

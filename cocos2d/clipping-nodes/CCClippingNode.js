@@ -456,7 +456,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
 window._proto = cc.ClippingNode.prototype;
 
-if (cc.Browser.supportWebGL) {
+if (cc.sys.supportWebGL) {
     //WebGL
     _proto.init = _proto._initForWebGL;
     _proto.visit = _proto._visitForWebGL;

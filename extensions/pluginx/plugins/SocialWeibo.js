@@ -27,7 +27,7 @@ plugin.SocialWeibo = cc.Class.extend({
             }
         }
         urlstring = urlstring.substr(0, urlstring.length - 1);
-        cc.Browser.openURL("http://v.t.sina.com.cn/share/share.php?" + urlstring);
+        cc.openURL("http://v.t.sina.com.cn/share/share.php?" + urlstring);
     },
     setDebugMode: function (debug) {
         //invalid on html5

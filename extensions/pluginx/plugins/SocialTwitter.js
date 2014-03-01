@@ -20,7 +20,7 @@ plugin.SocialTwitter = cc.Class.extend({
         this._shareInfo.pic = shareInfo["SharedImagePath"];
 
 
-        cc.Browser.openURL("http://twitter.com/intent/tweet?text=" + this._shareInfo.title + " " + this._shareInfo.url);
+        cc.openURL("http://twitter.com/intent/tweet?text=" + this._shareInfo.title + " " + this._shareInfo.url);
     },
     setDebugMode: function (debug) {
         //invalid on html5

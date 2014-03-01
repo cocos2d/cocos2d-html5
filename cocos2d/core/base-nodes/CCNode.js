@@ -2292,7 +2292,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
 window._proto = cc.Node.prototype;
 
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
 	//WebGL
 	_proto.ctor = _proto._ctorForWebGL;
 	_proto.setNodeDirty = _proto._setNodeDirtyForWebGL;

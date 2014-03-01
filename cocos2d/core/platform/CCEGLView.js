@@ -164,7 +164,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             else vp = elems[0];
 
 	        // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
-	        if (cc.Browser.isMobile && cc.Browser.type == "firefox") {
+	        if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
 		        vp.content = "initial-scale:1";
 		        return;
 	        }
@@ -395,7 +395,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         // Reinit frame size
         var frameW = this._frameSize.width, frameH = this._frameSize.height;
-        if (cc.Browser.isMobile)
+        if (cc.sys.isMobile)
             this._setViewPortMeta(this._frameSize.width, this._frameSize.height);
         this._initFrameSize();
         // No change
@@ -605,8 +605,8 @@ cc.ContainerStrategy = cc.Class.extend({
      * @param {cc.EGLView} The target view
      */
     preApply: function (view) {
-	    if(sys.os == "iOS" || sys.os == "OS X")
-		    this._adjustRetina = true;
+        var sys = cc.sys;
+        this._adjustRetina = sys.os == sys.OS_IOS || sys.os == sys.OS_OSX
     },
 
     /**
@@ -627,7 +627,7 @@ cc.ContainerStrategy = cc.Class.extend({
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (cc.Browser.isMobile && frame == document.documentElement) {
+        if (cc.sys.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
             cc.screen.autoFullScreen(frame);
         }
