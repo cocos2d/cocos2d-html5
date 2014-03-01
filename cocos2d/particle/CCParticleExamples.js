@@ -71,7 +71,7 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
             this.setAngleVar(10);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, 60);
             this.setPosVar(cc.p(40, 20));
 
@@ -159,7 +159,7 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
             this.setSpeedVar(50);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
 
             // angle
@@ -256,7 +256,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
             this.setAngleVar(360);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
             this.setPosVar(cc.p(0,0));
 
@@ -351,7 +351,7 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
             this.setAngleVar(360);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
             this.setPosVar(cc.p(0,0));
 
@@ -445,7 +445,7 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
             this.setAngleVar(360);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
             this.setPosVar(cc.p(0,0));
 
@@ -541,7 +541,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
             this.setAngleVar(360);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
             this.setPosVar(cc.p(0,0));
 
@@ -636,7 +636,7 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
             this.setAngleVar(0);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
             this.setPosVar(cc.p(0,0));
 
@@ -731,7 +731,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
             this.setAngleVar(360);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
             this.setPosVar(cc.p(0,0));
 
@@ -823,7 +823,7 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
             this.setAngleVar(5);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, 0);
             this.setPosVar(cc.p(20, 0));
 
@@ -914,7 +914,7 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
             this.setTangentialAccelVar(1);
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height + 10);
             this.setPosVar(cc.p(winSize.width / 2, 0));
 
@@ -1014,7 +1014,7 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
 
 
             // emitter position
-            var winSize = cc.Director.getInstance().getWinSize();
+            var winSize = cc.director.getWinSize();
             this.setPosition(winSize.width / 2, winSize.height);
             this.setPosVar(cc.p(winSize.width / 2, 0));
 

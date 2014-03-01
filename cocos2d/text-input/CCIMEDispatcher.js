@@ -514,18 +514,28 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
 });
 
 /**
+ * @type object
+ */
+cc.IMEDispatcher._instance = null;
+
+/**
  * Returns the shared CCIMEDispatcher object for the system.
  * @return {cc.IMEDispatcher}
  */
-cc.IMEDispatcher.getInstance = function () {
-    if (!cc.IMEDispatcher.instance) {
-        cc.IMEDispatcher.instance = new cc.IMEDispatcher();
-        cc.IMEDispatcher.instance.init();
+cc.IMEDispatcher._getInstance = function () {
+    if (!cc.IMEDispatcher._instance) {
+        cc.IMEDispatcher._instance = new cc.IMEDispatcher();
+        cc.IMEDispatcher._instance.init();
     }
-    return cc.IMEDispatcher.instance;
+    return cc.IMEDispatcher._instance;
 };
 
 /**
- * @type object
+ * The shared CCIMEDispatcher object for the system.
+ * @Object
+ * @type {cc.IMEDispatcher}
  */
-cc.IMEDispatcher.instance = null;
+cc.imeDispatcher;
+cc.defineGetterSetter(cc, "imeDispatcher", function() {
+	return cc.IMEDispatcher._instance ? cc.IMEDispatcher._instance : cc.IMEDispatcher._getInstance();
+});

@@ -36,7 +36,7 @@ var cocos2dApp = cc.Application.extend({
     },
     applicationDidFinishLaunching:function () {
         // initialize director
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         var designSize = cc.size(800, 450);
 
         cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.ResolutionPolicy.SHOW_ALL);

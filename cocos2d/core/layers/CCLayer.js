@@ -49,7 +49,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this.anchorY = 0.5;
         this._ignoreAnchorPointForPosition = true;
 
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         this.setContentSize(director.getWinSize());
         return true;
     }
@@ -477,7 +477,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         if(cc.renderContextType !== cc.CANVAS)
             this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
         color = color ||  cc.color(0, 0, 0, 255);
 	    this.width = width || winSize.width;
         this.height = height || winSize.height;

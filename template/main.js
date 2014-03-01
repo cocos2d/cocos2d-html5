@@ -36,7 +36,7 @@ var cocos2dApp = cc.Application.extend({
     },
     applicationDidFinishLaunching:function () {
         // initialize director
-        var director = cc.Director.getInstance();
+        var director = cc.director;
 
         cc.EGLView.getInstance()._adjustSizeToBrowser();
         var screenSize = cc.EGLView.getInstance().getFrameSize();

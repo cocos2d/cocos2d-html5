@@ -274,4 +274,4 @@ cc.Camera.getZEye = function () {
     return cc.FLT_EPSILON;
 };
 
-//cc.CONTENT_SCALE_FACTOR = cc.Director.getInstance().getContentScaleFactor();
+//cc.CONTENT_SCALE_FACTOR = cc.director.getContentScaleFactor();

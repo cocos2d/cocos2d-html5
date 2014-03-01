@@ -60,7 +60,7 @@ cc.inputManager = {
             return;
 
         this._accelEnabled = isEnable;
-        var scheduler = cc.Director.getInstance().getScheduler();
+        var scheduler = cc.director.getScheduler();
         if(this._accelEnabled){
             this._accelCurTime = 0;
             scheduler.scheduleUpdateForTarget(this);

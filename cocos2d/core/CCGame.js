@@ -1304,7 +1304,7 @@ cc.game = {
     _runMainLoop : function(){
         var self = this, callback, config = self.config, CONFIG_KEY = self.CONFIG_KEY,
             win = window, frameRate = config[CONFIG_KEY.frameRate],
-            director = cc.Director.getInstance();
+            director = cc.director;
         director.setDisplayStats(config[CONFIG_KEY.showFPS]);
         if (win.requestAnimFrame && frameRate == 60) {
             callback = function () {

@@ -48,7 +48,7 @@ var MyLayer = cc.Layer.extend({
         this._super();
 
 
-        var size = cc.Director.getInstance().getVisibleSize();
+        var size = cc.director.getVisibleSize();
 
         var bg = cc.Sprite.create(s_Background);
         bg.x = size.width / 2;

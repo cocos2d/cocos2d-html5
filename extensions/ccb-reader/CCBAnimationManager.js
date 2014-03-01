@@ -752,7 +752,7 @@ cc.BuilderSoundEffect = cc.ActionInstant.extend({
         return true;
     },
     update:function(dt) {
-        cc.AudioEngine.getInstance().playEffect(this._file);
+        cc.audioEngine.playEffect(this._file);
     }
 });
 cc.BuilderSoundEffect.create = function (file, pitch, pan, gain) {

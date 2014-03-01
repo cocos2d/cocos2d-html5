@@ -86,7 +86,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._originalDesignResolutionSize = cc.size(w, h);
         this._viewPortRect = cc.rect(0, 0, w, h);
         this._visibleRect = cc.rect(0, 0, w, h);
-        this._delegate = cc.Director.getInstance().getTouchDispatcher();
+        this._delegate = cc.director.getTouchDispatcher();
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
 
@@ -242,7 +242,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     setFrameZoomFactor: function (zoomFactor) {
         this._frameZoomFactor = zoomFactor;
         this.centerWindow();
-        cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
+        cc.director.setProjection(cc.director.getProjection());
     },
 
     /**
@@ -304,7 +304,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._frame.style.height = height + "px";
         //this.centerWindow();
         this._resizeEvent();
-        cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
+        cc.director.setProjection(cc.director.getProjection());
     },
 
     centerWindow: function () {
@@ -426,7 +426,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
 
         // reset director's member variables to fit visible rect
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         director._winSizeInPoints = this.getDesignResolutionSize();
 
         policy.postApply(this);
@@ -585,7 +585,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 cc.EGLView._getInstance = function () {
     if (!this._instance) {
 	    // First init director
-	    cc.Director.getInstance();
+	    cc.director;
         this._instance = this._instance || new cc.EGLView();
         cc.inputManager.registerSystemEvent(cc.canvas);
         this._instance.initialize();
@@ -873,7 +873,7 @@ cc.ContentStrategy = cc.Class.extend({
         },
 
         postApply: function (view) {
-            cc.Director.getInstance()._winSizeInPoints = view.getVisibleSize();
+            cc.director._winSizeInPoints = view.getVisibleSize();
         }
     });
 
@@ -887,7 +887,7 @@ cc.ContentStrategy = cc.Class.extend({
         },
 
         postApply: function (view) {
-            cc.Director.getInstance()._winSizeInPoints = view.getVisibleSize();
+            cc.director._winSizeInPoints = view.getVisibleSize();
         }
     });
 

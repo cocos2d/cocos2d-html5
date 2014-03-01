@@ -312,13 +312,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
         cc.kmGLPushMatrix();
 
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         director.setProjection(director.getProjection());
 
         var texSize = this._texture.getContentSizeInPixels();
 
         // Calculate the adjustment ratios based on the old and new projections
-        var size = cc.Director.getInstance().getWinSizeInPixels();
+        var size = cc.director.getWinSizeInPixels();
         var widthRatio = size.width / texSize.width;
         var heightRatio = size.height / texSize.height;
 
@@ -445,7 +445,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _endForWebGL: function () {
         var gl = cc.renderContext;
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
 
         //restore viewport

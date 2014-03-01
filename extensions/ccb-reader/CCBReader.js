@@ -210,7 +210,7 @@ cc.BuilderReader = cc.Class.extend({
         this._owner = owner;
 
         //setup resolution scale and container size
-        this._animationManager.setRootContainerSize(cc.Director.getInstance().getWinSize());
+        this._animationManager.setRootContainerSize(cc.director.getWinSize());
 
         return true;
     },
@@ -251,10 +251,10 @@ cc.BuilderReader = cc.Class.extend({
 
     readNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
         if (parentSize == null) {
-            parentSize = cc.Director.getInstance().getWinSize();
+            parentSize = cc.director.getWinSize();
         } else if (parentSize instanceof  cc.BuilderAnimationManager) {
             animationManager = parentSize;
-            parentSize = cc.Director.getInstance().getWinSize();
+            parentSize = cc.director.getWinSize();
         }
 
         var data = cc.loader.getRes(ccbFileName);

@@ -411,7 +411,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._maxGID = layerInfo._maxGID;
             this._opacity = layerInfo._opacity;
             this.properties = layerInfo.properties;
-            this._contentScaleFactor = cc.Director.getInstance().getContentScaleFactor();
+            this._contentScaleFactor = cc.director.getContentScaleFactor();
 
             // tilesetInfo
             this.tileset = tilesetInfo;

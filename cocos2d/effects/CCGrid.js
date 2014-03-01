@@ -71,7 +71,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     setActive:function (active) {
         this._active = active;
         if (!active) {
-            var director = cc.Director.getInstance();
+            var director = cc.director;
             var proj = director.getProjection();
             director.setProjection(proj);
         }
@@ -154,7 +154,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      */
     initWithSize:function (gridSize, texture, flipped) {
         if (!texture) {
-            var director = cc.Director.getInstance();
+            var director = cc.director;
             var winSize = director.getWinSizeInPixels();
 
             var POTWide = cc.NextPOT(winSize.width);
@@ -197,7 +197,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
     beforeDraw:function () {
         // save projection
-        this._directorProjection = cc.Director.getInstance().getProjection();
+        this._directorProjection = cc.director.getProjection();
 
         // 2d projection
         //    [director setProjection:kCCDirectorProjection2D];
@@ -209,7 +209,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._grabber.afterRender(this._texture);
 
         // restore projection
-        cc.Director.getInstance().setProjection(this._directorProjection);
+        cc.director.setProjection(this._directorProjection);
 
         if (target.getCamera().isDirty()) {
             var offset = target.getAnchorPointInPoints();
@@ -243,7 +243,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     },
 
     set2DProjection:function () {
-        var winSize = cc.Director.getInstance().getWinSizeInPixels();
+        var winSize = cc.director.getWinSizeInPixels();
 
         var gl = cc.renderContext;
         gl.viewport(0, 0, winSize.width , winSize.height);

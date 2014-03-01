@@ -130,7 +130,7 @@ cc.GLToClipTransform = function (transformOut) {
  *      - setting the orientation (default one is Protrait)<br/>
  *      <br/>
  *    Since the cc.Director is a singleton, the standard way to use it is by calling:<br/>
- *      - cc.Director.getInstance().methodName(); <br/>
+ *      - cc.director.methodName(); <br/>
  *    <br/>
  *    The CCDirector also sets the default OpenGL context:<br/>
  *      - GL_TEXTURE_2D is enabled<br/>

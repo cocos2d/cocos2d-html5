@@ -39,7 +39,7 @@ for (var i = 0; i < appFiles.length; i++) {
     require(appFiles[i]);
 }
 
-var director = cc.Director.getInstance();
+var director = cc.director;
 
 //var screenSize = cc.EGLView.getInstance().getFrameSize();
 var screenSize = cc.size(320,480)
