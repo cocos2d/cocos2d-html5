@@ -50,7 +50,7 @@ Object.defineProperties(sys,
 
 			// if (window.DeviceOrientationEvent!==undefined || window.OrientationEvent!==undefined)
 			//   capabilities["accelerometer"] = true;
-            if(cc.Browser.supportWebGL)
+            if(cc.sys.supportWebGL)
                 capabilities["opengl"] = true;
 
 			if( document.documentElement['ontouchstart'] !== undefined || window.navigator.msPointerEnabled)

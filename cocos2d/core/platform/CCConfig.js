@@ -267,14 +267,6 @@ cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
 /**
- *  Runtime information
- *  @deprecated Use "sys" instead.
- */
-cc.config = {
-    'platform' : sys.platform
-};
-
-/**
  * dump config info, but only in debug mode
  */
 cc.dumpConfig = function() {

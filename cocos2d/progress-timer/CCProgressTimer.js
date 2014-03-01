@@ -903,7 +903,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 });
 
 window._proto = cc.ProgressTimer.prototype;
-if(cc.Browser.supportWebGL) {
+if(cc.sys.supportWebGL) {
     _proto.ctor = _proto._ctorForWebGL;
     _proto.setReverseProgress = _proto._setReverseProgressForWebGL;
     _proto.setSprite = _proto._setSpriteForWebGL;

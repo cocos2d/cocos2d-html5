@@ -1174,7 +1174,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     }
 });
 
-if (cc.Browser.supportWebGL) {
+if (cc.sys.supportWebGL) {
     cc.Director.prototype._clear = cc.Director.prototype._clearWebGL;
     cc.Director.prototype._beforeVisitScene = cc.Director.prototype._beforeVisitSceneWebGL;
     cc.Director.prototype._afterVisitScene = cc.Director.prototype._afterVisitSceneWebGL;

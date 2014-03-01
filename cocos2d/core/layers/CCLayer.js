@@ -613,7 +613,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 });
 
 window._proto = cc.LayerColor.prototype;
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
     _proto.ctor = _proto._ctorForWebGL;
     _proto.setContentSize = _proto._setContentSizeForWebGL;
 	_proto._setWidth = _proto._setWidthForWebGL;

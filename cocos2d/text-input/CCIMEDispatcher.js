@@ -150,7 +150,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
     },
 
     init:function () {
-        if (cc.Browser.isMobile)
+        if (cc.sys.isMobile)
             return;
         this._domInputControl = cc.$("#imeDispatcherInput");
         if (!this._domInputControl) {
@@ -382,7 +382,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
     },
 
     _focusDomInput:function (delegate) {
-        if(cc.Browser.isMobile){
+        if(cc.sys.isMobile){
             this.impl._delegateWithIme = delegate;
             delegate.didAttachWithIME();
             //prompt

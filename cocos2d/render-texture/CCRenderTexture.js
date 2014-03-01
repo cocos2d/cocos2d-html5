@@ -790,7 +790,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
 window._proto = cc.RenderTexture.prototype;
 
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
     _proto.ctor = _proto._ctorForWebGL;
     _proto.cleanup = _proto._cleanupForWebGL;
     _proto.initWithWidthAndHeight = _proto._initWithWidthAndHeightForWebGL;

@@ -1394,7 +1394,7 @@ ccs.Layout._visit_once = null;
 ccs.Layout._layer = null;
 ccs.Layout._sharedCache = null;
 
-if (cc.Browser.supportWebGL) {
+if (cc.sys.supportWebGL) {
     //WebGL
     ccs.Layout.prototype.initStencil = ccs.Layout.prototype._initStencilForWebGL;
     ccs.Layout.prototype.stencilClippingVisit = ccs.Layout.prototype._stencilClippingVisitForWebGL;

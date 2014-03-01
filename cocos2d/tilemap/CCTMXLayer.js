@@ -1034,7 +1034,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
 window._proto = cc.TMXLayer.prototype;
 
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
 	_proto.draw = cc.SpriteBatchNode.prototype.draw;
     _proto.visit = cc.SpriteBatchNode.prototype.visit;
 	_proto.getTexture = cc.SpriteBatchNode.prototype.getTexture;
