@@ -143,7 +143,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
     _initStencilForCanvas: function () {
         this._clippingStencil = cc.DrawNode.create();
-        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         var locContext = cc.renderContext;
         var stencil = this._clippingStencil;
         stencil.draw = function () {
@@ -449,7 +449,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (this._handleScissor) {
             gl.enable(gl.SCISSOR_TEST);
         }
-        cc.EGLView.getInstance().setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
         cc.NodeRGBA.prototype.visit.call(this);
         if (this._handleScissor) {
             gl.disable(gl.SCISSOR_TEST);

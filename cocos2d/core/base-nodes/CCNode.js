@@ -1980,7 +1980,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _transformForCanvas: function (ctx) {
         // transform for canvas
-        var context = ctx || cc.renderContext, eglViewer = cc.EGLView.getInstance();
+        var context = ctx || cc.renderContext, eglViewer = cc.view;
 
         var t = this.nodeToParentTransform();
         context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());

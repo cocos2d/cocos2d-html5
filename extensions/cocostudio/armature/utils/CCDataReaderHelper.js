@@ -228,7 +228,7 @@ ccs.DataReaderHelper.addDataFromXML = function (xml,dataInfo) {
      */
     var xmlStr = cc.loader.getRes(xml);
     if(!xmlStr) throw "Please load the resource first : " + xml;
-    var skeletonXML = cc.SAXParser.getInstance().parse(xmlStr);
+    var skeletonXML = cc.saxParser.parse(xmlStr);
     var skeleton = skeletonXML.documentElement;
     if (skeleton) {
         this.addDataFromCache(skeleton,dataInfo);

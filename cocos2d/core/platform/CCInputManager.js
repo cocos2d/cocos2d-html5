@@ -330,7 +330,7 @@ cc.inputManager = {
     registerSystemEvent: function(element){
         if(this._isRegisterEvent) return;
 
-        var locView = this._glView = cc.EGLView.getInstance();
+        var locView = this._glView = cc.view;
         var selfPointer = this;
         var supportMouse = ('mouse' in sys.capabilities), supportTouches = ('touches' in sys.capabilities);
 

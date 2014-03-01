@@ -296,7 +296,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _beginForCanvas: function () {
         cc.renderContext = this._cacheContext;
-        cc.EGLView.getInstance()._setScaleXYForRenderTexture();
+        cc.view._setScaleXYForRenderTexture();
 
         /*// Save the current matrix
          cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -432,7 +432,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     _endForCanvas: function () {
         cc.renderContext = cc.mainRenderContextBackup;
-        cc.EGLView.getInstance()._resetScale();
+        cc.view._resetScale();
 
         //TODO
         /*//restore viewport

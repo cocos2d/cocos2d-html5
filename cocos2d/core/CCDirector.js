@@ -763,7 +763,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // set size
         this._winSizeInPoints.width = cc.canvas.width;      //this._openGLView.getDesignResolutionSize();
         this._winSizeInPoints.height = cc.canvas.height;
-        this._openGLView = openGLView || cc.EGLView.getInstance();
+        this._openGLView = openGLView || cc.view;
 
         if (cc.renderContextType === cc.CANVAS)
             return;
@@ -1123,7 +1123,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          Secondly, the size of this image is 480*320, to display the FPS label with correct size,
          a factor of design resolution ratio of 480x320 is also needed.
          */
-        var factor = cc.EGLView.getInstance().getDesignResolutionSize().height / 320.0;
+        var factor = cc.view.getDesignResolutionSize().height / 320.0;
         if(factor === 0)
             factor = this._winSizeInPoints.height / 320.0;
 

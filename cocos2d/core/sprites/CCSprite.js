@@ -1934,7 +1934,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (this._isLighterMode)
             context.globalCompositeOperation = 'lighter';
 
-        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
 
         context.globalAlpha = this._displayedOpacity / 255;
         var locRect = this._rect, locContentSize = this._contentSize, locOffsetPosition = this._offsetPosition, locDrawSizeCanvas = this._drawSize_Canvas;

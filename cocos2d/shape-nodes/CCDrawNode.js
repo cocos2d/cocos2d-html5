@@ -441,7 +441,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
         var locColor = element.fillColor;
         var locPos = element.verts[0];
         var locRadius = element.lineWidth;
-        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
 
         ctx.fillStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
         ctx.beginPath();
@@ -456,7 +456,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
         var locTo = element.verts[1];
         var locLineWidth = element.lineWidth;
         var locLineCap = element.lineCap;
-        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
 
         ctx.strokeStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
         ctx.lineWidth = locLineWidth * locScaleX;
@@ -480,7 +480,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
             return;
 
         var firstPoint = locVertices[0];
-        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
 
         ctx.lineCap = locLineCap;
 

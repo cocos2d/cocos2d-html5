@@ -383,7 +383,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _setStencilForCanvas: function (stencil) {
         this._stencil = stencil;
-        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         var locContext = cc.renderContext;
         // For texture stencil, use the sprite itself
         if (stencil instanceof cc.Sprite) {

@@ -588,7 +588,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        var locEGLViewer = cc.EGLView.getInstance();
+        var locEGLViewer = cc.view;
         var locDisplayedColor = this._displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
@@ -898,7 +898,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
+        var locEGLViewer = cc.view, opacityf = this._displayedOpacity / 255.0;
         var tWidth = this.width * locEGLViewer.getScaleX();
         var tHeight = this.height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,

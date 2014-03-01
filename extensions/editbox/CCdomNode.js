@@ -421,7 +421,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 cc.DOM._resetEGLViewDiv = function(){
     var eglViewDiv = cc.$("#EGLViewDiv");
     if(eglViewDiv){
-        var eglViewer = cc.EGLView.getInstance();
+        var eglViewer = cc.view;
         var designSize = eglViewer.getDesignResolutionSize();
         var viewPortRect = eglViewer.getViewPortRect();
         var screenSize = eglViewer.getFrameSize();
@@ -481,7 +481,7 @@ cc.DOM.parentDOM = function (x) {
                 eglViewDiv = cc.$new("div");
                 eglViewDiv.id = "EGLViewDiv";
 
-                var eglViewer = cc.EGLView.getInstance();
+                var eglViewer = cc.view;
                 var designSize = eglViewer.getDesignResolutionSize();
                 var viewPortRect = eglViewer.getViewPortRect();
                 var screenSize = eglViewer.getFrameSize();

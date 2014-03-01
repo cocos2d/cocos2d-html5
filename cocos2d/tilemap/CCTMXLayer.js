@@ -206,7 +206,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if (this._cacheDirty) {
             //
-            var eglViewer = cc.EGLView.getInstance();
+            var eglViewer = cc.view;
             eglViewer._setScaleXYForRenderTexture();
             //add dirty region
             var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
@@ -248,7 +248,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var context = ctx || cc.renderContext;
         //context.globalAlpha = this._opacity / 255;
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
-        var eglViewer = cc.EGLView.getInstance();
+        var eglViewer = cc.view;
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage
         if (locCacheCanvas) {

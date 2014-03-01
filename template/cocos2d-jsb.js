@@ -41,7 +41,7 @@ for (var i = 0; i < appFiles.length; i++) {
 
 var director = cc.director;
 
-//var screenSize = cc.EGLView.getInstance().getFrameSize();
+//var screenSize = cc.view.getFrameSize();
 var screenSize = cc.size(320,480)
 var resourceSize = cc.size(800, 450);
 var designSize = cc.size(800, 450);
@@ -77,7 +77,7 @@ cc.FileUtils.getInstance().setSearchResolutionsOrder(resDirOrders);
 
 director.setContentScaleFactor(resourceSize.width / designSize.width);
 
-//cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.ResolutionPolicy.SHOW_ALL);
+//cc.view.setDesignResolutionSize(designSize.width, designSize.height, cc.ResolutionPolicy.SHOW_ALL);
 
 
 director.setDisplayStats(true);

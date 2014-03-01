@@ -54,7 +54,7 @@ cc.plistLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadTxt(realUrl, function(err, txt){
             if(err) return cb(err);
-            cb(null, cc.PlistParser.getInstance().parse(txt));
+            cb(null, cc.plistParser.parse(txt));
         });
     }
 }

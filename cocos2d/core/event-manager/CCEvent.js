@@ -219,7 +219,7 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
 	 * @return {cc.Point}
 	 */
 	getLocationInView: function() {
-		return {x: this._x, y: cc.EGLView.getInstance()._designResolutionSize.height - this._y};
+		return {x: this._x, y: cc.view._designResolutionSize.height - this._y};
 	},
 
     _setPrevCursor: function (x, y) {
