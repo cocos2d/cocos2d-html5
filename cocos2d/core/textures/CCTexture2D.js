@@ -139,7 +139,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     /*public:*/
     ctor:function () {
         this._contentSize = cc.size(0, 0);
-        this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_DEFAULT;
+        this._pixelFormat = cc.Texture2D.defaultPixelFormat;
     },
 
     releaseTexture:function () {
@@ -675,7 +675,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var outPixel16 = null;
         var hasAlpha = uiImage.hasAlpha();
         var imageSize = cc.size(uiImage.getWidth(), uiImage.getHeight());
-        var pixelFormat = tex2d.PIXEL_FORMAT_DEFAULT;
+        var pixelFormat = tex2d.defaultPixelFormat;
         var bpp = uiImage.getBitsPerComponent();
         var i;
 
@@ -1179,19 +1179,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 
 cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
-window._proto = cc.Texture2D.prototype;
-
-// Extended properties
-cc.defineGetterSetter(_proto, "name", _proto.getName);
-cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
-cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
-cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
-//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-
-delete window._proto;
-
 
 
 /**
@@ -1313,6 +1300,21 @@ _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB5A1] = 16;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC4] = 4;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC2] = 3;
 
+
+window._proto = cc.Texture2D.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "name", _proto.getName);
+cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
+cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
+cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
+//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+cc.Texture2D.defaultPixelFormat = _Class.PIXEL_FORMAT_DEFAULT;
+
+delete window._proto;
 delete window._Class;
 delete window._PIXEL_FORMAT_STR_MAP;
 delete window._BITS_PER_PIXEL_FORMAT;
