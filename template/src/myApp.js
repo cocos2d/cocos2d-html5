@@ -30,55 +30,77 @@ var MyLayer = cc.Layer.extend({
     helloLabel:null,
     circle:null,
     sprite:null,
+    _data:[],
+    _dataIndex:[],
 
     init:function () {
 
         //////////////////////////////
         // 1. super init first
         this._super();
- 
+
+        for (var i = 0; i < 300; i++) {
+            this._data.push(i);
+        }
 
         var pBg = cc.Sprite.create("HelloWorld.jpg");
         pBg.setPosition(cc.p(240, 160));
         this.addChild(pBg);
 
-        /*var gridView = ccs.GridView.create(cc.size(240 / 10, 160 / 10),24,this.gridviewDataSource, this);
-//        gridView.addEventListenerGridView(this.gridviewDataSource, this);
-        gridView.setTouchEnabled(true);
+        var gridView = ccs.GridView.create(cc.size(240 / 10, 160 / 10),10,5,this.gridviewDataSource, this);
         gridView.setBackGroundColorType(ccs.LayoutBackGroundColorType.solid);
         gridView.setBackGroundColor(cc.c3b(111,111,111));
-        gridView.setColumns(6);
-        gridView.reloadData();*/
+        gridView.reloadData();
+
+        var uiLayer = ccs.UILayer.create();
+        uiLayer.setPosition(cc.p(100,100));
+        uiLayer.addWidget(gridView);
+        this.addChild(uiLayer);
 
 
-
-        var gridPageView = ccs.GridPageView.create(cc.size(240,240), cc.size(240 / 10, 240 / 10), 10,5,
-            this.gridviewDataSource, this);
-        gridPageView.setTouchEnabled(true);
+      /*  var gridPageView = ccs.GridPageView.create(
+            cc.size(240,160),cc.size(24,16),
+            10, 5,this._data.length, this.gridviewDataSource, this);
         gridPageView.setBackGroundColorType(ccs.LayoutBackGroundColorType.solid);
         gridPageView.setBackGroundColor(cc.c3b(222,111,111));
+        gridPageView.setPageIndexEnabled(true);
 
         var uiLayer = ccs.UILayer.create();
         uiLayer.setPosition(cc.p(100,100));
         uiLayer.addWidget(gridPageView);
-        this.addChild(uiLayer);
+        this.addChild(uiLayer);*/
+
+      /*  var gridPageView = ccs.GridScrollView.create(
+            cc.size(240,160),cc.size(24,16),
+            30,this._data.length, this.gridviewDataSource, this);
+        gridPageView.setBackGroundColorType(ccs.LayoutBackGroundColorType.solid);
+        gridPageView.setBackGroundColor(cc.c3b(222,111,111));
+        gridPageView.setDirection(ccs.ScrollViewDir.horizontal);
+
+        var uiLayer = ccs.UILayer.create();
+        uiLayer.setPosition(cc.p(100,100));
+        uiLayer.addWidget(gridPageView);
+        this.addChild(uiLayer);*/
     },
+
     gridviewDataSource:function(convertView, idx){
         var cell = convertView;
-        var pButton;
+        var button;
 
         if(!cell){
+            var str = this._data[idx];
+
             cell = new ccs.GridViewCell();
-            pButton = cc.LabelTTF.create("0", "Arial", 12);
-            pButton.setAnchorPoint(0,0);
-            pButton.setTag(1);
-            cell.addNode(pButton);
+            button = cc.LabelTTF.create(str, "Arial", 12);
+            button.setAnchorPoint(0,0);
+            button.setTag(1);
+            cell.addNode(button);
         }
         else{
-            pButton = cell.getChildByTag(1);
+            button = cell.getChildByTag(1);
         }
 
-        pButton.setString(idx);
+        button.setString(idx);
         return cell;
     }
 });

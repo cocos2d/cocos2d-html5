@@ -6,7 +6,7 @@
  * 页码指示器
  * @type {Function|*}
  */
-ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
+ccs.PageIndex = ccs.Layout.extend(/** @lends ccs.UILayer# */{
     _totalPageNum: 1,
     _lastPageNum: 1,
     _curPageNum: 1,
@@ -16,22 +16,18 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
     _maxPageIndexNum: 5,
     _pageIndexRenders: null,
     _pageOnRender: null,
-    _onTextureLoaded: false,
-    _offTextureLoaded: false,
     _offTexName: "",
     _offTexType: 0,
     _onTexName: "",
     _onTexType: 0,
     _spacing: 8,
+    _indexDirty: false,
 
     init: function () {
-        if (cc.Layer.prototype.init.call(this)) {
-            this._pageIndexRenders = [];
-            this._pageOnRender = cc.Sprite.create();
-            this._pageIndexRenders.push(this._pageOnRender);
-            return true;
-        }
-        return false;
+        this._super();
+        this._pageIndexRenders = [];
+        this._pageOnRender = ccs.ImageView.create();
+        this._pageIndexRenders.push(this._pageOnRender);
     },
 
     /**
@@ -59,21 +55,9 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
         this._offTexType = texType;
 
         var indexRenders = this._pageIndexRenders;
-        var render;
         for(var i = 1, li = indexRenders.length; i < li; i++){
-            render = indexRenders[i];
-            switch (this._offTexType) {
-                case ccs.TextureResType.local:
-                    render.initWithFile(off);
-                    break;
-                case ccs.TextureResType.plist:
-                    render.initWithSpriteFrameName(off);
-                    break;
-                default:
-                    break;
-            }
+            indexRenders[i].loadTexture(off, this._offTexType);
         }
-        this._offTextureLoaded = true;
     },
 
     /**
@@ -88,20 +72,7 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
         texType = texType||ccs.TextureResType.local;
         this._onTexName = on;
         this._onTexType = texType;
-
-        var render;
-        render = this._pageOnRender;
-        switch (this._offTexType) {
-            case ccs.TextureResType.local:
-                render.initWithFile(on);
-                break;
-            case ccs.TextureResType.plist:
-                render.initWithSpriteFrameName(on);
-                break;
-            default:
-                break;
-        }
-        this._onTextureLoaded = true;
+        this._pageOnRender.loadTexture(on, this._offTexType);
     },
 
     /**
@@ -110,12 +81,10 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
      */
     setSpacing: function(spacing){
         this._spacing = spacing;
+        this._indexDirty = true;
     },
 
     drawPageIndexIcon: function(){
-        if(!this._onTextureLoaded || !this._offTextureLoaded)
-            return;
-
         var items = this._pageIndexRenders;
         var spacing = this._spacing;
         var iconSize = this._pageOnRender.getContentSize();
@@ -123,7 +92,7 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
         if(!items)
             return;
 
-        var self = this, itemLength = this._requiredPageIndexNum;
+        var itemLength = this._requiredPageIndexNum;
         var halfIconSize = cc.size(iconSize.width * 0.5, iconSize.height * 0.5);
         var pageIndexPos = cc.p(0,0);
         var starPosition = (cc.pAdd(
@@ -137,7 +106,7 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
         var index, r, c;
         for(index = 0; index < itemLength; index++){
             r = 1;
-            c = index
+            c = index;
             var indexIcon = items[index];
             indexIcon.setPosition(
                 cc.pAdd(
@@ -160,6 +129,8 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
             this._maxPageIndexNum = 1;
         }
         this._maxPageIndexNum = num;
+
+        this._indexDirty = true;
     },
 
     /**
@@ -175,7 +146,7 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
         }
         if(num > this._maxPageIndexNum){
             this._requiredPageIndexNum = this._maxPageIndexNum;
-        };
+        }
         var curLength = this._pageIndexRenders.length;
 
         // 如果不够则添加
@@ -185,24 +156,13 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
         }
         var render;
         for(var i = 0; i < delta; i++){
-            render = cc.Sprite.create();
-            if(this._offTextureLoaded){
-                switch (this._offTexType) {
-                    case ccs.TextureResType.local:
-                        render.initWithFile(this._offTexName);
-                        break;
-                    case ccs.TextureResType.plist:
-                        render.initWithSpriteFrameName(this._offTexName);
-                        break;
-                    default:
-                        break;
-                }
-            }
+            render = ccs.ImageView.create();
+            render.loadTexture(this._offTexName, this._offTexType);
             this._pageIndexRenders.push(render);
         }
         this.setPageNum(1);
-        this.removeAllChildren();
-        this.drawPageIndexIcon();
+
+        this._indexDirty = true;
     },
 
     /**
@@ -261,11 +221,19 @@ ccs.UIPageIndex = cc.Layer.extend(/** @lends ccs.UILayer# */{
         // 交换数据
         ccs.arraySwap(self._pageIndexRenders, prePageIndex, curPageIndex);
         this._lastPageIndex = this._curPageIndex;
+    },
+    visit:function(ctx){
+        this._super(ctx);
+        if(this._indexDirty){
+            this._indexDirty = false;
+            this.removeAllChildren();
+            this.drawPageIndexIcon();
+        }
     }
 });
 
-ccs.UIPageIndex.create = function(){
-    var c = new ccs.UIPageIndex();
+ccs.PageIndex.create = function(){
+    var c = new ccs.PageIndex();
     c.init();
     return c;
 };

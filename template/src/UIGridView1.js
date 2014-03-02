@@ -36,8 +36,8 @@ ccs.GridView = ccs.ScrollView.extend({
     _cellsFreed: null,
     _positions: null,
 
-    _dataSourceAdapterListener: null,
-    _dataSourceAdapterHandler: null,
+    _dataSourceAdapterSelector: null,
+    _dataSourceAdapterTarget: null,
 
     _RELOCATE_SPPED: 350,
     init: function (viewSize, cellSize, cellCount, target, selector) {
@@ -56,13 +56,13 @@ ccs.GridView = ccs.ScrollView.extend({
     },
 
     setDataSourceAdapter: function (target, selector) {
-        this._dataSourceAdapterListener = target;
-        this._dataSourceAdapterHandler = selector;
+        this._dataSourceAdapterSelector = target;
+        this._dataSourceAdapterTarget = selector;
     },
 
-    executeDataSourceAdapterHandler: function (convertCell, idx) {
-        if (this._dataSourceAdapterListener && this._dataSourceAdapterHandler) {
-            return this._dataSourceAdapterHandler.call(this._dataSourceAdapterListener, convertCell, idx);
+    _executeDataAdapterCallback: function (convertCell, idx) {
+        if (this._dataSourceAdapterSelector && this._dataSourceAdapterTarget) {
+            return this._dataSourceAdapterTarget.call(this._dataSourceAdapterSelector, convertCell, idx);
         }
     },
 
@@ -112,7 +112,7 @@ ccs.GridView = ccs.ScrollView.extend({
         }
     },
 
-    dequeueCell: function () {
+    _dequeueCell: function () {
         return this._cellsFreed.shift();
     },
 
@@ -142,10 +142,10 @@ ccs.GridView = ccs.ScrollView.extend({
     onScrolling: function () {
         //getContentOffset
         var offset = this.getInnerContainer().getPosition();
-        var beginRow = this.cellBeginRowFromOffset(offset),
-            endRow = this.cellEndRowFromOffset(offset),
-            beginColumn = this.cellBeginColumnFromOffset(offset),
-            endColumn = this.cellEndColumnFromOffset(offset);
+        var beginRow = this._cellBeginRowFromOffset(offset),
+            endRow = this._cellEndRowFromOffset(offset),
+            beginColumn = this._cellBeginColumnFromOffset(offset),
+            endColumn = this._cellEndColumnFromOffset(offset);
 
         var cellsUsed = this._cellsUsed;
         if (cellsUsed.length > 0) {
@@ -165,7 +165,7 @@ ccs.GridView = ccs.ScrollView.extend({
         }
 
         for (var i = beginRow; i <= endRow && i < this._rows; ++i) {
-            var cellBeginIndex = this.cellFirstIndexFromRow(i),
+            var cellBeginIndex = this._cellFirstIndexFromRow(i),
                 cellEndIndex = cellBeginIndex + this._columns;
 
             for (var idx = cellBeginIndex; idx < cellEndIndex && idx < this._cellsCount; ++idx) {
@@ -231,7 +231,7 @@ ccs.GridView = ccs.ScrollView.extend({
         if (this._cellsCount == 0)
             return;
 
-        var cell = this.executeDataSourceAdapterHandler(this.dequeueCell(), idx);
+        var cell = this._executeDataAdapterCallback(this._dequeueCell(), idx);
         cell.setIdx(idx);
         cell.setRow(row);
         cell.setContentSize(this._cellsSize);
@@ -249,7 +249,7 @@ ccs.GridView = ccs.ScrollView.extend({
         return this._positions[idx];
     },
 
-    cellBeginRowFromOffset: function (offset) {
+    _cellBeginRowFromOffset: function (offset) {
         var ofy = offset.y + this.getInnerContainerSize().height,
             xos = ofy - this.getContentSize().height,
             row = 0 | (xos / this._cellsSize.height);
@@ -257,24 +257,24 @@ ccs.GridView = ccs.ScrollView.extend({
         return Math.min(this._rows - 1, Math.max(row, 0));
     },
 
-    cellEndRowFromOffset: function (offset) {
+    _cellEndRowFromOffset: function (offset) {
         var ofy = offset.y + this.getInnerContainerSize().height,
             row = 0 | (ofy / this._cellsSize.height);
         return Math.min(this._rows - 1, Math.max(row, 0));
     },
 
-    cellBeginColumnFromOffset: function (offset) {
+    _cellBeginColumnFromOffset: function (offset) {
         var column = 0 | (offset.x / this._cellsSize.width);
         return Math.abs(column);
     },
 
-    cellEndColumnFromOffset: function (offset) {
+    _cellEndColumnFromOffset: function (offset) {
         var ofx = Math.abs(offset.x) + this.getContentSize().width,
             column = 0 | (ofx / this._cellsSize.width);
         return column;
     },
 
-    cellFirstIndexFromRow: function (row) {
+    _cellFirstIndexFromRow: function (row) {
         return this._columns * row;
     }
 });
