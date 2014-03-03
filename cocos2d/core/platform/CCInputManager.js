@@ -129,8 +129,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.BEGAN;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesBegan: size = 0");
+        }
     },
 
     handleTouchesMove: function(touches){
@@ -155,8 +154,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.MOVED;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesMoved: size = 0");
+        }
     },
 
     handleTouchesEnd: function(touches){
@@ -166,8 +164,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.ENDED;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesEnded: size = 0");
+        }
     },
 
     handleTouchesCancel: function(touches){
@@ -177,8 +174,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.CANCELLED;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesCanceled: size = 0");
+        }
     },
 
     getSetOfTouchesEndOrCancel: function(touches) {
