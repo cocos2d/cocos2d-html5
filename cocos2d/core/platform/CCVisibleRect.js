@@ -29,7 +29,7 @@
  *
  * @type Object
  */
-cc.VisibleRect = {
+cc.visibleRect = {
     _topLeft:cc.p(0,0),
     _topRight:cc.p(0,0),
     _top:cc.p(0,0),
@@ -69,38 +69,39 @@ cc.VisibleRect = {
         //right
         this._right.x = w;
         this._right.y = h/2;
-    },
-    getWidth:function(){
-        return this._width;
-    },
-    getHeight:function(){
-        return this._height;
-    },
-    topLeft:function(){
-        return this._topLeft;
-    },
-    topRight:function(){
-        return this._topRight;
-    },
-    top:function(){
-        return this._top;
-    },
-    bottomLeft:function(){
-        return this._bottomLeft;
-    },
-    bottomRight:function(){
-        return this._bottomRight;
-    },
-    bottom:function(){
-        return this._bottom;
-    },
-    center:function(){
-        return this._center;
-    },
-    left:function(){
-        return this._left;
-    },
-    right:function(){
-        return this._right;
     }
 };
+
+cc.defineGetterSetter(cc.visibleRect, "width", function(){
+    return this._width;
+});
+cc.defineGetterSetter(cc.visibleRect, "height", function(){
+    return this._height;
+});
+cc.defineGetterSetter(cc.visibleRect, "topLeft", function(){
+    return this._topLeft;
+});
+cc.defineGetterSetter(cc.visibleRect, "topRight", function(){
+    return this._topRight;
+});
+cc.defineGetterSetter(cc.visibleRect, "top", function(){
+    return this._top;
+});
+cc.defineGetterSetter(cc.visibleRect, "bottomLeft", function(){
+    return this._bottomLeft;
+});
+cc.defineGetterSetter(cc.visibleRect, "bottomRight", function(){
+    return this._bottomRight;
+});
+cc.defineGetterSetter(cc.visibleRect, "bottom", function(){
+    return this._bottom;
+});
+cc.defineGetterSetter(cc.visibleRect, "center", function(){
+    return this._center;
+});
+cc.defineGetterSetter(cc.visibleRect, "left", function(){
+    return this._left;
+});
+cc.defineGetterSetter(cc.visibleRect, "right", function(){
+    return this._right;
+});

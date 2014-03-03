@@ -1152,19 +1152,17 @@ cc._rendererInitialized = false;
  * @function
  * @example
  * //setup with null
- * cc.setup();
+ * cc._setup();
  *
  * // setup with HTMLCanvasElement, gameCanvas is Canvas element
  * // declare like this: <canvas id="gameCanvas" width="800" height="450"></canvas>
- * cc.setup("gameCanvas");
+ * cc._setup("gameCanvas");
  *
  * //setup with HTMLDivElement, gameDiv is Div element
  * // declare like this: <div id="Cocos2dGameContainer" width="800" height="450"></div>
- * cc.setup("Cocos2dGameContainer");
+ * cc._setup("Cocos2dGameContainer");
  */
-cc.setup = function (el, width, height) {
-    cc._initDebugSetting();
-
+cc._setup = function (el, width, height) {
     var win = window;
     win.requestAnimFrame = win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
@@ -1444,14 +1442,14 @@ cc.game = {
         var self = this;
         if(!self._prepareCalled){
             self.prepare(function(){
-                cc.setup(self.config[self.CONFIG_KEY.id]);
+                cc._setup(self.config[self.CONFIG_KEY.id]);
                 self._runMainLoop();
                 self.onEnter(self._baseRes4Npm);
             });
         }else{
             self._checkPrepare = setInterval(function(){
                 if(self._prepared){
-                    cc.setup(self.config[self.CONFIG_KEY.id]);
+                    cc._setup(self.config[self.CONFIG_KEY.id]);
                     self._runMainLoop();
                     self.onEnter(self._baseRes4Npm);
                     clearInterval(self._checkPrepare);
@@ -1512,6 +1510,7 @@ cc.game = {
         var self = this;
         self._initConfig(function(config){
             var CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
+            cc._initDebugSetting();
             self._prepareCalled = true;
             if(config[CONFIG_KEY.isNpm]){//for mpn
                 loader.loadNpm(function(err, resArr){
