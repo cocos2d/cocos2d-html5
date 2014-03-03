@@ -2001,7 +2001,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 });
 
 window._proto = cc.Sprite.prototype;
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
 	_proto._spriteFrameLoadedCallback = _proto._spriteFrameLoadedCallbackForWebGL;
 	_proto.setOpacityModifyRGB = _proto._setOpacityModifyRGBForWebGL;
 	_proto.updateDisplayedOpacity = _proto._updateDisplayedOpacityForWebGL;

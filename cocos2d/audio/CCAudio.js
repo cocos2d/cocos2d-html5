@@ -33,7 +33,7 @@
  * @param {function} setter Setter function for the property
  */
 
-if (cc.Browser.supportWebAudio) {
+if (cc.sys.supportWebAudio) {
     var _ctx = cc.webAudioContext = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
     /**
      * A class of Web Audio.
@@ -186,7 +186,7 @@ if (cc.Browser.supportWebAudio) {
         },
 
         canplay : function(){
-            return cc.Browser.supportWebAudio;
+            return cc.sys.supportWebAudio;
         },
         _onSuccess : function(buffer){
             var self = this;
@@ -661,8 +661,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
 });
 
-cc.AudioEngine.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari", "ucbrowser", "qqbrowser", "mqqbrowser"];
-if (!cc.Browser.supportWebAudio && cc.AudioEngine.multipleAudioWhiteList.indexOf(cc.Browser.type) < 0){
+
+if (!cc.sys.supportWebAudio && cc.sys.MULTIPLE_AUDIO_WHITE_LIST.indexOf(cc.sys.browserType) < 0){
     /**
      * AudioEngine for single audio mode.
      * @class

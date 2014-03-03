@@ -1108,14 +1108,14 @@ cc.setup = function (el, width, height) {
     localConStyle.overflow = 'hidden';
     localContainer.top = '100%';
 
-    if(cc.__renderDoesnotSupport)
+    if(!cc._supportRender)
         return;
 
-    if (cc.Browser.supportWebGL)
+    if (cc.sys.supportWebGL)
         cc.renderContext = cc.webglContext = cc.create3DContext(localCanvas,{
             'stencil': true,
             'preserveDrawingBuffer': true,
-            'antialias': !cc.Browser.isMobile,
+            'antialias': !cc.sys.isMobile,
             'alpha': false});
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
@@ -1140,7 +1140,7 @@ cc.setup = function (el, width, height) {
 
     cc.setContextMenuEnable(false);
 
-    if(cc.Browser.isMobile){
+    if(cc.sys.isMobile){
         cc._addUserSelectStatus();
     }
 };

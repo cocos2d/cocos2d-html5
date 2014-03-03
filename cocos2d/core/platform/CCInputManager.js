@@ -328,7 +328,7 @@ cc.inputManager = {
 
         var locView = this._glView = cc.view;
         var selfPointer = this;
-        var supportMouse = ('mouse' in sys.capabilities), supportTouches = ('touches' in sys.capabilities);
+        var supportMouse = ('mouse' in cc.sys.capabilities), supportTouches = ('touches' in cc.sys.capabilities);
 
         //register touch event
         if (supportMouse) {
@@ -529,12 +529,12 @@ cc.inputManager = {
         this._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
 
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
-        if (cc.Browser.type == "mqqbrowser")
+        if (cc.sys.browserType == cc.sys.BROWSER_TYPE_MOBILE_QQ)
             this._accelDeviceEvent = window.DeviceOrientationEvent;
 
         var _deviceEventType = (this._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
         var ua = navigator.userAgent;
-        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.Browser.type == "ucbrowser")) {
+        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.sys.browserType == cc.BROWSER_TYPE_UC)) {
             this._minus = -1;
         }
 
