@@ -389,7 +389,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         else {
             checkBox.loadTextures(backGroundFileName_tp, backGroundSelectedFileName_tp, frontCrossFileName_tp, backGroundDisabledFileName_tp, frontCrossDisabledFileName_tp);
         }
-
+        checkBox.setSelectedState(options["selectedState"] || false);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
 
@@ -444,7 +444,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var label = widget;
         var touchScaleChangeAble = options["touchScaleEnable"];
-        label.setTouchScaleChangeAble(touchScaleChangeAble);
+        label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
         label.setText(text);
         if (options["fontSize"] !== undefined) {
@@ -1177,7 +1177,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var label = widget;
         var touchScaleChangeAble = options["touchScaleEnable"];
-        label.setTouchScaleChangeAble(touchScaleChangeAble);
+        label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
         label.setText(text);
         if (options["fontSize"] !== undefined) {
