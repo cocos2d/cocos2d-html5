@@ -196,19 +196,6 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         }
     },
 
-    /**
-     * Adds a child to the container.
-     * @param {ccs.Widget} child
-     */
-    addChild: function (child, zOrder, tag) {
-        if(!(child instanceof ccs.Widget)){
-            cc.log("Widget only supports Widgets as children");
-            return;
-        }
-        cc.NodeRGBA.prototype.addChild.call(this, child, zOrder, tag);
-        this._widgetChildren.push(child);
-    },
-
     sortAllChildren: function () {
         this._reorderWidgetChildDirty = this._reorderChildDirty;
         cc.NodeRGBA.prototype.sortAllChildren.call(this);
@@ -239,6 +226,41 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     },
 
     /**
+     * Adds a child to the container.
+     * @param {ccs.Widget} widget
+     * @param {Number} zOrder
+     * @param {Number} tag
+     */
+    addChild: function (widget, zOrder, tag) {
+        if(widget instanceof ccs.Widget){
+            cc.NodeRGBA.prototype.addChild.call(this, widget, zOrder, tag);
+            this._widgetChildren.push(widget);
+            return;
+        }
+        if(widget instanceof cc.Node){
+            cc.log("Please use addNode to add a CCNode.");
+            return;
+        }
+    },
+
+    /**
+     *
+     * @param tag
+     * @returns {ccs.Widget}
+     */
+    getChildByTag:function(tag){
+        var __children = this._widgetChildren;
+        if (__children != null) {
+            for (var i = 0; i < __children.length; i++) {
+                var node = __children[i];
+                if (node && node._tag == tag)
+                    return node;
+            }
+        }
+        return null;
+    },
+
+    /**
      * Return an array of children
      * @returns {Array}
      */
@@ -251,7 +273,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {Number}
      */
     getChildrenCount: function () {
-        return this._widgetChildren ? this._widgetChildren.length : 0;
+        return this._widgetChildren.length;
     },
 
     getWidgetParent: function () {
@@ -262,22 +284,18 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         return null;
     },
 
-    removeFromParent: function (cleanup) {
-        cc.NodeRGBA.prototype.removeFromParent.call(this, cleanup);
-    },
-
-    removeFromParentAndCleanup: function (cleanup) {
-        cc.NodeRGBA.prototype.removeFromParent.call(this, cleanup);
-    },
-
     /**
      * remove  child
-     * @param {ccs.Widget} child
+     * @param {ccs.Widget} widget
      * @param {Boolean} cleanup
      */
-    removeChild: function (child, cleanup) {
-        cc.NodeRGBA.prototype.removeChild.call(this, child, cleanup);
-        cc.arrayRemoveObject(this._widgetChildren, child);
+    removeChild: function (widget, cleanup) {
+        if(!(widget instanceof ccs.Widget)){
+            cc.log("child must a type of ccs.Widget");
+            return;
+        }
+        cc.NodeRGBA.prototype.removeChild.call(this, widget, cleanup);
+        cc.ArrayRemoveObject(this._widgetChildren, widget);
     },
 
     removeChildByTag: function (tag, cleanup) {
@@ -295,12 +313,11 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * Removes all children from the container, and do a cleanup to all running actions depending on the cleanup parameter.
      */
     removeAllChildren: function (cleanup) {
-        var childrenLength = this._widgetChildren.length;
-        if (childrenLength <= 0) {
-            return
+        for (var i = 0; i < this._widgetChildren.length; i++) {
+            var widget = this._widgetChildren[i];
+            cc.NodeRGBA.prototype.removeChild.call(this, widget, cleanup);
         }
-        cc.NodeRGBA.prototype.removeAllChildren.call(this, cleanup);
-        this._widgetChildren = [];
+        this._widgetChildren.length = 0;
     },
 
     /**
@@ -347,7 +364,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     addNode: function (node, zOrder, tag) {
         if (node instanceof ccs.Widget) {
-            cc.log("Widget only supports Nodes as renderer");
+            cc.log("Please use addChild to add a Widget.");
             return;
         }
         cc.NodeRGBA.prototype.addChild.call(this, node, zOrder, tag);
@@ -360,8 +377,9 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {cc.Node}
      */
     getNodeByTag: function (tag) {
-        for (var i = 0; i < this._nodes.length; i++) {
-            var node = this._nodes[i];
+        var _nodes = this._nodes;
+        for (var i = 0; i < _nodes.length; i++) {
+            var node = _nodes[i];
             if (node && node.getTag() == tag) {
                 return node;
             }
@@ -380,17 +398,19 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     /**
      * remove node
      * @param {cc.Node} node
+     * @param {Boolean} cleanup
      */
-    removeNode: function (node) {
+    removeNode: function (node, cleanup) {
         cc.NodeRGBA.prototype.removeChild.call(this, node);
-        cc.arrayRemoveObject(this._nodes, node);
+        cc.ArrayRemoveObject(this._nodes, node);
     },
 
     /**
      *  remove node by tag
-     * @param tag
+     * @param {Number} tag
+     * @param {Boolean} cleanup
      */
-    removeNodeByTag: function (tag) {
+    removeNodeByTag: function (tag, cleanup) {
         var node = this.getNodeByTag(tag);
         if (!node) {
             cc.log("cocos2d: removeNodeByTag(tag = %d): child not found!", tag);
@@ -408,7 +428,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             var node = this._nodes[i];
             cc.NodeRGBA.prototype.removeChild.call(this, node);
         }
-        this._nodes = [];
+        this._nodes.length = 0;
     },
 
     /**
