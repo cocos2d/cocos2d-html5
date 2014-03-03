@@ -311,6 +311,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if(!self._soundSupported) return;
 
         var audio = self._currMusic;
+        if(audio) this._stopAudio(audio);
         if(url != self._currMusicPath){
             audio = self._getAudioByUrl(url);
             self._currMusic = audio;

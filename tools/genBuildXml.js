@@ -15,9 +15,40 @@ var modules = projectJson.modules;
 var ccJsList = ccModuleMap.core;
 var userJsList = projectJson.jsList;
 
+
+//cache for js and module that has added into jsList to be loaded.
+var _jsAddedCache = {};
+function _getJsListOfModule(moduleMap, moduleName, dir){
+    var jsAddedCache = _jsAddedCache;
+    if(jsAddedCache[moduleName]) return null;
+    dir = dir || "";
+    var jsList = [];
+    var tempList = moduleMap[moduleName];
+    if(!tempList) throw "can not find module [" + moduleName + "]";
+    for(var i = 0, li = tempList.length; i < li; i++){
+        var item = tempList[i];
+        if(jsAddedCache[item]) continue;
+        var extname = path.extname(item);
+        if(!extname) {
+            var arr = _getJsListOfModule(moduleMap, item, dir);
+            if(arr) jsList = jsList.concat(arr);
+        }else if(extname.toLowerCase() == ".js") jsList.push(path.join(dir, item));
+        jsAddedCache[item] = true;
+    }
+    return jsList;
+};
+
+
+
 for(var i = 0, li = modules.length; i < li; i++){
-    var tempJsList = ccModuleMap[modules[i]];
-    if(tempJsList) ccJsList = ccJsList.concat(tempJsList);
+    var item = modules[i];
+    if(_jsAddedCache[item]) continue;
+    var extname = path.extname(item);
+    if(!extname) {
+        var arr = _getJsListOfModule(ccModuleMap, item, "");
+        if(arr) ccJsList = ccJsList.concat(arr);
+    }else if(extname.toLowerCase() == ".js") ccJsList.push(path.join("", item));
+    _jsAddedCache[item] = true;
 }
 
 var ccJsListStr = "";

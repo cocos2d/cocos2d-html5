@@ -340,6 +340,19 @@ cc.create3DContext = function (canvas, opt_attribs) {
         // N/A in cocos2d-html5
     };
 
+    sys.dump = function(){
+        var self = this;
+        var str = "";
+        str += "isMobile : " + self.isMobile + "\r\n";
+        str += "language : " + self.language + "\r\n";
+        str += "browserType : " + self.browserType + "\r\n";
+        str += "supportWebAudio : " + self.supportWebAudio + "\r\n";
+        str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
+        str += "supportWebGL : " + self.supportWebGL + "\r\n";
+        str += "os : " + self.os + "\r\n";
+        cc.log(str);
+    }
+
     win = null;
     nav = null;
     doc = null;
