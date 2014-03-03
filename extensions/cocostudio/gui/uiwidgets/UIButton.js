@@ -164,6 +164,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     /**
+     *  Get button is using scale9 renderer or not.
+     * @returns {Boolean}
+     */
+    isScale9Enabled:function(){
+        return this._scale9Enabled;
+    },
+
+    /**
      * ignoreContentAdaptWithSize
      * @param {Boolean} ignore
      */
@@ -356,6 +364,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     /**
+     *  Get normal renderer cap insets  .
+     * @returns {cc.Rect}
+     */
+    getCapInsetNormalRenderer:function(){
+        return this._capInsetsNormal;
+    },
+
+    /**
      * Sets capinsets for button, if button is using scale9 renderer.
      * @param {cc.Rect} capInsets
      */
@@ -368,6 +384,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     /**
+     *  Get pressed renderer cap insets  .
+     * @returns {cc.Rect}
+     */
+    getCapInsetPressedRenderer:function(){
+        return this._capInsetsPressed;
+    },
+
+    /**
      * Sets capinsets for button, if button is using scale9 renderer.
      * @param {cc.Rect} capInsets
      */
@@ -377,6 +401,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             return;
         }
         this._buttonDisableRenderer.setCapInsets(capInsets);
+    },
+
+    /**
+     *  Get disable renderer cap insets  .
+     * @returns {cc.Rect}
+     */
+    getCapInsetDisabledRenderer:function(){
+        return this._capInsetsDisabled;
     },
 
     onPressStateChangedToNormal: function () {
@@ -396,10 +428,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
                 this._buttonDisableRenderer.runAction(zoomAction2);
             }
         } else {
-            //todo
-//            this._buttonNormalRenderer.stopAllActions();
-//            var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
-//            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonNormalRenderer.stopAllActions();
             this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
         }
     },
@@ -424,10 +453,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             this._buttonNormalRenderer.setVisible(true);
             this._buttonClickedRenderer.setVisible(true);
             this._buttonDisableRenderer.setVisible(false);
-            //todo
-//            this._buttonNormalRenderer.stopAllActions();
-//            var zoomAction = cc.ScaleTo.create(0.05, this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
-//            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonNormalRenderer.stopAllActions();
             this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
         }
     },
