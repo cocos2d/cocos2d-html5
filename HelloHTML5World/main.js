@@ -26,13 +26,6 @@
  ****************************************************************************/
 
 cc.game.onEnter = function(){
-    for(var i = 0; i < 100; i++){
-        cc.log("loglogloglogloglogloglogloglog");
-        cc.warn("warnwarnwarnwarnwarnwarn");
-        cc.error("errorerrorerrorerrorerrorerrorerrorerror");
-        cc.assert(false, "assertassertassertassertassertassertassert");
-    }
-
 	cc.view.setDesignResolutionSize(800, 450, cc.ResolutionPolicy.SHOW_ALL);
     //load resources
     cc.LoaderScene.preload(g_resources, function () {
