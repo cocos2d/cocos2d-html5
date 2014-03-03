@@ -385,6 +385,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
             checkBox.loadTextures(backGroundFileName_tp, backGroundSelectedFileName_tp, frontCrossFileName_tp, backGroundDisabledFileName_tp, frontCrossDisabledFileName_tp);
         }
 
+        checkBox.setSelectedState(options["selectedState"] || false);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     },
 
