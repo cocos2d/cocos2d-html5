@@ -439,7 +439,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var label = widget;
         var touchScaleChangeAble = options["touchScaleEnable"];
-        label.setTouchScaleChangeAble(touchScaleChangeAble);
+        label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
         label.setText(text);
         if (options["fontSize"] !== undefined) {
@@ -1172,7 +1172,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var label = widget;
         var touchScaleChangeAble = options["touchScaleEnable"];
-        label.setTouchScaleChangeAble(touchScaleChangeAble);
+        label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
         label.setText(text);
         if (options["fontSize"] !== undefined) {

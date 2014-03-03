@@ -188,6 +188,14 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     },
 
     /**
+     * Get  button is using scale9 renderer or not.
+     * @returns {Boolean}
+     */
+    isScale9Enabled:function(){
+        return this._scale9Enabled;
+    },
+
+    /**
      * ignoreContentAdaptWithSize
      * @param {Boolean} ignore
      */
@@ -208,6 +216,14 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             return;
         }
         this._imageRenderer.setCapInsets(capInsets);
+    },
+
+    /**
+     * Get cap insets.
+     * @returns {cc.Rect}
+     */
+    getCapInsets:function(){
+        return this._capInsets;
     },
 
     /**
