@@ -88,7 +88,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
 
-        cc.VisibleRect.init(this._designResolutionSize);
+        cc.visibleRect.init(this._designResolutionSize);
 
         // Setup system default resolution policies
         this._rpExactFit = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.EXACT_FIT);
@@ -438,7 +438,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             cc.DOM._resetEGLViewDiv();
         }
 
-        cc.VisibleRect.init(this.getVisibleSize());
+        cc.visibleRect.init(this.getVisibleSize());
     },
 
     /**
