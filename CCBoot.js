@@ -957,6 +957,110 @@ cc.loader = {
 })();
 //+++++++++++++++++++++++++something about window events end+++++++++++++++++++++++++++++
 
+//+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
+
+cc._logToWebPage = function (msg) {
+    var logList = cc._logList;
+    var doc = document;
+    if(!logList){
+        var logDiv = doc.createElement("Div");
+        var logDivStyle = logDiv.style;
+
+        logDiv.setAttribute("id", "logInfoDiv");
+        cc.canvas.parentNode.appendChild(logDiv);
+        logDiv.setAttribute("width", "200");
+        logDiv.setAttribute("height", cc.canvas.height);
+        logDivStyle.zIndex = "99999";
+        logDivStyle.position = "absolute";
+        logDivStyle.top = "0";
+        logDivStyle.left = "0";
+
+        logList = cc._logList = doc.createElement("textarea");
+        var logListStyle = logList.style;
+
+        logList.setAttribute("rows", "20");
+        logList.setAttribute("cols", "30");
+        logList.setAttribute("disabled", true);
+        logDiv.appendChild(logList);
+        logListStyle.backgroundColor = "transparent";
+        logListStyle.borderBottom = "1px solid #cccccc";
+        logListStyle.borderRightWidth = "0px";
+        logListStyle.borderLeftWidth = "0px";
+        logListStyle.borderTopWidth = "0px";
+        logListStyle.borderTopStyle = "none";
+        logListStyle.borderRightStyle = "none";
+        logListStyle.borderLeftStyle = "none";
+        logListStyle.padding = "0px";
+        logListStyle.margin = 0;
+
+    }
+    msg = typeof msg == "string" ? msg : JSON.stringify(msg);
+    logList.value = logList.value + msg + "\r\n";
+    logList.scrollTop = logList.scrollHeight;
+};
+/**
+ * Init Debug setting.
+ * @function
+ */
+cc._initDebugSetting = function () {
+    var ccGame = cc.game;
+    var mode = ccGame.config[ccGame.CONFIG_KEY.debugMode];
+
+    //log
+    if(mode == ccGame.DEBUG_MODE_LOG && console.log) {
+        cc.log = function(){
+            console.log.apply(console, arguments);
+        }
+    }else if((mode == ccGame.DEBUG_MODE_LOG && !console.log)
+        || mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE){
+        cc.log = function(){
+            cc._logToWebPage.apply(cc, arguments);
+        }
+    }else cc.log = function(){}
+
+    //warn
+    if(!mode || mode == ccGame.DEBUG_MODE_NONE
+        || mode == ccGame.DEBUG_MODE_ERROR
+        || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE) cc.warn = function(){};
+    else if(mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE
+        || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
+        || !console.warn) {
+        cc.warn = function(){
+            cc._logToWebPage.apply(cc, arguments);
+        }
+    }else{
+        cc.warn = function(){
+            console.warn.apply(console, arguments);
+        }
+    }
+
+    //error and assert
+    if(!mode || mode == ccGame.DEBUG_MODE_NONE) {
+        cc.error = function(){};
+        cc.assert = function(){};
+    }
+    else if(mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE
+        || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
+        || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE
+        || !console.error){
+        cc.error = function(){
+            cc._logToWebPage.apply(cc, arguments);
+        }
+        cc.assert = function(cond, msg){
+            if(!cond && msg) cc._logToWebPage(msg);
+        }
+    }else{
+        cc.error = function(){
+            console.error.apply(console, arguments);
+        }
+        cc.assert = function(){
+            console.assert.apply(console, arguments);
+        }
+    }
+};
+//+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
+
+
 //+++++++++++++++++++++++++something about CCGame begin+++++++++++++++++++++++++++
 
 /**
@@ -993,14 +1097,14 @@ cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
  * @constant
  * @type Number
  */
-cc.CANVAS = 0;
+cc.RENDER_TYPE_CANVAS = 0;
 
 /**
  * WebGL of render type
  * @constant
  * @type Number
  */
-cc.WEBGL = 1;
+cc.RENDER_TYPE_WEBGL = 1;
 
 /**
  * drawing primitive of game engine
@@ -1030,7 +1134,7 @@ cc.gameDiv = null;
  * current render type of game engine
  * @type Number
  */
-cc.renderContextType = cc.CANVAS;
+cc.renderType = cc.RENDER_TYPE_CANVAS;
 
 cc.isAddedHiddenEvent = false;
 
@@ -1059,6 +1163,8 @@ cc._rendererInitialized = false;
  * cc.setup("Cocos2dGameContainer");
  */
 cc.setup = function (el, width, height) {
+    cc._initDebugSetting();
+
     var win = window;
     win.requestAnimFrame = win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
@@ -1118,7 +1224,7 @@ cc.setup = function (el, width, height) {
             'antialias': !cc.sys.isMobile,
             'alpha': false});
     if(cc.renderContext){
-        cc.renderContextType = cc.WEBGL;
+        cc.renderType = cc.RENDER_TYPE_WEBGL;
         win.gl = cc.renderContext; // global variable declared in CCMacro.js
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
         cc._rendererInitialized = true;
@@ -1127,7 +1233,7 @@ cc.setup = function (el, width, height) {
     } else {
         cc.renderContext = localCanvas.getContext("2d");
         cc.mainRenderContextBackup = cc.renderContext;
-        cc.renderContextType = cc.CANVAS;
+        cc.renderType = cc.RENDER_TYPE_CANVAS;
         cc.renderContext.translate(0, localCanvas.height);
         cc.drawingUtil = cc.DrawingPrimitiveCanvas ? new cc.DrawingPrimitiveCanvas(cc.renderContext) : null;
     }
@@ -1178,6 +1284,15 @@ cc.game = {
     _baseRes4Npm : [],//cache to restore base resources for npm
 
     _intervalId : null,//interval target of main
+
+
+    DEBUG_MODE_NONE : 0,
+    DEBUG_MODE_LOG : 1,
+    DEBUG_MODE_WARN : 2,
+    DEBUG_MODE_ERROR : 3,
+    DEBUG_MODE_LOG_FOR_WEB_PAGE : 4,
+    DEBUG_MODE_WARN_FOR_WEB_PAGE : 5,
+    DEBUG_MODE_ERROR_FOR_WEB_PAGE : 6,
 
     /**
      * Path of config.json
@@ -1329,14 +1444,14 @@ cc.game = {
         var self = this;
         if(!self._prepareCalled){
             self.prepare(function(){
-                cc.setup(self.config["id"]);
+                cc.setup(self.config[self.CONFIG_KEY.id]);
                 self._runMainLoop();
                 self.onEnter(self._baseRes4Npm);
             });
         }else{
             self._checkPrepare = setInterval(function(){
                 if(self._prepared){
-                    cc.setup(self.config["id"]);
+                    cc.setup(self.config[self.CONFIG_KEY.id]);
                     self._runMainLoop();
                     self.onEnter(self._baseRes4Npm);
                     clearInterval(self._checkPrepare);

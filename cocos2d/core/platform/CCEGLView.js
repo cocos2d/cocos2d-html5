@@ -425,7 +425,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         policy.postApply(this);
 
-        if (cc.renderContextType == cc.WEBGL) {
+        if (cc.renderType == cc.RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
@@ -702,7 +702,7 @@ cc.ContentStrategy = cc.Class.extend({
                                contentW, contentH);
 
         // Translate the content
-        if (cc.renderContextType == cc.CANVAS)
+        if (cc.renderType == cc.RENDER_TYPE_CANVAS)
             cc.renderContext.translate(viewport.x, viewport.y + contentH);
 
         this._result.scale = [scaleX, scaleY];

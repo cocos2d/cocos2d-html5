@@ -411,7 +411,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             self.setAnchorPoint(0.5, 0.5);
 
-            if (cc.renderContextType === cc.WEBGL) {
+            if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
                 var locTexture = self.textureAtlas.texture;
                 self._opacityModifyRGB = locTexture.hasPremultipliedAlpha();
 
@@ -430,8 +430,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     createFontChars:function () {
         var self = this;
-        var locContextType = cc.renderContextType;
-        var locTexture = (locContextType === cc.CANVAS) ? self.texture : self.textureAtlas.texture;
+        var locContextType = cc.renderType;
+        var locTexture = (locContextType === cc.RENDER_TYPE_CANVAS) ? self.texture : self.textureAtlas.texture;
 
         var nextFontPositionX = 0;
 
@@ -484,12 +484,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             //var hasSprite = true;
             if (!fontChar) {
                 fontChar = new cc.Sprite();
-                if ((key === 32) && (locContextType === cc.CANVAS)) rect = cc.rect(0, 0, 0, 0);
+                if ((key === 32) && (locContextType === cc.RENDER_TYPE_CANVAS)) rect = cc.rect(0, 0, 0, 0);
                 fontChar.initWithTexture(locTexture, rect, false);
                 fontChar._newTextureWhenChangeColor = true;
                 self.addChild(fontChar, 0, i);
             } else {
-                if ((key === 32) && (locContextType === cc.CANVAS)) {
+                if ((key === 32) && (locContextType === cc.RENDER_TYPE_CANVAS)) {
                     fontChar.setTextureRect(rect, false, cc.size(0, 0));
                 } else {
                     // updating previous sprite
@@ -853,7 +853,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var locIsLoaded = texture.isLoaded();
             self._textureLoaded = locIsLoaded;
             self.texture = texture;
-            if (cc.renderContextType === cc.CANVAS)
+            if (cc.renderType === cc.RENDER_TYPE_CANVAS)
                 self._originalTexture = self.texture;
             if(!locIsLoaded){
                 texture.addLoadedEventListener(function(sender){
@@ -1063,7 +1063,7 @@ cc.fntLoader = {
         //common
         var commonObj = self._parseStrToObj(fntStr.match(self.COMMON_EXP)[0]);
         fnt.commonHeight = commonObj["lineHeight"];
-        if (cc.renderContextType === cc.WEBGL) {
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
             var texSize = cc.configuration.getMaxTextureSize();
             if(commonObj["scaleW"] > texSize.width || commonObj["scaleH"] > texSize.height)
                 cc.log("cc.LabelBMFont._parseCommonArguments(): page can't be larger than supported");

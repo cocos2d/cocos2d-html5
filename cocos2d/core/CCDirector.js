@@ -265,7 +265,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._deltaTime = (now - this._lastUpdate) / 1000;
         }
 
-        if ((cc.COCOS2D_DEBUG > 0) && (this._deltaTime > 0.2))
+        if ((cc.game.config[cc.game.CONFIG_KEY.debugMode] > 0) && (this._deltaTime > 0.2))
             this._deltaTime = 1 / 60.0;
 
         this._lastUpdate = now;
@@ -632,7 +632,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Boolean} on
      */
     setDepthTest:function (on) {
-        if(cc.renderContextType === cc.CANVAS)
+        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
             return;
 
         var loc_gl= cc.renderContext;
@@ -739,7 +739,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._winSizeInPoints.height = cc.canvas.height;
         this._openGLView = openGLView || cc.view;
 
-        if (cc.renderContextType === cc.CANVAS)
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
             return;
 
         // Configuration. Gather GPU info
@@ -783,7 +783,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setProjection: function (projection) {
         var size = this._winSizeInPoints;
 
-        if (cc.renderContextType === cc.CANVAS) {
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
             this._projection = projection;
             cc.eventManager.dispatchEvent(this._eventProjectionChanged);
             return;
