@@ -436,7 +436,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._pointRect = cc.rect(0, 0, 0, 0);
         this._textureLoaded = true;
 
-        if (cc.renderContextType === cc.WEBGL) {
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
             this._quadsArrayBuffer = null;
         }
     },
@@ -482,7 +482,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             high = this._texture.pixelsHeight;
         }
 
-        if(cc.renderContextType === cc.CANVAS)
+        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
             return;
 
         var left, bottom, right, top;
@@ -1292,8 +1292,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} tp totalParticles
      */
     setTotalParticles:function (tp) {
-        //cc.Assert(tp <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
-        if (cc.renderContextType === cc.CANVAS){
+        //cc.assert(tp <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS){
             this._totalParticles = (tp < 200) ? tp : 200;
             return;
         }
@@ -1434,7 +1434,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             locBlendFunc.src = gl.SRC_ALPHA;
             locBlendFunc.dst = gl.ONE;
         } else {
-            if (cc.renderContextType === cc.WEBGL) {
+            if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
                 if (this._texture && !this._texture.hasPremultipliedAlpha()) {
                     locBlendFunc.src = gl.SRC_ALPHA;
                     locBlendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
@@ -1766,7 +1766,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         // udpate after action in run!
         this.scheduleUpdateWithPriority(1);
 
-        if(cc.renderContextType === cc.WEBGL){
+        if(cc.renderType === cc.RENDER_TYPE_WEBGL){
             // allocating data space
             if (!this._allocMemory())
                 return false;
@@ -1795,7 +1795,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if (this.isFull())
             return false;
         var particle, particles = this._particles;
-        if (cc.renderContextType === cc.CANVAS) {
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
             if (this.particleCount < particles.length) {
                 particle = particles[this.particleCount];
             } else {
@@ -1829,7 +1829,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var start, end;
         var locStartColor = this._startColor, locStartColorVar = this._startColorVar;
         var locEndColor = this._endColor, locEndColorVar = this._endColorVar;
-        if (cc.renderContextType === cc.CANVAS) {
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
             start = cc.color(
                 cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 255),
                 cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 255),
@@ -2069,7 +2069,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * should be overridden by subclasses
      */
     postStep:function () {
-        if (cc.renderContextType === cc.WEBGL) {
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
             var gl = cc.renderContext;
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
@@ -2225,7 +2225,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         newPos.y += this._position.y;
                     }
 
-                    if (cc.renderContextType == cc.WEBGL) {
+                    if (cc.renderType == cc.RENDER_TYPE_WEBGL) {
                         // IMPORTANT: newPos may not be used as a reference here! (as it is just the temporary tpa point)
                         // the implementation of updateQuadWithParticle must use
                         // the x and y values directly
@@ -2431,7 +2431,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             cc.log("cc.ParticleSystem.setDisplayFrame(): QuadParticle only supports SpriteFrames with no offsets");
 
         // update texture before updating texture rect
-        if (cc.renderContextType === cc.WEBGL)
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL)
             if (!this._texture || spriteFrame.getTexture()._webTextureObj != this._texture._webTextureObj)
                 this.setTexture(spriteFrame.getTexture());
     },
@@ -2443,7 +2443,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setTextureWithRect:function (texture, rect) {
         var locTexture = this._texture;
-        if (cc.renderContextType === cc.WEBGL) {
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
             // Only update the texture if is different from the current one
             if ((!locTexture || texture._webTextureObj != locTexture._webTextureObj) && (locTexture != texture)) {
                 this._texture = texture;
@@ -2469,7 +2469,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if(!this._textureLoaded || this._batchNode)     // draw should not be called when added to a particleBatchNode
             return;
 
-        if (cc.renderContextType === cc.CANVAS)
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
             this._drawForCanvas(ctx);
         else
             this._drawForWebGL(ctx);
@@ -2564,7 +2564,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         cc.glBindTexture2D(this._texture);
         cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
 
-        //cc.Assert(this._particleIdx == this.particleCount, "Abnormal error in particle quad");
+        //cc.assert(this._particleIdx == this.particleCount, "Abnormal error in particle quad");
 
         //
         // Using VBO without VAO
@@ -2593,7 +2593,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     _setupVBOandVAO:function () {
         //Not support on WebGL
-        /*if (cc.renderContextType == cc.CANVAS) {
+        /*if (cc.renderType == cc.RENDER_TYPE_CANVAS) {
          return;
          }*/
 
@@ -2631,7 +2631,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _setupVBO:function () {
-        if (cc.renderContextType == cc.CANVAS)
+        if (cc.renderType == cc.RENDER_TYPE_CANVAS)
             return;
 
         var gl = cc.renderContext;
@@ -2649,10 +2649,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _allocMemory:function () {
-        if (cc.renderContextType === cc.CANVAS)
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
             return true;
 
-        //cc.Assert((!this._quads && !this._indices), "Memory already allocated");
+        //cc.assert((!this._quads && !this._indices), "Memory already allocated");
         if(this._batchNode){
             cc.log("cc.ParticleSystem._allocMemory(): Memory should not be allocated when not using batchNode");
             return false;

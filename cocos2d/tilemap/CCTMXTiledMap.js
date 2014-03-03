@@ -384,7 +384,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
                             var gid = layerInfo._tiles[pos];
                             if (gid != 0) {
                                 // Optimization: quick return
-                                // if the layer is invalid (more than 1 tileset per layer) an cc.Assert will be thrown later
+                                // if the layer is invalid (more than 1 tileset per layer) an cc.assert will be thrown later
                                 if (((gid & cc.TMX_TILE_FLIPPED_MASK)>>>0) >= tileset.firstGid) {
                                     return tileset;
                                 }

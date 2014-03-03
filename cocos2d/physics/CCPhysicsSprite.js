@@ -162,7 +162,7 @@
             }
         },
         nodeToParentTransform:function () {
-            if(cc.renderContextType === cc.CANVAS)
+            if(cc.renderType === cc.RENDER_TYPE_CANVAS)
                 return this._nodeToParentTransformForCanvas();
 
             var locBody = this._body, locAnchorPIP = this._anchorPointInPoints, locScaleX = this._scaleX, locScaleY = this._scaleY;
