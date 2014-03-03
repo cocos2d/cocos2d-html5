@@ -147,8 +147,8 @@ cc.PARTICLE_TYPE_GROUPED = 2;
 cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, atlasIndex, modeA, modeB) {
     this.pos = pos ? pos : cc.p(0,0);
     this.startPos = startPos ? startPos : cc.p(0,0);
-    this.color = color ? color : cc.color(0, 0, 0, 255);
-    this.deltaColor = deltaColor ? deltaColor : cc.color(0, 0, 0, 255);
+    this.color = color ? color : {r:0, g: 0, b:0, a:255};
+    this.deltaColor = deltaColor ? deltaColor : {r:0, g: 0, b:0, a:255} ;
     this.size = size || 0;
     this.deltaSize = deltaSize || 0;
     this.rotation = rotation || 0;
@@ -1843,18 +1843,18 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 255)
             );
         } else {
-            start = cc.color(
-                cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 255),
-                cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 255),
-                cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 255),
-                cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 255)
-            );
-            end = cc.color(
-                cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 255),
-                cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 255),
-                cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 255),
-                cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 255)
-            );
+            start = {
+                r: cc.clampf(locStartColor.r + locStartColorVar.r * locRandomMinus11(), 0, 255),
+                g: cc.clampf(locStartColor.g + locStartColorVar.g * locRandomMinus11(), 0, 255),
+                b: cc.clampf(locStartColor.b + locStartColorVar.b * locRandomMinus11(), 0, 255),
+                a: cc.clampf(locStartColor.a + locStartColorVar.a * locRandomMinus11(), 0, 255)
+            };
+            end = {
+                r: cc.clampf(locEndColor.r + locEndColorVar.r * locRandomMinus11(), 0, 255),
+                g: cc.clampf(locEndColor.g + locEndColorVar.g * locRandomMinus11(), 0, 255),
+                b: cc.clampf(locEndColor.b + locEndColorVar.b * locRandomMinus11(), 0, 255),
+                a: cc.clampf(locEndColor.a + locEndColorVar.a * locRandomMinus11(), 0, 255)
+            };
         }
 
         particle.color = start;
@@ -1976,13 +1976,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             r = 0 | (particle.color.r * particle.color.a/255);
             g = 0 | (particle.color.g * particle.color.a/255);
             b = 0 | (particle.color.b * particle.color.a/255);
-            a = 0 | (particle.color.a);
         } else {
             r = 0 | (particle.color.r );
             g = 0 | (particle.color.g );
             b = 0 | (particle.color.b );
-            a = 0 | (particle.color.a );
         }
+        a = 0 | (particle.color.a );
 
         var locColors = quad.bl.colors;
         locColors.r = r;
