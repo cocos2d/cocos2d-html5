@@ -73,9 +73,28 @@ ccs.LayoutParameter = ccs.Class.extend(/** @lends ccs.LayoutParameter# */{
     },
 
     clone:function(){
-        var parameter = new ccs.LayoutParameter();
-        parameter.setMargin(this._margin);
+        var parameter = this.createCloneInstance();
+        parameter.copyProperties(this);
         return parameter;
+    },
+
+    /**
+     * create clone instance.
+     * @returns {ccs.LayoutParameter}
+     */
+    createCloneInstance:function(){
+        return ccs.LayoutParameter.create();
+    },
+
+    /**
+     * copy properties
+     * @param {ccs.LayoutParameter} model
+     */
+    copyProperties:function(model){
+        this._margin.left = model._margin.left;
+        this._margin.top = model._margin.top;
+        this._margin.right = model._margin.right;
+        this._margin.bottom = model._margin.bottom;
     }
 });
 
@@ -121,11 +140,21 @@ ccs.LinearLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.LinearLayo
         return this._linearGravity;
     },
 
-    clone:function(){
-        var parameter = new ccs.LinearLayoutParameter();
-        parameter.setMargin(this._margin);
-        parameter.setGravity(this._linearGravity);
-        return parameter;
+    /**
+     * create clone instance.
+     * @returns {ccs.LinearLayoutParameter}
+     */
+    createCloneInstance: function () {
+        return ccs.LinearLayoutParameter.create();
+    },
+
+    /**
+     * copy properties
+     * @param {ccs.LinearLayoutParameter} model
+     */
+    copyProperties: function (model) {
+        ccs.LayoutParameter.prototype.copyProperties.call(this, model);
+        this.setGravity(model._linearGravity);
     }
 });
 
@@ -209,13 +238,23 @@ ccs.RelativeLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.Relative
         return this._relativeLayoutName;
     },
 
-    clone:function(){
-        var parameter = new ccs.RelativeLayoutParameter();
-        parameter.setMargin(this._margin);
-        parameter.setAlign(this._relativeAlign);
-        parameter.setRelativeToWidgetName(this._relativeWidgetName);
-        parameter.setRelativeName(this._relativeLayoutName);
-        return parameter;
+    /**
+     * create clone instance.
+     * @returns {ccs.RelativeLayoutParameter}
+     */
+    createCloneInstance:function(){
+        return ccs.LinearLayoutParameter.create();
+    },
+
+    /**
+     * copy properties
+     * @param {ccs.RelativeLayoutParameter} model
+     */
+    copyProperties:function(model){
+        ccs.LayoutParameter.prototype.copyProperties.call(this, model);
+        this.setAlign(model._relativeAlign);
+        this.setRelativeToWidgetName(model._relativeWidgetName);
+        this.setRelativeName(model._relativeLayoutName);
     }
 });
 
