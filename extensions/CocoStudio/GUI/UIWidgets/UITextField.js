@@ -283,13 +283,21 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
-     * set touch size
+     * Set touch size.
      * @param {cc.Size} size
      */
     setTouchSize: function (size) {
         this._useTouchArea = true;
         this._touchWidth = size.width;
         this._touchHeight = size.height;
+    },
+
+    /**
+     * Get touch size.
+     * @returns {cc.Size}
+     */
+    getTouchSize:function(){
+        return cc.size(this._touchWidth,this._touchHeight);
     },
 
     /**
@@ -324,6 +332,13 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
+     * @returns {String}
+     */
+    getPlaceHolder:function(){
+        return this._textFieldRender.getPlaceHolder();
+    },
+
+    /**
      * @param {cc.Size} size
      */
     setFontSize: function (size) {
@@ -332,11 +347,25 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
+     * @returns {Number}
+     */
+    getFontSize:function(){
+        return this._textFieldRender.getFontSize();
+    },
+
+    /**
      * @param {String} name
      */
     setFontName: function (name) {
         this._textFieldRender.setFontName(name);
         this.textfieldRendererScaleChangedWithSize();
+    },
+
+    /**
+     * @returns {String}
+     */
+    getFontName:function(){
+        return this._textFieldRender.getFontName();
     },
 
     /**
@@ -415,11 +444,18 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
-     * @param {String} enable
+     * @param {String} styleText
      */
     setPasswordStyleText: function (styleText) {
         this._textFieldRender.setPasswordStyleText(styleText);
         this._passwordStyleText = styleText;
+    },
+
+    /**
+     * @returns {String}
+     */
+    getPasswordStyleText:function(){
+        return this._passwordStyleText;
     },
 
     update: function (dt) {
