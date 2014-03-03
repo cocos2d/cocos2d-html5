@@ -231,6 +231,14 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     },
 
     /**
+     * Get  slider is using scale9 renderer or not.
+     * @returns {Boolean}
+     */
+    isScale9Enabled:function(){
+        return this._scale9Enabled;
+    },
+
+    /**
      * override "ignoreContentAdaptWithSize" method of widget.
      * @param {Boolean} ignore
      */
@@ -263,6 +271,14 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     },
 
     /**
+     * Get cap insets for slider.
+     * @returns {cc.Rect}
+     */
+    getCapInsetBarRenderer:function(){
+        return this._capInsetsBarRenderer;
+    },
+
+    /**
      * Sets capinsets for slider, if slider is using scale9 renderer.
      * @param {cc.Rect} capInsets
      */
@@ -272,6 +288,14 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             return;
         }
         this._progressBarRenderer.setCapInsets(capInsets);
+    },
+
+    /**
+     * Get cap insets for slider.
+     * @returns {cc.Rect}
+     */
+    getCapInsetProgressBarRebderer:function(){
+        return this._capInsetsProgressBarRenderer;
     },
 
     /**

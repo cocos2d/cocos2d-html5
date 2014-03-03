@@ -105,7 +105,7 @@ cc.RGB_PREMULTIPLY_APLHA = function (vr, vg, vb, va) {
  * image source
  * @Class
  * @Construct
- * @param {Array||String} data
+ * @param {Array|String} data
  * @param {Number} size
  * @param {Number} offset
  */

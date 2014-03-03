@@ -206,7 +206,6 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._totalDuration = 0;
                     this._betweenDuration = 0;
-                    this._fromIndex = this._toIndex = 0;
                     break;
             }
         }
