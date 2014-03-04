@@ -22,22 +22,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * PageView event type
- * @type {Object}
- */
-ccs.PageViewEventType = {
-    turning: 0
-};
 
-/**
- * PageView touch direction
- * @type {Object}
- */
-ccs.PVTouchDir = {
-    touchLeft: 0,
-    touchRight: 1
-};
+//PageView event
+ccs.PAGEVIEW_EVENT_TURNING = 0;
+
+//PageView touch direction
+ccs.PAGEVIEW_TOUCH_DIR_LEFT = 0;
+ccs.PAGEVIEW_TOUCH_DIR_RIGHT = 1;
 
 /**
  * Base class for ccs.PageView
@@ -66,7 +57,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         ccs.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;
         this._pages = [];
-        this._touchMoveDir = ccs.PVTouchDir.touchLeft;
+        this._touchMoveDir = ccs.PAGEVIEW_TOUCH_DIR_LEFT;
         this._touchStartLocation = 0;
         this._touchMoveStartLocation = 0;
         this._movePagePoint = null;
@@ -437,7 +428,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         var realOffset = touchOffset;
 
         switch (this._touchMoveDir) {
-            case ccs.PVTouchDir.touchLeft: // left
+            case ccs.PAGEVIEW_TOUCH_DIR_LEFT: // left
                 if (this._rightChild.getRightInParent() + touchOffset <= this._rightBoundary) {
                     realOffset = this._rightBoundary - this._rightChild.getRightInParent();
                     this.movePages(realOffset);
@@ -445,7 +436,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
                 }
                 break;
 
-            case ccs.PVTouchDir.touchRight: // right
+            case ccs.PAGEVIEW_TOUCH_DIR_RIGHT: // right
                 if (this._leftChild.getLeftInParent() + touchOffset >= this._leftBoundary) {
                     realOffset = this._leftBoundary - this._leftChild.getLeftInParent();
                     this.movePages(realOffset);
@@ -473,10 +464,10 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         offset = moveX - this._touchMoveStartLocation;
         this._touchMoveStartLocation = moveX;
         if (offset < 0) {
-            this._touchMoveDir = ccs.PVTouchDir.touchLeft;
+            this._touchMoveDir = ccs.PAGEVIEW_TOUCH_DIR_LEFT;
         }
         else if (offset > 0) {
-            this._touchMoveDir = ccs.PVTouchDir.touchRight;
+            this._touchMoveDir = ccs.PAGEVIEW_TOUCH_DIR_RIGHT;
         }
         this.scrollPages(offset);
     },
@@ -539,7 +530,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
 
     pageTurningEvent: function () {
         if (this._pageViewEventListener && this._pageViewEventSelector) {
-            this._pageViewEventSelector.call(this._pageViewEventListener, this, ccs.PageViewEventType.turning);
+            this._pageViewEventSelector.call(this._pageViewEventListener, this, ccs.PAGEVIEW_EVENT_TURNING);
         }
     },
 
