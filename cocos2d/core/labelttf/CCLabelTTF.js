@@ -325,7 +325,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
 
-            //this._fontSize = (cc.renderContextType === cc.CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
+            //this._fontSize = (cc.renderType === cc.RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
@@ -634,7 +634,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var texDef = new cc.FontDefinition();
 
         if (adjustForResolution){
-            //texDef.fontSize = (cc.renderContextType === cc.CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
+            //texDef.fontSize = (cc.renderType === cc.RENDER_TYPE_CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
             texDef.fontSize = this._fontSize;
             texDef.boundingWidth = cc.CONTENT_SCALE_FACTOR() * this._dimensions.width;
 	        texDef.boundingHeight = cc.CONTENT_SCALE_FACTOR() * this._dimensions.height;

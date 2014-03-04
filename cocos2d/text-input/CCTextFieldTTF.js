@@ -239,7 +239,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         // draw placeholder
         var color = this.color;
         this.color = this.colorSpaceHolder;
-        if(cc.renderContextType === cc.CANVAS)
+        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
             this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
         this.color = color;

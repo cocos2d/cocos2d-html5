@@ -405,7 +405,7 @@ cc.GLProgram = cc.Class.extend({
         this._vertShader = null;
         this._fragShader = null;
 
-        if (cc.COCOS2D_DEBUG) {
+        if (cc.game.config[cc.game.CONFIG_KEY.debugMode]) {
             var status = this._glContext.getProgramParameter(this._programObj, this._glContext.LINK_STATUS);
             if (!status) {
                 cc.log("cocos2d: ERROR: Failed to link program: " + this._glContext.getProgramInfoLog(this._programObj));

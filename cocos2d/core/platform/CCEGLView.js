@@ -88,7 +88,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
 
-        cc.VisibleRect.init(this._designResolutionSize);
+        cc.visibleRect.init(this._designResolutionSize);
 
         // Setup system default resolution policies
         this._rpExactFit = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.EXACT_FIT);
@@ -425,7 +425,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         policy.postApply(this);
 
-        if (cc.renderContextType == cc.WEBGL) {
+        if (cc.renderType == cc.RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
@@ -438,7 +438,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             cc.DOM._resetEGLViewDiv();
         }
 
-        cc.VisibleRect.init(this.getVisibleSize());
+        cc.visibleRect.init(this.getVisibleSize());
     },
 
     /**
@@ -702,7 +702,7 @@ cc.ContentStrategy = cc.Class.extend({
                                contentW, contentH);
 
         // Translate the content
-        if (cc.renderContextType == cc.CANVAS)
+        if (cc.renderType == cc.RENDER_TYPE_CANVAS)
             cc.renderContext.translate(viewport.x, viewport.y + contentH);
 
         this._result.scale = [scaleX, scaleY];

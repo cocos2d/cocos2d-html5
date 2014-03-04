@@ -323,7 +323,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             }
         }
         // check if too many rows/columns for available menu items
-        //cc.Assert(!columnsOccupied, "");    //?
+        //cc.assert(!columnsOccupied, "");    //?
         var winSize = cc.director.getWinSize();
 
         row = 0;
@@ -417,7 +417,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             }
         }
         // check if too many rows/columns for available menu items.
-        //cc.Assert(!rowsOccupied, "");
+        //cc.assert(!rowsOccupied, "");
         var winSize = cc.director.getWinSize();
 
         column = 0;
