@@ -81,7 +81,7 @@ ccs.ListView = ccs.ScrollView.extend({
 
     updateInnerContainerSize: function () {
         switch (this.direction) {
-            case ccs.ScrollViewDir.vertical:
+            case ccs.SCROLLVIEW_DIR_VERTICAL:
                 var length = this._items.length;
                 var totalHeight = (length - 1) * this._itemsMargin;
                 for (var i = 0; i < length; i++) {
@@ -92,7 +92,7 @@ ccs.ListView = ccs.ScrollView.extend({
                 var finalHeight = totalHeight;
                 this.setInnerContainerSize(cc.size(finalWidth, finalHeight));
                 break;
-            case ccs.ScrollViewDir.horizontal:
+            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
                 var length = this._items.length;
                 var totalWidth = (length - 1) * this._itemsMargin;
                 for (var i = 0; i < length; i++) {
@@ -113,7 +113,7 @@ ccs.ListView = ccs.ScrollView.extend({
             return;
         }
         switch (this.direction) {
-            case ccs.ScrollViewDir.vertical:
+            case ccs.SCROLLVIEW_DIR_VERTICAL:
                 var llp = item.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
                 if (!llp) {
                     var defaultLp = ccs.LinearLayoutParameter.create();
@@ -160,7 +160,7 @@ ccs.ListView = ccs.ScrollView.extend({
                     }
                 }
                 break;
-            case ccs.ScrollViewDir.horizontal:
+            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
                 var llp = item.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
                 if (!llp) {
                     var defaultLp = ccs.LinearLayoutParameter.create();
@@ -348,17 +348,17 @@ ccs.ListView = ccs.ScrollView.extend({
 
     /**
      * Changes scroll direction of scrollview.
-     * @param {ccs.ScrollViewDir } dir
+     * @param {ccs.SCROLLVIEW_DIR_NONE | ccs.SCROLLVIEW_DIR_VERTICAL | ccs.SCROLLVIEW_DIR_HORIZONTAL | ccs.SCROLLVIEW_DIR_BOTH} dir
      */
     setDirection: function (dir) {
         switch (dir) {
-            case ccs.ScrollViewDir.vertical:
+            case ccs.SCROLLVIEW_DIR_VERTICAL:
                 this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_VERTICAL);
                 break;
-            case ccs.ScrollViewDir.horizontal:
+            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
                 this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL);
                 break;
-            case ccs.ScrollViewDir.both:
+            case ccs.SCROLLVIEW_DIR_BOTH:
                 return;
             default:
                 return;
