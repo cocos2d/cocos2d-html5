@@ -252,7 +252,7 @@ cc.eventManager = {
         var locToAddedListeners = this._toAddedListeners, listener;
         for (i = 0; i < locToAddedListeners.length;) {
             listener = locToAddedListeners[i];
-            if (listener && listener._getListenerID == listenerID)
+            if (listener && listener._getListenerID() == listenerID)
                 cc.arrayRemoveObject(locToAddedListeners, listener);
             else
                 ++i;
@@ -280,6 +280,10 @@ cc.eventManager = {
         if (!listeners)
             return;
 
+        var sceneGraphListener = listeners.getSceneGraphPriorityListeners();
+        if(!sceneGraphListener || sceneGraphListener.length === 0)
+            return;
+
         var rootNode = cc.director.getRunningScene();
         // Reset priority index
         this._nodePriorityIndex = 0;
@@ -301,8 +305,10 @@ cc.eventManager = {
         if (!listeners)
             return;
 
-        // After sort: priority < 0, > 0
         var fixedListeners = listeners.getFixedPriorityListeners();
+        if(!fixedListeners || fixedListeners.length === 0)
+            return;
+        // After sort: priority < 0, > 0
         fixedListeners.sort(this._sortListenersOfFixedPriorityAsc);
 
         // FIXME: Should use binary search
@@ -419,7 +425,7 @@ cc.eventManager = {
 
         // If the event was stopped, return directly.
         if (event.isStopped()) {
-            this._updateListeners(event);
+            cc.eventManager._updateListeners(event);
             return true;
         }
 
@@ -429,7 +435,7 @@ cc.eventManager = {
             return true;
         }
         return false;
-    }.bind(this),
+    },
 
     _dispatchTouchEvent: function (event) {
         this._sortEventListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
@@ -500,11 +506,11 @@ cc.eventManager = {
 
         // If the event was stopped, return directly.
         if (event.isStopped()) {
-            this._updateListeners(event);
+            cc.eventManager._updateListeners(event);
             return true;
         }
         return false;
-    }.bind(this),
+    },
 
     _associateNodeAndEventListener: function (node, listener) {
         var listeners = this._nodeListenersMap[node.__instanceId];
@@ -794,6 +800,7 @@ cc.eventManager = {
         var locListeners = this._listenersMap;
         for (var selKey in locListeners)
             this._removeListenersForListenerID(selKey);
+
         if (!this._inDispatch)
             this._listenersMap = {};
     },
@@ -851,9 +858,7 @@ cc.eventManager = {
             return;
 
         this._updateDirtyFlagForSceneGraph();
-
         this._inDispatch++;
-
         if (event.getType() == cc.Event.TOUCH) {
             this._dispatchTouchEvent(event);
             return;
@@ -866,7 +871,6 @@ cc.eventManager = {
             this._dispatchEventToListeners(selListeners, this._onListenerCallback, event);
 
         this._updateListeners(event);
-
         this._inDispatch--;
     },
 
