@@ -183,9 +183,9 @@ ClassManager.compileSuper.ClassManager = ClassManager;
 
     Function.prototype.bind = Function.prototype.bind || function (bind) {
         var self = this;
+        var args = Array.prototype.slice.call(arguments, 1);
         return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return self.apply(bind || null, args);
+            return self.apply(bind || null, args.concat(Array.prototype.slice.call(arguments)));
         };
     };
 
