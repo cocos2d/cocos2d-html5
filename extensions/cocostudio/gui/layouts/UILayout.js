@@ -714,13 +714,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 break;
             case ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL:
             case ccs.LAYOUT_TYPE_LINEAR_VERTICAL:
-                var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
+                var layoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.LinearLayoutParameter.create());
                 }
                 break;
             case ccs.LAYOUT_TYPE_RELATIVE:
-                var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
+                var layoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.RelativeLayoutParameter.create());
                 }
@@ -969,7 +969,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -978,13 +978,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locFinalPosX = locAP.x * locSize.width;
                 var locFinalPosY = topBoundary - ((1 - locAP.y) * locSize.height);
                 switch (locChildGravity) {
-                    case ccs.LinearGravity.none:
-                    case ccs.LinearGravity.left:
+                    case ccs.LINEAR_GRAVITY_NONE:
+                    case ccs.LINEAR_GRAVITY_LEFT:
                         break;
-                    case ccs.LinearGravity.right:
+                    case ccs.LINEAR_GRAVITY_RIGHT:
                         locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                         break;
-                    case ccs.LinearGravity.centerHorizontal:
+                    case ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL:
                         locFinalPosX = layoutSize.width / 2 - locSize.width * (0.5 - locAP.x);
                         break;
                     default:
@@ -1004,7 +1004,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         var leftBoundary = 0;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -1013,13 +1013,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locFinalPosX = leftBoundary + (locAP.x * locSize.width);
                 var locFinalPosY = layoutSize.height - (1 - locAP.y) * locSize.height;
                 switch (locChildGravity) {
-                    case ccs.LinearGravity.none:
-                    case ccs.LinearGravity.top:
+                    case ccs.LINEAR_GRAVITY_NONE:
+                    case ccs.LINEAR_GRAVITY_TOP:
                         break;
-                    case ccs.LinearGravity.bottom:
+                    case ccs.LINEAR_GRAVITY_BOTTOM:
                         locFinalPosY = locAP.y * locSize.height;
                         break;
-                    case ccs.LinearGravity.centerVertical:
+                    case ccs.LINEAR_GRAVITY_CENTER_VERTICAL:
                         locFinalPosY = layoutSize.height / 2 - locSize.height * (0.5 - locAP.y);
                         break;
                     default:
@@ -1041,14 +1041,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         for (var i = 0; i < length; i++) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
+            var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
             locLayoutParameter._put = false;
         }
 
         while (unlayoutChildCount > 0) {
             for (var i = 0; i < length; i++) {
                 var locChild = layoutChildrenArray[i];
-                var locLayoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
+                var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
 
                 if (locLayoutParameter) {
                     if (locLayoutParameter._put) {
@@ -1065,49 +1065,49 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                     if (locRelativeName) {
                         locRelativeWidget = ccs.UIHelper.seekWidgetByRelativeName(this, locRelativeName);
                         if (locRelativeWidget) {
-                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccs.LayoutParameterType.relative);
+                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
                         }
                     }
                     switch (locAlign) {
-                        case ccs.RelativeAlign.alignNone:
-                        case ccs.RelativeAlign.alignParentTopLeft:
+                        case ccs.RELATIVE_ALIGN_NONE:
+                        case ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.RelativeAlign.alignParentTopCenterHorizontal:
+                        case ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.RelativeAlign.alignParentTopRight:
+                        case ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.RelativeAlign.alignParentLeftCenterVertical:
+                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.RelativeAlign.centerInParent:
+                        case ccs.RELATIVE_ALIGN_PARENT_CENTER:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.RelativeAlign.alignParentRightCenterVertical:
+                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.RelativeAlign.alignParentLeftBottom:
+                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = locAP.y * locSize.height;
                             break;
-                        case ccs.RelativeAlign.alignParentBottomCenterHorizontal:
+                        case ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = locAP.y * locSize.height;
                             break;
-                        case ccs.RelativeAlign.alignParentRightBottom:
+                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = locAP.y * locSize.height;
                             break;
 
-                        case ccs.RelativeAlign.locationAboveLeftAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1118,7 +1118,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RelativeAlign.locationAboveCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1130,7 +1130,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
-                        case ccs.RelativeAlign.locationAboveRightAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1141,7 +1141,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.RelativeAlign.locationLeftOfTopAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1152,7 +1152,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.RelativeAlign.locationLeftOfCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1164,7 +1164,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
-                        case ccs.RelativeAlign.locationLeftOfBottomAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1175,7 +1175,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.RelativeAlign.locationRightOfTopAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1186,7 +1186,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RelativeAlign.locationRightOfCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1198,7 +1198,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
-                        case ccs.RelativeAlign.locationRightOfBottomAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1209,7 +1209,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RelativeAlign.locationBelowLeftAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1220,7 +1220,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RelativeAlign.locationBelowCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1232,7 +1232,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
-                        case ccs.RelativeAlign.locationBelowRightAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1254,157 +1254,157 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                     }
                     //handle margin
                     switch (locAlign) {
-                        case ccs.RelativeAlign.alignNone:
-                        case ccs.RelativeAlign.alignParentTopLeft:
+                        case ccs.RELATIVE_ALIGN_NONE:
+                        case ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT:
                             locFinalPosX += locMargin.left;
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RelativeAlign.alignParentTopCenterHorizontal:
+                        case ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RelativeAlign.alignParentTopRight:
+                        case ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
                             locFinalPosX -= locMargin.right;
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RelativeAlign.alignParentLeftCenterVertical:
+                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
                             locFinalPosX += locMargin.left;
                             break;
-                        case ccs.RelativeAlign.centerInParent:
+                        case ccs.RELATIVE_ALIGN_PARENT_CENTER:
                             break;
-                        case ccs.RelativeAlign.alignParentRightCenterVertical:
+                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
                             locFinalPosX -= locMargin.right;
                             break;
-                        case ccs.RelativeAlign.alignParentLeftBottom:
+                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
                             locFinalPosX += locMargin.left;
                             locFinalPosY += locMargin.bottom;
                             break;
-                        case ccs.RelativeAlign.alignParentBottomCenterHorizontal:
+                        case ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
                             locFinalPosY += locMargin.bottom;
                             break;
-                        case ccs.RelativeAlign.alignParentRightBottom:
+                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
                             locFinalPosX -= locMargin.right;
                             locFinalPosY += locMargin.bottom;
                             break;
 
-                        case ccs.RelativeAlign.locationAboveLeftAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopCenterHorizontal
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignNone
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopRight)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             locFinalPosY += locMargin.left;
                             break;
-                        case ccs.RelativeAlign.locationAboveCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopCenterHorizontal
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignNone
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopRight)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             break;
-                        case ccs.RelativeAlign.locationAboveRightAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopCenterHorizontal
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignNone
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopRight)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             locFinalPosX -= locMargin.right;
                             break;
-                        case ccs.RelativeAlign.locationLeftOfTopAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignNone
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RelativeAlign.locationLeftOfCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignNone
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             break;
-                        case ccs.RelativeAlign.locationLeftOfBottomAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopLeft
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignNone
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             locFinalPosY += locMargin.bottom;
                             break;
                             break;
-                        case ccs.RelativeAlign.locationRightOfTopAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopRight
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RelativeAlign.locationRightOfCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopRight
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             break;
-                        case ccs.RelativeAlign.locationRightOfBottomAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentTopRight
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightCenterVertical)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             locFinalPosY += locMargin.bottom;
                             break;
                             break;
-                        case ccs.RelativeAlign.locationBelowLeftAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentBottomCenterHorizontal)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             locFinalPosX += locMargin.left;
                             break;
-                        case ccs.RelativeAlign.locationBelowCenter:
+                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentBottomCenterHorizontal)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             break;
-                        case ccs.RelativeAlign.locationBelowRightAlign:
+                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentLeftBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentRightBottom
-                                && locRelativeWidgetLPAlign != ccs.RelativeAlign.alignParentBottomCenterHorizontal)
+                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }

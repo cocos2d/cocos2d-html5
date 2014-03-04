@@ -22,49 +22,42 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * LinearGravity
- * @type {Object}
- */
-ccs.LinearGravity = {
-    none: 0,
-    left: 1,
-    top: 2,
-    right: 3,
-    bottom: 4,
-    centerVertical: 5,
-    centerHorizontal: 6
-};
+//LinearGravity
+ccs.LINEAR_GRAVITY_NONE = 0;
+ccs.LINEAR_GRAVITY_LEFT = 1;
+ccs.LINEAR_GRAVITY_TOP = 2;
+ccs.LINEAR_GRAVITY_RIGHT = 3;
+ccs.LINEAR_GRAVITY_BOTTOM = 4;
+ccs.LINEAR_GRAVITY_CENTER_VERTICAL = 5;
+ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL = 6;
 
-/**
- * RelativeAlign
- * @type {Object}
- */
-ccs.RelativeAlign = {
-    alignNone: 0,
-    alignParentTopLeft: 1,
-    alignParentTopCenterHorizontal: 2,
-    alignParentTopRight: 3,
-    alignParentLeftCenterVertical: 4,
-    centerInParent: 5,
-    alignParentRightCenterVertical: 6,
-    alignParentLeftBottom: 7,
-    alignParentBottomCenterHorizontal: 8,
-    alignParentRightBottom: 9,
-    locationAboveLeftAlign: 10,
-    locationAboveCenter: 11,
-    locationAboveRightAlign: 12,
-    locationLeftOfTopAlign: 13,
-    locationLeftOfCenter: 14,
-    locationLeftOfBottomAlign: 15,
-    locationRightOfTopAlign: 16,
-    locationRightOfCenter: 17,
-    locationRightOfBottomAlign: 18,
-    locationBelowLeftAlign: 19,
-    locationBelowCenter: 20,
-    locationBelowRightAlign: 21
-};
+//RelativeAlign
+ccs.RELATIVE_ALIGN_NONE = 0;
+ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT = 1;
+ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL = 2;
+ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT = 3;
+ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL = 4;
+ccs.RELATIVE_ALIGN_PARENT_CENTER = 5;
+ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL = 6;
+ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM = 7;
+ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL = 8;
+ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM = 9;
 
+ccs.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT = 10;
+ccs.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER = 11;
+ccs.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT = 12;
+
+ccs.RELATIVE_ALIGN_LOCATION_LEFT_TOP = 13;
+ccs.RELATIVE_ALIGN_LOCATION_LEFT_CENTER = 14;
+ccs.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM = 15;
+
+ccs.RELATIVE_ALIGN_LOCATION_RIGHT_TOP = 16;
+ccs.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER = 17;
+ccs.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM = 18;
+
+ccs.RELATIVE_ALIGN_LOCATION_BELOW_TOP = 19;
+ccs.RELATIVE_ALIGN_LOCATION_BELOW_CENTER = 20;
+ccs.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM = 21;
 /**
  * Base class for ccs.Margin
  * @class

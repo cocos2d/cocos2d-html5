@@ -1270,7 +1270,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Gets layout parameter
-     * @param {ccs.LayoutParameterType} type
+     * @param {ccs.LAYOUT_PARAMETER_NONE|ccs.LAYOUT_PARAMETER_LINEAR|ccs.LAYOUT_PARAMETER_RELATIVE} type
      * @returns {ccs.LayoutParameter}
      */
     getLayoutParameter: function (type) {

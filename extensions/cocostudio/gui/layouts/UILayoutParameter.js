@@ -22,15 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * layout parameter type
- * @type {Object}
- */
-ccs.LayoutParameterType = {
-    none: 0,
-    linear: 1,
-    relative: 2
-};
+
+//layout parameter type
+ccs.LAYOUT_PARAMETER_NONE = 0;
+ccs.LAYOUT_PARAMETER_LINEAR = 1;
+ccs.LAYOUT_PARAMETER_RELATIVE = 2;
 
 /**
  * Base class for ccs.LayoutParameter
@@ -42,7 +38,7 @@ ccs.LayoutParameter = ccs.Class.extend(/** @lends ccs.LayoutParameter# */{
     _layoutParameterType: null,
     ctor: function () {
         this._margin = new ccs.Margin();
-        this._layoutParameterType = ccs.LayoutParameterType.none;
+        this._layoutParameterType = ccs.LAYOUT_PARAMETER_NONE;
     },
 
     /**
@@ -120,13 +116,13 @@ ccs.LinearLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.LinearLayo
     _linearGravity: null,
     ctor: function () {
         ccs.LayoutParameter.prototype.ctor.call(this);
-        this._linearGravity = ccs.LinearGravity.none;
-        this._layoutParameterType = ccs.LayoutParameterType.linear;
+        this._linearGravity = ccs.LINEAR_GRAVITY_NONE;
+        this._layoutParameterType = ccs.LAYOUT_PARAMETER_LINEAR;
     },
 
     /**
      * Sets LinearGravity parameter for LayoutParameter.
-     * @param {ccs.LinearGravity} gravity
+     * @param {ccs.LINEAR_GRAVITY_NONE|ccs.LINEAR_GRAVITY_TOP|ccs.LINEAR_GRAVITY_RIGHT|ccs.LINEAR_GRAVITY_BOTTOM|ccs.LINEAR_GRAVITY_CENTER_VERTICAL|ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL} gravity
      */
     setGravity: function (gravity) {
         this._linearGravity = gravity;
@@ -134,7 +130,7 @@ ccs.LinearLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.LinearLayo
 
     /**
      * Gets LinearGravity parameter for LayoutParameter.
-     * @returns {ccs.LinearGravity}
+     * @returns {ccs.LINEAR_GRAVITY_NONE|ccs.LINEAR_GRAVITY_TOP|ccs.LINEAR_GRAVITY_RIGHT|ccs.LINEAR_GRAVITY_BOTTOM|ccs.LINEAR_GRAVITY_CENTER_VERTICAL|ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL}
      */
     getGravity: function () {
         return this._linearGravity;
@@ -183,16 +179,16 @@ ccs.RelativeLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.Relative
     _put:false,
     ctor: function () {
         ccs.LayoutParameter.prototype.ctor.call(this);
-        this._relativeAlign = ccs.RelativeAlign.alignNone;
+        this._relativeAlign = ccs.RELATIVE_ALIGN_NONE;
         this._relativeWidgetName = "";
         this._relativeLayoutName = "";
         this._put = false;
-        this._layoutParameterType = ccs.LayoutParameterType.relative;
+        this._layoutParameterType = ccs.LAYOUT_PARAMETER_RELATIVE;
     },
 
     /**
      * Sets RelativeAlign parameter for LayoutParameter.
-     * @param {ccs.RelativeAlign} align
+     * @param {ccs.RELATIVE_ALIGN_*} align
      */
     setAlign: function (align) {
         this._relativeAlign = align;
@@ -200,7 +196,7 @@ ccs.RelativeLayoutParameter = ccs.LayoutParameter.extend(/** @lends ccs.Relative
 
     /**
      * Gets RelativeAlign parameter for LayoutParameter.
-     * @returns {ccs.RelativeAlign}
+     * @returns {ccs.RELATIVE_ALIGN_*}
      */
     getAlign: function () {
         return this._relativeAlign;

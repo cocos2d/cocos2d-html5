@@ -124,18 +124,18 @@ ccs.ListView = ccs.ScrollView.extend({
         }
         switch (this.direction) {
             case ccs.ScrollViewDir.vertical:
-                var llp = item.getLayoutParameter(ccs.LayoutParameterType.linear);
+                var llp = item.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
                 if (!llp) {
                     var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccs.ListViewGravity.left:
-                            defaultLp.setGravity(ccs.LinearGravity.left);
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_LEFT);
                             break;
                         case ccs.ListViewGravity.right:
-                            defaultLp.setGravity(ccs.LinearGravity.right);
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_RIGHT);
                             break;
                         case ccs.ListViewGravity.centerHorizontal:
-                            defaultLp.setGravity(ccs.LinearGravity.centerHorizontal);
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL);
                             break;
                         default:
                             break;
@@ -157,13 +157,13 @@ ccs.ListView = ccs.ScrollView.extend({
                     }
                     switch (this._gravity) {
                         case ccs.ListViewGravity.left:
-                            llp.setGravity(ccs.LinearGravity.left);
+                            llp.setGravity(ccs.LINEAR_GRAVITY_LEFT);
                             break;
                         case ccs.ListViewGravity.right:
-                            llp.setGravity(ccs.LinearGravity.right);
+                            llp.setGravity(ccs.LINEAR_GRAVITY_RIGHT);
                             break;
                         case ccs.ListViewGravity.centerHorizontal:
-                            llp.setGravity(ccs.LinearGravity.centerHorizontal);
+                            llp.setGravity(ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL);
                             break;
                         default:
                             break;
@@ -171,18 +171,18 @@ ccs.ListView = ccs.ScrollView.extend({
                 }
                 break;
             case ccs.ScrollViewDir.horizontal:
-                var llp = item.getLayoutParameter(ccs.LayoutParameterType.linear);
+                var llp = item.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
                 if (!llp) {
                     var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
                         case ccs.ListViewGravity.top:
-                            defaultLp.setGravity(ccs.LinearGravity.top);
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_TOP);
                             break;
                         case ccs.ListViewGravity.bottom:
-                            defaultLp.setGravity(ccs.LinearGravity.bottom);
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_BOTTOM);
                             break;
                         case ccs.ListViewGravity.centerVertical:
-                            defaultLp.setGravity(ccs.LinearGravity.centerVertical);
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_CENTER_VERTICAL);
                             break;
                         default:
                             break;
@@ -204,13 +204,13 @@ ccs.ListView = ccs.ScrollView.extend({
                     }
                     switch (this._gravity) {
                         case ccs.ListViewGravity.top:
-                            llp.setGravity(ccs.LinearGravity.top);
+                            llp.setGravity(ccs.LINEAR_GRAVITY_TOP);
                             break;
                         case ccs.ListViewGravity.bottom:
-                            llp.setGravity(ccs.LinearGravity.bottom);
+                            llp.setGravity(ccs.LINEAR_GRAVITY_BOTTOM);
                             break;
                         case ccs.ListViewGravity.centerVertical:
-                            llp.setGravity(ccs.LinearGravity.centerVertical);
+                            llp.setGravity(ccs.LINEAR_GRAVITY_CENTER_VERTICAL);
                             break;
                         default:
                             break;
