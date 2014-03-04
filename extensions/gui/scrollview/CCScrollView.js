@@ -648,7 +648,9 @@ cc.ScrollView = cc.Layer.extend({
             this._touchMoved = false;
             this._touches.length = 0;
         } else {
-            var listener = cc.EventListenerTouchOneByOne.create();
+            var listener = cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ONE_BY_ONE
+            });
             if(this.onTouchBegan)
                 listener.onTouchBegan = this.onTouchBegan.bind(this);
             if(this.onTouchMoved)
