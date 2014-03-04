@@ -196,7 +196,7 @@ ccs.DataReaderHelper.addDataFromFileAsync = function (filePath,target,selector,i
         self._asyncRefCount--;
         self._asyncCallBack(target, selector, (self._asyncRefTotalCount - self._asyncRefCount) / self._asyncRefTotalCount);
     };
-    cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(this, fun, 0.1, false);
+    cc.director.getScheduler().scheduleCallbackForTarget(this, fun, 0.1, false);
 };
 
 ccs.DataReaderHelper._asyncCallBack=function (target, selector,percent) {
@@ -228,7 +228,7 @@ ccs.DataReaderHelper.addDataFromXML = function (xml,dataInfo) {
      */
     var xmlStr = cc.loader.getRes(xml);
     if(!xmlStr) throw "Please load the resource first : " + xml;
-    var skeletonXML = cc.SAXParser.getInstance().parse(xmlStr);
+    var skeletonXML = cc.saxParser.parse(xmlStr);
     var skeleton = skeletonXML.documentElement;
     if (skeleton) {
         this.addDataFromCache(skeleton,dataInfo);

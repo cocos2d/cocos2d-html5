@@ -145,7 +145,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
     _initStencilForCanvas: function () {
         this._clippingStencil = cc.DrawNode.create();
-        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         var locContext = cc.renderContext;
         var stencil = this._clippingStencil;
         stencil.draw = function () {
@@ -325,7 +325,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.color(255, 255, 255, 255));
+        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -471,7 +471,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (this._handleScissor) {
             gl.enable(gl.SCISSOR_TEST);
         }
-        cc.EGLView.getInstance().setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
+        cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
         cc.NodeRGBA.prototype.visit.call(this);
         if (this._handleScissor) {
             gl.disable(gl.SCISSOR_TEST);
@@ -1491,7 +1491,7 @@ ccs.Layout._visit_once = null;
 ccs.Layout._layer = null;
 ccs.Layout._sharedCache = null;
 
-if (cc.Browser.supportWebGL) {
+if (cc.sys.supportWebGL) {
     //WebGL
     ccs.Layout.prototype.initStencil = ccs.Layout.prototype._initStencilForWebGL;
     ccs.Layout.prototype.stencilClippingVisit = ccs.Layout.prototype._stencilClippingVisitForWebGL;

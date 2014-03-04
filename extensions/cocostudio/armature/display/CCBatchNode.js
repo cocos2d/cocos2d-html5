@@ -29,7 +29,7 @@ cc.BatchNode = cc.Node.extend({
     },
     init:function () {
         var ret = cc.Node.prototype.init.call(this);
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
+        this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         return ret;
     },
 

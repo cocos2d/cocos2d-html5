@@ -49,7 +49,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this.anchorY = 0.5;
         this._ignoreAnchorPointForPosition = true;
 
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         this.setContentSize(director.getWinSize());
         return true;
     }
@@ -79,6 +79,12 @@ cc.Layer.create = function () {
  * </p>
  * @class
  * @extends cc.Layer
+ *
+ * @property {Number}       opacity             - Opacity of layer
+ * @property {Boolean}      opacityModifyRGB    - Indicate whether or not the opacity modify color
+ * @property {Boolean}      cascadeOpacity      - Indicate whether or not it will set cascade opacity
+ * @property {cc.Color}     color               - Color of layer
+ * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
  */
 cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     RGBAProtocol:true,
@@ -454,7 +460,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
-        if(cc.renderContextType === cc.CANVAS)
+        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
             this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
     },
 
@@ -468,10 +474,10 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         if(!cc.Layer.prototype.init.call(this))
             return false;
 
-        if(cc.renderContextType !== cc.CANVAS)
-            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+        if(cc.renderType !== cc.RENDER_TYPE_CANVAS)
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
-        var winSize = cc.Director.getInstance().getWinSize();
+        var winSize = cc.director.getWinSize();
         color = color ||  cc.color(0, 0, 0, 255);
 	    this.width = width || winSize.width;
         this.height = height || winSize.height;
@@ -582,7 +588,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        var locEGLViewer = cc.EGLView.getInstance();
+        var locEGLViewer = cc.view;
         var locDisplayedColor = this._displayedColor;
 
         context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
@@ -613,7 +619,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 });
 
 window._proto = cc.LayerColor.prototype;
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
     _proto.ctor = _proto._ctorForWebGL;
     _proto.setContentSize = _proto._setContentSizeForWebGL;
 	_proto._setWidth = _proto._setWidthForWebGL;
@@ -882,7 +888,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     draw:function (ctx) {
-        if (cc.renderContextType === cc.WEBGL){
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL){
             cc.LayerColor.prototype.draw.call(this, ctx);
             return;
         }
@@ -892,7 +898,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.globalCompositeOperation = 'lighter';
 
         context.save();
-        var locEGLViewer = cc.EGLView.getInstance(), opacityf = this._displayedOpacity / 255.0;
+        var locEGLViewer = cc.view, opacityf = this._displayedOpacity / 255.0;
         var tWidth = this.width * locEGLViewer.getScaleX();
         var tHeight = this.height * locEGLViewer.getScaleY();
         var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
@@ -913,7 +919,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     _updateColor:function () {
         var locAlongVector = this._alongVector;
-        if (cc.renderContextType === cc.CANVAS) {
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
             var tWidth = this.width * 0.5;
             var tHeight = this.height * 0.5;
 

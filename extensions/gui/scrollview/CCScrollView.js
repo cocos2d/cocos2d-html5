@@ -38,7 +38,7 @@ var INSET_RATIO = 0.2;
 var MOVE_INCH = 7.0/160.0;
 
 cc.convertDistanceFromPointToInch = function(pointDis){
-    var eglViewer = cc.EGLView.getInstance();
+    var eglViewer = cc.view;
     var factor = (eglViewer.getScaleX() + eglViewer.getScaleY())/2;
     return (pointDis * factor) / 160;               // CCDevice::getDPI() default value
 };
@@ -551,7 +551,7 @@ cc.ScrollView = cc.Layer.extend({
 
         var context = ctx || cc.renderContext;
         var i, locChildren = this._children, selChild, childrenLen;
-        if (cc.renderContextType === cc.CANVAS) {
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
             context.save();
             this.transform(context);
             this._beforeDraw(context);
@@ -771,13 +771,13 @@ cc.ScrollView = cc.Layer.extend({
     _beforeDraw:function (context) {
         if (this._clippingToBounds) {
             this._scissorRestored = false;
-            var frame = this._getViewRect(), locEGLViewer = cc.EGLView.getInstance();
+            var frame = this._getViewRect(), locEGLViewer = cc.view;
 
             var scaleX = this.getScaleX();
             var scaleY = this.getScaleY();
 
             var ctx = context || cc.renderContext;
-            if (cc.renderContextType === cc.CANVAS) {
+            if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
                 var getWidth = (this._viewSize.width * scaleX) * locEGLViewer.getScaleX();
                 var getHeight = (this._viewSize.height * scaleY) * locEGLViewer.getScaleY();
                 var startX = 0;
@@ -788,7 +788,7 @@ cc.ScrollView = cc.Layer.extend({
                 ctx.clip();
                 ctx.closePath();
             } else {
-                var EGLViewer = cc.EGLView.getInstance();
+                var EGLViewer = cc.view;
                 if(EGLViewer.isScissorEnabled()){
                     this._scissorRestored = true;
                     this._parentScissorRect = EGLViewer.getScissorRect();
@@ -814,10 +814,10 @@ cc.ScrollView = cc.Layer.extend({
      * other nodes.
      */
     _afterDraw:function (context) {
-        if (this._clippingToBounds && cc.renderContextType === cc.WEBGL) {
+        if (this._clippingToBounds && cc.renderType === cc.RENDER_TYPE_WEBGL) {
             if (this._scissorRestored) {  //restore the parent's scissor rect
                 var rect = this._parentScissorRect;
-                cc.EGLView.getInstance().setScissorInPoints(rect.x, rect.y, rect.width, rect.height)
+                cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height)
             }else{
                 var ctx = context || cc.renderContext;
                 ctx.disable(ctx.SCISSOR_TEST);

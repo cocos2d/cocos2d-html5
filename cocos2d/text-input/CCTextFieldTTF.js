@@ -106,7 +106,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      */
     ctor:function () {
         this.colorSpaceHolder = cc.color(127, 127, 127);
-        cc.IMEDispatcher.getInstance().addDelegate(this);
+        cc.imeDispatcher.addDelegate(this);
         cc.LabelTTF.prototype.ctor.call(this);
     },
 
@@ -239,7 +239,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         // draw placeholder
         var color = this.color;
         this.color = this.colorSpaceHolder;
-        if(cc.renderContextType === cc.CANVAS)
+        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
             this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
         this.color = color;
@@ -253,7 +253,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      * @return {Boolean}
      */
     attachWithIME:function () {
-        return cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
+        return cc.imeDispatcher.attachDelegateWithIME(this);
     },
 
     /**
@@ -261,7 +261,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      * @return {Boolean}
      */
     detachWithIME:function () {
-        return cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
+        return cc.imeDispatcher.detachDelegateWithIME(this);
     },
 
     /**
@@ -323,7 +323,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      *  Remove delegate
      */
     removeDelegate:function () {
-        cc.IMEDispatcher.getInstance().removeDelegate(this);
+        cc.imeDispatcher.removeDelegate(this);
     },
 
     /**

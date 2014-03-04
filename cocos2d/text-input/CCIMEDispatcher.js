@@ -46,27 +46,27 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
      * Constructor
      */
     ctor:function () {
-        cc.IMEDispatcher.getInstance().addDelegate(this);
+        cc.imeDispatcher.addDelegate(this);
     },
     /**
      * Remove delegate
      */
     removeDelegate:function () {
-        cc.IMEDispatcher.getInstance().removeDelegate(this);
+        cc.imeDispatcher.removeDelegate(this);
     },
     /**
      * Remove delegate
      * @return {Boolean}
      */
     attachWithIME:function () {
-        return cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
+        return cc.imeDispatcher.attachDelegateWithIME(this);
     },
     /**
      * Detach with IME
      * @return {Boolean}
      */
     detachWithIME:function () {
-        return cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
+        return cc.imeDispatcher.detachDelegateWithIME(this);
     },
 
     /**
@@ -150,7 +150,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
     },
 
     init:function () {
-        if (cc.Browser.isMobile)
+        if (cc.sys.isMobile)
             return;
         this._domInputControl = cc.$("#imeDispatcherInput");
         if (!this._domInputControl) {
@@ -327,7 +327,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @param {cc.IMEDelegate} delegate
      * @example
      * //example
-     * cc.IMEDispatcher.getInstance().addDelegate(this);
+     * cc.imeDispatcher.addDelegate(this);
      */
     addDelegate:function (delegate) {
         if (!delegate || !this.impl)
@@ -346,7 +346,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @return {Boolean} If the old delegate can detattach with ime and the new delegate can attach with ime, return true, otherwise return false.
      * @example
      * //example
-     * var ret = cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
+     * var ret = cc.imeDispatcher.attachDelegateWithIME(this);
      */
     attachDelegateWithIME:function (delegate) {
         if (!this.impl || !delegate)
@@ -382,7 +382,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
     },
 
     _focusDomInput:function (delegate) {
-        if(cc.Browser.isMobile){
+        if(cc.sys.isMobile){
             this.impl._delegateWithIme = delegate;
             delegate.didAttachWithIME();
             //prompt
@@ -416,7 +416,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @return {Boolean} If the old delegate can detattach with ime and the new delegate can attach with ime, return true, otherwise return false.
      * @example
      * //example
-     * var ret = cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
+     * var ret = cc.imeDispatcher.detachDelegateWithIME(this);
      */
     detachDelegateWithIME:function (delegate) {
         if (!this.impl || !delegate)
@@ -440,7 +440,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @param {cc.IMEDelegate} delegate
      * @example
      * //example
-     * cc.IMEDispatcher.getInstance().removeDelegate(this);
+     * cc.imeDispatcher.removeDelegate(this);
      */
     removeDelegate:function (delegate) {
         if (!this.impl || !delegate)
@@ -464,7 +464,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @example
      * //example
      * document.addEventListener("keydown", function (e) {
-     *      cc.IMEDispatcher.getInstance().processKeycode(e.keyCode);
+     *      cc.imeDispatcher.processKeycode(e.keyCode);
      * });
      */
     processKeycode:function (keyCode) {
@@ -514,18 +514,28 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
 });
 
 /**
+ * @type object
+ */
+cc.IMEDispatcher._instance = null;
+
+/**
  * Returns the shared CCIMEDispatcher object for the system.
  * @return {cc.IMEDispatcher}
  */
-cc.IMEDispatcher.getInstance = function () {
-    if (!cc.IMEDispatcher.instance) {
-        cc.IMEDispatcher.instance = new cc.IMEDispatcher();
-        cc.IMEDispatcher.instance.init();
+cc.IMEDispatcher._getInstance = function () {
+    if (!cc.IMEDispatcher._instance) {
+        cc.IMEDispatcher._instance = new cc.IMEDispatcher();
+        cc.IMEDispatcher._instance.init();
     }
-    return cc.IMEDispatcher.instance;
+    return cc.IMEDispatcher._instance;
 };
 
 /**
- * @type object
+ * The shared CCIMEDispatcher object for the system.
+ * @Object
+ * @type {cc.IMEDispatcher}
  */
-cc.IMEDispatcher.instance = null;
+cc.imeDispatcher;
+cc.defineGetterSetter(cc, "imeDispatcher", function() {
+	return cc.IMEDispatcher._instance ? cc.IMEDispatcher._instance : cc.IMEDispatcher._getInstance();
+});

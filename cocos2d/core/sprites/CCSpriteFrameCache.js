@@ -26,27 +26,16 @@
 
 /**
  * Singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.
- * @class
- * @extends cc.Class
+ * @Object
+ *
  * @example
- * // add SpriteFrames to SpriteFrameCache With File
- * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
+ * // add SpriteFrames to spriteFrameCache With File
+ * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);
  */
-cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
-    _spriteFrames: null,
-    _spriteFramesAliases: null,
-
-    _frameConfigCache : null,
-
-    /**
-     * Constructor
-     */
-    ctor: function () {
-        this._spriteFrames = {};
-        this._spriteFramesAliases = {};
-        this._frameConfigCache = {};
-    },
-
+cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
+    _spriteFrames: {},
+    _spriteFramesAliases: {},
+    _frameConfigCache : {},
 
     /**
      * Get the real data structure of frame used by engine.
@@ -90,21 +79,21 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 oh = Math.abs(oh);
                 tempFrame.size = cc.size(ow, oh);
             } else if (format == 1 || format == 2) {
-                tempFrame.rect = cc.RectFromString(frameDict["frame"]);
+                tempFrame.rect = cc.rectFromString(frameDict["frame"]);
                 tempFrame.rotated = frameDict["rotated"] || false;
-                tempFrame.offset = cc.PointFromString(frameDict["offset"]);
-                tempFrame.size = cc.SizeFromString(frameDict["sourceSize"]);
+                tempFrame.offset = cc.pointFromString(frameDict["offset"]);
+                tempFrame.size = cc.sizeFromString(frameDict["sourceSize"]);
             } else if (format == 3) {
                 // get values
-                var spriteSize = cc.SizeFromString(frameDict["spriteSize"]);
-                var textureRect = cc.RectFromString(frameDict["textureRect"]);
+                var spriteSize = cc.sizeFromString(frameDict["spriteSize"]);
+                var textureRect = cc.rectFromString(frameDict["textureRect"]);
                 if (spriteSize) {
                     textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                 }
                 tempFrame.rect = textureRect;
                 tempFrame.rotated = frameDict["textureRotated"] || false; // == "true";
-                tempFrame.offset = cc.PointFromString(frameDict["spriteOffset"]);
-                tempFrame.size = cc.SizeFromString(frameDict["spriteSourceSize"]);
+                tempFrame.offset = cc.pointFromString(frameDict["spriteOffset"]);
+                tempFrame.size = cc.sizeFromString(frameDict["spriteSourceSize"]);
                 tempFrame.aliases = frameDict["aliases"];
             } else {
                 var tmpFrame = frameDict["frame"], tmpSourceSize = frameDict["sourceSize"];
@@ -134,8 +123,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * @param {HTMLImageElement|cc.Texture2D|string} texture
      * @example
      * // add SpriteFrames to SpriteFrameCache With File
-     * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
-     * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniJson);
+     * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);
+     * cc.spriteFrameCache.addSpriteFrames(s_grossiniJson);
      */
     addSpriteFrames: function (url, texture) {
         if (!url)
@@ -147,11 +136,11 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         var frames = frameConfig.frames, meta = frameConfig.meta;
         if(!texture){
             var texturePath = cc.path.changeBasename(url, meta.image || ".png");
-            texture = cc.TextureCache.getInstance().addImage(texturePath);
+            texture = cc.textureCache.addImage(texturePath);
         }else if(texture instanceof cc.Texture2D){
             //do nothing
         }else if(typeof texture == "string"){//string
-            texture = cc.TextureCache.getInstance().addImage(texture);
+            texture = cc.textureCache.addImage(texture);
         }else throw "Argument must be non-nil"
 
         //create sprite frames
@@ -171,7 +160,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                         spAliases[alias] = key;
                     }
                 }
-                if (cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()) {
+                if (cc.renderType === cc.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
                     //clip to canvas
                     var locTexture = spriteFrame.getTexture();
                     if (locTexture.isLoaded()) {
@@ -301,7 +290,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * @return {cc.SpriteFrame}
      * @example
      * //get a SpriteFrame by name
-     * var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
+     * var frame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
      */
     getSpriteFrame: function (name) {
         var self = this, frame = self._spriteFrames[name];
@@ -315,25 +304,14 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         }
         if (!frame) cc.log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
         return frame;
-    }
-});
+    },
 
-cc.s_sharedSpriteFrameCache = null;
-
-/**
- * Returns the shared instance of the Sprite Frame cache
- * @return {cc.SpriteFrameCache}
- */
-cc.SpriteFrameCache.getInstance = function () {
-    if (!cc.s_sharedSpriteFrameCache) {
-        cc.s_sharedSpriteFrameCache = new cc.SpriteFrameCache();
-    }
-    return cc.s_sharedSpriteFrameCache;
-};
-
-/**
- * Purges the cache. It releases all the Sprite Frames and the retained instance.
- */
-cc.SpriteFrameCache.purgeSharedSpriteFrameCache = function () {
-    cc.s_sharedSpriteFrameCache = null;
+	/**
+	 * Purges the cache. It releases all cache objects.
+	 */
+	purgeSharedSpriteFrameCache: function () {
+		this._spriteFrames = {};
+		this._spriteFramesAliases = {};
+		this._frameConfigCache = {};
+	}
 };

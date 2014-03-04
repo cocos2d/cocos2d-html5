@@ -139,7 +139,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     /*public:*/
     ctor:function () {
         this._contentSize = cc.size(0, 0);
-        this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_DEFAULT;
+        this._pixelFormat = cc.Texture2D.defaultPixelFormat;
     },
 
     releaseTexture:function () {
@@ -340,7 +340,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         self._hasPremultipliedAlpha = false;
         self._hasMipmaps = false;
-        self.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
+        self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
 
         self._isLoaded = true;
 
@@ -435,9 +435,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var imageWidth = uiImage.getWidth();
         var imageHeight = uiImage.getHeight();
 
-        var conf = cc.Configuration.getInstance();
-
-        var maxTextureSize = conf.getMaxTextureSize();
+        var maxTextureSize = cc.configuration.getMaxTextureSize();
         if (imageWidth > maxTextureSize || imageHeight > maxTextureSize) {
             cc.log("cocos2d: WARNING: Image (" + imageWidth + " x " + imageHeight + ") is bigger than the supported " + maxTextureSize + " x " + maxTextureSize);
             return false;
@@ -492,7 +490,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-        self.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
+        self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
         cc.glBindTexture2D(null);
 
         var pixelsWide = self._htmlElementObj.width;
@@ -578,7 +576,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     setTexParameters:function (texParams) {
         var gl = cc.renderContext;
 
-        cc.Assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
+        cc.assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
             (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
             "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
@@ -640,7 +638,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      *  It only works if the texture size is POT (power of 2).
      */
     generateMipmap:function () {
-        cc.Assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
+        cc.assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
 
         cc.glBindTexture2D(this);
         cc.renderContext.generateMipmap(cc.renderContext.TEXTURE_2D);
@@ -675,7 +673,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var outPixel16 = null;
         var hasAlpha = uiImage.hasAlpha();
         var imageSize = cc.size(uiImage.getWidth(), uiImage.getHeight());
-        var pixelFormat = tex2d.PIXEL_FORMAT_DEFAULT;
+        var pixelFormat = tex2d.defaultPixelFormat;
         var bpp = uiImage.getBitsPerComponent();
         var i;
 
@@ -1177,20 +1175,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     }
 });
 
-cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
-
-window._proto = cc.Texture2D.prototype;
-
-// Extended properties
-cc.defineGetterSetter(_proto, "name", _proto.getName);
-cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
-cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
-cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
-//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-
-delete window._proto;
+cc.Texture2D = cc.sys.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
 
 
@@ -1313,6 +1298,21 @@ _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB5A1] = 16;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC4] = 4;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC2] = 3;
 
+
+window._proto = cc.Texture2D.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "name", _proto.getName);
+cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
+cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
+cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
+//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+cc.Texture2D.defaultPixelFormat = _Class.PIXEL_FORMAT_DEFAULT;
+
+delete window._proto;
 delete window._Class;
 delete window._PIXEL_FORMAT_STR_MAP;
 delete window._BITS_PER_PIXEL_FORMAT;

@@ -87,8 +87,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         // no lazy alloc in this node
         this._children.length = 0;
 
-        if (cc.renderContextType === cc.WEBGL)
-            this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL)
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR);
         return true;
     },
 
@@ -99,7 +99,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     initWithFile:function (fileImage, capacity) {
-        var tex = cc.TextureCache.getInstance().addImage(fileImage);
+        var tex = cc.textureCache.addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
 
@@ -306,7 +306,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     draw:function (ctx) {
         //cc.PROFILER_STOP("CCParticleBatchNode - draw");
-        if (cc.renderContextType === cc.CANVAS)
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
             return;
 
         if (this.textureAtlas.totalQuads == 0)
@@ -369,7 +369,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     // override visit.
     // Don't call visit on it's children
     visit:function (ctx) {
-        if (cc.renderContextType === cc.CANVAS)
+        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
             return;
 
         // CAREFUL:

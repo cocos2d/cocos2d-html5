@@ -216,7 +216,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.color(255, 255, 255, 255));
+        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -232,7 +232,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         if (this.alphaThreshold < 1) {
             // since glAlphaTest do not exists in OES, use a shader that writes
             // pixel only if greater than an alpha threshold
-            var program = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
+            var program = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
             var alphaValueLocation = gl.getUniformLocation(program.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
             // set our alphaThreshold
             cc.glUseProgram(program.getProgram());
@@ -383,7 +383,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
     _setStencilForCanvas: function (stencil) {
         this._stencil = stencil;
-        var locEGL_ScaleX = cc.EGLView.getInstance().getScaleX(), locEGL_ScaleY = cc.EGLView.getInstance().getScaleY();
+        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         var locContext = cc.renderContext;
         // For texture stencil, use the sprite itself
         if (stencil instanceof cc.Sprite) {
@@ -456,7 +456,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
 window._proto = cc.ClippingNode.prototype;
 
-if (cc.Browser.supportWebGL) {
+if (cc.sys.supportWebGL) {
     //WebGL
     _proto.init = _proto._initForWebGL;
     _proto.visit = _proto._visitForWebGL;

@@ -197,7 +197,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._children = [];
         this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
         this._eventDispatcher = cc.eventManager;
@@ -633,7 +633,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Point|Number} newPosOrxValue The position (x,y) of the node in coordinates or  X coordinate for position
      * @param {Number} [yValue] Y coordinate for position
      * @example
-     *    var size = cc.Director.getInstance().getWinSize();
+     *    var size = cc.director.getWinSize();
      *    node.setPosition(size.width/2, size.height/2);
      */
     setPosition:function (newPosOrxValue, yValue) {
@@ -1046,7 +1046,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getActionManager:function () {
         if (!this._actionManager) {
-            this._actionManager = cc.Director.getInstance().getActionManager();
+            this._actionManager = cc.director.getActionManager();
         }
         return this._actionManager;
     },
@@ -1072,7 +1072,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getScheduler:function () {
         if (!this._scheduler) {
-            this._scheduler = cc.Director.getInstance().getScheduler();
+            this._scheduler = cc.director.getScheduler();
         }
         return this._scheduler;
     },
@@ -1767,7 +1767,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _convertToWindowSpace:function (nodePoint) {
         var worldPoint = this.convertToWorldSpace(nodePoint);
-        return cc.Director.getInstance().convertToUI(worldPoint);
+        return cc.director.convertToUI(worldPoint);
     },
 
     /** convenience methods which take a cc.Touch instead of cc.Point
@@ -1777,7 +1777,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     convertTouchToNodeSpace:function (touch) {
         var point = touch.getLocation();
         //TODO This point needn't convert to GL in HTML5
-        //point = cc.Director.getInstance().convertToGL(point);
+        //point = cc.director.convertToGL(point);
         return this.convertToNodeSpace(point);
     },
 
@@ -1788,7 +1788,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertTouchToNodeSpaceAR:function (touch) {
         var point = touch.getLocation();
-        point = cc.Director.getInstance().convertToGL(point);
+        point = cc.director.convertToGL(point);
         return this.convertToNodeSpaceAR(point);
     },
 
@@ -1980,7 +1980,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _transformForCanvas: function (ctx) {
         // transform for canvas
-        var context = ctx || cc.renderContext, eglViewer = cc.EGLView.getInstance();
+        var context = ctx || cc.renderContext, eglViewer = cc.view;
 
         var t = this.nodeToParentTransform();
         context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
@@ -2221,7 +2221,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * </p>
      * @param {cc.GLProgram} newShaderProgram The shader program which fetchs from CCShaderCache.
      * @example
-     *  node.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+     *  node.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
     setShaderProgram:function (newShaderProgram) {
         this._shaderProgram = newShaderProgram;
@@ -2292,7 +2292,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
 window._proto = cc.Node.prototype;
 
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
 	//WebGL
 	_proto.ctor = _proto._ctorForWebGL;
 	_proto.setNodeDirty = _proto._setNodeDirtyForWebGL;

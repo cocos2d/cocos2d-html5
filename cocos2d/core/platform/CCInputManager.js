@@ -60,7 +60,7 @@ cc.inputManager = {
             return;
 
         this._accelEnabled = isEnable;
-        var scheduler = cc.Director.getInstance().getScheduler();
+        var scheduler = cc.director.getScheduler();
         if(this._accelEnabled){
             this._accelCurTime = 0;
             scheduler.scheduleUpdateForTarget(this);
@@ -129,8 +129,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.BEGAN;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesBegan: size = 0");
+        }
     },
 
     handleTouchesMove: function(touches){
@@ -155,8 +154,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.MOVED;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesMoved: size = 0");
+        }
     },
 
     handleTouchesEnd: function(touches){
@@ -166,8 +164,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.ENDED;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesEnded: size = 0");
+        }
     },
 
     handleTouchesCancel: function(touches){
@@ -177,8 +174,7 @@ cc.inputManager = {
             var touchEvent = new cc.EventTouch(handleTouches);
             touchEvent._eventCode = cc.EventTouch.EventCode.CANCELLED;
             cc.eventManager.dispatchEvent(touchEvent);
-        } else
-            cc.log("touchesCanceled: size = 0");
+        }
     },
 
     getSetOfTouchesEndOrCancel: function(touches) {
@@ -330,9 +326,9 @@ cc.inputManager = {
     registerSystemEvent: function(element){
         if(this._isRegisterEvent) return;
 
-        var locView = this._glView = cc.EGLView.getInstance();
+        var locView = this._glView = cc.view;
         var selfPointer = this;
-        var supportMouse = ('mouse' in sys.capabilities), supportTouches = ('touches' in sys.capabilities);
+        var supportMouse = ('mouse' in cc.sys.capabilities), supportTouches = ('touches' in cc.sys.capabilities);
 
         //register touch event
         if (supportMouse) {
@@ -341,7 +337,11 @@ cc.inputManager = {
             }, false);
 
             window.addEventListener('mouseup', function (event) {
+                var savePressed = selfPointer._mousePressed;
                 selfPointer._mousePressed = false;
+
+                if(!savePressed)
+                    return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
@@ -506,7 +506,7 @@ cc.inputManager = {
         }
 
         //register keyboard event
-        this._registerKeyboardEvent(element);
+        this._registerKeyboardEvent();
 
         //register Accelerometer event
         this._registerAccelerometerEvent();
@@ -529,12 +529,12 @@ cc.inputManager = {
         this._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
 
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
-        if (cc.Browser.type == "mqqbrowser")
+        if (cc.sys.browserType == cc.sys.BROWSER_TYPE_MOBILE_QQ)
             this._accelDeviceEvent = window.DeviceOrientationEvent;
 
         var _deviceEventType = (this._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
         var ua = navigator.userAgent;
-        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.Browser.type == "ucbrowser")) {
+        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.sys.browserType == cc.BROWSER_TYPE_UC)) {
             this._minus = -1;
         }
 

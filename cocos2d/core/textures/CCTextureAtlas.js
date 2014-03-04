@@ -216,7 +216,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     initWithFile:function (file, capacity) {
         // retained in property
-        var texture = cc.TextureCache.getInstance().addImage(file);
+        var texture = cc.textureCache.addImage(file);
         if (texture)
             return this.initWithTexture(texture, capacity);
         else {
@@ -235,7 +235,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @return {Boolean}
      * @example
      * //example
-     * var texture = cc.TextureCache.getInstance().addImage("hello.png");
+     * var texture = cc.textureCache.addImage("hello.png");
      * var textureAtlas = new cc.TextureAtlas();
      * textureAtlas.initWithTexture(texture, 3);
      */
@@ -660,7 +660,7 @@ delete window._proto;
  * var textureAtlas = cc.TextureAtlas.create("res/hello.png", 3);
  * 2.
  * //creates a TextureAtlas with texture
- * var texture = cc.TextureCache.getInstance().addImage("hello.png");
+ * var texture = cc.textureCache.addImage("hello.png");
  * var textureAtlas = cc.TextureAtlas.create(texture, 3);
  */
 cc.TextureAtlas.create = function (fileName, capacity) {

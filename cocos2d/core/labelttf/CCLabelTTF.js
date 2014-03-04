@@ -325,7 +325,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
 
-            //this._fontSize = (cc.renderContextType === cc.CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
+            //this._fontSize = (cc.renderType === cc.RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
@@ -364,7 +364,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return false;
 
         // shader program
-        this.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM);
+        this.shaderProgram = cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM);
 
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);
@@ -634,7 +634,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var texDef = new cc.FontDefinition();
 
         if (adjustForResolution){
-            //texDef.fontSize = (cc.renderContextType === cc.CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
+            //texDef.fontSize = (cc.renderType === cc.RENDER_TYPE_CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
             texDef.fontSize = this._fontSize;
             texDef.boundingWidth = cc.CONTENT_SCALE_FACTOR() * this._dimensions.width;
 	        texDef.boundingHeight = cc.CONTENT_SCALE_FACTOR() * this._dimensions.height;
@@ -1173,7 +1173,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 });
 
 window._proto = cc.LabelTTF.prototype;
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
 	_proto.setColor = cc.Sprite.prototype.setColor;
     _proto._setColorsString = _proto._setColorsStringForWebGL;
     _proto.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;

@@ -25,39 +25,19 @@
  ****************************************************************************/
 
 /**
- * TextureCache - Alloc, Init & Dealloc
- * @type object
+ * Implementation cc.textureCache
+ * @Object
  */
-cc.g_sharedTextureCache = null;
-
-/**
- *  Implementation TextureCache
- * @class
- * @extends cc.Class
- */
-cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
-    _textures:null,
-    _textureColorsCache:null,
+cc.textureCache = /** @lends cc.TextureCache# */{
+    _textures: {},
+    _textureColorsCache: {},
     _textureKeySeq:(0 | Math.random() * 1000),
 
-    _loadedTexturesBefore:null,
-
-    /**
-     * Constructor
-     */
-    ctor: function () {
-        if(cc.g_sharedTextureCache)
-            throw "Attempted to allocate a second instance of a singleton.";
-        this._textures = {};
-        this._textureColorsCache = {};
-        if(cc.renderContextType === cc.WEBGL){
-            this._loadedTexturesBefore = {};
-        }
-    },
+    _loadedTexturesBefore: {},
 
     handleLoadedTexture : function(url){
         var locTexs = this._textures;
-        if(cc.renderContextType === cc.WEBGL && !cc._rendererInitialized){
+        if(cc.renderType === cc.RENDER_TYPE_WEBGL && !cc._rendererInitialized){
             locTexs = this._loadedTexturesBefore;
         }
         var tex = locTexs[url];
@@ -123,7 +103,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {cc.Texture2D|Null}
      * @example
      * //example
-     * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
+     * var key = cc.textureCache.textureForKey("hello.png");
      */
     textureForKey:function (textureKeyName) {
         return this._textures[textureKeyName];
@@ -134,7 +114,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {String|Null}
      * @example
      * //example
-     * var key = cc.TextureCache.getInstance().getKeyByTexture(texture);
+     * var key = cc.textureCache.getKeyByTexture(texture);
      */
     getKeyByTexture:function (texture) {
         for (var key in this._textures) {
@@ -155,7 +135,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {Array}
      * @example
      * //example
-     * var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(texture);
+     * var cacheTextureForColor = cc.textureCache.getTextureColors(texture);
      */
     getTextureColors:function (texture) {
         var key = this.getKeyByTexture(texture);
@@ -190,7 +170,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * In the long term: it will be the same</p>
      * @example
      * //example
-     * cc.TextureCache.getInstance().removeAllTextures();
+     * cc.textureCache.removeAllTextures();
      */
     removeAllTextures:function () {
         var locTextures = this._textures;
@@ -206,7 +186,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @param {Image} texture
      * @example
      * //example
-     * cc.TextureCache.getInstance().removeTexture(texture);
+     * cc.textureCache.removeTexture(texture);
      */
     removeTexture:function (texture) {
         if (!texture)
@@ -226,7 +206,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @param {String} textureKeyName
      * @example
      * //example
-     * cc.TextureCache.getInstance().removeTexture("hello.png");
+     * cc.textureCache.removeTexture("hello.png");
      */
     removeTextureForKey:function (textureKeyName) {
         if (textureKeyName == null)
@@ -245,7 +225,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {cc.Texture2D}
      * @example
      * //example
-     * cc.TextureCache.getInstance().addImage("hello.png");
+     * cc.textureCache.addImage("hello.png");
      */
     addImage:function (url, target, cb) {
         if(!url)
@@ -255,7 +235,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             target = null;
         }
         var locTexs = this._textures;
-        if(cc.renderContextType === cc.WEBGL && !cc._rendererInitialized){
+        if(cc.renderType === cc.RENDER_TYPE_WEBGL && !cc._rendererInitialized){
             locTexs = this._loadedTexturesBefore;
         }
         var tex = locTexs[url];
@@ -352,22 +332,15 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         }
         cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, HTMLCanvasElement for "
             + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
-    }
-});
+    },
 
-/**
- * Return ths shared instance of the cache
- * @return {cc.TextureCache}
- */
-cc.TextureCache.getInstance = function () {
-    if (!cc.g_sharedTextureCache)
-        cc.g_sharedTextureCache = new cc.TextureCache();
-    return cc.g_sharedTextureCache;
-};
-
-/**
- * Purges the cache. It releases the retained instance.
- */
-cc.TextureCache.purgeSharedTextureCache = function () {
-    cc.g_sharedTextureCache = null;
+	/**
+	 * Purges the cache. It releases the retained instance.
+	 */
+	purgeSharedTextureCache: function () {
+		this._textures = {};
+		this._textureColorsCache = {};
+		this._textureKeySeq = (0 | Math.random() * 1000);
+		this._loadedTexturesBefore = {};
+	}
 };

@@ -31,7 +31,7 @@ plugin.SocialQzone = cc.Class.extend({
             }
         }
         urlstring = urlstring.substr(0, urlstring.length - 1);
-        cc.Browser.openURL("http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?"+urlstring);
+        cc.openURL("http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?"+urlstring);
     },
     setDebugMode: function (debug) {
         //invalid on html5

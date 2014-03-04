@@ -24,30 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.RESOLUTION_POLICY = {
-    // The entire application is visible in the specified area without trying to preserve the original aspect ratio.
-    // Distortion can occur, and the application may appear stretched or compressed.
-    EXACT_FIT: 0,
-    // The entire application fills the specified area, without distortion but possibly with some cropping,
-    // while maintaining the original aspect ratio of the application.
-    NO_BORDER: 1,
-    // The entire application is visible in the specified area without distortion while maintaining the original
-    // aspect ratio of the application. Borders can appear on two sides of the application.
-    SHOW_ALL: 2,
-    // The application takes the height of the design resolution size and modifies the width of the internal
-    // canvas so that it fits the aspect ratio of the device
-    // no distortion will occur however you must make sure your application works on different
-    // aspect ratios
-    FIXED_HEIGHT: 3,
-    // The application takes the width of the design resolution size and modifies the height of the internal
-    // canvas so that it fits the aspect ratio of the device
-    // no distortion will occur however you must make sure your application works on different
-    // aspect ratios
-    FIXED_WIDTH: 4,
-
-    UNKNOWN: 5
-};
-
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
@@ -90,7 +66,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _wnd: null,
     _hDC: null,
     _hRC: null,
-    _accelerometerKeyHook: null,
     _supportTouch: false,
     _contentTranslateLeftTop: null,
 
@@ -110,11 +85,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._originalDesignResolutionSize = cc.size(w, h);
         this._viewPortRect = cc.rect(0, 0, w, h);
         this._visibleRect = cc.rect(0, 0, w, h);
-        this._delegate = cc.Director.getInstance().getTouchDispatcher();
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
 
-        cc.VisibleRect.init(this._designResolutionSize);
+        cc.visibleRect.init(this._designResolutionSize);
 
         // Setup system default resolution policies
         this._rpExactFit = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.EXACT_FIT);
@@ -190,7 +164,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             else vp = elems[0];
 
 	        // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
-	        if (cc.Browser.isMobile && cc.Browser.type == "firefox") {
+	        if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
 		        vp.content = "initial-scale:1";
 		        return;
 	        }
@@ -266,7 +240,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     setFrameZoomFactor: function (zoomFactor) {
         this._frameZoomFactor = zoomFactor;
         this.centerWindow();
-        cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
+        cc.director.setProjection(cc.director.getProjection());
     },
 
     /**
@@ -328,14 +302,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._frame.style.height = height + "px";
         //this.centerWindow();
         this._resizeEvent();
-        cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
+        cc.director.setProjection(cc.director.getProjection());
     },
 
     centerWindow: function () {
-    },
-
-    setAccelerometerKeyHook: function (accelerometerKeyHook) {
-        this._accelerometerKeyHook = accelerometerKeyHook;
     },
 
     /**
@@ -377,19 +347,19 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         // Ensure compatibility with JSB
         else {
             switch (resolutionPolicy) {
-                case cc.RESOLUTION_POLICY.EXACT_FIT:
+                case cc.ResolutionPolicy.EXACT_FIT:
                     this._resolutionPolicy = this._rpExactFit;
                     break;
-                case cc.RESOLUTION_POLICY.SHOW_ALL:
+                case cc.ResolutionPolicy.SHOW_ALL:
                     this._resolutionPolicy = this._rpShowAll;
                     break;
-                case cc.RESOLUTION_POLICY.NO_BORDER:
+                case cc.ResolutionPolicy.NO_BORDER:
                     this._resolutionPolicy = this._rpNoBorder;
                     break;
-                case cc.RESOLUTION_POLICY.FIXED_HEIGHT:
+                case cc.ResolutionPolicy.FIXED_HEIGHT:
                     this._resolutionPolicy = this._rpFixedHeight;
                     break;
-                case cc.RESOLUTION_POLICY.FIXED_WIDTH:
+                case cc.ResolutionPolicy.FIXED_WIDTH:
                     this._resolutionPolicy = this._rpFixedWidth;
                     break;
             }
@@ -425,7 +395,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         // Reinit frame size
         var frameW = this._frameSize.width, frameH = this._frameSize.height;
-        if (cc.Browser.isMobile)
+        if (cc.sys.isMobile)
             this._setViewPortMeta(this._frameSize.width, this._frameSize.height);
         this._initFrameSize();
         // No change
@@ -450,12 +420,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
 
         // reset director's member variables to fit visible rect
-        var director = cc.Director.getInstance();
+        var director = cc.director;
         director._winSizeInPoints = this.getDesignResolutionSize();
 
         policy.postApply(this);
 
-        if (cc.renderContextType == cc.WEBGL) {
+        if (cc.renderType == cc.RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
@@ -468,7 +438,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             cc.DOM._resetEGLViewDiv();
         }
 
-        cc.VisibleRect.init(this.getVisibleSize());
+        cc.visibleRect.init(this.getVisibleSize());
     },
 
     /**
@@ -478,14 +448,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      */
     getDesignResolutionSize: function () {
         return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
-    },
-
-    /**
-     * set touch delegate
-     * @param {cc.TouchDispatcher} delegate
-     */
-    setTouchDelegate: function (delegate) {
-        this._delegate = delegate;
     },
 
     /**
@@ -606,16 +568,26 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     }
 });
 
-cc.EGLView.getInstance = function () {
+cc.EGLView._getInstance = function () {
     if (!this._instance) {
 	    // First init director
-	    cc.Director.getInstance();
+	    cc.director;
         this._instance = this._instance || new cc.EGLView();
         cc.inputManager.registerSystemEvent(cc.canvas);
         this._instance.initialize();
     }
     return this._instance;
 };
+
+/**
+ * The shared EGLView
+ * @Object
+ * @type {cc.EGLView}
+ */
+cc.view;
+cc.defineGetterSetter(cc, "view", function() {
+	return cc.EGLView._instance ? cc.EGLView._instance : cc.EGLView._getInstance();
+});
 
 /**
  * <p>cc.ContainerStrategy class is the root strategy class of container's scale strategy,
@@ -633,8 +605,8 @@ cc.ContainerStrategy = cc.Class.extend({
      * @param {cc.EGLView} The target view
      */
     preApply: function (view) {
-	    if(sys.os == "iOS" || sys.os == "OS X")
-		    this._adjustRetina = true;
+        var sys = cc.sys;
+        this._adjustRetina = sys.os == sys.OS_IOS || sys.os == sys.OS_OSX
     },
 
     /**
@@ -655,9 +627,9 @@ cc.ContainerStrategy = cc.Class.extend({
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (cc.Browser.isMobile && frame == document.documentElement) {
+        if (cc.sys.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
-            cc.Screen.getInstance().autoFullScreen(frame);
+            cc.screen.autoFullScreen(frame);
         }
 
         var locCanvasElement = cc.canvas, locContainer = cc.container;
@@ -730,7 +702,7 @@ cc.ContentStrategy = cc.Class.extend({
                                contentW, contentH);
 
         // Translate the content
-        if (cc.renderContextType == cc.CANVAS)
+        if (cc.renderType == cc.RENDER_TYPE_CANVAS)
             cc.renderContext.translate(viewport.x, viewport.y + contentH);
 
         this._result.scale = [scaleX, scaleY];
@@ -887,7 +859,7 @@ cc.ContentStrategy = cc.Class.extend({
         },
 
         postApply: function (view) {
-            cc.Director.getInstance()._winSizeInPoints = view.getVisibleSize();
+            cc.director._winSizeInPoints = view.getVisibleSize();
         }
     });
 
@@ -901,7 +873,7 @@ cc.ContentStrategy = cc.Class.extend({
         },
 
         postApply: function (view) {
-            cc.Director.getInstance()._winSizeInPoints = view.getVisibleSize();
+            cc.director._winSizeInPoints = view.getVisibleSize();
         }
     });
 
@@ -926,6 +898,57 @@ cc.ContentStrategy = cc.Class.extend({
  * @extends cc.Class
  */
 cc.ResolutionPolicy = cc.Class.extend({
+	/*
+	 * @public
+	 * @const
+	 * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
+	 * Distortion can occur, and the application may appear stretched or compressed.
+	 */
+	EXACT_FIT: 0,
+
+	/*
+	 * @public
+	 * @const
+	 * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
+	 * while maintaining the original aspect ratio of the application.
+	 */
+	NO_BORDER: 1,
+
+	/*
+	 * @public
+	 * @const
+	 * The entire application is visible in the specified area without distortion while maintaining the original<br/>
+	 * aspect ratio of the application. Borders can appear on two sides of the application.
+	 */
+	SHOW_ALL: 2,
+
+	/*
+	 * @public
+	 * @const
+	 * The application takes the height of the design resolution size and modifies the width of the internal<br/>
+	 * canvas so that it fits the aspect ratio of the device<br/>
+	 * no distortion will occur however you must make sure your application works on different<br/>
+	 * aspect ratios
+	 */
+	FIXED_HEIGHT: 3,
+
+	/*
+	 * @public
+	 * @const
+	 * The application takes the width of the design resolution size and modifies the height of the internal<br/>
+	 * canvas so that it fits the aspect ratio of the device<br/>
+	 * no distortion will occur however you must make sure your application works on different<br/>
+	 * aspect ratios
+	 */
+	FIXED_WIDTH: 4,
+
+	/*
+	 * @public
+	 * @const
+	 * Unknow policy
+	 */
+	UNKNOWN: 5,
+
     _containerStrategy: null,
     _contentStrategy: null,
 

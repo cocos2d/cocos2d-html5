@@ -207,7 +207,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         if (!size) {
             size = 1;
         }
-        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
         var newPoint = cc.p(point.x  * locScaleX, point.y * locScaleY);
         this._renderContext.beginPath();
         this._renderContext.arc(newPoint.x, -newPoint.y, size * locScaleX, 0, Math.PI * 2, false);
@@ -229,7 +229,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         if (!size) {
             size = 1;
         }
-        var locContext = this._renderContext,locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locContext = this._renderContext,locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
 
         locContext.beginPath();
         for (var i = 0, len = points.length; i < len; i++)
@@ -245,7 +245,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {cc.Point} destination
      */
     drawLine:function (origin, destination) {
-        var locContext = this._renderContext, locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locContext = this._renderContext, locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
         locContext.beginPath();
         locContext.moveTo(origin.x * locScaleX, -origin.y * locScaleY);
         locContext.lineTo(destination.x * locScaleX, -destination.y * locScaleY);
@@ -300,7 +300,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
             throw new Error("Polygon's point must greater than 2");
 
         var firstPoint = vertices[0], locContext = this._renderContext;
-        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
         locContext.beginPath();
         locContext.moveTo(firstPoint.x * locScaleX, -firstPoint.y * locScaleY);
         for (var i = 1, len = vertices.length; i < len; i++)
@@ -338,7 +338,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     drawCircle: function (center, radius, angle, segments, drawLineToCenter) {
         drawLineToCenter = drawLineToCenter || false;
         var locContext = this._renderContext;
-        var locScaleX = cc.EGLView.getInstance().getScaleX(), locScaleY = cc.EGLView.getInstance().getScaleY();
+        var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
         locContext.beginPath();
         var endAngle = angle - Math.PI * 2;
         locContext.arc(0 | (center.x * locScaleX), 0 | -(center.y * locScaleY), radius * locScaleX, -angle, -endAngle, false);
@@ -485,7 +485,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      */
     drawStar:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
-        radius *= cc.EGLView.getInstance().getScaleX();
+        radius *= cc.view.getScaleX();
         var colorStr = "rgba(" + (0 | color.r) + "," + (0 | color.g) + "," + (0 | color.b);
         context.fillStyle = colorStr + ",1)";
         var subRadius = radius / 10;
@@ -524,7 +524,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      */
     drawColorBall:function (ctx, radius, color) {
         var context = ctx || this._renderContext;
-        radius *= cc.EGLView.getInstance().getScaleX();
+        radius *= cc.view.getScaleX();
         var colorStr = "rgba(" +(0|color.r) + "," + (0|color.g) + "," + (0|color.b);
         var subRadius = radius / 10;
 
@@ -576,7 +576,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      * @param {Number} width
      */
     setLineWidth:function (width) {
-        this._renderContext.lineWidth = width * cc.EGLView.getInstance().getScaleX();
+        this._renderContext.lineWidth = width * cc.view.getScaleX();
     }
 });
 
@@ -608,7 +608,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             //
             // Position and 1 color passed as a uniform (to similate glColor4ub )
             //
-            this._shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_UCOLOR);
+            this._shader = cc.shaderCache.programForKey(cc.SHADER_POSITION_UCOLOR);
             this._colorLocation = this._renderContext.getUniformLocation(this._shader.getProgram(), "u_color");
             this._pointSizeLocation = this._renderContext.getUniformLocation(this._shader.getProgram(), "u_pointSize");
             //cc.CHECK_GL_ERROR_DEBUG();

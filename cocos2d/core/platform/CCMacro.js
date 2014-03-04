@@ -235,7 +235,7 @@ cc.FLT_EPSILON = 0.0000001192092896;
  * @function
  */
 cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
-    return cc.Director.getInstance().getContentScaleFactor();
+    return cc.director.getContentScaleFactor();
 } : function () {
     return 1;
 };
@@ -321,7 +321,7 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
     return p;
 };
 
-if (!cc.Browser.supportWebGL) {
+if (!cc.sys.supportWebGL) {
     /**
      * WebGL constants
      * @type {object}
@@ -360,7 +360,7 @@ if (!cc.Browser.supportWebGL) {
 }
 
 cc.CHECK_GL_ERROR_DEBUG = function () {
-    if (cc.renderMode == cc.WEBGL) {
+    if (cc.renderMode == cc.RENDER_TYPE_WEBGL) {
         var _error = cc.renderContext.getError();
         if (_error) {
             cc.log("WebGL error " + _error);

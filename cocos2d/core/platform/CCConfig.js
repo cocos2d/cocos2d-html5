@@ -267,22 +267,6 @@ cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
 /**
- *  Runtime information
- *  @deprecated Use "sys" instead.
- */
-cc.config = {
-    'platform' : sys.platform
-};
-
-/**
- * dump config info, but only in debug mode
- */
-cc.dumpConfig = function() {
-    for(var i in sys )
-        cc.log( i + " = " + sys[i] );
-};
-
-/**
  * <p>
  *    If enabled, actions that alter the position property (eg: CCMoveBy, CCJumpBy, CCBezierBy, etc..) will be stacked.                  <br/>
  *    If you run 2 or more 'position' actions at the same time on a node, then end position will be the sum of all the positions.        <br/>

@@ -24,14 +24,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.TIFFReader = cc.Class.extend({
+cc.tiffReader = {
     _littleEndian: false,
     _tiffData: null,
-    _fileDirectories: null,
-
-    ctor: function () {
-        this._fileDirectories = [];
-    },
+    _fileDirectories: [],
 
     getUint8: function (offset) {
         return this._tiffData[offset];
@@ -679,11 +675,4 @@ cc.TIFFReader = cc.Class.extend({
         0x000B: 'FLOAT',
         0x000C: 'DOUBLE'
     }
-});
-
-cc.TIFFReader.__instance = null;
-cc.TIFFReader.getInstance = function () {
-    if (!cc.TIFFReader.__instance)
-        cc.TIFFReader.__instance = new cc.TIFFReader();
-    return cc.TIFFReader.__instance;
 };
