@@ -24,13 +24,13 @@
 
 ccs.LABELBMFONTRENDERERZ = -1;
 /**
- * Base class for ccs.LabelBMFont
+ * Base class for ccs.TextBMFont
  * @class
  * @extends ccs.Widget
  *
  * @property {String}   string  - Content string of the label
  */
-ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
+ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
     _labelBMFontRenderer: null,
     _fileHasInit: false,
     _fntFileName: "",
@@ -167,7 +167,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
     },
 
     createCloneInstance: function () {
-        return ccs.LabelBMFont.create();
+        return ccs.TextBMFont.create();
     },
 
     copySpecialProperties: function (labelBMFont) {
@@ -176,7 +176,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
     }
 });
 
-window._proto = ccs.LabelBMFont.prototype;
+window._proto = ccs.TextBMFont.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
@@ -186,13 +186,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILabelBMFont.
  * @constructs
- * @return {ccs.LabelBMFont}
+ * @return {ccs.TextBMFont}
  * @example
  * // example
- * var uiLabelBMFont = ccs.LabelBMFont.create();
+ * var uiLabelBMFont = ccs.TextBMFont.create();
  */
-ccs.LabelBMFont.create = function () {
-    var uiLabelBMFont = new ccs.LabelBMFont();
+ccs.TextBMFont.create = function () {
+    var uiLabelBMFont = new ccs.TextBMFont();
     if (uiLabelBMFont && uiLabelBMFont.init()) {
         return uiLabelBMFont;
     }

@@ -39,7 +39,7 @@ ccs.LABELRENDERERZ = -1;
  * @property {Number}   verticalAlign       - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
  * @property {Boolean}  touchScaleEnabled   - Indicate whether the label will scale when touching
  */
-ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
+ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     touchScaleEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
@@ -398,7 +398,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     },
 
     createCloneInstance: function () {
-        return ccs.Label.create();
+        return ccs.Text.create();
     },
 
     copySpecialProperties: function (uiLabel) {
@@ -412,7 +412,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     }
 });
 
-window._proto = ccs.Label.prototype;
+window._proto = ccs.Text.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto._setBoundingWidth);
@@ -430,13 +430,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILabel.
  * @constructs
- * @return {ccs.Label}
+ * @return {ccs.Text}
  * @example
  * // example
- * var uiLabel = ccs.Label.create();
+ * var uiLabel = ccs.Text.create();
  */
-ccs.Label.create = function () {
-    var uiLabel = new ccs.Label();
+ccs.Text.create = function () {
+    var uiLabel = new ccs.Text();
     if (uiLabel && uiLabel.init()) {
         return uiLabel;
     }
