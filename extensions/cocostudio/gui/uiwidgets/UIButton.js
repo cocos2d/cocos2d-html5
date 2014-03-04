@@ -707,7 +707,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._titleColor.r = color.r;
         this._titleColor.g = color.g;
         this._titleColor.b = color.b;
-        this._titleRenderer.updateDisplayedColor(color);
+        this._titleRenderer.setColor(color);
     },
 
     /**

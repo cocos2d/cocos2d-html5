@@ -274,7 +274,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
      */
     removeChild: function (child, cleanup) {
         if(cleanup)
-            cc.ArrayRemoveObject(this._pages, child);
+            cc.arrayRemoveObject(this._pages, child);
         ccs.Layout.prototype.removeChild.call(this, child, cleanup);
     },
 

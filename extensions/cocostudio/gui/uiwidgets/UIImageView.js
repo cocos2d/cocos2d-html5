@@ -110,6 +110,10 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     setTextureRect: function (rect) {
         if (!this._scale9Enabled){
             this._imageRenderer.setTextureRect(rect);
+            var locRendererSize = this._imageRenderer.getContentSize();
+            this._imageTextureSize.width = locRendererSize.width;
+            this._imageTextureSize.height = locRendererSize.height;
+            this.imageTextureScaleChangedWithSize();
         }
     },
 

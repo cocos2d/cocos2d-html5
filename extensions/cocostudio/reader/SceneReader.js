@@ -238,11 +238,8 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     this._callSelector(audio, subDict);
                 }
                 else if (className == "GUIComponent") {
-                    var pLayer = ccs.UILayer.create();
-                    pLayer.scheduleUpdate();
                     var widget = ccs.GUIReader.getInstance().widgetFromJsonFile(path);
-                    pLayer.addWidget(widget);
-                    var render = ccs.ComRender.create(pLayer, "GUIComponent");
+                    var render = ccs.ComRender.create(widget, "GUIComponent");
                     if (comName != null) {
                         render.setName(comName);
                     }

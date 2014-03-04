@@ -83,8 +83,7 @@ ccs.PositionType = {
  * Base class for ccs.Widget
  * @sample
  * var uiWidget = ccs.Widget.create();
- * var uiLayer = ccs.UILayer.create();
- * uiLayer.addWidget(uiWidget);
+ * this.addChild(uiWidget);
  * @class
  * @extends ccs.NodeRGBA
  *
@@ -135,6 +134,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _reorderWidgetChildDirty: false,
     _hitted: false,
     _nodes: null,
+    _touchListener : null,
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._enabled = true;
@@ -165,6 +165,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
         this._nodes = [];
+        this._touchListener = null;
     },
 
     /**
@@ -295,7 +296,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             return;
         }
         cc.NodeRGBA.prototype.removeChild.call(this, widget, cleanup);
-        cc.ArrayRemoveObject(this._widgetChildren, widget);
+        cc.arrayRemoveObject(this._widgetChildren, widget);
     },
 
     removeChildByTag: function (tag, cleanup) {
@@ -402,7 +403,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     removeNode: function (node, cleanup) {
         cc.NodeRGBA.prototype.removeChild.call(this, node);
-        cc.ArrayRemoveObject(this._nodes, node);
+        cc.arrayRemoveObject(this._nodes, node);
     },
 
     /**
@@ -734,7 +735,22 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @param enable
      */
     setTouchEnabled: function (enable) {
+        if (this._touchEnabled === enable) {
+            return;
+        }
         this._touchEnabled = enable;
+        if(this._touchEnabled){
+            this._touchListener = cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ONE_BY_ONE,
+                swallowTouches: true,
+                onTouchBegan: this.onTouchBegan.bind(this),
+                onTouchMoved: this.onTouchMoved.bind(this),
+                onTouchEnded: this.onTouchEnded.bind(this)
+            });
+            cc.eventManager.addListener(this._touchListener, this);
+        }else{
+            cc.eventManager.removeListener(this._touchListener);
+        }
     },
 
     /**
