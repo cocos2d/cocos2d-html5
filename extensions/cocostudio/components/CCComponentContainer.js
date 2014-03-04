@@ -61,19 +61,30 @@ cc.ComponentContainer = cc.Class.extend({
         return true;
     },
 
+    /**
+     *
+     * @param {String|cc.Component} name
+     * @returns {boolean}
+     */
     remove:function(name){
         if(!name)
             throw "cc.ComponentContainer.remove(): name should be non-null";
         if(!this._components)
             return false;
-        var locComponents = this._components;
-        name = name.trim();
-        var component = locComponents[name];
+        if(name instanceof cc.Component){
+            return this._removeByComponent(name);
+        }else{
+            name = name.trim();
+            return this._removeByComponent(this._components[name]);
+        }
+    },
+
+    _removeByComponent:function(component){
         if(component)
             return false;
         component.onExit();
         component.setOwner(null);
-        delete locComponents[name];
+        delete this._components[component.getName()];
         return true;
     },
 
