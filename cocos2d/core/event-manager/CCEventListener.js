@@ -137,7 +137,7 @@ cc.EventListener.CUSTOM = 6;
  * @extends cc.EventListener
  *
  */
-cc.EventListenerCustom = cc.EventListener.extend(/** @lends cc.EventListenerCustom# */{
+cc._EventListenerCustom = cc.EventListener.extend(/** @lends cc.EventListenerCustom# */{
     _onCustomEvent: null,
     ctor: function (listenerId, callback) {
         this._onCustomEvent = callback;
@@ -155,7 +155,7 @@ cc.EventListenerCustom = cc.EventListener.extend(/** @lends cc.EventListenerCust
     },
 
     clone: function () {
-        return new cc.EventListenerCustom(this._listenerID, this._onCustomEvent);
+        return new cc._EventListenerCustom(this._listenerID, this._onCustomEvent);
     }
 });
 
@@ -164,11 +164,11 @@ cc.EventListenerCustom = cc.EventListener.extend(/** @lends cc.EventListenerCust
  * @param {string} eventName
  * @param {function} callback
  */
-cc.EventListenerCustom.create = function (eventName, callback) {
-    return new cc.EventListenerCustom(eventName, callback);
+cc._EventListenerCustom.create = function (eventName, callback) {
+    return new cc._EventListenerCustom(eventName, callback);
 };
 
-cc.EventListenerAcceleration = cc.EventListener.extend({
+cc._EventListenerAcceleration = cc.EventListener.extend({
     _onAccelerationEvent: null,
     ctor: function (callback) {
         this._onAccelerationEvent = callback;
@@ -176,27 +176,27 @@ cc.EventListenerAcceleration = cc.EventListener.extend({
         var listener = function (event) {
             selfPointer._onAccelerationEvent(event._acc, event);
         };
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.ACCELERATION, cc.EventListenerAcceleration.LISTENER_ID, listener);
+        cc.EventListener.prototype.ctor.call(this, cc.EventListener.ACCELERATION, cc._EventListenerAcceleration.LISTENER_ID, listener);
     },
 
     checkAvailable: function () {
         if (!this._onAccelerationEvent)
-            throw "cc.EventListenerAcceleration.checkAvailable(): _onAccelerationEvent must be non-nil";
+            throw "cc._EventListenerAcceleration.checkAvailable(): _onAccelerationEvent must be non-nil";
         return true;
     },
 
     clone: function () {
-        return new cc.EventListenerAcceleration(this._onAccelerationEvent);
+        return new cc._EventListenerAcceleration(this._onAccelerationEvent);
     }
 });
 
-cc.EventListenerAcceleration.LISTENER_ID = "__cc_acceleration";
+cc._EventListenerAcceleration.LISTENER_ID = "__cc_acceleration";
 
-cc.EventListenerAcceleration.create = function (callback) {
-    return new cc.EventListenerAcceleration(callback);
+cc._EventListenerAcceleration.create = function (callback) {
+    return new cc._EventListenerAcceleration(callback);
 };
 
-cc.EventListenerKeyboard = cc.EventListener.extend({
+cc._EventListenerKeyboard = cc.EventListener.extend({
     onKeyPressed: null,
     onKeyReleased: null,
 
@@ -211,31 +211,32 @@ cc.EventListenerKeyboard = cc.EventListener.extend({
                     selfPointer.onKeyReleased(event._keyCode, event);
             }
         };
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.KEYBOARD, cc.EventListenerKeyboard.LISTENER_ID, listener);
+        cc.EventListener.prototype.ctor.call(this, cc.EventListener.KEYBOARD, cc._EventListenerKeyboard.LISTENER_ID, listener);
     },
 
     clone: function () {
-        var eventListener = new cc.EventListenerKeyboard();
+        var eventListener = new cc._EventListenerKeyboard();
         eventListener.onKeyPressed = this.onKeyPressed;
         eventListener.onKeyReleased = this.onKeyReleased;
+        return eventListener;
     },
 
     checkAvailable: function () {
         if (this.onKeyPressed == null && this.onKeyReleased == null) {
-            cc.log("cc.EventListenerKeyboard.checkAvailable(): Invalid EventListenerKeyboard!");
+            cc.log("cc._EventListenerKeyboard.checkAvailable(): Invalid EventListenerKeyboard!");
             return false;
         }
         return true;
     }
 });
 
-cc.EventListenerKeyboard.LISTENER_ID = "__cc_keyboard";
+cc._EventListenerKeyboard.LISTENER_ID = "__cc_keyboard";
 
-cc.EventListenerKeyboard.create = function () {
-    return new cc.EventListenerKeyboard();
+cc._EventListenerKeyboard.create = function () {
+    return new cc._EventListenerKeyboard();
 };
 
-cc.EventListenerMouse = cc.EventListener.extend({
+cc._EventListenerMouse = cc.EventListener.extend({
     onMouseDown: null,
     onMouseUp: null,
     onMouseMove: null,
@@ -266,11 +267,11 @@ cc.EventListenerMouse = cc.EventListener.extend({
                     break;
             }
         };
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.MOUSE, cc.EventListenerMouse.LISTENER_ID, listener);
+        cc.EventListener.prototype.ctor.call(this, cc.EventListener.MOUSE, cc._EventListenerMouse.LISTENER_ID, listener);
     },
 
     clone: function () {
-        var eventListener = new cc.EventListenerMouse();
+        var eventListener = new cc._EventListenerMouse();
         eventListener.onMouseDown = this.onMouseDown;
         eventListener.onMouseUp = this.onMouseUp;
         eventListener.onMouseMove = this.onMouseMove;
@@ -283,13 +284,13 @@ cc.EventListenerMouse = cc.EventListener.extend({
     }
 });
 
-cc.EventListenerMouse.LISTENER_ID = "__cc_mouse";
+cc._EventListenerMouse.LISTENER_ID = "__cc_mouse";
 
-cc.EventListenerMouse.create = function () {
-    return new cc.EventListenerMouse();
+cc._EventListenerMouse.create = function () {
+    return new cc._EventListenerMouse();
 };
 
-cc.EventListenerTouchOneByOne = cc.EventListener.extend({
+cc._EventListenerTouchOneByOne = cc.EventListener.extend({
     _claimedTouches: null,
     swallowTouches: false,
     onTouchBegan: null,
@@ -298,7 +299,7 @@ cc.EventListenerTouchOneByOne = cc.EventListener.extend({
     onTouchCancelled: null,
 
     ctor: function () {
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.TOUCH_ONE_BY_ONE, cc.EventListenerTouchOneByOne.LISTENER_ID, null);
+        cc.EventListener.prototype.ctor.call(this, cc.EventListener.TOUCH_ONE_BY_ONE, cc._EventListenerTouchOneByOne.LISTENER_ID, null);
         this._claimedTouches = [];
     },
 
@@ -307,7 +308,7 @@ cc.EventListenerTouchOneByOne = cc.EventListener.extend({
     },
 
     clone: function () {
-        var eventListener = new cc.EventListenerTouchOneByOne();
+        var eventListener = new cc._EventListenerTouchOneByOne();
         eventListener.onTouchBegan = this.onTouchBegan;
         eventListener.onTouchMoved = this.onTouchMoved;
         eventListener.onTouchEnded = this.onTouchEnded;
@@ -318,31 +319,31 @@ cc.EventListenerTouchOneByOne = cc.EventListener.extend({
 
     checkAvailable: function () {
         if(!this.onTouchBegan){
-            cc.log("cc.EventListenerTouchOneByOne.checkAvailable(): Invalid EventListenerTouchOneByOne!");
+            cc.log("cc._EventListenerTouchOneByOne.checkAvailable(): Invalid EventListenerTouchOneByOne!");
             return false;
         }
         return true;
     }
 });
 
-cc.EventListenerTouchOneByOne.LISTENER_ID = "__cc_touch_one_by_one";
+cc._EventListenerTouchOneByOne.LISTENER_ID = "__cc_touch_one_by_one";
 
-cc.EventListenerTouchOneByOne.create = function () {
-    return new cc.EventListenerTouchOneByOne();
+cc._EventListenerTouchOneByOne.create = function () {
+    return new cc._EventListenerTouchOneByOne();
 };
 
-cc.EventListenerTouchAllAtOnce = cc.EventListener.extend({
+cc._EventListenerTouchAllAtOnce = cc.EventListener.extend({
     onTouchesBegan: null,
     onTouchesMoved: null,
     onTouchesEnded: null,
     onTouchesCancelled: null,
 
     ctor: function(){
-       cc.EventListener.prototype.ctor.call(this, cc.EventListener.TOUCH_ALL_AT_ONCE, cc.EventListenerTouchAllAtOnce.LISTENER_ID, null);
+       cc.EventListener.prototype.ctor.call(this, cc.EventListener.TOUCH_ALL_AT_ONCE, cc._EventListenerTouchAllAtOnce.LISTENER_ID, null);
     },
 
     clone: function(){
-        var eventListener = new cc.EventListenerTouchAllAtOnce();
+        var eventListener = new cc._EventListenerTouchAllAtOnce();
         eventListener.onTouchesBegan = this.onTouchesBegan;
         eventListener.onTouchesMoved = this.onTouchesMoved;
         eventListener.onTouchesEnded = this.onTouchesEnded;
@@ -353,17 +354,17 @@ cc.EventListenerTouchAllAtOnce = cc.EventListener.extend({
     checkAvailable: function(){
         if (this.onTouchesBegan == null && this.onTouchesMoved == null
             && this.onTouchesEnded == null && this.onTouchesCancelled == null) {
-            cc.log("cc.EventListenerTouchAllAtOnce.checkAvailable(): Invalid EventListenerTouchAllAtOnce!");
+            cc.log("cc._EventListenerTouchAllAtOnce.checkAvailable(): Invalid EventListenerTouchAllAtOnce!");
             return false;
         }
         return true;
     }
 });
 
-cc.EventListenerTouchAllAtOnce.LISTENER_ID = "__cc_touch_all_at_once";
+cc._EventListenerTouchAllAtOnce.LISTENER_ID = "__cc_touch_all_at_once";
 
-cc.EventListenerTouchAllAtOnce.create = function(){
-     return new cc.EventListenerTouchAllAtOnce();
+cc._EventListenerTouchAllAtOnce.create = function(){
+     return new cc._EventListenerTouchAllAtOnce();
 };
 
 cc.EventListener.create = function(argObj){
@@ -375,19 +376,19 @@ cc.EventListener.create = function(argObj){
 
     var listener = null;
     if(listenerType === cc.EventListener.TOUCH_ONE_BY_ONE)
-        listener = new cc.EventListenerTouchOneByOne();
+        listener = new cc._EventListenerTouchOneByOne();
     else if(listenerType === cc.EventListener.TOUCH_ALL_AT_ONCE)
-        listener = new cc.EventListenerTouchAllAtOnce();
+        listener = new cc._EventListenerTouchAllAtOnce();
     else if(listenerType === cc.EventListener.MOUSE)
-        listener = new cc.EventListenerMouse();
+        listener = new cc._EventListenerMouse();
     else if(listenerType === cc.EventListener.CUSTOM){
-        listener = new cc.EventListenerCustom(argObj.eventName, argObj.callback);
+        listener = new cc._EventListenerCustom(argObj.eventName, argObj.callback);
         delete argObj.eventName;
         delete argObj.callback;
     } else if(listenerType === cc.EventListener.KEYBOARD)
-        listener = new cc.EventListenerKeyboard();
+        listener = new cc._EventListenerKeyboard();
     else if(listenerType === cc.EventListener.ACCELERATION){
-        listener = new cc.EventListenerAcceleration(argObj.callback);
+        listener = new cc._EventListenerAcceleration(argObj.callback);
         delete argObj.callback;
     }
 

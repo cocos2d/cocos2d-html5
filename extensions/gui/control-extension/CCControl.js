@@ -66,6 +66,7 @@ cc.CONTROL_STATE_INITIAL = 1 << 3;
 cc.Control = cc.LayerRGBA.extend({
     _isOpacityModifyRGB:false,
     _hasVisibleParents:false,
+    _touchListener: null,
 
     isOpacityModifyRGB:function () {
         return this._isOpacityModifyRGB;
@@ -154,7 +155,9 @@ cc.Control = cc.LayerRGBA.extend({
             this._selected = false;
             this._highlighted = false;
 
-            var listener = cc.EventListenerTouchOneByOne.create();
+            var listener = cc.EventListener.create({
+                event: cc.EventListener.TOUCH_ONE_BY_ONE
+            });
             if(this.onTouchBegan)
                 listener.onTouchBegan = this.onTouchBegan.bind(this);
             if(this.onTouchMoved)
@@ -163,11 +166,17 @@ cc.Control = cc.LayerRGBA.extend({
                 listener.onTouchEnded = this.onTouchEnded.bind(this);
             if(this.onTouchCancelled)
                 listener.onTouchCancelled = this.onTouchCancelled.bind(this);
-            cc.eventManager.addListener(listener, this);
-
+            this._touchListener = listener;
             return true;
         } else
             return false;
+    },
+
+    onEnter: function(){
+        var locListener = this._touchListener;
+        if(!locListener._isRegistered())
+            cc.eventManager.addListener(locListener, this);
+        cc.Node.prototype.onEnter.call(this);
     },
 
     /**

@@ -554,14 +554,17 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     parsePropTypeColor4FVar:function (node, parent, ccbReader) {
-        var red = ccbReader.readFloat();
-        var green = ccbReader.readFloat();
-        var blue = ccbReader.readFloat();
+        //TODO Color4F doesn't supports on HTML5
+        var red = 0 | (ccbReader.readFloat() * 255);
+        var green = 0 | (ccbReader.readFloat() * 255);
+        var blue = 0 | (ccbReader.readFloat() * 255);
         var alpha = ccbReader.readFloat();
-        var redVar = ccbReader.readFloat();
-        var greenVar = ccbReader.readFloat();
-        var blueVar = ccbReader.readFloat();
+        alpha = alpha <= 1 ? (0 | (alpha * 255)) : alpha;
+        var redVar = 0 | (ccbReader.readFloat() * 255);
+        var greenVar = 0 | (ccbReader.readFloat() * 255);
+        var blueVar = 0 | (ccbReader.readFloat() * 255);
         var alphaVar = ccbReader.readFloat();
+        alphaVar = alphaVar <= 1 ? (0 | (alphaVar * 255)) : alphaVar;
 
         var colors = [];
         colors[0] = {r:red, g:green, b:blue, a:alpha};
