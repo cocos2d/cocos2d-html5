@@ -1601,7 +1601,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * Sets LayoutType.
-     * @param {ccs.LayoutType} type
+     * @param {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE} type
      */
     setLayoutType: function (type) {
         this._innerContainer.setLayoutType(type);
@@ -1609,7 +1609,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * Gets LayoutType.
-     * @returns {ccs.LayoutType}
+     * @returns {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE}
      */
     getLayoutType: function () {
         return this._innerContainer.getLayoutType();

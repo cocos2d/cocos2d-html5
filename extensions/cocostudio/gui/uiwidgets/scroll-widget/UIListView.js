@@ -72,7 +72,7 @@ ccs.ListView = ccs.ScrollView.extend({
     init: function () {
         if (ccs.ScrollView.prototype.init.call(this)) {
             this._items = [];
-            this.setLayoutType(ccs.LayoutType.linearVertical);
+            this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_VERTICAL);
             return true;
         }
         return false;
@@ -363,10 +363,10 @@ ccs.ListView = ccs.ScrollView.extend({
     setDirection: function (dir) {
         switch (dir) {
             case ccs.ScrollViewDir.vertical:
-                this.setLayoutType(ccs.LayoutType.linearVertical);
+                this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_VERTICAL);
                 break;
             case ccs.ScrollViewDir.horizontal:
-                this.setLayoutType(ccs.LayoutType.linearHorizontal);
+                this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL);
                 break;
             case ccs.ScrollViewDir.both:
                 return;

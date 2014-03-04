@@ -21,46 +21,32 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-/**
- * layoutBackGround color type
- * @type {Object}
- */
-ccs.LayoutBackGroundColorType = {
-    none: 0,
-    solid: 1,
-    gradient: 2
-};
 
-/**
- * Layout type
- * @type {Object}
- */
-ccs.LayoutType = {
-    absolute: 0,
-    linearVertical: 1,
-    linearHorizontal: 2,
-    relative: 3
-};
+//layoutBackGround color type
+ccs.LAYOUT_BG_COLOR_NONE = 0;
+ccs.LAYOUT_BG_COLOR_SOLID = 1;
+ccs.LAYOUT_BG_COLOR_GRADIENT = 2;
 
-/**
- * Layout type
- * @type {Object}
- */
-ccs.LayoutClippingType = {
-    stencil: 0,
-    scissor: 1
-};
+//Layout type
+ccs.LAYOUT_TYPE_ABSOLUTE = 0;
+ccs.LAYOUT_TYPE_LINEAR_VERTICAL = 1;
+ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL = 2;
+ccs.LAYOUT_TYPE_RELATIVE = 3;
 
-ccs.BACKGROUNDIMAGEZ = -2;
-ccs.BACKGROUNDCOLORRENDERERZ = -2;
+//Layout clipping type
+ccs.LAYOUT_CLIPPING_STENCIL = 0;
+ccs.LAYOUT_CLIPPING_SCISSOR = 1;
+
+ccs.BACKGROUND_IMAGE_ZORDER = -2;
+ccs.BACKGROUND_COLORRENDERER_ZORDER = -2;
 /**
  * Base class for ccs.Layout
  * @class
  * @extends ccs.Widget
  *
  * @property {Boolean}                  clippingEnabled - Indicate whether clipping is enabled
- * @property {ccs.LayoutClippingType}   clippingType    - The clipping type: ccs.LayoutClippingType.stencil | ccs.LayoutClippingType.scissor
- * @property {ccs.LayoutType}           layoutType      - The layout type: ccs.LayoutType.absolute | ccs.LayoutType.linearVertical | ccs.LayoutType.linearHorizontal | ccs.LayoutType.relative
+ * @property {ccs.LAYOUT_CLIPPING_STENCIL|ccs.LAYOUT_CLIPPING_SCISSOR}   clippingType
+ * @property {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE}  layoutType
  *
  */
 ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
@@ -95,7 +81,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
-        this._colorType = ccs.LayoutBackGroundColorType.none;
+        this._colorType = ccs.LAYOUT_BG_COLOR_NONE;
         this._bgImageTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         this._colorRender = null;
         this._gradientRender = null;
@@ -105,11 +91,11 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
-        this._layoutType = ccs.LayoutType.absolute;
+        this._layoutType = ccs.LAYOUT_TYPE_ABSOLUTE;
         this._widgetType = ccs.WIDGET_TYPE_CONTAINER;
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
-        this._clippingType = ccs.LayoutClippingType.stencil;
+        this._clippingType = ccs.LAYOUT_CLIPPING_STENCIL;
         this._clippingStencil = null;
         this._handleScissor = false;
         this._scissorRectDirty = false;
@@ -209,10 +195,10 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         if (this._clippingEnabled) {
             switch (this._clippingType) {
-                case ccs.LayoutClippingType.stencil:
+                case ccs.LAYOUT_CLIPPING_STENCIL:
                     this.stencilClippingVisit(ctx);
                     break;
-                case ccs.LayoutClippingType.scissor:
+                case ccs.LAYOUT_CLIPPING_SCISSOR:
                     this.scissorClippingVisit(ctx);
                     break;
                 default:
@@ -488,7 +474,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         this._clippingEnabled = able;
         switch (this._clippingType) {
-            case ccs.LayoutClippingType.stencil:
+            case ccs.LAYOUT_CLIPPING_STENCIL:
                 if (able) {
                     this.setStencilClippingSize(this._size);
                 }
@@ -503,7 +489,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Set clipping type
-     * @param {ccs.LayoutClippingType} type
+     * @param {ccs.LAYOUT_CLIPPING_STENCIL|ccs.LAYOUT_CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
         if (type == this._clippingType) {
@@ -517,14 +503,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Get clipping type
-     * @returns {ccs.LayoutClippingType}
+     * @returns {ccs.LAYOUT_CLIPPING_STENCIL|ccs.LAYOUT_CLIPPING_SCISSOR}
      */
     getClippingType : function(){
         return this._clippingType;
     },
 
     setStencilClippingSize: function (size) {
-        if (this._clippingEnabled && this._clippingType == ccs.LayoutClippingType.stencil) {
+        if (this._clippingEnabled && this._clippingType == ccs.LAYOUT_CLIPPING_STENCIL) {
             var rect = [];
             rect[0] = cc.p(0, 0);
             rect[1] = cc.p(size.width, 0);
@@ -559,7 +545,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                             firstClippingParentFounded = true;
                         }
 
-                        if (parent._clippingType == ccs.LayoutClippingType.scissor) {
+                        if (parent._clippingType == ccs.LAYOUT_CLIPPING_SCISSOR) {
                             this._handleScissor = false;
                             break;
                         }
@@ -653,7 +639,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
     },
@@ -724,16 +710,16 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             return;
         }
         switch (this._layoutType) {
-            case ccs.LayoutType.absolute:
+            case ccs.LAYOUT_TYPE_ABSOLUTE:
                 break;
-            case ccs.LayoutType.linearHorizontal:
-            case ccs.LayoutType.linearVertical:
+            case ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL:
+            case ccs.LAYOUT_TYPE_LINEAR_VERTICAL:
                 var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.linear);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.LinearLayoutParameter.create());
                 }
                 break;
-            case ccs.LayoutType.relative:
+            case ccs.LAYOUT_TYPE_RELATIVE:
                 var layoutParameter = locChild.getLayoutParameter(ccs.LayoutParameterType.relative);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccs.RelativeLayoutParameter.create());
@@ -755,7 +741,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
@@ -774,14 +760,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Sets Color Type for layout.
-     * @param {ccs.LayoutBackGroundColorType} type
+     * @param {ccs.LAYOUT_BG_COLOR_NONE|ccs.LAYOUT_BG_COLOR_SOLID|ccs.LAYOUT_BG_COLOR_GRADIENT} type
      */
     setBackGroundColorType: function (type) {
         if (this._colorType == type) {
             return;
         }
         switch (this._colorType) {
-            case ccs.LayoutBackGroundColorType.none:
+            case ccs.LAYOUT_BG_COLOR_NONE:
                 if (this._colorRender) {
                     cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
@@ -791,13 +777,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                     this._gradientRender = null;
                 }
                 break;
-            case ccs.LayoutBackGroundColorType.solid:
+            case ccs.LAYOUT_BG_COLOR_SOLID:
                 if (this._colorRender) {
                     cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
-            case ccs.LayoutBackGroundColorType.gradient:
+            case ccs.LAYOUT_BG_COLOR_GRADIENT:
                 if (this._gradientRender) {
                     cc.NodeRGBA.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
@@ -808,23 +794,23 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         this._colorType = type;
         switch (this._colorType) {
-            case ccs.LayoutBackGroundColorType.none:
+            case ccs.LAYOUT_BG_COLOR_NONE:
                 break;
-            case ccs.LayoutBackGroundColorType.solid:
+            case ccs.LAYOUT_BG_COLOR_SOLID:
                 this._colorRender = cc.LayerColor.create();
                 this._colorRender.setContentSize(this._size);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
-                cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
+                cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
                 break;
-            case ccs.LayoutBackGroundColorType.gradient:
+            case ccs.LAYOUT_BG_COLOR_GRADIENT:
                 this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
                 this._gradientRender.setContentSize(this._size);
                 this._gradientRender.setOpacity(this._opacity);
                 this._gradientRender.setStartColor(this._startColor);
                 this._gradientRender.setEndColor(this._endColor);
                 this._gradientRender.setVector(this._alongVector);
-                cc.NodeRGBA.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
+                cc.NodeRGBA.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
                 break;
             default:
                 break;
@@ -833,7 +819,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Get color type.
-     * @returns {ccs.LayoutBackGroundColorType}
+     * @returns {ccs.LAYOUT_BG_COLOR_NONE|ccs.LAYOUT_BG_COLOR_SOLID|ccs.LAYOUT_BG_COLOR_GRADIENT}
      */
     getBackGroundColorType:function(){
         return this._colorType;
@@ -898,12 +884,12 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     setBackGroundColorOpacity: function (opacity) {
         this._opacity = opacity;
         switch (this._colorType) {
-            case ccs.LayoutBackGroundColorType.none:
+            case ccs.LAYOUT_BG_COLOR_NONE:
                 break;
-            case ccs.LayoutBackGroundColorType.solid:
+            case ccs.LAYOUT_BG_COLOR_SOLID:
                 this._colorRender.setOpacity(opacity);
                 break;
-            case ccs.LayoutBackGroundColorType.gradient:
+            case ccs.LAYOUT_BG_COLOR_GRADIENT:
                 this._gradientRender.setOpacity(opacity);
                 break;
             default:
@@ -949,7 +935,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Sets LayoutType.
-     * @param {ccs.LayoutType} type
+     * @param {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE} type
      */
     setLayoutType: function (type) {
         this._layoutType = type;
@@ -1439,15 +1425,15 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             return;
         }
         switch (this._layoutType) {
-            case ccs.LayoutType.absolute:
+            case ccs.LAYOUT_TYPE_ABSOLUTE:
                 break;
-            case ccs.LayoutType.linearVertical:
+            case ccs.LAYOUT_TYPE_LINEAR_VERTICAL:
                 this.doLayout_LINEAR_VERTICAL();
                 break;
-            case ccs.LayoutType.linearHorizontal:
+            case ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL:
                 this.doLayout_LINEAR_HORIZONTAL();
                 break;
-            case ccs.LayoutType.relative:
+            case ccs.LAYOUT_TYPE_RELATIVE:
                 this.doLayout_RELATIVE();
                 break;
             default:
