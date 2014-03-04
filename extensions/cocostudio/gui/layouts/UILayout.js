@@ -96,7 +96,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._backGroundImageFileName = "";
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
         this._colorType = ccs.LayoutBackGroundColorType.none;
-        this._bgImageTexType = ccs.TextureResType.local;
+        this._bgImageTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         this._colorRender = null;
         this._gradientRender = null;
         this._color = cc.color(255, 255, 255, 255);
@@ -106,7 +106,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
         this._layoutType = ccs.LayoutType.absolute;
-        this._widgetType = ccs.WidgetType.container;
+        this._widgetType = ccs.WIDGET_TYPE_CONTAINER;
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
         this._clippingType = ccs.LayoutClippingType.stencil;
@@ -669,23 +669,23 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     /**
      * Sets a background image for layout
      * @param {String} fileName
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     setBackGroundImage: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         if (this._backGroundImage == null) {
             this.addBackGroundImage();
         }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
         switch (this._bgImageTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._backGroundImage.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._backGroundImage.initWithSpriteFrameName(fileName);
                 break;
             default:

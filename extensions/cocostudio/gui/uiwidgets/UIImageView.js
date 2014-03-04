@@ -42,7 +42,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
         this._capInsets = cc.rect(0,0,0,0);
         this._imageRenderer = null;
         this._textureFile = "";
-        this._imageTexType = ccs.TextureResType.local;
+        this._imageTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         this._imageTextureSize = cc.size(this._size.width, this._size.height);
     },
 
@@ -54,21 +54,21 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
     /**
      * Load textures for button.
      * @param {String} fileName
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._textureFile = fileName;
         this._imageTexType = texType;
         var imageRenderer = this._imageRenderer
         switch (this._imageTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 imageRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:

@@ -82,9 +82,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._capInsetsNormal = cc.rect(0, 0, 0, 0);
         this._capInsetsPressed = cc.rect(0, 0, 0, 0);
         this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
-        this._normalTexType = ccs.TextureResType.local;
-        this._pressedTexType = ccs.TextureResType.local;
-        this._disabledTexType = ccs.TextureResType.local;
+        this._normalTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._pressedTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._disabledTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         var locSize = this._size;
         this._normalTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
@@ -125,7 +125,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled == able) {
             return;
         }
-        this._brightStyle = ccs.BrightStyle.none;
+        this._brightStyle = ccs.BRIGHT_STYLE_NONE;
         this._scale9Enabled = able;
 
         cc.NodeRGBA.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
@@ -187,7 +187,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      * @param {String} normal
      * @param {String} selected
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextures: function (normal, selected, disabled, texType) {
         this.loadTextureNormal(normal, texType);
@@ -198,21 +198,21 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     /**
      * Load normal state texture for button.
      * @param {String} normal
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
-        texType = texType||ccs.TextureResType.local;
+        texType = texType||ccs.TEXTURE_RES_TYPE_LOCAL;
         this._normalFileName = normal;
         this._normalTexType = texType;
         var buttonNormalRenderer = this._buttonNormalRenderer;
         switch (this._normalTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 buttonNormalRenderer.initWithFile(normal);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 buttonNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
@@ -246,21 +246,21 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     /**
      * Load selected state texture for button.
      * @param {String} selected
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTexturePressed: function (selected, texType) {
         if (!selected) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
         var clickedRenderer = this._buttonClickedRenderer;
         switch (this._pressedTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 clickedRenderer.initWithFile(selected);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 clickedRenderer.initWithSpriteFrameName(selected);
                 break;
             default:
@@ -292,21 +292,21 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     /**
      * Load dark state texture for button.
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
         var disableRenderer = this._buttonDisableRenderer;
         switch (this._disabledTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 disableRenderer.initWithFile(disabled);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 disableRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
@@ -580,9 +580,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     getVirtualRenderer: function () {
         if (this._bright) {
             switch (this._brightStyle) {
-                case ccs.BrightStyle.normal:
+                case ccs.BRIGHT_STYLE_NORMAL:
                     return this._buttonNormalRenderer;
-                case ccs.BrightStyle.highlight:
+                case ccs.BRIGHT_STYLE_HIGH_LIGHT:
                     return this._buttonClickedRenderer;
                 default:
                     return null;

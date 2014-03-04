@@ -55,7 +55,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         this._percent = 100;
         this._totalLength = 0;
         this._barRenderer = null;
-        this._renderBarTexType = ccs.TextureResType.local;
+        this._renderBarTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         this._barRendererTextureSize = cc.size(0, 0);
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
@@ -110,21 +110,21 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     /**
      * Load texture for loadingbar.
      * @param {String} texture
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTexture: function (texture, texType) {
         if (!texture) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._renderBarTexType = texType;
         this._textureFile = texture;
         var barRenderer = this._barRenderer;
         switch (this._renderBarTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 barRenderer.initWithFile(texture);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 barRenderer.initWithSpriteFrameName(texture);
                 break;
             default:
@@ -251,7 +251,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         var res = this._percent / 100.0;
 
         var x = 0, y = 0;
-        if(this._renderBarTexType==ccs.TextureResType.plist){
+        if(this._renderBarTexType==ccs.TEXTURE_RES_TYPE_PLIST){
             var barNode = this._barRenderer;
             if (barNode) {
                 var to = barNode.getTextureRect()._origin;

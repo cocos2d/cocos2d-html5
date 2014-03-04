@@ -148,7 +148,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (!page) {
             return;
         }
-        if (page.getWidgetType() != ccs.WidgetType.container) {
+        if (page.getWidgetType() != ccs.WIDGET_TYPE_CONTAINER) {
             return;
         }
         if (this._pages.indexOf(page) != -1) {
@@ -178,7 +178,7 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         if (!page) {
             return;
         }
-        if (page.getWidgetType() != ccs.WidgetType.container) {
+        if (page.getWidgetType() != ccs.WIDGET_TYPE_CONTAINER) {
             return;
         }
         if (this._pages.indexOf(page) != -1) {

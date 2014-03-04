@@ -87,11 +87,11 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
         this._sliderEventListener = null;
         this._sliderEventSelector = null;
-        this._barTexType = ccs.TextureResType.local;
-        this._progressBarTexType = ccs.TextureResType.local;
-        this._ballNTexType = ccs.TextureResType.local;
-        this._ballPTexType = ccs.TextureResType.local;
-        this._ballDTexType = ccs.TextureResType.local;
+        this._barTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._progressBarTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._ballNTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._ballPTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._ballDTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         this._isTextureLoaded = false;
     },
 
@@ -116,21 +116,21 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     /**
      * Load texture for slider bar.
      * @param {String} fileName
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._textureFile = fileName;
         this._barTexType = texType;
         var barRenderer = this._barRenderer;
         switch (this._barTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 barRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 barRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -149,21 +149,21 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     /**
      * Load dark state texture for slider progress bar.
      * @param {String} fileName
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadProgressBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._progressBarTextureFile = fileName;
         this._progressBarTexType = texType;
         var progressBarRenderer = this._progressBarRenderer;
         switch (this._progressBarTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 progressBarRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 progressBarRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -305,7 +305,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
      * @param {String} normal
      * @param {String} pressed
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTextures: function (normal, pressed, disabled, texType) {
         this.loadSlidBallTextureNormal(normal, texType);
@@ -316,20 +316,20 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     /**
      * Load normal state texture for slider ball.
      * @param {String} normal
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._slidBallNormalTextureFile = normal;
         this._ballNTexType = texType;
         switch (this._ballNTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._slidBallNormalRenderer.initWithFile(normal);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._slidBallNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
@@ -341,20 +341,20 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     /**
      * Load selected state texture for slider ball.
      * @param {String} pressed
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTexturePressed: function (pressed, texType) {
         if (!pressed) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._slidBallPressedTextureFile = pressed;
         this._ballPTexType = texType;
         switch (this._ballPTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._slidBallPressedRenderer.initWithFile(pressed);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._slidBallPressedRenderer.initWithSpriteFrameName(pressed);
                 break;
             default:
@@ -366,20 +366,20 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     /**
      * Load dark state texture for slider ball.
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._slidBallDisabledTextureFile = disabled;
         this._ballDTexType = texType;
         switch (this._ballDTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._slidBallDisabledRenderer.initWithFile(disabled);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._slidBallDisabledRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
@@ -410,7 +410,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
         else {
             var x = 0, y = 0;
-            if (this._progressBarTexType == ccs.TextureResType.plist) {
+            if (this._progressBarTexType == ccs.TEXTURE_RES_TYPE_PLIST) {
                 var barNode = this._progressBarRenderer;
                 if (barNode) {
                     var to = barNode.getTextureRect()._origin;

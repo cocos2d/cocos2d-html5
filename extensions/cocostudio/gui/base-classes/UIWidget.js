@@ -22,62 +22,32 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * bright style
- * @type {Object}
- */
-ccs.BrightStyle = {
-    none: -1,
-    normal: 0,
-    highlight: 1
-};
+//bright style
+ccs.BRIGHT_STYLE_NONE = -1;
+ccs.BRIGHT_STYLE_NORMAL = 0;
+ccs.BRIGHT_STYLE_HIGH_LIGHT = 1;
 
-/**
- * widget type
- * @type {Object}
- */
-ccs.WidgetType = {
-    widget: 0, //control
-    container: 1 //container
-};
+//widget type
+ccs.WIDGET_TYPE_WIDGET = 0;
+ccs.WIDGET_TYPE_CONTAINER = 1;
 
-/**
- * texture resource type
- * @type {Object}
- */
-ccs.TextureResType = {
-    local: 0,
-    plist: 1
-};
+//texture resource type
+ccs.TEXTURE_RES_TYPE_LOCAL = 0;
+ccs.TEXTURE_RES_TYPE_PLIST = 1;
 
-/**
- * touch event type
- * @type {Object}
- */
-ccs.TouchEventType = {
-    began: 0,
-    moved: 1,
-    ended: 2,
-    canceled: 3
-};
+//touch event type
+ccs.TOUCH_EVENT_TYPE_BAGAN = 0;
+ccs.TOUCH_EVENT_TYPE_MOVED = 1;
+ccs.TOUCH_EVENT_TYPE_ENDED = 2;
+ccs.TOUCH_EVENT_TYPE_CANCELED = 3;
 
-/**
- * size type
- * @type {Object}
- */
-ccs.SizeType = {
-    absolute: 0,
-    percent: 1
-};
+//size type
+ccs.SIZE_TYPE_ABSOLUTE = 0;
+ccs.SIZE_TYPE_PERCENT = 1;
 
-/**
- * position type
- * @type {Object}
- */
-ccs.PositionType = {
-    absolute: 0,
-    percent: 1
-};
+//position type
+ccs.POSITION_TYPE_ABSOLUTE = 0;
+ccs.POSITION_TYPE_PERCENT = 1;
 
 /**
  * Base class for ccs.Widget
@@ -94,8 +64,8 @@ ccs.PositionType = {
  * @property {ccs.Widget}       widgetParent    - <@readonly> The direct parent when it's a widget also, otherwise equals null
  * @property {Boolean}          enabled         - Indicate whether the widget is enabled
  * @property {Boolean}          focused         - Indicate whether the widget is focused
- * @property {ccs.SizeType}     sizeType        - The size type of the widget
- * @property {ccs.WidgetType}   widgetType      - <@readonly> The type of the widget
+ * @property {ccs.SIZE_TYPE_ABSOLUTE|ccs.SIZE_TYPE_PERCENT}     sizeType        - The size type of the widget
+ * @property {ccs.WIDGET_TYPE_WIDGET|ccs.WIDGET_TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
  * @property {Boolean}          touchEnabled    - Indicate whether touch events are enabled
  * @property {Boolean}          updateEnabled   - Indicate whether the update function is scheduled
  * @property {Boolean}          bright          - Indicate whether the widget is bright
@@ -142,7 +112,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._touchEnabled = false;
         this._touchPassedEnabled = false;
         this._focus = false;
-        this._brightStyle = ccs.BrightStyle.none;
+        this._brightStyle = ccs.BRIGHT_STYLE_NONE;
         this._updateEnabled = false;
         this._touchStartPos = cc.p(0,0);
         this._touchMovePos = cc.p(0,0);
@@ -150,7 +120,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._touchEventListener = null;
         this._touchEventSelector = null;
         this._name = "default";
-        this._widgetType = ccs.WidgetType.widget;
+        this._widgetType = ccs.WIDGET_TYPE_WIDGET;
         this._actionTag = 0;
         this._size = cc.size(0, 0);
         this._customSize = cc.size(0, 0);
@@ -158,9 +128,9 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._ignoreSize = false;
         this._widgetChildren = [];
         this._affectByClipping = false;
-        this._sizeType = ccs.SizeType.absolute;
+        this._sizeType = ccs.SIZE_TYPE_ABSOLUTE;
         this._sizePercent = cc.p(0,0);
-        this.positionType = ccs.PositionType.absolute;
+        this.positionType = ccs.POSITION_TYPE_ABSOLUTE;
         this._positionPercent = cc.p(0,0);
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
@@ -539,7 +509,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     updateSizeAndPosition: function () {
         switch (this._sizeType) {
-            case ccs.SizeType.absolute:
+            case ccs.SIZE_TYPE_ABSOLUTE:
                 var locSize;
                 if (this._ignoreSize) {
                     locSize = this.getContentSize();
@@ -566,7 +536,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                 this._sizePercent.x = spx;
                 this._sizePercent.y = spy;
                 break;
-            case ccs.SizeType.percent:
+            case ccs.SIZE_TYPE_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var cSize = cc.size(0,0);
                 if (widgetParent){
@@ -594,7 +564,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.onSizeChanged();
         var absPos = this.getPosition();
         switch (this.positionType) {
-            case ccs.PositionType.absolute:
+            case ccs.POSITION_TYPE_ABSOLUTE:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -610,7 +580,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                     this._positionPercent.y = absPos.y / pSize.height;
                 }
                 break;
-            case ccs.PositionType.percent:
+            case ccs.POSITION_TYPE_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -628,7 +598,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Changes the size type of widget.
-     * @param {ccs.SizeType} type
+     * @param {ccs.SIZE_TYPE_ABSOLUTE|ccs.SIZE_TYPE_PERCENT} type
      */
     setSizeType: function (type) {
         this._sizeType = type;
@@ -636,7 +606,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Gets the size type of widget.
-     * @returns {ccs.SizeType}
+     * @returns {ccs.SIZE_TYPE_ABSOLUTE|ccs.SIZE_TYPE_PERCENT}
      */
     getSizeType: function () {
         return this._sizeType;
@@ -806,10 +776,10 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._focus = fucos;
         if (this._bright) {
             if (this._focus) {
-                this.setBrightStyle(ccs.BrightStyle.highlight);
+                this.setBrightStyle(ccs.BRIGHT_STYLE_HIGH_LIGHT);
             }
             else {
-                this.setBrightStyle(ccs.BrightStyle.normal);
+                this.setBrightStyle(ccs.BRIGHT_STYLE_NORMAL);
             }
         }
         else {
@@ -820,8 +790,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     setBright: function (bright, containChild) {
         this._bright = bright;
         if (this._bright) {
-            this._brightStyle = ccs.BrightStyle.none;
-            this.setBrightStyle(ccs.BrightStyle.normal);
+            this._brightStyle = ccs.BRIGHT_STYLE_NONE;
+            this.setBrightStyle(ccs.BRIGHT_STYLE_NORMAL);
         }
         else {
             this.onPressStateChangedToDisabled();
@@ -830,19 +800,19 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * To set the bright style of widget.
-     * @param {ccs.BrightStyle} style
+     * @param {ccs.BRIGHT_STYLE_NONE|ccs.BRIGHT_STYLE_NORMAL|ccs.BRIGHT_STYLE_HIGH_LIGHT} style
      */
     setBrightStyle: function (style) {
         if (this._brightStyle == style) {
             return;
         }
-        style = style|| ccs.BrightStyle.normal;
+        style = style|| ccs.BRIGHT_STYLE_NORMAL;
         this._brightStyle = style;
         switch (this._brightStyle) {
-            case ccs.BrightStyle.normal:
+            case ccs.BRIGHT_STYLE_NORMAL:
                 this.onPressStateChangedToNormal();
                 break;
-            case ccs.BrightStyle.highlight:
+            case ccs.BRIGHT_STYLE_HIGH_LIGHT:
                 this.onPressStateChangedToPressed();
                 break;
             default:
@@ -948,7 +918,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     pushDownEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.began);
+                this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_BAGAN);
             }
         }
     },
@@ -956,7 +926,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     moveEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.moved);
+                this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_MOVED);
             }
         }
     },
@@ -964,14 +934,14 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     releaseUpEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.ended);
+                this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_ENDED);
             }
         }
     },
 
     cancelUpEvent: function () {
         if (this._touchEventSelector) {
-            this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.canceled);
+            this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_CANCELED);
         }
     },
 
@@ -1167,7 +1137,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Changes the position type of the widget
-     * @param {ccs.PositionType} type
+     * @param {ccs.POSITION_TYPE_ABSOLUTE|ccs.POSITION_TYPE_PERCENT} type
      */
     setPositionType: function (type) {
         this.positionType = type;
@@ -1284,7 +1254,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * get widget type
-     * @returns {ccs.WidgetType}
+     * @returns {ccs.WIDGET_TYPE_WIDGET|ccs.WIDGET_TYPE_CONTAINER}
      */
     getWidgetType: function () {
         return this._widgetType;
