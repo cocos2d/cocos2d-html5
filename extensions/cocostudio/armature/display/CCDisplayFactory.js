@@ -144,7 +144,7 @@ ccs.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, 
     if (startPos != -1) {
         textureName = textureName.substring(0, startPos);
     }
-    var textureData = ccs.ArmatureDataManager.getInstance().getTextureData(textureName);
+    var textureData = ccs.armatureDataManager.getTextureData(textureName);
     if (textureData) {
         //! Init display anchorPoint, every Texture have a anchor point
         skin.setAnchorPoint(textureData.pivotX, textureData.pivotY);

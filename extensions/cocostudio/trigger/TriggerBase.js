@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 ccs.sendEvent = function (event) {
-    var triggerObjArr = ccs.TriggerMng.getInstance().get(event);
+    var triggerObjArr = ccs.triggerManager.get(event);
     if (triggerObjArr == null) {
         return;
     }
