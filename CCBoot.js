@@ -859,17 +859,17 @@ cc._initDebugSetting = function () {
         || !console.error){
         cc.error = function(){
             cc._logToWebPage.apply(cc, arguments);
-        }
+        };
         cc.assert = function(cond, msg){
             if(!cond && msg) cc._logToWebPage(msg);
-        }
+        };
     }else{
         cc.error = function(){
             console.error.apply(console, arguments);
-        }
+        };
         cc.assert = function(){
             console.assert.apply(console, arguments);
-        }
+        };
     }
 };
 //+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
@@ -1082,7 +1082,6 @@ cc.game = {
     _paused : true,//whether the game is paused
 
     _intervalId : null,//interval target of main
-
 
     DEBUG_MODE_NONE : 0,
     DEBUG_MODE_LOG : 1,
