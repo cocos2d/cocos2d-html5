@@ -431,7 +431,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
 
         this.impl._delegateWithIme = null;
         delegate.didDetachWithIME();
-        cc.canvas.focus();
+        cc._canvas.focus();
         return true;
     },
 

@@ -156,7 +156,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             var s = this.size;
             var vertices = [cc.p(0, 0), cc.p(s.width, 0),
                 cc.p(s.width, s.height), cc.p(0, s.height)];
-            cc.drawingUtil.drawPoly(vertices, 4, true);
+            cc._drawingUtil.drawPoly(vertices, 4, true);
         }
     },
 

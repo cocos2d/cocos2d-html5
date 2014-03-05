@@ -361,6 +361,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
 	},
 
     /**
+     * Set font size for text field content
      * @param {cc.Size} size
      */
     setFontSize: function (size) {
@@ -368,14 +369,16 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.textfieldRendererScaleChangedWithSize();
     },
 
-    /**
-     * @returns {Number}
-     */
-    getFontSize:function(){
-        return this._textFieldRender.getFontSize();
-    },
+	/**
+	 * Get font size for text field content
+	 * @param {cc.Size} size
+	 */
+	getFontSize: function () {
+		return this._textFieldRender.getFontSize();
+	},
 
     /**
+     * Set font name for text field content
      * @param {String} name
      */
     setFontName: function (name) {
@@ -383,12 +386,13 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.textfieldRendererScaleChangedWithSize();
     },
 
-    /**
-     * @returns {String}
-     */
-    getFontName:function(){
-        return this._textFieldRender.getFontName();
-    },
+	/**
+	 * Get font name for text field content
+	 * @param {cc.Size} size
+	 */
+	getFontName: function () {
+		return this._textFieldRender.getFontName();
+	},
 
     /**
      * detach with IME

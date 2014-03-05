@@ -33,7 +33,7 @@ cc.TouchesIntergerDict = {};
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _delegate: null,
-    // Size of parent node that contains cc.container and cc.canvas
+    // Size of parent node that contains cc.container and cc._canvas
     _frameSize: null,
     // resolution size, it is the size appropriate for the app resources.
     _designResolutionSize: null,
@@ -69,7 +69,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _supportTouch: false,
     _contentTranslateLeftTop: null,
 
-    // Parent node that contains cc.container and cc.canvas
+    // Parent node that contains cc.container and cc._canvas
     _frame: null,
     _frameZoomFactor: 1.0,
     __resizeWithBrowserSize: false,
@@ -80,7 +80,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._frameSize = cc.size(0, 0);
         this._initFrameSize();
 
-        var w = cc.canvas.width, h = cc.canvas.height;
+        var w = cc._canvas.width, h = cc._canvas.height;
         this._designResolutionSize = cc.size(w, h);
         this._originalDesignResolutionSize = cc.size(w, h);
         this._viewPortRect = cc.rect(0, 0, w, h);
@@ -97,8 +97,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._rpFixedHeight = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.FIXED_HEIGHT);
         this._rpFixedWidth = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.FIXED_WIDTH);
 
-        this._hDC = cc.canvas;
-        this._hRC = cc.renderContext;
+        this._hDC = cc._canvas;
+        this._hRC = cc._renderContext;
     },
 
     // Resize helper functions
@@ -413,8 +413,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
         if (result.viewport) {
             var vp = this._viewPortRect = result.viewport, visible = this._visibleRect;
-            visible.width = cc.canvas.width / this._scaleX;
-            visible.height = cc.canvas.height / this._scaleY;
+            visible.width = cc._canvas.width / this._scaleX;
+            visible.height = cc._canvas.height / this._scaleY;
             visible.x = -vp.x / this._scaleX;
             visible.y = -vp.y / this._scaleY;
         }
@@ -425,7 +425,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         policy.postApply(this);
 
-        if (cc.renderType == cc.RENDER_TYPE_WEBGL) {
+        if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
@@ -459,7 +459,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      */
     setViewPortInPoints: function (x, y, w, h) {
         var locFrameZoomFactor = this._frameZoomFactor, locScaleX = this._scaleX, locScaleY = this._scaleY;
-        cc.renderContext.viewport((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
+        cc._renderContext.viewport((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
             (y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor),
             (w * locScaleX * locFrameZoomFactor),
             (h * locScaleY * locFrameZoomFactor));
@@ -474,7 +474,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      */
     setScissorInPoints: function (x, y, w, h) {
         var locFrameZoomFactor = this._frameZoomFactor, locScaleX = this._scaleX, locScaleY = this._scaleY;
-        cc.renderContext.scissor((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
+        cc._renderContext.scissor((x * locScaleX * locFrameZoomFactor + this._viewPortRect.x * locFrameZoomFactor),
             (y * locScaleY * locFrameZoomFactor + this._viewPortRect.y * locFrameZoomFactor),
             (w * locScaleX * locFrameZoomFactor),
             (h * locScaleY * locFrameZoomFactor));
@@ -484,7 +484,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * Get whether GL_SCISSOR_TEST is enable
      */
     isScissorEnabled: function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         return gl.isEnabled(gl.SCISSOR_TEST);
     },
 
@@ -493,7 +493,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @return {cc.Rect}
      */
     getScissorRect: function () {
-        var gl = cc.renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
+        var gl = cc._renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
         var boxArr = gl.getParameter(gl.SCISSOR_BOX);
         return cc.rect((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / scaleY,
             boxArr[2] / scaleX, boxArr[3] / scaleY);
@@ -573,7 +573,7 @@ cc.EGLView._getInstance = function () {
 	    // First init director
 	    cc.director;
         this._instance = this._instance || new cc.EGLView();
-        cc.inputManager.registerSystemEvent(cc.canvas);
+        cc.inputManager.registerSystemEvent(cc._canvas);
         this._instance.initialize();
     }
     return this._instance;
@@ -591,7 +591,7 @@ cc.defineGetterSetter(cc, "view", function() {
 
 /**
  * <p>cc.ContainerStrategy class is the root strategy class of container's scale strategy,
- * it controls the behavior of how to scale the cc.container and cc.canvas object</p>
+ * it controls the behavior of how to scale the cc.container and cc._canvas object</p>
  *
  * @class
  * @extends cc.Class
@@ -632,7 +632,7 @@ cc.ContainerStrategy = cc.Class.extend({
             cc.screen.autoFullScreen(frame);
         }
 
-        var locCanvasElement = cc.canvas, locContainer = cc.container;
+        var locCanvasElement = cc._canvas, locContainer = cc.container;
         // Setup container
         locContainer.style.width = locCanvasElement.style.width = w + "px";
         locContainer.style.height = locCanvasElement.style.height = h + "px";
@@ -702,8 +702,8 @@ cc.ContentStrategy = cc.Class.extend({
                                contentW, contentH);
 
         // Translate the content
-        if (cc.renderType == cc.RENDER_TYPE_CANVAS)
-            cc.renderContext.translate(viewport.x, viewport.y + contentH);
+        if (cc._renderType == cc._RENDER_TYPE_CANVAS)
+            cc._renderContext.translate(viewport.x, viewport.y + contentH);
 
         this._result.scale = [scaleX, scaleY];
         this._result.viewport = viewport;
@@ -796,7 +796,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     var OriginalContainer = cc.ContainerStrategy.extend({
         apply: function (view) {
-            this._setupContainer(view, cc.canvas.width, cc.canvas.height);
+            this._setupContainer(view, cc._canvas.width, cc._canvas.height);
         }
     });
 
@@ -814,7 +814,7 @@ cc.ContentStrategy = cc.Class.extend({
 // Content scale strategys
     var ExactFit = cc.ContentStrategy.extend({
         apply: function (view, designedResolution) {
-            var containerW = cc.canvas.width, containerH = cc.canvas.height,
+            var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 scaleX = containerW / designedResolution.width, scaleY = containerH / designedResolution.height;
 
             return this._buildResult(containerW, containerH, containerW, containerH, scaleX, scaleY);
@@ -823,7 +823,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     var ShowAll = cc.ContentStrategy.extend({
         apply: function (view, designedResolution) {
-            var containerW = cc.canvas.width, containerH = cc.canvas.height,
+            var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designW = designedResolution.width, designH = designedResolution.height,
                 scaleX = containerW / designW, scaleY = containerH / designH, scale = 0,
                 contentW, contentH;
@@ -837,7 +837,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     var NoBorder = cc.ContentStrategy.extend({
         apply: function (view, designedResolution) {
-            var containerW = cc.canvas.width, containerH = cc.canvas.height,
+            var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designW = designedResolution.width, designH = designedResolution.height,
                 scaleX = containerW / designW, scaleY = containerH / designH, scale,
                 contentW, contentH;
@@ -851,7 +851,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     var FixedHeight = cc.ContentStrategy.extend({
         apply: function (view, designedResolution) {
-            var containerW = cc.canvas.width, containerH = cc.canvas.height,
+            var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designH = designedResolution.height, scale = containerH / designH,
                 contentW = containerW, contentH = containerH;
 
@@ -865,7 +865,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     var FixedWidth = cc.ContentStrategy.extend({
         apply: function (view, designedResolution) {
-            var containerW = cc.canvas.width, containerH = cc.canvas.height,
+            var containerW = cc._canvas.width, containerH = cc._canvas.height,
                 designW = designedResolution.width, scale = containerW / designW,
                 contentW = containerW, contentH = containerH;
 

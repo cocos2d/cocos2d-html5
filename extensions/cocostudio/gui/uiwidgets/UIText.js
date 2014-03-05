@@ -121,8 +121,8 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     },
 
     /**
-     * set fontName
-     * @param {String} name
+     * Set font name
+     * @return {String} name
      */
     setFontName: function (name) {
         this._fontName = name;
@@ -189,7 +189,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     },
 
     /**
-     * return Horizontal Alignment of cc.LabelTTF
+     * Return Horizontal Alignment of label
      * @returns {TEXT_ALIGNMENT_LEFT|TEXT_ALIGNMENT_CENTER|TEXT_ALIGNMENT_RIGHT}
      */
     getTextHorizontalAlignment:function(){
@@ -197,7 +197,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     },
 
     /**
-     * set Vertical Alignment of cc.LabelTTF
+     * Set Vertical Alignment of label
      * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
      */
     setTextVerticalAlignment: function (alignment) {
@@ -211,7 +211,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
      * @returns {VERTICAL_TEXT_ALIGNMENT_TOP|VERTICAL_TEXT_ALIGNMENT_CENTER|VERTICAL_TEXT_ALIGNMENT_BOTTOM}
      */
     getTextVerticalAlignment:function(){
-        return this._labelRenderer.getVerticalAlignment();
+        return this._textVerticalAlignment;
     },
 
     /**
@@ -430,7 +430,7 @@ cc.defineGetterSetter(_proto, "stringLength", _proto.getStringLength);
 cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
 cc.defineGetterSetter(_proto, "fontSize", _proto.getFontSize, _proto.setFontSize);
 cc.defineGetterSetter(_proto, "fontName", _proto.getFontName, _proto.setFontName);
-cc.defineGetterSetter(_proto, "textAlign", _proto.getHorizontalAlignment, _proto.setTextHorizontalAlignment);
+cc.defineGetterSetter(_proto, "textAlign", _proto.getTextHorizontalAlignment, _proto.setTextHorizontalAlignment);
 cc.defineGetterSetter(_proto, "verticalAlign", _proto.getTextVerticalAlignment, _proto.setTextVerticalAlignment);
 
 delete window._proto;

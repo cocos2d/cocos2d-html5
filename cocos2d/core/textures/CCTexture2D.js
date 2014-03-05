@@ -144,7 +144,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
     releaseTexture:function () {
         if (this._webTextureObj)
-            cc.renderContext.deleteTexture(this._webTextureObj);
+            cc._renderContext.deleteTexture(this._webTextureObj);
         cc.loader.release(this.url);
     },
 
@@ -274,7 +274,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
         var self = this, tex2d = cc.Texture2D;
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         var format = gl.RGBA, type = gl.UNSIGNED_BYTE;
 
         var bitsPerPixel = cc.Texture2D.BITS_PER_PIXEL_FORMAT[pixelFormat];
@@ -379,7 +379,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         cc.glBindTexture2D(self);
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
@@ -409,7 +409,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         cc.glBindTexture2D(self);
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
@@ -449,7 +449,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     initWithElement:function (element) {
         if (!element)
             return;
-        this._webTextureObj = cc.renderContext.createTexture();
+        this._webTextureObj = cc._renderContext.createTexture();
         this._htmlElementObj = element;
     },
 
@@ -476,7 +476,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         }
         self._isLoaded = true;
         //upload image to buffer
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.glBindTexture2D(self);
 
@@ -574,7 +574,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param texParams
      */
     setTexParameters:function (texParams) {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
             (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
@@ -596,7 +596,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      *  - GL_TEXTURE_MAG_FILTER = GL_NEAREST
      */
     setAntiAliasTexParameters:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.glBindTexture2D(this);
         if (!this._hasMipmaps)
@@ -617,7 +617,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      *   GL_TEXTURE_MAG_FILTER = GL_NEAREST
      */
     setAliasTexParameters:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.glBindTexture2D(this);
         if (!this._hasMipmaps)
@@ -641,7 +641,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         cc.assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
 
         cc.glBindTexture2D(this);
-        cc.renderContext.generateMipmap(cc.renderContext.TEXTURE_2D);
+        cc._renderContext.generateMipmap(cc._renderContext.TEXTURE_2D);
         this._hasMipmaps = true;
     },
 

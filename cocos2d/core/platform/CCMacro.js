@@ -165,7 +165,7 @@ cc.BLEND_DST = 0x0303;
 cc.NODE_DRAW_SETUP = function (node) {
     //cc.glEnable(node._glServerState);
     if (node._shaderProgram) {
-        //cc.renderContext.useProgram(node._shaderProgram._programObj);
+        //cc._renderContext.useProgram(node._shaderProgram._programObj);
         node._shaderProgram.use();
         node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
     }
@@ -360,8 +360,8 @@ if (!cc.sys.supportWebGL) {
 }
 
 cc.CHECK_GL_ERROR_DEBUG = function () {
-    if (cc.renderMode == cc.RENDER_TYPE_WEBGL) {
-        var _error = cc.renderContext.getError();
+    if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
+        var _error = cc._renderContext.getError();
         if (_error) {
             cc.log("WebGL error " + _error);
         }
