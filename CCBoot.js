@@ -318,11 +318,14 @@ if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
 //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
 cc.loader = {
 
+    _jsCache : {},//cache for js
+    _register : {},//register of loaders
+    _langPathCache : {},//cache for lang path
+    _aliases : {},//aliases for res url
+
     resPath : "",//root path of resource
     audioPath : "",//root path of audio
-    _register : {},//register of loaders
     cache : {},//cache for data loaded
-    _langPathCache : {},//cache for lang path
 
     /**
      * Get XMLHttpRequest.
@@ -334,8 +337,6 @@ cc.loader = {
 
 
     //@MODE_BEGIN DEV
-
-    _jsCache : {},//cache for js
 
     _getArgs4Js : function(args){
         var a0 = args[0], a1 = args[1], a2 = args[2], results = ["", null, null];
@@ -680,6 +681,27 @@ cc.loader = {
         cc.async.map(res, option);
     },
 
+    _handleAliases : function(fileNames, cb){
+        var self = this, aliases = self._aliases;
+        var resList = [];
+        for (var key in fileNames) {
+            var value = fileNames[key];
+            aliases[key] = value;
+            resList.push(value);
+        }
+        this.load(resList, cb);
+    },
+
+    loadAliases : function(url, cb){
+        var self = this, dict = self.getRes(url);
+        var filenames = dict["filenames"];
+        if(!filenames){
+            self.load(url, function(err, results){
+                self._handleAliases(results[0], cb);
+            });
+        }else self._handleAliases(filenames, cb);
+    },
+
     /**
      * Register a resource loader into loader.
      * @param {string} extname
@@ -700,7 +722,7 @@ cc.loader = {
      * @returns {*}
      */
     getRes : function(url){
-        return this.cache[url];
+        return this.cache[url] || this.cache[this._aliases[url]];
     },
 
     /**
@@ -708,16 +730,22 @@ cc.loader = {
      * @param url
      */
     release : function(url){
-        delete this.cache[url];
+        var cache = this.cache, aliases = this._aliases;
+        delete cache[url];
+        delete cache[aliases[url]];
+        delete aliases[url];
     },
 
     /**
      * Resource cache of all resources.
      */
     releaseAll : function(){
-        var locCache = this.cache;
+        var locCache = this.cache, aliases = this._aliases;
         for (var key in locCache) {
             delete locCache[key];
+        }
+        for (var key in aliases) {
+            delete aliases[key];
         }
     }
 
