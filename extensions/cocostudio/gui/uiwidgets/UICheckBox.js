@@ -22,20 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * checkBoxEvent type
- * @type {Object}
- */
-ccs.CheckBoxEventType = {
-    selected: 0,
-    unselected: 1
-};
+//CheckBoxEvent type
+ccs.CHECKBOX_EVENT_SELECTED = 0;
+ccs.CHECKBOX_EVENT_UNSELECTED = 1;
 
-ccs.BACKGROUNDBOXRENDERERZ = -1;
-ccs.BACKGROUNDBOXSELECTEDRENDERERZ = -1;
-ccs.FRONTCROSSRENDERERZ = -1;
-ccs.BACKGROUNDBOXDISABLEDRENDERER = -1;
-ccs.FRONTCROSSDISABLEDRENDERER = -1;
+//Render zorder
+ccs.BACKGROUND_BOX_RENDERER_ZORDER = -1;
+ccs.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER = -1;
+ccs.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER = -1;
+ccs.FRONT_CROSS_RENDERER_ZORDER = -1;
+ccs.FRONT_CROSS_DISABLED_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.CheckBox
  * @class
@@ -72,11 +68,11 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._isSelected = true;
         this._checkBoxEventListener = null;
         this._checkBoxEventSelector = null;
-        this._backGroundTexType = ccs.TextureResType.local;
-        this._backGroundSelectedTexType = ccs.TextureResType.local;
-        this._frontCrossTexType = ccs.TextureResType.local;
-        this._backGroundDisabledTexType = ccs.TextureResType.local;
-        this._frontCrossDisabledTexType = ccs.TextureResType.local;
+        this._backGroundTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._backGroundSelectedTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._frontCrossTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._backGroundDisabledTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._frontCrossDisabledTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundFileName = "";
         this._backGroundSelectedFileName = "";
         this._frontCrossFileName = "";
@@ -97,11 +93,11 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._frontCrossRenderer = cc.Sprite.create();
         this._backGroundBoxDisabledRenderer = cc.Sprite.create();
         this._frontCrossDisabledRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUNDBOXRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUNDBOXSELECTEDRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONTCROSSRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUNDBOXDISABLEDRENDERER, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONTCROSSDISABLEDRENDERER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUND_BOX_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONT_CROSS_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONT_CROSS_DISABLED_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -111,7 +107,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
      * @param {String} cross
      * @param {String} backGroundDisabled
      * @param {String} frontCrossDisabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextures: function (backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType) {
         this.loadTextureBackGround(backGround, texType);
@@ -124,28 +120,29 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     /**
      * Load backGround texture for checkbox.
      * @param {String} backGround
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureBackGround: function (backGround, texType) {
         if (!backGround) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundFileName = backGround;
         this._backGroundTexType = texType;
         var bgBoxRenderer = this._backGroundBoxRenderer;
         switch (this._backGroundTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 bgBoxRenderer.initWithFile(backGround);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 bgBoxRenderer.initWithSpriteFrameName(backGround);
                 break;
             default:
                 break;
         }
 
-        this._updateDisplay();
+        this.updateColorToRenderer(bgBoxRenderer);
+        this.updateAnchorPoint();
 
         if(!bgBoxRenderer.textureLoaded()){
             this._backGroundBoxRenderer.setContentSize(this._customSize);
@@ -158,111 +155,110 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     /**
      * Load backGroundSelected texture for checkbox.
      * @param {String} backGroundSelected
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureBackGroundSelected: function (backGroundSelected, texType) {
         if (!backGroundSelected) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundSelectedFileName = backGroundSelected;
         this._backGroundSelectedTexType = texType;
         switch (this._backGroundSelectedTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._backGroundSelectedBoxRenderer.initWithFile(backGroundSelected);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._backGroundSelectedBoxRenderer.initWithSpriteFrameName(backGroundSelected);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._backGroundSelectedBoxRenderer);
+        this.updateAnchorPoint();
+
         this.backGroundSelectedTextureScaleChangedWithSize();
     },
 
     /**
      * Load cross texture for checkbox.
      * @param {String} cross
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureFrontCross: function (cross, texType) {
         if (!cross) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._frontCrossFileName = cross;
         this._frontCrossTexType = texType;
         switch (this._frontCrossTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._frontCrossRenderer.initWithFile(cross);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._frontCrossRenderer.initWithSpriteFrameName(cross);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._frontCrossRenderer);
+        this.updateAnchorPoint();
         this.frontCrossTextureScaleChangedWithSize();
     },
 
     /**
      * Load backGroundDisabled texture for checkbox.
      * @param {String} backGroundDisabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureBackGroundDisabled: function (backGroundDisabled, texType) {
         if (!backGroundDisabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundDisabledFileName = backGroundDisabled;
         this._backGroundDisabledTexType = texType;
         switch (this._backGroundDisabledTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._backGroundBoxDisabledRenderer.initWithFile(backGroundDisabled);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._backGroundBoxDisabledRenderer.initWithSpriteFrameName(backGroundDisabled);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._backGroundBoxDisabledRenderer);
+        this.updateAnchorPoint();
         this.backGroundDisabledTextureScaleChangedWithSize();
     },
 
     /**
      * Load frontCrossDisabled texture for checkbox.
      * @param {String} frontCrossDisabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureFrontCrossDisabled: function (frontCrossDisabled, texType) {
         if (!frontCrossDisabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._frontCrossDisabledFileName = frontCrossDisabled;
         this._frontCrossDisabledTexType = texType;
         switch (this._frontCrossDisabledTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 this._frontCrossDisabledRenderer.initWithFile(frontCrossDisabled);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 this._frontCrossDisabledRenderer.initWithSpriteFrameName(frontCrossDisabled);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
-        this.frontCrossDisabledTextureScaleChangedWithSize();
-    },
-
-    _updateDisplay:function(){
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateColorToRenderer(this._frontCrossDisabledRenderer);
         this.updateAnchorPoint();
+        this.frontCrossDisabledTextureScaleChangedWithSize();
     },
 
     onTouchEnded: function (touch , event) {
@@ -325,13 +321,13 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
 
     selectedEvent: function () {
         if (this._checkBoxEventListener && this._checkBoxEventSelector) {
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CheckBoxEventType.selected);
+            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CHECKBOX_EVENT_SELECTED);
         }
     },
 
     unSelectedEvent: function () {
         if (this._checkBoxEventListener && this._checkBoxEventSelector) {
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CheckBoxEventType.unselected);
+            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CHECKBOX_EVENT_UNSELECTED);
         }
     },
 
@@ -541,6 +537,22 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             this._frontCrossDisabledRenderer.setScaleX(scaleX);
             this._frontCrossDisabledRenderer.setScaleY(scaleY);
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._backGroundBoxRenderer);
+        this.updateColorToRenderer(this._backGroundSelectedBoxRenderer);
+        this.updateColorToRenderer(this._frontCrossRenderer);
+        this.updateColorToRenderer(this._backGroundBoxDisabledRenderer);
+        this.updateColorToRenderer(this._frontCrossDisabledRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._backGroundBoxRenderer);
+        this.updateOpacityToRenderer(this._backGroundSelectedBoxRenderer);
+        this.updateOpacityToRenderer(this._frontCrossRenderer);
+        this.updateOpacityToRenderer(this._backGroundBoxDisabledRenderer);
+        this.updateOpacityToRenderer(this._frontCrossDisabledRenderer);
     },
 
     /**

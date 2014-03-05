@@ -90,7 +90,7 @@ ccs.UIHelper.seekWidgetByRelativeName = function (root, name) {
     var length = arrayRootChildren.length;
     for (var i = 0; i < length; i++) {
         var child = arrayRootChildren[i];
-        var layoutParameter = child.getLayoutParameter(ccs.LayoutParameterType.relative);
+        var layoutParameter = child.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
         if (layoutParameter && layoutParameter.getRelativeName() == name) {
             return child;
         }

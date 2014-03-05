@@ -22,26 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * listView event type
- * @type {Object}
- */
-ccs.ListViewEventType = {
-    listViewOnselectedItem: 0
-};
+//listView event type
+ccs.LISTVIEW_EVENT_SELECTED_ITEM = 0;
 
-/**
- * listView gravity
- * @type {Object}
- */
-ccs.ListViewGravity = {
-    left: 0,
-    right: 1,
-    centerHorizontal: 2,
-    top: 3,
-    bottom: 4,
-    centerVertical: 5
-};
+//listView gravity
+ccs.LISTVIEW_GRAVITY_LEFT = 0;
+ccs.LISTVIEW_GRAVITY_RIGHT = 1;
+ccs.LISTVIEW_GRAVITY_CENTER_HORIZONTAL = 2;
+ccs.LISTVIEW_GRAVITY_TOP = 3;
+ccs.LISTVIEW_GRAVITY_BOTTOM = 4;
+ccs.LISTVIEW_GRAVITY_CENTER_VERTICAL = 5;
 
 /**
  * Base class for ccs.ListView
@@ -61,7 +51,7 @@ ccs.ListView = ccs.ScrollView.extend({
         ccs.ScrollView.prototype.ctor.call(this);
         this._model = null;
         this._items = [];
-        this._gravity = ccs.ListViewGravity.centerHorizontal;
+        this._gravity = ccs.LISTVIEW_GRAVITY_CENTER_HORIZONTAL;
         this._itemsMargin = 0;
         this._listViewEventListener = null;
         this._listViewEventSelector = null;
@@ -72,7 +62,7 @@ ccs.ListView = ccs.ScrollView.extend({
     init: function () {
         if (ccs.ScrollView.prototype.init.call(this)) {
             this._items = [];
-            this.setLayoutType(ccs.LayoutType.linearVertical);
+            this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_VERTICAL);
             return true;
         }
         return false;
@@ -91,7 +81,7 @@ ccs.ListView = ccs.ScrollView.extend({
 
     updateInnerContainerSize: function () {
         switch (this.direction) {
-            case ccs.ScrollViewDir.vertical:
+            case ccs.SCROLLVIEW_DIR_VERTICAL:
                 var length = this._items.length;
                 var totalHeight = (length - 1) * this._itemsMargin;
                 for (var i = 0; i < length; i++) {
@@ -102,7 +92,7 @@ ccs.ListView = ccs.ScrollView.extend({
                 var finalHeight = totalHeight;
                 this.setInnerContainerSize(cc.size(finalWidth, finalHeight));
                 break;
-            case ccs.ScrollViewDir.horizontal:
+            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
                 var length = this._items.length;
                 var totalWidth = (length - 1) * this._itemsMargin;
                 for (var i = 0; i < length; i++) {
@@ -123,19 +113,19 @@ ccs.ListView = ccs.ScrollView.extend({
             return;
         }
         switch (this.direction) {
-            case ccs.ScrollViewDir.vertical:
-                var llp = item.getLayoutParameter(ccs.LayoutParameterType.linear);
+            case ccs.SCROLLVIEW_DIR_VERTICAL:
+                var llp = item.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
                 if (!llp) {
                     var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
-                        case ccs.ListViewGravity.left:
-                            defaultLp.setGravity(ccs.LinearGravity.left);
+                        case ccs.LISTVIEW_GRAVITY_LEFT:
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_LEFT);
                             break;
-                        case ccs.ListViewGravity.right:
-                            defaultLp.setGravity(ccs.LinearGravity.right);
+                        case ccs.LISTVIEW_GRAVITY_RIGHT:
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_RIGHT);
                             break;
-                        case ccs.ListViewGravity.centerHorizontal:
-                            defaultLp.setGravity(ccs.LinearGravity.centerHorizontal);
+                        case ccs.LISTVIEW_GRAVITY_CENTER_HORIZONTAL:
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL);
                             break;
                         default:
                             break;
@@ -156,33 +146,33 @@ ccs.ListView = ccs.ScrollView.extend({
                         llp.setMargin(new ccs.Margin(0, this._itemsMargin, 0, 0));
                     }
                     switch (this._gravity) {
-                        case ccs.ListViewGravity.left:
-                            llp.setGravity(ccs.LinearGravity.left);
+                        case ccs.LISTVIEW_GRAVITY_LEFT:
+                            llp.setGravity(ccs.LINEAR_GRAVITY_LEFT);
                             break;
-                        case ccs.ListViewGravity.right:
-                            llp.setGravity(ccs.LinearGravity.right);
+                        case ccs.LISTVIEW_GRAVITY_RIGHT:
+                            llp.setGravity(ccs.LINEAR_GRAVITY_RIGHT);
                             break;
-                        case ccs.ListViewGravity.centerHorizontal:
-                            llp.setGravity(ccs.LinearGravity.centerHorizontal);
+                        case ccs.LISTVIEW_GRAVITY_CENTER_HORIZONTAL:
+                            llp.setGravity(ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL);
                             break;
                         default:
                             break;
                     }
                 }
                 break;
-            case ccs.ScrollViewDir.horizontal:
-                var llp = item.getLayoutParameter(ccs.LayoutParameterType.linear);
+            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
+                var llp = item.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
                 if (!llp) {
                     var defaultLp = ccs.LinearLayoutParameter.create();
                     switch (this._gravity) {
-                        case ccs.ListViewGravity.top:
-                            defaultLp.setGravity(ccs.LinearGravity.top);
+                        case ccs.LISTVIEW_GRAVITY_TOP:
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_TOP);
                             break;
-                        case ccs.ListViewGravity.bottom:
-                            defaultLp.setGravity(ccs.LinearGravity.bottom);
+                        case ccs.LISTVIEW_GRAVITY_BOTTOM:
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_BOTTOM);
                             break;
-                        case ccs.ListViewGravity.centerVertical:
-                            defaultLp.setGravity(ccs.LinearGravity.centerVertical);
+                        case ccs.LISTVIEW_GRAVITY_CENTER_VERTICAL:
+                            defaultLp.setGravity(ccs.LINEAR_GRAVITY_CENTER_VERTICAL);
                             break;
                         default:
                             break;
@@ -203,14 +193,14 @@ ccs.ListView = ccs.ScrollView.extend({
                         llp.setMargin(new ccs.Margin(this._itemsMargin, 0.0, 0.0, 0.0));
                     }
                     switch (this._gravity) {
-                        case ccs.ListViewGravity.top:
-                            llp.setGravity(ccs.LinearGravity.top);
+                        case ccs.LISTVIEW_GRAVITY_TOP:
+                            llp.setGravity(ccs.LINEAR_GRAVITY_TOP);
                             break;
-                        case ccs.ListViewGravity.bottom:
-                            llp.setGravity(ccs.LinearGravity.bottom);
+                        case ccs.LISTVIEW_GRAVITY_BOTTOM:
+                            llp.setGravity(ccs.LINEAR_GRAVITY_BOTTOM);
                             break;
-                        case ccs.ListViewGravity.centerVertical:
-                            llp.setGravity(ccs.LinearGravity.centerVertical);
+                        case ccs.LISTVIEW_GRAVITY_CENTER_VERTICAL:
+                            llp.setGravity(ccs.LINEAR_GRAVITY_CENTER_VERTICAL);
                             break;
                         default:
                             break;
@@ -326,7 +316,7 @@ ccs.ListView = ccs.ScrollView.extend({
 
     /**
      * Changes the gravity of listview.
-     * @param {ccs.ListViewGravity} gravity
+     * @param {ccs.LISTVIEW_GRAVITY_LEFT|ccs.LISTVIEW_GRAVITY_RIGHT|ccs.LISTVIEW_GRAVITY_CENTER_HORIZONTAL|ccs.LISTVIEW_GRAVITY_BOTTOM|ccs.LISTVIEW_GRAVITY_CENTER_VERTICAL} gravity
      */
     setGravity: function (gravity) {
         if (this._gravity == gravity) {
@@ -358,17 +348,17 @@ ccs.ListView = ccs.ScrollView.extend({
 
     /**
      * Changes scroll direction of scrollview.
-     * @param {ccs.ScrollViewDir } dir
+     * @param {ccs.SCROLLVIEW_DIR_NONE | ccs.SCROLLVIEW_DIR_VERTICAL | ccs.SCROLLVIEW_DIR_HORIZONTAL | ccs.SCROLLVIEW_DIR_BOTH} dir
      */
     setDirection: function (dir) {
         switch (dir) {
-            case ccs.ScrollViewDir.vertical:
-                this.setLayoutType(ccs.LayoutType.linearVertical);
+            case ccs.SCROLLVIEW_DIR_VERTICAL:
+                this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_VERTICAL);
                 break;
-            case ccs.ScrollViewDir.horizontal:
-                this.setLayoutType(ccs.LayoutType.linearHorizontal);
+            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
+                this.setLayoutType(ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL);
                 break;
-            case ccs.ScrollViewDir.both:
+            case ccs.SCROLLVIEW_DIR_BOTH:
                 return;
             default:
                 return;
@@ -390,7 +380,7 @@ ccs.ListView = ccs.ScrollView.extend({
 
     selectedItemEvent: function () {
         if(this._listViewEventSelector&&this._listViewEventListener){
-            this._listViewEventSelector.call(this._listViewEventListener, this, ccs.ListViewEventType.listViewOnselectedItem);
+            this._listViewEventSelector.call(this._listViewEventListener, this, ccs.LISTVIEW_EVENT_SELECTED_ITEM);
         }
     },
 

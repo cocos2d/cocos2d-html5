@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-ccs.IMAGERENDERERZ = -1;
+ccs.IMAGE_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.Button
  * @class
@@ -42,33 +42,33 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
         this._capInsets = cc.rect(0,0,0,0);
         this._imageRenderer = null;
         this._textureFile = "";
-        this._imageTexType = ccs.TextureResType.local;
+        this._imageTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
         this._imageTextureSize = cc.size(this._size.width, this._size.height);
     },
 
     initRenderer: function () {
         this._imageRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
     },
 
     /**
      * Load textures for button.
      * @param {String} fileName
-     * @param {ccs.TextureResType} texType
+     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
         this._textureFile = fileName;
         this._imageTexType = texType;
         var imageRenderer = this._imageRenderer
         switch (this._imageTexType) {
-            case ccs.TextureResType.local:
+            case ccs.TEXTURE_RES_TYPE_LOCAL:
                 imageRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.plist:
+            case ccs.TEXTURE_RES_TYPE_PLIST:
                 imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -97,8 +97,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateColorToRenderer(imageRenderer);
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },
@@ -170,7 +169,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
 
 
         this._scale9Enabled = able;
-        cc.NodeRGBA.prototype.removeChild.call(this, this._imageRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._imageRenderer, true);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
             this._imageRenderer = cc.Scale9Sprite.create();
@@ -179,7 +178,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -298,12 +297,19 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
                     this._imageRenderer.setScale(1.0);
                     return;
                 }
-                var scaleX = this._size.width / textureSize.width;
-                var scaleY = this._size.height / textureSize.height;
+                var scaleX = this._size.width / textureSize.width; var scaleY = this._size.height / textureSize.height;
                 this._imageRenderer.setScaleX(scaleX);
                 this._imageRenderer.setScaleY(scaleY);
             }
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._imageRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._imageRenderer);
     },
 
     /**
