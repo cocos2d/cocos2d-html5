@@ -104,10 +104,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -121,9 +121,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._brightStyle = ccs.BrightStyle.none;
         this._scale9Enabled = able;
 
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
 
         if (this._scale9Enabled) {
             this._buttonNormalRenderer = cc.Scale9Sprite.create();
@@ -139,9 +139,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -231,7 +231,8 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
 
-        this._updateDisplay();
+        this.updateRGBAToRenderer(buttonNormalRenderer);
+        this.updateAnchorPoint();
         this.normalTextureScaleChangedWithSize();
         this._normalTextureLoaded = true;
     },
@@ -277,7 +278,8 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             clickedRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._updateDisplay();
+        this.updateRGBAToRenderer(clickedRenderer);
+        this.updateAnchorPoint();
         this.pressedTextureScaleChangedWithSize();
         this._pressedTextureLoaded = true;
     },
@@ -323,15 +325,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             disableRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._updateDisplay();
+        this.updateRGBAToRenderer(disableRenderer);
+        this.updateAnchorPoint();
         this.disabledTextureScaleChangedWithSize();
         this._disabledTextureLoaded = true;
-    },
-
-    _updateDisplay:function(){
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
-        this.updateAnchorPoint();
     },
 
     /**
@@ -721,14 +718,22 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         return this._titleRenderer.getFontName();
     },
 
-    /**
-     * Sets color to widget
-     * It default change the color of widget's children.
-     * @param color
-     */
-    setColor: function (color) {
-        ccs.Widget.prototype.setColor.call(this,color);
-        this.setTitleColor(this._titleColor);
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._buttonNormalRenderer);
+        this.updateColorToRenderer(this._buttonClickedRenderer);
+        this.updateColorToRenderer(this._buttonDisableRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._buttonNormalRenderer);
+        this.updateOpacityToRenderer(this._buttonClickedRenderer);
+        this.updateOpacityToRenderer(this._buttonDisableRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._buttonNormalRenderer);
+        this.updateRGBAToRenderer(this._buttonClickedRenderer);
+        this.updateRGBAToRenderer(this._buttonDisableRenderer);
     },
 
     /**
