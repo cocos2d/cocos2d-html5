@@ -334,10 +334,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
             + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
     },
 
-	/**
-	 * Purges the cache. It releases the retained instance.
-	 */
-	purgeSharedTextureCache: function () {
+	_clear: function () {
 		this._textures = {};
 		this._textureColorsCache = {};
 		this._textureKeySeq = (0 | Math.random() * 1000);

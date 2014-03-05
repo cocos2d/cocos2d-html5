@@ -217,10 +217,7 @@ cc.animationCache = /** @lends cc.AnimationCache# */{
         }
     },
 
-	/**
-	 * Purges the cache. It releases all the cc.Animation objects.
-	 */
-	purgeSharedAnimationCache: function () {
+	_clear: function () {
 		this._animations = {};
 	}
 };

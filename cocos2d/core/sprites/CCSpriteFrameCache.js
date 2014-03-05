@@ -306,10 +306,7 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
         return frame;
     },
 
-	/**
-	 * Purges the cache. It releases all cache objects.
-	 */
-	purgeSharedSpriteFrameCache: function () {
+	_clear: function () {
 		this._spriteFrames = {};
 		this._spriteFramesAliases = {};
 		this._frameConfigCache = {};
