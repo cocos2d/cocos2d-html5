@@ -22,15 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * slider event type
- * @type {Obejct}
- */
-ccs.SliderEventType = {percent_changed: 0};
+//Slider event type
+ccs.SLIDER_EVENT_PERCENT_CHANGED = 0;
 
-ccs.BASEBARRENDERERZ = -3;
-ccs.PROGRESSBARRENDERERZ = -2;
-ccs.SLIDBALLRENDERERZ = -1;
+//Render zorder
+ccs.SLIDER_BASEBAR_RENDERER_ZORDER = -3;
+ccs.SLIDER_PROGRESSBAR_RENDERER_ZORDER = -2;
+ccs.SLIDER_BALL_RENDERER_ZORDER = -1;
+
 /**
  * Base class for ccs.Slider
  * @class
@@ -99,8 +98,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
         this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
         this._slidBallNormalRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer.setVisible(false);
@@ -110,7 +109,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
-        cc.NodeRGBA.prototype.addChild.call(this, this._slidBallRenderer, ccs.SLIDBALLRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._slidBallRenderer, ccs.SLIDER_BALL_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -218,8 +217,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
         this.loadBarTexture(this._textureFile, this._barTexType);
         this.loadProgressBarTexture(this._progressBarTextureFile, this._progressBarTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);

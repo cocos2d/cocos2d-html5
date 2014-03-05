@@ -21,14 +21,14 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-ccs.TextFiledEventType = {
-    attach_with_me: 0,
-    detach_with_ime: 1,
-    insert_text: 2,
-    delete_backward: 3
-};
 
-ccs.TEXTFIELDRENDERERZ = -1;
+//TextFiled event
+ccs.TEXTFILE_EVENT_ATTACH_WITH_ME = 0;
+ccs.TEXTFILE_EVENT_DETACH_WITH_ME = 1;
+ccs.TEXTFILE_EVENT_INSERT_TEXT = 2;
+ccs.TEXTFILE_EVENT_DELETE_BACKWARD = 3;
+
+ccs.TEXTFIELD_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.UICCTextField
  * @class
@@ -291,7 +291,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
 
     initRenderer: function () {
         this._textFieldRender = ccs.UICCTextField.create("input words here", "Thonburi", 20);
-        cc.NodeRGBA.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELDRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELD_RENDERER_ZORDER, -1);
 
     },
 
@@ -565,25 +565,25 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
 
     attachWithIMEEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TextFiledEventType.attach_with_me);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_ATTACH_WITH_ME);
         }
     },
 
     detachWithIMEEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TextFiledEventType.detach_with_ime);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_DETACH_WITH_ME);
         }
     },
 
     insertTextEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TextFiledEventType.insert_text);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_INSERT_TEXT);
         }
     },
 
     deleteBackwardEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TextFiledEventType.delete_backward);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_DELETE_BACKWARD);
         }
     },
 

@@ -22,10 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var NORMAL_RENDERER_ZORDER = -2;
-var PRESSED_RENDERER_ZORDER = -2;
-var DISABLED_RENDERER_ZORDER = -2;
-var TITLE_RENDERER_ZORDER = -1;
+ccs.NORMAL_RENDERER_ZORDER = -2;
+ccs.PRESSED_RENDERER_ZORDER = -2;
+ccs.DISABLED_RENDERER_ZORDER = -2;
+ccs.TITLE_RENDERER_ZORDER = -1;
 
 /**
  * Base class for ccs.Button
@@ -111,10 +111,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, ccs.NORMAL_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, ccs.PRESSED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, ccs.DISABLED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._titleRenderer, ccs.TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -146,9 +146,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, ccs.NORMAL_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, ccs.PRESSED_RENDERER_ZORDER);
+        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, ccs.DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);

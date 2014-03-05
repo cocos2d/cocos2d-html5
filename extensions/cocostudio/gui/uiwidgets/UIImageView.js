@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-ccs.IMAGERENDERERZ = -1;
+ccs.IMAGE_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.Button
  * @class
@@ -48,7 +48,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
 
     initRenderer: function () {
         this._imageRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -179,7 +179,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGERENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);

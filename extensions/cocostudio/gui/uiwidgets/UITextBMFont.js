@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LABELBMFONTRENDERERZ = -1;
+ccs.TEXTBMFONT_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.TextBMFont
  * @class
@@ -42,7 +42,7 @@ ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.LABELBMFONTRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.TEXTBMFONT_RENDERER_ZORDER, -1);
     },
 
     /**

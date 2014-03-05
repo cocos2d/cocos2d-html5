@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LABELATLASRENDERERZ = -1;
+ccs.TEXTATLAS_RENDERER_ZORDER = -1;
 
 /**
  * Base class for ccs.TextAtlas
@@ -45,7 +45,7 @@ ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
 
     initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.LABELATLASRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.TEXTATLAS_RENDERER_ZORDER, -1);
     },
 
     /**

@@ -22,20 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * checkBoxEvent type
- * @type {Object}
- */
-ccs.CheckBoxEventType = {
-    selected: 0,
-    unselected: 1
-};
+//CheckBoxEvent type
+ccs.CHECKBOX_EVENT_SELECTED = 0;
+ccs.CHECKBOX_EVENT_UNSELECTED = 1;
 
-ccs.BACKGROUNDBOXRENDERERZ = -1;
-ccs.BACKGROUNDBOXSELECTEDRENDERERZ = -1;
-ccs.FRONTCROSSRENDERERZ = -1;
-ccs.BACKGROUNDBOXDISABLEDRENDERER = -1;
-ccs.FRONTCROSSDISABLEDRENDERER = -1;
+//Render zorder
+ccs.BACKGROUND_BOX_RENDERER_ZORDER = -1;
+ccs.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER = -1;
+ccs.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER = -1;
+ccs.FRONT_CROSS_RENDERER_ZORDER = -1;
+ccs.FRONT_CROSS_DISABLED_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.CheckBox
  * @class
@@ -97,11 +93,11 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._frontCrossRenderer = cc.Sprite.create();
         this._backGroundBoxDisabledRenderer = cc.Sprite.create();
         this._frontCrossDisabledRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUNDBOXRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUNDBOXSELECTEDRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONTCROSSRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUNDBOXDISABLEDRENDERER, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONTCROSSDISABLEDRENDERER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUND_BOX_RENDERER_ZORDER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONT_CROSS_RENDERER_ZORDER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONT_CROSS_DISABLED_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -325,13 +321,13 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
 
     selectedEvent: function () {
         if (this._checkBoxEventListener && this._checkBoxEventSelector) {
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CheckBoxEventType.selected);
+            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CHECKBOX_EVENT_SELECTED);
         }
     },
 
     unSelectedEvent: function () {
         if (this._checkBoxEventListener && this._checkBoxEventSelector) {
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CheckBoxEventType.unselected);
+            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CHECKBOX_EVENT_UNSELECTED);
         }
     },
 

@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LABELRENDERERZ = -1;
+ccs.TEXT_RENDERER_ZORDER = -1;
 /**
  * Base class for ccs.Button
  * @class
@@ -73,7 +73,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
 
     initRenderer: function () {
         this._labelRenderer = cc.LabelTTF.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelRenderer, ccs.LABELRENDERERZ, -1);
+        cc.NodeRGBA.prototype.addChild.call(this, this._labelRenderer, ccs.TEXT_RENDERER_ZORDER, -1);
     },
 
     /**
