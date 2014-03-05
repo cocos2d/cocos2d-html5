@@ -23,33 +23,33 @@
  ****************************************************************************/
 
 //layoutBackGround color type
-ccs.LAYOUT_BG_COLOR_NONE = 0;
-ccs.LAYOUT_BG_COLOR_SOLID = 1;
-ccs.LAYOUT_BG_COLOR_GRADIENT = 2;
+ccui.LAYOUT_BG_COLOR_NONE = 0;
+ccui.LAYOUT_BG_COLOR_SOLID = 1;
+ccui.LAYOUT_BG_COLOR_GRADIENT = 2;
 
 //Layout type
-ccs.LAYOUT_TYPE_ABSOLUTE = 0;
-ccs.LAYOUT_TYPE_LINEAR_VERTICAL = 1;
-ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL = 2;
-ccs.LAYOUT_TYPE_RELATIVE = 3;
+ccui.LAYOUT_TYPE_ABSOLUTE = 0;
+ccui.LAYOUT_TYPE_LINEAR_VERTICAL = 1;
+ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL = 2;
+ccui.LAYOUT_TYPE_RELATIVE = 3;
 
 //Layout clipping type
-ccs.LAYOUT_CLIPPING_STENCIL = 0;
-ccs.LAYOUT_CLIPPING_SCISSOR = 1;
+ccui.LAYOUT_CLIPPING_STENCIL = 0;
+ccui.LAYOUT_CLIPPING_SCISSOR = 1;
 
-ccs.BACKGROUND_IMAGE_ZORDER = -2;
-ccs.BACKGROUND_COLORRENDERER_ZORDER = -2;
+ccui.BACKGROUND_IMAGE_ZORDER = -2;
+ccui.BACKGROUND_COLORRENDERER_ZORDER = -2;
 /**
- * Base class for ccs.Layout
+ * Base class for ccui.Layout
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {Boolean}                  clippingEnabled - Indicate whether clipping is enabled
- * @property {ccs.LAYOUT_CLIPPING_STENCIL|ccs.LAYOUT_CLIPPING_SCISSOR}   clippingType
- * @property {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE}  layoutType
+ * @property {ccui.LAYOUT_CLIPPING_STENCIL|ccui.LAYOUT_CLIPPING_SCISSOR}   clippingType
+ * @property {ccui.LAYOUT_TYPE_ABSOLUTE|ccui.LAYOUT_TYPE_LINEAR_VERTICAL|ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccui.LAYOUT_TYPE_RELATIVE}  layoutType
  *
  */
-ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
+ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _clippingEnabled: null,
     _backGroundScale9Enabled: null,
     _backGroundImage: null,
@@ -75,14 +75,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _clippingRect: null,
     _clippingParent: null,
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._clippingEnabled = false;
         this._backGroundScale9Enabled = false;
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
-        this._colorType = ccs.LAYOUT_BG_COLOR_NONE;
-        this._bgImageTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._colorType = ccui.LAYOUT_BG_COLOR_NONE;
+        this._bgImageTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
         this._colorRender = null;
         this._gradientRender = null;
         this._color = cc.color(255, 255, 255, 255);
@@ -91,11 +91,11 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
-        this._layoutType = ccs.LAYOUT_TYPE_ABSOLUTE;
-        this._widgetType = ccs.WIDGET_TYPE_CONTAINER;
+        this._layoutType = ccui.LAYOUT_TYPE_ABSOLUTE;
+        this._widgetType = ccui.WIDGET_TYPE_CONTAINER;
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
-        this._clippingType = ccs.LAYOUT_CLIPPING_STENCIL;
+        this._clippingType = ccui.LAYOUT_CLIPPING_STENCIL;
         this._clippingStencil = null;
         this._handleScissor = false;
         this._scissorRectDirty = false;
@@ -119,12 +119,12 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     initStencil : null,
     _initStencilForWebGL:function(){
         this._clippingStencil = cc.DrawNode.create();
-        ccs.Layout._init_once = true;
-        if (ccs.Layout._init_once) {
+        ccui.Layout._init_once = true;
+        if (ccui.Layout._init_once) {
             cc.stencilBits = cc._renderContext.getParameter(cc._renderContext.STENCIL_BITS);
             if (cc.stencilBits <= 0)
                 cc.log("Stencil buffer is not enabled.");
-            ccs.Layout._init_once = false;
+            ccui.Layout._init_once = false;
         }
     },
     _initStencilForCanvas: function () {
@@ -147,26 +147,26 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Adds a widget to the container.
-     * @param {ccs.Widget} widget
+     * @param {ccui.Widget} widget
      * @param {Number} zOrder
      * @param {Number} tag
      */
     addChild: function (widget, zOrder, tag) {
-        if(!(widget instanceof ccs.Widget)){
+        if(!(widget instanceof ccui.Widget)){
             throw "the child add to Layout  must a type of cc.Widget";
         }
         this.supplyTheLayoutParameterLackToChild(widget);
-        ccs.Widget.prototype.addChild.call(this, widget, zOrder, tag);
+        ccui.Widget.prototype.addChild.call(this, widget, zOrder, tag);
         this._doLayoutDirty = true;
     },
 
     /**
      * Remove widget
-     * @param {ccs.Widget} widget
+     * @param {ccui.Widget} widget
      * @param {Boolean} cleanup
      */
     removeChild:function(widget,cleanup){
-        ccs.Widget.prototype.removeChild.call(this, widget,cleanup);
+        ccui.Widget.prototype.removeChild.call(this, widget,cleanup);
         this._doLayoutDirty = true;
     },
 
@@ -175,7 +175,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      * @param {Boolean} cleanup
      */
     removeAllChildren:function(cleanup){
-        ccs.Widget.prototype.removeAllChildren.call(this, cleanup);
+        ccui.Widget.prototype.removeAllChildren.call(this, cleanup);
         this._doLayoutDirty = true;
     },
 
@@ -193,10 +193,10 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         if (this._clippingEnabled) {
             switch (this._clippingType) {
-                case ccs.LAYOUT_CLIPPING_STENCIL:
+                case ccui.LAYOUT_CLIPPING_STENCIL:
                     this.stencilClippingVisit(ctx);
                     break;
-                case ccs.LAYOUT_CLIPPING_SCISSOR:
+                case ccui.LAYOUT_CLIPPING_SCISSOR:
                     this.scissorClippingVisit(ctx);
                     break;
                 default:
@@ -209,7 +209,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     sortAllChildren: function () {
-        ccs.Widget.prototype.sortAllChildren.call(this);
+        ccui.Widget.prototype.sortAllChildren.call(this);
         this.doLayout();
     },
 
@@ -235,15 +235,15 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         // store the current stencil layer (position in the stencil buffer),
         // this will allow nesting up to n CCClippingNode,
         // where n is the number of bits of the stencil buffer.
-        ccs.Layout._layer = -1;
+        ccui.Layout._layer = -1;
 
         // all the _stencilBits are in use?
-        if (ccs.Layout._layer + 1 == cc.stencilBits) {
+        if (ccui.Layout._layer + 1 == cc.stencilBits) {
             // warn once
-            ccs.Layout._visit_once = true;
-            if (ccs.Layout._visit_once) {
+            ccui.Layout._visit_once = true;
+            if (ccui.Layout._visit_once) {
                 cc.log("Nesting more than " + cc.stencilBits + "stencils is not supported. Everything will be drawn without stencil for this node and its childs.");
-                ccs.Layout._visit_once = false;
+                ccui.Layout._visit_once = false;
             }
             // draw everything, as if there where no stencil
             cc.Node.prototype.visit.call(this, ctx);
@@ -254,10 +254,10 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         // INIT
 
         // increment the current layer
-        ccs.Layout._layer++;
+        ccui.Layout._layer++;
 
         // mask of the current layer (ie: for layer 3: 00000100)
-        var mask_layer = 0x1 << ccs.Layout._layer;
+        var mask_layer = 0x1 << ccui.Layout._layer;
         // mask of all layers less than the current (ie: for layer 3: 00000011)
         var mask_layer_l = mask_layer - 1;
         // mask of all layers less than or equal to the current (ie: for layer 3: 00000111)
@@ -367,7 +367,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             gl.disable(gl.STENCIL_TEST);
 
         // we are done using this layer, decrement
-        ccs.Layout._layer--;
+        ccui.Layout._layer--;
     },
 
     _stencilClippingVisitForCanvas: function (ctx) {
@@ -382,7 +382,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
             var canvas = context.canvas;
-            var locCache = ccs.Layout._getSharedCache();
+            var locCache = ccui.Layout._getSharedCache();
             locCache.width = canvas.width;
             locCache.height = canvas.height;
             var locCacheCtx = locCache.getContext("2d");
@@ -472,7 +472,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         this._clippingEnabled = able;
         switch (this._clippingType) {
-            case ccs.LAYOUT_CLIPPING_STENCIL:
+            case ccui.LAYOUT_CLIPPING_STENCIL:
                 if (able) {
                     this.setStencilClippingSize(this._size);
                 }
@@ -487,7 +487,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Set clipping type
-     * @param {ccs.LAYOUT_CLIPPING_STENCIL|ccs.LAYOUT_CLIPPING_SCISSOR} type
+     * @param {ccui.LAYOUT_CLIPPING_STENCIL|ccui.LAYOUT_CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
         if (type == this._clippingType) {
@@ -501,14 +501,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Get clipping type
-     * @returns {ccs.LAYOUT_CLIPPING_STENCIL|ccs.LAYOUT_CLIPPING_SCISSOR}
+     * @returns {ccui.LAYOUT_CLIPPING_STENCIL|ccui.LAYOUT_CLIPPING_SCISSOR}
      */
     getClippingType : function(){
         return this._clippingType;
     },
 
     setStencilClippingSize: function (size) {
-        if (this._clippingEnabled && this._clippingType == ccs.LAYOUT_CLIPPING_STENCIL) {
+        if (this._clippingEnabled && this._clippingType == ccui.LAYOUT_CLIPPING_STENCIL) {
             var rect = [];
             rect[0] = cc.p(0, 0);
             rect[1] = cc.p(size.width, 0);
@@ -536,14 +536,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             var firstClippingParentFounded = false;
             while (parent) {
                 parent = parent.getParent();
-                if (parent && parent instanceof ccs.Layout) {
+                if (parent && parent instanceof ccui.Layout) {
                     if (parent.isClippingEnabled()) {
                         if (!firstClippingParentFounded) {
                             this._clippingParent = parent;
                             firstClippingParentFounded = true;
                         }
 
-                        if (parent._clippingType == ccs.LAYOUT_CLIPPING_SCISSOR) {
+                        if (parent._clippingType == ccui.LAYOUT_CLIPPING_SCISSOR) {
                             this._handleScissor = false;
                             break;
                         }
@@ -599,7 +599,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.setContentSize(this._size);
         this.setStencilClippingSize(this._size);
         this._doLayoutDirty = true;
@@ -637,7 +637,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.BACKGROUND_IMAGE_ZORDER, -1);
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
     },
@@ -653,23 +653,23 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     /**
      * Sets a background image for layout
      * @param {String} fileName
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     setBackGroundImage: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         if (this._backGroundImage == null) {
             this.addBackGroundImage();
         }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
         switch (this._bgImageTexType) {
-            case ccs.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._backGroundImage.initWithFile(fileName);
                 break;
-            case ccs.TEXTURE_RES_TYPE_PLIST:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._backGroundImage.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -708,19 +708,19 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             return;
         }
         switch (this._layoutType) {
-            case ccs.LAYOUT_TYPE_ABSOLUTE:
+            case ccui.LAYOUT_TYPE_ABSOLUTE:
                 break;
-            case ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL:
-            case ccs.LAYOUT_TYPE_LINEAR_VERTICAL:
-                var layoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
+            case ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL:
+            case ccui.LAYOUT_TYPE_LINEAR_VERTICAL:
+                var layoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_LINEAR);
                 if (!layoutParameter) {
-                    locChild.setLayoutParameter(ccs.LinearLayoutParameter.create());
+                    locChild.setLayoutParameter(ccui.LinearLayoutParameter.create());
                 }
                 break;
-            case ccs.LAYOUT_TYPE_RELATIVE:
-                var layoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
+            case ccui.LAYOUT_TYPE_RELATIVE:
+                var layoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
                 if (!layoutParameter) {
-                    locChild.setLayoutParameter(ccs.RelativeLayoutParameter.create());
+                    locChild.setLayoutParameter(ccui.RelativeLayoutParameter.create());
                 }
                 break;
             default:
@@ -739,7 +739,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.BACKGROUND_IMAGE_ZORDER, -1);
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
@@ -758,14 +758,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Sets Color Type for layout.
-     * @param {ccs.LAYOUT_BG_COLOR_NONE|ccs.LAYOUT_BG_COLOR_SOLID|ccs.LAYOUT_BG_COLOR_GRADIENT} type
+     * @param {ccui.LAYOUT_BG_COLOR_NONE|ccui.LAYOUT_BG_COLOR_SOLID|ccui.LAYOUT_BG_COLOR_GRADIENT} type
      */
     setBackGroundColorType: function (type) {
         if (this._colorType == type) {
             return;
         }
         switch (this._colorType) {
-            case ccs.LAYOUT_BG_COLOR_NONE:
+            case ccui.LAYOUT_BG_COLOR_NONE:
                 if (this._colorRender) {
                     cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
@@ -775,13 +775,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                     this._gradientRender = null;
                 }
                 break;
-            case ccs.LAYOUT_BG_COLOR_SOLID:
+            case ccui.LAYOUT_BG_COLOR_SOLID:
                 if (this._colorRender) {
                     cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
-            case ccs.LAYOUT_BG_COLOR_GRADIENT:
+            case ccui.LAYOUT_BG_COLOR_GRADIENT:
                 if (this._gradientRender) {
                     cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
@@ -792,23 +792,23 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
         this._colorType = type;
         switch (this._colorType) {
-            case ccs.LAYOUT_BG_COLOR_NONE:
+            case ccui.LAYOUT_BG_COLOR_NONE:
                 break;
-            case ccs.LAYOUT_BG_COLOR_SOLID:
+            case ccui.LAYOUT_BG_COLOR_SOLID:
                 this._colorRender = cc.LayerColor.create();
                 this._colorRender.setContentSize(this._size);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
-                cc.Node.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
+                cc.Node.prototype.addChild.call(this, this._colorRender, ccui.BACKGROUND_COLORRENDERER_ZORDER, -1);
                 break;
-            case ccs.LAYOUT_BG_COLOR_GRADIENT:
+            case ccui.LAYOUT_BG_COLOR_GRADIENT:
                 this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
                 this._gradientRender.setContentSize(this._size);
                 this._gradientRender.setOpacity(this._opacity);
                 this._gradientRender.setStartColor(this._startColor);
                 this._gradientRender.setEndColor(this._endColor);
                 this._gradientRender.setVector(this._alongVector);
-                cc.Node.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
+                cc.Node.prototype.addChild.call(this, this._gradientRender, ccui.BACKGROUND_COLORRENDERER_ZORDER, -1);
                 break;
             default:
                 break;
@@ -817,7 +817,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Get color type.
-     * @returns {ccs.LAYOUT_BG_COLOR_NONE|ccs.LAYOUT_BG_COLOR_SOLID|ccs.LAYOUT_BG_COLOR_GRADIENT}
+     * @returns {ccui.LAYOUT_BG_COLOR_NONE|ccui.LAYOUT_BG_COLOR_SOLID|ccui.LAYOUT_BG_COLOR_GRADIENT}
      */
     getBackGroundColorType:function(){
         return this._colorType;
@@ -882,12 +882,12 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     setBackGroundColorOpacity: function (opacity) {
         this._opacity = opacity;
         switch (this._colorType) {
-            case ccs.LAYOUT_BG_COLOR_NONE:
+            case ccui.LAYOUT_BG_COLOR_NONE:
                 break;
-            case ccs.LAYOUT_BG_COLOR_SOLID:
+            case ccui.LAYOUT_BG_COLOR_SOLID:
                 this._colorRender.setOpacity(opacity);
                 break;
-            case ccs.LAYOUT_BG_COLOR_GRADIENT:
+            case ccui.LAYOUT_BG_COLOR_GRADIENT:
                 this._gradientRender.setOpacity(opacity);
                 break;
             default:
@@ -933,7 +933,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
     /**
      * Sets LayoutType.
-     * @param {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE} type
+     * @param {ccui.LAYOUT_TYPE_ABSOLUTE|ccui.LAYOUT_TYPE_LINEAR_VERTICAL|ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccui.LAYOUT_TYPE_RELATIVE} type
      */
     setLayoutType: function (type) {
         this._layoutType = type;
@@ -967,7 +967,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
+            var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_LINEAR);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -976,13 +976,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locFinalPosX = locAP.x * locSize.width;
                 var locFinalPosY = topBoundary - ((1 - locAP.y) * locSize.height);
                 switch (locChildGravity) {
-                    case ccs.LINEAR_GRAVITY_NONE:
-                    case ccs.LINEAR_GRAVITY_LEFT:
+                    case ccui.LINEAR_GRAVITY_NONE:
+                    case ccui.LINEAR_GRAVITY_LEFT:
                         break;
-                    case ccs.LINEAR_GRAVITY_RIGHT:
+                    case ccui.LINEAR_GRAVITY_RIGHT:
                         locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                         break;
-                    case ccs.LINEAR_GRAVITY_CENTER_HORIZONTAL:
+                    case ccui.LINEAR_GRAVITY_CENTER_HORIZONTAL:
                         locFinalPosX = layoutSize.width / 2 - locSize.width * (0.5 - locAP.x);
                         break;
                     default:
@@ -1002,7 +1002,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         var leftBoundary = 0;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_LINEAR);
+            var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_LINEAR);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -1011,13 +1011,13 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 var locFinalPosX = leftBoundary + (locAP.x * locSize.width);
                 var locFinalPosY = layoutSize.height - (1 - locAP.y) * locSize.height;
                 switch (locChildGravity) {
-                    case ccs.LINEAR_GRAVITY_NONE:
-                    case ccs.LINEAR_GRAVITY_TOP:
+                    case ccui.LINEAR_GRAVITY_NONE:
+                    case ccui.LINEAR_GRAVITY_TOP:
                         break;
-                    case ccs.LINEAR_GRAVITY_BOTTOM:
+                    case ccui.LINEAR_GRAVITY_BOTTOM:
                         locFinalPosY = locAP.y * locSize.height;
                         break;
-                    case ccs.LINEAR_GRAVITY_CENTER_VERTICAL:
+                    case ccui.LINEAR_GRAVITY_CENTER_VERTICAL:
                         locFinalPosY = layoutSize.height / 2 - locSize.height * (0.5 - locAP.y);
                         break;
                     default:
@@ -1039,14 +1039,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         for (var i = 0; i < length; i++) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
+            var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
             locLayoutParameter._put = false;
         }
 
         while (unlayoutChildCount > 0) {
             for (var i = 0; i < length; i++) {
                 var locChild = layoutChildrenArray[i];
-                var locLayoutParameter = locChild.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
+                var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
 
                 if (locLayoutParameter) {
                     if (locLayoutParameter._put) {
@@ -1061,51 +1061,51 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                     var locFinalPosX = 0;
                     var locFinalPosY = 0;
                     if (locRelativeName) {
-                        locRelativeWidget = ccs.UIHelper.seekWidgetByRelativeName(this, locRelativeName);
+                        locRelativeWidget = ccui.UIHelper.seekWidgetByRelativeName(this, locRelativeName);
                         if (locRelativeWidget) {
-                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccs.LAYOUT_PARAMETER_RELATIVE);
+                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
                         }
                     }
                     switch (locAlign) {
-                        case ccs.RELATIVE_ALIGN_NONE:
-                        case ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT:
+                        case ccui.RELATIVE_ALIGN_NONE:
+                        case ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
+                        case ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = layoutSize.height - ((1 - locAP.y) * locSize.height);
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_CENTER:
+                        case ccui.RELATIVE_ALIGN_PARENT_CENTER:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = layoutSize.height * 0.5 - locSize.height * (0.5 - locAP.y);
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
                             locFinalPosX = locAP.x * locSize.width;
                             locFinalPosY = locAP.y * locSize.height;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
                             locFinalPosX = layoutSize.width * 0.5 - locSize.width * (0.5 - locAP.x);
                             locFinalPosY = locAP.y * locSize.height;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
                             locFinalPosX = layoutSize.width - ((1 - locAP.x) * locSize.width);
                             locFinalPosY = locAP.y * locSize.height;
                             break;
 
-                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
+                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1116,7 +1116,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1128,7 +1128,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
+                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1139,7 +1139,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
+                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1150,7 +1150,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1162,7 +1162,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1173,7 +1173,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationRight - (1 - locAP.x) * locSize.width;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
+                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1184,7 +1184,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1196,7 +1196,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosY = locRelativeWidget.getBottomInParent() + rbs.height * 0.5 + locAP.y * locSize.height - locSize.height * 0.5;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1207,7 +1207,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
+                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1218,7 +1218,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locationLeft + locAP.x * locSize.width;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1230,7 +1230,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                                 locFinalPosX = locRelativeWidget.getLeftInParent() + rbs.width * 0.5 + locAP.x * locSize.width - locSize.width * 0.5;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
                             if (locRelativeWidget) {
                                 if (locRelativeWidgetLP && !locRelativeWidgetLP._put) {
                                     continue;
@@ -1252,157 +1252,157 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                     }
                     //handle margin
                     switch (locAlign) {
-                        case ccs.RELATIVE_ALIGN_NONE:
-                        case ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT:
+                        case ccui.RELATIVE_ALIGN_NONE:
+                        case ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT:
                             locFinalPosX += locMargin.left;
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL:
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
+                        case ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT:
                             locFinalPosX -= locMargin.right;
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL:
                             locFinalPosX += locMargin.left;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_CENTER:
+                        case ccui.RELATIVE_ALIGN_PARENT_CENTER:
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL:
                             locFinalPosX -= locMargin.right;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM:
                             locFinalPosX += locMargin.left;
                             locFinalPosY += locMargin.bottom;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
+                        case ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL:
                             locFinalPosY += locMargin.bottom;
                             break;
-                        case ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM:
                             locFinalPosX -= locMargin.right;
                             locFinalPosY += locMargin.bottom;
                             break;
 
-                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
+                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             locFinalPosY += locMargin.left;
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
+                        case ccui.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT:
                             locFinalPosY += locMargin.bottom;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
                             {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             locFinalPosX -= locMargin.right;
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
+                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_TOP:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_CENTER:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM:
                             locFinalPosX -= locMargin.right;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_LEFT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
                             {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             locFinalPosY += locMargin.bottom;
                             break;
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
+                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_TOP:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             locFinalPosY -= locMargin.top;
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM:
                             locFinalPosX += locMargin.left;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_TOP_RIGHT
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
                             {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             locFinalPosY += locMargin.bottom;
                             break;
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
+                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_TOP:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             locFinalPosX += locMargin.left;
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
+                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_CENTER:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             break;
-                        case ccs.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
+                        case ccui.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM:
                             locFinalPosY -= locMargin.top;
-                            if (locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccs.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
+                            if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
                             {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
@@ -1423,15 +1423,15 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             return;
         }
         switch (this._layoutType) {
-            case ccs.LAYOUT_TYPE_ABSOLUTE:
+            case ccui.LAYOUT_TYPE_ABSOLUTE:
                 break;
-            case ccs.LAYOUT_TYPE_LINEAR_VERTICAL:
+            case ccui.LAYOUT_TYPE_LINEAR_VERTICAL:
                 this.doLayout_LINEAR_VERTICAL();
                 break;
-            case ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL:
+            case ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL:
                 this.doLayout_LINEAR_HORIZONTAL();
                 break;
-            case ccs.LAYOUT_TYPE_RELATIVE:
+            case ccui.LAYOUT_TYPE_RELATIVE:
                 this.doLayout_RELATIVE();
                 break;
             default:
@@ -1449,11 +1449,11 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     createCloneInstance: function () {
-        return ccs.Layout.create();
+        return ccui.Layout.create();
     },
 
     copyClonedWidgetChildren: function (model) {
-        ccs.Widget.prototype.copyClonedWidgetChildren.call(this, model);
+        ccui.Widget.prototype.copyClonedWidgetChildren.call(this, model);
     },
 
     copySpecialProperties: function (layout) {
@@ -1470,26 +1470,26 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this.setClippingType(layout._clippingType);
     }
 });
-ccs.Layout._init_once = null;
-ccs.Layout._visit_once = null;
-ccs.Layout._layer = null;
-ccs.Layout._sharedCache = null;
+ccui.Layout._init_once = null;
+ccui.Layout._visit_once = null;
+ccui.Layout._layer = null;
+ccui.Layout._sharedCache = null;
 
 if (cc.sys.supportWebGL) {
     //WebGL
-    ccs.Layout.prototype.initStencil = ccs.Layout.prototype._initStencilForWebGL;
-    ccs.Layout.prototype.stencilClippingVisit = ccs.Layout.prototype._stencilClippingVisitForWebGL;
-    ccs.Layout.prototype.scissorClippingVisit = ccs.Layout.prototype._scissorClippingVisitForWebGL;
+    ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForWebGL;
+    ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForWebGL;
+    ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._scissorClippingVisitForWebGL;
 }else{
-    ccs.Layout.prototype.initStencil = ccs.Layout.prototype._initStencilForCanvas;
-    ccs.Layout.prototype.stencilClippingVisit = ccs.Layout.prototype._stencilClippingVisitForCanvas;
-    ccs.Layout.prototype.scissorClippingVisit = ccs.Layout.prototype._stencilClippingVisitForCanvas;
+    ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForCanvas;
+    ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
+    ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
 }
-ccs.Layout._getSharedCache = function () {
+ccui.Layout._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 };
 
-window._proto = ccs.Layout.prototype;
+window._proto = ccui.Layout.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "clippingEnabled", _proto.isClippingEnabled, _proto.setClippingEnabled);
@@ -1501,13 +1501,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILayout.
  * @constructs
- * @return {ccs.Layout}
+ * @return {ccui.Layout}
  * @example
  * // example
- * var uiLayout = ccs.Layout.create();
+ * var uiLayout = ccui.Layout.create();
  */
-ccs.Layout.create = function () {
-    var layout = new ccs.Layout();
+ccui.Layout.create = function () {
+    var layout = new ccui.Layout();
     if (layout && layout.init()) {
         return layout;
     }
