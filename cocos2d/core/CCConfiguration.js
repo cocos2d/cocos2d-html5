@@ -216,7 +216,7 @@ cc.configuration = /** @lends cc.Configuration# */{
     /**
      * Dumps the current configuration on the console
      */
-    getInfo: function(){
+    dumpInfo: function(){
          if(cc.ENABLE_GL_STATE_CACHE === 0){
              cc.log("");
              cc.log("cocos2d: **** WARNING **** CC_ENABLE_PROFILERS is defined. Disable it when you finish profiling (from ccConfig.js)");

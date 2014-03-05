@@ -200,7 +200,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var director = cc.director;
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
-        this._eventDispatcher = cc.eventManager;
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         if(cc.ComponentContainer){
@@ -385,7 +384,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._localZOrder = localZOrder;
         if (this._parent)
             this._parent.reorderChild(this, localZOrder);
-        this._eventDispatcher._setDirtyForNode(this);
+        cc.eventManager._setDirtyForNode(this);
     },
 
     /**
@@ -450,7 +449,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setGlobalZOrder: function (globalZOrder) {
         if (this._globalZOrder != globalZOrder) {
             this._globalZOrder = globalZOrder;
-            this._eventDispatcher._setDirtyForNode(this);
+            cc.eventManager._setDirtyForNode(this);
         }
     },
 
@@ -1112,7 +1111,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.unscheduleAllCallbacks();
 
         // event
-        this._eventDispatcher.removeListeners(this);
+        cc.eventManager.removeListeners(this);
 
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
@@ -1618,7 +1617,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     resume: function() {
         this.scheduler.resumeTarget(this);
         this.actionManager.resumeTarget(this);
-        this._eventDispatcher.resumeTarget(this);
+        cc.eventManager.resumeTarget(this);
     },
 
     /**
@@ -1638,7 +1637,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     pause: function(){
         this.scheduler.pauseTarget(this);
         this.actionManager.pauseTarget(this);
-        this._eventDispatcher.pauseTarget(this);
+        cc.eventManager.pauseTarget(this);
     },
 
     /**
