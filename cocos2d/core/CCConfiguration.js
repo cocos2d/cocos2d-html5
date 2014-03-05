@@ -252,12 +252,12 @@ cc.configuration = /** @lends cc.Configuration# */{
      * gathers OpenGL / GPU information
      */
     gatherGPUInfo: function(){
-        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
             return;
 
 	    if(!this._inited)
 		    this._init();
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         var locValueDict = this._valueDict;
         locValueDict["gl.vendor"] = gl.getParameter(gl.VENDOR);
         locValueDict["gl.renderer"] = gl.getParameter(gl.RENDERER);

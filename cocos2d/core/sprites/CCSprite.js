@@ -810,7 +810,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._rect = cc.rect(0,0,0,0);
 
         this._quad = new cc.V3F_C4B_T2F_Quad();
-        this._quadWebBuffer = cc.renderContext.createBuffer();
+        this._quadWebBuffer = cc._renderContext.createBuffer();
         this._quadDirty = true;
 
         this._textureLoaded = true;
@@ -1358,7 +1358,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 cc.p(this._quad.tr.vertices.x, this._quad.tr.vertices.y),
                 cc.p(this._quad.tl.vertices.x, this._quad.tl.vertices.y)
             ];
-            cc.drawingUtil.drawPoly(vertices, 4, true);
+            cc._drawingUtil.drawPoly(vertices, 4, true);
         }
     },
 
@@ -1860,7 +1860,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (!this._textureLoaded)
             return;
 
-        var gl = cc.renderContext, locTexture = this._texture;
+        var gl = cc._renderContext, locTexture = this._texture;
         //cc.assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (locTexture) {
@@ -1895,7 +1895,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
             if (this._quadDirty) {
-                cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc.renderContext.STATIC_DRAW);
+                cc._renderContext.bufferData(cc._renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc._renderContext.STATIC_DRAW);
                 this._quadDirty = false;
             }
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
@@ -1915,14 +1915,14 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
                 cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
             ];
-            cc.drawingUtil.drawPoly(verticesG1, 4, true);
+            cc._drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             var drawRectG2 = this.getTextureRect();
             var offsetPixG2 = this.getOffsetPosition();
             var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y),
                 cc.p(offsetPixG2.x + drawRectG2.width, offsetPixG2.y + drawRectG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawRectG2.height)];
-            cc.drawingUtil.drawPoly(verticesG2, 4, true);
+            cc._drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
     },
 
@@ -1930,7 +1930,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if (!this._textureLoaded)
             return;
 
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         if (this._isLighterMode)
             context.globalCompositeOperation = 'lighter';
 
@@ -1984,7 +1984,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 cc.p(flipXOffset + locRect.width, flipYOffset),
                 cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
                 cc.p(flipXOffset, flipYOffset - locRect.height)];
-            cc.drawingUtil.drawPoly(vertices1, 4, true);
+            cc._drawingUtil.drawPoly(vertices1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             context.strokeStyle = "rgba(0,255,0,1)";
@@ -1992,7 +1992,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             flipYOffset = -flipYOffset;
             var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset),
                 cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
-            cc.drawingUtil.drawPoly(vertices2, 4, true);
+            cc._drawingUtil.drawPoly(vertices2, 4, true);
         }
         if (this._flippedX || this._flippedY)
             context.restore();

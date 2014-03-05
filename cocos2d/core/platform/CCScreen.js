@@ -137,7 +137,7 @@ cc.screen = {
      */
     autoFullScreen: function (element, onFullScreenChange) {
 	    element = element || document.body;
-	    var touchTarget = cc.canvas || element;
+	    var touchTarget = cc._canvas || element;
         var theScreen = this;
         // Function bind will be too complicated here because we need the callback function's reference to remove the listener
         function callback() {

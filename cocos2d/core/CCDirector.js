@@ -365,11 +365,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _clearCanvas: function() {
         var viewport = this._openGLView.getViewPortRect();
-        cc.renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
     },
 
     _clearWebGL: function() {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     },
 
@@ -608,7 +608,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (on)
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         else
-            cc.glBlendFunc(cc.renderContext.ONE, cc.renderContext.ZERO);
+            cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO);
         //cc.CHECK_GL_ERROR_DEBUG();
     },
 
@@ -632,15 +632,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Boolean} on
      */
     setDepthTest:function (on) {
-        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
             return;
 
-        var loc_gl= cc.renderContext;
+        var loc_gl= cc._renderContext;
         if (on) {
             loc_gl.clearDepth(1.0);
             loc_gl.enable(loc_gl.DEPTH_TEST);
             loc_gl.depthFunc(loc_gl.LEQUAL);
-            //cc.renderContext.hint(cc.renderContext.PERSPECTIVE_CORRECTION_HINT, cc.renderContext.NICEST);
+            //cc._renderContext.hint(cc._renderContext.PERSPECTIVE_CORRECTION_HINT, cc._renderContext.NICEST);
         } else {
             loc_gl.disable(loc_gl.DEPTH_TEST);
         }
@@ -665,7 +665,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.setProjection(this._projection);
 
         // set other opengl default values
-        cc.renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
+        cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     },
 
     /**
@@ -735,11 +735,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setOpenGLView:function (openGLView) {
         // set size
-        this._winSizeInPoints.width = cc.canvas.width;      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.height = cc.canvas.height;
+        this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
+        this._winSizeInPoints.height = cc._canvas.height;
         this._openGLView = openGLView || cc.view;
 
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
             return;
 
         // Configuration. Gather GPU info
@@ -783,7 +783,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setProjection: function (projection) {
         var size = this._winSizeInPoints;
 
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this._projection = projection;
             cc.eventManager.dispatchEvent(this._eventProjectionChanged);
             return;

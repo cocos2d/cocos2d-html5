@@ -38,7 +38,7 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 300 : 150);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 300 : 150);
     },
 
     /**
@@ -131,7 +131,7 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 1500 : 150);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1500 : 150);
     },
 
     /**
@@ -221,7 +221,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 350 : 150);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 350 : 150);
     },
 
     /**
@@ -315,7 +315,7 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
      */
     init:function () {
         //return this.initWithTotalParticles(200);
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 200 : 100);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
     },
 
     /**
@@ -409,7 +409,7 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 250 : 100);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 250 : 100);
     },
 
     /**
@@ -505,7 +505,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 150 : 100);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 150 : 100);
     },
 
     /**
@@ -600,7 +600,7 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 500 : 100);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 500 : 100);
     },
 
     /**
@@ -696,7 +696,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
      */
     init:function () {
         //return this.initWithTotalParticles(700);
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 700 : 300);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 300);
     },
 
     /**
@@ -791,7 +791,7 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
      */
     init:function () {
         //return this.initWithTotalParticles(200);
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 200 : 100);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 200 : 100);
     },
 
     /**
@@ -882,7 +882,7 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 700 : 250);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 700 : 250);
     },
 
     /**
@@ -978,7 +978,7 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderType === cc.RENDER_TYPE_WEBGL) ? 1000 : 300);
+        return this.initWithTotalParticles((cc._renderType === cc._RENDER_TYPE_WEBGL) ? 1000 : 300);
     },
 
     /**

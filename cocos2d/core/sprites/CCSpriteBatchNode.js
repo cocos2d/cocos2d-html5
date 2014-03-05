@@ -797,7 +797,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     visit:null,
 
     _visitForCanvas:function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         // quick return if not visible
         if (!this._visible)
             return;
@@ -818,7 +818,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _visitForWebGL:function (ctx) {
-        var gl = ctx || cc.renderContext;
+        var gl = ctx || cc._renderContext;
 
         // CAREFUL:
         // This visit is almost identical to CocosNode#visit

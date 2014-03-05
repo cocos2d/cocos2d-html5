@@ -26,6 +26,9 @@
 
 var cc = cc || {};
 
+//is nodejs ? Used to support node-webkit.
+cc._isNodeJs = typeof require !== 'undefined' && require("fs");
+
 /**
  * Iterate over an object or an array, executing a function for each matched element.
  * @param {object|array} obj
@@ -175,11 +178,8 @@ cc.path = {
      * @returns {*}
      */
     extname : function(pathStr){
-        var index = pathStr.indexOf("?");
-        if(index > 0) pathStr = pathStr.substring(0, index);
-        index = pathStr.lastIndexOf(".");
-        if(index < 0) return null;
-        return pathStr.substring(index, pathStr.length);
+        var temp = /(\.[^\.\/\?\\]*)(\?.*)?$/.exec(pathStr);
+        return temp ? temp[1] : null;
     },
 
     /**
@@ -445,24 +445,36 @@ cc.loader = {
      * @param {function} cb arguments are : err, txt
      */
     loadTxt : function(url, cb){
-        var xhr = this.getXMLHttpRequest(),
-            errInfo = "load " + url + " failed!";
-        xhr.open("GET", url, true);
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            // IE-specific logic here
-            xhr.setRequestHeader("Accept-Charset", "utf-8");
-            xhr.onreadystatechange = function () {
-                xhr.readyState == 4 && xhr.status == 200 ? cb(null, xhr.responseText) : cb(errInfo);
-            };
-        } else {
-            if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
-            xhr.onload = function () {
-                xhr.readyState == 4 && xhr.status == 200 ? cb(null, xhr.responseText) : cb(errInfo);
-            };
+        if(!cc._isNodeJs){
+            var xhr = this.getXMLHttpRequest(),
+                errInfo = "load " + url + " failed!";
+            xhr.open("GET", url, true);
+            if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+                // IE-specific logic here
+                xhr.setRequestHeader("Accept-Charset", "utf-8");
+                xhr.onreadystatechange = function () {
+                    xhr.readyState == 4 && xhr.status == 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                };
+            } else {
+                if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
+                xhr.onload = function () {
+                    xhr.readyState == 4 && xhr.status == 200 ? cb(null, xhr.responseText) : cb(errInfo);
+                };
+            }
+            xhr.send(null);
+        }else{
+            var fs = require("fs");
+            fs.readFile(url, function(err, data){
+                err ? cb(err) : cb(null, data.toString());
+            });
         }
-        xhr.send(null);
     },
 
+    /**
+     * Load a single resource as json.
+     * @param {!string} url
+     * @param {function} cb arguments are : err, json
+     */
     loadJson : function(url, cb){
         this.loadTxt(url, function(err, txt){
             try{
@@ -707,205 +719,7 @@ cc.loader = {
         for (var key in locCache) {
             delete locCache[key];
         }
-    },
-
-    //@MODE_BEGIN NPM
-    /**
-     * path of res.js
-     * @constant
-     * @type string
-     */
-    RES_JS_PATH : "cfg/res.js",
-    /**
-     * path of jsRes.js
-     * @constant
-     * @type string
-     */
-    JS_RES_JS_PATH : "cfg/jsRes.js",
-    /**
-     * path of resCfg.js
-     * @constant
-     * @type string
-     */
-    RES_CFG_JS_PATH : "cfg/resCfg.js",
-
-    /**
-     * path of node_module
-     * @constant
-     * @type string
-     */
-    NODE_MODULE_PATH : "node_module",
-
-    _resCache : {},//cache of res
-    _jsCacheOfCfg : {},//cache of js
-    _deps : [],//dependencies of cocos2d-html5
-    _depsOf3rdParty : [],//dependencies of 3rd party
-
-    /**
-     * load for npm branch
-     * @param cb
-     */
-    loadNpm : function(cb){
-        var self = this, config = cc.game.config, tempArr = [self.RES_JS_PATH];
-        self.loadJson(cc.game.PACKAGE_PATH, function(err, pkg){
-            self._handleCfgAndPkg("", config, pkg, tempArr, function(err){
-                if(err) return cb(err);
-                self.loadJsWithImg("", tempArr, function(err1){
-                    if(err1) return cb(err1);
-                    var result = {jsArr : [], resArr : []}
-                    var deps = self._deps, depsOf3rdParty = self._depsOf3rdParty;
-                    for(var i = 0, li = deps.length; i < li; i++){
-                        var r = cc.loader.getResCfg(deps[i]);
-                        if(!r) continue;
-                        result.jsArr = result.jsArr.concat(r.jsArr);
-                        result.resArr = result.resArr.concat(r.resArr);
-                    }
-                    for(var i = 0, li = depsOf3rdParty.length; i < li; i++){
-                        var r = cc.loader.getResCfg(depsOf3rdParty[i]);
-                        if(!r) continue;
-                        result.jsArr = result.jsArr.concat(r.jsArr);
-                        result.resArr = result.resArr.concat(r.resArr);
-                    }
-                    var r = cc.loader.getResCfg(cc.projName);
-                    if(r){
-                        result.jsArr = result.jsArr.concat(r.jsArr);
-                        result.resArr = result.resArr.concat(r.resArr);
-                    }
-                    self.loadJsWithImg("", result.jsArr, function(err2){
-                        err2 ? cb(err2) : cb(null, result.resArr);
-                    });
-                });
-            });
-        });
-    },
-
-    /**
-     * Handle config and package.
-     * @param depPath
-     * @param cfg
-     * @param pkg
-     * @param arr
-     * @param cb
-     * @private
-     */
-    _handleCfgAndPkg : function(depPath, cfg, pkg, arr, cb){
-        var self = this, path = cc.path, depArr = [], is3rdPartyArr = [];
-        var deps = cfg[cc.game.CONFIG_KEY.dependencies] || [],
-            depsOf3rdParty = pkg[cc.game.PACKAGE_KEY.dependencies] || {};
-        depsOf3rdParty = Object.keys(depsOf3rdParty);
-        for(var i = 0, li = deps.length; i < li; i++){
-            depArr.push(deps[i]);
-            is3rdPartyArr.push(false);
-        }
-        for(var i = 0, li = depsOf3rdParty.length; i < li; i++){
-            depArr.push(depsOf3rdParty[i]);
-            is3rdPartyArr.push(true);
-        }
-        cc.async.map(depArr, function(item, index, cb1){
-            self._loadDep(arr, item, is3rdPartyArr[index], cb1);
-        }, function(err){
-            if(err) return cb(err);
-            arr.push(path.join(depPath, self.JS_RES_JS_PATH));
-            arr.push(path.join(depPath, self.RES_CFG_JS_PATH));
-            cb();
-        });
-    },
-
-    /**
-     * Load dependency.
-     * @param arr
-     * @param name
-     * @param is3rdParty
-     * @param cb
-     * @private
-     */
-    _loadDep : function(arr, name, is3rdParty, cb){
-        var self = this, path = cc.path, engineDir = cc.game.config[cc.game.CONFIG_KEY.engineDir],
-            locDeps = self._deps, locDepsOf3rdParty = self._depsOf3rdParty;
-        if(locDeps.indexOf(name) >= 0 || locDepsOf3rdParty.indexOf(name) >= 0) cb();//has loaded
-        var depPath = path.join((is3rdParty ? self.NODE_MODULE_PATH : engineDir), name);
-        cc.async.map([cc.game.CONFIG_PATH, cc.game.PACKAGE_PATH], function(item, index, cb1){
-            self.loadJson(path.join(depPath, item), cb1);
-        }, function(err, results){
-            if(err) return cb(err);
-            if(locDeps.indexOf(name) >= 0 || locDepsOf3rdParty.indexOf(name) >= 0) cb();//has loaded
-            self._handleCfgAndPkg(depPath, results[0], results[1], arr, function(err){
-                if(err) return cb(err);
-                is3rdParty ? locDepsOf3rdParty.push(name) : locDeps.push(name);
-                cb();
-            });
-        });
-    },
-    /**
-     * Get config of res from resCfg by cfgName.
-     * @param cfgName
-     * @returns {*}
-     */
-    getResCfg : function(cfgName){
-        var self = this, jsCacheOfCfg = self._jsCacheOfCfg, resCfg = cc.resCfg, resCache = self._resCache;
-        if(!cfgName || jsCacheOfCfg[cfgName] >= 0) return null;
-        var cfg = resCfg[cfgName];
-        var extname = cc.path.extname(cfgName);
-        var isJs = extname && extname.toLowerCase() == ".js";//is js ?
-
-        cfg = cfg || {};
-
-        var result = {jsArr:[], resArr:[]};
-        var requireArr = cfg.require || [];
-        for(var i = 0, li = requireArr.length; i < li; i++){//js
-            if(!requireArr[i]) continue;
-            var r = self.getResCfg(requireArr[i]);
-            if(r){
-                if(r.jsArr && r.jsArr.length > 0) result.jsArr = result.jsArr.concat(r.jsArr);
-                if(r.resArr && r.resArr.length > 0) result.resArr = result.resArr.concat(r.resArr);
-            }
-        }
-        var res = cfg.res || [];
-        for(var i = 0, li = res.length; i < li; ++i){//res
-            var resPath = res[i];
-            if(!resPath) continue;
-            var resPathTemp = typeof resPath == "string" ? resPath : resPath.name + "." + resPath.type.toLowerCase();
-            if(resCache[resPathTemp]) continue;
-            result.resArr.push(resPath);
-            resCache[resPathTemp] = true;
-        }
-        if(isJs) {//cfgName is a path of js.
-            var results = cfgName.match(/\[\%[\w_\d\-]+\%\]/);
-            if(results && results.length > 0){
-                var moduleName = results[0].substring(2, results[0].length - 2);
-                var repStr = "";
-                if(self._deps.indexOf(moduleName) >= 0) repStr = cc.path.join(cc.game.config[cc.game.CONFIG_KEY.engineDir], moduleName, "/");
-                else if(self._depsOf3rdParty.indexOf(moduleName) >= 0) repStr = cc.path.join(self.NODE_MODULE_PATH, moduleName, "/");
-                cfgName = cfgName.replace(/\[\%[\w_\d\-]+\%\]/, repStr);//replace module name with path
-            }
-            result.jsArr.push(cfgName);
-        }
-        jsCacheOfCfg[cfgName] = true;
-        return result;
-    },
-
-    //@MODE_BEGIN TEST
-    _is4Test : false,
-    //@MODE_END TEST
-    loadGameModule : function(moduleName, cb){
-        var self = this, r = self.getResCfg(moduleName) || {jsArr:[], resArr:[]};
-        //@MODE_BEGIN TEST
-        if(self._is4Test){
-            var rOfTest = self.getResCfg(cc.TEST_BASE) || {jsArr:[], resArr:[]};
-            r.jsArr = rOfTest.jsArr.concat(r.jsArr);
-            r.resArr = rOfTest.resArr.concat(r.resArr);
-        }
-        if(cc.game._baseRes4Npm) {
-            r.resArr = cc.game._baseRes4Npm.concat(r.resArr);
-            cc.game._baseRes4Npm = null;
-        }
-        //@MODE_END TEST
-        self.loadJsWithImg("", r.jsArr, function(){
-            this._isBaseLoaded = true;
-            cb(r.resArr);
-        });
     }
-    //@MODE_END NPM
 
 };
 //+++++++++++++++++++++++++something about loader end+++++++++++++++++++++++++++++
@@ -967,9 +781,9 @@ cc._logToWebPage = function (msg) {
         var logDivStyle = logDiv.style;
 
         logDiv.setAttribute("id", "logInfoDiv");
-        cc.canvas.parentNode.appendChild(logDiv);
+        cc._canvas.parentNode.appendChild(logDiv);
         logDiv.setAttribute("width", "200");
-        logDiv.setAttribute("height", cc.canvas.height);
+        logDiv.setAttribute("height", cc._canvas.height);
         logDivStyle.zIndex = "99999";
         logDivStyle.position = "absolute";
         logDivStyle.top = "0";
@@ -1097,46 +911,44 @@ cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
  * @constant
  * @type Number
  */
-cc.RENDER_TYPE_CANVAS = 0;
+cc._RENDER_TYPE_CANVAS = 0;
 
 /**
  * WebGL of render type
  * @constant
  * @type Number
  */
-cc.RENDER_TYPE_WEBGL = 1;
+cc._RENDER_TYPE_WEBGL = 1;
 
 /**
  * drawing primitive of game engine
  * @type cc.DrawingPrimitive
  */
-cc.drawingUtil = null;
+cc._drawingUtil = null;
 
 /**
  * main Canvas 2D/3D Context of game engine
  * @type CanvasRenderingContext2D|WebGLRenderingContext
  */
-cc.renderContext = null;
+cc._renderContext = null;
 
 /**
  * main Canvas of game engine
  * @type HTMLCanvasElement
  */
-cc.canvas = null;
+cc._canvas = null;
 
 /**
  * This Div element contain all game canvas
  * @type HTMLDivElement
  */
-cc.gameDiv = null;
+cc._gameDiv = null;
 
 /**
  * current render type of game engine
  * @type Number
  */
-cc.renderType = cc.RENDER_TYPE_CANVAS;
-
-cc.isAddedHiddenEvent = false;
+cc._renderType = cc._RENDER_TYPE_CANVAS;
 
 cc._rendererInitialized = false;
 /**
@@ -1146,7 +958,7 @@ cc._rendererInitialized = false;
  *   can receive follow type of arguemnt: <br/>
  *      - empty: create a canvas append to document's body, and setup other option    <br/>
  *      - string: search the element by document.getElementById(),    <br/>
- *          if this element is HTMLCanvasElement, set this element as main canvas of engine, and set it's ParentNode as cc.gameDiv.<br/>
+ *          if this element is HTMLCanvasElement, set this element as main canvas of engine, and set it's ParentNode as cc._gameDiv.<br/>
  *          if this element is HTMLDivElement, set it's ParentNode to cc.gameDiv， and create a canvas as main canvas of engine.   <br/>
  * </p>
  * @function
@@ -1170,13 +982,6 @@ cc._setup = function (el, width, height) {
         win.oRequestAnimationFrame ||
         win.msRequestAnimationFrame;
 
-    win.console = win.console || {
-        log : function(){},
-        warn : function(){},
-        error : function(){},
-        assert : function(){}
-    };
-
     var element = cc.$(el) || cc.$('#' + el);
     var localCanvas, localContainer, localConStyle;
     if (element.tagName == "CANVAS") {
@@ -1185,7 +990,7 @@ cc._setup = function (el, width, height) {
 
         //it is already a canvas, we wrap it around with a div
         localContainer = cc.container = cc.$new("DIV");
-        localCanvas = cc.canvas = element;
+        localCanvas = cc._canvas = element;
         localCanvas.parentNode.insertBefore(localContainer, localCanvas);
         localCanvas.appendTo(localContainer);
         localContainer.setAttribute('id', 'Cocos2dGameContainer');
@@ -1196,7 +1001,7 @@ cc._setup = function (el, width, height) {
         width = width || element.clientWidth;
         height = height || element.clientHeight;
         localContainer = cc.container = element;
-        localCanvas = cc.canvas = cc.$new("CANVAS");
+        localCanvas = cc._canvas = cc.$new("CANVAS");
         element.appendChild(localCanvas);
     }
 
@@ -1216,24 +1021,24 @@ cc._setup = function (el, width, height) {
         return;
 
     if (cc.sys.supportWebGL)
-        cc.renderContext = cc.webglContext = cc.create3DContext(localCanvas,{
+        cc._renderContext = cc.webglContext = cc.create3DContext(localCanvas,{
             'stencil': true,
             'preserveDrawingBuffer': true,
             'antialias': !cc.sys.isMobile,
             'alpha': false});
-    if(cc.renderContext){
-        cc.renderType = cc.RENDER_TYPE_WEBGL;
-        win.gl = cc.renderContext; // global variable declared in CCMacro.js
-        cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
+    if(cc._renderContext){
+        cc._renderType = cc._RENDER_TYPE_WEBGL;
+        win.gl = cc._renderContext; // global variable declared in CCMacro.js
+        cc._drawingUtil = new cc.DrawingPrimitiveWebGL(cc._renderContext);
         cc._rendererInitialized = true;
         cc.textureCache._initializingRenderer();
 	    cc.shaderCache._init();
     } else {
-        cc.renderContext = localCanvas.getContext("2d");
-        cc.mainRenderContextBackup = cc.renderContext;
-        cc.renderType = cc.RENDER_TYPE_CANVAS;
-        cc.renderContext.translate(0, localCanvas.height);
-        cc.drawingUtil = cc.DrawingPrimitiveCanvas ? new cc.DrawingPrimitiveCanvas(cc.renderContext) : null;
+        cc._renderContext = localCanvas.getContext("2d");
+        cc.mainRenderContextBackup = cc._renderContext;
+        cc._renderType = cc._RENDER_TYPE_CANVAS;
+        cc._renderContext.translate(0, localCanvas.height);
+        cc._drawingUtil = cc.DrawingPrimitiveCanvas ? new cc.DrawingPrimitiveCanvas(cc._renderContext) : null;
     }
 
     cc.originalCanvasSize = cc.size(localCanvas.width, localCanvas.height);
@@ -1242,30 +1047,27 @@ cc._setup = function (el, width, height) {
     cc.log(cc.ENGINE_VERSION);
     //cc.configuration.getInstance();
 
-    cc.setContextMenuEnable(false);
+    cc._setContextMenuEnable(false);
 
     if(cc.sys.isMobile){
-        cc._addUserSelectStatus();
+        var fontStyle = document.createElement("style");
+        fontStyle.type = "text/css";
+        document.body.appendChild(fontStyle);
+
+        fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
+            +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
     }
 };
 
-cc._addUserSelectStatus = function(){
-    var fontStyle = document.createElement("style");
-    fontStyle.type = "text/css";
-    document.body.appendChild(fontStyle);
-
-    fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
-        +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
-};
 
 cc._isContextMenuEnable = false;
 /**
  * enable/disable contextMenu for Canvas
  * @param {Boolean} enabled
  */
-cc.setContextMenuEnable = function (enabled) {
+cc._setContextMenuEnable = function (enabled) {
     cc._isContextMenuEnable = enabled;
-    cc.canvas.oncontextmenu = function () {
+    cc._canvas.oncontextmenu = function () {
         if(!cc._isContextMenuEnable) return false;
     };
 };
@@ -1279,8 +1081,6 @@ cc.game = {
     _isContextMenuEnable : false,
     _paused : true,//whether the game is paused
 
-    _baseRes4Npm : [],//cache to restore base resources for npm
-
     _intervalId : null,//interval target of main
 
 
@@ -1292,21 +1092,6 @@ cc.game = {
     DEBUG_MODE_WARN_FOR_WEB_PAGE : 5,
     DEBUG_MODE_ERROR_FOR_WEB_PAGE : 6,
 
-    /**
-     * Path of config.json
-     * @constant
-     * @type String
-     */
-    CONFIG_PATH : "project.json",
-    /**
-     * Default config
-     * @constant
-     * @type Object
-     */
-    DEFAULT_CONFIG : {
-        engineDir : "libs/cocos2d-html5",
-        engineDir4Npm : "../node_modules"
-    },
     /**
      * Key of config
      * @constant
@@ -1320,27 +1105,9 @@ cc.game = {
         frameRate : "frameRate",
         id : "id",
         renderMode : "renderMode",
-        isNpm : "isNpm",
         jsList : "jsList",
         classReleaseMode : "classReleaseMode"
     },
-
-    //@MODE_BEGIN NPM
-    /**
-     * Path of package.json
-     * @constant
-     * @type String
-     */
-    PACKAGE_PATH : "package.json",
-    /**
-     * Key of package.json
-     * @constant
-     * @type Object
-     */
-    PACKAGE_KEY : {
-        dependencies : "dependencies"
-    },
-    //@MODE_BEGIN NPM
 
     /**
      * Config of game
@@ -1444,14 +1211,14 @@ cc.game = {
             self.prepare(function(){
                 cc._setup(self.config[self.CONFIG_KEY.id]);
                 self._runMainLoop();
-                self.onEnter(self._baseRes4Npm);
+                self.onEnter();
             });
         }else{
             self._checkPrepare = setInterval(function(){
                 if(self._prepared){
                     cc._setup(self.config[self.CONFIG_KEY.id]);
                     self._runMainLoop();
-                    self.onEnter(self._baseRes4Npm);
+                    self.onEnter();
                     clearInterval(self._checkPrepare);
                 }
             }, 10);
@@ -1464,16 +1231,16 @@ cc.game = {
      * @private
      */
     _initConfig : function(cb){
-        var self = this, CONFIG_KEY = self.CONFIG_KEY, DEFAULT_CONFIG = self.DEFAULT_CONFIG;
+        var self = this, CONFIG_KEY = self.CONFIG_KEY;
         var _init = function(cfg){
-            cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || (cfg[CONFIG_KEY.isNpm] ? DEFAULT_CONFIG.engineDir : DEFAULT_CONFIG.engineDir4Npm);
+            cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "libs/cocos2d-html5";
             cfg[CONFIG_KEY.debugMode] = cfg[CONFIG_KEY.debugMode] || 0;
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
             cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 0;
             return cfg;
         };
         if(self.config) return cb(_init(self.config));
-        cc.loader.loadJson(self.CONFIG_PATH, function(err, data){
+        cc.loader.loadJson("project.json", function(err, data){
             if(err) throw err;
             self.config = data;
             cb(_init(self.config));
@@ -1512,43 +1279,35 @@ cc.game = {
             var CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
             cc._initDebugSetting();
             self._prepareCalled = true;
-            if(config[CONFIG_KEY.isNpm]){//for mpn
-                loader.loadNpm(function(err, resArr){
+
+            var jsList = config[CONFIG_KEY.jsList] || [];
+            if(cc.Class){//is single file
+                //load user's jsList only
+                loader.loadJsWithImg("", jsList, function(err){
                     if(err) throw err;
-                    self._baseRes4Npm = resArr;
-                    cb();
+                    self._prepared = true;
+                    if(cb) cb();
                 });
             }else{
-                var jsList = config[CONFIG_KEY.jsList] || [];
-                if(cc.Class){//is single file
-                    //load user's jsList only
-                    loader.loadJsWithImg("", jsList, function(err){
+                //load cc's jsList first
+                var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
+                loader.loadJson(ccModulesPath, function(err, modulesJson){
+                    if(err) throw err;
+                    var modules = config["modules"] || [];
+                    var moduleMap = modulesJson["module"];
+                    var newJsList = [];
+                    if(modules.indexOf("core") < 0) modules.splice(0, 0, "core");
+                    for(var i = 0, li = modules.length; i < li; i++){
+                        var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
+                        if(arr) newJsList = newJsList.concat(arr);
+                    }
+                    newJsList = newJsList.concat(jsList);
+                    cc.loader.loadJsWithImg(newJsList, function(err){
                         if(err) throw err;
                         self._prepared = true;
                         if(cb) cb();
                     });
-                }else{
-                    //load cc's jsList first
-                    var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
-                    loader.loadJson(ccModulesPath, function(err, modulesJson){
-                        if(err) throw err;
-                        var modules = config["modules"] || [];
-                        var moduleMap = modulesJson["module"];
-                        var newJsList = [];
-                        if(modules.indexOf("core") < 0) modules.splice(0, 0, "core");
-                        for(var i = 0, li = modules.length; i < li; i++){
-                            var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
-                            if(arr) newJsList = newJsList.concat(arr);
-                        }
-                        newJsList = newJsList.concat(jsList);
-                        cc.loader.loadJsWithImg(newJsList, function(err){
-                            if(err) throw err;
-                            self._prepared = true;
-                            if(cb) cb();
-                        });
-                    });
-                }
-
+                });
             }
         });
     }

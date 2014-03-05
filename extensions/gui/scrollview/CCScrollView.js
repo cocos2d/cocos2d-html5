@@ -549,9 +549,9 @@ cc.ScrollView = cc.Layer.extend({
         if (!this.isVisible())
             return;
 
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         var i, locChildren = this._children, selChild, childrenLen;
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             context.save();
             this.transform(context);
             this._beforeDraw(context);
@@ -776,8 +776,8 @@ cc.ScrollView = cc.Layer.extend({
             var scaleX = this.getScaleX();
             var scaleY = this.getScaleY();
 
-            var ctx = context || cc.renderContext;
-            if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
+            var ctx = context || cc._renderContext;
+            if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 var getWidth = (this._viewSize.width * scaleX) * locEGLViewer.getScaleX();
                 var getHeight = (this._viewSize.height * scaleY) * locEGLViewer.getScaleY();
                 var startX = 0;
@@ -814,12 +814,12 @@ cc.ScrollView = cc.Layer.extend({
      * other nodes.
      */
     _afterDraw:function (context) {
-        if (this._clippingToBounds && cc.renderType === cc.RENDER_TYPE_WEBGL) {
+        if (this._clippingToBounds && cc._renderType === cc._RENDER_TYPE_WEBGL) {
             if (this._scissorRestored) {  //restore the parent's scissor rect
                 var rect = this._parentScissorRect;
                 cc.view.setScissorInPoints(rect.x, rect.y, rect.width, rect.height)
             }else{
-                var ctx = context || cc.renderContext;
+                var ctx = context || cc._renderContext;
                 ctx.disable(ctx.SCISSOR_TEST);
             }
         }

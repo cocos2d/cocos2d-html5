@@ -227,7 +227,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
         //shader stuff
         this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
-        this._uniformColor = cc.renderContext.getUniformLocation(this.shaderProgram.getProgram(), "u_color");
+        this._uniformColor = cc._renderContext.getUniformLocation(this.shaderProgram.getProgram(), "u_color");
         return true;
     },
 
@@ -237,7 +237,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {WebGLRenderingContext} ctx renderContext
      */
     _drawForWebGL:function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         cc.NODE_DRAW_SETUP(this);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.uniform4fv(this._uniformColor, this._colorF32Array);

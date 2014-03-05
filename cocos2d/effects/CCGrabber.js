@@ -33,7 +33,7 @@ cc.Grabber = cc.Class.extend({
     _gl:null,
 
     ctor:function () {
-        this._gl = cc.renderContext;
+        this._gl = cc._renderContext;
         this._oldClearColor = [0, 0, 0, 0];
         this._oldFBO = null;
         // generate FBO
