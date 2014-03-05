@@ -22,19 +22,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * Action frame type
- * @constant
- * @type Object
- */
-ccs.FrameType = {
-    move: 0,
-    scale: 1,
-    rotate: 2,
-    tint: 3,
-    fade: 4,
-    max: 5
-};
+//Action frame type
+ccs.FRAME_TYPE_MOVE = 0;
+ccs.FRAME_TYPE_SCALE = 1;
+ccs.FRAME_TYPE_ROTATE = 2;
+ccs.FRAME_TYPE_TINT = 3;
+ccs.FRAME_TYPE_FADE = 4;
+ccs.FRAME_TYPE_MAX = 5;
 
 /**
  * Base class for ccs.ActionFrame
@@ -42,79 +36,15 @@ ccs.FrameType = {
  * @extends ccs.Class
  */
 ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
-    _frameType: 0,
-    _easingType: 0,
-    _frameIndex: 0,
-    _time: 0,
+    frameType: 0,
+    easingType: 0,
+    frameIndex: 0,
+    time: 0,
     ctor: function () {
-        this._frameType = 0;
-        this._easingType = 0;
-        this._frameIndex = 0;
-        this._time = 0;
-    },
-
-    /**
-     * Changes the index of action frame
-     * @param {number} index
-     */
-    setFrameIndex: function (index) {
-        this._frameIndex = index;
-    },
-
-    /**
-     * Gets the index of action frame
-     * @returns {number}
-     */
-    getFrameIndex: function () {
-        return this._frameIndex;
-    },
-
-    /**
-     * Changes the time of action frame
-     * @param {number} fTime
-     */
-    setFrameTime: function (time) {
-        this._time = time;
-    },
-
-    /**
-     * Gets the time of action frame
-     * @returns {number}
-     */
-    getFrameTime: function () {
-        return this._time;
-    },
-
-    /**
-     * Changes the type of action frame
-     * @param {number} frameType
-     */
-    setFrameType: function (frameType) {
-        this._frameType = frameType;
-    },
-
-    /**
-     * Gets the type of action frame
-     * @returns {number}
-     */
-    getFrameType: function () {
-        return this._frameType;
-    },
-
-    /**
-     * Changes the easing type.
-     * @param {number} easingType
-     */
-    setEasingType: function (easingType) {
-        this._easingType = easingType;
-    },
-
-    /**
-     * Gets the easing type.
-     * @returns {number}
-     */
-    getEasingType: function () {
-        return this._easingType;
+        this.frameType = 0;
+        this.easingType = 0;
+        this.frameIndex = 0;
+        this.time = 0;
     },
 
     /**
@@ -137,7 +67,7 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._position = cc.p(0, 0);
-        this._frameType = ccs.FrameType.move;
+        this.frameType = ccs.FRAME_TYPE_MOVE;
     },
 
     /**
@@ -185,7 +115,7 @@ ccs.ActionScaleFrame = ccs.ActionFrame.extend({
         ccs.ActionFrame.prototype.ctor.call(this);
         this._scaleX = 1;
         this._scaleY = 1;
-        this._frameType = ccs.FrameType.scale;
+        this.frameType = ccs.FRAME_TYPE_SCALE;
     },
 
     /**
@@ -240,7 +170,7 @@ ccs.ActionRotationFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._rotation = 0;
-        this._frameType = ccs.FrameType.rotate;
+        this.frameType = ccs.FRAME_TYPE_ROTATE;
     },
 
     /**
@@ -279,7 +209,7 @@ ccs.ActionFadeFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._opacity = 255;
-        this._frameType = ccs.FrameType.fade;
+        this.frameType = ccs.FRAME_TYPE_FADE;
     },
 
     /**
@@ -318,7 +248,7 @@ ccs.ActionTintFrame = ccs.ActionFrame.extend({
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
         this._color = cc.color(255, 255, 255, 255);
-        this._frameType = ccs.FrameType.tint;
+        this.frameType = ccs.FRAME_TYPE_TINT;
     },
 
     /**
