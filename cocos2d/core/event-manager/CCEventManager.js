@@ -644,14 +644,18 @@ cc.eventManager = {
      * @param {cc.Node|Number} nodeOrPriority The priority of the listener is based on the draw order of this node or fixedPriority The fixed priority of the listener.
      * @note  The priority of scene graph will be fixed value 0. So the order of listener item in the vector will be ' <0, scene graph (0 priority), >0'.
      *         A lower priority will be called before the ones that have a higher value. 0 priority is forbidden for fixed priority since it's used for scene graph based priority.
+     *         The listener must be a cc.EventListener object when adding a fixed priority listener, because we can't remove a fixed priority listener without the listener handler,
+     *         except calls removeAllListeners().
      */
     addListener: function (listener, nodeOrPriority) {
         if (!listener || !nodeOrPriority)
             throw "Invalid parameters.";
 
-        if(!(listener instanceof cc.EventListener))
+        if(!(listener instanceof cc.EventListener)){
+            if(typeof(nodeOrPriority) === "number")
+                throw "listener must be a cc.EventListener object when adding a fixed priority listener";
             listener = cc.EventListener.create(listener);
-        else{
+        } else{
             if (listener._isRegistered())
                 throw "The listener has been registered.";
         }
