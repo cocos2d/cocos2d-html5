@@ -417,7 +417,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
     },
 
     draw: function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         if ((this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE)))
             context.globalCompositeOperation = 'lighter';
 
@@ -556,7 +556,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
         if (cc.Node.prototype.init.call(this)) {
             this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR);
             this._ensureCapacity(512);
-            this._trianglesWebBuffer = cc.renderContext.createBuffer();
+            this._trianglesWebBuffer = cc._renderContext.createBuffer();
             this._dirty = true;
             return true;
         }
@@ -564,7 +564,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
     },
 
     _render:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._trianglesWebBuffer);

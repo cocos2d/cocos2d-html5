@@ -221,7 +221,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
         this._sprite = null;
 
-        this._vertexWebGLBuffer = cc.renderContext.createBuffer();
+        this._vertexWebGLBuffer = cc._renderContext.createBuffer();
         this._vertexDataCount = 0;
         this._vertexData = null;
         this._vertexArrayBuffer = null;
@@ -435,7 +435,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     draw:null,
 
     _drawForCanvas:function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
 
         var locSprite = this._sprite;
         if (locSprite._isLighterMode)
@@ -502,7 +502,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     },
 
     _drawForWebGL:function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         if (!this._vertexData || !this._sprite)
             return;
 

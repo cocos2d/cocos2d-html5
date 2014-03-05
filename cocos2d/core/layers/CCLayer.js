@@ -439,8 +439,8 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen),
             cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
             cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
-        this._verticesFloat32Buffer = cc.renderContext.createBuffer();
-        this._colorsUint8Buffer = cc.renderContext.createBuffer();
+        this._verticesFloat32Buffer = cc._renderContext.createBuffer();
+        this._colorsUint8Buffer = cc._renderContext.createBuffer();
     },
 
     /**
@@ -453,7 +453,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
-        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
             this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
     },
 
@@ -467,7 +467,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         if(!cc.Layer.prototype.init.call(this))
             return false;
 
-        if(cc.renderType !== cc.RENDER_TYPE_CANVAS)
+        if(cc._renderType !== cc._RENDER_TYPE_CANVAS)
             this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
         var winSize = cc.director.getWinSize();
@@ -561,13 +561,13 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     },
 
     _bindLayerVerticesBufferData:function () {
-        var glContext = cc.renderContext;
+        var glContext = cc._renderContext;
         glContext.bindBuffer(glContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareVerticesAB , glContext.STATIC_DRAW);
     },
 
     _bindLayerColorsBufferData:function () {
-        var glContext = cc.renderContext;
+        var glContext = cc._renderContext;
         glContext.bindBuffer(glContext.ARRAY_BUFFER, this._colorsUint8Buffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
     },
@@ -579,7 +579,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     draw:null,
 
     _drawForCanvas:function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
 
         var locEGLViewer = cc.view;
         var locDisplayedColor = this._displayedColor;
@@ -592,7 +592,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     },
 
     _drawForWebGL:function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
 
         cc.NODE_DRAW_SETUP(this);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
@@ -881,12 +881,12 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     draw:function (ctx) {
-        if (cc.renderType === cc.RENDER_TYPE_WEBGL){
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL){
             cc.LayerColor.prototype.draw.call(this, ctx);
             return;
         }
 
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         if (this._isLighterMode)
             context.globalCompositeOperation = 'lighter';
 
@@ -912,7 +912,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     _updateColor:function () {
         var locAlongVector = this._alongVector;
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             var tWidth = this.width * 0.5;
             var tHeight = this.height * 0.5;
 

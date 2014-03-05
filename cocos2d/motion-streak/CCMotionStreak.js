@@ -83,7 +83,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         cc.NodeRGBA.prototype.ctor.call(this);
         this._positionR = cc.p(0, 0);
         this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        this._vertexWebGLBuffer = cc.renderContext.createBuffer();
+        this._vertexWebGLBuffer = cc._renderContext.createBuffer();
 
         this.fastMode = false;
         this.startingPositionInitialized = false;
@@ -166,11 +166,11 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     onExit:function(){
         cc.Node.prototype.onExit.call(this);
         if(this._verticesBuffer)
-            cc.renderContext.deleteBuffer(this._verticesBuffer);
+            cc._renderContext.deleteBuffer(this._verticesBuffer);
         if(this._texCoordsBuffer)
-            cc.renderContext.deleteBuffer(this._texCoordsBuffer);
+            cc._renderContext.deleteBuffer(this._texCoordsBuffer);
         if(this._colorPointerBuffer)
-            cc.renderContext.deleteBuffer(this._colorPointerBuffer);
+            cc._renderContext.deleteBuffer(this._colorPointerBuffer);
     },
 
     isFastMode:function () {
@@ -232,7 +232,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._colorPointer = new Uint8Array(locMaxPoints * 8);
         this._maxPoints = locMaxPoints;
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         this._verticesBuffer = gl.createBuffer();
         this._texCoordsBuffer = gl.createBuffer();
@@ -339,7 +339,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
             return;
 
         if(this.texture && this.texture.isLoaded()){
-            ctx = ctx || cc.renderContext;
+            ctx = ctx || cc._renderContext;
             cc.NODE_DRAW_SETUP(this);
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);

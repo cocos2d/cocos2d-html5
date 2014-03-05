@@ -137,7 +137,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._clippingStencil = cc.DrawNode.create();
         ccs.Layout._init_once = true;
         if (ccs.Layout._init_once) {
-            cc.stencilBits = cc.renderContext.getParameter(cc.renderContext.STENCIL_BITS);
+            cc.stencilBits = cc._renderContext.getParameter(cc._renderContext.STENCIL_BITS);
             if (cc.stencilBits <= 0)
                 cc.log("Stencil buffer is not enabled.");
             ccs.Layout._init_once = false;
@@ -146,7 +146,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _initStencilForCanvas: function () {
         this._clippingStencil = cc.DrawNode.create();
         var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-        var locContext = cc.renderContext;
+        var locContext = cc._renderContext;
         var stencil = this._clippingStencil;
         stencil.draw = function () {
             for (var i = 0; i < stencil._buffer.length; i++) {
@@ -232,7 +232,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     stencilClippingVisit : null,
 
     _stencilClippingVisitForWebGL: function (ctx) {
-        var gl = ctx || cc.renderContext;
+        var gl = ctx || cc._renderContext;
 
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
@@ -325,7 +325,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
+        cc._drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -393,7 +393,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (!this._clippingStencil || !this._clippingStencil.isVisible()) {
             return;
         }
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         // Composition mode, costy but support texture stencil
         if (this._cangodhelpme() || this._clippingStencil instanceof cc.Sprite) {
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
@@ -467,7 +467,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     scissorClippingVisit : null,
     _scissorClippingVisitForWebGL: function (ctx) {
         var clippingRect = this.getClippingRect();
-        var gl = ctx || cc.renderContext;
+        var gl = ctx || cc._renderContext;
         if (this._handleScissor) {
             gl.enable(gl.SCISSOR_TEST);
         }

@@ -141,7 +141,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
 
             this.animation.setAnimationData(animationData);
         }
-        if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         }
 
@@ -550,15 +550,15 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
      * draw contour
      */
     drawContour: function () {
-        cc.drawingUtil.setDrawColor(255, 255, 255, 255);
-        cc.drawingUtil.setLineWidth(1);
+        cc._drawingUtil.setDrawColor(255, 255, 255, 255);
+        cc._drawingUtil.setLineWidth(1);
         for (var key in this._boneDic) {
             var bone = this._boneDic[key];
             var bodyList = bone.getColliderBodyList();
             for (var i = 0; i < bodyList.length; i++) {
                 var body = bodyList[i];
                 var vertexList = body.getCalculatedVertexList();
-                cc.drawingUtil.drawPoly(vertexList, vertexList.length, true);
+                cc._drawingUtil.drawPoly(vertexList, vertexList.length, true);
             }
         }
     },

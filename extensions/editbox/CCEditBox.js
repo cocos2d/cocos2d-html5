@@ -257,7 +257,7 @@ cc.EditBox = cc.ControlButton.extend({
             if (e.keyCode === cc.KEY.enter) {
                 e.stopPropagation();
                 e.preventDefault();
-                cc.canvas.focus();
+                cc._canvas.focus();
             }
         });
         this._edTxt.addEventListener("focus", function () {

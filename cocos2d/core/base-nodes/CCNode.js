@@ -1899,7 +1899,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
 
         //visit for canvas
-        var context = ctx || cc.renderContext, i;
+        var context = ctx || cc._renderContext, i;
         var children = this._children,child;
         context.save();
         this.transform(context);
@@ -1929,7 +1929,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // quick return if not visible
         if (!this._visible)
             return;
-        var context = cc.renderContext, i, currentStack = cc.current_stack;
+        var context = cc._renderContext, i, currentStack = cc.current_stack;
 
         //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
         //optimize performance for javascript
@@ -1980,7 +1980,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _transformForCanvas: function (ctx) {
         // transform for canvas
-        var context = ctx || cc.renderContext, eglViewer = cc.view;
+        var context = ctx || cc._renderContext, eglViewer = cc.view;
 
         var t = this.nodeToParentTransform();
         context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
