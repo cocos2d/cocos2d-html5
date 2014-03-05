@@ -23,12 +23,12 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.ActionManager
- * @class
- * @extends ccs.Class
+ * Base singleton object for ccs.ActionManager
+ * @object
  */
-ccs.ActionManager = ccs.Class.extend(/** @lends ccs.ActionManager# */{
+ccs.actionManager = /** @lends ccs.ActionManager# */{
     _actionDic: null,
+
     ctor: function () {
         this._actionDic = {};
     },
@@ -93,25 +93,12 @@ ccs.ActionManager = ccs.Class.extend(/** @lends ccs.ActionManager# */{
     releaseActions: function () {
         this._actionDic = {};
 
-    }
-});
-ccs.ActionManager._instance = null;
+    },
 
-/**
- * returns a shared instance of the CCSActionManager
- * @function
- * @return {ccs.ActionManager}
- */
-ccs.ActionManager.getInstance = function () {
-    if (!this._instance) {
-        this._instance = new ccs.ActionManager();
-    }
-    return this._instance;
-};
-
-/**
- * Purges ActionManager point.
- */
-ccs.ActionManager.purge = function(){
-    this._instance = null;
+	/**
+	 * Clear data: Release all actions.
+	 */
+	clear: function() {
+		this._actionDic = {};
+	}
 };

@@ -22,19 +22,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * Base class for ccs.SceneReader
- * @class
- * @extends ccs.Class
+ * Base object for ccs.GUIReader
+ * @object
  */
-ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
+ccs.guiReader = /** @lends ccs.GUIReader# */{
     _filePath: "",
     _olderVersion: false,
     _fileDesignSizes: {},
-    ctor: function () {
-        this._filePath = "";
-        this._olderVersion = false;
-        this._fileDesignSizes = {};
-    },
 
     /**
      * get version
@@ -130,7 +124,9 @@ ccs.GUIReader = ccs.Class.extend(/** @lends ccs.GUIReader# */{
         jsonDict = null;
         return widget;
     }
-});
+};
+
+
 ccs.WidgetPropertiesReader = ccs.Class.extend({
     _filePath: "",
     createWidget: function (jsonDict, fullPath, fileName) {
@@ -153,10 +149,10 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0) {
             cc.log("Read design size error!");
             var winSize = cc.director.getWinSize();
-            ccs.GUIReader.getInstance().storeFileDesignSize(fileName, winSize);
+            ccs.guiReader.storeFileDesignSize(fileName, winSize);
         }
         else {
-            ccs.GUIReader.getInstance().storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
+            ccs.guiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
         }
         var widgetTree = jsonDict["widgetTree"];
         var widget = this.widgetFromJsonDictionary(widgetTree);
@@ -168,7 +164,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
 
         var actions = jsonDict["animation"];
         var rootWidget = widget;
-        ccs.ActionManager.getInstance().initWithDictionary(fileName, actions, rootWidget);
+        ccs.actionManager.initWithDictionary(fileName, actions, rootWidget);
 
         widgetTree = null;
         actions = null;
@@ -747,10 +743,10 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0) {
             cc.log("Read design size error!");
             var winSize = cc.director.getWinSize();
-            ccs.GUIReader.getInstance().storeFileDesignSize(fileName, winSize);
+            ccs.guiReader.storeFileDesignSize(fileName, winSize);
         }
         else {
-            ccs.GUIReader.getInstance().storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
+            ccs.guiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
         }
         var widgetTree = jsonDict["widgetTree"];
         var widget = this.widgetFromJsonDictionary(widgetTree);
@@ -762,7 +758,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
         var actions = jsonDict["animation"];
         var rootWidget = widget;
-        ccs.ActionManager.getInstance().initWithDictionary(fileName, actions, rootWidget);
+        ccs.actionManager.initWithDictionary(fileName, actions, rootWidget);
 
         widgetTree = null;
         actions = null;
@@ -1586,23 +1582,3 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     }
 });
-
-ccs.GUIReader._instance = null;
-/**
- * returns a shared instance of the GUIReader
- * @function
- * @return {ccs.GUIReader}
- */
-ccs.GUIReader.getInstance = function () {
-    if (!this._instance) {
-        this._instance = new ccs.GUIReader();
-    }
-    return this._instance;
-};
-
-/**
- * purge  instance
- */
-ccs.GUIReader.purge = function(){
-    this._instance = null;
-};
