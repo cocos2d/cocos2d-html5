@@ -109,8 +109,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._layerSize = cc.size(0, 0);
         this._mapTileSize = cc.size(0, 0);
 
-        if(cc.renderType === cc.RENDER_TYPE_CANVAS){
-            var locCanvas = cc.canvas;
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+            var locCanvas = cc._canvas;
             var tmpCanvas = document.createElement('canvas');
             tmpCanvas.width = locCanvas.width;
             tmpCanvas.height = locCanvas.height;
@@ -137,7 +137,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var locContentSize = this._contentSize;
 	    cc.Node.prototype.setContentSize.call(this, size, height);
 
-        if(cc.renderType === cc.RENDER_TYPE_CANVAS){
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS){
             var locCanvas = this._cacheCanvas;
             var scaleFactor = cc.CONTENT_SCALE_FACTOR();
             locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
@@ -195,7 +195,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     visit: null,
 
     _visitForCanvas: function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         // quick return if not visible
         if (!this._visible)
             return;
@@ -245,7 +245,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     draw:null,
 
     _drawForCanvas:function (ctx) {
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         //context.globalAlpha = this._opacity / 255;
         var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
         var eglViewer = cc.view;
@@ -615,7 +615,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         var gid = this.getTileGIDAt(pos);
         if (gid !== 0) {
-            if (cc.renderType === cc.RENDER_TYPE_CANVAS)
+            if (cc._renderType === cc._RENDER_TYPE_CANVAS)
                 this._setNodeDirtyForCache();
             var z = 0 | (pos.x + pos.y * this._layerSize.width);
             var atlasIndex = this._atlasIndexForExistantZ(z);
@@ -631,7 +631,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             if (sprite)
                 cc.SpriteBatchNode.prototype.removeChild.call(this, sprite, true);           //this.removeChild(sprite, true);
             else {
-                if(cc.renderType === cc.RENDER_TYPE_WEBGL)
+                if(cc._renderType === cc._RENDER_TYPE_WEBGL)
                     this.textureAtlas.removeQuadAtIndex(atlasIndex);
 
                 // update possible children
@@ -687,7 +687,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this.tileset.imageSize = this._originalTexture.getContentSizeInPixels();
         } else {
             this.tileset.imageSize = this.textureAtlas.texture.getContentSizeInPixels();
@@ -702,7 +702,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         // Parse cocos2d properties
         this._parseInternalProperties();
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
             this._setNodeDirtyForCache();
 
         var locLayerHeight = this._layerSize.height, locLayerWidth = this._layerSize.width;
@@ -752,7 +752,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             return;
         }
 
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS)
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
             this._setNodeDirtyForCache();
         var atlasIndex = sprite.atlasIndex;
         var zz = this._atlasIndexArray[atlasIndex];
@@ -894,9 +894,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 if (alphaFuncVal)
                     alphaFuncValue = parseFloat(alphaFuncVal);
 
-                if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
+                if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                     this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
-                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.shaderProgram.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
+                    var alphaValueLocation = cc._renderContext.getUniformLocation(this.shaderProgram.getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
                     // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
                     this.shaderProgram.use();
                     this.shaderProgram.setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
@@ -909,7 +909,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _setupTileSprite:function (sprite, pos, gid) {
         var z = pos.x + pos.y * this._layerSize.width;
         sprite.setPosition(this.getPositionAt(pos));
-        if (cc.renderType === cc.RENDER_TYPE_WEBGL)
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL)
             sprite.vertexZ = this._vertexZForPos(pos);
         else
             sprite.tag = z;
@@ -917,7 +917,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         sprite.anchorX = 0;
 	    sprite.anchorY = 0;
         sprite.opacity = this._opacity;
-        if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
+        if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             sprite.rotation = 0.0;
         }
 
@@ -957,7 +957,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _reusedTileWithRect:function (rect) {
-        if(cc.renderType === cc.RENDER_TYPE_WEBGL){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL){
             if (!this._reusedTile) {
                 this._reusedTile = new cc.Sprite();
                 this._reusedTile.initWithTexture(this.texture, rect, false);

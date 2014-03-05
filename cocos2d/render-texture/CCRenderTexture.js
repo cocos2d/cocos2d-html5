@@ -154,7 +154,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         //this.sprite = null;
         this._textureCopy = null;
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.deleteFramebuffer(this._fBO);
         if (this._depthRenderBuffer)
             gl.deleteRenderbuffer(this._depthRenderBuffer);
@@ -203,7 +203,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if(format == cc.Texture2D.PIXEL_FORMAT_A8)
             cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
-        var gl = cc.renderContext, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var gl = cc._renderContext, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
 
         width = 0 | (width * locScaleFactor);
         height = 0 | (height * locScaleFactor);
@@ -295,7 +295,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     begin: null,
 
     _beginForCanvas: function () {
-        cc.renderContext = this._cacheContext;
+        cc._renderContext = this._cacheContext;
         cc.view._setScaleXYForRenderTexture();
 
         /*// Save the current matrix
@@ -322,7 +322,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var widthRatio = size.width / texSize.width;
         var heightRatio = size.height / texSize.height;
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         // Adjust the orthographic projection and viewport
         gl.viewport(0, 0, texSize.width, texSize.height);
@@ -360,7 +360,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} [stencilValue=]
      */
     beginWithClear:function (r, g, b, a, depthValue, stencilValue) {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         depthValue = depthValue || gl.COLOR_BUFFER_BIT;
         stencilValue = stencilValue || (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -377,7 +377,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         b = b || 0;
         a = isNaN(a) ? 1 : a;
 
-        //var context = cc.renderContext;
+        //var context = cc._renderContext;
         var context = this._cacheContext;
         var locCanvas = this._cacheCanvas;
         context.save();
@@ -390,7 +390,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _beginWithClearForWebGL: function (r, g, b, a, depthValue, stencilValue, flags) {
         this.begin();
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         // save clear color
         var clearColor = [0.0, 0.0, 0.0, 0.0];
@@ -431,7 +431,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     end: null,
 
     _endForCanvas: function () {
-        cc.renderContext = cc.mainRenderContextBackup;
+        cc._renderContext = cc.mainRenderContextBackup;
         cc.view._resetScale();
 
         //TODO
@@ -444,7 +444,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _endForWebGL: function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         var director = cc.director;
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
 
@@ -503,7 +503,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _clearDepthForWebGL:function (depthValue) {
         this.begin();
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         //! save old depth value
         var depthClearValue = gl.getParameter(gl.DEPTH_CLEAR_VALUE);
 
@@ -526,7 +526,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _clearStencilForWebGL:function (stencilValue) {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         // save old stencil value
         var stencilClearValue = gl.getParameter(gl.STENCIL_CLEAR_VALUE);
 
@@ -545,7 +545,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if (!this._visible)
             return;
 
-        ctx = ctx || cc.renderContext;
+        ctx = ctx || cc._renderContext;
         ctx.save();
 
         this.draw(ctx);                                                   // update children of RenderTexture before
@@ -586,7 +586,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     draw:null,
 
     _drawForCanvas: function (ctx) {
-        ctx = ctx || cc.renderContext;
+        ctx = ctx || cc._renderContext;
         if (this.autoDraw) {
             this.begin();
 
@@ -615,7 +615,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     _drawForWebGL: function (ctx) {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         if (this.autoDraw) {
             this.begin();
 

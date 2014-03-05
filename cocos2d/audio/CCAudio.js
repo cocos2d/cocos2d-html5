@@ -161,19 +161,19 @@ if (cc.sys.supportWebAudio) {
             this._stop();
         },
         load : function(){
-            var _self = this;
-            if(_self._loadState == 1) return;
+            var self = this;
+            if(self._loadState == 1) return;
             self._loadState = -1;//not loaded
 
-            _self.played = false;
-            _self.ended = true;
+            self.played = false;
+            self.ended = true;
             var request = new XMLHttpRequest();
-            request.open("GET", _self.src, true);
+            request.open("GET", self.src, true);
             request.responseType = "arraybuffer";
 
             // Our asynchronous callback
             request.onload = function() {
-                _ctx.decodeAudioData(request.response, _self._onSuccess1, _self._onError1);
+                _ctx.decodeAudioData(request.response, self._onSuccess1, self._onError1);
             };
             request.send();
         },
@@ -199,15 +199,15 @@ if (cc.sys.supportWebAudio) {
             self._loadState = 1;//loaded
         },
         _onError : function(){
-            var error = self._events["error"]
+            var error = this._events["error"]
             if(error) error();
-            self._loadState = -2;//load failed
+            this._loadState = -2;//load failed
         },
         cloneNode : function(){
-            var _self = this, obj = new cc.WebAudio(_self.src);
-            obj.volume = _self.volume;
-            obj._loadState = _self._loadState;
-            obj._buffer = _self._buffer;
+            var self = this, obj = new cc.WebAudio(self.src);
+            obj.volume = self.volume;
+            obj._loadState = self._loadState;
+            obj._buffer = self._buffer;
             if(obj._loadState == 0 || obj._loadState == -1) obj.load();
             return obj;
         }
@@ -965,7 +965,7 @@ cc.AudioEngine._getInstance = function () {
  */
 cc.audioEngine;
 cc.defineGetterSetter(cc, "audioEngine", function() {
-	return cc.AudioEngine._instance ? cc.AudioEngine._instance : cc.AudioEngine._getInstance();
+    return cc.AudioEngine._instance ? cc.AudioEngine._instance : cc.AudioEngine._getInstance();
 });
 
 /**

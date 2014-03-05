@@ -325,7 +325,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
 
-            //this._fontSize = (cc.renderType === cc.RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
+            //this._fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
@@ -634,7 +634,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var texDef = new cc.FontDefinition();
 
         if (adjustForResolution){
-            //texDef.fontSize = (cc.renderType === cc.RENDER_TYPE_CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
+            //texDef.fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
             texDef.fontSize = this._fontSize;
             texDef.boundingWidth = cc.CONTENT_SCALE_FACTOR() * this._dimensions.width;
 	        texDef.boundingHeight = cc.CONTENT_SCALE_FACTOR() * this._dimensions.height;
@@ -1006,7 +1006,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._needUpdateTexture = false;
             this._updateTexture();
         }
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         cc.Sprite.prototype.visit.call(this,context);
     },
 
@@ -1020,7 +1020,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (!this._string || this._string == "")
             return;
 
-        var gl = ctx || cc.renderContext, locTexture = this._texture;
+        var gl = ctx || cc._renderContext, locTexture = this._texture;
 
         if (locTexture && locTexture._isLoaded) {
             this._shaderProgram.use();
@@ -1051,14 +1051,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
                 cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
             ];
-            cc.drawingUtil.drawPoly(verticesG1, 4, true);
+            cc._drawingUtil.drawPoly(verticesG1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             var drawSizeG2 = this.getTextureRect()._size;
             var offsetPixG2X = this.offsetX, offsetPixG2Y = this.offsetY;
             var verticesG2 = [cc.p(offsetPixG2X, offsetPixG2Y), cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y),
                 cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y + drawSizeG2.height), cc.p(offsetPixG2X, offsetPixG2Y + drawSizeG2.height)];
-            cc.drawingUtil.drawPoly(verticesG2, 4, true);
+            cc._drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.g_NumberOfDraws++;
     },

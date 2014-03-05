@@ -289,7 +289,7 @@ cc.GLProgram = cc.Class.extend({
         this._fragShader = null;
         this._uniforms = [];
         this._hashForUniforms = [];
-        this._glContext = glContext || cc.renderContext;
+        this._glContext = glContext || cc._renderContext;
     },
 
     destroyProgram: function () {
