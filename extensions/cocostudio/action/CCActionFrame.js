@@ -142,10 +142,17 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend({
 
     /**
      * Changes the move action position.
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} pos
+     * @param {Number} y
      */
-    setPosition: function (pos) {
-        this._position = pos;
+    setPosition: function (pos, y) {
+        if (y === undefined) {
+            this._position.x = pos.x;
+            this._position.y = pos.y;
+        } else {
+            this._position.x = pos;
+            this._position.y = y;
+        }
     },
 
     /**

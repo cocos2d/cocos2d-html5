@@ -37,7 +37,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
 
     handleLoadedTexture : function(url){
         var locTexs = this._textures;
-        if(cc.renderType === cc.RENDER_TYPE_WEBGL && !cc._rendererInitialized){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL && !cc._rendererInitialized){
             locTexs = this._loadedTexturesBefore;
         }
         var tex = locTexs[url];
@@ -235,7 +235,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
             target = null;
         }
         var locTexs = this._textures;
-        if(cc.renderType === cc.RENDER_TYPE_WEBGL && !cc._rendererInitialized){
+        if(cc._renderType === cc._RENDER_TYPE_WEBGL && !cc._rendererInitialized){
             locTexs = this._loadedTexturesBefore;
         }
         var tex = locTexs[url];

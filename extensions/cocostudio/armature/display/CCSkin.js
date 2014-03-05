@@ -95,7 +95,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         if (locArmature && locArmature.getBatchNode()) {
             this._transform = cc.AffineTransformConcat(locTransform, locArmature.nodeToParentTransform());
         }
-        if (cc.renderType === cc.RENDER_TYPE_CANVAS) {
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locTransform = this._transform
             locTransform.b *= -1;
             locTransform.c *= -1;

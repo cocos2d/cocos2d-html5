@@ -227,7 +227,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      */
     draw:function (ctx) {
         //console.log("size",this._contentSize);
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         if (this.delegate && this.delegate.onDraw(this))
             return;
 
@@ -239,7 +239,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         // draw placeholder
         var color = this.color;
         this.color = this.colorSpaceHolder;
-        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
             this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
         this.color = color;

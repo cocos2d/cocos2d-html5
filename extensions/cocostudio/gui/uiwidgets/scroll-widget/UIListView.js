@@ -90,7 +90,7 @@ ccs.ListView = ccs.ScrollView.extend({
     },
 
     updateInnerContainerSize: function () {
-        switch (this._direction) {
+        switch (this.direction) {
             case ccs.ScrollViewDir.vertical:
                 var length = this._items.length;
                 var totalHeight = (length - 1) * this._itemsMargin;
@@ -122,7 +122,7 @@ ccs.ListView = ccs.ScrollView.extend({
         if (!item) {
             return;
         }
-        switch (this._direction) {
+        switch (this.direction) {
             case ccs.ScrollViewDir.vertical:
                 var llp = item.getLayoutParameter(ccs.LayoutParameterType.linear);
                 if (!llp) {
@@ -346,6 +346,14 @@ ccs.ListView = ccs.ScrollView.extend({
         }
         this._itemsMargin = margin;
         this._refreshViewDirty = true;
+    },
+
+    /**
+     * Get the margin between each item.
+     * @returns {Number}
+     */
+    getItemsMargin:function(){
+        return this._itemsMargin;
     },
 
     /**

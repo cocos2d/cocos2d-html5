@@ -418,7 +418,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      */
     drawCardinalSpline:function (config, tension, segments) {
         //lazy_init();
-        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
+        cc._renderContext.strokeStyle = "rgba(255,255,255,1)";
         var points = this._cacheArray;
         points.length = 0;
         var p, lt;
@@ -594,7 +594,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
     _pointSize:-1,
     ctor:function (ctx) {
         if (ctx == null)
-            ctx = cc.renderContext;
+            ctx = cc._renderContext;
 
         if (!ctx instanceof  WebGLRenderingContext)
             throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";

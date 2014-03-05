@@ -84,7 +84,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // get (only once) the number of bits of the stencil buffer
         cc.ClippingNode._init_once = true;
         if (cc.ClippingNode._init_once) {
-            cc.stencilBits = cc.renderContext.getParameter(cc.renderContext.STENCIL_BITS);
+            cc.stencilBits = cc._renderContext.getParameter(cc._renderContext.STENCIL_BITS);
             if (cc.stencilBits <= 0)
                 cc.log("Stencil buffer is not enabled.");
             cc.ClippingNode._init_once = false;
@@ -121,7 +121,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     visit: null,
 
     _visitForWebGL: function (ctx) {
-        var gl = ctx || cc.renderContext;
+        var gl = ctx || cc._renderContext;
 
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
@@ -216,7 +216,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
+        cc._drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -299,7 +299,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
             return;
         }
 
-        var context = ctx || cc.renderContext;
+        var context = ctx || cc._renderContext;
         // Composition mode, costy but support texture stencil
         if (this._cangodhelpme() || this._stencil instanceof cc.Sprite) {
             // Cache the current canvas, for later use (This is a little bit heavy, replace this solution with other walkthrough)
@@ -384,7 +384,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _setStencilForCanvas: function (stencil) {
         this._stencil = stencil;
         var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-        var locContext = cc.renderContext;
+        var locContext = cc._renderContext;
         // For texture stencil, use the sprite itself
         if (stencil instanceof cc.Sprite) {
             return;
