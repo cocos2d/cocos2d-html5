@@ -39,7 +39,7 @@ ccs.DisplayManager = ccs.Class.extend({
         this._forceChangeDisplay = false;
         this._bone = null;
         this._visible = true;
-        this._displayType = ccs.DisplayType.max;
+        this._displayType = ccs.DISPLAY_TYPE_MAX;
     },
 
     init:function (bone) {
@@ -211,7 +211,7 @@ ccs.DisplayManager = ccs.Class.extend({
             //todo
             //this._displayRenderNode.setVisible(this._visible);
         }else{
-            this._displayType = ccs.DisplayType.max;
+            this._displayType = ccs.DISPLAY_TYPE_MAX;
         }
     },
 
@@ -267,7 +267,7 @@ ccs.DisplayManager = ccs.Class.extend({
 
         var ret = false;
         switch (this._currentDecoDisplay.getDisplayData().displayType) {
-            case ccs.DisplayType.sprite:
+            case ccs.DISPLAY_TYPE_SPRITE:
                 /*
                  *  First we first check if the point is in the sprite content rect. If false, then we continue to check
                  *  the contour point. If this step is also false, then we can say the bone not contain this point.

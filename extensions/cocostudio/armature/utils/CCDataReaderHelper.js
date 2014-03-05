@@ -317,11 +317,11 @@ ccs.DataReaderHelper.decodeBoneDisplay = function (displayXML, dataInfo) {
 
     if (isArmature == 1) {
         displayData = new ccs.ArmatureDisplayData();
-        displayData.displayType = ccs.DisplayType.armature;
+        displayData.displayType = ccs.DISPLAY_TYPE_ARMATURE;
     }
     else {
         displayData = new ccs.SpriteDisplayData();
-        displayData.displayType = ccs.DisplayType.sprite;
+        displayData.displayType = ccs.DISPLAY_TYPE_SPRITE;
     }
     var displayName = displayXML.getAttribute(ccs.CONST_A_NAME) || "";
     if (displayName) {
@@ -489,23 +489,23 @@ ccs.DataReaderHelper.decodeFrame = function (frameXML, parentFrameXml, boneData,
     var frameData = new ccs.FrameData();
     frameData.movement = frameXML.getAttribute(ccs.CONST_A_MOVEMENT) || "";
     frameData.event = frameXML.getAttribute(ccs.CONST_A_EVENT) || "";
-    frameData.blendType = parseInt(frameXML.getAttribute(ccs.CONST_A_BLEND_TYPE)) || ccs.BlendType.normal;
+    frameData.blendType = parseInt(frameXML.getAttribute(ccs.CONST_A_BLEND_TYPE)) || ccs.BLEND_TYPE_NORMAL;
 
     var blendFunc = frameData.blendFunc;
     switch (frameData.blendType) {
-        case ccs.BlendType.normal:
+        case ccs.BLEND_TYPE_NORMAL:
             blendFunc.src = cc.BLEND_SRC;
             blendFunc.dst = cc.BLEND_DST;
             break;
-        case ccs.BlendType.add:
+        case ccs.BLEND_TYPE_ADD:
             blendFunc.src = gl.SRC_ALPHA;
             blendFunc.dst = gl.ONE;
             break;
-        case ccs.BlendType.multiply:
+        case ccs.BLEND_TYPE_MULTIPLY:
             blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
             blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
             break;
-        case ccs.BlendType.screen:
+        case ccs.BLEND_TYPE_SCREEN:
             blendFunc.src = gl.ONE;
             blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
             break;
@@ -729,10 +729,10 @@ ccs.DataReaderHelper.decodeBoneFromJson = function (json, dataInfo) {
 };
 
 ccs.DataReaderHelper.decodeBoneDisplayFromJson = function (json, dataInfo) {
-    var displayType = json[ccs.CONST_A_DISPLAY_TYPE] || ccs.DisplayType.sprite;
+    var displayType = json[ccs.CONST_A_DISPLAY_TYPE] || ccs.DISPLAY_TYPE_SPRITE;
     var displayData = null;
     switch (displayType) {
-        case ccs.DisplayType.sprite:
+        case ccs.DISPLAY_TYPE_SPRITE:
             displayData = new ccs.SpriteDisplayData();
             displayData.displayName = json[ccs.CONST_A_NAME] || "";
 
@@ -756,11 +756,11 @@ ccs.DataReaderHelper.decodeBoneDisplayFromJson = function (json, dataInfo) {
                 dic = null;
             }
             break;
-        case ccs.DisplayType.armature:
+        case ccs.DISPLAY_TYPE_ARMATURE:
             displayData = new ccs.ArmatureDisplayData();
             displayData.displayName = json[ccs.CONST_A_NAME] || "";
             break;
-        case ccs.DisplayType.particle:
+        case ccs.DISPLAY_TYPE_PARTICLE:
             displayData = new ccs.ParticleDisplayData();
             displayData.displayName = dataInfo.basefilePath + json[ccs.CONST_A_PLIST] || "";
             break;
