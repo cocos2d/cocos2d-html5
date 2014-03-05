@@ -36,13 +36,16 @@ ccs.ComRender = ccs.Component.extend(/** @lends ccs.ComRender# */{
     },
 
     onEnter: function () {
-        if (this._owner != null) {
+        if (this._owner) {
             this._owner.addChild(this._render);
         }
     },
 
     onExit: function () {
-        this._render = null;
+        if (this._owner) {
+            this._owner.removeChild(this._render, true);
+            this._render = null;
+        }
     },
 
     /**

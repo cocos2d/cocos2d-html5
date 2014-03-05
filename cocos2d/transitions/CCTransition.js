@@ -88,8 +88,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         director.runScene(this._inScene);
 
         // enable events while transitions
-        if(cc.TouchDispatcher)
-            director.getTouchDispatcher().setDispatchEvents(true);
+        cc.eventManager.setEnabled(true);
+
         // issue #267
         this._outScene.visible = true;
     },
@@ -119,8 +119,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         cc.Node.prototype.onEnter.call(this);
 
         // disable events while transitions
-        if(cc.TouchDispatcher)
-            cc.director.getTouchDispatcher().setDispatchEvents(false);
+        cc.eventManager.setEnabled(false);
 
         // outScene should not receive the onEnter callback
         // only the onExitTransitionDidStart
@@ -136,8 +135,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         cc.Node.prototype.onExit.call(this);
 
         // enable events while transitions
-        if(cc.TouchDispatcher)
-            cc.director.getTouchDispatcher().setDispatchEvents(true);
+        cc.eventManager.setEnabled(true);
 
         this._outScene.onExit();
 
@@ -204,7 +202,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 	        scale: 1.0,
 	        rotation: 0.0
         });
-        if(cc.renderContextType === cc.WEBGL)
+        if(cc.renderType === cc.RENDER_TYPE_WEBGL)
             this._inScene.getCamera().restore();
 
         this._outScene.attr({
@@ -214,7 +212,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 	        scale: 1.0,
 	        rotation: 0.0
         });
-        if(cc.renderContextType === cc.WEBGL)
+        if(cc.renderType === cc.RENDER_TYPE_WEBGL)
             this._outScene.getCamera().restore();
 
         //[self schedule:@selector(setNewScene:) interval:0];

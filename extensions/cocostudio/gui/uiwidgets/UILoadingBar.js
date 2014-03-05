@@ -206,6 +206,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     },
 
     /**
+     * Get  loadingBar is using scale9 renderer or not..
+     * @returns {Boolean}
+     */
+    isScale9Enabled:function(){
+        return this._scale9Enabled;
+    },
+
+    /**
      * Sets capinsets for loadingbar, if loadingbar is using scale9 renderer.
      * @param {cc.Rect} capInsets
      */
@@ -215,6 +223,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             return;
         }
         this._barRenderer.setCapInsets(capInsets);
+    },
+
+    /**
+     * Get cap insets for loadingBar.
+     * @returns {cc.Rect}
+     */
+    getCapInsets:function(){
+        return this._capInsets;
     },
 
     /**

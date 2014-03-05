@@ -1,20 +1,12 @@
 {
-    "debugMode" : 2,
+    "debugMode" : 4,
     "showFPS" : true,
     "frameRate" : 60,
     "id" : "gameCanvas",
     "renderMode" : 1,
     "engineDir":"../",
 
-    "modulesDesc" : {
-        "desc" : "This prop is not used. It just tells you which modules you can config in `modules`.",
-
-        "extensions" : "extensions module",
-        "pluginx" : "pluginx module",
-        "box2d" : "box2d module",
-        "chipmunk" : "chipmunk module"
-    },
-    "modules" : ["extensions", "pluginx", "box2d", "chipmunk"],
+    "modules" : ["menus"],
 
     "jsList" : [
         "src/resource.js",

@@ -17,7 +17,7 @@ plugin.SocialFacebook = cc.Class.extend({
             this._shareInfo.url = url;
         }
 
-        cc.Browser.openURL("http://www.facebook.com/sharer/sharer.php?u=" + url);
+        cc.openURL("http://www.facebook.com/sharer/sharer.php?u=" + url);
     },
     setDebugMode: function (debug) {
         //invalid on html5

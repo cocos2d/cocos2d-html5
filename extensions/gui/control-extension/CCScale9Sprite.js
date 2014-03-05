@@ -157,7 +157,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         var leftWidth = locBottomLeftContentSize.width;
         var bottomHeight = locBottomLeftContentSize.height;
 
-        if(!cc.Browser.supportWebGL) {
+        if(!cc.sys.supportWebGL) {
             //browser is in canvas mode, need to manually control rounding to prevent overlapping pixels
             var roundedRescaledWidth = Math.round(rescaledWidth);
             if(rescaledWidth != roundedRescaledWidth) {
@@ -489,7 +489,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
                 preferredSize = cc.size(preferredSize.width, preferredSize.height);
-                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
+                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.sys.supportWebGL ? sender.isRotated() : false, this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
                 this._callLoadedEventCallbacks();
@@ -497,7 +497,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         }
         var batchNode = cc.SpriteBatchNode.create(spriteFrame.getTexture(), 9);
         // the texture is rotated on Canvas render mode, so isRotated always is false.
-        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, capInsets);
+        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), cc.sys.supportWebGL ? spriteFrame.isRotated() : false, capInsets);
     },
 
     /**
@@ -883,13 +883,13 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 // the texture is rotated on Canvas render mode, so isRotated always is false.
                 var preferredSize = this._preferredSize;
                 preferredSize = cc.size(preferredSize.width, preferredSize.height);
-                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.Browser.supportWebGL ? sender.isRotated() : false, this._capInsets);
+                this.updateWithBatchNode(this._scale9Image, sender.getRect(), cc.sys.supportWebGL ? sender.isRotated() : false, this._capInsets);
                 this.setPreferredSize(preferredSize);
                 this._positionsAreDirty = true;
                 this._callLoadedEventCallbacks();
             },this);
         }
-        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, cc.rect(0, 0, 0, 0));
+        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.sys.supportWebGL ? spriteFrame.isRotated() : false, cc.rect(0, 0, 0, 0));
 
         // Reset insets
         this._insetLeft = 0;

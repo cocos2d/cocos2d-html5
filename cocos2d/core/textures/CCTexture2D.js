@@ -576,7 +576,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     setTexParameters:function (texParams) {
         var gl = cc.renderContext;
 
-        cc.Assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
+        cc.assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
             (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
             "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
@@ -638,7 +638,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      *  It only works if the texture size is POT (power of 2).
      */
     generateMipmap:function () {
-        cc.Assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
+        cc.assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
 
         cc.glBindTexture2D(this);
         cc.renderContext.generateMipmap(cc.renderContext.TEXTURE_2D);
@@ -1175,7 +1175,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     }
 });
 
-cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
+cc.Texture2D = cc.sys.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
 
 

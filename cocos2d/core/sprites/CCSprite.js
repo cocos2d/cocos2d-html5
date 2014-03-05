@@ -1284,7 +1284,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     updateTransform: null,
 
     _updateTransformForWebGL: function () {
-        //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
+        //cc.assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
         if (this.dirty) {
@@ -1302,7 +1302,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 if (!locParent || locParent == this._batchNode) {
                     this._transformToBatch = this.nodeToParentTransform();
                 } else {
-                    //cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                    //cc.assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
                     this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), locParent._transformToBatch);
                 }
 
@@ -1363,7 +1363,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _updateTransformForCanvas: function () {
-        //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
+        //cc.assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
         if (this.dirty) {
@@ -1377,7 +1377,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                 if (!locParent || locParent == this._batchNode) {
                     this._transformToBatch = this.nodeToParentTransform();
                 } else {
-                    //cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                    //cc.assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
                     this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), locParent._transformToBatch);
                 }
             }
@@ -1689,11 +1689,20 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // CCTextureProtocol
     /**
      * Texture of sprite setter
-     * @param {cc.Texture2D} texture
+     * @param {cc.Texture2D|String} texture
      */
     setTexture: null,
 
     _setTextureForWebGL: function (texture) {
+        if(texture && (typeof(texture) === "string")){
+            texture = cc.textureCache.addImage(texture);
+            this._setTextureForWebGL(texture);
+
+            //TODO
+            var size = texture.getContentSize();
+            this.setTextureRect(cc.rect(0,0, size.width, size.height));
+            return;
+        }
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
         if(texture && !(texture instanceof cc.Texture2D))
             throw "Invalid argument: cc.Sprite.texture setter expects a CCTexture2D.";
@@ -1716,6 +1725,16 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _setTextureForCanvas: function (texture) {
+        if(texture && (typeof(texture) === "string")){
+            texture = cc.textureCache.addImage(texture);
+            this._setTextureForCanvas(texture);
+
+            //TODO
+            var size = texture.getContentSize();
+            this.setTextureRect(cc.rect(0,0, size.width, size.height));
+            return;
+        }
+
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
         if(texture && !(texture instanceof cc.Texture2D))
             throw "Invalid argument: cc.Sprite texture setter expects a CCTexture2D.";
@@ -1861,7 +1880,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             return;
 
         var gl = cc.renderContext, locTexture = this._texture;
-        //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
+        //cc.assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (locTexture) {
             if (locTexture._isLoaded) {
@@ -2001,7 +2020,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 });
 
 window._proto = cc.Sprite.prototype;
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
 	_proto._spriteFrameLoadedCallback = _proto._spriteFrameLoadedCallbackForWebGL;
 	_proto.setOpacityModifyRGB = _proto._setOpacityModifyRGBForWebGL;
 	_proto.updateDisplayedOpacity = _proto._updateDisplayedOpacityForWebGL;

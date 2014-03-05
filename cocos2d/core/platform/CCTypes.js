@@ -350,7 +350,7 @@ cc.AnimationFrameData = function(texCoords, delay, size){
     this.size = size;
 };
 
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
     //redefine some types with ArrayBuffer for WebGL
     cc.color = function (r, g, b, a, arrayBuffer, offset) {
         if (r === undefined)
@@ -390,25 +390,25 @@ if(cc.Browser.supportWebGL){
         return this._rU8[0];
     };
     _proto._setR = function(value){
-        this._rU8[0] = value;
+        this._rU8[0] = value < 0 ? 0 : value;
     };
     _proto._getG = function(){
         return this._gU8[0];
     };
     _proto._setG = function(value){
-        this._gU8[0] = value;
+        this._gU8[0] = value < 0 ? 0 : value;
     };
     _proto._getB = function(){
         return this._bU8[0];
     };
     _proto._setB = function(value){
-        this._bU8[0] = value;
+        this._bU8[0] = value < 0 ? 0 : value;
     };
     _proto._getA = function(){
         return this._aU8[0];
     };
     _proto._setA = function(value){
-        this._aU8[0] = value;
+        this._aU8[0] = value < 0 ? 0 : value;
     };
     cc.defineGetterSetter(_proto, "r", _proto._getR,_proto._setR);
     cc.defineGetterSetter(_proto, "g", _proto._getG,_proto._setG);

@@ -79,21 +79,21 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
                 oh = Math.abs(oh);
                 tempFrame.size = cc.size(ow, oh);
             } else if (format == 1 || format == 2) {
-                tempFrame.rect = cc.RectFromString(frameDict["frame"]);
+                tempFrame.rect = cc.rectFromString(frameDict["frame"]);
                 tempFrame.rotated = frameDict["rotated"] || false;
-                tempFrame.offset = cc.PointFromString(frameDict["offset"]);
-                tempFrame.size = cc.SizeFromString(frameDict["sourceSize"]);
+                tempFrame.offset = cc.pointFromString(frameDict["offset"]);
+                tempFrame.size = cc.sizeFromString(frameDict["sourceSize"]);
             } else if (format == 3) {
                 // get values
-                var spriteSize = cc.SizeFromString(frameDict["spriteSize"]);
-                var textureRect = cc.RectFromString(frameDict["textureRect"]);
+                var spriteSize = cc.sizeFromString(frameDict["spriteSize"]);
+                var textureRect = cc.rectFromString(frameDict["textureRect"]);
                 if (spriteSize) {
                     textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                 }
                 tempFrame.rect = textureRect;
                 tempFrame.rotated = frameDict["textureRotated"] || false; // == "true";
-                tempFrame.offset = cc.PointFromString(frameDict["spriteOffset"]);
-                tempFrame.size = cc.SizeFromString(frameDict["spriteSourceSize"]);
+                tempFrame.offset = cc.pointFromString(frameDict["spriteOffset"]);
+                tempFrame.size = cc.sizeFromString(frameDict["spriteSourceSize"]);
                 tempFrame.aliases = frameDict["aliases"];
             } else {
                 var tmpFrame = frameDict["frame"], tmpSourceSize = frameDict["sourceSize"];
@@ -160,7 +160,7 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
                         spAliases[alias] = key;
                     }
                 }
-                if (cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()) {
+                if (cc.renderType === cc.RENDER_TYPE_CANVAS && spriteFrame.isRotated()) {
                     //clip to canvas
                     var locTexture = spriteFrame.getTexture();
                     if (locTexture.isLoaded()) {

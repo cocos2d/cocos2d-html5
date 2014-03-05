@@ -141,7 +141,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
 
             this.animation.setAnimationData(animationData);
         }
-        if (cc.renderContextType === cc.WEBGL) {
+        if (cc.renderType === cc.RENDER_TYPE_WEBGL) {
             this.setShaderProgram(cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         }
 
@@ -671,7 +671,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
 });
 
 
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
     //WebGL
     ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
 }else{

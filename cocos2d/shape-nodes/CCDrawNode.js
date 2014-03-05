@@ -773,7 +773,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
     }
 });
 
-cc.DrawNode = cc.Browser.supportWebGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
+cc.DrawNode = cc.sys.supportWebGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
 
 /**
  * Creates a DrawNode

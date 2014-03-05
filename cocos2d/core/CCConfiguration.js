@@ -228,7 +228,7 @@ cc.configuration = /** @lends cc.Configuration# */{
      * gathers OpenGL / GPU information
      */
     gatherGPUInfo: function(){
-        if(cc.renderContextType === cc.CANVAS)
+        if(cc.renderType === cc.RENDER_TYPE_CANVAS)
             return;
 
 	    if(!this._inited)

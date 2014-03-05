@@ -270,10 +270,12 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
     /**
      *  remove widget child override
      * @param {ccs.Widget} child
+     * @param {Boolean} cleanup
      */
-    removeChild: function (child) {
-        cc.arrayRemoveObject(this._pages, child);
-        ccs.Layout.prototype.removeChild.call(this, child);
+    removeChild: function (child, cleanup) {
+        if(cleanup)
+            cc.arrayRemoveObject(this._pages, child);
+        ccs.Layout.prototype.removeChild.call(this, child, cleanup);
     },
 
     onSizeChanged: function () {
@@ -316,9 +318,10 @@ ccs.PageView = ccs.Layout.extend(/** @lends ccs.PageView# */{
         }
     },
 
-    removeAllChildren: function () {
-        this._pages = [];
-        ccs.Layout.prototype.removeAllChildren.call(this);
+    removeAllChildren: function (cleanup) {
+        if(cleanup)
+            this._pages.length = 0;
+        ccs.Layout.prototype.removeAllChildren.call(this, cleanup);
     },
 
     /**

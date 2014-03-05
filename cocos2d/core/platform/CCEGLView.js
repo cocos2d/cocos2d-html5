@@ -66,7 +66,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _wnd: null,
     _hDC: null,
     _hRC: null,
-    _accelerometerKeyHook: null,
     _supportTouch: false,
     _contentTranslateLeftTop: null,
 
@@ -86,11 +85,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._originalDesignResolutionSize = cc.size(w, h);
         this._viewPortRect = cc.rect(0, 0, w, h);
         this._visibleRect = cc.rect(0, 0, w, h);
-        this._delegate = cc.director.getTouchDispatcher();
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
 
-        cc.VisibleRect.init(this._designResolutionSize);
+        cc.visibleRect.init(this._designResolutionSize);
 
         // Setup system default resolution policies
         this._rpExactFit = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.EXACT_FIT);
@@ -166,7 +164,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             else vp = elems[0];
 
 	        // For avoiding Android Firefox issue, to remove once firefox fixes its issue.
-	        if (cc.Browser.isMobile && cc.Browser.type == "firefox") {
+	        if (cc.sys.isMobile && cc.sys.browserType == cc.sys.BROWSER_TYPE_FIREFOX) {
 		        vp.content = "initial-scale:1";
 		        return;
 	        }
@@ -310,10 +308,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     centerWindow: function () {
     },
 
-    setAccelerometerKeyHook: function (accelerometerKeyHook) {
-        this._accelerometerKeyHook = accelerometerKeyHook;
-    },
-
     /**
      * Get the visible area size of OpenGL view port.
      * @return {cc.Size}
@@ -401,7 +395,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         // Reinit frame size
         var frameW = this._frameSize.width, frameH = this._frameSize.height;
-        if (cc.Browser.isMobile)
+        if (cc.sys.isMobile)
             this._setViewPortMeta(this._frameSize.width, this._frameSize.height);
         this._initFrameSize();
         // No change
@@ -431,7 +425,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
         policy.postApply(this);
 
-        if (cc.renderContextType == cc.WEBGL) {
+        if (cc.renderType == cc.RENDER_TYPE_WEBGL) {
             // reset director's member variables to fit visible rect
             director._createStatsLabel();
             director.setGLDefaultValues();
@@ -444,7 +438,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             cc.DOM._resetEGLViewDiv();
         }
 
-        cc.VisibleRect.init(this.getVisibleSize());
+        cc.visibleRect.init(this.getVisibleSize());
     },
 
     /**
@@ -454,14 +448,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      */
     getDesignResolutionSize: function () {
         return cc.size(this._designResolutionSize.width, this._designResolutionSize.height);
-    },
-
-    /**
-     * set touch delegate
-     * @param {cc.TouchDispatcher} delegate
-     */
-    setTouchDelegate: function (delegate) {
-        this._delegate = delegate;
     },
 
     /**
@@ -619,8 +605,8 @@ cc.ContainerStrategy = cc.Class.extend({
      * @param {cc.EGLView} The target view
      */
     preApply: function (view) {
-	    if(sys.os == "iOS" || sys.os == "OS X")
-		    this._adjustRetina = true;
+        var sys = cc.sys;
+        this._adjustRetina = sys.os == sys.OS_IOS || sys.os == sys.OS_OSX
     },
 
     /**
@@ -641,7 +627,7 @@ cc.ContainerStrategy = cc.Class.extend({
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (cc.Browser.isMobile && frame == document.documentElement) {
+        if (cc.sys.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
             cc.screen.autoFullScreen(frame);
         }
@@ -716,7 +702,7 @@ cc.ContentStrategy = cc.Class.extend({
                                contentW, contentH);
 
         // Translate the content
-        if (cc.renderContextType == cc.CANVAS)
+        if (cc.renderType == cc.RENDER_TYPE_CANVAS)
             cc.renderContext.translate(viewport.x, viewport.y + contentH);
 
         this._result.scale = [scaleX, scaleY];
