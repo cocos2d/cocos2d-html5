@@ -112,13 +112,17 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.labelScaleChangedWithSize();
     },
 
-	_getFontSize: function () {
-		this._labelRenderer.getFontSize();
+	/**
+	 * Get font size
+	 * @return {Number}
+	 */
+	getFontSize: function () {
+		return this._labelRenderer.getFontSize();
 	},
 
     /**
-     * set fontName
-     * @param {String} name
+     * Set font name
+     * @return {String} name
      */
     setFontName: function (name) {
         this._fontName = name;
@@ -126,8 +130,8 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.labelScaleChangedWithSize();
     },
 
-	_getFontName: function () {
-		this._labelRenderer.getFontName();
+	getFontName: function () {
+		return this._labelRenderer.getFontName();
 	},
 
 	_setFont: function (font) {
@@ -180,7 +184,11 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.labelScaleChangedWithSize();
     },
 
-	_getHorizontalAlignment: function () {
+	/**
+	 * Get Horizontal Alignment of cc.LabelTTF
+	 * @return {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT}
+	 */
+	getHorizontalAlignment: function () {
 		return this._textHorizontalAlignment;
 	},
 
@@ -194,7 +202,11 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this.labelScaleChangedWithSize();
     },
 
-	_getVerticalAlignment: function () {
+	/**
+	 * Get Vertical Alignment of cc.LabelTTF
+	 * @return {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM}
+	 */
+	getVerticalAlignment: function () {
 		return this._textVerticalAlignment;
 	},
 
@@ -414,10 +426,10 @@ cc.defineGetterSetter(_proto, "boundingHeight", _proto._getBoundingHeight, _prot
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
 cc.defineGetterSetter(_proto, "stringLength", _proto.getStringLength);
 cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
-cc.defineGetterSetter(_proto, "fontSize", _proto._getFontSize, _proto.setFontSize);
-cc.defineGetterSetter(_proto, "fontName", _proto._getFontName, _proto.setFontName);
-cc.defineGetterSetter(_proto, "textAlign", _proto._getHorizontalAlignment, _proto.setTextHorizontalAlignment);
-cc.defineGetterSetter(_proto, "verticalAlign", _proto._getVerticalAlignment, _proto.setTextVerticalAlignment);
+cc.defineGetterSetter(_proto, "fontSize", _proto.getFontSize, _proto.setFontSize);
+cc.defineGetterSetter(_proto, "fontName", _proto.getFontName, _proto.setFontName);
+cc.defineGetterSetter(_proto, "textAlign", _proto.getHorizontalAlignment, _proto.setTextHorizontalAlignment);
+cc.defineGetterSetter(_proto, "verticalAlign", _proto.getVerticalAlignment, _proto.setTextVerticalAlignment);
 
 delete window._proto;
 
