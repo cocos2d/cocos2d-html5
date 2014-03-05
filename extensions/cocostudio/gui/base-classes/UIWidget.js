@@ -1383,7 +1383,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
      * @param {Number} opacity
      */
     setOpacity: function (opacity) {
-        this._color.a = color.a;
+        this._color.a = opacity;
         this.updateTextureOpacity();
     },
 
