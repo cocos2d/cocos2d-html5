@@ -200,6 +200,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             this.ignoreContentAdaptWithSize(this._prevIgnoreSize);
         }
         this.setCapInsets(this._capInsets);
+        this.setPercent(this._percent);
     },
 
     /**
