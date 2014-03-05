@@ -129,9 +129,33 @@ cc.configuration = /** @lends cc.Configuration# */{
      * Whether or not PVR Texture Compressed is supported
      * @return {Boolean}
      */
-    supportsPVRTC:function () {
+    supportsPVRTC: function () {
         return this._supportsPVRTC;
     },
+
+	/**
+	 * Whether or not ETC Texture Compressed is supported
+	 * @return {Boolean}
+	 */
+	supportsETC: function() {
+		return false;
+	},
+
+	/**
+	 * Whether or not S3TC Texture Compressed is supported
+	 * @return {Boolean}
+	 */
+	supportsS3TC: function() {
+		return false;
+	},
+
+	/**
+	 * Whether or not ATITC Texture Compressed is supported
+	 * @return {Boolean}
+	 */
+	supportsATITC: function() {
+		return false;
+	},
 
     /**
      * Whether or not BGRA8888 textures are supported.
@@ -166,12 +190,12 @@ cc.configuration = /** @lends cc.Configuration# */{
     },
 
     /**
-     * returns the value of a given key as a string.  If the key is not found, it will return the default value
+     * Returns the value of a given key.  If the key is not found, it will return the default value
      * @param {String} key
-     * @param {String} [default_value=null]
-     * @returns {String}
+     * @param {String|Bool|Number|Object} [default_value=null]
+     * @returns {String|Bool|Number|Object}
      */
-    getCString:function(key, default_value){
+    getValue: function(key, default_value){
 	    if(!this._inited)
 		    this._init();
         var locValueDict = this._valueDict;
@@ -181,66 +205,18 @@ cc.configuration = /** @lends cc.Configuration# */{
     },
 
     /**
-     * returns the value of a given key as a boolean. If the key is not found, it will return the default value
+     * Sets a new key/value pair  in the configuration dictionary
      * @param {string} key
-     * @param {boolean|null} [default_value=false]
-     * @returns {boolean}
+     * @param {String|Bool|Number|Object} value
      */
-    getBool: function(key, default_value){
-        if(default_value == null)
-            default_value = false;
-	    if(!this._inited)
-		    this._init();
-        var locValueDict = this._valueDict;
-        if(locValueDict[key])
-            return locValueDict[key];
-        return default_value;
-    },
-
-    /**
-     * returns the value of a given key as a double. If the key is not found, it will return the default value
-     * @param {string} key
-     * @param {number} [default_value=0]
-     * @returns {number}
-     */
-    getNumber: function(key, default_value){
-        if(default_value == null)
-            default_value = 0;
-	    if(!this._inited)
-		    this._init();
-        var locValueDict = this._valueDict;
-        if(locValueDict[key])
-            return locValueDict[key];
-        return default_value;
-    },
-
-    /**
-     * returns the value of a given key as a double
-     * @param {string} key
-     * @returns {Object|null}
-     */
-    getObject:function(key){
-        var locValueDict = this._valueDict;
-	    if(!this._inited)
-		    this._init();
-        if(locValueDict[key])
-            return locValueDict[key];
-        return null;
-    },
-
-    /**
-     * sets a new key/value pair  in the configuration dictionary
-     * @param {string} key
-     * @param {Object} value
-     */
-    setObject: function(key, value){
+    setValue: function(key, value){
         this._valueDict[key] = value;
     },
 
     /**
-     * dumps the current configuration on the console
+     * Dumps the current configuration on the console
      */
-    dumpInfo: function(){
+    getInfo: function(){
          if(cc.ENABLE_GL_STATE_CACHE === 0){
              cc.log("");
              cc.log("cocos2d: **** WARNING **** CC_ENABLE_PROFILERS is defined. Disable it when you finish profiling (from ccConfig.js)");
