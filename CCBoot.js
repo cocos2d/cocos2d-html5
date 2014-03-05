@@ -768,6 +768,11 @@ cc.loader = {
         win.addEventListener("blur", onHidden, false);
         win.addEventListener("focus", onShow, false);
     }
+    win = null;
+    onHidden = null;
+    onShow = null;
+    hidden = null;
+    visibilityChange = null;
 })();
 //+++++++++++++++++++++++++something about window events end+++++++++++++++++++++++++++++
 
@@ -1045,7 +1050,6 @@ cc._setup = function (el, width, height) {
     cc.gameDiv = localContainer;
 
     cc.log(cc.ENGINE_VERSION);
-    //cc.configuration.getInstance();
 
     cc._setContextMenuEnable(false);
 
@@ -1076,14 +1080,6 @@ cc._setContextMenuEnable = function (enabled) {
  * An object to boot the game.
  */
 cc.game = {
-    _prepareCalled : false,//whether the prepare function has been called
-    _prepared : false,//whether the engine has prepared
-    _isContextMenuEnable : false,
-    _paused : true,//whether the game is paused
-
-    _intervalId : null,//interval target of main
-
-
     DEBUG_MODE_NONE : 0,
     DEBUG_MODE_LOG : 1,
     DEBUG_MODE_WARN : 2,
@@ -1108,6 +1104,13 @@ cc.game = {
         jsList : "jsList",
         classReleaseMode : "classReleaseMode"
     },
+
+    _prepareCalled : false,//whether the prepare function has been called
+    _prepared : false,//whether the engine has prepared
+    _paused : true,//whether the game is paused
+
+    _intervalId : null,//interval target of main
+
 
     /**
      * Config of game
