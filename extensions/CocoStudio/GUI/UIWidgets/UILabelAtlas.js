@@ -73,7 +73,7 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
 
     initRenderer: function () {
         this._labelAtlasRenderer = ccs.UICCLabelAtlas.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.LABELATLASRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.LABELATLASRENDERERZ, -1);
     },
 
     /**
@@ -176,12 +176,24 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
         }
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelAtlasRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelAtlasRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._labelAtlasRenderer);
+    },
+    
     /**
      * Returns the "class name" of widget.
      * @returns {string}
      */
     getDescription: function () {
-        return "LabelAtlase";
+        return "LabelAtlas";
     },
 
     createCloneInstance: function () {

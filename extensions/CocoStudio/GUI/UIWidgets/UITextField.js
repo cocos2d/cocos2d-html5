@@ -278,7 +278,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
 
     initRenderer: function () {
         this._textFieldRender = ccs.UICCTextField.create("input words here", "Thonburi", 20);
-        cc.NodeRGBA.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELDRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELDRENDERERZ, -1);
 
     },
 
@@ -646,6 +646,18 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         return this._textFieldRender;
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._textFieldRender);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._textFieldRender);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._textFieldRender);
+    },
+    
     /**
      * Returns the "class name" of widget.
      * @returns {string}

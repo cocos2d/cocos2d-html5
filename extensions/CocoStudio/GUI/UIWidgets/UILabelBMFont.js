@@ -40,7 +40,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.LABELBMFONTRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.LABELBMFONTRENDERERZ, -1);
     },
 
     /**
@@ -142,6 +142,18 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
         }
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelBMFontRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelBMFontRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._labelBMFontRenderer);
+    },
+    
     /**
      * Returns the "class name" of widget.
      * @returns {string}
