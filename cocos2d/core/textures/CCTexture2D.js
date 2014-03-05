@@ -139,12 +139,12 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     /*public:*/
     ctor:function () {
         this._contentSize = cc.size(0, 0);
-        this._pixelFormat = cc.Texture2D.PIXEL_FORMAT_DEFAULT;
+        this._pixelFormat = cc.Texture2D.defaultPixelFormat;
     },
 
     releaseTexture:function () {
         if (this._webTextureObj)
-            cc.renderContext.deleteTexture(this._webTextureObj);
+            cc._renderContext.deleteTexture(this._webTextureObj);
         cc.loader.release(this.url);
     },
 
@@ -274,7 +274,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
         var self = this, tex2d = cc.Texture2D;
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         var format = gl.RGBA, type = gl.UNSIGNED_BYTE;
 
         var bitsPerPixel = cc.Texture2D.BITS_PER_PIXEL_FORMAT[pixelFormat];
@@ -340,7 +340,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         self._hasPremultipliedAlpha = false;
         self._hasMipmaps = false;
-        self.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
+        self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
 
         self._isLoaded = true;
 
@@ -379,7 +379,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         cc.glBindTexture2D(self);
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
@@ -409,7 +409,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         cc.glBindTexture2D(self);
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
@@ -435,9 +435,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var imageWidth = uiImage.getWidth();
         var imageHeight = uiImage.getHeight();
 
-        var conf = cc.Configuration.getInstance();
-
-        var maxTextureSize = conf.getMaxTextureSize();
+        var maxTextureSize = cc.configuration.getMaxTextureSize();
         if (imageWidth > maxTextureSize || imageHeight > maxTextureSize) {
             cc.log("cocos2d: WARNING: Image (" + imageWidth + " x " + imageHeight + ") is bigger than the supported " + maxTextureSize + " x " + maxTextureSize);
             return false;
@@ -451,7 +449,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     initWithElement:function (element) {
         if (!element)
             return;
-        this._webTextureObj = cc.renderContext.createTexture();
+        this._webTextureObj = cc._renderContext.createTexture();
         this._htmlElementObj = element;
     },
 
@@ -478,7 +476,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         }
         self._isLoaded = true;
         //upload image to buffer
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.glBindTexture2D(self);
 
@@ -492,7 +490,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-        self.shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
+        self.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
         cc.glBindTexture2D(null);
 
         var pixelsWide = self._htmlElementObj.width;
@@ -525,40 +523,8 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-        if (arguments.length == 3) {
-            fontName = arguments[1];
-            fontSize = arguments[2];
-            dimensions = cc.size(0, 0);
-            hAlignment = cc.TEXT_ALIGNMENT_CENTER;
-            vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-        }
-
-        /*if (cc.ENABLE_CACHE_TEXTURE_DATA) {
-         // cache the texture data
-         cc.VolatileTexture.addStringTexture(this, text, dimensions, alignment, fontName, fontSize);
-         }*/
-
-        var image = new cc.Image();
-        var eAlign;
-
-        if (cc.VERTICAL_TEXT_ALIGNMENT_TOP === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_TOP
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_TOP_LEFT : cc.ALIGN_TOP_RIGHT;
-        } else if (cc.VERTICAL_TEXT_ALIGNMENT_CENTER === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_CENTER
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_LEFT : cc.ALIGN_RIGHT;
-        } else if (cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM === vAlignment) {
-            eAlign = (cc.TEXT_ALIGNMENT_CENTER === hAlignment) ? cc.ALIGN_BOTTOM
-                : (cc.TEXT_ALIGNMENT_LEFT === hAlignment) ? cc.ALIGN_BOTTOM_LEFT : cc.ALIGN_BOTTOM_RIGHT;
-        } else {
-            cc.log("Not supported alignment format!");
-            return false;
-        }
-
-        if (!image.initWithString(text, dimensions.width, dimensions.height, eAlign, fontName, fontSize))
-            return false;
-
-        return this.initWithImage(image);
+        cc.log("initWithString isn't supported on cocos2d-html5");
+        return null;
     },
 
     /**
@@ -608,9 +574,9 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param texParams
      */
     setTexParameters:function (texParams) {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
-        cc.Assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
+        cc.assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
             (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
             "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
@@ -630,7 +596,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      *  - GL_TEXTURE_MAG_FILTER = GL_NEAREST
      */
     setAntiAliasTexParameters:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.glBindTexture2D(this);
         if (!this._hasMipmaps)
@@ -651,7 +617,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      *   GL_TEXTURE_MAG_FILTER = GL_NEAREST
      */
     setAliasTexParameters:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         cc.glBindTexture2D(this);
         if (!this._hasMipmaps)
@@ -672,10 +638,10 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      *  It only works if the texture size is POT (power of 2).
      */
     generateMipmap:function () {
-        cc.Assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
+        cc.assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
 
         cc.glBindTexture2D(this);
-        cc.renderContext.generateMipmap(cc.renderContext.TEXTURE_2D);
+        cc._renderContext.generateMipmap(cc._renderContext.TEXTURE_2D);
         this._hasMipmaps = true;
     },
 
@@ -707,7 +673,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var outPixel16 = null;
         var hasAlpha = uiImage.hasAlpha();
         var imageSize = cc.size(uiImage.getWidth(), uiImage.getHeight());
-        var pixelFormat = tex2d.PIXEL_FORMAT_DEFAULT;
+        var pixelFormat = tex2d.defaultPixelFormat;
         var bpp = uiImage.getBitsPerComponent();
         var i;
 
@@ -1209,20 +1175,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     }
 });
 
-cc.Texture2D = cc.Browser.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
-
-window._proto = cc.Texture2D.prototype;
-
-// Extended properties
-cc.defineGetterSetter(_proto, "name", _proto.getName);
-cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
-cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
-cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
-//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
-
-delete window._proto;
+cc.Texture2D = cc.sys.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
 
 
@@ -1345,6 +1298,21 @@ _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB5A1] = 16;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC4] = 4;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC2] = 3;
 
+
+window._proto = cc.Texture2D.prototype;
+
+// Extended properties
+cc.defineGetterSetter(_proto, "name", _proto.getName);
+cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
+cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
+cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
+//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+
+cc.Texture2D.defaultPixelFormat = _Class.PIXEL_FORMAT_DEFAULT;
+
+delete window._proto;
 delete window._Class;
 delete window._PIXEL_FORMAT_STR_MAP;
 delete window._BITS_PER_PIXEL_FORMAT;

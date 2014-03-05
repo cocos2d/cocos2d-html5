@@ -350,7 +350,7 @@ cc.AnimationFrameData = function(texCoords, delay, size){
     this.size = size;
 };
 
-if(cc.Browser.supportWebGL){
+if(cc.sys.supportWebGL){
     //redefine some types with ArrayBuffer for WebGL
     cc.color = function (r, g, b, a, arrayBuffer, offset) {
         if (r === undefined)
@@ -390,25 +390,25 @@ if(cc.Browser.supportWebGL){
         return this._rU8[0];
     };
     _proto._setR = function(value){
-        this._rU8[0] = value;
+        this._rU8[0] = value < 0 ? 0 : value;
     };
     _proto._getG = function(){
         return this._gU8[0];
     };
     _proto._setG = function(value){
-        this._gU8[0] = value;
+        this._gU8[0] = value < 0 ? 0 : value;
     };
     _proto._getB = function(){
         return this._bU8[0];
     };
     _proto._setB = function(value){
-        this._bU8[0] = value;
+        this._bU8[0] = value < 0 ? 0 : value;
     };
     _proto._getA = function(){
         return this._aU8[0];
     };
     _proto._setA = function(value){
-        this._aU8[0] = value;
+        this._aU8[0] = value < 0 ? 0 : value;
     };
     cc.defineGetterSetter(_proto, "r", _proto._getR,_proto._setR);
     cc.defineGetterSetter(_proto, "g", _proto._getG,_proto._setG);
@@ -984,20 +984,22 @@ cc._Dictionary = cc.Class.extend({
     }
 });
 
-cc.FontDefinition = function(){
+cc.FontDefinition = function () {
     this.fontName = "Arial";
     this.fontSize = 12;
-    this.fontAlignmentH = cc.TEXT_ALIGNMENT_CENTER;
-    this.fontAlignmentV = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-    this.fontFillColor = cc.color(255, 255, 255, 255);
-    this.fontDimensions = cc.size(0,0);
+    this.textAlign = cc.TEXT_ALIGNMENT_CENTER;
+    this.verticalAlign = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+    this.fillStyle = cc.color(255, 255, 255, 255);
+    this.boundingWidth = 0;
+	this.boundingHeight = 0;
 
     this.strokeEnabled = false;
-    this.strokeColor = cc.color(255, 255, 255, 255);
-    this.strokeSize = 1;
+    this.strokeStyle = cc.color(255, 255, 255, 255);
+    this.lineWidth = 1;
 
     this.shadowEnabled = false;
-    this.shadowOffset = cc.p(0, 0);
+    this.shadowOffsetX = 0;
+	this.shadowOffsetY = 0;
     this.shadowBlur = 0;
     this.shadowOpacity = 1.0;
 };

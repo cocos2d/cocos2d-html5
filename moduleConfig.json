@@ -1,13 +1,50 @@
 {
     "module" : {
+        "actions" : [
+            "core",
+
+            "cocos2d/actions/CCAction.js",
+            "cocos2d/actions/CCActionInterval.js",
+            "cocos2d/actions/CCActionInstant.js",
+            "cocos2d/actions/CCActionCamera.js",
+            "cocos2d/actions/CCActionEase.js",
+            "cocos2d/actions/CCActionCatmullRom.js",
+            "cocos2d/actions/CCActionTween.js"
+        ],
+        "actions3d" : [
+            "core", "kazmath", "shaders", "actions", "effects", "render-texture",
+
+            "cocos2d/actions3d/CCActionGrid.js",
+            "cocos2d/actions3d/CCActionGrid3D.js",
+            "cocos2d/actions3d/CCActionTiledGrid.js",
+            "cocos2d/actions3d/CCActionPageTurn3D.js"
+        ],
+        "audio" : [
+            "core",
+
+            "cocos2d/audio/CCAudio.js"
+        ],
+        "clipping-nodes" : [
+            "core", "shape-nodes",
+
+            "cocos2d/clipping-nodes/CCClippingNode.js"
+        ],
+        "compression" : [
+            "core",
+
+            "cocos2d/compression/ZipUtils.js",
+            "cocos2d/compression/base64.js",
+            "cocos2d/compression/gzip.js",
+            "cocos2d/compression/zlib.min.js"
+        ],
         "core" : [
             "cocos2d/core/platform/CCClass.js",
-            "cocos2d/core/CCLoaders.js",
+	        "cocos2d/core/platform/CCCommon.js",
             "cocos2d/core/cocoa/CCGeometry.js",
-            "cocos2d/core/platform/Sys.js",
+            "cocos2d/core/platform/CCSAXParser.js",
+            "cocos2d/core/platform/CCLoaders.js",
             "cocos2d/core/platform/CCConfig.js",
             "cocos2d/core/platform/miniFramework.js",
-            "cocos2d/core/platform/CCCommon.js",
             "cocos2d/core/platform/CCMacro.js",
             "cocos2d/core/platform/CCTypes.js",
             "cocos2d/core/platform/CCEGLView.js",
@@ -18,32 +55,41 @@
             "cocos2d/core/support/CCPointExtension.js",
             "cocos2d/core/support/CCVertex.js",
             "cocos2d/core/support/TransformUtils.js",
-            "cocos2d/event_dispatcher/CCTouch.js",
-            "cocos2d/event_dispatcher/CCEvent.js",
-            "cocos2d/event_dispatcher/CCEventListener.js",
-            "cocos2d/event_dispatcher/CCEventManager.js",
-            "cocos2d/core/base_nodes/CCNode.js",
-            "cocos2d/core/base_nodes/CCAtlasNode.js",
+            "cocos2d/core/event-manager/CCTouch.js",
+            "cocos2d/core/event-manager/CCEvent.js",
+            "cocos2d/core/event-manager/CCEventListener.js",
+            "cocos2d/core/event-manager/CCEventManager.js",
+            "cocos2d/core/base-nodes/CCNode.js",
+            "cocos2d/core/base-nodes/CCAtlasNode.js",
             "cocos2d/core/textures/CCTexture2D.js",
             "cocos2d/core/textures/CCTextureCache.js",
             "cocos2d/core/textures/CCTextureAtlas.js",
-            "cocos2d/core/scenes_nodes/CCScene.js",
-            "cocos2d/core/scenes_nodes/CCLoaderScene.js",
-            "cocos2d/core/layers_nodes/CCLayer.js",
-            "cocos2d/core/sprite_nodes/CCSprite.js",
-            "cocos2d/core/sprite_nodes/CCAnimation.js",
-            "cocos2d/core/sprite_nodes/CCAnimationCache.js",
-            "cocos2d/core/sprite_nodes/CCSpriteFrame.js",
-            "cocos2d/core/sprite_nodes/CCSpriteFrameCache.js",
-            "cocos2d/core/sprite_nodes/CCSpriteBatchNode.js",
+            "cocos2d/core/scenes/CCScene.js",
+            "cocos2d/core/scenes/CCLoaderScene.js",
+            "cocos2d/core/layers/CCLayer.js",
+            "cocos2d/core/sprites/CCSprite.js",
+            "cocos2d/core/sprites/CCAnimation.js",
+            "cocos2d/core/sprites/CCAnimationCache.js",
+            "cocos2d/core/sprites/CCSpriteFrame.js",
+            "cocos2d/core/sprites/CCSpriteFrameCache.js",
+            "cocos2d/core/sprites/CCSpriteBatchNode.js",
             "cocos2d/core/CCConfiguration.js",
             "cocos2d/core/CCDirector.js",
             "cocos2d/core/CCCamera.js",
             "cocos2d/core/CCScheduler.js",
             "cocos2d/core/CCDrawingPrimitives.js",
-            "cocos2d/core/platform/CCSAXParser.js",
-            "cocos2d/core/labelTTF/CCLabelTTF.js",
-            "cocos2d/core/CCActionManager.js",
+            "cocos2d/core/labelttf/CCLabelTTF.js",
+            "cocos2d/core/CCActionManager.js"
+        ],
+        "effects" : [
+            "core",
+
+            "cocos2d/effects/CCGrid.js",
+            "cocos2d/effects/CCGrabber.js"
+        ],
+        "kazmath" : [
+            "core",
+
             "cocos2d/kazmath/utility.js",
             "cocos2d/kazmath/vec2.js",
             "cocos2d/kazmath/vec3.js",
@@ -54,185 +100,241 @@
             "cocos2d/kazmath/plane.js",
             "cocos2d/kazmath/quaternion.js",
             "cocos2d/kazmath/aabb.js",
-            "cocos2d/kazmath/GL/mat4stack.js",
-            "cocos2d/kazmath/GL/matrix.js",
+            "cocos2d/kazmath/gl/mat4stack.js",
+            "cocos2d/kazmath/gl/matrix.js"
+        ],
+        "labels" : [
+            "core",
+
+            "cocos2d/labels/CCLabelAtlas.js",
+            "cocos2d/labels/CCLabelBMFont.js"
+        ],
+        "menus" : [
+            "core", "actions",
+
+            "cocos2d/menus/CCMenuItem.js",
+            "cocos2d/menus/CCMenu.js"
+        ],
+        "motion-streak" : [
+            "core", "shaders", "kazmath", "labels",
+
+            "cocos2d/motion-streak/CCMotionStreak.js"
+        ],
+        "parallax" : [
+            "core",
+
+            "cocos2d/parallax/CCParallaxNode.js"
+        ],
+        "particle" : [
+            "core", "compression",
+
+            "cocos2d/particle/CCPNGReader.js",
+            "cocos2d/particle/CCTIFFReader.js",
+            "cocos2d/particle/CCParticleSystem.js",
+            "cocos2d/particle/CCParticleExamples.js",
+            "cocos2d/particle/CCParticleBatchNode.js"
+        ],
+        "physics" : [
+            "core", "shape-nodes",
+
+            "cocos2d/physics/CCPhysicsSprite.js",
+            "cocos2d/physics/CCPhysicsDebugNode.js"
+        ],
+        "progress-timer" : [
+            "core", "actions",
+
+            "cocos2d/progress-timer/CCProgressTimer.js",
+            "cocos2d/progress-timer/CCActionProgressTimer.js"
+        ],
+        "render-texture" : [
+            "core",
+
+            "cocos2d/render-texture/CCRenderTexture.js"
+        ],
+        "shaders" : [
+            "core", "kazmath",
+
             "cocos2d/shaders/CCShaders.js",
             "cocos2d/shaders/CCShaderCache.js",
             "cocos2d/shaders/CCGLProgram.js",
-            "cocos2d/shaders/CCGLStateCache.js",
-            "cocos2d/render_texture/CCRenderTexture.js",
-            "cocos2d/motion_streak/CCMotionStreak.js",
-            "cocos2d/clipping_nodes/CCClippingNode.js",
-            "cocos2d/effects/CCGrid.js",
-            "cocos2d/effects/CCGrabber.js",
-            "cocos2d/shape_nodes/CCDrawNode.js",
-            "cocos2d/actions/CCAction.js",
-            "cocos2d/actions/CCActionInterval.js",
-            "cocos2d/actions/CCActionInstant.js",
-            "cocos2d/actions/CCActionCamera.js",
-            "cocos2d/actions/CCActionEase.js",
-            "cocos2d/actions/CCActionCatmullRom.js",
-            "cocos2d/actions/CCActionTween.js",
-            "cocos2d/actions3d/CCActionGrid.js",
-            "cocos2d/actions3d/CCActionGrid3D.js",
-            "cocos2d/actions3d/CCActionTiledGrid.js",
-            "cocos2d/actions3d/CCActionPageTurn3D.js",
-            "cocos2d/progress_timer/CCProgressTimer.js",
-            "cocos2d/progress_timer/CCActionProgressTimer.js",
-            "cocos2d/transitions_nodes/CCTransition.js",
-            "cocos2d/transitions_nodes/CCTransitionProgress.js",
-            "cocos2d/transitions_nodes/CCTransitionPageTurn.js",
-            "cocos2d/label_nodes/CCLabelAtlas.js",
-            "cocos2d/label_nodes/CCLabelBMFont.js",
-            "cocos2d/compress/ZipUtils.js",
-            "cocos2d/compress/base64.js",
-            "cocos2d/compress/gzip.js",
-            "cocos2d/compress/zlib.min.js",
-            "cocos2d/particle_nodes/CCPNGReader.js",
-            "cocos2d/particle_nodes/CCTIFFReader.js",
-            "cocos2d/particle_nodes/CCParticleSystem.js",
-            "cocos2d/particle_nodes/CCParticleExamples.js",
-            "cocos2d/particle_nodes/CCParticleBatchNode.js",
-            "cocos2d/text_input_node/CCIMEDispatcher.js",
-            "cocos2d/text_input_node/CCTextFieldTTF.js",
-            "cocos2d/menu_nodes/CCMenuItem.js",
-            "cocos2d/menu_nodes/CCMenu.js",
-            "cocos2d/tileMap_nodes/CCTGAlib.js",
-            "cocos2d/tileMap_nodes/CCTMXTiledMap.js",
-            "cocos2d/tileMap_nodes/CCTMXXMLParser.js",
-            "cocos2d/tileMap_nodes/CCTMXObjectGroup.js",
-            "cocos2d/tileMap_nodes/CCTMXLayer.js",
-            "cocos2d/parallax_nodes/CCParallaxNode.js",
-            "cocos2d/audio/CCAudio.js",
-
-            "cocos2d/CCUserDefault.js",
-            "cocos2d/CCImage.js"
+            "cocos2d/shaders/CCGLStateCache.js"
         ],
-        "extensions" : [
-            "extensions/GUI/CCControlExtension/CCControl.js",
-            "extensions/GUI/CCControlExtension/CCControlButton.js",
-            "extensions/GUI/CCControlExtension/CCControlUtils.js",
-            "extensions/GUI/CCControlExtension/CCInvocation.js",
-            "extensions/GUI/CCControlExtension/CCScale9Sprite.js",
-            "extensions/GUI/CCControlExtension/CCMenuPassive.js",
-            "extensions/GUI/CCControlExtension/CCControlSaturationBrightnessPicker.js",
-            "extensions/GUI/CCControlExtension/CCControlHuePicker.js",
-            "extensions/GUI/CCControlExtension/CCControlColourPicker.js",
-            "extensions/GUI/CCControlExtension/CCControlSlider.js",
-            "extensions/GUI/CCControlExtension/CCControlSwitch.js",
-            "extensions/GUI/CCControlExtension/CCControlStepper.js",
-            "extensions/GUI/CCControlExtension/CCControlPotentiometer.js",
-            "extensions/GUI/CCScrollView/CCScrollView.js",
-            "extensions/GUI/CCScrollView/CCSorting.js",
-            "extensions/GUI/CCScrollView/CCTableView.js",
-            "extensions/CCBReader/CCNodeLoader.js",
-            "extensions/CCBReader/CCBReaderUtil.js",
-            "extensions/CCBReader/CCControlLoader.js",
-            "extensions/CCBReader/CCSpriteLoader.js",
-            "extensions/CCBReader/CCNodeLoaderLibrary.js",
-            "extensions/CCBReader/CCBReader.js",
-            "extensions/CCBReader/CCBValue.js",
-            "extensions/CCBReader/CCBKeyframe.js",
-            "extensions/CCBReader/CCBSequence.js",
-            "extensions/CCBReader/CCBRelativePositioning.js",
-            "extensions/CCBReader/CCBAnimationManager.js",
-            "extensions/CCEditBox/CCdomNode.js",
-            "extensions/CCEditBox/CCEditBox.js",
+        "shape-nodes" : [
+            "core",
 
-            "extensions/CocoStudio/Components/CCComponent.js",
-            "extensions/CocoStudio/Components/CCComponentContainer.js",
-            "extensions/CocoStudio/CocoStudio.js",
-
-            "extensions/CocoStudio/Armature/utils/CCArmatureDefine.js",
-            "extensions/CocoStudio/Armature/utils/CCDataReaderHelper.js",
-            "extensions/CocoStudio/Armature/utils/CCSpriteFrameCacheHelper.js",
-            "extensions/CocoStudio/Armature/utils/CCTransformHelp.js",
-            "extensions/CocoStudio/Armature/utils/CCTweenFunction.js",
-            "extensions/CocoStudio/Armature/utils/CCUtilMath.js",
-            "extensions/CocoStudio/Armature/utils/CCArmatureDataManager.js",
-            "extensions/CocoStudio/Armature/datas/CCDatas.js",
-            "extensions/CocoStudio/Armature/display/CCDecorativeDisplay.js",
-            "extensions/CocoStudio/Armature/display/CCDisplayFactory.js",
-            "extensions/CocoStudio/Armature/display/CCDisplayManager.js",
-            "extensions/CocoStudio/Armature/display/CCSkin.js",
-            "extensions/CocoStudio/Armature/animation/CCProcessBase.js",
-            "extensions/CocoStudio/Armature/animation/CCArmatureAnimation.js",
-            "extensions/CocoStudio/Armature/animation/CCTween.js",
-            "extensions/CocoStudio/Armature/physics/CCColliderDetector.js",
-            "extensions/CocoStudio/Armature/CCArmature.js",
-            "extensions/CocoStudio/Armature/CCBone.js",
-
-            "extensions/CocoStudio/Action/CCActionFrame.js",
-            "extensions/CocoStudio/Action/CCActionManager.js",
-            "extensions/CocoStudio/Action/CCActionNode.js",
-            "extensions/CocoStudio/Action/CCActionObject.js",
-
-            "extensions/CocoStudio/Components/CCComAttribute.js",
-            "extensions/CocoStudio/Components/CCComAudio.js",
-            "extensions/CocoStudio/Components/CCComController.js",
-            "extensions/CocoStudio/Components/CCComRender.js",
-
-            "extensions/CocoStudio/Trigger/ObjectFactory.js",
-            "extensions/CocoStudio/Trigger/TriggerBase.js",
-            "extensions/CocoStudio/Trigger/TriggerMng.js",
-            "extensions/CocoStudio/Trigger/TriggerObj.js",
-
-            "extensions/CocoStudio/GUI/BaseClasses/UIWidget.js",
-            "extensions/CocoStudio/GUI/Layouts/UILayout.js",
-            "extensions/CocoStudio/GUI/Layouts/UILayoutParameter.js",
-            "extensions/CocoStudio/GUI/Layouts/UILayoutDefine.js",
-            "extensions/CocoStudio/GUI/System/CocosGUI.js",
-            "extensions/CocoStudio/GUI/System/UIHelper.js",
-            "extensions/CocoStudio/GUI/System/UILayer.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UIButton.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UICheckBox.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UIImageView.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UILabel.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UILabelAtlas.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UILabelBMFont.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UILoadingBar.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UISlider.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UISwitch.js",
-            "extensions/CocoStudio/GUI/UIWidgets/UITextField.js",
-            "extensions/CocoStudio/GUI/UIWidgets/Compatible/CompatibleClasses.js",
-            "extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIScrollView.js",
-            "extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js",
-            "extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js",
-            "extensions/CocoStudio/Reader/GUIReader.js",
-            "extensions/CocoStudio/Reader/SceneReader.js"
+            "cocos2d/shape-nodes/CCDrawNode.js"
         ],
+        "text-input" : [
+            "core",
+
+            "cocos2d/text-input/CCIMEDispatcher.js",
+            "cocos2d/text-input/CCTextFieldTTF.js"
+        ],
+        "tilemap" : [
+            "core", "compression",
+
+            "cocos2d/tilemap/CCTGAlib.js",
+            "cocos2d/tilemap/CCTMXTiledMap.js",
+            "cocos2d/tilemap/CCTMXXMLParser.js",
+            "cocos2d/tilemap/CCTMXObjectGroup.js",
+            "cocos2d/tilemap/CCTMXLayer.js"
+        ],
+        "transitions" : [
+            "core", "actions", "render-texture", "progress-timer",
+
+            "cocos2d/transitions/CCTransition.js",
+            "cocos2d/transitions/CCTransitionProgress.js",
+            "cocos2d/transitions/CCTransitionPageTurn.js"
+        ],
+        "cocos2d" : [
+            "core", "kazmath", "shaders", "render-texture", "motion-streak",
+            "clipping-nodes", "effects", "shape-nodes", "actions", "actions3d",
+            "progress-timer", "transitions", "labels", "compression", "particle",
+            "text-input", "menus", "tilemap", "parallax", "audio"
+        ],
+
+
+
+        "ccbreader" : [
+            "core", "audio", "gui", "menus", "particle", "actions", "labels",
+
+            "extensions/ccb-reader/CCNodeLoader.js",
+            "extensions/ccb-reader/CCBReaderUtil.js",
+            "extensions/ccb-reader/CCControlLoader.js",
+            "extensions/ccb-reader/CCSpriteLoader.js",
+            "extensions/ccb-reader/CCNodeLoaderLibrary.js",
+            "extensions/ccb-reader/CCBReader.js",
+            "extensions/ccb-reader/CCBValue.js",
+            "extensions/ccb-reader/CCBKeyframe.js",
+            "extensions/ccb-reader/CCBSequence.js",
+            "extensions/ccb-reader/CCBRelativePositioning.js",
+            "extensions/ccb-reader/CCBAnimationManager.js"
+        ],
+        "editbox" : [
+            "core", "gui",
+
+            "extensions/editbox/CCdomNode.js",
+            "extensions/editbox/CCEditBox.js"
+        ],
+        "cocostudio" : [
+            "core", "gui", "actions", "labels", "text-input", "tilemap", "clipping-nodes", "particle", "shape-nodes",
+
+            "extensions/cocostudio/components/CCComponent.js",
+            "extensions/cocostudio/components/CCComponentContainer.js",
+            "extensions/cocostudio/CocoStudio.js",
+
+            "extensions/cocostudio/armature/utils/CCArmatureDefine.js",
+            "extensions/cocostudio/armature/utils/CCDataReaderHelper.js",
+            "extensions/cocostudio/armature/utils/CCSpriteFrameCacheHelper.js",
+            "extensions/cocostudio/armature/utils/CCTransformHelp.js",
+            "extensions/cocostudio/armature/utils/CCTweenFunction.js",
+            "extensions/cocostudio/armature/utils/CCUtilMath.js",
+            "extensions/cocostudio/armature/utils/CCArmatureDataManager.js",
+            "extensions/cocostudio/armature/datas/CCDatas.js",
+            "extensions/cocostudio/armature/display/CCDecorativeDisplay.js",
+            "extensions/cocostudio/armature/display/CCDisplayFactory.js",
+            "extensions/cocostudio/armature/display/CCDisplayManager.js",
+            "extensions/cocostudio/armature/display/CCSkin.js",
+            "extensions/cocostudio/armature/animation/CCProcessBase.js",
+            "extensions/cocostudio/armature/animation/CCArmatureAnimation.js",
+            "extensions/cocostudio/armature/animation/CCTween.js",
+            "extensions/cocostudio/armature/physics/CCColliderDetector.js",
+            "extensions/cocostudio/armature/CCArmature.js",
+            "extensions/cocostudio/armature/CCBone.js",
+
+            "extensions/cocostudio/action/CCActionFrame.js",
+            "extensions/cocostudio/action/CCActionManager.js",
+            "extensions/cocostudio/action/CCActionNode.js",
+            "extensions/cocostudio/action/CCActionObject.js",
+
+            "extensions/cocostudio/components/CCComAttribute.js",
+            "extensions/cocostudio/components/CCComAudio.js",
+            "extensions/cocostudio/components/CCComController.js",
+            "extensions/cocostudio/components/CCComRender.js",
+
+            "extensions/cocostudio/trigger/ObjectFactory.js",
+            "extensions/cocostudio/trigger/TriggerBase.js",
+            "extensions/cocostudio/trigger/TriggerMng.js",
+            "extensions/cocostudio/trigger/TriggerObj.js",
+
+            "extensions/cocostudio/gui/base-classes/UIWidget.js",
+            "extensions/cocostudio/gui/layouts/UILayout.js",
+            "extensions/cocostudio/gui/layouts/UILayoutParameter.js",
+            "extensions/cocostudio/gui/layouts/UILayoutDefine.js",
+            "extensions/cocostudio/gui/system/CocosGUI.js",
+            "extensions/cocostudio/gui/system/UIHelper.js",
+            "extensions/cocostudio/gui/uiwidgets/UIButton.js",
+            "extensions/cocostudio/gui/uiwidgets/UICheckBox.js",
+            "extensions/cocostudio/gui/uiwidgets/UIImageView.js",
+            "extensions/cocostudio/gui/uiwidgets/UILabel.js",
+            "extensions/cocostudio/gui/uiwidgets/UILabelAtlas.js",
+            "extensions/cocostudio/gui/uiwidgets/UILabelBMFont.js",
+            "extensions/cocostudio/gui/uiwidgets/UILoadingBar.js",
+            "extensions/cocostudio/gui/uiwidgets/UISlider.js",
+            "extensions/cocostudio/gui/uiwidgets/UISwitch.js",
+            "extensions/cocostudio/gui/uiwidgets/UITextField.js",
+            "extensions/cocostudio/gui/uiwidgets/scroll-widget/UIScrollView.js",
+            "extensions/cocostudio/gui/uiwidgets/scroll-widget/UIListView.js",
+            "extensions/cocostudio/gui/uiwidgets/scroll-widget/UIPageView.js",
+            "extensions/cocostudio/reader/GUIReader.js",
+            "extensions/cocostudio/reader/SceneReader.js"
+        ],
+        "gui" : [
+            "core", "clipping-nodes", "render-texture", "actions", "progress-timer",
+
+            "extensions/gui/control-extension/CCControl.js",
+            "extensions/gui/control-extension/CCControlButton.js",
+            "extensions/gui/control-extension/CCControlUtils.js",
+            "extensions/gui/control-extension/CCInvocation.js",
+            "extensions/gui/control-extension/CCScale9Sprite.js",
+            "extensions/gui/control-extension/CCMenuPassive.js",
+            "extensions/gui/control-extension/CCControlSaturationBrightnessPicker.js",
+            "extensions/gui/control-extension/CCControlHuePicker.js",
+            "extensions/gui/control-extension/CCControlColourPicker.js",
+            "extensions/gui/control-extension/CCControlSlider.js",
+            "extensions/gui/control-extension/CCControlSwitch.js",
+            "extensions/gui/control-extension/CCControlStepper.js",
+            "extensions/gui/control-extension/CCControlPotentiometer.js",
+            "extensions/gui/scrollview/CCScrollView.js",
+            "extensions/gui/scrollview/CCSorting.js",
+            "extensions/gui/scrollview/CCTableView.js"
+        ],
+
         "pluginx" : [
-            "extensions/PluginX/protocols/Config.js",
-            "extensions/PluginX/protocols/PluginUtils.js",
-            "extensions/PluginX/protocols/PluginProtocol.js",
-            "extensions/PluginX/protocols/ProtocolSocial.js",
-            "extensions/PluginX/protocols/ProtocolAds.js",
-            "extensions/PluginX/protocols/ProtocolAnalytics.js",
+            "core",
 
-            "extensions/PluginX/protocols/PluginFactory.js",
-            "extensions/PluginX/protocols/PluginManager.js",
+            "extensions/pluginx/protocols/Config.js",
+            "extensions/pluginx/protocols/PluginUtils.js",
+            "extensions/pluginx/protocols/PluginProtocol.js",
+            "extensions/pluginx/protocols/ProtocolSocial.js",
+            "extensions/pluginx/protocols/ProtocolAds.js",
+            "extensions/pluginx/protocols/ProtocolAnalytics.js",
+
+            "extensions/pluginx/protocols/PluginFactory.js",
+            "extensions/pluginx/protocols/PluginManager.js",
 
 
-            "extensions/PluginX/plugins/SocialWeibo.js",
-            "extensions/PluginX/plugins/SocialQQWeibo.js",
-            "extensions/PluginX/plugins/SocialQzone.js",
-            "extensions/PluginX/plugins/SocialTwitter.js",
-            "extensions/PluginX/plugins/SocialFacebook.js",
+            "extensions/pluginx/plugins/SocialWeibo.js",
+            "extensions/pluginx/plugins/SocialQQWeibo.js",
+            "extensions/pluginx/plugins/SocialQzone.js",
+            "extensions/pluginx/plugins/SocialTwitter.js",
+            "extensions/pluginx/plugins/SocialFacebook.js",
 
-            "extensions/PluginX/plugins/AnalyticsFlurry.js"
+            "extensions/pluginx/plugins/AnalyticsFlurry.js"
         ],
+        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "pluginx"],
+
+
         "box2d" : [
-            "cocos2d/physics_nodes/CCPhysicsSprite.js",
-            "cocos2d/physics_nodes/CCPhysicsDebugNode.js",
+            "core", "physics",
+
             "external/box2d/box2d.js"
         ],
         "chipmunk" : [
-            "cocos2d/physics_nodes/CCPhysicsSprite.js",
-            "cocos2d/physics_nodes/CCPhysicsDebugNode.js",
-            "external/chipmunk/chipmunk.js"
-        ]
-    },
-    "dependence" : {
+            "core", "physics",
 
+            "external/chipmunk/chipmunk.js"
+        ],
+        "external" : ["box2d", "chipmunk"]
     }
 }

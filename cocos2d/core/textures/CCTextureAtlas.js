@@ -181,7 +181,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     _setupVBO:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         //create WebGLBuffer
         this._buffersVBO[0] = gl.createBuffer();
         this._buffersVBO[1] = gl.createBuffer();
@@ -191,7 +191,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     _mapBuffers:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
@@ -216,7 +216,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     initWithFile:function (file, capacity) {
         // retained in property
-        var texture = cc.TextureCache.getInstance().addImage(file);
+        var texture = cc.textureCache.addImage(file);
         if (texture)
             return this.initWithTexture(texture, capacity);
         else {
@@ -235,7 +235,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @return {Boolean}
      * @example
      * //example
-     * var texture = cc.TextureCache.getInstance().addImage("hello.png");
+     * var texture = cc.textureCache.addImage("hello.png");
      * var textureAtlas = new cc.TextureAtlas();
      * textureAtlas.initWithTexture(texture, 3);
      */
@@ -586,7 +586,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (0 === n || !this.texture || !this.texture.isLoaded())
             return;
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         cc.glBindTexture2D(this.texture);
 
         //
@@ -627,7 +627,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     _releaseBuffer: function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         if (this._buffersVBO) {
             if (this._buffersVBO[0])
                 gl.deleteBuffer(this._buffersVBO[0]);
@@ -660,7 +660,7 @@ delete window._proto;
  * var textureAtlas = cc.TextureAtlas.create("res/hello.png", 3);
  * 2.
  * //creates a TextureAtlas with texture
- * var texture = cc.TextureCache.getInstance().addImage("hello.png");
+ * var texture = cc.textureCache.addImage("hello.png");
  * var textureAtlas = cc.TextureAtlas.create(texture, 3);
  */
 cc.TextureAtlas.create = function (fileName, capacity) {

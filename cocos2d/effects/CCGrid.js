@@ -71,7 +71,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     setActive:function (active) {
         this._active = active;
         if (!active) {
-            var director = cc.Director.getInstance();
+            var director = cc.director;
             var proj = director.getProjection();
             director.setProjection(proj);
         }
@@ -154,7 +154,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      */
     initWithSize:function (gridSize, texture, flipped) {
         if (!texture) {
-            var director = cc.Director.getInstance();
+            var director = cc.director;
             var winSize = director.getWinSizeInPixels();
 
             var POTWide = cc.NextPOT(winSize.width);
@@ -190,14 +190,14 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         if (!this._grabber)
             return false;
         this._grabber.grab(this._texture);
-        this._shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE);
+        this._shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE);
         this.calculateVertexPoints();
         return true;
     },
 
     beforeDraw:function () {
         // save projection
-        this._directorProjection = cc.Director.getInstance().getProjection();
+        this._directorProjection = cc.director.getProjection();
 
         // 2d projection
         //    [director setProjection:kCCDirectorProjection2D];
@@ -209,7 +209,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._grabber.afterRender(this._texture);
 
         // restore projection
-        cc.Director.getInstance().setProjection(this._directorProjection);
+        cc.director.setProjection(this._directorProjection);
 
         if (target.getCamera().isDirty()) {
             var offset = target.getAnchorPointInPoints();
@@ -243,9 +243,9 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     },
 
     set2DProjection:function () {
-        var winSize = cc.Director.getInstance().getWinSizeInPixels();
+        var winSize = cc.director.getWinSizeInPixels();
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.viewport(0, 0, winSize.width , winSize.height);
         cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLLoadIdentity();
@@ -349,7 +349,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
 
-        var gl = cc.renderContext, locDirty = this._dirty;
+        var gl = cc._renderContext, locDirty = this._dirty;
         //
         // Attributes
         //
@@ -384,7 +384,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     },
 
     calculateVertexPoints:function () {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
 
         var width = this._texture.pixelsWidth;
         var height = this._texture.pixelsHeight;
@@ -572,7 +572,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         //
         // Attributes
         //
-        var gl = cc.renderContext, locDirty = this._dirty;
+        var gl = cc._renderContext, locDirty = this._dirty;
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
 
         // position
@@ -616,7 +616,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         this._texCoordinates = new Float32Array(numQuads * 8);
         this._indices = new Uint16Array(numQuads * 6);
 
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         if(this._verticesBuffer)
             gl.deleteBuffer(this._verticesBuffer);
         this._verticesBuffer = gl.createBuffer();

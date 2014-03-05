@@ -78,227 +78,6 @@ cc.associateWithNative = function (jsObj, superclass) {
 };
 
 /**
- * Is show bebug info on web page
- * @constant
- * @type {Boolean}
- */
-cc.IS_SHOW_DEBUG_ON_PAGE = cc.IS_SHOW_DEBUG_ON_PAGE || false;
-
-cc._logToWebPage = function (message) {
-    var logList = document.getElementById("logInfoList");
-    if (!logList) {
-        var logDiv = document.createElement("Div");
-        logDiv.setAttribute("id", "logInfoDiv");
-        cc.canvas.parentNode.appendChild(logDiv);
-        logDiv.setAttribute("width", "200");
-        logDiv.setAttribute("height", cc.canvas.height);
-        logDiv.style.zIndex = "99999";
-        logDiv.style.position = "absolute";
-        logDiv.style.top = "0";
-        logDiv.style.left = "0";
-
-        logList = document.createElement("ul");
-        logDiv.appendChild(logList);
-        logList.setAttribute("id", "logInfoList");
-        logList.style.height = cc.canvas.height + "px";
-        logList.style.color = "#fff";
-        logList.style.textAlign = "left";
-        logList.style.listStyle = "disc outside";
-        logList.style.fontSize = "12px";
-        logList.style.fontFamily = "arial";
-        logList.style.padding = "0 0 0 20px";
-        logList.style.margin = "0";
-        logList.style.textShadow = "0 0 3px #000";
-        logList.style.zIndex = "99998";
-        logList.style.position = "absolute";
-        logList.style.top = "0";
-        logList.style.left = "0";
-        logList.style.overflowY = "hidden";
-
-        var tempDiv = document.createElement("Div");
-        logDiv.appendChild(tempDiv);
-        tempDiv.style.width = "200px";
-        tempDiv.style.height = cc.canvas.height + "px";
-        tempDiv.style.opacity = "0.1";
-        tempDiv.style.background = "#fff";
-        tempDiv.style.border = "1px solid #dfdfdf";
-        tempDiv.style.borderRadius = "8px";
-    }
-    var addMessage = document.createElement("li");
-    //var now = new Date();
-    //addMessage.innerHTML = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " " + now.getMilliseconds() + " " + message;
-    addMessage.innerHTML = message;
-    if (logList.childNodes.length == 0) {
-        logList.appendChild(addMessage);
-    } else {
-        logList.insertBefore(addMessage, logList.childNodes[0]);
-    }
-};
-
-/**
- * Output Debug message.
- * @function
- * @param {String} message
- */
-cc.log = function (message) {
-    if (!cc.IS_SHOW_DEBUG_ON_PAGE) {
-        console.log.apply(console, arguments);
-    } else {
-        cc._logToWebPage(message);
-    }
-};
-
-/**
- * Pop out a message box
- * @param {String} message
- * @function
- */
-cc.MessageBox = function (message) {
-    console.log(message);
-};
-
-/**
- * Output Assert message.
- * @function
- * @param {Boolean} cond If cond is false, assert.
- * @param {String} message
- */
-cc.Assert = function (cond, message) {
-    if (console.assert)
-        console.assert(cond, message);
-    else {
-        if (!cond) {
-            if (message)
-                alert(message);
-        }
-    }
-};
-
-/**
- * Update Debug setting.
- * @function
- */
-cc.initDebugSetting = function () {
-    // cocos2d debug
-    if (cc.COCOS2D_DEBUG == 0) {
-        cc.log = function () {
-        };
-        cc.logINFO = function () {
-        };
-        cc.logERROR = function () {
-        };
-        cc.Assert = function () {
-        };
-    } else if (cc.COCOS2D_DEBUG == 1) {
-        cc.logINFO = cc.log;
-        cc.logERROR = function () {
-        };
-    } else if (cc.COCOS2D_DEBUG > 1) {
-        cc.logINFO = cc.log;
-        cc.logERROR = cc.log;
-    }// COCOS2D_DEBUG
-};
-
-// Enum the language type supportted now
-/**
- * English language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_ENGLISH = 0;
-
-/**
- * Chinese language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_CHINESE = 1;
-
-/**
- * French language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_FRENCH = 2;
-
-/**
- * Italian language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_ITALIAN = 3;
-
-/**
- * German language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_GERMAN = 4;
-
-/**
- * Spanish language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_SPANISH = 5;
-
-/**
- * Russian language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_RUSSIAN = 6;
-
-/**
- * Korean language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_KOREAN = 7;
-
-/**
- * Japanese language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_JAPANESE = 8;
-
-/**
- * Hungarian language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_HUNGARIAN = 9;
-
-/**
- * Portuguese language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_PORTUGUESE = 10;
-
-/**
- * Arabic language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_ARABIC = 11;
-
-/**
- * Norwegian language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_NORWEGIAN = 12;
-
-/**
- * Polish language code
- * @constant
- * @type Number
- */
-cc.LANGUAGE_POLISH = 13;
-
-/**
  * keymap
  * @example
  * //Example
@@ -509,9 +288,9 @@ var CCNS_REG2 = /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*
  * Constructor
  * @example
  * // example
- * var rect = cc.RectFromString("{{3,2},{4,5}}");
+ * var rect = cc.rectFromString("{{3,2},{4,5}}");
  */
-cc.RectFromString = function (content) {
+cc.rectFromString = function (content) {
 	var result = CCNS_REG2.exec(content);
 	if(!result) return cc.rect(0, 0, 0, 0);
 	return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
@@ -529,9 +308,9 @@ cc.RectFromString = function (content) {
  * Constructor
  * @example
  * //example
- * var point = cc.PointFromString("{3.0,2.5}");
+ * var point = cc.pointFromString("{3.0,2.5}");
  */
-cc.PointFromString = function (content) {
+cc.pointFromString = function (content) {
 	var result = CCNS_REG1.exec(content);
 	if(!result) return cc.p(0,0);
 	return cc.p(parseFloat(result[1]), parseFloat(result[2]));
@@ -548,9 +327,9 @@ cc.PointFromString = function (content) {
  * If the string is not well-formed, the function returns cc.size(0,0).
  * @example
  * // example
- * var size = cc.SizeFromString("{3.0,2.5}");
+ * var size = cc.sizeFromString("{3.0,2.5}");
  */
-cc.SizeFromString = function (content) {
+cc.sizeFromString = function (content) {
 	var result = CCNS_REG1.exec(content);
 	if(!result) return cc.size(0, 0);
 	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
@@ -590,7 +369,7 @@ cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, sette
 		var props = Object.getOwnPropertyNames(proto);
 		for (var i = 0; i < props.length; i++) {
 			var name = props[i];
-			if( proto.__lookupGetter__(name) !== undefined || typeof proto[name] !== "function" ) continue;
+			if( proto.__lookupGetter__(name) || typeof proto[name] !== "function" ) continue;
 			var func = proto[name];
 			if (hasGetter && func === getter) {
 				getterName = name;

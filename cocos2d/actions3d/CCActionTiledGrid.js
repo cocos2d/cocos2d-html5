@@ -918,7 +918,7 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
 
     startWithTarget:function (target) {
         cc.TiledGrid3DAction.prototype.startWithTarget.call(this, target);
-        this._winSize = cc.Director.getInstance().getWinSizeInPixels();
+        this._winSize = cc.director.getWinSizeInPixels();
     }
 });
 
@@ -984,7 +984,7 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
      */
     startWithTarget:function (target) {
         cc.TiledGrid3DAction.prototype.startWithTarget.call(this, target);
-        this._winSize = cc.Director.getInstance().getWinSizeInPixels();
+        this._winSize = cc.director.getWinSizeInPixels();
     }
 });
 

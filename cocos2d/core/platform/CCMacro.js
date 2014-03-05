@@ -165,7 +165,7 @@ cc.BLEND_DST = 0x0303;
 cc.NODE_DRAW_SETUP = function (node) {
     //cc.glEnable(node._glServerState);
     if (node._shaderProgram) {
-        //cc.renderContext.useProgram(node._shaderProgram._programObj);
+        //cc._renderContext.useProgram(node._shaderProgram._programObj);
         node._shaderProgram.use();
         node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
     }
@@ -235,7 +235,7 @@ cc.FLT_EPSILON = 0.0000001192092896;
  * @function
  */
 cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
-    return cc.Director.getInstance().getContentScaleFactor();
+    return cc.director.getContentScaleFactor();
 } : function () {
     return 1;
 };
@@ -321,7 +321,7 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
     return p;
 };
 
-if (!cc.Browser.supportWebGL) {
+if (!cc.sys.supportWebGL) {
     /**
      * WebGL constants
      * @type {object}
@@ -360,8 +360,8 @@ if (!cc.Browser.supportWebGL) {
 }
 
 cc.CHECK_GL_ERROR_DEBUG = function () {
-    if (cc.renderMode == cc.WEBGL) {
-        var _error = cc.renderContext.getError();
+    if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
+        var _error = cc._renderContext.getError();
         if (_error) {
             cc.log("WebGL error " + _error);
         }

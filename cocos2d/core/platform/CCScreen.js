@@ -27,10 +27,9 @@
 /**
  * The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
  * It's invalid on safari,QQbrowser and android browser
- * @class
- * @extends cc.Class
+ * @Object
  */
-cc.Screen = cc.Class.extend({
+cc.screen = {
     _supportsFullScreen: false,
 	// the pre fullscreenchange function
     _preOnFullScreenChange: null,
@@ -138,7 +137,7 @@ cc.Screen = cc.Class.extend({
      */
     autoFullScreen: function (element, onFullScreenChange) {
 	    element = element || document.body;
-	    var touchTarget = cc.canvas || element;
+	    var touchTarget = cc._canvas || element;
         var theScreen = this;
         // Function bind will be too complicated here because we need the callback function's reference to remove the listener
         function callback() {
@@ -148,18 +147,5 @@ cc.Screen = cc.Class.extend({
         this.requestFullScreen(element, onFullScreenChange);
         touchTarget.addEventListener(this._touchEvent, callback);
     }
-});
-
-/**
- * returns a shared instance of the cc.Screen
- * @function
- * @return {cc.Screen}
- */
-cc.Screen.getInstance = function () {
-    if (!this._instance){
-        var screen = new cc.Screen();
-        screen.init();
-        this._instance = screen;
-    }
-    return this._instance;
 };
+cc.screen.init();

@@ -130,7 +130,7 @@ cc.GLToClipTransform = function (transformOut) {
  *      - setting the orientation (default one is Protrait)<br/>
  *      <br/>
  *    Since the cc.Director is a singleton, the standard way to use it is by calling:<br/>
- *      - cc.Director.getInstance().methodName(); <br/>
+ *      - cc.director.methodName(); <br/>
  *    <br/>
  *    The CCDirector also sets the default OpenGL context:<br/>
  *      - GL_TEXTURE_2D is enabled<br/>
@@ -184,11 +184,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _eventAfterDraw: null,
     _eventAfterVisit: null,
     _eventAfterUpdate: null,
-
-    _touchDispatcher:null,
-    _keyboardDispatcher:null,
-    _accelerometer:null,
-    _mouseDispatcher:null,
 
     _isBlur:false,
 
@@ -253,26 +248,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._eventProjectionChanged = new cc.EventCustom(cc.Director.EVENT_PROJECTION_CHANGED);
         this._eventProjectionChanged.setUserData(this);
 
-        //touchDispatcher
-        if(cc.TouchDispatcher){
-            this._touchDispatcher = new cc.TouchDispatcher();
-            this._touchDispatcher.init();
-        }
-
-        //KeyboardDispatcher
-        if(cc.KeyboardDispatcher)
-            this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
-
-        //accelerometer
-        if(cc.Accelerometer)
-            this._accelerometer = new cc.Accelerometer();
-
-        //MouseDispatcher
-        if(cc.MouseDispatcher){
-            this._mouseDispatcher = new cc.MouseDispatcher();
-            this._mouseDispatcher.init();
-        }
-
         return true;
     },
 
@@ -290,7 +265,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._deltaTime = (now - this._lastUpdate) / 1000;
         }
 
-        if ((cc.COCOS2D_DEBUG > 0) && (this._deltaTime > 0.2))
+        if ((cc.game.config[cc.game.CONFIG_KEY.debugMode] > 0) && (this._deltaTime > 0.2))
             this._deltaTime = 1 / 60.0;
 
         this._lastUpdate = now;
@@ -390,11 +365,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _clearCanvas: function() {
         var viewport = this._openGLView.getViewPortRect();
-        cc.renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
     },
 
     _clearWebGL: function() {
-        var gl = cc.renderContext;
+        var gl = cc._renderContext;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     },
 
@@ -523,7 +498,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     purgeCachedData:function () {
         cc.LabelBMFont.purgeCachedData();
-        //cc.TextureCache.getInstance().removeUnusedTextures();
+        //cc.textureCache.removeUnusedTextures();
     },
 
     /**
@@ -535,7 +510,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         // don't release the event handlers
         // They are needed in case the director is run again
-        if(this._touchDispatcher)this._touchDispatcher.removeAllDelegates();
 
         if (this._runningScene) {
             this._runningScene.onExitTransitionDidStart();
@@ -556,9 +530,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.LabelBMFont.purgeCachedData();
 
         // purge all managers
-        cc.AnimationCache.purgeSharedAnimationCache();
-        cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
-        cc.TextureCache.purgeSharedTextureCache();
+        cc.animationCache.purgeSharedAnimationCache();
+        cc.spriteFrameCache.purgeSharedSpriteFrameCache();
+        cc.textureCache.purgeSharedTextureCache();
 
         cc.CHECK_GL_ERROR_DEBUG();
     },
@@ -634,7 +608,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (on)
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         else
-            cc.glBlendFunc(cc.renderContext.ONE, cc.renderContext.ZERO);
+            cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO);
         //cc.CHECK_GL_ERROR_DEBUG();
     },
 
@@ -658,15 +632,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Boolean} on
      */
     setDepthTest:function (on) {
-        if(cc.renderContextType === cc.CANVAS)
+        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
             return;
 
-        var loc_gl= cc.renderContext;
+        var loc_gl= cc._renderContext;
         if (on) {
             loc_gl.clearDepth(1.0);
             loc_gl.enable(loc_gl.DEPTH_TEST);
             loc_gl.depthFunc(loc_gl.LEQUAL);
-            //cc.renderContext.hint(cc.renderContext.PERSPECTIVE_CORRECTION_HINT, cc.renderContext.NICEST);
+            //cc._renderContext.hint(cc._renderContext.PERSPECTIVE_CORRECTION_HINT, cc._renderContext.NICEST);
         } else {
             loc_gl.disable(loc_gl.DEPTH_TEST);
         }
@@ -691,7 +665,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.setProjection(this._projection);
 
         // set other opengl default values
-        cc.renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
+        cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     },
 
     /**
@@ -761,15 +735,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setOpenGLView:function (openGLView) {
         // set size
-        this._winSizeInPoints.width = cc.canvas.width;      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.height = cc.canvas.height;
-        this._openGLView = openGLView || cc.EGLView.getInstance();
+        this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
+        this._winSizeInPoints.height = cc._canvas.height;
+        this._openGLView = openGLView || cc.view;
 
-        if (cc.renderContextType === cc.CANVAS)
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
             return;
 
         // Configuration. Gather GPU info
-        var conf = cc.Configuration.getInstance();
+        var conf = cc.configuration;
         conf.gatherGPUInfo();
         conf.dumpInfo();
 
@@ -789,7 +763,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          this.updateContentScaleFactor();
          }*/
 
-        if(this._touchDispatcher)this._touchDispatcher.setDispatchEvents(true);
         //}
     },
 
@@ -810,7 +783,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setProjection: function (projection) {
         var size = this._winSizeInPoints;
 
-        if (cc.renderContextType === cc.CANVAS) {
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             this._projection = projection;
             cc.eventManager.dispatchEvent(this._eventProjectionChanged);
             return;
@@ -1048,53 +1021,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
     },
 
-    getTouchDispatcher:function () {
-        return this._touchDispatcher;
-    },
-    setTouchDispatcher:function (touchDispatcher) {
-        if (this._touchDispatcher != touchDispatcher) {
-            this._touchDispatcher = touchDispatcher;
-        }
-    },
-
-    getKeyboardDispatcher:function () {
-        if(!cc.KeyboardDispatcher)
-            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
-        return this._keyboardDispatcher;
-    },
-    setKeyboardDispatcher:function (keyboardDispatcher) {
-        if(!cc.KeyboardDispatcher)
-            throw "cc.KeyboardDispatcher is undefined, maybe it has been removed from js loading list.";
-        this._keyboardDispatcher = keyboardDispatcher;
-    },
-
-    getAccelerometer:function () {
-        if(!cc.Accelerometer)
-            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
-        return this._accelerometer;
-    },
-    setAccelerometer:function (accelerometer) {
-        if(!cc.Accelerometer)
-            throw "cc.Accelerometer is undefined, maybe it has been removed from js loading list.";
-        if (this._accelerometer != accelerometer)
-            this._accelerometer = accelerometer;
-    },
-
     getDeltaTime:function(){
         return this._deltaTime;
-    },
-
-    getMouseDispatcher:function () {
-        if(!cc.MouseDispatcher)
-            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
-        return this._mouseDispatcher;
-    },
-
-    setMouseDispatcher:function (mouseDispatcher) {
-        if(!cc.MouseDispatcher)
-            throw "cc.MouseDispatcher is undefined, maybe it has been removed from js loading list.";
-        if (this._mouseDispatcher != mouseDispatcher)
-            this._mouseDispatcher = mouseDispatcher;
     },
 
     _createStatsLabel: null,
@@ -1123,7 +1051,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          Secondly, the size of this image is 480*320, to display the FPS label with correct size,
          a factor of design resolution ratio of 480x320 is also needed.
          */
-        var factor = cc.EGLView.getInstance().getDesignResolutionSize().height / 320.0;
+        var factor = cc.view.getDesignResolutionSize().height / 320.0;
         if(factor === 0)
             factor = this._winSizeInPoints.height / 320.0;
 
@@ -1174,7 +1102,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     }
 });
 
-if (cc.Browser.supportWebGL) {
+if (cc.sys.supportWebGL) {
     cc.Director.prototype._clear = cc.Director.prototype._clearWebGL;
     cc.Director.prototype._beforeVisitScene = cc.Director.prototype._beforeVisitSceneWebGL;
     cc.Director.prototype._afterVisitScene = cc.Director.prototype._afterVisitSceneWebGL;
@@ -1249,27 +1177,47 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
     }
 });
 
-cc.s_SharedDirector = null;
-
-cc.firstUseDirector = true;
+cc.Director.sharedDirector = null;
+cc.Director.firstUseDirector = true;
 
 /**
  * returns a shared instance of the director
  * @function
  * @return {cc.Director}
  */
-cc.Director.getInstance = function () {
-    if (cc.firstUseDirector) {
-        cc.firstUseDirector = false;
-        cc.s_SharedDirector = new cc.DisplayLinkDirector();
-        cc.s_SharedDirector.init();
-        cc.s_SharedDirector.setOpenGLView(cc.EGLView.getInstance());
+cc.Director._getInstance = function () {
+    if (cc.Director.firstUseDirector) {
+        cc.Director.firstUseDirector = false;
+        cc.Director.sharedDirector = new cc.DisplayLinkDirector();
+        cc.Director.sharedDirector.init();
+        cc.Director.sharedDirector.setOpenGLView(cc.view);
     }
-    return cc.s_SharedDirector;
+    return cc.Director.sharedDirector;
 };
 
+/**
+ * <p>
+ *   cc.director is a DisplayLinkDirector type Director that synchronizes timers with the refresh rate of the display.<br/>
+ *   Features and Limitations:<br/>
+ *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
+ *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
+ * </p>
+ * @Object
+ * @type {cc.Director}
+ */
+cc.director;
+cc.defineGetterSetter(cc, "director", function() {
+	return cc.Director.firstUseDirector ? cc.Director._getInstance() : cc.Director.sharedDirector;
+});
+
+/**
+ * <p>
+ * An alias for cc.director.getWinSize()
+ * </p>
+ * @type {cc.Size}
+ */
 cc.defineGetterSetter(cc, "winSize", function(){
-    return cc.Director.getInstance().getWinSize();
+    return cc.director._winSizeInPoints;
 });
 
 /**
