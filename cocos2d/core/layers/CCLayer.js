@@ -24,13 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/** Layer will receive all the touches at once The onTouchesXXX API will be called
- */
-cc.TOUCH_ALL_AT_ONCE = 0;
-
-/** Layer will receive only one touch at the time. The onTouchXXX API will be called */
-cc.TOUCH_ONE_BY_ONE = 1;
-
 /** cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.<br/>
  * All features from cc.Node are valid, plus the following new features:<br/>
  * It can receive iPhone Touches<br/>

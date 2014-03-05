@@ -296,13 +296,21 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
-     * set touch size
+     * Set touch size
      * @param {cc.Size} size
      */
     setTouchSize: function (size) {
         this._useTouchArea = true;
         this._touchWidth = size.width;
         this._touchHeight = size.height;
+    },
+
+    /**
+     * Get touch size.
+     * @returns {cc.Size}
+     */
+    getTouchSize:function(){
+        return cc.size(this._touchWidth,this._touchHeight);
     },
 
     /**
@@ -336,9 +344,12 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.textfieldRendererScaleChangedWithSize();
     },
 
-	_getPlaceHolder: function () {
-		return this._textFieldRender.getPlaceHolder();
-	},
+    /**
+     * @returns {String}
+     */
+    getPlaceHolder:function(){
+        return this._textFieldRender.getPlaceHolder();
+    },
 
 	_setFont: function (font) {
 		this._textFieldRender._setFont(font);
@@ -350,6 +361,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
 	},
 
     /**
+     * Set font size for text field content
      * @param {cc.Size} size
      */
     setFontSize: function (size) {
@@ -357,11 +369,16 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.textfieldRendererScaleChangedWithSize();
     },
 
-	_getFontSize: function () {
+	/**
+	 * Get font size for text field content
+	 * @param {cc.Size} size
+	 */
+	getFontSize: function () {
 		return this._textFieldRender.getFontSize();
 	},
 
     /**
+     * Set font name for text field content
      * @param {String} name
      */
     setFontName: function (name) {
@@ -369,7 +386,11 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this.textfieldRendererScaleChangedWithSize();
     },
 
-	_getFontName: function () {
+	/**
+	 * Get font name for text field content
+	 * @param {cc.Size} size
+	 */
+	getFontName: function () {
 		return this._textFieldRender.getFontName();
 	},
 
@@ -454,6 +475,13 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     setPasswordStyleText: function (styleText) {
         this._textFieldRender.setPasswordStyleText(styleText);
         this._passwordStyleText = styleText;
+    },
+
+    /**
+     * @returns {String}
+     */
+    getPasswordStyleText:function(){
+        return this._passwordStyleText;
     },
 
     update: function (dt) {
@@ -694,10 +722,10 @@ window._proto = ccs.TextField.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
-cc.defineGetterSetter(_proto, "placeHolder", _proto._getPlaceHolder, _proto.setPlaceHolder);
+cc.defineGetterSetter(_proto, "placeHolder", _proto.getPlaceHolder, _proto.setPlaceHolder);
 cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
-cc.defineGetterSetter(_proto, "fontSize", _proto._getFontSize, _proto.setFontSize);
-cc.defineGetterSetter(_proto, "fontName", _proto._getFontName, _proto.setFontName);
+cc.defineGetterSetter(_proto, "fontSize", _proto.getFontSize, _proto.setFontSize);
+cc.defineGetterSetter(_proto, "fontName", _proto.getFontName, _proto.setFontName);
 cc.defineGetterSetter(_proto, "maxLengthEnabled", _proto.isMaxLengthEnabled, _proto.setMaxLengthEnabled);
 cc.defineGetterSetter(_proto, "maxLength", _proto.getMaxLength, _proto.setMaxLength);
 cc.defineGetterSetter(_proto, "passwordEnabled", _proto.isPasswordEnabled, _proto.setPasswordEnabled);

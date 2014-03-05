@@ -1112,7 +1112,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.unscheduleAllCallbacks();
 
         // event
-        this._eventDispatcher._cleanTarget(this);
+        this._eventDispatcher.removeListeners(this);
 
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
@@ -1618,7 +1618,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     resume: function() {
         this.scheduler.resumeTarget(this);
         this.actionManager.resumeTarget(this);
-        this._eventDispatcher._resumeTarget(this);
+        this._eventDispatcher.resumeTarget(this);
     },
 
     /**
@@ -1638,7 +1638,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     pause: function(){
         this.scheduler.pauseTarget(this);
         this.actionManager.pauseTarget(this);
-        this._eventDispatcher._pauseTarget(this);
+        this._eventDispatcher.pauseTarget(this);
     },
 
     /**
@@ -1844,8 +1844,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * removes a component by its name
-     * @param {String} name
+     * removes a component by its name or a component
+     * @param {String|cc.Component} name
      */
     removeComponent:function(name){
         return this._componentContainer.remove(name);

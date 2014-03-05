@@ -696,7 +696,7 @@ cc.BuilderReader = cc.Class.extend({
                 value = cc.SpriteFrame.create(texture, bounds);
             } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;
-                var frameCache = cc.SpriteFrameCache.getInstance();
+                var frameCache = cc.spriteFrameCache;
                 // Load the sprite sheet only if it is not loaded
                 if (this._loadedSpriteSheets.indexOf(spriteSheet) == -1) {
                     frameCache.addSpriteFrames(spriteSheet);
