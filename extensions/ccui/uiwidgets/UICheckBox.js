@@ -23,23 +23,23 @@
  ****************************************************************************/
 
 //CheckBoxEvent type
-ccs.CHECKBOX_EVENT_SELECTED = 0;
-ccs.CHECKBOX_EVENT_UNSELECTED = 1;
+ccui.CHECKBOX_EVENT_SELECTED = 0;
+ccui.CHECKBOX_EVENT_UNSELECTED = 1;
 
 //Render zorder
-ccs.BACKGROUND_BOX_RENDERER_ZORDER = -1;
-ccs.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER = -1;
-ccs.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER = -1;
-ccs.FRONT_CROSS_RENDERER_ZORDER = -1;
-ccs.FRONT_CROSS_DISABLED_RENDERER_ZORDER = -1;
+ccui.BACKGROUND_BOX_RENDERER_ZORDER = -1;
+ccui.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER = -1;
+ccui.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER = -1;
+ccui.FRONT_CROSS_RENDERER_ZORDER = -1;
+ccui.FRONT_CROSS_DISABLED_RENDERER_ZORDER = -1;
 /**
- * Base class for ccs.CheckBox
+ * Base class for ccui.CheckBox
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {Boolean}  selected    - Indicate whether the check box has been selected
  */
-ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
+ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     _backGroundBoxRenderer: null,
     _backGroundSelectedBoxRenderer: null,
     _frontCrossRenderer: null,
@@ -59,7 +59,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._backGroundBoxRenderer = null;
         this._backGroundSelectedBoxRenderer = null;
         this._frontCrossRenderer = null;
@@ -68,11 +68,11 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._isSelected = true;
         this._checkBoxEventListener = null;
         this._checkBoxEventSelector = null;
-        this._backGroundTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
-        this._backGroundSelectedTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
-        this._frontCrossTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
-        this._backGroundDisabledTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
-        this._frontCrossDisabledTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._backGroundTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._backGroundSelectedTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._frontCrossTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._backGroundDisabledTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._frontCrossDisabledTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundFileName = "";
         this._backGroundSelectedFileName = "";
         this._frontCrossFileName = "";
@@ -80,7 +80,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._frontCrossDisabledFileName = "";
     },
     init: function () {
-        if (ccs.Widget.prototype.init.call(this)) {
+        if (ccui.Widget.prototype.init.call(this)) {
             this.setSelectedState(false);
             return true;
         }
@@ -93,11 +93,11 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._frontCrossRenderer = cc.Sprite.create();
         this._backGroundBoxDisabledRenderer = cc.Sprite.create();
         this._frontCrossDisabledRenderer = cc.Sprite.create();
-        cc.Node.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUND_BOX_RENDERER_ZORDER, -1);
-        cc.Node.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER, -1);
-        cc.Node.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONT_CROSS_RENDERER_ZORDER, -1);
-        cc.Node.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER, -1);
-        cc.Node.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONT_CROSS_DISABLED_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundBoxRenderer, ccui.BACKGROUND_BOX_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccui.BACKGROUND_BOX_SELECTED_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._frontCrossRenderer, ccui.FRONT_CROSS_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccui.BACKGROUND_BOX_DISABLED_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccui.FRONT_CROSS_DISABLED_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -107,7 +107,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
      * @param {String} cross
      * @param {String} backGroundDisabled
      * @param {String} frontCrossDisabled
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextures: function (backGround, backGroundSelected, cross, backGroundDisabled, frontCrossDisabled, texType) {
         this.loadTextureBackGround(backGround, texType);
@@ -120,21 +120,21 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     /**
      * Load backGround texture for checkbox.
      * @param {String} backGround
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureBackGround: function (backGround, texType) {
         if (!backGround) {
             return;
         }
-        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundFileName = backGround;
         this._backGroundTexType = texType;
         var bgBoxRenderer = this._backGroundBoxRenderer;
         switch (this._backGroundTexType) {
-            case ccs.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 bgBoxRenderer.initWithFile(backGround);
                 break;
-            case ccs.TEXTURE_RES_TYPE_PLIST:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 bgBoxRenderer.initWithSpriteFrameName(backGround);
                 break;
             default:
@@ -155,20 +155,20 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     /**
      * Load backGroundSelected texture for checkbox.
      * @param {String} backGroundSelected
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureBackGroundSelected: function (backGroundSelected, texType) {
         if (!backGroundSelected) {
             return;
         }
-        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundSelectedFileName = backGroundSelected;
         this._backGroundSelectedTexType = texType;
         switch (this._backGroundSelectedTexType) {
-            case ccs.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._backGroundSelectedBoxRenderer.initWithFile(backGroundSelected);
                 break;
-            case ccs.TEXTURE_RES_TYPE_PLIST:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._backGroundSelectedBoxRenderer.initWithSpriteFrameName(backGroundSelected);
                 break;
             default:
@@ -183,20 +183,20 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     /**
      * Load cross texture for checkbox.
      * @param {String} cross
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureFrontCross: function (cross, texType) {
         if (!cross) {
             return;
         }
-        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._frontCrossFileName = cross;
         this._frontCrossTexType = texType;
         switch (this._frontCrossTexType) {
-            case ccs.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._frontCrossRenderer.initWithFile(cross);
                 break;
-            case ccs.TEXTURE_RES_TYPE_PLIST:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._frontCrossRenderer.initWithSpriteFrameName(cross);
                 break;
             default:
@@ -210,20 +210,20 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     /**
      * Load backGroundDisabled texture for checkbox.
      * @param {String} backGroundDisabled
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureBackGroundDisabled: function (backGroundDisabled, texType) {
         if (!backGroundDisabled) {
             return;
         }
-        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._backGroundDisabledFileName = backGroundDisabled;
         this._backGroundDisabledTexType = texType;
         switch (this._backGroundDisabledTexType) {
-            case ccs.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._backGroundBoxDisabledRenderer.initWithFile(backGroundDisabled);
                 break;
-            case ccs.TEXTURE_RES_TYPE_PLIST:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._backGroundBoxDisabledRenderer.initWithSpriteFrameName(backGroundDisabled);
                 break;
             default:
@@ -237,20 +237,20 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     /**
      * Load frontCrossDisabled texture for checkbox.
      * @param {String} frontCrossDisabled
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureFrontCrossDisabled: function (frontCrossDisabled, texType) {
         if (!frontCrossDisabled) {
             return;
         }
-        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._frontCrossDisabledFileName = frontCrossDisabled;
         this._frontCrossDisabledTexType = texType;
         switch (this._frontCrossDisabledTexType) {
-            case ccs.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._frontCrossDisabledRenderer.initWithFile(frontCrossDisabled);
                 break;
-            case ccs.TEXTURE_RES_TYPE_PLIST:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._frontCrossDisabledRenderer.initWithSpriteFrameName(frontCrossDisabled);
                 break;
             default:
@@ -321,13 +321,13 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
 
     selectedEvent: function () {
         if (this._checkBoxEventListener && this._checkBoxEventSelector) {
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CHECKBOX_EVENT_SELECTED);
+            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CHECKBOX_EVENT_SELECTED);
         }
     },
 
     unSelectedEvent: function () {
         if (this._checkBoxEventListener && this._checkBoxEventSelector) {
-            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccs.CHECKBOX_EVENT_UNSELECTED);
+            this._checkBoxEventSelector.call(this._checkBoxEventListener, this, ccui.CHECKBOX_EVENT_UNSELECTED);
         }
     },
 
@@ -388,14 +388,14 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
      */
     setAnchorPoint: function (point, y) {
         if(y === undefined){
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
 	        this._backGroundBoxRenderer.setAnchorPoint(point);
 	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
 	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
 	        this._frontCrossRenderer.setAnchorPoint(point);
 	        this._frontCrossDisabledRenderer.setAnchorPoint(point);
         }else{
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
 	        this._backGroundBoxRenderer.setAnchorPoint(point, y);
 	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
 	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
@@ -404,7 +404,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         }
     },
 	_setAnchorX: function (value) {
-		ccs.Widget.prototype._setAnchorX.call(this, value);
+		ccui.Widget.prototype._setAnchorX.call(this, value);
 		this._backGroundBoxRenderer._setAnchorX(value);
 		this._backGroundSelectedBoxRenderer._setAnchorX(value);
 		this._backGroundBoxDisabledRenderer._setAnchorX(value);
@@ -412,7 +412,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
 		this._frontCrossDisabledRenderer._setAnchorX(value);
 	},
 	_setAnchorY: function (value) {
-		ccs.Widget.prototype._setAnchorY.call(this, value);
+		ccui.Widget.prototype._setAnchorY.call(this, value);
 		this._backGroundBoxRenderer._setAnchorY(value);
 		this._backGroundSelectedBoxRenderer._setAnchorY(value);
 		this._backGroundBoxDisabledRenderer._setAnchorY(value);
@@ -421,7 +421,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
 	},
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.backGroundTextureScaleChangedWithSize();
         this.backGroundSelectedTextureScaleChangedWithSize();
         this.frontCrossTextureScaleChangedWithSize();
@@ -564,7 +564,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     },
 
     createCloneInstance: function () {
-        return ccs.CheckBox.create();
+        return ccui.CheckBox.create();
     },
 
     copySpecialProperties: function (uiCheckBox) {
@@ -577,7 +577,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     }
 });
 
-window._proto = ccs.CheckBox.prototype;
+window._proto = ccui.CheckBox.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "selected", _proto.getSelectedState, _proto.setSelectedState);
@@ -587,13 +587,13 @@ delete window._proto;
 /**
  * allocates and initializes a UICheckBox.
  * @constructs
- * @return {ccs.CheckBox}
+ * @return {ccui.CheckBox}
  * @example
  * // example
- * var uiCheckBox = ccs.CheckBox.create();
+ * var uiCheckBox = ccui.CheckBox.create();
  */
-ccs.CheckBox.create = function () {
-    var uiCheckBox = new ccs.CheckBox();
+ccui.CheckBox.create = function () {
+    var uiCheckBox = new ccui.CheckBox();
     if (uiCheckBox && uiCheckBox.init()) {
         return uiCheckBox;
     }

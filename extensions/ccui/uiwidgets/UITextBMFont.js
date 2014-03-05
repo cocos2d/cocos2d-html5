@@ -22,27 +22,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.TEXTBMFONT_RENDERER_ZORDER = -1;
+ccui.TEXTBMFONT_RENDERER_ZORDER = -1;
 /**
- * Base class for ccs.TextBMFont
+ * Base class for ccui.TextBMFont
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {String}   string  - Content string of the label
  */
-ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
+ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     _labelBMFontRenderer: null,
     _fileHasInit: false,
     _fntFileName: "",
     _stringValue: "",
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._labelBMFontRenderer = null;
         this._fileHasInit = false;
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
-        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.TEXTBMFONT_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccui.TEXTBMFONT_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -95,24 +95,24 @@ ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
      */
     setAnchorPoint: function (point, y) {
         if(y === undefined){
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
 	        this._labelBMFontRenderer.setAnchorPoint(point);
         } else {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
 	        this._labelBMFontRenderer.setAnchorPoint(point, y);
         }
     },
 	_setAnchorX: function (value) {
-		ccs.Widget.prototype._setAnchorX.call(this, value);
+		ccui.Widget.prototype._setAnchorX.call(this, value);
 		this._labelBMFontRenderer._setAnchorX(value);
 	},
 	_setAnchorY: function (value) {
-		ccs.Widget.prototype._setAnchorY.call(this, value);
+		ccui.Widget.prototype._setAnchorY.call(this, value);
 		this._labelBMFontRenderer._setAnchorY(value);
 	},
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.labelBMFontScaleChangedWithSize();
     },
 
@@ -175,7 +175,7 @@ ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
     },
 
     createCloneInstance: function () {
-        return ccs.TextBMFont.create();
+        return ccui.TextBMFont.create();
     },
 
     copySpecialProperties: function (labelBMFont) {
@@ -184,7 +184,7 @@ ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
     }
 });
 
-window._proto = ccs.TextBMFont.prototype;
+window._proto = ccui.TextBMFont.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
@@ -194,13 +194,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILabelBMFont.
  * @constructs
- * @return {ccs.TextBMFont}
+ * @return {ccui.TextBMFont}
  * @example
  * // example
- * var uiLabelBMFont = ccs.TextBMFont.create();
+ * var uiLabelBMFont = ccui.TextBMFont.create();
  */
-ccs.TextBMFont.create = function () {
-    var uiLabelBMFont = new ccs.TextBMFont();
+ccui.TextBMFont.create = function () {
+    var uiLabelBMFont = new ccui.TextBMFont();
     if (uiLabelBMFont && uiLabelBMFont.init()) {
         return uiLabelBMFont;
     }

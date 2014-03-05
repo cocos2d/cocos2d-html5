@@ -23,19 +23,19 @@
  ****************************************************************************/
 
 //loadingBar Type
-ccs.LOADINGBAR_TYPE_LEFT = 0;
-ccs.LOADINGBAR_TYPE_RIGHT = 1;
+ccui.LOADINGBAR_TYPE_LEFT = 0;
+ccui.LOADINGBAR_TYPE_RIGHT = 1;
 
-ccs.LOADINGBAR_RENDERER_ZORDER = -1;
+ccui.LOADINGBAR_RENDERER_ZORDER = -1;
 /**
- * Base class for ccs.LoadingBar
+ * Base class for ccui.LoadingBar
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
- * @property {ccs.LOADINGBAR_TYPE_LEFT | ccs.LOADINGBAR_TYPE_RIGHT}   direction   - The progress direction of loadingbar
+ * @property {ccui.LOADINGBAR_TYPE_LEFT | ccui.LOADINGBAR_TYPE_RIGHT}   direction   - The progress direction of loadingbar
  * @property {Number}               percent     - The current progress of loadingbar
  */
-ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
+ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     _barType: null,
     _percent: 100,
     _totalLength: 0,
@@ -48,12 +48,12 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     _textureFile: "",
     _isTextureLoaded: false,
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
-        this._barType = ccs.LOADINGBAR_TYPE_LEFT;
+        ccui.Widget.prototype.ctor.call(this);
+        this._barType = ccui.LOADINGBAR_TYPE_LEFT;
         this._percent = 100;
         this._totalLength = 0;
         this._barRenderer = null;
-        this._renderBarTexType = ccs.TEXTURE_RES_TYPE_LOCAL;
+        this._renderBarTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
         this._barRendererTextureSize = cc.size(0, 0);
         this._scale9Enabled = false;
         this._prevIgnoreSize = true;
@@ -63,14 +63,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
 
     initRenderer: function () {
         this._barRenderer = cc.Sprite.create();
-        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.LOADINGBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccui.LOADINGBAR_RENDERER_ZORDER, -1);
         this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
 
     /**
      * Changes the progress direction of loadingbar.
      * LoadingBarTypeLeft means progress left to right, LoadingBarTypeRight otherwise.
-     * @param {ccs.LOADINGBAR_TYPE_LEFT | ccs.LOADINGBAR_TYPE_RIGHT} dir
+     * @param {ccui.LOADINGBAR_TYPE_LEFT | ccui.LOADINGBAR_TYPE_RIGHT} dir
      */
     setDirection: function (dir) {
         if (this._barType == dir) {
@@ -79,14 +79,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         this._barType = dir;
 
         switch (this._barType) {
-            case ccs.LOADINGBAR_TYPE_LEFT:
+            case ccui.LOADINGBAR_TYPE_LEFT:
                 this._barRenderer.setAnchorPoint(0.0, 0.5);
                 this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled) {
                     this._barRenderer.setFlippedX(false);
                 }
                 break;
-            case ccs.LOADINGBAR_TYPE_RIGHT:
+            case ccui.LOADINGBAR_TYPE_RIGHT:
                 this._barRenderer.setAnchorPoint(1.0, 0.5);
                 this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
                 if (!this._scale9Enabled) {
@@ -99,7 +99,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     /**
      * Gets the progress direction of loadingbar.
      * LoadingBarTypeLeft means progress left to right, LoadingBarTypeRight otherwise.
-     * @returns {ccs.LOADINGBAR_TYPE_LEFT | ccs.LOADINGBAR_TYPE_RIGHT}
+     * @returns {ccui.LOADINGBAR_TYPE_LEFT | ccui.LOADINGBAR_TYPE_RIGHT}
      */
     getDirection: function () {
         return this._barType;
@@ -108,21 +108,21 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     /**
      * Load texture for loadingbar.
      * @param {String} texture
-     * @param {ccs.TEXTURE_RES_TYPE_LOCAL|ccs.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTexture: function (texture, texType) {
         if (!texture) {
             return;
         }
-        texType = texType || ccs.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._renderBarTexType = texType;
         this._textureFile = texture;
         var barRenderer = this._barRenderer;
         switch (this._renderBarTexType) {
-            case ccs.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 barRenderer.initWithFile(texture);
                 break;
-            case ccs.TEXTURE_RES_TYPE_PLIST:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 barRenderer.initWithSpriteFrameName(texture);
                 break;
             default:
@@ -156,13 +156,13 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         }
 
         switch (this._barType) {
-            case ccs.LOADINGBAR_TYPE_LEFT:
+            case ccui.LOADINGBAR_TYPE_LEFT:
                 barRenderer.setAnchorPoint(0.0, 0.5);
                 if (!this._scale9Enabled) {
                     barRenderer.setFlippedX(false);
                 }
                 break;
-            case ccs.LOADINGBAR_TYPE_RIGHT:
+            case ccui.LOADINGBAR_TYPE_RIGHT:
                 barRenderer.setAnchorPoint(1.0, 0.5);
                 if (!this._scale9Enabled) {
                     barRenderer.setFlippedX(true);
@@ -190,7 +190,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             this._barRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._renderBarTexType);
-        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.LOADINGBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccui.LOADINGBAR_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -249,7 +249,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         var res = this._percent / 100.0;
 
         var x = 0, y = 0;
-        if(this._renderBarTexType==ccs.TEXTURE_RES_TYPE_PLIST){
+        if(this._renderBarTexType==ccui.TEXTURE_RES_TYPE_PLIST){
             var barNode = this._barRenderer;
             if (barNode) {
                 var to = barNode.getTextureRect()._origin;
@@ -272,7 +272,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     },
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.barRendererScaleChangedWithSize();
     },
 
@@ -282,7 +282,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -336,10 +336,10 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             }
         }
         switch (this._barType) {
-            case ccs.LOADINGBAR_TYPE_LEFT:
+            case ccui.LOADINGBAR_TYPE_LEFT:
                 this._barRenderer.setPosition(-this._totalLength * 0.5, 0.0);
                 break;
-            case ccs.LOADINGBAR_TYPE_RIGHT:
+            case ccui.LOADINGBAR_TYPE_RIGHT:
                 this._barRenderer.setPosition(this._totalLength * 0.5, 0.0);
                 break;
             default:
@@ -369,7 +369,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     },
 
     createCloneInstance: function () {
-        return ccs.LoadingBar.create();
+        return ccui.LoadingBar.create();
     },
 
     copySpecialProperties: function (loadingBar) {
@@ -382,7 +382,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     }
 });
 
-window._proto = ccs.LoadingBar.prototype;
+window._proto = ccui.LoadingBar.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "direction", _proto.getDirection, _proto.setDirection);
@@ -393,13 +393,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILoadingBar.
  * @constructs
- * @return {ccs.LoadingBar}
+ * @return {ccui.LoadingBar}
  * @example
  * // example
- * var uiLoadingBar = ccs.LoadingBar.create();
+ * var uiLoadingBar = ccui.LoadingBar.create();
  */
-ccs.LoadingBar.create = function () {
-    var uiLoadingBar = new ccs.LoadingBar();
+ccui.LoadingBar.create = function () {
+    var uiLoadingBar = new ccui.LoadingBar();
     if (uiLoadingBar && uiLoadingBar.init()) {
         return uiLoadingBar;
     }

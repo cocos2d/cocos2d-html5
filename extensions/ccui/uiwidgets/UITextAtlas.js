@@ -22,16 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.TEXTATLAS_RENDERER_ZORDER = -1;
+ccui.TEXTATLAS_RENDERER_ZORDER = -1;
 
 /**
- * Base class for ccs.TextAtlas
+ * Base class for ccui.TextAtlas
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {String}   string  - Content string of the label
  */
-ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
+ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _labelAtlasRenderer: null,
     _stringValue: "",
     _charMapFileName: "",
@@ -39,13 +39,13 @@ ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
     _itemHeight: 0,
     _startCharMap: "",
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._labelAtlasRenderer = null;
     },
 
     initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
-        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.TEXTATLAS_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TEXTATLAS_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -99,24 +99,24 @@ ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
      */
     setAnchorPoint: function (point, y) {
         if (y === undefined) {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
 	        this._labelAtlasRenderer.setAnchorPoint(point);
         } else {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
 	        this._labelAtlasRenderer.setAnchorPoint(point, y);
         }
     },
 	_setAnchorX: function (value) {
-		ccs.Widget.prototype._setAnchorX.call(this, value);
+		ccui.Widget.prototype._setAnchorX.call(this, value);
 		this._labelAtlasRenderer._setAnchorX(value);
 	},
 	_setAnchorY: function (value) {
-		ccs.Widget.prototype._setAnchorY.call(this, value);
+		ccui.Widget.prototype._setAnchorY.call(this, value);
 		this._labelAtlasRenderer._setAnchorY(value);
 	},
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.labelAtlasScaleChangedWithSize();
     },
 
@@ -179,7 +179,7 @@ ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
     },
 
     createCloneInstance: function () {
-        return ccs.TextAtlas.create();
+        return ccui.TextAtlas.create();
     },
 
     copySpecialProperties: function (labelAtlas) {
@@ -187,7 +187,7 @@ ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
     }
 });
 
-window._proto = ccs.TextAtlas.prototype;
+window._proto = ccui.TextAtlas.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
@@ -197,13 +197,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILabelAtlas.
  * @constructs
- * @return {ccs.TextAtlas}
+ * @return {ccui.TextAtlas}
  * @example
  * // example
- * var uiLabelAtlas = ccs.TextAtlas.create();
+ * var uiLabelAtlas = ccui.TextAtlas.create();
  */
-ccs.TextAtlas.create = function () {
-    var uiLabelAtlas = new ccs.TextAtlas();
+ccui.TextAtlas.create = function () {
+    var uiLabelAtlas = new ccui.TextAtlas();
     if (uiLabelAtlas && uiLabelAtlas.init()) {
         return uiLabelAtlas;
     }

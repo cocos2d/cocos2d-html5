@@ -22,11 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.TEXT_RENDERER_ZORDER = -1;
+ccui.TEXT_RENDERER_ZORDER = -1;
 /**
- * Base class for ccs.Button
+ * Base class for ccui.Button
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {Number}   boundingWidth       - Width of the bounding area of label, the real content width is limited by boundingWidth
  * @property {Number}   boundingHeight      - Height of the bounding area of label, the real content height is limited by boundingHeight
@@ -39,7 +39,7 @@ ccs.TEXT_RENDERER_ZORDER = -1;
  * @property {Number}   verticalAlign       - Vertical Alignment of label: cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM
  * @property {Boolean}  touchScaleEnabled   - Indicate whether the label will scale when touching
  */
-ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
+ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     touchScaleEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
@@ -51,7 +51,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     _textVerticalAlignment:0,
     _textHorizontalAlignment:0,
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this.touchScaleEnabled = false;
         this._normalScaleValueX = 0;
         this._normalScaleValueY = 0;
@@ -65,7 +65,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     },
 
     init: function () {
-        if (ccs.Widget.prototype.init.call(this)) {
+        if (ccui.Widget.prototype.init.call(this)) {
             return true;
         }
         return false;
@@ -73,7 +73,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
 
     initRenderer: function () {
         this._labelRenderer = cc.LabelTTF.create();
-        cc.Node.prototype.addChild.call(this, this._labelRenderer, ccs.TEXT_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelRenderer, ccui.TEXT_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -263,7 +263,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
      * @param {Number} scale
      */
     setScale: function (scale) {
-        ccs.Widget.prototype.setScale.call(this, scale);
+        ccui.Widget.prototype.setScale.call(this, scale);
     },
 
     /**
@@ -271,7 +271,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
      * @param {Number} scaleX
      */
     setScaleX: function (scaleX) {
-        ccs.Widget.prototype.setScaleX.call(this, scaleX);
+        ccui.Widget.prototype.setScaleX.call(this, scaleX);
         this._normalScaleValueX = scaleX;
     },
 
@@ -280,7 +280,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
      * @param {Number} scaleY
      */
     setScaleY: function (scaleY) {
-        ccs.Widget.prototype.setScaleY.call(this, scaleY);
+        ccui.Widget.prototype.setScaleY.call(this, scaleY);
         this._normalScaleValueY = scaleY;
     },
 
@@ -323,24 +323,24 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
      */
     setAnchorPoint: function (point, y) {
         if(y === undefined){
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
 	        this._labelRenderer.setAnchorPoint(point);
         } else {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
 	        this._labelRenderer.setAnchorPoint(point, y);
         }
     },
 	_setAnchorX: function (value) {
-		ccs.Widget.prototype._setAnchorX.call(this, value);
+		ccui.Widget.prototype._setAnchorX.call(this, value);
 		this._labelRenderer._setAnchorX(value);
 	},
 	_setAnchorY: function (value) {
-		ccs.Widget.prototype._setAnchorY.call(this, value);
+		ccui.Widget.prototype._setAnchorY.call(this, value);
 		this._labelRenderer._setAnchorY(value);
 	},
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.labelScaleChangedWithSize();
     },
 
@@ -406,7 +406,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     },
 
     createCloneInstance: function () {
-        return ccs.Text.create();
+        return ccui.Text.create();
     },
 
     copySpecialProperties: function (uiLabel) {
@@ -420,7 +420,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
     }
 });
 
-window._proto = ccs.Text.prototype;
+window._proto = ccui.Text.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto._setBoundingWidth);
@@ -438,13 +438,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILabel.
  * @constructs
- * @return {ccs.Text}
+ * @return {ccui.Text}
  * @example
  * // example
- * var uiLabel = ccs.Text.create();
+ * var uiLabel = ccui.Text.create();
  */
-ccs.Text.create = function () {
-    var uiLabel = new ccs.Text();
+ccui.Text.create = function () {
+    var uiLabel = new ccui.Text();
     if (uiLabel && uiLabel.init()) {
         return uiLabel;
     }

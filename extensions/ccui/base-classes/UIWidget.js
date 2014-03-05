@@ -23,56 +23,56 @@
  ****************************************************************************/
 
 //bright style
-ccs.BRIGHT_STYLE_NONE = -1;
-ccs.BRIGHT_STYLE_NORMAL = 0;
-ccs.BRIGHT_STYLE_HIGH_LIGHT = 1;
+ccui.BRIGHT_STYLE_NONE = -1;
+ccui.BRIGHT_STYLE_NORMAL = 0;
+ccui.BRIGHT_STYLE_HIGH_LIGHT = 1;
 
 //widget type
-ccs.WIDGET_TYPE_WIDGET = 0;
-ccs.WIDGET_TYPE_CONTAINER = 1;
+ccui.WIDGET_TYPE_WIDGET = 0;
+ccui.WIDGET_TYPE_CONTAINER = 1;
 
 //texture resource type
-ccs.TEXTURE_RES_TYPE_LOCAL = 0;
-ccs.TEXTURE_RES_TYPE_PLIST = 1;
+ccui.TEXTURE_RES_TYPE_LOCAL = 0;
+ccui.TEXTURE_RES_TYPE_PLIST = 1;
 
 //touch event type
-ccs.TOUCH_EVENT_TYPE_BAGAN = 0;
-ccs.TOUCH_EVENT_TYPE_MOVED = 1;
-ccs.TOUCH_EVENT_TYPE_ENDED = 2;
-ccs.TOUCH_EVENT_TYPE_CANCELED = 3;
+ccui.TOUCH_EVENT_TYPE_BAGAN = 0;
+ccui.TOUCH_EVENT_TYPE_MOVED = 1;
+ccui.TOUCH_EVENT_TYPE_ENDED = 2;
+ccui.TOUCH_EVENT_TYPE_CANCELED = 3;
 
 //size type
-ccs.SIZE_TYPE_ABSOLUTE = 0;
-ccs.SIZE_TYPE_PERCENT = 1;
+ccui.SIZE_TYPE_ABSOLUTE = 0;
+ccui.SIZE_TYPE_PERCENT = 1;
 
 //position type
-ccs.POSITION_TYPE_ABSOLUTE = 0;
-ccs.POSITION_TYPE_PERCENT = 1;
+ccui.POSITION_TYPE_ABSOLUTE = 0;
+ccui.POSITION_TYPE_PERCENT = 1;
 
 /**
- * Base class for ccs.Widget
+ * Base class for ccui.Widget
  * @sample
- * var uiWidget = ccs.Widget.create();
+ * var uiWidget = ccui.Widget.create();
  * this.addChild(uiWidget);
  * @class
- * @extends ccs.Node
+ * @extends ccui.Node
  *
  * @property {Number}           xPercent        - Position x in percentage of width
  * @property {Number}           yPercent        - Position y in percentage of height
  * @property {Number}           widthPercent    - Width in percentage of parent width
  * @property {Number}           heightPercent   - Height in percentage of parent height
- * @property {ccs.Widget}       widgetParent    - <@readonly> The direct parent when it's a widget also, otherwise equals null
+ * @property {ccui.Widget}       widgetParent    - <@readonly> The direct parent when it's a widget also, otherwise equals null
  * @property {Boolean}          enabled         - Indicate whether the widget is enabled
  * @property {Boolean}          focused         - Indicate whether the widget is focused
- * @property {ccs.SIZE_TYPE_ABSOLUTE|ccs.SIZE_TYPE_PERCENT}     sizeType        - The size type of the widget
- * @property {ccs.WIDGET_TYPE_WIDGET|ccs.WIDGET_TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
+ * @property {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT}     sizeType        - The size type of the widget
+ * @property {ccui.WIDGET_TYPE_WIDGET|ccui.WIDGET_TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
  * @property {Boolean}          touchEnabled    - Indicate whether touch events are enabled
  * @property {Boolean}          updateEnabled   - Indicate whether the update function is scheduled
  * @property {Boolean}          bright          - Indicate whether the widget is bright
  * @property {String}           name            - The name of the widget
  * @property {Number}           actionTag       - The action tag of the widget
  */
-ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
+ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _enabled: true,            ///< Highest control of widget
     _bright: true,             ///< is this widget bright
     _touchEnabled: false,       ///< is this widget touch endabled
@@ -113,7 +113,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
         this._touchEnabled = false;
         this._touchPassedEnabled = false;
         this._focus = false;
-        this._brightStyle = ccs.BRIGHT_STYLE_NONE;
+        this._brightStyle = ccui.BRIGHT_STYLE_NONE;
         this._updateEnabled = false;
         this._touchStartPos = cc.p(0,0);
         this._touchMovePos = cc.p(0,0);
@@ -121,7 +121,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
         this._touchEventListener = null;
         this._touchEventSelector = null;
         this._name = "default";
-        this._widgetType = ccs.WIDGET_TYPE_WIDGET;
+        this._widgetType = ccui.WIDGET_TYPE_WIDGET;
         this._actionTag = 0;
         this._size = cc.size(0, 0);
         this._customSize = cc.size(0, 0);
@@ -129,9 +129,9 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
         this._ignoreSize = false;
         this._widgetChildren = [];
         this._affectByClipping = false;
-        this._sizeType = ccs.SIZE_TYPE_ABSOLUTE;
+        this._sizeType = ccui.SIZE_TYPE_ABSOLUTE;
         this._sizePercent = cc.p(0,0);
-        this.positionType = ccs.POSITION_TYPE_ABSOLUTE;
+        this.positionType = ccui.POSITION_TYPE_ABSOLUTE;
         this._positionPercent = cc.p(0,0);
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
@@ -198,12 +198,12 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * Adds a child to the container.
-     * @param {ccs.Widget} widget
+     * @param {ccui.Widget} widget
      * @param {Number} zOrder
      * @param {Number} tag
      */
     addChild: function (widget, zOrder, tag) {
-        if(widget instanceof ccs.Widget){
+        if(widget instanceof ccui.Widget){
             cc.Node.prototype.addChild.call(this, widget, zOrder, tag);
             this._widgetChildren.push(widget);
             return;
@@ -217,7 +217,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     /**
      *
      * @param tag
-     * @returns {ccs.Widget}
+     * @returns {ccui.Widget}
      */
     getChildByTag:function(tag){
         var __children = this._widgetChildren;
@@ -249,7 +249,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     getWidgetParent: function () {
         var widget = this.getParent();
-        if(widget instanceof ccs.Widget){
+        if(widget instanceof ccui.Widget){
             return widget;
         }
         return null;
@@ -257,12 +257,12 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * remove  child
-     * @param {ccs.Widget} widget
+     * @param {ccui.Widget} widget
      * @param {Boolean} cleanup
      */
     removeChild: function (widget, cleanup) {
-        if(!(widget instanceof ccs.Widget)){
-            cc.log("child must a type of ccs.Widget");
+        if(!(widget instanceof ccui.Widget)){
+            cc.log("child must a type of ccui.Widget");
             return;
         }
         cc.Node.prototype.removeChild.call(this, widget, cleanup);
@@ -308,7 +308,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     /**
      * Gets a child from the container with its name
      * @param {string} name
-     * @returns {ccs.Widget}
+     * @returns {ccui.Widget}
      */
     getChildByName: function (name) {
         var arrayChildren = this._widgetChildren;
@@ -334,7 +334,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
      * @param {Number} tag
      */
     addNode: function (node, zOrder, tag) {
-        if (node instanceof ccs.Widget) {
+        if (node instanceof ccui.Widget) {
             cc.log("Please use addChild to add a Widget.");
             return;
         }
@@ -509,7 +509,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
      */
     updateSizeAndPosition: function () {
         switch (this._sizeType) {
-            case ccs.SIZE_TYPE_ABSOLUTE:
+            case ccui.SIZE_TYPE_ABSOLUTE:
                 var locSize;
                 if (this._ignoreSize) {
                     locSize = this.getContentSize();
@@ -536,7 +536,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
                 this._sizePercent.x = spx;
                 this._sizePercent.y = spy;
                 break;
-            case ccs.SIZE_TYPE_PERCENT:
+            case ccui.SIZE_TYPE_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var cSize = cc.size(0,0);
                 if (widgetParent){
@@ -564,7 +564,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
         this.onSizeChanged();
         var absPos = this.getPosition();
         switch (this.positionType) {
-            case ccs.POSITION_TYPE_ABSOLUTE:
+            case ccui.POSITION_TYPE_ABSOLUTE:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -580,7 +580,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
                     this._positionPercent.y = absPos.y / pSize.height;
                 }
                 break;
-            case ccs.POSITION_TYPE_PERCENT:
+            case ccui.POSITION_TYPE_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -598,7 +598,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * Changes the size type of widget.
-     * @param {ccs.SIZE_TYPE_ABSOLUTE|ccs.SIZE_TYPE_PERCENT} type
+     * @param {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT} type
      */
     setSizeType: function (type) {
         this._sizeType = type;
@@ -606,7 +606,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * Gets the size type of widget.
-     * @returns {ccs.SIZE_TYPE_ABSOLUTE|ccs.SIZE_TYPE_PERCENT}
+     * @returns {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT}
      */
     getSizeType: function () {
         return this._sizeType;
@@ -776,10 +776,10 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
         this._focus = fucos;
         if (this._bright) {
             if (this._focus) {
-                this.setBrightStyle(ccs.BRIGHT_STYLE_HIGH_LIGHT);
+                this.setBrightStyle(ccui.BRIGHT_STYLE_HIGH_LIGHT);
             }
             else {
-                this.setBrightStyle(ccs.BRIGHT_STYLE_NORMAL);
+                this.setBrightStyle(ccui.BRIGHT_STYLE_NORMAL);
             }
         }
         else {
@@ -790,8 +790,8 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     setBright: function (bright, containChild) {
         this._bright = bright;
         if (this._bright) {
-            this._brightStyle = ccs.BRIGHT_STYLE_NONE;
-            this.setBrightStyle(ccs.BRIGHT_STYLE_NORMAL);
+            this._brightStyle = ccui.BRIGHT_STYLE_NONE;
+            this.setBrightStyle(ccui.BRIGHT_STYLE_NORMAL);
         }
         else {
             this.onPressStateChangedToDisabled();
@@ -800,19 +800,19 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * To set the bright style of widget.
-     * @param {ccs.BRIGHT_STYLE_NONE|ccs.BRIGHT_STYLE_NORMAL|ccs.BRIGHT_STYLE_HIGH_LIGHT} style
+     * @param {ccui.BRIGHT_STYLE_NONE|ccui.BRIGHT_STYLE_NORMAL|ccui.BRIGHT_STYLE_HIGH_LIGHT} style
      */
     setBrightStyle: function (style) {
         if (this._brightStyle == style) {
             return;
         }
-        style = style|| ccs.BRIGHT_STYLE_NORMAL;
+        style = style|| ccui.BRIGHT_STYLE_NORMAL;
         this._brightStyle = style;
         switch (this._brightStyle) {
-            case ccs.BRIGHT_STYLE_NORMAL:
+            case ccui.BRIGHT_STYLE_NORMAL:
                 this.onPressStateChangedToNormal();
                 break;
-            case ccs.BRIGHT_STYLE_HIGH_LIGHT:
+            case ccui.BRIGHT_STYLE_HIGH_LIGHT:
                 this.onPressStateChangedToPressed();
                 break;
             default:
@@ -918,7 +918,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     pushDownEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_BAGAN);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_BAGAN);
             }
         }
     },
@@ -926,7 +926,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     moveEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_MOVED);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_MOVED);
             }
         }
     },
@@ -934,14 +934,14 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     releaseUpEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_ENDED);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_ENDED);
             }
         }
     },
 
     cancelUpEvent: function () {
         if (this._touchEventSelector) {
-            this._touchEventSelector.call(this._touchEventListener, this, ccs.TOUCH_EVENT_TYPE_CANCELED);
+            this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_CANCELED);
         }
     },
 
@@ -983,7 +983,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
         var parent = this.getParent();
         var clippingParent = null;
         while (parent) {
-            if (parent instanceof ccs.Layout) {
+            if (parent instanceof ccui.Layout) {
                 if (parent.isClippingEnabled()) {
                     this._affectByClipping = true;
                     clippingParent = parent;
@@ -1014,7 +1014,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     /**
      * Sends the touch event to widget's parent
      * @param {number} handleState
-     * @param {ccs.Widget} sender
+     * @param {ccui.Widget} sender
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
@@ -1137,7 +1137,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * Changes the position type of the widget
-     * @param {ccs.POSITION_TYPE_ABSOLUTE|ccs.POSITION_TYPE_PERCENT} type
+     * @param {ccui.POSITION_TYPE_ABSOLUTE|ccui.POSITION_TYPE_PERCENT} type
      */
     setPositionType: function (type) {
         this.positionType = type;
@@ -1254,7 +1254,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * get widget type
-     * @returns {ccs.WIDGET_TYPE_WIDGET|ccs.WIDGET_TYPE_CONTAINER}
+     * @returns {ccui.WIDGET_TYPE_WIDGET|ccui.WIDGET_TYPE_CONTAINER}
      */
     getWidgetType: function () {
         return this._widgetType;
@@ -1262,7 +1262,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * Sets layout parameter
-     * @param {ccs.LayoutParameter} parameter
+     * @param {ccui.LayoutParameter} parameter
      */
     setLayoutParameter: function (parameter) {
         this._layoutParameterDictionary[parameter.getLayoutType()] = parameter;
@@ -1270,8 +1270,8 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
 
     /**
      * Gets layout parameter
-     * @param {ccs.LAYOUT_PARAMETER_NONE|ccs.LAYOUT_PARAMETER_LINEAR|ccs.LAYOUT_PARAMETER_RELATIVE} type
-     * @returns {ccs.LayoutParameter}
+     * @param {ccui.LAYOUT_PARAMETER_NONE|ccui.LAYOUT_PARAMETER_LINEAR|ccui.LAYOUT_PARAMETER_RELATIVE} type
+     * @returns {ccui.LayoutParameter}
      */
     getLayoutParameter: function (type) {
         return this._layoutParameterDictionary[type];
@@ -1293,14 +1293,14 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     },
 
     createCloneInstance: function () {
-        return ccs.Widget.create();
+        return ccui.Widget.create();
     },
 
     copyClonedWidgetChildren: function (model) {
         var widgetChildren = model.getChildren();
         for (var i = 0; i < widgetChildren.length; i++) {
             var locChild = widgetChildren[i];
-            if(locChild instanceof ccs.Widget){
+            if(locChild instanceof ccui.Widget){
                 this.addChild(locChild.clone());
             }
         }
@@ -1417,7 +1417,7 @@ ccs.Widget = ccs.Node.extend(/** @lends ccs.Widget# */{
     }
 });
 
-window._proto = ccs.Widget.prototype;
+window._proto = ccui.Widget.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "xPercent", _proto._getXPercent, _proto._setXPercent);
@@ -1440,13 +1440,13 @@ delete window._proto;
 /**
  * allocates and initializes a UIWidget.
  * @constructs
- * @return {ccs.Widget}
+ * @return {ccui.Widget}
  * @example
  * // example
- * var uiWidget = ccs.Widget.create();
+ * var uiWidget = ccui.Widget.create();
  */
-ccs.Widget.create = function () {
-    var widget = new ccs.Widget();
+ccui.Widget.create = function () {
+    var widget = new ccui.Widget();
     if (widget && widget.init()) {
         return widget;
     }

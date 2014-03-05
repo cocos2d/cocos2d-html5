@@ -118,8 +118,8 @@ ccs.ActionNode = ccs.Class.extend({
     },
 
     initActionNodeFromRoot: function (root) {
-        if (root instanceof ccs.Widget) {
-            var widget = ccs.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
+        if (root instanceof ccui.Widget) {
+            var widget = ccui.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
             if (widget) {
                 this.setObject(widget);
             }
@@ -183,7 +183,7 @@ ccs.ActionNode = ccs.Class.extend({
         if (this._object instanceof cc.Node) {
             return this._object;
         }
-        else if (this._object instanceof ccs.Widget) {
+        else if (this._object instanceof ccui.Widget) {
             return this._object;
         }
         return null;

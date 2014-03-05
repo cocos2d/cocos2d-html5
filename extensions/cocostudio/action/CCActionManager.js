@@ -27,11 +27,7 @@
  * @object
  */
 ccs.actionManager = /** @lends ccs.ActionManager# */{
-    _actionDic: null,
-
-    ctor: function () {
-        this._actionDic = {};
-    },
+    _actionDic: {},
 
     /**
      * Init properties with json dictionary

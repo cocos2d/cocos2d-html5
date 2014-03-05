@@ -23,14 +23,14 @@
  ****************************************************************************/
 
 //TextFiled event
-ccs.TEXTFILE_EVENT_ATTACH_WITH_ME = 0;
-ccs.TEXTFILE_EVENT_DETACH_WITH_ME = 1;
-ccs.TEXTFILE_EVENT_INSERT_TEXT = 2;
-ccs.TEXTFILE_EVENT_DELETE_BACKWARD = 3;
+ccui.TEXTFILE_EVENT_ATTACH_WITH_ME = 0;
+ccui.TEXTFILE_EVENT_DETACH_WITH_ME = 1;
+ccui.TEXTFILE_EVENT_INSERT_TEXT = 2;
+ccui.TEXTFILE_EVENT_DELETE_BACKWARD = 3;
 
-ccs.TEXTFIELD_RENDERER_ZORDER = -1;
+ccui.TEXTFIELD_RENDERER_ZORDER = -1;
 /**
- * Base class for ccs.UICCTextField
+ * Base class for ccui.UICCTextField
  * @class
  * @extends cc.TextFieldTTF
  *
@@ -38,7 +38,7 @@ ccs.TEXTFIELD_RENDERER_ZORDER = -1;
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccs.UICCTextField = cc.TextFieldTTF.extend({
+ccui.UICCTextField = cc.TextFieldTTF.extend({
     maxLengthEnabled: false,
     maxLength: 0,
     passwordEnabled: false,
@@ -224,8 +224,8 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
     }
 });
 
-ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
-    var ret = new ccs.UICCTextField();
+ccui.UICCTextField.create = function (placeholder, fontName, fontSize) {
+    var ret = new ccui.UICCTextField();
     if (ret && ret.initWithString("", fontName, fontSize)) {
         if (placeholder) {
             ret.setPlaceHolder(placeholder);
@@ -236,9 +236,9 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
 };
 
 /**
- * Base class for ccs.TextField
+ * Base class for ccui.TextField
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {String}   string              - The content string of the label
  * @property {Number}   placeHolder         - The place holder of the text field
@@ -249,7 +249,7 @@ ccs.UICCTextField.create = function (placeholder, fontName, fontSize) {
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
+ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     _textFieldRender: null,
     _touchWidth: 0,
     _touchHeight: 0,
@@ -266,7 +266,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     _deleteBackwardSelector: null,
     _passwordStyleText:"",
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._textFieldRender = null;
         this._touchWidth = 0;
         this._touchHeight = 0;
@@ -285,13 +285,13 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     onEnter:function(){
-        ccs.Widget.prototype.onEnter.call(this);
+        ccui.Widget.prototype.onEnter.call(this);
         this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
-        this._textFieldRender = ccs.UICCTextField.create("input words here", "Thonburi", 20);
-        cc.Node.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELD_RENDERER_ZORDER, -1);
+        this._textFieldRender = ccui.UICCTextField.create("input words here", "Thonburi", 20);
+        cc.Node.prototype.addChild.call(this, this._textFieldRender, ccui.TEXTFIELD_RENDERER_ZORDER, -1);
 
     },
 
@@ -414,7 +414,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      * @param {cc.Point} touchPoint
      */
     onTouchBegan: function (touchPoint) {
-        var pass = ccs.Widget.prototype.onTouchBegan.call(this, touchPoint);
+        var pass = ccui.Widget.prototype.onTouchBegan.call(this, touchPoint);
         return pass;
     },
 
@@ -423,7 +423,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      * @param touchPoint
      */
     onTouchEnded: function (touchPoint) {
-        ccs.Widget.prototype.onTouchEnded.call(this, touchPoint);
+        ccui.Widget.prototype.onTouchEnded.call(this, touchPoint);
         this._textFieldRender.attachWithIME();
     },
 
@@ -569,25 +569,25 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
 
     attachWithIMEEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_ATTACH_WITH_ME);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_ATTACH_WITH_ME);
         }
     },
 
     detachWithIMEEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_DETACH_WITH_ME);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_DETACH_WITH_ME);
         }
     },
 
     insertTextEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_INSERT_TEXT);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_INSERT_TEXT);
         }
     },
 
     deleteBackwardEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccs.TEXTFILE_EVENT_DELETE_BACKWARD);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_DELETE_BACKWARD);
         }
     },
 
@@ -623,24 +623,24 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      */
     setAnchorPoint: function (point, y) {
         if(y === undefined){
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
 	        this._textFieldRender.setAnchorPoint(point);
         } else {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
 	        this._textFieldRender.setAnchorPoint(point, y);
         }
     },
 	_setAnchorX: function (value) {
-		ccs.Widget.prototype._setAnchorX.call(this, value);
+		ccui.Widget.prototype._setAnchorX.call(this, value);
 		this._textFieldRender._setAnchorX(value);
 	},
 	_setAnchorY: function (value) {
-		ccs.Widget.prototype._setAnchorY.call(this, value);
+		ccui.Widget.prototype._setAnchorY.call(this, value);
 		this._textFieldRender._setAnchorY(value);
 	},
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.textfieldRendererScaleChangedWithSize();
     },
 
@@ -707,7 +707,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     createCloneInstance: function () {
-        return ccs.TextField.create();
+        return ccui.TextField.create();
     },
 
     copySpecialProperties: function (textField) {
@@ -726,7 +726,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     }
 });
 
-window._proto = ccs.TextField.prototype;
+window._proto = ccui.TextField.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
@@ -743,13 +743,13 @@ delete window._proto;
 /**
  * allocates and initializes a UITextField.
  * @constructs
- * @return {ccs.TextField}
+ * @return {ccui.TextField}
  * @example
  * // example
- * var uiTextField = ccs.TextField.create();
+ * var uiTextField = ccui.TextField.create();
  */
-ccs.TextField.create = function () {
-    var uiTextField = new ccs.TextField();
+ccui.TextField.create = function () {
+    var uiTextField = new ccui.TextField();
     if (uiTextField && uiTextField.init()) {
         return uiTextField;
     }

@@ -290,18 +290,14 @@ ccs.armatureDataManager = /** @lends ccs.ArmatureDataManager# */{
         return this._relativeDatas[configFilePath];
     },
 
-    removeAll:function () {
-        this._animationDatas = null;
-        this._armarureDatas = null;
-        this._textureDatas = null;
-	    ccs.spriteFrameCacheHelper.clear();
-        ccs.dataReaderHelper.clear();
-    },
-
 	/**
 	 * Clear data
 	 */
 	clear: function() {
-		this.removeAll();
+        this._animationDatas = {};
+        this._armarureDatas = {};
+        this._textureDatas = {};
+        ccs.spriteFrameCacheHelper.clear();
+        ccs.dataReaderHelper.clear();
 	}
 };

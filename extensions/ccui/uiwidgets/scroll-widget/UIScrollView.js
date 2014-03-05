@@ -23,40 +23,40 @@
  ****************************************************************************/
 
 //ScrollView direction
-ccs.SCROLLVIEW_DIR_NONE = 0;
-ccs.SCROLLVIEW_DIR_VERTICAL = 1;
-ccs.SCROLLVIEW_DIR_HORIZONTAL = 2;
-ccs.SCROLLVIEW_DIR_BOTH = 3;
+ccui.SCROLLVIEW_DIR_NONE = 0;
+ccui.SCROLLVIEW_DIR_VERTICAL = 1;
+ccui.SCROLLVIEW_DIR_HORIZONTAL = 2;
+ccui.SCROLLVIEW_DIR_BOTH = 3;
 
 //ScrollView event
-ccs.SCROLLVIEW_EVENT_SCROLL_TO_TOP = 0;
-ccs.SCROLLVIEW_EVENT_SCROLL_TO_BOTTOM = 1;
-ccs.SCROLLVIEW_EVENT_SCROLL_TO_LEFT = 2;
-ccs.SCROLLVIEW_EVENT_SCROLL_TO_RIGHT = 3;
-ccs.SCROLLVIEW_EVENT_SCROLLING = 4;
-ccs.SCROLLVIEW_EVENT_BOUNCE_TOP = 5;
-ccs.SCROLLVIEW_EVENT_BOUNCE_BOTTOM = 6;
-ccs.SCROLLVIEW_EVENT_BOUNCE_LEFT = 7;
-ccs.SCROLLVIEW_EVENT_BOUNCE_RIGHT = 8;
+ccui.SCROLLVIEW_EVENT_SCROLL_TO_TOP = 0;
+ccui.SCROLLVIEW_EVENT_SCROLL_TO_BOTTOM = 1;
+ccui.SCROLLVIEW_EVENT_SCROLL_TO_LEFT = 2;
+ccui.SCROLLVIEW_EVENT_SCROLL_TO_RIGHT = 3;
+ccui.SCROLLVIEW_EVENT_SCROLLING = 4;
+ccui.SCROLLVIEW_EVENT_BOUNCE_TOP = 5;
+ccui.SCROLLVIEW_EVENT_BOUNCE_BOTTOM = 6;
+ccui.SCROLLVIEW_EVENT_BOUNCE_LEFT = 7;
+ccui.SCROLLVIEW_EVENT_BOUNCE_RIGHT = 8;
 
 
-ccs.AUTO_SCROLL_MAX_SPEED = 1000;
-ccs.SCROLLDIR_UP = cc.p(0, 1);
-ccs.SCROLLDIR_DOWN = cc.p(0, -1);
-ccs.SCROLLDIR_LEFT = cc.p(-1, 0);
-ccs.SCROLLDIR_RIGHT = cc.p(1, 0);
+ccui.AUTO_SCROLL_MAX_SPEED = 1000;
+ccui.SCROLLDIR_UP = cc.p(0, 1);
+ccui.SCROLLDIR_DOWN = cc.p(0, -1);
+ccui.SCROLLDIR_LEFT = cc.p(-1, 0);
+ccui.SCROLLDIR_RIGHT = cc.p(1, 0);
 /**
- * Base class for ccs.ScrollView
+ * Base class for ccui.ScrollView
  * @class
- * @extends ccs.Layout
+ * @extends ccui.Layout
  *
  * @property {Number}               innerWidth              - Inner container width of the scroll view
  * @property {Number}               innerHeight             - Inner container height of the scroll view
- * @property {ccs.SCROLLVIEW_DIR_NONE | ccs.SCROLLVIEW_DIR_VERTICAL | ccs.SCROLLVIEW_DIR_HORIZONTAL | ccs.SCROLLVIEW_DIR_BOTH}    direction               - Scroll direction of the scroll view
+ * @property {ccui.SCROLLVIEW_DIR_NONE | ccui.SCROLLVIEW_DIR_VERTICAL | ccui.SCROLLVIEW_DIR_HORIZONTAL | ccui.SCROLLVIEW_DIR_BOTH}    direction               - Scroll direction of the scroll view
  * @property {Boolean}              bounceEnabled           - Indicate whether bounce is enabled
  * @property {Boolean}              inertiaScrollEnabled    - Indicate whether inertiaScroll is enabled
  */
-ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
+ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _innerContainer: null,
     direction: null,
     _touchBeganPoint: null,
@@ -95,9 +95,9 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
     ctor: function () {
-        ccs.Layout.prototype.ctor.call(this);
+        ccui.Layout.prototype.ctor.call(this);
         this._innerContainer = null;
-        this.direction = ccs.SCROLLVIEW_DIR_NONE;
+        this.direction = ccui.SCROLLVIEW_DIR_NONE;
         this._touchBeganPoint = cc.p(0, 0);
         this._touchMovedPoint = cc.p(0, 0);
         this._touchEndedPoint = cc.p(0, 0);
@@ -136,7 +136,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     init: function () {
-        if (ccs.Layout.prototype.init.call(this)) {
+        if (ccui.Layout.prototype.init.call(this)) {
             this.setTouchEnabled(true);
             this.setClippingEnabled(true);
             this._innerContainer.setTouchEnabled(false);
@@ -146,18 +146,18 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     onEnter:function(){
-        ccs.Layout.prototype.onEnter.call(this);
+        ccui.Layout.prototype.onEnter.call(this);
         this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
-        ccs.Layout.prototype.initRenderer.call(this);
-        this._innerContainer = ccs.Layout.create();
-        ccs.Layout.prototype.addChild.call(this, this._innerContainer);
+        ccui.Layout.prototype.initRenderer.call(this);
+        this._innerContainer = ccui.Layout.create();
+        ccui.Layout.prototype.addChild.call(this, this._innerContainer);
     },
 
     onSizeChanged: function () {
-        ccs.Layout.prototype.onSizeChanged.call(this);
+        ccui.Layout.prototype.onSizeChanged.call(this);
         var locSize = this._size;
         this._topBoundary = locSize.height;
         this._rightBoundary = locSize.width;
@@ -195,19 +195,19 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         }
         this._innerContainer.setSize(cc.size(innerSizeWidth, innerSizeHeight));
         switch (this.direction) {
-            case ccs.SCROLLVIEW_DIR_VERTICAL:
+            case ccui.SCROLLVIEW_DIR_VERTICAL:
                 var newInnerSize = this._innerContainer.getSize();
                 var offset = originalInnerSize.height - newInnerSize.height;
                 this.scrollChildren(0, offset);
                 break;
-            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
+            case ccui.SCROLLVIEW_DIR_HORIZONTAL:
                 if (this._innerContainer.getRightInParent() <= locSize.width) {
                     var newInnerSize = this._innerContainer.getSize();
                     var offset = originalInnerSize.width - newInnerSize.width;
                     this.scrollChildren(offset, 0);
                 }
                 break;
-            case ccs.SCROLLVIEW_DIR_BOTH:
+            case ccui.SCROLLVIEW_DIR_BOTH:
                 var newInnerSize = this._innerContainer.getSize();
                 var offsetY = originalInnerSize.height - newInnerSize.height;
                 var offsetX = 0;
@@ -248,8 +248,8 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 		container.width = innerWidth;
 
 		switch (this.direction) {
-			case ccs.SCROLLVIEW_DIR_HORIZONTAL:
-			case ccs.SCROLLVIEW_DIR_BOTH:
+			case ccui.SCROLLVIEW_DIR_HORIZONTAL:
+			case ccui.SCROLLVIEW_DIR_BOTH:
 				if (container.getRightInParent() <= locW) {
 					var newInnerWidth = container.width;
 					var offset = oldInnerWidth - newInnerWidth;
@@ -277,8 +277,8 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 		container.height = innerHeight;
 
 		switch (this.direction) {
-			case ccs.SCROLLVIEW_DIR_VERTICAL:
-			case ccs.SCROLLVIEW_DIR_BOTH:
+			case ccui.SCROLLVIEW_DIR_VERTICAL:
+			case ccui.SCROLLVIEW_DIR_BOTH:
 				var newInnerHeight = innerHeight;
 				var offset = oldInnerHeight - newInnerHeight;
 				this.scrollChildren(0, offset);
@@ -305,7 +305,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * Add widget
-     * @param {ccs.Widget} widget
+     * @param {ccui.Widget} widget
      * @param {Number} zOrder
      * @param {Number} tag
      * @returns {boolean}
@@ -320,7 +320,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      *  remove widget child override
-     * @param {ccs.Widget} child
+     * @param {ccui.Widget} child
      * @param {Boolean} cleanup
      * @returns {boolean}
      */
@@ -347,7 +347,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     /**
      * Gets a child from the container given its tag
      * @param {Number} tag
-     * @returns {ccs.Widget}
+     * @returns {ccui.Widget}
      */
     getChildByTag: function (tag) {
         return this._innerContainer.getChildByTag(tag);
@@ -356,7 +356,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     /**
      * Gets a child from the container given its name
      * @param {String} name
-     * @returns {ccs.Widget}
+     * @returns {ccui.Widget}
      */
     getChildByName: function (name) {
         return this._innerContainer.getChildByName(name);
@@ -613,17 +613,17 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         var finalOffsetX = dstX;
         var finalOffsetY = dstY;
         switch (this.direction) {
-            case ccs.SCROLLVIEW_DIR_VERTICAL:
+            case ccui.SCROLLVIEW_DIR_VERTICAL:
                 if (dstY <= 0) {
                     finalOffsetY = Math.max(dstY, this._size.height - this._innerContainer.getSize().height);
                 }
                 break;
-            case ccs.SCROLLVIEW_DIR_HORIZONTAL:
+            case ccui.SCROLLVIEW_DIR_HORIZONTAL:
                 if (dstX <= 0) {
                     finalOffsetX = Math.max(dstX, this._size.width - this._innerContainer.getSize().width);
                 }
                 break;
-            case ccs.SCROLLVIEW_DIR_BOTH:
+            case ccui.SCROLLVIEW_DIR_BOTH:
                 if (dstY <= 0) {
                     finalOffsetY = Math.max(dstY, this._size.height - this._innerContainer.getSize().height);
                 }
@@ -768,7 +768,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     checkCustomScrollDestination: function (touchOffsetX, touchOffsetY) {
         var scrollEnabled = true;
         switch (this.direction) {
-            case ccs.SCROLLVIEW_DIR_VERTICAL: // vertical
+            case ccui.SCROLLVIEW_DIR_VERTICAL: // vertical
                 if (this._autoScrollDir.y > 0) {
                     var icBottomPos = this._innerContainer.getBottomInParent();
                     if (icBottomPos + touchOffsetY >= this._autoScrollDestination.y) {
@@ -784,7 +784,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
                     }
                 }
                 break;
-            case ccs.SCROLLVIEW_DIR_HORIZONTAL: // horizontal
+            case ccui.SCROLLVIEW_DIR_HORIZONTAL: // horizontal
                 if (this._autoScrollDir.x > 0) {
                     var icLeftPos = this._innerContainer.getLeftInParent();
                     if (icLeftPos + touchOffsetX >= this._autoScrollDestination.x) {
@@ -800,7 +800,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
                     }
                 }
                 break;
-            case ccs.SCROLLVIEW_DIR_BOTH:
+            case ccui.SCROLLVIEW_DIR_BOTH:
                 if (touchOffsetX > 0.0 && touchOffsetY > 0.0) // up right
                 {
                     var icLeftPos = this._innerContainer.getLeftInParent();
@@ -902,7 +902,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         var scrollEnabled = true;
         this.scrollingEvent();
         switch (this.direction) {
-            case ccs.SCROLLVIEW_DIR_VERTICAL: // vertical
+            case ccui.SCROLLVIEW_DIR_VERTICAL: // vertical
                 var realOffset = touchOffsetY;
                 if (this.bounceEnabled) {
                     var icBottomPos = this._innerContainer.getBottomInParent();
@@ -934,7 +934,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
                 }
                 this.moveChildren(0.0, realOffset);
                 break;
-            case ccs.SCROLLVIEW_DIR_HORIZONTAL: // horizontal
+            case ccui.SCROLLVIEW_DIR_HORIZONTAL: // horizontal
                 var realOffset = touchOffsetX;
                 if (this.bounceEnabled) {
                     var icRightPos = this._innerContainer.getRightInParent();
@@ -966,7 +966,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
                 }
                 this.moveChildren(realOffset, 0.0);
                 break;
-            case ccs.SCROLLVIEW_DIR_BOTH:
+            case ccui.SCROLLVIEW_DIR_BOTH:
                 var realOffsetX = touchOffsetX;
                 var realOffsetY = touchOffsetY;
                 if (this.bounceEnabled) {
@@ -1190,7 +1190,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     scrollToTopLeft: function (time, attenuated) {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1198,7 +1198,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     scrollToTopRight: function (time, attenuated) {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1206,7 +1206,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     scrollToBottomLeft: function (time, attenuated) {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1214,7 +1214,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     scrollToBottomRight: function (time, attenuated) {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1233,7 +1233,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     scrollToPercentBothDirection: function (percent, time, attenuated) {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             return;
         }
         var minY = this._size.height - this._innerContainer.getSize().height;
@@ -1259,7 +1259,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     jumpToTopLeft: function () {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1267,7 +1267,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     jumpToTopRight: function () {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1275,7 +1275,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     jumpToBottomLeft: function () {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1283,7 +1283,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     jumpToBottomRight: function () {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             cc.log("Scroll diretion is not both!");
             return;
         }
@@ -1302,7 +1302,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     jumpToPercentBothDirection: function (percent) {
-        if (this.direction != ccs.SCROLLVIEW_DIR_BOTH) {
+        if (this.direction != ccui.SCROLLVIEW_DIR_BOTH) {
             return;
         }
         var minY = this._size.height - this._innerContainer.getSize().height;
@@ -1329,25 +1329,25 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
             var totalDis = 0;
             var dir;
             switch (this.direction) {
-                case ccs.SCROLLVIEW_DIR_VERTICAL :
+                case ccui.SCROLLVIEW_DIR_VERTICAL :
                     totalDis = this._touchEndedPoint.y - this._touchBeganPoint.y;
                     if (totalDis < 0) {
-                        dir = ccs.SCROLLDIR_DOWN;
+                        dir = ccui.SCROLLDIR_DOWN;
                     }
                     else {
-                        dir = ccs.SCROLLDIR_UP;
+                        dir = ccui.SCROLLDIR_UP;
                     }
                     break;
-                case ccs.SCROLLVIEW_DIR_HORIZONTAL:
+                case ccui.SCROLLVIEW_DIR_HORIZONTAL:
                     totalDis = this._touchEndedPoint.x - this._touchBeganPoint.x;
                     if (totalDis < 0) {
-                        dir = ccs.SCROLLDIR_LEFT;
+                        dir = ccui.SCROLLDIR_LEFT;
                     }
                     else {
-                        dir = ccs.SCROLLDIR_RIGHT;
+                        dir = ccui.SCROLLDIR_RIGHT;
                     }
                     break;
-                case ccs.SCROLLVIEW_DIR_BOTH :
+                case ccui.SCROLLVIEW_DIR_BOTH :
                     var subVector = cc.pSub(this._touchEndedPoint, this._touchBeganPoint);
                     totalDis = cc.pLength(subVector);
                     dir = cc.pNormalize(subVector);
@@ -1355,7 +1355,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
                 default:
                     break;
             }
-            var orSpeed = Math.min(Math.abs(totalDis) / (this._slidTime), ccs.AUTO_SCROLL_MAX_SPEED);
+            var orSpeed = Math.min(Math.abs(totalDis) / (this._slidTime), ccui.AUTO_SCROLL_MAX_SPEED);
             this.startAutoScrollChildrenWithOriginalSpeed(dir, orSpeed, true, -1000);
             this._slidTime = 0;
         }
@@ -1373,13 +1373,13 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         var delta = cc.pSub(this._touchMovedPoint, this._touchMovingPoint);
         this._touchMovingPoint = this._touchMovedPoint;
         switch (this.direction) {
-            case ccs.SCROLLVIEW_DIR_VERTICAL: // vertical
+            case ccui.SCROLLVIEW_DIR_VERTICAL: // vertical
                 this.scrollChildren(0.0, delta.y);
                 break;
-            case ccs.SCROLLVIEW_DIR_HORIZONTAL: // horizontal
+            case ccui.SCROLLVIEW_DIR_HORIZONTAL: // horizontal
                 this.scrollChildren(delta.x, 0);
                 break;
-            case ccs.SCROLLVIEW_DIR_BOTH: // both
+            case ccui.SCROLLVIEW_DIR_BOTH: // both
                 this.scrollChildren(delta.x, delta.y);
                 break;
             default:
@@ -1394,7 +1394,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     onTouchBegan: function (touch , event) {
-        var pass = ccs.Layout.prototype.onTouchBegan.call(this, touch , event);
+        var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch , event);
         if (this._hitted)        {
             this.handlePressLogic(this._touchStartPos);
         }
@@ -1402,17 +1402,17 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     onTouchMoved: function (touch , event) {
-        ccs.Layout.prototype.onTouchMoved.call(this, touch , event);
+        ccui.Layout.prototype.onTouchMoved.call(this, touch , event);
         this.handleMoveLogic(this._touchMovePos);
     },
 
     onTouchEnded: function (touch , event) {
-        ccs.Layout.prototype.onTouchEnded.call(this, touch , event);
+        ccui.Layout.prototype.onTouchEnded.call(this, touch , event);
         this.handleReleaseLogic(this._touchEndPos);
     },
 
     onTouchCancelled: function (touch , event) {
-        ccs.Layout.prototype.onTouchCancelled.call(this, touch , event);
+        ccui.Layout.prototype.onTouchCancelled.call(this, touch , event);
     },
 
     onTouchLongClicked: function (touchPoint) {
@@ -1438,7 +1438,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     /**
      * Intercept touch event
      * @param {number} handleState
-     * @param {ccs.Widget} sender
+     * @param {ccui.Widget} sender
      * @param {cc.Point} touchPoint
      */
     interceptTouchEvent: function (handleState, sender, touchPoint) {
@@ -1465,7 +1465,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     /**
      *
      * @param {number} handleState
-     * @param {ccs.Widget} sender
+     * @param {ccui.Widget} sender
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
@@ -1475,55 +1475,55 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     scrollToTopEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_SCROLL_TO_TOP);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_SCROLL_TO_TOP);
         }
     },
 
     scrollToBottomEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_SCROLL_TO_BOTTOM);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_SCROLL_TO_BOTTOM);
         }
     },
 
     scrollToLeftEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_SCROLL_TO_LEFT);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_SCROLL_TO_LEFT);
         }
     },
 
     scrollToRightEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_SCROLL_TO_RIGHT);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_SCROLL_TO_RIGHT);
         }
     },
 
     scrollingEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_SCROLLING);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_SCROLLING);
         }
     },
 
     bounceTopEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_BOUNCE_TOP);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_BOUNCE_TOP);
         }
     },
 
     bounceBottomEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_BOUNCE_BOTTOM);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_BOUNCE_BOTTOM);
         }
     },
 
     bounceLeftEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_BOUNCE_LEFT);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_BOUNCE_LEFT);
         }
     },
 
     bounceRightEvent: function () {
         if (this._scrollViewEventListener && this._scrollViewEventSelector) {
-            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccs.SCROLLVIEW_EVENT_BOUNCE_RIGHT);
+            this._scrollViewEventSelector.call(this._scrollViewEventListener, this, ccui.SCROLLVIEW_EVENT_BOUNCE_RIGHT);
         }
     },
 
@@ -1538,7 +1538,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * set direction
-     * @param {ccs.SCROLLVIEW_DIR_NONE | ccs.SCROLLVIEW_DIR_VERTICAL | ccs.SCROLLVIEW_DIR_HORIZONTAL | ccs.SCROLLVIEW_DIR_BOTH} dir
+     * @param {ccui.SCROLLVIEW_DIR_NONE | ccui.SCROLLVIEW_DIR_VERTICAL | ccui.SCROLLVIEW_DIR_HORIZONTAL | ccui.SCROLLVIEW_DIR_BOTH} dir
      */
     setDirection: function (dir) {
         this.direction = dir;
@@ -1546,7 +1546,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * get direction
-     * @returns {ccs.SCROLLVIEW_DIR_NONE | ccs.SCROLLVIEW_DIR_VERTICAL | ccs.SCROLLVIEW_DIR_HORIZONTAL | ccs.SCROLLVIEW_DIR_BOTH}
+     * @returns {ccui.SCROLLVIEW_DIR_NONE | ccui.SCROLLVIEW_DIR_VERTICAL | ccui.SCROLLVIEW_DIR_HORIZONTAL | ccui.SCROLLVIEW_DIR_BOTH}
      */
     getDirection: function () {
         return this.direction;
@@ -1586,7 +1586,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * get inner container
-     * @returns {ccs.Layout}
+     * @returns {ccui.Layout}
      */
     getInnerContainer: function () {
         return this._innerContainer;
@@ -1594,7 +1594,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * Sets LayoutType.
-     * @param {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE} type
+     * @param {ccui.LAYOUT_TYPE_ABSOLUTE|ccui.LAYOUT_TYPE_LINEAR_VERTICAL|ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccui.LAYOUT_TYPE_RELATIVE} type
      */
     setLayoutType: function (type) {
         this._innerContainer.setLayoutType(type);
@@ -1602,7 +1602,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
 
     /**
      * Gets LayoutType.
-     * @returns {ccs.LAYOUT_TYPE_ABSOLUTE|ccs.LAYOUT_TYPE_LINEAR_VERTICAL|ccs.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccs.LAYOUT_TYPE_RELATIVE}
+     * @returns {ccui.LAYOUT_TYPE_ABSOLUTE|ccui.LAYOUT_TYPE_LINEAR_VERTICAL|ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccui.LAYOUT_TYPE_RELATIVE}
      */
     getLayoutType: function () {
         return this._innerContainer.getLayoutType();
@@ -1623,11 +1623,11 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     },
 
     copyClonedWidgetChildren: function (model) {
-        ccs.Layout.prototype.copyClonedWidgetChildren.call(this, model);
+        ccui.Layout.prototype.copyClonedWidgetChildren.call(this, model);
     },
 
     copySpecialProperties: function (scrollView) {
-        ccs.Layout.prototype.copySpecialProperties.call(this, scrollView);
+        ccui.Layout.prototype.copySpecialProperties.call(this, scrollView);
         this.setInnerContainerSize(scrollView.getInnerContainerSize());
         this.setDirection(scrollView.direction);
         this.setBounceEnabled(scrollView.bounceEnabled);
@@ -1635,7 +1635,7 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
     }
 });
 
-window._proto = ccs.ScrollView.prototype;
+window._proto = ccui.ScrollView.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "innerWidth", _proto._getInnerWidth, _proto._setInnerWidth);
@@ -1646,13 +1646,13 @@ delete window._proto;
 /**
  * allocates and initializes a UIScrollView.
  * @constructs
- * @return {ccs.ScrollView}
+ * @return {ccui.ScrollView}
  * @example
  * // example
- * var uiScrollView = ccs.ScrollView.create();
+ * var uiScrollView = ccui.ScrollView.create();
  */
-ccs.ScrollView.create = function () {
-    var uiScrollView = new ccs.ScrollView();
+ccui.ScrollView.create = function () {
+    var uiScrollView = new ccui.ScrollView();
     if (uiScrollView && uiScrollView.init()) {
         return uiScrollView;
     }
