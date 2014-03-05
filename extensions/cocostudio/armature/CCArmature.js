@@ -90,7 +90,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         this._textureAtlasDic = {};
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this.name = (!name) ? "" : name;
-        var armatureDataManager = ccs.ArmatureDataManager.getInstance();
+        var armatureDataManager = ccs.armatureDataManager;
         if (name != "") {
             //animationData
             var animationData = armatureDataManager.getAnimationData(name);
