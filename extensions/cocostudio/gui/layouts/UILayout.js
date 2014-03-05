@@ -103,12 +103,10 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._clippingParent = null;
     },
     init: function () {
-        if (cc.NodeRGBA.prototype.init.call(this)){
+        if (cc.Node.prototype.init.call(this)){
             this._layoutParameterDictionary = {};
             this._widgetChildren = [];
             this.initRenderer();
-            this.setCascadeColorEnabled(false);
-            this.setCascadeOpacityEnabled(false);
             this.ignoreContentAdaptWithSize(false);
             this.setSize(cc.size(0, 0));
             this.setBright(true);
@@ -206,7 +204,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             }
         }
         else {
-            cc.NodeRGBA.prototype.visit.call(this,ctx);
+            cc.Node.prototype.visit.call(this,ctx);
         }
     },
 
@@ -458,7 +456,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             gl.enable(gl.SCISSOR_TEST);
         }
         cc.view.setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
-        cc.NodeRGBA.prototype.visit.call(this);
+        cc.Node.prototype.visit.call(this);
         if (this._handleScissor) {
             gl.disable(gl.SCISSOR_TEST);
         }
@@ -630,7 +628,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (this._backGroundScale9Enabled == able) {
             return;
         }
-        cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
+        cc.Node.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundScale9Enabled = able;
         if (this._backGroundScale9Enabled) {
@@ -639,7 +637,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
     },
@@ -741,7 +739,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUND_IMAGE_ZORDER, -1);
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
@@ -752,7 +750,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (!this._backGroundImage) {
             return;
         }
-        cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
+        cc.Node.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageTextureSize = cc.size(0, 0);
@@ -769,23 +767,23 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         switch (this._colorType) {
             case ccs.LAYOUT_BG_COLOR_NONE:
                 if (this._colorRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 if (this._gradientRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._gradientRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;
             case ccs.LAYOUT_BG_COLOR_SOLID:
                 if (this._colorRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
             case ccs.LAYOUT_BG_COLOR_GRADIENT:
                 if (this._gradientRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._gradientRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;
@@ -801,7 +799,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 this._colorRender.setContentSize(this._size);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
-                cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
+                cc.Node.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
                 break;
             case ccs.LAYOUT_BG_COLOR_GRADIENT:
                 this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
@@ -810,7 +808,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 this._gradientRender.setStartColor(this._startColor);
                 this._gradientRender.setEndColor(this._endColor);
                 this._gradientRender.setVector(this._alongVector);
-                cc.NodeRGBA.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
+                cc.Node.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUND_COLORRENDERER_ZORDER, -1);
                 break;
             default:
                 break;

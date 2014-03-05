@@ -73,7 +73,7 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
 
     initRenderer: function () {
         this._labelRenderer = cc.LabelTTF.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelRenderer, ccs.TEXT_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelRenderer, ccs.TEXT_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -387,6 +387,14 @@ ccs.Text = ccs.Widget.extend(/** @lends ccs.Text# */{
             this._normalScaleValueX = scaleX;
             this._normalScaleValueY = scaleY;
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelRenderer);
     },
 
     /**

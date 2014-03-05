@@ -48,7 +48,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
 
     initRenderer: function () {
         this._imageRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -97,8 +97,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             imageRenderer.setCapInsets(this._capInsets);
         }
 
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateColorToRenderer(imageRenderer);
         this.updateAnchorPoint();
         this.imageTextureScaleChangedWithSize();
     },
@@ -170,7 +169,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
 
 
         this._scale9Enabled = able;
-        cc.NodeRGBA.prototype.removeChild.call(this, this._imageRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._imageRenderer, true);
         this._imageRenderer = null;
         if (this._scale9Enabled) {
             this._imageRenderer = cc.Scale9Sprite.create();
@@ -179,7 +178,7 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccs.IMAGE_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -298,12 +297,19 @@ ccs.ImageView = ccs.Widget.extend(/** @lends ccs.ImageView# */{
                     this._imageRenderer.setScale(1.0);
                     return;
                 }
-                var scaleX = this._size.width / textureSize.width;
-                var scaleY = this._size.height / textureSize.height;
+                var scaleX = this._size.width / textureSize.width; var scaleY = this._size.height / textureSize.height;
                 this._imageRenderer.setScaleX(scaleX);
                 this._imageRenderer.setScaleY(scaleY);
             }
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._imageRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._imageRenderer);
     },
 
     /**

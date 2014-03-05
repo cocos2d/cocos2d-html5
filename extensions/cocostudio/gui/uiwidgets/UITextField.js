@@ -291,7 +291,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
 
     initRenderer: function () {
         this._textFieldRender = ccs.UICCTextField.create("input words here", "Thonburi", 20);
-        cc.NodeRGBA.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELD_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELD_RENDERER_ZORDER, -1);
 
     },
 
@@ -680,6 +680,14 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      */
     getVirtualRenderer: function () {
         return this._textFieldRender;
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._textFieldRender);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._textFieldRender);
     },
 
     /**

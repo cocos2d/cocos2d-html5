@@ -35,12 +35,12 @@ ccs.Class = ccs.Class || cc.Class;
 ccs.Class.extend = ccs.Class.extend || cc.Class.extend;
 
 /**
- * that same as cc.NodeRGBA
+ * that same as cc.Node
  * @class
  * @extends ccs.Class
  */
-ccs.NodeRGBA = ccs.NodeRGBA || cc.NodeRGBA;
-ccs.NodeRGBA.extend = ccs.NodeRGBA.extend || cc.NodeRGBA.extend;
+ccs.Node = ccs.Node || cc.Node;
+ccs.Node.extend = ccs.Node.extend || cc.Node.extend;
 
 /**
  * that same as cc.Sprite

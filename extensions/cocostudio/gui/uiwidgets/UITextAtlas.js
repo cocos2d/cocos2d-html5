@@ -45,7 +45,7 @@ ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
 
     initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.TEXTATLAS_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.TEXTATLAS_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -162,12 +162,20 @@ ccs.TextAtlas = ccs.Widget.extend(/** @lends ccs.TextAtlas# */{
         }
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelAtlasRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelAtlasRenderer);
+    },
+
     /**
      * Returns the "class name" of widget.
      * @returns {string}
      */
     getDescription: function () {
-        return "LabelAtlase";
+        return "LabelAtlas";
     },
 
     createCloneInstance: function () {

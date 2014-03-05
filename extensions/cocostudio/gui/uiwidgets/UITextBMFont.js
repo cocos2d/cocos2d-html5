@@ -42,7 +42,7 @@ ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.TEXTBMFONT_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.TEXTBMFONT_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -156,6 +156,14 @@ ccs.TextBMFont = ccs.Widget.extend(/** @lends ccs.TextBMFont# */{
             this._labelBMFontRenderer.setScaleX(scaleX);
             this._labelBMFontRenderer.setScaleY(scaleY);
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelBMFontRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelBMFontRenderer);
     },
 
     /**

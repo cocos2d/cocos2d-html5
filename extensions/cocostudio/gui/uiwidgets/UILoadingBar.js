@@ -63,7 +63,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
 
     initRenderer: function () {
         this._barRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.LOADINGBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.LOADINGBAR_RENDERER_ZORDER, -1);
         this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
 
@@ -131,8 +131,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         if (this._scale9Enabled){
             barRenderer.setCapInsets(this._capInsets);
         }
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateColorToRenderer(barRenderer);
 
         var textLoaded = barRenderer.textureLoaded();
         this._isTextureLoaded = textLoaded;
@@ -182,7 +181,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             return;
         }
         this._scale9Enabled = enabled;
-        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._barRenderer, true);
         this._barRenderer = null;
         if (this._scale9Enabled) {
             this._barRenderer = cc.Scale9Sprite.create();
@@ -191,7 +190,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             this._barRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._renderBarTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.LOADINGBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.LOADINGBAR_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -351,6 +350,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
     setScale9Scale: function () {
         var width = (this._percent) / 100 * this._totalLength;
         this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._barRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._barRenderer);
     },
 
     /**

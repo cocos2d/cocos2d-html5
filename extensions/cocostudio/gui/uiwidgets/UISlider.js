@@ -98,8 +98,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
         this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._progressBarRenderer, ccs.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
         this._slidBallNormalRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer.setVisible(false);
@@ -109,7 +109,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
-        cc.NodeRGBA.prototype.addChild.call(this, this._slidBallRenderer, ccs.SLIDER_BALL_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._slidBallRenderer, ccs.SLIDER_BALL_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -135,7 +135,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(barRenderer);
         this.barRendererScaleChangedWithSize();
 
         if (!barRenderer.textureLoaded()) {
@@ -168,7 +168,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(progressBarRenderer);
         progressBarRenderer.setAnchorPoint(0.0, 0.5);
         var locSize = progressBarRenderer.getContentSize();
         this._progressBarTextureSize.width = locSize.width;
@@ -188,11 +188,6 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
     },
 
-    _updateDisplay:function(){
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
-    },
-
     /**
      * Sets if slider is using scale9 renderer.
      * @param {Boolean} able
@@ -203,8 +198,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
 
         this._scale9Enabled = able;
-        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._progressBarRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._barRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._progressBarRenderer, true);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {
@@ -217,8 +212,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
         this.loadBarTexture(this._textureFile, this._barTexType);
         this.loadProgressBarTexture(this._progressBarTextureFile, this._progressBarTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._progressBarRenderer, ccs.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -334,7 +329,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._slidBallNormalRenderer);
     },
 
     /**
@@ -359,7 +354,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._slidBallPressedRenderer);
     },
 
     /**
@@ -384,7 +379,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._slidBallDisabledRenderer);
     },
 
     /**
@@ -585,6 +580,22 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._slidBallNormalRenderer.setVisible(false);
         this._slidBallPressedRenderer.setVisible(false);
         this._slidBallDisabledRenderer.setVisible(true);
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._barRenderer);
+        this.updateColorToRenderer(this._progressBarRenderer);
+        this.updateColorToRenderer(this._slidBallNormalRenderer);
+        this.updateColorToRenderer(this._slidBallPressedRenderer);
+        this.updateColorToRenderer(this._slidBallDisabledRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._barRenderer);
+        this.updateOpacityToRenderer(this._progressBarRenderer);
+        this.updateOpacityToRenderer(this._slidBallNormalRenderer);
+        this.updateOpacityToRenderer(this._slidBallPressedRenderer);
+        this.updateOpacityToRenderer(this._slidBallDisabledRenderer);
     },
 
     /**
