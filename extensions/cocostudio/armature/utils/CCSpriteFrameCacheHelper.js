@@ -22,13 +22,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.SpriteFrameCacheHelper = ccs.Class.extend({
-    _textureAtlasDic:null,
+ccs.spriteFrameCacheHelper = {
+    _textureAtlasDic:{},
     _imagePaths:[],
-    ctor:function () {
-        this._textureAtlasDic = {};
-        this._imagePaths = [];
-    },
+
     addSpriteFrameFromFile:function (plistPath, imagePath) {
         cc.spriteFrameCache.addSpriteFrames(plistPath, imagePath);
     },
@@ -43,14 +40,10 @@ ccs.SpriteFrameCacheHelper = ccs.Class.extend({
             this._textureAtlasDic[textureName] = atlas;
         }
         return atlas;
-    }
-});
-ccs.SpriteFrameCacheHelper.getInstance = function () {
-    if (!this._instance) {
-        this._instance = new ccs.SpriteFrameCacheHelper();
-    }
-    return this._instance;
-};
-ccs.SpriteFrameCacheHelper.purge = function () {
-    this._instance = null;
+    },
+
+	clear: function () {
+		this._textureAtlasDic = {};
+		this._imagePaths = [];
+	}
 };

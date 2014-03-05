@@ -494,11 +494,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * Removes cached all cocos2d cached data. It will purge the CCTextureCache, CCSpriteFrameCache, CCLabelBMFont cache
+     * Removes cached all cocos2d cached data. It will purge the cc.textureCache, cc.spriteFrameCache, cc.animationCache
      */
     purgeCachedData:function () {
-        cc.LabelBMFont.purgeCachedData();
-        //cc.textureCache.removeUnusedTextures();
+	    cc.animationCache._clear();
+	    cc.spriteFrameCache._clear();
+	    cc.textureCache._clear();
     },
 
     /**
@@ -526,13 +527,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         this.stopAnimation();
 
-        // purge bitmap cache
-        cc.LabelBMFont.purgeCachedData();
-
-        // purge all managers
-        cc.animationCache.purgeSharedAnimationCache();
-        cc.spriteFrameCache.purgeSharedSpriteFrameCache();
-        cc.textureCache.purgeSharedTextureCache();
+        // Clear all caches
+        this.purgeCachedData();
 
         cc.CHECK_GL_ERROR_DEBUG();
     },
