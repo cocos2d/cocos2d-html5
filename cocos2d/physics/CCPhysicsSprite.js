@@ -241,10 +241,11 @@
         isDirty:function(){
            return !this._body.isSleeping();
         },
+        setDirty: function(){ },
+
         setIgnoreBodyRotation: function(b) {
             this._ignoreBodyRotation = b;
         }
-
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
 
@@ -253,6 +254,7 @@
 	/** @expose */
 	_proto.body;
 	cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
+    cc.defineGetterSetter(_proto, "dirty", _proto.isDirty, _proto.setDirty);
 	delete window._proto;
 
     /**

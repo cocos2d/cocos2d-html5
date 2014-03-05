@@ -929,6 +929,21 @@ window._proto = cc.LabelBMFont.prototype;
 
 // Extended properties
 /** @expose */
+_proto.opacityModifyRGB;
+cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+/** @expose */
+_proto.opacity;
+cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+/** @expose */
+_proto.cascadeOpacity;
+cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+/** @expose */
+_proto.color;
+cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+/** @expose */
+_proto.cascadeColor;
+cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
+/** @expose */
 _proto.string;
 cc.defineGetterSetter(_proto, "string", _proto.getString, _proto._setStringForSetter);
 /** @expose */
