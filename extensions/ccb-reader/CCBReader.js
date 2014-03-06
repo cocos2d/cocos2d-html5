@@ -1123,4 +1123,4 @@ cc.BuilderReader.concat = function (stringA, stringB) {
     return stringA + stringB;
 };
 
-cc.loader.register(["ccbi"], cc.binaryLoader);
+cc.loader.register(["ccbi"], cc._binaryLoader);

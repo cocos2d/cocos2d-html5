@@ -24,21 +24,21 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.txtLoader = {
+cc._txtLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadTxt(realUrl, cb);
     }
 }
-cc.loader.register(["txt", "xml", "vsh", "fsh"], cc.txtLoader);
+cc.loader.register(["txt", "xml", "vsh", "fsh"], cc._txtLoader);
 
-cc.jsonLoader = {
+cc._jsonLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadJson(realUrl, cb);
     }
 };
-cc.loader.register(["json", "ExportJson"], cc.jsonLoader);
+cc.loader.register(["json", "ExportJson"], cc._jsonLoader);
 
-cc.imgLoader = {
+cc._imgLoader = {
     load : function(realUrl, url, res, cb){
         var image = cc.loader.loadImg(realUrl, function(err, img){
             if(err) return cb(err);
@@ -48,9 +48,9 @@ cc.imgLoader = {
         cc.loader.cache[url] = image;
     }
 };
-cc.loader.register(["png", "jpg", "bmp","jpeg","gif"], cc.imgLoader);
+cc.loader.register(["png", "jpg", "bmp","jpeg","gif"], cc._imgLoader);
 
-cc.plistLoader = {
+cc._plistLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadTxt(realUrl, function(err, txt){
             if(err) return cb(err);
@@ -58,66 +58,9 @@ cc.plistLoader = {
         });
     }
 }
-cc.loader.register(["plist"], cc.plistLoader);
-/**
- * This is a loader to merge plist files to one file.
- */
-cc.pkgJsonLoader = {
-    /**
-     * @constant
-     */
-    KEY : {
-        frames : "frames",
-        rect : "rect", size : "size", offset : "offset", rotated : "rotated", aliases : "aliases",
+cc.loader.register(["plist"], cc._plistLoader);
 
-        meta : "meta",
-        image : "image"
-    },
-    /**
-     * @constant
-     */
-    MIN_KEY : {
-        frames : 0,
-        rect : 0, size : 1, offset : 2, rotated : 3, aliases : 4,
-
-        meta : 1,
-        image : 0
-    },
-    _parse : function(data){
-        var KEY = data instanceof Array ? this.MIN_KEY : this.KEY;
-        var frames = {}, meta = data[KEY.meta] ? {image : data[KEY.meta][KEY.image]} : {};
-        var tempFrames = data[KEY.frames];
-        for (var frameName in tempFrames) {
-            var f = tempFrames[frameName];
-            var rect = f[KEY.rect];
-            var size = f[KEY.size];
-            var offset = f[KEY.offset];
-            frames[frameName] = {
-                rect : {x : rect[0], y : rect[1], width : rect[2], height : rect[3]},
-                size : {width : size[0], height : size[1]},
-                offset : {x : offset[0], y : offset[1]},
-                rotated : f[KEY.rotated],
-                aliases : f[KEY.aliases]
-            }
-        }
-        return {_inited : true, frames : frames, meta : meta};
-    },
-    load : function(realUrl, url, res, cb){
-        var self = this, locLoader = cc.loader, cache = locLoader.cache;
-        locLoader.loadJson(realUrl, function(err, pkg){
-            if(err) return cb(err);
-            var dir = cc.path.dirname(url);
-            for (var key in pkg) {
-                var filePath = cc.path.join(dir, key);
-                cache[filePath] = self._parse(pkg[key]);
-            }
-            cb(null, true);
-        });
-    }
-};
-cc.loader.register(["pkgJson"], cc.pkgJsonLoader);
-
-cc.fontLoader = {
+cc._fontLoader = {
     TYPE : {
         "eot" : "embedded-opentype",
         "ttf" : "truetype",
@@ -164,9 +107,9 @@ cc.fontLoader = {
         cb(null, true);
     }
 }
-cc.loader.register(["font", "eot", "ttf", "woff", "svg"], cc.fontLoader);
+cc.loader.register(["font", "eot", "ttf", "woff", "svg"], cc._fontLoader);
 
-cc.binaryLoader = {
+cc._binaryLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadBinary(realUrl, cb);
     }
