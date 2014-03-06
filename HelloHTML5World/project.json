@@ -1,9 +1,9 @@
 {
-    "debugMode" : 4,
+    "debugMode" : 1,
     "showFPS" : true,
     "frameRate" : 60,
     "id" : "gameCanvas",
-    "renderMode" : 1,
+    "renderMode" : 2,
     "engineDir":"../",
 
     "modules" : ["menus"],

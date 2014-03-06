@@ -318,11 +318,14 @@ if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
 //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
 cc.loader = {
 
+    _jsCache : {},//cache for js
+    _register : {},//register of loaders
+    _langPathCache : {},//cache for lang path
+    _aliases : {},//aliases for res url
+
     resPath : "",//root path of resource
     audioPath : "",//root path of audio
-    _register : {},//register of loaders
     cache : {},//cache for data loaded
-    _langPathCache : {},//cache for lang path
 
     /**
      * Get XMLHttpRequest.
@@ -334,8 +337,6 @@ cc.loader = {
 
 
     //@MODE_BEGIN DEV
-
-    _jsCache : {},//cache for js
 
     _getArgs4Js : function(args){
         var a0 = args[0], a1 = args[1], a2 = args[2], results = ["", null, null];
@@ -680,6 +681,55 @@ cc.loader = {
         cc.async.map(res, option);
     },
 
+    _handleAliases : function(fileNames, cb){
+        var self = this, aliases = self._aliases;
+        var resList = [];
+        for (var key in fileNames) {
+            var value = fileNames[key];
+            aliases[key] = value;
+            resList.push(value);
+        }
+        this.load(resList, cb);
+    },
+
+    /**
+     * <p>
+     *     Loads alias map from the contents of a filename.                                        <br/>
+     *                                                                                                                 <br/>
+     *     @note The plist file name should follow the format below:                                                   <br/>
+     *     <?xml version="1.0" encoding="UTF-8"?>                                                                      <br/>
+     *         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">  <br/>
+     *             <plist version="1.0">                                                                               <br/>
+     *                 <dict>                                                                                          <br/>
+     *                     <key>filenames</key>                                                                        <br/>
+     *                     <dict>                                                                                      <br/>
+     *                         <key>sounds/click.wav</key>                                                             <br/>
+     *                         <string>sounds/click.caf</string>                                                       <br/>
+     *                         <key>sounds/endgame.wav</key>                                                           <br/>
+     *                         <string>sounds/endgame.caf</string>                                                     <br/>
+     *                         <key>sounds/gem-0.wav</key>                                                             <br/>
+     *                         <string>sounds/gem-0.caf</string>                                                       <br/>
+     *                     </dict>                                                                                     <br/>
+     *                     <key>metadata</key>                                                                         <br/>
+     *                     <dict>                                                                                      <br/>
+     *                         <key>version</key>                                                                      <br/>
+     *                         <integer>1</integer>                                                                    <br/>
+     *                     </dict>                                                                                     <br/>
+     *                 </dict>                                                                                         <br/>
+     *              </plist>                                                                                           <br/>
+     * </p>
+     * @param {String} filename  The plist file name.
+     * @param {Function} cb     callback
+     */
+    loadAliases : function(url, cb){
+        var self = this, dict = self.getRes(url);
+        if(!dict){
+            self.load(url, function(results){
+                self._handleAliases(results[0]["filenames"], cb);
+            });
+        }else self._handleAliases(dict["filenames"], cb);
+    },
+
     /**
      * Register a resource loader into loader.
      * @param {string} extname
@@ -700,7 +750,7 @@ cc.loader = {
      * @returns {*}
      */
     getRes : function(url){
-        return this.cache[url];
+        return this.cache[url] || this.cache[this._aliases[url]];
     },
 
     /**
@@ -708,16 +758,22 @@ cc.loader = {
      * @param url
      */
     release : function(url){
-        delete this.cache[url];
+        var cache = this.cache, aliases = this._aliases;
+        delete cache[url];
+        delete cache[aliases[url]];
+        delete aliases[url];
     },
 
     /**
      * Resource cache of all resources.
      */
     releaseAll : function(){
-        var locCache = this.cache;
+        var locCache = this.cache, aliases = this._aliases;
         for (var key in locCache) {
             delete locCache[key];
+        }
+        for (var key in aliases) {
+            delete aliases[key];
         }
     }
 
@@ -768,6 +824,11 @@ cc.loader = {
         win.addEventListener("blur", onHidden, false);
         win.addEventListener("focus", onShow, false);
     }
+    win = null;
+    onHidden = null;
+    onShow = null;
+    hidden = null;
+    visibilityChange = null;
 })();
 //+++++++++++++++++++++++++something about window events end+++++++++++++++++++++++++++++
 
@@ -859,21 +920,373 @@ cc._initDebugSetting = function () {
         || !console.error){
         cc.error = function(){
             cc._logToWebPage.apply(cc, arguments);
-        };
+        }
         cc.assert = function(cond, msg){
             if(!cond && msg) cc._logToWebPage(msg);
-        };
+        }
     }else{
         cc.error = function(){
             console.error.apply(console, arguments);
-        };
+        }
         cc.assert = function(){
             console.assert.apply(console, arguments);
-        };
+        }
     }
 };
 //+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
 
+/**
+ * create a webgl context
+ * @param {HTMLCanvasElement} canvas
+ * @param {Object} opt_attribs
+ * @return {WebGLRenderingContext}
+ */
+cc.create3DContext = function (canvas, opt_attribs) {
+    var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+    var context = null;
+    for (var ii = 0; ii < names.length; ++ii) {
+        try {
+            context = canvas.getContext(names[ii], opt_attribs);
+        } catch (e) {
+        }
+        if (context) {
+            break;
+        }
+    }
+    return context;
+};
+//+++++++++++++++++++++++++something about sys begin+++++++++++++++++++++++++++++
+cc._initSys = function(config){
+    /**
+     * Canvas of render type
+     * @constant
+     * @type Number
+     */
+    cc._RENDER_TYPE_CANVAS = 0;
+
+    /**
+     * WebGL of render type
+     * @constant
+     * @type Number
+     */
+    cc._RENDER_TYPE_WEBGL = 1;
+
+    var sys = cc.sys = {};
+
+    /**
+     * English language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_ENGLISH = "en";
+
+    /**
+     * Chinese language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_CHINESE = "zh";
+
+    /**
+     * French language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_FRENCH = "fr";
+
+    /**
+     * Italian language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_ITALIAN = "it";
+
+    /**
+     * German language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_GERMAN = "de";
+
+    /**
+     * Spanish language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_SPANISH = "es";
+
+    /**
+     * Russian language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_RUSSIAN = "ru";
+
+    /**
+     * Korean language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_KOREAN = "ko";
+
+    /**
+     * Japanese language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_JAPANESE = "ja";
+
+    /**
+     * Hungarian language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_HUNGARIAN = "hu";
+
+    /**
+     * Portuguese language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_PORTUGUESE = "pt";
+
+    /**
+     * Arabic language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_ARABIC = "ar";
+
+    /**
+     * Norwegian language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_NORWEGIAN = "no";
+
+    /**
+     * Polish language code
+     * @constant
+     * @type Number
+     */
+    sys.LANGUAGE_POLISH = "pl";
+
+
+    /**
+     * @constant
+     * @type {string}
+     */
+    sys.OS_WINDOWS = "Windows";
+    /**
+     * @constant
+     * @type {string}
+     */
+    sys.OS_IOS = "iOS";
+    /**
+     * @constant
+     * @type {string}
+     */
+    sys.OS_OSX = "OS X";
+    /**
+     * @constant
+     * @type {string}
+     */
+    sys.OS_UNIX = "UNIX";
+    /**
+     * @constant
+     * @type {string}
+     */
+    sys.OS_LINUX = "Linux";
+    /**
+     * @constant
+     * @type {string}
+     */
+    sys.OS_ANDROID = "Android";
+    sys.OS_UNKNOWN = "unknown";
+
+    sys.BROWSER_TYPE_WECHAT = "wechat";
+    sys.BROWSER_TYPE_ANDROID = "androidbrowser";
+    sys.BROWSER_TYPE_IE = "ie";
+    sys.BROWSER_TYPE_QQ = "qqbrowser";
+    sys.BROWSER_TYPE_MOBILE_QQ = "mqqbrowser";
+    sys.BROWSER_TYPE_UC = "ucbrowser";
+    sys.BROWSER_TYPE_360 = "360browser";
+    sys.BROWSER_TYPE_BAIDU_APP = "baiduboxapp";
+    sys.BROWSER_TYPE_BAIDU = "baidubrowser";
+    sys.BROWSER_TYPE_MAXTHON = "maxthon";
+    sys.BROWSER_TYPE_OPERA = "opera";
+    sys.BROWSER_TYPE_MIUI = "miuibrowser";
+    sys.BROWSER_TYPE_FIREFOX = "firefox";
+    sys.BROWSER_TYPE_SAFARI = "safari";
+    sys.BROWSER_TYPE_CHROME = "chrome";
+    sys.BROWSER_TYPE_UNKNOWN = "unknown";
+
+    /**
+     * WhiteList of browser for WebGL.
+     * @constant
+     * @type Array
+     */
+    sys.WEBGL_WHITE_LIST = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
+    sys.MULTIPLE_AUDIO_WHITE_LIST = [
+        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME,
+        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ
+    ];
+    /**
+     * Is native ? This is set to be true in jsb auto.
+     * @constant
+     * @type Boolean
+     */
+    sys.isNative = false;
+
+    var CONFIG_KEY = cc.game.CONFIG_KEY;
+
+    var win = window, nav = win.navigator, doc = document, docEle = doc.documentElement;
+    var ua = nav.userAgent.toLowerCase();
+
+    sys.isMobile = ua.indexOf('mobile') != -1 || ua.indexOf('android') != -1;
+
+
+    var currLanguage = nav.language;
+    currLanguage = currLanguage ? currLanguage : nav.browserLanguage;
+    currLanguage = currLanguage ? currLanguage.split("-")[0] : sys.LANGUAGE_ENGLISH;
+    sys.language = currLanguage;
+
+    /** The type of browser */
+    sys.browserType = (function () {
+        var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|opera|miuibrowser|firefox/i)
+            || ua.match(/chrome|safari/i);
+        if (browserTypes && browserTypes.length > 0) {
+            var el = browserTypes[0];
+            if (el == 'micromessenger') {
+                return sys.BROWSER_TYPE_WECHAT;
+            }else if( el === "safari" && (ua.match(/android.*applewebkit/) != null))
+                return sys.BROWSER_TYPE_ANDROID;
+            else if(el == "trident") return sys.BROWSER_TYPE_IE;
+            return el;
+        }
+        return sys.BROWSER_TYPE_UNKNOWN;
+    })();
+
+
+    //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
+    var userRenderMode = parseInt(config[CONFIG_KEY.renderMode]);
+    var renderType = cc._RENDER_TYPE_WEBGL;
+    var tempCanvas = document.createElement("Canvas");
+    cc._supportRender = true;
+    var notInWhiteList = sys.WEBGL_WHITE_LIST.indexOf(sys.browserType) == -1;
+    if(userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList))){
+        renderType = cc._RENDER_TYPE_CANVAS;
+    }
+
+
+    if(renderType == cc._RENDER_TYPE_WEBGL){
+        if(!window.WebGLRenderingContext
+            || !cc.create3DContext(tempCanvas, {'stencil': true, 'preserveDrawingBuffer': true })){
+            if(userRenderMode == 0) renderType = cc._RENDER_TYPE_CANVAS;
+            else cc._supportRender = false;
+        }
+    }
+
+    if(renderType == cc._RENDER_TYPE_CANVAS){
+        try {
+            tempCanvas.getContext("2d");
+        } catch (e) {
+            cc._supportRender = false;
+        }
+    }
+    cc._renderType = renderType;
+    //++++++++++++++++++something about cc._renderTYpe and cc._supportRender end++++++++++++++++++++++++++++++
+
+
+    // check if browser supports Web Audio
+    sys.supportWebAudio = (function () {
+        // check Web Audio's context
+        try {
+            var ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+            return ctx ? true : false;
+        } catch (e) {
+            return false;
+        }
+    })();
+
+    /** LocalStorage is a local storage component.
+     */
+    try{
+        var localStorage = sys.localStorage = window.localStorage;
+        localStorage.setItem("storage", "");
+        localStorage.removeItem("storage");
+        localStorage = null;
+    }catch(e){
+
+        if( e.name === "SECURITY_ERR" || e.name === "QuotaExceededError" ) {
+            console.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+        }
+        sys.localStorage = function(){};
+    }
+
+
+    var capabilities = sys.capabilities = {"canvas":true};
+    if(cc._renderType == cc._RENDER_TYPE_WEBGL)
+        capabilities["opengl"] = true;
+    if( docEle['ontouchstart'] !== undefined || nav.msPointerEnabled)
+        capabilities["touches"] = true;
+    else if( docEle['onmouseup'] !== undefined )
+        capabilities["mouse"] = true;
+    if( docEle['onkeyup'] !== undefined )
+        capabilities["keyboard"] = true;
+    if(win.DeviceMotionEvent || win.DeviceOrientationEvent)
+        capabilities["accelerometer"] = true;
+
+    /** Get the os of system */
+    sys.os = (function(){
+        var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
+        var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
+        var OSName;
+        if (nav.appVersion.indexOf("Win")!=-1)
+            OSName="Windows";
+        else if( iOS )
+            OSName = "iOS";
+        else if (navigator.appVersion.indexOf("Mac")!=-1)
+            OSName="OS X";
+        else if (navigator.appVersion.indexOf("X11")!=-1)
+            OSName="UNIX";
+        else if (navigator.appVersion.indexOf("Linux")!=-1)
+            OSName="Linux";
+        else if( isAndroid )
+            OSName = "Android";
+        else OSName = sys.OS_UNKNOWN;
+        return OSName;
+    })();
+
+    // Forces the garbage collector
+    sys.garbageCollect = function() {
+        // N/A in cocos2d-html5
+    };
+
+    // Dumps rooted objects
+    sys.dumpRoot = function() {
+        // N/A in cocos2d-html5
+    };
+
+    // restarts the JS VM
+    sys.restartVM = function() {
+        // N/A in cocos2d-html5
+    };
+
+    sys.dump = function(){
+        var self = this;
+        var str = "";
+        str += "isMobile : " + self.isMobile + "\r\n";
+        str += "language : " + self.language + "\r\n";
+        str += "browserType : " + self.browserType + "\r\n";
+        str += "supportWebAudio : " + self.supportWebAudio + "\r\n";
+        str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
+        str += "os : " + self.os + "\r\n";
+        cc.log(str);
+    }
+};
+
+//+++++++++++++++++++++++++something about sys end+++++++++++++++++++++++++++++
 
 //+++++++++++++++++++++++++something about CCGame begin+++++++++++++++++++++++++++
 
@@ -905,21 +1318,6 @@ cc.ORIENTATION_LANDSCAPE_LEFT = 2;
  */
 cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
 
-//engine render type
-/**
- * Canvas of render type
- * @constant
- * @type Number
- */
-cc._RENDER_TYPE_CANVAS = 0;
-
-/**
- * WebGL of render type
- * @constant
- * @type Number
- */
-cc._RENDER_TYPE_WEBGL = 1;
-
 /**
  * drawing primitive of game engine
  * @type cc.DrawingPrimitive
@@ -944,12 +1342,6 @@ cc._canvas = null;
  */
 cc._gameDiv = null;
 
-/**
- * current render type of game engine
- * @type Number
- */
-cc._renderType = cc._RENDER_TYPE_CANVAS;
-
 cc._rendererInitialized = false;
 /**
  * <p>
@@ -959,7 +1351,7 @@ cc._rendererInitialized = false;
  *      - empty: create a canvas append to document's body, and setup other option    <br/>
  *      - string: search the element by document.getElementById(),    <br/>
  *          if this element is HTMLCanvasElement, set this element as main canvas of engine, and set it's ParentNode as cc._gameDiv.<br/>
- *          if this element is HTMLDivElement, set it's ParentNode to cc.gameDiv， and create a canvas as main canvas of engine.   <br/>
+ *          if this element is HTMLDivElement, set it's ParentNode to cc._gameDiv， and create a canvas as main canvas of engine.   <br/>
  * </p>
  * @function
  * @example
@@ -1017,17 +1409,13 @@ cc._setup = function (el, width, height) {
     localConStyle.overflow = 'hidden';
     localContainer.top = '100%';
 
-    if(!cc._supportRender)
-        return;
-
-    if (cc.sys.supportWebGL)
+    if (cc._renderType == cc._RENDER_TYPE_WEBGL)
         cc._renderContext = cc.webglContext = cc.create3DContext(localCanvas,{
             'stencil': true,
             'preserveDrawingBuffer': true,
             'antialias': !cc.sys.isMobile,
             'alpha': false});
     if(cc._renderContext){
-        cc._renderType = cc._RENDER_TYPE_WEBGL;
         win.gl = cc._renderContext; // global variable declared in CCMacro.js
         cc._drawingUtil = new cc.DrawingPrimitiveWebGL(cc._renderContext);
         cc._rendererInitialized = true;
@@ -1035,17 +1423,15 @@ cc._setup = function (el, width, height) {
 	    cc.shaderCache._init();
     } else {
         cc._renderContext = localCanvas.getContext("2d");
-        cc.mainRenderContextBackup = cc._renderContext;
-        cc._renderType = cc._RENDER_TYPE_CANVAS;
+        cc._mainRenderContextBackup = cc._renderContext;
         cc._renderContext.translate(0, localCanvas.height);
         cc._drawingUtil = cc.DrawingPrimitiveCanvas ? new cc.DrawingPrimitiveCanvas(cc._renderContext) : null;
     }
 
     cc.originalCanvasSize = cc.size(localCanvas.width, localCanvas.height);
-    cc.gameDiv = localContainer;
+    cc._gameDiv = localContainer;
 
     cc.log(cc.ENGINE_VERSION);
-    //cc.configuration.getInstance();
 
     cc._setContextMenuEnable(false);
 
@@ -1076,13 +1462,6 @@ cc._setContextMenuEnable = function (enabled) {
  * An object to boot the game.
  */
 cc.game = {
-    _prepareCalled : false,//whether the prepare function has been called
-    _prepared : false,//whether the engine has prepared
-    _isContextMenuEnable : false,
-    _paused : true,//whether the game is paused
-
-    _intervalId : null,//interval target of main
-
     DEBUG_MODE_NONE : 0,
     DEBUG_MODE_LOG : 1,
     DEBUG_MODE_WARN : 2,
@@ -1107,6 +1486,13 @@ cc.game = {
         jsList : "jsList",
         classReleaseMode : "classReleaseMode"
     },
+
+    _prepareCalled : false,//whether the prepare function has been called
+    _prepared : false,//whether the engine has prepared
+    _paused : true,//whether the game is paused
+
+    _intervalId : null,//interval target of main
+
 
     /**
      * Config of game
@@ -1208,11 +1594,13 @@ cc.game = {
         var self = this;
         if(!self._prepareCalled){
             self.prepare(function(){
+                if(!cc._supportRender) return;
                 cc._setup(self.config[self.CONFIG_KEY.id]);
                 self._runMainLoop();
                 self.onEnter();
             });
         }else{
+            if(!cc._supportRender) return;
             self._checkPrepare = setInterval(function(){
                 if(self._prepared){
                     cc._setup(self.config[self.CONFIG_KEY.id]);
@@ -1276,6 +1664,11 @@ cc.game = {
         var self = this;
         self._initConfig(function(config){
             var CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
+            cc._initSys(config);
+            if(!cc._supportRender){
+                cc.log("Can not support render!")
+                return;
+            }
             cc._initDebugSetting();
             self._prepareCalled = true;
 
@@ -1295,7 +1688,8 @@ cc.game = {
                     var modules = config["modules"] || [];
                     var moduleMap = modulesJson["module"];
                     var newJsList = [];
-                    if(modules.indexOf("core") < 0) modules.splice(0, 0, "core");
+                    if(cc._renderType == cc._RENDER_TYPE_WEBGL) modules.splice(0, 0, "shaders");
+                    else if(modules.indexOf("core") < 0) modules.splice(0, 0, "core");
                     for(var i = 0, li = modules.length; i < li; i++){
                         var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
                         if(arr) newJsList = newJsList.concat(arr);
