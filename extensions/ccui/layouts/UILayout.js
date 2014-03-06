@@ -514,7 +514,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             rect[1] = cc.p(size.width, 0);
             rect[2] = cc.p(size.width, size.height);
             rect[3] = cc.p(0, size.height);
-            var green = cc.color.green;
+            var green = cc.color.GREEN;
             this._clippingStencil.clear();
             this._clippingStencil.drawPoly(rect, 4, green, 0, green);
         }

@@ -1099,30 +1099,30 @@ cc.color._getGray = function () {
 };
 window._proto = cc.color;
 /** @expose */
-_proto.white;
-cc.defineGetterSetter(_proto, "white", _proto._getWhite);
+_proto.WHITE;
+cc.defineGetterSetter(_proto, "WHITE", _proto._getWhite);
 /** @expose */
-_proto.yellow;
-cc.defineGetterSetter(_proto, "yellow", _proto._getYellow);
+_proto.YELLOW;
+cc.defineGetterSetter(_proto, "YELLOW", _proto._getYellow);
 /** @expose */
-_proto.blue;
-cc.defineGetterSetter(_proto, "blue", _proto._getBlue);
+_proto.BLUE;
+cc.defineGetterSetter(_proto, "BLUE", _proto._getBlue);
 /** @expose */
-_proto.green;
-cc.defineGetterSetter(_proto, "green", _proto._getGreen);
+_proto.GREEN;
+cc.defineGetterSetter(_proto, "GREEN", _proto._getGreen);
 /** @expose */
-_proto.red;
-cc.defineGetterSetter(_proto, "red", _proto._getRed);
+_proto.RED;
+cc.defineGetterSetter(_proto, "RED", _proto._getRed);
 /** @expose */
-_proto.magenta;
-cc.defineGetterSetter(_proto, "magenta", _proto._getMagenta);
+_proto.MAGENTA;
+cc.defineGetterSetter(_proto, "MAGENTA", _proto._getMagenta);
 /** @expose */
-_proto.black;
-cc.defineGetterSetter(_proto, "black", _proto._getBlack);
+_proto.BLACK;
+cc.defineGetterSetter(_proto, "BLACK", _proto._getBlack);
 /** @expose */
-_proto.orange;
-cc.defineGetterSetter(_proto, "orange", _proto._getOrange);
+_proto.ORANGE;
+cc.defineGetterSetter(_proto, "ORANGE", _proto._getOrange);
 /** @expose */
-_proto.gray;
-cc.defineGetterSetter(_proto, "gray", _proto._getGray);
+_proto.GRAY;
+cc.defineGetterSetter(_proto, "GRAY", _proto._getGray);
 delete window._proto;
