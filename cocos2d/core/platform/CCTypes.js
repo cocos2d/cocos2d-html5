@@ -1023,7 +1023,7 @@ cc.Acceleration = function(){
  * @private
  */
 cc.color._getWhite = function(){
-    return cc.color(255, 255, 255, 255);
+    return cc.color(255, 255, 255);
 };
 
 /**
@@ -1032,7 +1032,7 @@ cc.color._getWhite = function(){
  * @private
  */
 cc.color._getYellow = function () {
-    return cc.color(255, 255, 0, 255);
+    return cc.color(255, 255, 0);
 };
 
 /**
@@ -1041,7 +1041,7 @@ cc.color._getYellow = function () {
  * @private
  */
 cc.color._getBlue = function () {
-    return  cc.color(0, 0, 255, 255);
+    return  cc.color(0, 0, 255);
 };
 
 /**
@@ -1050,7 +1050,7 @@ cc.color._getBlue = function () {
  * @private
  */
 cc.color._getGreen = function () {
-    return cc.color(0, 255, 0, 255);
+    return cc.color(0, 255, 0);
 };
 
 /**
@@ -1059,7 +1059,7 @@ cc.color._getGreen = function () {
  * @private
  */
 cc.color._getRed = function () {
-    return cc.color(255, 0, 0, 255);
+    return cc.color(255, 0, 0);
 };
 
 /**
@@ -1068,7 +1068,7 @@ cc.color._getRed = function () {
  * @private
  */
 cc.color._getMagenta = function () {
-    return cc.color(255, 0, 255, 255);
+    return cc.color(255, 0, 255);
 };
 
 /**
@@ -1077,7 +1077,7 @@ cc.color._getMagenta = function () {
  * @private
  */
 cc.color._getBlack = function () {
-    return cc.color(0, 0, 0, 255);
+    return cc.color(0, 0, 0);
 };
 
 /**
@@ -1086,7 +1086,7 @@ cc.color._getBlack = function () {
  * @private
  */
 cc.color._getOrange = function () {
-    return cc.color(255, 127, 0, 255);
+    return cc.color(255, 127, 0);
 };
 
 /**
@@ -1095,7 +1095,7 @@ cc.color._getOrange = function () {
  * @private
  */
 cc.color._getGray = function () {
-    return cc.color(166, 166, 166, 255);
+    return cc.color(166, 166, 166);
 };
 window._proto = cc.color;
 /** @expose */
