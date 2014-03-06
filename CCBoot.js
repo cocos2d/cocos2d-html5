@@ -784,10 +784,6 @@ cc.loader = {
 //+++++++++++++++++++++++++something about window events begin+++++++++++++++++++++++++++
 (function(){
     var win = window, hidden, visibilityChange;
-    cc.winEvents = {
-        hiddens : [],
-        shows : []
-    };
     if (typeof document.hidden !== "undefined") {
         hidden = "hidden";
         visibilityChange = "visibilitychange";
@@ -803,16 +799,10 @@ cc.loader = {
     }
 
     var onHidden = function(){
-        for(var i = 0, funcs = cc.winEvents.hiddens, li = funcs.length; i < li; i++){
-            var func = funcs[i];
-            if(func) func();
-        }
+        cc.eventManager.dispatchEvent(cc.game._eventHide);
     };
     var onShow = function(){
-        for(var i = 0, funcs = cc.winEvents.shows, li = funcs.length; i < li; i++){
-            var func = funcs[i];
-            if(func) func();
-        }
+        cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
 
     if (typeof document.addEventListener !== "undefined" && hidden) {
@@ -825,9 +815,6 @@ cc.loader = {
         win.addEventListener("focus", onShow, false);
     }
     win = null;
-    onHidden = null;
-    onShow = null;
-    hidden = null;
     visibilityChange = null;
 })();
 //+++++++++++++++++++++++++something about window events end+++++++++++++++++++++++++++++
@@ -1102,7 +1089,7 @@ cc._initSys = function(config){
      * @type {string}
      */
     sys.OS_ANDROID = "Android";
-    sys.OS_UNKNOWN = "unknown";
+    sys.OS_UNKNOWN = "Unknown";
 
     sys.BROWSER_TYPE_WECHAT = "wechat";
     sys.BROWSER_TYPE_ANDROID = "androidbrowser";
@@ -1470,6 +1457,11 @@ cc.game = {
     DEBUG_MODE_WARN_FOR_WEB_PAGE : 5,
     DEBUG_MODE_ERROR_FOR_WEB_PAGE : 6,
 
+    EVENT_HIDE: "game_on_hide",
+    EVENT_SHOW: "game_on_show",
+    _eventHide: null,
+    _eventShow: null,
+
     /**
      * Key of config
      * @constant
@@ -1492,7 +1484,6 @@ cc.game = {
     _paused : true,//whether the game is paused
 
     _intervalId : null,//interval target of main
-
 
     /**
      * Config of game
@@ -1587,6 +1578,8 @@ cc.game = {
         }
         self._paused = false;
     },
+
+
     /**
      * Run game.
      */
@@ -1597,6 +1590,10 @@ cc.game = {
                 if(!cc._supportRender) return;
                 cc._setup(self.config[self.CONFIG_KEY.id]);
                 self._runMainLoop();
+                self._eventHide = new cc.EventCustom(self.EVENT_HIDE);
+                self._eventHide.setUserData(this);
+                self._eventShow = new cc.EventCustom(self.EVENT_SHOW);
+                self._eventShow.setUserData(this);
                 self.onEnter();
             });
         }else{
