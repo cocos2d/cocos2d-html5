@@ -336,15 +336,15 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
         // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
         var locBlendFunc = this._blendFunc;
-        if (texture && !texture.hasPremultipliedAlpha() && ( locBlendFunc.src == gl.BLEND_SRC && locBlendFunc.dst == gl.BLEND_DST )) {
-            locBlendFunc.src = gl.SRC_ALPHA;
-            locBlendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+        if (texture && !texture.hasPremultipliedAlpha() && ( locBlendFunc.src == cc.BLEND_SRC && locBlendFunc.dst == cc.BLEND_DST )) {
+            locBlendFunc.src = cc.SRC_ALPHA;
+            locBlendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         }
     },
 
     /**
      * set the blending function used for the texture
-     * @param {Number} src
+     * @param {Number|cc.BlencFunc} src
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
@@ -503,8 +503,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     _updateBlendFunc:function () {
         if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = gl.SRC_ALPHA;
-            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+            this._blendFunc.src = cc.SRC_ALPHA;
+            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         }
     },
 

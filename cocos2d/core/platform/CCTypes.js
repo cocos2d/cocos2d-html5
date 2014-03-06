@@ -319,7 +319,7 @@ cc.BlendFunc = function (src1, dst1) {
 };
 
 cc.BlendFuncDisable = function () {
-    return new cc.BlendFunc(gl.ONE, gl.ZERO);
+    return new cc.BlendFunc(cc.ONE, cc.ZERO);
 };
 
 /**
