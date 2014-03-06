@@ -898,58 +898,7 @@ cc.ContentStrategy = cc.Class.extend({
  * @extends cc.Class
  */
 cc.ResolutionPolicy = cc.Class.extend({
-	/*
-	 * @public
-	 * @const
-	 * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
-	 * Distortion can occur, and the application may appear stretched or compressed.
-	 */
-	EXACT_FIT: 0,
-
-	/*
-	 * @public
-	 * @const
-	 * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
-	 * while maintaining the original aspect ratio of the application.
-	 */
-	NO_BORDER: 1,
-
-	/*
-	 * @public
-	 * @const
-	 * The entire application is visible in the specified area without distortion while maintaining the original<br/>
-	 * aspect ratio of the application. Borders can appear on two sides of the application.
-	 */
-	SHOW_ALL: 2,
-
-	/*
-	 * @public
-	 * @const
-	 * The application takes the height of the design resolution size and modifies the width of the internal<br/>
-	 * canvas so that it fits the aspect ratio of the device<br/>
-	 * no distortion will occur however you must make sure your application works on different<br/>
-	 * aspect ratios
-	 */
-	FIXED_HEIGHT: 3,
-
-	/*
-	 * @public
-	 * @const
-	 * The application takes the width of the design resolution size and modifies the height of the internal<br/>
-	 * canvas so that it fits the aspect ratio of the device<br/>
-	 * no distortion will occur however you must make sure your application works on different<br/>
-	 * aspect ratios
-	 */
-	FIXED_WIDTH: 4,
-
-	/*
-	 * @public
-	 * @const
-	 * Unknow policy
-	 */
-	UNKNOWN: 5,
-
-    _containerStrategy: null,
+	_containerStrategy: null,
     _contentStrategy: null,
 
     ctor: function (containerStg, contentStg) {
@@ -1006,3 +955,54 @@ cc.ResolutionPolicy = cc.Class.extend({
             this._contentStrategy = contentStg;
     }
 });
+
+/*
+ * @public
+ * @const
+ * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
+ * Distortion can occur, and the application may appear stretched or compressed.
+ */
+cc.ResolutionPolicy.EXACT_FIT = 0;
+
+/*
+ * @public
+ * @const
+ * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
+ * while maintaining the original aspect ratio of the application.
+ */
+cc.ResolutionPolicy.NO_BORDER = 1;
+
+/*
+ * @public
+ * @const
+ * The entire application is visible in the specified area without distortion while maintaining the original<br/>
+ * aspect ratio of the application. Borders can appear on two sides of the application.
+ */
+cc.ResolutionPolicy.SHOW_ALL = 2;
+
+/*
+ * @public
+ * @const
+ * The application takes the height of the design resolution size and modifies the width of the internal<br/>
+ * canvas so that it fits the aspect ratio of the device<br/>
+ * no distortion will occur however you must make sure your application works on different<br/>
+ * aspect ratios
+ */
+cc.ResolutionPolicy.FIXED_HEIGHT = 3;
+
+/*
+ * @public
+ * @const
+ * The application takes the width of the design resolution size and modifies the height of the internal<br/>
+ * canvas so that it fits the aspect ratio of the device<br/>
+ * no distortion will occur however you must make sure your application works on different<br/>
+ * aspect ratios
+ */
+cc.ResolutionPolicy.FIXED_WIDTH = 4;
+
+/*
+ * @public
+ * @const
+ * Unknow policy
+ */
+cc.ResolutionPolicy.UNKNOWN = 5;

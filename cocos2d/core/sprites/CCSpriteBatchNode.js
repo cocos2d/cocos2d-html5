@@ -581,8 +581,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     _updateBlendFunc:function () {
         if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = gl.SRC_ALPHA;
-            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+            this._blendFunc.src = cc.SRC_ALPHA;
+            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         }
     },
 

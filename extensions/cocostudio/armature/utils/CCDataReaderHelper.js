@@ -496,16 +496,16 @@ ccs.dataReaderHelper = {
                 blendFunc.dst = cc.BLEND_DST;
                 break;
             case ccs.BLEND_TYPE_ADD:
-                blendFunc.src = gl.SRC_ALPHA;
-                blendFunc.dst = gl.ONE;
+                blendFunc.src = cc.SRC_ALPHA;
+                blendFunc.dst = cc.ONE;
                 break;
             case ccs.BLEND_TYPE_MULTIPLY:
-                blendFunc.src = gl.ONE_MINUS_SRC_ALPHA;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+                blendFunc.src = cc.ONE_MINUS_SRC_ALPHA;
+                blendFunc.dst = cc.ONE_MINUS_DST_COLOR;
                 break;
             case ccs.BLEND_TYPE_SCREEN:
-                blendFunc.src = gl.ONE;
-                blendFunc.dst = gl.ONE_MINUS_DST_COLOR;
+                blendFunc.src = cc.ONE;
+                blendFunc.dst = cc.ONE_MINUS_DST_COLOR;
                 break;
             default:
                 break;

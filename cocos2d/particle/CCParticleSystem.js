@@ -1419,7 +1419,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *    dest blend function = GL_ONE;
      */
     isBlendAdditive:function () {
-        return (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE));
+        return (( this._blendFunc.src == cc.SRC_ALPHA && this._blendFunc.dst == cc.ONE) || (this._blendFunc.src == cc.ONE && this._blendFunc.dst == cc.ONE));
     },
 
     /**
@@ -1431,13 +1431,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     setBlendAdditive:function (isBlendAdditive) {
         var locBlendFunc = this._blendFunc;
         if (isBlendAdditive) {
-            locBlendFunc.src = gl.SRC_ALPHA;
-            locBlendFunc.dst = gl.ONE;
+            locBlendFunc.src = cc.SRC_ALPHA;
+            locBlendFunc.dst = cc.ONE;
         } else {
             if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 if (this._texture && !this._texture.hasPremultipliedAlpha()) {
-                    locBlendFunc.src = gl.SRC_ALPHA;
-                    locBlendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+                    locBlendFunc.src = cc.SRC_ALPHA;
+                    locBlendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
                 } else {
                     locBlendFunc.src = cc.BLEND_SRC;
                     locBlendFunc.dst = cc.BLEND_DST;
@@ -2300,8 +2300,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 if (locTexture.hasPremultipliedAlpha()) {
                     this._opacityModifyRGB = true;
                 } else {
-                    locBlendFunc.src = gl.SRC_ALPHA;
-                    locBlendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+                    locBlendFunc.src = cc.SRC_ALPHA;
+                    locBlendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
                 }
             }
         }

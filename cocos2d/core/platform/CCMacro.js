@@ -321,43 +321,36 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
     return p;
 };
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    /**
-     * WebGL constants
-     * @type {object}
-     */
-    var gl = gl || {};
+/**
+ * @constant
+ * @type Number
+ */
+cc.ONE = 1;
 
-    /**
-     * @constant
-     * @type Number
-     */
-    gl.ONE = 1;
+/**
+ * @constant
+ * @type Number
+ */
+cc.ZERO = 0;
 
-    /**
-     * @constant
-     * @type Number
-     */
-    gl.ZERO = 0;
+/**
+ * @constant
+ * @type Number
+ */
+cc.SRC_ALPHA = 0x0302;
 
-    /**
-     * @constant
-     * @type Number
-     */
-    gl.SRC_ALPHA = 0x0302;
+/**
+ * @constant
+ * @type Number
+ */
+cc.ONE_MINUS_SRC_ALPHA = 0x0303;
 
-    /**
-     * @constant
-     * @type Number
-     */
-    gl.ONE_MINUS_SRC_ALPHA = 0x0303;
+/**
+ * @constant
+ * @type Number
+ */
+cc.ONE_MINUS_DST_COLOR = 0x0307;
 
-    /**
-     * @constant
-     * @type Number
-     */
-    gl.ONE_MINUS_DST_COLOR = 0x0307;
-}
 
 cc.CHECK_GL_ERROR_DEBUG = function () {
     if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
