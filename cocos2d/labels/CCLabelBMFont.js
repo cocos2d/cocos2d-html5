@@ -1038,7 +1038,7 @@ cc.utf8_trim_from = function (str, index) {
 
 
 
-cc.fntLoader = {
+cc._fntLoader = {
     INFO_EXP : /info [^\n]*(\n|$)/gi,
     COMMON_EXP : /common [^\n]*(\n|$)/gi,
     PAGE_EXP : /page [^\n]*(\n|$)/gi,
@@ -1124,4 +1124,4 @@ cc.fntLoader = {
         });
     }
 };
-cc.loader.register(["fnt"], cc.fntLoader);
+cc.loader.register(["fnt"], cc._fntLoader);

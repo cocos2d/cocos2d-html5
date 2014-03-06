@@ -648,7 +648,7 @@ cc.loader = {
         if(url.match(/[\/(\\\\)]lang[\/(\\\\)]/i)){
             if(langPathCache[url]) return langPathCache[url];
             var extname = path.extname(url) || "";
-            url = langPathCache[url] = url.substring(0, url.length - extname.length) + "_" + cc.language.current + extname;
+            url = langPathCache[url] = url.substring(0, url.length - extname.length) + "_" + cc.sys.language + extname;
         }
         return url;
     },
@@ -877,9 +877,8 @@ cc._logToWebPage = function (msg) {
  * Init Debug setting.
  * @function
  */
-cc._initDebugSetting = function () {
+cc._initDebugSetting = function (mode) {
     var ccGame = cc.game;
-    var mode = ccGame.config[ccGame.CONFIG_KEY.debugMode];
 
     //log
     if(mode == ccGame.DEBUG_MODE_LOG && console.log) {
@@ -956,7 +955,7 @@ cc.create3DContext = function (canvas, opt_attribs) {
     return context;
 };
 //+++++++++++++++++++++++++something about sys begin+++++++++++++++++++++++++++++
-cc._initSys = function(config){
+cc._initSys = function(config, CONFIG_KEY){
     /**
      * Canvas of render type
      * @constant
@@ -1122,23 +1121,22 @@ cc._initSys = function(config){
     sys.BROWSER_TYPE_UNKNOWN = "unknown";
 
     /**
-     * WhiteList of browser for WebGL.
-     * @constant
-     * @type Array
-     */
-    sys.WEBGL_WHITE_LIST = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
-    sys.MULTIPLE_AUDIO_WHITE_LIST = [
-        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME,
-        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ
-    ];
-    /**
      * Is native ? This is set to be true in jsb auto.
      * @constant
      * @type Boolean
      */
     sys.isNative = false;
 
-    var CONFIG_KEY = cc.game.CONFIG_KEY;
+    /**
+     * WhiteList of browser for WebGL.
+     * @constant
+     * @type Array
+     */
+    var webglWhiteList = [sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME, sys.BROWSER_TYPE_SAFARI];
+    var multipleAudioWhiteList = [
+        sys.BROWSER_TYPE_BAIDU, sys.BROWSER_TYPE_OPERA, sys.BROWSER_TYPE_FIREFOX, sys.BROWSER_TYPE_CHROME,
+        sys.BROWSER_TYPE_SAFARI, sys.BROWSER_TYPE_UC, sys.BROWSER_TYPE_QQ, sys.BROWSER_TYPE_MOBILE_QQ
+    ];
 
     var win = window, nav = win.navigator, doc = document, docEle = doc.documentElement;
     var ua = nav.userAgent.toLowerCase();
@@ -1167,13 +1165,14 @@ cc._initSys = function(config){
         return sys.BROWSER_TYPE_UNKNOWN;
     })();
 
+    sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
 
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
     var userRenderMode = parseInt(config[CONFIG_KEY.renderMode]);
     var renderType = cc._RENDER_TYPE_WEBGL;
     var tempCanvas = document.createElement("Canvas");
     cc._supportRender = true;
-    var notInWhiteList = sys.WEBGL_WHITE_LIST.indexOf(sys.browserType) == -1;
+    var notInWhiteList = webglWhiteList.indexOf(sys.browserType) == -1;
     if(userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList))){
         renderType = cc._RENDER_TYPE_CANVAS;
     }
@@ -1199,7 +1198,7 @@ cc._initSys = function(config){
 
 
     // check if browser supports Web Audio
-    sys.supportWebAudio = (function () {
+    sys._supportWebAudio = (function () {
         // check Web Audio's context
         try {
             var ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
@@ -1279,7 +1278,6 @@ cc._initSys = function(config){
         str += "isMobile : " + self.isMobile + "\r\n";
         str += "language : " + self.language + "\r\n";
         str += "browserType : " + self.browserType + "\r\n";
-        str += "supportWebAudio : " + self.supportWebAudio + "\r\n";
         str += "capabilities : " + JSON.stringify(self.capabilities) + "\r\n";
         str += "os : " + self.os + "\r\n";
         cc.log(str);
@@ -1504,13 +1502,13 @@ cc.game = {
      * Callback when the scripts of engine have been load.
      * @type Function
      */
-    onEnter : null,
+    onStart : null,
 
     /**
      * Callback when game exits.
      * @type Function
      */
-    onExit : null,
+    onStop : null,
     /**
      * Callback before game resumes.
      * @type Function
@@ -1532,25 +1530,6 @@ cc.game = {
      */
     onAfterPause : null,
 
-    /**
-     * Resume game.
-     */
-    resume : function(){
-        var self = this;
-        if(self.onBeforeResume && self.onBeforeResume()) return;
-        self._runMainLoop();
-        if(self.onAfterResume) self.onAfterResume();
-    },
-    /**
-     * Pause game.
-     */
-    pause : function(){
-        var self = this;
-        if(self.onBeforePause && self.onBeforePause()) return;
-        if(self._intervalId) clearInterval(self._intervalId);
-        self._paused = true;
-        if(self.onAfterPause) self.onAfterPause();
-    },
     /**
      * Set frameRate of game.
      * @param frameRate
@@ -1597,7 +1576,7 @@ cc.game = {
                 if(!cc._supportRender) return;
                 cc._setup(self.config[self.CONFIG_KEY.id]);
                 self._runMainLoop();
-                self.onEnter();
+                self.onStart();
             });
         }else{
             if(!cc._supportRender) return;
@@ -1605,7 +1584,7 @@ cc.game = {
                 if(self._prepared){
                     cc._setup(self.config[self.CONFIG_KEY.id]);
                     self._runMainLoop();
-                    self.onEnter();
+                    self.onStart();
                     clearInterval(self._checkPrepare);
                 }
             }, 10);
@@ -1664,12 +1643,12 @@ cc.game = {
         var self = this;
         self._initConfig(function(config){
             var CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
-            cc._initSys(config);
+            cc._initSys(config, CONFIG_KEY);
             if(!cc._supportRender){
                 cc.log("Can not support render!")
                 return;
             }
-            cc._initDebugSetting();
+            cc._initDebugSetting(config[CONFIG_KEY.debugMode]);
             self._prepareCalled = true;
 
             var jsList = config[CONFIG_KEY.jsList] || [];
