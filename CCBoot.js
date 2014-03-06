@@ -692,14 +692,42 @@ cc.loader = {
         this.load(resList, cb);
     },
 
+    /**
+     * <p>
+     *     Loads alias map from the contents of a filename.                                        <br/>
+     *                                                                                                                 <br/>
+     *     @note The plist file name should follow the format below:                                                   <br/>
+     *     <?xml version="1.0" encoding="UTF-8"?>                                                                      <br/>
+     *         <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">  <br/>
+     *             <plist version="1.0">                                                                               <br/>
+     *                 <dict>                                                                                          <br/>
+     *                     <key>filenames</key>                                                                        <br/>
+     *                     <dict>                                                                                      <br/>
+     *                         <key>sounds/click.wav</key>                                                             <br/>
+     *                         <string>sounds/click.caf</string>                                                       <br/>
+     *                         <key>sounds/endgame.wav</key>                                                           <br/>
+     *                         <string>sounds/endgame.caf</string>                                                     <br/>
+     *                         <key>sounds/gem-0.wav</key>                                                             <br/>
+     *                         <string>sounds/gem-0.caf</string>                                                       <br/>
+     *                     </dict>                                                                                     <br/>
+     *                     <key>metadata</key>                                                                         <br/>
+     *                     <dict>                                                                                      <br/>
+     *                         <key>version</key>                                                                      <br/>
+     *                         <integer>1</integer>                                                                    <br/>
+     *                     </dict>                                                                                     <br/>
+     *                 </dict>                                                                                         <br/>
+     *              </plist>                                                                                           <br/>
+     * </p>
+     * @param {String} filename  The plist file name.
+     * @param {Function} cb     callback
+     */
     loadAliases : function(url, cb){
         var self = this, dict = self.getRes(url);
-        var filenames = dict["filenames"];
-        if(!filenames){
-            self.load(url, function(err, results){
-                self._handleAliases(results[0], cb);
+        if(!dict){
+            self.load(url, function(results){
+                self._handleAliases(results[0]["filenames"], cb);
             });
-        }else self._handleAliases(filenames, cb);
+        }else self._handleAliases(dict["filenames"], cb);
     },
 
     /**
