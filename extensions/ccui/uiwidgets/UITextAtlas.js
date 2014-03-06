@@ -22,46 +22,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.LABELATLASRENDERERZ = -1;
-/**
- * Base class for ccs.UICCLabelAtlas
- * @class
- * @extends cc.LabelAtlas
- */
-ccs.UICCLabelAtlas = cc.LabelAtlas.extend({
-
-    setProperty: function (string, charMapFile, itemWidth, itemHeight, startCharMap) {
-        this.initWithString(string, charMapFile, itemWidth, itemHeight, startCharMap);
-    },
-
-    draw: function () {
-        if (!this.textureAtlas) {
-            return;
-        }
-
-        cc.AtlasNode.prototype.draw.call(this);
-    },
-    updateDisplayedOpacity: function (opacity) {
-        cc.AtlasNode.prototype.updateDisplayedOpacity.call(this, opacity);
-    }
-});
-
-ccs.UICCLabelAtlas.create = function () {
-    var uiCCLabelAtlas = new ccs.UICCLabelAtlas();
-    if (uiCCLabelAtlas && uiCCLabelAtlas.init()) {
-        return uiCCLabelAtlas;
-    }
-    return null;
-};
+ccui.TEXTATLAS_RENDERER_ZORDER = -1;
 
 /**
- * Base class for ccs.LabelAtlas
+ * Base class for ccui.TextAtlas
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {String}   string  - Content string of the label
  */
-ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
+ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _labelAtlasRenderer: null,
     _stringValue: "",
     _charMapFileName: "",
@@ -69,13 +39,13 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
     _itemHeight: 0,
     _startCharMap: "",
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._labelAtlasRenderer = null;
     },
 
     initRenderer: function () {
-        this._labelAtlasRenderer = ccs.UICCLabelAtlas.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelAtlasRenderer, ccs.LABELATLASRENDERERZ, -1);
+        this._labelAtlasRenderer = new cc.LabelAtlas();
+        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TEXTATLAS_RENDERER_ZORDER, -1);
     },
 
     /**
@@ -93,7 +63,7 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
         this._itemHeight = itemHeight;
         this._startCharMap = startCharMap;
         var renderer = this._labelAtlasRenderer;
-        renderer.setProperty(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
+        renderer.initWithString(stringValue, charMapFile, itemWidth, itemHeight, startCharMap[0]);
         this.updateAnchorPoint();
         this.labelAtlasScaleChangedWithSize();
 
@@ -129,24 +99,24 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
      */
     setAnchorPoint: function (point, y) {
         if (y === undefined) {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
 	        this._labelAtlasRenderer.setAnchorPoint(point);
         } else {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
 	        this._labelAtlasRenderer.setAnchorPoint(point, y);
         }
     },
 	_setAnchorX: function (value) {
-		ccs.Widget.prototype._setAnchorX.call(this, value);
+		ccui.Widget.prototype._setAnchorX.call(this, value);
 		this._labelAtlasRenderer._setAnchorX(value);
 	},
 	_setAnchorY: function (value) {
-		ccs.Widget.prototype._setAnchorY.call(this, value);
+		ccui.Widget.prototype._setAnchorY.call(this, value);
 		this._labelAtlasRenderer._setAnchorY(value);
 	},
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.labelAtlasScaleChangedWithSize();
     },
 
@@ -192,16 +162,24 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
         }
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelAtlasRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelAtlasRenderer);
+    },
+
     /**
      * Returns the "class name" of widget.
      * @returns {string}
      */
     getDescription: function () {
-        return "LabelAtlase";
+        return "LabelAtlas";
     },
 
     createCloneInstance: function () {
-        return ccs.LabelAtlas.create();
+        return ccui.TextAtlas.create();
     },
 
     copySpecialProperties: function (labelAtlas) {
@@ -209,7 +187,7 @@ ccs.LabelAtlas = ccs.Widget.extend(/** @lends ccs.LabelAtlas# */{
     }
 });
 
-window._proto = ccs.LabelAtlas.prototype;
+window._proto = ccui.TextAtlas.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
@@ -219,13 +197,13 @@ delete window._proto;
 /**
  * allocates and initializes a UILabelAtlas.
  * @constructs
- * @return {ccs.LabelAtlas}
+ * @return {ccui.TextAtlas}
  * @example
  * // example
- * var uiLabelAtlas = ccs.LabelAtlas.create();
+ * var uiLabelAtlas = ccui.TextAtlas.create();
  */
-ccs.LabelAtlas.create = function () {
-    var uiLabelAtlas = new ccs.LabelAtlas();
+ccui.TextAtlas.create = function () {
+    var uiLabelAtlas = new ccui.TextAtlas();
     if (uiLabelAtlas && uiLabelAtlas.init()) {
         return uiLabelAtlas;
     }

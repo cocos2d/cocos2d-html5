@@ -25,13 +25,13 @@
 ccs.DisplayFactory = ccs.DisplayFactory || ccs.Class.extend({});
 ccs.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
     switch (displayData.displayType) {
-        case ccs.DisplayType.sprite:
+        case ccs.DISPLAY_TYPE_SPRITE:
             this.addSpriteDisplay(bone, decoDisplay, displayData);
             break;
-        case  ccs.DisplayType.particle:
+        case  ccs.DISPLAY_TYPE_PARTICLE:
             this.addParticleDisplay(bone, decoDisplay, displayData);
             break;
-        case  ccs.DisplayType.armature:
+        case  ccs.DISPLAY_TYPE_ARMATURE:
             this.addArmatureDisplay(bone, decoDisplay, displayData);
             break;
         default:
@@ -40,13 +40,13 @@ ccs.DisplayFactory.addDisplay = function (bone, decoDisplay, displayData) {
 };
 ccs.DisplayFactory.createDisplay = function (bone, decoDisplay) {
     switch (decoDisplay.getDisplayData().displayType) {
-        case ccs.DisplayType.sprite:
+        case ccs.DISPLAY_TYPE_SPRITE:
             this.createSpriteDisplay(bone, decoDisplay);
             break;
-        case ccs.DisplayType.particle:
+        case ccs.DISPLAY_TYPE_PARTICLE:
             this.createParticleDisplay(bone, decoDisplay);
             break;
-        case ccs.DisplayType.armature:
+        case ccs.DISPLAY_TYPE_ARMATURE:
             this.createArmatureDisplay(bone, decoDisplay);
             break;
         default:
@@ -60,15 +60,15 @@ ccs.DisplayFactory.updateDisplay = function (bone,dt, dirty) {
         return;
 
     switch (bone.getDisplayRenderNodeType()) {
-        case ccs.DisplayType.sprite:
+        case ccs.DISPLAY_TYPE_SPRITE:
             if (dirty){
                 display.updateArmatureTransform();
             }
             break;
-        case ccs.DisplayType.particle:
+        case ccs.DISPLAY_TYPE_PARTICLE:
             this.updateParticleDisplay(bone, display, dt);
             break;
-        case ccs.DisplayType.armature:
+        case ccs.DISPLAY_TYPE_ARMATURE:
             this.updateArmatureDisplay(bone, display, dt);
             break;
         default:
@@ -144,7 +144,7 @@ ccs.DisplayFactory.initSpriteDisplay = function(bone, decoDisplay, displayName, 
     if (startPos != -1) {
         textureName = textureName.substring(0, startPos);
     }
-    var textureData = ccs.ArmatureDataManager.getInstance().getTextureData(textureName);
+    var textureData = ccs.armatureDataManager.getTextureData(textureName);
     if (textureData) {
         //! Init display anchorPoint, every Texture have a anchor point
         skin.setAnchorPoint(textureData.pivotX, textureData.pivotY);

@@ -22,55 +22,48 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * LinearGravity
- * @type {Object}
- */
-ccs.LinearGravity = {
-    none: 0,
-    left: 1,
-    top: 2,
-    right: 3,
-    bottom: 4,
-    centerVertical: 5,
-    centerHorizontal: 6
-};
+//LinearGravity
+ccui.LINEAR_GRAVITY_NONE = 0;
+ccui.LINEAR_GRAVITY_LEFT = 1;
+ccui.LINEAR_GRAVITY_TOP = 2;
+ccui.LINEAR_GRAVITY_RIGHT = 3;
+ccui.LINEAR_GRAVITY_BOTTOM = 4;
+ccui.LINEAR_GRAVITY_CENTER_VERTICAL = 5;
+ccui.LINEAR_GRAVITY_CENTER_HORIZONTAL = 6;
 
-/**
- * RelativeAlign
- * @type {Object}
- */
-ccs.RelativeAlign = {
-    alignNone: 0,
-    alignParentTopLeft: 1,
-    alignParentTopCenterHorizontal: 2,
-    alignParentTopRight: 3,
-    alignParentLeftCenterVertical: 4,
-    centerInParent: 5,
-    alignParentRightCenterVertical: 6,
-    alignParentLeftBottom: 7,
-    alignParentBottomCenterHorizontal: 8,
-    alignParentRightBottom: 9,
-    locationAboveLeftAlign: 10,
-    locationAboveCenter: 11,
-    locationAboveRightAlign: 12,
-    locationLeftOfTopAlign: 13,
-    locationLeftOfCenter: 14,
-    locationLeftOfBottomAlign: 15,
-    locationRightOfTopAlign: 16,
-    locationRightOfCenter: 17,
-    locationRightOfBottomAlign: 18,
-    locationBelowLeftAlign: 19,
-    locationBelowCenter: 20,
-    locationBelowRightAlign: 21
-};
+//RelativeAlign
+ccui.RELATIVE_ALIGN_NONE = 0;
+ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT = 1;
+ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL = 2;
+ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT = 3;
+ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL = 4;
+ccui.RELATIVE_ALIGN_PARENT_CENTER = 5;
+ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL = 6;
+ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM = 7;
+ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL = 8;
+ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM = 9;
 
+ccui.RELATIVE_ALIGN_LOCATION_ABOVE_LEFT = 10;
+ccui.RELATIVE_ALIGN_LOCATION_ABOVE_CENTER = 11;
+ccui.RELATIVE_ALIGN_LOCATION_ABOVE_RIGHT = 12;
+
+ccui.RELATIVE_ALIGN_LOCATION_LEFT_TOP = 13;
+ccui.RELATIVE_ALIGN_LOCATION_LEFT_CENTER = 14;
+ccui.RELATIVE_ALIGN_LOCATION_LEFT_BOTTOM = 15;
+
+ccui.RELATIVE_ALIGN_LOCATION_RIGHT_TOP = 16;
+ccui.RELATIVE_ALIGN_LOCATION_RIGHT_CENTER = 17;
+ccui.RELATIVE_ALIGN_LOCATION_RIGHT_BOTTOM = 18;
+
+ccui.RELATIVE_ALIGN_LOCATION_BELOW_TOP = 19;
+ccui.RELATIVE_ALIGN_LOCATION_BELOW_CENTER = 20;
+ccui.RELATIVE_ALIGN_LOCATION_BELOW_BOTTOM = 21;
 /**
- * Base class for ccs.Margin
+ * Base class for ccui.Margin
  * @class
- * @extends ccs.Class
+ * @extends ccui.Class
  */
-ccs.Margin = ccs.Class.extend(/** @lends ccs.Margin# */{
+ccui.Margin = ccui.Class.extend(/** @lends ccui.Margin# */{
     left: 0,
     top: 0,
     right: 0,
@@ -104,7 +97,7 @@ ccs.Margin = ccs.Class.extend(/** @lends ccs.Margin# */{
     },
     /**
      *  check is equals
-     * @param {ccs.Margin} target
+     * @param {ccui.Margin} target
      * @returns {boolean}
      */
     equals: function (target) {
@@ -112,6 +105,6 @@ ccs.Margin = ccs.Class.extend(/** @lends ccs.Margin# */{
     }
 });
 
-ccs.MarginZero = function(){
-   return new ccs.Margin(0,0,0,0);
+ccui.MarginZero = function(){
+   return new ccui.Margin(0,0,0,0);
 };

@@ -22,36 +22,28 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * BlendType
- * @type Object
- */
-ccs.BlendType = {
-    normal: 0,
-    layer: 1,
-    darken: 2,
-    multiply: 3,
-    lighten: 4,
-    screen: 5,
-    overlay: 6,
-    highlight: 7,
-    add: 8,
-    subtract: 9,
-    difference: 10,
-    invert: 11,
-    alpha: 12,
-    erase: 13
-};
-/**
- * DisplayType
- * @type Object
- */
-ccs.DisplayType = {
-    sprite: 0,
-    armature: 1,
-    particle: 2,
-    max: 3
-};
+//BlendType
+ccs.BLEND_TYPE_NORMAL = 0;
+ccs.BLEND_TYPE_LAYER = 1;
+ccs.BLEND_TYPE_DARKEN = 2;
+ccs.BLEND_TYPE_MULTIPLY = 3;
+ccs.BLEND_TYPE_LIGHTEN = 4;
+ccs.BLEND_TYPE_SCREEN = 5;
+ccs.BLEND_TYPE_OVERLAY = 6;
+ccs.BLEND_TYPE_HIGHLIGHT = 7;
+ccs.BLEND_TYPE_ADD = 8;
+ccs.BLEND_TYPE_SUBTRACT = 9;
+ccs.BLEND_TYPE_DIFFERENCE = 10;
+ccs.BLEND_TYPE_INVERT = 11;
+ccs.BLEND_TYPE_ALPHA = 12;
+ccs.BLEND_TYPE_ERASE = 13;
+
+
+//DisplayType
+ccs.DISPLAY_TYPE_SPRITE = 0;
+ccs.DISPLAY_TYPE_ARMATURE = 1;
+ccs.DISPLAY_TYPE_PARTICLE = 2;
+ccs.DISPLAY_TYPE_MAX = 3;
 
 /**
  * Base class for ccs.BaseData objects.
@@ -182,10 +174,10 @@ ccs.BaseData = ccs.Class.extend(/** @lends ccs.BaseData# */{
  * @extends ccs.Class
  */
 ccs.DisplayData = ccs.Class.extend(/** @lends ccs.DisplayData# */{
-    displayType:ccs.DisplayType.max,
+    displayType:ccs.DISPLAY_TYPE_MAX,
     displayName:"",
     ctor:function () {
-        this.displayType = ccs.DisplayType.max;
+        this.displayType = ccs.DISPLAY_TYPE_MAX;
     },
     /**
      * change display name to texture type
@@ -221,7 +213,7 @@ ccs.SpriteDisplayData = ccs.DisplayData.extend(/** @lends ccs.SpriteDisplayData#
     skinData:null,
     ctor:function () {
         this.skinData = new ccs.BaseData();
-        this.displayType = ccs.DisplayType.sprite;
+        this.displayType = ccs.DISPLAY_TYPE_SPRITE;
     },
     /**
      * copy data
@@ -242,7 +234,7 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
     displayName:"",
     ctor:function () {
         this.displayName = "";
-        this.displayType = ccs.DisplayType.armature;
+        this.displayType = ccs.DISPLAY_TYPE_ARMATURE;
     }
 });
 
@@ -253,7 +245,7 @@ ccs.ArmatureDisplayData = ccs.DisplayData.extend(/** @lends ccs.ArmatureDisplayD
  */
 ccs.ParticleDisplayData = ccs.DisplayData.extend(/** @lends ccs.ParticleDisplayData# */{
     ctor:function () {
-        this.displayType = ccs.DisplayType.particle;
+        this.displayType = ccs.DISPLAY_TYPE_PARTICLE;
     }
 });
 

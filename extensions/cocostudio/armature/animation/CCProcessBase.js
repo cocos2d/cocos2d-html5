@@ -29,43 +29,43 @@
  * @constant
  * @type {number}
  */
-CC_ANIMATION_TYPE_SINGLE_FRAME = -4;
+ccs.ANIMATION_TYPE_SINGLE_FRAME = -4;
 /**
  * the animation isn't loop
  * @constant
  * @type {number}
  */
-CC_ANIMATION_TYPE_NO_LOOP = -3;
+ccs.ANIMATION_TYPE_NO_LOOP = -3;
 /**
  * the animation to loop from front
  * @constant
  * @type {number}
  */
-CC_ANIMATION_TYPE_TO_LOOP_FRONT = -2;
+ccs.ANIMATION_TYPE_TO_LOOP_FRONT = -2;
 /**
  * the animation to loop from back
  * @constant
  * @type {number}
  */
-CC_ANIMATION_TYPE_TO_LOOP_BACK = -1;
+ccs.ANIMATION_TYPE_TO_LOOP_BACK = -1;
 /**
  * the animation loop from front
  * @constant
  * @type {number}
  */
-CC_ANIMATION_TYPE_LOOP_FRONT = 0;
+ccs.ANIMATION_TYPE_LOOP_FRONT = 0;
 /**
  * the animation loop from back
  * @constant
  * @type {number}
  */
-CC_ANIMATION_TYPE_LOOP_BACK = 1;
+ccs.ANIMATION_TYPE_LOOP_BACK = 1;
 /**
  * the animation max
  * @constant
  * @type {number}
  */
-CC_ANIMATION_TYPE_MAX = 2;
+ccs.ANIMATION_TYPE_MAX = 2;
 
 /**
  * Base class for ccs.ProcessBase objects.
@@ -107,7 +107,7 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
         this._currentPercent = 0.0;
         this._durationTween = 0;
         this._rawDuration = 0;
-        this._loopType = CC_ANIMATION_TYPE_LOOP_BACK;
+        this._loopType = ccs.ANIMATION_TYPE_LOOP_BACK;
         this._tweenEasing = ccs.TweenType.linear;
         this.animationInternal = 1/60;
         this._curFrameIndex = 0;
@@ -199,11 +199,11 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
      */
     gotoFrame:function (frameIndex) {
         var locLoopType = this._loopType;
-        if (locLoopType == CC_ANIMATION_TYPE_NO_LOOP) {
-            locLoopType = CC_ANIMATION_TYPE_MAX;
+        if (locLoopType == ccs.ANIMATION_TYPE_NO_LOOP) {
+            locLoopType = ccs.ANIMATION_TYPE_MAX;
         }
-        else if (locLoopType == CC_ANIMATION_TYPE_TO_LOOP_FRONT) {
-            locLoopType = CC_ANIMATION_TYPE_LOOP_FRONT;
+        else if (locLoopType == ccs.ANIMATION_TYPE_TO_LOOP_FRONT) {
+            locLoopType = ccs.ANIMATION_TYPE_LOOP_FRONT;
         }
         this._loopType = locLoopType;
         this._curFrameIndex = frameIndex;

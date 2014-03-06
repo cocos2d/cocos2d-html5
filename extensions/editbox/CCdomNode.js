@@ -33,9 +33,9 @@ cc.DOM = {};
 /**
  * @function
  * @private
- * @param x
+ * @param node
  */
-cc.DOM.addMethods = function (node) {
+cc.DOM._addMethods = function (node) {
     for (var funcs in cc.DOM.methods) {
 	    node[funcs] = cc.DOM.methods[funcs];
     }
@@ -351,15 +351,15 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     /**
      * replace resume Schedule and actions of ccNode
      */
-    resumeSchedulerAndActions:function () {
+    resume:function () {
         this.getScheduler().resumeTarget(this);
         this.getActionManager().resumeTarget(this);
+        cc.eventManager.resumeTarget(this);
         //if dom does not have parent, but node has no parent and its running
         if (this.dom && !this.dom.parentNode) {
             if (!this.getParent()) {
                 this.dom.appendTo(cc.container);
-            }
-            else {
+            } else {
                 cc.DOM.parentDOM(this);
             }
         }
@@ -370,9 +370,10 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     /**
      * replace pause Schedule and Actions of ccNode
      */
-    pauseSchedulerAndActions:function () {
+    pause:function () {
         this.getScheduler().pauseTarget(this);
         this.getActionManager().pauseTarget(this);
+        cc.eventManager.pauseTarget(this);
         if (this.dom) {
             this.dom.style.visibility = 'hidden';
         }
@@ -588,7 +589,7 @@ cc.DOM.placeHolder = function (x) {
     x.dom.style.margin = 0;
     cc.DOM.setTransform(x);
     x.dom.transforms();
-    cc.DOM.addMethods(x);
+    cc.DOM._addMethods(x);
     //x.dom.style.border = 'red 1px dotted';
 };
 
@@ -623,7 +624,7 @@ cc.DOM.convert = function (nodeObject) {
         } else {
             cc.log('DOM converter only supports sprite and menuitems yet');
         }
-        cc.DOM.addMethods(args[i]);
+        cc.DOM._addMethods(args[i]);
         args[i].visit = function () {
         };
         args[i].transform = function () {

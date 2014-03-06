@@ -46,7 +46,7 @@ ccs.ActionNode = ccs.Class.extend({
         this._actionSpawn = null;
         this._action = null;
         this._frameArray = [];
-        this._frameArrayNum = ccs.FrameType.max;
+        this._frameArrayNum = ccs.FRAME_TYPE_MAX;
         for (var i = 0; i < this._frameArrayNum; i++) {
             this._frameArray.push([]);
         }
@@ -67,9 +67,9 @@ ccs.ActionNode = ccs.Class.extend({
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
                 var actionFrame = new ccs.ActionMoveFrame();
-                actionFrame.setFrameIndex(frameInex);
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setPosition(positionX, positionY);
-                var actionArray = this._frameArray[ccs.FrameType.move];
+                var actionArray = this._frameArray[ccs.FRAME_TYPE_MOVE];
                 actionArray.push(actionFrame);
             }
 
@@ -77,28 +77,28 @@ ccs.ActionNode = ccs.Class.extend({
                 var scaleX = actionFrameDic["scalex"];
                 var scaleY = actionFrameDic["scaley"];
                 var actionFrame = new ccs.ActionScaleFrame();
-                actionFrame.setFrameIndex(frameInex);
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setScaleX(scaleX);
                 actionFrame.setScaleY(scaleY);
-                var actionArray = this._frameArray[ccs.FrameType.scale];
+                var actionArray = this._frameArray[ccs.FRAME_TYPE_SCALE];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic["rotation"] !== undefined) {
                 var rotation = actionFrameDic["rotation"];
                 var actionFrame = new ccs.ActionRotationFrame();
-                actionFrame.setFrameIndex(frameInex);
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setRotation(rotation);
-                var actionArray = this._frameArray[ccs.FrameType.rotate];
+                var actionArray = this._frameArray[ccs.FRAME_TYPE_ROTATE];
                 actionArray.push(actionFrame);
             }
 
             if (actionFrameDic["opacity"] !== undefined) {
                 var opacity = actionFrameDic["opacity"];
                 var actionFrame = new ccs.ActionFadeFrame();
-                actionFrame.setFrameIndex(frameInex);
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setOpacity(opacity);
-                var actionArray = this._frameArray[ccs.FrameType.fade];
+                var actionArray = this._frameArray[ccs.FRAME_TYPE_FADE];
                 actionArray.push(actionFrame);
             }
 
@@ -107,9 +107,9 @@ ccs.ActionNode = ccs.Class.extend({
                 var colorG = actionFrameDic["colorg"];
                 var colorB = actionFrameDic["colorb"];
                 var actionFrame = new ccs.ActionTintFrame();
-                actionFrame.setFrameIndex(frameInex);
+                actionFrame.frameIndex = frameInex;
                 actionFrame.setColor(cc.color(colorR, colorG, colorB));
-                var actionArray = this._frameArray[ccs.FrameType.tint];
+                var actionArray = this._frameArray[ccs.FRAME_TYPE_TINT];
                 actionArray.push(actionFrame);
             }
             actionFrameDic = null;
@@ -118,8 +118,8 @@ ccs.ActionNode = ccs.Class.extend({
     },
 
     initActionNodeFromRoot: function (root) {
-        if (root instanceof ccs.Widget) {
-            var widget = ccs.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
+        if (root instanceof ccui.Widget) {
+            var widget = ccui.UIHelper.seekActionWidgetByActionTag(root, this.getActionTag());
             if (widget) {
                 this.setObject(widget);
             }
@@ -183,7 +183,7 @@ ccs.ActionNode = ccs.Class.extend({
         if (this._object instanceof cc.Node) {
             return this._object;
         }
-        else if (this._object instanceof ccs.Widget) {
+        else if (this._object instanceof ccui.Widget) {
             return this._object;
         }
         return null;
@@ -198,7 +198,7 @@ ccs.ActionNode = ccs.Class.extend({
         if (frame == null) {
             return;
         }
-        var frameType = frame.getFrameType();
+        var frameType = frame.frameType;
         var array = this._frameArray[frameType];
         array[index] = frame;
     },
@@ -211,7 +211,7 @@ ccs.ActionNode = ccs.Class.extend({
         if (!frame) {
             return;
         }
-        var frameType = frame.getFrameType();
+        var frameType = frame.frameType;
         var array = this._frameArray[frameType];
         array.push(frame);
     },
@@ -224,7 +224,7 @@ ccs.ActionNode = ccs.Class.extend({
         if (frame == null) {
             return;
         }
-        var frameType = frame.getFrameType();
+        var frameType = frame.frameType;
         var array = this._frameArray[frameType];
         cc.arrayRemoveObject(array, frame);
     },
@@ -257,7 +257,7 @@ ccs.ActionNode = ccs.Class.extend({
                 var locFrame = locArray[j];
                 if (j != 0) {
                     var locSrcFrame = locArray[j - 1];
-                    var locDuration = (locFrame.getFrameIndex() - locSrcFrame.getFrameIndex()) * this.getUnitTime();
+                    var locDuration = (locFrame.frameIndex - locSrcFrame.frameIndex) * this.getUnitTime();
                     var locAction = locFrame.getAction(locDuration);
                     locSequenceArray.push(locAction);
                 }
@@ -325,7 +325,7 @@ ccs.ActionNode = ccs.Class.extend({
             }
             locIsFindFrame = true;
             var locFrame = locArray[0];
-            var locFrameIndex = locFrame.getFrameIndex();
+            var locFrameIndex = locFrame.frameIndex;
             locFrameindex = locFrameindex > locFrameIndex ? locFrameIndex : locFrameindex;
         }
         if (!locIsFindFrame) {
@@ -348,7 +348,7 @@ ccs.ActionNode = ccs.Class.extend({
             }
             locIsFindFrame = true;
             var locFrame = locArray[locArray.length - 1];
-            var locFrameIndex = locFrame.getFrameIndex();
+            var locFrameIndex = locFrame.frameIndex;
             locFrameindex = locFrameindex < locFrameIndex ? locFrameIndex : locFrameindex;
         }
         if (!locIsFindFrame) {
@@ -373,20 +373,20 @@ ccs.ActionNode = ccs.Class.extend({
 
             for (var j = 0; j < locArray.length; j++) {
                 var locFrame = locArray[j];
-                if (locFrame.getFrameIndex() * locUnitTime == time) {
+                if (locFrame.frameIndex * locUnitTime == time) {
                     this.easingToFrame(1.0, 1.0, locFrame);
                     locIsFindFrame = true;
                     break;
                 }
-                else if (locFrame.getFrameIndex() * locUnitTime > time) {
+                else if (locFrame.frameIndex * locUnitTime > time) {
                     if (j == 0) {
                         this.easingToFrame(1.0, 1.0, locFrame);
                         locIsFindFrame = false;
                     }
                     else {
                         var locSrcFrame = locArray[j - 1];
-                        var locDuration = (locFrame.getFrameIndex() - locSrcFrame.getFrameIndex()) * locUnitTime;
-                        var locDelaytime = time - locSrcFrame.getFrameIndex() * locUnitTime;
+                        var locDuration = (locFrame.frameIndex - locSrcFrame.frameIndex) * locUnitTime;
+                        var locDelaytime = time - locSrcFrame.frameIndex * locUnitTime;
                         this.easingToFrame(locDuration, 1.0, locSrcFrame);
                         this.easingToFrame(locDuration, locDelaytime / locDuration, locFrame);
                         locIsFindFrame = true;

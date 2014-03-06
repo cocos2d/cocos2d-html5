@@ -22,23 +22,22 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * slider event type
- * @type {Obejct}
- */
-ccs.SliderEventType = {percent_changed: 0};
+//Slider event type
+ccui.SLIDER_EVENT_PERCENT_CHANGED = 0;
 
-ccs.BASEBARRENDERERZ = -3;
-ccs.PROGRESSBARRENDERERZ = -2;
-ccs.SLIDBALLRENDERERZ = -1;
+//Render zorder
+ccui.SLIDER_BASEBAR_RENDERER_ZORDER = -3;
+ccui.SLIDER_PROGRESSBAR_RENDERER_ZORDER = -2;
+ccui.SLIDER_BALL_RENDERER_ZORDER = -1;
+
 /**
- * Base class for ccs.Slider
+ * Base class for ccui.Slider
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {Number}   percent     - The current progress of loadingbar
  */
-ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
+ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _barRenderer: null,
     _progressBarRenderer: null,
     _progressBarTextureSize: null,
@@ -66,7 +65,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     _ballDTexType: null,
     _isTextureLoaded: false,
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         this._progressBarTextureSize = cc.size(0, 0);
@@ -87,11 +86,11 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
         this._sliderEventListener = null;
         this._sliderEventSelector = null;
-        this._barTexType = ccs.TextureResType.local;
-        this._progressBarTexType = ccs.TextureResType.local;
-        this._ballNTexType = ccs.TextureResType.local;
-        this._ballPTexType = ccs.TextureResType.local;
-        this._ballDTexType = ccs.TextureResType.local;
+        this._barTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._progressBarTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._ballNTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._ballPTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._ballDTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
         this._isTextureLoaded = false;
     },
 
@@ -99,8 +98,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();
         this._progressBarRenderer.setAnchorPoint(0.0, 0.5);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccui.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._progressBarRenderer, ccui.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
         this._slidBallNormalRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer = cc.Sprite.create();
         this._slidBallPressedRenderer.setVisible(false);
@@ -110,33 +109,33 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._slidBallRenderer.addChild(this._slidBallNormalRenderer);
         this._slidBallRenderer.addChild(this._slidBallPressedRenderer);
         this._slidBallRenderer.addChild(this._slidBallDisabledRenderer);
-        cc.NodeRGBA.prototype.addChild.call(this, this._slidBallRenderer, ccs.SLIDBALLRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._slidBallRenderer, ccui.SLIDER_BALL_RENDERER_ZORDER, -1);
     },
 
     /**
      * Load texture for slider bar.
      * @param {String} fileName
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._textureFile = fileName;
         this._barTexType = texType;
         var barRenderer = this._barRenderer;
         switch (this._barTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 barRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 barRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(barRenderer);
         this.barRendererScaleChangedWithSize();
 
         if (!barRenderer.textureLoaded()) {
@@ -149,27 +148,27 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     /**
      * Load dark state texture for slider progress bar.
      * @param {String} fileName
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadProgressBarTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._progressBarTextureFile = fileName;
         this._progressBarTexType = texType;
         var progressBarRenderer = this._progressBarRenderer;
         switch (this._progressBarTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 progressBarRenderer.initWithFile(fileName);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 progressBarRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(progressBarRenderer);
         progressBarRenderer.setAnchorPoint(0.0, 0.5);
         var locSize = progressBarRenderer.getContentSize();
         this._progressBarTextureSize.width = locSize.width;
@@ -189,11 +188,6 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
     },
 
-    _updateDisplay:function(){
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
-    },
-
     /**
      * Sets if slider is using scale9 renderer.
      * @param {Boolean} able
@@ -204,8 +198,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
 
         this._scale9Enabled = able;
-        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._progressBarRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._barRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._progressBarRenderer, true);
         this._barRenderer = null;
         this._progressBarRenderer = null;
         if (this._scale9Enabled) {
@@ -218,8 +212,8 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
         this.loadBarTexture(this._textureFile, this._barTexType);
         this.loadProgressBarTexture(this._progressBarTextureFile, this._progressBarTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BASEBARRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._progressBarRenderer, ccs.PROGRESSBARRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccui.SLIDER_BASEBAR_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._progressBarRenderer, ccui.SLIDER_PROGRESSBAR_RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -246,7 +240,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -305,7 +299,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
      * @param {String} normal
      * @param {String} pressed
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTextures: function (normal, pressed, disabled, texType) {
         this.loadSlidBallTextureNormal(normal, texType);
@@ -316,76 +310,76 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     /**
      * Load normal state texture for slider ball.
      * @param {String} normal
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._slidBallNormalTextureFile = normal;
         this._ballNTexType = texType;
         switch (this._ballNTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._slidBallNormalRenderer.initWithFile(normal);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._slidBallNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._slidBallNormalRenderer);
     },
 
     /**
      * Load selected state texture for slider ball.
      * @param {String} pressed
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTexturePressed: function (pressed, texType) {
         if (!pressed) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._slidBallPressedTextureFile = pressed;
         this._ballPTexType = texType;
         switch (this._ballPTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._slidBallPressedRenderer.initWithFile(pressed);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._slidBallPressedRenderer.initWithSpriteFrameName(pressed);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._slidBallPressedRenderer);
     },
 
     /**
      * Load dark state texture for slider ball.
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadSlidBallTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._slidBallDisabledTextureFile = disabled;
         this._ballDTexType = texType;
         switch (this._ballDTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 this._slidBallDisabledRenderer.initWithFile(disabled);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 this._slidBallDisabledRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(this._slidBallDisabledRenderer);
     },
 
     /**
@@ -410,7 +404,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         }
         else {
             var x = 0, y = 0;
-            if (this._progressBarTexType == ccs.TextureResType.plist) {
+            if (this._progressBarTexType == ccui.TEXTURE_RES_TYPE_PLIST) {
                 var barNode = this._progressBarRenderer;
                 if (barNode) {
                     var to = barNode.getTextureRect()._origin;
@@ -423,7 +417,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     },
 
     onTouchBegan: function (touch , event) {
-        var pass = ccs.Widget.prototype.onTouchBegan.call(this,touch , event);
+        var pass = ccui.Widget.prototype.onTouchBegan.call(this,touch , event);
         if(this._hitted){
             var nsp = this.convertToNodeSpace(this._touchStartPos);
             this.setPercent(this.getPercentWithBallPos(nsp.x));
@@ -443,11 +437,11 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     },
 
     onTouchEnded: function (touch , event) {
-        ccs.Widget.prototype.onTouchEnded.call(this, touch , event);
+        ccui.Widget.prototype.onTouchEnded.call(this, touch , event);
     },
 
     onTouchCancelled: function (touch , event) {
-        ccs.Widget.prototype.onTouchCancelled.call(this, touch , event);
+        ccui.Widget.prototype.onTouchCancelled.call(this, touch , event);
     },
 
     /**
@@ -471,7 +465,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
 
     percentChangedEvent: function () {
         if (this._sliderEventListener && this._sliderEventSelector) {
-            this._sliderEventSelector.call(this._sliderEventListener, this, ccs.SliderEventType.percent_changed);
+            this._sliderEventSelector.call(this._sliderEventListener, this, ccui.SLIDER_EVENT_PERCENT_CHANGED);
         }
     },
 
@@ -484,7 +478,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     },
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.barRendererScaleChangedWithSize();
         this.progressBarRendererScaleChangedWithSize();
     },
@@ -588,6 +582,22 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._slidBallDisabledRenderer.setVisible(true);
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._barRenderer);
+        this.updateColorToRenderer(this._progressBarRenderer);
+        this.updateColorToRenderer(this._slidBallNormalRenderer);
+        this.updateColorToRenderer(this._slidBallPressedRenderer);
+        this.updateColorToRenderer(this._slidBallDisabledRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._barRenderer);
+        this.updateOpacityToRenderer(this._progressBarRenderer);
+        this.updateOpacityToRenderer(this._slidBallNormalRenderer);
+        this.updateOpacityToRenderer(this._slidBallPressedRenderer);
+        this.updateOpacityToRenderer(this._slidBallDisabledRenderer);
+    },
+
     /**
      * Returns the "class name" of widget.
      * @returns {string}
@@ -597,7 +607,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     },
 
     createCloneInstance: function () {
-        return ccs.Slider.create();
+        return ccui.Slider.create();
     },
 
     copySpecialProperties: function (slider) {
@@ -612,7 +622,7 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
     }
 });
 
-window._proto = ccs.Slider.prototype;
+window._proto = ccui.Slider.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);
@@ -622,13 +632,13 @@ delete window._proto;
 /**
  * allocates and initializes a UISlider.
  * @constructs
- * @return {ccs.Slider}
+ * @return {ccui.Slider}
  * @example
  * // example
- * var uiSlider = ccs.Slider.create();
+ * var uiSlider = ccui.Slider.create();
  */
-ccs.Slider.create = function () {
-    var uiSlider = new ccs.Slider();
+ccui.Slider.create = function () {
+    var uiSlider = new ccui.Slider();
     if (uiSlider && uiSlider.init()) {
         return uiSlider;
     }

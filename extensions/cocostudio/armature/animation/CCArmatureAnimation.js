@@ -253,14 +253,14 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
 
         if (this._rawDuration == 0) {
-            this._loopType = CC_ANIMATION_TYPE_SINGLE_FRAME;
+            this._loopType = ccs.ANIMATION_TYPE_SINGLE_FRAME;
         }
         else {
             if (loop) {
-                this._loopType = CC_ANIMATION_TYPE_TO_LOOP_FRONT;
+                this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;
             }
             else {
-                this._loopType = CC_ANIMATION_TYPE_NO_LOOP;
+                this._loopType = ccs.ANIMATION_TYPE_NO_LOOP;
             }
             this._durationTween = durationTween;
         }
@@ -473,8 +473,8 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         var locCurrentPercent = this._currentPercent;
         if (locCurrentPercent >= 1) {
             switch (this._loopType) {
-                case CC_ANIMATION_TYPE_NO_LOOP:
-                    this._loopType = CC_ANIMATION_TYPE_MAX;
+                case ccs.ANIMATION_TYPE_NO_LOOP:
+                    this._loopType = ccs.ANIMATION_TYPE_MAX;
                     this._currentFrame = (locCurrentPercent - 1) * this._nextFrameIndex;
                     locCurrentPercent = this._currentFrame / this._durationTween;
                     if (locCurrentPercent < 1.0) {
@@ -482,16 +482,16 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
                         this.movementEvent(this._armature, ccs.MovementEventType.start, this._movementID);
                         break;
                     }
-                case CC_ANIMATION_TYPE_MAX:
-                case CC_ANIMATION_TYPE_SINGLE_FRAME:
+                case ccs.ANIMATION_TYPE_MAX:
+                case ccs.ANIMATION_TYPE_SINGLE_FRAME:
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
                     this.movementEvent(this._armature, ccs.MovementEventType.complete, this._movementID);
                     this.updateMovementList();
                     break;
-                case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
-                    this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
+                case ccs.ANIMATION_TYPE_TO_LOOP_FRONT:
+                    this._loopType = ccs.ANIMATION_TYPE_LOOP_FRONT;
                     locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
                     this._currentFrame = this._nextFrameIndex == 0 ? 0 : ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;

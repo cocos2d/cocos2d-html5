@@ -23,21 +23,15 @@
  ****************************************************************************/
 
 /**
- * Base class for ccs.SceneReader
- * @class
- * @extends ccs.Class
+ * Base singleton object for ccs.sceneReader
+ * @object
  */
-ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
+ccs.sceneReader = /** @lends ccs.SceneReader# */{
     _baseBath:"",
     _listener:null,
     _selector:null,
     _node: null,
-    ctor: function () {
-        this._instance = null;
-        this._baseBath = "";
-        this._listener = null;
-        this._selector = null;
-    },
+
     /**
      * create node with json file that exported by cocostudio scene editor
      * @param pszFileName
@@ -173,7 +167,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     var subData = armature_data[0];
                     var name = subData["name"];
 
-                    ccs.ArmatureDataManager.getInstance().addArmatureFileInfo(path);
+                    ccs.armatureDataManager.addArmatureFileInfo(path);
 
                     var armature = ccs.Armature.create(name);
                     var render = ccs.ComRender.create(armature, "CCArmature");
@@ -238,7 +232,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                     this._callSelector(audio, subDict);
                 }
                 else if (className == "GUIComponent") {
-                    var widget = ccs.GUIReader.getInstance().widgetFromJsonFile(path);
+                    var widget = ccs.guiReader.widgetFromJsonFile(path);
                     var render = ccs.ComRender.create(widget, "GUIComponent");
                     if (comName != null) {
                         render.setName(comName);
@@ -334,34 +328,16 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
             this._selector.call(this._listener,obj,subDict);
         }
     },
+
+	version: function () {
+		return "1.2.0.0";
+	},
+
     /**
-     * purge instance
+     * Clear data
      */
-    purge: function () {
-        cc.log("deprecated. purge is a static class now. Use 'ccs.SceneReader.purge()' instead.");
-        this._instance = null;
+    clear: function () {
+	    ccs.triggerManager.removeAll();
+	    cc.audioEngine.end();
     }
-});
-ccs.SceneReader._instance = null;
-/**
- * get a singleton SceneReader
- * @function
- * @return {ccs.SceneReader}
- */
-ccs.SceneReader.getInstance = function () {
-    if (!this._instance) {
-        this._instance = new ccs.SceneReader();
-    }
-    return this._instance;
-};
-/**
- * purge instance
- */
-ccs.SceneReader.purge = function () {
-    ccs.TriggerMng.getInstance().destroyInstance();
-    cc.audioEngine.end();
-    this._instance = null;
-};
-ccs.SceneReader.sceneReaderVersion = function () {
-    return "1.2.0.0";
 };

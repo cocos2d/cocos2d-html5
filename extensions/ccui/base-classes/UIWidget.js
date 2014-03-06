@@ -22,87 +22,57 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * bright style
- * @type {Object}
- */
-ccs.BrightStyle = {
-    none: -1,
-    normal: 0,
-    highlight: 1
-};
+//bright style
+ccui.BRIGHT_STYLE_NONE = -1;
+ccui.BRIGHT_STYLE_NORMAL = 0;
+ccui.BRIGHT_STYLE_HIGH_LIGHT = 1;
+
+//widget type
+ccui.WIDGET_TYPE_WIDGET = 0;
+ccui.WIDGET_TYPE_CONTAINER = 1;
+
+//texture resource type
+ccui.TEXTURE_RES_TYPE_LOCAL = 0;
+ccui.TEXTURE_RES_TYPE_PLIST = 1;
+
+//touch event type
+ccui.TOUCH_EVENT_TYPE_BAGAN = 0;
+ccui.TOUCH_EVENT_TYPE_MOVED = 1;
+ccui.TOUCH_EVENT_TYPE_ENDED = 2;
+ccui.TOUCH_EVENT_TYPE_CANCELED = 3;
+
+//size type
+ccui.SIZE_TYPE_ABSOLUTE = 0;
+ccui.SIZE_TYPE_PERCENT = 1;
+
+//position type
+ccui.POSITION_TYPE_ABSOLUTE = 0;
+ccui.POSITION_TYPE_PERCENT = 1;
 
 /**
- * widget type
- * @type {Object}
- */
-ccs.WidgetType = {
-    widget: 0, //control
-    container: 1 //container
-};
-
-/**
- * texture resource type
- * @type {Object}
- */
-ccs.TextureResType = {
-    local: 0,
-    plist: 1
-};
-
-/**
- * touch event type
- * @type {Object}
- */
-ccs.TouchEventType = {
-    began: 0,
-    moved: 1,
-    ended: 2,
-    canceled: 3
-};
-
-/**
- * size type
- * @type {Object}
- */
-ccs.SizeType = {
-    absolute: 0,
-    percent: 1
-};
-
-/**
- * position type
- * @type {Object}
- */
-ccs.PositionType = {
-    absolute: 0,
-    percent: 1
-};
-
-/**
- * Base class for ccs.Widget
+ * Base class for ccui.Widget
  * @sample
- * var uiWidget = ccs.Widget.create();
+ * var uiWidget = ccui.Widget.create();
  * this.addChild(uiWidget);
  * @class
- * @extends ccs.NodeRGBA
+ * @extends ccui.Node
  *
  * @property {Number}           xPercent        - Position x in percentage of width
  * @property {Number}           yPercent        - Position y in percentage of height
  * @property {Number}           widthPercent    - Width in percentage of parent width
  * @property {Number}           heightPercent   - Height in percentage of parent height
- * @property {ccs.Widget}       widgetParent    - <@readonly> The direct parent when it's a widget also, otherwise equals null
+ * @property {ccui.Widget}       widgetParent    - <@readonly> The direct parent when it's a widget also, otherwise equals null
  * @property {Boolean}          enabled         - Indicate whether the widget is enabled
  * @property {Boolean}          focused         - Indicate whether the widget is focused
- * @property {ccs.SizeType}     sizeType        - The size type of the widget
- * @property {ccs.WidgetType}   widgetType      - <@readonly> The type of the widget
+ * @property {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT}     sizeType        - The size type of the widget
+ * @property {ccui.WIDGET_TYPE_WIDGET|ccui.WIDGET_TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
  * @property {Boolean}          touchEnabled    - Indicate whether touch events are enabled
  * @property {Boolean}          updateEnabled   - Indicate whether the update function is scheduled
  * @property {Boolean}          bright          - Indicate whether the widget is bright
  * @property {String}           name            - The name of the widget
  * @property {Number}           actionTag       - The action tag of the widget
  */
-ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
+ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _enabled: true,            ///< Highest control of widget
     _bright: true,             ///< is this widget bright
     _touchEnabled: false,       ///< is this widget touch endabled
@@ -135,14 +105,15 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     _hitted: false,
     _nodes: null,
     _touchListener : null,
+    _color:null,
     ctor: function () {
-        cc.NodeRGBA.prototype.ctor.call(this);
+        cc.Node.prototype.ctor.call(this);
         this._enabled = true;
         this._bright = true;
         this._touchEnabled = false;
         this._touchPassedEnabled = false;
         this._focus = false;
-        this._brightStyle = ccs.BrightStyle.none;
+        this._brightStyle = ccui.BRIGHT_STYLE_NONE;
         this._updateEnabled = false;
         this._touchStartPos = cc.p(0,0);
         this._touchMovePos = cc.p(0,0);
@@ -150,7 +121,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._touchEventListener = null;
         this._touchEventSelector = null;
         this._name = "default";
-        this._widgetType = ccs.WidgetType.widget;
+        this._widgetType = ccui.WIDGET_TYPE_WIDGET;
         this._actionTag = 0;
         this._size = cc.size(0, 0);
         this._customSize = cc.size(0, 0);
@@ -158,13 +129,14 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._ignoreSize = false;
         this._widgetChildren = [];
         this._affectByClipping = false;
-        this._sizeType = ccs.SizeType.absolute;
+        this._sizeType = ccui.SIZE_TYPE_ABSOLUTE;
         this._sizePercent = cc.p(0,0);
-        this.positionType = ccs.PositionType.absolute;
+        this.positionType = ccui.POSITION_TYPE_ABSOLUTE;
         this._positionPercent = cc.p(0,0);
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
         this._nodes = [];
+        this._color = cc.color(255,255,255,255);
         this._touchListener = null;
     },
 
@@ -173,12 +145,10 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @returns {boolean}
      */
     init: function () {
-        if (cc.NodeRGBA.prototype.init.call(this)){
+        if (cc.Node.prototype.init.call(this)){
             this._layoutParameterDictionary = {};
             this._widgetChildren = [];
             this.initRenderer();
-            this.setCascadeColorEnabled(true);
-            this.setCascadeOpacityEnabled(true);
             this.setBright(true);
             this.ignoreContentAdaptWithSize(true);
             this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -188,18 +158,18 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     onEnter: function () {
         this.updateSizeAndPosition();
-        cc.NodeRGBA.prototype.onEnter.call(this);
+        cc.Node.prototype.onEnter.call(this);
     },
 
     visit: function (ctx) {
         if (this._enabled) {
-            cc.NodeRGBA.prototype.visit.call(this,ctx);
+            cc.Node.prototype.visit.call(this,ctx);
         }
     },
 
     sortAllChildren: function () {
         this._reorderWidgetChildDirty = this._reorderChildDirty;
-        cc.NodeRGBA.prototype.sortAllChildren.call(this);
+        cc.Node.prototype.sortAllChildren.call(this);
         if (this._reorderWidgetChildDirty) {
             var _children = this._widgetChildren;
             var i, j, length = _children.length, tempChild;
@@ -228,13 +198,13 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Adds a child to the container.
-     * @param {ccs.Widget} widget
+     * @param {ccui.Widget} widget
      * @param {Number} zOrder
      * @param {Number} tag
      */
     addChild: function (widget, zOrder, tag) {
-        if(widget instanceof ccs.Widget){
-            cc.NodeRGBA.prototype.addChild.call(this, widget, zOrder, tag);
+        if(widget instanceof ccui.Widget){
+            cc.Node.prototype.addChild.call(this, widget, zOrder, tag);
             this._widgetChildren.push(widget);
             return;
         }
@@ -247,7 +217,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     /**
      *
      * @param tag
-     * @returns {ccs.Widget}
+     * @returns {ccui.Widget}
      */
     getChildByTag:function(tag){
         var __children = this._widgetChildren;
@@ -279,7 +249,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     getWidgetParent: function () {
         var widget = this.getParent();
-        if(widget instanceof ccs.Widget){
+        if(widget instanceof ccui.Widget){
             return widget;
         }
         return null;
@@ -287,15 +257,15 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * remove  child
-     * @param {ccs.Widget} widget
+     * @param {ccui.Widget} widget
      * @param {Boolean} cleanup
      */
     removeChild: function (widget, cleanup) {
-        if(!(widget instanceof ccs.Widget)){
-            cc.log("child must a type of ccs.Widget");
+        if(!(widget instanceof ccui.Widget)){
+            cc.log("child must a type of ccui.Widget");
             return;
         }
-        cc.NodeRGBA.prototype.removeChild.call(this, widget, cleanup);
+        cc.Node.prototype.removeChild.call(this, widget, cleanup);
         cc.arrayRemoveObject(this._widgetChildren, widget);
     },
 
@@ -316,7 +286,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     removeAllChildren: function (cleanup) {
         for (var i = 0; i < this._widgetChildren.length; i++) {
             var widget = this._widgetChildren[i];
-            cc.NodeRGBA.prototype.removeChild.call(this, widget, cleanup);
+            cc.Node.prototype.removeChild.call(this, widget, cleanup);
         }
         this._widgetChildren.length = 0;
     },
@@ -338,7 +308,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     /**
      * Gets a child from the container with its name
      * @param {string} name
-     * @returns {ccs.Widget}
+     * @returns {ccui.Widget}
      */
     getChildByName: function (name) {
         var arrayChildren = this._widgetChildren;
@@ -364,11 +334,11 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @param {Number} tag
      */
     addNode: function (node, zOrder, tag) {
-        if (node instanceof ccs.Widget) {
+        if (node instanceof ccui.Widget) {
             cc.log("Please use addChild to add a Widget.");
             return;
         }
-        cc.NodeRGBA.prototype.addChild.call(this, node, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, node, zOrder, tag);
         this._nodes.push(node);
     },
 
@@ -402,7 +372,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      * @param {Boolean} cleanup
      */
     removeNode: function (node, cleanup) {
-        cc.NodeRGBA.prototype.removeChild.call(this, node);
+        cc.Node.prototype.removeChild.call(this, node);
         cc.arrayRemoveObject(this._nodes, node);
     },
 
@@ -427,7 +397,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     removeAllNodes: function () {
         for (var i = 0; i < this._nodes.length; i++) {
             var node = this._nodes[i];
-            cc.NodeRGBA.prototype.removeChild.call(this, node);
+            cc.Node.prototype.removeChild.call(this, node);
         }
         this._nodes.length = 0;
     },
@@ -539,7 +509,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
      */
     updateSizeAndPosition: function () {
         switch (this._sizeType) {
-            case ccs.SizeType.absolute:
+            case ccui.SIZE_TYPE_ABSOLUTE:
                 var locSize;
                 if (this._ignoreSize) {
                     locSize = this.getContentSize();
@@ -566,7 +536,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                 this._sizePercent.x = spx;
                 this._sizePercent.y = spy;
                 break;
-            case ccs.SizeType.percent:
+            case ccui.SIZE_TYPE_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var cSize = cc.size(0,0);
                 if (widgetParent){
@@ -594,7 +564,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.onSizeChanged();
         var absPos = this.getPosition();
         switch (this.positionType) {
-            case ccs.PositionType.absolute:
+            case ccui.POSITION_TYPE_ABSOLUTE:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -610,7 +580,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
                     this._positionPercent.y = absPos.y / pSize.height;
                 }
                 break;
-            case ccs.PositionType.percent:
+            case ccui.POSITION_TYPE_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -628,7 +598,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Changes the size type of widget.
-     * @param {ccs.SizeType} type
+     * @param {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT} type
      */
     setSizeType: function (type) {
         this._sizeType = type;
@@ -636,7 +606,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Gets the size type of widget.
-     * @returns {ccs.SizeType}
+     * @returns {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT}
      */
     getSizeType: function () {
         return this._sizeType;
@@ -806,10 +776,10 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this._focus = fucos;
         if (this._bright) {
             if (this._focus) {
-                this.setBrightStyle(ccs.BrightStyle.highlight);
+                this.setBrightStyle(ccui.BRIGHT_STYLE_HIGH_LIGHT);
             }
             else {
-                this.setBrightStyle(ccs.BrightStyle.normal);
+                this.setBrightStyle(ccui.BRIGHT_STYLE_NORMAL);
             }
         }
         else {
@@ -820,8 +790,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     setBright: function (bright, containChild) {
         this._bright = bright;
         if (this._bright) {
-            this._brightStyle = ccs.BrightStyle.none;
-            this.setBrightStyle(ccs.BrightStyle.normal);
+            this._brightStyle = ccui.BRIGHT_STYLE_NONE;
+            this.setBrightStyle(ccui.BRIGHT_STYLE_NORMAL);
         }
         else {
             this.onPressStateChangedToDisabled();
@@ -830,19 +800,19 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * To set the bright style of widget.
-     * @param {ccs.BrightStyle} style
+     * @param {ccui.BRIGHT_STYLE_NONE|ccui.BRIGHT_STYLE_NORMAL|ccui.BRIGHT_STYLE_HIGH_LIGHT} style
      */
     setBrightStyle: function (style) {
         if (this._brightStyle == style) {
             return;
         }
-        style = style|| ccs.BrightStyle.normal;
+        style = style|| ccui.BRIGHT_STYLE_NORMAL;
         this._brightStyle = style;
         switch (this._brightStyle) {
-            case ccs.BrightStyle.normal:
+            case ccui.BRIGHT_STYLE_NORMAL:
                 this.onPressStateChangedToNormal();
                 break;
-            case ccs.BrightStyle.highlight:
+            case ccui.BRIGHT_STYLE_HIGH_LIGHT:
                 this.onPressStateChangedToPressed();
                 break;
             default:
@@ -948,7 +918,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     pushDownEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.began);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_BAGAN);
             }
         }
     },
@@ -956,7 +926,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     moveEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.moved);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_MOVED);
             }
         }
     },
@@ -964,14 +934,14 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     releaseUpEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.ended);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_ENDED);
             }
         }
     },
 
     cancelUpEvent: function () {
         if (this._touchEventSelector) {
-            this._touchEventSelector.call(this._touchEventListener, this, ccs.TouchEventType.canceled);
+            this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_CANCELED);
         }
     },
 
@@ -1013,7 +983,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         var parent = this.getParent();
         var clippingParent = null;
         while (parent) {
-            if (parent instanceof ccs.Layout) {
+            if (parent instanceof ccui.Layout) {
                 if (parent.isClippingEnabled()) {
                     this._affectByClipping = true;
                     clippingParent = parent;
@@ -1044,7 +1014,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     /**
      * Sends the touch event to widget's parent
      * @param {number} handleState
-     * @param {ccs.Widget} sender
+     * @param {ccui.Widget} sender
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
@@ -1080,7 +1050,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
             }
         }
 
-        cc.NodeRGBA.prototype.setPosition.apply(this, arguments);
+        cc.Node.prototype.setPosition.apply(this, arguments);
     },
 
 	setPositionX: function (x) {
@@ -1095,7 +1065,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionX.call(this, x);
+		cc.Node.prototype.setPositionX.call(this, x);
 	},
 	setPositionY: function (y) {
 		if (this._running) {
@@ -1109,7 +1079,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 			}
 		}
 
-		cc.NodeRGBA.prototype.setPositionY.call(this, y);
+		cc.Node.prototype.setPositionY.call(this, y);
 	},
 
     /**
@@ -1167,7 +1137,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Changes the position type of the widget
-     * @param {ccs.PositionType} type
+     * @param {ccui.POSITION_TYPE_ABSOLUTE|ccui.POSITION_TYPE_PERCENT} type
      */
     setPositionType: function (type) {
         this.positionType = type;
@@ -1284,7 +1254,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * get widget type
-     * @returns {ccs.WidgetType}
+     * @returns {ccui.WIDGET_TYPE_WIDGET|ccui.WIDGET_TYPE_CONTAINER}
      */
     getWidgetType: function () {
         return this._widgetType;
@@ -1292,7 +1262,7 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Sets layout parameter
-     * @param {ccs.LayoutParameter} parameter
+     * @param {ccui.LayoutParameter} parameter
      */
     setLayoutParameter: function (parameter) {
         this._layoutParameterDictionary[parameter.getLayoutType()] = parameter;
@@ -1300,8 +1270,8 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     /**
      * Gets layout parameter
-     * @param {ccs.LayoutParameterType} type
-     * @returns {ccs.LayoutParameter}
+     * @param {ccui.LAYOUT_PARAMETER_NONE|ccui.LAYOUT_PARAMETER_LINEAR|ccui.LAYOUT_PARAMETER_RELATIVE} type
+     * @returns {ccui.LayoutParameter}
      */
     getLayoutParameter: function (type) {
         return this._layoutParameterDictionary[type];
@@ -1323,14 +1293,14 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
     },
 
     createCloneInstance: function () {
-        return ccs.Widget.create();
+        return ccui.Widget.create();
     },
 
     copyClonedWidgetChildren: function (model) {
         var widgetChildren = model.getChildren();
         for (var i = 0; i < widgetChildren.length; i++) {
             var locChild = widgetChildren[i];
-            if(locChild instanceof ccs.Widget){
+            if(locChild instanceof ccui.Widget){
                 this.addChild(locChild.clone());
             }
         }
@@ -1370,8 +1340,6 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
         this.setFlippedY(widget.isFlippedY());
         this.setColor(widget.getColor());
         this.setOpacity(widget.getOpacity());
-        this.setCascadeOpacityEnabled(widget.isCascadeOpacityEnabled());
-        this.setCascadeColorEnabled(widget.isCascadeColorEnabled());
         for (var key in widget._layoutParameterDictionary) {
             var parameter = widget._layoutParameterDictionary[key];
             if (parameter)
@@ -1387,10 +1355,69 @@ ccs.Widget = ccs.NodeRGBA.extend(/** @lends ccs.Widget# */{
 
     getActionTag: function () {
         return this._actionTag;
+    },
+    /**
+     * Set color
+     * @param {cc.Color} color
+     */
+    setColor: function (color) {
+        this._color.r = color.r;
+        this._color.g = color.g;
+        this._color.b = color.b;
+        this.updateTextureColor();
+        if (color.a !== undefined && !color.a_undefined) {
+            this.setOpacity(color.a);
+        }
+    },
+
+    /**
+     * Get color
+     * @returns {cc.Color}
+     */
+    getColor:function(){
+        return cc.color(this._color.r,this._color.g,this._color.b,this._color.a) ;
+    },
+
+    /**
+     * Set opacity
+     * @param {Number} opacity
+     */
+    setOpacity: function (opacity) {
+        this._color.a = opacity;
+        this.updateTextureOpacity();
+    },
+
+    /**
+     * Get opacity
+     * @returns {Number}
+     */
+    getOpacity: function () {
+        return this._color.a;
+    },
+
+    updateTextureColor: function () {
+
+    },
+
+    updateTextureOpacity: function () {
+
+    },
+
+
+    updateColorToRenderer: function (renderer) {
+        if (renderer.RGBAProtocol) {
+            renderer.setColor(this._color);
+        }
+    },
+
+    updateOpacityToRenderer: function (renderer) {
+        if (renderer.RGBAProtocol) {
+            renderer.setOpacity(this._color.a);
+        }
     }
 });
 
-window._proto = ccs.Widget.prototype;
+window._proto = ccui.Widget.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "xPercent", _proto._getXPercent, _proto._setXPercent);
@@ -1413,13 +1440,13 @@ delete window._proto;
 /**
  * allocates and initializes a UIWidget.
  * @constructs
- * @return {ccs.Widget}
+ * @return {ccui.Widget}
  * @example
  * // example
- * var uiWidget = ccs.Widget.create();
+ * var uiWidget = ccui.Widget.create();
  */
-ccs.Widget.create = function () {
-    var widget = new ccs.Widget();
+ccui.Widget.create = function () {
+    var widget = new ccui.Widget();
     if (widget && widget.init()) {
         return widget;
     }

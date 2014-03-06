@@ -22,15 +22,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var NORMAL_RENDERER_ZORDER = -2;
-var PRESSED_RENDERER_ZORDER = -2;
-var DISABLED_RENDERER_ZORDER = -2;
-var TITLE_RENDERER_ZORDER = -1;
+ccui.NORMAL_RENDERER_ZORDER = -2;
+ccui.PRESSED_RENDERER_ZORDER = -2;
+ccui.DISABLED_RENDERER_ZORDER = -2;
+ccui.TITLE_RENDERER_ZORDER = -1;
 
 /**
- * Base class for ccs.Button
+ * Base class for ccui.Button
  * @class
- * @extends ccs.Widget
+ * @extends ccui.Widget
  *
  * @property {String}   titleText               - The content string of the button title
  * @property {String}   titleFont               - The content string font of the button title
@@ -39,7 +39,7 @@ var TITLE_RENDERER_ZORDER = -1;
  * @property {cc.Color} titleFontColor          - The content string font color of the button title
  * @property {Boolean}  pressedActionEnabled    - Indicate whether button has zoom effect when clicked
  */
-ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
+ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _buttonNormalRenderer: null,
     _buttonClickedRenderer: null,
     _buttonDisableRenderer: null,
@@ -69,7 +69,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
     ctor: function () {
-        ccs.Widget.prototype.ctor.call(this);
+        ccui.Widget.prototype.ctor.call(this);
         this._buttonNormalRenderer = null;
         this._buttonClickedRenderer = null;
         this._buttonDisableRenderer = null;
@@ -82,9 +82,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._capInsetsNormal = cc.rect(0, 0, 0, 0);
         this._capInsetsPressed = cc.rect(0, 0, 0, 0);
         this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
-        this._normalTexType = ccs.TextureResType.local;
-        this._pressedTexType = ccs.TextureResType.local;
-        this._disabledTexType = ccs.TextureResType.local;
+        this._normalTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._pressedTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._disabledTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
         var locSize = this._size;
         this._normalTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
@@ -101,7 +101,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     init: function () {
-        if (ccs.Widget.prototype.init.call(this))
+        if (ccui.Widget.prototype.init.call(this))
             return true;
         return false;
     },
@@ -111,10 +111,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, ccui.NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, ccui.PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, ccui.DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._titleRenderer, ccui.TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -125,12 +125,12 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled == able) {
             return;
         }
-        this._brightStyle = ccs.BrightStyle.none;
+        this._brightStyle = ccui.BRIGHT_STYLE_NONE;
         this._scale9Enabled = able;
 
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
 
         if (this._scale9Enabled) {
             this._buttonNormalRenderer = cc.Scale9Sprite.create();
@@ -146,9 +146,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, ccui.NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, ccui.PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, ccui.DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -177,7 +177,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      */
     ignoreContentAdaptWithSize: function (ignore) {
         if (!this._scale9Enabled || (this._scale9Enabled && !ignore)) {
-            ccs.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
+            ccui.Widget.prototype.ignoreContentAdaptWithSize.call(this, ignore);
             this._prevIgnoreSize = ignore;
         }
     },
@@ -187,7 +187,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      * @param {String} normal
      * @param {String} selected
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextures: function (normal, selected, disabled, texType) {
         this.loadTextureNormal(normal, texType);
@@ -198,21 +198,21 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     /**
      * Load normal state texture for button.
      * @param {String} normal
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
-        texType = texType||ccs.TextureResType.local;
+        texType = texType||ccui.TEXTURE_RES_TYPE_LOCAL;
         this._normalFileName = normal;
         this._normalTexType = texType;
         var buttonNormalRenderer = this._buttonNormalRenderer;
         switch (this._normalTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 buttonNormalRenderer.initWithFile(normal);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 buttonNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
@@ -238,7 +238,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
 
-        this._updateDisplay();
+        this.updateColorToRenderer(buttonNormalRenderer);
+        this.updateAnchorPoint();
+
         this.normalTextureScaleChangedWithSize();
         this._normalTextureLoaded = true;
     },
@@ -246,21 +248,21 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     /**
      * Load selected state texture for button.
      * @param {String} selected
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTexturePressed: function (selected, texType) {
         if (!selected) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
         var clickedRenderer = this._buttonClickedRenderer;
         switch (this._pressedTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 clickedRenderer.initWithFile(selected);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 clickedRenderer.initWithSpriteFrameName(selected);
                 break;
             default:
@@ -284,7 +286,8 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             clickedRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(clickedRenderer);
+        this.updateAnchorPoint();
         this.pressedTextureScaleChangedWithSize();
         this._pressedTextureLoaded = true;
     },
@@ -292,21 +295,21 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     /**
      * Load dark state texture for button.
      * @param {String} disabled
-     * @param {ccs.TextureResType} texType
+     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
      */
     loadTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
-        texType = texType || ccs.TextureResType.local;
+        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
         var disableRenderer = this._buttonDisableRenderer;
         switch (this._disabledTexType) {
-            case ccs.TextureResType.local:
+            case ccui.TEXTURE_RES_TYPE_LOCAL:
                 disableRenderer.initWithFile(disabled);
                 break;
-            case ccs.TextureResType.plist:
+            case ccui.TEXTURE_RES_TYPE_PLIST:
                 disableRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
@@ -330,15 +333,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             disableRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._updateDisplay();
+        this.updateColorToRenderer(disableRenderer);
+        this.updateAnchorPoint();
         this.disabledTextureScaleChangedWithSize();
         this._disabledTextureLoaded = true;
-    },
-
-    _updateDisplay:function(){
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
-        this.updateAnchorPoint();
     },
 
     /**
@@ -523,12 +521,12 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      */
     setAnchorPoint: function (point, y) {
         if(y === undefined){
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
 	        this._buttonNormalRenderer.setAnchorPoint(point);
 	        this._buttonClickedRenderer.setAnchorPoint(point);
 	        this._buttonDisableRenderer.setAnchorPoint(point);
         } else {
-	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
 	        this._buttonNormalRenderer.setAnchorPoint(point, y);
 	        this._buttonClickedRenderer.setAnchorPoint(point, y);
 	        this._buttonDisableRenderer.setAnchorPoint(point, y);
@@ -536,7 +534,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
     },
 	_setAnchorX: function (value) {
-		ccs.Widget.prototype._setAnchorX.call(this, value);
+		ccui.Widget.prototype._setAnchorX.call(this, value);
 		this._buttonNormalRenderer._setAnchorX(value);
 		this._buttonClickedRenderer._setAnchorX(value);
 		this._buttonDisableRenderer._setAnchorX(value);
@@ -544,7 +542,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 		this._titleRenderer.setPositionX(this._size.width * (0.5 - this._anchorPoint.x));
 	},
 	_setAnchorY: function (value) {
-		ccs.Widget.prototype._setAnchorY.call(this, value);
+		ccui.Widget.prototype._setAnchorY.call(this, value);
 		this._buttonNormalRenderer._setAnchorY(value);
 		this._buttonClickedRenderer._setAnchorY(value);
 		this._buttonDisableRenderer._setAnchorY(value);
@@ -553,7 +551,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 	},
 
     onSizeChanged: function () {
-        ccs.Widget.prototype.onSizeChanged.call(this);
+        ccui.Widget.prototype.onSizeChanged.call(this);
         this.normalTextureScaleChangedWithSize();
         this.pressedTextureScaleChangedWithSize();
         this.disabledTextureScaleChangedWithSize();
@@ -580,9 +578,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     getVirtualRenderer: function () {
         if (this._bright) {
             switch (this._brightStyle) {
-                case ccs.BrightStyle.normal:
+                case ccui.BRIGHT_STYLE_NORMAL:
                     return this._buttonNormalRenderer;
-                case ccs.BrightStyle.highlight:
+                case ccui.BRIGHT_STYLE_HIGH_LIGHT:
                     return this._buttonClickedRenderer;
                 default:
                     return null;
@@ -757,14 +755,16 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 		return this._titleRenderer.font;
 	},
 
-    /**
-     * Sets color to widget
-     * It default change the color of widget's children.
-     * @param color
-     */
-    setColor: function (color) {
-        ccs.Widget.prototype.setColor.call(this,color);
-        this.setTitleColor(this._titleColor);
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._buttonNormalRenderer);
+        this.updateColorToRenderer(this._buttonClickedRenderer);
+        this.updateColorToRenderer(this._buttonDisableRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._buttonNormalRenderer);
+        this.updateOpacityToRenderer(this._buttonClickedRenderer);
+        this.updateOpacityToRenderer(this._buttonDisableRenderer);
     },
 
     /**
@@ -776,7 +776,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     createCloneInstance:function(){
-        return ccs.Button.create();
+        return ccui.Button.create();
     },
 
     copySpecialProperties:function(uiButton){
@@ -797,7 +797,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 
 });
 
-window._proto = ccs.Button.prototype;
+window._proto = ccui.Button.prototype;
 
 // Extended properties
 cc.defineGetterSetter(_proto, "titleText", _proto.getTitleText, _proto.setTitleText);
@@ -811,13 +811,13 @@ delete window._proto;
 /**
  * allocates and initializes a UIButton.
  * @constructs
- * @return {ccs.Button}
+ * @return {ccui.Button}
  * @example
  * // example
- * var uiButton = ccs.Button.create();
+ * var uiButton = ccui.Button.create();
  */
-ccs.Button.create = function () {
-    var uiButton = new ccs.Button();
+ccui.Button.create = function () {
+    var uiButton = new ccui.Button();
     if (uiButton && uiButton.init()) {
         return uiButton;
     }

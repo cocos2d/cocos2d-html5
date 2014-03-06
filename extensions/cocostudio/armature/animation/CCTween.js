@@ -87,9 +87,9 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
 
         if(loop){
-            this._loopType = CC_ANIMATION_TYPE_TO_LOOP_FRONT;
+            this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;
         }else{
-            this._loopType = CC_ANIMATION_TYPE_NO_LOOP;
+            this._loopType = ccs.ANIMATION_TYPE_NO_LOOP;
         }
 
         this._totalDuration = 0;
@@ -109,7 +109,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         }
 
         if (this._rawDuration == 0 || this._movementBoneData.frameList.length == 1) {
-            this._loopType = CC_ANIMATION_TYPE_SINGLE_FRAME;
+            this._loopType = ccs.ANIMATION_TYPE_SINGLE_FRAME;
             if (durationTo == 0) {
                 this.setBetween(nextKeyFrame, nextKeyFrame);
             } else {
@@ -156,13 +156,13 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
         var locLoopType = this._loopType;
         if (locCurrentPercent >= 1) {
             switch (locLoopType) {
-                case CC_ANIMATION_TYPE_SINGLE_FRAME:
+                case ccs.ANIMATION_TYPE_SINGLE_FRAME:
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
                     break;
-                case CC_ANIMATION_TYPE_NO_LOOP:
-                    locLoopType = CC_ANIMATION_TYPE_MAX;
+                case ccs.ANIMATION_TYPE_NO_LOOP:
+                    locLoopType = ccs.ANIMATION_TYPE_MAX;
                     if (this._durationTween <= 0) {
                         locCurrentPercent = 1;
                     }
@@ -183,8 +183,8 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                         this._fromIndex = this._toIndex = 0;
                         break;
                     }
-                case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
-                    locLoopType = CC_ANIMATION_TYPE_LOOP_FRONT;
+                case ccs.ANIMATION_TYPE_TO_LOOP_FRONT:
+                    locLoopType = ccs.ANIMATION_TYPE_LOOP_FRONT;
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
                     if (this._movementBoneData.delay != 0) {
                         this._currentFrame = (1 - this._movementBoneData.delay) * this._nextFrameIndex;
@@ -199,7 +199,7 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                     this._betweenDuration = 0;
                     this._fromIndex = this._toIndex = 0;
                     break;
-                case CC_ANIMATION_TYPE_MAX:
+                case ccs.ANIMATION_TYPE_MAX:
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
@@ -212,14 +212,14 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             }
         }
 
-        if (locCurrentPercent < 1 && locLoopType < CC_ANIMATION_TYPE_TO_LOOP_BACK) {
+        if (locCurrentPercent < 1 && locLoopType < ccs.ANIMATION_TYPE_TO_LOOP_BACK) {
             locCurrentPercent = Math.sin(locCurrentPercent * cc.PI / 2);
         }
 
         this._currentPercent = locCurrentPercent;
         this._loopType = locLoopType;
 
-        if (locLoopType > CC_ANIMATION_TYPE_TO_LOOP_BACK) {
+        if (locLoopType > ccs.ANIMATION_TYPE_TO_LOOP_BACK) {
             locCurrentPercent = this.updateFrameData(locCurrentPercent);
         }
         if (this._frameTweenEasing != ccs.TweenType.tweenEasingMax) {

@@ -23,15 +23,15 @@
  ****************************************************************************/
 
 
-ccs.UIHelper = ccs.UIHelper || ccs.Class.extend({});
+ccui.UIHelper = ccui.UIHelper || ccui.Class.extend({});
 
 /**
  * Finds a widget whose tag equals to param tag from root widget.
- * @param {ccs.Widget} root
+ * @param {ccui.Widget} root
  * @param {number} tag
- * @returns {ccs.Widget}
+ * @returns {ccui.Widget}
  */
-ccs.UIHelper.seekWidgetByTag = function (root, tag) {
+ccui.UIHelper.seekWidgetByTag = function (root, tag) {
     if (!root) {
         return null;
     }
@@ -52,11 +52,11 @@ ccs.UIHelper.seekWidgetByTag = function (root, tag) {
 
 /**
  * Finds a widget whose name equals to param name from root widget.
- * @param {ccs.Widget} root
+ * @param {ccui.Widget} root
  * @param {String} name
- * @returns {ccs.Widget}
+ * @returns {ccui.Widget}
  */
-ccs.UIHelper.seekWidgetByName = function (root, name) {
+ccui.UIHelper.seekWidgetByName = function (root, name) {
     if (!root) {
         return null;
     }
@@ -78,11 +78,11 @@ ccs.UIHelper.seekWidgetByName = function (root, name) {
 /**
  * Finds a widget whose name equals to param name from root widget.
  * RelativeLayout will call this method to find the widget witch is needed.
- * @param {ccs.Widget} root
+ * @param {ccui.Widget} root
  * @param {String} name
- * @returns {ccs.Widget}
+ * @returns {ccui.Widget}
  */
-ccs.UIHelper.seekWidgetByRelativeName = function (root, name) {
+ccui.UIHelper.seekWidgetByRelativeName = function (root, name) {
     if (!root) {
         return null;
     }
@@ -90,7 +90,7 @@ ccs.UIHelper.seekWidgetByRelativeName = function (root, name) {
     var length = arrayRootChildren.length;
     for (var i = 0; i < length; i++) {
         var child = arrayRootChildren[i];
-        var layoutParameter = child.getLayoutParameter(ccs.LayoutParameterType.relative);
+        var layoutParameter = child.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
         if (layoutParameter && layoutParameter.getRelativeName() == name) {
             return child;
         }
@@ -99,7 +99,7 @@ ccs.UIHelper.seekWidgetByRelativeName = function (root, name) {
 };
 
 /*temp action*/
-ccs.UIHelper.seekActionWidgetByActionTag = function (root, tag) {
+ccui.UIHelper.seekActionWidgetByActionTag = function (root, tag) {
     if (!root) {
         return null;
     }

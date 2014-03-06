@@ -21,12 +21,31 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+/**
+ * base namespace of cocostuidio
+ * @namespace
+ */
+var ccui = ccui || {};
 
+/**
+ * that same as cc.Class
+ * @class
+ */
+ccui.Class = ccui.Class || cc.Class;
+ccui.Class.extend = ccui.Class.extend || cc.Class.extend;
+
+/**
+ * that same as cc.Node
+ * @class
+ * @extends ccui.Class
+ */
+ccui.Node = ccui.Node || cc.Node;
+ccui.Node.extend = ccui.Node.extend || cc.Node.extend;
 /**
  * Get CocoStudio version
  * @returns {string}
  * @constructor
  */
-ccs.CocosGUIVersion = function(){
+ccui.CocosGUIVersion = function(){
     return "CocosGUI v1.0.0.0";
 };

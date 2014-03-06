@@ -130,7 +130,7 @@ ccs.TriggerObj = ccs.Class.extend({
         for (var i = 0; i < conditions.length; i++) {
             var subDict = conditions[i];
             var classname = subDict["classname"];
-            var con = ccs.ObjectFactory.getInstance().createObject(classname);
+            var con = ccs.objectFactory.createObject(classname);
             if (!con) {
                 cc.log("class named classname(" + classname + ") can not implement!");
                 continue;
@@ -145,7 +145,7 @@ ccs.TriggerObj = ccs.Class.extend({
         for (var i = 0; i < actions.length; i++) {
             var subDict = actions[i];
             var classname = subDict["classname"];
-            var act = ccs.ObjectFactory.getInstance().createObject(classname);
+            var act = ccs.objectFactory.createObject(classname);
             if (!act) {
                 cc.log("class named classname(" + classname + ") can not implement!");
                 continue;
