@@ -359,19 +359,24 @@ cc.eventManager = {
 
         if (fixedPriorityListeners && fixedPriorityListeners.length === 0)
             listeners.clearFixedListeners();
-
-        if (listeners.empty()) {
-            delete this._priorityDirtyFlagMap[listenerID];
-            delete this._listenersMap[listenerID];
-        }
     },
 
     _updateListeners: function (event) {
+        cc.assert(this._inDispatch > 0, "If program goes here, there should be event in dispatch.");
         if (event.getType() == cc.Event.TOUCH) {
             this._onUpdateListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
             this._onUpdateListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
         } else
             this._onUpdateListeners(cc.__getListenerID(event));
+
+        cc.assert(this._inDispatch == 1, "_inDispatch should be 1 here.");
+        var locListenersMap = this._listenersMap, locPriorityDirtyFlagMap = this._priorityDirtyFlagMap;
+        for( var selKey in locListenersMap ){
+             if(locListenersMap[selKey].empty()){
+                 delete locPriorityDirtyFlagMap[selKey];
+                 delete locListenersMap[selKey];
+             }
+        }
 
         var locToAddedListeners = this._toAddedListeners;
         if (locToAddedListeners.length !== 0) {
@@ -865,6 +870,7 @@ cc.eventManager = {
         this._inDispatch++;
         if (event.getType() == cc.Event.TOUCH) {
             this._dispatchTouchEvent(event);
+            this._inDispatch--;
             return;
         }
 

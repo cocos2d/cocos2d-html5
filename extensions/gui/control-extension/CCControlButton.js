@@ -61,7 +61,7 @@ cc.ControlButton = cc.Control.extend({
         this._preferredSize = cc.size(0, 0);
         this._labelAnchorPoint = cc.p(0, 0);
         this._currentTitle = "";
-        this._currentTitleColor = cc.color.white;
+        this._currentTitleColor = cc.color.WHITE;
         this._titleDispatchTable = {};
         this._titleColorDispatchTable = {};
         this._titleLabelDispatchTable = {};
@@ -463,7 +463,7 @@ cc.ControlButton = cc.Control.extend({
         colorObject = this._titleColorDispatchTable[cc.CONTROL_STATE_NORMAL];
         if (colorObject)
             return colorObject;
-        return cc.color.white;
+        return cc.color.WHITE;
     },
 
     /**

@@ -2569,7 +2569,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.color.white;
+            parentColor = cc.color.WHITE;
         this.updateDisplayedColor(parentColor);
 
         if (color.a !== undefined && !color.a_undefined) {
@@ -2624,7 +2624,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
-            parentColor = cc.color.white;
+            parentColor = cc.color.WHITE;
         this.updateDisplayedColor(parentColor);
     },
 
@@ -2634,7 +2634,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children, whiteColor = cc.color.white;
+        var selChildren = this._children, whiteColor = cc.color.WHITE;
         for(var i = 0; i< selChildren.length;i++){
             var item = selChildren[i];
             if(item && item.RGBAProtocol)

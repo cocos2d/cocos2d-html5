@@ -229,8 +229,8 @@ cc.EditBox = cc.ControlButton.extend({
     ctor: function (boxSize) {
         cc.ControlButton.prototype.ctor.call(this);
 
-        this._textColor = cc.color.white;
-        this._placeholderColor = cc.color.gray;
+        this._textColor = cc.color.WHITE;
+        this._placeholderColor = cc.color.GRAY;
         this.setContentSize(boxSize);
         this._domInputSprite = new cc.Sprite();
         this._domInputSprite.draw = function(){ };                           //redefine draw function

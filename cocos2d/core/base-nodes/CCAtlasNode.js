@@ -70,7 +70,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
-        this._colorUnmodified = cc.color.white;
+        this._colorUnmodified = cc.color.WHITE;
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
         this._ignoreContentScaleFactor = false;
     },
@@ -204,7 +204,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _initWithTextureForWebGL:function(texture, tileWidth, tileHeight, itemsToRender){
         this._itemWidth = tileWidth;
         this._itemHeight = tileHeight;
-        this._colorUnmodified = cc.color.white;
+        this._colorUnmodified = cc.color.WHITE;
         this._opacityModifyRGB = true;
 
         this._blendFunc.src = cc.BLEND_SRC;
@@ -372,8 +372,8 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     _updateBlendFunc:function () {
         if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = gl.SRC_ALPHA;
-            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+            this._blendFunc.src = cc.SRC_ALPHA;
+            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         }
     },
 

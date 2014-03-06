@@ -418,7 +418,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
 
     draw: function (ctx) {
         var context = ctx || cc._renderContext;
-        if ((this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE)))
+        if ((this._blendFunc && (this._blendFunc.src == cc.SRC_ALPHA) && (this._blendFunc.dst == cc.ONE)))
             context.globalCompositeOperation = 'lighter';
 
         for (var i = 0; i < this._buffer.length; i++) {

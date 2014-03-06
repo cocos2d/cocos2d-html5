@@ -1289,7 +1289,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      * @return {Boolean}
      */
     initWithDuration:function (t, scene, color) {
-        color = color || cc.color.black;
+        color = color || cc.color.BLACK;
         if (cc.TransitionScene.prototype.initWithDuration.call(this, t, scene)) {
             this._color.r = color.r;
             this._color.g = color.g;
@@ -1366,8 +1366,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         this._outScene.visit();
         outTexture.end();
 
-        inTexture.sprite.setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
-        outTexture.sprite.setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
+        inTexture.sprite.setBlendFunc(cc.ONE, cc.ONE);                                             // inScene will lay on background and will not be used with alpha
+        outTexture.sprite.setBlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
 
         // add render textures to the layer
         layer.addChild(inTexture);

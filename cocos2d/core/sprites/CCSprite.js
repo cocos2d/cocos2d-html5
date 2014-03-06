@@ -902,7 +902,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             locBlendFunc.dst = dst;
         }
         this._isLighterMode = (locBlendFunc &&
-            (( locBlendFunc.src == gl.SRC_ALPHA && locBlendFunc.dst == gl.ONE) || (locBlendFunc.src == gl.ONE && locBlendFunc.dst == gl.ONE)));
+            (( locBlendFunc.src == cc.SRC_ALPHA && locBlendFunc.dst == cc.ONE) || (locBlendFunc.src == cc.ONE && locBlendFunc.dst == cc.ONE)));
     },
 
     /**
@@ -1756,8 +1756,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // it's possible to have an untextured sprite
         if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
-            this._blendFunc.src = gl.SRC_ALPHA;
-            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+            this._blendFunc.src = cc.SRC_ALPHA;
+            this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
             this.opacityModifyRGB = false;
         } else {
             this._blendFunc.src = cc.BLEND_SRC;

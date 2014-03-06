@@ -82,7 +82,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._positionR = cc.p(0, 0);
-        this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        this._blendFunc = new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
         this._vertexWebGLBuffer = cc._renderContext.createBuffer();
 
         this.fastMode = false;

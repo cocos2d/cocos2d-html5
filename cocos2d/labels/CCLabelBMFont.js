@@ -197,7 +197,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         if(this._textureLoaded){
             if(this._cascadeColorEnabled){
-                var parentColor = cc.color.white;
+                var parentColor = cc.color.WHITE;
                 var locParent = this._parent;
                 if(locParent && locParent.RGBAProtocol && locParent.cascadeColor)
                     parentColor = locParent.getDisplayedColor();
