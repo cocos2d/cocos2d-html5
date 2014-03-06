@@ -1173,7 +1173,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 });
 
 window._proto = cc.LabelTTF.prototype;
-if(cc.sys.supportWebGL){
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 	_proto.setColor = cc.Sprite.prototype.setColor;
     _proto._setColorsString = _proto._setColorsStringForWebGL;
     _proto.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;

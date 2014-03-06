@@ -1475,7 +1475,7 @@ ccui.Layout._visit_once = null;
 ccui.Layout._layer = null;
 ccui.Layout._sharedCache = null;
 
-if (cc.sys.supportWebGL) {
+if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     //WebGL
     ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForWebGL;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForWebGL;

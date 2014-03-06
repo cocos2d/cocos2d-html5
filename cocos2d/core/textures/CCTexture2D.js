@@ -1175,7 +1175,7 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     }
 });
 
-cc.Texture2D = cc.sys.supportWebGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
+cc.Texture2D = cc._renderType === cc._RENDER_TYPE_WEBGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
 
 
 

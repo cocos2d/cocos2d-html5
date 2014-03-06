@@ -387,7 +387,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 });
 
 window._proto = cc.AtlasNode.prototype;
-if(cc.sys.supportWebGL){
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 	_proto.initWithTexture = _proto._initWithTextureForWebGL;
 	_proto.draw = _proto._drawForWebGL;
 	_proto.setColor = _proto._setColorForWebGL;

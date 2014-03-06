@@ -338,7 +338,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 });
 
 window._proto = cc.LabelAtlas.prototype;
-if(cc.sys.supportWebGL){
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _proto.updateAtlasValues =  _proto._updateAtlasValuesForWebGL;
     _proto.setString =  _proto._setStringForWebGL;
     _proto.setOpacity =  _proto._setOpacityForWebGL;

@@ -671,7 +671,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
 });
 
 
-if(cc.sys.supportWebGL){
+if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     //WebGL
     ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForWebGL;
 }else{

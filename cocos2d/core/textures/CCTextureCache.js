@@ -106,7 +106,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
      * var key = cc.textureCache.textureForKey("hello.png");
      */
     textureForKey:function (textureKeyName) {
-        return this._textures[textureKeyName];
+        return this._textures[textureKeyName] || this._textures[cc.loader._aliases[textureKeyName]];
     },
 
     /**
@@ -238,7 +238,7 @@ cc.textureCache = /** @lends cc.TextureCache# */{
         if(cc._renderType === cc._RENDER_TYPE_WEBGL && !cc._rendererInitialized){
             locTexs = this._loadedTexturesBefore;
         }
-        var tex = locTexs[url];
+        var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if(tex) {
             if(cb) cb.call(target);
             return tex;

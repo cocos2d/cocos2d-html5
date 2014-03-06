@@ -321,7 +321,7 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
     return p;
 };
 
-if (!cc.sys.supportWebGL) {
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     /**
      * WebGL constants
      * @type {object}
