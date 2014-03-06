@@ -33,7 +33,7 @@
  * @param {function} setter Setter function for the property
  */
 
-if (cc.sys.supportWebAudio) {
+if (cc.sys._supportWebAudio) {
     var _ctx = cc.webAudioContext = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
     /**
      * A class of Web Audio.
@@ -186,7 +186,7 @@ if (cc.sys.supportWebAudio) {
         },
 
         canplay : function(){
-            return cc.sys.supportWebAudio;
+            return cc.sys._supportWebAudio;
         },
         _onSuccess : function(buffer){
             var self = this;
@@ -274,7 +274,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     ctor:function(){
         var self = this;
-        self._soundSupported = cc.audioLoader._supportedAudioTypes.length > 0;
+        self._soundSupported = cc._audioLoader._supportedAudioTypes.length > 0;
         if(self._effectPauseCb) self._effectPauseCb = self._effectPauseCb.bind(self);
     },
 
@@ -663,7 +663,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 });
 
 
-if (!cc.sys.supportWebAudio && cc.sys.MULTIPLE_AUDIO_WHITE_LIST.indexOf(cc.sys.browserType) < 0){
+if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0){
     /**
      * AudioEngine for single audio mode.
      * @class
@@ -971,7 +971,7 @@ cc.defineGetterSetter(cc, "audioEngine", function() {
 /**
  * Resource loader for audio.
  */
-cc.audioLoader = {
+cc._audioLoader = {
     _supportedAudioTypes : null,
     getBasePath : function(){
         return cc.loader.audioPath;
@@ -1041,7 +1041,7 @@ cc.audioLoader = {
         this._load(realUrl, url, res, -1, tryArr, null, cb);
     }
 };
-cc.audioLoader._supportedAudioTypes = function() {
+cc._audioLoader._supportedAudioTypes = function() {
     var au = document.createElement('audio'), arr = [];;
     if (au.canPlayType) {
         // <audio> tag is supported, go on
@@ -1057,4 +1057,4 @@ cc.audioLoader._supportedAudioTypes = function() {
     }
     return arr;
 }();
-cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], cc.audioLoader);
+cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], cc._audioLoader);
