@@ -144,7 +144,7 @@ cc.Control = cc.LayerRGBA.extend({
     ctor:function () {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._dispatchTable = {};
-        this._color = cc.color.white;
+        this._color = cc.color.WHITE;
     },
 
     init:function () {
