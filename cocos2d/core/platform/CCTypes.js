@@ -1023,7 +1023,7 @@ cc.Acceleration = function(){
  * @private
  */
 cc.color._getWhite = function(){
-    return cc.color(255, 255, 255, 255);
+    return cc.color(255, 255, 255);
 };
 
 /**
@@ -1032,7 +1032,7 @@ cc.color._getWhite = function(){
  * @private
  */
 cc.color._getYellow = function () {
-    return cc.color(255, 255, 0, 255);
+    return cc.color(255, 255, 0);
 };
 
 /**
@@ -1041,7 +1041,7 @@ cc.color._getYellow = function () {
  * @private
  */
 cc.color._getBlue = function () {
-    return  cc.color(0, 0, 255, 255);
+    return  cc.color(0, 0, 255);
 };
 
 /**
@@ -1050,7 +1050,7 @@ cc.color._getBlue = function () {
  * @private
  */
 cc.color._getGreen = function () {
-    return cc.color(0, 255, 0, 255);
+    return cc.color(0, 255, 0);
 };
 
 /**
@@ -1059,7 +1059,7 @@ cc.color._getGreen = function () {
  * @private
  */
 cc.color._getRed = function () {
-    return cc.color(255, 0, 0, 255);
+    return cc.color(255, 0, 0);
 };
 
 /**
@@ -1068,7 +1068,7 @@ cc.color._getRed = function () {
  * @private
  */
 cc.color._getMagenta = function () {
-    return cc.color(255, 0, 255, 255);
+    return cc.color(255, 0, 255);
 };
 
 /**
@@ -1077,7 +1077,7 @@ cc.color._getMagenta = function () {
  * @private
  */
 cc.color._getBlack = function () {
-    return cc.color(0, 0, 0, 255);
+    return cc.color(0, 0, 0);
 };
 
 /**
@@ -1086,7 +1086,7 @@ cc.color._getBlack = function () {
  * @private
  */
 cc.color._getOrange = function () {
-    return cc.color(255, 127, 0, 255);
+    return cc.color(255, 127, 0);
 };
 
 /**
@@ -1095,34 +1095,34 @@ cc.color._getOrange = function () {
  * @private
  */
 cc.color._getGray = function () {
-    return cc.color(166, 166, 166, 255);
+    return cc.color(166, 166, 166);
 };
 window._proto = cc.color;
 /** @expose */
-_proto.white;
-cc.defineGetterSetter(_proto, "white", _proto._getWhite);
+_proto.WHITE;
+cc.defineGetterSetter(_proto, "WHITE", _proto._getWhite);
 /** @expose */
-_proto.yellow;
-cc.defineGetterSetter(_proto, "yellow", _proto._getYellow);
+_proto.YELLOW;
+cc.defineGetterSetter(_proto, "YELLOW", _proto._getYellow);
 /** @expose */
-_proto.blue;
-cc.defineGetterSetter(_proto, "blue", _proto._getBlue);
+_proto.BLUE;
+cc.defineGetterSetter(_proto, "BLUE", _proto._getBlue);
 /** @expose */
-_proto.green;
-cc.defineGetterSetter(_proto, "green", _proto._getGreen);
+_proto.GREEN;
+cc.defineGetterSetter(_proto, "GREEN", _proto._getGreen);
 /** @expose */
-_proto.red;
-cc.defineGetterSetter(_proto, "red", _proto._getRed);
+_proto.RED;
+cc.defineGetterSetter(_proto, "RED", _proto._getRed);
 /** @expose */
-_proto.magenta;
-cc.defineGetterSetter(_proto, "magenta", _proto._getMagenta);
+_proto.MAGENTA;
+cc.defineGetterSetter(_proto, "MAGENTA", _proto._getMagenta);
 /** @expose */
-_proto.black;
-cc.defineGetterSetter(_proto, "black", _proto._getBlack);
+_proto.BLACK;
+cc.defineGetterSetter(_proto, "BLACK", _proto._getBlack);
 /** @expose */
-_proto.orange;
-cc.defineGetterSetter(_proto, "orange", _proto._getOrange);
+_proto.ORANGE;
+cc.defineGetterSetter(_proto, "ORANGE", _proto._getOrange);
 /** @expose */
-_proto.gray;
-cc.defineGetterSetter(_proto, "gray", _proto._getGray);
+_proto.GRAY;
+cc.defineGetterSetter(_proto, "GRAY", _proto._getGray);
 delete window._proto;
