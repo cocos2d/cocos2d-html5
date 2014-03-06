@@ -350,7 +350,7 @@ cc.AnimationFrameData = function(texCoords, delay, size){
     this.size = size;
 };
 
-if(cc.sys.supportWebGL){
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     //redefine some types with ArrayBuffer for WebGL
     cc.color = function (r, g, b, a, arrayBuffer, offset) {
         if (r === undefined)

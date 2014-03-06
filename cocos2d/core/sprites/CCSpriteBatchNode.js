@@ -1013,7 +1013,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
 window._proto = cc.SpriteBatchNode.prototype;
 
-if(cc.sys.supportWebGL){
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _proto.ctor = _proto._ctorForWebGL;
     _proto.updateQuadFromSprite = _proto._updateQuadFromSpriteForWebGL;
     _proto.insertQuadFromSprite = _proto._insertQuadFromSpriteForWebGL;
