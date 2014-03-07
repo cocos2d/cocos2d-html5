@@ -195,10 +195,12 @@
                 <file name="CocoStudio/GUI/UIWidgets/UIButton.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UICheckBox.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UIImageView.js"/>
+                <file name="CocoStudio/GUI/UIWidgets/UIRichText.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UILabel.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UILabelAtlas.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UILabelBMFont.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UILoadingBar.js"/>
+                <file name="CocoStudio/GUI/UIWidgets/UIRichText.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UISlider.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UISwitch.js"/>
                 <file name="CocoStudio/GUI/UIWidgets/UITextField.js"/>
