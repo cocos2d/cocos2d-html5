@@ -651,6 +651,14 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
+     * Get custom size
+     * @returns {cc.Size}
+     */
+    getCustomSize:function(){
+        return this._customSize
+    },
+
+    /**
      * Returns size percent of widget
      * @returns {cc.Point}
      */
