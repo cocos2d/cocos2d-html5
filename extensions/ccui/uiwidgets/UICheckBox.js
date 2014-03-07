@@ -81,6 +81,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
     init: function () {
         if (ccui.Widget.prototype.init.call(this)) {
+            this.setTouchEnabled(true);
             this.setSelectedState(false);
             return true;
         }

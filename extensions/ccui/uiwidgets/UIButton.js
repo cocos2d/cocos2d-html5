@@ -101,8 +101,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     init: function () {
-        if (ccui.Widget.prototype.init.call(this))
+        if (ccui.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
             return true;
+        }
         return false;
     },
 
