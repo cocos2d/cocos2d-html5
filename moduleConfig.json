@@ -186,6 +186,8 @@
             "cocos2d/transitions/CCTransitionProgress.js",
             "cocos2d/transitions/CCTransitionPageTurn.js"
         ],
+
+        "base4webgl" : ["core", "kazmath", "shaders"],
         "cocos2d" : [
             "core", "kazmath", "shaders", "render-texture", "motion-streak",
             "clipping-nodes", "effects", "shape-nodes", "actions", "actions3d",
