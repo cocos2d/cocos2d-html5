@@ -76,6 +76,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _backGroundImageTextureSize: null,
     _layoutType: null,
     _doLayoutDirty: false,
+    _clippingRectDirty: false,
     _clippingType : null,
     _clippingStencil: null,
     _handleScissor: false,
@@ -101,7 +102,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._backGroundImageTextureSize = cc.SizeZero();
         this._layoutType = ccs.LayoutType.absolute;
         this._widgetType = ccs.WidgetType.container;
-        this._doLayoutDirty = false;
+        this._doLayoutDirty = true;
+        this._clippingRectDirty = true;
         this._clippingType = ccs.LayoutClippingType.stencil;
         this._clippingStencil = null;
         this._handleScissor = false;
@@ -110,12 +112,10 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._clippingParent = null;
     },
     init: function () {
-        if (cc.NodeRGBA.prototype.init.call(this)){
+        if (cc.Node.prototype.init.call(this)){
             this._layoutParameterDictionary = {};
             this._widgetChildren = [];
             this.initRenderer();
-            this.setCascadeColorEnabled(false);
-            this.setCascadeOpacityEnabled(false);
             this.ignoreContentAdaptWithSize(false);
             this.setSize(cc.SizeZero());
             this.setBright(true);
@@ -155,16 +155,36 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     /**
-     * Adds a locChild to the container.
-     * @param {ccs.Widget} locChild
+     * Adds a widget to the container.
+     * @param {ccs.Widget} widget
      * @param {Number} zOrder
      * @param {Number} tag
      */
-    addChild: function (child, zOrder, tag) {
-        if(!(child instanceof ccs.Widget))
-            return;
-        this.supplyTheLayoutParameterLackToChild(child);
-        ccs.Widget.prototype.addChild.call(this, child, zOrder, tag);
+    addChild: function (widget, zOrder, tag) {
+        if(!(widget instanceof ccs.Widget)){
+            throw "the child add to Layout  must a type of cc.Widget";
+        }
+        this.supplyTheLayoutParameterLackToChild(widget);
+        ccs.Widget.prototype.addChild.call(this, widget, zOrder, tag);
+        this._doLayoutDirty = true;
+    },
+
+    /**
+     * Remove widget
+     * @param {ccs.Widget} widget
+     * @param {Boolean} cleanup
+     */
+    removeChild:function(widget,cleanup){
+        ccs.Widget.prototype.removeChild.call(this, widget,cleanup);
+        this._doLayoutDirty = true;
+    },
+
+    /**
+     * Remove all widget
+     * @param {Boolean} cleanup
+     */
+    removeAllChildren:function(cleanup){
+        ccs.Widget.prototype.removeAllChildren.call(this, cleanup);
         this._doLayoutDirty = true;
     },
 
@@ -193,7 +213,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             }
         }
         else {
-            cc.NodeRGBA.prototype.visit.call(this,ctx);
+            cc.Node.prototype.visit.call(this,ctx);
         }
     },
 
@@ -446,7 +466,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
             gl.enable(gl.SCISSOR_TEST);
         }
         cc.EGLView.getInstance().setScissorInPoints(clippingRect.x, clippingRect.y, clippingRect.width, clippingRect.height);
-        cc.NodeRGBA.prototype.visit.call(this);
+        cc.Node.prototype.visit.call(this);
         if (this._handleScissor) {
             gl.disable(gl.SCISSOR_TEST);
         }
@@ -476,7 +496,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     /**
-     * set clipping type
+     * Set clipping type
      * @param {ccs.LayoutClippingType} type
      */
     setClippingType: function (type) {
@@ -487,6 +507,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this.setClippingEnabled(false);
         this._clippingType = type;
         this.setClippingEnabled(clippingEnabled);
+    },
+
+    /**
+     * Get clipping type
+     * @returns {ccs.LayoutClippingType}
+     */
+    getClippingType : function(){
+        return this._clippingType;
     },
 
     setStencilClippingSize: function (size) {
@@ -507,80 +535,85 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     getClippingRect: function () {
-        this._handleScissor = true;
-        var worldPos = this.convertToWorldSpace(cc.p(0, 0));
-        var t = this.nodeToWorldTransform();
-        var scissorWidth = this._size.width * t.a;
-        var scissorHeight = this._size.height * t.d;
-        var parentClippingRect;
-        var parent = this;
-        var firstClippingParentFounded = false;
-        while (parent) {
-            parent = parent.getParent();
-            if (parent && parent instanceof ccs.Layout) {
-                if (parent.isClippingEnabled()) {
-                    if (!firstClippingParentFounded) {
-                        this._clippingParent = parent;
-                        firstClippingParentFounded = true;
-                    }
+        if (this._clippingRectDirty){
+            this._handleScissor = true;
+            var worldPos = this.convertToWorldSpace(cc.p(0, 0));
+            var t = this.nodeToWorldTransform();
+            var scissorWidth = this._size.width * t.a;
+            var scissorHeight = this._size.height * t.d;
+            var parentClippingRect;
+            var parent = this;
+            var firstClippingParentFounded = false;
+            while (parent) {
+                parent = parent.getParent();
+                if (parent && parent instanceof ccs.Layout) {
+                    if (parent.isClippingEnabled()) {
+                        if (!firstClippingParentFounded) {
+                            this._clippingParent = parent;
+                            firstClippingParentFounded = true;
+                        }
 
-                    if (parent._clippingType == ccs.LayoutClippingType.scissor) {
-                        this._handleScissor = false;
-                        break;
+                        if (parent._clippingType == ccs.LayoutClippingType.scissor) {
+                            this._handleScissor = false;
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        if (this._clippingParent) {
-            parentClippingRect = this._clippingParent.getClippingRect();
-            var finalX = worldPos.x - (scissorWidth * this._anchorPoint.x);
-            var finalY = worldPos.y - (scissorHeight * this._anchorPoint.y);
-            var finalWidth = scissorWidth;
-            var finalHeight = scissorHeight;
+            if (this._clippingParent) {
+                parentClippingRect = this._clippingParent.getClippingRect();
+                var finalX = worldPos.x - (scissorWidth * this._anchorPoint.x);
+                var finalY = worldPos.y - (scissorHeight * this._anchorPoint.y);
+                var finalWidth = scissorWidth;
+                var finalHeight = scissorHeight;
 
-            var leftOffset = worldPos.x - parentClippingRect.x;
-            if (leftOffset < 0) {
-                finalX = parentClippingRect.x;
-                finalWidth += leftOffset;
+                var leftOffset = worldPos.x - parentClippingRect.x;
+                if (leftOffset < 0) {
+                    finalX = parentClippingRect.x;
+                    finalWidth += leftOffset;
+                }
+                var rightOffset = (worldPos.x + scissorWidth) - (parentClippingRect.x + parentClippingRect.width);
+                if (rightOffset > 0) {
+                    finalWidth -= rightOffset;
+                }
+                var topOffset = (worldPos.y + scissorHeight) - (parentClippingRect.y + parentClippingRect.height);
+                if (topOffset > 0) {
+                    finalHeight -= topOffset;
+                }
+                var bottomOffset = worldPos.y - parentClippingRect.y;
+                if (bottomOffset < 0) {
+                    finalY = parentClippingRect.x;
+                    finalHeight += bottomOffset;
+                }
+                if (finalWidth < 0) {
+                    finalWidth = 0;
+                }
+                if (finalHeight < 0) {
+                    finalHeight = 0;
+                }
+                this._clippingRect.x = finalX;
+                this._clippingRect.y = finalY;
+                this._clippingRect.width = finalWidth;
+                this._clippingRect.height = finalHeight;
             }
-            var rightOffset = (worldPos.x + scissorWidth) - (parentClippingRect.x + parentClippingRect.width);
-            if (rightOffset > 0) {
-                finalWidth -= rightOffset;
+            else {
+                this._clippingRect.x = worldPos.x - (scissorWidth * this._anchorPoint.x);
+                this._clippingRect.y = worldPos.y - (scissorHeight * this._anchorPoint.y);
+                this._clippingRect.width = scissorWidth;
+                this._clippingRect.height = scissorHeight;
             }
-            var topOffset = (worldPos.y + scissorHeight) - (parentClippingRect.y + parentClippingRect.height);
-            if (topOffset > 0) {
-                finalHeight -= topOffset;
-            }
-            var bottomOffset = worldPos.y - parentClippingRect.y;
-            if (bottomOffset < 0) {
-                finalY = parentClippingRect.x;
-                finalHeight += bottomOffset;
-            }
-            if (finalWidth < 0) {
-                finalWidth = 0;
-            }
-            if (finalHeight < 0) {
-                finalHeight = 0;
-            }
-            this._clippingRect.x = finalX;
-            this._clippingRect.y = finalY;
-            this._clippingRect.width = finalWidth;
-            this._clippingRect.height = finalHeight;
-        }
-        else {
-            this._clippingRect.x = worldPos.x - (scissorWidth * this._anchorPoint.x);
-            this._clippingRect.y = worldPos.y - (scissorHeight * this._anchorPoint.y);
-            this._clippingRect.width = scissorWidth;
-            this._clippingRect.height = scissorHeight;
+            this._clippingRectDirty = false;
         }
         return this._clippingRect;
     },
 
     onSizeChanged: function () {
         ccs.Widget.prototype.onSizeChanged.call(this);
+        this.setContentSize(this._size);
         this.setStencilClippingSize(this._size);
         this._doLayoutDirty = true;
+        this._clippingRectDirty = true;
 
         if (this._backGroundImage) {
             this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
@@ -599,14 +632,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     /**
-     * Sets background iamge use scale9 renderer.
+     * Sets background image use scale9 renderer.
      * @param {Boolean} able
      */
     setBackGroundImageScale9Enabled: function (able) {
         if (this._backGroundScale9Enabled == able) {
             return;
         }
-        cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
+        cc.Node.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundScale9Enabled = able;
         if (this._backGroundScale9Enabled) {
@@ -615,9 +648,17 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
+    },
+
+    /**
+     * Get background image is use scale9 renderer.
+     * @returns {Boolean}
+     */
+    isBackGroundImageScale9Enabled:function(){
+        return this._backGroundScale9Enabled;
     },
 
     /**
@@ -665,6 +706,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         }
     },
 
+    /**
+     * Get  background image cap insets.
+     * @returns {cc.Rect}
+     */
+    getBackGroundImageCapInsets:function(){
+        return this._backGroundImageCapInsets;
+    },
+
     supplyTheLayoutParameterLackToChild: function (locChild) {
         if (!locChild) {
             return;
@@ -701,7 +750,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccs.BACKGROUNDIMAGEZ, -1);
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
@@ -712,7 +761,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (!this._backGroundImage) {
             return;
         }
-        cc.NodeRGBA.prototype.removeChild.call(this, this._backGroundImage, true);
+        cc.Node.prototype.removeChild.call(this, this._backGroundImage, true);
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageTextureSize = cc.SizeZero();
@@ -729,23 +778,23 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         switch (this._colorType) {
             case ccs.LayoutBackGroundColorType.none:
                 if (this._colorRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 if (this._gradientRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._gradientRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;
             case ccs.LayoutBackGroundColorType.solid:
                 if (this._colorRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._colorRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
                 if (this._gradientRender) {
-                    cc.NodeRGBA.prototype.removeChild.call(this, this._gradientRender, true);
+                    cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
                 }
                 break;
@@ -761,7 +810,7 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 this._colorRender.setContentSize(this._size);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
-                cc.NodeRGBA.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
+                cc.Node.prototype.addChild.call(this, this._colorRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
                 break;
             case ccs.LayoutBackGroundColorType.gradient:
                 this._gradientRender = cc.LayerGradient.create(cc.c4b(255, 0, 0, 255), cc.c4b(0, 255, 0, 255));
@@ -770,11 +819,19 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
                 this._gradientRender.setStartColor(this._startColor);
                 this._gradientRender.setEndColor(this._endColor);
                 this._gradientRender.setVector(this._alongVector);
-                cc.NodeRGBA.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
+                cc.Node.prototype.addChild.call(this, this._gradientRender, ccs.BACKGROUNDCOLORRENDERERZ, -1);
                 break;
             default:
                 break;
         }
+    },
+
+    /**
+     * Get color type.
+     * @returns {ccs.LayoutBackGroundColorType}
+     */
+    getBackGroundColorType:function(){
+        return this._colorType;
     },
 
     /**
@@ -806,6 +863,30 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     /**
+     * Get back ground color
+     * @returns {cc.Color}
+     */
+    getBackGroundColor:function(){
+        return this._color;
+    },
+
+    /**
+     * Get back ground start color
+     * @returns {cc.Color}
+     */
+    getBackGroundStartColor:function(){
+        return this._startColor;
+    },
+
+    /**
+     * Get back ground end color
+     * @returns {cc.Color}
+     */
+    getBackGroundEndColor:function(){
+        return this._endColor;
+    },
+
+    /**
      * Sets background opacity layout.
      * @param {number} opacity
      */
@@ -826,6 +907,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     },
 
     /**
+     * Get background opacity value.
+     * @returns {Number}
+     */
+    getBackGroundColorOpacity:function(){
+        return this._opacity;
+    },
+
+    /**
      * Sets background color vector for layout, if color type is LAYOUT_COLOR_GRADIENT
      * @param {cc.Point} vector
      */
@@ -835,6 +924,14 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (this._gradientRender) {
             this._gradientRender.setVector(vector);
         }
+    },
+
+    /**
+     *  Get background color value.
+     * @returns {cc.Point}
+     */
+    getBackGroundColorVector:function(){
+        return this._alongVector;
     },
 
     /**

@@ -253,17 +253,18 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         return this._innerContainer.addChild(widget, zOrder, tag);
     },
 
-    removeAllChildren: function () {
-        this._innerContainer.removeAllChildren();
+    removeAllChildren: function (cleanup) {
+        this._innerContainer.removeAllChildren(cleanup);
     },
 
     /**
      *  remove widget child override
      * @param {ccs.Widget} child
+     * @param {Boolean} cleanup
      * @returns {boolean}
      */
-    removeChild: function (child) {
-        return this._innerContainer.removeChild(child);
+    removeChild: function (child, cleanup) {
+        return this._innerContainer.removeChild(child,cleanup);
     },
 
     /**
@@ -300,6 +301,56 @@ ccs.ScrollView = ccs.Layout.extend(/** @lends ccs.ScrollView# */{
         return this._innerContainer.getChildByName(name);
     },
 
+    /**
+     * Add node for scrollView
+     * @param {cc.Node}node
+     * @param {Number} zOrder
+     * @param {Number} tag
+     */
+    addNode: function (node, zOrder, tag) {
+        this._innerContainer.addNode(node, zOrder, tag);
+    },
+
+    /**
+     * Get node by tag
+     * @param {Number} tag
+     * @returns {cc.Node}
+     */
+    getNodeByTag: function (tag) {
+        return this._innerContainer.getNodeByTag(tag);
+    },
+
+    /**
+     * Get all node
+     * @returns {Array}
+     */
+    getNodes: function () {
+        return this._innerContainer.getNodes();
+    },
+
+    /**
+     * Remove a node
+     * @param {cc.Node} node
+     */
+    removeNode: function (node) {
+        this._innerContainer.removeNode(node);
+    },
+
+    /**
+     * Remove a node by tag
+     * @param {Number} tag
+     */
+    removeNodeByTag: function (tag) {
+        this._innerContainer.removeNodeByTag(tag);
+    },
+
+    /**
+     * Remove all node
+     */
+    removeAllNodes: function () {
+        this._innerContainer.removeAllNodes();
+    },
+    
     moveChildren: function (offsetX, offsetY) {
         var pos = this._innerContainer.getPosition();
         this._moveChildPoint.x = pos.x + offsetX;

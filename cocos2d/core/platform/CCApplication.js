@@ -394,14 +394,17 @@ cc.Application.getCurrentLanguage = function () {
     var ret = cc.LANGUAGE_ENGLISH;
 
     var currentLang = navigator.language;
-    if(!currentLang)
+    if(!currentLang){
         currentLang = navigator.browserLanguage || navigator.userLanguage;
-    if(!currentLang)
+    }
+    if(!currentLang){
         return ret;
+    }
 
-    currentLang = currentLang.toLowerCase();
+    currentLang = currentLang.substring(0,2).toLowerCase();
     switch (currentLang) {
-        case "zh-cn":
+        case "cn":
+        case "zh":
             ret = cc.LANGUAGE_CHINESE;
             break;
         case "fr":

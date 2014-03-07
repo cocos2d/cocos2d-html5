@@ -1672,8 +1672,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * removes a component by its name
-     * @param {String} name
+     * removes a component by its name or a component
+     * @param {String|cc.Component} name
      */
     removeComponent:function(name){
         return this._componentContainer.remove(name);
