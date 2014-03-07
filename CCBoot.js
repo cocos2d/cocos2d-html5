@@ -1130,7 +1130,6 @@ cc._initSys = function(config, CONFIG_KEY){
 
     sys.isMobile = ua.indexOf('mobile') != -1 || ua.indexOf('android') != -1;
 
-
     var currLanguage = nav.language;
     currLanguage = currLanguage ? currLanguage : nav.browserLanguage;
     currLanguage = currLanguage ? currLanguage.split("-")[0] : sys.LANGUAGE_ENGLISH;
@@ -1203,7 +1202,6 @@ cc._initSys = function(config, CONFIG_KEY){
         localStorage.removeItem("storage");
         localStorage = null;
     }catch(e){
-
         if( e.name === "SECURITY_ERR" || e.name === "QuotaExceededError" ) {
             console.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
         }
