@@ -948,10 +948,10 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0){
 cc.AudioEngine._getInstance = function () {
     if(!this._instance){
         var ae = this._instance = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
-        cc.winEvents.hiddens.push(function(){
+        cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function(){
             ae._pausePlaying();
         });
-        cc.winEvents.shows.push(function(){
+        cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function(){
             ae._resumePlaying();
         });
     }

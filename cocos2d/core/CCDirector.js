@@ -185,21 +185,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _eventAfterVisit: null,
     _eventAfterUpdate: null,
 
-    _isBlur:false,
-
     /**
      * Constructor
      */
     ctor:function () {
         var self = this;
         self._lastUpdate = Date.now();
-        cc.winEvents.shows.push(function(){
+        cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function(){
             self._lastUpdate = Date.now();
         });
-    },
-
-    _resetLastUpdate:function () {
-        this._lastUpdate = Date.now();
     },
 
     /**

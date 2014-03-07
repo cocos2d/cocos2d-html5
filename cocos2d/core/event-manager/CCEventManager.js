@@ -118,6 +118,8 @@ cc.eventManager = {
     _isEnabled: true,
     _nodePriorityIndex: 0,
 
+    _internalCustomListenerIDs:[cc.game.EVENT_HIDE, cc.game.EVENT_SHOW],
+
     _setDirtyForNode: function (node) {
         // Mark the node dirty only when there is an event listener associated with it.
         if (this._nodeListenersMap[node.__instanceId] != null)
@@ -806,12 +808,11 @@ cc.eventManager = {
      * Removes all listeners
      */
     removeAllListeners: function () {
-        var locListeners = this._listenersMap;
-        for (var selKey in locListeners)
-            this._removeListenersForListenerID(selKey);
-
-        if (!this._inDispatch)
-            this._listenersMap = {};
+        var locListeners = this._listenersMap, locInternalCustomEventIDs = this._internalCustomListenerIDs;
+        for (var selKey in locListeners){
+            if(locInternalCustomEventIDs.indexOf(selKey) === -1)
+                this._removeListenersForListenerID(selKey);
+        }
     },
 
     /**
