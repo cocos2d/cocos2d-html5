@@ -33,9 +33,70 @@
  * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);
  */
 cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
+    _CCNS_REG1 : /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/,
+    _CCNS_REG2 : /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*\}\s*$/,
+
     _spriteFrames: {},
     _spriteFramesAliases: {},
     _frameConfigCache : {},
+
+    /**
+     * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
+     * The string is not localized, so items are always separated with a comma. <br/>
+     * If the string is not well-formed, the function returns cc.rect(0, 0, 0, 0).
+     * @function
+     * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
+     * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
+     * These components can represent integer or float values.
+     * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
+     * Constructor
+     * @example
+     * // example
+     * var rect = this._rectFromString("{{3,2},{4,5}}");
+     */
+    _rectFromString :  function (content) {
+        var result = this._CCNS_REG2.exec(content);
+        if(!result) return cc.rect(0, 0, 0, 0);
+        return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
+    },
+
+    /**
+     * Returns a Core Graphics point structure corresponding to the data in a given string.
+     * @function
+     * @param {String} content   A string object whose contents are of the form "{x,y}",
+     * where x is the x coordinate and y is the y coordinate.<br/>
+     * The x and y values can represent integer or float values. <br/>
+     * The string is not localized, so items are always separated with a comma.<br/>
+     * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
+     * If the string is not well-formed, the function returns cc.p(0,0).
+     * Constructor
+     * @example
+     * //example
+     * var point = this._pointFromString("{3.0,2.5}");
+     */
+    _pointFromString : function (content) {
+        var result = this._CCNS_REG1.exec(content);
+        if(!result) return cc.p(0,0);
+        return cc.p(parseFloat(result[1]), parseFloat(result[2]));
+    },
+    /**
+     * Returns a Core Graphics size structure corresponding to the data in a given string.
+     * @function
+     * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
+     * where w is the width and h is the height.<br/>
+     * The w and h values can be integer or float values. <br/>
+     * The string is not localized, so items are always separated with a comma.<br/>
+     * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
+     * If the string is not well-formed, the function returns cc.size(0,0).
+     * @example
+     * // example
+     * var size = this._sizeFromString("{3.0,2.5}");
+     */
+    _sizeFromString : function (content) {
+        var result = this._CCNS_REG1.exec(content);
+        if(!result) return cc.size(0, 0);
+        return cc.size(parseFloat(result[1]), parseFloat(result[2]));
+    },
 
     /**
      * Get the real data structure of frame used by engine.
@@ -79,21 +140,21 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
                 oh = Math.abs(oh);
                 tempFrame.size = cc.size(ow, oh);
             } else if (format == 1 || format == 2) {
-                tempFrame.rect = cc.rectFromString(frameDict["frame"]);
+                tempFrame.rect = this._rectFromString(frameDict["frame"]);
                 tempFrame.rotated = frameDict["rotated"] || false;
-                tempFrame.offset = cc.pointFromString(frameDict["offset"]);
-                tempFrame.size = cc.sizeFromString(frameDict["sourceSize"]);
+                tempFrame.offset = this._pointFromString(frameDict["offset"]);
+                tempFrame.size = this._sizeFromString(frameDict["sourceSize"]);
             } else if (format == 3) {
                 // get values
-                var spriteSize = cc.sizeFromString(frameDict["spriteSize"]);
-                var textureRect = cc.rectFromString(frameDict["textureRect"]);
+                var spriteSize = this._sizeFromString(frameDict["spriteSize"]);
+                var textureRect = this._rectFromString(frameDict["textureRect"]);
                 if (spriteSize) {
                     textureRect = cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height);
                 }
                 tempFrame.rect = textureRect;
                 tempFrame.rotated = frameDict["textureRotated"] || false; // == "true";
-                tempFrame.offset = cc.pointFromString(frameDict["spriteOffset"]);
-                tempFrame.size = cc.sizeFromString(frameDict["spriteSourceSize"]);
+                tempFrame.offset = this._pointFromString(frameDict["spriteOffset"]);
+                tempFrame.size = this._sizeFromString(frameDict["spriteSourceSize"]);
                 tempFrame.aliases = frameDict["aliases"];
             } else {
                 var tmpFrame = frameDict["frame"], tmpSourceSize = frameDict["sourceSize"];

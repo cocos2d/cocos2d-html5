@@ -868,12 +868,12 @@ cc._initDebugSetting = function (mode) {
     var ccGame = cc.game;
 
     //log
-    if(mode == ccGame.DEBUG_MODE_LOG && console.log) {
+    if(mode == ccGame.DEBUG_MODE_INFO && console.log) {
         cc.log = function(){
             console.log.apply(console, arguments);
         }
-    }else if((mode == ccGame.DEBUG_MODE_LOG && !console.log)
-        || mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE){
+    }else if((mode == ccGame.DEBUG_MODE_INFO && !console.log)
+        || mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE){
         cc.log = function(){
             cc._logToWebPage.apply(cc, arguments);
         }
@@ -883,7 +883,7 @@ cc._initDebugSetting = function (mode) {
     if(!mode || mode == ccGame.DEBUG_MODE_NONE
         || mode == ccGame.DEBUG_MODE_ERROR
         || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE) cc.warn = function(){};
-    else if(mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE
+    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
         || !console.warn) {
         cc.warn = function(){
@@ -900,7 +900,7 @@ cc._initDebugSetting = function (mode) {
         cc.error = function(){};
         cc.assert = function(){};
     }
-    else if(mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE
+    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE
         || !console.error){
@@ -1446,10 +1446,10 @@ cc._setContextMenuEnable = function (enabled) {
  */
 cc.game = {
     DEBUG_MODE_NONE : 0,
-    DEBUG_MODE_LOG : 1,
+    DEBUG_MODE_INFO : 1,
     DEBUG_MODE_WARN : 2,
     DEBUG_MODE_ERROR : 3,
-    DEBUG_MODE_LOG_FOR_WEB_PAGE : 4,
+    DEBUG_MODE_INFO_FOR_WEB_PAGE : 4,
     DEBUG_MODE_WARN_FOR_WEB_PAGE : 5,
     DEBUG_MODE_ERROR_FOR_WEB_PAGE : 6,
 
