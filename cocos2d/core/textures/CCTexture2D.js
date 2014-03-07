@@ -858,6 +858,13 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
     },
 
+    _getWidth:function () {
+        return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+    },
+    _getHeight:function () {
+        return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+    },
+
     getContentSizeInPixels:function () {
         return this._contentSize;
     },
@@ -1176,8 +1183,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
 });
 
 cc.Texture2D = cc._renderType === cc._RENDER_TYPE_WEBGL ? cc.Texture2DWebGL : cc.Texture2DCanvas;
-
-
 
 /**
  * <p>

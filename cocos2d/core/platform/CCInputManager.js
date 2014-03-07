@@ -305,7 +305,7 @@ cc.inputManager = {
             touch_event = event.changedTouches[i];
             if (touch_event) {
                 var location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos);
-                if (touch_event.identifier) {
+                if (touch_event.identifier != null) {
                     touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                     //use Touch Pool
                     preLocation = this.getPreTouch(touch).getLocation();

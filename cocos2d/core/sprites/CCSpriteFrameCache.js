@@ -193,7 +193,7 @@ cc.spriteFrameCache = /** @lends cc.SpriteFrameCache# */{
 
         var self = this;
         var frameConfig = self._frameConfigCache[url] || self._getFrameConfig(url);
-        self._checkConflict(frameConfig);
+        //self._checkConflict(frameConfig);                             //TODO
         var frames = frameConfig.frames, meta = frameConfig.meta;
         if(!texture){
             var texturePath = cc.path.changeBasename(url, meta.image || ".png");
