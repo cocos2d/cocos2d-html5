@@ -106,6 +106,9 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _nodes: null,
     _touchListener : null,
     _color:null,
+    _className:"Widget",
+    _flippedX: false,
+    _flippedY: false,
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._enabled = true;
@@ -138,6 +141,8 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._nodes = [];
         this._color = cc.color(255,255,255,255);
         this._touchListener = null;
+        this._flippedX = false;
+        this._flippedY = false;
     },
 
     /**
@@ -647,6 +652,14 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     },
 
     /**
+     * Get custom size
+     * @returns {cc.Size}
+     */
+    getCustomSize:function(){
+        return this._customSize
+    },
+
+    /**
      * Returns size percent of widget
      * @returns {cc.Point}
      */
@@ -1151,17 +1164,46 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         return this.positionType;
     },
 
+    /**
+     * Set flipped x
+     * @param {Boolean} flipX
+     */
     setFlippedX: function (flipX) {
+        this._flippedX = flipX;
+        this.updateFlippedX();
     },
 
+    /**
+     * Get flipped x
+     * @returns {Boolean}
+     */
     isFlippedX: function () {
-        return false;
+        return this._flippedX;
     },
 
+    /**
+     * Set flipped y
+     * @param {Boolean} flipY
+     */
     setFlippedY: function (flipY) {
+        this._flippedY = flipY;
+        this.updateFlippedY();
     },
+
+    /**
+     * Get flipped y
+     * @returns {Boolean}
+     */
     isFlippedY: function () {
-        return false;
+        return this._flippedY;
+    },
+
+    updateFlippedX:function(){
+
+    },
+
+    updateFlippedY:function(){
+
     },
 
     /**

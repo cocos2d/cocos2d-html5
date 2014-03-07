@@ -103,6 +103,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     _textureLoaded: false,
     _loadedEventListeners: null,
+    _className:"LabelBMFont",
 
     _setString:function(newString, needUpdateLabel){
         if(!needUpdateLabel){

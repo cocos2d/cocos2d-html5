@@ -81,6 +81,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     _target:null,
     _callback:null,
     _isSelected:false,
+    _className:"MenuItem",
 
     ctor:function(){
         cc.NodeRGBA.prototype.ctor.call(this);

@@ -277,7 +277,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var gl = cc._renderContext;
         var format = gl.RGBA, type = gl.UNSIGNED_BYTE;
 
-        var bitsPerPixel = cc.Texture2D.BITS_PER_PIXEL_FORMAT[pixelFormat];
+        var bitsPerPixel = cc.Texture2D._BITS_PER_PIXEL_FORMAT[pixelFormat];
 
         var bytesPerRow = pixelsWide * bitsPerPixel / 8;
         if (bytesPerRow % 8 === 0) {
@@ -650,7 +650,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {String}
      */
     stringForFormat:function () {
-        return cc.Texture2D.PIXEL_FORMAT_STR_MAP[this._pixelFormat];
+        return cc.Texture2D._PIXEL_FORMAT_STR_MAP[this._pixelFormat];
     },
 
     /**
@@ -659,7 +659,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     bitsPerPixelForFormat:function (format) {//TODO I want to delete the format argument, use this._pixelFormat
         format = format || this._pixelFormat;
-        var value = cc.Texture2D.BITS_PER_PIXEL_FORMAT[format];
+        var value = cc.Texture2D._BITS_PER_PIXEL_FORMAT[format];
         if(value != null) return value;
         cc.log("bitsPerPixelForFormat: " + format + ", cannot give useful result, it's a illegal pixel format");
         return -1;
@@ -1279,7 +1279,7 @@ _Class.PIXEL_FORMAT_PVRTC2 = 9;
  */
 _Class.PIXEL_FORMAT_DEFAULT = _Class.PIXEL_FORMAT_RGBA8888;
 
-window._PIXEL_FORMAT_STR_MAP = cc.Texture2D.PIXEL_FORMAT_STR_MAP = {};
+window._PIXEL_FORMAT_STR_MAP = cc.Texture2D._PIXEL_FORMAT_STR_MAP = {};
 _PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGBA8888] = "RGBA8888";
 _PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB888] = "RGB888";
 _PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB565] = "RGB565";
@@ -1291,7 +1291,7 @@ _PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB5A1] = "RGB5A1";
 _PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC4] = "PVRTC4";
 _PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC2] = "PVRTC2";
 
-window._BITS_PER_PIXEL_FORMAT = cc.Texture2D.BITS_PER_PIXEL_FORMAT = {};
+window._BITS_PER_PIXEL_FORMAT = cc.Texture2D._BITS_PER_PIXEL_FORMAT = {};
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGBA8888] = 32;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB888] = 24;
 _BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB565] = 16;

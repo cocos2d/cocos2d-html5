@@ -64,6 +64,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _ballPTexType: null,
     _ballDTexType: null,
     _isTextureLoaded: false,
+    _className:"Slider",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._barRenderer = null;
@@ -92,6 +93,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballPTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
         this._ballDTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
         this._isTextureLoaded = false;
+    },
+
+    init:function(){
+        if(ccui.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
     },
 
     initRenderer: function () {

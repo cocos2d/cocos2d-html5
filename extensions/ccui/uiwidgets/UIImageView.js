@@ -35,6 +35,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     _textureFile: "",
     _imageTexType: null,
     _imageTextureSize: null,
+    _className:"ImageView",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._scale9Enabled = false;
@@ -99,6 +100,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
         this.updateColorToRenderer(imageRenderer);
         this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.imageTextureScaleChangedWithSize();
     },
 
@@ -116,46 +119,20 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         }
     },
 
-    /**
-     * Sets whether the widget should be flipped horizontally or not.
-     * @param {Boolean} flipX
-     */
-    setFlippedX: function (flipX) {
-        if (!this._scale9Enabled) {
-            this._imageRenderer.setFlippedX(flipX);
+    updateFlippedX: function () {
+        if (this._scale9Enabled) {
+            this._imageRenderer.setScaleX(this._flippedX ? -1 : 1);
+        } else {
+            this._imageRenderer.setFlippedX(this._flippedX);
         }
     },
 
-    /**
-     * override "setFlippedY" of widget.
-     * @param {Boolean} flipY
-     */
-    setFlippedY: function (flipY) {
-        if (!this._scale9Enabled) {
-            this._imageRenderer.setFlippedY(flipY);
+    updateFlippedY: function () {
+        if (this._scale9Enabled) {
+            this._imageRenderer.setScaleY(this._flippedY ? -1 : 1);
+        } else {
+            this._imageRenderer.setFlippedY(this._flippedY);
         }
-    },
-
-    /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        if (this._scale9Enabled)
-            return false;
-        else
-            return this._imageRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        if (this._scale9Enabled)
-            return false;
-        else
-            return this._imageRenderer.isFlippedY();
     },
 
     /**

@@ -37,7 +37,7 @@ cc.ControlSwitch = cc.Control.extend({
     _moved:false,
     /** A Boolean value that determines the off/on state of the switch. */
     _on:false,
-
+    _className:"ControlSwitch",
     ctor:function () {
         cc.Control.prototype.ctor.call(this);
     },

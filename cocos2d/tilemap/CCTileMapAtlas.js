@@ -53,6 +53,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     _itemsToRender:0,
     //x,y to altas dictionary
     _posToAtlasIndex:null,
+    _className:"TileMapAtlas",
 
     /**
      * @return {cc.ImageTGA}

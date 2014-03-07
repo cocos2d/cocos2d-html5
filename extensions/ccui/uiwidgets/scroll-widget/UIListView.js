@@ -47,6 +47,7 @@ ccui.ListView = ccui.ScrollView.extend({
     _listViewEventSelector: null,
     _curSelectedIndex: 0,
     _refreshViewDirty: true,
+    _className:"ListView",
     ctor: function () {
         ccui.ScrollView.prototype.ctor.call(this);
         this._model = null;

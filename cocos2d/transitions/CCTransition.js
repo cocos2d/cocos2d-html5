@@ -78,6 +78,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
     _duration:null,
     _isInSceneOnTop:false,
     _isSendCleanupToScene:false,
+    _className:"TransitionScene",
 
     //private
     _setNewScene:function (dt) {

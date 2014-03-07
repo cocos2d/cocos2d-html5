@@ -129,6 +129,7 @@ cc.PhysicsDebugNode = cc.DrawNode.extend({
 	space:null,
 
     _spaceObj:null,
+    _className:"PhysicsDebugNode",
 
     getSpace:function () {
         return this.space;

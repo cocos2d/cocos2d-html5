@@ -273,69 +273,6 @@ cc.getImageFormatByData = function (imgData) {
 };
 
 
-
-var CCNS_REG1 = /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/;
-var CCNS_REG2 = /^\s*\{\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*,\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*\}\s*$/
-/**
- * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
- * The string is not localized, so items are always separated with a comma. <br/>
- * If the string is not well-formed, the function returns cc.rect(0, 0, 0, 0).
- * @function
- * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
- * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
- * These components can represent integer or float values.
- * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
- * Constructor
- * @example
- * // example
- * var rect = cc.rectFromString("{{3,2},{4,5}}");
- */
-cc.rectFromString = function (content) {
-	var result = CCNS_REG2.exec(content);
-	if(!result) return cc.rect(0, 0, 0, 0);
-	return cc.rect(parseFloat(result[1]), parseFloat(result[2]), parseFloat(result[3]), parseFloat(result[4]));
-};
-
-/**
- * Returns a Core Graphics point structure corresponding to the data in a given string.
- * @function
- * @param {String} content   A string object whose contents are of the form "{x,y}",
- * where x is the x coordinate and y is the y coordinate.<br/>
- * The x and y values can represent integer or float values. <br/>
- * The string is not localized, so items are always separated with a comma.<br/>
- * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
- * If the string is not well-formed, the function returns cc.p(0,0).
- * Constructor
- * @example
- * //example
- * var point = cc.pointFromString("{3.0,2.5}");
- */
-cc.pointFromString = function (content) {
-	var result = CCNS_REG1.exec(content);
-	if(!result) return cc.p(0,0);
-	return cc.p(parseFloat(result[1]), parseFloat(result[2]));
-};
-
-/**
- * Returns a Core Graphics size structure corresponding to the data in a given string.
- * @function
- * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
- * where w is the width and h is the height.<br/>
- * The w and h values can be integer or float values. <br/>
- * The string is not localized, so items are always separated with a comma.<br/>
- * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
- * If the string is not well-formed, the function returns cc.size(0,0).
- * @example
- * // example
- * var size = cc.sizeFromString("{3.0,2.5}");
- */
-cc.sizeFromString = function (content) {
-	var result = CCNS_REG1.exec(content);
-	if(!result) return cc.size(0, 0);
-	return cc.size(parseFloat(result[1]), parseFloat(result[2]));
-};
-
-
 /**
  * Common getter setter configuration function
  * @function

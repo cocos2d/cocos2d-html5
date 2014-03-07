@@ -29,6 +29,7 @@ cc.LoaderScene = cc.Scene.extend({
     _length : 0,
     _count : 0,
     _label : null,
+    _className:"LoaderScene",
     init : function(){
         var self = this;
         var winSize = cc.director.getWinSize();

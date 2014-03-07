@@ -84,6 +84,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _labelCanvas:null,
     _labelContext:null,
     _lineWidths:null,
+    _className:"LabelTTF",
+
 
     /**
      * Constructor

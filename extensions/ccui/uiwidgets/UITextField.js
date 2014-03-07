@@ -47,6 +47,7 @@ ccui.UICCTextField = cc.TextFieldTTF.extend({
     _detachWithIME: false,
     _insertText: false,
     _deleteBackward: false,
+    _className:"UICCTextField",
     ctor: function () {
         cc.TextFieldTTF.prototype.ctor.call(this);
         this.maxLengthEnabled = false;
@@ -57,6 +58,13 @@ ccui.UICCTextField = cc.TextFieldTTF.extend({
         this._detachWithIME = false;
         this._insertText = false;
         this._deleteBackward = false;
+    },
+    init:function(){
+        if(ccui.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
     },
     onEnter: function () {
         cc.TextFieldTTF.prototype.onEnter.call(this);

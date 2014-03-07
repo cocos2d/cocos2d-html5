@@ -186,6 +186,8 @@
             "cocos2d/transitions/CCTransitionProgress.js",
             "cocos2d/transitions/CCTransitionPageTurn.js"
         ],
+
+        "base4webgl" : ["core", "kazmath", "shaders"],
         "cocos2d" : [
             "core", "kazmath", "shaders", "render-texture", "motion-streak",
             "clipping-nodes", "effects", "shape-nodes", "actions", "actions3d",
@@ -233,6 +235,7 @@
             "extensions/ccui/uiwidgets/UITextAtlas.js",
             "extensions/ccui/uiwidgets/UITextBMFont.js",
             "extensions/ccui/uiwidgets/UITextField.js",
+            "extensions/ccui/uiwidgets/UIRichText.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIScrollView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIListView.js",
             "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js"
@@ -338,5 +341,6 @@
             "external/chipmunk/chipmunk.js"
         ],
         "external" : ["box2d", "chipmunk"]
-    }
+    },
+    "bootFile" : "CCBoot.js"
 }

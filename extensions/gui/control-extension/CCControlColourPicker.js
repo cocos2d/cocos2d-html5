@@ -43,7 +43,7 @@ cc.ControlColourPicker = cc.Control.extend({
     _huePicker:null,
 
     _background:null,
-
+    _className:"ControlColourPicker",
     hueSliderValueChanged:function (sender, controlEvent) {
         this._hsv.h = sender.getHue();
 

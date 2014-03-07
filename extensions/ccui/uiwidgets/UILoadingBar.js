@@ -47,6 +47,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     _capInsets: null,
     _textureFile: "",
     _isTextureLoaded: false,
+    _className:"LoadingBar",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._barType = ccui.LOADINGBAR_TYPE_LEFT;
