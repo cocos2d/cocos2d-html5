@@ -338,5 +338,6 @@
             "external/chipmunk/chipmunk.js"
         ],
         "external" : ["box2d", "chipmunk"]
-    }
+    },
+    "bootFile" : "CCBoot.js"
 }
