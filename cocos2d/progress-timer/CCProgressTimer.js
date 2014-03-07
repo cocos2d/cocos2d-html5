@@ -78,6 +78,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _midPoint:null,
     _barChangeRate:null,
     _reverseDirection:false,
+    _className:"ProgressTimer",
 
     /**
      *    Midpoint is used to modify the progress start position.

@@ -188,6 +188,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _rotationRadiansX:0,
     _rotationRadiansY:0,
+    _className:"Node",
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);

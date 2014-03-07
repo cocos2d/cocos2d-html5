@@ -121,6 +121,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     _tileSize:null,
     //tile properties
     _tileProperties:null,
+    _className:"TMXTiledMap",
 
     ctor:function(){
         cc.Node.prototype.ctor.call(this);

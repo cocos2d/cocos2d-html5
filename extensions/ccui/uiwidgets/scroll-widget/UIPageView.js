@@ -53,6 +53,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _childFocusCancelOffset: 0,
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
+    _className:"PageView",
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;

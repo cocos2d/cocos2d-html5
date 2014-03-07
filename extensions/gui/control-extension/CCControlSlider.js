@@ -54,6 +54,7 @@ cc.ControlSlider = cc.Control.extend({
     _thumbSprite:null,
     _progressSprite:null,
     _backgroundSprite:null,
+    _className:"ControlSlider",
 
     getValue:function () {
         return this._value;

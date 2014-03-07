@@ -222,6 +222,7 @@ cc.EditBox = cc.ControlButton.extend({
     _placeholderFontSize: 14,
 
     _tooltip: false,
+    _className:"EditBox",
 
     /**
      * * Constructor.

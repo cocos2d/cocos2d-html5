@@ -68,6 +68,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     TextureProtocol:true,
     //the blend function used for drawing the quads
     _blendFunc:null,
+    _className:"ParticleBatchNode",
 
     ctor:function () {
         cc.Node.prototype.ctor.call(this);

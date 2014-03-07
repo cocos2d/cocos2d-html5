@@ -47,6 +47,7 @@ cc.ControlHuePicker = cc.Control.extend({
     _background:null,
     _slider:null,
     _startPos:null,
+    _className:"ControlHuePicker",
 
     //maunally put in the setters
     getHue:function () {

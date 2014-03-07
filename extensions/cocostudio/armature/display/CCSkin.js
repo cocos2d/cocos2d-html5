@@ -38,6 +38,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
     _skinTransform:null,
     _displayName:"",
     _armature:null,
+    _className:"Skin",
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;

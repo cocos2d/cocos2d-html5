@@ -67,6 +67,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _blendFunc:null,
 
     _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
+    _className:"AtlasNode",
 
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);

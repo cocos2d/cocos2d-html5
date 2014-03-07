@@ -52,6 +52,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     _body:null,
     _textureAtlasDic:null,
     _blendFunc:null,
+    _className:"Armature",
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this.animation = null;

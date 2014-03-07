@@ -39,6 +39,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
     _textureLoaded:false,
     _loadedEventListeners: null,
+    _className:"LabelAtlas",
 
     ctor:function(){
         cc.AtlasNode.prototype.ctor.call(this);

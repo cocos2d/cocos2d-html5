@@ -75,6 +75,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     _verticesBuffer:null,
     _colorPointerBuffer:null,
     _texCoordsBuffer:null,
+    _className:"MotionStreak",
 
     /**
      * Constructor

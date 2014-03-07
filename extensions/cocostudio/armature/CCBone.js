@@ -60,6 +60,7 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     _worldInfo:null,
     _armatureParentBone:null,
     _dataVersion:0,
+    _className:"Bone",
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._boneData = null;

@@ -35,6 +35,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     _textureFile: "",
     _imageTexType: null,
     _imageTextureSize: null,
+    _className:"ImageView",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._scale9Enabled = false;
