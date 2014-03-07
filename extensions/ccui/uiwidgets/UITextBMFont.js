@@ -35,6 +35,7 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     _fileHasInit: false,
     _fntFileName: "",
     _stringValue: "",
+    _className:"TextBMFont",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._labelBMFontRenderer = null;

@@ -58,6 +58,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     _frontCrossFileName: "",
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
+    _className:"CheckBox",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._backGroundBoxRenderer = null;

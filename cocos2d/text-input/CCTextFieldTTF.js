@@ -101,6 +101,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _inputText:"",
     _placeHolder:"",
     _charCount:0,
+    _className:"TextFieldTTF",
     /**
      * Constructor
      */

@@ -49,6 +49,7 @@ cc.ControlPotentiometer = cc.Control.extend({
     /** Contains the maximum value of the receiver.
      * The default value of this property is 1.0. */
     _maximumValue:1,
+    _className:"ControlPotentiometer",
 
     /**
      *

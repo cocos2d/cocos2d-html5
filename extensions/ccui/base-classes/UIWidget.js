@@ -106,6 +106,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _nodes: null,
     _touchListener : null,
     _color:null,
+    _className:"Widget",
     _flippedX: false,
     _flippedY: false,
     ctor: function () {

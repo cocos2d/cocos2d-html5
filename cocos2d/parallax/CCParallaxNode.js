@@ -112,6 +112,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
 	parallaxArray:null,
 
     _lastPosition:null,
+    _className:"ParallaxNode",
 
     /**
      * @return {Array}

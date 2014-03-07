@@ -55,6 +55,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
 
     _boxPos:0,
     _boxSize:0,
+    _className:"ControlSaturationBrightnessPicker",
 
     getSaturation:function () {
         return this._saturation;

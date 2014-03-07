@@ -118,6 +118,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     clearStencilVal:0,
 
     _clearColorStr:null,
+    _className:"RenderTexture",
 
     /**
      * Constructor

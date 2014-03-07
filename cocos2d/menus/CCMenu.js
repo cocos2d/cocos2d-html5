@@ -63,6 +63,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     _selectedItem:null,
     _state:-1,
     _touchListener: null,
+    _className:"Menu",
 
     ctor:function(){
         cc.LayerRGBA.prototype.ctor.call(this);

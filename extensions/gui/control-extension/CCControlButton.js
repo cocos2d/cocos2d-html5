@@ -55,6 +55,7 @@ cc.ControlButton = cc.Control.extend({
 
     _marginV:0,
     _marginH:0,
+    _className:"ControlButton",
 
     ctor:function () {
         cc.Control.prototype.ctor.call(this);

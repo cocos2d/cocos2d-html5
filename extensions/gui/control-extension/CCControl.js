@@ -67,6 +67,7 @@ cc.Control = cc.LayerRGBA.extend({
     _isOpacityModifyRGB:false,
     _hasVisibleParents:false,
     _touchListener: null,
+    _className:"Control",
 
     isOpacityModifyRGB:function () {
         return this._isOpacityModifyRGB;

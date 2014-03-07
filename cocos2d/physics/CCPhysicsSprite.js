@@ -248,7 +248,7 @@
         }
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
-
+    cc.PhysicsSprite._className = "PhysicsSprite";
 	window._proto = cc.PhysicsSprite.prototype;
 	// Extended properties
 	/** @expose */

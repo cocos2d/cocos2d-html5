@@ -151,11 +151,11 @@ cc.path = {
     /**
      * Join strings to be a path.
      * @example
-         cc.path.join("a", "b.png");//-->"a/b.png"
-         cc.path.join("a", "b", "c.png");//-->"a/b/c.png"
-         cc.path.join("a", "b");//-->"a/b"
-         cc.path.join("a", "b", "/");//-->"a/b/"
-         cc.path.join("a", "b/", "/");//-->"a/b/"
+     cc.path.join("a", "b.png");//-->"a/b.png"
+     cc.path.join("a", "b", "c.png");//-->"a/b/c.png"
+     cc.path.join("a", "b");//-->"a/b"
+     cc.path.join("a", "b", "/");//-->"a/b/"
+     cc.path.join("a", "b/", "/");//-->"a/b/"
      * @returns {string}
      */
     join : function(){
@@ -170,10 +170,10 @@ cc.path = {
     /**
      * Get the ext name of a path.
      * @example
-         cc.path.extname("a/b.png");//-->".png"
-         cc.path.extname("a/b.png?a=1&b=2");//-->".png"
-         cc.path.extname("a/b");//-->null
-         cc.path.extname("a/b?a=1&b=2");//-->null
+     cc.path.extname("a/b.png");//-->".png"
+     cc.path.extname("a/b.png?a=1&b=2");//-->".png"
+     cc.path.extname("a/b");//-->null
+     cc.path.extname("a/b?a=1&b=2");//-->null
      * @param pathStr
      * @returns {*}
      */
@@ -185,11 +185,11 @@ cc.path = {
     /**
      * Get the file name of a file path.
      * @example
-         cc.path.basename("a/b.png");//-->"b.png"
-         cc.path.basename("a/b.png?a=1&b=2");//-->"b.png"
-         cc.path.basename("a/b.png", ".png");//-->"b"
-         cc.path.basename("a/b.png?a=1&b=2", ".png");//-->"b"
-         cc.path.basename("a/b.png", ".txt");//-->"b.png"
+     cc.path.basename("a/b.png");//-->"b.png"
+     cc.path.basename("a/b.png?a=1&b=2");//-->"b.png"
+     cc.path.basename("a/b.png", ".png");//-->"b"
+     cc.path.basename("a/b.png?a=1&b=2", ".png");//-->"b"
+     cc.path.basename("a/b.png", ".txt");//-->"b.png"
      * @param pathStr
      * @param extname
      * @returns {*}
@@ -209,8 +209,8 @@ cc.path = {
     /**
      * Get ext name of a file path.
      * @example
-         cc.path.driname("a/b/c.png");//-->"a/b"
-         cc.path.driname("a/b/c.png?a=1&b=2");//-->"a/b"
+     cc.path.driname("a/b/c.png");//-->"a/b"
+     cc.path.driname("a/b/c.png?a=1&b=2");//-->"a/b"
      * @param {String} pathStr
      * @returns {*}
      */
@@ -221,8 +221,8 @@ cc.path = {
     /**
      * Change extname of a file path.
      * @example
-         cc.path.changeExtname("a/b.png", ".plist");//-->"a/b.plist"
-         cc.path.changeExtname("a/b.png?a=1&b=2", ".plist");//-->"a/b.plist?a=1&b=2"
+     cc.path.changeExtname("a/b.png", ".plist");//-->"a/b.plist"
+     cc.path.changeExtname("a/b.png?a=1&b=2", ".plist");//-->"a/b.plist?a=1&b=2"
      * @param pathStr
      * @param extname
      * @returns {string}
@@ -242,11 +242,11 @@ cc.path = {
     /**
      * Change file name of a file path.
      * @example
-         cc.path.changeBasename("a/b/c.plist", "b.plist");//-->"a/b/b.plist"
-         cc.path.changeBasename("a/b/c.plist?a=1&b=2", "b.plist");//-->"a/b/b.plist?a=1&b=2"
-         cc.path.changeBasename("a/b/c.plist", ".png");//-->"a/b/c.png"
-         cc.path.changeBasename("a/b/c.plist", "b");//-->"a/b/b"
-         cc.path.changeBasename("a/b/c.plist", "b", true);//-->"a/b/b.plist"
+     cc.path.changeBasename("a/b/c.plist", "b.plist");//-->"a/b/b.plist"
+     cc.path.changeBasename("a/b/c.plist?a=1&b=2", "b.plist");//-->"a/b/b.plist?a=1&b=2"
+     cc.path.changeBasename("a/b/c.plist", ".png");//-->"a/b/c.png"
+     cc.path.changeBasename("a/b/c.plist", "b");//-->"a/b/b"
+     cc.path.changeBasename("a/b/c.plist", "b", true);//-->"a/b/b.plist"
      * @param {String} pathStr
      * @param {String} basename
      * @param [{Boolean}] isSameExt
@@ -468,6 +468,26 @@ cc.loader = {
             fs.readFile(url, function(err, data){
                 err ? cb(err) : cb(null, data.toString());
             });
+        }
+    },
+    _loadTxtSync : function(url){
+        if(!cc._isNodeJs){
+            var xhr = this.getXMLHttpRequest();
+            xhr.open("GET", url, false);
+            if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+                // IE-specific logic here
+                xhr.setRequestHeader("Accept-Charset", "utf-8");
+            } else {
+                if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=utf-8");
+            }
+            xhr.send(null);
+            if (!xhr.readyState == 4 || xhr.status != 200) {
+                return null;
+            }
+            return xhr.responseText;
+        }else{
+            var fs = require("fs");
+            return fs.readFileSync(url).toString();
         }
     },
 
@@ -868,12 +888,12 @@ cc._initDebugSetting = function (mode) {
     var ccGame = cc.game;
 
     //log
-    if(mode == ccGame.DEBUG_MODE_LOG && console.log) {
+    if(mode == ccGame.DEBUG_MODE_INFO && console.log) {
         cc.log = function(){
             console.log.apply(console, arguments);
         }
-    }else if((mode == ccGame.DEBUG_MODE_LOG && !console.log)
-        || mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE){
+    }else if((mode == ccGame.DEBUG_MODE_INFO && !console.log)
+        || mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE){
         cc.log = function(){
             cc._logToWebPage.apply(cc, arguments);
         }
@@ -883,7 +903,7 @@ cc._initDebugSetting = function (mode) {
     if(!mode || mode == ccGame.DEBUG_MODE_NONE
         || mode == ccGame.DEBUG_MODE_ERROR
         || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE) cc.warn = function(){};
-    else if(mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE
+    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
         || !console.warn) {
         cc.warn = function(){
@@ -900,7 +920,7 @@ cc._initDebugSetting = function (mode) {
         cc.error = function(){};
         cc.assert = function(){};
     }
-    else if(mode == ccGame.DEBUG_MODE_LOG_FOR_WEB_PAGE
+    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE
         || !console.error){
@@ -1203,7 +1223,7 @@ cc._initSys = function(config, CONFIG_KEY){
         localStorage = null;
     }catch(e){
         if( e.name === "SECURITY_ERR" || e.name === "QuotaExceededError" ) {
-            console.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+            cc.warn("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
         }
         sys.localStorage = function(){};
     }
@@ -1403,7 +1423,7 @@ cc._setup = function (el, width, height) {
         cc._drawingUtil = new cc.DrawingPrimitiveWebGL(cc._renderContext);
         cc._rendererInitialized = true;
         cc.textureCache._initializingRenderer();
-	    cc.shaderCache._init();
+        cc.shaderCache._init();
     } else {
         cc._renderContext = localCanvas.getContext("2d");
         cc._mainRenderContextBackup = cc._renderContext;
@@ -1446,10 +1466,10 @@ cc._setContextMenuEnable = function (enabled) {
  */
 cc.game = {
     DEBUG_MODE_NONE : 0,
-    DEBUG_MODE_LOG : 1,
+    DEBUG_MODE_INFO : 1,
     DEBUG_MODE_WARN : 2,
     DEBUG_MODE_ERROR : 3,
-    DEBUG_MODE_LOG_FOR_WEB_PAGE : 4,
+    DEBUG_MODE_INFO_FOR_WEB_PAGE : 4,
     DEBUG_MODE_WARN_FOR_WEB_PAGE : 5,
     DEBUG_MODE_ERROR_FOR_WEB_PAGE : 6,
 
@@ -1595,7 +1615,7 @@ cc.game = {
      * @returns {*}
      * @private
      */
-    _initConfig : function(cb){
+    _initConfig : function(){
         var self = this, CONFIG_KEY = self.CONFIG_KEY;
         var _init = function(cfg){
             cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "libs/cocos2d-html5";
@@ -1604,12 +1624,19 @@ cc.game = {
             cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 0;
             return cfg;
         };
-        if(self.config) return cb(_init(self.config));
-        cc.loader.loadJson("project.json", function(err, data){
-            if(err) throw err;
-            self.config = data;
-            cb(_init(self.config));
-        })
+        if(document["ccConfig"]){
+            this.config = _init(document["ccConfig"]);
+        }else{
+            try{
+                var txt = cc.loader._loadTxtSync("project.json");
+                var data = JSON.parse(txt);
+                this.config = _init(data || {});
+            }catch(e){
+                this.config = _init({});
+            }
+        }
+        cc._initDebugSetting(this.config[CONFIG_KEY.debugMode]);
+        cc._initSys(this.config, CONFIG_KEY);
     },
 
     //cache for js and module that has added into jsList to be loaded.
@@ -1640,47 +1667,44 @@ cc.game = {
      */
     prepare : function(cb){
         var self = this;
-        self._initConfig(function(config){
-            var CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
-            cc._initSys(config, CONFIG_KEY);
-            if(!cc._supportRender){
-                cc.log("Can not support render!")
-                return;
-            }
-            cc._initDebugSetting(config[CONFIG_KEY.debugMode]);
-            self._prepareCalled = true;
+        var config = self.config, CONFIG_KEY = self.CONFIG_KEY, engineDir = config[CONFIG_KEY.engineDir], loader = cc.loader;
+        if(!cc._supportRender){
+            cc.error("Can not support render!")
+            return;
+        }
+        self._prepareCalled = true;
 
-            var jsList = config[CONFIG_KEY.jsList] || [];
-            if(cc.Class){//is single file
-                //load user's jsList only
-                loader.loadJsWithImg("", jsList, function(err){
+        var jsList = config[CONFIG_KEY.jsList] || [];
+        if(cc.Class){//is single file
+            //load user's jsList only
+            loader.loadJsWithImg("", jsList, function(err){
+                if(err) throw err;
+                self._prepared = true;
+                if(cb) cb();
+            });
+        }else{
+            //load cc's jsList first
+            var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
+            loader.loadJson(ccModulesPath, function(err, modulesJson){
+                if(err) throw err;
+                var modules = config["modules"] || [];
+                var moduleMap = modulesJson["module"];
+                var newJsList = [];
+                if(cc._renderType == cc._RENDER_TYPE_WEBGL) modules.splice(0, 0, "shaders");
+                else if(modules.indexOf("core") < 0) modules.splice(0, 0, "core");
+                for(var i = 0, li = modules.length; i < li; i++){
+                    var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
+                    if(arr) newJsList = newJsList.concat(arr);
+                }
+                newJsList = newJsList.concat(jsList);
+                cc.loader.loadJsWithImg(newJsList, function(err){
                     if(err) throw err;
                     self._prepared = true;
                     if(cb) cb();
                 });
-            }else{
-                //load cc's jsList first
-                var ccModulesPath = cc.path.join(engineDir, "moduleConfig.json");
-                loader.loadJson(ccModulesPath, function(err, modulesJson){
-                    if(err) throw err;
-                    var modules = config["modules"] || [];
-                    var moduleMap = modulesJson["module"];
-                    var newJsList = [];
-                    if(cc._renderType == cc._RENDER_TYPE_WEBGL) modules.splice(0, 0, "shaders");
-                    else if(modules.indexOf("core") < 0) modules.splice(0, 0, "core");
-                    for(var i = 0, li = modules.length; i < li; i++){
-                        var arr = self._getJsListOfModule(moduleMap, modules[i], engineDir);
-                        if(arr) newJsList = newJsList.concat(arr);
-                    }
-                    newJsList = newJsList.concat(jsList);
-                    cc.loader.loadJsWithImg(newJsList, function(err){
-                        if(err) throw err;
-                        self._prepared = true;
-                        if(cb) cb();
-                    });
-                });
-            }
-        });
+            });
+        }
     }
 };
+cc.game._initConfig();
 //+++++++++++++++++++++++++something about CCGame end+++++++++++++++++++++++++++++
