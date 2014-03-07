@@ -399,7 +399,10 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      * execute the function.
      */
     execute:function () {
-        cc.doCallback(this._callFunc, this._selectorTarget,this._data);
+        if (this._callFunc != null)
+            this._callFunc.call(this._selectorTarget, this._target, this._data);
+        else if(this._function)
+            this._function.call(null, this._target);
     },
 
     /**
