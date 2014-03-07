@@ -92,7 +92,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
     _blendFunc: null,
     _lineWidth: 0,
     _drawColor: null,
-
+    _className:"DrawNodeCanvas",
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._buffer = [];
@@ -535,6 +535,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
 
     _blendFunc:null,
     _dirty:false,
+    _className:"DrawNodeWebGL",
 
     // ----common function start ----
     getBlendFunc:function () {

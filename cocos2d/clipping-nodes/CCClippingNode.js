@@ -75,6 +75,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {cc.Node} [stencil=null]
      */
     init: null,
+    _className:"ClippingNode",
 
     _initForWebGL: function (stencil) {
         this._stencil = stencil;

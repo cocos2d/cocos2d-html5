@@ -65,6 +65,7 @@ cc.ControlStepper = cc.Control.extend({
     _touchInsideFlag:false,
     _touchedPart:cc.CONTROL_STEPPER_PARTNONE,
     _autorepeatCount:0,
+    _className:"ControlStepper",
     ctor:function () {
         cc.Control.prototype.ctor.call(this);
         this._minusSprite = null;

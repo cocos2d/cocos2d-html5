@@ -106,6 +106,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _nodes: null,
     _touchListener : null,
     _color:null,
+    _className:"Widget",
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._enabled = true;

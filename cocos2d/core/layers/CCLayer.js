@@ -36,6 +36,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * init layer
      * @return {Boolean}
      */
+    _className:"Layer",
     init:function () {
         cc.Node.prototype.init.call(this);
         this.anchorX = 0.5;
@@ -87,6 +88,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     _realColor: null,
     _cascadeOpacityEnabled: false,
     _cascadeColorEnabled: false,
+    _className:"LayerRGBA",
 
     ctor: function () {
         cc.Layer.prototype.ctor.call(this);
@@ -346,6 +348,7 @@ delete window._proto;
  */
 cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     _blendFunc:null,
+    _className:"LayerColor",
 
     /**
      * blendFunc getter
@@ -706,7 +709,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _compressedInterpolation:false,
     _gradientStartPoint:null,
     _gradientEndPoint:null,
-
+    _className:"LayerGradient",
     /**
      * Constructor
      * @function
@@ -1021,6 +1024,7 @@ cc.LayerGradient.create = function (start, end, v) {
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     _enabledLayer:0,
     _layers:null,
+    _className:"LayerMultiplex",
 
     /**
      * @param {cc.Layer} layer

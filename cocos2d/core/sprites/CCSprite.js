@@ -321,6 +321,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _textureLoaded:false,
     _loadedEventListeners: null,
     _newTextureWhenChangeColor: null,         //hack property for LabelBMFont
+    _className:"Sprite",
 
     textureLoaded:function(){
         return this._textureLoaded;
