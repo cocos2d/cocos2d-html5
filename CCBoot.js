@@ -799,10 +799,12 @@ cc.loader = {
     }
 
     var onHidden = function(){
-        cc.eventManager.dispatchEvent(cc.game._eventHide);
+        if(cc.eventManager)
+            cc.eventManager.dispatchEvent(cc.game._eventHide);
     };
     var onShow = function(){
-        cc.eventManager.dispatchEvent(cc.game._eventShow);
+        if(cc.eventManager)
+            cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
 
     if (typeof document.addEventListener !== "undefined" && hidden) {
@@ -822,6 +824,9 @@ cc.loader = {
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
 
 cc._logToWebPage = function (msg) {
+    if(!cc._canvas)
+        return;
+
     var logList = cc._logList;
     var doc = document;
     if(!logList){
