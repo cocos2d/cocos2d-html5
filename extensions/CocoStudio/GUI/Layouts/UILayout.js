@@ -83,6 +83,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
     _scissorRectDirty: false,
     _clippingRect: null,
     _clippingParent: null,
+    _backGroundImageColor:null,
+    _backGroundImageOpacity:null,
     ctor: function () {
         ccs.Widget.prototype.ctor.call(this);
         this._clippingEnabled = false;
@@ -110,6 +112,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         this._scissorRectDirty = false;
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._clippingParent = null;
+        this._backGroundImageColor = cc.c3b(255, 255, 255);
+        this._backGroundImageOpacity = 255;
     },
     init: function () {
         if (cc.Node.prototype.init.call(this)){
@@ -689,8 +693,8 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
         if (this._backGroundScale9Enabled) {
             this._backGroundImage.setPreferredSize(this._size);
         }
-        this._backGroundImage.setColor(this.getColor());
-        this._backGroundImage.setOpacity(this.getOpacity());
+
+        this.updateBackGroundImageRGBA();
         this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
@@ -932,6 +936,57 @@ ccs.Layout = ccs.Widget.extend(/** @lends ccs.Layout# */{
      */
     getBackGroundColorVector:function(){
         return this._alongVector;
+    },
+
+    /**
+     * Set backGround image color
+     * @param {cc.Color3B} color
+     */
+    setBackGroundImageColor: function (color) {
+        this._backGroundImageColor.r = color.r;
+        this._backGroundImageColor.g = color.g;
+        this._backGroundImageColor.b = color.b;
+
+        this.updateBackGroundImageColor();
+    },
+
+    /**
+     * Get backGround image color
+     * @param {Number} opacity
+     */
+    setBackGroundImageOpacity: function (opacity) {
+        this._backGroundImageOpacity = opacity;
+        this.getBackGroundImageColor();
+    },
+
+    /**
+     * Get backGround image color
+     * @returns {cc.Color3B}
+     */
+    getBackGroundImageColor: function () {
+        var color = this._backGroundImageColor;
+        return cc.color(color.r, color.g, color.b);
+    },
+
+    /**
+     * Get backGround image opacity
+     * @returns {Number}
+     */
+    getBackGroundImageOpacity: function () {
+        return this._backGroundImageOpacity;
+    },
+
+    updateBackGroundImageColor: function () {
+        this._backGroundImage.setColor(this._backGroundImageColor);
+    },
+
+    updateBackGroundImageOpacity: function () {
+        this._backGroundImage.setOpacity(this._backGroundImageOpacity);
+    },
+
+    updateBackGroundImageRGBA: function () {
+        this.updateBackGroundImageColor();
+        this.updateBackGroundImageOpacity();
     },
 
     /**
