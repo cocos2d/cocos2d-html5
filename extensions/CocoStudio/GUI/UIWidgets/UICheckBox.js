@@ -83,6 +83,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     },
     init: function () {
         if (ccs.Widget.prototype.init.call(this)) {
+            this.setTouchEnabled(true);
             this.setSelectedState(false);
             return true;
         }

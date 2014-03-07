@@ -93,6 +93,14 @@ ccs.Slider = ccs.Widget.extend(/** @lends ccs.Slider# */{
         this._isTextureLoaded = false;
     },
 
+    init:function(){
+        if(ccs.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
+    },
+
     initRenderer: function () {
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();

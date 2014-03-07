@@ -94,8 +94,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     init: function () {
-        if (ccs.Widget.prototype.init.call(this))
+        if (ccs.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
             return true;
+        }
         return false;
     },
 

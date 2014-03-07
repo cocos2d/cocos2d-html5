@@ -54,6 +54,13 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
         this._insertText = false;
         this._deleteBackward = false;
     },
+    init:function(){
+        if(ccs.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
+    },
     onEnter: function () {
         cc.TextFieldTTF.prototype.onEnter.call(this);
         cc.TextFieldTTF.prototype.setDelegate.call(this,this);
