@@ -304,6 +304,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     modeA: null,
     //! Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
     modeB: null,
+    _className:"ParticleSystem",
 
     //private POINTZERO for ParticleSystem
     _pointZeroForParticle: cc.p(0, 0),

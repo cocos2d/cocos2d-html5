@@ -94,6 +94,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     inertiaScrollEnabled: false,
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
+    _className:"ScrollView",
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
         this._innerContainer = null;

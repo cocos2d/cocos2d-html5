@@ -36,6 +36,7 @@ cc.TABLEVIEW_FILL_BOTTOMUP = 1;
  */
 cc.TableViewCell = cc.Node.extend({
     _idx:0,
+    _className:"TableViewCell",
 
     /**
      * The index used internally by SWTableView and its subclasses

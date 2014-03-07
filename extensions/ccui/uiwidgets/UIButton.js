@@ -68,6 +68,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _normalTextureLoaded: false,
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
+    _className:"Button",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._buttonNormalRenderer = null;

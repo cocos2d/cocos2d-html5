@@ -64,6 +64,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _ballPTexType: null,
     _ballDTexType: null,
     _isTextureLoaded: false,
+    _className:"Slider",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._barRenderer = null;

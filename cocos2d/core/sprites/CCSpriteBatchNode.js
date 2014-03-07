@@ -64,6 +64,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 	_blendFunc:null,
     // all descendants: chlidren, gran children, etc...
     _descendants:null,
+    _className:"SpriteBatchNode",
 
     /**
      * <p>

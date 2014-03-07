@@ -89,6 +89,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     _spriteFrameRotated: false,
     _textureLoaded:false,
     _loadedEventListeners: null,
+    _className:"Scale9Sprite",
 
     /**
      * return  texture is loaded

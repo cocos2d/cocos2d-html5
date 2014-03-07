@@ -74,6 +74,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _scissorRectDirty: false,
     _clippingRect: null,
     _clippingParent: null,
+    _className:"Layout",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._clippingEnabled = false;

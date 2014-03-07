@@ -94,6 +94,7 @@ cc.ScrollView = cc.Layer.extend({
     // cache object
     _tmpViewRect:null,
     _touchListener: null,
+    _className:"ScrollView",
 
     ctor:function () {
         cc.Layer.prototype.ctor.call(this);

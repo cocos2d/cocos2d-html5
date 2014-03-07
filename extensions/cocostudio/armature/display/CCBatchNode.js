@@ -24,6 +24,7 @@
 
 cc.BatchNode = cc.Node.extend({
     _atlas:null,
+    _className:"BatchNode",
     ctor:function () {
         this._atlas = null;
     },
