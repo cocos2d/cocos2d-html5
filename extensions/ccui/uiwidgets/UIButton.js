@@ -102,8 +102,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     init: function () {
-        if (ccui.Widget.prototype.init.call(this))
+        if (ccui.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
             return true;
+        }
         return false;
     },
 
@@ -241,7 +243,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
         this.updateColorToRenderer(buttonNormalRenderer);
         this.updateAnchorPoint();
-
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.normalTextureScaleChangedWithSize();
         this._normalTextureLoaded = true;
     },
@@ -289,6 +292,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         }
         this.updateColorToRenderer(clickedRenderer);
         this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.pressedTextureScaleChangedWithSize();
         this._pressedTextureLoaded = true;
     },
@@ -336,6 +341,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         }
         this.updateColorToRenderer(disableRenderer);
         this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.disabledTextureScaleChangedWithSize();
         this._disabledTextureLoaded = true;
     },
@@ -465,32 +472,44 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
     },
 
-    /**
-     * override "setFlippedX" of widget.
-     * @param {Boolean} flipX
-     */
-    setFlippedX: function (flipX) {
-        this._titleRenderer.setFlippedX(flipX);
+    updateFlippedX: function () {
+        this._titleRenderer.setFlippedX(this._flippedX);
         if (this._scale9Enabled) {
-            return;
+            if (this._flippedX) {
+                this._buttonNormalRenderer.setScaleX(-1);
+                this._buttonClickedRenderer.setScaleX(-1);
+                this._buttonDisableRenderer.setScaleX(-1);
+            }
+            else {
+                this._buttonNormalRenderer.setScaleX(1);
+                this._buttonClickedRenderer.setScaleX(1);
+                this._buttonDisableRenderer.setScaleX(1);
+            }
+        } else {
+            this._buttonNormalRenderer.setFlippedX(this._flippedX);
+            this._buttonClickedRenderer.setFlippedX(this._flippedX);
+            this._buttonDisableRenderer.setFlippedX(this._flippedX);
         }
-        this._buttonNormalRenderer.setFlippedX(flipX);
-        this._buttonClickedRenderer.setFlippedX(flipX);
-        this._buttonDisableRenderer.setFlippedX(flipX);
     },
 
-    /**
-     * override "setFlippedY" of widget.
-     * @param {Boolean} flipY
-     */
-    setFlippedY: function (flipY) {
-        this._titleRenderer.setFlippedY(flipY);
+    updateFlippedY: function () {
+        this._titleRenderer.setFlippedY(this._flippedY);
         if (this._scale9Enabled) {
-            return;
+            if (this._flippedX) {
+                this._buttonNormalRenderer.setScaleY(-1);
+                this._buttonClickedRenderer.setScaleX(-1);
+                this._buttonDisableRenderer.setScaleX(-1);
+            }
+            else {
+                this._buttonNormalRenderer.setScaleY(1);
+                this._buttonClickedRenderer.setScaleY(1);
+                this._buttonDisableRenderer.setScaleY(1);
+            }
+        }else{
+            this._buttonNormalRenderer.setFlippedY(this._flippedY);
+            this._buttonClickedRenderer.setFlippedY(this._flippedY);
+            this._buttonDisableRenderer.setFlippedY(this._flippedY);
         }
-        this._buttonNormalRenderer.setFlippedY(flipY);
-        this._buttonClickedRenderer.setFlippedY(flipY);
-        this._buttonDisableRenderer.setFlippedY(flipY);
     },
 
     /**
