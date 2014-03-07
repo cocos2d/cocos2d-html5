@@ -200,7 +200,7 @@ ccs.ActionNode = ccs.Class.extend({
         }
         var frameType = frame.getFrameType();
         var array = this._frameArray[frameType];
-        array[index] = frame;
+        array.splice(index, 0, frame);
     },
 
     /**

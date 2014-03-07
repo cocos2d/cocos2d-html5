@@ -228,6 +228,7 @@
             '../extensions/CocoStudio/GUI/UIWidgets/UILabelAtlas.js',
             '../extensions/CocoStudio/GUI/UIWidgets/UILabelBMFont.js',
             '../extensions/CocoStudio/GUI/UIWidgets/UILoadingBar.js',
+            '../extensions/CocoStudio/GUI/UIWidgets/UIRichText.js',
             '../extensions/CocoStudio/GUI/UIWidgets/UISlider.js',
             '../extensions/CocoStudio/GUI/UIWidgets/UISwitch.js',
             '../extensions/CocoStudio/GUI/UIWidgets/UITextField.js',
