@@ -682,7 +682,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         this._backGroundImageTextureSize = this._backGroundImage.getContentSize();
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
-        this.updateBackGroundImageRGBA();
+        this.updateBackGroundImageColor();
     },
 
     /**

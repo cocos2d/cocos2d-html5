@@ -504,10 +504,11 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
                 this._buttonClickedRenderer.setScaleY(1);
                 this._buttonDisableRenderer.setScaleY(1);
             }
+        }else{
+            this._buttonNormalRenderer.setFlippedY(this._flippedY);
+            this._buttonClickedRenderer.setFlippedY(this._flippedY);
+            this._buttonDisableRenderer.setFlippedY(this._flippedY);
         }
-        this._buttonNormalRenderer.setFlippedY(this._flippedY);
-        this._buttonClickedRenderer.setFlippedY(this._flippedY);
-        this._buttonDisableRenderer.setFlippedY(this._flippedY);
     },
 
     /**
