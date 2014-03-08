@@ -25,6 +25,13 @@
  ****************************************************************************/
 
 /**
+ * The shared CCIMEDispatcher object for the system.
+ * @Object
+ * @type {cc.IMEDispatcher}
+ */
+cc.imeDispatcher;
+
+/**
  * IME Keyboard Notification Info structure
  * @param {cc.Rect} begin the soft keyboard rectangle when animatin begin
  * @param {cc.Rect} end the soft keyboard rectangle when animatin end
@@ -511,33 +518,4 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
         }
         return null;
     }
-});
-
-/**
- * @type object
- */
-cc.IMEDispatcher._instance = null;
-
-/**
- * Returns the shared CCIMEDispatcher object for the system.
- * @return {cc.IMEDispatcher}
- */
-cc.IMEDispatcher._getInstance = function () {
-    if (!cc.IMEDispatcher._instance) {
-        cc.IMEDispatcher._instance = new cc.IMEDispatcher();
-        cc.IMEDispatcher._instance.init();
-    }
-    return cc.IMEDispatcher._instance;
-};
-
-/**
- * The shared CCIMEDispatcher object for the system.
- * @Object
- * @type {cc.IMEDispatcher}
- */
-cc.imeDispatcher;
-/** @expose */
-cc.imeDispatcher;
-cc.defineGetterSetter(cc, "imeDispatcher", function() {
-	return cc.IMEDispatcher._instance ? cc.IMEDispatcher._instance : cc.IMEDispatcher._getInstance();
 });

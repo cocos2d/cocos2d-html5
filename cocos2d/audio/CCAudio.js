@@ -25,6 +25,13 @@
  ****************************************************************************/
 
 /**
+ * The shared audio Engine object
+ * @Object
+ * @type {cc.AudioEngine}
+ */
+cc.audioEngine;
+
+/**
  * Common getter setter configuration function
  * @function
  * @param {Object} proto    A class prototype or an object to config<br/>
@@ -941,32 +948,6 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0){
 
     });
 }
-/**
- * Get the shared Engine object, it will new one when first time be called.
- * @return {cc.AudioEngine}
- */
-cc.AudioEngine._getInstance = function () {
-    if(!this._instance){
-        var ae = this._instance = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
-        cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function(){
-            ae._pausePlaying();
-        });
-        cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function(){
-            ae._resumePlaying();
-        });
-    }
-    return this._instance;
-};
-
-/**
- * The shared Engine object
- * @Object
- * @type {cc.AudioEngine}
- */
-cc.audioEngine;
-cc.defineGetterSetter(cc, "audioEngine", function() {
-    return cc.AudioEngine._instance ? cc.AudioEngine._instance : cc.AudioEngine._getInstance();
-});
 
 /**
  * Resource loader for audio.

@@ -24,6 +24,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * The shared EGLView
+ * @Object
+ * @type {cc.EGLView}
+ */
+cc.view;
+
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
@@ -564,31 +571,19 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             selPoint = selTouch._point;
             selTouch._setPoint((selPoint.x - locViewPortRect.x) / locScaleX,
                 (selPoint.y - locViewPortRect.y) / locScaleY);
+            selTouch._setPrevPoint((selPrePoint.x - locViewPortRect.x) / locScaleX,
+                (selPrePoint.y - locViewPortRect.y) / locScaleY);
         }
     }
 });
 
 cc.EGLView._getInstance = function () {
     if (!this._instance) {
-	    // First init director
-	    cc.director;
         this._instance = this._instance || new cc.EGLView();
-        cc.inputManager.registerSystemEvent(cc._canvas);
         this._instance.initialize();
     }
     return this._instance;
 };
-
-/**
- * The shared EGLView
- * @Object
- * @type {cc.EGLView}
- */
-/** @expose */
-cc.view;
-cc.defineGetterSetter(cc, "view", function() {
-	return cc.EGLView._instance ? cc.EGLView._instance : cc.EGLView._getInstance();
-});
 
 /**
  * <p>cc.ContainerStrategy class is the root strategy class of container's scale strategy,

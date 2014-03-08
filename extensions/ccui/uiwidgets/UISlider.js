@@ -95,6 +95,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._isTextureLoaded = false;
     },
 
+    init:function(){
+        if(ccui.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
+    },
+
     initRenderer: function () {
         this._barRenderer = cc.Sprite.create();
         this._progressBarRenderer = cc.Sprite.create();

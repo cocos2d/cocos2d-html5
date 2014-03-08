@@ -364,14 +364,18 @@ cc.eventManager = {
     },
 
     _updateListeners: function (event) {
-        cc.assert(this._inDispatch > 0, "If program goes here, there should be event in dispatch.");
+        var locInDispatch = this._inDispatch;
+        cc.assert(locInDispatch > 0, "If program goes here, there should be event in dispatch.");
         if (event.getType() == cc.Event.TOUCH) {
             this._onUpdateListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
             this._onUpdateListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
         } else
             this._onUpdateListeners(cc.__getListenerID(event));
 
-        cc.assert(this._inDispatch == 1, "_inDispatch should be 1 here.");
+        if(locInDispatch > 1)
+            return;
+
+        cc.assert(locInDispatch == 1, "_inDispatch should be 1 here.");
         var locListenersMap = this._listenersMap, locPriorityDirtyFlagMap = this._priorityDirtyFlagMap;
         for( var selKey in locListenersMap ){
              if(locListenersMap[selKey].empty()){

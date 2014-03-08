@@ -832,10 +832,12 @@ cc.loader = {
     }
 
     var onHidden = function(){
-        cc.eventManager.dispatchEvent(cc.game._eventHide);
+        if(cc.eventManager)
+            cc.eventManager.dispatchEvent(cc.game._eventHide);
     };
     var onShow = function(){
-        cc.eventManager.dispatchEvent(cc.game._eventShow);
+        if(cc.eventManager)
+            cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
 
     if (typeof document.addEventListener !== "undefined" && hidden) {
@@ -855,6 +857,9 @@ cc.loader = {
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
 
 cc._logToWebPage = function (msg) {
+    if(!cc._canvas)
+        return;
+
     var logList = cc._logList;
     var doc = document;
     if(!logList){
@@ -1100,7 +1105,6 @@ cc._initSys = function(config, CONFIG_KEY){
      * @type Number
      */
     sys.LANGUAGE_POLISH = "pl";
-
 
     /**
      * @constant
@@ -1470,6 +1474,35 @@ cc._setup = function (el, width, height) {
         fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
             +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
     }
+
+	// Init singletons
+	// Audio engine
+    if(cc.AudioEngine){
+        cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
+        cc.eventManager.addCustomListener(this.EVENT_HIDE, function(){
+            cc.audioEngine._pausePlaying();
+        });
+        cc.eventManager.addCustomListener(this.EVENT_SHOW, function(){
+            cc.audioEngine._resumePlaying();
+        });
+    }
+
+	// View
+	cc.view = cc.EGLView._getInstance();
+	// register system events
+	cc.inputManager.registerSystemEvent(cc._canvas);
+
+	// Director
+	cc.director = cc.Director._getInstance();
+    cc.winSize = cc.director.getWinSize();
+
+	// IME Dispatcher
+	cc.imeDispatcher = new cc.IMEDispatcher();
+	cc.imeDispatcher.init();
+
+	// Parsers
+	cc.saxParser = new cc.SAXParser();
+	cc.plistParser = new cc.PlistParser();
 };
 
 

@@ -24,6 +24,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * <p>
+ *   cc.director is a DisplayLinkDirector type Director that synchronizes timers with the refresh rate of the display.<br/>
+ *   Features and Limitations:<br/>
+ *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
+ *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
+ * </p>
+ * @Object
+ * @type {cc.Director}
+ */
+cc.director;
+
 cc.g_NumberOfDraws = 0;
 
 //Possible OpenGL projections used by director
@@ -1184,34 +1196,6 @@ cc.Director._getInstance = function () {
     }
     return cc.Director.sharedDirector;
 };
-
-/**
- * <p>
- *   cc.director is a DisplayLinkDirector type Director that synchronizes timers with the refresh rate of the display.<br/>
- *   Features and Limitations:<br/>
- *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
- *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
- * </p>
- * @Object
- * @type {cc.Director}
- */
-/** @expose */
-cc.director;
-cc.defineGetterSetter(cc, "director", function() {
-	return cc.Director.firstUseDirector ? cc.Director._getInstance() : cc.Director.sharedDirector;
-});
-
-/**
- * <p>
- * An alias for cc.director.getWinSize()
- * </p>
- * @type {cc.Size}
- */
-/** @expose */
-cc.winSize;
-cc.defineGetterSetter(cc, "winSize", function(){
-    return cc.director._winSizeInPoints;
-});
 
 /**
  * set default fps to 60

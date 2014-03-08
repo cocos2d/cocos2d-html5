@@ -25,6 +25,13 @@
  ****************************************************************************/
 
 /**
+ * A SAX Parser
+ * @Object
+ * @type {cc.SAXParser}
+ */
+cc.saxParser;
+
+/**
  * a SAX Parser
  * @class
  * @extends cc.Class
@@ -61,28 +68,13 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
     }
 
 });
-/**
- * get a singleton SAX parser
- * @function
- * @return {cc.SAXParser}
- */
-cc.SAXParser._getInstance = function () {
-    if (!this._instance) {
-        this._instance = new cc.SAXParser();
-    }
-    return this._instance;
-};
 
 /**
- * A SAX Parser
+ * A Plist Parser
  * @Object
- * @type {cc.SAXParser}
+ * @type {cc.PlistParser}
  */
-/** @expose */
-cc.saxParser;
-cc.defineGetterSetter(cc, "saxParser", function() {
-	return cc.SAXParser._instance ? cc.SAXParser._instance : cc.SAXParser._getInstance();
-});
+cc.plistParser;
 
 /**
  * a plist Parser
@@ -168,26 +160,4 @@ cc.PlistParser = cc.SAXParser.extend({
         return data;
     }
 
-});
-/**
- * get a singleton SAX parser
- * @function
- * @return {cc.SAXParser}
- */
-cc.PlistParser._getInstance = function () {
-    if (!this._instance) {
-        this._instance = new cc.PlistParser();
-    }
-    return this._instance;
-};
-
-/**
- * A Plist Parser
- * @Object
- * @type {cc.PlistParser}
- */
-/** @expose */
-cc.plistParser;
-cc.defineGetterSetter(cc, "plistParser", function() {
-	return cc.PlistParser._instance ? cc.PlistParser._instance : new cc.PlistParser();
 });
