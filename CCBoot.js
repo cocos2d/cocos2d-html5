@@ -1082,7 +1082,6 @@ cc._initSys = function(config, CONFIG_KEY){
      */
     sys.LANGUAGE_POLISH = "pl";
 
-
     /**
      * @constant
      * @type {string}
@@ -1451,6 +1450,32 @@ cc._setup = function (el, width, height) {
         fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
             +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
     }
+
+	// Init singletons
+	// Audio engine
+	cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
+	cc.eventManager.addCustomListener(this.EVENT_HIDE, function(){
+		ae._pausePlaying();
+	});
+	cc.eventManager.addCustomListener(this.EVENT_SHOW, function(){
+		ae._resumePlaying();
+	});
+
+	// View
+	cc.view = cc.EGLView._getInstance();
+	// register system events
+	cc.inputManager.registerSystemEvent(cc._canvas);
+
+	// Director
+	cc.director = cc.Director._getInstance();
+
+	// IME Dispatcher
+	cc.imeDispatcher = new cc.IMEDispatcher();
+	cc.imeDispatcher.init();
+
+	// Parsers
+	cc.saxParser = new cc.SAXParser();
+	cc.plistParser = new cc.PlistParser();
 };
 
 
