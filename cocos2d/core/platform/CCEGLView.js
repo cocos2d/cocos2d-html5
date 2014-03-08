@@ -565,10 +565,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     _convertTouchesWithScale: function(touches){
-        var locViewPortRect = this._viewPortRect, locScaleX = this._scaleX, locScaleY = this._scaleY, selTouch, selPoint;
+        var locViewPortRect = this._viewPortRect, locScaleX = this._scaleX, locScaleY = this._scaleY, selTouch, selPoint, selPrePoint;
         for( var i = 0; i < touches.length; i ++){
             selTouch = touches[i];
             selPoint = selTouch._point;
+	        selPrePoint = selTouch._prevPoint;
             selTouch._setPoint((selPoint.x - locViewPortRect.x) / locScaleX,
                 (selPoint.y - locViewPortRect.y) / locScaleY);
             selTouch._setPrevPoint((selPrePoint.x - locViewPortRect.x) / locScaleX,
