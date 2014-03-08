@@ -1091,7 +1091,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     var locFinalPosX = 0;
                     var locFinalPosY = 0;
                     if (locRelativeName) {
-                        locRelativeWidget = ccui.UIHelper.seekWidgetByRelativeName(this, locRelativeName);
+                        locRelativeWidget = ccui.helper.seekWidgetByRelativeName(this, locRelativeName);
                         if (locRelativeWidget) {
                             locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
                         }
