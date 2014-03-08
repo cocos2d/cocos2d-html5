@@ -1045,7 +1045,6 @@ if(cc._renderType == cc._RENDER_TYPE_WEBGL){
 }
 
 /** @expose */
-_p.texture;
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
 // Extended properties

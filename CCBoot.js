@@ -31,6 +31,8 @@ window._p;
 /** @expose */
 window.gl;
 /** @expose */
+window.WebGLRenderingContext;
+/** @expose */
 Object.prototype._super;
 /** @expose */
 Object.prototype.ctor;
@@ -891,6 +893,17 @@ cc._logToWebPage = function (msg) {
     logList.value = logList.value + msg + "\r\n";
     logList.scrollTop = logList.scrollHeight;
 };
+
+
+//to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
+if(console.log){
+    cc.log = console.log.bind(cc);
+    cc.warn = console.warn.bind(cc);
+    cc.error = console.error.bind(cc);
+    cc.assert = console.assert.bind(cc);
+}else{
+    cc.log = cc.warn = cc.error = cc.assert = function(){};
+}
 /**
  * Init Debug setting.
  * @function
