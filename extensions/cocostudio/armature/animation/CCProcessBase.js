@@ -308,16 +308,32 @@ ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     }
 });
 
-window._proto = ccs.ProcessBase.prototype;
+window._p = ccs.ProcessBase.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "currentFrameIndex", _proto.getCurrentFrameIndex);
-cc.defineGetterSetter(_proto, "paused", _proto.isPause);
-cc.defineGetterSetter(_proto, "completed", _proto.isComplete);
-cc.defineGetterSetter(_proto, "currentPercent", _proto.getCurrentPercent);
-cc.defineGetterSetter(_proto, "rawDuration", _proto.getRawDuration);
-cc.defineGetterSetter(_proto, "loop", _proto.getLoop);
-cc.defineGetterSetter(_proto, "tweenEasing", _proto.getTweenEasing);
-cc.defineGetterSetter(_proto, "playing", _proto.isPlaying);
+/** @expose */
+_p.currentFrameIndex;
+cc.defineGetterSetter(_p, "currentFrameIndex", _p.getCurrentFrameIndex);
+/** @expose */
+_p.paused;
+cc.defineGetterSetter(_p, "paused", _p.isPause);
+/** @expose */
+_p.completed;
+cc.defineGetterSetter(_p, "completed", _p.isComplete);
+/** @expose */
+_p.currentPercent;
+cc.defineGetterSetter(_p, "currentPercent", _p.getCurrentPercent);
+/** @expose */
+_p.rawDuration;
+cc.defineGetterSetter(_p, "rawDuration", _p.getRawDuration);
+/** @expose */
+_p.loop;
+cc.defineGetterSetter(_p, "loop", _p.getLoop);
+/** @expose */
+_p.tweenEasing;
+cc.defineGetterSetter(_p, "tweenEasing", _p.getTweenEasing);
+/** @expose */
+_p.playing;
+cc.defineGetterSetter(_p, "playing", _p.isPlaying);
 
-delete window._proto;
+delete window._p;

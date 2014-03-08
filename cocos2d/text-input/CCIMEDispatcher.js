@@ -536,6 +536,8 @@ cc.IMEDispatcher._getInstance = function () {
  * @type {cc.IMEDispatcher}
  */
 cc.imeDispatcher;
+/** @expose */
+cc.imeDispatcher;
 cc.defineGetterSetter(cc, "imeDispatcher", function() {
 	return cc.IMEDispatcher._instance ? cc.IMEDispatcher._instance : cc.IMEDispatcher._getInstance();
 });

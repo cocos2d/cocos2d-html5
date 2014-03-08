@@ -639,14 +639,20 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     }
 });
 
-window._proto = cc.TextureAtlas.prototype;
+window._p = cc.TextureAtlas.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "totalQuads", _proto.getTotalQuads);
-cc.defineGetterSetter(_proto, "capacity", _proto.getCapacity);
-cc.defineGetterSetter(_proto, "quads", _proto.getQuads, _proto.setQuads);
+/** @expose */
+_p.totalQuads;
+cc.defineGetterSetter(_p, "totalQuads", _p.getTotalQuads);
+/** @expose */
+_p.capacity;
+cc.defineGetterSetter(_p, "capacity", _p.getCapacity);
+/** @expose */
+_p.quads;
+cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
 
-delete window._proto;
+delete window._p;
 
 /**
  * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />

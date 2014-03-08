@@ -141,13 +141,17 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
 });
 ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
 
-window._proto = ccs.Skin.prototype;
+window._p = ccs.Skin.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "skinData", _proto.getSkinData, _proto.setSkinData);
-cc.defineGetterSetter(_proto, "displayName", _proto.getDisplayName);
+/** @expose */
+_p.skinData;
+cc.defineGetterSetter(_p, "skinData", _p.getSkinData, _p.setSkinData);
+/** @expose */
+_p.displayName;
+cc.defineGetterSetter(_p, "displayName", _p.getDisplayName);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a skin.

@@ -208,18 +208,32 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlSaturationBrightnessPicker.prototype;
+window._p = cc.ControlSaturationBrightnessPicker.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "saturation", _proto.getSaturation);
-cc.defineGetterSetter(_proto, "brightness", _proto.getBrightness);
-cc.defineGetterSetter(_proto, "background", _proto.getBackground);
-cc.defineGetterSetter(_proto, "overlay", _proto.getOverlay);
-cc.defineGetterSetter(_proto, "shadow", _proto.getShadow);
-cc.defineGetterSetter(_proto, "slider", _proto.getSlider);
-cc.defineGetterSetter(_proto, "startPos", _proto.getStartPos);
+/** @expose */
+_p.saturation;
+cc.defineGetterSetter(_p, "saturation", _p.getSaturation);
+/** @expose */
+_p.brightness;
+cc.defineGetterSetter(_p, "brightness", _p.getBrightness);
+/** @expose */
+_p.background;
+cc.defineGetterSetter(_p, "background", _p.getBackground);
+/** @expose */
+_p.overlay;
+cc.defineGetterSetter(_p, "overlay", _p.getOverlay);
+/** @expose */
+_p.shadow;
+cc.defineGetterSetter(_p, "shadow", _p.getShadow);
+/** @expose */
+_p.slider;
+cc.defineGetterSetter(_p, "slider", _p.getSlider);
+/** @expose */
+_p.startPos;
+cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 
-delete window._proto;
+delete window._p;
 
 cc.ControlSaturationBrightnessPicker.create = function (target, pos) {
     var pRet = new cc.ControlSaturationBrightnessPicker();

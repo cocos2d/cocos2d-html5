@@ -573,36 +573,56 @@ cc.EditBox = cc.ControlButton.extend({
     }
 });
 
-window._proto = cc.EditBox.prototype;
+window._p = cc.EditBox.prototype;
 
 // Extended properties
 /** @expose */
-_proto.font;
-cc.defineGetterSetter(_proto, "font", null, _proto._setFont);
+_p.font;
+cc.defineGetterSetter(_p, "font", null, _p._setFont);
 /** @expose */
-_proto.fontName;
-cc.defineGetterSetter(_proto, "fontName", null, _proto.setFontName);
+_p.fontName;
+cc.defineGetterSetter(_p, "fontName", null, _p.setFontName);
 /** @expose */
-_proto.fontSize;
-cc.defineGetterSetter(_proto, "fontSize", null, _proto.setFontSize);
+_p.fontSize;
+cc.defineGetterSetter(_p, "fontSize", null, _p.setFontSize);
 /** @expose */
-_proto.fontColor;
-cc.defineGetterSetter(_proto, "fontColor", null, _proto.setFontColor);
+_p.fontColor;
+cc.defineGetterSetter(_p, "fontColor", null, _p.setFontColor);
 /** @expose */
-_proto.string;
-cc.defineGetterSetter(_proto, "string", _proto.getText, _proto.setText);
-cc.defineGetterSetter(_proto, "maxLength", _proto.getMaxLength, _proto.setMaxLength);
-cc.defineGetterSetter(_proto, "placeHolder", _proto.getPlaceHolder, _proto.setPlaceHolder);
-cc.defineGetterSetter(_proto, "placeHolderFont", null, _proto._setPlaceholderFont);
-cc.defineGetterSetter(_proto, "placeHolderFontName", null, _proto.setPlaceholderFontName);
-cc.defineGetterSetter(_proto, "placeHolderFontSize", null, _proto.setPlaceholderFontSize);
-cc.defineGetterSetter(_proto, "placeHolderFontColor", null, _proto.setPlaceholderFontColor);
-cc.defineGetterSetter(_proto, "inputFlag", null, _proto.setInputFlag);
-cc.defineGetterSetter(_proto, "delegate", null, _proto.setDelegate);
-cc.defineGetterSetter(_proto, "inputMode", null, _proto.setInputMode);
-cc.defineGetterSetter(_proto, "returnType", null, _proto.setReturnType);
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getText, _p.setText);
+/** @expose */
+_p.maxLength;
+cc.defineGetterSetter(_p, "maxLength", _p.getMaxLength, _p.setMaxLength);
+/** @expose */
+_p.placeHolder;
+cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
+/** @expose */
+_p.placeHolderFont;
+cc.defineGetterSetter(_p, "placeHolderFont", null, _p._setPlaceholderFont);
+/** @expose */
+_p.placeHolderFontName;
+cc.defineGetterSetter(_p, "placeHolderFontName", null, _p.setPlaceholderFontName);
+/** @expose */
+_p.placeHolderFontSize;
+cc.defineGetterSetter(_p, "placeHolderFontSize", null, _p.setPlaceholderFontSize);
+/** @expose */
+_p.placeHolderFontColor;
+cc.defineGetterSetter(_p, "placeHolderFontColor", null, _p.setPlaceholderFontColor);
+/** @expose */
+_p.inputFlag;
+cc.defineGetterSetter(_p, "inputFlag", null, _p.setInputFlag);
+/** @expose */
+_p.delegate;
+cc.defineGetterSetter(_p, "delegate", null, _p.setDelegate);
+/** @expose */
+_p.inputMode;
+cc.defineGetterSetter(_p, "inputMode", null, _p.setInputMode);
+/** @expose */
+_p.returnType;
+cc.defineGetterSetter(_p, "returnType", null, _p.setReturnType);
 
-delete window._proto;
+delete window._p;
 
 cc.EditBox.getRect = function (node) {
     var contentSize = node.getContentSize();

@@ -1195,6 +1195,7 @@ cc.Director._getInstance = function () {
  * @Object
  * @type {cc.Director}
  */
+/** @expose */
 cc.director;
 cc.defineGetterSetter(cc, "director", function() {
 	return cc.Director.firstUseDirector ? cc.Director._getInstance() : cc.Director.sharedDirector;
@@ -1206,6 +1207,8 @@ cc.defineGetterSetter(cc, "director", function() {
  * </p>
  * @type {cc.Size}
  */
+/** @expose */
+cc.winSize;
 cc.defineGetterSetter(cc, "winSize", function(){
     return cc.director._winSizeInPoints;
 });

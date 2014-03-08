@@ -1490,14 +1490,20 @@ ccui.Layout._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
 };
 
-window._proto = ccui.Layout.prototype;
+window._p = ccui.Layout.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "clippingEnabled", _proto.isClippingEnabled, _proto.setClippingEnabled);
-cc.defineGetterSetter(_proto, "clippingType", null, _proto.setClippingType);
-cc.defineGetterSetter(_proto, "layoutType", _proto.getLayoutType, _proto.setLayoutType);
+/** @expose */
+_p.clippingEnabled;
+cc.defineGetterSetter(_p, "clippingEnabled", _p.isClippingEnabled, _p.setClippingEnabled);
+/** @expose */
+_p.clippingType;
+cc.defineGetterSetter(_p, "clippingType", null, _p.setClippingType);
+/** @expose */
+_p.layoutType;
+cc.defineGetterSetter(_p, "layoutType", _p.getLayoutType, _p.setLayoutType);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UILayout.

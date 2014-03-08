@@ -680,13 +680,19 @@ if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     ccs.Armature.prototype.nodeToParentTransform = ccs.Armature.prototype._nodeToParentTransformForCanvas;
 }
 
-window._proto = ccs.Armature.prototype;
+window._p = ccs.Armature.prototype;
 
-cc.defineGetterSetter(_proto, "parentBone", _proto.getParentBone, _proto.setParentBone);
-cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
-cc.defineGetterSetter(_proto, "colliderFilter", null, _proto.setColliderFilter);
+/** @expose */
+_p.parentBone;
+cc.defineGetterSetter(_p, "parentBone", _p.getParentBone, _p.setParentBone);
+/** @expose */
+_p.body;
+cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
+/** @expose */
+_p.colliderFilter;
+cc.defineGetterSetter(_p, "colliderFilter", null, _p.setColliderFilter);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a armature.

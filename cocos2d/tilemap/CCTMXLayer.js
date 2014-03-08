@@ -1032,27 +1032,37 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     }
 });
 
-window._proto = cc.TMXLayer.prototype;
+window._p = cc.TMXLayer.prototype;
 
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
-	_proto.draw = cc.SpriteBatchNode.prototype.draw;
-    _proto.visit = cc.SpriteBatchNode.prototype.visit;
-	_proto.getTexture = cc.SpriteBatchNode.prototype.getTexture;
+	_p.draw = cc.SpriteBatchNode.prototype.draw;
+    _p.visit = cc.SpriteBatchNode.prototype.visit;
+	_p.getTexture = cc.SpriteBatchNode.prototype.getTexture;
 }else{
-    _proto.draw = _proto._drawForCanvas;
-    _proto.visit = _proto._visitForCanvas;
-	_proto.getTexture = _proto._getTextureForCanvas;
+    _p.draw = _p._drawForCanvas;
+    _p.visit = _p._visitForCanvas;
+	_p.getTexture = _p._getTextureForCanvas;
 }
 
-cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+/** @expose */
+_p.texture;
+cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
 // Extended properties
-cc.defineGetterSetter(_proto, "layerWidth", _proto._getLayerWidth, _proto._setLayerWidth);
-cc.defineGetterSetter(_proto, "layerHeight", _proto._getLayerHeight, _proto._setLayerHeight);
-cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);
-cc.defineGetterSetter(_proto, "tileHeight", _proto._getTileHeight, _proto._setTileHeight);
+/** @expose */
+_p.layerWidth;
+cc.defineGetterSetter(_p, "layerWidth", _p._getLayerWidth, _p._setLayerWidth);
+/** @expose */
+_p.layerHeight;
+cc.defineGetterSetter(_p, "layerHeight", _p._getLayerHeight, _p._setLayerHeight);
+/** @expose */
+_p.tileWidth;
+cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
+/** @expose */
+_p.tileHeight;
+cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
-delete window._proto;
+delete window._p;
 
 /**
  * Creates a cc.TMXLayer with an tile set info, a layer info and a map info

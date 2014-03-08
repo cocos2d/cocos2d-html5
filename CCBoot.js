@@ -26,6 +26,17 @@
 
 var cc = cc || {};
 
+/** @expose */
+window._p;
+/** @expose */
+window.gl;
+/** @expose */
+Object.prototype._super;
+/** @expose */
+Object.prototype.ctor;
+/** @expose */
+Object.prototype.ctor;
+
 //is nodejs ? Used to support node-webkit.
 cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
@@ -1477,6 +1488,7 @@ cc.game = {
     EVENT_SHOW: "game_on_show",
     _eventHide: null,
     _eventShow: null,
+    _onBeforeStartArr : [],
 
     /**
      * Key of config

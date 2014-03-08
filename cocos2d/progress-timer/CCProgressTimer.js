@@ -903,35 +903,47 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     }
 });
 
-window._proto = cc.ProgressTimer.prototype;
+window._p = cc.ProgressTimer.prototype;
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
-    _proto.ctor = _proto._ctorForWebGL;
-    _proto.setReverseProgress = _proto._setReverseProgressForWebGL;
-    _proto.setSprite = _proto._setSpriteForWebGL;
-    _proto.setType = _proto._setTypeForWebGL;
-    _proto.setReverseDirection = _proto._setReverseDirectionForWebGL;
-    _proto.initWithSprite = _proto._initWithSpriteForWebGL;
-    _proto.draw = _proto._drawForWebGL;
-    _proto._updateProgress = _proto._updateProgressForWebGL;
+    _p.ctor = _p._ctorForWebGL;
+    _p.setReverseProgress = _p._setReverseProgressForWebGL;
+    _p.setSprite = _p._setSpriteForWebGL;
+    _p.setType = _p._setTypeForWebGL;
+    _p.setReverseDirection = _p._setReverseDirectionForWebGL;
+    _p.initWithSprite = _p._initWithSpriteForWebGL;
+    _p.draw = _p._drawForWebGL;
+    _p._updateProgress = _p._updateProgressForWebGL;
 } else {
-    _proto.ctor = _proto._ctorForCanvas;
-    _proto.setReverseProgress = _proto._setReverseProgressForCanvas;
-    _proto.setSprite = _proto._setSpriteForCanvas;
-    _proto.setType = _proto._setTypeForCanvas;
-    _proto.setReverseDirection = _proto._setReverseDirectionForCanvas;
-    _proto.initWithSprite = _proto._initWithSpriteForCanvas;
-    _proto.draw = _proto._drawForCanvas;
-    _proto._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
+    _p.ctor = _p._ctorForCanvas;
+    _p.setReverseProgress = _p._setReverseProgressForCanvas;
+    _p.setSprite = _p._setSpriteForCanvas;
+    _p.setType = _p._setTypeForCanvas;
+    _p.setReverseDirection = _p._setReverseDirectionForCanvas;
+    _p.initWithSprite = _p._initWithSpriteForCanvas;
+    _p.draw = _p._drawForCanvas;
+    _p._updateProgress = cc.ProgressTimer.prototype._updateProgressForCanvas;
 }
 
 // Extended properties
-cc.defineGetterSetter(_proto, "midPoint", _proto.getMidpoint, _proto.setMidpoint);
-cc.defineGetterSetter(_proto, "barChangeRate", _proto.getBarChangeRate, _proto.setBarChangeRate);
-cc.defineGetterSetter(_proto, "type", _proto.getType, _proto.setType);
-cc.defineGetterSetter(_proto, "percentage", _proto.getPercentage, _proto.setPercentage);
-cc.defineGetterSetter(_proto, "sprite", _proto.getSprite, _proto.setSprite);
-cc.defineGetterSetter(_proto, "reverseDir", _proto.isReverseDirection, _proto.setReverseDirection);
-delete window._proto;
+/** @expose */
+_p.midPoint;
+cc.defineGetterSetter(_p, "midPoint", _p.getMidpoint, _p.setMidpoint);
+/** @expose */
+_p.barChangeRate;
+cc.defineGetterSetter(_p, "barChangeRate", _p.getBarChangeRate, _p.setBarChangeRate);
+/** @expose */
+_p.type;
+cc.defineGetterSetter(_p, "type", _p.getType, _p.setType);
+/** @expose */
+_p.percentage;
+cc.defineGetterSetter(_p, "percentage", _p.getPercentage, _p.setPercentage);
+/** @expose */
+_p.sprite;
+cc.defineGetterSetter(_p, "sprite", _p.getSprite, _p.setSprite);
+/** @expose */
+_p.reverseDir;
+cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDirection);
+delete window._p;
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage

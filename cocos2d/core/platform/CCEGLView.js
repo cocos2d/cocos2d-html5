@@ -584,6 +584,7 @@ cc.EGLView._getInstance = function () {
  * @Object
  * @type {cc.EGLView}
  */
+/** @expose */
 cc.view;
 cc.defineGetterSetter(cc, "view", function() {
 	return cc.EGLView._instance ? cc.EGLView._instance : cc.EGLView._getInstance();

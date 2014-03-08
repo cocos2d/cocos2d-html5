@@ -44,7 +44,7 @@ plugin.AdsPos = {
 	TopRight: 3,
 	Bottom: 4,
 	BottomLeft: 5,
-	BottomRight: 6,
+	BottomRight: 6
 };
 
 plugin.AdsResultListener = cc.Class.extend({

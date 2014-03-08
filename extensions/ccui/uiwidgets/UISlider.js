@@ -623,12 +623,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     }
 });
 
-window._proto = ccui.Slider.prototype;
+window._p = ccui.Slider.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);
+/** @expose */
+_p.percent;
+cc.defineGetterSetter(_p, "percent", _p.getPercent, _p.setPercent);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UISlider.

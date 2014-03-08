@@ -900,17 +900,29 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     }
 });
 
-window._proto = cc.Scale9Sprite.prototype;
+window._p = cc.Scale9Sprite.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "preferredSize", _proto.getPreferredSize, _proto.setPreferredSize);
-cc.defineGetterSetter(_proto, "capInsets", _proto.getCapInsets, _proto.setCapInsets);
-cc.defineGetterSetter(_proto, "insetLeft", _proto.getInsetLeft, _proto.setInsetLeft);
-cc.defineGetterSetter(_proto, "insetTop", _proto.getInsetTop, _proto.setInsetTop);
-cc.defineGetterSetter(_proto, "insetRight", _proto.getInsetRight, _proto.setInsetRight);
-cc.defineGetterSetter(_proto, "insetBottom", _proto.getInsetBottom, _proto.setInsetBottom);
+/** @expose */
+_p.preferredSize;
+cc.defineGetterSetter(_p, "preferredSize", _p.getPreferredSize, _p.setPreferredSize);
+/** @expose */
+_p.capInsets;
+cc.defineGetterSetter(_p, "capInsets", _p.getCapInsets, _p.setCapInsets);
+/** @expose */
+_p.insetLeft;
+cc.defineGetterSetter(_p, "insetLeft", _p.getInsetLeft, _p.setInsetLeft);
+/** @expose */
+_p.insetTop;
+cc.defineGetterSetter(_p, "insetTop", _p.getInsetTop, _p.setInsetTop);
+/** @expose */
+_p.insetRight;
+cc.defineGetterSetter(_p, "insetRight", _p.getInsetRight, _p.setInsetRight);
+/** @expose */
+_p.insetBottom;
+cc.defineGetterSetter(_p, "insetBottom", _p.getInsetBottom, _p.setInsetBottom);
 
-delete window._proto;
+delete window._p;
 
 /**
  * Creates a 9-slice sprite with a texture file, a delimitation zone and

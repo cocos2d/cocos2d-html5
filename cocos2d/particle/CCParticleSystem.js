@@ -2676,36 +2676,86 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-window._proto = cc.ParticleSystem.prototype;
+window._p = cc.ParticleSystem.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-cc.defineGetterSetter(_proto, "batchNode", _proto.getBatchNode, _proto.setBatchNode);
-cc.defineGetterSetter(_proto, "active", _proto.isActive);
-cc.defineGetterSetter(_proto, "sourcePos", _proto.getSourcePosition, _proto.setSourcePosition);
-cc.defineGetterSetter(_proto, "posVar", _proto.getPosVar, _proto.setPosVar);
-cc.defineGetterSetter(_proto, "gravity", _proto.getGravity, _proto.setGravity);
-cc.defineGetterSetter(_proto, "speed", _proto.getSpeed, _proto.setSpeed);
-cc.defineGetterSetter(_proto, "speedVar", _proto.getSpeedVar, _proto.setSpeedVar);
-cc.defineGetterSetter(_proto, "tangentialAccel", _proto.getTangentialAccel, _proto.setTangentialAccel);
-cc.defineGetterSetter(_proto, "tangentialAccelVar", _proto.getTangentialAccelVar, _proto.setTangentialAccelVar);
-cc.defineGetterSetter(_proto, "radialAccel", _proto.getRadialAccel, _proto.setRadialAccel);
-cc.defineGetterSetter(_proto, "radialAccelVar", _proto.getRadialAccelVar, _proto.setRadialAccelVar);
-cc.defineGetterSetter(_proto, "rotationIsDir", _proto.getRotationIsDir, _proto.setRotationIsDir);
-cc.defineGetterSetter(_proto, "startRadius", _proto.getStartRadius, _proto.setStartRadius);
-cc.defineGetterSetter(_proto, "startRadiusVar", _proto.getStartRadiusVar, _proto.setStartRadiusVar);
-cc.defineGetterSetter(_proto, "endRadius", _proto.getEndRadius, _proto.setEndRadius);
-cc.defineGetterSetter(_proto, "endRadiusVar", _proto.getEndRadiusVar, _proto.setEndRadiusVar);
-cc.defineGetterSetter(_proto, "rotatePerS", _proto.getRotatePerSecond, _proto.setRotatePerSecond);
-cc.defineGetterSetter(_proto, "rotatePerSVar", _proto.getRotatePerSecondVar, _proto.setRotatePerSecondVar);
-cc.defineGetterSetter(_proto, "startColor", _proto.getStartColor, _proto.setStartColor);
-cc.defineGetterSetter(_proto, "startColorVar", _proto.getStartColorVar, _proto.setStartColorVar);
-cc.defineGetterSetter(_proto, "endColor", _proto.getEndColor, _proto.setEndColor);
-cc.defineGetterSetter(_proto, "endColorVar", _proto.getEndColorVar, _proto.setEndColorVar);
-cc.defineGetterSetter(_proto, "totalParticles", _proto.getTotalParticles, _proto.setTotalParticles);
-cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+/** @expose */
+_p.opacityModifyRGB;
+cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
+/** @expose */
+_p.batchNode;
+cc.defineGetterSetter(_p, "batchNode", _p.getBatchNode, _p.setBatchNode);
+/** @expose */
+_p.active;
+cc.defineGetterSetter(_p, "active", _p.isActive);
+/** @expose */
+_p.sourcePos;
+cc.defineGetterSetter(_p, "sourcePos", _p.getSourcePosition, _p.setSourcePosition);
+/** @expose */
+_p.posVar;
+cc.defineGetterSetter(_p, "posVar", _p.getPosVar, _p.setPosVar);
+/** @expose */
+_p.gravity;
+cc.defineGetterSetter(_p, "gravity", _p.getGravity, _p.setGravity);
+/** @expose */
+_p.speed;
+cc.defineGetterSetter(_p, "speed", _p.getSpeed, _p.setSpeed);
+/** @expose */
+_p.speedVar;
+cc.defineGetterSetter(_p, "speedVar", _p.getSpeedVar, _p.setSpeedVar);
+/** @expose */
+_p.tangentialAccel;
+cc.defineGetterSetter(_p, "tangentialAccel", _p.getTangentialAccel, _p.setTangentialAccel);
+/** @expose */
+_p.tangentialAccelVar;
+cc.defineGetterSetter(_p, "tangentialAccelVar", _p.getTangentialAccelVar, _p.setTangentialAccelVar);
+/** @expose */
+_p.radialAccel;
+cc.defineGetterSetter(_p, "radialAccel", _p.getRadialAccel, _p.setRadialAccel);
+/** @expose */
+_p.radialAccelVar;
+cc.defineGetterSetter(_p, "radialAccelVar", _p.getRadialAccelVar, _p.setRadialAccelVar);
+/** @expose */
+_p.rotationIsDir;
+cc.defineGetterSetter(_p, "rotationIsDir", _p.getRotationIsDir, _p.setRotationIsDir);
+/** @expose */
+_p.startRadius;
+cc.defineGetterSetter(_p, "startRadius", _p.getStartRadius, _p.setStartRadius);
+/** @expose */
+_p.startRadiusVar;
+cc.defineGetterSetter(_p, "startRadiusVar", _p.getStartRadiusVar, _p.setStartRadiusVar);
+/** @expose */
+_p.endRadius;
+cc.defineGetterSetter(_p, "endRadius", _p.getEndRadius, _p.setEndRadius);
+/** @expose */
+_p.endRadiusVar;
+cc.defineGetterSetter(_p, "endRadiusVar", _p.getEndRadiusVar, _p.setEndRadiusVar);
+/** @expose */
+_p.rotatePerS;
+cc.defineGetterSetter(_p, "rotatePerS", _p.getRotatePerSecond, _p.setRotatePerSecond);
+/** @expose */
+_p.rotatePerSVar;
+cc.defineGetterSetter(_p, "rotatePerSVar", _p.getRotatePerSecondVar, _p.setRotatePerSecondVar);
+/** @expose */
+_p.startColor;
+cc.defineGetterSetter(_p, "startColor", _p.getStartColor, _p.setStartColor);
+/** @expose */
+_p.startColorVar;
+cc.defineGetterSetter(_p, "startColorVar", _p.getStartColorVar, _p.setStartColorVar);
+/** @expose */
+_p.endColor;
+cc.defineGetterSetter(_p, "endColor", _p.getEndColor, _p.setEndColor);
+/** @expose */
+_p.endColorVar;
+cc.defineGetterSetter(_p, "endColorVar", _p.getEndColorVar, _p.setEndColorVar);
+/** @expose */
+_p.totalParticles;
+cc.defineGetterSetter(_p, "totalParticles", _p.getTotalParticles, _p.setTotalParticles);
+/** @expose */
+_p.texture;
+cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
-delete window._proto;
+delete window._p;
 
 /**
  * <p> return the string found by key in dict. <br/>

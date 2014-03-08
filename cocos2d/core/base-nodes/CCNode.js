@@ -2290,108 +2290,118 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     }
 });
 
-window._proto = cc.Node.prototype;
+window._p = cc.Node.prototype;
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 	//WebGL
-	_proto.ctor = _proto._ctorForWebGL;
-	_proto.setNodeDirty = _proto._setNodeDirtyForWebGL;
-	_proto.visit = _proto._visitForWebGL;
-	_proto.transform = _proto._transformForWebGL;
-	_proto.nodeToParentTransform = _proto._nodeToParentTransformForWebGL;
+	_p.ctor = _p._ctorForWebGL;
+	_p.setNodeDirty = _p._setNodeDirtyForWebGL;
+	_p.visit = _p._visitForWebGL;
+	_p.transform = _p._transformForWebGL;
+	_p.nodeToParentTransform = _p._nodeToParentTransformForWebGL;
 }else{
 	//Canvas
-	_proto.ctor = _proto._ctorForCanvas;
-	_proto.setNodeDirty = _proto._setNodeDirtyForCanvas;
-	_proto.visit = _proto._visitForCanvas;
-	_proto.transform = _proto._transformForCanvas;
-	_proto.nodeToParentTransform = _proto._nodeToParentTransformForCanvas;
+	_p.ctor = _p._ctorForCanvas;
+	_p.setNodeDirty = _p._setNodeDirtyForCanvas;
+	_p.visit = _p._visitForCanvas;
+	_p.transform = _p._transformForCanvas;
+	_p.nodeToParentTransform = _p._nodeToParentTransformForCanvas;
 }
 
-cc.defineGetterSetter(_proto, "x", _proto.getPositionX, _proto.setPositionX);
-cc.defineGetterSetter(_proto, "y", _proto.getPositionY, _proto.setPositionY);
+cc.defineGetterSetter(_p, "x", _p.getPositionX, _p.setPositionX);
+cc.defineGetterSetter(_p, "y", _p.getPositionY, _p.setPositionY);
 /** @expose */
-//_proto.pos;
-//cc.defineGetterSetter(_proto, "pos", _proto.getPosition, _proto.setPosition);
+//_p.pos;
+//cc.defineGetterSetter(_p, "pos", _p.getPosition, _p.setPosition);
 /** @expose */
-_proto.width;
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
+_p.width;
+cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
 /** @expose */
-_proto.height;
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+_p.height;
+cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
 /** @expose */
-//_proto.size;
-//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
+//_p.size;
+//cc.defineGetterSetter(_p, "size", _p.getContentSize, _p.setContentSize);
 /** @expose */
-//_proto.anchor;
-//cc.defineGetterSetter(_proto, "anchor", _proto._getAnchor, _proto._setAnchor);
+//_p.anchor;
+//cc.defineGetterSetter(_p, "anchor", _p._getAnchor, _p._setAnchor);
 /** @expose */
-_proto.anchorX;
-cc.defineGetterSetter(_proto, "anchorX", _proto._getAnchorX, _proto._setAnchorX);
+_p.anchorX;
+cc.defineGetterSetter(_p, "anchorX", _p._getAnchorX, _p._setAnchorX);
 /** @expose */
-_proto.anchorY;
-cc.defineGetterSetter(_proto, "anchorY", _proto._getAnchorY, _proto._setAnchorY);
+_p.anchorY;
+cc.defineGetterSetter(_p, "anchorY", _p._getAnchorY, _p._setAnchorY);
 /** @expose */
-_proto.skewX;
-cc.defineGetterSetter(_proto, "skewX", _proto.getSkewX, _proto.setSkewX);
+_p.skewX;
+cc.defineGetterSetter(_p, "skewX", _p.getSkewX, _p.setSkewX);
 /** @expose */
-_proto.skewY;
-cc.defineGetterSetter(_proto, "skewY", _proto.getSkewY, _proto.setSkewY);
+_p.skewY;
+cc.defineGetterSetter(_p, "skewY", _p.getSkewY, _p.setSkewY);
 /** @expose */
-_proto.zIndex;
-cc.defineGetterSetter(_proto, "zIndex", _proto.getLocalZOrder, _proto.setLocalZOrder);
+_p.zIndex;
+cc.defineGetterSetter(_p, "zIndex", _p.getLocalZOrder, _p.setLocalZOrder);
 /** @expose */
-_proto.vertexZ;
-cc.defineGetterSetter(_proto, "vertexZ", _proto.getVertexZ, _proto.setVertexZ);
+_p.vertexZ;
+cc.defineGetterSetter(_p, "vertexZ", _p.getVertexZ, _p.setVertexZ);
 /** @expose */
-_proto.rotation;
-cc.defineGetterSetter(_proto, "rotation", _proto.getRotation, _proto.setRotation);
+_p.rotation;
+cc.defineGetterSetter(_p, "rotation", _p.getRotation, _p.setRotation);
 /** @expose */
-_proto.rotationX;
-cc.defineGetterSetter(_proto, "rotationX", _proto.getRotationX, _proto.setRotationX);
+_p.rotationX;
+cc.defineGetterSetter(_p, "rotationX", _p.getRotationX, _p.setRotationX);
 /** @expose */
-_proto.rotationY;
-cc.defineGetterSetter(_proto, "rotationY", _proto.getRotationY, _proto.setRotationY);
+_p.rotationY;
+cc.defineGetterSetter(_p, "rotationY", _p.getRotationY, _p.setRotationY);
 /** @expose */
-_proto.scale;
-cc.defineGetterSetter(_proto, "scale", _proto.getScale, _proto.setScale);
+_p.scale;
+cc.defineGetterSetter(_p, "scale", _p.getScale, _p.setScale);
 /** @expose */
-_proto.scaleX;
-cc.defineGetterSetter(_proto, "scaleX", _proto.getScaleX, _proto.setScaleX);
+_p.scaleX;
+cc.defineGetterSetter(_p, "scaleX", _p.getScaleX, _p.setScaleX);
 /** @expose */
-_proto.scaleY;
-cc.defineGetterSetter(_proto, "scaleY", _proto.getScaleY, _proto.setScaleY);
-cc.defineGetterSetter(_proto, "children", _proto.getChildren);
-cc.defineGetterSetter(_proto, "childrenCount", _proto.getChildrenCount);
+_p.scaleY;
+cc.defineGetterSetter(_p, "scaleY", _p.getScaleY, _p.setScaleY);
 /** @expose */
-_proto.parent;
-cc.defineGetterSetter(_proto, "parent", _proto.getParent, _proto.setParent);
+_p.children;
+cc.defineGetterSetter(_p, "children", _p.getChildren);
 /** @expose */
-_proto.visible;
-cc.defineGetterSetter(_proto, "visible", _proto.isVisible, _proto.setVisible);
-cc.defineGetterSetter(_proto, "running", _proto.isRunning);
+_p.childrenCount;
+cc.defineGetterSetter(_p, "childrenCount", _p.getChildrenCount);
 /** @expose */
-_proto.ignoreAnchor;
-cc.defineGetterSetter(_proto, "ignoreAnchor", _proto.isIgnoreAnchorPointForPosition, _proto.ignoreAnchorPointForPosition);
+_p.parent;
+cc.defineGetterSetter(_p, "parent", _p.getParent, _p.setParent);
 /** @expose */
-_proto.tag;
+_p.visible;
+cc.defineGetterSetter(_p, "visible", _p.isVisible, _p.setVisible);
 /** @expose */
-_proto.userData;
+_p.running;
+cc.defineGetterSetter(_p, "running", _p.isRunning);
 /** @expose */
-_proto.userObject;
+_p.ignoreAnchor;
+cc.defineGetterSetter(_p, "ignoreAnchor", _p.isIgnoreAnchorPointForPosition, _p.ignoreAnchorPointForPosition);
 /** @expose */
-_proto.arrivalOrder;
+_p.tag;
 /** @expose */
-_proto.actionManager;
-cc.defineGetterSetter(_proto, "actionManager", _proto.getActionManager, _proto.setActionManager);
+_p.userData;
 /** @expose */
-_proto.scheduler;
-cc.defineGetterSetter(_proto, "scheduler", _proto.getScheduler, _proto.setScheduler);
-//cc.defineGetterSetter(_proto, "boundingBox", _proto.getBoundingBox);
-cc.defineGetterSetter(_proto, "shaderProgram", _proto.getShaderProgram, _proto.setShaderProgram);
-cc.defineGetterSetter(_proto, "glServerState", _proto.getGLServerState, _proto.setGLServerState);
+_p.userObject;
+/** @expose */
+_p.arrivalOrder;
+/** @expose */
+_p.actionManager;
+cc.defineGetterSetter(_p, "actionManager", _p.getActionManager, _p.setActionManager);
+/** @expose */
+_p.scheduler;
+cc.defineGetterSetter(_p, "scheduler", _p.getScheduler, _p.setScheduler);
+//cc.defineGetterSetter(_p, "boundingBox", _p.getBoundingBox);
+/** @expose */
+_p.shaderProgram;
+cc.defineGetterSetter(_p, "shaderProgram", _p.getShaderProgram, _p.setShaderProgram);
+/** @expose */
+_p.glServerState;
+cc.defineGetterSetter(_p, "glServerState", _p.getGLServerState, _p.setGLServerState);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a node.
@@ -2671,20 +2681,20 @@ cc.NodeRGBA.create = function () {
     return res;
 };
 
-window._proto = cc.NodeRGBA.prototype;
+window._p = cc.NodeRGBA.prototype;
 /** @expose */
-_proto.opacity;
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+_p.opacity;
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
 /** @expose */
-_proto.opacityModifyRGB;
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+_p.opacityModifyRGB;
+cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
 /** @expose */
-_proto.cascadeOpacity;
-cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+_p.cascadeOpacity;
+cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
 /** @expose */
-_proto.color;
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+_p.color;
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 /** @expose */
-_proto.cascadeColor;
-cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
-delete window._proto;
+_p.cascadeColor;
+cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+delete window._p;

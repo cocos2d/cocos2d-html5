@@ -78,6 +78,7 @@ cc.SAXParser._getInstance = function () {
  * @Object
  * @type {cc.SAXParser}
  */
+/** @expose */
 cc.saxParser;
 cc.defineGetterSetter(cc, "saxParser", function() {
 	return cc.SAXParser._instance ? cc.SAXParser._instance : cc.SAXParser._getInstance();
@@ -185,6 +186,8 @@ cc.PlistParser._getInstance = function () {
  * @Object
  * @type {cc.PlistParser}
  */
+/** @expose */
+cc.plistParser;
 cc.defineGetterSetter(cc, "plistParser", function() {
 	return cc.PlistParser._instance ? cc.PlistParser._instance : new cc.PlistParser();
 });

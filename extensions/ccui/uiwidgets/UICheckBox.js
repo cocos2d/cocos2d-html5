@@ -578,12 +578,14 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     }
 });
 
-window._proto = ccui.CheckBox.prototype;
+window._p = ccui.CheckBox.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "selected", _proto.getSelectedState, _proto.setSelectedState);
+/** @expose */
+_p.selected;
+cc.defineGetterSetter(_p, "selected", _p.getSelectedState, _p.setSelectedState);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UICheckBox.

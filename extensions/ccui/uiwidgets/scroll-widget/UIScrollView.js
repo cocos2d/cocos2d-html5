@@ -1636,13 +1636,17 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     }
 });
 
-window._proto = ccui.ScrollView.prototype;
+window._p = ccui.ScrollView.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "innerWidth", _proto._getInnerWidth, _proto._setInnerWidth);
-cc.defineGetterSetter(_proto, "innerHeight", _proto._getInnerHeight, _proto._setInnerHeight);
+/** @expose */
+_p.innerWidth;
+cc.defineGetterSetter(_p, "innerWidth", _p._getInnerWidth, _p._setInnerWidth);
+/** @expose */
+_p.innerHeight;
+cc.defineGetterSetter(_p, "innerHeight", _p._getInnerHeight, _p._setInnerHeight);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UIScrollView.
