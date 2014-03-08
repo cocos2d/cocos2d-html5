@@ -4,11 +4,11 @@
 
 /**
  * <p>NodeGrid class is a class serves as a decorator of cc.Node,<br/>
- * Any node can be wrapped by this class to permit them to run grid actions.</p>
+ * Grid node can run grid actions over all its children</p>
  * @type {Class}
  *
  * @property {cc.GridBase}  grid    - Grid object that is used when applying effects
- * @property {cc.Node}      target  - Target node that is used when applying effects
+ * @property {cc.Node}      target  - <@writeonly>Target
  */
 cc.NodeGrid = cc.Node.extend({
 	grid: null,
@@ -29,8 +29,11 @@ cc.NodeGrid = cc.Node.extend({
 		//self.addChild(self._target);
 	},
 
-	getTarget: function() {
-		return this._target;
+	addChild: function(child, zOrder, tag) {
+		cc.Node.prototype.addChild.call(this, child, zOrder, tag);
+
+		if (child && !this._target)
+			this._target = child;
 	},
 
 	visit: function() {
@@ -46,10 +49,19 @@ cc.NodeGrid = cc.Node.extend({
 
 		self.transform();
 
-		self.target.visit();
+		var locChildren = this._children;
+		if (locChildren && locChildren.length > 0) {
+			var childLen = locChildren.length;
+			this.sortAllChildren();
+			// draw children
+			for (i = 0; i < childLen; i++) {
+				var child = locChildren[i];
+				child && child.visit();
+			}
+		}
 
 		if (isWebGL && locGrid && locGrid._active)
-			locGrid.afterDraw(self.target);
+			locGrid.afterDraw(self._target);
 	},
 
 	_transformForWebGL: function () {
@@ -100,33 +112,14 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 _p.grid;
 /** @expose */
 _p.target;
-cc.defineGetterSetter(_p, "target", _p.getTarget, _p.setTarget);
+cc.defineGetterSetter(_p, "target", null, _p.setTarget);
 delete window._p;
 
 /**
- * Creates a NodeGrid with a target and/or grid effect.
+ * Creates a NodeGrid
  * Implementation cc.NodeGrid
- * @param {cc.GridBase} grid    - Grid object that is used when applying effects
- * @param {cc.Node}     target  - Target node that is used when applying effects
  * @return {cc.NodeGrid|null}
- * @example
- * //example
- * 1.
- * // create a NodeGrid with a target node
- * var node = cc.Sprite.create("a.png");
- * var nodeGrid = cc.NodeGrid.create(node);
- * 2.
- * // create a NodeGrid with a target node and a grid effect
- * var node = cc.Sprite.create("a.png");
- * var grid = cc.Shaky3D.create( duration, cc.size(15,10), 5, false );
- * var nodeGrid = cc.NodeGrid.create(node, grid);
  */
-cc.NodeGrid.create = function(target, grid) {
-	var node = new cc.NodeGrid();
-	if (node) {
-		target && (node.target = target);
-		grid && (node.grid = grid);
-		return node;
-	}
-	return null;
+cc.NodeGrid.create = function() {
+	return new cc.NodeGrid();
 };
