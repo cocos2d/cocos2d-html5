@@ -44,7 +44,7 @@ ccs.sceneReader = /** @lends ccs.SceneReader# */{
         if (!jsonDict) throw "Please load the resource first : " + pszFileName;
 
         this._node = this.createObject(jsonDict, null);
-        ccs.TriggerMng.getInstance().parse(jsonDict["Triggers"]||[]);
+        ccs.triggerManager.parse(jsonDict["Triggers"]||[]);
         return this._node;
     },
 

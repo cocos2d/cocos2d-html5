@@ -78,10 +78,10 @@ if (cc.sys._supportWebAudio) {
             self._events = {};
             self.src = src;
 
-            if(_ctx.createGain)
-                self._volumeNode = _ctx.createGain();
+            if(_ctx["createGain"])
+                self._volumeNode = _ctx["createGain"]();
             else
-                self._volumeNode = _ctx.createGainNode();
+                self._volumeNode = _ctx["createGainNode"]();
 
             self._onSuccess1 = self._onSuccess.bind(this);
             self._onError1 = self._onError.bind(this);
@@ -89,13 +89,13 @@ if (cc.sys._supportWebAudio) {
 
         _play : function(offset){
             var self = this;
-            var sourceNode = self._sourceNode = _ctx.createBufferSource();
+            var sourceNode = self._sourceNode = _ctx["createBufferSource"]();
             var volumeNode = self._volumeNode;
 
             sourceNode.buffer = self._buffer;
-            volumeNode.gain.value = self._volume;
-            sourceNode.connect(volumeNode);
-            volumeNode.connect(_ctx.destination);
+            volumeNode["gain"].value = self._volume;
+            sourceNode["connect"](volumeNode);
+            volumeNode["connect"](_ctx["destination"]);
             sourceNode.loop = self._loop;
 
             self._paused = false;
@@ -112,7 +112,7 @@ if (cc.sys._supportWebAudio) {
             if (sourceNode.start) {
                 // starting from offset means resuming from where it paused last time
                 sourceNode.start(0, offset);
-            } else if (sourceNode.noteGrainOn) {
+            } else if (sourceNode["noteGrainOn"]) {
                 var duration = sourceNode.buffer.duration;
                 if (self.loop) {
                     /*
@@ -121,13 +121,13 @@ if (cc.sys._supportWebAudio) {
                      * On latest chrome desktop version, the passed in duration will only be the duration in this cycle.
                      * Now that latest chrome would have start() method, it is prepared for iOS here.
                      */
-                    sourceNode.noteGrainOn(0, offset, duration);
+                    sourceNode["noteGrainOn"](0, offset, duration);
                 } else {
-                    sourceNode.noteGrainOn(0, offset, duration - offset);
+                    sourceNode["noteGrainOn"](0, offset, duration - offset);
                 }
             } else {
                 // if only noteOn() is supported, resuming sound will NOT work
-                sourceNode.noteOn(0);
+                sourceNode["noteOn"](0);
             }
             self._pauseTime = 0;
         },
@@ -146,7 +146,7 @@ if (cc.sys._supportWebAudio) {
             }else if(self._loadState != 1) return;
 
             var sourceNode = self._sourceNode;
-            if(!self._stopped && sourceNode && sourceNode.playbackState == 2) return;//playing
+            if(!self._stopped && sourceNode && sourceNode["playbackState"] == 2) return;//playing
             self.startTime = _ctx.currentTime;
             this._play(0);
         },
@@ -180,7 +180,7 @@ if (cc.sys._supportWebAudio) {
 
             // Our asynchronous callback
             request.onload = function() {
-                _ctx.decodeAudioData(request.response, self._onSuccess1, self._onError1);
+                _ctx["decodeAudioData"](request.response, self._onSuccess1, self._onError1);
             };
             request.send();
         },
@@ -235,7 +235,7 @@ if (cc.sys._supportWebAudio) {
         return this._volume;
     }, function(volume){
         this._volume = volume;
-        this._volumeNode.gain.value = volume;
+        this._volumeNode["gain"].value = volume;
     });
     /** @expose */
     _p.ended;
@@ -246,13 +246,13 @@ if (cc.sys._supportWebAudio) {
     _p.ended;
     cc.defineGetterSetter(_p, "ended", function(){
         var sourceNode = this._sourceNode;
-        return !this._paused && (this._stopped || !sourceNode || sourceNode.playbackState == 3);
+        return !this._paused && (this._stopped || !sourceNode || sourceNode["playbackState"] == 3);
     });
     /** @expose */
     _p.played;
     cc.defineGetterSetter(_p, "played", function(){
         var sourceNode = this._sourceNode;
-        return sourceNode && sourceNode.playbackState == 2;
+        return sourceNode && sourceNode["playbackState"] == 2;
     });
     delete window._p;
 }
