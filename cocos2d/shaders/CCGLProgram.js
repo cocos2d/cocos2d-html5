@@ -267,7 +267,7 @@ cc.GLProgram = cc.Class.extend({
             + "uniform vec4 CC_SinTime;         \n"
             + "uniform vec4 CC_CosTime;         \n"
             + "uniform vec4 CC_Random01;        \n"
-            + "//CC INCLUDES END                \n  \n" + source;
+            + "//CC INCLUDES END                \n" + source;
 
         this._glContext.shaderSource(shader, source);
         this._glContext.compileShader(shader);
