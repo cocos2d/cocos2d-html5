@@ -21,7 +21,6 @@ var buildOpt = {
 
 if(!fs.existsSync(realPublishDir)) core4cc.mkdirSyncRecursive(realPublishDir);
 
-
 require("./genBuildXml")(projectDir, projectJson, buildOpt);
 
 var outputJsPath = path.join(realPublishDir, buildOpt.outputFileName);
@@ -38,8 +37,8 @@ exec("cd " + realPublishDir + " && ant", function(err, data, info){
     var sourceMapPath = path.join(realPublishDir, "sourcemap");
     if(fs.existsSync(sourceMapPath)){
         var smContent = fs.readFileSync(sourceMapPath).toString();
-        smContent = smContent.replace(new RegExp(path.join(projectDir, "/"), "gi"), "");
-        smContent = smContent.replace(new RegExp(realEngineDir, "gi"), engineDir);
+        smContent = smContent.replace(new RegExp(path.join(projectDir, "/"), "gi"), path.join(path.relative(realPublishDir, projectDir), "/"));
+        smContent = smContent.replace(new RegExp(path.join(realEngineDir, "/"), "gi"), path.join(path.relative(realPublishDir, realEngineDir), "/"));
         fs.writeFileSync(sourceMapPath, smContent);
     }
 
@@ -51,5 +50,10 @@ exec("cd " + realPublishDir + " && ant", function(err, data, info){
     var publishResDir = path.join(realPublishDir, "res");
     core4cc.rmdirSyncRecursive(publishResDir);
     core4cc.copyFiles(path.join(projectDir, "res"), publishResDir);
+
+    var indexContent = fs.readFileSync(path.join(projectDir, "index.html")).toString();
+    indexContent = indexContent.replace(/<script\s+src\s*=\s*("|')[^"']*CCBoot\.js("|')\s*><\/script>/g, "");
+    indexContent = indexContent.replace(/"main\.js"\s*/, '"' + buildOpt.outputFileName + '"');
+    fs.writeFileSync(path.join(realPublishDir, "index.html"), indexContent);
     console.log("Finished!")
 });
