@@ -249,13 +249,15 @@
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
     cc.PhysicsSprite._className = "PhysicsSprite";
-	window._proto = cc.PhysicsSprite.prototype;
+	window._p = cc.PhysicsSprite.prototype;
 	// Extended properties
 	/** @expose */
-	_proto.body;
-	cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
-    cc.defineGetterSetter(_proto, "dirty", _proto.isDirty, _proto.setDirty);
-	delete window._proto;
+	_p.body;
+	cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
+    /** @expose */
+    _p.dirty;
+    cc.defineGetterSetter(_p, "dirty", _p.isDirty, _p.setDirty);
+	delete window._p;
 
     /**
      * Create a PhysicsSprite with filename and rect

@@ -734,19 +734,35 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     }
 });
 
-window._proto = ccui.TextField.prototype;
+window._p = ccui.TextField.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
-cc.defineGetterSetter(_proto, "placeHolder", _proto.getPlaceHolder, _proto.setPlaceHolder);
-cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
-cc.defineGetterSetter(_proto, "fontSize", _proto.getFontSize, _proto.setFontSize);
-cc.defineGetterSetter(_proto, "fontName", _proto.getFontName, _proto.setFontName);
-cc.defineGetterSetter(_proto, "maxLengthEnabled", _proto.isMaxLengthEnabled, _proto.setMaxLengthEnabled);
-cc.defineGetterSetter(_proto, "maxLength", _proto.getMaxLength, _proto.setMaxLength);
-cc.defineGetterSetter(_proto, "passwordEnabled", _proto.isPasswordEnabled, _proto.setPasswordEnabled);
+/** @expose */
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setText);
+/** @expose */
+_p.placeHolder;
+cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
+/** @expose */
+_p.font;
+cc.defineGetterSetter(_p, "font", _p._getFont, _p._setFont);
+/** @expose */
+_p.fontSize;
+cc.defineGetterSetter(_p, "fontSize", _p.getFontSize, _p.setFontSize);
+/** @expose */
+_p.fontName;
+cc.defineGetterSetter(_p, "fontName", _p.getFontName, _p.setFontName);
+/** @expose */
+_p.maxLengthEnabled;
+cc.defineGetterSetter(_p, "maxLengthEnabled", _p.isMaxLengthEnabled, _p.setMaxLengthEnabled);
+/** @expose */
+_p.maxLength;
+cc.defineGetterSetter(_p, "maxLength", _p.getMaxLength, _p.setMaxLength);
+/** @expose */
+_p.passwordEnabled;
+cc.defineGetterSetter(_p, "passwordEnabled", _p.isPasswordEnabled, _p.setPasswordEnabled);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UITextField.

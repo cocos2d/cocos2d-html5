@@ -661,18 +661,32 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     }
 });
 
-window._proto = ccs.Bone.prototype;
+window._p = ccs.Bone.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "boneData", _proto.getBoneData, _proto.setBoneData);
-cc.defineGetterSetter(_proto, "armature", _proto.getArmature, _proto.setArmature);
-cc.defineGetterSetter(_proto, "childArmature", _proto.getChildArmature, _proto.setChildArmature);
-cc.defineGetterSetter(_proto, "childrenBone", _proto.getChildrenBone);
-cc.defineGetterSetter(_proto, "tween", _proto.getTween);
-cc.defineGetterSetter(_proto, "tweenData", _proto.getTweenData);
-cc.defineGetterSetter(_proto, "colliderFilter", _proto.getColliderFilter, _proto.setColliderFilter);
+/** @expose */
+_p.boneData;
+cc.defineGetterSetter(_p, "boneData", _p.getBoneData, _p.setBoneData);
+/** @expose */
+_p.armature;
+cc.defineGetterSetter(_p, "armature", _p.getArmature, _p.setArmature);
+/** @expose */
+_p.childArmature;
+cc.defineGetterSetter(_p, "childArmature", _p.getChildArmature, _p.setChildArmature);
+/** @expose */
+_p.childrenBone;
+cc.defineGetterSetter(_p, "childrenBone", _p.getChildrenBone);
+/** @expose */
+_p.tween;
+cc.defineGetterSetter(_p, "tween", _p.getTween);
+/** @expose */
+_p.tweenData;
+cc.defineGetterSetter(_p, "tweenData", _p.getTweenData);
+/** @expose */
+_p.colliderFilter;
+cc.defineGetterSetter(_p, "colliderFilter", _p.getColliderFilter, _p.setColliderFilter);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a bone.

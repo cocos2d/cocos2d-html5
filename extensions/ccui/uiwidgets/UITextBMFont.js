@@ -185,12 +185,14 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     }
 });
 
-window._proto = ccui.TextBMFont.prototype;
+window._p = ccui.TextBMFont.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
+/** @expose */
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UILabelBMFont.

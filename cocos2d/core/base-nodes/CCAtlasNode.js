@@ -387,39 +387,39 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     }
 });
 
-window._proto = cc.AtlasNode.prototype;
+window._p = cc.AtlasNode.prototype;
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-	_proto.initWithTexture = _proto._initWithTextureForWebGL;
-	_proto.draw = _proto._drawForWebGL;
-	_proto.setColor = _proto._setColorForWebGL;
-	_proto.setOpacity = _proto._setOpacityForWebGL;
-	_proto.getTexture = _proto._getTextureForWebGL;
-	_proto.setTexture = _proto._setTextureForWebGL;
-	_proto._calculateMaxItems = _proto._calculateMaxItemsForWebGL;
+	_p.initWithTexture = _p._initWithTextureForWebGL;
+	_p.draw = _p._drawForWebGL;
+	_p.setColor = _p._setColorForWebGL;
+	_p.setOpacity = _p._setOpacityForWebGL;
+	_p.getTexture = _p._getTextureForWebGL;
+	_p.setTexture = _p._setTextureForWebGL;
+	_p._calculateMaxItems = _p._calculateMaxItemsForWebGL;
 } else {
-    _proto.initWithTexture = _proto._initWithTextureForCanvas;
-    _proto.draw = cc.Node.prototype.draw;
-    _proto.setColor = _proto._setColorForCanvas;
-    _proto.setOpacity = _proto._setOpacityForCanvas;
-    _proto.getTexture = _proto._getTextureForCanvas;
-    _proto.setTexture = _proto._setTextureForCanvas;
-    _proto._calculateMaxItems = _proto._calculateMaxItemsForCanvas;
+    _p.initWithTexture = _p._initWithTextureForCanvas;
+    _p.draw = cc.Node.prototype.draw;
+    _p.setColor = _p._setColorForCanvas;
+    _p.setOpacity = _p._setOpacityForCanvas;
+    _p.getTexture = _p._getTextureForCanvas;
+    _p.setTexture = _p._setTextureForCanvas;
+    _p._calculateMaxItems = _p._calculateMaxItemsForCanvas;
 }
 
 // Override properties
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 
 // Extended properties
 /** @expose */
-_proto.texture;
-cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+_p.texture;
+cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 /** @expose */
-_proto.textureAtlas;
+_p.textureAtlas;
 /** @expose */
-_proto.quadsToDraw;
+_p.quadsToDraw;
 
-delete window._proto;
+delete window._p;
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
  * @param {String} tile

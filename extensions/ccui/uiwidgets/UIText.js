@@ -372,20 +372,38 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     }
 });
 
-window._proto = ccui.Text.prototype;
+window._p = ccui.Text.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto._setBoundingWidth);
-cc.defineGetterSetter(_proto, "boundingHeight", _proto._getBoundingHeight, _proto._setBoundingHeight);
-cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setText);
-cc.defineGetterSetter(_proto, "stringLength", _proto.getStringLength);
-cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
-cc.defineGetterSetter(_proto, "fontSize", _proto.getFontSize, _proto.setFontSize);
-cc.defineGetterSetter(_proto, "fontName", _proto.getFontName, _proto.setFontName);
-cc.defineGetterSetter(_proto, "textAlign", _proto.getTextHorizontalAlignment, _proto.setTextHorizontalAlignment);
-cc.defineGetterSetter(_proto, "verticalAlign", _proto.getTextVerticalAlignment, _proto.setTextVerticalAlignment);
+/** @expose */
+_p.boundingWidth;
+cc.defineGetterSetter(_p, "boundingWidth", _p._getBoundingWidth, _p._setBoundingWidth);
+/** @expose */
+_p.boundingHeight;
+cc.defineGetterSetter(_p, "boundingHeight", _p._getBoundingHeight, _p._setBoundingHeight);
+/** @expose */
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setText);
+/** @expose */
+_p.stringLength;
+cc.defineGetterSetter(_p, "stringLength", _p.getStringLength);
+/** @expose */
+_p.font;
+cc.defineGetterSetter(_p, "font", _p._getFont, _p._setFont);
+/** @expose */
+_p.fontSize;
+cc.defineGetterSetter(_p, "fontSize", _p.getFontSize, _p.setFontSize);
+/** @expose */
+_p.fontName;
+cc.defineGetterSetter(_p, "fontName", _p.getFontName, _p.setFontName);
+/** @expose */
+_p.textAlign;
+cc.defineGetterSetter(_p, "textAlign", _p.getTextHorizontalAlignment, _p.setTextHorizontalAlignment);
+/** @expose */
+_p.verticalAlign;
+cc.defineGetterSetter(_p, "verticalAlign", _p.getTextVerticalAlignment, _p.setTextVerticalAlignment);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UILabel.

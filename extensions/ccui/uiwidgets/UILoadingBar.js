@@ -383,13 +383,17 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     }
 });
 
-window._proto = ccui.LoadingBar.prototype;
+window._p = ccui.LoadingBar.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "direction", _proto.getDirection, _proto.setDirection);
-cc.defineGetterSetter(_proto, "percent", _proto.getPercent, _proto.setPercent);
+/** @expose */
+_p.direction;
+cc.defineGetterSetter(_p, "direction", _p.getDirection, _p.setDirection);
+/** @expose */
+_p.percent;
+cc.defineGetterSetter(_p, "percent", _p.getPercent, _p.setPercent);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UILoadingBar.

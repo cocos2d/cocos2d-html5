@@ -334,21 +334,41 @@ cc.ControlStepper = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlStepper.prototype;
+window._p = cc.ControlStepper.prototype;
 
 // Extedned properties
-cc.defineGetterSetter(_proto, "wraps", _proto.getWraps, _proto.setWraps);
-cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
-cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);
-cc.defineGetterSetter(_proto, "maxValue", _proto.getMaximumValue, _proto.setMaximumValue);
-cc.defineGetterSetter(_proto, "stepValue", _proto.getStepValue, _proto.setStepValue);
-cc.defineGetterSetter(_proto, "continuous", _proto.isContinuous);
-cc.defineGetterSetter(_proto, "minusSprite", _proto.getMinusSprite, _proto.setMinusSprite);
-cc.defineGetterSetter(_proto, "plusSprite", _proto.getPlusSprite, _proto.setPlusSprite);
-cc.defineGetterSetter(_proto, "minusLabel", _proto.getMinusLabel, _proto.setMinusLabel);
-cc.defineGetterSetter(_proto, "plusLabel", _proto.getPlusLabel, _proto.setPlusLabel);
+/** @expose */
+_p.wraps;
+cc.defineGetterSetter(_p, "wraps", _p.getWraps, _p.setWraps);
+/** @expose */
+_p.value;
+cc.defineGetterSetter(_p, "value", _p.getValue, _p.setValue);
+/** @expose */
+_p.minValue;
+cc.defineGetterSetter(_p, "minValue", _p.getMinimumValue, _p.setMinimumValue);
+/** @expose */
+_p.maxValue;
+cc.defineGetterSetter(_p, "maxValue", _p.getMaximumValue, _p.setMaximumValue);
+/** @expose */
+_p.stepValue;
+cc.defineGetterSetter(_p, "stepValue", _p.getStepValue, _p.setStepValue);
+/** @expose */
+_p.continuous;
+cc.defineGetterSetter(_p, "continuous", _p.isContinuous);
+/** @expose */
+_p.minusSprite;
+cc.defineGetterSetter(_p, "minusSprite", _p.getMinusSprite, _p.setMinusSprite);
+/** @expose */
+_p.plusSprite;
+cc.defineGetterSetter(_p, "plusSprite", _p.getPlusSprite, _p.setPlusSprite);
+/** @expose */
+_p.minusLabel;
+cc.defineGetterSetter(_p, "minusLabel", _p.getMinusLabel, _p.setMinusLabel);
+/** @expose */
+_p.plusLabel;
+cc.defineGetterSetter(_p, "plusLabel", _p.getPlusLabel, _p.setPlusLabel);
 
-delete window._proto;
+delete window._p;
 
 cc.ControlStepper.create = function (minusSprite, plusSprite) {
     var pRet = new cc.ControlStepper();

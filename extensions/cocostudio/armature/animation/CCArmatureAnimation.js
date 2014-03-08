@@ -633,13 +633,17 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     }
 });
 
-window._proto = ccs.ArmatureAnimation.prototype;
+window._p = ccs.ArmatureAnimation.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "speedScale", _proto.getSpeedScale, _proto.setSpeedScale);
-cc.defineGetterSetter(_proto, "animationScale", _proto.getAnimationScale, _proto.setAnimationScale);
+/** @expose */
+_p.speedScale;
+cc.defineGetterSetter(_p, "speedScale", _p.getSpeedScale, _p.setSpeedScale);
+/** @expose */
+_p.animationScale;
+cc.defineGetterSetter(_p, "animationScale", _p.getAnimationScale, _p.setAnimationScale);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a ArmatureAnimation.

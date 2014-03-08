@@ -926,35 +926,35 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     }
 });
 
-window._proto = cc.LabelBMFont.prototype;
+window._p = cc.LabelBMFont.prototype;
 
 // Extended properties
 /** @expose */
-_proto.opacityModifyRGB;
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
+_p.opacityModifyRGB;
+cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
 /** @expose */
-_proto.opacity;
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+_p.opacity;
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
 /** @expose */
-_proto.cascadeOpacity;
-cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
+_p.cascadeOpacity;
+cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
 /** @expose */
-_proto.color;
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
+_p.color;
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 /** @expose */
-_proto.cascadeColor;
-cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
+_p.cascadeColor;
+cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
 /** @expose */
-_proto.string;
-cc.defineGetterSetter(_proto, "string", _proto.getString, _proto._setStringForSetter);
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getString, _p._setStringForSetter);
 /** @expose */
-_proto.boundingWidth;
-cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto.setBoundingWidth);
+_p.boundingWidth;
+cc.defineGetterSetter(_p, "boundingWidth", _p._getBoundingWidth, _p.setBoundingWidth);
 /** @expose */
-_proto.textAlign;
-cc.defineGetterSetter(_proto, "textAlign", _proto._getAlignment, _proto.setAlignment);
+_p.textAlign;
+cc.defineGetterSetter(_p, "textAlign", _p._getAlignment, _p.setAlignment);
 
-delete window._proto;
+delete window._p;
 
 /**
  * creates a bitmap font atlas with an initial string and the FNT file

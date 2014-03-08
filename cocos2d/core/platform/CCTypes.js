@@ -385,36 +385,36 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
     cc.Color.BYTES_PER_ELEMENT = 4;
 
-    window._proto = cc.Color.prototype;
-    _proto._getR = function(){
+    window._p = cc.Color.prototype;
+    _p._getR = function(){
         return this._rU8[0];
     };
-    _proto._setR = function(value){
+    _p._setR = function(value){
         this._rU8[0] = value < 0 ? 0 : value;
     };
-    _proto._getG = function(){
+    _p._getG = function(){
         return this._gU8[0];
     };
-    _proto._setG = function(value){
+    _p._setG = function(value){
         this._gU8[0] = value < 0 ? 0 : value;
     };
-    _proto._getB = function(){
+    _p._getB = function(){
         return this._bU8[0];
     };
-    _proto._setB = function(value){
+    _p._setB = function(value){
         this._bU8[0] = value < 0 ? 0 : value;
     };
-    _proto._getA = function(){
+    _p._getA = function(){
         return this._aU8[0];
     };
-    _proto._setA = function(value){
+    _p._setA = function(value){
         this._aU8[0] = value < 0 ? 0 : value;
     };
-    cc.defineGetterSetter(_proto, "r", _proto._getR,_proto._setR);
-    cc.defineGetterSetter(_proto, "g", _proto._getG,_proto._setG);
-    cc.defineGetterSetter(_proto, "b", _proto._getB,_proto._setB);
-    cc.defineGetterSetter(_proto, "a", _proto._getA,_proto._setA);
-    delete window._proto;
+    cc.defineGetterSetter(_p, "r", _p._getR,_p._setR);
+    cc.defineGetterSetter(_p, "g", _p._getG,_p._setG);
+    cc.defineGetterSetter(_p, "b", _p._getB,_p._setB);
+    cc.defineGetterSetter(_p, "a", _p._getA,_p._setA);
+    delete window._p;
 
     //redefine cc.Vertex2F
     cc.Vertex2F = function (x, y, arrayBuffer, offset) {
@@ -1097,32 +1097,32 @@ cc.color._getOrange = function () {
 cc.color._getGray = function () {
     return cc.color(166, 166, 166);
 };
-window._proto = cc.color;
+window._p = cc.color;
 /** @expose */
-_proto.WHITE;
-cc.defineGetterSetter(_proto, "WHITE", _proto._getWhite);
+_p.WHITE;
+cc.defineGetterSetter(_p, "WHITE", _p._getWhite);
 /** @expose */
-_proto.YELLOW;
-cc.defineGetterSetter(_proto, "YELLOW", _proto._getYellow);
+_p.YELLOW;
+cc.defineGetterSetter(_p, "YELLOW", _p._getYellow);
 /** @expose */
-_proto.BLUE;
-cc.defineGetterSetter(_proto, "BLUE", _proto._getBlue);
+_p.BLUE;
+cc.defineGetterSetter(_p, "BLUE", _p._getBlue);
 /** @expose */
-_proto.GREEN;
-cc.defineGetterSetter(_proto, "GREEN", _proto._getGreen);
+_p.GREEN;
+cc.defineGetterSetter(_p, "GREEN", _p._getGreen);
 /** @expose */
-_proto.RED;
-cc.defineGetterSetter(_proto, "RED", _proto._getRed);
+_p.RED;
+cc.defineGetterSetter(_p, "RED", _p._getRed);
 /** @expose */
-_proto.MAGENTA;
-cc.defineGetterSetter(_proto, "MAGENTA", _proto._getMagenta);
+_p.MAGENTA;
+cc.defineGetterSetter(_p, "MAGENTA", _p._getMagenta);
 /** @expose */
-_proto.BLACK;
-cc.defineGetterSetter(_proto, "BLACK", _proto._getBlack);
+_p.BLACK;
+cc.defineGetterSetter(_p, "BLACK", _p._getBlack);
 /** @expose */
-_proto.ORANGE;
-cc.defineGetterSetter(_proto, "ORANGE", _proto._getOrange);
+_p.ORANGE;
+cc.defineGetterSetter(_p, "ORANGE", _p._getOrange);
 /** @expose */
-_proto.GRAY;
-cc.defineGetterSetter(_proto, "GRAY", _proto._getGray);
-delete window._proto;
+_p.GRAY;
+cc.defineGetterSetter(_p, "GRAY", _p._getGray);
+delete window._p;

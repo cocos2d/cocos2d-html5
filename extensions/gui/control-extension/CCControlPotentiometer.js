@@ -246,17 +246,29 @@ cc.ControlPotentiometer = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlPotentiometer.prototype;
+window._p = cc.ControlPotentiometer.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
-cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);
-cc.defineGetterSetter(_proto, "maxValue", _proto.getMaximumValue, _proto.setMaximumValue);
-cc.defineGetterSetter(_proto, "progressTimer", _proto.getProgressTimer, _proto.setProgressTimer);
-cc.defineGetterSetter(_proto, "thumbSprite", _proto.getThumbSprite, _proto.setThumbSprite);
-cc.defineGetterSetter(_proto, "prevLocation", _proto.getPreviousLocation, _proto.setPreviousLocation);
+/** @expose */
+_p.value;
+cc.defineGetterSetter(_p, "value", _p.getValue, _p.setValue);
+/** @expose */
+_p.minValue;
+cc.defineGetterSetter(_p, "minValue", _p.getMinimumValue, _p.setMinimumValue);
+/** @expose */
+_p.maxValue;
+cc.defineGetterSetter(_p, "maxValue", _p.getMaximumValue, _p.setMaximumValue);
+/** @expose */
+_p.progressTimer;
+cc.defineGetterSetter(_p, "progressTimer", _p.getProgressTimer, _p.setProgressTimer);
+/** @expose */
+_p.thumbSprite;
+cc.defineGetterSetter(_p, "thumbSprite", _p.getThumbSprite, _p.setThumbSprite);
+/** @expose */
+_p.prevLocation;
+cc.defineGetterSetter(_p, "prevLocation", _p.getPreviousLocation, _p.setPreviousLocation);
 
-delete window._proto;
+delete window._p;
 
 cc.ControlPotentiometer.create = function (backgroundFile, progressFile, thumbFile) {
     var pRet = new cc.ControlPotentiometer();

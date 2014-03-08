@@ -381,12 +381,16 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     }
 });
 
-window._proto = cc.TextFieldTTF.prototype;
+window._p = cc.TextFieldTTF.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "charCount", _proto.getCharCount);
-cc.defineGetterSetter(_proto, "placeHolder", _proto.getPlaceHolder, _proto.setPlaceHolder);
-delete window._proto;
+/** @expose */
+_p.charCount;
+cc.defineGetterSetter(_p, "charCount", _p.getCharCount);
+/** @expose */
+_p.placeHolder;
+cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
+delete window._p;
 
 /**
  *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size

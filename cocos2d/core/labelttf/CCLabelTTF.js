@@ -1174,87 +1174,87 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     }
 });
 
-window._proto = cc.LabelTTF.prototype;
+window._p = cc.LabelTTF.prototype;
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-	_proto.setColor = cc.Sprite.prototype.setColor;
-    _proto._setColorsString = _proto._setColorsStringForWebGL;
-    _proto.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
-    _proto.setOpacity = cc.Sprite.prototype.setOpacity;
-    _proto.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
-    _proto.initWithStringAndTextDefinition = _proto._initWithStringAndTextDefinitionForWebGL;
-    _proto.setFontFillColor = _proto._setFontFillColorForWebGL;
-    _proto.draw = _proto._drawForWebGL;
-    _proto.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
+	_p.setColor = cc.Sprite.prototype.setColor;
+    _p._setColorsString = _p._setColorsStringForWebGL;
+    _p.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
+    _p.setOpacity = cc.Sprite.prototype.setOpacity;
+    _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
+    _p.initWithStringAndTextDefinition = _p._initWithStringAndTextDefinitionForWebGL;
+    _p.setFontFillColor = _p._setFontFillColorForWebGL;
+    _p.draw = _p._drawForWebGL;
+    _p.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
 } else {
-    _proto.setColor = _proto._setColorForCanvas;
-    _proto._setColorsString = _proto._setColorsStringForCanvas;
-    _proto.updateDisplayedColor = _proto._updateDisplayedColorForCanvas;
-    _proto.setOpacity = _proto._setOpacityForCanvas;
-    _proto.updateDisplayedOpacity = _proto._updateDisplayedOpacityForCanvas;
-    _proto.initWithStringAndTextDefinition = _proto._initWithStringAndTextDefinitionForCanvas;
-    _proto.setFontFillColor = _proto._setFontFillColorForCanvas;
-    _proto.draw = cc.Sprite.prototype.draw;
-    _proto.setTextureRect = _proto._setTextureRectForCanvas;
+    _p.setColor = _p._setColorForCanvas;
+    _p._setColorsString = _p._setColorsStringForCanvas;
+    _p.updateDisplayedColor = _p._updateDisplayedColorForCanvas;
+    _p.setOpacity = _p._setOpacityForCanvas;
+    _p.updateDisplayedOpacity = _p._updateDisplayedOpacityForCanvas;
+    _p.initWithStringAndTextDefinition = _p._initWithStringAndTextDefinitionForCanvas;
+    _p.setFontFillColor = _p._setFontFillColorForCanvas;
+    _p.draw = cc.Sprite.prototype.draw;
+    _p.setTextureRect = _p._setTextureRectForCanvas;
 }
 
 // Override properties
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
 
 // Extended properties
 /** @expose */
-_proto.string;
-cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 /** @expose */
-_proto.textAlign;
-cc.defineGetterSetter(_proto, "textAlign", _proto.getHorizontalAlignment, _proto.setHorizontalAlignment);
+_p.textAlign;
+cc.defineGetterSetter(_p, "textAlign", _p.getHorizontalAlignment, _p.setHorizontalAlignment);
 /** @expose */
-_proto.verticalAlign;
-cc.defineGetterSetter(_proto, "verticalAlign", _proto.getVerticalAlignment, _proto.setVerticalAlignment);
+_p.verticalAlign;
+cc.defineGetterSetter(_p, "verticalAlign", _p.getVerticalAlignment, _p.setVerticalAlignment);
 /** @expose */
-_proto.fontSize;
-cc.defineGetterSetter(_proto, "fontSize", _proto.getFontSize, _proto.setFontSize);
+_p.fontSize;
+cc.defineGetterSetter(_p, "fontSize", _p.getFontSize, _p.setFontSize);
 /** @expose */
-_proto.fontName;
-cc.defineGetterSetter(_proto, "fontName", _proto.getFontName, _proto.setFontName);
+_p.fontName;
+cc.defineGetterSetter(_p, "fontName", _p.getFontName, _p.setFontName);
 /** @expose */
-_proto.font;
-cc.defineGetterSetter(_proto, "font", _proto._getFont, _proto._setFont);
+_p.font;
+cc.defineGetterSetter(_p, "font", _p._getFont, _p._setFont);
 /** @expose */
-//_proto.boundingSize;
-//cc.defineGetterSetter(_proto, "boundingSize", _proto.getDimensions, _proto.setDimensions);
+_p.boundingSize;
+//cc.defineGetterSetter(_p, "boundingSize", _p.getDimensions, _p.setDimensions);
 /** @expose */
-_proto.boundingWidth;
-cc.defineGetterSetter(_proto, "boundingWidth", _proto._getBoundingWidth, _proto._setBoundingWidth);
+_p.boundingWidth;
+cc.defineGetterSetter(_p, "boundingWidth", _p._getBoundingWidth, _p._setBoundingWidth);
 /** @expose */
-_proto.boundingHeight;
-cc.defineGetterSetter(_proto, "boundingHeight", _proto._getBoundingHeight, _proto._setBoundingHeight);
+_p.boundingHeight;
+cc.defineGetterSetter(_p, "boundingHeight", _p._getBoundingHeight, _p._setBoundingHeight);
 /** @expose */
-_proto.fillStyle;
-cc.defineGetterSetter(_proto, "fillStyle", _proto._getFillStyle, _proto.setFontFillColor);
+_p.fillStyle;
+cc.defineGetterSetter(_p, "fillStyle", _p._getFillStyle, _p.setFontFillColor);
 /** @expose */
-_proto.strokeStyle;
-cc.defineGetterSetter(_proto, "strokeStyle", _proto._getStrokeStyle, _proto._setStrokeStyle);
+_p.strokeStyle;
+cc.defineGetterSetter(_p, "strokeStyle", _p._getStrokeStyle, _p._setStrokeStyle);
 /** @expose */
-_proto.lineWidth;
-cc.defineGetterSetter(_proto, "lineWidth", _proto._getLineWidth, _proto._setLineWidth);
+_p.lineWidth;
+cc.defineGetterSetter(_p, "lineWidth", _p._getLineWidth, _p._setLineWidth);
 /** @expose */
-//_proto.shadowOffset;
-//cc.defineGetterSetter(_proto, "shadowOffset", _proto._getShadowOffset, _proto._setShadowOffset);
+_p.shadowOffset;
+//cc.defineGetterSetter(_p, "shadowOffset", _p._getShadowOffset, _p._setShadowOffset);
 /** @expose */
-_proto.shadowOffsetX;
-cc.defineGetterSetter(_proto, "shadowOffsetX", _proto._getShadowOffsetX, _proto._setShadowOffsetX);
+_p.shadowOffsetX;
+cc.defineGetterSetter(_p, "shadowOffsetX", _p._getShadowOffsetX, _p._setShadowOffsetX);
 /** @expose */
-_proto.shadowOffsetY;
-cc.defineGetterSetter(_proto, "shadowOffsetY", _proto._getShadowOffsetY, _proto._setShadowOffsetY);
+_p.shadowOffsetY;
+cc.defineGetterSetter(_p, "shadowOffsetY", _p._getShadowOffsetY, _p._setShadowOffsetY);
 /** @expose */
-_proto.shadowOpacity;
-cc.defineGetterSetter(_proto, "shadowOpacity", _proto._getShadowOpacity, _proto._setShadowOpacity);
+_p.shadowOpacity;
+cc.defineGetterSetter(_p, "shadowOpacity", _p._getShadowOpacity, _p._setShadowOpacity);
 /** @expose */
-_proto.shadowBlur;
-cc.defineGetterSetter(_proto, "shadowBlur", _proto._getShadowBlur, _proto._setShadowBlur);
+_p.shadowBlur;
+cc.defineGetterSetter(_p, "shadowBlur", _p._getShadowBlur, _p._setShadowBlur);
 
-delete window._proto;
+delete window._p;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 

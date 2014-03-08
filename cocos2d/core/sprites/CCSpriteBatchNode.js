@@ -1012,45 +1012,47 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     }
 });
 
-window._proto = cc.SpriteBatchNode.prototype;
+window._p = cc.SpriteBatchNode.prototype;
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    _proto.ctor = _proto._ctorForWebGL;
-    _proto.updateQuadFromSprite = _proto._updateQuadFromSpriteForWebGL;
-    _proto.insertQuadFromSprite = _proto._insertQuadFromSpriteForWebGL;
-    _proto.initWithTexture = _proto._initWithTextureForWebGL;
-    _proto.appendChild = _proto._appendChildForWebGL;
-    _proto.removeSpriteFromAtlas = _proto._removeSpriteFromAtlasForWebGL;
-    _proto.getTexture = _proto._getTextureForWebGL;
-    _proto.setTexture = _proto._setTextureForWebGL;
-    _proto.visit = _proto._visitForWebGL;
-    _proto.addChild = _proto._addChildForWebGL;
-    _proto.removeAllChildren = _proto._removeAllChildrenForWebGL;
-    _proto.sortAllChildren = _proto._sortAllChildrenForWebGL;
-    _proto.draw = _proto._drawForWebGL;
+    _p.ctor = _p._ctorForWebGL;
+    _p.updateQuadFromSprite = _p._updateQuadFromSpriteForWebGL;
+    _p.insertQuadFromSprite = _p._insertQuadFromSpriteForWebGL;
+    _p.initWithTexture = _p._initWithTextureForWebGL;
+    _p.appendChild = _p._appendChildForWebGL;
+    _p.removeSpriteFromAtlas = _p._removeSpriteFromAtlasForWebGL;
+    _p.getTexture = _p._getTextureForWebGL;
+    _p.setTexture = _p._setTextureForWebGL;
+    _p.visit = _p._visitForWebGL;
+    _p.addChild = _p._addChildForWebGL;
+    _p.removeAllChildren = _p._removeAllChildrenForWebGL;
+    _p.sortAllChildren = _p._sortAllChildrenForWebGL;
+    _p.draw = _p._drawForWebGL;
 } else {
-    _proto.ctor = _proto._ctorForCanvas;
-    _proto.updateQuadFromSprite = _proto._updateQuadFromSpriteForCanvas;
-    _proto.insertQuadFromSprite = _proto._insertQuadFromSpriteForCanvas;
-    _proto.initWithTexture = _proto._initWithTextureForCanvas;
-    _proto.appendChild = _proto._appendChildForCanvas;
-    _proto.removeSpriteFromAtlas = _proto._removeSpriteFromAtlasForCanvas;
-    _proto.getTexture = _proto._getTextureForCanvas;
-    _proto.setTexture = _proto._setTextureForCanvas;
-    _proto.visit = _proto._visitForCanvas;
-    _proto.removeAllChildren = _proto._removeAllChildrenForCanvas;
-    _proto.addChild = _proto._addChildForCanvas;
-    _proto.sortAllChildren = _proto._sortAllChildrenForCanvas;
-    _proto.draw = cc.Node.prototype.draw;
+    _p.ctor = _p._ctorForCanvas;
+    _p.updateQuadFromSprite = _p._updateQuadFromSpriteForCanvas;
+    _p.insertQuadFromSprite = _p._insertQuadFromSpriteForCanvas;
+    _p.initWithTexture = _p._initWithTextureForCanvas;
+    _p.appendChild = _p._appendChildForCanvas;
+    _p.removeSpriteFromAtlas = _p._removeSpriteFromAtlasForCanvas;
+    _p.getTexture = _p._getTextureForCanvas;
+    _p.setTexture = _p._setTextureForCanvas;
+    _p.visit = _p._visitForCanvas;
+    _p.removeAllChildren = _p._removeAllChildrenForCanvas;
+    _p.addChild = _p._addChildForCanvas;
+    _p.sortAllChildren = _p._sortAllChildrenForCanvas;
+    _p.draw = cc.Node.prototype.draw;
 }
 
 // Override properties
-cc.defineGetterSetter(_proto, "texture", _proto.getTexture, _proto.setTexture);
+cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
 // Extended properties
-cc.defineGetterSetter(_proto, "descendants", _proto.getDescendants);
+/** @expose */
+_p.descendants;
+cc.defineGetterSetter(_p, "descendants", _p.getDescendants);
 
-delete window._proto;
+delete window._p;
 
 /**
  * <p>

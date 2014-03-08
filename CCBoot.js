@@ -26,6 +26,19 @@
 
 var cc = cc || {};
 
+/** @expose */
+window._p;
+/** @expose */
+window.gl;
+/** @expose */
+window.WebGLRenderingContext;
+/** @expose */
+Object.prototype._super;
+/** @expose */
+Object.prototype.ctor;
+/** @expose */
+Object.prototype.ctor;
+
 //is nodejs ? Used to support node-webkit.
 cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
@@ -885,6 +898,17 @@ cc._logToWebPage = function (msg) {
     logList.value = logList.value + msg + "\r\n";
     logList.scrollTop = logList.scrollHeight;
 };
+
+
+//to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
+if(console.log){
+    cc.log = console.log.bind(cc);
+    cc.warn = console.warn.bind(cc);
+    cc.error = console.error.bind(cc);
+    cc.assert = console.assert.bind(cc);
+}else{
+    cc.log = cc.warn = cc.error = cc.assert = function(){};
+}
 /**
  * Init Debug setting.
  * @function
@@ -1081,7 +1105,6 @@ cc._initSys = function(config, CONFIG_KEY){
      * @type Number
      */
     sys.LANGUAGE_POLISH = "pl";
-
 
     /**
      * @constant
@@ -1451,6 +1474,36 @@ cc._setup = function (el, width, height) {
         fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
             +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
     }
+
+	// Init singletons
+	// Audio engine
+    if(cc.AudioEngine){
+        cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
+        cc.eventManager.addCustomListener(this.EVENT_HIDE, function(){
+            cc.audioEngine._pausePlaying();
+        });
+        cc.eventManager.addCustomListener(this.EVENT_SHOW, function(){
+            cc.audioEngine._resumePlaying();
+        });
+    }
+
+	// View
+	cc.view = cc.EGLView._getInstance();
+	// register system events
+	cc.inputManager.registerSystemEvent(cc._canvas);
+
+	// Director
+	cc.director = cc.Director._getInstance();
+	cc.director.setOpenGLView(cc.view);
+    cc.winSize = cc.director.getWinSize();
+
+	// IME Dispatcher
+	cc.imeDispatcher = new cc.IMEDispatcher();
+	cc.imeDispatcher.init();
+
+	// Parsers
+	cc.saxParser = new cc.SAXParser();
+	cc.plistParser = new cc.PlistParser();
 };
 
 
@@ -1482,6 +1535,7 @@ cc.game = {
     EVENT_SHOW: "game_on_show",
     _eventHide: null,
     _eventShow: null,
+    _onBeforeStartArr : [],
 
     /**
      * Key of config
