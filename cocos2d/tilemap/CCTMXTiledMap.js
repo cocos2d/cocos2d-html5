@@ -403,15 +403,23 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     }
 });
 
-window._proto = cc.TMXTiledMap.prototype;
+window._p = cc.TMXTiledMap.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "mapWidth", _proto._getMapWidth, _proto._setMapWidth);
-cc.defineGetterSetter(_proto, "mapHeight", _proto._getMapHeight, _proto._setMapHeight);
-cc.defineGetterSetter(_proto, "tileWidth", _proto._getTileWidth, _proto._setTileWidth);
-cc.defineGetterSetter(_proto, "tileHeight", _proto._getTileHeight, _proto._setTileHeight);
+/** @expose */
+_p.mapWidth;
+cc.defineGetterSetter(_p, "mapWidth", _p._getMapWidth, _p._setMapWidth);
+/** @expose */
+_p.mapHeight;
+cc.defineGetterSetter(_p, "mapHeight", _p._getMapHeight, _p._setMapHeight);
+/** @expose */
+_p.tileWidth;
+cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
+/** @expose */
+_p.tileHeight;
+cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
-delete window._proto;
+delete window._p;
 
 /**
  * Creates a TMX Tiled Map with a TMX file  or content string.

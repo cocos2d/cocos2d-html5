@@ -323,14 +323,20 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
     }
 });
 
-window._proto = ccs.ColliderDetector.prototype;
+window._p = ccs.ColliderDetector.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "colliderFilter", _proto.getColliderFilter, _proto.setColliderFilter);
-cc.defineGetterSetter(_proto, "active", _proto.getActive, _proto.setActive);
-cc.defineGetterSetter(_proto, "body", _proto.getBody, _proto.setBody);
+/** @expose */
+_p.colliderFilter;
+cc.defineGetterSetter(_p, "colliderFilter", _p.getColliderFilter, _p.setColliderFilter);
+/** @expose */
+_p.active;
+cc.defineGetterSetter(_p, "active", _p.getActive, _p.setActive);
+/** @expose */
+_p.body;
+cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
 
-delete window._proto;
+delete window._p;
 
 ccs.ColliderDetector.create = function (bone) {
     var colliderDetector = new ccs.ColliderDetector();

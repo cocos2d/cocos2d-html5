@@ -220,41 +220,41 @@ if (cc.sys._supportWebAudio) {
         }
 
     });
-    window._proto = cc.WebAudio.prototype;
+    window._p = cc.WebAudio.prototype;
     /** @expose */
-    _proto.loop;
-    cc.defineGetterSetter(_proto, "loop", function(){
+    _p.loop;
+    cc.defineGetterSetter(_p, "loop", function(){
         return this._loop;
     }, function(loop){
         this._loop = loop;
         if(this._sourceNode) this._sourceNode.loop = loop;
     });
     /** @expose */
-    _proto.volume;
-    cc.defineGetterSetter(_proto, "volume", function(){
+    _p.volume;
+    cc.defineGetterSetter(_p, "volume", function(){
         return this._volume;
     }, function(volume){
         this._volume = volume;
         this._volumeNode.gain.value = volume;
     });
     /** @expose */
-    _proto.ended;
-    cc.defineGetterSetter(_proto, "paused", function(){
+    _p.ended;
+    cc.defineGetterSetter(_p, "paused", function(){
         return this._paused;
     });
     /** @expose */
-    _proto.ended;
-    cc.defineGetterSetter(_proto, "ended", function(){
+    _p.ended;
+    cc.defineGetterSetter(_p, "ended", function(){
         var sourceNode = this._sourceNode;
         return !this._paused && (this._stopped || !sourceNode || sourceNode.playbackState == 3);
     });
     /** @expose */
-    _proto.played;
-    cc.defineGetterSetter(_proto, "played", function(){
+    _p.played;
+    cc.defineGetterSetter(_p, "played", function(){
         var sourceNode = this._sourceNode;
         return sourceNode && sourceNode.playbackState == 2;
     });
-    delete window._proto;
+    delete window._p;
 }
 
 /**

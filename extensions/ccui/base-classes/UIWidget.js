@@ -1459,25 +1459,53 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     }
 });
 
-window._proto = ccui.Widget.prototype;
+window._p = ccui.Widget.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "xPercent", _proto._getXPercent, _proto._setXPercent);
-cc.defineGetterSetter(_proto, "yPercent", _proto._getYPercent, _proto._setYPercent);
-cc.defineGetterSetter(_proto, "widthPercent", _proto._getWidthPercent, _proto._setWidthPercent);
-cc.defineGetterSetter(_proto, "heightPercent", _proto._getHeightPercent, _proto._setHeightPercent);
-cc.defineGetterSetter(_proto, "widgetParent", _proto.getWidgetParent);
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-cc.defineGetterSetter(_proto, "focused", _proto.isFocused, _proto.setFocused);
-cc.defineGetterSetter(_proto, "sizeType", _proto.getSizeType, _proto.setSizeType);
-cc.defineGetterSetter(_proto, "widgetType", _proto.getWidgetType);
-cc.defineGetterSetter(_proto, "touchEnabled", _proto.isTouchEnabled, _proto.setTouchEnabled);
-cc.defineGetterSetter(_proto, "updateEnabled", _proto.isUpdateEnabled, _proto.setUpdateEnabled);
-cc.defineGetterSetter(_proto, "bright", _proto.isBright, _proto.setBright);
-cc.defineGetterSetter(_proto, "name", _proto.getName, _proto.setName);
-cc.defineGetterSetter(_proto, "actionTag", _proto.getActionTag, _proto.setActionTag);
+/** @expose */
+_p.xPercent;
+cc.defineGetterSetter(_p, "xPercent", _p._getXPercent, _p._setXPercent);
+/** @expose */
+_p.yPercent;
+cc.defineGetterSetter(_p, "yPercent", _p._getYPercent, _p._setYPercent);
+/** @expose */
+_p.widthPercent;
+cc.defineGetterSetter(_p, "widthPercent", _p._getWidthPercent, _p._setWidthPercent);
+/** @expose */
+_p.heightPercent;
+cc.defineGetterSetter(_p, "heightPercent", _p._getHeightPercent, _p._setHeightPercent);
+/** @expose */
+_p.widgetParent;
+cc.defineGetterSetter(_p, "widgetParent", _p.getWidgetParent);
+/** @expose */
+_p.enabled;
+cc.defineGetterSetter(_p, "enabled", _p.isEnabled, _p.setEnabled);
+/** @expose */
+_p.focused;
+cc.defineGetterSetter(_p, "focused", _p.isFocused, _p.setFocused);
+/** @expose */
+_p.sizeType;
+cc.defineGetterSetter(_p, "sizeType", _p.getSizeType, _p.setSizeType);
+/** @expose */
+_p.widgetType;
+cc.defineGetterSetter(_p, "widgetType", _p.getWidgetType);
+/** @expose */
+_p.touchEnabled;
+cc.defineGetterSetter(_p, "touchEnabled", _p.isTouchEnabled, _p.setTouchEnabled);
+/** @expose */
+_p.updateEnabled;
+cc.defineGetterSetter(_p, "updateEnabled", _p.isUpdateEnabled, _p.setUpdateEnabled);
+/** @expose */
+_p.bright;
+cc.defineGetterSetter(_p, "bright", _p.isBright, _p.setBright);
+/** @expose */
+_p.name;
+cc.defineGetterSetter(_p, "name", _p.getName, _p.setName);
+/** @expose */
+_p.actionTag;
+cc.defineGetterSetter(_p, "actionTag", _p.getActionTag, _p.setActionTag);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UIWidget.

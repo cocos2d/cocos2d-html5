@@ -338,26 +338,26 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     }
 });
 
-window._proto = cc.LabelAtlas.prototype;
+window._p = cc.LabelAtlas.prototype;
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    _proto.updateAtlasValues =  _proto._updateAtlasValuesForWebGL;
-    _proto.setString =  _proto._setStringForWebGL;
-    _proto.setOpacity =  _proto._setOpacityForWebGL;
+    _p.updateAtlasValues =  _p._updateAtlasValuesForWebGL;
+    _p.setString =  _p._setStringForWebGL;
+    _p.setOpacity =  _p._setOpacityForWebGL;
 } else {
-    _proto.updateAtlasValues =  _proto._updateAtlasValuesForCanvas;
-    _proto.setString =  _proto._setStringForCanvas;
-    _proto.setOpacity =  _proto._setOpacityForCanvas;
+    _p.updateAtlasValues =  _p._updateAtlasValuesForCanvas;
+    _p.setString =  _p._setStringForCanvas;
+    _p.setOpacity =  _p._setOpacityForCanvas;
 }
 
 // Override properties
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
 
 // Extended properties
 /** @expose */
-_proto.string;
-cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 
-delete window._proto;
+delete window._p;
 
 /**
  * <p>

@@ -1198,16 +1198,6 @@ cc.Director._getInstance = function () {
 };
 
 /**
- * <p>
- * An alias for cc.director.getWinSize()
- * </p>
- * @type {cc.Size}
- */
-cc.defineGetterSetter(cc, "winSize", function(){
-    return cc.director._winSizeInPoints;
-});
-
-/**
  * set default fps to 60
  * @type Number
  */

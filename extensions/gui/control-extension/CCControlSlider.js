@@ -245,19 +245,35 @@ cc.ControlSlider = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlSlider.prototype;
+window._p = cc.ControlSlider.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "value", _proto.getValue, _proto.setValue);
-cc.defineGetterSetter(_proto, "minValue", _proto.getMinimumValue, _proto.setMinimumValue);
-cc.defineGetterSetter(_proto, "maxValue", _proto.getMaximumValue, _proto.setMaximumValue);
-cc.defineGetterSetter(_proto, "minAllowedValue", _proto.getMinimumAllowedValue, _proto.setMinimumAllowedValue);
-cc.defineGetterSetter(_proto, "maxAllowedValue", _proto.getMaximumAllowedValue, _proto.setMaximumAllowedValue);
-cc.defineGetterSetter(_proto, "thumbSprite", _proto.getThumbSprite);
-cc.defineGetterSetter(_proto, "progressSprite", _proto.getProgressSprite);
-cc.defineGetterSetter(_proto, "backgroundSprite", _proto.getBackgroundSprite);
+/** @expose */
+_p.value;
+cc.defineGetterSetter(_p, "value", _p.getValue, _p.setValue);
+/** @expose */
+_p.minValue;
+cc.defineGetterSetter(_p, "minValue", _p.getMinimumValue, _p.setMinimumValue);
+/** @expose */
+_p.maxValue;
+cc.defineGetterSetter(_p, "maxValue", _p.getMaximumValue, _p.setMaximumValue);
+/** @expose */
+_p.minAllowedValue;
+cc.defineGetterSetter(_p, "minAllowedValue", _p.getMinimumAllowedValue, _p.setMinimumAllowedValue);
+/** @expose */
+_p.maxAllowedValue;
+cc.defineGetterSetter(_p, "maxAllowedValue", _p.getMaximumAllowedValue, _p.setMaximumAllowedValue);
+/** @expose */
+_p.thumbSprite;
+cc.defineGetterSetter(_p, "thumbSprite", _p.getThumbSprite);
+/** @expose */
+_p.progressSprite;
+cc.defineGetterSetter(_p, "progressSprite", _p.getProgressSprite);
+/** @expose */
+_p.backgroundSprite;
+cc.defineGetterSetter(_p, "backgroundSprite", _p.getBackgroundSprite);
 
-delete window._proto;
+delete window._p;
 
 /**
  * Creates a slider with a given background sprite and a progress bar and a

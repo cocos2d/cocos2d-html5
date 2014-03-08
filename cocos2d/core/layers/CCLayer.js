@@ -327,14 +327,24 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
-window._proto = cc.LayerRGBA.prototype;
+window._p = cc.LayerRGBA.prototype;
 // Extended properties
-cc.defineGetterSetter(_proto, "opacityModifyRGB", _proto.isOpacityModifyRGB, _proto.setOpacityModifyRGB);
-cc.defineGetterSetter(_proto, "opacity", _proto.getOpacity, _proto.setOpacity);
-cc.defineGetterSetter(_proto, "cascadeOpacity", _proto.isCascadeOpacityEnabled, _proto.setCascadeOpacityEnabled);
-cc.defineGetterSetter(_proto, "color", _proto.getColor, _proto.setColor);
-cc.defineGetterSetter(_proto, "cascadeColor", _proto.isCascadeColorEnabled, _proto.setCascadeColorEnabled);
-delete window._proto;
+/** @expose */
+_p.opacityModifyRGB;
+cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
+/** @expose */
+_p.opacity;
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
+/** @expose */
+_p.cascadeOpacity;
+cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
+/** @expose */
+_p.color;
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
+/** @expose */
+_p.cascadeColor;
+cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+delete window._p;
 
 /**
  * <p>
@@ -614,28 +624,28 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     }
 });
 
-window._proto = cc.LayerColor.prototype;
+window._p = cc.LayerColor.prototype;
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    _proto.ctor = _proto._ctorForWebGL;
-    _proto.setContentSize = _proto._setContentSizeForWebGL;
-	_proto._setWidth = _proto._setWidthForWebGL;
-	_proto._setHeight = _proto._setHeightForWebGL;
-    _proto._updateColor = _proto._updateColorForWebGL;
-    _proto.draw = _proto._drawForWebGL;
+    _p.ctor = _p._ctorForWebGL;
+    _p.setContentSize = _p._setContentSizeForWebGL;
+	_p._setWidth = _p._setWidthForWebGL;
+	_p._setHeight = _p._setHeightForWebGL;
+    _p._updateColor = _p._updateColorForWebGL;
+    _p.draw = _p._drawForWebGL;
 } else {
-    _proto.ctor = _proto._ctorForCanvas;
-    _proto.setContentSize = cc.LayerRGBA.prototype.setContentSize;
-	_proto._setWidth = cc.LayerRGBA.prototype._setWidth;
-	_proto._setHeight = cc.LayerRGBA.prototype._setHeight;
-    _proto._updateColor = _proto._updateColorForCanvas;
-    _proto.draw = _proto._drawForCanvas;
+    _p.ctor = _p._ctorForCanvas;
+    _p.setContentSize = cc.LayerRGBA.prototype.setContentSize;
+	_p._setWidth = cc.LayerRGBA.prototype._setWidth;
+	_p._setHeight = cc.LayerRGBA.prototype._setHeight;
+    _p._updateColor = _p._updateColorForCanvas;
+    _p.draw = _p._drawForCanvas;
 }
 
 // Override properties
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
+cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
 
-delete window._proto;
+delete window._p;
 
 /**
  * creates a cc.Layer with color, width and height in Points
@@ -970,17 +980,26 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     }
 });
 
-window._proto = cc.LayerGradient.prototype;
+window._p = cc.LayerGradient.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "startColor", _proto.getStartColor, _proto.setStartColor);
-cc.defineGetterSetter(_proto, "endColor", _proto.getEndColor, _proto.setEndColor);
-cc.defineGetterSetter(_proto, "startOpacity", _proto.getStartOpacity, _proto.setStartOpacity);
-cc.defineGetterSetter(_proto, "endOpacity", _proto.getEndOpacity, _proto.setEndOpacity);
-cc.defineGetterSetter(_proto, "vector", _proto.getVector, _proto.setVector);
-cc.defineGetterSetter(_proto, "compresseInterpolation", _proto.isCompressedInterpolation, _proto.setCompressedInterpolation);
+/** @expose */
+_p.startColor;
+cc.defineGetterSetter(_p, "startColor", _p.getStartColor, _p.setStartColor);
+/** @expose */
+_p.endColor;
+cc.defineGetterSetter(_p, "endColor", _p.getEndColor, _p.setEndColor);
+/** @expose */
+_p.startOpacity;
+cc.defineGetterSetter(_p, "startOpacity", _p.getStartOpacity, _p.setStartOpacity);
+/** @expose */
+_p.endOpacity;
+cc.defineGetterSetter(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
+/** @expose */
+_p.vector;
+cc.defineGetterSetter(_p, "vector", _p.getVector, _p.setVector);
 
-delete window._proto;
+delete window._p;
 
 /**
  * creates a gradient layer

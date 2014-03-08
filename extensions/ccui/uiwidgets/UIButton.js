@@ -817,16 +817,26 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
 });
 
-window._proto = ccui.Button.prototype;
+window._p = ccui.Button.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "titleText", _proto.getTitleText, _proto.setTitleText);
-cc.defineGetterSetter(_proto, "titleFont", _proto._getTitleFont, _proto._setTitleFont);
-cc.defineGetterSetter(_proto, "titleFontSize", _proto.getTitleFontSize, _proto.setTitleFontSize);
-cc.defineGetterSetter(_proto, "titleFontName", _proto.getTitleFontName, _proto.setTitleFontName);
-cc.defineGetterSetter(_proto, "titleColor", _proto.getTitleColor, _proto.setTitleColor);
+/** @expose */
+_p.titleText;
+cc.defineGetterSetter(_p, "titleText", _p.getTitleText, _p.setTitleText);
+/** @expose */
+_p.titleFont;
+cc.defineGetterSetter(_p, "titleFont", _p._getTitleFont, _p._setTitleFont);
+/** @expose */
+_p.titleFontSize;
+cc.defineGetterSetter(_p, "titleFontSize", _p.getTitleFontSize, _p.setTitleFontSize);
+/** @expose */
+_p.titleFontName;
+cc.defineGetterSetter(_p, "titleFontName", _p.getTitleFontName, _p.setTitleFontName);
+/** @expose */
+_p.titleColor;
+cc.defineGetterSetter(_p, "titleColor", _p.getTitleColor, _p.setTitleColor);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UIButton.

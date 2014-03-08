@@ -277,7 +277,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
         var gl = cc._renderContext;
         var format = gl.RGBA, type = gl.UNSIGNED_BYTE;
 
-        var bitsPerPixel = cc.Texture2D._BITS_PER_PIXEL_FORMAT[pixelFormat];
+        var bitsPerPixel = cc.Texture2D._B[pixelFormat];
 
         var bytesPerRow = pixelsWide * bitsPerPixel / 8;
         if (bytesPerRow % 8 === 0) {
@@ -650,7 +650,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {String}
      */
     stringForFormat:function () {
-        return cc.Texture2D._PIXEL_FORMAT_STR_MAP[this._pixelFormat];
+        return cc.Texture2D._M[this._pixelFormat];
     },
 
     /**
@@ -659,7 +659,7 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     bitsPerPixelForFormat:function (format) {//TODO I want to delete the format argument, use this._pixelFormat
         format = format || this._pixelFormat;
-        var value = cc.Texture2D._BITS_PER_PIXEL_FORMAT[format];
+        var value = cc.Texture2D._B[format];
         if(value != null) return value;
         cc.log("bitsPerPixelForFormat: " + format + ", cannot give useful result, it's a illegal pixel format");
         return -1;
@@ -1200,124 +1200,143 @@ cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied)
 };
 
 
-window._Class = cc.Texture2D;
+window._c = cc.Texture2D;
 
 /**
  * 32-bit texture: RGBA8888
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_RGBA8888 = 0;
+_c.PIXEL_FORMAT_RGBA8888 = 0;
 
 /**
  * 24-bit texture: RGBA888
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_RGB888 = 1;
+_c.PIXEL_FORMAT_RGB888 = 1;
 
 /**
  * 16-bit texture without Alpha channel
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_RGB565 = 2;
+_c.PIXEL_FORMAT_RGB565 = 2;
 
 /**
  * 8-bit textures used as masks
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_A8 = 3;
+_c.PIXEL_FORMAT_A8 = 3;
 
 /**
  * 8-bit intensity texture
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_I8 = 4;
+_c.PIXEL_FORMAT_I8 = 4;
 
 /**
  * 16-bit textures used as masks
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_AI88 = 5;
+_c.PIXEL_FORMAT_AI88 = 5;
 
 /**
  * 16-bit textures: RGBA4444
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_RGBA4444 = 6;
+_c.PIXEL_FORMAT_RGBA4444 = 6;
 
 /**
  * 16-bit textures: RGB5A1
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_RGB5A1 = 7;
+_c.PIXEL_FORMAT_RGB5A1 = 7;
 
 /**
  * 4-bit PVRTC-compressed texture: PVRTC4
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_PVRTC4 = 8;
+_c.PIXEL_FORMAT_PVRTC4 = 8;
 
 /**
  * 2-bit PVRTC-compressed texture: PVRTC2
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_PVRTC2 = 9;
+_c.PIXEL_FORMAT_PVRTC2 = 9;
 
 /**
  * Default texture format: RGBA8888
  * @constant
  * @type {Number}
  */
-_Class.PIXEL_FORMAT_DEFAULT = _Class.PIXEL_FORMAT_RGBA8888;
+_c.PIXEL_FORMAT_DEFAULT = _c.PIXEL_FORMAT_RGBA8888;
 
-window._PIXEL_FORMAT_STR_MAP = cc.Texture2D._PIXEL_FORMAT_STR_MAP = {};
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGBA8888] = "RGBA8888";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB888] = "RGB888";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB565] = "RGB565";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_A8] = "A8";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_I8] = "I8";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_AI88] = "AI88";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGBA4444] = "RGBA4444";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_RGB5A1] = "RGB5A1";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC4] = "PVRTC4";
-_PIXEL_FORMAT_STR_MAP[_Class.PIXEL_FORMAT_PVRTC2] = "PVRTC2";
+window._M = cc.Texture2D._M = {};
+_M[_c.PIXEL_FORMAT_RGBA8888] = "RGBA8888";
+_M[_c.PIXEL_FORMAT_RGB888] = "RGB888";
+_M[_c.PIXEL_FORMAT_RGB565] = "RGB565";
+_M[_c.PIXEL_FORMAT_A8] = "A8";
+_M[_c.PIXEL_FORMAT_I8] = "I8";
+_M[_c.PIXEL_FORMAT_AI88] = "AI88";
+_M[_c.PIXEL_FORMAT_RGBA4444] = "RGBA4444";
+_M[_c.PIXEL_FORMAT_RGB5A1] = "RGB5A1";
+_M[_c.PIXEL_FORMAT_PVRTC4] = "PVRTC4";
+_M[_c.PIXEL_FORMAT_PVRTC2] = "PVRTC2";
 
-window._BITS_PER_PIXEL_FORMAT = cc.Texture2D._BITS_PER_PIXEL_FORMAT = {};
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGBA8888] = 32;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB888] = 24;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB565] = 16;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_A8] = 8;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_I8] = 8;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_AI88] = 16;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGBA4444] = 16;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_RGB5A1] = 16;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC4] = 4;
-_BITS_PER_PIXEL_FORMAT[_Class.PIXEL_FORMAT_PVRTC2] = 3;
+window._B = cc.Texture2D._B = {};
+_B[_c.PIXEL_FORMAT_RGBA8888] = 32;
+_B[_c.PIXEL_FORMAT_RGB888] = 24;
+_B[_c.PIXEL_FORMAT_RGB565] = 16;
+_B[_c.PIXEL_FORMAT_A8] = 8;
+_B[_c.PIXEL_FORMAT_I8] = 8;
+_B[_c.PIXEL_FORMAT_AI88] = 16;
+_B[_c.PIXEL_FORMAT_RGBA4444] = 16;
+_B[_c.PIXEL_FORMAT_RGB5A1] = 16;
+_B[_c.PIXEL_FORMAT_PVRTC4] = 4;
+_B[_c.PIXEL_FORMAT_PVRTC2] = 3;
 
 
-window._proto = cc.Texture2D.prototype;
+window._p = cc.Texture2D.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "name", _proto.getName);
-cc.defineGetterSetter(_proto, "pixelFormat", _proto.getPixelFormat);
-cc.defineGetterSetter(_proto, "pixelsWidth", _proto.getPixelsWide);
-cc.defineGetterSetter(_proto, "pixelsHeight", _proto.getPixelsHigh);
-//cc.defineGetterSetter(_proto, "size", _proto.getContentSize, _proto.setContentSize);
-cc.defineGetterSetter(_proto, "width", _proto._getWidth, _proto._setWidth);
-cc.defineGetterSetter(_proto, "height", _proto._getHeight, _proto._setHeight);
+/** @expose */
+_p.name;
+cc.defineGetterSetter(_p, "name", _p.getName);
+/** @expose */
+_p.pixelFormat;
+cc.defineGetterSetter(_p, "pixelFormat", _p.getPixelFormat);
+/** @expose */
+_p.pixelsWidth;
+cc.defineGetterSetter(_p, "pixelsWidth", _p.getPixelsWide);
+/** @expose */
+_p.pixelsHeight;
+cc.defineGetterSetter(_p, "pixelsHeight", _p.getPixelsHigh);
+//cc.defineGetterSetter(_p, "size", _p.getContentSize, _p.setContentSize);
+/** @expose */
+_p.width;
+cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
+/** @expose */
+_p.height;
+cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
 
-cc.Texture2D.defaultPixelFormat = _Class.PIXEL_FORMAT_DEFAULT;
+cc.Texture2D.defaultPixelFormat = _c.PIXEL_FORMAT_DEFAULT;
 
-delete window._proto;
-delete window._Class;
-delete window._PIXEL_FORMAT_STR_MAP;
-delete window._BITS_PER_PIXEL_FORMAT;
+/** @expose */
+window._c;
+/** @expose */
+window._M;
+/** @expose */
+window._B;
+
+delete window._p;
+delete window._c;
+delete window._M;
+delete window._B;

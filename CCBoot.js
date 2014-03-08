@@ -26,6 +26,19 @@
 
 var cc = cc || {};
 
+/** @expose */
+window._p;
+/** @expose */
+window.gl;
+/** @expose */
+window.WebGLRenderingContext;
+/** @expose */
+Object.prototype._super;
+/** @expose */
+Object.prototype.ctor;
+/** @expose */
+Object.prototype.ctor;
+
 //is nodejs ? Used to support node-webkit.
 cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
@@ -885,6 +898,17 @@ cc._logToWebPage = function (msg) {
     logList.value = logList.value + msg + "\r\n";
     logList.scrollTop = logList.scrollHeight;
 };
+
+
+//to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
+if(console.log){
+    cc.log = console.log.bind(cc);
+    cc.warn = console.warn.bind(cc);
+    cc.error = console.error.bind(cc);
+    cc.assert = console.assert.bind(cc);
+}else{
+    cc.log = cc.warn = cc.error = cc.assert = function(){};
+}
 /**
  * Init Debug setting.
  * @function
@@ -1453,13 +1477,15 @@ cc._setup = function (el, width, height) {
 
 	// Init singletons
 	// Audio engine
-	cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
-	cc.eventManager.addCustomListener(this.EVENT_HIDE, function(){
-		ae._pausePlaying();
-	});
-	cc.eventManager.addCustomListener(this.EVENT_SHOW, function(){
-		ae._resumePlaying();
-	});
+    if(cc.AudioEngine){
+        cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
+        cc.eventManager.addCustomListener(this.EVENT_HIDE, function(){
+            cc.audioEngine._pausePlaying();
+        });
+        cc.eventManager.addCustomListener(this.EVENT_SHOW, function(){
+            cc.audioEngine._resumePlaying();
+        });
+    }
 
 	// View
 	cc.view = cc.EGLView._getInstance();
@@ -1468,6 +1494,7 @@ cc._setup = function (el, width, height) {
 
 	// Director
 	cc.director = cc.Director._getInstance();
+    cc.winSize = cc.director.getWinSize();
 
 	// IME Dispatcher
 	cc.imeDispatcher = new cc.IMEDispatcher();
@@ -1507,6 +1534,7 @@ cc.game = {
     EVENT_SHOW: "game_on_show",
     _eventHide: null,
     _eventShow: null,
+    _onBeforeStartArr : [],
 
     /**
      * Key of config

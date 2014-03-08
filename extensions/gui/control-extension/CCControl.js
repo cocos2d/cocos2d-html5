@@ -354,15 +354,23 @@ cc.Control = cc.LayerRGBA.extend({
     }
 });
 
-window._proto = cc.Control.prototype;
+window._p = cc.Control.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "state", _proto.getState);
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-cc.defineGetterSetter(_proto, "selected", _proto.isSelected, _proto.setSelected);
-cc.defineGetterSetter(_proto, "highlighted", _proto.isHighlighted, _proto.setHighlighted);
+/** @expose */
+_p.state;
+cc.defineGetterSetter(_p, "state", _p.getState);
+/** @expose */
+_p.enabled;
+cc.defineGetterSetter(_p, "enabled", _p.isEnabled, _p.setEnabled);
+/** @expose */
+_p.selected;
+cc.defineGetterSetter(_p, "selected", _p.isSelected, _p.setSelected);
+/** @expose */
+_p.highlighted;
+cc.defineGetterSetter(_p, "highlighted", _p.isHighlighted, _p.setHighlighted);
 
-delete window._proto;
+delete window._p;
 
 cc.Control.create = function () {
     var retControl = new cc.Control();

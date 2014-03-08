@@ -72,36 +72,58 @@ cc.visibleRect = {
     }
 };
 
+/** @expose */
+cc.visibleRect.width;
 cc.defineGetterSetter(cc.visibleRect, "width", function(){
     return this._width;
 });
+/** @expose */
+cc.visibleRect.height;
 cc.defineGetterSetter(cc.visibleRect, "height", function(){
     return this._height;
 });
+/** @expose */
+cc.visibleRect.topLeft;
 cc.defineGetterSetter(cc.visibleRect, "topLeft", function(){
     return this._topLeft;
 });
+/** @expose */
+cc.visibleRect.topRight;
 cc.defineGetterSetter(cc.visibleRect, "topRight", function(){
     return this._topRight;
 });
+/** @expose */
+cc.visibleRect.top;
 cc.defineGetterSetter(cc.visibleRect, "top", function(){
     return this._top;
 });
+/** @expose */
+cc.visibleRect.bottomLeft;
 cc.defineGetterSetter(cc.visibleRect, "bottomLeft", function(){
     return this._bottomLeft;
 });
+/** @expose */
+cc.visibleRect.bottomRight;
 cc.defineGetterSetter(cc.visibleRect, "bottomRight", function(){
     return this._bottomRight;
 });
+/** @expose */
+cc.visibleRect.bottom;
 cc.defineGetterSetter(cc.visibleRect, "bottom", function(){
     return this._bottom;
 });
+/** @expose */
+cc.visibleRect.center;
 cc.defineGetterSetter(cc.visibleRect, "center", function(){
     return this._center;
 });
+/** @expose */
+cc.visibleRect.left;
 cc.defineGetterSetter(cc.visibleRect, "left", function(){
     return this._left;
 });
+/** @expose */
+cc.visibleRect.right;
 cc.defineGetterSetter(cc.visibleRect, "right", function(){
     return this._right;
 });

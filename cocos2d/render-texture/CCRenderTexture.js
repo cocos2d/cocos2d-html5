@@ -789,40 +789,42 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     }
 });
 
-window._proto = cc.RenderTexture.prototype;
+window._p = cc.RenderTexture.prototype;
 
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
-    _proto.ctor = _proto._ctorForWebGL;
-    _proto.cleanup = _proto._cleanupForWebGL;
-    _proto.initWithWidthAndHeight = _proto._initWithWidthAndHeightForWebGL;
-    _proto.begin = _proto._beginForWebGL;
-    _proto._beginWithClear = _proto._beginWithClearForWebGL;
-    _proto.end = _proto._endForWebGL;
-    _proto.clearRect = _proto._clearRectForWebGL;
-    _proto.clearDepth = _proto._clearDepthForWebGL;
-    _proto.clearStencil = _proto._clearStencilForWebGL;
-    _proto.visit = _proto._visitForWebGL;
-    _proto.draw = _proto._drawForWebGL;
-    _proto.setClearColor = _proto._setClearColorForWebGL;
+    _p.ctor = _p._ctorForWebGL;
+    _p.cleanup = _p._cleanupForWebGL;
+    _p.initWithWidthAndHeight = _p._initWithWidthAndHeightForWebGL;
+    _p.begin = _p._beginForWebGL;
+    _p._beginWithClear = _p._beginWithClearForWebGL;
+    _p.end = _p._endForWebGL;
+    _p.clearRect = _p._clearRectForWebGL;
+    _p.clearDepth = _p._clearDepthForWebGL;
+    _p.clearStencil = _p._clearStencilForWebGL;
+    _p.visit = _p._visitForWebGL;
+    _p.draw = _p._drawForWebGL;
+    _p.setClearColor = _p._setClearColorForWebGL;
 } else {
-    _proto.ctor = _proto._ctorForCanvas;
-    _proto.cleanup = _proto._cleanupForCanvas;
-    _proto.initWithWidthAndHeight = _proto._initWithWidthAndHeightForCanvas;
-    _proto.begin = _proto._beginForCanvas;
-    _proto._beginWithClear = _proto._beginWithClearForCanvas;
-    _proto.end = _proto._endForCanvas;
-    _proto.clearRect = _proto._clearRectForCanvas;
-    _proto.clearDepth = _proto._clearDepthForCanvas;
-    _proto.clearStencil = _proto._clearStencilForCanvas;
-    _proto.visit = _proto._visitForCanvas;
-    _proto.draw = _proto._drawForCanvas;
-    _proto.setClearColor = _proto._setClearColorForCanvas;
+    _p.ctor = _p._ctorForCanvas;
+    _p.cleanup = _p._cleanupForCanvas;
+    _p.initWithWidthAndHeight = _p._initWithWidthAndHeightForCanvas;
+    _p.begin = _p._beginForCanvas;
+    _p._beginWithClear = _p._beginWithClearForCanvas;
+    _p.end = _p._endForCanvas;
+    _p.clearRect = _p._clearRectForCanvas;
+    _p.clearDepth = _p._clearDepthForCanvas;
+    _p.clearStencil = _p._clearStencilForCanvas;
+    _p.visit = _p._visitForCanvas;
+    _p.draw = _p._drawForCanvas;
+    _p.setClearColor = _p._setClearColorForCanvas;
 }
 
-// Extended properties
-cc.defineGetterSetter(_proto, "clearColorVal", _proto.getClearColor, _proto.setClearColor);
+// Extended
+/** @expose */
+_p.clearColorVal;
+cc.defineGetterSetter(_p, "clearColorVal", _p.getClearColor, _p.setClearColor);
 
-delete window._proto;
+delete window._p;
 
 /**
  * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
