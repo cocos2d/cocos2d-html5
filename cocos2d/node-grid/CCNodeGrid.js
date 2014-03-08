@@ -103,6 +103,24 @@ _p.target;
 cc.defineGetterSetter(_p, "target", _p.getTarget, _p.setTarget);
 delete window._p;
 
+/**
+ * Creates a NodeGrid with a target and/or grid effect.
+ * Implementation cc.NodeGrid
+ * @param {cc.GridBase} grid    - Grid object that is used when applying effects
+ * @param {cc.Node}     target  - Target node that is used when applying effects
+ * @return {cc.NodeGrid|null}
+ * @example
+ * //example
+ * 1.
+ * // create a NodeGrid with a target node
+ * var node = cc.Sprite.create("a.png");
+ * var nodeGrid = cc.NodeGrid.create(node);
+ * 2.
+ * // create a NodeGrid with a target node and a grid effect
+ * var node = cc.Sprite.create("a.png");
+ * var grid = cc.Shaky3D.create( duration, cc.size(15,10), 5, false );
+ * var nodeGrid = cc.NodeGrid.create(node, grid);
+ */
 cc.NodeGrid.create = function(target, grid) {
 	var node = new cc.NodeGrid();
 	if (node) {
