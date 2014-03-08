@@ -102,8 +102,6 @@ var CCB_SIZETYPE_MULTIPLY_RESOLUTION = 5;
 var CCB_SCALETYPE_ABSOLUTE = 0;
 var CCB_SCALETYPE_MULTIPLY_RESOLUTION = 1;
 
-var _ccbGlobalContext = _ccbGlobalContext || window;
-
 cc.BuilderFile = cc.Node.extend({
     _ccbFileNode:null,
 
@@ -972,6 +970,10 @@ cc.BuilderReader.loadAsScene = function (ccbFilePath, owner, parentSize, ccbRoot
     return scene;
 };
 
+cc.BuilderReader._controllerClassCache = {};
+cc.BuilderReader.registerController = function(controllerName, controller){
+    cc.BuilderReader._controllerClassCache[controllerName] = cc.Class.extend(controller);
+};
 cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
     ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
     var reader = new cc.BuilderReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
@@ -1012,6 +1014,8 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
     var animationManagersForNodes = reader.getAnimationManagersForNodes();
     if(!nodesWithAnimationManagers || !animationManagersForNodes)
         return node;
+
+    var controllerClassCache = cc.BuilderReader._controllerClassCache;
     // Attach animation managers to nodes and assign root node callbacks and member variables
     for (i = 0; i < nodesWithAnimationManagers.length; i++) {
         var innerNode = nodesWithAnimationManagers[i];
@@ -1020,20 +1024,14 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
         var j;
         innerNode.animationManager = animationManager;
 
-        var documentControllerName = animationManager.getDocumentControllerName();
-        if (!documentControllerName) continue;
+        var controllerName = animationManager.getDocumentControllerName();
+        if (!controllerName) continue;
 
-        // Create a document controller
-        var controller;
-        if(documentControllerName.indexOf(".") > -1){
-            var controllerNameArr = documentControllerName.split(".");
-            controller = _ccbGlobalContext[controllerNameArr[0]];
-            for(var ni = 1, niLen = controllerNameArr.length - 1; ni < niLen; ni++)
-                controller = controller[controllerNameArr[ni]];
-            controller = new controller[controllerNameArr[controllerNameArr.length - 1]]();
-        }else
-            controller = new _ccbGlobalContext[documentControllerName]();
-        controller.controllerName = documentControllerName;
+        // Create a controller
+        var controllerClass = controllerClassCache[controllerName];
+        if(!controllerClass) throw "Can not find controller : " + controllerName;
+        var controller = new controllerClass();
+        controller.controllerName = controllerName;
 
         innerNode.controller = controller;
         controller.rootNode = innerNode;
