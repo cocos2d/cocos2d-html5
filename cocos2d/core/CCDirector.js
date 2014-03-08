@@ -1192,7 +1192,6 @@ cc.Director._getInstance = function () {
         cc.Director.firstUseDirector = false;
         cc.Director.sharedDirector = new cc.DisplayLinkDirector();
         cc.Director.sharedDirector.init();
-        cc.Director.sharedDirector.setOpenGLView(cc.view);
     }
     return cc.Director.sharedDirector;
 };
