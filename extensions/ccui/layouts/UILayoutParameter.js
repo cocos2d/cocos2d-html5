@@ -22,12 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-//layout parameter type
-ccui.LAYOUT_PARAMETER_NONE = 0;
-ccui.LAYOUT_PARAMETER_LINEAR = 1;
-ccui.LAYOUT_PARAMETER_RELATIVE = 2;
-
 /**
  * Base class for ccui.LayoutParameter
  * @class
@@ -38,7 +32,7 @@ ccui.LayoutParameter = ccui.Class.extend(/** @lends ccui.LayoutParameter# */{
     _layoutParameterType: null,
     ctor: function () {
         this._margin = new ccui.Margin();
-        this._layoutParameterType = ccui.LAYOUT_PARAMETER_NONE;
+        this._layoutParameterType = ccui.LayoutParameter.NONE;
     },
 
     /**
@@ -117,7 +111,7 @@ ccui.LinearLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.LinearL
     ctor: function () {
         ccui.LayoutParameter.prototype.ctor.call(this);
         this._linearGravity = ccui.LINEAR_GRAVITY_NONE;
-        this._layoutParameterType = ccui.LAYOUT_PARAMETER_LINEAR;
+        this._layoutParameterType = ccui.LayoutParameter.LINEAR;
     },
 
     /**
@@ -183,7 +177,7 @@ ccui.RelativeLayoutParameter = ccui.LayoutParameter.extend(/** @lends ccui.Relat
         this._relativeWidgetName = "";
         this._relativeLayoutName = "";
         this._put = false;
-        this._layoutParameterType = ccui.LAYOUT_PARAMETER_RELATIVE;
+        this._layoutParameterType = ccui.LayoutParameter.RELATIVE;
     },
 
     /**
@@ -266,3 +260,10 @@ ccui.RelativeLayoutParameter.create = function () {
     var parameter = new ccui.RelativeLayoutParameter();
     return parameter;
 };
+
+
+// Constants
+//layout parameter type
+ccui.LayoutParameter.NONE = 0;
+ccui.LayoutParameter.LINEAR = 1;
+ccui.LayoutParameter.RELATIVE = 2;

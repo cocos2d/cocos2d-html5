@@ -22,33 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//bright style
-ccui.BRIGHT_STYLE_NONE = -1;
-ccui.BRIGHT_STYLE_NORMAL = 0;
-ccui.BRIGHT_STYLE_HIGH_LIGHT = 1;
-
-//widget type
-ccui.WIDGET_TYPE_WIDGET = 0;
-ccui.WIDGET_TYPE_CONTAINER = 1;
-
-//texture resource type
-ccui.TEXTURE_RES_TYPE_LOCAL = 0;
-ccui.TEXTURE_RES_TYPE_PLIST = 1;
-
-//touch event type
-ccui.TOUCH_EVENT_TYPE_BAGAN = 0;
-ccui.TOUCH_EVENT_TYPE_MOVED = 1;
-ccui.TOUCH_EVENT_TYPE_ENDED = 2;
-ccui.TOUCH_EVENT_TYPE_CANCELED = 3;
-
-//size type
-ccui.SIZE_TYPE_ABSOLUTE = 0;
-ccui.SIZE_TYPE_PERCENT = 1;
-
-//position type
-ccui.POSITION_TYPE_ABSOLUTE = 0;
-ccui.POSITION_TYPE_PERCENT = 1;
-
 /**
  * Base class for ccui.Widget
  * @sample
@@ -64,7 +37,7 @@ ccui.POSITION_TYPE_PERCENT = 1;
  * @property {ccui.Widget}       widgetParent    - <@readonly> The direct parent when it's a widget also, otherwise equals null
  * @property {Boolean}          enabled         - Indicate whether the widget is enabled
  * @property {Boolean}          focused         - Indicate whether the widget is focused
- * @property {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT}     sizeType        - The size type of the widget
+ * @property {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT}     sizeType        - The size type of the widget
  * @property {ccui.WIDGET_TYPE_WIDGET|ccui.WIDGET_TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
  * @property {Boolean}          touchEnabled    - Indicate whether touch events are enabled
  * @property {Boolean}          updateEnabled   - Indicate whether the update function is scheduled
@@ -132,9 +105,9 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._ignoreSize = false;
         this._widgetChildren = [];
         this._affectByClipping = false;
-        this._sizeType = ccui.SIZE_TYPE_ABSOLUTE;
+        this._sizeType = ccui.Widget.SIZE_ABSOLUTE;
         this._sizePercent = cc.p(0,0);
-        this.positionType = ccui.POSITION_TYPE_ABSOLUTE;
+        this.positionType = ccui.Widget.POSITION_ABSOLUTE;
         this._positionPercent = cc.p(0,0);
         this._reorderWidgetChildDirty = false;
         this._hitted = false;
@@ -514,7 +487,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      */
     updateSizeAndPosition: function () {
         switch (this._sizeType) {
-            case ccui.SIZE_TYPE_ABSOLUTE:
+            case ccui.Widget.SIZE_ABSOLUTE:
                 var locSize;
                 if (this._ignoreSize) {
                     locSize = this.getContentSize();
@@ -541,7 +514,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
                 this._sizePercent.x = spx;
                 this._sizePercent.y = spy;
                 break;
-            case ccui.SIZE_TYPE_PERCENT:
+            case ccui.Widget.SIZE_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var cSize = cc.size(0,0);
                 if (widgetParent){
@@ -569,7 +542,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this.onSizeChanged();
         var absPos = this.getPosition();
         switch (this.positionType) {
-            case ccui.POSITION_TYPE_ABSOLUTE:
+            case ccui.Widget.POSITION_ABSOLUTE:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -585,7 +558,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
                     this._positionPercent.y = absPos.y / pSize.height;
                 }
                 break;
-            case ccui.POSITION_TYPE_PERCENT:
+            case ccui.Widget.POSITION_PERCENT:
                 var widgetParent = this.getWidgetParent();
                 var pSize;
                 if(widgetParent){
@@ -601,9 +574,9 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this.setPosition(absPos);
     },
 
-    /**
+    /**TEXTURE_RES_TYPE
      * Changes the size type of widget.
-     * @param {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT} type
+     * @param {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT} type
      */
     setSizeType: function (type) {
         this._sizeType = type;
@@ -611,7 +584,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets the size type of widget.
-     * @returns {ccui.SIZE_TYPE_ABSOLUTE|ccui.SIZE_TYPE_PERCENT}
+     * @returns {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT}
      */
     getSizeType: function () {
         return this._sizeType;
@@ -931,7 +904,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     pushDownEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_BAGAN);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_BAGAN);
             }
         }
     },
@@ -939,7 +912,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     moveEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_MOVED);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_MOVED);
             }
         }
     },
@@ -947,14 +920,14 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     releaseUpEvent: function () {
         if (this._touchEventListener && this._touchEventSelector) {
             if (this._touchEventSelector) {
-                this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_ENDED);
+                this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_ENDED);
             }
         }
     },
 
     cancelUpEvent: function () {
         if (this._touchEventSelector) {
-            this._touchEventSelector.call(this._touchEventListener, this, ccui.TOUCH_EVENT_TYPE_CANCELED);
+            this._touchEventSelector.call(this._touchEventListener, this, ccui.Widget.TOUCH_CANCELED);
         }
     },
 
@@ -1150,7 +1123,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Changes the position type of the widget
-     * @param {ccui.POSITION_TYPE_ABSOLUTE|ccui.POSITION_TYPE_PERCENT} type
+     * @param {ccui.Widget.POSITION_ABSOLUTE|ccui.Widget.POSITION_PERCENT} type
      */
     setPositionType: function (type) {
         this.positionType = type;
@@ -1312,7 +1285,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * Gets layout parameter
-     * @param {ccui.LAYOUT_PARAMETER_NONE|ccui.LAYOUT_PARAMETER_LINEAR|ccui.LAYOUT_PARAMETER_RELATIVE} type
+     * @param {ccui.LayoutParameter.NONE|ccui.LayoutParameter.LINEAR|ccui.LayoutParameter.RELATIVE} type
      * @returns {ccui.LayoutParameter}
      */
     getLayoutParameter: function (type) {
@@ -1522,3 +1495,32 @@ ccui.Widget.create = function () {
     }
     return null;
 };
+
+
+// Constants
+//bright style
+ccui.Widget.BRIGHT_STYLE_NONE = -1;
+ccui.Widget.BRIGHT_STYLE_NORMAL = 0;
+ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT = 1;
+
+//widget type
+ccui.Widget.TYPE_WIDGET = 0;
+ccui.Widget.TYPE_CONTAINER = 1;
+
+//texture resource type
+ccui.Widget.LOCAL_TEXTURE = 0;
+ccui.Widget.PLIST_TEXTURE = 1;
+
+//touch event type
+ccui.Widget.TOUCH_BAGAN = 0;
+ccui.Widget.TOUCH_MOVED = 1;
+ccui.Widget.TOUCH_ENDED = 2;
+ccui.Widget.TOUCH_CANCELED = 3;
+
+//size type
+ccui.Widget.SIZE_ABSOLUTE = 0;
+ccui.Widget.SIZE_PERCENT = 1;
+
+//position type
+ccui.Widget.POSITION_ABSOLUTE = 0;
+ccui.Widget.POSITION_PERCENT = 1;
