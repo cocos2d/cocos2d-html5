@@ -28,16 +28,27 @@ var cc = cc || {};
 
 /** @expose */
 window._p;
+_p = window;
 /** @expose */
-window.gl;
+_p.gl;
 /** @expose */
-window.WebGLRenderingContext;
+_p.WebGLRenderingContext;
 /** @expose */
-Object.prototype._super;
+_p.DeviceOrientationEvent;
 /** @expose */
-Object.prototype.ctor;
+_p.DeviceMotionEvent;
 /** @expose */
-Object.prototype.ctor;
+_p.AudioContext;
+/** @expose */
+_p.webkitAudioContext;
+/** @expose */
+_p.mozAudioContext;
+_p = Object.prototype;
+/** @expose */
+_p._super;
+/** @expose */
+_p.ctor;
+delete window._p;
 
 //is nodejs ? Used to support node-webkit.
 cc._isNodeJs = typeof require !== 'undefined' && require("fs");
