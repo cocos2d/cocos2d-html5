@@ -37,8 +37,8 @@ exec("cd " + realPublishDir + " && ant", function(err, data, info){
     var sourceMapPath = path.join(realPublishDir, "sourcemap");
     if(fs.existsSync(sourceMapPath)){
         var smContent = fs.readFileSync(sourceMapPath).toString();
-        smContent = smContent.replace(new RegExp(path.join(projectDir, "/"), "gi"), path.join(path.relative(realPublishDir, projectDir), "/"));
-        smContent = smContent.replace(new RegExp(path.join(realEngineDir, "/"), "gi"), path.join(path.relative(realPublishDir, realEngineDir), "/"));
+        smContent = smContent.replace(new RegExp(path.join(projectDir, "/").replace(/\\/g, "\\\\\\\\") , "gi"), path.join(path.relative(realPublishDir, projectDir), "/"));
+        smContent = smContent.replace(new RegExp(path.join(realEngineDir, "/").replace(/\\/g, "\\\\\\\\"), "gi"), path.join(path.relative(realPublishDir, realEngineDir), "/"));
         fs.writeFileSync(sourceMapPath, smContent);
     }
 

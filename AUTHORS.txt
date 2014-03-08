@@ -135,6 +135,8 @@ kuaipao              @kuaipao       CocoStudio GUIReader bug fix
 
 XieDaijin            @NijiadeIX     CCControl bug fix
 
+samael               @samael65535   CCPhysicsSprite bug fix
+
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 
 Thanks to all developers who report & trace bugs, dicuss the engine usage in forum & QQ groups!

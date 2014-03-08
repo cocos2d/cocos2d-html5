@@ -410,9 +410,17 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p._setA = function(value){
         this._aU8[0] = value < 0 ? 0 : value;
     };
+    /** @expose */
+    _p.r;
     cc.defineGetterSetter(_p, "r", _p._getR,_p._setR);
+    /** @expose */
+    _p.g;
     cc.defineGetterSetter(_p, "g", _p._getG,_p._setG);
+    /** @expose */
+    _p.b;
     cc.defineGetterSetter(_p, "b", _p._getB,_p._setB);
+    /** @expose */
+    _p.a;
     cc.defineGetterSetter(_p, "a", _p._getA,_p._setA);
     delete window._p;
 
