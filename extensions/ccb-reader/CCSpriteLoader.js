@@ -61,7 +61,7 @@ cc.SpriteLoader = cc.NodeLoader.extend({
     onHandlePropTypeSpriteFrame:function (node, parent, propertyName, ccSpriteFrame, ccbReader) {
         if (propertyName === PROPERTY_DISPLAYFRAME) {
             if(ccSpriteFrame)
-                node.setDisplayFrame(ccSpriteFrame);
+                node.setSpriteFrame(ccSpriteFrame);
             else
                 cc.log("ERROR: SpriteFrame is null");
         } else {
