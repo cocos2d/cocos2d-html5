@@ -542,7 +542,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
                 } else if(propName === "opacity"){
                     node.setOpacity(value);
                 } else if(propName === "displayFrame"){
-                    node.setDisplayFrame(value);
+                    node.setSpriteFrame(value);
                 } else if(propName === "color"){
                     var ccColor3B = value.getColor();
                     if(ccColor3B.r !== 255 || ccColor3B.g !== 255 || ccColor3B.b !== 255){
@@ -672,7 +672,7 @@ cc.BuilderSetSpriteFrame = cc.ActionInstant.extend({
         return true;
     },
     update:function (time) {
-        this.target.setDisplayFrame(this._spriteFrame);
+        this.target.setSpriteFrame(this._spriteFrame);
     }
 });
 
