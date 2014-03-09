@@ -22,7 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.TEXT_RENDERER_ZORDER = -1;
 /**
  * Base class for ccui.Button
  * @class
@@ -420,3 +419,5 @@ ccui.Text.create = function () {
     }
     return null;
 };
+
+ccui.Text.RENDERER_ZORDER = -1;

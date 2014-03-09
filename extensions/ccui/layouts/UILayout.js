@@ -22,31 +22,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//layoutBackGround color type
-ccui.LAYOUT_BG_COLOR_NONE = 0;
-ccui.LAYOUT_BG_COLOR_SOLID = 1;
-ccui.LAYOUT_BG_COLOR_GRADIENT = 2;
-
-//Layout type
-ccui.LAYOUT_TYPE_ABSOLUTE = 0;
-ccui.LAYOUT_TYPE_LINEAR_VERTICAL = 1;
-ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL = 2;
-ccui.LAYOUT_TYPE_RELATIVE = 3;
-
-//Layout clipping type
-ccui.LAYOUT_CLIPPING_STENCIL = 0;
-ccui.LAYOUT_CLIPPING_SCISSOR = 1;
-
-ccui.BACKGROUND_IMAGE_ZORDER = -2;
-ccui.BACKGROUND_COLORRENDERER_ZORDER = -2;
 /**
  * Base class for ccui.Layout
  * @class
  * @extends ccui.Widget
  *
  * @property {Boolean}                  clippingEnabled - Indicate whether clipping is enabled
- * @property {ccui.LAYOUT_CLIPPING_STENCIL|ccui.LAYOUT_CLIPPING_SCISSOR}   clippingType
- * @property {ccui.LAYOUT_TYPE_ABSOLUTE|ccui.LAYOUT_TYPE_LINEAR_VERTICAL|ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccui.LAYOUT_TYPE_RELATIVE}  layoutType
+ * @property {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR}   clippingType
+ * @property {ccui.Layout.ABSOLUTE|ccui.Layout.LINEAR_VERTICAL|ccui.Layout.LINEAR_HORIZONTAL|ccui.Layout.RELATIVE}  layoutType
  *
  */
 ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
@@ -83,8 +66,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImage = null;
         this._backGroundImageFileName = "";
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
-        this._colorType = ccui.LAYOUT_BG_COLOR_NONE;
-        this._bgImageTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._colorType = ccui.Layout.BG_COLOR_NONE;
+        this._bgImageTexType = ccui.Widget.LOCAL_TEXTURE;
         this._colorRender = null;
         this._gradientRender = null;
         this._color = cc.color(255, 255, 255, 255);
@@ -93,11 +76,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._alongVector = cc.p(0, -1);
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
-        this._layoutType = ccui.LAYOUT_TYPE_ABSOLUTE;
+        this._layoutType = ccui.Layout.ABSOLUTE;
         this._widgetType = ccui.WIDGET_TYPE_CONTAINER;
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
-        this._clippingType = ccui.LAYOUT_CLIPPING_STENCIL;
+        this._clippingType = ccui.Layout.CLIPPING_STENCIL;
         this._clippingStencil = null;
         this._handleScissor = false;
         this._scissorRectDirty = false;
@@ -196,10 +179,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         if (this._clippingEnabled) {
             switch (this._clippingType) {
-                case ccui.LAYOUT_CLIPPING_STENCIL:
+                case ccui.Layout.CLIPPING_STENCIL:
                     this.stencilClippingVisit(ctx);
                     break;
-                case ccui.LAYOUT_CLIPPING_SCISSOR:
+                case ccui.Layout.CLIPPING_SCISSOR:
                     this.scissorClippingVisit(ctx);
                     break;
                 default:
@@ -475,7 +458,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         this._clippingEnabled = able;
         switch (this._clippingType) {
-            case ccui.LAYOUT_CLIPPING_STENCIL:
+            case ccui.Layout.CLIPPING_STENCIL:
                 if (able) {
                     this.setStencilClippingSize(this._size);
                 }
@@ -490,7 +473,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Set clipping type
-     * @param {ccui.LAYOUT_CLIPPING_STENCIL|ccui.LAYOUT_CLIPPING_SCISSOR} type
+     * @param {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR} type
      */
     setClippingType: function (type) {
         if (type == this._clippingType) {
@@ -504,14 +487,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Get clipping type
-     * @returns {ccui.LAYOUT_CLIPPING_STENCIL|ccui.LAYOUT_CLIPPING_SCISSOR}
+     * @returns {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR}
      */
     getClippingType : function(){
         return this._clippingType;
     },
 
     setStencilClippingSize: function (size) {
-        if (this._clippingEnabled && this._clippingType == ccui.LAYOUT_CLIPPING_STENCIL) {
+        if (this._clippingEnabled && this._clippingType == ccui.Layout.CLIPPING_STENCIL) {
             var rect = [];
             rect[0] = cc.p(0, 0);
             rect[1] = cc.p(size.width, 0);
@@ -546,7 +529,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             firstClippingParentFounded = true;
                         }
 
-                        if (parent._clippingType == ccui.LAYOUT_CLIPPING_SCISSOR) {
+                        if (parent._clippingType == ccui.Layout.CLIPPING_SCISSOR) {
                             this._handleScissor = false;
                             break;
                         }
@@ -640,7 +623,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.BACKGROUND_IMAGE_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
         this.setBackGroundImage(this._backGroundImageFileName, this._bgImageTexType);
         this.setBackGroundImageCapInsets(this._backGroundImageCapInsets);
     },
@@ -656,23 +639,23 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     /**
      * Sets a background image for layout
      * @param {String} fileName
-     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     setBackGroundImage: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.Widget.LOCAL_TEXTURE;
         if (this._backGroundImage == null) {
             this.addBackGroundImage();
         }
         this._backGroundImageFileName = fileName;
         this._bgImageTexType = texType;
         switch (this._bgImageTexType) {
-            case ccui.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.Widget.LOCAL_TEXTURE:
                 this._backGroundImage.initWithFile(fileName);
                 break;
-            case ccui.TEXTURE_RES_TYPE_PLIST:
+            case ccui.Widget.PLIST_TEXTURE:
                 this._backGroundImage.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -710,17 +693,17 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             return;
         }
         switch (this._layoutType) {
-            case ccui.LAYOUT_TYPE_ABSOLUTE:
+            case ccui.Layout.ABSOLUTE:
                 break;
-            case ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL:
-            case ccui.LAYOUT_TYPE_LINEAR_VERTICAL:
-                var layoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_LINEAR);
+            case ccui.Layout.TYPE_LINEAR_HORIZONTAL:
+            case ccui.Layout.TYPE_LINEAR_VERTICAL:
+                var layoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccui.LinearLayoutParameter.create());
                 }
                 break;
-            case ccui.LAYOUT_TYPE_RELATIVE:
-                var layoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
+            case ccui.Layout.RELATIVE:
+                var layoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccui.RelativeLayoutParameter.create());
                 }
@@ -741,7 +724,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         else {
             this._backGroundImage = cc.Sprite.create();
         }
-        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.BACKGROUND_IMAGE_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundImage, ccui.Layout.BACKGROUND_IMAGE_ZORDER, -1);
         this._backGroundImage.setPosition(this._size.width / 2.0, this._size.height / 2.0);
     },
 
@@ -760,14 +743,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Sets Color Type for layout.
-     * @param {ccui.LAYOUT_BG_COLOR_NONE|ccui.LAYOUT_BG_COLOR_SOLID|ccui.LAYOUT_BG_COLOR_GRADIENT} type
+     * @param {ccui.Layout.BG_COLOR_NONE|ccui.Layout.BG_COLOR_SOLID|ccui.Layout.BG_COLOR_GRADIENT} type
      */
     setBackGroundColorType: function (type) {
         if (this._colorType == type) {
             return;
         }
         switch (this._colorType) {
-            case ccui.LAYOUT_BG_COLOR_NONE:
+            case ccui.Layout.BG_COLOR_NONE:
                 if (this._colorRender) {
                     cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
@@ -777,13 +760,13 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     this._gradientRender = null;
                 }
                 break;
-            case ccui.LAYOUT_BG_COLOR_SOLID:
+            case ccui.Layout.BG_COLOR_SOLID:
                 if (this._colorRender) {
                     cc.Node.prototype.removeChild.call(this, this._colorRender, true);
                     this._colorRender = null;
                 }
                 break;
-            case ccui.LAYOUT_BG_COLOR_GRADIENT:
+            case ccui.Layout.BG_COLOR_GRADIENT:
                 if (this._gradientRender) {
                     cc.Node.prototype.removeChild.call(this, this._gradientRender, true);
                     this._gradientRender = null;
@@ -794,23 +777,23 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         this._colorType = type;
         switch (this._colorType) {
-            case ccui.LAYOUT_BG_COLOR_NONE:
+            case ccui.Layout.BG_COLOR_NONE:
                 break;
-            case ccui.LAYOUT_BG_COLOR_SOLID:
+            case ccui.Layout.BG_COLOR_SOLID:
                 this._colorRender = cc.LayerColor.create();
                 this._colorRender.setContentSize(this._size);
                 this._colorRender.setOpacity(this._opacity);
                 this._colorRender.setColor(this._color);
-                cc.Node.prototype.addChild.call(this, this._colorRender, ccui.BACKGROUND_COLORRENDERER_ZORDER, -1);
+                cc.Node.prototype.addChild.call(this, this._colorRender, ccui.Layout.BACKGROUND_RENDERER_ZORDER, -1);
                 break;
-            case ccui.LAYOUT_BG_COLOR_GRADIENT:
+            case ccui.Layout.BG_COLOR_GRADIENT:
                 this._gradientRender = cc.LayerGradient.create(cc.color(255, 0, 0, 255), cc.color(0, 255, 0, 255));
                 this._gradientRender.setContentSize(this._size);
                 this._gradientRender.setOpacity(this._opacity);
                 this._gradientRender.setStartColor(this._startColor);
                 this._gradientRender.setEndColor(this._endColor);
                 this._gradientRender.setVector(this._alongVector);
-                cc.Node.prototype.addChild.call(this, this._gradientRender, ccui.BACKGROUND_COLORRENDERER_ZORDER, -1);
+                cc.Node.prototype.addChild.call(this, this._gradientRender, ccui.Layout.BACKGROUND_RENDERER_ZORDER, -1);
                 break;
             default:
                 break;
@@ -819,14 +802,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Get color type.
-     * @returns {ccui.LAYOUT_BG_COLOR_NONE|ccui.LAYOUT_BG_COLOR_SOLID|ccui.LAYOUT_BG_COLOR_GRADIENT}
+     * @returns {ccui.Layout.BG_COLOR_NONE|ccui.Layout.BG_COLOR_SOLID|ccui.Layout.BG_COLOR_GRADIENT}
      */
     getBackGroundColorType:function(){
         return this._colorType;
     },
 
     /**
-     * Sets background color for layout, if color type is LAYOUT_COLOR_SOLID
+     * Sets background color for layout, if color type is Layout.COLOR_SOLID
      * @param {cc.Color} color
      * @param {cc.Color} endColor
      */
@@ -884,12 +867,12 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     setBackGroundColorOpacity: function (opacity) {
         this._opacity = opacity;
         switch (this._colorType) {
-            case ccui.LAYOUT_BG_COLOR_NONE:
+            case ccui.Layout.BG_COLOR_NONE:
                 break;
-            case ccui.LAYOUT_BG_COLOR_SOLID:
+            case ccui.Layout.BG_COLOR_SOLID:
                 this._colorRender.setOpacity(opacity);
                 break;
-            case ccui.LAYOUT_BG_COLOR_GRADIENT:
+            case ccui.Layout.BG_COLOR_GRADIENT:
                 this._gradientRender.setOpacity(opacity);
                 break;
             default:
@@ -906,7 +889,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     /**
-     * Sets background color vector for layout, if color type is LAYOUT_COLOR_GRADIENT
+     * Sets background color vector for layout, if color type is Layout.COLOR_GRADIENT
      * @param {cc.Point} vector
      */
     setBackGroundColorVector: function (vector) {
@@ -980,7 +963,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * Sets LayoutType.
-     * @param {ccui.LAYOUT_TYPE_ABSOLUTE|ccui.LAYOUT_TYPE_LINEAR_VERTICAL|ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL|ccui.LAYOUT_TYPE_RELATIVE} type
+     * @param {ccui.Layout.ABSOLUTE|ccui.Layout.LINEAR_VERTICAL|ccui.Layout.LINEAR_HORIZONTAL|ccui.Layout.RELATIVE} type
      */
     setLayoutType: function (type) {
         this._layoutType = type;
@@ -1014,7 +997,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var topBoundary = layoutSize.height;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_LINEAR);
+            var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -1049,7 +1032,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         var leftBoundary = 0;
         for (var i = 0; i < layoutChildrenArray.length; ++i) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_LINEAR);
+            var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
 
             if (locLayoutParameter) {
                 var locChildGravity = locLayoutParameter.getGravity();
@@ -1086,14 +1069,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         for (var i = 0; i < length; i++) {
             var locChild = layoutChildrenArray[i];
-            var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
+            var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
             locLayoutParameter._put = false;
         }
 
         while (unlayoutChildCount > 0) {
             for (var i = 0; i < length; i++) {
                 var locChild = layoutChildrenArray[i];
-                var locLayoutParameter = locChild.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
+                var locLayoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
 
                 if (locLayoutParameter) {
                     if (locLayoutParameter._put) {
@@ -1108,9 +1091,9 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     var locFinalPosX = 0;
                     var locFinalPosY = 0;
                     if (locRelativeName) {
-                        locRelativeWidget = ccui.UIHelper.seekWidgetByRelativeName(this, locRelativeName);
+                        locRelativeWidget = ccui.helper.seekWidgetByRelativeName(this, locRelativeName);
                         if (locRelativeWidget) {
-                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
+                            locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccui.LayoutParameter.RELATIVE);
                         }
                     }
                     switch (locAlign) {
@@ -1470,15 +1453,15 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             return;
         }
         switch (this._layoutType) {
-            case ccui.LAYOUT_TYPE_ABSOLUTE:
+            case ccui.Layout.ABSOLUTE:
                 break;
-            case ccui.LAYOUT_TYPE_LINEAR_VERTICAL:
+            case ccui.Layout.LINEAR_VERTICAL:
                 this.doLayout_LINEAR_VERTICAL();
                 break;
-            case ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL:
+            case ccui.Layout.LINEAR_HORIZONTAL:
                 this.doLayout_LINEAR_HORIZONTAL();
                 break;
-            case ccui.LAYOUT_TYPE_RELATIVE:
+            case ccui.Layout.RELATIVE:
                 this.doLayout_RELATIVE();
                 break;
             default:
@@ -1566,3 +1549,23 @@ ccui.Layout.create = function () {
     }
     return null;
 };
+
+// Constants
+
+//layoutBackGround color type
+ccui.Layout.BG_COLOR_NONE = 0;
+ccui.Layout.BG_COLOR_SOLID = 1;
+ccui.Layout.BG_COLOR_GRADIENT = 2;
+
+//Layout type
+ccui.Layout.ABSOLUTE = 0;
+ccui.Layout.LINEAR_VERTICAL = 1;
+ccui.Layout.LINEAR_HORIZONTAL = 2;
+ccui.Layout.RELATIVE = 3;
+
+//Layout clipping type
+ccui.Layout.CLIPPING_STENCIL = 0;
+ccui.Layout.CLIPPING_SCISSOR = 1;
+
+ccui.Layout.BACKGROUND_IMAGE_ZORDER = -2;
+ccui.Layout.BACKGROUND_RENDERER_ZORDER = -2;

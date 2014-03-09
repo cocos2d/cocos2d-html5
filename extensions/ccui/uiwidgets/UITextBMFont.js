@@ -22,7 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.TEXTBMFONT_RENDERER_ZORDER = -1;
 /**
  * Base class for ccui.TextBMFont
  * @class
@@ -209,3 +208,6 @@ ccui.TextBMFont.create = function () {
     }
     return null;
 };
+
+// Constants
+ccui.TextBMFont.RENDERER_ZORDER = -1;

@@ -22,8 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.TEXTATLAS_RENDERER_ZORDER = -1;
-
 /**
  * Base class for ccui.TextAtlas
  * @class
@@ -212,3 +210,6 @@ ccui.TextAtlas.create = function () {
     }
     return null;
 };
+
+// Constants
+ccui.TextAtlas.RENDERER_ZORDER = -1;

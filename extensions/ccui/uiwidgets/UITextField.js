@@ -22,13 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//TextFiled event
-ccui.TEXTFILE_EVENT_ATTACH_WITH_ME = 0;
-ccui.TEXTFILE_EVENT_DETACH_WITH_ME = 1;
-ccui.TEXTFILE_EVENT_INSERT_TEXT = 2;
-ccui.TEXTFILE_EVENT_DELETE_BACKWARD = 3;
-
-ccui.TEXTFIELD_RENDERER_ZORDER = -1;
 /**
  * Base class for ccui.UICCTextField
  * @class
@@ -299,7 +292,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     initRenderer: function () {
         this._textFieldRender = ccui.UICCTextField.create("input words here", "Thonburi", 20);
-        cc.Node.prototype.addChild.call(this, this._textFieldRender, ccui.TEXTFIELD_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._textFieldRender, ccui.TextField.RENDERER_ZORDER, -1);
 
     },
 
@@ -577,25 +570,25 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     attachWithIMEEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_ATTACH_WITH_ME);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_ATTACH_WITH_ME);
         }
     },
 
     detachWithIMEEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_DETACH_WITH_ME);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DETACH_WITH_ME);
         }
     },
 
     insertTextEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_INSERT_TEXT);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_INSERT_TEXT);
         }
     },
 
     deleteBackwardEvent: function () {
         if (this._textFieldEventListener && this._textFieldEventSelector) {
-            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TEXTFILE_EVENT_DELETE_BACKWARD);
+            this._textFieldEventSelector.call(this._textFieldEventListener, this, ccui.TextField.EVENT_DELETE_BACKWARD);
         }
     },
 
@@ -779,3 +772,12 @@ ccui.TextField.create = function () {
     }
     return null;
 };
+
+// Constants
+//TextField event
+ccui.TextField.EVENT_ATTACH_WITH_ME = 0;
+ccui.TextField.EVENT_DETACH_WITH_ME = 1;
+ccui.TextField.EVENT_INSERT_TEXT = 2;
+ccui.TextField.EVENT_DELETE_BACKWARD = 3;
+
+ccui.TextField.RENDERER_ZORDER = -1;
