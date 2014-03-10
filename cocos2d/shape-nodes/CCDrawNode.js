@@ -519,14 +519,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     }
 });
 
-/**
- * <p>CCDrawNode for WebGL                                             <br/>
- * Node that draws dots, segments and polygons.                        <br/>
- * Faster than the "drawing primitives" since they it draws everything in one single batch.</p>
- * @class
- * @extends cc.Node
- */
-cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
+cc.DrawNodeWebGL = cc.Node.extend({
     _bufferCapacity:0,
     _buffer:null,
 
@@ -620,12 +613,6 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
         this._render();
     },
 
-    /**
-     *  draw a dot at a position, with a given radius and color
-     * @param {cc.Point} pos
-     * @param {Number} radius
-     * @param {cc.Color} color
-     */
     drawDot:function (pos, radius, color) {
         var c4bColor = {r: 0 | color.r, g: 0 | color.g, b: 0 | color.b, a: 0 | color.a};
         var a = {vertices: {x: pos.x - radius, y: pos.y - radius}, colors: c4bColor, texCoords: {u: -1.0, v: -1.0}};
@@ -637,13 +624,6 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
         this._dirty = true;
     },
 
-    /**
-     * draw a segment with a radius and color
-     * @param {cc.Point} from
-     * @param {cc.Point} to
-     * @param {Number} radius
-     * @param {cc.Color} color
-     */
     drawSegment:function (from, to, radius, color) {
         var vertexCount = 6*3;
         this._ensureCapacity(vertexCount);
@@ -693,13 +673,6 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
         this._dirty = true;
     },
 
-    /**
-     * draw a polygon with a fill color and line color
-     * @param {Array} verts
-     * @param {cc.Color} fillColor
-     * @param {Number} borderWidth
-     * @param {cc.Color} borderColor
-     */
     drawPoly:function (verts, fillColor, borderWidth, borderColor) {
         var c4bFillColor = {r: 0 | fillColor.r, g: 0 | fillColor.g, b: 0 | fillColor.b, a: 0 | fillColor.a};
         var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a};
@@ -766,9 +739,6 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
         this._dirty = true;
     },
 
-    /**
-     * Clear the geometry in the node's buffer.
-     */
     clear:function () {
         this._buffer.length = 0;
         this._dirty = true;
