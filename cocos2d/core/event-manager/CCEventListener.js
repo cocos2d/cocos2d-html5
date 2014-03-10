@@ -47,7 +47,6 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
      * @param {number} type
      * @param {string} listenerID
      * @param {function} callback
-     * @constructor
      */
     ctor: function (type, listenerID, callback) {
         this._onEvent = callback;
@@ -131,13 +130,7 @@ cc.EventListener.MOUSE = 4;
 cc.EventListener.ACCELERATION = 5;
 cc.EventListener.CUSTOM = 6;
 
-/**
- * The custom event listener
- * @class
- * @extends cc.EventListener
- *
- */
-cc._EventListenerCustom = cc.EventListener.extend(/** @lends cc.EventListenerCustom# */{
+cc._EventListenerCustom = cc.EventListener.extend({
     _onCustomEvent: null,
     ctor: function (listenerId, callback) {
         this._onCustomEvent = callback;
@@ -159,11 +152,6 @@ cc._EventListenerCustom = cc.EventListener.extend(/** @lends cc.EventListenerCus
     }
 });
 
-/**
- * Creates an event listener with type and callback.
- * @param {string} eventName
- * @param {function} callback
- */
 cc._EventListenerCustom.create = function (eventName, callback) {
     return new cc._EventListenerCustom(eventName, callback);
 };
@@ -367,6 +355,20 @@ cc._EventListenerTouchAllAtOnce.create = function(){
      return new cc._EventListenerTouchAllAtOnce();
 };
 
+/**
+ * Create a EventListener object by json object
+ * @param {object} argObj a json object
+ * @returns {cc.EventListener}
+ * @example
+ * cc.EventListener.create({
+ *       event: cc.EventListener.TOUCH_ONE_BY_ONE,
+ *       swallowTouches: true,
+ *       onTouchBegan: function (touch, event) {
+ *           //do something
+ *           return true;
+ *       }
+ *    });
+ */
 cc.EventListener.create = function(argObj){
     if(!argObj || !argObj.event){
         throw "Invalid parameter.";

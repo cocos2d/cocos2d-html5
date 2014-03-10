@@ -31,6 +31,12 @@ cc.UIInterfaceOrientationPortraitUpsideDown = 180;
 
 cc.UIInterfaceOrientationPortrait = 0;
 
+/**
+ * <p>
+ *  This class manages all events of input. include: touch, mouse, accelerometer, keyboard                                       <br/>
+ * </p>
+ * @class
+ */
 cc.inputManager = {
     _mousePressed: false,
 
@@ -55,6 +61,10 @@ cc.inputManager = {
     _acceleration: null,
     _accelDeviceEvent: null,
 
+    /**
+     * whether enable accelerometer event
+     * @param {Boolean} isEnable
+     */
     setAccelerometerEnabled: function(isEnable){
         if(this._accelEnabled === isEnable)
             return;
@@ -70,6 +80,10 @@ cc.inputManager = {
         }
     },
 
+    /**
+     * set accelerometer interval value
+     * @param {Number} interval
+     */
     setAccelerometerInterval: function(interval){
         if (this._accelInterval !== interval) {
             this._accelInterval = interval;
@@ -102,10 +116,6 @@ cc.inputManager = {
 
     _glView: null,
 
-    /**
-     * Touch events are handled by default; if you want to customize your handlers, please override these functions:
-     * @param {Array} touches
-     */
     handleTouchesBegin: function (touches) {
         var selTouch, index, curTouch, touchID, handleTouches = [], locTouchIntDict = this._touchesIntegerDict;
         for(var i = 0, len = touches.length; i< len; i ++){
