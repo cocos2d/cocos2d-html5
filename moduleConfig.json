@@ -120,6 +120,11 @@
 
             "cocos2d/motion-streak/CCMotionStreak.js"
         ],
+	    "node-grid" : [
+		    "core",
+
+		    "cocos2d/node-grid/CCNodeGrid.js"
+	    ],
         "parallax" : [
             "core",
 
@@ -189,7 +194,7 @@
 
         "base4webgl" : ["core", "kazmath", "shaders"],
         "cocos2d" : [
-            "core", "kazmath", "shaders", "render-texture", "motion-streak",
+            "core", "kazmath", "shaders", "render-texture", "motion-streak", "node-grid",
             "clipping-nodes", "effects", "shape-nodes", "actions", "actions3d",
             "progress-timer", "transitions", "labels", "compression", "particle",
             "text-input", "menus", "tilemap", "parallax", "audio"

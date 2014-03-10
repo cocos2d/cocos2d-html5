@@ -866,19 +866,35 @@ cc.ScrollView = cc.Layer.extend({
     }
 });
 
-window._proto = cc.ScrollView.prototype;
+window._p = cc.ScrollView.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "minOffset", _proto._getMinContainerOffset);
-cc.defineGetterSetter(_proto, "maxOffset", _proto._getMaxContainerOffset);
-cc.defineGetterSetter(_proto, "bounceable", _proto.isBounceable, _proto.setBounceable);
-cc.defineGetterSetter(_proto, "viewSize", _proto.getViewSize, _proto.setViewSize);
-cc.defineGetterSetter(_proto, "container", _proto.getContainer, _proto.setContainer);
-cc.defineGetterSetter(_proto, "direction", _proto.getDirection, _proto.setDirection);
-cc.defineGetterSetter(_proto, "delegate", _proto.getDelegate, _proto.setDelegate);
-cc.defineGetterSetter(_proto, "clippingToBounds", _proto.isClippingToBounds, _proto.setClippingToBounds);
+/** @expose */
+_p.minOffset;
+cc.defineGetterSetter(_p, "minOffset", _p._getMinContainerOffset);
+/** @expose */
+_p.maxOffset;
+cc.defineGetterSetter(_p, "maxOffset", _p._getMaxContainerOffset);
+/** @expose */
+_p.bounceable;
+cc.defineGetterSetter(_p, "bounceable", _p.isBounceable, _p.setBounceable);
+/** @expose */
+_p.viewSize;
+cc.defineGetterSetter(_p, "viewSize", _p.getViewSize, _p.setViewSize);
+/** @expose */
+_p.container;
+cc.defineGetterSetter(_p, "container", _p.getContainer, _p.setContainer);
+/** @expose */
+_p.direction;
+cc.defineGetterSetter(_p, "direction", _p.getDirection, _p.setDirection);
+/** @expose */
+_p.delegate;
+cc.defineGetterSetter(_p, "delegate", _p.getDelegate, _p.setDelegate);
+/** @expose */
+_p.clippingToBounds;
+cc.defineGetterSetter(_p, "clippingToBounds", _p.isClippingToBounds, _p.setClippingToBounds);
 
-delete window._proto;
+delete window._p;
 
 /**
  * Returns an autoreleased scroll view object.

@@ -43,18 +43,44 @@ cc.DOM._addMethods = function (node) {
 	// Redefine getter setter
 	cc.defineGetterSetter(node, "x", node.getPositionX, node.setPositionX);
 	cc.defineGetterSetter(node, "y", node.getPositionY, node.setPositionY);
+    /** @expose */
+    _p.width;
 	cc.defineGetterSetter(node, "width", node._getWidth, node._setWidth);
+    /** @expose */
+    _p.height;
 	cc.defineGetterSetter(node, "height", node._getHeight, node._setHeight);
+    /** @expose */
+    _p.anchorX;
 	cc.defineGetterSetter(node, "anchorX", node._getAnchorX, node._setAnchorX);
+    /** @expose */
+    _p.anchorY;
 	cc.defineGetterSetter(node, "anchorY", node._getAnchorY, node._setAnchorY);
+    /** @expose */
+    _p.scale;
 	cc.defineGetterSetter(node, "scale", node.getScale, node.setScale);
+    /** @expose */
+    _p.scaleX;
 	cc.defineGetterSetter(node, "scaleX", node.getScaleX, node.setScaleX);
+    /** @expose */
+    _p.scaleY;
 	cc.defineGetterSetter(node, "scaleY", node.getScaleY, node.getScaleY);
+    /** @expose */
+    _p.rotation;
 	cc.defineGetterSetter(node, "rotation", node.getRotation, node.setRotation);
+    /** @expose */
+    _p.skewX;
 	cc.defineGetterSetter(node, "skewX", node.getSkewX, node.setSkewX);
+    /** @expose */
+    _p.skewY;
 	cc.defineGetterSetter(node, "skewY", node.getSkewY, node.setSkewY);
+    /** @expose */
+    _p.visible;
 	cc.defineGetterSetter(node, "visible", node.isVisible, node.setVisible);
+    /** @expose */
+    _p.parent;
 	cc.defineGetterSetter(node, "parent", node.getParent, node.setParent);
+    /** @expose */
+    _p.opacity;
 	cc.defineGetterSetter(node, "opacity", node.getOpacity, node.setOpacity);
 };
 cc.DOM.methods = /** @lends cc.DOM# */{

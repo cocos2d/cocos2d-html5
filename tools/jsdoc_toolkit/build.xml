@@ -78,6 +78,7 @@
                 <include name="shaders/CCGLStateCache.js"/>
                 <include name="render_texture/CCRenderTexture.js"/>
                 <include name="motion_streak/CCMotionStreak.js"/>
+                <include name="node-grid/CCNodeGrid.js"/>
                 <include name="clipping_nodes/CCClippingNode.js"/>
                 <include name="effects/CCGrid.js"/>
                 <include name="effects/CCGrabber.js"/>

@@ -174,16 +174,26 @@ cc.ControlHuePicker = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlHuePicker.prototype;
+window._p = cc.ControlHuePicker.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "hue", _proto.getHue, _proto.setHue);
-cc.defineGetterSetter(_proto, "huePercent", _proto.getHuePercentage, _proto.setHuePercentage);
-cc.defineGetterSetter(_proto, "background", _proto.getBackground);
-cc.defineGetterSetter(_proto, "slider", _proto.getSlider);
-cc.defineGetterSetter(_proto, "startPos", _proto.getStartPos);
+/** @expose */
+_p.hue;
+cc.defineGetterSetter(_p, "hue", _p.getHue, _p.setHue);
+/** @expose */
+_p.huePercent;
+cc.defineGetterSetter(_p, "huePercent", _p.getHuePercentage, _p.setHuePercentage);
+/** @expose */
+_p.background;
+cc.defineGetterSetter(_p, "background", _p.getBackground);
+/** @expose */
+_p.slider;
+cc.defineGetterSetter(_p, "slider", _p.getSlider);
+/** @expose */
+_p.startPos;
+cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 
-delete window._proto;
+delete window._p;
 
 cc.ControlHuePicker.create = function (target, pos) {
     var pRet = new cc.ControlHuePicker();

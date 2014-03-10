@@ -101,6 +101,17 @@ Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted
 XiaoJun Zheng        @SmallAiTT    _getResType error fix
                                    cc.ScrollView bug fix
                                    cc.LabelTTF bug fix
+                                   rewrite functions in CCNS.js with regex
+                                   refactor CCScheduler.js and CCCommon.js
+                                   cc.BMFontConfiguration bug fix
+                                   refactor cc.Application to cc.game
+                                   refactor cc.loader
+                                   refactor cc.Textur2D
+                                   refactor some functions about array operation
+                                   move sys.xxx to cc.sys.xxx
+                                   refactor some public functions in cc to private
+                                   add node.js scripts for publishing game
+                                   refactor cc.CCBReader
 
 Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
 
@@ -118,11 +129,12 @@ Luis Parravicini     @luisparravicini      cc.Director refactoring
                                            typo fix
 
 Jose Antonio         @jandujar      cc.ParticleSystem bug fix for CocoStudio animations
+                                    SceneReader bug fix
 
 BoHao Tang           @btspoony      cc.TableView bug fix
 
 Claudiu              @csaftoiu      cc.LabelTTF bug fix
-                                    cc.DrawNode bug fix
+                                    cc.DrawNode bugs fix
                                     cc.NodeRGBA bug fix
                                     cc.Texture2D bug fix
 
@@ -134,6 +146,18 @@ kuaipao              @kuaipao       CocoStudio GUIReader bug fix
                                     CocoStudio UIWidget bug fix
 
 XieDaijin            @NijiadeIX     CCControl bug fix
+
+samael               @samael65535   CCPhysicsSprite bug fix
+
+NatWeiss             @NatWeiss      Add analytics plugin protocol ,Flurry plugin and ProtocolAds.js plugin protocol
+                                    cc.FileUtils refactoring
+
+Andor Salga          @asalga        typo fix
+
+erykwalder           @erykwalder    Function.prototype.bind bug fix
+
+ZippoLag             @ZippoLag      cc.Application.getCurrentLanguage bug fix
+
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 

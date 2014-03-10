@@ -160,12 +160,14 @@ cc.ControlColourPicker = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlColourPicker.prototype;
+window._p = cc.ControlColourPicker.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "background", _proto.getBackground);
+/** @expose */
+_p.background;
+cc.defineGetterSetter(_p, "background", _p.getBackground);
 
-delete window._proto;
+delete window._p;
 
 cc.ControlColourPicker.create = function () {
     var pRet = new cc.ControlColourPicker();

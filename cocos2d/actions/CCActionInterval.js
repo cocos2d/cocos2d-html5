@@ -2407,7 +2407,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         var numberOfFrames = frames.length, locSplitTimes = this._splitTimes;
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
             if (locSplitTimes[i] <= time) {
-                this.target.setDisplayFrame(frames[i].getSpriteFrame());
+                this.target.setSpriteFrame(frames[i].getSpriteFrame());
                 this._nextFrame = i + 1;
             } else {
                 // Issue 1438. Could be more than one frame per tick, due to low frame rate or frame delta < 1/FPS
@@ -2442,7 +2442,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      */
     stop:function () {
         if (this._animation.getRestoreOriginalFrame() && this.target)
-            this.target.setDisplayFrame(this._origFrame);
+            this.target.setSpriteFrame(this._origFrame);
         cc.Action.prototype.stop.call(this);
     }
 });

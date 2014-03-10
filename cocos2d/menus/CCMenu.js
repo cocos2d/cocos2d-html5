@@ -572,12 +572,12 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     }
 });
 
-window._proto = cc.Menu.prototype;
+window._p = cc.Menu.prototype;
 
 // Extended properties
 /** @expose */
-_proto.enabled;
-delete window._proto;
+_p.enabled;
+delete window._p;
 
 /**
  * create a new menu

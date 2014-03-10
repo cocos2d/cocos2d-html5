@@ -63,11 +63,13 @@ cc.TableViewCell = cc.Node.extend({
     }
 });
 
-window._proto = cc.TableViewCell.prototype;
+window._p = cc.TableViewCell.prototype;
 
-cc.defineGetterSetter(_proto, "objectId", _proto.getObjectID, _proto.setObjectID);
+/** @expose */
+_p.objectId;
+cc.defineGetterSetter(_p, "objectId", _p.getObjectID, _p.setObjectID);
 
-delete window._proto;
+delete window._p;
 
 /**
  * Sole purpose of this delegate is to single touch event in this version.
@@ -662,13 +664,19 @@ cc.TableView = cc.ScrollView.extend({
     }
 });
 
-window._proto = cc.TableView.prototype;
+window._p = cc.TableView.prototype;
 
-cc.defineGetterSetter(_proto, "dataSource", _proto.getDataSource, _proto.setDataSource);
-cc.defineGetterSetter(_proto, "delegate", _proto.getDelegate, _proto.setDelegate);
-cc.defineGetterSetter(_proto, "verticalFillOrder", _proto.getVerticalFillOrder, _proto.setVerticalFillOrder);
+/** @expose */
+_p.dataSource;
+cc.defineGetterSetter(_p, "dataSource", _p.getDataSource, _p.setDataSource);
+/** @expose */
+_p.delegate;
+cc.defineGetterSetter(_p, "delegate", _p.getDelegate, _p.setDelegate);
+/** @expose */
+_p.verticalFillOrder;
+cc.defineGetterSetter(_p, "verticalFillOrder", _p.getVerticalFillOrder, _p.setVerticalFillOrder);
 
-delete window._proto;
+delete window._p;
 
 /**
  * An initialized table view object

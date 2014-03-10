@@ -22,11 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.NORMAL_RENDERER_ZORDER = -2;
-ccui.PRESSED_RENDERER_ZORDER = -2;
-ccui.DISABLED_RENDERER_ZORDER = -2;
-ccui.TITLE_RENDERER_ZORDER = -1;
-
 /**
  * Base class for ccui.Button
  * @class
@@ -83,9 +78,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._capInsetsNormal = cc.rect(0, 0, 0, 0);
         this._capInsetsPressed = cc.rect(0, 0, 0, 0);
         this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
-        this._normalTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
-        this._pressedTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
-        this._disabledTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._normalTexType = ccui.Widget.LOCAL_TEXTURE;
+        this._pressedTexType = ccui.Widget.LOCAL_TEXTURE;
+        this._disabledTexType = ccui.Widget.LOCAL_TEXTURE;
         var locSize = this._size;
         this._normalTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
@@ -114,10 +109,10 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, ccui.NORMAL_RENDERER_ZORDER);
-        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, ccui.PRESSED_RENDERER_ZORDER);
-        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, ccui.DISABLED_RENDERER_ZORDER);
-        cc.Node.prototype.addChild.call(this, this._titleRenderer, ccui.TITLE_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, ccui.Button.NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, ccui.Button.PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, ccui.Button.DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._titleRenderer, ccui.Button.TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -149,9 +144,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, ccui.NORMAL_RENDERER_ZORDER);
-        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, ccui.PRESSED_RENDERER_ZORDER);
-        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, ccui.DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, ccui.Button.NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, ccui.Button.PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, ccui.Button.DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -190,7 +185,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
      * @param {String} normal
      * @param {String} selected
      * @param {String} disabled
-     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextures: function (normal, selected, disabled, texType) {
         this.loadTextureNormal(normal, texType);
@@ -201,21 +196,21 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     /**
      * Load normal state texture for button.
      * @param {String} normal
-     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureNormal: function (normal, texType) {
         if (!normal) {
             return;
         }
-        texType = texType||ccui.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType||ccui.Widget.LOCAL_TEXTURE;
         this._normalFileName = normal;
         this._normalTexType = texType;
         var buttonNormalRenderer = this._buttonNormalRenderer;
         switch (this._normalTexType) {
-            case ccui.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.Widget.LOCAL_TEXTURE:
                 buttonNormalRenderer.initWithFile(normal);
                 break;
-            case ccui.TEXTURE_RES_TYPE_PLIST:
+            case ccui.Widget.PLIST_TEXTURE:
                 buttonNormalRenderer.initWithSpriteFrameName(normal);
                 break;
             default:
@@ -252,21 +247,21 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     /**
      * Load selected state texture for button.
      * @param {String} selected
-     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexturePressed: function (selected, texType) {
         if (!selected) {
             return;
         }
-        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._clickedFileName = selected;
         this._pressedTexType = texType;
         var clickedRenderer = this._buttonClickedRenderer;
         switch (this._pressedTexType) {
-            case ccui.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.Widget.LOCAL_TEXTURE:
                 clickedRenderer.initWithFile(selected);
                 break;
-            case ccui.TEXTURE_RES_TYPE_PLIST:
+            case ccui.Widget.PLIST_TEXTURE:
                 clickedRenderer.initWithSpriteFrameName(selected);
                 break;
             default:
@@ -301,21 +296,21 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     /**
      * Load dark state texture for button.
      * @param {String} disabled
-     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTextureDisabled: function (disabled, texType) {
         if (!disabled) {
             return;
         }
-        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._disabledFileName = disabled;
         this._disabledTexType = texType;
         var disableRenderer = this._buttonDisableRenderer;
         switch (this._disabledTexType) {
-            case ccui.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.Widget.LOCAL_TEXTURE:
                 disableRenderer.initWithFile(disabled);
                 break;
-            case ccui.TEXTURE_RES_TYPE_PLIST:
+            case ccui.Widget.PLIST_TEXTURE:
                 disableRenderer.initWithSpriteFrameName(disabled);
                 break;
             default:
@@ -795,16 +790,26 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
 });
 
-window._proto = ccui.Button.prototype;
+window._p = ccui.Button.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "titleText", _proto.getTitleText, _proto.setTitleText);
-cc.defineGetterSetter(_proto, "titleFont", _proto._getTitleFont, _proto._setTitleFont);
-cc.defineGetterSetter(_proto, "titleFontSize", _proto.getTitleFontSize, _proto.setTitleFontSize);
-cc.defineGetterSetter(_proto, "titleFontName", _proto.getTitleFontName, _proto.setTitleFontName);
-cc.defineGetterSetter(_proto, "titleColor", _proto.getTitleColor, _proto.setTitleColor);
+/** @expose */
+_p.titleText;
+cc.defineGetterSetter(_p, "titleText", _p.getTitleText, _p.setTitleText);
+/** @expose */
+_p.titleFont;
+cc.defineGetterSetter(_p, "titleFont", _p._getTitleFont, _p._setTitleFont);
+/** @expose */
+_p.titleFontSize;
+cc.defineGetterSetter(_p, "titleFontSize", _p.getTitleFontSize, _p.setTitleFontSize);
+/** @expose */
+_p.titleFontName;
+cc.defineGetterSetter(_p, "titleFontName", _p.getTitleFontName, _p.setTitleFontName);
+/** @expose */
+_p.titleColor;
+cc.defineGetterSetter(_p, "titleColor", _p.getTitleColor, _p.setTitleColor);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UIButton.
@@ -821,3 +826,9 @@ ccui.Button.create = function () {
     }
     return null;
 };
+
+// Constants
+ccui.Button.NORMAL_RENDERER_ZORDER = -2;
+ccui.Button.PRESSED_RENDERER_ZORDER = -2;
+ccui.Button.DISABLED_RENDERER_ZORDER = -2;
+ccui.Button.TITLE_RENDERER_ZORDER = -1;

@@ -305,7 +305,7 @@ cc.inputManager = {
             touch_event = event.changedTouches[i];
             if (touch_event) {
                 var location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos);
-                if (touch_event.identifier) {
+                if (touch_event.identifier != null) {
                     touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                     //use Touch Pool
                     preLocation = this.getPreTouch(touch).getLocation();
@@ -547,14 +547,14 @@ cc.inputManager = {
 
         var mAcceleration = this._acceleration;
         if (this._accelDeviceEvent == window.DeviceMotionEvent) {
-            var eventAcceleration = eventData.accelerationIncludingGravity;
+            var eventAcceleration = eventData["accelerationIncludingGravity"];
             mAcceleration.x = this._accelMinus * eventAcceleration.x * 0.1;
             mAcceleration.y = this._accelMinus * eventAcceleration.y * 0.1;
             mAcceleration.z = eventAcceleration.z * 0.1;
         } else {
-            mAcceleration.x = (eventData.gamma / 90) * 0.981;
-            mAcceleration.y = -(eventData.beta / 90) * 0.981;
-            mAcceleration.z = (eventData.alpha / 90) * 0.981;
+            mAcceleration.x = (eventData["gamma"] / 90) * 0.981;
+            mAcceleration.y = -(eventData["beta"] / 90) * 0.981;
+            mAcceleration.z = (eventData["alpha"] / 90) * 0.981;
         }
         mAcceleration.timestamp = eventData.timeStamp || Date.now();
 

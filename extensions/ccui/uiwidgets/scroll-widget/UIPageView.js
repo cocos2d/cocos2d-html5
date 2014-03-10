@@ -22,14 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-//PageView event
-ccui.PAGEVIEW_EVENT_TURNING = 0;
-
-//PageView touch direction
-ccui.PAGEVIEW_TOUCH_DIR_LEFT = 0;
-ccui.PAGEVIEW_TOUCH_DIR_RIGHT = 1;
-
 /**
  * Base class for ccui.PageView
  * @class
@@ -58,7 +50,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         ccui.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;
         this._pages = [];
-        this._touchMoveDir = ccui.PAGEVIEW_TOUCH_DIR_LEFT;
+        this._touchMoveDir = ccui.PageView.TOUCH_DIR_LEFT;
         this._touchStartLocation = 0;
         this._touchMoveStartLocation = 0;
         this._movePagePoint = null;
@@ -429,7 +421,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         var realOffset = touchOffset;
 
         switch (this._touchMoveDir) {
-            case ccui.PAGEVIEW_TOUCH_DIR_LEFT: // left
+            case ccui.PageView.TOUCH_DIR_LEFT: // left
                 if (this._rightChild.getRightInParent() + touchOffset <= this._rightBoundary) {
                     realOffset = this._rightBoundary - this._rightChild.getRightInParent();
                     this.movePages(realOffset);
@@ -437,7 +429,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
                 }
                 break;
 
-            case ccui.PAGEVIEW_TOUCH_DIR_RIGHT: // right
+            case ccui.PageView.TOUCH_DIR_RIGHT: // right
                 if (this._leftChild.getLeftInParent() + touchOffset >= this._leftBoundary) {
                     realOffset = this._leftBoundary - this._leftChild.getLeftInParent();
                     this.movePages(realOffset);
@@ -465,10 +457,10 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         offset = moveX - this._touchMoveStartLocation;
         this._touchMoveStartLocation = moveX;
         if (offset < 0) {
-            this._touchMoveDir = ccui.PAGEVIEW_TOUCH_DIR_LEFT;
+            this._touchMoveDir = ccui.PageView.TOUCH_DIR_LEFT;
         }
         else if (offset > 0) {
-            this._touchMoveDir = ccui.PAGEVIEW_TOUCH_DIR_RIGHT;
+            this._touchMoveDir = ccui.PageView.TOUCH_DIR_RIGHT;
         }
         this.scrollPages(offset);
     },
@@ -531,7 +523,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     pageTurningEvent: function () {
         if (this._pageViewEventListener && this._pageViewEventSelector) {
-            this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PAGEVIEW_EVENT_TURNING);
+            this._pageViewEventSelector.call(this._pageViewEventListener, this, ccui.PageView.EVENT_TURNING);
         }
     },
 
@@ -605,3 +597,11 @@ ccui.PageView.create = function () {
     }
     return null;
 };
+
+// Constants
+//PageView event
+ccui.PageView.EVENT_TURNING = 0;
+
+//PageView touch direction
+ccui.PageView.TOUCH_DIR_LEFT = 0;
+ccui.PageView.TOUCH_DIR_RIGHT = 1;

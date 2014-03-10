@@ -380,19 +380,43 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     }
 });
 
-window._proto = cc.ControlSwitchSprite.prototype;
+window._p = cc.ControlSwitchSprite.prototype;
 
-cc.defineGetterSetter(_proto, "sliderX", _proto.getSliderXPosition, _proto.setSliderXPosition);
-cc.defineGetterSetter(_proto, "onPos", _proto.getOnPosition, _proto.setOnPosition);
-cc.defineGetterSetter(_proto, "offPos", _proto.getOffPosition, _proto.setOffPosition);
-cc.defineGetterSetter(_proto, "maskTexture", _proto.getMaskTexture, _proto.setMaskTexture);
-cc.defineGetterSetter(_proto, "maskPos", _proto.getMaskLocation, _proto.setMaskLocation);
-cc.defineGetterSetter(_proto, "onSprite", _proto.getOnSprite, _proto.setOnSprite);
-cc.defineGetterSetter(_proto, "offSprite", _proto.getOffSprite, _proto.setOffSprite);
-cc.defineGetterSetter(_proto, "thumbSprite", _proto.getThumbSprite, _proto.setThumbSprite);
-cc.defineGetterSetter(_proto, "onLabel", _proto.getOnLabel, _proto.setOnLabel);
-cc.defineGetterSetter(_proto, "offLabel", _proto.getOffLabel, _proto.setOffLabel);
-cc.defineGetterSetter(_proto, "onSideWidth", _proto._getOnSideWidth);
-cc.defineGetterSetter(_proto, "offSideWidth", _proto._getOffSideWidth);
+/** @expose */
+_p.sliderX;
+cc.defineGetterSetter(_p, "sliderX", _p.getSliderXPosition, _p.setSliderXPosition);
+/** @expose */
+_p.onPos;
+cc.defineGetterSetter(_p, "onPos", _p.getOnPosition, _p.setOnPosition);
+/** @expose */
+_p.offPos;
+cc.defineGetterSetter(_p, "offPos", _p.getOffPosition, _p.setOffPosition);
+/** @expose */
+_p.maskTexture;
+cc.defineGetterSetter(_p, "maskTexture", _p.getMaskTexture, _p.setMaskTexture);
+/** @expose */
+_p.maskPos;
+cc.defineGetterSetter(_p, "maskPos", _p.getMaskLocation, _p.setMaskLocation);
+/** @expose */
+_p.onSprite;
+cc.defineGetterSetter(_p, "onSprite", _p.getOnSprite, _p.setOnSprite);
+/** @expose */
+_p.offSprite;
+cc.defineGetterSetter(_p, "offSprite", _p.getOffSprite, _p.setOffSprite);
+/** @expose */
+_p.thumbSprite;
+cc.defineGetterSetter(_p, "thumbSprite", _p.getThumbSprite, _p.setThumbSprite);
+/** @expose */
+_p.onLabel;
+cc.defineGetterSetter(_p, "onLabel", _p.getOnLabel, _p.setOnLabel);
+/** @expose */
+_p.offLabel;
+cc.defineGetterSetter(_p, "offLabel", _p.getOffLabel, _p.setOffLabel);
+/** @expose */
+_p.onSideWidth;
+cc.defineGetterSetter(_p, "onSideWidth", _p._getOnSideWidth);
+/** @expose */
+_p.offSideWidth;
+cc.defineGetterSetter(_p, "offSideWidth", _p._getOffSideWidth);
 
-delete window._proto;
+delete window._p;

@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-ccui.IMAGE_RENDERER_ZORDER = -1;
+
 /**
  * Base class for ccui.Button
  * @class
@@ -43,33 +43,33 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._capInsets = cc.rect(0,0,0,0);
         this._imageRenderer = null;
         this._textureFile = "";
-        this._imageTexType = ccui.TEXTURE_RES_TYPE_LOCAL;
+        this._imageTexType = ccui.Widget.LOCAL_TEXTURE;
         this._imageTextureSize = cc.size(this._size.width, this._size.height);
     },
 
     initRenderer: function () {
         this._imageRenderer = cc.Sprite.create();
-        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccui.IMAGE_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
     },
 
     /**
      * Load textures for button.
      * @param {String} fileName
-     * @param {ccui.TEXTURE_RES_TYPE_LOCAL|ccui.TEXTURE_RES_TYPE_PLIST} texType
+     * @param {ccui.Widget.LOCAL_TEXTURE|ccui.Widget.PLIST_TEXTURE} texType
      */
     loadTexture: function (fileName, texType) {
         if (!fileName) {
             return;
         }
-        texType = texType || ccui.TEXTURE_RES_TYPE_LOCAL;
+        texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._textureFile = fileName;
         this._imageTexType = texType;
         var imageRenderer = this._imageRenderer
         switch (this._imageTexType) {
-            case ccui.TEXTURE_RES_TYPE_LOCAL:
+            case ccui.Widget.LOCAL_TEXTURE:
                 imageRenderer.initWithFile(fileName);
                 break;
-            case ccui.TEXTURE_RES_TYPE_PLIST:
+            case ccui.Widget.PLIST_TEXTURE:
                 imageRenderer.initWithSpriteFrameName(fileName);
                 break;
             default:
@@ -155,7 +155,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
             this._imageRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._imageTexType);
-        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccui.IMAGE_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._imageRenderer, ccui.ImageView.RENDERER_ZORDER, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -325,3 +325,6 @@ ccui.ImageView.create = function () {
     }
     return null;
 };
+
+// Constants
+ccui.ImageView.RENDERER_ZORDER = -1;

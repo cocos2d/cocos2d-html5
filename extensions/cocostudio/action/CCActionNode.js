@@ -119,7 +119,7 @@ ccs.ActionNode = ccs.Class.extend({
 
     initActionNodeFromRoot: function (root) {
         if (root instanceof ccui.Widget) {
-            var widget = ccui.uiHelper.seekActionWidgetByActionTag(root, this.getActionTag());
+            var widget = ccui.helper.seekActionWidgetByActionTag(root, this.getActionTag());
             if (widget) {
                 this.setObject(widget);
             }

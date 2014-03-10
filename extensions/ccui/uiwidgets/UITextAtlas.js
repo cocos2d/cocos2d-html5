@@ -22,8 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccui.TEXTATLAS_RENDERER_ZORDER = -1;
-
 /**
  * Base class for ccui.TextAtlas
  * @class
@@ -188,12 +186,14 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     }
 });
 
-window._proto = ccui.TextAtlas.prototype;
+window._p = ccui.TextAtlas.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "string", _proto.getStringValue, _proto.setStringValue);
+/** @expose */
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
 
-delete window._proto;
+delete window._p;
 
 /**
  * allocates and initializes a UILabelAtlas.
@@ -210,3 +210,6 @@ ccui.TextAtlas.create = function () {
     }
     return null;
 };
+
+// Constants
+ccui.TextAtlas.RENDERER_ZORDER = -1;

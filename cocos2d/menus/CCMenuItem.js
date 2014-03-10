@@ -201,13 +201,13 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     }
 });
 
-window._proto = cc.MenuItem.prototype;
+window._p = cc.MenuItem.prototype;
 
 // Extended properties
 /** @expose */
-_proto.enabled;
-cc.defineGetterSetter(_proto, "enabled", _proto.isEnabled, _proto.setEnabled);
-delete window._proto;
+_p.enabled;
+cc.defineGetterSetter(_p, "enabled", _p.isEnabled, _p.setEnabled);
+delete window._p;
 
 /**
  * creates an empty menu item with target and callback<br/>
@@ -410,16 +410,20 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     }
 });
 
-window._proto = cc.MenuItemLabel.prototype;
+window._p = cc.MenuItemLabel.prototype;
 
 // Extended properties
 /** @expose */
-_proto.string;
-cc.defineGetterSetter(_proto, "string", _proto.getString, _proto.setString);
-cc.defineGetterSetter(_proto, "disabledColor", _proto.getDisabledColor, _proto.setDisabledColor);
-cc.defineGetterSetter(_proto, "label", _proto.getLabel, _proto.setLabel);
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
+/** @expose */
+_p.disabledColor;
+cc.defineGetterSetter(_p, "disabledColor", _p.getDisabledColor, _p.setDisabledColor);
+/** @expose */
+_p.label;
+cc.defineGetterSetter(_p, "label", _p.getLabel, _p.setLabel);
 
-delete window._proto;
+delete window._p;
 
 /**
  * @param {cc.Node} label
@@ -588,17 +592,17 @@ cc.MenuItemFont.setFontName = function (name) {
     cc._globalFontNameRelease = true;
 };
 
-window._proto = cc.MenuItemFont.prototype;
+window._p = cc.MenuItemFont.prototype;
 
 // Extended properties
 /** @expose */
-_proto.fontSize;
-cc.defineGetterSetter(_proto, "fontSize", _proto.fontSize, _proto.setFontSize);
+_p.fontSize;
+cc.defineGetterSetter(_p, "fontSize", _p.fontSize, _p.setFontSize);
 /** @expose */
-_proto.fontName;
-cc.defineGetterSetter(_proto, "fontName", _proto.fontName, _proto.setFontName);
+_p.fontName;
+cc.defineGetterSetter(_p, "fontName", _p.fontName, _p.setFontName);
 
-delete window._proto;
+delete window._p;
 
 /**
  * a shared function to get the font name for menuitem font
@@ -892,13 +896,19 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     }
 });
 
-window._proto = cc.MenuItemSprite.prototype;
+window._p = cc.MenuItemSprite.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "normalImage", _proto.getNormalImage, _proto.setNormalImage);
-cc.defineGetterSetter(_proto, "selectedImage", _proto.getSelectedImage, _proto.setSelectedImage);
-cc.defineGetterSetter(_proto, "disabledImage", _proto.getDisabledImage, _proto.setDisabledImage);
-delete window._proto;
+/** @expose */
+_p.normalImage;
+cc.defineGetterSetter(_p, "normalImage", _p.getNormalImage, _p.setNormalImage);
+/** @expose */
+_p.selectedImage;
+cc.defineGetterSetter(_p, "selectedImage", _p.getSelectedImage, _p.setSelectedImage);
+/** @expose */
+_p.disabledImage;
+cc.defineGetterSetter(_p, "disabledImage", _p.getDisabledImage, _p.setDisabledImage);
+delete window._p;
 
 /**
  * create a menu item from sprite
@@ -1251,11 +1261,13 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     }
 });
 
-window._proto = cc.MenuItemToggle.prototype;
+window._p = cc.MenuItemToggle.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "selectedIndex", _proto.getSelectedIndex, _proto.setSelectedIndex);
-delete window._proto;
+/** @expose */
+_p.selectedIndex;
+cc.defineGetterSetter(_p, "selectedIndex", _p.getSelectedIndex, _p.setSelectedIndex);
+delete window._p;
 
 /**
  * create a simple container class that "toggles" it's inner items<br/>

@@ -455,23 +455,25 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     }
 });
 
-window._proto = cc.ClippingNode.prototype;
+window._p = cc.ClippingNode.prototype;
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     //WebGL
-    _proto.init = _proto._initForWebGL;
-    _proto.visit = _proto._visitForWebGL;
-    _proto.setStencil = _proto._setStencilForWebGL;
+    _p.init = _p._initForWebGL;
+    _p.visit = _p._visitForWebGL;
+    _p.setStencil = _p._setStencilForWebGL;
 } else {
-    _proto.init = _proto._initForCanvas;
-    _proto.visit = _proto._visitForCanvas;
-    _proto.setStencil = _proto._setStencilForCanvas;
+    _p.init = _p._initForCanvas;
+    _p.visit = _p._visitForCanvas;
+    _p.setStencil = _p._setStencilForCanvas;
 }
 
 // Extended properties
-cc.defineGetterSetter(_proto, "stencil", _proto.getStencil, _proto.setStencil);
+cc.defineGetterSetter(_p, "stencil", _p.getStencil, _p.setStencil);
+/** @expose */
+_p.stencil;
 
-delete window._proto;
+delete window._p;
 
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;

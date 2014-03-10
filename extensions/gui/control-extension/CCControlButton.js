@@ -645,14 +645,20 @@ cc.ControlButton = cc.Control.extend({
     }
 });
 
-window._proto = cc.ControlButton.prototype;
+window._p = cc.ControlButton.prototype;
 
 // Extended properties
-cc.defineGetterSetter(_proto, "adjustBackground", _proto.getAdjustBackgroundImage, _proto.setAdjustBackgroundImage);
-cc.defineGetterSetter(_proto, "preferredSize", _proto.getPreferredSize, _proto.setPreferredSize);
-cc.defineGetterSetter(_proto, "labelAnchor", _proto.getLabelAnchorPoint, _proto.setLabelAnchorPoint);
+/** @expose */
+_p.adjustBackground;
+cc.defineGetterSetter(_p, "adjustBackground", _p.getAdjustBackgroundImage, _p.setAdjustBackgroundImage);
+/** @expose */
+_p.preferredSize;
+cc.defineGetterSetter(_p, "preferredSize", _p.getPreferredSize, _p.setPreferredSize);
+/** @expose */
+_p.labelAnchor;
+cc.defineGetterSetter(_p, "labelAnchor", _p.getLabelAnchorPoint, _p.setLabelAnchorPoint);
 
-delete window._proto;
+delete window._p;
 
 cc.ControlButton.create = function(label, backgroundSprite) {
     var controlButton;
