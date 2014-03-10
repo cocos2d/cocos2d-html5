@@ -44,12 +44,12 @@
                 <include name="core/textures/CCTextureAtlas.js"/>
                 <include name="core/scenes/CCScene.js"/>
                 <include name="core/layers/CCLayer.js"/>
-                <include name="core/sprite/CCSprite.js"/>
-                <include name="core/sprite/CCAnimation.js"/>
-                <include name="core/sprite/CCAnimationCache.js"/>
-                <include name="core/sprite/CCSpriteFrame.js"/>
-                <include name="core/sprite/CCSpriteFrameCache.js"/>
-                <include name="core/sprite/CCSpriteBatchNode.js"/>
+                <include name="core/sprites/CCSprite.js"/>
+                <include name="core/sprites/CCAnimation.js"/>
+                <include name="core/sprites/CCAnimationCache.js"/>
+                <include name="core/sprites/CCSpriteFrame.js"/>
+                <include name="core/sprites/CCSpriteFrameCache.js"/>
+                <include name="core/sprites/CCSpriteBatchNode.js"/>
                 <include name="core/CCConfiguration.js"/>
                 <include name="core/CCDirector.js"/>
                 <include name="core/CCCamera.js"/>
@@ -61,7 +61,7 @@
                 <include name="core/event-manager/CCTouch.js"/>
                 <include name="core/event-manager/CCEventListener.js"/>
                 <include name="core/event-manager/CCEventManager.js"/>
-                <include name="core/labelTTF/CCLabelTTF.js"/>
+                <include name="core/labelttf/CCLabelTTF.js"/>
                 <include name="core/CCActionManager.js"/>
                 <include name="kazmath/utility.js"/>
                 <include name="kazmath/vec2.js"/>
