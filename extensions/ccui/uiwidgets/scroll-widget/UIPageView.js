@@ -132,7 +132,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         if (!page) {
             return;
         }
-        if (page.getWidgetType() != ccui.WIDGET_TYPE_CONTAINER) {
+        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
             return;
         }
         if (this._pages.indexOf(page) != -1) {
@@ -162,7 +162,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         if (!page) {
             return;
         }
-        if (page.getWidgetType() != ccui.WIDGET_TYPE_CONTAINER) {
+        if (page.getWidgetType() != ccui.Widget.TYPE_CONTAINER) {
             return;
         }
         if (this._pages.indexOf(page) != -1) {

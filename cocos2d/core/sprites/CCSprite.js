@@ -450,7 +450,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             spriteFrame.addLoadedEventListener(this._spriteFrameLoadedCallback, this);
         }
         var ret = this.initWithTexture(spriteFrame.getTexture(), spriteFrame.getRect());
-        this.setDisplayFrame(spriteFrame);
+        this.setSpriteFrame(spriteFrame);
 
         return ret;
     },
@@ -759,7 +759,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             cc.log("cc.Sprite.setDisplayFrameWithAnimationName(): Invalid frame index");
             return;
         }
-        this.setDisplayFrame(animFrame.getSpriteFrame());
+        this.setSpriteFrame(animFrame.getSpriteFrame());
     },
 
     /**
@@ -1529,12 +1529,19 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     // Frames
     /**
-     * Sets a new display frame to the cc.Sprite.
-     * @param {cc.SpriteFrame} newFrame
+     * Sets a new spriteFrame to the cc.Sprite.
+     * @param {cc.SpriteFrame|String} newFrame
+     * @deprecated
      */
-    setDisplayFrame: null,
+    setSpriteFrame: null,
 
-    _setDisplayFrameForWebGL: function (newFrame) {
+    _setSpriteFrameForWebGL: function (newFrame) {
+        if(typeof(newFrame) == "string"){
+             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
+            if(!newFrame)
+                throw "Invalid spriteFrameName";
+        }
+
         this.setNodeDirty(true);
         var frameOffset = newFrame.getOffset();
         this._unflippedOffsetPositionFromCenter.x = frameOffset.x;
@@ -1563,7 +1570,13 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
     },
 
-    _setDisplayFrameForCanvas: function (newFrame) {
+    _setSpriteFrameForCanvas: function (newFrame) {
+        if(typeof(newFrame) == "string"){
+            newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
+            if(!newFrame)
+                throw "Invalid spriteFrameName";
+        }
+
         this.setNodeDirty(true);
 
         var frameOffset = newFrame.getOffset();
@@ -1600,6 +1613,16 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             if (curColor.r !== 255 || curColor.g !== 255 || curColor.b !== 255)
                 this._changeTextureColor();
         }
+    },
+
+    /**
+     * Sets a new display frame to the cc.Sprite.
+     * @param {cc.SpriteFrame|String} newFrame
+     * @deprecated
+     */
+    setDisplayFrame: function(newFrame){
+        cc.log("setDisplayFrame is deprecated, please use setSpriteFrame instead.");
+        this.setSpriteFrame(newFrame);
     },
 
     /**
@@ -2036,7 +2059,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.setOpacity = _p._setOpacityForWebGL;
     _p.setColor = _p._setColorForWebGL;
     _p.updateDisplayedColor = _p._updateDisplayedColorForWebGL;
-    _p.setDisplayFrame = _p._setDisplayFrameForWebGL;
+    _p.setSpriteFrame = _p._setSpriteFrameForWebGL;
     _p.isFrameDisplayed = _p._isFrameDisplayedForWebGL;
     _p.setBatchNode = _p._setBatchNodeForWebGL;
     _p.setTexture = _p._setTextureForWebGL;
@@ -2056,7 +2079,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.setOpacity = _p._setOpacityForCanvas;
     _p.setColor = _p._setColorForCanvas;
     _p.updateDisplayedColor = _p._updateDisplayedColorForCanvas;
-    _p.setDisplayFrame = _p._setDisplayFrameForCanvas;
+    _p.setSpriteFrame = _p._setSpriteFrameForCanvas;
     _p.isFrameDisplayed = _p._isFrameDisplayedForCanvas;
     _p.setBatchNode = _p._setBatchNodeForCanvas;
     _p.setTexture = _p._setTextureForCanvas;

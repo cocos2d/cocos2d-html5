@@ -44,7 +44,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 
     initRenderer: function () {
         this._labelAtlasRenderer = new cc.LabelAtlas();
-        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TEXTATLAS_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelAtlasRenderer, ccui.TextAtlas.RENDERER_ZORDER, -1);
     },
 
     /**

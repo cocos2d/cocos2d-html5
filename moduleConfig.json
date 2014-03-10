@@ -224,7 +224,7 @@
             "extensions/editbox/CCEditBox.js"
         ],
         "ccui" : [
-            "core", "gui",
+            "core", "gui", "actions", "labels", "text-input","clipping-nodes",
             "extensions/ccui/system/CocosGUI.js",
             "extensions/ccui/base-classes/UIWidget.js",
             "extensions/ccui/layouts/UILayout.js",
@@ -246,7 +246,7 @@
             "extensions/ccui/uiwidgets/scroll-widget/UIPageView.js"
         ],
         "cocostudio" : [
-            "core", "gui", "actions", "labels", "text-input", "tilemap", "clipping-nodes", "particle", "shape-nodes", "ccui",
+            "core",  "tilemap", "particle", "shape-nodes", "ccui",
 
             "extensions/cocostudio/components/CCComponent.js",
             "extensions/cocostudio/components/CCComponentContainer.js",
