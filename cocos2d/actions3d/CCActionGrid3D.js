@@ -132,7 +132,7 @@ cc.Waves3D.create = function (duration, gridSize, waves, amplitude) {
  * @class
  * @extends cc.Grid3DAction
  */
-cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.Waves3D# */{
+cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.FlipX3D# */{
     /**
      * initializes the action with duration
      * @param {Number} duration
@@ -876,7 +876,7 @@ cc.Waves.create = function (duration, gridSize, waves, amplitude, horizontal, ve
  * @class
  * @extends cc.Grid3DAction
  */
-cc.Twirl = cc.Grid3DAction.extend({
+cc.Twirl = cc.Grid3DAction.extend(/** @lends cc.Twirl# */{
     /* twirl center */
     _position:null,
     _twirls:null,

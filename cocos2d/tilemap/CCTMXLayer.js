@@ -56,19 +56,10 @@
  * @property {Number}               tileHeight          - Height of a tile
  */
 cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
-	/** @public */
 	tiles: null,
-
-	/** @public */
 	tileset: null,
-
-	/** @public */
 	layerOrientation: null,
-
-	/** @public */
 	properties: null,
-
-	/** @public */
 	layerName: "",
 
     //size of the layer in tiles

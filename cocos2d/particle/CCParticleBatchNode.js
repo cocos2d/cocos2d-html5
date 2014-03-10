@@ -59,10 +59,6 @@ cc.PARTICLE_DEFAULT_CAPACITY = 500;
  * @property {cc.TextureAtlas}                                  textureAtlas    - The texture atlas used for drawing the quads
  */
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
-	/**
-	 * @public
-	 * The texture atlas used for drawing the quads
-	 */
 	textureAtlas:null,
 
     TextureProtocol:true,

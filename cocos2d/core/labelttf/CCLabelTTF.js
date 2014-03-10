@@ -565,6 +565,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * set text tinting
+     * @function
      * @param {cc.Color} tintColor
      */
     setFontFillColor:null,
@@ -1012,12 +1013,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         cc.Sprite.prototype.visit.call(this,context);
     },
 
+	/**
+	 * Draw sprite to canvas
+	 * @function
+	 * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx Render context of canvas, 2d or 3d
+	 */
     draw: null,
 
-    /**
-     * draw sprite to canvas
-     * @param {WebGLRenderingContext} ctx 3d context of canvas
-     */
     _drawForWebGL: function (ctx) {
         if (!this._string || this._string == "")
             return;

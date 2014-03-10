@@ -264,6 +264,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
+     * @function
      * @param {Boolean} reverse
      */
     setReverseProgress:null,
@@ -285,6 +286,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
+     * @function
      * @param {cc.Sprite} sprite
      */
     setSprite:null,
@@ -314,6 +316,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      * set Progress type of cc.ProgressTimer
+     * @function
      * @param {cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR} type
      */
     setType:null,
@@ -337,6 +340,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      * Reverse Progress setter
+     * @function
      * @param {Boolean} reverse
      */
     setReverseDirection: null,
@@ -391,6 +395,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      * Initializes a progress timer with the sprite as the shape the timer goes through
+     * @function
      * @param {cc.Sprite} sprite
      * @return {Boolean}
      */
@@ -430,7 +435,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
-     * stuff gets drawn here
+     * Stuff gets drawn here
+     * @function
      * @param {CanvasRenderingContext2D} ctx
      */
     draw:null,

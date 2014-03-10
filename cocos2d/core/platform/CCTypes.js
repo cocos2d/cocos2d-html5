@@ -1014,18 +1014,6 @@ cc.FontDefinition = function () {
 
 
 /**
- * The device accelerometer reports values for each axis in units of g-force
- * @constructor
- */
-cc.Acceleration = function(){
-    this.x = 0;
-    this.y = 0;
-    this.z = 0;
-    this.timestamp = 0;
-};
-
-
-/**
  * White color (255, 255, 255, 255)
  * @returns {cc.Color}
  * @private

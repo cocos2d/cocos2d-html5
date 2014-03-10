@@ -53,10 +53,7 @@ cc.setProgram = function (node, program) {
  * @property {cc.Node}  stencil         - he cc.Node to use as a stencil to do the clipping.
  */
 cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
-	/** @public */
 	alphaThreshold: 0,
-
-	/** @public */
 	inverted: false,
 
     _stencil: null,
@@ -374,6 +371,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     /**
+     * @function
      * @param {cc.Node} stencil
      */
     setStencil: null,

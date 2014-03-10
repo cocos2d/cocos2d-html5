@@ -42,12 +42,6 @@ cc.ACTION_TAG_INVALID = -1;
 cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     //***********variables*************
     originalTarget:null,
-
-    /** The "target".
-     The target will be set with the 'startWithTarget' method.
-     When the 'stop' method is called, target will be set to nil.
-     The target is 'assigned', it is not 'retained'.
-     */
     target:null,
     tag:cc.ACTION_TAG_INVALID,
 
@@ -56,12 +50,6 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
         this.originalTarget = null;
         this.target = null;
         this.tag = cc.ACTION_TAG_INVALID;
-    },
-    /**
-     * @return {String}
-     */
-    description:function () {
-        return "<cc.Action | Tag = " + this.tag + ">";
     },
 
     /**

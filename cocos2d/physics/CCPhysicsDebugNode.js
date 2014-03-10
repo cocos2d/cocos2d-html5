@@ -122,10 +122,9 @@ cc.CONSTRAINT_COLOR = cc.color(0, 255, 0, 128);
  * @class
  * @extends cc.DrawNode
  *
- * @property {cp.Space}     Physic world space
+ * @property {cp.Space} space     Physic world space
  */
 cc.PhysicsDebugNode = cc.DrawNode.extend({
-	/** @public */
 	space:null,
 
     _spaceObj:null,

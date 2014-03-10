@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Test-JsDoc" default="jsdoc" basedir=".">
 
-    <property name="src.dir" location="${basedir}/../../cocos2d"/>
+    <property name="src.dir" location="${basedir}/../../../cocos2d-html5/cocos2d"/>
 
     <property name="jsdoc.dir" location="${basedir}"/>
     <property name="rhino.dir" location="${basedir}/java/classes"/>
@@ -37,19 +37,19 @@
                 <include name="core/support/CCVertex.js"/>
                 <include name="core/support/TransformUtils.js"/>
                 <include name="core/platform/CCInputManager.js"/>
-                <include name="core/base_nodes/CCNode.js"/>
-                <include name="core/base_nodes/CCAtlasNode.js"/>
+                <include name="core/base-nodes/CCNode.js"/>
+                <include name="core/base-nodes/CCAtlasNode.js"/>
                 <include name="core/textures/CCTexture2D.js"/>
                 <include name="core/textures/CCTextureCache.js"/>
                 <include name="core/textures/CCTextureAtlas.js"/>
-                <include name="core/scenes_nodes/CCScene.js"/>
-                <include name="core/layers_nodes/CCLayer.js"/>
-                <include name="core/sprite_nodes/CCSprite.js"/>
-                <include name="core/sprite_nodes/CCAnimation.js"/>
-                <include name="core/sprite_nodes/CCAnimationCache.js"/>
-                <include name="core/sprite_nodes/CCSpriteFrame.js"/>
-                <include name="core/sprite_nodes/CCSpriteFrameCache.js"/>
-                <include name="core/sprite_nodes/CCSpriteBatchNode.js"/>
+                <include name="core/scenes/CCScene.js"/>
+                <include name="core/layers/CCLayer.js"/>
+                <include name="core/sprites/CCSprite.js"/>
+                <include name="core/sprites/CCAnimation.js"/>
+                <include name="core/sprites/CCAnimationCache.js"/>
+                <include name="core/sprites/CCSpriteFrame.js"/>
+                <include name="core/sprites/CCSpriteFrameCache.js"/>
+                <include name="core/sprites/CCSpriteBatchNode.js"/>
                 <include name="core/CCConfiguration.js"/>
                 <include name="core/CCDirector.js"/>
                 <include name="core/CCCamera.js"/>
@@ -61,7 +61,7 @@
                 <include name="core/event-manager/CCTouch.js"/>
                 <include name="core/event-manager/CCEventListener.js"/>
                 <include name="core/event-manager/CCEventManager.js"/>
-                <include name="core/labelTTF/CCLabelTTF.js"/>
+                <include name="core/labelttf/CCLabelTTF.js"/>
                 <include name="core/CCActionManager.js"/>
                 <include name="kazmath/utility.js"/>
                 <include name="kazmath/vec2.js"/>
@@ -79,13 +79,13 @@
                 <include name="shaders/CCShaderCache.js"/>
                 <include name="shaders/CCGLProgram.js"/>
                 <include name="shaders/CCGLStateCache.js"/>
-                <include name="render_texture/CCRenderTexture.js"/>
-                <include name="motion_streak/CCMotionStreak.js"/>
+                <include name="render-texture/CCRenderTexture.js"/>
+                <include name="motion-streak/CCMotionStreak.js"/>
                 <include name="node-grid/CCNodeGrid.js"/>
-                <include name="clipping_nodes/CCClippingNode.js"/>
+                <include name="clipping-nodes/CCClippingNode.js"/>
                 <include name="effects/CCGrid.js"/>
                 <include name="effects/CCGrabber.js"/>
-                <include name="shape_nodes/CCDrawNode.js"/>
+                <include name="shape-nodes/CCDrawNode.js"/>
                 <include name="actions/CCAction.js"/>
                 <include name="actions/CCActionInterval.js"/>
                 <include name="actions/CCActionInstant.js"/>
@@ -97,39 +97,39 @@
                 <include name="actions3d/CCActionGrid3D.js"/>
                 <include name="actions3d/CCActionTiledGrid.js"/>
                 <include name="actions3d/CCActionPageTurn3D.js"/>
-                <include name="progress_timer/CCProgressTimer.js"/>
-                <include name="progress_timer/CCActionProgressTimer.js"/>
-                <include name="transitions_nodes/CCTransition.js"/>
-                <include name="transitions_nodes/CCTransitionProgress.js"/>
-                <include name="transitions_nodes/CCTransitionPageTurn.js"/>
-                <include name="label_nodes/CCLabelAtlas.js"/>
-                <include name="label_nodes/CCLabelBMFont.js"/>
+                <include name="progress-timer/CCProgressTimer.js"/>
+                <include name="progress-timer/CCActionProgressTimer.js"/>
+                <include name="transitions/CCTransition.js"/>
+                <include name="transitions/CCTransitionProgress.js"/>
+                <include name="transitions/CCTransitionPageTurn.js"/>
+                <include name="labels/CCLabelAtlas.js"/>
+                <include name="labels/CCLabelBMFont.js"/>
                 <include name="compress/ZipUtils.js"/>
                 <include name="compress/base64.js"/>
                 <include name="compress/gzip.js"/>
                 <include name="compress/zlib.min.js"/>
-                <include name="particle_nodes/CCPNGReader.js"/>
-                <include name="particle_nodes/CCTIFFReader.js"/>
-                <include name="particle_nodes/CCParticleSystem.js"/>
-                <include name="particle_nodes/CCParticleExamples.js"/>
-                <include name="particle_nodes/CCParticleBatchNode.js"/>
-                <include name="text_input_node/CCIMEDispatcher.js"/>
-                <include name="text_input_node/CCTextFieldTTF.js"/>
-                <include name="menu_nodes/CCMenuItem.js"/>
-                <include name="menu_nodes/CCMenu.js"/>
-                <include name="tileMap_nodes/CCTGAlib.js"/>
-                <include name="tileMap_nodes/CCTMXTiledMap.js"/>
-                <include name="tileMap_nodes/CCTMXXMLParser.js"/>
-                <include name="tileMap_nodes/CCTMXObjectGroup.js"/>
-                <include name="tileMap_nodes/CCTMXLayer.js"/>
-                <include name="parallax_nodes/CCParallaxNode.js"/>
+                <include name="particle/CCPNGReader.js"/>
+                <include name="particle/CCTIFFReader.js"/>
+                <include name="particle/CCParticleSystem.js"/>
+                <include name="particle/CCParticleExamples.js"/>
+                <include name="particle/CCParticleBatchNode.js"/>
+                <include name="text-input/CCIMEDispatcher.js"/>
+                <include name="text-input/CCTextFieldTTF.js"/>
+                <include name="menus/CCMenuItem.js"/>
+                <include name="menus/CCMenu.js"/>
+                <include name="tilemap/CCTGAlib.js"/>
+                <include name="tilemap/CCTMXTiledMap.js"/>
+                <include name="tilemap/CCTMXXMLParser.js"/>
+                <include name="tilemap/CCTMXObjectGroup.js"/>
+                <include name="tilemap/CCTMXLayer.js"/>
+                <include name="parallax/CCParallaxNode.js"/>
                 <include name="audio/SimpleAudioEngine.js"/>
                 <include name="CCUserDefault.js"/>
                 <include name="CCImage.js"/>
                 <include name="jsloader.js"/>
             </fileset>
 
-            <fileset dir="${basedir}/../../extensions">
+            <fileset dir="${basedir}/../../../cocos2d-html5/extensions">
                 <!--<include name="CCBReader/CCBReaderUtil.js"/>
                 <include name="CCBReader/CCBValue.js"/>
                 <include name="CCBReader/CCBKeyframe.js"/>

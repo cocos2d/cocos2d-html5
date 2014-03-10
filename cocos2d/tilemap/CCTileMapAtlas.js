@@ -45,7 +45,6 @@
  * @property {cc.ImageTGA}  tgaInfo - TGA Info
  */
 cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
-	/** @public */
     tgaInfo:null,
 
 	indices:null,

@@ -107,31 +107,21 @@ cc.TMX_ORIENTATION_ISO = 2;
  * @property {Number}   tileHeight      - Height of a tile
  */
 cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
-	/** @public */
-	properties:null,
-
-	/** @public */
-	mapOrientation:null,
-
-	/** @public */
-	objectGroups:null,
+	properties: null,
+	mapOrientation: null,
+	objectGroups: null,
 
     //the map's size property measured in tiles
-    _mapSize:null,
-    _tileSize:null,
+    _mapSize: null,
+    _tileSize: null,
     //tile properties
-    _tileProperties:null,
-    _className:"TMXTiledMap",
+    _tileProperties: null,
+    _className: "TMXTiledMap",
 
     ctor:function(){
         cc.Node.prototype.ctor.call(this);
         this._mapSize = cc.size(0, 0);
         this._tileSize = cc.size(0, 0);
-        this.properties = null;
-        this.objectGroups = null;
-        this.mapOrientation = null;
-
-        this._tileProperties = null;
     },
 
     /**

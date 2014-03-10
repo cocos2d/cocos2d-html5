@@ -70,14 +70,12 @@ cc.NextPOT = function (x) {
  * @extends cc.Node
  *
  * @property {cc.Sprite}    sprite          - The sprite.
- * @property {Number}       clearFlags      - Code for "auto" update.
  * @property {Number}       clearDepthVal   - Clear depth value.
  * @property {Number}       clearStencilVal - Clear stencil value.
  * @property {cc.Color}     clearColorVal   - Clear color value, valid only when "autoDraw" is true.
  * @property {Boolean}      autoDraw        - Indicate auto draw mode activate or not.
  */
 cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
-	/** @public */
 	sprite:null,
 
 	/**
@@ -88,10 +86,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 	 */
 	clearFlags:0,
 
-	/** @public */
 	clearDepthVal:0,
-
-	/** @public */
 	autoDraw:false,
 
     /**
@@ -120,9 +115,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _clearColorStr:null,
     _className:"RenderTexture",
 
-    /**
-     * Constructor
-     */
     ctor: null,
 
     _ctorForCanvas: function () {
@@ -180,6 +172,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
+     * @function
      * @param {Number} width
      * @param {Number} height
      * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
@@ -292,6 +285,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * starts grabbing
+     * @function
      */
     begin: null,
 
@@ -428,6 +422,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * ends grabbing
+     * @function
      */
     end: null,
 
@@ -493,6 +488,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a specified depth value
+     * @function
      * @param {Number} depthValue
      */
     clearDepth:null,
@@ -518,6 +514,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a specified stencil value
+     * @function
      * @param {Number} stencilValue
      */
     clearStencil:null,
@@ -725,12 +722,18 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * Clear color value. Valid only when "autoDraw" is true.
+     * @function
      * @return {cc.Color}
      */
     getClearColor:function () {
         return this._clearColor;
     },
 
+	/**
+	 * Set the clear color value. Valid only when "autoDraw" is true.
+	 * @function
+	 * @param {cc.Color} clearColor The clear color
+	 */
     setClearColor:null,
 
     _setClearColorForCanvas:function (clearColor) {

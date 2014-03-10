@@ -162,7 +162,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     },
 
     /**
-     *  Atlas generation
+     * @function
+     * Atlas generation
      */
     updateAtlasValues: null,
 
@@ -281,6 +282,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
     /**
      * set the display string
+     * @function
      * @param {String} label
      */
     setString: null,

@@ -91,10 +91,7 @@ cc.TextFieldDelegate = cc.Class.extend(/** @lends cc.TextFieldDelegate# */{
  * @property {cc.Color}     colorSpaceHolder
  */
 cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
-	/** @public */
 	delegate:null,
-
-	/** @public */
 	colorSpaceHolder:null,
 
     _lens:null,
@@ -102,9 +99,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _placeHolder:"",
     _charCount:0,
     _className:"TextFieldTTF",
-    /**
-     * Constructor
-     */
+
     ctor:function () {
         this.colorSpaceHolder = cc.color(127, 127, 127);
         cc.imeDispatcher.addDelegate(this);

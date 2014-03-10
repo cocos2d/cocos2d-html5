@@ -29,12 +29,12 @@
  *     Singleton that manages the Animations.<br/>
  *     It saves in a cache the animations. You should use this class if you want to save your animations in a cache.<br/>
  * </p>
- * @Object
+ * @namespace
  *
  * @example
  * cc.animationCache.addAnimation(animation,"animation1");
  */
-cc.animationCache = /** @lends cc.AnimationCache# */{
+cc.animationCache = /** @lends cc.animationCache# */{
 	_animations: {},
 
     /**
