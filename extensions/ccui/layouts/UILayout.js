@@ -945,7 +945,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {Number} opacity
      */
     setBackGroundImageOpacity: function (opacity) {
-        this._backGroundImageColor.a = color.a;
+        this._backGroundImageColor.a = opacity;
         this.getBackGroundImageColor();
     },
 
@@ -1108,7 +1108,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                     var locFinalPosX = 0;
                     var locFinalPosY = 0;
                     if (locRelativeName) {
-                        locRelativeWidget = ccui.UIHelper.seekWidgetByRelativeName(this, locRelativeName);
+                        locRelativeWidget = ccui.uiHelper.seekWidgetByRelativeName(this, locRelativeName);
                         if (locRelativeWidget) {
                             locRelativeWidgetLP = locRelativeWidget.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
                         }

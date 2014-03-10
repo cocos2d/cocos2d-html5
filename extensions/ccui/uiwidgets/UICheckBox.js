@@ -368,22 +368,6 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     },
 
     /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        return this._backGroundBoxRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        return this._backGroundBoxRenderer.isFlippedY();
-    },
-
-    /**
      * override "setAnchorPoint" of widget.
      * @param {cc.Point|Number} point The anchor point of UICheckBox or The anchor point.x of UICheckBox.
      * @param {Number} [y] The anchor point.y of UICheckBox.

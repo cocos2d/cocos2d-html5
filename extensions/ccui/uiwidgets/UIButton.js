@@ -513,28 +513,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     },
 
     /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        if (this._scale9Enabled) {
-            return false;
-        }
-        return this._buttonNormalRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        if (this._scale9Enabled) {
-            return false;
-        }
-        return this._buttonNormalRenderer.isFlippedY();
-    },
-
-    /**
      * override "setAnchorPoint" of widget.
      * @param {cc.Point|Number} point The anchor point of UIButton or The anchor point.x of UIButton.
      * @param {Number} [y] The anchor point.y of UIButton.
