@@ -1555,26 +1555,6 @@ cc.game = {
      * @type Function
      */
     onStop : null,
-    /**
-     * Callback before game resumes.
-     * @type Function
-     */
-    onBeforeResume : null,
-    /**
-     * Callback after game resumes.
-     * @type Function
-     */
-    onAfterResume : null,
-    /**
-     * Callback before game pauses.
-     * @type Function
-     */
-    onBeforePause : null,
-    /**
-     * Callback after game pauses.
-     * @type Function
-     */
-    onAfterPause : null,
 
     /**
      * Set frameRate of game.
