@@ -1200,7 +1200,9 @@ cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied)
     cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
 };
 
-
+/*
+ * @alias cc.Texture2D
+ */
 window._c = cc.Texture2D;
 
 /**

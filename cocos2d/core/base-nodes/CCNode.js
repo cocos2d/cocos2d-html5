@@ -1858,9 +1858,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _camera:null,
     grid:null,
 
-    /**
-     * Constructor
-     */
     ctor: null,
 
     _ctorForCanvas: function () {
@@ -1882,7 +1879,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * recursive method that visit its children and draw them
+     * Recursive method that visit its children and draw them
+     * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
     visit:null,
@@ -1969,6 +1967,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes.
+     * @function
+     * @param {CanvasRenderingContext2D|null} ctx Render context
      */
     transform:null,
 
@@ -2016,8 +2016,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
-    /** Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
+    /**
+     * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
      * The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     nodeToParentTransform: null,

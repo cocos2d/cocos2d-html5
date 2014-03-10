@@ -26,7 +26,7 @@
 
 cc.openURL = function (url) {
     if (this.isMobile) {
-        var size = cc.Director.getInstance().getWinSize();
+        var size = cc.director.getWinSize();
         var w = size.width + "px";
         var h = size.height + "px";
 

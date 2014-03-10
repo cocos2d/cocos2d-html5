@@ -81,13 +81,14 @@ cc.__t = function (v) {
 };
 
 /**
- * <p>CCDrawNode for Canvas                                             <br/>
+ * <p>CCDrawNode                                                <br/>
  * Node that draws dots, segments and polygons.                        <br/>
  * Faster than the "drawing primitives" since they it draws everything in one single batch.</p>
  * @class
+ * @name cc.DrawNode
  * @extends cc.Node
  */
-cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
+cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     _buffer: null,
     _blendFunc: null,
     _lineWidth: 0,

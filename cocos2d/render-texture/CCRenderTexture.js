@@ -172,6 +172,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     },
 
     /**
+     * @function
      * @param {Number} width
      * @param {Number} height
      * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
@@ -284,6 +285,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * starts grabbing
+     * @function
      */
     begin: null,
 
@@ -420,6 +422,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * ends grabbing
+     * @function
      */
     end: null,
 
@@ -485,6 +488,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a specified depth value
+     * @function
      * @param {Number} depthValue
      */
     clearDepth:null,
@@ -510,6 +514,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a specified stencil value
+     * @function
      * @param {Number} stencilValue
      */
     clearStencil:null,
@@ -717,12 +722,18 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * Clear color value. Valid only when "autoDraw" is true.
+     * @function
      * @return {cc.Color}
      */
     getClearColor:function () {
         return this._clearColor;
     },
 
+	/**
+	 * Set the clear color value. Valid only when "autoDraw" is true.
+	 * @function
+	 * @param {cc.Color} clearColor The clear color
+	 */
     setClearColor:null,
 
     _setClearColorForCanvas:function (clearColor) {

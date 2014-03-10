@@ -371,6 +371,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     /**
+     * @function
      * @param {cc.Node} stencil
      */
     setStencil: null,

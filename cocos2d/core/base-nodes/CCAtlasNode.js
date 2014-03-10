@@ -240,9 +240,10 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     /**
+     * @function
      * @param {cc.Color} color3
      */
-    setColor:null,
+    setColor: null,
 
     _setColorForCanvas:function (color3) {
         var locRealColor = this._realColor;
@@ -291,9 +292,10 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     },
 
     /**
+     * @function
      * @param {Number} opacity
      */
-    setOpacity: null,
+    setOpacity: function (opacity) {},
 
     _setOpacityForCanvas: function (opacity) {
         cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
@@ -318,6 +320,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     // cc.Texture protocol
     /**
      * returns the used texture
+     * @function
      * @return {cc.Texture2D}
      */
     getTexture: null,
@@ -330,7 +333,9 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         return  this.textureAtlas.texture;
     },
 
-    /** sets a new texture. it will be retained
+    /**
+     * sets a new texture. it will be retained
+     * @function
      * @param {cc.Texture2D} texture
      */
     setTexture: null,

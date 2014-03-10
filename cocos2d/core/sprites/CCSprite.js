@@ -692,6 +692,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     //
     /**
      * opacity: conforms to CCRGBAProtocol protocol
+     * @function
      * @param {Boolean} modify
      */
     setOpacityModifyRGB:null,
@@ -719,6 +720,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     updateDisplayedOpacity: null,
+
     _updateDisplayedOpacityForWebGL:function (parentOpacity) {
         cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this.updateColor();
@@ -789,6 +791,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Constructor
+     * @function
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
      */
     ctor: null,
@@ -868,6 +871,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * conforms to cc.TextureProtocol protocol
+     * @function
      * @param {Number|cc.BlendFunc} src
      * @param {Number} dst
      */
@@ -899,6 +903,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Initializes an empty sprite with nothing init.
+     * @function
      * @return {Boolean}
      */
     init:null,
@@ -1009,6 +1014,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     /**
      * Initializes a sprite with a texture and a rect in points, optionally rotated.  <br/>
      * After initialization, the rect used will be the size of the texture, and the offset will be (0,0).
+     * @function
      * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
      * @param {cc.Rect} rect Only the contents inside rect of this texture will be applied for this sprite.
      * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
@@ -1195,6 +1201,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * updates the texture rect of the CCSprite in points.
+     * @function
      * @param {cc.Rect} rect a rect of texture
      * @param {Boolean} rotated
      * @param {cc.Size} untrimmedSize
@@ -1272,6 +1279,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // BatchNode methods
     /**
      * updates the quad according the the rotation, position, scale values.
+     * @function
      */
     updateTransform: null,
 
@@ -1384,6 +1392,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Add child to sprite (override cc.Node )
+     * @function
      * @param {cc.Sprite} child
      * @param {Number} localZOrder  child's zOrder
      * @param {String} tag child's tag
@@ -1465,7 +1474,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * opacity setter
+     * Opacity setter
+     * @function
      * @param {Number} opacity
      */
     setOpacity:null,
@@ -1481,7 +1491,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * color setter
+     * Color setter
+     * @function
      * @param {cc.Color} color3
      */
     setColor: null,
@@ -1521,6 +1532,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // Frames
     /**
      * Sets a new spriteFrame to the cc.Sprite.
+     * @function
      * @param {cc.SpriteFrame|String} newFrame
      * @deprecated
      */
@@ -1618,6 +1630,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Returns whether or not a cc.SpriteFrame is being displayed
+     * @function
      * @param {cc.SpriteFrame} frame
      * @return {Boolean}
      */
@@ -1648,6 +1661,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     /**
      * Sets the batch node to sprite
+     * @function
      * @param {cc.SpriteBatchNode|null} spriteBatchNode
      * @example
      *  var batch = cc.SpriteBatchNode.create("Images/grossini_dance_atlas.png", 15);
@@ -1704,6 +1718,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // CCTextureProtocol
     /**
      * Texture of sprite setter
+     * @function
      * @param {cc.Texture2D|String} texture
      */
     setTexture: null,
@@ -1887,6 +1902,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
     /**
      * draw sprite to canvas
+     * @function
      */
     draw: null,
 

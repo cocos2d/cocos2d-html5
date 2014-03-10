@@ -539,7 +539,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
      *
      * @return {Number}
      */
-    fontSize:function () {
+    getFontSize:function () {
         return this._fontSize;
     },
 
@@ -554,7 +554,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     /**
      * @return {String}
      */
-    fontName:function () {
+    getFontName:function () {
         return this._fontName;
     },
 
@@ -597,10 +597,10 @@ window._p = cc.MenuItemFont.prototype;
 // Extended properties
 /** @expose */
 _p.fontSize;
-cc.defineGetterSetter(_p, "fontSize", _p.fontSize, _p.setFontSize);
+cc.defineGetterSetter(_p, "fontSize", _p.getFontSize, _p.setFontSize);
 /** @expose */
 _p.fontName;
-cc.defineGetterSetter(_p, "fontName", _p.fontName, _p.setFontName);
+cc.defineGetterSetter(_p, "fontName", _p.getFontName, _p.setFontName);
 
 delete window._p;
 

@@ -128,7 +128,6 @@ cc.TMX_TILE_FLIPPED_MASK = (~(cc.TMX_TILE_FLIPPED_ALL)) >>> 0;
  * @property {Array}    properties  - Properties of the layer info.
  */
 cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
-	/** @public */
     properties:null,
 
 	name:"",

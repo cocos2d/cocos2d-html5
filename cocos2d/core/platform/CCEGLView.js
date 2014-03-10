@@ -24,21 +24,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * The shared EGLView
- * @Object
- * @type {cc.EGLView}
- */
-cc.view;
-
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
 /**
- * @class
- * @extends cc.Class
+ * cc.view is the shared view object.
+ * @namespace
+ * @name cc.view
  */
-cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
+cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _delegate: null,
     // Size of parent node that contains cc.container and cc._canvas
     _frameSize: null,
@@ -617,14 +611,14 @@ cc.EGLView._getInstance = function () {
 cc.ContainerStrategy = cc.Class.extend({
     /**
      * Manipulation before appling the strategy
-     * @param {cc.EGLView} The target view
+     * @param {cc.view} The target view
      */
     preApply: function (view) {
     },
 
     /**
      * Function to apply this strategy
-     * @param {cc.EGLView} view
+     * @param {cc.view} view
      * @param {cc.Size} designedResolution
      */
     apply: function (view, designedResolution) {
@@ -632,7 +626,7 @@ cc.ContainerStrategy = cc.Class.extend({
 
     /**
      * Manipulation after applying the strategy
-     * @param {cc.EGLView} view  The target view
+     * @param {cc.view} view  The target view
      */
     postApply: function (view) {
 
@@ -725,7 +719,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     /**
      * Manipulation before applying the strategy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     preApply: function (view) {
     },
@@ -734,7 +728,7 @@ cc.ContentStrategy = cc.Class.extend({
      * Function to apply this strategy
      * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
      * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
-     * @param {cc.EGLView} view
+     * @param {cc.view} view
      * @param {cc.Size} designedResolution
      * @return {object} scaleAndViewportRect
      */
@@ -744,7 +738,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     /**
      * Manipulation after applying the strategy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     postApply: function (view) {
     }
@@ -921,7 +915,7 @@ cc.ResolutionPolicy = cc.Class.extend({
 
     /**
      * Manipulation before applying the resolution policy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     preApply: function (view) {
         this._containerStrategy.preApply(view);
@@ -932,7 +926,7 @@ cc.ResolutionPolicy = cc.Class.extend({
      * Function to apply this resolution policy
      * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
      * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      * @param {cc.Size} designedResolution The user defined design resolution
      * @return {object} An object contains the scale X/Y values and the viewport rect
      */
@@ -943,7 +937,7 @@ cc.ResolutionPolicy = cc.Class.extend({
 
     /**
      * Manipulation after appyling the strategy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     postApply: function (view) {
         this._containerStrategy.postApply(view);

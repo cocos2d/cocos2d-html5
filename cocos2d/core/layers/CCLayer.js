@@ -508,6 +508,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     /**
      * Sets the untransformed size of the LayerColor.
      * @override
+     * @function
      * @param {cc.Size|Number} size The untransformed size of the LayerColor or The untransformed size's width of the LayerColor.
      * @param {Number} [height] The untransformed size's height of the LayerColor.
      */
@@ -586,8 +587,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * renders the layer
-     * @param {CanvasRenderingContext2D|Null} ctx
+     * Renders the layer
+     * @function
+     * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
     draw:null,
 
