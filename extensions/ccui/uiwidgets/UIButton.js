@@ -123,7 +123,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         if (this._scale9Enabled == able) {
             return;
         }
-        this._brightStyle = ccui.BRIGHT_STYLE_NONE;
+        this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
         this._scale9Enabled = able;
 
         cc.Node.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
@@ -571,9 +571,9 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     getVirtualRenderer: function () {
         if (this._bright) {
             switch (this._brightStyle) {
-                case ccui.BRIGHT_STYLE_NORMAL:
+                case ccui.Widget.BRIGHT_STYLE_NORMAL:
                     return this._buttonNormalRenderer;
-                case ccui.BRIGHT_STYLE_HIGH_LIGHT:
+                case ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT:
                     return this._buttonClickedRenderer;
                 default:
                     return null;

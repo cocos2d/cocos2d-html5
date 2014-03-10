@@ -42,7 +42,7 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
-        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccui.TEXTBMFONT_RENDERER_ZORDER, -1);
+        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccui.TextBMFont.RENDERER_ZORDER, -1);
     },
 
     /**

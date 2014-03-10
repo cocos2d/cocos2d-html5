@@ -92,7 +92,7 @@ ccui.helper = {
 	    var length = arrayRootChildren.length;
 	    for (var i = 0; i < length; i++) {
 	        var child = arrayRootChildren[i];
-	        var layoutParameter = child.getLayoutParameter(ccui.LAYOUT_PARAMETER_RELATIVE);
+	        var layoutParameter = child.getLayoutParameter(ccui.Layout.RELATIVE);
 	        if (layoutParameter && layoutParameter.getRelativeName() == name) {
 	            return child;
 	        }

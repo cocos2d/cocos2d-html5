@@ -52,7 +52,7 @@ ccui.ListView = ccui.ScrollView.extend({
     init: function () {
         if (ccui.ScrollView.prototype.init.call(this)) {
             this._items = [];
-            this.setLayoutType(ccui.LAYOUT_TYPE_LINEAR_VERTICAL);
+            this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
             return true;
         }
         return false;
@@ -343,10 +343,10 @@ ccui.ListView = ccui.ScrollView.extend({
     setDirection: function (dir) {
         switch (dir) {
             case ccui.ScrollView.DIR_VERTICAL:
-                this.setLayoutType(ccui.LAYOUT_TYPE_LINEAR_VERTICAL);
+                this.setLayoutType(ccui.Layout.LINEAR_VERTICAL);
                 break;
             case ccui.ScrollView.DIR_HORIZONTAL:
-                this.setLayoutType(ccui.LAYOUT_TYPE_LINEAR_HORIZONTAL);
+                this.setLayoutType(ccui.Layout.LINEAR_HORIZONTAL);
                 break;
             case ccui.ScrollView.DIR_BOTH:
                 return;
