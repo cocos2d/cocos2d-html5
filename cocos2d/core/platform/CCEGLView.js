@@ -49,6 +49,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _viewPortRect: null,
     // The visible rect in content's coordinate in point
     _visibleRect: null,
+	_retinaEnabled: false,
     // The device's pixel ratio (for retina displays)
     _devicePixelRatio: 1,
     // the view name
@@ -94,6 +95,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._visibleRect = cc.rect(0, 0, w, h);
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
+
+	    var sys = cc.sys;
+	    this.enableRetina(sys.os == sys.OS_IOS || sys.os == sys.OS_OSX);
 
         cc.visibleRect.init(this._designResolutionSize);
 
@@ -224,6 +228,23 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     adjustViewPort: function (enabled) {
         this._isAdjustViewPort = enabled;
     },
+
+	/**
+	 * Retina support is enabled by default for Apple device but disabled for other devices,
+	 * it takes effect only when you called setDesignResolutionPolicy
+	 * @param {Boolean} enabled  Enable or disable retina display
+	 */
+	enableRetina: function(enabled) {
+		this._retinaEnabled = enabled ? true : false;
+	},
+
+	/**
+	 * Check whether retina display is enabled.
+	 * @return {Boolean}
+	 */
+	isRetinaEnabled: function() {
+		return this._retinaEnabled;
+	},
 
     /**
      * Force destroying EGL view, subclass must implement this method.
@@ -594,16 +615,11 @@ cc.EGLView._getInstance = function () {
  * @extends cc.Class
  */
 cc.ContainerStrategy = cc.Class.extend({
-    // Adjust canvas's size for retina display
-    _adjustRetina: false,
-
     /**
      * Manipulation before appling the strategy
      * @param {cc.EGLView} The target view
      */
     preApply: function (view) {
-        var sys = cc.sys;
-        this._adjustRetina = sys.os == sys.OS_IOS || sys.os == sys.OS_OSX
     },
 
     /**
@@ -635,7 +651,7 @@ cc.ContainerStrategy = cc.Class.extend({
         locContainer.style.height = locCanvasElement.style.height = h + "px";
         // Setup pixel ratio for retina display
         var devicePixelRatio = view._devicePixelRatio = 1;
-        if (this._adjustRetina)
+        if (view.isRetinaEnabled())
             devicePixelRatio = view._devicePixelRatio = window.devicePixelRatio || 1;
         // Setup canvas
         locCanvasElement.width = w * devicePixelRatio;
