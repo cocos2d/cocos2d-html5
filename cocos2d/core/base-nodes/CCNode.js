@@ -128,12 +128,6 @@ cc.s_globalOrderOfArrival = 1;
  * @property {cc.GridBase}          grid            - grid object that is used when applying effects
  * @property {cc.GLProgram}         shaderProgram   - The shader program currently used for this node
  * @property {Number}               glServerState   - The state of OpenGL server side
- *
- * @example
- * // example
- * cc.Sprite = cc.Node.extend({});
- * cc.Sprite.initWithImage = function(){
- * };
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node

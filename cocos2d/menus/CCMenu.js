@@ -55,7 +55,6 @@ cc.DEFAULT_PADDING = 5;
  * @property {Boolean}  enabled - Indicates whether or not the menu is enabled
  */
 cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
-	/** @public */
 	enabled:false,
 
     _color:null,

@@ -41,13 +41,7 @@
  *
  */
 cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
-	/** @public */
 	textureAtlas:null,
-
-	/**
-	 * @public
-	 * Number of quads to draw
-	 */
 	quadsToDraw:0,
 
     RGBAProtocol:true,

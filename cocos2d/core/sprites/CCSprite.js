@@ -276,17 +276,8 @@ if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
  */
 cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     RGBAProtocol:true,
-
-	/** @public */
 	dirty:false,
-
-	/** @public */
 	atlasIndex:0,
-
-	/**
-	 * @public
-	 * The weak reference of the cc.TextureAtlas when the sprite is rendered using via cc.SpriteBatchNode
-	 */
     textureAtlas:null,
 
     _batchNode:null,

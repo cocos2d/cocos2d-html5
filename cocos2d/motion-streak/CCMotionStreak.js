@@ -41,16 +41,8 @@
  * @property {Boolean}      startingPositionInitialized     - Indicate whether starting position initialized.
  */
 cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
-	/**
-	 * @public
-	 * texture used for the motion streak
-	 */
 	texture:null,
-
-	/** @public */
 	fastMode:false,
-
-	/** @public */
     startingPositionInitialized:false,
 
     _blendFunc:null,

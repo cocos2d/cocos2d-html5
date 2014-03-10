@@ -1060,7 +1060,6 @@ cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, fiv
  * @property {Number}   selectedIndex   - Index of selected sub item
  */
 cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
-	/** @public */
 	subItems:null,
 
     _selectedIndex:0,

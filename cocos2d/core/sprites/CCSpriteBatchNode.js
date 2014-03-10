@@ -58,7 +58,6 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
  * var parent2 = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
  */
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
-	/** @public */
     textureAtlas:null,
 
 	_blendFunc:null,

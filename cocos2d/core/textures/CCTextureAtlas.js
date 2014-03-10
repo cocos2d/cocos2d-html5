@@ -43,10 +43,7 @@
  * @property {Array}    quads           - <@readonly> Quads that are going to be rendered
  */
 cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
-	/** @public */
 	dirty:false,
-
-	/** @public */
 	texture:null,
 
     _indices:null,

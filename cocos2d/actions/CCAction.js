@@ -57,12 +57,6 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
         this.target = null;
         this.tag = cc.ACTION_TAG_INVALID;
     },
-    /**
-     * @return {String}
-     */
-    description:function () {
-        return "<cc.Action | Tag = " + this.tag + ">";
-    },
 
     /**
      * to copy object with deep copy.

@@ -70,14 +70,12 @@ cc.NextPOT = function (x) {
  * @extends cc.Node
  *
  * @property {cc.Sprite}    sprite          - The sprite.
- * @property {Number}       clearFlags      - Code for "auto" update.
  * @property {Number}       clearDepthVal   - Clear depth value.
  * @property {Number}       clearStencilVal - Clear stencil value.
  * @property {cc.Color}     clearColorVal   - Clear color value, valid only when "autoDraw" is true.
  * @property {Boolean}      autoDraw        - Indicate auto draw mode activate or not.
  */
 cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
-	/** @public */
 	sprite:null,
 
 	/**
@@ -88,10 +86,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 	 */
 	clearFlags:0,
 
-	/** @public */
 	clearDepthVal:0,
-
-	/** @public */
 	autoDraw:false,
 
     /**
@@ -120,9 +115,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _clearColorStr:null,
     _className:"RenderTexture",
 
-    /**
-     * Constructor
-     */
     ctor: null,
 
     _ctorForCanvas: function () {

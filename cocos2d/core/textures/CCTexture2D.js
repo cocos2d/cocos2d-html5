@@ -101,6 +101,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
  * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions <br/>
  *  i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).                                           <br/>
  * Be aware that the content of the generated textures will be upside-down! </p>
+ * @name cc.Texture2D
  * @class
  * @extends cc.Class
  *
