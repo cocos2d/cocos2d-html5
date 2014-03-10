@@ -205,7 +205,7 @@ cc.tiffReader = {
             tiffFields[fieldTagName] = { type: fieldTypeName, values: fieldValues };
         }
 
-        this.fileDirectories.push(tiffFields);
+        this._fileDirectories.push(tiffFields);
 
         var nextIFDByteOffset = this.getUint32(i);
         if (nextIFDByteOffset !== 0x00000000) {
@@ -233,10 +233,10 @@ cc.tiffReader = {
 
         var firstIFDByteOffset = this.getUint32(4);
 
-        this.fileDirectories = [];
+        this._fileDirectories.length = 0;
         this.parseFileDirectory(firstIFDByteOffset);
 
-        var fileDirectory = this.fileDirectories[0];
+        var fileDirectory = this._fileDirectories[0];
 
         var imageWidth = fileDirectory['ImageWidth'].values[0];
         var imageLength = fileDirectory['ImageLength'].values[0];
@@ -257,9 +257,9 @@ cc.tiffReader = {
 
         fileDirectory['BitsPerSample'].values.forEach(function (bitsPerSample, i, bitsPerSampleValues) {
             sampleProperties[i] = {
-                'bitsPerSample': bitsPerSample,
-                'hasBytesPerSample': false,
-                'bytesPerSample': undefined
+                bitsPerSample: bitsPerSample,
+                hasBytesPerSample: false,
+                bytesPerSample: undefined
             };
 
             if ((bitsPerSample % 8) === 0) {
