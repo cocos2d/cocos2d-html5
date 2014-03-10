@@ -77,7 +77,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
         this._layoutType = ccui.Layout.ABSOLUTE;
-        this._widgetType = ccui.WIDGET_TYPE_CONTAINER;
+        this._widgetType = ccui.Widget.TYPE_CONTAINER;
         this._doLayoutDirty = true;
         this._clippingRectDirty = true;
         this._clippingType = ccui.Layout.CLIPPING_STENCIL;
@@ -928,7 +928,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {Number} opacity
      */
     setBackGroundImageOpacity: function (opacity) {
-        this._backGroundImageColor.a = color.a;
+        this._backGroundImageColor.a = opacity;
         this.getBackGroundImageColor();
     },
 

@@ -38,7 +38,7 @@
  * @property {Boolean}          enabled         - Indicate whether the widget is enabled
  * @property {Boolean}          focused         - Indicate whether the widget is focused
  * @property {ccui.Widget.SIZE_ABSOLUTE|ccui.Widget.SIZE_PERCENT}     sizeType        - The size type of the widget
- * @property {ccui.WIDGET_TYPE_WIDGET|ccui.WIDGET_TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
+ * @property {ccui.Widget.TYPE_WIDGET|ccui.Widget.TYPE_CONTAINER}   widgetType      - <@readonly> The type of the widget
  * @property {Boolean}          touchEnabled    - Indicate whether touch events are enabled
  * @property {Boolean}          updateEnabled   - Indicate whether the update function is scheduled
  * @property {Boolean}          bright          - Indicate whether the widget is bright
@@ -89,7 +89,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._touchEnabled = false;
         this._touchPassedEnabled = false;
         this._focus = false;
-        this._brightStyle = ccui.BRIGHT_STYLE_NONE;
+        this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
         this._updateEnabled = false;
         this._touchStartPos = cc.p(0,0);
         this._touchMovePos = cc.p(0,0);
@@ -97,7 +97,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._touchEventListener = null;
         this._touchEventSelector = null;
         this._name = "default";
-        this._widgetType = ccui.WIDGET_TYPE_WIDGET;
+        this._widgetType = ccui.Widget.TYPE_WIDGET;
         this._actionTag = 0;
         this._size = cc.size(0, 0);
         this._customSize = cc.size(0, 0);
@@ -762,10 +762,10 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._focus = fucos;
         if (this._bright) {
             if (this._focus) {
-                this.setBrightStyle(ccui.BRIGHT_STYLE_HIGH_LIGHT);
+                this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT);
             }
             else {
-                this.setBrightStyle(ccui.BRIGHT_STYLE_NORMAL);
+                this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL);
             }
         }
         else {
@@ -776,8 +776,8 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     setBright: function (bright, containChild) {
         this._bright = bright;
         if (this._bright) {
-            this._brightStyle = ccui.BRIGHT_STYLE_NONE;
-            this.setBrightStyle(ccui.BRIGHT_STYLE_NORMAL);
+            this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
+            this.setBrightStyle(ccui.Widget.BRIGHT_STYLE_NORMAL);
         }
         else {
             this.onPressStateChangedToDisabled();
@@ -786,19 +786,19 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * To set the bright style of widget.
-     * @param {ccui.BRIGHT_STYLE_NONE|ccui.BRIGHT_STYLE_NORMAL|ccui.BRIGHT_STYLE_HIGH_LIGHT} style
+     * @param {ccui.Widget.BRIGHT_STYLE_NONE|ccui.Widget.BRIGHT_STYLE_NORMAL|ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT} style
      */
     setBrightStyle: function (style) {
         if (this._brightStyle == style) {
             return;
         }
-        style = style|| ccui.BRIGHT_STYLE_NORMAL;
+        style = style|| ccui.Widget.BRIGHT_STYLE_NORMAL;
         this._brightStyle = style;
         switch (this._brightStyle) {
-            case ccui.BRIGHT_STYLE_NORMAL:
+            case ccui.Widget.BRIGHT_STYLE_NORMAL:
                 this.onPressStateChangedToNormal();
                 break;
-            case ccui.BRIGHT_STYLE_HIGH_LIGHT:
+            case ccui.Widget.BRIGHT_STYLE_HIGH_LIGHT:
                 this.onPressStateChangedToPressed();
                 break;
             default:
@@ -1269,7 +1269,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     /**
      * get widget type
-     * @returns {ccui.WIDGET_TYPE_WIDGET|ccui.WIDGET_TYPE_CONTAINER}
+     * @returns {ccui.Widget.TYPE_WIDGET|ccui.Widget.TYPE_CONTAINER}
      */
     getWidgetType: function () {
         return this._widgetType;
