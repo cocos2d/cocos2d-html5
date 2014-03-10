@@ -120,3 +120,4 @@ ccui.helper = {
 	}
 
 };
+ccui.helper;
