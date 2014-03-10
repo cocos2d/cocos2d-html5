@@ -36,6 +36,7 @@
                 <include name="core/support/CCPointExtension.js"/>
                 <include name="core/support/CCVertex.js"/>
                 <include name="core/support/TransformUtils.js"/>
+                <include name="core/platform/CCInputManager.js"/>
                 <include name="core/base_nodes/CCNode.js"/>
                 <include name="core/base_nodes/CCAtlasNode.js"/>
                 <include name="core/textures/CCTexture2D.js"/>
@@ -55,9 +56,11 @@
                 <include name="core/CCScheduler.js"/>
                 <include name="core/CCLoader.js"/>
                 <include name="core/CCDrawingPrimitives.js"/>
-                <include name="core/platform/CCApplication.js"/>
                 <include name="core/platform/CCSAXParser.js"/>
-                <include name="core/platform/AppControl.js"/>
+                <include name="core/event-manager/CCEvent.js"/>
+                <include name="core/event-manager/CCTouch.js"/>
+                <include name="core/event-manager/CCEventListener.js"/>
+                <include name="core/event-manager/CCEventManager.js"/>
                 <include name="core/labelTTF/CCLabelTTF.js"/>
                 <include name="core/CCActionManager.js"/>
                 <include name="kazmath/utility.js"/>

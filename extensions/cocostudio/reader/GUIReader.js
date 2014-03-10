@@ -296,8 +296,8 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var colorG = options["colorG"] !== undefined ? options["colorG"] : 255;
         var colorB = options["colorB"] !== undefined ? options["colorB"] : 255;
         widget.setColor(cc.color(colorR, colorG, colorB));
-        var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccui.WIDGET_TYPE_WIDGET) ? 0.5 : 0);
-        var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccui.WIDGET_TYPE_WIDGET) ? 0.5 : 0);
+        var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccui.Widget.TYPE_WIDGET) ? 0.5 : 0);
+        var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccui.Widget.TYPE_WIDGET) ? 0.5 : 0);
         widget.setAnchorPoint(apx, apy);
         var flipX = options["flipX"];
         var flipY = options["flipY"];
@@ -938,8 +938,8 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var colorG = options["colorG"] !== undefined ? options["colorG"] : 255;
         var colorB = options["colorB"] !== undefined ? options["colorB"] : 255;
         widget.setColor(cc.color(colorR, colorG, colorB));
-        var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccui.WIDGET_TYPE_WIDGET) ? 0.5 : 0);
-        var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccui.WIDGET_TYPE_WIDGET) ? 0.5 : 0);
+        var apx = options["anchorPointX"] !== undefined ? options["anchorPointX"] : ((widget.getWidgetType() == ccui.Widget.TYPE_WIDGET) ? 0.5 : 0);
+        var apy = options["anchorPointY"] !== undefined ? options["anchorPointY"] : ((widget.getWidgetType() == ccui.Widget.TYPE_WIDGET) ? 0.5 : 0);
         widget.setAnchorPoint(apx, apy);
         var flipX = options["flipX"];
         var flipY = options["flipY"];
