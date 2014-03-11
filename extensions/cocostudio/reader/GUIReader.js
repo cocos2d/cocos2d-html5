@@ -23,7 +23,7 @@
  ****************************************************************************/
 /**
  * Base object for ccs.GUIReader
- * @object
+ * @namespace
  */
 ccs.guiReader = /** @lends ccs.GUIReader# */{
     _filePath: "",

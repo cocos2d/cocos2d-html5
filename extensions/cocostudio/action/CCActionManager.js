@@ -24,7 +24,7 @@
 
 /**
  * Base singleton object for ccs.ActionManager
- * @object
+ * @namespace
  */
 ccs.actionManager = /** @lends ccs.ActionManager# */{
     _actionDic: {},

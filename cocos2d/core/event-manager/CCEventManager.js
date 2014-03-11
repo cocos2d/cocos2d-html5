@@ -98,9 +98,9 @@ cc.__getListenerID = function (event) {
  *  The EventListener list is managed in such a way that event listeners can be added and removed even          <br/>
  *  from within an EventListener, while events are being dispatched.
  * </p>
- * @class
+ * @namespace
  */
-cc.eventManager = {
+cc.eventManager = /** @lends cc.eventManager# */{
     //Priority dirty flag
     DIRTY_NONE:0,
     DIRTY_FIXED_PRIORITY:1 <<0,
