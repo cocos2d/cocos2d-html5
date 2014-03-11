@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * base namespace of cocostuidio
+ * base namespace of Cocos GUI
  * @namespace
  */
 var ccui = ccui || {};
@@ -41,11 +41,9 @@ ccui.Class.extend = ccui.Class.extend || cc.Class.extend;
  */
 ccui.Node = ccui.Node || cc.Node;
 ccui.Node.extend = ccui.Node.extend || cc.Node.extend;
+
 /**
- * Get CocoStudio version
- * @returns {string}
- * @constructor
+ * Cocos GUI version
+ * @type {String}
  */
-ccui.CocosGUIVersion = function(){
-    return "CocosGUI v1.0.0.0";
-};
+ccui.cocosGUIVersion = "CocosGUI v1.0.0.0";

@@ -1451,16 +1451,6 @@ cc._setup = function (el, width, height) {
     }
 
 	// Init singletons
-	// Audio engine
-    if(cc.AudioEngine){
-        cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
-        cc.eventManager.addCustomListener(this.EVENT_HIDE, function(){
-            cc.audioEngine._pausePlaying();
-        });
-        cc.eventManager.addCustomListener(this.EVENT_SHOW, function(){
-            cc.audioEngine._resumePlaying();
-        });
-    }
 
 	// View
 	cc.view = cc.EGLView._getInstance();
@@ -1471,13 +1461,6 @@ cc._setup = function (el, width, height) {
 	cc.director = cc.Director._getInstance();
 	cc.director.setOpenGLView(cc.view);
     cc.winSize = cc.director.getWinSize();
-
-    // IME Dispatcher
-    if(cc.IMEDispatcher){
-        cc.imeDispatcher = new cc.IMEDispatcher();
-        cc.imeDispatcher.init();
-
-    }
 
 	// Parsers
 	cc.saxParser = new cc.SAXParser();

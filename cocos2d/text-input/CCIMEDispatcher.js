@@ -519,3 +519,8 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
         return null;
     }
 });
+
+
+// Initialize imeDispatcher singleton
+cc.imeDispatcher = new cc.IMEDispatcher();
+cc.imeDispatcher.init();
