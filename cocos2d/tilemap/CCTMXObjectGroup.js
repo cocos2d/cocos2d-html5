@@ -33,18 +33,12 @@
  * @property {String}   groupName   - Name of the group
  */
 cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
-	/** @public */
-	properties:null,
+	properties: null,
+    groupName: "",
 
-	/** @public */
-	groupName:null,
+    _positionOffset: null,
+    _objects: null,
 
-    _positionOffset:null,
-    _objects:null,
-
-    /**
-     *  Constructor
-     */
     ctor:function () {
         this.groupName = "";
         this._positionOffset = cc.p(0,0);

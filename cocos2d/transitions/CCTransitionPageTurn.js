@@ -29,7 +29,7 @@
  * to transition to the scene beneath it simulating a page turn.<br/></p>
  *
  * <p>This uses a 3DAction so it's strongly recommended that depth buffering<br/>
- * is turned on in cc.Director using:</p>
+ * is turned on in cc.director using:</p>
  *
  * <p>cc.director.setDepthBufferFormat(kDepthBuffer16);</p>
  * @class

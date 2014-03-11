@@ -554,13 +554,11 @@ cc.loader = {
         img.addEventListener("load", function () {
             this.removeEventListener('load', arguments.callee, false);
             this.removeEventListener('error', arguments.callee, false);
-            if(!cb) return;
-            cb(null, img);
+            if(cb) cb(null, img);
         });
         img.addEventListener("error", function () {
             this.removeEventListener('error', arguments.callee, false);
-            if(!cb) return;
-            cb("error");
+            if(cb) cb("load image failed");
         });
         img.src = url;
         return img;
@@ -913,10 +911,10 @@ cc._logToWebPage = function (msg) {
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 if(console.log){
-    cc.log = console.log.bind(cc);
-    cc.warn = console.warn.bind(cc);
-    cc.error = console.error.bind(cc);
-    cc.assert = console.assert.bind(cc);
+    cc.log = console.log.bind(console);
+    cc.warn = console.warn.bind(console);
+    cc.error = console.error.bind(console);
+    cc.assert = console.assert.bind(console);
 }else{
     cc.log = cc.warn = cc.error = cc.assert = function(){};
 }
@@ -929,14 +927,9 @@ cc._initDebugSetting = function (mode) {
 
     //log
     if(mode == ccGame.DEBUG_MODE_INFO && console.log) {
-        cc.log = function(){
-            console.log.apply(console, arguments);
-        }
     }else if((mode == ccGame.DEBUG_MODE_INFO && !console.log)
         || mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE){
-        cc.log = function(){
-            cc._logToWebPage.apply(cc, arguments);
-        }
+        cc.log = cc._logToWebPage.bind(cc);
     }else cc.log = function(){}
 
     //warn
@@ -946,13 +939,7 @@ cc._initDebugSetting = function (mode) {
     else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
         || !console.warn) {
-        cc.warn = function(){
-            cc._logToWebPage.apply(cc, arguments);
-        }
-    }else{
-        cc.warn = function(){
-            console.warn.apply(console, arguments);
-        }
+        cc.warn = cc._logToWebPage.bind(cc);
     }
 
     //error and assert
@@ -964,18 +951,9 @@ cc._initDebugSetting = function (mode) {
         || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
         || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE
         || !console.error){
-        cc.error = function(){
-            cc._logToWebPage.apply(cc, arguments);
-        }
+        cc.error = cc._logToWebPage.bind(cc);
         cc.assert = function(cond, msg){
             if(!cond && msg) cc._logToWebPage(msg);
-        }
-    }else{
-        cc.error = function(){
-            console.error.apply(console, arguments);
-        }
-        cc.assert = function(){
-            console.assert.apply(console, arguments);
         }
     }
 };
@@ -1195,20 +1173,19 @@ cc._initSys = function(config, CONFIG_KEY){
     sys.language = currLanguage;
 
     /** The type of browser */
-    sys.browserType = (function () {
-        var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|opera|miuibrowser|firefox/i)
-            || ua.match(/chrome|safari/i);
-        if (browserTypes && browserTypes.length > 0) {
-            var el = browserTypes[0];
-            if (el == 'micromessenger') {
-                return sys.BROWSER_TYPE_WECHAT;
-            }else if( el === "safari" && (ua.match(/android.*applewebkit/) != null))
-                return sys.BROWSER_TYPE_ANDROID;
-            else if(el == "trident") return sys.BROWSER_TYPE_IE;
-            return el;
-        }
-        return sys.BROWSER_TYPE_UNKNOWN;
-    })();
+
+    var browserType = sys.BROWSER_TYPE_UNKNOWN;
+    var browserTypes = ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|trident|opera|miuibrowser|firefox/i)
+        || ua.match(/chrome|safari/i);
+    if (browserTypes && browserTypes.length > 0) {
+        browserType = browserTypes[0].toLowerCase();
+        if (browserType == 'micromessenger') {
+            browserType = sys.BROWSER_TYPE_WECHAT;
+        }else if( browserType === "safari" && (ua.match(/android.*applewebkit/)))
+            browserType = sys.BROWSER_TYPE_ANDROID;
+        else if(browserType == "trident") browserType = sys.BROWSER_TYPE_IE;
+    }
+    sys.browserType = browserType;
 
     sys._supportMultipleAudio = multipleAudioWhiteList.indexOf(sys.browserType) > -1;
 
@@ -1224,7 +1201,7 @@ cc._initSys = function(config, CONFIG_KEY){
 
 
     if(renderType == cc._RENDER_TYPE_WEBGL){
-        if(!window.WebGLRenderingContext
+        if(!win.WebGLRenderingContext
             || !cc.create3DContext(tempCanvas, {'stencil': true, 'preserveDrawingBuffer': true })){
             if(userRenderMode == 0) renderType = cc._RENDER_TYPE_CANVAS;
             else cc._supportRender = false;
@@ -1243,20 +1220,17 @@ cc._initSys = function(config, CONFIG_KEY){
 
 
     // check if browser supports Web Audio
-    sys._supportWebAudio = (function () {
-        // check Web Audio's context
-        try {
-            var ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
-            return ctx ? true : false;
-        } catch (e) {
-            return false;
-        }
-    })();
+    // check Web Audio's context
+    try {
+        sys._supportWebAudio = !!(new (win.AudioContext || win.webkitAudioContext || win.mozAudioContext)());
+    } catch (e) {
+        sys._supportWebAudio = false;
+    }
 
     /** LocalStorage is a local storage component.
      */
     try{
-        var localStorage = sys.localStorage = window.localStorage;
+        var localStorage = sys.localStorage = win.localStorage;
         localStorage.setItem("storage", "");
         localStorage.removeItem("storage");
         localStorage = null;
@@ -1281,25 +1255,16 @@ cc._initSys = function(config, CONFIG_KEY){
         capabilities["accelerometer"] = true;
 
     /** Get the os of system */
-    sys.os = (function(){
-        var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
-        var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
-        var OSName;
-        if (nav.appVersion.indexOf("Win")!=-1)
-            OSName="Windows";
-        else if( iOS )
-            OSName = "iOS";
-        else if (navigator.appVersion.indexOf("Mac")!=-1)
-            OSName="OS X";
-        else if (navigator.appVersion.indexOf("X11")!=-1)
-            OSName="UNIX";
-        else if (navigator.appVersion.indexOf("Linux")!=-1)
-            OSName="Linux";
-        else if( isAndroid )
-            OSName = "Android";
-        else OSName = sys.OS_UNKNOWN;
-        return OSName;
-    })();
+    var iOS = ( ua.match(/(iPad|iPhone|iPod)/i) ? true : false );
+    var isAndroid = ua.match(/android/i) || nav.platform.match(/android/i) ? true : false;
+    var osName = sys.OS_UNKNOWN;
+    if (nav.appVersion.indexOf("Win")!=-1) osName=sys.OS_WINDOWS;
+    else if( iOS ) osName = sys.OS_IOS;
+    else if (nav.appVersion.indexOf("Mac")!=-1) osName=sys.OS_OSX;
+    else if (nav.appVersion.indexOf("X11")!=-1) osName=sys.OS_UNIX;
+    else if (nav.appVersion.indexOf("Linux")!=-1) osName=sys.OS_LINUX;
+    else if( isAndroid ) osName = sys.OS_ANDROID;
+    sys.os = osName;
 
     // Forces the garbage collector
     sys.garbageCollect = function() {
@@ -1470,7 +1435,6 @@ cc._setup = function (el, width, height) {
         cc._drawingUtil = cc.DrawingPrimitiveCanvas ? new cc.DrawingPrimitiveCanvas(cc._renderContext) : null;
     }
 
-    cc.originalCanvasSize = cc.size(localCanvas.width, localCanvas.height);
     cc._gameDiv = localContainer;
 
     cc.log(cc.ENGINE_VERSION);
@@ -1508,9 +1472,12 @@ cc._setup = function (el, width, height) {
 	cc.director.setOpenGLView(cc.view);
     cc.winSize = cc.director.getWinSize();
 
-	// IME Dispatcher
-	cc.imeDispatcher = new cc.IMEDispatcher();
-	cc.imeDispatcher.init();
+    // IME Dispatcher
+    if(cc.IMEDispatcher){
+        cc.imeDispatcher = new cc.IMEDispatcher();
+        cc.imeDispatcher.init();
+
+    }
 
 	// Parsers
 	cc.saxParser = new cc.SAXParser();
@@ -1588,26 +1555,6 @@ cc.game = {
      * @type Function
      */
     onStop : null,
-    /**
-     * Callback before game resumes.
-     * @type Function
-     */
-    onBeforeResume : null,
-    /**
-     * Callback after game resumes.
-     * @type Function
-     */
-    onAfterResume : null,
-    /**
-     * Callback before game pauses.
-     * @type Function
-     */
-    onBeforePause : null,
-    /**
-     * Callback after game pauses.
-     * @type Function
-     */
-    onAfterPause : null,
 
     /**
      * Set frameRate of game.
@@ -1654,29 +1601,31 @@ cc.game = {
         var self = this;
         if(!self._prepareCalled){
             self.prepare(function(){
-                if(!cc._supportRender) return;
-                cc._setup(self.config[self.CONFIG_KEY.id]);
-                self._runMainLoop();
-                self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
-                self._eventHide.setUserData(this);
-                self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
-                self._eventShow.setUserData(this);
-                self.onStart();
-            });
-        }else{
-            if(!cc._supportRender) return;
-            self._checkPrepare = setInterval(function(){
-                if(self._prepared){
+                if(cc._supportRender) {
                     cc._setup(self.config[self.CONFIG_KEY.id]);
                     self._runMainLoop();
                     self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
-                    self._eventHide.setUserData(this);
+                    self._eventHide.setUserData(self);
                     self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
-                    self._eventShow.setUserData(this);
+                    self._eventShow.setUserData(self);
                     self.onStart();
-                    clearInterval(self._checkPrepare);
                 }
-            }, 10);
+            });
+        }else{
+            if(cc._supportRender) {
+                self._checkPrepare = setInterval(function(){
+                    if(self._prepared){
+                        cc._setup(self.config[self.CONFIG_KEY.id]);
+                        self._runMainLoop();
+                        self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
+                        self._eventHide.setUserData(self);
+                        self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
+                        self._eventShow.setUserData(self);
+                        self.onStart();
+                        clearInterval(self._checkPrepare);
+                    }
+                }, 10);
+            }
         }
     },
     /**
@@ -1695,18 +1644,18 @@ cc.game = {
             return cfg;
         };
         if(document["ccConfig"]){
-            this.config = _init(document["ccConfig"]);
+            self.config = _init(document["ccConfig"]);
         }else{
             try{
                 var txt = cc.loader._loadTxtSync("project.json");
                 var data = JSON.parse(txt);
-                this.config = _init(data || {});
+                self.config = _init(data || {});
             }catch(e){
-                this.config = _init({});
+                self.config = _init({});
             }
         }
-        cc._initDebugSetting(this.config[CONFIG_KEY.debugMode]);
-        cc._initSys(this.config, CONFIG_KEY);
+        cc._initDebugSetting(self.config[CONFIG_KEY.debugMode]);
+        cc._initSys(self.config, CONFIG_KEY);
     },
 
     //cache for js and module that has added into jsList to be loaded.
@@ -1727,7 +1676,7 @@ cc.game = {
                 var arr = this._getJsListOfModule(moduleMap, item, dir);
                 if(arr) jsList = jsList.concat(arr);
             }else if(extname.toLowerCase() == ".js") jsList.push(ccPath.join(dir, item));
-            jsAddedCache[item] = true;
+            jsAddedCache[item] = 1;
         }
         return jsList;
     },

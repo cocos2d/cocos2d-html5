@@ -108,7 +108,6 @@ cc.PointObject.create = function (ratio, offset) {
  * @property {Array}    parallaxArray   - Parallax nodes array
  */
 cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
-	/** @public */
 	parallaxArray:null,
 
     _lastPosition:null,

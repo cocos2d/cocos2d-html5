@@ -128,12 +128,6 @@ cc.s_globalOrderOfArrival = 1;
  * @property {cc.GridBase}          grid            - grid object that is used when applying effects
  * @property {cc.GLProgram}         shaderProgram   - The shader program currently used for this node
  * @property {Number}               glServerState   - The state of OpenGL server side
- *
- * @example
- * // example
- * cc.Sprite = cc.Node.extend({});
- * cc.Sprite.initWithImage = function(){
- * };
  */
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _localZOrder: 0,                                     ///< Local order (relative to its siblings) used to sort the node
@@ -189,6 +183,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationRadiansX:0,
     _rotationRadiansY:0,
     _className:"Node",
+    _showNode:false,
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
@@ -1864,9 +1859,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _camera:null,
     grid:null,
 
-    /**
-     * Constructor
-     */
     ctor: null,
 
     _ctorForCanvas: function () {
@@ -1888,7 +1880,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * recursive method that visit its children and draw them
+     * Recursive method that visit its children and draw them
+     * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
     visit:null,
@@ -1975,6 +1968,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes.
+     * @function
+     * @param {CanvasRenderingContext2D|null} ctx Render context
      */
     transform:null,
 
@@ -2022,8 +2017,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
-    /** Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
+    /**
+     * Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
      * The matrix is in Pixels.
+     * @function
      * @return {cc.AffineTransform}
      */
     nodeToParentTransform: null,

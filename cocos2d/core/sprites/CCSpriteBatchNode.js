@@ -58,7 +58,6 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
  * var parent2 = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
  */
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
-	/** @public */
     textureAtlas:null,
 
 	_blendFunc:null,
@@ -377,6 +376,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     /**
      * Constructor
+     * @function
      * @param {String} fileImage
      */
     ctor: null,
@@ -401,6 +401,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      *   This method should be called only when you are dealing with very big AtlasSrite and when most of the cc.Sprite won't be updated.<br/>
      *   For example: a tile map (cc.TMXMap) or a label with lots of characters (BitmapFontAtlas)<br/>
      * </p>
+     * @function
      * @param {cc.Sprite} sprite
      * @param {Number} index
      */
@@ -472,6 +473,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      *    This method should be called only when you are dealing with very big AtlasSprite and when most of the cc.Sprite won't be updated.  <br/>
      *    For example: a tile map (cc.TMXMap) or a label with lots of characters (cc.LabelBMFont)
      * </p>
+     * @function
      * @param {cc.Sprite} sprite
      * @param {Number} index
      */
@@ -592,6 +594,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      *    initializes a CCSpriteBatchNode with a texture2d and capacity of children.<br/>
      *    The capacity will be increased in 33% in runtime if it run out of space.
      * </p>
+     * @function
      * @param {cc.Texture2D} tex
      * @param {Number} [capacity]
      * @return {Boolean}
@@ -661,6 +664,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     /**
      * addChild helper, faster than insertChild
+     * @function
      * @param {cc.Sprite} sprite
      */
     appendChild:null,
@@ -702,6 +706,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     /**
      * remove sprite from TextureAtlas
+     * @function
      * @param {cc.Sprite} sprite
      */
     removeSpriteFromAtlas:null,
@@ -760,6 +765,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     // CCTextureProtocol
     /**
      * Return texture of cc.SpriteBatchNode
+     * @function
      * @return {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}
      */
     getTexture:null,
@@ -773,7 +779,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     /**
-     * texture of cc.SpriteBatchNode setter
+     * Texture of cc.SpriteBatchNode setter
+     * @function
      * @param {cc.Texture2D} texture
      */
     setTexture:null,
@@ -791,7 +798,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     /**
-     * don't call visit on it's children ( override visit of cc.Node )
+     * Don't call visit on it's children ( override visit of cc.Node )
+     * @function
      * @override
      * @param {CanvasRenderingContext2D} ctx
      */
@@ -846,7 +854,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     /**
-     * add child to cc.SpriteBatchNode (override addChild of cc.Node)
+     * Add child to cc.SpriteBatchNode (override addChild of cc.Node)
+     * @function
      * @override
      * @param {cc.Sprite} child
      * @param {Number} [zOrder]
@@ -893,6 +902,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     /**
      * <p>Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * (override removeAllChildren of cc.Node)</p>
+     * @function
      * @param {Boolean} cleanup
      */
     removeAllChildren:null,
@@ -994,6 +1004,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
     /**
      * draw cc.SpriteBatchNode (override draw of cc.Node)
+     * @function
      */
     draw:null,
 

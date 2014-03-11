@@ -24,18 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * <p>
- *   cc.director is a DisplayLinkDirector type Director that synchronizes timers with the refresh rate of the display.<br/>
- *   Features and Limitations:<br/>
- *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
- *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
- * </p>
- * @Object
- * @type {cc.Director}
- */
-cc.director;
-
 cc.g_NumberOfDraws = 0;
 
 //Possible OpenGL projections used by director
@@ -130,8 +118,12 @@ cc.GLToClipTransform = function (transformOut) {
 
 /**
  * <p>
- *    Class that creates and handle the main Window and manages how<br/>
- *    and when to execute the Scenes.<br/>
+ *    cc.director is a singleton of DisplayLinkDirector type director.<br/>
+ *    Since the cc.director is a singleton, you don't need to call any constructor or create functions,<br/>
+ *    the standard way to use it is by calling:<br/>
+ *      - cc.director.methodName(); <br/>
+ *
+ *    It creates and handle the main Window and manages how and when to execute the Scenes.<br/>
  *    <br/>
  *    The cc.Director is also responsible for:<br/>
  *      - initializing the OpenGL context<br/>
@@ -141,19 +133,23 @@ cc.GLToClipTransform = function (transformOut) {
  *      - setting the projection (default one is 3D)<br/>
  *      - setting the orientation (default one is Protrait)<br/>
  *      <br/>
- *    Since the cc.Director is a singleton, the standard way to use it is by calling:<br/>
- *      - cc.director.methodName(); <br/>
  *    <br/>
- *    The CCDirector also sets the default OpenGL context:<br/>
+ *    The cc.director also sets the default OpenGL context:<br/>
  *      - GL_TEXTURE_2D is enabled<br/>
  *      - GL_VERTEX_ARRAY is enabled<br/>
  *      - GL_COLOR_ARRAY is enabled<br/>
  *      - GL_TEXTURE_COORD_ARRAY is enabled<br/>
  * </p>
- * @class
- * @extends cc.Class
+ * <p>
+ *   With DisplayLinkDirector functionality, cc.director synchronizes timers with the refresh rate of the display.<br/>
+ *   Features and Limitations:<br/>
+ *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
+ *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
+ * </p>
+ * @namespace
+ * @name cc.director
  */
-cc.Director = cc.Class.extend(/** @lends cc.Director# */{
+cc.Director = cc.Class.extend(/** @lends cc.director# */{
     //Variables
     _landscape:false,
     _nextDeltaTimeZero:false,
@@ -197,9 +193,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _eventAfterVisit: null,
     _eventAfterUpdate: null,
 
-    /**
-     * Constructor
-     */
     ctor:function () {
         var self = this;
         self._lastUpdate = Date.now();
@@ -209,7 +202,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * initializes cc.Director
+     * initializes cc.director
      * @return {Boolean}
      */
     init:function () {
@@ -1122,20 +1115,7 @@ cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
 /***************************************************
  * implementation of DisplayLinkDirector
  **************************************************/
-// should we afford 4 types of director ??
-// I think DisplayLinkDirector is enough
-// so we now only support DisplayLinkDirector
-/**
- * <p>
- *   DisplayLinkDirector is a Director that synchronizes timers with the refresh rate of the display.<br/>
- *   Features and Limitations:<br/>
- *      - Scheduled timers & drawing are synchronizes with the refresh rate of the display<br/>
- *      - Only supports animation intervals of 1/60 1/30 & 1/15<br/>
- * </p>
- * @class
- * @extends cc.Director
- */
-cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# */{
+cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.director# */{
     invalid:false,
 
     /**
@@ -1182,11 +1162,6 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
 cc.Director.sharedDirector = null;
 cc.Director.firstUseDirector = true;
 
-/**
- * returns a shared instance of the director
- * @function
- * @return {cc.Director}
- */
 cc.Director._getInstance = function () {
     if (cc.Director.firstUseDirector) {
         cc.Director.firstUseDirector = false;

@@ -26,9 +26,9 @@
 
 /**
  * cc.configuration contains some openGL variables
- * @Object
+ * @namespace
  */
-cc.configuration = /** @lends cc.Configuration# */{
+cc.configuration = /** @lends cc.configuration# */{
 	// Type constants
 	/*
 	 * ERROR type

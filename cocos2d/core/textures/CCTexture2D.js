@@ -96,11 +96,12 @@ cc.PVRHaveAlphaPremultiplied_ = false;
 
 /**
  * <p>
- * This class allows to easily create OpenGL 2D textures from images, text or raw data.                                    <br/>
+ * This class allows to easily create OpenGL or Canvas 2D textures from images, text or raw data.                                    <br/>
  * The created cc.Texture2D object will always have power-of-two dimensions.                                                <br/>
  * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions <br/>
  *  i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).                                           <br/>
  * Be aware that the content of the generated textures will be upside-down! </p>
+ * @name cc.Texture2D
  * @class
  * @extends cc.Class
  *
@@ -799,60 +800,28 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     }
 });
 
-/**
- * <p>
- * This class allows to easily create Canvas 2D textures from images, text or raw data.                                    <br/>
- * The created cc.Texture2D object will always have power-of-two dimensions.                                                <br/>
- * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions <br/>
- *  i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).                                           <br/>
- * Be aware that the content of the generated textures will be upside-down! </p>
- * @class
- * @extends cc.Class
- *
- * @property {WebGLTexture}     name            - WebGLTexture Object
- * @property {Number}           pixelFormat     - Pixel format of the texture
- * @property {Number}           pixelsWidth     - Width in pixels
- * @property {Number}           pixelsHeight    - Height in pixels
- * @property {Number}           width           - Content width in points
- * @property {Number}           height          - Content height in points
- * @property {cc.GLProgram}     shaderProgram   - The shader program used by drawAtPoint and drawInRect
- * @property {Number}           maxS            - Texture max S
- * @property {Number}           maxT            - Texture max T
- */
-cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
+cc.Texture2DCanvas = cc.Class.extend({
     _contentSize:null,
     _isLoaded:false,
     _htmlElementObj:null,
     _loadedEventListeners:null,
 
     url : null,
-    /*public:*/
+
     ctor:function () {
         this._contentSize = cc.size(0,0);
         this._isLoaded = false;
         this._htmlElementObj = null;
     },
 
-    /**
-     * width in pixels
-     * @return {Number}
-     */
     getPixelsWide:function () {
         return this._contentSize.width;
     },
 
-    /**
-     * hight in pixels
-     * @return {Number}
-     */
     getPixelsHigh:function () {
         return this._contentSize.height;
     },
 
-    /**
-     * content size
-     * @return {cc.Size}
-     */
     getContentSize:function () {
         var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
         return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
@@ -908,48 +877,16 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height+">";
     },
 
-    /**
-     * Initializes with a texture2d with data
-     * @param {Array} data
-     * @param {Number} pixelFormat
-     * @param {Number} pixelsWide
-     * @param {Number} pixelsHigh
-     * @param {cc.Size} contentSize
-     * @return {Boolean}
-     */
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
         //support only in WebGl rendering mode
         return false;
     },
 
-    /**
-     Extensions to make it easy to create a CCTexture2D object from an image file.
-     Note that RGBA type textures will have their alpha premultiplied - use the blending mode (gl.ONE, gl.ONE_MINUS_SRC_ALPHA).
-     */
-    /**
-     * Initializes a texture from a UIImage object
-     * @param uiImage
-     * @return {Boolean}
-     */
     initWithImage:function (uiImage) {
         //support only in WebGl rendering mode
         return false;
     },
 
-    /**
-     Extensions to make it easy to create a cc.Texture2D object from a string of text.
-     Note that the generated textures are of type A8 - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
-     */
-    /**
-     * Initializes a texture from a string with dimensions, alignment, font name and font size (note: initWithString does not support on HTML5)
-     * @param {String} text
-     * @param {String | cc.FontDefinition} fontName or fontDefinition
-     * @param {Number} fontSize
-     * @param {cc.Size} dimensions
-     * @param {Number} hAlignment
-     * @param {Number} vAlignment
-     * @return {Boolean}
-     */
     initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
         //support only in WebGl rendering mode
         return false;
@@ -959,16 +896,11 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         //support only in WebGl rendering mode
     },
 
-    /**
-     * get WebGLTexture Object
-     * @return {WebGLTexture}
-     */
     getName:function () {
         //support only in WebGl rendering mode
         return null;
     },
 
-    /** texture max S */
     getMaxS:function () {
         //support only in WebGl rendering mode
         return 1;
@@ -978,7 +910,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         //support only in WebGl rendering mode
     },
 
-    /** texture max T */
     getMaxT:function () {
         return 1;
     },
@@ -992,27 +923,15 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         return null;
     },
 
-    /**
-     * return shader program used by drawAtPoint and drawInRect
-     * @return {cc.GLProgram}
-     */
     getShaderProgram:function () {
         //support only in WebGl rendering mode
         return null;
     },
 
-    /**
-     * set shader program used by drawAtPoint and drawInRect
-     * @param {cc.GLProgram} shaderProgram
-     */
     setShaderProgram:function (shaderProgram) {
         //support only in WebGl rendering mode
     },
 
-    /**
-     * whether or not the texture has their Alpha premultiplied
-     * @return {Boolean}
-     */
     hasPremultipliedAlpha:function () {
         //support only in WebGl rendering mode
         return false;
@@ -1023,10 +942,6 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         return false;
     },
 
-    /**
-     * These functions are needed to create mutable textures
-     * @param {Array} data
-     */
     releaseData:function (data) {
         //support only in WebGl rendering mode
         data = null;
@@ -1037,116 +952,50 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
         return data;
     },
 
-    /**
-     Drawing extensions to make it easy to draw basic quads using a CCTexture2D object.
-     These functions require gl.TEXTURE_2D and both gl.VERTEX_ARRAY and gl.TEXTURE_COORD_ARRAY client states to be enabled.
-     */
-
-    /**
-     * draws a texture at a given point
-     * @param {cc.Point} point
-     */
     drawAtPoint:function (point) {
         //support only in WebGl rendering mode
     },
 
-    /**
-     * draws a texture inside a rect
-     * @param {cc.Rect} rect
-     */
     drawInRect:function (rect) {
         //support only in WebGl rendering mode
     },
 
-    /**
-     * Initializes a texture from a ETC file  (note: initWithETCFile does not support on HTML5)
-     * @note Compatible to Cocos2d-x
-     * @param {String} file
-     * @return {Boolean}
-     */
     initWithETCFile:function (file) {
         cc.log("initWithETCFile does not support on HTML5");
         return false;
     },
 
-    /**
-     * Initializes a texture from a PVR file
-     * @param {String} file
-     * @return {Boolean}
-     */
     initWithPVRFile:function (file) {
         cc.log("initWithPVRFile does not support on HTML5");
         return false;
     },
 
-    /**
-     Extensions to make it easy to create a cc.Texture2D object from a PVRTC file
-     Note that the generated textures don't have their alpha premultiplied - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
-     */
-    /**
-     * Initializes a texture from a PVRTC buffer
-     * @note compatible to cocos2d-iphone interface.
-     * @param {Array} data
-     * @param {Number} level
-     * @param {Number} bpp
-     * @param {Boolean} hasAlpha
-     * @param {Number} length
-     * @param {Number} pixelFormat
-     * @return {Boolean}
-     */
     initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
         cc.log("initWithPVRTCData does not support on HTML5");
         return false;
     },
 
-    /**
-     * sets the min filter, mag filter, wrap s and wrap t texture parameters. <br/>
-     * If the texture size is NPOT (non power of 2), then in can only use gl.CLAMP_TO_EDGE in gl.TEXTURE_WRAP_{S,T}.
-     * @param texParams
-     */
     setTexParameters:function (texParams) {
         //support only in WebGl rendering mode
     },
 
-    /**
-     * sets antialias texture parameters:              <br/>
-     *  - GL_TEXTURE_MIN_FILTER = GL_NEAREST           <br/>
-     *  - GL_TEXTURE_MAG_FILTER = GL_NEAREST
-     */
     setAntiAliasTexParameters:function () {
         //support only in WebGl rendering mode
     },
 
-    /**
-     *  sets alias texture parameters:
-     *   GL_TEXTURE_MIN_FILTER = GL_NEAREST
-     *   GL_TEXTURE_MAG_FILTER = GL_NEAREST
-     */
     setAliasTexParameters:function () {
         //support only in WebGl rendering mode
     },
 
-    /**
-     *  Generates mipmap images for the texture.<br/>
-     *  It only works if the texture size is POT (power of 2).
-     */
     generateMipmap:function () {
         //support only in WebGl rendering mode
     },
 
-    /**
-     * returns the pixel format.
-     * @return {String}
-     */
     stringForFormat:function () {
         //support only in WebGl rendering mode
         return "";
     },
 
-    /**
-     * returns the bits-per-pixel of the in-memory OpenGL texture
-     * @return {Number}
-     */
     bitsPerPixelForFormat:function (format) {
         //support only in WebGl rendering mode
         return -1;
@@ -1199,7 +1048,9 @@ cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied)
     cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
 };
 
-
+/*
+ * @alias cc.Texture2D
+ */
 window._c = cc.Texture2D;
 
 /**

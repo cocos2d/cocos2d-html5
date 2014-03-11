@@ -25,10 +25,10 @@
  ****************************************************************************/
 
 /**
- * Implementation cc.textureCache
- * @Object
+ * The global cache for cc.Texture2D
+ * @namespace
  */
-cc.textureCache = /** @lends cc.TextureCache# */{
+cc.textureCache = /** @lends cc.textureCache# */{
     _textures: {},
     _textureColorsCache: {},
     _textureKeySeq:(0 | Math.random() * 1000),

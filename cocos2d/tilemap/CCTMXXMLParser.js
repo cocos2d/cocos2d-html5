@@ -128,7 +128,6 @@ cc.TMX_TILE_FLIPPED_MASK = (~(cc.TMX_TILE_FLIPPED_ALL)) >>> 0;
  * @property {Array}    properties  - Properties of the layer info.
  */
 cc.TMXLayerInfo = cc.Class.extend(/** @lends cc.TMXLayerInfo# */{
-	/** @public */
     properties:null,
 
 	name:"",
@@ -266,28 +265,13 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
  * @property {Number}   tileHeight          - Height of a tile
  */
 cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
-	/** @public */
 	properties:null,
-
-	/** @public */
     orientation:null,
-
-	/** @public */
 	parentElement:null,
-
-	/** @public */
 	parentGID:null,
-
-	/** @public */
 	layerAttrs:0,
-
-	/** @public */
 	storingCharacters:false,
-
-	/** @public */
 	tmxFileName:null,
-
-	/** @public */
 	currentString:null,
 
 	_objectGroups:null,

@@ -24,21 +24,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * The shared EGLView
- * @Object
- * @type {cc.EGLView}
- */
-cc.view;
-
 cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
 /**
- * @class
- * @extends cc.Class
+ * cc.view is the shared view object.
+ * @namespace
+ * @name cc.view
  */
-cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
+cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _delegate: null,
     // Size of parent node that contains cc.container and cc._canvas
     _frameSize: null,
@@ -49,6 +43,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _viewPortRect: null,
     // The visible rect in content's coordinate in point
     _visibleRect: null,
+	_retinaEnabled: false,
     // The device's pixel ratio (for retina displays)
     _devicePixelRatio: 1,
     // the view name
@@ -94,6 +89,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._visibleRect = cc.rect(0, 0, w, h);
         this._contentTranslateLeftTop = {left: 0, top: 0};
         this._viewName = "Cocos2dHTML5";
+
+	    var sys = cc.sys;
+	    this.enableRetina(sys.os == sys.OS_IOS || sys.os == sys.OS_OSX);
 
         cc.visibleRect.init(this._designResolutionSize);
 
@@ -224,6 +222,23 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     adjustViewPort: function (enabled) {
         this._isAdjustViewPort = enabled;
     },
+
+	/**
+	 * Retina support is enabled by default for Apple device but disabled for other devices,
+	 * it takes effect only when you called setDesignResolutionPolicy
+	 * @param {Boolean} enabled  Enable or disable retina display
+	 */
+	enableRetina: function(enabled) {
+		this._retinaEnabled = enabled ? true : false;
+	},
+
+	/**
+	 * Check whether retina display is enabled.
+	 * @return {Boolean}
+	 */
+	isRetinaEnabled: function() {
+		return this._retinaEnabled;
+	},
 
     /**
      * Force destroying EGL view, subclass must implement this method.
@@ -594,21 +609,16 @@ cc.EGLView._getInstance = function () {
  * @extends cc.Class
  */
 cc.ContainerStrategy = cc.Class.extend({
-    // Adjust canvas's size for retina display
-    _adjustRetina: false,
-
     /**
      * Manipulation before appling the strategy
-     * @param {cc.EGLView} The target view
+     * @param {cc.view} The target view
      */
     preApply: function (view) {
-        var sys = cc.sys;
-        this._adjustRetina = sys.os == sys.OS_IOS || sys.os == sys.OS_OSX
     },
 
     /**
      * Function to apply this strategy
-     * @param {cc.EGLView} view
+     * @param {cc.view} view
      * @param {cc.Size} designedResolution
      */
     apply: function (view, designedResolution) {
@@ -616,7 +626,7 @@ cc.ContainerStrategy = cc.Class.extend({
 
     /**
      * Manipulation after applying the strategy
-     * @param {cc.EGLView} view  The target view
+     * @param {cc.view} view  The target view
      */
     postApply: function (view) {
 
@@ -635,7 +645,7 @@ cc.ContainerStrategy = cc.Class.extend({
         locContainer.style.height = locCanvasElement.style.height = h + "px";
         // Setup pixel ratio for retina display
         var devicePixelRatio = view._devicePixelRatio = 1;
-        if (this._adjustRetina)
+        if (view.isRetinaEnabled())
             devicePixelRatio = view._devicePixelRatio = window.devicePixelRatio || 1;
         // Setup canvas
         locCanvasElement.width = w * devicePixelRatio;
@@ -709,7 +719,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     /**
      * Manipulation before applying the strategy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     preApply: function (view) {
     },
@@ -718,7 +728,7 @@ cc.ContentStrategy = cc.Class.extend({
      * Function to apply this strategy
      * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
      * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
-     * @param {cc.EGLView} view
+     * @param {cc.view} view
      * @param {cc.Size} designedResolution
      * @return {object} scaleAndViewportRect
      */
@@ -728,7 +738,7 @@ cc.ContentStrategy = cc.Class.extend({
 
     /**
      * Manipulation after applying the strategy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     postApply: function (view) {
     }
@@ -905,7 +915,7 @@ cc.ResolutionPolicy = cc.Class.extend({
 
     /**
      * Manipulation before applying the resolution policy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     preApply: function (view) {
         this._containerStrategy.preApply(view);
@@ -916,7 +926,7 @@ cc.ResolutionPolicy = cc.Class.extend({
      * Function to apply this resolution policy
      * The return value is {scale: [scaleX, scaleY], viewport: {cc.Rect}},
      * The target view can then apply these value to itself, it's preferred not to modify directly its private variables
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      * @param {cc.Size} designedResolution The user defined design resolution
      * @return {object} An object contains the scale X/Y values and the viewport rect
      */
@@ -927,7 +937,7 @@ cc.ResolutionPolicy = cc.Class.extend({
 
     /**
      * Manipulation after appyling the strategy
-     * @param {cc.EGLView} view The target view
+     * @param {cc.view} view The target view
      */
     postApply: function (view) {
         this._containerStrategy.postApply(view);

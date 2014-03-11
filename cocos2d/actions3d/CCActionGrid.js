@@ -108,7 +108,7 @@ cc.GridAction.create = function (duration, gridSize) {
  * @class
  * @extends cc.GridAction
  */
-cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.GridAction# */{
+cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.Grid3DAction# */{
     /**
      * returns the grid
      * @return {cc.GridBase}
