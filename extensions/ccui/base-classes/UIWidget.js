@@ -438,7 +438,8 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      * @param {cc.Point} percent
      */
     setSizePercent: function (percent) {
-        this._sizePercent = percent;
+        this._sizePercent.x = percent.x;
+        this._sizePercent.y = percent.y;
         var width = this._customSize.width, height = this._customSize.height;
         if (this._running) {
             var widgetParent = this.getWidgetParent();
@@ -519,7 +520,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
                 var cSize = cc.size(0,0);
                 if (widgetParent){
                     cSize.width = widgetParent.getSize().width * this._sizePercent.x;
-                    cSize.height = widgetParent.getSize().height * this._sizePercent.x;
+                    cSize.height = widgetParent.getSize().height * this._sizePercent.y;
                 }else{
                     cSize.width = this._parent.getContentSize().width * this._sizePercent.x;
                     cSize.height = this._parent.getContentSize().height * this._sizePercent.y;
