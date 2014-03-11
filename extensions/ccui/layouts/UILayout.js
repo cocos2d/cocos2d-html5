@@ -695,8 +695,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         switch (this._layoutType) {
             case ccui.Layout.ABSOLUTE:
                 break;
-            case ccui.Layout.TYPE_LINEAR_HORIZONTAL:
-            case ccui.Layout.TYPE_LINEAR_VERTICAL:
+            case ccui.Layout.LINEAR_HORIZONTAL:
+            case ccui.Layout.LINEAR_VERTICAL:
                 var layoutParameter = locChild.getLayoutParameter(ccui.LayoutParameter.LINEAR);
                 if (!layoutParameter) {
                     locChild.setLayoutParameter(ccui.LinearLayoutParameter.create());

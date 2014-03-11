@@ -24,7 +24,7 @@
 
 /**
  * Base singleton object for ccs.sceneReader
- * @object
+ * @namespace
  */
 ccs.sceneReader = /** @lends ccs.SceneReader# */{
     _baseBath:"",
@@ -33,12 +33,12 @@ ccs.sceneReader = /** @lends ccs.SceneReader# */{
     _node: null,
 
     /**
-     * create node with json file that exported by cocostudio scene editor
+     * create node with json file that exported by CocoStudio scene editor
      * @param pszFileName
      * @returns {cc.Node}
      */
     createNodeWithSceneFile: function (pszFileName) {
-        this._baseBath = cc.path.dirname(pszFileName)
+        this._baseBath = cc.path.dirname(pszFileName);
         var jsonDict = cc.loader.getRes(pszFileName);
 
         if (!jsonDict) throw "Please load the resource first : " + pszFileName;

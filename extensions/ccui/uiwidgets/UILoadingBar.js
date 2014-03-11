@@ -116,7 +116,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         var barRenderer = this._barRenderer;
         switch (this._renderBarTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
-                barRenderer.initWithFile(texture);
+                barRenderer.init(texture);
                 break;
             case ccui.Widget.PLIST_TEXTURE:
                 barRenderer.initWithSpriteFrameName(texture);

@@ -23,7 +23,7 @@
  ****************************************************************************/
 /**
  * Base object for ccs.GUIReader
- * @object
+ * @namespace
  */
 ccs.guiReader = /** @lends ccs.GUIReader# */{
     _filePath: "",
@@ -862,6 +862,10 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
 
     setPropsForWidgetFromJsonDictionary: function (widget, options) {
+        var name = options["name"];
+        var widgetName = name ? name : "default";
+        widget.setName(widgetName);
+
         if (options["ignoreSize"] !== undefined) {
             widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
         }
@@ -878,9 +882,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         widget.setTag(options["tag"]);
         widget.setActionTag(options["actiontag"]);
         widget.setTouchEnabled(options["touchAble"]);
-        var name = options["name"];
-        var widgetName = name ? name : "default";
-        widget.setName(widgetName);
+
         var x = options["x"];
         var y = options["y"];
         widget.setPosition(x, y);
