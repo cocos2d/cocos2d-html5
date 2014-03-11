@@ -1953,10 +1953,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
         cc.g_NumberOfDraws++;
-        if (cc.SPRITE_DEBUG_DRAW === 0)
+        if (cc.SPRITE_DEBUG_DRAW === 0 && !this._showNode)
             return;
 
-        if (cc.SPRITE_DEBUG_DRAW === 1) {
+        if (cc.SPRITE_DEBUG_DRAW === 1 || this._showNode) {
             // draw bounding box
             var locQuad = this._quad;
             var verticesG1 = [
@@ -2024,7 +2024,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }
 
-        if (cc.SPRITE_DEBUG_DRAW === 1) {
+        if (cc.SPRITE_DEBUG_DRAW === 1 || this._showNode) {
             // draw bounding box
             context.strokeStyle = "rgba(0,255,0,1)";
             flipXOffset /= locEGL_ScaleX;
