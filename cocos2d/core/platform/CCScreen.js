@@ -27,9 +27,9 @@
 /**
  * The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
  * It's invalid on safari,QQbrowser and android browser
- * @Object
+ * @namespace
  */
-cc.screen = {
+cc.screen = /** @lends cc.shaderCache# */{
     _supportsFullScreen: false,
 	// the pre fullscreenchange function
     _preOnFullScreenChange: null,

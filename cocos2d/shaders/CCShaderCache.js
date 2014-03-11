@@ -26,9 +26,9 @@
 
 /**
  * Singleton object that stores manages GL shaders
- * @Object
+ * @namespace
  */
-cc.shaderCache = {
+cc.shaderCache = /** @lends cc.shaderCache# */{
 
 	/**
 	 * @public

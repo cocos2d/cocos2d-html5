@@ -24,7 +24,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.tiffReader = {
+
+/**
+ * a tiff file reader, it can parse byte array to draw into a canvas
+ * @namespace
+ */
+cc.tiffReader = /** @lends cc.tiffReader# */{
     _littleEndian: false,
     _tiffData: null,
     _fileDirectories: [],
@@ -219,6 +224,12 @@ cc.tiffReader = {
         return Math.floor((colorSample * multiplier) + (multiplier - 1));
     },
 
+    /**
+     *
+     * @param {Array} tiffData
+     * @param {HTMLCanvasElement} canvas
+     * @returns {*}
+     */
     parseTIFF: function (tiffData, canvas) {
         canvas = canvas || document.createElement('canvas');
 
