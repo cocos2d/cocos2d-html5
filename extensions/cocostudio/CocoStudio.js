@@ -70,4 +70,4 @@ ccs.Component.extend = ccs.Component.extend || cc.Component.extend;
  * cocostudio version
  * @type {string}
  */
-ccs.CocoStudioVersion = "1.3";
+ccs.cocostudioVersion = "v1.3.0.0";
