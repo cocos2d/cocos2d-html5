@@ -23,7 +23,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * The constant value of the fill style from top to bottom for cc.TableView
+ * @constant
+ * @type {number}
+ */
 cc.TABLEVIEW_FILL_TOPDOWN = 0;
+
+/**
+ * The constant value of the fill style from bottom to top for cc.TableView
+ * @constant
+ * @type {number}
+ */
 cc.TABLEVIEW_FILL_BOTTOMUP = 1;
 
 /**

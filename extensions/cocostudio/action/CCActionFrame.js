@@ -23,6 +23,9 @@
  ****************************************************************************/
 
 //Action frame type
+/**
+ * @ignore
+ */
 ccs.FRAME_TYPE_MOVE = 0;
 ccs.FRAME_TYPE_SCALE = 1;
 ccs.FRAME_TYPE_ROTATE = 2;

@@ -28,6 +28,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * An RGBA color class, its value present as percent
+ * @param {Number} r
+ * @param {Number} g
+ * @param {Number} b
+ * @param {Number} a
+ * @constructor
+ */
 cc.RGBA = function(r,g,b,a){
     this.r = r ;    // percent
     this.g = g ;    // percent

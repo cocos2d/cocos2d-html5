@@ -22,7 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.spriteFrameCacheHelper = {
+/**
+ * @namespace <p>
+ *     The sprite frame cache helper
+ */
+ccs.spriteFrameCacheHelper = /** @lends cc.spriteFrameCacheHelper# */ {
     _textureAtlasDic:{},
     _imagePaths:[],
 

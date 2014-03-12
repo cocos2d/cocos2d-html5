@@ -23,6 +23,9 @@
  ****************************************************************************/
 
 //LinearGravity
+/**
+ * @ignore
+ */
 ccui.LINEAR_GRAVITY_NONE = 0;
 ccui.LINEAR_GRAVITY_LEFT = 1;
 ccui.LINEAR_GRAVITY_TOP = 2;

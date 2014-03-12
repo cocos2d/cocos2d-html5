@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-ccs.DisplayManager = ccs.Class.extend({
+/**
+ * The display manager of CocoStudio
+ * @Class
+ * @extend cc.Class
+ */
+ccs.DisplayManager = ccs.Class.extend(/** @lends cc.DisplayManager */{
     _decoDisplayList:null,
     _currentDecoDisplay:null,
     _displayRenderNode:null,

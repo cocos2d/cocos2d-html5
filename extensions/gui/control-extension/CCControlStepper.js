@@ -25,6 +25,9 @@
  *
  */
 
+/**
+ * @ignore
+ */
 cc.CONTROL_STEPPER_PARTMINUS = 0;
 cc.CONTROL_STEPPER_PARTPLUS = 1;
 cc.CONTROL_STEPPER_PARTNONE = 2;

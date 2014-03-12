@@ -21,6 +21,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+/**
+ * @ignore
+ */
 ccs.PT_RATIO = 32;
 /**
  * Base class for ccs.ColliderFilter
