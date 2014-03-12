@@ -23,6 +23,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * @ignore
+ */
 cc.SCROLLVIEW_DIRECTION_NONE = -1;
 
 cc.SCROLLVIEW_DIRECTION_HORIZONTAL = 0;

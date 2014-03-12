@@ -24,7 +24,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
+/**
+ * The color class
+ * @param {Number} r 0 to 255
+ * @param {Number} g 0 to 255
+ * @param {Number} b 0 to 255
+ * @param {Number} a 0 to 255
+ * @constructor
+ */
 cc.Color = function (r, g, b, a) {
     this.r = r || 0;
     this.g = g || 0;

@@ -25,6 +25,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * the value of stencil bits.
+ * @type Number
+ */
 cc.stencilBits = -1;
 
 cc.setProgram = function (node, program) {

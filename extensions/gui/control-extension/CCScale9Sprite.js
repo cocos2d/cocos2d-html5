@@ -25,6 +25,9 @@
  Created by Jung Sang-Taik on 2012-03-16
  ****************************************************************************/
 
+/**
+ * @ignore
+ */
 cc.POSITIONS_CENTRE = 0;
 cc.POSITIONS_TOP = 1;
 cc.POSITIONS_LEFT = 2;

@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.ComponentContainer = cc.Class.extend({
+/**
+ * The container of cc.Component
+ * @class
+ * @extends cc.Class
+ */
+cc.ComponentContainer = cc.Class.extend(/** @lends cc.ComponentContainer# */{
     _components:null,
     _owner:null,
 

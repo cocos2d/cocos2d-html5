@@ -24,6 +24,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Open an URL address
+ * @function
+ */
 cc.openURL = function (url) {
     if (this.isMobile) {
         var size = cc.director.getWinSize();
