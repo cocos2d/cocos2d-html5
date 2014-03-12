@@ -125,6 +125,10 @@ ccs.CONST_COLOR_INFO = "color";
 ccs.CONST_CONFIG_FILE_PATH = "config_file_path";
 ccs.CONST_CONTENT_SCALE = "content_scale";
 
+/**
+ * @ignore
+ * @constructor
+ */
 ccs.DataInfo = function () {
     this.asyncStruct = null;
     this.configFileQueue = [];
@@ -135,7 +139,10 @@ ccs.DataInfo = function () {
     this.cocoStudioVersion = 0
 };
 
-ccs.dataReaderHelper = {
+/**
+ * @namespace CocoStudio data reader helper
+ */
+ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
     _configFileList: [],
     _flashToolVersion: ccs.CONST_VERSION_2_0,
     _cocoStudioVersion: ccs.CONST_VERSION_COMBINED,

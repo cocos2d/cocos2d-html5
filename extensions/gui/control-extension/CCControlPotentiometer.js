@@ -37,7 +37,7 @@
  * @property {cc.Sprite}        thumbSprite     - The thumb sprite of the potentionmeter
  * @property {cc.Point}         prevLocation    - The previous location of the potentionmeter
  */
-cc.ControlPotentiometer = cc.Control.extend({
+cc.ControlPotentiometer = cc.Control.extend(/** @lends cc.ControlPotentiometer# */{
     _thumbSprite:null,
     _progressTimer:null,
     _previousLocation:null,

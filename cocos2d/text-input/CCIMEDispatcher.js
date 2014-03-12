@@ -25,13 +25,6 @@
  ****************************************************************************/
 
 /**
- * The shared CCIMEDispatcher object for the system.
- * @Object
- * @type {cc.IMEDispatcher}
- */
-cc.imeDispatcher;
-
-/**
  * IME Keyboard Notification Info structure
  * @param {cc.Rect} begin the soft keyboard rectangle when animatin begin
  * @param {cc.Rect} end the soft keyboard rectangle when animatin end
@@ -139,11 +132,10 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
 });
 
 /**
- * Input Method Edit Message Dispatcher.
- * @class
- * @extends cc.Class
+ * @namespace Input Method Edit Message Dispatcher.
+ * @name cc.imeDispatcher
  */
-cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
+cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
     _domInputControl:null,
     impl:null,
     _currentInputString:"",
@@ -496,6 +488,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
 /**
  * @class
  * @extends cc.Class
+ * @name cc.IMEDispatcher.Impl
  */
 cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
     _delegateWithIme:null,
@@ -519,7 +512,6 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
         return null;
     }
 });
-
 
 // Initialize imeDispatcher singleton
 cc.imeDispatcher = new cc.IMEDispatcher();

@@ -22,10 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * Base object for ccs.GUIReader
- * @namespace
+ * @namespace Base object for ccs.GUIReader
  */
-ccs.guiReader = /** @lends ccs.GUIReader# */{
+ccs.guiReader = /** @lends ccs.guiReader# */{
     _filePath: "",
     _olderVersion: false,
     _fileDesignSizes: {},

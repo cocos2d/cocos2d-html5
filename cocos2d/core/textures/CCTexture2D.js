@@ -1048,13 +1048,13 @@ cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied)
     cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
 };
 
-/*
- * @alias cc.Texture2D
- */
 window._c = cc.Texture2D;
 
 /**
  * 32-bit texture: RGBA8888
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_RGBA8888
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1062,6 +1062,9 @@ _c.PIXEL_FORMAT_RGBA8888 = 0;
 
 /**
  * 24-bit texture: RGBA888
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_RGB888
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1069,6 +1072,9 @@ _c.PIXEL_FORMAT_RGB888 = 1;
 
 /**
  * 16-bit texture without Alpha channel
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_RGB565
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1076,6 +1082,9 @@ _c.PIXEL_FORMAT_RGB565 = 2;
 
 /**
  * 8-bit textures used as masks
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_A8
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1083,6 +1092,9 @@ _c.PIXEL_FORMAT_A8 = 3;
 
 /**
  * 8-bit intensity texture
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_I8
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1090,6 +1102,9 @@ _c.PIXEL_FORMAT_I8 = 4;
 
 /**
  * 16-bit textures used as masks
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_AI88
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1097,6 +1112,9 @@ _c.PIXEL_FORMAT_AI88 = 5;
 
 /**
  * 16-bit textures: RGBA4444
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_RGBA4444
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1104,6 +1122,9 @@ _c.PIXEL_FORMAT_RGBA4444 = 6;
 
 /**
  * 16-bit textures: RGB5A1
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_RGB5A1
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1111,6 +1132,9 @@ _c.PIXEL_FORMAT_RGB5A1 = 7;
 
 /**
  * 4-bit PVRTC-compressed texture: PVRTC4
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_PVRTC4
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1118,6 +1142,9 @@ _c.PIXEL_FORMAT_PVRTC4 = 8;
 
 /**
  * 2-bit PVRTC-compressed texture: PVRTC2
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_PVRTC2
+ * @static
  * @constant
  * @type {Number}
  */
@@ -1125,6 +1152,9 @@ _c.PIXEL_FORMAT_PVRTC2 = 9;
 
 /**
  * Default texture format: RGBA8888
+ * @memberOf cc.Texture2D
+ * @name PIXEL_FORMAT_DEFAULT
+ * @static
  * @constant
  * @type {Number}
  */

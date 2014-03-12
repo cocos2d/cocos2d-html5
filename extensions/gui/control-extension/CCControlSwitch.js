@@ -29,7 +29,7 @@
  * @class
  * @extend cc.Control
  */
-cc.ControlSwitch = cc.Control.extend({
+cc.ControlSwitch = cc.Control.extend(/** @lends cc.ControlSwitch# */{
     /** Sprite which represents the view. */
     _switchSprite:null,
     _initialTouchXPosition:0,

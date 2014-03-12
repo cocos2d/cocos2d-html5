@@ -43,7 +43,7 @@
  * @property {cc.Sprite}    slider      - <@readonly> The slider sprite
  * @property {cc.Point}     startPos    - <@readonly> The start position of the picker
  */
-cc.ControlSaturationBrightnessPicker = cc.Control.extend({
+cc.ControlSaturationBrightnessPicker = cc.Control.extend(/** @lends cc.ControlSaturationBrightnessPicker# */{
     _saturation:0,
     _brightness:0,
 

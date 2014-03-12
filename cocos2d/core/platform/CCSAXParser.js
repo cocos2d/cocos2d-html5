@@ -25,18 +25,11 @@
  ****************************************************************************/
 
 /**
- * A SAX Parser
- * @Object
- * @type {cc.SAXParser}
+ *
+ * @namespace A SAX Parser
+ * @name cc.saxParser
  */
-cc.saxParser;
-
-/**
- * a SAX Parser
- * @class
- * @extends cc.Class
- */
-cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
+cc.SAXParser = cc.Class.extend(/** @lends cc.saxParser# */{
     _parser: null,
     _isSupportDOMParser: null,
 
@@ -70,18 +63,11 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
 });
 
 /**
- * A Plist Parser
- * @Object
- * @type {cc.PlistParser}
+ *
+ * @namespace A plist Parser
+ * @name cc.plistParser
  */
-cc.plistParser;
-
-/**
- * a plist Parser
- * @class
- * @extends cc.SAXParser
- */
-cc.PlistParser = cc.SAXParser.extend({
+cc.PlistParser = cc.SAXParser.extend(/** @lends cc.plistParser# */{
 
     /**
      * parse a xml string as plist object.

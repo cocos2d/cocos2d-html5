@@ -62,7 +62,7 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
  * @class
  * @extends ccs.ActionFrame
  */
-ccs.ActionMoveFrame = ccs.ActionFrame.extend({
+ccs.ActionMoveFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionMoveFrame# */{
     _position: null,
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
@@ -108,7 +108,7 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend({
  * @class
  * @extends ccs.ActionFrame
  */
-ccs.ActionScaleFrame = ccs.ActionFrame.extend({
+ccs.ActionScaleFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionScaleFrame# */{
     _scaleX: 1,
     _scaleY: 1,
     ctor: function () {
@@ -165,7 +165,7 @@ ccs.ActionScaleFrame = ccs.ActionFrame.extend({
  * @class
  * @extends ccs.ActionFrame
  */
-ccs.ActionRotationFrame = ccs.ActionFrame.extend({
+ccs.ActionRotationFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionRotationFrame# */{
     _rotation: 0,
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
@@ -204,7 +204,7 @@ ccs.ActionRotationFrame = ccs.ActionFrame.extend({
  * @class
  * @extends ccs.ActionFrame
  */
-ccs.ActionFadeFrame = ccs.ActionFrame.extend({
+ccs.ActionFadeFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionFadeFrame# */{
     _opacity: 255,
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);
@@ -243,7 +243,7 @@ ccs.ActionFadeFrame = ccs.ActionFrame.extend({
  * @class
  * @extends ccs.ActionFrame
  */
-ccs.ActionTintFrame = ccs.ActionFrame.extend({
+ccs.ActionTintFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionTintFrame# */{
     _color: null,
     ctor: function () {
         ccs.ActionFrame.prototype.ctor.call(this);

@@ -41,7 +41,7 @@
  * @property {cc.Sprite}    slider      - <@readonly> The slider sprite
  * @property {cc.Point}     startPos    - <@readonly> The start position of the picker
  */
-cc.ControlHuePicker = cc.Control.extend({
+cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
     _hue:0,
     _huePercentage:0,
     _background:null,

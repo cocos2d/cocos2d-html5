@@ -249,7 +249,7 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
  *
  * <p>This information is obtained from the TMX file. </p>
  * @class
- * @extends cc.SAXParser
+ * @extends cc.saxParser
  *
  * @property {Array}    properties          - Properties of the map info.
  * @property {Number}   orientation         - Map orientation.

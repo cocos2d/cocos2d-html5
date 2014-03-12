@@ -25,6 +25,7 @@
  ****************************************************************************/
 
 /**
+ * @memberOf cc
  * @function
  * @param {Number} a
  * @param {Number} b
@@ -47,6 +48,7 @@ cc.__AffineTransformMake = function (a, b, c, d, tx, ty) {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {Number} a
  * @param {Number} b
@@ -66,6 +68,7 @@ cc.__PointApplyAffineTransform = function (point, t) {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {cc.Point} point
  * @param {cc.AffineTransform} t
@@ -86,6 +89,7 @@ cc.__SizeApplyAffineTransform = function (size, t) {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {cc.Size} size
  * @param {cc.AffineTransform} t
@@ -97,6 +101,7 @@ cc.SizeApplyAffineTransform = function (size, t) {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @return {cc.AffineTransform}
  * Constructor
@@ -106,6 +111,7 @@ cc.AffineTransformMakeIdentity = function () {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @return {cc.AffineTransform}
  * Constructor
@@ -115,6 +121,7 @@ cc.AffineTransformIdentity = function () {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {cc.Rect} rect
  * @param {cc.AffineTransform} anAffineTransform
@@ -164,6 +171,7 @@ cc._RectApplyAffineTransformIn = function(rect, anAffineTransform){
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {cc.AffineTransform} t
  * @param {Number} tx
@@ -183,6 +191,7 @@ cc.AffineTransformTranslate = function (t, tx, ty) {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {cc.AffineTransform} t
  * @param {Number} sx
@@ -195,6 +204,7 @@ cc.AffineTransformScale = function (t, sx, sy) {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {cc.AffineTransform} aTransform
  * @param {Number} anAngle
@@ -213,8 +223,11 @@ cc.AffineTransformRotate = function (aTransform, anAngle) {
         ty: aTransform.ty};
 };
 
-/** Concatenate `t2' to `t1' and return the result:<br/>
+/**
+ * Concatenate `t2' to `t1' and return the result:<br/>
  * t' = t1 * t2
+ * @memberOf cc
+ * @function
  * @param {cc.AffineTransform} t1
  * @param {cc.AffineTransform} t2
  * @return {cc.AffineTransform}
@@ -231,6 +244,7 @@ cc.AffineTransformConcat = function (t1, t2) {
 
 /**
  * Return true if `t1' and `t2' are equal, false otherwise.
+ * @memberOf cc
  * @function
  * @param {cc.AffineTransform} t1
  * @param {cc.AffineTransform} t2
@@ -242,6 +256,7 @@ cc.AffineTransformEqualToTransform = function (t1, t2) {
 };
 
 /**
+ * @memberOf cc
  * @function
  * @param {cc.AffineTransform} t
  * @return {cc.AffineTransform}

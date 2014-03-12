@@ -50,7 +50,7 @@ cc.AUTOREPEAT_INCREASETIME_INCREMENT = 12;
  * @property {cc.LabelTTF}  minusLabel  - The label for minus button of the stepper control
  * @property {cc.LabelTTF}  plusSLabel  - The label for plus button of the stepper control
  */
-cc.ControlStepper = cc.Control.extend({
+cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
     _minusSprite:null,
     _plusSprite:null,
     _minusLabel:null,

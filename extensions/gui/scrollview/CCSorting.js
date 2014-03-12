@@ -51,7 +51,12 @@ var _compareObject = function (val1, val2) {
     return (val1.getObjectID() - val2.getObjectID());
 };
 
-cc.ArrayForObjectSorting = cc.Class.extend({
+/**
+ * Array for object sorting utils
+ * @class
+ * @extend cc.Class
+ */
+cc.ArrayForObjectSorting = cc.Class.extend(/** @lends cc.ArrayForObjectSorting# */{
     _saveObjectArr:null,
 
     ctor:function () {

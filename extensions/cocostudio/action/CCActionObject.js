@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.Class
  */
-ccs.ActionObject = ccs.Class.extend({
+ccs.ActionObject = ccs.Class.extend(/** @lends ccs.ActionObject# */{
     _actionNodeList: null,
     _name: "",
     _loop: false,
