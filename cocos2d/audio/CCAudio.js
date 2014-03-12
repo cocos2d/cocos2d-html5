@@ -949,15 +949,6 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0){
     });
 }
 
-// Initialize Audio engine singleton
-cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
-cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function(){
-	cc.audioEngine._pausePlaying();
-});
-cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function(){
-	cc.audioEngine._resumePlaying();
-});
-
 /**
  * Resource loader for audio.
  */
@@ -1048,3 +1039,12 @@ cc._audioLoader._supportedAudioTypes = function() {
     return arr;
 }();
 cc.loader.register(["mp3", "ogg", "wav", "mp4", "m4a"], cc._audioLoader);
+
+// Initialize Audio engine singleton
+cc.audioEngine = cc.AudioEngineForSingle ? new cc.AudioEngineForSingle() : new cc.AudioEngine();
+cc.eventManager.addCustomListener(cc.game.EVENT_HIDE, function(){
+    cc.audioEngine._pausePlaying();
+});
+cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function(){
+    cc.audioEngine._resumePlaying();
+});
