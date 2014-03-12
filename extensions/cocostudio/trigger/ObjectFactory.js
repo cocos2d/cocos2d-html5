@@ -46,11 +46,7 @@ ccs.objectFactory = {
 ccs.TInfo = ccs.Class.extend({
     _className: "",
     _fun: null,
-    /**
-     *
-     * @param {String|ccs.TInfo}c
-     * @param {Function}f
-     */
+
     ctor: function (c, f) {
         if (f) {
             this._className = c;

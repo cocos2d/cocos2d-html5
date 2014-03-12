@@ -65,7 +65,7 @@ cc.ScrollViewDelegate = cc.Class.extend({
  * @property {cc.ScrollViewDelegate}    delegate    - The inside container of the scroll view
  * @property {Boolean}           clippingToBounds   - Indicate whether the scroll view clips its children
  */
-cc.ScrollView = cc.Layer.extend({
+cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     _zoomScale:0,
     _minZoomScale:0,
     _maxZoomScale:0,

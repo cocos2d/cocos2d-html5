@@ -83,20 +83,21 @@ cc.$ = function (x) {
     /** @lends cc.$# */
     var parent = (this == cc) ? document : this;
 
-    /**
-     * @type {HTMLElement}
-     */
     var el = (x instanceof HTMLElement) ? x : parent.querySelector(x);
 
     if (el) {
         /**
          * find and return the child wth css selector (same as jquery.find)
+         * @lends cc.$#
+         * @function
          * @param {HTMLElement|String} x pass in a css selector in string or the whole HTMLElement
          * @return {cc.$}
          */
         el.find = el.find || cc.$;
         /**
          * check if a DOMNode has a specific class
+         * @lends cc.$#
+         * @function
          * @param {String} cls
          * @return {Boolean}
          */
@@ -105,6 +106,8 @@ cc.$ = function (x) {
         };
         /**
          * add a class to a DOMNode, returns self to allow chaining
+         * @lends cc.$#
+         * @function
          * @param {String} cls
          * @return {cc.$}
          */
@@ -119,6 +122,8 @@ cc.$ = function (x) {
         };
         /**
          * remove a specific class from a DOMNode, returns self to allow chaining
+         * @lends cc.$#
+         * @function
          * @param {String} cls
          * @return {cc.$}
          */
@@ -130,6 +135,7 @@ cc.$ = function (x) {
         };
         /**
          * detach it self from parent
+         * @lends cc.$#
          * @function
          */
         el.remove = el.remove || function () {
@@ -140,6 +146,8 @@ cc.$ = function (x) {
 
         /**
          * add to another element as a child
+         * @lends cc.$#
+         * @function
          * @param {HTMLElement|cc.$} x
          * @return {cc.$}
          */
@@ -150,6 +158,8 @@ cc.$ = function (x) {
 
         /**
          * add to another element as a child and place on the top of the children list
+         * @lends cc.$#
+         * @function
          * @param {HTMLElement|cc.$} x
          * @return {cc.$}
          */
@@ -160,6 +170,8 @@ cc.$ = function (x) {
 
         /**
          * helper function for updating the css transform
+         * @lends cc.$#
+         * @function
          * @return {cc.$}
          */
         el.transforms = el.transforms || function () {
@@ -174,6 +186,9 @@ cc.$ = function (x) {
 
         /**
          * move the element
+         * @memberOf cc.$#
+         * @name translates
+         * @function
          * @param {Number} x in pixel
          * @param {Number} y in pixel
          * @return {cc.$}
@@ -187,6 +202,9 @@ cc.$ = function (x) {
 
         /**
          * rotate the element
+         * @memberOf cc.$#
+         * @name rotate
+         * @function
          * @param {Number} x in degrees
          * @return {cc.$}
          */
@@ -198,6 +216,9 @@ cc.$ = function (x) {
 
         /**
          * resize the element
+         * @memberOf cc.$#
+         * @name resize
+         * @function
          * @param {Number} x
          * @param {Number} y
          * @return {cc.$}
@@ -211,6 +232,9 @@ cc.$ = function (x) {
 
         /**
          * skews the element
+         * @memberOf cc.$#
+         * @name setSkew
+         * @function
          * @param {Number} x in degrees
          * @param {Number} y
          * @return {cc.$}

@@ -43,7 +43,7 @@ cc.Spacer.horizontalSpacer = function (space) {
  * @class
  * @extend cc.Layer
  */
-cc.MenuPassive = cc.Layer.extend({
+cc.MenuPassive = cc.Layer.extend(/** @lends cc.MenuPassive# */{
     RGBAProtocol:true,
 
     _color:null,

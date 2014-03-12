@@ -31,7 +31,7 @@
  * @property {Number}   maxLength           - The max length of the text field
  * @property {Boolean}  passwordEnabled     - Indicate whether the text field is for entering password
  */
-ccui.UICCTextField = cc.TextFieldTTF.extend({
+ccui.UICCTextField = cc.TextFieldTTF.extend(/** @lends ccui.UICCTextField# */{
     maxLengthEnabled: false,
     maxLength: 0,
     passwordEnabled: false,

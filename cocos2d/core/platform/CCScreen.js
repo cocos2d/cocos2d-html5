@@ -25,11 +25,11 @@
  ****************************************************************************/
 
 /**
- * The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
+ * @namespace The fullscreen API provides an easy way for web content to be presented using the user's entire screen.
  * It's invalid on safari,QQbrowser and android browser
- * @namespace
+ * @name cc.screen
  */
-cc.screen = /** @lends cc.shaderCache# */{
+cc.screen = /** @lends cc.screen# */{
     _supportsFullScreen: false,
 	// the pre fullscreenchange function
     _preOnFullScreenChange: null,
@@ -103,7 +103,6 @@ cc.screen = /** @lends cc.shaderCache# */{
      * change the screen to full mode.
      * @param {Element} element
      * @param {Function} onFullScreenChange
-     * @returns {*}
      */
     requestFullScreen: function (element, onFullScreenChange) {
 	    if (!this._supportsFullScreen) return;
@@ -124,7 +123,6 @@ cc.screen = /** @lends cc.shaderCache# */{
 
     /**
      * exit the full mode.
-     * @returns {*}
      */
     exitFullScreen: function () {
         return this._supportsFullScreen ? document[ this._fn.exitFullscreen ]() : true;

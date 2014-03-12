@@ -24,22 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * The shared audio Engine object
- * @Object
- * @type {cc.AudioEngine}
- */
-cc.audioEngine;
-
-/**
- * Common getter setter configuration function
- * @function
- * @param {Object} proto    A class prototype or an object to config<br/>
- * @param {String} prop     Property name
- * @param {function} getter Getter function for the property
- * @param {function} setter Setter function for the property
- */
-
 if (cc.sys._supportWebAudio) {
     var _ctx = cc.webAudioContext = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
     /**
@@ -258,11 +242,10 @@ if (cc.sys._supportWebAudio) {
 }
 
 /**
- * A simple Audio Engine engine API.
- * @class
- * @extends   cc.Class
+ * @namespace A simple Audio Engine engine API.
+ * @name cc.audioEngine
  */
-cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
+cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     _soundSupported:false,      // if sound is not enabled, this engine's init() will return false
 
     _currMusic : null,
@@ -672,9 +655,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
 if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0){
     /**
-     * AudioEngine for single audio mode.
+     * Extended AudioEngine for single audio mode.
      * @class
-     * @extends   cc.AudioEngine
      */
     cc.AudioEngineForSingle = cc.AudioEngine.extend({
         _waitingEffIds : [],

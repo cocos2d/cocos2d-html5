@@ -28,8 +28,7 @@ cc.Touches = [];
 cc.TouchesIntergerDict = {};
 
 /**
- * cc.view is the shared view object.
- * @namespace
+ * @namespace cc.view is the shared view object.
  * @name cc.view
  */
 cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
@@ -608,7 +607,7 @@ cc.EGLView._getInstance = function () {
  * @class
  * @extends cc.Class
  */
-cc.ContainerStrategy = cc.Class.extend({
+cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
     /**
      * Manipulation before appling the strategy
      * @param {cc.view} The target view
@@ -692,7 +691,7 @@ cc.ContainerStrategy = cc.Class.extend({
  * @class
  * @extends cc.Class
  */
-cc.ContentStrategy = cc.Class.extend({
+cc.ContentStrategy = cc.Class.extend(/** @lends cc.ContentStrategy# */{
 
     _result: {
         scale: [1, 1],
@@ -904,7 +903,7 @@ cc.ContentStrategy = cc.Class.extend({
  * @class
  * @extends cc.Class
  */
-cc.ResolutionPolicy = cc.Class.extend({
+cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
 	_containerStrategy: null,
     _contentStrategy: null,
 
@@ -964,32 +963,40 @@ cc.ResolutionPolicy = cc.Class.extend({
 });
 
 /*
- * @public
+ * @memberOf cc.ResolutionPolicy#
+ * @name EXACT_FIT
  * @const
+ * @static
  * The entire application is visible in the specified area without trying to preserve the original aspect ratio.<br/>
  * Distortion can occur, and the application may appear stretched or compressed.
  */
 cc.ResolutionPolicy.EXACT_FIT = 0;
 
 /*
- * @public
+ * @memberOf cc.ResolutionPolicy#
+ * @name NO_BORDER
  * @const
+ * @static
  * The entire application fills the specified area, without distortion but possibly with some cropping,<br/>
  * while maintaining the original aspect ratio of the application.
  */
 cc.ResolutionPolicy.NO_BORDER = 1;
 
 /*
- * @public
+ * @memberOf cc.ResolutionPolicy#
+ * @name SHOW_ALL
  * @const
+ * @static
  * The entire application is visible in the specified area without distortion while maintaining the original<br/>
  * aspect ratio of the application. Borders can appear on two sides of the application.
  */
 cc.ResolutionPolicy.SHOW_ALL = 2;
 
 /*
- * @public
+ * @memberOf cc.ResolutionPolicy#
+ * @name FIXED_HEIGHT
  * @const
+ * @static
  * The application takes the height of the design resolution size and modifies the width of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
  * no distortion will occur however you must make sure your application works on different<br/>
@@ -998,8 +1005,10 @@ cc.ResolutionPolicy.SHOW_ALL = 2;
 cc.ResolutionPolicy.FIXED_HEIGHT = 3;
 
 /*
- * @public
+ * @memberOf cc.ResolutionPolicy#
+ * @name FIXED_WIDTH
  * @const
+ * @static
  * The application takes the width of the design resolution size and modifies the height of the internal<br/>
  * canvas so that it fits the aspect ratio of the device<br/>
  * no distortion will occur however you must make sure your application works on different<br/>
@@ -1008,8 +1017,10 @@ cc.ResolutionPolicy.FIXED_HEIGHT = 3;
 cc.ResolutionPolicy.FIXED_WIDTH = 4;
 
 /*
- * @public
+ * @memberOf cc.ResolutionPolicy#
+ * @name UNKNOWN
  * @const
+ * @static
  * Unknow policy
  */
 cc.ResolutionPolicy.UNKNOWN = 5;

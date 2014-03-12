@@ -23,10 +23,9 @@
  ****************************************************************************/
 
 /**
- * Base singleton object for ccs.sceneReader
- * @namespace
+ * @namespace Base singleton object for ccs.sceneReader
  */
-ccs.sceneReader = /** @lends ccs.SceneReader# */{
+ccs.sceneReader = /** @lends ccs.sceneReader# */{
     _baseBath:"",
     _listener:null,
     _selector:null,

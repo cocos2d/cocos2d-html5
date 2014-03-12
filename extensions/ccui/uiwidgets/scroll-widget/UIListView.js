@@ -27,7 +27,7 @@
  * @class
  * @extends ccui.ScrollView
  */
-ccui.ListView = ccui.ScrollView.extend({
+ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     _model: null,
     _items: null,
     _gravity: null,

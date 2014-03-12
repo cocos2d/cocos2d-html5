@@ -34,7 +34,7 @@ cc.TABLEVIEW_FILL_BOTTOMUP = 1;
  *
  * @property {Number}   objectId    - The index used internally by SWTableView and its subclasses
  */
-cc.TableViewCell = cc.Node.extend({
+cc.TableViewCell = cc.Node.extend(/** @lends cc.TableViewCell# */{
     _idx:0,
     _className:"TableViewCell",
 
@@ -74,7 +74,7 @@ delete window._p;
 /**
  * Sole purpose of this delegate is to single touch event in this version.
  */
-cc.TableViewDelegate = cc.ScrollViewDelegate.extend({
+cc.TableViewDelegate = cc.ScrollViewDelegate.extend(/** @lends cc.TableViewDelegate# */{
     /**
      * Delegate to respond touch event
      *
@@ -120,7 +120,7 @@ cc.TableViewDelegate = cc.ScrollViewDelegate.extend({
 /**
  * Data source that governs table backend data.
  */
-cc.TableViewDataSource = cc.Class.extend({
+cc.TableViewDataSource = cc.Class.extend(/** @lends cc.TableViewDataSource# */{
     /**
      * cell size for a given index
      * @param {cc.TableView} table table to hold the instances of Class
@@ -172,7 +172,7 @@ cc.TableViewDataSource = cc.Class.extend({
  * @property {Number}                   verticalFillOrder   - The index to determine how cell is ordered and filled in the view
  *
  */
-cc.TableView = cc.ScrollView.extend({
+cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     _vOrdering:null,
     _indices:null,
     _cellsFreed:null,

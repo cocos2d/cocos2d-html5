@@ -54,7 +54,7 @@ ccs.DisplayManager = ccs.Class.extend({
             decoDisplay = this._decoDisplayList[index];
         }
         else {
-            decoDisplay = ccs.DecotativeDisplay.create();
+            decoDisplay = ccs.DecorativeDisplay.create();
             this._decoDisplayList.push(decoDisplay);
         }
 
@@ -243,7 +243,7 @@ ccs.DisplayManager = ccs.Class.extend({
         var displayList = boneData.displayDataList;
         for (var i = 0; i < displayList.length; i++) {
             var displayData = displayList[i];
-            var decoDisplay = ccs.DecotativeDisplay.create();
+            var decoDisplay = ccs.DecorativeDisplay.create();
             decoDisplay.setDisplayData(displayData);
 
             ccs.DisplayFactory.createDisplay(this._bone, decoDisplay);

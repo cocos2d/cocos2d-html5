@@ -27,7 +27,7 @@
  * @class
  * @extends ccs.Class
  */
-ccs.ActionNode = ccs.Class.extend({
+ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
     _currentFrameIndex: 0,
     _destFrameIndex: 0,
     _unitTime: 0,

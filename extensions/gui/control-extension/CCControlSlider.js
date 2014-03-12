@@ -44,7 +44,7 @@ cc.SLIDER_MARGIN_V = 8;
  * @property {cc.Sprite}    progressSprite      - <@readonly> The background sprite
  * @property {cc.Sprite}    backgroundSprite    - <@readonly> The overlay sprite
  */
-cc.ControlSlider = cc.Control.extend({
+cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
     _value:0,
     _minimumValue:0,
     _maximumValue:0,

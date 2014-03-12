@@ -25,12 +25,13 @@
  ****************************************************************************/
 
 /**
- * Singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.
- * @namespace
- *
- * @example
- * // add SpriteFrames to spriteFrameCache With File
- * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);
+ * @namespace <p>
+ * Singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.<br/>
+ * <br/>
+ * example<br/>
+ * // add SpriteFrames to spriteFrameCache With File<br/>
+ * cc.spriteFrameCache.addSpriteFrames(s_grossiniPlist);<br/>
+ * </p>
  */
 cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
     _CCNS_REG1 : /^\s*\{\s*([\-]?\d+[.]?\d*)\s*,\s*([\-]?\d+[.]?\d*)\s*\}\s*$/,

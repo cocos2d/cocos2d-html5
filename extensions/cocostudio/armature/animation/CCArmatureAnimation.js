@@ -36,7 +36,7 @@ ccs.MovementEventType = {
  * @class
  * @extends ccs.Class
  */
-ccs.AnimationEvent = ccs.Class.extend({
+ccs.AnimationEvent = ccs.Class.extend(/** @lends ccs.AnimationEvent# */{
     _arguments:null,
     _callFunc:null,
     _selectorTarget:null,
