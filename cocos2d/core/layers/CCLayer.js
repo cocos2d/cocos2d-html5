@@ -46,9 +46,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this.anchorX = 0.5;
         this.anchorY = 0.5;
         this._ignoreAnchorPointForPosition = true;
-
-        var director = cc.director;
-        this.setContentSize(director.getWinSize());
+        this.setContentSize(cc.winSize);
     }
 });
 
@@ -96,9 +94,9 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 	 * @constructor
 	 */
     ctor: function () {
+		this._displayedColor = cc.color(255, 255, 255, 255);
+		this._realColor = cc.color(255, 255, 255, 255);
         cc.Layer.prototype.ctor.call(this);
-        this._displayedColor = cc.color(255, 255, 255, 255);
-        this._realColor = cc.color(255, 255, 255, 255);
     },
 
     init: function () {
@@ -443,30 +441,30 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
-	    this.init(color, width, height);
+	    cc.LayerColor.prototype.init.call(this, color, width, height);
     },
 
     _ctorForWebGL: function (color, width, height) {
-        cc.LayerRGBA.prototype.ctor.call(this);
+	    this._squareVerticesAB = new ArrayBuffer(32);
+	    this._squareColorsAB = new ArrayBuffer(16);
+
+	    var locSquareVerticesAB = this._squareVerticesAB, locSquareColorsAB = this._squareColorsAB;
+	    var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
+	    this._squareVertices = [new cc.Vertex2F(0, 0, locSquareVerticesAB, 0),
+		    new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen),
+		    new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 2),
+		    new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 3)];
+	    this._squareColors = [cc.color(0, 0, 0, 255, locSquareColorsAB, 0),
+		    cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen),
+		    cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
+		    cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
+	    this._verticesFloat32Buffer = cc._renderContext.createBuffer();
+	    this._colorsUint8Buffer = cc._renderContext.createBuffer();
+
+	    cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
 
-        this._squareVerticesAB = new ArrayBuffer(32);
-        this._squareColorsAB = new ArrayBuffer(16);
-
-        var locSquareVerticesAB = this._squareVerticesAB, locSquareColorsAB = this._squareColorsAB;
-        var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
-        this._squareVertices = [new cc.Vertex2F(0, 0, locSquareVerticesAB, 0),
-            new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen),
-            new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 2),
-            new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 3)];
-        this._squareColors = [cc.color(0, 0, 0, 255, locSquareColorsAB, 0),
-            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen),
-            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
-            cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
-        this._verticesFloat32Buffer = cc._renderContext.createBuffer();
-        this._colorsUint8Buffer = cc._renderContext.createBuffer();
-
-	    this.init(color, width, height);
+	    cc.LayerColor.prototype.init.call(this, color, width, height);
     },
 
 	/**
@@ -481,8 +479,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
 		var winSize = cc.director.getWinSize();
 		color = color ||  cc.color(0, 0, 0, 255);
-		this.width = width === undefined ? winSize.width : width;
-		this.height = height === undefined ? winSize.height : height;
+		width = width === undefined ? winSize.width : width;
+		height = height === undefined ? winSize.height : height;
+		this.setContentSize(width, height);
 
 		var locDisplayedColor = this._displayedColor;
 		locDisplayedColor.r = color.r;
@@ -726,9 +725,16 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 	 * @param {cc.Point|Null} v
 	 */
     ctor:function (start, end, v) {
-        cc.LayerColor.prototype.ctor.call(this);
+		this._startColor =  cc.color(0, 0, 0, 255);
+		this._endColor =  cc.color(0, 0, 0, 255);
+		this._alongVector = cc.p(0, -1);
+		this._startOpacity = 255;
+		this._endOpacity = 255;
+		this._gradientStartPoint = cc.p(0, 0);
+		this._gradientEndPoint = cc.p(0, 0);
 
-		this.init(start, end, v);
+        cc.LayerColor.prototype.ctor.call(this);
+		cc.LayerGradient.prototype.init.call(this, start, end, v);
     },
 
 	/**
@@ -759,7 +765,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 		this._gradientStartPoint = cc.p(0, 0);
 		this._gradientEndPoint = cc.p(0, 0);
 
-		cc.LayerColor.prototype.init.call(this, cc.color(start.r, start.g, start.b, 255));
+		cc.LayerColor.prototype.init.call(this,cc.color(start.r, start.g, start.b, 255));
 		return true;
 	},
 
@@ -1028,7 +1034,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
 	 */
 	ctor: function (layers) {
 		cc.Layer.prototype.ctor.call(this);
-		layers && this.initWithLayers(layers);
+		layers && cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
 	},
 
     /**
