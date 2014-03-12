@@ -793,10 +793,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * Constructor
      * @function
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
+     * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
      */
     ctor: null,
 
-    _ctorForWebGL: function (fileName) {
+    _ctorForWebGL: function (fileName, rect) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
@@ -810,26 +811,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         this._textureLoaded = true;
 
-        if (fileName) {
-            if (typeof(fileName) === "string") {
-                var frame = cc.spriteFrameCache.getSpriteFrame(fileName);
-                this.initWithSpriteFrame(frame);
-            } else if (typeof(fileName) === "object") {
-                if (fileName instanceof cc.SpriteFrame) {
-                    this.initWithSpriteFrame(fileName);
-                } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
-                    var texture2d = new cc.Texture2D();
-                    texture2d.initWithElement(fileName);
-                    texture2d.handleLoadedTexture();
-                    this.initWithTexture(texture2d);
-                } else if (fileName instanceof cc.Texture2D) {
-                    this.initWithTexture(fileName);
-                }
-            }
-        }
+	    this._softInit(fileName, rect);
     },
 
-    _ctorForCanvas: function (fileName) {
+    _ctorForCanvas: function (fileName, rect) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
@@ -842,24 +827,39 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         this._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
         this._drawSize_Canvas = cc.size(0, 0);
 
-        if (fileName) {
-            if (typeof(fileName) === "string") {
-                var frame = cc.spriteFrameCache.getSpriteFrame(fileName);
-                this.initWithSpriteFrame(frame);
-            } else if (typeof(fileName) === "object") {
-                if (fileName instanceof cc.SpriteFrame) {
-                    this.initWithSpriteFrame(fileName);
-                } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
-                    var texture2d = new cc.Texture2D();
-                    texture2d.initWithElement(fileName);
-                    texture2d.handleLoadedTexture();
-                    this.initWithTexture(texture2d);
-                } else if (fileName instanceof cc.Texture2D) {
-                    this.initWithTexture(fileName);
-                }
-            }
-        }
+	    this._softInit(fileName, rect);
     },
+
+	_softInit: function (fileName, rect) {
+		if (fileName === undefined)
+			cc.Sprite.prototype.init.call(this);
+		else if (typeof(fileName) === "string") {
+			if (fileName[0] === "#") {
+				// Init with a sprite frame name
+				var frameName = fileName.substr(1, fileName.length - 1);
+				var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
+				this.initWithSpriteFrame(spriteFrame);
+			} else {
+				// Init  with filename and rect
+				cc.Sprite.prototype.init.call(this, fileName, rect);
+			}
+		}
+		else if (typeof(fileName) === "object") {
+			if (fileName instanceof cc.Texture2D) {
+				// Init  with texture and rect
+				this.initWithTexture(fileName, rect);
+			} else if (fileName instanceof cc.SpriteFrame) {
+				// Init with a sprite frame
+				this.initWithSpriteFrame(fileName);
+			} else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
+				// Init with a canvas or image element
+				var texture2d = new cc.Texture2D();
+				texture2d.initWithElement(fileName);
+				texture2d.handleLoadedTexture();
+				this.initWithTexture(texture2d);
+			}
+		}
+	},
 
     /**
      * Returns the quad (tex coords, vertex coords and color) information.
@@ -2135,7 +2135,7 @@ delete window._p;
 /**
  * Create a sprite with image path or frame name or texture or spriteFrame.
  * @constructs
- * @param {String|cc.Texture2D|cc.SpriteFrame} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
+ * @param {String|cc.SpriteFrame|HTMLImageElement|cc.Texture2D} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
  * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
  * @return {cc.Sprite} A valid sprite object
  * @example
@@ -2159,40 +2159,5 @@ delete window._p;
  *
  */
 cc.Sprite.create = function (fileName, rect) {
-    var sprite = new cc.Sprite();
-
-    if (arguments.length == 0) {
-        sprite.init();
-        return sprite;
-    }
-
-    if (typeof(fileName) === "string") {
-        if (fileName[0] === "#") {
-            //init with a sprite frame name
-            var frameName = fileName.substr(1, fileName.length - 1);
-            var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
-            if (sprite.initWithSpriteFrame(spriteFrame))
-                return sprite;
-        } else {
-            //init  with filename and rect
-            if (sprite.init(fileName, rect))
-                return  sprite;
-        }
-        return null;
-    }
-
-    if (typeof(fileName) === "object") {
-        if (fileName instanceof cc.Texture2D) {
-            //init  with texture and rect
-            if (sprite.initWithTexture(fileName, rect))
-                return  sprite;
-        } else if (fileName instanceof cc.SpriteFrame) {
-            //init with a sprite frame
-            if (sprite.initWithSpriteFrame(fileName))
-                return sprite;
-        }
-        return null;
-    }
-
-    return null;
+    return new cc.Sprite(fileName, rect);
 };
