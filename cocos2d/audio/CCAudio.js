@@ -457,7 +457,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      *  }
      */
     isMusicPlaying: function () {
-        return this._currMusic && !this._currMusic.ended;
+        return this._musicPlayState == 2 && this._currMusic && !this._currMusic.ended;
     },
     //music end
 
