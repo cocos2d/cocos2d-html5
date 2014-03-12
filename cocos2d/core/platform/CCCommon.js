@@ -336,22 +336,6 @@ cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, sette
 };
 
 /**
- * Common getter setter configuration function
- * @function
- * @param {Object}   class      A class prototype or an object to config<br/>
- * @param {String}   prop       Property name
- * @param {function} getter     Getter function for the property
- * @param {function} setter     Setter function for the property
- * @param {String}   getterName Name of getter function for the property
- * @param {String}   setterName Name of setter function for the property
- */
-cc.defineProtoGetterSetter = function (classobj, prop, getter, setter, getterName, setterName)
-{
-	var proto = classobj.prototype;
-	cc.defineGetterSetter(proto, prop, getter, setter, getterName, setterName);
-};
-
-/**
  * copy an array's item to a new array (its performance is better than Array.slice)
  * @param {Array} arr
  * @returns {Array}
