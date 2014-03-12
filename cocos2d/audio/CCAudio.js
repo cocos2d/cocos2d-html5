@@ -457,7 +457,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      *  }
      */
     isMusicPlaying: function () {
-        return this._musicPlayState == 2;
+        return this._currMusic && !this._currMusic.ended;
     },
     //music end
 
@@ -650,7 +650,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 eff.pause();
             }
         }
-        if(self._musicPlayState == 2) {
+        if(self.isMusicPlaying()) {
             self._playings.push(self._currMusic);
             self._currMusic.pause();
         }
