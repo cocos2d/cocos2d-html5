@@ -42,11 +42,11 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 	 * @constructor
 	 */
     ctor: function () {
-        cc.Node.prototype.ctor.call(this);
-        this.anchorX = 0.5;
-        this.anchorY = 0.5;
+		var nodep = cc.Node.prototype;
+		nodep.ctor.call(this);
         this._ignoreAnchorPointForPosition = true;
-        this.setContentSize(cc.winSize);
+		nodep.setAnchorPoint.call(this, 0.5, 0.5);
+		nodep.setContentSize.call(this, cc.winSize);
     }
 });
 
@@ -94,18 +94,18 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
 	 * @constructor
 	 */
     ctor: function () {
+        cc.Layer.prototype.ctor.call(this);
 		this._displayedColor = cc.color(255, 255, 255, 255);
 		this._realColor = cc.color(255, 255, 255, 255);
-        cc.Layer.prototype.ctor.call(this);
     },
 
     init: function () {
-        if(cc.Layer.prototype.init.call(this)){
-            this.cascadeOpacity = false;
-            this.cascadeColor = false;
-            return true;
-        }
-        return false;
+	    this._ignoreAnchorPointForPosition = true;
+	    nodep.setAnchorPoint.call(this, 0.5, 0.5);
+	    nodep.setContentSize.call(this, cc.winSize);
+        this.cascadeOpacity = false;
+        this.cascadeColor = false;
+        return true;
     },
 
     /**
@@ -481,7 +481,6 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 		color = color ||  cc.color(0, 0, 0, 255);
 		width = width === undefined ? winSize.width : width;
 		height = height === undefined ? winSize.height : height;
-		this.setContentSize(width, height);
 
 		var locDisplayedColor = this._displayedColor;
 		locDisplayedColor.r = color.r;
@@ -496,7 +495,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 		this._displayedOpacity = color.a;
 		this._realOpacity = color.a;
 
-		this._updateColor();
+		var proto = cc.LayerColor.prototype;
+		proto.setContentSize.call(this, width, height);
+		proto._updateColor.call(this);
 
 		return true;
 	},
@@ -725,6 +726,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 	 * @param {cc.Point|Null} v
 	 */
     ctor:function (start, end, v) {
+        cc.LayerColor.prototype.ctor.call(this);
+
 		this._startColor =  cc.color(0, 0, 0, 255);
 		this._endColor =  cc.color(0, 0, 0, 255);
 		this._alongVector = cc.p(0, -1);
@@ -732,8 +735,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 		this._endOpacity = 255;
 		this._gradientStartPoint = cc.p(0, 0);
 		this._gradientEndPoint = cc.p(0, 0);
-
-        cc.LayerColor.prototype.ctor.call(this);
 		cc.LayerGradient.prototype.init.call(this, start, end, v);
     },
 
@@ -765,7 +766,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 		this._gradientStartPoint = cc.p(0, 0);
 		this._gradientEndPoint = cc.p(0, 0);
 
-		cc.LayerColor.prototype.init.call(this,cc.color(start.r, start.g, start.b, 255));
+		cc.LayerColor.prototype.init.call(this, cc.color(start.r, start.g, start.b, 255));
+		cc.LayerGradient.prototype._updateColor.call(this);
 		return true;
 	},
 

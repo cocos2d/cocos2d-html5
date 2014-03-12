@@ -798,36 +798,38 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     ctor: null,
 
     _ctorForWebGL: function (fileName, rect) {
-        cc.NodeRGBA.prototype.ctor.call(this);
-        this._shouldBeHidden = false;
-        this._offsetPosition = cc.p(0, 0);
-        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
-        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
-        this._rect = cc.rect(0,0,0,0);
+	    var self = this;
+        cc.NodeRGBA.prototype.ctor.call(self);
+	    self._shouldBeHidden = false;
+	    self._offsetPosition = cc.p(0, 0);
+	    self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+	    self._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+	    self._rect = cc.rect(0,0,0,0);
 
-        this._quad = new cc.V3F_C4B_T2F_Quad();
-        this._quadWebBuffer = cc._renderContext.createBuffer();
-        this._quadDirty = true;
+	    self._quad = new cc.V3F_C4B_T2F_Quad();
+	    self._quadWebBuffer = cc._renderContext.createBuffer();
+	    self._quadDirty = true;
 
-        this._textureLoaded = true;
+	    self._textureLoaded = true;
 
-	    this._softInit(fileName, rect);
+	    self._softInit(fileName, rect);
     },
 
     _ctorForCanvas: function (fileName, rect) {
-        cc.NodeRGBA.prototype.ctor.call(this);
-        this._shouldBeHidden = false;
-        this._offsetPosition = cc.p(0, 0);
-        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
-        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
-        this._rect = cc.rect(0, 0, 0, 0);
+	    var self = this;
+        cc.NodeRGBA.prototype.ctor.call(self);
+	    self._shouldBeHidden = false;
+	    self._offsetPosition = cc.p(0, 0);
+	    self._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+	    self._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+	    self._rect = cc.rect(0, 0, 0, 0);
 
-        this._newTextureWhenChangeColor = false;
-        this._textureLoaded = true;
-        this._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
-        this._drawSize_Canvas = cc.size(0, 0);
+	    self._newTextureWhenChangeColor = false;
+	    self._textureLoaded = true;
+	    self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
+	    self._drawSize_Canvas = cc.size(0, 0);
 
-	    this._softInit(fileName, rect);
+	    self._softInit(fileName, rect);
     },
 
 	_softInit: function (fileName, rect) {
