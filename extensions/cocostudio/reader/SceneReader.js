@@ -231,7 +231,7 @@ ccs.sceneReader = /** @lends ccs.sceneReader# */{
                     this._callSelector(audio, subDict);
                 }
                 else if (className == "GUIComponent") {
-                    var widget = ccs.guiReader.widgetFromJsonFile(path);
+                    var widget = ccs.uiReader.widgetFromJsonFile(path);
                     var render = ccs.ComRender.create(widget, "GUIComponent");
                     if (comName != null) {
                         render.setName(comName);

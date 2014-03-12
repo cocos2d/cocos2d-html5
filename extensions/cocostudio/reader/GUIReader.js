@@ -24,7 +24,7 @@
 /**
  * @namespace Base object for ccs.GUIReader
  */
-ccs.guiReader = /** @lends ccs.guiReader# */{
+ccs.uiReader = /** @lends ccs.guiReader# */{
     _filePath: "",
     _olderVersion: false,
     _fileDesignSizes: {},
@@ -157,10 +157,10 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0) {
             cc.log("Read design size error!");
             var winSize = cc.director.getWinSize();
-            ccs.guiReader.storeFileDesignSize(fileName, winSize);
+            ccs.uiReader.storeFileDesignSize(fileName, winSize);
         }
         else {
-            ccs.guiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
+            ccs.uiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
         }
         var widgetTree = jsonDict["widgetTree"];
         var widget = this.widgetFromJsonDictionary(widgetTree);
@@ -751,10 +751,10 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         if (fileDesignWidth <= 0 || fileDesignHeight <= 0) {
             cc.log("Read design size error!");
             var winSize = cc.director.getWinSize();
-            ccs.guiReader.storeFileDesignSize(fileName, winSize);
+            ccs.uiReader.storeFileDesignSize(fileName, winSize);
         }
         else {
-            ccs.guiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
+            ccs.uiReader.storeFileDesignSize(fileName, cc.size(fileDesignWidth, fileDesignHeight));
         }
         var widgetTree = jsonDict["widgetTree"];
         var widget = this.widgetFromJsonDictionary(widgetTree);
