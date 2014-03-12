@@ -22,6 +22,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * @ignore
+ */
 ccs.CONST_VERSION = "version";
 ccs.CONST_VERSION_2_0 = 2.0;
 ccs.CONST_VERSION_COMBINED = 0.3;

@@ -24,6 +24,9 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @ignore
+ */
 cc.kmScalar = Number;
 
 cc.kmBool = Number;

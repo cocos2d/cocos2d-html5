@@ -23,7 +23,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.SortableObject = cc.Class.extend({
+/**
+ * The sortable object interface
+ * @class
+ * @extends cc.Class
+ */
+cc.SortableObject = cc.Class.extend(/** @lends cc.SortableObject */{
     setObjectID:function (objectId) {
     },
     getObjectID:function () {
@@ -31,7 +36,12 @@ cc.SortableObject = cc.Class.extend({
     }
 });
 
-cc.SortedObject = cc.SortableObject.extend({
+/**
+ * The SortedObject class
+ * @class
+ * @extends cc.SortableObject
+ */
+cc.SortedObject = cc.SortableObject.extend(/** @lends cc.SortedObject */{
     _objectID:0,
 
     ctor:function () {

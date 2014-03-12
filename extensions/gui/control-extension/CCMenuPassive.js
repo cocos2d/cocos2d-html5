@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.Spacer = cc.Layer.extend({});
+/**
+ * The Spacer class
+ * @class
+ * @extends cc.Layer
+ */
+cc.Spacer = cc.Layer.extend(/** @lends cc.Spacer */{});
 
 cc.Spacer.verticalSpacer = function (space) {
     var pRet = new cc.Spacer();

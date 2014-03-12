@@ -23,6 +23,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * ignore
+ */
 cc.UIInterfaceOrientationLandscapeLeft = -90;
 
 cc.UIInterfaceOrientationLandscapeRight = 90;

@@ -24,9 +24,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.RAND_MAX = 0xffffff;
+/**
+ * get a random number from 0 to 0xffffff
+ * @function
+ * @returns {number}
+ */
 cc.rand = function () {
-    return Math.random() * cc.RAND_MAX;
+    return Math.random() * 0xffffff;
 };
 /**
  * cc.Waves3D action

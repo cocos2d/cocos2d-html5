@@ -27,6 +27,9 @@
  * converted to Javascript / cocos2d-x by Angus C
  */
 
+/**
+ * @ignore
+ */
 cc.SLIDER_MARGIN_H = 24;
 cc.SLIDER_MARGIN_V = 8;
 

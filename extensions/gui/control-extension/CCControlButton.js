@@ -24,6 +24,9 @@
  * THE SOFTWARE.
  */
 
+/**
+ * @ignore
+ */
 cc.CONTROL_ZOOM_ACTION_TAG = 0xCCCB0001;
 
 /**

@@ -24,6 +24,14 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * The Quaternion class
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z
+ * @param {Number} w
+ * @constructor
+ */
 cc.kmQuaternion = function (x, y, z, w) {
     this.x = x || 0;
     this.y = y || 0;

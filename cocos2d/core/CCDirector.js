@@ -24,8 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.g_NumberOfDraws = 0;
-
 //Possible OpenGL projections used by director
 /**
  * sets a 2D projection (orthogonal projection)
@@ -33,6 +31,8 @@ cc.g_NumberOfDraws = 0;
  * @type Number
  */
 cc.DIRECTOR_PROJECTION_2D = 0;
+
+cc.g_NumberOfDraws = 0;
 
 /**
  * sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.

@@ -23,19 +23,102 @@
  ****************************************************************************/
 
 //BlendType
+/**
+ * The value of the blend type of normal
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_NORMAL = 0;
+
+/**
+ * The value of the blend type of layer
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_LAYER = 1;
+
+/**
+ * The value of the blend type of darken
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_DARKEN = 2;
+
+/**
+ * The value of the blend type of multiply
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_MULTIPLY = 3;
+
+/**
+ * The value of the blend type of lighten
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_LIGHTEN = 4;
+
+/**
+ * The value of the blend type of screen
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_SCREEN = 5;
+
+/**
+ * The value of the blend type of overlay
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_OVERLAY = 6;
+
+/**
+ * The value of the blend type of highlight
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_HIGHLIGHT = 7;
+
+/**
+ * The value of the blend type of add
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_ADD = 8;
+
+/**
+ * The value of the blend type of subtract
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_SUBTRACT = 9;
+
+/**
+ * The value of the blend type of difference
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_DIFFERENCE = 10;
+
+/**
+ * The value of the blend type of invert
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_INVERT = 11;
+
+/**
+ * The value of the blend type of alpha
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_ALPHA = 12;
+
+/**
+ * The value of the blend type of erase
+ * @constant
+ * @type Number
+ */
 ccs.BLEND_TYPE_ERASE = 13;
 
 
