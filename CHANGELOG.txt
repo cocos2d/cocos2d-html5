@@ -1,5 +1,5 @@
 ChangeLog:
-Cocos2d-html5-v3.0 alpha @ Feb.10, 2014
+Cocos2d-html5-v3.0 alpha @ Feb.15, 2014
 
 * Refactor some properties of all rendering classes with getter setter for providing javascript user friendly APIs.
 * Provide `attr` function for cc.Node and its descendants to permit modify multiple properties at the same time with a key-value object.
