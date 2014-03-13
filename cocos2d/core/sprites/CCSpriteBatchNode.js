@@ -375,23 +375,58 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _originalTexture:null,
 
     /**
-     * Constructor
+     * <p>
+     *    Constructor
+     *    creates a cc.SpriteBatchNodeCanvas with a file image (.png, .jpg etc) with a default capacity of 29 children.<br/>
+     *    The capacity will be increased in 33% in runtime if it run out of space.<br/>
+     *    The file will be loaded using the TextureMgr.<br/>
+     * </p>
      * @function
+     * @constructor
      * @param {String} fileImage
+     * @param {Number} capacity
+     * @example
+     * 1.
+     * //create a SpriteBatchNode with image path
+     * var spriteBatchNode = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
+     * 2.
+     * //create a SpriteBatchNode with texture
+     * var texture = cc.textureCache.addImage("res/animations/grossini.png");
+     * var spriteBatchNode = cc.SpriteBatchNode.create(texture,50);
      */
     ctor: null,
 
-    _ctorForCanvas: function (fileImage) {
+    _ctorForCanvas: function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
-        if (fileImage)
-            this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
+
+	    var texture2D;
+	    capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
+	    if (typeof(fileImage) == "string") {
+		    texture2D = cc.textureCache.textureForKey(fileImage);
+		    if (!texture2D)
+			    texture2D = cc.textureCache.addImage(fileImage);
+	    }
+	    else if (fileImage instanceof cc.Texture2D)
+		    texture2D  = fileImage;
+
+	    texture2D && this.initWithTexture(texture2D, capacity);
     },
 
-    _ctorForWebGL: function (fileImage) {
+    _ctorForWebGL: function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
         this._mvpMatrix = new cc.kmMat4();
-        if (fileImage)
-            this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
+
+	    var texture2D;
+	    capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
+	    if (typeof(fileImage) == "string") {
+		    texture2D = cc.textureCache.textureForKey(fileImage);
+		    if (!texture2D)
+			    texture2D = cc.textureCache.addImage(fileImage);
+	    }
+	    else if (fileImage instanceof cc.Texture2D)
+		    texture2D  = fileImage;
+
+	    texture2D && this.initWithTexture(texture2D, capacity);
     },
 
 
@@ -1084,11 +1119,5 @@ delete window._p;
  * var spriteBatchNode = cc.SpriteBatchNode.create(texture,50);
  */
 cc.SpriteBatchNode.create = function (fileImage, capacity) {
-    capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
-    var batchNode = new cc.SpriteBatchNode();
-    if (typeof(fileImage) == "string")
-        batchNode.init(fileImage, capacity);
-    else if (fileImage instanceof cc.Texture2D)
-        batchNode.initWithTexture(fileImage, capacity);
-    return batchNode;
+    return new cc.SpriteBatchNode(fileImage, capacity);
 };

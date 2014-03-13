@@ -64,7 +64,19 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     _touchListener: null,
     _className:"Menu",
 
-    ctor:function(){
+	/**
+	 * Constructor of cc.Menu
+	 * @constructor
+	 * @function
+	 * @param {...cc.MenuItem|null} menuItems
+	 *
+	 * @example
+	 * // Example
+	 * //there is no limit on how many menu item you can pass in
+	 * var myMenu1 = cc.Menu.create(menuitem1, menuitem2, menuitem3);
+	 * var myMenu2 = cc.Menu.create([menuitem1, menuitem2, menuitem3]);
+	 */
+    ctor:function(menuItems){
         cc.LayerRGBA.prototype.ctor.call(this);
         this._color = cc.color.WHITE;
         this.enabled = false;
@@ -80,6 +92,27 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             onTouchEnded: this._onTouchEnded,
             onTouchCancelled: this._onTouchCancelled
         });
+
+	    if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+		    cc.log("parameters should not be ending with null in Javascript");
+
+		var argc = arguments.length, items;
+	    if (argc == 0) {
+		    items = [];
+	    } else if (argc == 1) {
+		    if (menuItems instanceof Array) {
+			    items = menuItems;
+		    }
+		    else items = [menuItems];
+	    }
+		else if (argc > 1) {
+		    var items = [];
+		    for (var i = 0; i < argc; i++) {
+			    if (arguments[i])
+				    items.push(arguments[i]);
+		    }
+	    }
+	    this.initWithArray(items);
     },
 
     onEnter: function(){
@@ -177,19 +210,15 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     initWithArray:function (arrayOfItems) {
-        if (this.init()) {
+        if (cc.LayerRGBA.prototype.init.call(this)) {
             this.enabled = true;
 
             // menu in the center of the screen
-            var winSize = cc.director.getWinSize();
-	        this.attr({
-		        x: winSize.width / 2,
-		        y: winSize.height / 2,
-				size: winSize,
-		        anchorX: 0.5,
-		        anchorY: 0.5,
-		        ignoreAnchor: true
-	        });
+            var winSize = cc.winSize;
+	        this.setPosition(winSize.width / 2, winSize.height / 2);
+		    this.setContentSize(winSize);
+	        this.setAnchorPoint(0.5, 0.5);
+	        this.ignoreAnchorPointForPosition(true);
 
             if (arrayOfItems) {
                 for (var i = 0; i < arrayOfItems.length; i++)
@@ -588,19 +617,16 @@ delete window._p;
  * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu.create = function (menuItems) {
-    if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+	var argc = arguments.length;
+    if((argc > 0) && (arguments[argc-1] == null))
         cc.log("parameters should not be ending with null in Javascript");
 
-    var ret = new cc.Menu();
-
-    if (arguments.length == 0) {
-        ret.initWithItems(null, null);
-    } else if (arguments.length == 1) {
-        if (arguments[0] instanceof Array) {
-            ret.initWithArray(arguments[0]);
-            return ret;
-        }
-    }
-    ret.initWithItems(arguments);
+	var ret;
+	if (argc == 0)
+		ret = new cc.Menu();
+	else if (argc == 1)
+        ret = new cc.Menu(menuItems);
+	else
+		ret = new cc.Menu(Array.prototype.slice.call(arguments, 0));
     return ret;
 };
