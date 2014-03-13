@@ -313,7 +313,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 this._barRenderer.setScale(1.0);
-                this._size.width = this._barRendererTextureSize;
+                this._size.width = this._barRendererTextureSize.width;
             }
         }
         else {
