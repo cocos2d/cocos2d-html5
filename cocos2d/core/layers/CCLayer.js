@@ -100,6 +100,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     init: function () {
+	    var nodep = cc.Layer.prototype;
 	    this._ignoreAnchorPointForPosition = true;
 	    nodep.setAnchorPoint.call(this, 0.5, 0.5);
 	    nodep.setContentSize.call(this, cc.winSize);
