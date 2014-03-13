@@ -83,12 +83,26 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     _isSelected:false,
     _className:"MenuItem",
 
-    ctor:function(){
-        cc.NodeRGBA.prototype.ctor.call(this);
+	/**
+	 * Constructor
+	 * @constructor
+	 * @param {function|String} callback
+	 * @param {cc.Node} target
+	 */
+    ctor:function(callback, target){
+	    var nodeP = cc.NodeRGBA.prototype;
+        nodeP.ctor.call(this);
         this._target = null;
         this._callback = null;
         this._isSelected = false;
         this._enabled = false;
+
+	    nodeP.setAnchorPoint.call(this, 0.5, 0.5);
+	    this._target = target || null;
+	    this._callback = callback || null;
+	    if(this._callback) {
+		    this._enabled = true;
+	    }
     },
 
     /**
@@ -217,9 +231,7 @@ delete window._p;
  * @return {cc.MenuItem}
  */
 cc.MenuItem.create = function (callback, target) {
-    var ret = new cc.MenuItem();
-    ret.initWithCallback(callback,target);
-    return ret;
+    return new cc.MenuItem(callback,target);
 };
 
 /**
@@ -241,12 +253,28 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _orginalScale: 0,
     _colorBackup: null,
 
-    ctor: function () {
-        cc.MenuItem.prototype.ctor.call(this);
+	/**
+	 * @constructor
+	 * @param {cc.Node} label
+	 * @param {function|String} selector
+	 * @param {cc.Node} target
+	 */
+    ctor: function (label, selector, target) {
+        cc.MenuItem.prototype.ctor.call(this, selector, target);
         this._disabledColor = null;
         this._label = null;
         this._orginalScale = 0;
         this._colorBackup = null;
+
+	    if (label) {
+		    this._originalScale = 1.0;
+		    this._colorBackup = cc.color.WHITE;
+		    this._disabledColor = cc.color(126, 126, 126);
+		    this.setLabel(label);
+
+		    this.cascadeColor = true;
+		    this.cascadeOpacity = true;
+	    }
     },
 
     /**
@@ -432,9 +460,7 @@ delete window._p;
  * @return {cc.MenuItemLabel}
  */
 cc.MenuItemLabel.create = function (label, selector, target) {
-    var ret = new cc.MenuItemLabel();
-    ret.initWithLabel(label, selector, target);
-    return ret;
+    return new cc.MenuItemLabel(label, selector, target);
 };
 
 /**
@@ -443,6 +469,25 @@ cc.MenuItemLabel.create = function (label, selector, target) {
  * @extends cc.MenuItemLabel
  */
 cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# */{
+
+	/**
+	 * @param {String} value
+	 * @param {String} charMapFile
+	 * @param {Number} itemWidth
+	 * @param {Number} itemHeight
+	 * @param {String} startCharMap a single character
+	 * @param {function|String|Null} callback
+	 * @param {cc.Node|Null} target
+	 */
+	ctor: function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
+		var label;
+		if(value && value.length > 0) {
+			label = cc.LabelAtlas.create(value, charMapFile, itemWidth, itemHeight, startCharMap);
+		}
+
+		cc.MenuItemLabel.prototype.ctor.call(this, label, callback, target);
+	},
+
     /**
      * @param {String} value
      * @param {String} charMapFile
@@ -484,9 +529,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
  * var item = cc.MenuItemAtlasFont.create('text to display', 'font.fnt', 12, 32, ' ',  game.run, game)
  */
 cc.MenuItemAtlasFont.create = function (value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target) {
-    var ret = new cc.MenuItemAtlasFont();
-    ret.initWithString(value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target);
-    return ret;
+    return new cc.MenuItemAtlasFont(value, charMapFile, itemWidth, itemHeight, startCharMap, callback, target);
 };
 
 /**
@@ -501,10 +544,25 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     _fontSize:null,
     _fontName:null,
 
-    ctor:function(){
-        cc.MenuItemLabel.prototype.ctor.call(this);
-        this._fontSize = 0;
-        this._fontName = "";
+	/**
+	 * @constructor
+	 * @param {String} value text for the menu item
+	 * @param {function|String} callback
+	 * @param {cc.Node} target
+	 */
+    ctor:function(value, callback, target){
+	    var label;
+	    if(value && value.length > 0) {
+		    this._fontName = cc._globalFontName;
+		    this._fontSize = cc._globalFontSize;
+		    label = cc.LabelTTF.create(value, this._fontName, this._fontSize);
+	    }
+	    else {
+		    this._fontSize = 0;
+		    this._fontName = "";
+	    }
+
+        cc.MenuItemLabel.prototype.ctor.call(this, label, callback, target);
     },
 
     /**
@@ -632,9 +690,7 @@ cc.MenuItemFont.fontName = function () {
  * cc.MenuItemFont.setFontSize(62);
  */
 cc.MenuItemFont.create = function (value, callback, target) {
-    var ret = new cc.MenuItemFont();
-    ret.initWithString(value, callback, target);
-    return ret;
+    return new cc.MenuItemFont(value, callback, target);
 };
 
 
@@ -656,11 +712,50 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     _selectedImage:null,
     _disabledImage:null,
 
-    ctor: function(){
+	/**
+	 * @constructor
+	 * @param {Image|Null} normalSprite normal state image
+	 * @param {Image|Null} selectedSprite selected state image
+	 * @param {Image|cc.Node|Null} three disabled state image OR target node
+	 * @param {String|function|cc.Node|Null} four callback function name in string or actual function, OR target Node
+	 * @param {String|function|Null} five callback function name in string or actual function
+	 *
+	 * @example
+	 * // Example
+	 * var item = new cc.MenuItemSprite(normalImage)//create a menu item from a sprite with no functionality
+	 * var item = new cc.MenuItemSprite(normalImage, selectedImage)//create a menu Item, nothing will happen when clicked
+	 * var item = new cc.MenuItemSprite(normalImage, SelectedImage, disabledImage)//same above, but with disabled state image
+	 * var item = new cc.MenuItemSprite(normalImage, SelectedImage, 'callback', targetNode)//create a menu item, when clicked runs targetNode.callback()
+	 * var item = new cc.MenuItemSprite(normalImage, SelectedImage, disabledImage, targetNode.callback, targetNode)
+	 * //same as above, but with disabled image, and passing in callback function
+	 */
+    ctor: function(normalSprite, selectedSprite, three, four, five){
         cc.MenuItem.prototype.ctor.call(this);
         this._normalImage = null;
         this._selectedImage = null;
         this._disabledImage = null;
+
+	    var argc = arguments.length;
+		if (argc > 1) {
+		    normalSprite = arguments[0];
+		    selectedSprite = arguments[1];
+		    var disabledImage, target, callback;
+		    //when you send 4 arguments, five is undefined
+		    if (argc == 5) {
+			    disabledImage = arguments[2];
+			    callback = arguments[3];
+			    target = arguments[4];
+		    } else if (argc == 4 && typeof arguments[3] === "function") {
+			    disabledImage = arguments[2];
+			    callback = arguments[3];
+		    } else if (argc == 4 && typeof arguments[2] === "function") {
+			    target = arguments[3];
+			    callback = arguments[2];
+		    } else if (argc <= 2) {
+			    disabledImage = arguments[2];
+		    }
+		    this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage,  callback, target);
+		}
     },
 
     /**
@@ -932,27 +1027,7 @@ delete window._p;
  * //same as above, but with disabled image, and passing in callback function
  */
 cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five) {
-    var len = arguments.length;
-    normalSprite = arguments[0];
-    selectedSprite = arguments[1];
-    var disabledImage, target, callback;
-    var ret = new cc.MenuItemSprite();
-    //when you send 4 arguments, five is undefined
-    if (len == 5) {
-        disabledImage = arguments[2];
-        callback = arguments[3];
-        target = arguments[4];
-    } else if (len == 4 && typeof arguments[3] === "function") {
-        disabledImage = arguments[2];
-        callback = arguments[3];
-    } else if (len == 4 && typeof arguments[2] === "function") {
-        target = arguments[3];
-        callback = arguments[2];
-    } else if (len <= 2) {
-        disabledImage = arguments[2];
-    }
-    ret.initWithNormalSprite(normalSprite, selectedSprite, disabledImage,  callback, target);
-    return ret;
+	return new cc.MenuItemSprite(normalSprite, selectedSprite, three, four, five);
 };
 
 /**
@@ -967,6 +1042,45 @@ cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, 
  * @extends cc.MenuItemSprite
  */
 cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
+
+	/**
+	 * @constructor
+	 * @param {string|null} normalImage
+	 * @param {string|null} selectedImage
+	 * @param {string|null} disabledImage
+	 * @param {function|string|null} callback
+	 * @param {cc.Node|null} target
+	 */
+	ctor: function(normalImage, selectedImage, three, four, five) {
+		var normalSprite = null,
+			selectedSprite = null,
+			disabledSprite = null,
+			callback = null,
+			target = null;
+
+		if (normalImage === undefined) {
+			cc.MenuItemSprite.prototype.ctor.call(this);
+		}
+		else {
+			normalSprite = cc.Sprite.create(normalImage);
+			selectedImage &&
+			(selectedSprite = cc.Sprite.create(selectedImage));
+			if (four === undefined)  {
+				callback = three;
+			}
+			else if (five === undefined) {
+				callback = three;
+				target = four;
+			}
+			else if (five) {
+				disabledSprite = cc.Sprite.create(three);
+				callback = four;
+				target = five;
+			}
+			cc.MenuItemSprite.prototype.ctor.call(this, normalSprite, selectedSprite, disabledSprite, callback, target);
+		}
+	},
+
     /**
      * sets the sprite frame for the normal image
      * @param {cc.SpriteFrame} frame
@@ -1034,19 +1148,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'disabled.png', gameScene.run, gameScene)
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
-    if (normalImage === undefined) {
-        return cc.MenuItemImage.create(null, null, null, null, null);
-    }
-    else if (four === undefined)  {
-        return cc.MenuItemImage.create(normalImage, selectedImage, null, three, null);
-    }
-    else if (five === undefined) {
-        return cc.MenuItemImage.create(normalImage, selectedImage, null, three, four);
-    }
-    var ret = new cc.MenuItemImage();
-    if (ret.initWithNormalImage(normalImage, selectedImage, three, four, five))
-        return ret;
-    return null;
+    return new cc.MenuItemImage(normalImage, selectedImage, three, four, five);
 };
 
 
@@ -1066,12 +1168,49 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     _opacity:null,
     _color:null,
 
-    ctor: function(){
-        cc.MenuItem.prototype.ctor.call(this);
+	/**
+	 * @constructor
+	 * @example
+	 * // Example
+	 * //create a toggle item with 2 menu items (which you can then toggle between them later)
+	 * var toggler = new cc.MenuItemToggle( cc.MenuItemFont.create("On"), cc.MenuItemFont.create("Off"), this.callback, this)
+	 * //Note: the first param is the target, the second is the callback function, afterwards, you can pass in any number of menuitems
+	 *
+	 * //if you pass only 1 variable, then it must be a cc.MenuItem
+	 * var notYetToggler = new cc.MenuItemToggle(cc.MenuItemFont.create("On"));//it is useless right now, until you add more stuff to it
+	 * notYetToggler.addSubItem(cc.MenuItemFont.create("Off"));
+	 * //this is useful for constructing a toggler without a callback function (you wish to control the behavior from somewhere else)
+	 */
+    ctor: function(/*Multiple arguments follow*/){
+	    var argc =  arguments.length, callback, target;
+	    // passing callback.
+	    if (typeof arguments[argc-2] === 'function') {
+		    callback = arguments[argc-2];
+		    target = arguments[argc-1];
+		    argc = argc - 2;
+	    } else if(typeof arguments[argc-1] === 'function'){
+		    callback = arguments[argc-1];
+		    argc = argc-1;
+	    }
+
+        cc.MenuItem.prototype.ctor.call(this, callback, target);
         this._selectedIndex = 0;
         this.subItems = [];
         this._opacity = 0;
         this._color = cc.color.WHITE;
+
+		if(argc > 0) {
+		    var locSubItems = this.subItems;
+		    locSubItems.length = 0;
+		    for (var i = 0; i < argc; i++) {
+			    if (arguments[i])
+				    locSubItems.push(arguments[i]);
+		    }
+		    this._selectedIndex = cc.UINT_MAX;
+		    this.setSelectedIndex(0);
+			this.setCascadeColorEnabled(true);
+			this.setCascadeOpacityEnabled(true);
+		}
     },
 
     /**
