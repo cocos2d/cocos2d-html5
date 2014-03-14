@@ -1536,7 +1536,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * Sets a new spriteFrame to the cc.Sprite.
      * @function
      * @param {cc.SpriteFrame|String} newFrame
-     * @deprecated
      */
     setSpriteFrame: null,
 
