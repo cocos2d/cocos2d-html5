@@ -355,9 +355,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} z Z order of this node.
      */
     setZOrder:function (z) {
-        this._setZOrder(z);
+        // ZOrder is set on parent's reorderChild.
         if (this._parent)
             this._parent.reorderChild(this, z);
+        else
+            this._setZOrder(z);
     },
 
     /**
