@@ -98,7 +98,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @param {String} key
      * @param {Boolean} value
      */
-    setCString: function (key, value) {
+    setString: function (key, value) {
         if (!key) {
             cc.log("Argument must be non-nil");
             return;
@@ -164,7 +164,7 @@ ccs.ComAttribute = ccs.Component.extend(/** @lends ccs.ComAttribute# */{
      * @param {String} key
      * @returns {String}
      */
-    getCString: function (key) {
+    getString: function (key) {
         var ret = this._jsonDict[key];
         return ret || "";
     },
