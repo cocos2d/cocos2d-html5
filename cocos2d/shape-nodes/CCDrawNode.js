@@ -91,13 +91,12 @@ cc.__t = function (v) {
 cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     _buffer: null,
     _blendFunc: null,
-    _lineWidth: 0,
+    _lineWidth: 1,
     _drawColor: null,
     _className:"DrawNodeCanvas",
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._buffer = [];
-        this._lineWidth = 1;
         this._drawColor = cc.color(255, 255, 255, 255);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
@@ -107,8 +106,14 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
         return this._blendFunc;
     },
 
-    setBlendFunc: function (blendFunc) {
-        this._blendFunc = blendFunc;
+    setBlendFunc: function (blendFunc, dst) {
+        if (dst === undefined) {
+            this._blendFunc.src = blendFunc.src;
+            this._blendFunc.dst = blendFunc.dst;
+        } else {
+            this._blendFunc.src = blendFunc;
+            this._blendFunc.dst = dst;
+        }
     },
 
     /**
@@ -358,6 +363,21 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     },
 
     /**
+     * draws an array of points.
+     * @override
+     * @param {Array} points point of array
+     * @param {Number} radius
+     * @param {cc.Color} color
+     */
+    drawDots: function(points, radius, color){
+        if(!points || points.length == 0)
+            return;
+        color = color || this.getDrawColor();
+        for(var i = 0, len = points.length; i < len; i++)
+           this.drawDot(points[i], radius, color);
+    },
+
+    /**
      * draw a segment with a radius and color
      * @param {cc.Point} from
      * @param {cc.Point} to
@@ -370,7 +390,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
 
         var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_POLY);
         element.verts = [from, to];
-        element.lineWidth = lineWidth;
+        element.lineWidth = lineWidth * 2;
         element.lineColor = color;
         element.isStroke = true;
         element.lineCap = "round";
@@ -527,6 +547,9 @@ cc.DrawNodeWebGL = cc.Node.extend({
     _trianglesWebBuffer:null,
     _trianglesReader:null,
 
+    _lineWidth: 1,
+    _drawColor: null,
+
     _blendFunc:null,
     _dirty:false,
     _className:"DrawNodeWebGL",
@@ -536,8 +559,14 @@ cc.DrawNodeWebGL = cc.Node.extend({
         return this._blendFunc;
     },
 
-    setBlendFunc:function (blendFunc) {
-        this._blendFunc = blendFunc;
+    setBlendFunc:function (blendFunc, dst) {
+        if (dst === undefined) {
+            this._blendFunc.src = blendFunc.src;
+            this._blendFunc.dst = blendFunc.dst;
+        } else {
+            this._blendFunc.src = blendFunc;
+            this._blendFunc.dst = dst;
+        }
     },
     // ----common function end ----
 
@@ -545,17 +574,215 @@ cc.DrawNodeWebGL = cc.Node.extend({
         cc.Node.prototype.ctor.call(this);
         this._buffer = [];
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._drawColor = cc.color(255,255,255,255);
     },
 
     init:function () {
         if (cc.Node.prototype.init.call(this)) {
             this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR);
-            this._ensureCapacity(512);
+            this._ensureCapacity(64);
             this._trianglesWebBuffer = cc._renderContext.createBuffer();
             this._dirty = true;
             return true;
         }
         return false;
+    },
+
+    /**
+     * line width setter
+     * @param {Number} width
+     */
+    setLineWidth: function (width) {
+        this._lineWidth = width;
+    },
+
+    /**
+     * line width getter
+     * @returns {Number}
+     */
+    getLineWidth: function () {
+        return this._lineWidth;
+    },
+
+    /**
+     * draw color setter
+     * @param {cc.Color} color
+     */
+    setDrawColor: function (color) {
+        this._drawColor.r = color.r;
+        this._drawColor.g = color.g;
+        this._drawColor.b = color.b;
+        this._drawColor.a = color.a;
+    },
+
+    /**
+     * draw color getter
+     * @returns {cc.Color}
+     */
+    getDrawColor: function () {
+        return  cc.color(this._drawColor.r, this._drawColor.g, this._drawColor.b, this._drawColor.a);
+    },
+
+    /**
+     * draws a rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     *  @param {cc.Color} fillColor
+     * @param {Number} lineWidth
+     * @param {cc.Color} lineColor
+     */
+    drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
+        lineWidth = lineWidth || this._lineWidth;
+        lineColor = lineColor || this.getDrawColor();
+        var vertices = [
+            origin,
+            cc.p(destination.x, origin.y),
+            destination,
+            cc.p(origin.x, destination.y)
+        ];
+        if(fillColor == null){
+            this._drawSegments(vertices, lineWidth, lineColor, true);
+        } else
+            this.drawPoly(vertices, fillColor, lineWidth, lineColor);
+    },
+
+    /**
+     * draws a circle given the center, radius and number of segments.
+     * @override
+     * @param {cc.Point} center center of circle
+     * @param {Number} radius
+     * @param {Number} angle angle in radians
+     * @param {Number} segments
+     * @param {Boolean} drawLineToCenter
+     * @param {Number} lineWidth
+     * @param {cc.Color} color
+     */
+    drawCircle: function (center, radius, angle, segments, drawLineToCenter, lineWidth, color) {
+        lineWidth = lineWidth || this._lineWidth;
+        color = color || this.getDrawColor();
+
+        var coef = 2.0 * Math.PI / segments;
+        var vertices = [];
+        for (var i = 0; i <= segments; i++) {
+            var rads = i * coef;
+            var j = radius * Math.cos(rads + angle) + center.x;
+            var k = radius * Math.sin(rads + angle) + center.y;
+            vertices.push(cc.p(j, k));
+        }
+        if (drawLineToCenter)
+            vertices.push(cc.p(center.x, center.y));
+
+        lineWidth *= 0.5;
+        for (var j = 0, len = vertices.length; j < len - 1; j++)
+            this.drawSegment(vertices[j], vertices[j + 1], lineWidth, color);
+    },
+
+    /**
+     * draws a quad bezier path
+     * @override
+     * @param {cc.Point} origin
+     * @param {cc.Point} control
+     * @param {cc.Point} destination
+     * @param {Number} segments
+     * @param {Number} lineWidth
+     * @param {cc.Color} color
+     */
+    drawQuadBezier: function (origin, control, destination, segments, lineWidth, color) {
+        lineWidth = lineWidth || this._lineWidth;
+        color = color || this.getDrawColor();
+
+        var vertices = [];
+        var t = 0.0;
+        for (var i = 0; i < segments; i++) {
+            var x = Math.pow(1 - t, 2) * origin.x + 2.0 * (1 - t) * t * control.x + t * t * destination.x;
+            var y = Math.pow(1 - t, 2) * origin.y + 2.0 * (1 - t) * t * control.y + t * t * destination.y;
+            vertices.push(cc.p(x, y));
+            t += 1.0 / segments;
+        }
+        vertices.push(cc.p(destination.x, destination.y));
+        this._drawSegments(vertices, lineWidth, color, false);
+    },
+
+    /**
+     * draws a cubic bezier path
+     * @override
+     * @param {cc.Point} origin
+     * @param {cc.Point} control1
+     * @param {cc.Point} control2
+     * @param {cc.Point} destination
+     * @param {Number} segments
+     * @param {Number} lineWidth
+     * @param {cc.Color} color
+     */
+    drawCubicBezier: function (origin, control1, control2, destination, segments, lineWidth, color) {
+        lineWidth = lineWidth || this._lineWidth;
+        color = color || this.getDrawColor();
+
+        var vertices = [];
+        var t = 0;
+        for (var i = 0; i < segments; i++) {
+            var x = Math.pow(1 - t, 3) * origin.x + 3.0 * Math.pow(1 - t, 2) * t * control1.x + 3.0 * (1 - t) * t * t * control2.x + t * t * t * destination.x;
+            var y = Math.pow(1 - t, 3) * origin.y + 3.0 * Math.pow(1 - t, 2) * t * control1.y + 3.0 * (1 - t) * t * t * control2.y + t * t * t * destination.y;
+            vertices.push(cc.p(x, y));
+            t += 1.0 / segments;
+        }
+        vertices.push(cc.p(destination.x, destination.y));
+        this._drawSegments(vertices, lineWidth, color, false);
+    },
+
+    /**
+     * draw a CatmullRom curve
+     * @override
+     * @param {Array} points
+     * @param {Number} segments
+     * @param {Number} lineWidth
+     * @param {cc.Color} color
+     */
+    drawCatmullRom: function (points, segments, lineWidth, color) {
+        this.drawCardinalSpline(points, 0.5, segments, lineWidth, color);
+    },
+
+    /**
+     * draw a cardinal spline path
+     * @override
+     * @param {Array} config
+     * @param {Number} tension
+     * @param {Number} segments
+     * @param {Number} lineWidth
+     * @param {cc.Color} color
+     */
+    drawCardinalSpline: function (config, tension, segments, lineWidth, color) {
+        lineWidth = lineWidth || this._lineWidth;
+        color = color || this.getDrawColor();
+
+        var vertices = [], p, lt;
+        var deltaT = 1.0 / config.length;
+
+        for (var i = 0; i < segments + 1; i++) {
+            var dt = i / segments;
+
+            // border
+            if (dt == 1) {
+                p = config.length - 1;
+                lt = 1;
+            } else {
+                p = 0 | (dt / deltaT);
+                lt = (dt - deltaT * p) / deltaT;
+            }
+
+            // Interpolate
+            var newPos = cc.CardinalSplineAt(
+                cc.getControlPointAt(config, p - 1),
+                cc.getControlPointAt(config, p - 0),
+                cc.getControlPointAt(config, p + 1),
+                cc.getControlPointAt(config, p + 2),
+                tension, lt);
+            vertices.push(newPos);
+        }
+
+        lineWidth *= 0.5;
+        for (var j = 0, len = vertices.length; j < len - 1; j++)
+            this.drawSegment(vertices[j], vertices[j + 1], lineWidth, color);
     },
 
     _render:function () {
@@ -582,26 +809,26 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     _ensureCapacity:function(count){
-        if(this._buffer.length + count > this._bufferCapacity){
+        var locBuffer = this._buffer;
+        if(locBuffer.length + count > this._bufferCapacity){
             var TriangleLength = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT;
             this._bufferCapacity += Math.max(this._bufferCapacity, count);
             //re alloc
-            if((this._buffer == null) || (this._buffer.length === 0)){
+            if((locBuffer == null) || (locBuffer.length === 0)){
                 //init
                 this._buffer = [];
                 this._trianglesArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
                 this._trianglesReader = new Uint8Array(this._trianglesArrayBuffer);
             } else {
-                var newTriangles = this._buffer;
-                newTriangles.length = 0;
+                var newTriangles = [];
                 var newArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
-
-                for(var i = 0; i < this._buffer.length;i++){
-                    newTriangles[i] = new cc.V2F_C4B_T2F_Triangle(this._buffer[i].a,this._buffer[i].b,this._buffer[i].c,
-                        newArrayBuffer,i * TriangleLength);
+                for(var i = 0; i < locBuffer.length;i++){
+                    newTriangles[i] = new cc.V2F_C4B_T2F_Triangle(locBuffer[i].a,locBuffer[i].b,locBuffer[i].c,
+                        newArrayBuffer, i * TriangleLength);
                 }
                 this._trianglesReader = new Uint8Array(newArrayBuffer);
                 this._trianglesArrayBuffer = newArrayBuffer;
+                this._buffer = newTriangles;
             }
         }
     },
@@ -622,6 +849,14 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._buffer.push(new cc.V2F_C4B_T2F_Triangle(a, b, c, this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
         this._buffer.push(new cc.V2F_C4B_T2F_Triangle(a, c, d, this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
         this._dirty = true;
+    },
+
+    drawDots: function(points, radius,color) {
+        if(!points || points.length == 0)
+            return;
+        color = color || this.getDrawColor();
+        for(var i = 0, len = points.length; i < len; i++)
+            this.drawDot(points[i], radius, color);
     },
 
     drawSegment:function (from, to, radius, color) {
@@ -674,6 +909,12 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     drawPoly:function (verts, fillColor, borderWidth, borderColor) {
+        if(fillColor == null){
+            this._drawSegments(verts, borderWidth, borderColor, true);
+            return;
+        }
+        borderWidth = borderWidth || this._lineWidth;
+        borderWidth *= 0.5;
         var c4bFillColor = {r: 0 | fillColor.r, g: 0 | fillColor.g, b: 0 | fillColor.b, a: 0 | fillColor.a};
         var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a};
         var extrude = [], i;
@@ -734,6 +975,57 @@ cc.DrawNodeWebGL = cc.Node.extend({
                     {vertices: outer0, colors: c4bFillColor, texCoords: cc.__t(n0)}, {vertices: outer1, colors: c4bFillColor, texCoords: cc.__t(n0)},
                     trianglesBuffer, locBuffer.length * triangleBytesLen));
             }
+        }
+        extrude = null;
+        this._dirty = true;
+    },
+
+    _drawSegments: function(verts, borderWidth, borderColor, closePoly){
+        borderWidth = borderWidth || this._lineWidth;
+        borderColor = borderColor || this._drawColor;
+        borderWidth *= 0.5;
+        if (borderWidth <= 0)
+            return;
+
+        var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a};
+        var extrude = [], i;
+        var v0, v1, v2;
+        var count = verts.length;
+        for (i = 0; i < count; i++) {
+            v0 = cc.__v2f(verts[(i - 1 + count) % count]);
+            v1 = cc.__v2f(verts[i]);
+            v2 = cc.__v2f(verts[(i + 1) % count]);
+            var n1 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v1, v0)));
+            var n2 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v2, v1)));
+            var offset = cc.v2fmult(cc.v2fadd(n1, n2), 1.0 / (cc.v2fdot(n1, n2) + 1.0));
+            extrude[i] = {offset: offset, n: n2};
+        }
+
+        var triangleCount = 3 * count - 2;
+        var vertexCount = 3 * triangleCount;
+        this._ensureCapacity(vertexCount);
+
+        var triangleBytesLen = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT, trianglesBuffer = this._trianglesArrayBuffer;
+        var locBuffer = this._buffer;
+        var len = closePoly ? count : count - 1;
+        for (i = 0; i < len; i++) {
+            var j = (i + 1) % count;
+            v0 = cc.__v2f(verts[i]);
+            v1 = cc.__v2f(verts[j]);
+
+            var n0 = extrude[i].n;
+            var offset0 = extrude[i].offset;
+            var offset1 = extrude[j].offset;
+            var inner0 = cc.v2fsub(v0, cc.v2fmult(offset0, borderWidth));
+            var inner1 = cc.v2fsub(v1, cc.v2fmult(offset1, borderWidth));
+            var outer0 = cc.v2fadd(v0, cc.v2fmult(offset0, borderWidth));
+            var outer1 = cc.v2fadd(v1, cc.v2fmult(offset1, borderWidth));
+            locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: inner0, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))},
+                {vertices: inner1, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))}, {vertices: outer1, colors: c4bBorderColor, texCoords: cc.__t(n0)},
+                trianglesBuffer, locBuffer.length * triangleBytesLen));
+            locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: inner0, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))},
+                {vertices: outer0, colors: c4bBorderColor, texCoords: cc.__t(n0)}, {vertices: outer1, colors: c4bBorderColor, texCoords: cc.__t(n0)},
+                trianglesBuffer, locBuffer.length * triangleBytesLen));
         }
         extrude = null;
         this._dirty = true;
