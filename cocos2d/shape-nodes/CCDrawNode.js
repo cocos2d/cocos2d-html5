@@ -841,6 +841,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     drawDot:function (pos, radius, color) {
+        color = color || this.getDrawColor();
         var c4bColor = {r: 0 | color.r, g: 0 | color.g, b: 0 | color.b, a: 0 | color.a};
         var a = {vertices: {x: pos.x - radius, y: pos.y - radius}, colors: c4bColor, texCoords: {u: -1.0, v: -1.0}};
         var b = {vertices: {x: pos.x - radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: -1.0, v: 1.0}};
@@ -860,6 +861,8 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     drawSegment:function (from, to, radius, color) {
+        color = color || this.getDrawColor();
+        radius = radius || (this._lineWidth * 0.5);
         var vertexCount = 6*3;
         this._ensureCapacity(vertexCount);
 
@@ -987,7 +990,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
         if (borderWidth <= 0)
             return;
 
-        var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a};
+        var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a };
         var extrude = [], i;
         var v0, v1, v2;
         var count = verts.length;
