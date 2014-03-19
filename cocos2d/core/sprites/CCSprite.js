@@ -1173,7 +1173,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-        this.batchNode = null;
+        this.batchNode = this._batchNode;
         this._quadDirty = true;
         this._callLoadedEventCallbacks();
     },
@@ -1197,7 +1197,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
-        this.batchNode = null;
+        this.batchNode = this._batchNode;
         this._callLoadedEventCallbacks();
     },
 
