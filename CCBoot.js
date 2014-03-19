@@ -911,10 +911,17 @@ cc._logToWebPage = function (msg) {
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 if(console.log){
-    cc.log = console.log.bind(console);
-    cc.warn = console.warn.bind(console);
-    cc.error = console.error.bind(console);
-    cc.assert = console.assert.bind(console);
+    cc.log = console.log?console.log.bind(console):function(){};
+    cc.warn = console.warn?console.warn.bind(console):console.log.bind(console);
+    cc.error = console.error?console.error.bind(console):console.log.bind(console);
+    if (console.assert)
+        cc.assert = console.assert.bind(console);
+    else {
+        cc.assert = function (cond, message) {
+            if (!cond && message)
+                cc.log(message);
+        };
+    }
 }else{
     cc.log = cc.warn = cc.error = cc.assert = function(){};
 }
