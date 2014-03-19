@@ -704,8 +704,8 @@ cc.FileUtils = cc.Class.extend({
         var path = searchPath;
         if (path.length > 0 && path.lastIndexOf('/') !== path.length - 1)
             path += '/';
+        path += resourceDirectory+"/";
         path += file_path;
-        path += resourceDirectory;
         if (path.length > 0 && path.lastIndexOf("/") !== path.length - 1)
             path += '/';
         path += file;
