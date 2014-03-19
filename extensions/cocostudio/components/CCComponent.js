@@ -29,8 +29,8 @@
  */
 cc.Component = cc.Class.extend(/** @lends cc.Component# */{
     _owner: null,
-    _name: null,
-    _enabled:null,
+    _name: "",
+    _enabled: true,
 
     ctor:function(){
         this._owner = null;
