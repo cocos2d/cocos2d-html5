@@ -1685,6 +1685,7 @@ cc.game = {
                 var data = JSON.parse(txt);
                 self.config = _init(data || {});
             }catch(e){
+                cc.log("Failed to read or parse project.json");
                 self.config = _init({});
             }
         }
