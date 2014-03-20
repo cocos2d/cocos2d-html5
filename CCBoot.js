@@ -57,6 +57,7 @@ cc._isNodeJs = typeof require !== 'undefined' && require("fs");
  * Iterate over an object or an array, executing a function for each matched element.
  * @param {object|array} obj
  * @param {function} iterator
+ * @param {object} context
  * @param {object} [context]
  */
 cc.each = function(obj, iterator, context){
@@ -93,10 +94,7 @@ cc.isCrossOrigin = function(url){
 
 //+++++++++++++++++++++++++something about async begin+++++++++++++++++++++++++++++++
 cc.async = {
-    /**
-     * Counter for cc.async
-     * @param err
-     */
+    // Counter for cc.async
     _counterFunc : function(err){
         var counter = this.counter;
         if(counter.err) return;
@@ -120,27 +118,24 @@ cc.async = {
         if(counter.count == 0 && cb) cb.apply(cbTarget, [null, results]);
     },
 
-    /**
-     * Empty function for async.
-     * @private
-     */
+    // Empty function for async.
     _emptyFunc : function(){},
+
     /**
      * Do tasks parallel.
-     * @param tasks
-     * @param option
-     * @param cb
+     * @param {array} tasks
+     * @param {object|function} [option]
+     * @param {function} [cb]
      */
     parallel : function(tasks, option, cb){
         var async = cc.async;
-        var l = arguments.length;
-        if(l == 3) {
+        if(cb !== undefined) {
             if(typeof option == "function") option = {trigger : option};
             option.cb = cb || option.cb;
         }
-        else if(l == 2){
+        else if(option !== undefined){
             if(typeof option == "function") option = {cb : option};
-        }else if(l == 1) option = {};
+        }else if(tasks !== undefined) option = {};
         else throw "arguments error!";
         var isArr = tasks instanceof Array;
         var li = isArr ? tasks.length : Object.keys(tasks).length;
@@ -160,9 +155,16 @@ cc.async = {
 
     /**
      * Do tasks by iterator.
-     * @param tasks
-     * @param {{cb:{function}, target:{object}, iterator:{function}, iteratorTarget:{function}}|function} option
-     * @param cb
+     * The format of the option should be:
+     *  {
+     *      cb: function,
+     *      target: object,
+     *      iterator: function,
+     *      iteratorTarget: function
+     *  }
+     * @param {array} tasks
+     * @param {object|function} [option]
+     * @param {function} [cb]
      */
     map: function(tasks, option, cb){
         var self = this;
@@ -174,6 +176,12 @@ cc.async = {
         else if(len == 2);
         else
             throw "arguments error!";
+        if(typeof option == "function") option = {iterator : option};
+        if(cb !== undefined)
+	        option.cb = cb || option.cb;
+        else if(option !== undefined)
+	        ;
+        else throw "arguments error!";
         var isArr = tasks instanceof Array;
         var li = isArr ? tasks.length : Object.keys(tasks).length;
         if(li == 0){
@@ -193,6 +201,7 @@ cc.async = {
 
 //+++++++++++++++++++++++++something about path begin++++++++++++++++++++++++++++++++
 cc.path = {
+
     /**
      * Join strings to be a path.
      * @example
@@ -219,7 +228,7 @@ cc.path = {
      cc.path.extname("a/b.png?a=1&b=2");//-->".png"
      cc.path.extname("a/b");//-->null
      cc.path.extname("a/b?a=1&b=2");//-->null
-     * @param pathStr
+     * @param {string} pathStr
      * @returns {*}
      */
     extname : function(pathStr){
@@ -235,8 +244,8 @@ cc.path = {
      cc.path.basename("a/b.png", ".png");//-->"b"
      cc.path.basename("a/b.png?a=1&b=2", ".png");//-->"b"
      cc.path.basename("a/b.png", ".txt");//-->"b.png"
-     * @param pathStr
-     * @param extname
+     * @param {string} pathStr
+     * @param {string} [extname]
      * @returns {*}
      */
     basename : function(pathStr, extname){
@@ -256,7 +265,7 @@ cc.path = {
      * @example
      cc.path.driname("a/b/c.png");//-->"a/b"
      cc.path.driname("a/b/c.png?a=1&b=2");//-->"a/b"
-     * @param {String} pathStr
+     * @param {string} pathStr
      * @returns {*}
      */
     dirname : function(pathStr){
@@ -268,8 +277,8 @@ cc.path = {
      * @example
      cc.path.changeExtname("a/b.png", ".plist");//-->"a/b.plist"
      cc.path.changeExtname("a/b.png?a=1&b=2", ".plist");//-->"a/b.plist?a=1&b=2"
-     * @param pathStr
-     * @param extname
+     * @param {string} pathStr
+     * @param {string} [extname]
      * @returns {string}
      */
     changeExtname : function(pathStr, extname){
@@ -400,13 +409,14 @@ cc.loader = {
         }else throw "arguments error to load js!";
         return results;
     },
+
     /**
      * Load js files.
-     * @param {?string=} baseDir   The pre path for jsList.
-     * @param {array.<string>} jsList    List of js path.
-     * @param {function} cb        Callback function
+     * If the third parameter doesn't exist, then the baseDir turns to be "".
      *
-     *      If the arguments.length == 2, then the baseDir turns to be "".
+     * @param {string} [baseDir]   The pre path for jsList.
+     * @param {array} jsList    List of js path.
+     * @param {function} [cb]        Callback function
      * @returns {*}
      */
     loadJs : function(baseDir, jsList, cb){
@@ -425,9 +435,10 @@ cc.loader = {
     },
     /**
      * Load js width loading image.
-     * @param {?string} baseDir
+     *
+     * @param {string} [baseDir]
      * @param {array} jsList
-     * @param {function} cb
+     * @param {function} [cb]
      */
     loadJsWithImg : function(baseDir, jsList, cb){
         var self = this, jsLoadingImg = self._loadJsImg(),
@@ -484,8 +495,8 @@ cc.loader = {
 
     /**
      * Load a single resource as txt.
-     * @param {!string} url
-     * @param {function} cb arguments are : err, txt
+     * @param {string} url
+     * @param {function} [cb] arguments are : err, txt
      */
     loadTxt : function(url, cb){
         if(!cc._isNodeJs){
@@ -535,8 +546,8 @@ cc.loader = {
 
     /**
      * Load a single resource as json.
-     * @param {!string} url
-     * @param {function} cb arguments are : err, json
+     * @param {string} url
+     * @param {function} [cb] arguments are : err, json
      */
     loadJson : function(url, cb){
         this.loadTxt(url, function(err, txt){
@@ -557,17 +568,20 @@ cc.loader = {
      * @param {!string} url
      * @param {object} [option]
      * @param {function} cb
+     * @param {string} url
+     * @param {object} [option]
+     * @param {function} [cb]
      * @returns {Image}
      */
     loadImg : function(url, option, cb){
-        var l = arguments.length;
         var opt = {
             isCrossOrigin : true
         };
-        if(l == 3) {
+        if(cb !== undefined) {
             opt.isCrossOrigin = option.isCrossOrigin == null ? opt.isCrossOrigin : option.isCrossOrigin;
         }
-        else if(l == 2) cb = option;
+        else if(option !== undefined)
+	        cb = option;
 
         var img = new Image();
         if(opt.isCrossOrigin)
@@ -598,10 +612,11 @@ cc.loader = {
         }
         return arrData;
     },
+
     /**
      * Load binary data by url.
      * @param {String} url
-     * @param {Function} cb
+     * @param {Function} [cb]
      */
     loadBinary : function(url, cb){
         var self = this;
@@ -661,7 +676,7 @@ cc.loader = {
      * Iterator function to load res
      * @param {object} item
      * @param {number} index
-     * @param {function} cb
+     * @param {function} [cb]
      * @returns {*}
      * @private
      */
@@ -698,13 +713,13 @@ cc.loader = {
 
     /**
      * Get url with basePath.
-     * @param [{string}] basePath
-     * @param {string} url
+     * @param {string} basePath
+     * @param {string} [url]
      * @returns {*}
      */
     getUrl : function(basePath, url){
         var self = this, langPathCache = self._langPathCache, path = cc.path;
-        if(arguments.length == 1){
+        if(basePath !== undefined && url === undefined){
             url = basePath;
             var type = path.extname(url);
             type = type ? type.toLowerCase() : "";
@@ -723,29 +738,33 @@ cc.loader = {
 
     /**
      * Load resources then call the callback.
-     * @param {[string]} res
-     * @param {function|Object} option or cb
+     * @param {string} res
+     * @param {function|Object} [option] option or cb
      * @param {function} [cb]
      */
-    load: function (res, option, cb) {
-        var len = arguments.length;
-        if (len == 3) {
-            if (typeof option == "function") option = {trigger: option};
-        } else if (len == 2) {
-            if (typeof option == "function") {
+    load : function(res, option, cb){
+        if(cb !== undefined) {
+            if(typeof option == "function")
+                option = {trigger : option};
+        }
+        else if(option !== undefined){
+            if(typeof option == "function") {
                 cb = option;
                 option = {};
             }
-        } else if (len == 1)
+        }
+        else if(res !== undefined)
             option = {};
         else
             throw "arguments error!";
-
-        option.cb = function (err, results) {
-            if (err) cc.log(err);
-            if (cb) cb(results);
+        option.cb = function(err, results){
+            if(err)
+                cc.log(err);
+            if(cb)
+                cb(results);
         };
-        if (!(res instanceof Array)) res = [res];
+        if(!(res instanceof Array))
+            res = [res];
         option.iterator = this._loadResIterator;
         option.iteratorTarget = this;
         cc.async.map(res, option);
@@ -789,7 +808,7 @@ cc.loader = {
      *              </plist>                                                                                           <br/>
      * </p>
      * @param {String} filename  The plist file name.
-     * @param {Function} cb     callback
+     * @param {Function} [cb]     callback
      */
     loadAliases : function(url, cb){
         var self = this, dict = self.getRes(url);
@@ -803,7 +822,7 @@ cc.loader = {
     /**
      * Register a resource loader into loader.
      * @param {string} extname
-     * @param {load : function} loader
+     * @param {function} loader
      */
     register : function(extNames, loader){
         if(!extNames || !loader) return;

@@ -28,7 +28,7 @@ cc._txtLoader = {
     load : function(realUrl, url, res, cb){
         cc.loader.loadTxt(realUrl, cb);
     }
-}
+};
 cc.loader.register(["txt", "xml", "vsh", "fsh"], cc._txtLoader);
 
 cc._jsonLoader = {
@@ -118,7 +118,7 @@ cc._fontLoader = {
         }
         cb(null, true);
     }
-}
+};
 cc.loader.register(["font", "eot", "ttf", "woff", "svg"], cc._fontLoader);
 
 cc._binaryLoader = {
