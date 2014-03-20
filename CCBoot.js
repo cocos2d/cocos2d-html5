@@ -670,7 +670,7 @@ cc.loader = {
         var type = item.type;
         if(type){
             type = "." + type.toLowerCase();
-            url = item.name + type;
+            url = item.src ? item.src : item.name + type;
         }else{
             url = item;
             type = cc.path.extname(url);

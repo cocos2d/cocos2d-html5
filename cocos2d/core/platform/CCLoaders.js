@@ -49,6 +49,17 @@ cc._imgLoader = {
     }
 };
 cc.loader.register(["png", "jpg", "bmp","jpeg","gif"], cc._imgLoader);
+cc._serverImgLoader = {
+    load : function(realUrl, url, res, cb){
+        cc.loader.cache[url] =  cc.loader.loadImg(res.src, function(err, img){
+            if(err)
+                return cb(err);
+            cc.textureCache.handleLoadedTexture(url);
+            cb(null, img);
+        });
+    }
+};
+cc.loader.register(["serverImg"], cc._serverImgLoader);
 
 cc._plistLoader = {
     load : function(realUrl, url, res, cb){
