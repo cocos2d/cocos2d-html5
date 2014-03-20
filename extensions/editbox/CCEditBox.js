@@ -633,21 +633,18 @@ cc.EditBox.getRect = function (node) {
 /**
  * create a edit box with size and background-color or
  * @param {cc.Size} size
- * @param {cc.Color | cc.Scale9Sprite } normal9SpriteBg
+ * @param {cc.Scale9Sprite } normal9SpriteBg
+ * @param {cc.Scale9Sprite } [press9SpriteBg]
+ * @param {cc.Scale9Sprite } [disabled9SpriteBg]
  */
 cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
     var edbox = new cc.EditBox(size);
-    if (normal9SpriteBg instanceof cc.Color) {
-        edbox.setBackgroundColor(normal9SpriteBg);
-    } else {
-        //Todo
-        if (edbox.initWithSizeAndBackgroundSprite(size, normal9SpriteBg)) {
-            if (press9SpriteBg)
-                edbox.setBackgroundSpriteForState(press9SpriteBg, cc.CONTROL_STATE_HIGHLIGHTED);
+    if (edbox.initWithSizeAndBackgroundSprite(size, normal9SpriteBg)) {
+        if (press9SpriteBg)
+            edbox.setBackgroundSpriteForState(press9SpriteBg, cc.CONTROL_STATE_HIGHLIGHTED);
 
-            if (disabled9SpriteBg)
-                edbox.setBackgroundSpriteForState(disabled9SpriteBg, cc.CONTROL_STATE_DISABLED);
-        }
+        if (disabled9SpriteBg)
+            edbox.setBackgroundSpriteForState(disabled9SpriteBg, cc.CONTROL_STATE_DISABLED);
     }
     return edbox;
 };
