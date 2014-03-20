@@ -73,7 +73,6 @@ cc.textureCache = /** @lends cc.textureCache# */{
         cc.log("TextureCache:addPVRTCImage does not support on HTML5");
     },
 
-
     /**
      * <p>
      *     Returns a Texture2D object given an ETC filename                                                               <br/>
@@ -239,14 +238,25 @@ cc.textureCache = /** @lends cc.textureCache# */{
         }
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if(tex) {
-            if(cb) cb.call(target);
+            if(cb)
+                cb.call(target);
             return tex;
         }
 
         if(!cc.loader.getRes(url)){
-            cc.loader.load(url, function(err){
-                if(cb) cb.call(target);
-            });
+            if (cc.loader._checkIsImageURL(url)) {
+                cc.loader.load(url, function (err) {
+                    if (cb)
+                        cb.call(target);
+                });
+            } else {
+                cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
+                    if(err)
+                        return cb(err);
+                    cc.textureCache.handleLoadedTexture(url);
+                    cb(null, img);
+                });
+            }
         }
 
         tex = locTexs[url] = new cc.Texture2D();
