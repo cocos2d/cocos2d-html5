@@ -58,6 +58,7 @@ cc._isNodeJs = typeof require !== 'undefined' && require("fs");
  * @param {object|array} obj
  * @param {function} iterator
  * @param {object} context
+ * @param {object} [context]
  */
 cc.each = function(obj, iterator, context){
     if(!obj) return;
@@ -72,6 +73,24 @@ cc.each = function(obj, iterator, context){
     }
 };
 
+/**
+ * Check the url whether cross origin
+ * @param {String} url
+ * @returns {boolean}
+ */
+cc.isCrossOrigin = function(url){
+    if(!url){
+        cc.log("invalid URL");
+        return false;
+    }
+    var startIndex = url.indexOf("://");
+    if (startIndex == -1)
+        return false;
+
+    var endIndex = url.indexOf("/", startIndex + 3);
+    var urlOrigin = (endIndex == -1) ? url : url.substring(0, endIndex);
+    return urlOrigin != location.origin;
+};
 
 //+++++++++++++++++++++++++something about async begin+++++++++++++++++++++++++++++++
 cc.async = {
@@ -147,8 +166,16 @@ cc.async = {
      * @param {object|function} [option]
      * @param {function} [cb]
      */
-    map : function(tasks, option, cb){
+    map: function(tasks, option, cb){
         var self = this;
+        var len = arguments.length;
+        if(typeof option == "function")
+            option = {iterator : option};
+        if(len === 3)
+            option.cb = cb || option.cb;
+        else if(len == 2);
+        else
+            throw "arguments error!";
         if(typeof option == "function") option = {iterator : option};
         if(cb !== undefined)
 	        option.cb = cb || option.cb;
@@ -261,7 +288,7 @@ cc.path = {
         if(index > 0) {
             tempStr = pathStr.substring(index);
             pathStr = pathStr.substring(0, index);
-        };
+        }
         index = pathStr.lastIndexOf(".");
         if(index < 0) return pathStr + extname + tempStr;
         return pathStr.substring(0, index) + extname + tempStr;
@@ -287,7 +314,7 @@ cc.path = {
         if(index > 0) {
             tempStr = pathStr.substring(index);
             pathStr = pathStr.substring(0, index);
-        };
+        }
         index = pathStr.lastIndexOf("/");
         index = index <= 0 ? 0 : index+1;
         return pathStr.substring(0, index) + basename + ext + tempStr;
@@ -341,10 +368,8 @@ if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
     };
 }
 
-
 //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
 cc.loader = {
-
     _jsCache : {},//cache for js
     _register : {},//register of loaders
     _langPathCache : {},//cache for lang path
@@ -362,15 +387,14 @@ cc.loader = {
         return window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject("MSXML2.XMLHTTP");
     },
 
-
     //@MODE_BEGIN DEV
 
     _getArgs4Js : function(args){
         var a0 = args[0], a1 = args[1], a2 = args[2], results = ["", null, null];
 
-        if(args.length == 1){
+        if(args.length === 1){
             results[1] = a0 instanceof Array ? a0 : [a0];
-        }else if(args.length == 2){
+        }else if(args.length === 2){
             if(typeof a1 == "function"){
                 results[1] = a0 instanceof Array ? a0 : [a0];
                 results[2] = a1;
@@ -378,7 +402,7 @@ cc.loader = {
                 results[0] = a0 || "";
                 results[1] = a1 instanceof Array ? a1 : [a1];
             }
-        }else if(args.length == 3){
+        }else if(args.length === 3){
             results[0] = a0 || "";
             results[1] = a1 instanceof Array ? a1 : [a1];
             results[2] = a2;
@@ -530,14 +554,20 @@ cc.loader = {
             try{
                 err ? cb(err) : cb(null, JSON.parse(txt));
             }catch(e){
-                throw e;
-                cb("load json [" + url + "] failed : " + e);
+                throw "load json [" + url + "] failed : " + e;
             }
         });
     },
 
+    _checkIsImageURL: function(url){
+        var ext = /(\.png)|(\.jpg)|(\.bmp)|(\.jpeg)|(\.gif)/.exec(url);
+        return (ext != null);
+    },
     /**
      * Load a single image.
+     * @param {!string} url
+     * @param {object} [option]
+     * @param {function} cb
      * @param {string} url
      * @param {object} [option]
      * @param {function} [cb]
@@ -554,16 +584,19 @@ cc.loader = {
 	        cb = option;
 
         var img = new Image();
-        if(opt.isCrossOrigin) img.crossOrigin = "Anonymous";
+        if(opt.isCrossOrigin)
+            img.crossOrigin = "Anonymous";
 
         img.addEventListener("load", function () {
             this.removeEventListener('load', arguments.callee, false);
             this.removeEventListener('error', arguments.callee, false);
-            if(cb) cb(null, img);
+            if(cb)
+                cb(null, img);
         });
         img.addEventListener("error", function () {
             this.removeEventListener('error', arguments.callee, false);
-            if(cb) cb("load image failed");
+            if(cb)
+                cb("load image failed");
         });
         img.src = url;
         return img;
@@ -652,16 +685,18 @@ cc.loader = {
         var type = item.type;
         if(type){
             type = "." + type.toLowerCase();
-            url = item.name + type;
+            url = item.src ? item.src : item.name + type;
         }else{
             url = item;
             type = cc.path.extname(url);
         }
 
         var obj = self.cache[url];
-        if(obj) return cb(null, obj);
+        if(obj)
+            return cb(null, obj);
         var loader = self._register[type.toLowerCase()];
-        if(!loader) return cb("loader for [" + type + "] not exists!");
+        if(!loader)
+            return cb("loader for [" + type + "] not exists!");
         var basePath = loader.getBasePath ? loader.getBasePath() : self.resPath;
         var realUrl = self.getUrl(basePath, url);
         loader.load(realUrl, url, item, function(err, data){
@@ -704,12 +739,13 @@ cc.loader = {
     /**
      * Load resources then call the callback.
      * @param {string} res
-     * @param {function|Object} [option]
+     * @param {function|Object} [option] option or cb
      * @param {function} [cb]
      */
     load : function(res, option, cb){
         if(cb !== undefined) {
-            if(typeof option == "function") option = {trigger : option};
+            if(typeof option == "function")
+                option = {trigger : option};
         }
         else if(option !== undefined){
             if(typeof option == "function") {
@@ -718,14 +754,17 @@ cc.loader = {
             }
         }
         else if(res !== undefined)
-	        option = {};
+            option = {};
         else
-	        throw "arguments error!";
+            throw "arguments error!";
         option.cb = function(err, results){
-            if(err) cc.log(err);
-            if(cb) cb(results);
+            if(err)
+                cc.log(err);
+            if(cb)
+                cb(results);
         };
-        if(!(res instanceof Array)) res = [res];
+        if(!(res instanceof Array))
+            res = [res];
         option.iterator = this._loadResIterator;
         option.iteratorTarget = this;
         cc.async.map(res, option);
@@ -872,7 +911,6 @@ cc.loader = {
 //+++++++++++++++++++++++++something about window events end+++++++++++++++++++++++++++++
 
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
-
 cc._logToWebPage = function (msg) {
     if(!cc._canvas)
         return;
@@ -916,10 +954,9 @@ cc._logToWebPage = function (msg) {
     logList.scrollTop = logList.scrollHeight;
 };
 
-
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 if(console.log){
-    cc.log = console.log?console.log.bind(console):function(){};
+    cc.log = console.log.bind(console);
     cc.warn = console.warn?console.warn.bind(console):console.log.bind(console);
     cc.error = console.error?console.error.bind(console):console.log.bind(console);
     if (console.assert)
@@ -1591,7 +1628,6 @@ cc.game = {
         self._paused = false;
     },
 
-
     /**
      * Run game.
      */
@@ -1649,6 +1685,7 @@ cc.game = {
                 var data = JSON.parse(txt);
                 self.config = _init(data || {});
             }catch(e){
+                cc.log("Failed to read or parse project.json");
                 self.config = _init({});
             }
         }
