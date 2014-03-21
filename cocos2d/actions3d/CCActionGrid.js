@@ -33,6 +33,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     _gridSize:null,
 
     ctor:function(){
+        cc._checkWebGLRenderMode();
         cc.ActionInterval.prototype.ctor.call(this);
         this._gridSize = cc.size(0,0);
     },
@@ -213,7 +214,7 @@ cc.TiledGrid3DAction.create = function (duration, gridSize) {
 
 /**
  * <p>
- * cc.StopGrid action.                                                               <br/>
+ * cc.StopGrid action.                                               <br/>
  * @warning Don't call this action if another grid action is active.                 <br/>
  * Call if you want to remove the the grid effect. Example:                          <br/>
  * cc.Sequence.create(Lens.action(...), cc.StopGrid.create(...), null);              <br/>

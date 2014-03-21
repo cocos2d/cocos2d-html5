@@ -1519,6 +1519,10 @@ cc._setup = function (el, width, height) {
 	cc.plistParser = new cc.PlistParser();
 };
 
+cc._checkWebGLRenderMode = function(){
+    if(cc._renderType !== cc._RENDER_TYPE_WEBGL)
+        throw "This feature supports WebGL render mode only.";
+};
 
 cc._isContextMenuEnable = false;
 /**
