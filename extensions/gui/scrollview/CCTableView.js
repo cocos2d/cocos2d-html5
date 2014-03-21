@@ -613,7 +613,10 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
 
         if (this._touchedCell){
             var bb = this.getBoundingBox();
-            bb._origin = this._parent.convertToWorldSpace(bb._origin);
+            var tmpOrigin = cc.p(bb.x, bb.y);
+            tmpOrigin = this._parent.convertToWorldSpace(tmpOrigin);
+            bb.x = tmpOrigin.x;
+            bb.y = tmpOrigin.y;
             var locTableViewDelegate = this._tableViewDelegate;
             if (cc.rectContainsPoint(bb, touch.getLocation()) && locTableViewDelegate != null){
                 if(locTableViewDelegate.tableCellUnhighlight)

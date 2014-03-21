@@ -44,6 +44,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     _dirty:false,
 
     ctor:function () {
+        cc._checkWebGLRenderMode();
         this._active=false;
         this._reuseGrid=0;
         this._gridSize=null;
