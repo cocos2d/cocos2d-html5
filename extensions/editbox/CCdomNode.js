@@ -426,13 +426,14 @@ cc.DOM._resetEGLViewDiv = function(){
         var designSize = eglViewer.getDesignResolutionSize();
         var viewPortRect = eglViewer.getViewPortRect();
         var screenSize = eglViewer.getFrameSize();
+	    var pixelRatio = eglViewer.getDevicePixelRatio();
         var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
         if((designSize.width === 0) && (designSize.height === 0)){
             designSizeWidth = screenSize.width;
             designSizeHeight = screenSize.height;
         }
 
-        var viewPortWidth = viewPortRect.width;
+        var viewPortWidth = viewPortRect.width/pixelRatio;
         if((viewPortRect.width === 0) && (viewPortRect.height === 0)){
             viewPortWidth = screenSize.width;
         }
@@ -443,8 +444,7 @@ cc.DOM._resetEGLViewDiv = function(){
         eglViewDiv.style.maxHeight = designSizeHeight + "px";
         eglViewDiv.style.margin = 0;
 
-        eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
-
+        eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
         eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
         eglViewDiv.style.bottom = "0px";
     }
@@ -486,13 +486,14 @@ cc.DOM.parentDOM = function (x) {
                 var designSize = eglViewer.getDesignResolutionSize();
                 var viewPortRect = eglViewer.getViewPortRect();
                 var screenSize = eglViewer.getFrameSize();
+	            var pixelRatio = eglViewer.getDevicePixelRatio();
                 var designSizeWidth = designSize.width, designSizeHeight = designSize.height;
                 if ((designSize.width === 0) && (designSize.height === 0)) {
                     designSizeWidth = screenSize.width;
                     designSizeHeight = screenSize.height;
                 }
 
-                var viewPortWidth = viewPortRect.width;
+                var viewPortWidth = viewPortRect.width/pixelRatio;
                 if ((viewPortRect.width === 0) && (viewPortRect.height === 0)) {
                     viewPortWidth = screenSize.width;
                 }
@@ -503,7 +504,7 @@ cc.DOM.parentDOM = function (x) {
                 eglViewDiv.style.maxHeight = designSizeHeight + "px";
                 eglViewDiv.style.margin = 0;
 
-                eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleY());
+                eglViewDiv.resize(eglViewer.getScaleX()/pixelRatio, eglViewer.getScaleY()/pixelRatio);
                 eglViewDiv.style.left = (viewPortWidth - designSizeWidth) / 2 + "px";
                 eglViewDiv.style.bottom = "0px";
 
