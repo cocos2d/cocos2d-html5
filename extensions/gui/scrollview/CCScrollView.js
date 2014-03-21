@@ -294,10 +294,10 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
      * Provided to make scroll view compatible with SWLayer's pause method
      */
     pause:function (sender) {
-        this._container.pauseSchedulerAndActions();
+        this._container.pause();
         var selChildren = this._container.getChildren();
         for (var i = 0; i < selChildren.length; i++) {
-            selChildren[i].pauseSchedulerAndActions();
+            selChildren[i].pause();
         }
     },
 
@@ -307,10 +307,9 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     resume:function (sender) {
         var selChildren = this._container.getChildren();
         for (var i = 0, len = selChildren.length; i < len; i++) {
-            selChildren[i].resumeSchedulerAndActions();
+            selChildren[i].resume();
         }
-
-        this._container.resumeSchedulerAndActions();
+        this._container.resume();
     },
 
     isDragging:function () {
