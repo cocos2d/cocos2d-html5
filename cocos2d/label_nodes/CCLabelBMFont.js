@@ -979,7 +979,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     start_line = false;
                     startOfWord = -1;
                     startOfLine = -1;
-                    i+= justSkipped;
+                    j--;
+                    skip -= justSkipped;
                     line++;
 
                     if (i >= stringLength)
@@ -1083,6 +1084,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 if (this._string[ctr].charCodeAt(0) == 10 || this._string[ctr].charCodeAt(0) == 0) {
                     var lineWidth = 0;
                     var line_length = last_line.length;
+                    // if last line is empty we must just increase lineNumber and work with next line
+                    if (line_length == 0) {
+                        lineNumber++;
+                        continue;
+                    }
                     var index = i + line_length - 1 + lineNumber;
                     if (index < 0) continue;
 
@@ -1245,11 +1251,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     _getLetterPosXLeft:function (sp) {
-        return sp.getPositionX() * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.getPositionX() * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     },
 
     _getLetterPosXRight:function (sp) {
-        return sp.getPositionX() * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
+        return sp.getPositionX() * this._scaleX + (sp.getContentSize().width * this._scaleX * (1 - sp.getAnchorPoint().x));
     }
 });
 
