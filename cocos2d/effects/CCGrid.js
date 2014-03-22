@@ -232,15 +232,15 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
     },
 
     blit:function () {
-        cc.Assert(0, "");
+        cc.log("cc.GridBase.blit(): Shall be overridden in subclass.");
     },
 
     reuse:function () {
-        cc.Assert(0, "");
+        cc.log("cc.GridBase.reuse(): Shall be overridden in subclass.");
     },
 
     calculateVertexPoints:function () {
-        cc.Assert(0, "");
+        cc.log("cc.GridBase.calculateVertexPoints(): Shall be overridden in subclass.");
     },
 
     set2DProjection:function () {
@@ -308,7 +308,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
      * @return {cc.Vertex3F}
      */
     vertex:function (pos) {
-        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
+            cc.log("cc.Grid3D.vertex() : Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         var locVertices = this._vertices;
         return new cc.Vertex3F(locVertices[index], locVertices[index + 1], locVertices[index + 2]);
@@ -320,7 +321,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
      * @return {cc.Vertex3F}
      */
     originalVertex:function (pos) {
-        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
+            cc.log("cc.Grid3D.originalVertex() : Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         var locOriginalVertices = this._originalVertices;
         return new cc.Vertex3F(locOriginalVertices[index], locOriginalVertices[index + 1], locOriginalVertices[index + 2]);
@@ -332,7 +334,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
      * @param {cc.Vertex3F} vertex
      */
     setVertex:function (pos, vertex) {
-        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
+            cc.log("cc.Grid3D.setVertex() : Numbers must be integers");
         var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         var vertArray = this._vertices;
         vertArray[index] = vertex.x;
@@ -343,7 +346,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 
     blit:function () {
         var n = this._gridSize.width * this._gridSize.height;
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
 
@@ -507,7 +510,8 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
      * @return {cc.Quad3}
      */
     tile:function (pos) {
-        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
+            cc.log("cc.TiledGrid3D.tile() : Numbers must be integers");
 
         var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
         var locVertices = this._vertices;
@@ -523,7 +527,8 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
      * @return {cc.Quad3}
      */
     originalTile:function (pos) {
-        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
+            cc.log("cc.TiledGrid3D.originalTile() : Numbers must be integers");
 
         var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
         var locOriginalVertices = this._originalVertices;
@@ -539,7 +544,8 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
      * @param {cc.Quad3} coords
      */
     setTile:function (pos, coords) {
-        cc.Assert( pos.x == (0| pos.x) && pos.y == (0| pos.y) , "Numbers must be integers");
+        if(pos.x !== (0| pos.x) || pos.y !== (0| pos.y))
+            cc.log("cc.TiledGrid3D.setTile() : Numbers must be integers");
 
         var idx = (this._gridSize.height * pos.x + pos.y) * 12;
         var locVertices = this._vertices;
@@ -568,7 +574,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         // Attributes
         //
         var gl = cc.renderContext, locDirty = this._dirty;
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS);
 
         // position
         gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);

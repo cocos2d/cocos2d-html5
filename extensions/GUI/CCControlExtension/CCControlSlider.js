@@ -79,8 +79,8 @@ cc.ControlSlider = cc.Control.extend({
         touchLocation = this.getParent().convertToNodeSpace(touchLocation);
 
         var rect = this.getBoundingBox();
-        rect.size.width += this._thumbSprite.getContentSize().width;
-        rect.origin.x -= this._thumbSprite.getContentSize().width / 2;
+        rect._size.width += this._thumbSprite.getContentSize().width;
+        rect._origin.x -= this._thumbSprite.getContentSize().width / 2;
 
         return cc.rectContainsPoint(rect, touchLocation);
     },
@@ -140,21 +140,20 @@ cc.ControlSlider = cc.Control.extend({
 
             // Defines the content size
             var maxRect = cc.ControlUtils.CCRectUnion(backgroundSprite.getBoundingBox(), thumbSprite.getBoundingBox());
-            var size = cc.size(maxRect.width, maxRect.height);
-            this.setContentSize(size);
+            this.setContentSize(maxRect.width, maxRect.height);
 
             // Add the slider background
-            this._backgroundSprite.setAnchorPoint(cc.p(0.5, 0.5));
-            this._backgroundSprite.setPosition(cc.p(size.width / 2, size.height / 2));
+            this._backgroundSprite.setAnchorPoint(0.5, 0.5);
+            this._backgroundSprite.setPosition(maxRect.width / 2, maxRect.height / 2);
             this.addChild(this._backgroundSprite);
 
             // Add the progress bar
-            this._progressSprite.setAnchorPoint(cc.p(0.0, 0.5));
-            this._progressSprite.setPosition(cc.p(0.0, size.height / 2));
+            this._progressSprite.setAnchorPoint(0.0, 0.5);
+            this._progressSprite.setPosition(0, maxRect.height / 2);
             this.addChild(this._progressSprite);
 
             // Add the slider thumb
-            this._thumbSprite.setPosition(cc.p(0, size.height / 2));
+            this._thumbSprite.setPosition(0, maxRect.height / 2);
             this.addChild(this._thumbSprite);
 
             // Init default values
@@ -175,7 +174,7 @@ cc.ControlSlider = cc.Control.extend({
 
     sliderBegan:function (location) {
         this.setSelected(true);
-        this.getThumbSprite().setColor(cc.GRAY);
+        this.getThumbSprite().setColor(cc.gray());
         this.setValue(this.valueForLocation(location));
     },
     sliderMoved:function (location) {
@@ -185,7 +184,7 @@ cc.ControlSlider = cc.Control.extend({
         if (this.isSelected()) {
             this.setValue(this.valueForLocation(this._thumbSprite.getPosition()));
         }
-        this._thumbSprite.setColor(cc.WHITE);
+        this._thumbSprite.setColor(cc.white());
         this.setSelected(false);
     },
 
@@ -218,14 +217,12 @@ cc.ControlSlider = cc.Control.extend({
     },
     needsLayout:function(){
         var percent = (this._value - this._minimumValue) / (this._maximumValue - this._minimumValue);
-        var pos = this._thumbSprite.getPosition();
-        pos.x = percent * this._backgroundSprite.getContentSize().width;
-        this._thumbSprite.setPosition(pos);
+        this._thumbSprite.setPositionX(percent * this._backgroundSprite.getContentSize().width);
 
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.rect(textureRect.x, textureRect.y, pos.x, textureRect.height);
-        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
+        textureRect = cc.rect(textureRect.x, textureRect.y, this._thumbSprite.getPositionX(), textureRect.height);
+        this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect._size);
     },
     /** Returns the value for the given location. */
     valueForLocation:function (location) {

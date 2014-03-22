@@ -121,7 +121,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @return {Null}
      */
     reverse:function () {
-        cc.Assert(false, "cc.IntervalAction: reverse not implemented.");
+        cc.log("cc.IntervalAction: reverse not implemented.");
         return null;
     },
 
@@ -130,7 +130,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     setAmplitudeRate:function (amp) {
         // Abstract class needs implementation
-        cc.Assert(0, 'Actioninterval setAmplitudeRate');
+        cc.log("cc.ActionInterval.setAmplitudeRate(): it should be overridden in subclass.");
     },
 
     /**
@@ -138,8 +138,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     getAmplitudeRate:function () {
         // Abstract class needs implementation
-        cc.Assert(0, 'Actioninterval getAmplitudeRate');
-        return 0;
+        cc.log("cc.ActionInterval.getAmplitudeRate(): it should be overridden in subclass.");
     }
 });
 
@@ -182,8 +181,8 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @return {Boolean}
      */
     initWithTwoActions:function (actionOne, actionTwo) {
-        cc.Assert(actionOne != null, "Sequence.initWithTwoActions");
-        cc.Assert(actionTwo != null, "Sequence.initWithTwoActions");
+        if(!actionOne || !actionTwo)
+            throw "cc.Sequence.initWithTwoActions(): arguments must all be non nil";
 
         var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
@@ -230,7 +229,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         var locSplit = this._split, locActions = this._actions, locLast = this._last;
         if (time < locSplit) {
             // action[0]
-            new_t = (locSplit) ? time / locSplit : 1;
+            new_t = (locSplit !== 0) ? time / locSplit : 1;
 
             if (found === 0 && locLast === 1) {
                 // Reverse mode ?
@@ -475,7 +474,7 @@ cc.Repeat.create = function (action, times) {
 
 /**  Repeats an action for ever.  <br/>
  * To repeat the an action for a limited number of times use the Repeat action. <br/>
- * @warning This action can't be Sequenceable because it is not an IntervalAction
+ * @warning This action can't be Sequencable because it is not an IntervalAction
  * @class
  * @extends cc.ActionInterval
  */
@@ -493,7 +492,8 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      * @return {Boolean}
      */
     initWithAction:function (action) {
-        cc.Assert(action != null, "");
+        if(!action)
+            throw "cc.RepeatForever.initWithAction(): action must be non null";
 
         this._innerAction = action;
         return true;
@@ -600,8 +600,8 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * @return {Boolean}
      */
     initWithTwoActions:function (action1, action2) {
-        cc.Assert(action1 != null, "no action1");
-        cc.Assert(action2 != null, "no action2");
+        if(!action1 || !action2)
+            throw "cc.Spawn.initWithTwoActions(): arguments must all be non null" ;
 
         var ret = false;
 
@@ -783,7 +783,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * RotateTo reverse not implemented
      */
     reverse:function () {
-        cc.Assert(0, "RotateTo reverse not implemented");
+        cc.log("cc.RotateTo.reverse(): it should be overridden in subclass.");
     },
 
     /**
@@ -1817,95 +1817,6 @@ cc.Blink.create = function (duration, blinks) {
     return blink;
 };
 
-/** Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.<br/>
- * The "reverse" of this action is FadeOut
- * @class
- * @extends cc.ActionInterval
- */
-cc.FadeIn = cc.ActionInterval.extend(/** @lends cc.FadeIn# */{
-    /**
-     * @param {Number} time time in seconds
-     */
-    update:function (time) {
-        this._target.setOpacity(255 * time);
-    },
-
-    /**
-     * @return {cc.ActionInterval}
-     */
-    reverse:function () {
-        return cc.FadeOut.create(this._duration);
-    },
-
-    /**
-     * returns a new clone of the action
-     * @returns {cc.FadeIn}
-     */
-    clone:function () {
-        var action = new cc.FadeIn();
-        action.initWithDuration(this._duration);
-        return action;
-    }
-});
-
-/**
- * @param {Number} duration duration in seconds
- * @return {cc.FadeIn}
- * @example
- * //example
- * var action = cc.FadeIn.create(1.0);
- */
-cc.FadeIn.create = function (duration) {
-    var action = new cc.FadeIn();
-    action.initWithDuration(duration);
-    return action;
-};
-
-
-/** Fades Out an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 255 to 0.
- * The "reverse" of this action is FadeIn
- * @class
- * @extends cc.ActionInterval
- */
-cc.FadeOut = cc.ActionInterval.extend(/** @lends cc.FadeOut# */{
-    /**
-     * @param {Number} time  time in seconds
-     */
-    update:function (time) {
-        this._target.setOpacity(255 * (1 - time));
-    },
-
-    /**
-     * @return {cc.ActionInterval}
-     */
-    reverse:function () {
-        return cc.FadeIn.create(this._duration);
-    },
-
-    /**
-     * returns a new clone of the action
-     * @returns {cc.FadeOut}
-     */
-    clone:function () {
-        var action = new cc.FadeOut();
-        action.initWithDuration(this._duration);
-        return action;
-    }
-});
-
-/**
- * @param {Number} d  duration in seconds
- * @return {cc.FadeOut}
- * @example
- * // example
- * var action = cc.FadeOut.create(1.0);
- */
-cc.FadeOut.create = function (d) {
-    var action = new cc.FadeOut();
-    action.initWithDuration(d);
-    return action;
-};
-
 /** Fades an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from the current value to a custom one.
  * @warning This action doesn't support "reverse"
  * @class
@@ -1948,7 +1859,10 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        this._target.setOpacity((this._fromOpacity + (this._toOpacity - this._fromOpacity) * time));
+        if (this._target.RGBAProtocol) {
+            var fromOpacity = this._fromOpacity;
+            this._target.setOpacity((fromOpacity + (this._toOpacity - fromOpacity) * time));
+        }
     },
 
     /**
@@ -1956,7 +1870,9 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._fromOpacity = target.getOpacity();
+        if(this._target.RGBAProtocol){
+            this._fromOpacity = target.getOpacity();
+        }
     }
 });
 
@@ -1972,6 +1888,99 @@ cc.FadeTo.create = function (duration, opacity) {
     var fadeTo = new cc.FadeTo();
     fadeTo.initWithDuration(duration, opacity);
     return fadeTo;
+};
+
+/** Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.<br/>
+ * The "reverse" of this action is FadeOut
+ * @class
+ * @extends cc.FadeTo
+ */
+cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
+    _reverseAction: null,
+    /**
+     * @return {cc.ActionInterval}
+     */
+    reverse:function () {
+        var action = new cc.FadeOut();
+        action.initWithDuration(this._duration, 0);
+        return action;
+    },
+
+    /**
+     * returns a new clone of the action
+     * @returns {cc.FadeIn}
+     */
+    clone:function () {
+        var action = new cc.FadeIn();
+        action.initWithDuration(this._duration, this._toOpacity);
+        return action;
+    },
+
+    /**
+     * @param {cc.Sprite} target
+     */
+    startWithTarget:function (target) {
+        if(this._reverseAction)
+            this._toOpacity = this._reverseAction._fromOpacity;
+        cc.FadeTo.prototype.startWithTarget.call(this, target);
+    }
+});
+
+/**
+ * @param {Number} duration duration in seconds
+ * @param {Number} [toOpacity] to opacity
+ * @return {cc.FadeIn}
+ * @example
+ * //example
+ * var action = cc.FadeIn.create(1.0);
+ */
+cc.FadeIn.create = function (duration, toOpacity) {
+    if(toOpacity == null)
+        toOpacity = 255;
+    var action = new cc.FadeIn();
+    action.initWithDuration(duration, toOpacity);
+    return action;
+};
+
+
+/** Fades Out an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 255 to 0.
+ * The "reverse" of this action is FadeIn
+ * @class
+ * @extends cc.FadeTo
+ */
+cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
+    /**
+     * @return {cc.ActionInterval}
+     */
+    reverse:function () {
+        var action = new cc.FadeIn();
+        action._reverseAction = this;
+        action.initWithDuration(this._duration, 255);
+        return action;
+    },
+
+    /**
+     * returns a new clone of the action
+     * @returns {cc.FadeOut}
+     */
+    clone:function () {
+        var action = new cc.FadeOut();
+        action.initWithDuration(this._duration, this._toOpacity);
+        return action;
+    }
+});
+
+/**
+ * @param {Number} d  duration in seconds
+ * @return {cc.FadeOut}
+ * @example
+ * // example
+ * var action = cc.FadeOut.create(1.0);
+ */
+cc.FadeOut.create = function (d) {
+    var action = new cc.FadeOut();
+    action.initWithDuration(d, 0);
+    return action;
 };
 
 /** Tints a cc.Node that implements the cc.NodeRGB protocol from current tint to a custom one.
@@ -2020,7 +2029,9 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._from = this._target.getColor();
+        if (this._target.RGBAProtocol) {
+            this._from = this._target.getColor();
+        }
     },
 
     /**
@@ -2028,8 +2039,10 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     update:function (time) {
         var locFrom = this._from, locTo = this._to;
-        this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
-            (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+        if (this._target.RGBAProtocol) {
+            this._target.setColor(cc.c3b(locFrom.r + (locTo.r - locFrom.r) * time,
+                (locFrom.g + (locTo.g - locFrom.g) * time), (locFrom.b + (locTo.b - locFrom.b) * time)));
+        }
     }
 });
 
@@ -2212,8 +2225,10 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      * @return {Boolean}
      */
     initWithAction:function (action) {
-        cc.Assert(action != null, "");
-        cc.Assert(action != this._other, "");
+        if(!action)
+            throw "cc.ReverseTime.initWithAction(): action must be non null";
+        if(action == this._other)
+            throw "cc.ReverseTime.initWithAction(): the action was already passed in.";
 
         if (cc.ActionInterval.prototype.initWithDuration.call(this, action.getDuration())) {
             // Don't leak if action is reused
@@ -2296,7 +2311,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         this._nextFrame = 0;
         this._origFrame = null;
         this._executedLoops = 0;
-        this._splitTimes = null;
+        this._splitTimes = [];
     },
 
     /**
@@ -2318,7 +2333,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      * @return {Boolean}
      */
     initWithAnimation:function (animation) {
-        cc.Assert(animation != null, "Animate: argument Animation must be non-NULL");
+        if(!animation)
+            throw "cc.Animate.initWithAnimation(): animation must be non-NULL";
         var singleDuration = animation.getDuration();
         if (this.initWithDuration(singleDuration * animation.getLoops())) {
             this._nextFrame = 0;
@@ -2326,7 +2342,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
             this._origFrame = null;
             this._executedLoops = 0;
-            var locTimes = [];
+            var locTimes = this._splitTimes;
+            locTimes.length = 0;
 
             var accumUnitsOfTime = 0;
             var newUnitOfTimeValue = singleDuration / animation.getTotalDelayUnits();
@@ -2340,7 +2357,6 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
                 accumUnitsOfTime += frame.getDelayUnits();
                 locTimes.push(value);
             }
-            this._splitTimes = locTimes;
             return true;
         }
         return false;

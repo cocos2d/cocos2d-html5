@@ -23,11 +23,11 @@
  ****************************************************************************/
 
 /**
- * Base class for cc.Bone objects.
+ * Base class for ccs.Bone objects.
  * @class
- * @extends cc.NodeRGBA
+ * @extends ccs.NodeRGBA
  */
-cc.Bone = cc.NodeRGBA.extend({
+ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
     _boneData:null,
     _armature:null,
     _childArmature:null,
@@ -40,7 +40,11 @@ cc.Bone = cc.NodeRGBA.extend({
     _parentBone:null,
     _boneTransformDirty:false,
     _worldTransform:null,
-    _blendType:0,
+    _blendFunc:0,
+    _blendDirty:false,
+    _worldInfo:null,
+    _armatureParentBone:null,
+    _dataVersion:0,
     ctor:function () {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._boneData = null;
@@ -55,7 +59,8 @@ cc.Bone = cc.NodeRGBA.extend({
         this._parentBone = null;
         this._boneTransformDirty = true;
         this._worldTransform = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
-        this._blendType=cc.BlendType.NORMAL;
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._blendDirty = false;
     },
 
     /**
@@ -83,17 +88,19 @@ cc.Bone = cc.NodeRGBA.extend({
         if (name) {
             this._name = name;
         }
-        this._tweenData = new cc.FrameData();
-        this._tween = new cc.Tween();
+        this._tweenData = new ccs.FrameData();
+        this._tween = new ccs.Tween();
         this._tween.init(this);
-        this._displayManager = new cc.DisplayManager();
+        this._displayManager = new ccs.DisplayManager();
         this._displayManager.init(this);
+        this._worldInfo = new ccs.BaseData();
+        this._boneData = new ccs.BaseData();
         return true;
     },
 
     /**
      * set the boneData
-     * @param {cc.BoneData} boneData
+     * @param {ccs.BoneData} boneData
      */
     setBoneData:function (boneData) {
         if (!boneData) {
@@ -108,7 +115,7 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * boneData getter
-     * @return {cc.BoneData}
+     * @return {ccs.BoneData}
      */
     getBoneData:function () {
         return this._boneData;
@@ -116,18 +123,22 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * set the armature
-     * @param {cc.Armature} armature
+     * @param {ccs.Armature} armature
      */
     setArmature:function (armature) {
         this._armature = armature;
         if(armature){
             this._tween.setAnimation(this._armature.getAnimation());
+            this._dataVersion = this._armature.getArmatureData().dataVersion;
+            this._armatureParentBone = this._armature.getParentBone();
+        }else{
+            this._armatureParentBone = null;
         }
     },
 
     /**
      * armature getter
-     * @return {cc.Armature}
+     * @return {ccs.Armature}
      */
     getArmature:function () {
         return this._armature;
@@ -142,32 +153,72 @@ cc.Bone = cc.NodeRGBA.extend({
         var locArmature = this._armature;
         var locTweenData = this._tweenData;
         var locWorldTransform = this._worldTransform;
+        var locWorldInfo = this._worldInfo;
+        var locArmatureParentBone = this._armatureParentBone;
 
         if (locParentBone) {
             this._boneTransformDirty = this._boneTransformDirty || locParentBone.isTransformDirty();
         }
+        if (locArmatureParentBone && !this._boneTransformDirty){
+            this._boneTransformDirty = locArmatureParentBone.isTransformDirty();
+        }
         if (this._boneTransformDirty) {
-            if (locArmature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED) {
-                cc.TransformHelp.nodeConcat(locTweenData, this._boneData);
+            if (this._dataVersion >= ccs.CONST_VERSION_COMBINED) {
+                var locBoneData = this._boneData;
+                locTweenData.x += locBoneData.x;
+                locTweenData.y += locBoneData.y;
+                locTweenData.skewX += locBoneData.skewX;
+                locTweenData.skewY += locBoneData.skewY;
+                locTweenData.scaleX += locBoneData.scaleX;
+                locTweenData.scaleY += locBoneData.scaleY;
+
                 locTweenData.scaleX -= 1;
                 locTweenData.scaleY -= 1;
             }
 
-            cc.TransformHelp.nodeToMatrix(locTweenData, locWorldTransform);
+            locWorldInfo.x = locTweenData.x + this._position._x;
+            locWorldInfo.y = locTweenData.y + this._position._y;
+            locWorldInfo.scaleX = locTweenData.scaleX * this._scaleX;
+            locWorldInfo.scaleY = locTweenData.scaleY * this._scaleY;
+            locWorldInfo.skewX = locTweenData.skewX + this._skewX + this._rotationX;
+            locWorldInfo.skewY = locTweenData.skewY + this._skewY - this._rotationY;
 
-            this._worldTransform = cc.AffineTransformConcat(this.nodeToParentTransform(), locWorldTransform);
+            if (this._parentBone) {
+                this.applyParentTransform(this._parentBone);
+            }
+            else {
+                if (locArmatureParentBone) {
+                    this.applyParentTransform(locArmatureParentBone);
+                }
+            }
 
-            if (locParentBone) {
-                this._worldTransform = cc.AffineTransformConcat(this._worldTransform, locParentBone._worldTransform);
+            ccs.TransformHelp.nodeToMatrix(locWorldInfo, locWorldTransform);
+
+            if (locArmatureParentBone) {
+                this._worldTransform = cc.AffineTransformConcat(locWorldTransform, locArmature.nodeToParentTransform());
             }
         }
-        cc.DisplayFactory.updateDisplay(this, this._displayManager.getCurrentDecorativeDisplay(), dt, this._boneTransformDirty || locArmature.getArmatureTransformDirty());
+        ccs.DisplayFactory.updateDisplay(this, dt, this._boneTransformDirty || locArmature.getArmatureTransformDirty());
 
         var locChildrenBone = this._childrenBone;
         for (var i = 0; i < locChildrenBone.length; i++) {
             locChildrenBone[i].update(dt);
         }
         this._boneTransformDirty = false;
+    },
+
+    applyParentTransform: function (parent) {
+        var locWorldInfo = this._worldInfo;
+        var locParentWorldTransform = parent._worldTransform;
+        var locParentWorldInfo = parent._worldInfo;
+        var x = locWorldInfo.x;
+        var y = locWorldInfo.y;
+        locWorldInfo.x = x * locParentWorldTransform.a + y * locParentWorldTransform.c + locParentWorldInfo.x;
+        locWorldInfo.y = x * locParentWorldTransform.b + y * locParentWorldTransform.d + locParentWorldInfo.y;
+        locWorldInfo.scaleX = locWorldInfo.scaleX * locParentWorldInfo.scaleX;
+        locWorldInfo.scaleY = locWorldInfo.scaleY * locParentWorldInfo.scaleY;
+        locWorldInfo.skewX = locWorldInfo.skewX + locParentWorldInfo.skewX;
+        locWorldInfo.skewY = locWorldInfo.skewY + locParentWorldInfo.skewY;
     },
 
     /**
@@ -201,18 +252,35 @@ cc.Bone = cc.NodeRGBA.extend({
     },
 
     /**
+     * set display color
+     * @param {cc.c3b} color
+     */
+    setColor: function (color) {
+        cc.NodeRGBA.prototype.setColor.call(this, color);
+        this.updateColor();
+    },
+
+    /**
+     * set display opacity
+     * @param {Number} opacity  0-255
+     */
+    setOpacity: function (opacity) {
+        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
+        this.updateColor();
+    },
+
+    /**
      * update display color
      */
     updateColor:function () {
         var display = this._displayManager.getDisplayRenderNode();
-        if (display&&display instanceof cc.Skin) {
-            //display.setColor(cc.c3b(this._displayedColor.r * this._tweenData.r / 255, this._displayedColor.g * this._tweenData.g / 255, this._displayedColor.b * this._tweenData.b / 255));
-            if(cc.Browser.supportWebGL){
-                display.setOpacity(this._displayedOpacity * this._tweenData.a / 255);
-            }else{
-                cc.NodeRGBA.prototype.setOpacity.call(display, this._displayedOpacity * this._tweenData.a / 255);
-            }
-
+        if (display && display.RGBAProtocol) {
+            var locDisplayedColor = this._displayedColor;
+            var locTweenData = this._tweenData;
+            var locOpacity = this._displayedOpacity * locTweenData.a / 255;
+            var locColor = cc.c3b(locDisplayedColor.r * locTweenData.r / 255, locDisplayedColor.g * locTweenData.g / 255, locDisplayedColor.b * locTweenData.b / 255);
+            display.setOpacity(locOpacity);
+            display.setColor(locColor);
         }
     },
 
@@ -220,7 +288,7 @@ cc.Bone = cc.NodeRGBA.extend({
      * update display zOrder
      */
     updateZOrder: function () {
-        if (this._armature.getArmatureData().dataVersion >= cc.CONST_VERSION_COMBINED) {
+        if (this._armature.getArmatureData().dataVersion >= ccs.CONST_VERSION_COMBINED) {
             var zorder = this._tweenData.zOrder + this._boneData.zOrder;
             this.setZOrder(zorder);
         }
@@ -230,8 +298,8 @@ cc.Bone = cc.NodeRGBA.extend({
     },
 
     /**
-     * Add a child to this bone, and it will let this child call setParent(cc.Bone) function to set self to it's parent
-     * @param {cc.Bone} child
+     * Add a child to this bone, and it will let this child call setParent(ccs.Bone) function to set self to it's parent
+     * @param {ccs.Bone} child
      */
     addChildBone:function (child) {
         if (!child) {
@@ -250,7 +318,7 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * Removes a child bone
-     * @param {cc.Bone} bone
+     * @param {ccs.Bone} bone
      * @param {Boolean} recursion
      */
     removeChildBone:function (bone, recursion) {
@@ -282,8 +350,8 @@ cc.Bone = cc.NodeRGBA.extend({
     /**
      * Set parent bone.
      * If _parent is NUll, then also remove this bone from armature.
-     * It will not set the CCArmature, if you want to add the bone to a CCArmature, you should use cc.Armature.addBone(bone, parentName).
-     * @param {cc.Bone}  parent  the parent bone.
+     * It will not set the CCArmature, if you want to add the bone to a CCArmature, you should use ccs.Armature.addBone(bone, parentName).
+     * @param {ccs.Bone}  parent  the parent bone.
      */
     setParentBone:function (parent) {
         this._parentBone = parent;
@@ -291,7 +359,7 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * parent bone getter
-     * @return {cc.Bone}
+     * @return {ccs.Bone}
      */
     getParentBone:function () {
         return this._parentBone;
@@ -299,17 +367,20 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * child armature setter
-     * @param {cc.Armature} armature
+     * @param {ccs.Armature} armature
      */
     setChildArmature:function (armature) {
         if (this._childArmature != armature) {
+            if (armature == null && this._childArmature)            {
+                this._childArmature.setParentBone(null);
+            }
             this._childArmature = armature;
         }
     },
 
     /**
      * child armature getter
-     * @return {cc.Armature}
+     * @return {ccs.Armature}
      */
     getChildArmature:function () {
         return this._childArmature;
@@ -325,7 +396,7 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * tween getter
-     * @return {cc.Tween}
+     * @return {ccs.Tween}
      */
     getTween:function () {
         return this._tween;
@@ -381,6 +452,14 @@ cc.Bone = cc.NodeRGBA.extend({
     },
 
     /**
+     * get render node type
+     * @returns {Number}
+     */
+    getDisplayRenderNodeType: function () {
+        return this._displayManager.getDisplayRenderNodeType();
+    },
+
+    /**
      * Add display and use  _displayData init the display.
      * If index already have a display, then replace it.
      * If index is current display index, then also change display to _index
@@ -394,6 +473,14 @@ cc.Bone = cc.NodeRGBA.extend({
         return this._displayManager.addDisplay(displayData, index);
     },
 
+    /**
+     * remove display
+     * @param {Number} index
+     */
+    removeDisplay: function (index) {
+        this._displayManager.removeDisplay(index);
+    },
+
     addSkin:function (skin, index) {
         index = index||0;
         return this._displayManager.addSkin(skin, index);
@@ -405,12 +492,77 @@ cc.Bone = cc.NodeRGBA.extend({
      * @param {Boolean} force
      */
     changeDisplayByIndex:function (index, force) {
-        this._displayManager.changeDisplayByIndex(index, force);
+        cc.log("changeDisplayByIndex is deprecated. Use changeDisplayWithIndex instead.");
+        this.changeDisplayWithIndex(index, force);
+    },
+
+    /**
+     * change display with index
+     * @param {Number} index
+     * @param {Boolean} force
+     */
+    changeDisplayWithIndex:function (index, force) {
+        this._displayManager.changeDisplayWithIndex(index, force);
+    },
+
+    /**
+     * change display with name
+     * @param {String} name
+     * @param {Boolean} force
+     */
+    changeDisplayWithName:function (name, force) {
+        this._displayManager.changeDisplayWithName(name, force);
+    },
+
+    /**
+     * get the collider body list in this bone.
+     * @returns {*}
+     */
+    getColliderBodyList: function () {
+        var decoDisplay = this._displayManager.getCurrentDecorativeDisplay()
+        if (decoDisplay) {
+            var detector = decoDisplay.getColliderDetector()
+            if (detector) {
+                return detector.getColliderBodyList();
+            }
+        }
+        return [];
+    },
+
+    /**
+     * collider filter setter
+     * @param {cc.ColliderFilter} filter
+     */
+    setColliderFilter: function (filter) {
+        var displayList = this._displayManager.getDecorativeDisplayList();
+        for (var i = 0; i < displayList.length; i++) {
+            var locDecoDisplay = displayList[i];
+            var locDetector = locDecoDisplay.getColliderDetector();
+            if (locDetector) {
+                locDetector.setColliderFilter(filter);
+            }
+        }
+
+    },
+
+    /**
+     * collider filter getter
+     * @returns {cc.ColliderFilter}
+     */
+    getColliderFilter: function () {
+        var decoDisplay = this._displayManager.getCurrentDecorativeDisplay();
+        if (decoDisplay) {
+            var detector = decoDisplay.getColliderDetector();
+            if (detector) {
+                return detector.getColliderFilter();
+            }
+        }
+        return null;
     },
 
     /**
      * displayManager setter
-     * @param {cc.DisplayManager}
+     * @param {ccs.DisplayManager}
         */
     setDisplayManager:function (displayManager) {
         this._displayManager = displayManager;
@@ -418,7 +570,7 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * displayManager dirty getter
-     * @return {cc.DisplayManager}
+     * @return {ccs.DisplayManager}
      */
     getDisplayManager:function () {
         return this._displayManager;
@@ -443,7 +595,7 @@ cc.Bone = cc.NodeRGBA.extend({
 
     /**
      * tweenData  getter
-     * @return {cc.FrameData}
+     * @return {ccs.FrameData}
      */
     getTweenData:function () {
         return this._tweenData;
@@ -466,32 +618,43 @@ cc.Bone = cc.NodeRGBA.extend({
     },
 
     /**
-     * blendType  setter
-     * @param {cc.BlendType} blendType
+     * BlendFunc  setter
+     * @param {cc.BlendFunc} blendFunc
      */
-    setBlendType:function (blendType) {
-        this._blendType = blendType;
+    setBlendFunc:function (blendFunc) {
+        if (this._blendFunc.src != blendFunc.src || this._blendFunc.dst != blendFunc.dst)        {
+            this._blendFunc = blendFunc;
+            this._blendDirty = true;
+        }
     },
 
     /**
      * blendType  getter
-     * @return {cc.BlendType}
+     * @return {cc.BlendFunc}
      */
-    getBlendType:function () {
-        return this._blendType;
+    getBlendFunc:function () {
+        return this._blendFunc;
+    },
+
+    setBlendDirty:function(dirty){
+        this._blendDirty = dirty;
+    },
+
+    isBlendDirty:function(){
+        return this._blendDirty;
     }
 });
 
 /**
  * allocates and initializes a bone.
  * @constructs
- * @return {cc.Bone}
+ * @return {ccs.Bone}
  * @example
  * // example
- * var bone = cc.Bone.create();
+ * var bone = ccs.Bone.create();
  */
-cc.Bone.create = function (name) {
-    var bone = new cc.Bone();
+ccs.Bone.create = function (name) {
+    var bone = new ccs.Bone();
     if (bone && bone.init(name)) {
         return bone;
     }

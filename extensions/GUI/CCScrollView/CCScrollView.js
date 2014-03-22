@@ -169,7 +169,8 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     getContentOffset:function () {
-        return this._container.getPosition();
+        var locPos = this._container.getPosition();
+        return cc.p(locPos.x, locPos.y);
     },
 
     /**
@@ -215,7 +216,7 @@ cc.ScrollView = cc.Layer.extend({
             newCenter = locContainer.convertToWorldSpace(oldCenter);
 
             var offset = cc.pSub(center, newCenter);
-            if (this._delegate != null)
+            if (this._delegate && this._delegate.scrollViewDidZoom)
                 this._delegate.scrollViewDidZoom(this);
             this.setContentOffset(cc.pAdd(locContainer.getPosition(), offset));
         }
@@ -343,7 +344,7 @@ cc.ScrollView = cc.Layer.extend({
 
         this._container = container;
         container.ignoreAnchorPointForPosition(false);
-        container.setAnchorPoint(cc.p(0.0, 0.0));
+        container.setAnchorPoint(0, 0);
 
         this.addChild(container);
         this.setViewSize(this._viewSize);
@@ -486,9 +487,12 @@ cc.ScrollView = cc.Layer.extend({
         this._touchMoved = false;
     },
 
-    setContentSize: function (size) {
+    setContentSize: function (size, height) {
         if (this.getContainer() != null) {
-            this.getContainer().setContentSize(size);
+            if(height === undefined)
+                this.getContainer().setContentSize(size);
+            else
+                this.getContainer().setContentSize(size, height);
             this.updateInset();
         }
     },
@@ -603,7 +607,7 @@ cc.ScrollView = cc.Layer.extend({
         tag = tag || child.getTag();
 
         child.ignoreAnchorPointForPosition(false);
-        child.setAnchorPoint(cc.p(0.0, 0.0));
+        child.setAnchorPoint(0, 0);
         if (this._container != child) {
             this._container.addChild(child, zOrder, tag);
         } else {
@@ -686,10 +690,8 @@ cc.ScrollView = cc.Layer.extend({
          newX = Math.max(newX, minInset.x);
          var newY = Math.min(this._container.getPosition().y, maxInset.y);
          newY = Math.max(newY, minInset.y);*/
-        oldPosition.x = this._container.getPositionX();
-        oldPosition.y = this._container.getPositionY();
-        var newX = oldPosition.x;
-        var newY = oldPosition.y;
+        var newX = this._container.getPositionX();
+        var newY = this._container.getPositionY();
 
         //this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(newX - this._container.getPosition().x, newY - this._container.getPosition().y));
         //= this._scrollDistance = cc.pSub(this._scrollDistance, cc.p(0, 0)); = do nothing
@@ -719,7 +721,7 @@ cc.ScrollView = cc.Layer.extend({
             return;
         }
 
-        if (this._delegate != null)
+        if (this._delegate && this._delegate.scrollViewDidScroll)
             this._delegate.scrollViewDidScroll(this);
     },
     /**
@@ -728,7 +730,7 @@ cc.ScrollView = cc.Layer.extend({
     _stoppedAnimatedScroll:function (node) {
         this.unschedule(this._performedAnimatedScroll);
         // After the animation stopped, "scrollViewDidScroll" should be invoked, this could fix the bug of lack of tableview cells.
-        if (this._delegate != null) {
+        if (this._delegate && this._delegate.scrollViewDidScroll) {
             this._delegate.scrollViewDidScroll(this);
         }
     },
@@ -739,15 +741,15 @@ cc.ScrollView = cc.Layer.extend({
     _beforeDraw:function (context) {
         if (this._clippingToBounds) {
             this._scissorRestored = false;
-            var frame = this._getViewRect();
+            var frame = this._getViewRect(), locEGLViewer = cc.EGLView.getInstance();
 
             var scaleX = this.getScaleX();
             var scaleY = this.getScaleY();
 
             var ctx = context || cc.renderContext;
             if (cc.renderContextType === cc.CANVAS) {
-                var getWidth = (this._viewSize.width * scaleX);
-                var getHeight = (this._viewSize.height * scaleY);
+                var getWidth = (this._viewSize.width * scaleX) * locEGLViewer.getScaleX();
+                var getHeight = (this._viewSize.height * scaleY) * locEGLViewer.getScaleY();
                 var startX = 0;
                 var startY = 0;
 

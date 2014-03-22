@@ -22,7 +22,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.DecotativeDisplay = cc.Class.extend({
+/**
+ * Base class for ccs.DecotativeDisplay
+ * @class
+ * @extends ccs.Class
+ */
+ccs.DecotativeDisplay = ccs.Class.extend({
     _display:null,
     _colliderDetector:null,
     _displayData:null,
@@ -37,25 +42,50 @@ cc.DecotativeDisplay = cc.Class.extend({
         return true;
     },
 
+    /**
+     * display setter
+     * @param {cc.Node} display
+     */
     setDisplay:function (display) {
         this._display = display;
     },
 
+    /**
+     * display getter
+     * @returns {cc.Node}
+     */
     getDisplay:function () {
         return this._display;
     },
 
+    /**
+     * colliderDetector setter
+     * @param {ccs.ColliderDetector} colliderDetector
+     */
     setColliderDetector:function (colliderDetector) {
         this._colliderDetector = colliderDetector;
     },
 
+    /**
+     * colliderDetector getter
+     * @returns {ccs.ColliderDetector}
+     */
     getColliderDetector:function () {
         return this._colliderDetector;
     },
 
+    /**
+     * display data setter
+     * @param {ccs.DisplayData} displayData
+     */
     setDisplayData:function (displayData) {
         this._displayData = displayData;
     },
+
+    /**
+     * display data getter
+     * @returns {ccs.DisplayData}
+     */
     getDisplayData:function () {
         return this._displayData;
     },
@@ -70,8 +100,16 @@ cc.DecotativeDisplay = cc.Class.extend({
 
 });
 
-cc.DecotativeDisplay.create = function () {
-    var decotativeDisplay = new cc.DecotativeDisplay();
+/**
+ * allocates and initializes a decotative display.
+ * @constructs
+ * @return {ccs.DecotativeDisplay}
+ * @example
+ * // example
+ * var display = ccs.DecotativeDisplay.create();
+ */
+ccs.DecotativeDisplay.create = function () {
+    var decotativeDisplay = new ccs.DecotativeDisplay();
     if (decotativeDisplay && decotativeDisplay.init()) {
         return decotativeDisplay;
     }

@@ -147,7 +147,9 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * @return {Boolean}
      */
     initWithDuration:function (duration, points, tension) {
-        cc.Assert(points.length > 0, "Invalid configuration. It must at least have one control point");
+        if(!points || points.length == 0)
+            throw "Invalid configuration. It must at least have one control point";
+
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this.setPoints(points);
             this._tension = tension;
@@ -173,8 +175,8 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         // Issue #1441 from cocos2d-iphone
         this._deltaT = 1 / (this._points.length - 1);
-
-        this._previousPosition = this._target.getPosition();
+        var locPosition = this._target.getPosition();
+        this._previousPosition = cc.p(locPosition.x, locPosition.y);
         this._accumulatedDiff = cc.p(0, 0);
     },
 
@@ -301,7 +303,9 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      */
     startWithTarget:function (target) {
         cc.CardinalSplineTo.prototype.startWithTarget.call(this, target);
-        this._startPosition = target.getPosition();
+        var locPosition = target.getPosition();
+        this._startPosition.x = locPosition.x;
+        this._startPosition.y = locPosition.y;
     },
 
     /**

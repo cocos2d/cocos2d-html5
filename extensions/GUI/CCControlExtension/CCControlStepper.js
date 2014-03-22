@@ -73,10 +73,12 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     initWithMinusSpriteAndPlusSprite:function (minusSprite, plusSprite) {
-        if (this.init()) {
-            cc.Assert(minusSprite, "Minus sprite must be not nil");
-            cc.Assert(plusSprite, "Plus sprite must be not nil");
+        if(!minusSprite)
+            throw "cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Minus sprite should be non-null.";
+        if(!plusSprite)
+            throw "cc.ControlStepper.initWithMinusSpriteAndPlusSprite(): Plus sprite should be non-null.";
 
+        if (this.init()) {
             this.setTouchEnabled(true);
 
             // Set the default values
@@ -91,28 +93,28 @@ cc.ControlStepper = cc.Control.extend({
 
             // Add the minus components
             this.setMinusSprite(minusSprite);
-            this._minusSprite.setPosition(cc.p(minusSprite.getContentSize().width / 2, minusSprite.getContentSize().height / 2));
+            this._minusSprite.setPosition(minusSprite.getContentSize().width / 2, minusSprite.getContentSize().height / 2);
             this.addChild(this._minusSprite);
 
             this.setMinusLabel(cc.LabelTTF.create("-", cc.CONTROL_STEPPER_LABELFONT, 40, cc.size(40, 40), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_CENTER));
             this._minusLabel.setColor(cc.CONTROL_STEPPER_LABELCOLOR_DISABLED);
-            this._minusLabel.setPosition(cc.p(this._minusSprite.getContentSize().width / 2, this._minusSprite.getContentSize().height / 2));
+            this._minusLabel.setPosition(this._minusSprite.getContentSize().width / 2, this._minusSprite.getContentSize().height / 2);
             this._minusSprite.addChild(this._minusLabel);
 
             // Add the plus components
             this.setPlusSprite(plusSprite);
-            this._plusSprite.setPosition(cc.p(minusSprite.getContentSize().width + plusSprite.getContentSize().width / 2,
-                minusSprite.getContentSize().height / 2));
+            this._plusSprite.setPosition(minusSprite.getContentSize().width + plusSprite.getContentSize().width / 2,
+                minusSprite.getContentSize().height / 2);
             this.addChild(this._plusSprite);
 
             this.setPlusLabel(cc.LabelTTF.create("+", cc.CONTROL_STEPPER_LABELFONT, 40, cc.size(40, 40), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_CENTER));
             this._plusLabel.setColor(cc.CONTROL_STEPPER_LABELCOLOR_ENABLED);
-            this._plusLabel.setPosition(cc.p(this._plusSprite.getContentSize().width / 2, this._plusSprite.getContentSize().height / 2));
+            this._plusLabel.setPosition(this._plusSprite.getContentSize().width / 2, this._plusSprite.getContentSize().height / 2);
             this._plusSprite.addChild(this._plusLabel);
 
             // Defines the content size
             var maxRect = cc.ControlUtils.CCRectUnion(this._minusSprite.getBoundingBox(), this._plusSprite.getBoundingBox());
-            this.setContentSize(cc.size(this._minusSprite.getContentSize().width + this._plusSprite.getContentSize().height, maxRect.size.height));
+            this.setContentSize(this._minusSprite.getContentSize().width + this._plusSprite.getContentSize().height, maxRect._size.height);
             return true;
         }
         return false;
@@ -132,18 +134,16 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     setMinimumValue:function (minimumValue) {
-        if (minimumValue >= this._maximumValue) {
-            cc.Assert(0, "Must be numerically less than maximumValue.");
-        }
+        if (minimumValue >= this._maximumValue)
+            throw "cc.ControlStepper.setMinimumValue(): minimumValue should be numerically less than maximumValue.";
 
         this._minimumValue = minimumValue;
         this.setValue(this._value);
     },
 
     setMaximumValue:function (maximumValue) {
-        if (maximumValue <= this._minimumValue) {
-            cc.Assert(0, "Must be numerically greater than minimumValue.");
-        }
+        if (maximumValue <= this._minimumValue)
+            throw "cc.ControlStepper.setMaximumValue(): maximumValue should be numerically less than maximumValue.";
 
         this._maximumValue = maximumValue;
         this.setValue(this._value);
@@ -158,10 +158,8 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     setStepValue:function (stepValue) {
-        if (stepValue <= 0) {
-            cc.Assert(0, "Must be numerically greater than 0.");
-        }
-
+        if (stepValue <= 0)
+            throw "cc.ControlStepper.setMaximumValue(): stepValue should be numerically greater than 0.";
         this._stepValue = stepValue;
     },
 
@@ -217,19 +215,19 @@ cc.ControlStepper = cc.Control.extend({
         if (location.x < this._minusSprite.getContentSize().width
             && this._value > this._minimumValue) {
             this._touchedPart = cc.CONTROL_STEPPER_PARTMINUS;
-            this._minusSprite.setColor(cc.GRAY);
-            this._plusSprite.setColor(cc.WHITE);
+            this._minusSprite.setColor(cc.gray());
+            this._plusSprite.setColor(cc.white());
 
         } else if (location.x >= this._minusSprite.getContentSize().width
             && this._value < this._maximumValue) {
             this._touchedPart = cc.CONTROL_STEPPER_PARTPLUS;
-            this._minusSprite.setColor(cc.WHITE);
-            this._plusSprite.setColor(cc.GRAY);
+            this._minusSprite.setColor(cc.white());
+            this._plusSprite.setColor(cc.gray());
 
         } else {
             this._touchedPart = cc.CONTROL_STEPPER_PARTNONE;
-            this._minusSprite.setColor(cc.WHITE);
-            this._plusSprite.setColor(cc.WHITE);
+            this._minusSprite.setColor(cc.white());
+            this._plusSprite.setColor(cc.white());
         }
     },
 
@@ -265,8 +263,8 @@ cc.ControlStepper = cc.Control.extend({
         } else {
             this._touchInsideFlag = false;
             this._touchedPart = cc.CONTROL_STEPPER_PARTNONE;
-            this._minusSprite.setColor(cc.WHITE);
-            this._plusSprite.setColor(cc.WHITE);
+            this._minusSprite.setColor(cc.white());
+            this._plusSprite.setColor(cc.white());
             if (this._autorepeat) {
                 this.stopAutorepeat();
             }
@@ -274,8 +272,8 @@ cc.ControlStepper = cc.Control.extend({
     },
 
     onTouchEnded:function (touch, event) {
-        this._minusSprite.setColor(cc.WHITE);
-        this._plusSprite.setColor(cc.WHITE);
+        this._minusSprite.setColor(cc.white());
+        this._plusSprite.setColor(cc.white());
 
         if (this._autorepeat) {
             this.stopAutorepeat();

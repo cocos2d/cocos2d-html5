@@ -49,61 +49,50 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, 0);
+            this.setGravity(cc.p(0, 0));
 
             // Gravity Mode: radial acceleration
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(0);
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 60;
-            this.modeA.speedVar = 20;
+            this.setSpeed(60);
+            this.setSpeedVar(20);
 
             // starting angle
-            this._angle = 90;
-            this._angleVar = 10;
+            this.setAngle(90);
+            this.setAngleVar(10);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, 60);
-            this._posVar = cc.p(40, 20);
+            this.setPosVar(cc.p(40, 20));
 
             // life of particles
-            this._life = 3;
-            this._lifeVar = 0.25;
+            this.setLife(3);
+            this.setLifeVar(0.25);
 
 
             // size, in pixels
-            this._startSize = 54.0;
-            this._startSizeVar = 10.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(54.0);
+            this.setStartSizeVar(10.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per frame
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.76;
-            this._startColor.g = 0.25;
-            this._startColor.b = 0.12;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.0;
-            this._startColorVar.g = 0.0;
-            this._startColorVar.b = 0.0;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 0.0;
-            this._endColor.g = 0.0;
-            this._endColor.b = 0.0;
-            this._endColor.a = 1.0;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.76,0.25,0.12,1.0));
+            this.setStartColorVar(cc.c4f(0,0,0,0));
+            this.setEndColor(cc.c4f(0,0,0,1));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             // additive
             this.setBlendAdditive(true);
@@ -153,59 +142,47 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, -90);
+            this.setGravity(cc.p(0, -90));
 
             // Gravity Mode:  radial
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(0);
 
             //  Gravity Mode: speed of particles
-            this.modeA.speed = 180;
-            this.modeA.speedVar = 50;
+            this.setSpeed(180);
+            this.setSpeedVar(50);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 20;
+            this.setAngle(90);
+            this.setAngleVar(20);
 
             // life of particles
-            this._life = 3.5;
-            this._lifeVar = 1;
+            this.setLife(3.5);
+            this.setLifeVar(1);
 
             // emits per frame
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.5;
-            this._startColor.g = 0.5;
-            this._startColor.b = 0.5;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.5;
-            this._startColorVar.g = 0.5;
-            this._startColorVar.b = 0.5;
-            this._startColorVar.a = 0.1;
-            this._endColor.r = 0.1;
-            this._endColor.g = 0.1;
-            this._endColor.b = 0.1;
-            this._endColor.a = 0.2;
-            this._endColorVar.r = 0.1;
-            this._endColorVar.g = 0.1;
-            this._endColorVar.b = 0.1;
-            this._endColorVar.a = 0.2;
+            this.setStartColor(cc.c4f(0.5,0.5,0.5,1.0));
+            this.setStartColorVar(cc.c4f(0.5,0.5,0.5,1.0));
+            this.setEndColor(cc.c4f(0.1,0.1,0.1,0.2));
+            this.setEndColorVar(cc.c4f(0.1,0.1,0.1,0.2));
 
             // size, in pixels
-            this._startSize = 8.0;
-            this._startSizeVar = 2.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(8.0);
+            this.setStartSizeVar(2.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // additive
             this.setBlendAdditive(false);
@@ -258,7 +235,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
             this.setBlendAdditive(true);
 
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Gravity Mode
             this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
@@ -275,8 +252,8 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
             this.setSpeedVar(5);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 360;
+            this.setAngle(90);
+            this.setAngleVar(360);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
@@ -284,34 +261,22 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
             this.setPosVar(cc.PointZero());
 
             // life of particles
-            this._life = 1;
-            this._lifeVar = 0.5;
+            this.setLife(1);
+            this.setLifeVar(0.5);
 
             // size, in pixels
-            this._startSize = 30.0;
-            this._startSizeVar = 10.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(30.0);
+            this.setStartSizeVar(10.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per seconds
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.76;
-            this._startColor.g = 0.25;
-            this._startColor.b = 0.12;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.0;
-            this._startColorVar.g = 0.0;
-            this._startColorVar.b = 0.0;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 0.0;
-            this._endColor.g = 0.0;
-            this._endColor.b = 0.0;
-            this._endColor.a = 1.0;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.76,0.25,0.12,1));
+            this.setStartColorVar(cc.c4f(0,0,0,0));
+            this.setEndColor(cc.c4f(0,0,0,1));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             return true;
         }
@@ -361,64 +326,52 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, 0);
+            this.setGravity(cc.p(0, 0));
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 60;
-            this.modeA.speedVar = 10;
+            this.setSpeed(60);
+            this.setSpeedVar(10);
 
             // Gravity Mode: radial
-            this.modeA.radialAccel = -80;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(-80);
+            this.setRadialAccelVar(0);
 
-            // Gravity Mode: tagential
-            this.modeA.tangentialAccel = 80;
-            this.modeA.tangentialAccelVar = 0;
+            // Gravity Mode: tangential
+            this.setTangentialAccel(80);
+            this.setTangentialAccelVar(0);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 360;
+            this.setAngle(90);
+            this.setAngleVar(360);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
-            this._posVar = cc.PointZero();
+            this.setPosVar(cc.PointZero());
 
             // life of particles
-            this._life = 4;
-            this._lifeVar = 1;
+            this.setLife(4);
+            this.setLifeVar(1);
 
             // size, in pixels
-            this._startSize = 37.0;
-            this._startSizeVar = 10.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(37.0);
+            this.setStartSizeVar(10.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.12;
-            this._startColor.g = 0.25;
-            this._startColor.b = 0.76;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.0;
-            this._startColorVar.g = 0.0;
-            this._startColorVar.b = 0.0;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 0.0;
-            this._endColor.g = 0.0;
-            this._endColor.b = 0.0;
-            this._endColor.a = 1.0;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.12,0.25,0.76,1));
+            this.setStartColorVar(cc.c4f(0,0,0,0));
+            this.setEndColor(cc.c4f(0,0,0,1));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             // additive
             this.setBlendAdditive(true);
@@ -467,64 +420,52 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, 0);
+            this.setGravity(cc.p(0, 0));
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 80;
-            this.modeA.speedVar = 10;
+            this.setSpeed(80);
+            this.setSpeedVar(10);
 
             // Gravity Mode: radial
-            this.modeA.radialAccel = -60;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(-60);
+            this.setRadialAccelVar(0);
 
-            // Gravity Mode: tagential
-            this.modeA.tangentialAccel = 15;
-            this.modeA.tangentialAccelVar = 0;
+            // Gravity Mode: tangential
+            this.setTangentialAccel(15);
+            this.setTangentialAccelVar(0);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 360;
+            this.setAngle(90);
+            this.setAngleVar(360);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
-            this._posVar = cc.PointZero();
+            this.setPosVar(cc.PointZero());
 
             // life of particles
-            this._life = 4;
-            this._lifeVar = 1;
+            this.setLife(4);
+            this.setLifeVar(1);
 
             // size, in pixels
-            this._startSize = 30.0;
-            this._startSizeVar = 10.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(30.0);
+            this.setStartSizeVar(10.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.50;
-            this._startColor.g = 0.50;
-            this._startColor.b = 0.50;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.5;
-            this._startColorVar.g = 0.5;
-            this._startColorVar.b = 0.5;
-            this._startColorVar.a = 0.5;
-            this._endColor.r = 0.0;
-            this._endColor.g = 0.0;
-            this._endColor.b = 0.0;
-            this._endColor.a = 1.0;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.5,0.5,0.5,1));
+            this.setStartColorVar(cc.c4f(0.5,0.5,0.5,0.5));
+            this.setEndColor(cc.c4f(0,0,0,1));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             // additive
             this.setBlendAdditive(true);
@@ -575,64 +516,52 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(-200, 200);
+            this.setGravity(cc.p(-200, 200));
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 15;
-            this.modeA.speedVar = 5;
+            this.setSpeed(15);
+            this.setSpeedVar(5);
 
             // Gravity Mode: radial
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(0);
 
-            // Gravity Mode: tagential
-            this.modeA.tangentialAccel = 0;
-            this.modeA.tangentialAccelVar = 0;
+            // Gravity Mode: tangential
+            this.setTangentialAccel(0);
+            this.setTangentialAccelVar(0);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 360;
+            this.setAngle(90);
+            this.setAngleVar(360);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
-            this._posVar = cc.PointZero();
+            this.setPosVar(cc.PointZero());
 
             // life of particles
-            this._life = 2;
-            this._lifeVar = 1;
+            this.setLife(2);
+            this.setLifeVar(1);
 
             // size, in pixels
-            this._startSize = 60.0;
-            this._startSizeVar = 10.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(60.0);
+            this.setStartSizeVar(10.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.2;
-            this._startColor.g = 0.4;
-            this._startColor.b = 0.7;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.0;
-            this._startColorVar.g = 0.0;
-            this._startColorVar.b = 0.2;
-            this._startColorVar.a = 0.1;
-            this._endColor.r = 0.0;
-            this._endColor.g = 0.0;
-            this._endColor.b = 0.0;
-            this._endColor.a = 1.0;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.2,0.4,0.7,1));
+            this.setStartColorVar(cc.c4f(0,0,0.2,0.1));
+            this.setEndColor(cc.c4f(0,0,0,1));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             // additive
             this.setBlendAdditive(true);
@@ -644,7 +573,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
 
 /**
  * Create a meteor particle system
- * @return {cc.ParticleFireworks}
+ * @return {cc.ParticleMeteor}
  *
  * @example
  * var emitter = cc.ParticleMeteor.create();
@@ -682,64 +611,52 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, 0);
+            this.setGravity(cc.p(0, 0));
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 150;
-            this.modeA.speedVar = 0;
+            this.setSpeed(150);
+            this.setSpeedVar(0);
 
             // Gravity Mode: radial
-            this.modeA.radialAccel = -380;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(-380);
+            this.setRadialAccelVar(0);
 
-            // Gravity Mode: tagential
-            this.modeA.tangentialAccel = 45;
-            this.modeA.tangentialAccelVar = 0;
+            // Gravity Mode: tangential
+            this.setTangentialAccel(45);
+            this.setTangentialAccelVar(0);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 0;
+            this.setAngle(90);
+            this.setAngleVar(0);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
-            this._posVar = cc.PointZero();
+            this.setPosVar(cc.PointZero());
 
             // life of particles
-            this._life = 12;
-            this._lifeVar = 0;
+            this.setLife(12);
+            this.setLifeVar(0);
 
             // size, in pixels
-            this._startSize = 20.0;
-            this._startSizeVar = 0.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(20.0);
+            this.setStartSizeVar(0.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.5;
-            this._startColor.g = 0.5;
-            this._startColor.b = 0.5;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.5;
-            this._startColorVar.g = 0.5;
-            this._startColorVar.b = 0.5;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 0.5;
-            this._endColor.g = 0.5;
-            this._endColor.b = 0.5;
-            this._endColor.a = 1.0;
-            this._endColorVar.r = 0.5;
-            this._endColorVar.g = 0.5;
-            this._endColorVar.b = 0.5;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.5,0.5,0.5,1));
+            this.setStartColorVar(cc.c4f(0.5,0.5,0.5,0));
+            this.setEndColor(cc.c4f(0.5,0.5,0.5,1));
+            this.setEndColorVar(cc.c4f(0.5,0.5,0.5,0));
 
             // additive
             this.setBlendAdditive(false);
@@ -790,63 +707,51 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = 0.1;
+            this.setDuration(0.1);
 
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, 0);
+            this.setGravity(cc.p(0, 0));
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 70;
-            this.modeA.speedVar = 40;
+            this.setSpeed(70);
+            this.setSpeedVar(40);
 
             // Gravity Mode: radial
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(0);
 
-            // Gravity Mode: tagential
-            this.modeA.tangentialAccel = 0;
-            this.modeA.tangentialAccelVar = 0;
+            // Gravity Mode: tangential
+            this.setTangentialAccel(0);
+            this.setTangentialAccelVar(0);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 360;
+            this.setAngle(90);
+            this.setAngleVar(360);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height / 2);
-            this._posVar = cc.PointZero();
+            this.setPosVar(cc.PointZero());
 
             // life of particles
-            this._life = 5.0;
-            this._lifeVar = 2;
+            this.setLife(5.0);
+            this.setLifeVar(2);
 
             // size, in pixels
-            this._startSize = 15.0;
-            this._startSizeVar = 10.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(15.0);
+            this.setStartSizeVar(10.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
-            this._emissionRate = this._totalParticles / this._duration;
+            this.setEmissionRate(this.getTotalParticles() / this.getDuration());
 
             // color of particles
-            this._startColor.r = 0.7;
-            this._startColor.g = 0.1;
-            this._startColor.b = 0.2;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.5;
-            this._startColorVar.g = 0.5;
-            this._startColorVar.b = 0.5;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 0.5;
-            this._endColor.g = 0.5;
-            this._endColor.b = 0.5;
-            this._endColor.a = 0.0;
-            this._endColorVar.r = 0.5;
-            this._endColorVar.g = 0.5;
-            this._endColorVar.b = 0.5;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.7,0.1,0.2,1));
+            this.setStartColorVar(cc.c4f(0.5,0.5,0.5,0));
+            this.setEndColor(cc.c4f(0.5,0.5,0.5,0));
+            this.setEndColorVar(cc.c4f(0.5,0.5,0.5,0));
 
             // additive
             this.setBlendAdditive(false);
@@ -897,60 +802,48 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // Emitter mode: Gravity Mode
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, 0);
+            this.setGravity(cc.p(0, 0));
 
             // Gravity Mode: radial acceleration
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 0;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(0);
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 25;
-            this.modeA.speedVar = 10;
+            this.setSpeed(25);
+            this.setSpeedVar(10);
 
             // angle
-            this._angle = 90;
-            this._angleVar = 5;
+            this.setAngle(90);
+            this.setAngleVar(5);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, 0);
-            this._posVar = cc.p(20, 0);
+            this.setPosVar(cc.p(20, 0));
 
             // life of particles
-            this._life = 4;
-            this._lifeVar = 1;
+            this.setLife(4);
+            this.setLifeVar(1);
 
             // size, in pixels
-            this._startSize = 60.0;
-            this._startSizeVar = 10.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(60.0);
+            this.setStartSizeVar(10.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per frame
-            this._emissionRate = this._totalParticles / this._life;
+            this.setEmissionRate(this.getTotalParticles() / this.getLife());
 
             // color of particles
-            this._startColor.r = 0.8;
-            this._startColor.g = 0.8;
-            this._startColor.b = 0.8;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.02;
-            this._startColorVar.g = 0.02;
-            this._startColorVar.b = 0.02;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 0.0;
-            this._endColor.g = 0.0;
-            this._endColor.b = 0.0;
-            this._endColor.a = 1.0;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.8,0.8,0.8,1));
+            this.setStartColorVar(cc.c4f(0.02,0.02,0.02,0));
+            this.setEndColor(cc.c4f(0,0,0,1));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             // additive
             this.setBlendAdditive(false);
@@ -962,7 +855,7 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
 
 /**
  * Create a smoke particle system
- * @return {cc.ParticleFireworks}
+ * @return {cc.ParticleSmoke}
  *
  * @example
  * var emitter = cc.ParticleFireworks.create();
@@ -1000,64 +893,52 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
             // set gravity mode.
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(0, -1);
+            this.setGravity(cc.p(0, -1));
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 5;
-            this.modeA.speedVar = 1;
+            this.setSpeed(5);
+            this.setSpeedVar(1);
 
             // Gravity Mode: radial
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 1;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(1);
 
-            // Gravity mode: tagential
-            this.modeA.tangentialAccel = 0;
-            this.modeA.tangentialAccelVar = 1;
+            // Gravity mode: tangential
+            this.setTangentialAccel(0);
+            this.setTangentialAccelVar(1);
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height + 10);
-            this._posVar = cc.p(winSize.width / 2, 0);
+            this.setPosVar(cc.p(winSize.width / 2, 0));
 
             // angle
-            this._angle = -90;
-            this._angleVar = 5;
+            this.setAngle(-90);
+            this.setAngleVar(5);
 
             // life of particles
-            this._life = 45;
-            this._lifeVar = 15;
+            this.setLife(45);
+            this.setLifeVar(15);
 
             // size, in pixels
-            this._startSize = 10.0;
-            this._startSizeVar = 5.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(10.0);
+            this.setStartSizeVar(5.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
-            this._emissionRate = 10;
+            this.setEmissionRate(10);
 
             // color of particles
-            this._startColor.r = 1.0;
-            this._startColor.g = 1.0;
-            this._startColor.b = 1.0;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.0;
-            this._startColorVar.g = 0.0;
-            this._startColorVar.b = 0.0;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 1.0;
-            this._endColor.g = 1.0;
-            this._endColor.b = 1.0;
-            this._endColor.a = 0.0;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(1,1,1,1));
+            this.setStartColorVar(cc.c4f(0,0,0,0));
+            this.setEndColor(cc.c4f(1,1,1,0));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             // additive
             this.setBlendAdditive(false);
@@ -1108,64 +989,52 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this._duration = cc.PARTICLE_DURATION_INFINITY;
+            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
-            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
+            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.p(10, -10);
+            this.setGravity(cc.p(10, -10));
 
             // Gravity Mode: radial
-            this.modeA.radialAccel = 0;
-            this.modeA.radialAccelVar = 1;
+            this.setRadialAccel(0);
+            this.setRadialAccelVar(1);
 
-            // Gravity Mode: tagential
-            this.modeA.tangentialAccel = 0;
-            this.modeA.tangentialAccelVar = 1;
+            // Gravity Mode: tangential
+            this.setTangentialAccel(0);
+            this.setTangentialAccelVar(1);
 
             // Gravity Mode: speed of particles
-            this.modeA.speed = 130;
-            this.modeA.speedVar = 30;
+            this.setSpeed(130);
+            this.setSpeedVar(30);
 
             // angle
-            this._angle = -90;
-            this._angleVar = 5;
+            this.setAngle(-90);
+            this.setAngleVar(5);
 
 
             // emitter position
             var winSize = cc.Director.getInstance().getWinSize();
             this.setPosition(winSize.width / 2, winSize.height);
-            this._posVar = cc.p(winSize.width / 2, 0);
+            this.setPosVar(cc.p(winSize.width / 2, 0));
 
             // life of particles
-            this._life = 4.5;
-            this._lifeVar = 0;
+            this.setLife(4.5);
+            this.setLifeVar(0);
 
             // size, in pixels
-            this._startSize = 4.0;
-            this._startSizeVar = 2.0;
-            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this.setStartSize(4.0);
+            this.setStartSizeVar(2.0);
+            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
-            this._emissionRate = 20;
+            this.setEmissionRate(20);
 
             // color of particles
-            this._startColor.r = 0.7;
-            this._startColor.g = 0.8;
-            this._startColor.b = 1.0;
-            this._startColor.a = 1.0;
-            this._startColorVar.r = 0.0;
-            this._startColorVar.g = 0.0;
-            this._startColorVar.b = 0.0;
-            this._startColorVar.a = 0.0;
-            this._endColor.r = 0.7;
-            this._endColor.g = 0.8;
-            this._endColor.b = 1.0;
-            this._endColor.a = 0.5;
-            this._endColorVar.r = 0.0;
-            this._endColorVar.g = 0.0;
-            this._endColorVar.b = 0.0;
-            this._endColorVar.a = 0.0;
+            this.setStartColor(cc.c4f(0.7,0.8,1,1));
+            this.setStartColorVar(cc.c4f(0,0,0,0));
+            this.setEndColor(cc.c4f(0.7,0.8,1,0.5));
+            this.setEndColorVar(cc.c4f(0,0,0,0));
 
             // additive
             this.setBlendAdditive(false);

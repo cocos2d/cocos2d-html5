@@ -81,10 +81,10 @@ cc.KeyboardHandler = cc.Class.extend(/** @lends cc.KeyboardHandler# */{
      * @return {Boolean}
      */
     initWithDelegate:function (delegate) {
-        cc.Assert(delegate != null, "It's a wrong delegate!");
+        if(!delegate)
+            throw "cc.KeyboardHandler.initWithDelegate(): delegate must be non-null";
 
         this._delegate = delegate;
-
         return true;
     },
     _delegate:null

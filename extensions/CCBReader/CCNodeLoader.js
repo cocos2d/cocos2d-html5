@@ -36,12 +36,10 @@ var PROPERTY_VISIBLE = "visible";
 
 var ASSERT_FAIL_UNEXPECTED_PROPERTY = function (propertyName) {
     cc.log("Unexpected property: '" + propertyName + "'!");
-    cc.Assert(false, "Unexpected property: '" + propertyName + "'!");
 };
 
 var ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE = function (propertyName) {
     cc.log("Unexpected property type: '" + propertyName + "'!");
-    cc.Assert(false, "Unexpected property type: '" + propertyName + "'!");
 };
 
 function BlockData(selMenuHander, target) {
@@ -656,6 +654,7 @@ cc.NodeLoader = cc.Class.extend({
                 } else {
                     ccbReader.addOwnerCallbackNode(node);
                     ccbReader.addOwnerCallbackName(selectorName);
+                    ccbReader.addOwnerCallbackControlEvents(0);
                 }
             }
         }
@@ -709,6 +708,7 @@ cc.NodeLoader = cc.Class.extend({
                 } else {
                     ccbReader.addOwnerCallbackNode(node);
                     ccbReader.addOwnerCallbackName(selectorName);
+                    ccbReader.addOwnerCallbackControlEvents(controlEvents);
                 }
             }
         }

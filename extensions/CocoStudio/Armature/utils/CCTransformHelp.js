@@ -22,20 +22,20 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.TransformHelp = {};
+ccs.TransformHelp = ccs.TransformHelp || ccs.Class.extend({});
 
-cc.TransformHelp.helpMatrix1 = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
-cc.TransformHelp.helpMatrix2 = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
-cc.TransformHelp.helpPoint1 = cc.p(0, 0);
-cc.TransformHelp.helpPoint2 = cc.p(0, 0);
+ccs.TransformHelp.helpMatrix1 = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
+ccs.TransformHelp.helpMatrix2 = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
+ccs.TransformHelp.helpPoint1 = cc.p(0, 0);
+ccs.TransformHelp.helpPoint2 = cc.p(0, 0);
 
 /**
  * @function
- * @param {cc.BaseData} bone
+ * @param {ccs.BaseData} bone
  * @return {cc.AffineTransform}
  * Constructor
  */
-cc.TransformHelp.transformFromParent = function (bone, parentBone) {
+ccs.TransformHelp.transformFromParent = function (bone, parentBone) {
     this.nodeToMatrix(bone, this.helpMatrix1);
     this.nodeToMatrix(parentBone, this.helpMatrix2);
 
@@ -47,14 +47,23 @@ cc.TransformHelp.transformFromParent = function (bone, parentBone) {
 
 /**
  * @function
- * @param {cc.BaseData} node
+ * @param {ccs.BaseData} node
  * @param {cc.AffineTransform} matrix
  */
-cc.TransformHelp.nodeToMatrix = function (node, matrix) {
-    matrix.a = node.scaleX * Math.cos(node.skewY);
-    matrix.b = node.scaleX * Math.sin(node.skewY);
-    matrix.c = node.scaleY * Math.sin(node.skewX);
-    matrix.d = node.scaleY * Math.cos(node.skewY);
+ccs.TransformHelp.nodeToMatrix = function (node, matrix) {
+    if (node.skewX == -node.skewY) {
+        var sine = Math.sin(node.skewX);
+        var cosine = Math.cos(node.skewX);
+        matrix.a = node.scaleX * cosine;
+        matrix.b = node.scaleX * -sine;
+        matrix.c = node.scaleY * sine;
+        matrix.d = node.scaleY * cosine;
+    } else {
+        matrix.a = node.scaleX * Math.cos(node.skewY);
+        matrix.b = node.scaleX * Math.sin(node.skewY);
+        matrix.c = node.scaleY * Math.sin(node.skewX);
+        matrix.d = node.scaleY * Math.cos(node.skewY);
+    }
     matrix.tx = node.x;
     matrix.ty = node.y;
 };
@@ -62,9 +71,9 @@ cc.TransformHelp.nodeToMatrix = function (node, matrix) {
 /**
  * @function
  * @param {cc.AffineTransform} matrix
- * @param {cc.BaseData} node
+ * @param {ccs.BaseData} node
  */
-cc.TransformHelp.matrixToNode = function (matrix, node) {
+ccs.TransformHelp.matrixToNode = function (matrix, node) {
     /*
      *  In as3 language, there is a function called "deltaTransformPoint", it calculate a point used give Transform
      *  but not used the tx, ty value. we simulate the function here
@@ -92,10 +101,10 @@ cc.TransformHelp.matrixToNode = function (matrix, node) {
 
 /**
  * @function
- * @param {cc.BaseData} target
- * @param {cc.BaseData} source
+ * @param {ccs.BaseData} target
+ * @param {ccs.BaseData} source
  */
-cc.TransformHelp.nodeConcat = function (target, source) {
+ccs.TransformHelp.nodeConcat = function (target, source) {
     target.x += source.x;
     target.y += source.y;
     target.skewX += source.skewX;
@@ -106,10 +115,10 @@ cc.TransformHelp.nodeConcat = function (target, source) {
 
 /**
  * @function
- * @param {cc.BaseData} target
- * @param {cc.BaseData} source
+ * @param {ccs.BaseData} target
+ * @param {ccs.BaseData} source
  */
-cc.TransformHelp.nodeSub = function (target, source) {
+ccs.TransformHelp.nodeSub = function (target, source) {
     target.x -= source.x;
     target.y -= source.y;
     target.skewX -= source.skewX;

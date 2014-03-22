@@ -40,22 +40,25 @@ cc.ControlSwitch = cc.Control.extend({
 
     /** Creates a switch with a mask sprite, on/off sprites for on/off states, a thumb sprite and an on/off labels. */
     initWithMaskSprite:function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
+        if(!maskSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): maskSprite should be non-null.";
+        if(!onSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): onSprite should be non-null.";
+        if(!offSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): offSprite should be non-null.";
+        if(!thumbSprite)
+            throw "cc.ControlSwitch.initWithMaskSprite(): thumbSprite should be non-null.";
         if (this.init()) {
-            cc.Assert(maskSprite, "Mask must not be nil.");
-            cc.Assert(onSprite, "onSprite must not be nil.");
-            cc.Assert(offSprite, "offSprite must not be nil.");
-            cc.Assert(thumbSprite, "thumbSprite must not be nil.");
-
             this.setTouchEnabled(true);
             this._on = true;
 
             this._switchSprite = new cc.ControlSwitchSprite();
             this._switchSprite.initWithMaskSprite(maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel);
-            this._switchSprite.setPosition(cc.p(this._switchSprite.getContentSize().width / 2, this._switchSprite.getContentSize().height / 2));
+            this._switchSprite.setPosition(this._switchSprite.getContentSize().width / 2, this._switchSprite.getContentSize().height / 2);
             this.addChild(this._switchSprite);
 
             this.ignoreAnchorPointForPosition(false);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setAnchorPoint(0.5, 0.5);
             this.setContentSize(this._switchSprite.getContentSize());
             return true;
         }
@@ -160,24 +163,26 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     _onPosition:0,
     _offPosition:0,
 
-    _maskTexture:null,
     _textureLocation:0,
     _maskLocation:0,
+    _maskSize:null,
 
     _onSprite:null,
     _offSprite:null,
     _thumbSprite:null,
     _onLabel:null,
     _offLabel:null,
+    _clipper:null,
+    _stencil:null,
+    _backRT:null,
 
     ctor:function () {
         cc.Sprite.prototype.ctor.call(this);
         this._sliderXPosition = 0;
         this._onPosition = 0;
         this._offPosition = 0;
-        this._maskTexture = null;
-        this._textureLocation = 0;
         this._maskLocation = 0;
+        this._maskSize = cc.size(0, 0);
         this._onSprite = null;
         this._offSprite = null;
         this._thumbSprite = null;
@@ -186,7 +191,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     },
 
     initWithMaskSprite:function (maskSprite, onSprite, offSprite, thumbSprite, onLabel, offLabel) {
-        if (cc.Sprite.prototype.initWithTexture.call(this,maskSprite.getTexture())) {
+        if (cc.Sprite.prototype.initWithTexture.call(this, maskSprite.getTexture())) {
             // Sets the default values
             this._onPosition = 0;
             this._offPosition = -onSprite.getContentSize().width + thumbSprite.getContentSize().width / 2;
@@ -198,31 +203,21 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
             this.setOnLabel(onLabel);
             this.setOffLabel(offLabel);
 
-            this.addChild(this._thumbSprite);
-
             // Set up the mask with the Mask shader
-            this.setMaskTexture(maskSprite.getTexture());
-            //TODO WebGL code
+            this._stencil = maskSprite;
+            var maskSize = this._maskSize = this._stencil.getContentSize();
+            this._stencil.setPosition(0, 0);
 
-            /*var pProgram = new cc.GLProgram();
-            pProgram.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, cc.SHADEREX_SWITCHMASK_FRAG);
-            this.setShaderProgram(pProgram);
+            // Init clipper for mask
+            this._clipper = cc.ClippingNode.create();
+            this._clipper.setAnchorPoint(0.5, 0.5);
+            this._clipper.setPosition(maskSize.width / 2, maskSize.height / 2);
+            this._clipper.setStencil(this._stencil);
+            this._backRT = cc.RenderTexture.create(maskSize.width, maskSize.height);
+            this._clipper.addChild(this._backRT.getSprite());
+            this.addChild(this._clipper);
 
-            cc.CHECK_GL_ERROR_DEBUG();
-            this.getShaderProgram().addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
-            this.getShaderProgram().addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
-            this.getShaderProgram().addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
-            this.getShaderProgram().link();
-            cc.CHECK_GL_ERROR_DEBUG();
-
-            this.getShaderProgram().updateUniforms();
-            cc.CHECK_GL_ERROR_DEBUG();*/
-
-            //this._textureLocation_textureLocation = cc.renderContext.getUniformLocation(this.getShaderProgram().getProgram(), "u_texture");
-            //this._maskLocation = cc.renderContext.getUniformLocation(this.getShaderProgram().getProgram(), "u_mask");
-            //cc.CHECK_GL_ERROR_DEBUG();
-
-            this.setContentSize(this._maskTexture.getContentSize());
+            this.addChild(this._thumbSprite);
 
             this.needsLayout();
             return true;
@@ -230,61 +225,25 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         return false;
     },
 
-    draw:function () {
-        //TODO WebGL code
-        cc.NODE_DRAW_SETUP(this);
-
-        /*ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
-         ccGLBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-         this.getShaderProgram().setUniformForModelViewProjectionMatrix();
-
-         glActiveTexture(GL_TEXTURE0);
-         glBindTexture( GL_TEXTURE_2D, getTexture().getName());
-         glUniform1i(this._textureLocation, 0);
-
-         glActiveTexture(GL_TEXTURE1);
-         glBindTexture( GL_TEXTURE_2D, this._maskTexture.getName() );
-         glUniform1i(this._maskLocation, 1);
-
-         var kQuadSize = 9;
-         var offset = this._quad;
-
-         // vertex
-         var diff = offsetof( cc.V3F_C4B_T2F, vertices);
-         glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (void*) (offset + diff));
-
-         // texCoods
-         diff = offsetof( ccV3F_C4B_T2F, texCoords);
-         glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
-
-         // color
-         diff = offsetof( ccV3F_C4B_T2F, colors);
-         glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
-
-         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-         glActiveTexture(GL_TEXTURE0);*/
-    },
-
     needsLayout:function () {
-        this._onSprite.setPosition(cc.p(this._onSprite.getContentSize().width / 2 + this._sliderXPosition,
-            this._onSprite.getContentSize().height / 2));
-        this._offSprite.setPosition(cc.p(this._onSprite.getContentSize().width + this._offSprite.getContentSize().width / 2 + this._sliderXPosition,
-            this._offSprite.getContentSize().height / 2));
+        this._onSprite.setPosition(this._onSprite.getContentSize().width / 2 + this._sliderXPosition,
+            this._onSprite.getContentSize().height / 2);
+        this._offSprite.setPosition(this._onSprite.getContentSize().width + this._offSprite.getContentSize().width / 2 + this._sliderXPosition,
+            this._offSprite.getContentSize().height / 2);
 
         if (this._onLabel) {
-            this._onLabel.setPosition(cc.p(this._onSprite.getPosition().x - this._thumbSprite.getContentSize().width / 6,
-                this._onSprite.getContentSize().height / 2));
+            this._onLabel.setPosition(this._onSprite.getPosition().x - this._thumbSprite.getContentSize().width / 6,
+                this._onSprite.getContentSize().height / 2);
         }
         if (this._offLabel) {
-            this._offLabel.setPosition(cc.p(this._offSprite.getPosition().x + this._thumbSprite.getContentSize().width / 6,
-                this._offSprite.getContentSize().height / 2));
+            this._offLabel.setPosition(this._offSprite.getPosition().x + this._thumbSprite.getContentSize().width / 6,
+                this._offSprite.getContentSize().height / 2);
         }
-        var locMaskSize = this._maskTexture.getContentSize();
-        this._thumbSprite.setPosition(cc.p(this._onSprite.getContentSize().width + this._sliderXPosition,
-            locMaskSize.height / 2));
-        var rt = cc.RenderTexture.create(locMaskSize.width, locMaskSize.height);
+        this._thumbSprite.setPosition(this._onSprite.getContentSize().width + this._sliderXPosition,
+            this._maskSize.height / 2);
 
-        rt.begin();
+        this._backRT.begin();
+
         this._onSprite.visit();
         this._offSprite.visit();
 
@@ -293,10 +252,9 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
         if (this._offLabel)
             this._offLabel.visit();
 
-        rt.end();
+        this._backRT.end();
 
-        this.setTexture(rt.getSprite().getTexture());
-        this.setFlippedY(true);
+        //this.setFlippedY(true);
     },
 
     setSliderXPosition:function (sliderXPosition) {
@@ -344,10 +302,10 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     },
 
     setMaskTexture:function (maskTexture) {
-        this._maskTexture = maskTexture;
+        this._stencil.setTexture(maskTexture);
     },
     getMaskTexture:function () {
-        return this._maskTexture;
+        return this._stencil.getTexture();
     },
 
     setTextureLocation:function (textureLocation) {

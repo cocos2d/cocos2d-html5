@@ -162,7 +162,10 @@ cc.kmMat3RotationAxisAngle = function (pOut, axis, radians) {
 };
 
 cc.kmMat3Assign = function (pOut, pIn) {
-    cc.Assert(pOut != pIn, "Is same object"); //You have tried to self-assign!!
+    if(pOut == pIn) {
+        cc.log("cc.kmMat3Assign(): pOut equals pIn");
+        return pOut;
+    }
 
     for (var i = 0; i < 9; i++)
         pOut.mat[i] = pIn.mat[i];

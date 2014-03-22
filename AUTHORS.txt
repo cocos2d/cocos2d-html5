@@ -16,6 +16,8 @@ Core Developers:
 
     Xingsen Ma
 
+    Huabin LING
+
 Contributors:
 Name                GithubID    Main contribution
 
@@ -41,6 +43,7 @@ Mcscooter           @mcscooter  tilempapxml fixed
 
 Roed                @roed       Mouse rightclick api
                                 Mouse scroll fix for firefox
+                                cc.Screen bug fix
 
 Surith Thekkiam(Zynga)  @folecr  match Cocos2dx api
 
@@ -87,15 +90,50 @@ Jing Wang             @06wj         CCScheduler improvements
 Ze Wang               @WanderWang   Fix crash when BrowserTypes match nothing from navigator.userAgent
                                     LabelTTF improvements
                                     cc.TextureCache.dumpCachedTextureInfo 's bug fix
+                                    CCTween bug fix
+                                    CCScale9Sprite bug fix
+                                    sys.localStorage bug fix
+                                    CCArmature refactoring
+                                    cc.SpriteFrame and cc.SpriteFrameCache refactoring
 
 Christian Schwartz   @cschwartz    SpriteFrame.initWithTextureFilename converted fix
 
 XiaoJun Zheng        @SmallAiTT    _getResType error fix
                                    cc.ScrollView bug fix
+                                   cc.LabelTTF bug fix
 
 Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
 
 Jing Xiao            @xbruce       cc.SAXParser bug fix
+                                   cc.ActionManager refactoring
+                                   cc.Scheduler refactoring
+                                   cc.LabelTTF refactoring
+
+JiaHui He            @garfield_ho   cc.FileUtils bug fix
+                                    cc.Builder and SpriteLoader bugs fix
+                                    CCBAnimation bug fix
+
+Luis Parravicini     @luisparravicini      cc.Director refactoring
+                                           cc.LabelTTF documentation
+                                           typo fix
+
+Jose Antonio         @jandujar      cc.ParticleSystem bug fix for CocoStudio animations
+
+BoHao Tang           @btspoony      cc.TableView bug fix
+
+Claudiu              @csaftoiu      cc.LabelTTF bug fix
+                                    cc.DrawNode bug fix
+                                    cc.NodeRGBA bug fix
+                                    cc.Texture2D bug fix
+
+Pei Wu               @rablwupei     cc.ProgressTimer bug fix
+                                    cc.ParticleBatchNode bug fix
+
+kuaipao              @kuaipao       CocoStudio GUIReader bug fix
+                                    CocoStudio UIScrollView bug fix
+                                    CocoStudio UIWidget bug fix
+
+XieDaijin            @NijiadeIX     CCControl bug fix
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 

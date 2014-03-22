@@ -22,17 +22,21 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//movement event type
-CC_MovementEventType_START = 0;
-CC_MovementEventType_COMPLETE = 1;
-CC_MovementEventType_LOOP_COMPLETE = 2;
-
+/**
+ * movement event type
+ * @type {Object}
+ */
+ccs.MovementEventType = {
+    start: 0,
+    complete: 1,
+    loopComplete: 2
+};
 /**
  * Base class for cc.MovementEvent objects.
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-cc.AnimationEvent = cc.Class.extend({
+ccs.AnimationEvent = ccs.Class.extend({
     _arguments:null,
     _callFunc:null,
     _selectorTarget:null,
@@ -50,13 +54,31 @@ cc.AnimationEvent = cc.Class.extend({
         this._arguments = args;
     }
 });
-
 /**
- * Base class for cc.ArmatureAnimation objects.
- * @class
- * @extends cc.ProcessBase
+ * movement event
+ * @constructor
  */
-cc.ArmatureAnimation = cc.ProcessBase.extend({
+ccs.MovementEvent = function () {
+    this.armature = null;
+    this.movementType = "";
+    this.movementID = "";
+};
+/**
+ * frame event
+ * @constructor
+ */
+ccs.FrameEvent = function () {
+    this.bone = null;
+    this.frameEventName = "";
+    this.originFrameIndex = 0;
+    this.currentFrameIndex = 0;
+};
+/**
+ * Base class for ccs.ArmatureAnimation objects.
+ * @class
+ * @extends ccs.ProcessBase
+ */
+ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation# */{
     _animationData:null,
     _movementData:null,
     _armature:null,
@@ -67,8 +89,16 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     _frameEvent:null,
     _movementEvent:null,
     _speedScale:1,
+    _ignoreFrameEvent:false,
+    _frameEventQueue:null,
+    _movementEventQueue:null,
+    _userObject:null,
+    _movementList: null,
+    _onMovementList: false,
+    _movementListLoop: false,
+    _movementIndex: 0,
     ctor:function () {
-        cc.ProcessBase.prototype.ctor.call(this);
+        ccs.ProcessBase.prototype.ctor.call(this);
         this._animationData = null;
         this._movementData = null;
         this._movementID = "";
@@ -79,11 +109,19 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         this._frameEvent = null;
         this._movementEvent = null;
         this._speedScale = 1;
+        this._ignoreFrameEvent = false;
+        this._frameEventQueue = [];
+        this._movementEventQueue = [];
+        this._userObject = null;
+        this._movementList = [];
+        this._onMovementList = false;
+        this._movementListLoop = false;
+        this._movementIndex = 0;
     },
 
     /**
      * init with a CCArmature
-     * @param {cc.Armature} armature
+     * @param {ccs.Armature} armature
      * @return {Boolean}
      */
     init:function (armature) {
@@ -95,13 +133,13 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         for (var i = 0; i < this._tweenList.length; i++) {
             this._tweenList[i].pause();
         }
-        cc.ProcessBase.prototype.pause.call(this);
+        ccs.ProcessBase.prototype.pause.call(this);
     },
     resume:function () {
         for (var i = 0; i < this._tweenList.length; i++) {
             this._tweenList[i].resume();
         }
-        cc.ProcessBase.prototype.resume.call(this);
+        ccs.ProcessBase.prototype.resume.call(this);
     },
 
     stop:function () {
@@ -109,7 +147,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
             this._tweenList[i].stop();
         }
         this._tweenList = [];
-        cc.ProcessBase.prototype.stop.call(this);
+        ccs.ProcessBase.prototype.stop.call(this);
     },
 
     /**
@@ -143,25 +181,9 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         return this.setSpeedScale(animationScale);
     },
 
-    setAnimationInternal:function (animationInternal) {
-        if (animationInternal == this._animationInternal) {
-            return;
-        }
-        this._animationInternal = animationInternal;
-
-        var dict = this._armature.getBoneDic();
-        for (var key in dict) {
-            var bone = dict[key];
-            bone.getTween().setAnimationInternal(this._animationInternal);
-            if (bone.getChildArmature()) {
-                bone.getChildArmature().getAnimation().setAnimationInternal(this._animationInternal);
-            }
-        }
-    },
-
     /**
      * play animation by animation name.
-     * @param {Number} animationName The animation name you want to play
+     * @param {String} animationName The animation name you want to play
      * @param {Number} durationTo
      *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
      *         -1 : use the value from CCMovementData get from flash design panel
@@ -180,6 +202,10 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      *         0  : line
      *         1  : fade in
      *         2  : fade in and out
+     * @example
+     * // example
+     * armature.getAnimation().play("run",-1,-1,1,-1);//loop play
+     * armature.getAnimation().play("run",-1,-1,0,-1);//not loop play
      */
     play:function (animationName, durationTo, durationTween, loop, tweenEasing) {
         if (this._animationData == null) {
@@ -194,15 +220,11 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         if (typeof durationTo == "undefined") {
             durationTo = -1;
         }
-        if (typeof durationTween == "undefined") {
-            durationTween = -1;
-        }
+
         if (typeof loop == "undefined") {
             loop = -1;
         }
-        if (typeof tweenEasing == "undefined") {
-            tweenEasing = cc.TweenType.TWEEN_EASING_MAX;
-        }
+
         var locMovementData = this._movementData;
         //Get key frame count
         this._rawDuration = locMovementData.duration;
@@ -210,12 +232,18 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         this._processScale = this._speedScale * locMovementData.scale;
         //Further processing parameters
         durationTo = (durationTo == -1) ? locMovementData.durationTo : durationTo;
-        durationTween = (durationTween == -1) ? locMovementData.durationTween : durationTween;
+        var durationTween = locMovementData.durationTween;
         durationTween = (durationTween == 0) ? locMovementData.duration : durationTween;//todo
-        tweenEasing = (tweenEasing == cc.TweenType.TWEEN_EASING_MAX) ? locMovementData.tweenEasing : tweenEasing;
-        loop = (loop < 0) ? locMovementData.loop : loop;
+        var tweenEasing = locMovementData.tweenEasing;
 
-        cc.ProcessBase.prototype.play.call(this, animationName, durationTo, durationTween, loop, tweenEasing);
+        if (loop < 0) {
+            loop = locMovementData.loop;
+        } else {
+            loop = Boolean(loop);
+        }
+
+        this._onMovementList = false;
+        ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
 
         if (this._rawDuration == 0) {
             this._loopType = CC_ANIMATION_TYPE_SINGLE_FRAME;
@@ -226,7 +254,6 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
             }
             else {
                 this._loopType = CC_ANIMATION_TYPE_NO_LOOP;
-                this._rawDuration--;
             }
             this._durationTween = durationTween;
         }
@@ -245,47 +272,161 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
                 tween.play(movementBoneData, durationTo, durationTween, loop, tweenEasing);
 
                 tween.setProcessScale(this._processScale);
-                tween.setAnimationInternal(this._animationInternal);
                 if (bone.getChildArmature()) {
                     bone.getChildArmature().getAnimation().setProcessScale(this._processScale);
-                    bone.getChildArmature().getAnimation().setAnimationInternal(this._animationInternal);
                 }
             } else {
                 if (!bone.getIgnoreMovementBoneData()) {
-                    bone.getDisplayManager().changeDisplayByIndex(-1, false);
+                    bone.getDisplayManager().changeDisplayWithIndex(-1, false);
                     tween.stop();
                 }
             }
         }
+        this._armature.update(0);
     },
 
     /**
-     * Play animation by index, the other param is the same to play.
-     * @param {Number} animationIndex
+     * play with names
+     * @param {Array} movementNames
+     * @param {Number} durationTo
+     * @param {Boolean} loop
+     */
+    playWithNames: function (movementNames, durationTo, loop) {
+        this._movementList = [];
+        this._movementListLoop = loop;
+        this._onMovementList = true;
+        this._movementIndex = 0;
+
+        for (var i = 0; i < movementNames.length; i++) {
+            this._movementList.push({name: movementNames[i], durationTo: durationTo});
+        }
+
+        this.updateMovementList();
+    },
+
+    updateMovementList: function () {
+        if (this._onMovementList) {
+            if (this._movementListLoop) {
+                var movementObj = this._movementList[this._movementIndex];
+                this.play(movementObj.name, movementObj.durationTo,-1,0);
+                this._movementIndex++;
+                if (this._movementIndex >= this._movementList.length) {
+                    this._movementIndex = 0;
+                }
+            }
+            else {
+                if (this._movementIndex < this._movementList.length) {
+                    var movementObj = this._movementList[this._movementIndex];
+                    this.play(movementObj.name, movementObj.durationTo,-1,0);
+                    this._movementIndex++;
+                }
+                else {
+                    this._onMovementList = false;
+                }
+            }
+            this._onMovementList = true;
+        }
+    },
+    
+    /**
+     * Go to specified frame and play current movement.
+     * You need first switch to the movement you want to play, then call this function.
+     *
+     * example : playByIndex(0);
+     *           gotoAndPlay(0);
+     *           playByIndex(1);
+     *           gotoAndPlay(0);
+     *           gotoAndPlay(15);
+     * @param {Number} frameIndex
+     */
+    gotoAndPlay: function (frameIndex) {
+        if (!this._movementData || frameIndex < 0 || frameIndex >= this._movementData.duration) {
+            cc.log("Please ensure you have played a movement, and the frameIndex is in the range.");
+            return;
+        }
+
+        var ignoreFrameEvent = this._ignoreFrameEvent;
+        this._ignoreFrameEvent = true;
+        this._isPlaying = true;
+        this._isComplete = this._isPause = false;
+
+        ccs.ProcessBase.prototype.gotoFrame.call(this, frameIndex);
+        this._currentPercent = this._curFrameIndex / (this._movementData.duration - 1);
+        this._currentFrame = this._nextFrameIndex * this._currentPercent;
+
+        for (var i = 0; i < this._tweenList.length; i++) {
+            var tween = this._tweenList[i];
+            tween.gotoAndPlay(frameIndex);
+        }
+        this._armature.update(0);
+        this._ignoreFrameEvent = ignoreFrameEvent;
+    },
+
+    /**
+     * Go to specified frame and pause current movement.
+     * @param {Number} frameIndex
+     */
+    gotoAndPause: function (frameIndex) {
+        this.gotoAndPlay(frameIndex);
+        this.pause();
+    },
+
+    /**
+     * Play animation with index, the other param is the same to play.
+     * @param {Number||Array} animationIndex
      * @param {Number} durationTo
      * @param {Number} durationTween
      * @param {Number} loop
      * @param {Number} tweenEasing
      */
-    playByIndex:function (animationIndex, durationTo, durationTween, loop, tweenEasing) {
+    playWithIndex:function (animationIndex, durationTo, durationTween, loop, tweenEasing) {
         if (typeof durationTo == "undefined") {
             durationTo = -1;
         }
-        if (typeof durationTween == "undefined") {
-            durationTween = -1;
-        }
         if (typeof loop == "undefined") {
             loop = -1;
-        }
-        if (typeof tweenEasing == "undefined") {
-            tweenEasing = 10000;
         }
         var moveNames = this._animationData.movementNames;
         if (animationIndex < -1 || animationIndex >= moveNames.length) {
             return;
         }
         var animationName = moveNames[animationIndex];
-        this.play(animationName, durationTo, durationTween, loop, tweenEasing);
+        this.play(animationName, durationTo,-1, loop, 0);
+    },
+
+    /**
+     * Play animation with index, the o ther param is the same to play.
+     * @param {Number} animationIndex
+     * @param {Number} durationTo
+     * @param {Number} durationTween
+     * @param {Number} loop
+     * @param {Number} tweenEasing
+     */
+    playByIndex:function(animationIndex, durationTo, durationTween, loop, tweenEasing){
+        cc.log("playByIndex is deprecated. Use playWithIndex instead.");
+        this.playWithIndex(animationIndex, durationTo, durationTween, loop, tweenEasing);
+    },
+
+    /**
+     *  play by indexes
+     * @param movementIndexes
+     * @param {Number} durationTo
+     * @param {Boolean} loop
+     */
+    playWithIndexes: function (movementIndexes, durationTo, loop) {
+        this._movementList = [];
+        this._movementListLoop = loop;
+        this._onMovementList = true;
+        this._movementIndex = 0;
+
+        var movName = this._animationData.movementNames;
+
+        for (var i = 0; i < movementIndexes.length; i++) {
+            var name = movName[movementIndexes[i]];
+            this._movementList.push({name: name, durationTo: durationTo});
+        }
+
+        this.updateMovementList();
     },
 
     /**
@@ -297,10 +438,24 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
     },
 
     update:function (dt) {
-        if(cc.ProcessBase.prototype.update.call(this, dt)){
+        if(ccs.ProcessBase.prototype.update.call(this, dt)){
             for (var i = 0; i < this._tweenList.length; i++) {
                 this._tweenList[i].update(dt);
             }
+        }
+
+        var frameEvents = this._frameEventQueue;
+        while (frameEvents.length > 0) {
+            var frameEvent = frameEvents.shift();
+            this._ignoreFrameEvent = true;
+            this.callFrameEvent([frameEvent.bone, frameEvent.frameEventName, frameEvent.originFrameIndex, frameEvent.currentFrameIndex]);
+            this._ignoreFrameEvent = false;
+        }
+
+        var movementEvents = this._movementEventQueue;
+        while (movementEvents.length > 0) {
+            var movEvent = movementEvents.shift();
+            this.callMovementEvent([movEvent.armature, movEvent.movementType, movEvent.movementID]);
         }
     },
 
@@ -317,7 +472,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
                     locCurrentPercent = this._currentFrame / this._durationTween;
                     if (locCurrentPercent < 1.0) {
                         this._nextFrameIndex = this._durationTween;
-                        this.callMovementEvent([this._armature, CC_MovementEventType_START, this._movementID]);
+                        this.movementEvent(this._armature, ccs.MovementEventType.start, this._movementID);
                         break;
                     }
                 case CC_ANIMATION_TYPE_MAX:
@@ -325,20 +480,21 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
                     locCurrentPercent = 1;
                     this._isComplete = true;
                     this._isPlaying = false;
-                    this.callMovementEvent([this._armature, CC_MovementEventType_COMPLETE, this._movementID]);
+                    this.movementEvent(this._armature, ccs.MovementEventType.complete, this._movementID);
+                    this.updateMovementList();
                     break;
                 case CC_ANIMATION_TYPE_TO_LOOP_FRONT:
                     this._loopType = CC_ANIMATION_TYPE_LOOP_FRONT;
-                    locCurrentPercent = cc.fmodf(locCurrentPercent, 1);
-                    this._currentFrame = this._nextFrameIndex == 0 ? 0 : cc.fmodf(this._currentFrame, this._nextFrameIndex);
+                    locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
+                    this._currentFrame = this._nextFrameIndex == 0 ? 0 : ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._nextFrameIndex = this._durationTween > 0 ? this._durationTween : 1;
-                    this.callMovementEvent([this, CC_MovementEventType_START, this._movementID]);
+                    this.movementEvent(this, ccs.MovementEventType.start, this._movementID);
                     break;
                 default:
-                    locCurrentPercent = cc.fmodf(locCurrentPercent, 1);
-                    this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
+                    //locCurrentPercent = ccs.fmodf(locCurrentPercent, 1);
+                    this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._toIndex = 0;
-                    this.callMovementEvent([this._armature, CC_MovementEventType_LOOP_COMPLETE, this._movementID]);
+                    this.movementEvent(this._armature, ccs.MovementEventType.loopComplete, this._movementID);
                     break;
             }
             this._currentPercent = locCurrentPercent;
@@ -361,7 +517,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      * @param {function} callFunc
      */
     setMovementEventCallFunc:function (callFunc, target) {
-        this._movementEvent = new cc.AnimationEvent(target, callFunc);
+        this._movementEvent = new ccs.AnimationEvent(target, callFunc);
     },
 
     /**
@@ -381,7 +537,7 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
      * @param {function} callFunc
      */
     setFrameEventCallFunc:function (callFunc, target) {
-        this._frameEvent = new cc.AnimationEvent(target, callFunc);
+        this._frameEvent = new ccs.AnimationEvent(target, callFunc);
     },
 
     /**
@@ -395,9 +551,36 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
         }
     },
 
+    movementEvent:function(armature, movementType,  movementID){
+        if (this._movementEvent)    {
+            var event = new ccs.MovementEvent();
+            event.armature = armature;
+            event.movementType = movementType;
+            event.movementID = movementID;
+            this._movementEventQueue.push(event);
+        }
+    },
+
+    /**
+     * @param {ccs.Bone} bone
+     * @param {String} frameEventName
+     * @param {Number} originFrameIndex
+     * @param {Number} currentFrameIndex
+     */
+    frameEvent:function(bone, frameEventName,  originFrameIndex,  currentFrameIndex){
+        if (this._frameEvent)    {
+            var frameEvent = new ccs.FrameEvent();
+            frameEvent.bone = bone;
+            frameEvent.frameEventName = frameEventName;
+            frameEvent.originFrameIndex = originFrameIndex;
+            frameEvent.currentFrameIndex = currentFrameIndex;
+            this._frameEventQueue.push(frameEvent);
+        }
+    },
+    
     /**
      * animationData setter
-     * @param {cc.AnimationData} aniData
+     * @param {ccs.AnimationData} aniData
      */
     setAnimationData:function (aniData) {
         this._animationData = aniData;
@@ -405,23 +588,54 @@ cc.ArmatureAnimation = cc.ProcessBase.extend({
 
     /**
      * animationData getter
-     * @return {cc.AnimationData}
+     * @return {ccs.AnimationData}
      */
     getAnimationData:function () {
         return this._animationData;
+    },
+    /**
+     * userObject setter
+     * @param {Object} userObject
+     */
+    setUserObject:function (userObject) {
+        this._userObject = userObject;
+    },
+
+    /**
+     * userObject getter
+     * @return {Object}
+     */
+    getUserObject:function () {
+        return this._userObject;
+    },
+
+    /**
+     * Determines if the frame event is ignore
+     * @returns {boolean}
+     */
+    isIgnoreFrameEvent:function(){
+        return this._ignoreFrameEvent;
+    },
+
+    /**
+     * Sets whether the frame event is ignore
+     * @param {Boolean} bool
+     */
+    setIgnoreFrameEvent:function(bool){
+        this._ignoreFrameEvent = bool;
     }
 });
 
 /**
  * allocates and initializes a ArmatureAnimation.
  * @constructs
- * @return {cc.ArmatureAnimation}
+ * @return {ccs.ArmatureAnimation}
  * @example
  * // example
- * var animation = cc.ArmatureAnimation.create();
+ * var animation = ccs.ArmatureAnimation.create();
  */
-cc.ArmatureAnimation.create = function (armature) {
-    var animation = new cc.ArmatureAnimation();
+ccs.ArmatureAnimation.create = function (armature) {
+    var animation = new ccs.ArmatureAnimation();
     if (animation && animation.init(armature)) {
         return animation;
     }

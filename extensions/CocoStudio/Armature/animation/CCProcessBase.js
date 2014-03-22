@@ -24,20 +24,55 @@
 
 
 //animation type
-CC_ANIMATION_TYPE_SINGLE_FRAME = -4;//the animation just have one frame
-CC_ANIMATION_TYPE_NO_LOOP = -3;//the animation isn't loop
-CC_ANIMATION_TYPE_TO_LOOP_FRONT = -2;//the animation to loop from front
-CC_ANIMATION_TYPE_TO_LOOP_BACK = -1;//the animation to loop from back
-CC_ANIMATION_TYPE_LOOP_FRONT = 0;//the animation loop from front
-CC_ANIMATION_TYPE_LOOP_BACK = 1;//the animation loop from back
-CC_ANIMATION_TYPE_MAX = 2;//the animation max
+/**
+ * the animation just have one frame
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_SINGLE_FRAME = -4;
+/**
+ * the animation isn't loop
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_NO_LOOP = -3;
+/**
+ * the animation to loop from front
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_TO_LOOP_FRONT = -2;
+/**
+ * the animation to loop from back
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_TO_LOOP_BACK = -1;
+/**
+ * the animation loop from front
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_LOOP_FRONT = 0;
+/**
+ * the animation loop from back
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_LOOP_BACK = 1;
+/**
+ * the animation max
+ * @constant
+ * @type {number}
+ */
+CC_ANIMATION_TYPE_MAX = 2;
 
 /**
- * Base class for cc.ProcessBase objects.
+ * Base class for ccs.ProcessBase objects.
  * @class
- * @extends cc.Class
+ * @extends ccs.Class
  */
-cc.ProcessBase = cc.Class.extend({
+ccs.ProcessBase = ccs.Class.extend(/** @lends ccs.ProcessBase# */{
     _processScale:1,
     _isComplete:true,
     _isPause:true,
@@ -62,64 +97,47 @@ cc.ProcessBase = cc.Class.extend({
         this._durationTween = 0;
         this._rawDuration = 0;
         this._loopType = CC_ANIMATION_TYPE_LOOP_BACK;
-        this._tweenEasing = cc.TweenType.Linear;
-        this._animationInternal = cc.Director.getInstance().getAnimationInterval();
+        this._tweenEasing = ccs.TweenType.linear;
+        this._animationInternal = 1/60;
         this._curFrameIndex = 0;
         this._durationTween = 0;
         this._isLoopBack = false;
     },
 
-
+    /**
+     * Pause the Process
+     */
     pause:function () {
         this._isPause = true;
         this._isPlaying = false;
     },
 
-
+    /**
+     * Resume the Process
+     */
     resume:function () {
         this._isPause = false;
         this._isPlaying = true;
     },
 
+    /**
+     * Stop the Process
+     */
     stop:function () {
         this._isComplete = true;
         this._isPlaying = false;
-        this._currentFrame = 0;
-        this._currentPercent = 0;
     },
 
     /**
-     * play animation by animation name.
-     * @param {Number} animationName The animation name you want to play
+     * Play the Process
      * @param {Number} durationTo
-     *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} durationTween he
-     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} loop
-     *          Whether the animation is loop.
-     *         loop < 0 : use the value from CCMovementData get from flash design panel
-     *         loop = 0 : this animation is not loop
-     *         loop > 0 : this animation is loop
-     * @param {Number} tweenEasing
-     *          CCTween easing is used for calculate easing effect
-     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
-     *         -1 : fade out
-     *         0  : line
-     *         1  : fade in
-     *         2  : fade in and out
+     * @param {ccs.TweenType} tweenEasing
      */
-    play:function (animation, durationTo, durationTween, loop, tweenEasing) {
+    play:function (durationTo, tweenEasing) {
         this._isComplete = false;
         this._isPause = false;
         this._isPlaying = true;
         this._currentFrame = 0;
-
-        /*
-         *  Set this._nextFrameIndex to durationTo, it is used for change tween between two animation.
-         *  When changing end, this._nextFrameIndex will be setted to _durationTween
-         */
         this._nextFrameIndex = durationTo;
         this._tweenEasing = tweenEasing;
     },
@@ -128,29 +146,31 @@ cc.ProcessBase = cc.Class.extend({
         if (this._isComplete || this._isPause) {
             return false;
         }
-        if (this._rawDuration <= 0 || dt > 1) {
+        if (this._rawDuration <= 0) {
             return false;
         }
         var locNextFrameIndex = this._nextFrameIndex;
+        var locCurrentFrame = this._currentFrame;
         if (locNextFrameIndex <= 0) {
             this._currentPercent = 1;
-            this._currentFrame = 0;
+            locCurrentFrame = 0;
         }else{
             /*
-             *  update this._currentFrame, every update add the frame passed.
+             *  update currentFrame, every update add the frame passed.
              *  dt/this._animationInternal determine it is not a frame animation. If frame speed changed, it will not make our
              *  animation speed slower or quicker.
              */
-            this._currentFrame += this._processScale * (dt / this._animationInternal);
+            locCurrentFrame += this._processScale * (dt / this._animationInternal);
 
-            this._currentPercent = this._currentFrame / locNextFrameIndex;
+            this._currentPercent = locCurrentFrame / locNextFrameIndex;
 
             /*
-             *	if this._currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util this._currentFrame is
+             *	if currentFrame is bigger or equal than this._nextFrameIndex, then reduce it util currentFrame is
              *  smaller than this._nextFrameIndex
              */
-            this._currentFrame = cc.fmodf(this._currentFrame, locNextFrameIndex);
+            locCurrentFrame = ccs.fmodf(locCurrentFrame, locNextFrameIndex);
         }
+        this._currentFrame = locCurrentFrame
         this.updateHandler();
         return true;
     },
@@ -161,9 +181,22 @@ cc.ProcessBase = cc.Class.extend({
     updateHandler:function () {
         //override
     },
-    gotoFrame:function (keyFrameIndex) {
-        this._curFrameIndex = keyFrameIndex;
-        this.pause();
+
+    /**
+     * goto frame
+     * @param {Number} frameIndex
+     */
+    gotoFrame:function (frameIndex) {
+        var locLoopType = this._loopType;
+        if (locLoopType == CC_ANIMATION_TYPE_NO_LOOP) {
+            locLoopType = CC_ANIMATION_TYPE_MAX;
+        }
+        else if (locLoopType == CC_ANIMATION_TYPE_TO_LOOP_FRONT) {
+            locLoopType = CC_ANIMATION_TYPE_LOOP_FRONT;
+        }
+        this._loopType = locLoopType;
+        this._curFrameIndex = frameIndex;
+        this._nextFrameIndex = this._durationTween;
     },
 
     /**
@@ -171,40 +204,94 @@ cc.ProcessBase = cc.Class.extend({
      * @return {Number}
      */
     getCurrentFrameIndex:function () {
-        this._curFrameIndex = this._rawDuration * this._currentPercent;
+        this._curFrameIndex = (this._rawDuration-1) * this._currentPercent;
         return this._curFrameIndex;
     },
 
+    /**
+     * whether the animation is pause
+     * @returns {boolean}
+     */
     isPause:function () {
         return this._isPause;
     },
+
+    /**
+     * whether the animation is complete
+     * @returns {boolean}
+     */
     isComplete:function () {
         return this._isComplete;
     },
+
+    /**
+     * current percent getter
+     * @returns {number}
+     */
     getCurrentPercent:function () {
         return this._currentPercent;
     },
+
+    /**
+     * rawDuration getter
+     * @returns {number}
+     */
     getRawDuration:function () {
         return this._rawDuration;
     },
+
+    /**
+     *  loop type getter
+     * @returns {number}
+     */
     getLoop:function () {
         return this._loopType;
     },
+
+    /**
+     * tween easing getter
+     * @returns {number}
+     */
     getTweenEasing:function () {
         return this._tweenEasing;
     },
+
+    /**
+     * animationInternal getter
+     * @returns {number}
+     */
     getAnimationInternal:function () {
         return this._animationInternal;
     },
+
+    /**
+     * animationInternal setter
+     * @param animationInternal
+     */
     setAnimationInternal:function(animationInternal){
         this._animationInternal = animationInternal;
     },
+
+    /**
+     * process scale getter
+     * @returns {number}
+     */
     getProcessScale:function () {
         return this._processScale;
     },
+
+    /**
+     * process scale setter
+     * @param processScale
+     */
     setProcessScale:function (processScale) {
         this._processScale = processScale;
     },
+
+    /**
+     * whether the animation is playing
+     * @returns {boolean}
+     */
     isPlaying:function () {
         return this._isPlaying;
     }
