@@ -450,10 +450,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
         if(window.navigator.msPointerEnabled){
             var _pointerEventsMap = {
-                "MSPointerDown"     : "handleTouchesBegin",
-                "MSPointerMove"     : "handleTouchesMove",
-                "MSPointerUp"       : "handleTouchesEnd",
-                "MSPointerCancel"   : "handleTouchesCancel"
+                "MSPointerDown"     : selfPointer.handleTouchesBegin,
+                "MSPointerMove"     : selfPointer.handleTouchesMove,
+                "MSPointerUp"       : selfPointer.handleTouchesEnd,
+                "MSPointerCancel"   : selfPointer.handleTouchesCancel
             };
 
             for(var eventName in _pointerEventsMap){
@@ -463,7 +463,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                         pos.left -= document.body.scrollLeft;
                         pos.top -= document.body.scrollTop;
 
-                        selfPointer[_touchEvent]([selfPointer.getTouchByXY(event.clientX, event.clientY, pos)]);
+                        _touchEvent.call(selfPointer, [selfPointer.getTouchByXY(event.clientX, event.clientY, pos)]);
                         event.stopPropagation();
                         event.preventDefault();
                     }, false);
