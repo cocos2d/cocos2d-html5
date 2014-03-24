@@ -345,7 +345,11 @@
 
             "external/chipmunk/chipmunk.js"
         ],
-        "external" : ["box2d", "chipmunk"]
+        "socketio" : [
+
+            "external/socketio/socket.io.min.js"
+        ],
+        "external" : ["box2d", "chipmunk", "socketio"]
     },
     "bootFile" : "CCBoot.js"
 }
