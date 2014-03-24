@@ -58,6 +58,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      * @return {object}
      */
     copy:function () {
+        cc.log("copy is deprecated. Please use clone instead.");
         return this.clone();
     },
 
