@@ -705,7 +705,7 @@ cc.FileUtils = cc.Class.extend({
         if (path.length > 0 && path.lastIndexOf('/') !== path.length - 1)
             path += '/';
         if(resourceDirectory && resourceDirectory != "")
-        path += resourceDirectory+"/";
+            path += resourceDirectory+"/";
         path += file_path;
         if (path.length > 0 && path.lastIndexOf("/") !== path.length - 1)
             path += '/';
