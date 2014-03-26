@@ -240,6 +240,8 @@ cc.setup = function (el, width, height) {
         cc._addUserSelectStatus();
     }
 
+    var isScreenHidden = false;
+
     var hidden, visibilityChange;
     if (typeof document.hidden !== "undefined") {
         hidden = "hidden";
@@ -255,32 +257,44 @@ cc.setup = function (el, width, height) {
         visibilityChange = "webkitvisibilitychange";
     }
 
-    function handleVisibilityChange() {
-        if(!cc.AudioEngine) return;
+    function handleFocus() {
+        if (!cc.AudioEngine || !isScreenHidden) return;
+        isScreenHidden = false;
         var audioEngine = cc.AudioEngine.getInstance();
-        if (!document[hidden]){
-            cc.Director.getInstance()._resetLastUpdate();
-            audioEngine._resumePlaying();
-        } else{
-            audioEngine._pausePlaying();
-        }
+        audioEngine.resumeAllEffects();
+        audioEngine.resumeMusic();
+    }
+
+    function handleBlur() {
+        if (!cc.AudioEngine || isScreenHidden) return;
+        isScreenHidden = true;
+        var audioEngine = cc.AudioEngine.getInstance();
+        audioEngine.pauseAllEffects();
+        audioEngine.pauseMusic();
+    }
+
+    function handleVisibilityChange() {
+        if (!document[hidden])
+            handleFocus();
+        else
+            handleBlur();
     }
 
     if (typeof document.addEventListener === "undefined" ||
         typeof hidden === "undefined") {
         cc.isAddedHiddenEvent = false;
-        window.addEventListener("focus", function () {
-            if(!cc.AudioEngine) return;
-            cc.AudioEngine.getInstance()._resumePlaying();
-        }, false);
-        window.addEventListener("blur", function () {
-            if(!cc.AudioEngine) return;
-            cc.AudioEngine.getInstance()._pausePlaying();
-        }, false);
+        window.addEventListener("focus", handleFocus, false);
+        window.addEventListener("blur", handleBlur, false);
     } else {
         cc.isAddedHiddenEvent = true;
         document.addEventListener(visibilityChange, handleVisibilityChange, false);
     }
+
+    if ("onpageshow" in window && "onpagehide" in window) {
+        window.addEventListener("pageshow", handleFocus, false);
+        window.addEventListener("pagehide", handleBlur, false);
+    }
+    
 };
 
 cc._addUserSelectStatus = function(){
