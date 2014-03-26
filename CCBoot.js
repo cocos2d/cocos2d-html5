@@ -897,13 +897,18 @@ cc.loader = {
     };
 
     if (typeof document.addEventListener !== "undefined" && hidden) {
-        document.addEventListener(visibilityChange, function(){
+        document.addEventListener(visibilityChange, function () {
             if (document[hidden]) onHidden();
             else onShow();
         }, false);
-    }else{
+    } else {
         win.addEventListener("blur", onHidden, false);
         win.addEventListener("focus", onShow, false);
+    }
+
+    if ("onpageshow" in window && "onpagehide" in window) {
+        win.addEventListener("pagehide", onHidden, false);
+        win.addEventListener("pageshow", onShow, false);
     }
     win = null;
     visibilityChange = null;
