@@ -130,13 +130,14 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * Constructor
      */
     ctor:function () {
-        cc.ActionInterval.prototype.ctor.call(this);
+        var _this = this;
+        cc.ActionInterval.prototype.ctor.call(_this);
 
-        this._points = [];
-        this._deltaT = 0;
-        this._tension = 0;
-        this._previousPosition = null;
-        this._accumulatedDiff = null;
+        _this._points = [];
+        _this._deltaT = 0;
+        _this._tension = 0;
+        _this._previousPosition = null;
+        _this._accumulatedDiff = null;
     },
 
     /**
@@ -172,19 +173,19 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
+        var _this = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
         // Issue #1441 from cocos2d-iphone
-        this._deltaT = 1 / (this._points.length - 1);
-        this._previousPosition = cc.p(this.target.getPositionX(), this.target.getPositionY());
-        this._accumulatedDiff = cc.p(0, 0);
+        _this._deltaT = 1 / (_this._points.length - 1);
+        _this._previousPosition = cc.p(_this.target.getPositionX(), _this.target.getPositionY());
+        _this._accumulatedDiff = cc.p(0, 0);
     },
 
     /**
      * @param {Number} time
      */
     update:function (time) {
-        var p, lt;
-        var ps = this._points;
+        var p, lt, ps = this._points;
         // eg.
         // p..p..p..p..p..p..p
         // 1..2..3..4..5..6..7

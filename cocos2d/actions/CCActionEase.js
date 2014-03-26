@@ -533,7 +533,6 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
     update:function (time1) {
         time1 = time1===0 || time1==1 ? time1 : -0.5 * (Math.cos(Math.PI * time1) - 1);
         this._inner.update(time1);
-
     },
 
     clone:function(){
@@ -632,7 +631,7 @@ cc.EaseElastic.create = function (action, period) {
 
 /**
  * Ease Elastic In action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseElastic
  */
@@ -746,7 +745,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
      */
     update:function (time1) {
         var newT = 0;
-        var locPeriod = this._period
+        var locPeriod = this._period;
         if (time1 === 0 || time1 == 1) {
             newT = time1;
         } else {
@@ -890,7 +889,7 @@ cc.EaseBounceIn.create = function (action) {
 };
 /**
  * cc.EaseBounceOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseBounce
  */
@@ -933,7 +932,7 @@ cc.EaseBounceOut.create = function (action) {
 
 /**
  * cc.EaseBounceInOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseBounce
  */
@@ -1072,7 +1071,7 @@ cc.EaseBackOut.create = function (action) {
 
 /**
  * cc.EaseBackInOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.ActionEase
  */
@@ -1082,7 +1081,6 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
      */
     update:function (time1) {
         var overshoot = 1.70158 * 1.525;
-
         time1 = time1 * 2;
         if (time1 < 1) {
             this._inner.update((time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2);

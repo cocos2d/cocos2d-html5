@@ -95,17 +95,18 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @param {Number} dt delta time in seconds
      */
     step:function (dt) {
-        if (this._firstTick) {
-            this._firstTick = false;
-            this._elapsed = 0;
+        var _this = this;
+        if (_this._firstTick) {
+            _this._firstTick = false;
+            _this._elapsed = 0;
         } else
-            this._elapsed += dt;
+            _this._elapsed += dt;
 
         //this.update((1 > (this._elapsed / this._duration)) ? this._elapsed / this._duration : 1);
         //this.update(Math.max(0, Math.min(1, this._elapsed / Math.max(this._duration, cc.FLT_EPSILON))));
-        var t = this._elapsed / (this._duration > 0.0000001192092896 ? this._duration : 0.0000001192092896);
+        var t = _this._elapsed / (_this._duration > 0.0000001192092896 ? _this._duration : 0.0000001192092896);
         t = (1 > t ? t : 1);
-        this.update(t > 0 ? t : 0);
+        _this.update(t > 0 ? t : 0);
     },
 
     /**
@@ -225,8 +226,9 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @param {Number} time  time in seconds
      */
     update:function (time) {
+        var _this = this;
         var new_t, found = 0;
-        var locSplit = this._split, locActions = this._actions, locLast = this._last;
+        var locSplit = _this._split, locActions = _this._actions, locLast = _this._last;
         if (time < locSplit) {
             // action[0]
             new_t = (locSplit !== 0) ? time / locSplit : 1;
@@ -246,7 +248,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 
             if (locLast === -1) {
                 // action[0] was skipped, execute it.
-                locActions[0].startWithTarget(this.target);
+                locActions[0].startWithTarget(_this.target);
                 locActions[0].update(1);
                 locActions[0].stop();
             }
@@ -263,10 +265,10 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 
         // Last action found and it is done
         if (locLast !== found)
-            locActions[found].startWithTarget(this.target);
+            locActions[found].startWithTarget(_this.target);
 
         locActions[found].update(new_t);
-        this._last = found;
+        _this._last = found;
     },
 
     /**
@@ -325,12 +327,13 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     _innerAction:null, //CCFiniteTimeAction
 
     ctor:function () {
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._times = 0;
-        this._total = 0;
-        this._nextDt = 0;
-        this._actionInstant = false;
-        this._innerAction = null;
+        var _this = this;
+        cc.ActionInterval.prototype.ctor.call(_this);
+        _this._times = 0;
+        _this._total = 0;
+        _this._nextDt = 0;
+        _this._actionInstant = false;
+        _this._innerAction = null;
     },
 
     /**
@@ -384,28 +387,29 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        var locInnerAction = this._innerAction;
-        var locDuration = this._duration;
-        var locTimes = this._times;
-        var locNextDt = this._nextDt;
+        var _this = this;
+        var locInnerAction = _this._innerAction;
+        var locDuration = _this._duration;
+        var locTimes = _this._times;
+        var locNextDt = _this._nextDt;
 
         if (time >= locNextDt) {
-            while (time > locNextDt && this._total < locTimes) {
+            while (time > locNextDt && _this._total < locTimes) {
                 locInnerAction.update(1);
-                this._total++;
+                _this._total++;
                 locInnerAction.stop();
-                locInnerAction.startWithTarget(this.target);
+                locInnerAction.startWithTarget(_this.target);
                 locNextDt += locInnerAction.getDuration() / locDuration;
-                this._nextDt = locNextDt;
+                _this._nextDt = locNextDt;
             }
 
             // fix for issue #1288, incorrect end value of repeat
-            if (time >= 1.0 && this._total < locTimes)
-                this._total++;
+            if (time >= 1.0 && _this._total < locTimes)
+                _this._total++;
 
             // don't set a instantaction back or update it, it has no use because it has no duration
-            if (this._actionInstant) {
-                if (this._total == locTimes) {
+            if (_this._actionInstant) {
+                if (_this._total == locTimes) {
                     locInnerAction.update(1);
                     locInnerAction.stop();
                 } else {
@@ -594,21 +598,18 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
         if(!action1 || !action2)
             throw "cc.Spawn.initWithTwoActions(): arguments must all be non null" ;
 
-        var ret = false;
+        var _this = this, ret = false;
+        var d1 = action1.getDuration(), d2 = action2.getDuration();
 
-        var d1 = action1.getDuration();
-        var d2 = action2.getDuration();
-
-        if (this.initWithDuration(Math.max(d1, d2))) {
-            this._one = action1;
-            this._two = action2;
+        if (_this.initWithDuration(Math.max(d1, d2))) {
+            _this._one = action1;
+            _this._two = action2;
 
             if (d1 > d2) {
-                this._two = cc.Sequence._actionOneTwo(action2, cc.DelayTime.create(d1 - d2));
+                _this._two = cc.Sequence._actionOneTwo(action2, cc.DelayTime.create(d1 - d2));
             } else if (d1 < d2) {
-                this._one = cc.Sequence._actionOneTwo(action1, cc.DelayTime.create(d2 - d1));
+                _this._one = cc.Sequence._actionOneTwo(action1, cc.DelayTime.create(d2 - d1));
             }
-
             ret = true;
         }
         return ret;
@@ -709,14 +710,15 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     _diffAngleY:0,
 
     ctor:function () {
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._dstAngleX = 0;
-        this._startAngleX = 0;
-        this._diffAngleX = 0;
+        var _this = this;
+        cc.ActionInterval.prototype.ctor.call(_this);
+        _this._dstAngleX = 0;
+        _this._startAngleX = 0;
+        _this._diffAngleX = 0;
 
-        this._dstAngleY = 0;
-        this._startAngleY = 0;
-        this._diffAngleY = 0;
+        _this._dstAngleY = 0;
+        _this._startAngleY = 0;
+        _this._diffAngleY = 0;
     },
 
     /**
@@ -781,9 +783,10 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this.target) {
-            this.target.rotationX = this._startAngleX + this._diffAngleX * time;
-            this.target.rotationY = this._startAngleY + this._diffAngleY * time;
+        var _this = this;
+        if (_this.target) {
+            _this.target.rotationX = _this._startAngleX + _this._diffAngleX * time;
+            _this.target.rotationY = _this._startAngleY + _this._diffAngleY * time;
         }
     }
 });
@@ -861,9 +864,10 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      * @param {Number} time
      */
     update:function (time) {
-        if (this.target) {
-            this.target.rotationX = this._startAngleX + this._angleX * time;
-            this.target.rotationY = this._startAngleY + this._angleY * time;
+        var _this = this;
+        if (_this.target) {
+            _this.target.rotationX = _this._startAngleX + _this._angleX * time;
+            _this.target.rotationY = _this._startAngleY + _this._angleY * time;
         }
     },
 
@@ -942,27 +946,29 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      * @param {Number} target
      */
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
+        var _this = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
         var locPosX = target.getPositionX();
         var locPosY = target.getPositionY();
-        this._previousPosition.x = locPosX;
-        this._previousPosition.y = locPosY;
-        this._startPosition.x = locPosX;
-        this._startPosition.y = locPosY;
+        _this._previousPosition.x = locPosX;
+        _this._previousPosition.y = locPosY;
+        _this._startPosition.x = locPosX;
+        _this._startPosition.y = locPosY;
     },
 
     /**
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        var _this = this;
         if (this.target) {
-            var x = this._positionDelta.x * time;
-            var y = this._positionDelta.y * time;
-            var locStartPosition = this._startPosition;
+            var x = _this._positionDelta.x * time;
+            var y = _this._positionDelta.y * time;
+            var locStartPosition = _this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = this.target.getPositionX();
-                var targetY = this.target.getPositionY();
-                var locPreviousPosition = this._previousPosition;
+                var targetX = _this.target.getPositionX();
+                var targetY = _this.target.getPositionY();
+                var locPreviousPosition = _this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
@@ -970,9 +976,9 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
                 y = y + locStartPosition.y;
 	            locPreviousPosition.x = x;
 	            locPreviousPosition.y = y;
-	            this.target.setPosition(x, y);
+                _this.target.setPosition(x, y);
             } else {
-                this.target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                _this.target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -1042,9 +1048,10 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.MoveBy.prototype.startWithTarget.call(this, target);
-        this._positionDelta.x = this._endPosition.x - target.getPositionX();
-        this._positionDelta.y = this._endPosition.y - target.getPositionY();
+        var _this = this;
+        cc.MoveBy.prototype.startWithTarget.call(_this, target);
+        _this._positionDelta.x = _this._endPosition.x - target.getPositionX();
+        _this._positionDelta.y = _this._endPosition.y - target.getPositionY();
     }
 });
 /**
@@ -1077,15 +1084,16 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     _deltaY:0,
 
     ctor:function () {
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._skewX = 0;
-        this._skewY = 0;
-        this._startSkewX = 0;
-        this._startSkewY = 0;
-        this._endSkewX = 0;
-        this._endSkewY = 0;
-        this._deltaX = 0;
-        this._deltaY = 0;
+        var _this = this;
+        cc.ActionInterval.prototype.ctor.call(_this);
+        _this._skewX = 0;
+        _this._skewY = 0;
+        _this._startSkewX = 0;
+        _this._startSkewY = 0;
+        _this._endSkewX = 0;
+        _this._endSkewY = 0;
+        _this._deltaX = 0;
+        _this._deltaY = 0;
     },
 
     /**
@@ -1118,21 +1126,22 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
+        var _this = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
 
-        this._startSkewX = target.skewX % 180;
-        this._deltaX = this._endSkewX - this._startSkewX;
-        if (this._deltaX > 180)
-            this._deltaX -= 360;
-        if (this._deltaX < -180)
-            this._deltaX += 360;
+        _this._startSkewX = target.skewX % 180;
+        _this._deltaX = _this._endSkewX - _this._startSkewX;
+        if (_this._deltaX > 180)
+            _this._deltaX -= 360;
+        if (_this._deltaX < -180)
+            _this._deltaX += 360;
 
-        this._startSkewY = target.skewY % 360;
-        this._deltaY = this._endSkewY - this._startSkewY;
-        if (this._deltaY > 180)
-            this._deltaY -= 360;
-        if (this._deltaY < -180)
-            this._deltaY += 360;
+        _this._startSkewY = target.skewY % 360;
+        _this._deltaY = _this._endSkewY - _this._startSkewY;
+        if (_this._deltaY > 180)
+            _this._deltaY -= 360;
+        if (_this._deltaY < -180)
+            _this._deltaY += 360;
     },
 
     /**
@@ -1194,11 +1203,12 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.SkewTo.prototype.startWithTarget.call(this, target);
-        this._deltaX = this._skewX;
-        this._deltaY = this._skewY;
-        this._endSkewX = this._startSkewX + this._deltaX;
-        this._endSkewY = this._startSkewY + this._deltaY;
+        var _this = this;
+        cc.SkewTo.prototype.startWithTarget.call(_this, target);
+        _this._deltaX = _this._skewX;
+        _this._deltaY = _this._skewY;
+        _this._endSkewX = _this._startSkewX + _this._deltaX;
+        _this._endSkewY = _this._startSkewY + _this._deltaY;
     },
 
     /**
@@ -1237,12 +1247,13 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     _previousPosition:null,
 
     ctor:function () {
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._startPosition = cc.p(0, 0);
-        this._previousPosition = cc.p(0, 0);
-        this._delta = cc.p(0, 0);
-        this._height = 0;
-        this._jumps = 0;
+        var _this = this;
+        cc.ActionInterval.prototype.ctor.call(_this);
+        _this._startPosition = cc.p(0, 0);
+        _this._previousPosition = cc.p(0, 0);
+        _this._delta = cc.p(0, 0);
+        _this._height = 0;
+        _this._jumps = 0;
     },
     /**
      * @param {Number} duration
@@ -1252,11 +1263,12 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, position, height, jumps) {
-        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._delta.x = position.x;
-            this._delta.y = position.y;
-            this._height = height;
-            this._jumps = jumps;
+        var _this = this;
+        if (cc.ActionInterval.prototype.initWithDuration.call(_this, duration)) {
+            _this._delta.x = position.x;
+            _this._delta.y = position.y;
+            _this._height = height;
+            _this._jumps = jumps;
             return true;
         }
         return false;
@@ -1276,13 +1288,14 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
+        var _this = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
         var locPosX = target.getPositionX();
         var locPosY = target.getPositionY();
-        this._previousPosition.x = locPosX;
-        this._previousPosition.y = locPosY;
-        this._startPosition.x = locPosX;
-        this._startPosition.y = locPosY;
+        _this._previousPosition.x = locPosX;
+        _this._previousPosition.y = locPosY;
+        _this._startPosition.x = locPosX;
+        _this._startPosition.y = locPosY;
     },
 
     /**
@@ -1445,13 +1458,14 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
+        var _this = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
         var locPosX = target.getPositionX();
         var locPosY = target.getPositionY();
-        this._previousPosition.x = locPosX;
-        this._previousPosition.y = locPosY;
-        this._startPosition.x = locPosX;
-        this._startPosition.y = locPosY;
+        _this._previousPosition.x = locPosX;
+        _this._previousPosition.y = locPosY;
+        _this._startPosition.x = locPosX;
+        _this._startPosition.y = locPosY;
     },
 
     /**
@@ -1460,18 +1474,10 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     update:function (time) {
         if (this.target) {
             var locConfig = this._config;
-            var xa = 0;
-            var xb = locConfig[0].x;
-            var xc = locConfig[1].x;
-            var xd = locConfig[2].x;
+            var xa = 0, xb = locConfig[0].x, xc = locConfig[1].x, xd = locConfig[2].x;
+            var ya = 0, yb = locConfig[0].y, yc = locConfig[1].y, yd = locConfig[2].y;
 
-            var ya = 0;
-            var yb = locConfig[0].y;
-            var yc = locConfig[1].y;
-            var yd = locConfig[2].y;
-
-            var x = cc.bezierAt(xa, xb, xc, xd, time);
-            var y = cc.bezierAt(ya, yb, yc, yd, time);
+            var x = cc.bezierAt(xa, xb, xc, xd, time), y = cc.bezierAt(ya, yb, yc, yd, time);
 
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
@@ -1562,9 +1568,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      */
     startWithTarget:function (target) {
         cc.BezierBy.prototype.startWithTarget.call(this, target);
-        var locStartPos = this._startPosition;
-        var locToConfig = this._toConfig;
-        var locConfig = this._config;
+        var locStartPos = this._startPosition, locToConfig = this._toConfig, locConfig = this._config;
 
         locConfig[0] = cc.pSub(locToConfig[0], locStartPos);
         locConfig[1] = cc.pSub(locToConfig[1], locStartPos);
@@ -1603,15 +1607,16 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     _deltaY:0,
 
     ctor:function () {
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._scaleX = 1;
-        this._scaleY = 1;
-        this._startScaleX = 1;
-        this._startScaleY = 1;
-        this._endScaleX = 0;
-        this._endScaleY = 0;
-        this._deltaX = 0;
-        this._deltaY = 0;
+        var _this = this;
+        cc.ActionInterval.prototype.ctor.call(_this);
+        _this._scaleX = 1;
+        _this._scaleY = 1;
+        _this._startScaleX = 1;
+        _this._startScaleY = 1;
+        _this._endScaleX = 0;
+        _this._endScaleY = 0;
+        _this._deltaX = 0;
+        _this._deltaY = 0;
     },
 
     /**
@@ -1643,11 +1648,12 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startScaleX = target.scaleX;
-        this._startScaleY = target.scaleY;
-        this._deltaX = this._endScaleX - this._startScaleX;
-        this._deltaY = this._endScaleY - this._startScaleY;
+        var _this = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
+        _this._startScaleX = target.scaleX;
+        _this._startScaleY = target.scaleY;
+        _this._deltaX = _this._endScaleX - _this._startScaleX;
+        _this._deltaY = _this._endScaleY - _this._startScaleY;
     },
 
     /**
@@ -2069,13 +2075,14 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     _fromB:0,
 
     ctor:function () {
-        cc.ActionInterval.prototype.ctor.call(this);
-        this._deltaR = 0;
-        this._deltaG = 0;
-        this._deltaB = 0;
-        this._fromR = 0;
-        this._fromG = 0;
-        this._fromB = 0;
+        var _this = this;
+        cc.ActionInterval.prototype.ctor.call(_this);
+        _this._deltaR = 0;
+        _this._deltaG = 0;
+        _this._deltaB = 0;
+        _this._fromR = 0;
+        _this._fromG = 0;
+        _this._fromB = 0;
     },
 
     /**
@@ -2412,8 +2419,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      */
     reverse:function () {
         var locAnimation = this._animation;
-        var oldArray = locAnimation.getFrames();
-        var newArray = [];
+        var oldArray = locAnimation.getFrames(), newArray = [];
         cc.arrayVerifyType(oldArray, cc.AnimationFrame);
         if (oldArray.length > 0) {
             for (var i = oldArray.length - 1; i >= 0; i--) {

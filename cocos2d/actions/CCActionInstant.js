@@ -367,11 +367,12 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     _data:null,
 
     ctor:function(){
-        cc.FiniteTimeAction.prototype.ctor.call(this);
-        this._selectorTarget = null;
-        this._callFunc = null;
-        this._function = null;
-        this._data = null;
+        var _this = this;
+        cc.FiniteTimeAction.prototype.ctor.call(_this);
+        _this._selectorTarget = null;
+        _this._callFunc = null;
+        _this._function = null;
+        _this._data = null;
     },
 
     /**
