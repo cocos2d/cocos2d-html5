@@ -153,10 +153,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationRadiansY:0,
 
     _initNode:function () {
-        this._anchorPoint = cc._pConst(0, 0);
-        this._anchorPointInPoints = cc._pConst(0, 0);
+        this._anchorPoint = cc.p(0, 0);
+        this._anchorPointInPoints = cc.p(0, 0);
         this._contentSize = cc._sizeConst(0, 0);
-        this._position = cc._pConst(0, 0);
+        this._position = cc.p(0, 0);
         this._children = [];
         this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
@@ -539,12 +539,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
         if (yValue === undefined) {
-            locPosition._x = newPosOrxValue.x;
-            locPosition._y = newPosOrxValue.y;
-        }
-	    else {
-	        locPosition._x = newPosOrxValue;
-	        locPosition._y = yValue;
+            locPosition.x = newPosOrxValue.x;
+            locPosition.y = newPosOrxValue.y;
+        } else {
+	        locPosition.x = newPosOrxValue;
+	        locPosition.y = yValue;
         }
         this.setNodeDirty();
     },
@@ -555,21 +554,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position);
     },
 
     /**
      * @return {Number}
      */
     getPositionX:function () {
-        return this._position._x;
+        return this._position.x;
     },
 
     /**
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this._position._x = x;
+        this._position.x = x;
         this.setNodeDirty();
     },
 
@@ -577,14 +576,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getPositionY:function () {
-        return  this._position._y;
+        return  this._position.y;
     },
 
     /**
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this._position._y = y;
+        this._position.y = y;
         this.setNodeDirty();
     },
 
@@ -640,7 +639,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint:function () {
-        return this._anchorPoint;
+        return cc.p(this._anchorPoint);
     },
 
     /**
@@ -659,19 +658,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
         if (y === undefined) {
-	        if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
+	        if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
 		        return;
-	        locAnchorPoint._x = point.x;
-	        locAnchorPoint._y = point.y;
+	        locAnchorPoint.x = point.x;
+	        locAnchorPoint.y = point.y;
         } else {
-	        if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
+	        if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
 		        return;
-	        locAnchorPoint._x = point;
-	        locAnchorPoint._y = y;
+	        locAnchorPoint.x = point;
+	        locAnchorPoint.y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP._x = locSize._width * locAnchorPoint._x;
-        locAPP._y = locSize._height * locAnchorPoint._y;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
         this.setNodeDirty();
     },
 
@@ -683,7 +682,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
-        return this._anchorPointInPoints;
+        return cc.p(this._anchorPointInPoints);
     },
 
     /**
@@ -721,8 +720,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 	        locContentSize._height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP._x = locContentSize._width * locAnchorPoint._x;
-        locAPP._y = locContentSize._height * locAnchorPoint._y;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
         this.setNodeDirty();
     },
 
@@ -1840,7 +1839,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
-            var apx = this._anchorPointInPoints._x, apy = this._anchorPointInPoints._y;
+            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
@@ -1863,8 +1862,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             var t = this._transform;// quick reference
 
             // base position
-            t.tx = this._position._x;
-            t.ty = this._position._y;
+            t.tx = this._position.x;
+            t.ty = this._position.y;
 
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
@@ -1879,7 +1878,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             t.c = Sin;
 
             var lScaleX = this._scaleX, lScaleY = this._scaleY;
-            var appX = this._anchorPointInPoints._x, appY = this._anchorPointInPoints._y;
+            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
 
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
@@ -1932,10 +1931,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _nodeToParentTransformForWebGL:function () {
         if (this._transformDirty) {
             // Translate values
-            var x = this._position._x;
-            var y = this._position._y;
-            var apx = this._anchorPointInPoints._x, napx = -apx;
-            var apy = this._anchorPointInPoints._y, napy = -apy;
+            var x = this._position.x;
+            var y = this._position.y;
+            var apx = this._anchorPointInPoints.x, napx = -apx;
+            var apy = this._anchorPointInPoints.y, napy = -apy;
             var scx = this._scaleX, scy = this._scaleY;
 
             if (this._ignoreAnchorPointForPosition) {

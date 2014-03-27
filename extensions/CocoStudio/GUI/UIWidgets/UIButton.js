@@ -521,7 +521,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
 	        this._buttonClickedRenderer.setAnchorPoint(point, y);
 	        this._buttonDisableRenderer.setAnchorPoint(point, y);
         }
-	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
     },
 
     onSizeChanged: function () {

@@ -190,7 +190,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             var locCacheContext = this._cacheContext, locCacheCanvas = this._cacheCanvas;
             locCacheContext.clearRect(0, 0, locCacheCanvas.width, -locCacheCanvas.height);
             locCacheContext.save();
-            locCacheContext.translate(this._anchorPointInPoints._x, -(this._anchorPointInPoints._y));
+            locCacheContext.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y));
             if (locChildren) {
                 this.sortAllChildren();
                 for (i = 0; i < locChildren.length; i++) {
@@ -225,7 +225,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
         //context.globalAlpha = this._opacity / 255;
-        var posX = 0 | ( -this._anchorPointInPoints._x), posY = 0 | ( -this._anchorPointInPoints._y);
+        var posX = 0 | ( -this._anchorPointInPoints.x), posY = 0 | ( -this._anchorPointInPoints.y);
         var eglViewer = cc.EGLView.getInstance();
         var locCacheCanvas = this._cacheCanvas;
         //direct draw image by canvas drawImage

@@ -45,44 +45,6 @@ cc.Point = function (_x, _y) {
     }
 };
 
-cc._PointConst = function (x, y) {
-    this._x = x || 0;
-    this._y = y || 0;
-
-    this.setX = function (x) {
-        this._x = x;
-    };
-    this.setY = function (y) {
-        this._y = y;
-    }
-};
-
-cc._pConst = function (x, y) {
-    return new cc._PointConst(x, y);
-};
-
-Object.defineProperties(cc._PointConst.prototype, {
-    x: {
-        get: function () {
-            return this._x;
-        },
-        set: function () {
-            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    },
-
-    y: {
-        get: function () {
-            return this._y;
-        },
-        set: function () {
-            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    }
-});
-
 /**
  * @function
  * @param {Number} x
@@ -107,7 +69,9 @@ cc.p = function (x, y) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT,
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Point(x, y)
-    if(x !== undefined && y === undefined)
+    if (x === undefined)
+        return {x: 0, y: 0};
+    else if (y === undefined)
         return {x: x.x, y: x.y};
     else
         return {x: x || 0, y: y || 0};
@@ -226,10 +190,11 @@ cc.size = function (w, h) {
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Size(w, h)
-    if(w !== undefined && h === undefined)
+    if (w === undefined)
+        return {width: 0, height: 0};
+    if (h === undefined)
         return { width: w.width, height: w.height};
-    else
-        return { width: w || 0, height: h || 0};
+    return { width: w || 0, height: h || 0};
 };
 
 // JSB compatbility: in JSB, cc._size reuses objects instead of creating new ones
@@ -244,17 +209,15 @@ cc.SizeZero = function () {
     return cc.size(0, 0);
 };
 
-cc._zeroConsts = {pointZero: cc._pConst(0,0), sizeZero: cc._sizeConst(0,0)};
-
 Object.defineProperties(cc, {
     POINT_ZERO:{
         get:function () {
-            return cc._zeroConsts.pointZero;
+            return cc.p();
         }
     },
     SIZE_ZERO:{
         get:function () {
-            return cc._zeroConsts.sizeZero;
+            return cc.size(0,0);
         }
     },
     RECT_ZERO:{
