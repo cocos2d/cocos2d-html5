@@ -221,8 +221,10 @@ cc.eventManager = /** @lends cc.eventManager# */{
         for (var i = 0; i < listenerVector.length;) {
             selListener = listenerVector[i];
             selListener._setRegistered(false);
-            if (selListener._getSceneGraphPriority() != null)
+            if (selListener._getSceneGraphPriority() != null){
                 this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
+                selListener._setSceneGraphPriority(null);   // NULL out the node pointer so we don't have any dangling pointers to destroyed nodes.
+            }
 
             if (this._inDispatch === 0)
                 cc.arrayRemoveObject(listenerVector, selListener);
@@ -757,8 +759,10 @@ cc.eventManager = /** @lends cc.eventManager# */{
             var selListener = listeners[i];
             if (selListener == listener) {
                 selListener._setRegistered(false);
-                if (selListener._getSceneGraphPriority() != null)
+                if (selListener._getSceneGraphPriority() != null){
                     this._dissociateNodeAndEventListener(selListener._getSceneGraphPriority(), selListener);
+                    selListener._setSceneGraphPriority(null);         // NULL out the node pointer so we don't have any dangling pointers to destroyed nodes.
+                }
 
                 if (this._inDispatch == 0)
                     cc.arrayRemoveObject(listeners, selListener);
