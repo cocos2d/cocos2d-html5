@@ -130,8 +130,8 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 	        locAnchorPoint.y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP.x = locSize._width * locAnchorPoint.x;
-        locAPP.y = locSize._height * locAnchorPoint.y;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
 
         this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + locAPP.x + 'px ' + -locAPP.y + 'px';
         if (this.isIgnoreAnchorPointForPosition()) {
@@ -152,21 +152,21 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if (height === undefined) {
-	        locContentSize._width = size.width;
-	        locContentSize._height = size.height;
+	        locContentSize.width = size.width;
+	        locContentSize.height = size.height;
         } else {
-	        locContentSize._width = size;
-	        locContentSize._height = height;
+	        locContentSize.width = size;
+	        locContentSize.height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP.x = locContentSize._width * locAnchorPoint.x;
-        locAPP.y = locContentSize._height * locAnchorPoint.y;
-        this.dom.width = locContentSize._width;
-        this.dom.height = locContentSize._height;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
+        this.dom.width = locContentSize.width;
+        this.dom.height = locContentSize.height;
         this.setAnchorPoint(this.getAnchorPoint());
         if (this.canvas) {
-            this.canvas.width = locContentSize._width;
-            this.canvas.height = locContentSize._height;
+            this.canvas.width = locContentSize.width;
+            this.canvas.height = locContentSize.height;
         }
         this.setNodeDirty();
         this.redraw();

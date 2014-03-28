@@ -1360,8 +1360,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             relativeOffset.y = -relativeOffset.y;
 
         var locRect = this._rect;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize._width - locRect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize._height - locRect.height) / 2;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - locRect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - locRect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1406,8 +1406,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             relativeOffset.x = -relativeOffset.x;
         if (this._flippedY)
             relativeOffset.y = -relativeOffset.y;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize._width - this._rect.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize._height - this._rect.height) / 2;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -2109,10 +2109,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
                     locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
-        } else if (locContentSize._width !== 0) {
+        } else if (locContentSize.width !== 0) {
             var curColor = this.getColor();
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
-            context.fillRect(flipXOffset, flipYOffset, locContentSize._width * locEGL_ScaleX, locContentSize._height * locEGL_ScaleY);
+            context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);
         }
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {

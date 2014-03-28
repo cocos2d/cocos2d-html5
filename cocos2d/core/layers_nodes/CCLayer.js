@@ -857,7 +857,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(w, this._contentSize._height);
+        this.setContentSize(w, this._contentSize.height);
     },
 
     /**
@@ -865,7 +865,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(this._contentSize._width, h);
+        this.setContentSize(this._contentSize.width, h);
     },
 
     /**

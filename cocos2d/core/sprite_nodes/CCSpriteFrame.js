@@ -55,9 +55,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     ctor:function () {
         this._offset = cc.p(0, 0);
         this._offsetInPixels = cc.p(0, 0);
-        this._originalSize = cc._sizeConst(0, 0);
+        this._originalSize = cc.size(0, 0);
         this._rotated = false;
-        this._originalSizeInPixels = cc._sizeConst(0, 0);
+        this._originalSizeInPixels = cc.size(0, 0);
         this._textureFilename = "";
         this._texture = null;
         this._textureLoaded = false;
@@ -173,7 +173,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Size}
      */
     getOriginalSizeInPixels:function () {
-        return this._originalSizeInPixels;
+        return cc.size(this._originalSizeInPixels);
     },
 
     /**
@@ -181,8 +181,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Size} sizeInPixels
      */
     setOriginalSizeInPixels:function (sizeInPixels) {
-        this._originalSizeInPixels._width = sizeInPixels.width;
-        this._originalSizeInPixels._height = sizeInPixels.height;
+        this._originalSizeInPixels.width = sizeInPixels.width;
+        this._originalSizeInPixels.height = sizeInPixels.height;
     },
 
     /**
@@ -191,7 +191,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Size}
      */
     getOriginalSize:function () {
-        return this._originalSize;
+        return cc.size(this._originalSize);
     },
 
     /**
@@ -199,8 +199,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Size} sizeInPixels
      */
     setOriginalSize:function (sizeInPixels) {
-        this._originalSize._width = sizeInPixels.width;
-        this._originalSize._height = sizeInPixels.height;
+        this._originalSize.width = sizeInPixels.width;
+        this._originalSize.height = sizeInPixels.height;
     },
 
     /**
@@ -248,10 +248,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                         this._rect.width = locContentSize.width;
                         this._rect.height = locContentSize.height;
                         this._rectInPixels = cc.RECT_POINTS_TO_PIXELS(this._rect);
-                        this._originalSizeInPixels._width = this._rectInPixels.width;
-                        this._originalSizeInPixels._height = this._rectInPixels.height;
-                        this._originalSize._width =  locContentSize.width;
-                        this._originalSize._height =  locContentSize.height;
+                        this._originalSizeInPixels.width = this._rectInPixels.width;
+                        this._originalSizeInPixels.height = this._rectInPixels.height;
+                        this._originalSize.width =  locContentSize.width;
+                        this._originalSize.height =  locContentSize.height;
                     }
                     this._callLoadedEventCallbacks();
                 }, this);
@@ -321,8 +321,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offsetInPixels.x = offset.x;
         this._offsetInPixels.y = offset.y;
         this._offset = cc.POINT_PIXELS_TO_POINTS(offset);
-        this._originalSizeInPixels._width = originalSize.width;
-        this._originalSizeInPixels._height = originalSize.height;
+        this._originalSizeInPixels.width = originalSize.width;
+        this._originalSizeInPixels.height = originalSize.height;
         this._originalSize = cc.SIZE_PIXELS_TO_POINTS(originalSize);
         this._rotated = rotated || false;
         return true;
@@ -354,8 +354,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offsetInPixels.x = offset.x;
         this._offsetInPixels.y = offset.y;
         this._offset = cc.POINT_PIXELS_TO_POINTS(offset);
-        this._originalSizeInPixels._width = originalSize.width;
-        this._originalSizeInPixels._height = originalSize.height;
+        this._originalSizeInPixels.width = originalSize.width;
+        this._originalSizeInPixels.height = originalSize.height;
         this._originalSize = cc.SIZE_PIXELS_TO_POINTS(originalSize);
         return true;
     }
@@ -428,9 +428,9 @@ cc.SpriteFrame._frameWithTextureForCanvas = function (texture, rect, rotated, of
     spriteFrame._offsetInPixels.x = offset.x;
     spriteFrame._offsetInPixels.y = offset.y;
     spriteFrame._offset = cc.POINT_PIXELS_TO_POINTS(spriteFrame._offsetInPixels);
-    spriteFrame._originalSizeInPixels._width = originalSize.width;
-    spriteFrame._originalSizeInPixels._height = originalSize.height;
-    cc._SIZE_PIXELS_TO_POINTS_OUT(spriteFrame._originalSizeInPixels, spriteFrame._originalSize);
+    spriteFrame._originalSizeInPixels.width = originalSize.width;
+    spriteFrame._originalSizeInPixels.height = originalSize.height;
+    spriteFrame._originalSize = cc.SIZE_PIXELS_TO_POINTS(spriteFrame._originalSizeInPixels);
     spriteFrame._rotated = rotated;
     return spriteFrame;
 };

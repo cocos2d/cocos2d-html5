@@ -118,13 +118,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if(cc.renderContextType === cc.CANVAS){
             var locCanvas = this._cacheCanvas;
             var scaleFactor = cc.CONTENT_SCALE_FACTOR();
-            locCanvas.width = 0 | (locContentSize._width * 1.5 * scaleFactor);
-            locCanvas.height = 0 | (locContentSize._height * 1.5 * scaleFactor);
+            locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
+            locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
             this._cacheContext.translate(0, locCanvas.height);
             var locTexContentSize = this._cacheTexture._contentSize;
-            locTexContentSize._width = locCanvas.width;
-            locTexContentSize._height = locCanvas.height;
+            locTexContentSize.width = locCanvas.width;
+            locTexContentSize.height = locCanvas.height;
 
             // Init sub caches if needed
             var totalPixel = locCanvas.width * locCanvas.height;

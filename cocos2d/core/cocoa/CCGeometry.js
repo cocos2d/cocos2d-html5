@@ -127,44 +127,6 @@ cc.Size = function (_width, _height) {
     }
 };
 
-cc._SizeConst = function (width, height) {
-    this._width = width || 0;
-    this._height = height || 0;
-
-    this.setWidth = function (width) {
-        this._width = width;
-    };
-    this.setHeight = function (height) {
-        this._height = height;
-    }
-};
-
-cc._sizeConst = function (width, height) {
-    return new cc._SizeConst(width, height);
-};
-
-Object.defineProperties(cc._SizeConst.prototype, {
-    width: {
-        get: function () {
-            return this._width;
-        },
-        set: function () {
-            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    },
-
-    height: {
-        get: function () {
-            return this._height;
-        },
-        set: function () {
-            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    }
-});
-
 /**
  * @function
  * @param {Number} width

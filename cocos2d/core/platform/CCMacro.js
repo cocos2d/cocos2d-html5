@@ -273,12 +273,6 @@ cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
     return cc.size(sizeInPixels.width / scale, sizeInPixels.height / scale);
 };
 
-cc._SIZE_PIXELS_TO_POINTS_OUT = function (sizeInPixels, outSize) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
-    outSize._width = sizeInPixels.width / scale;
-    outSize._height = sizeInPixels.height / scale;
-};
-
 /**
  * Converts a Point in pixels to points
  * @param {Point} pixels

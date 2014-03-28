@@ -155,7 +155,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
         this._anchorPointInPoints = cc.p(0, 0);
-        this._contentSize = cc._sizeConst(0, 0);
+        this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
         this._children = [];
         this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
@@ -693,7 +693,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
-        return this._contentSize;
+        return cc.size(this._contentSize);
     },
 
     /**
@@ -709,15 +709,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
         if (height === undefined) {
-	        if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
+	        if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
 		        return;
-	        locContentSize._width = size.width;
-	        locContentSize._height = size.height;
+	        locContentSize.width = size.width;
+	        locContentSize.height = size.height;
         } else {
-	        if ((size === locContentSize._width) && (height === locContentSize._height))
+	        if ((size === locContentSize.width) && (height === locContentSize.height))
 		        return;
-	        locContentSize._width = size;
-	        locContentSize._height = height;
+	        locContentSize.width = size;
+	        locContentSize.height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
         locAPP.x = locContentSize.width * locAnchorPoint.x;
@@ -947,7 +947,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
@@ -2074,7 +2074,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
@@ -2096,7 +2096,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
         rect = cc.RectApplyAffineTransform(rect, trans);
 
