@@ -1058,7 +1058,7 @@ window._c = cc.Texture2D;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_RGBA8888 = 0;
+_c.PIXEL_FORMAT_RGBA8888 = 2;
 
 /**
  * 24-bit texture: RGBA888
@@ -1068,7 +1068,7 @@ _c.PIXEL_FORMAT_RGBA8888 = 0;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_RGB888 = 1;
+_c.PIXEL_FORMAT_RGB888 = 3;
 
 /**
  * 16-bit texture without Alpha channel
@@ -1078,7 +1078,7 @@ _c.PIXEL_FORMAT_RGB888 = 1;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_RGB565 = 2;
+_c.PIXEL_FORMAT_RGB565 = 4;
 
 /**
  * 8-bit textures used as masks
@@ -1088,7 +1088,7 @@ _c.PIXEL_FORMAT_RGB565 = 2;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_A8 = 3;
+_c.PIXEL_FORMAT_A8 = 5;
 
 /**
  * 8-bit intensity texture
@@ -1098,7 +1098,7 @@ _c.PIXEL_FORMAT_A8 = 3;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_I8 = 4;
+_c.PIXEL_FORMAT_I8 = 6;
 
 /**
  * 16-bit textures used as masks
@@ -1108,7 +1108,7 @@ _c.PIXEL_FORMAT_I8 = 4;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_AI88 = 5;
+_c.PIXEL_FORMAT_AI88 = 7;
 
 /**
  * 16-bit textures: RGBA4444
@@ -1118,7 +1118,7 @@ _c.PIXEL_FORMAT_AI88 = 5;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_RGBA4444 = 6;
+_c.PIXEL_FORMAT_RGBA4444 = 8;
 
 /**
  * 16-bit textures: RGB5A1
@@ -1138,7 +1138,7 @@ _c.PIXEL_FORMAT_RGB5A1 = 7;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_PVRTC4 = 8;
+_c.PIXEL_FORMAT_PVRTC4 = 9;
 
 /**
  * 2-bit PVRTC-compressed texture: PVRTC2
@@ -1148,7 +1148,7 @@ _c.PIXEL_FORMAT_PVRTC4 = 8;
  * @constant
  * @type {Number}
  */
-_c.PIXEL_FORMAT_PVRTC2 = 9;
+_c.PIXEL_FORMAT_PVRTC2 = 10;
 
 /**
  * Default texture format: RGBA8888
