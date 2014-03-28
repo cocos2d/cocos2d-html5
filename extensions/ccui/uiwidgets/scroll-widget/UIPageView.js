@@ -576,7 +576,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         ccui.Layout.prototype.copySpecialProperties.call(this, pageView);
     },
 
-    doLayout: function () {
+    _doLayout: function () {
         if (!this._doLayoutDirty)
             return;
         this._doLayoutDirty = false;

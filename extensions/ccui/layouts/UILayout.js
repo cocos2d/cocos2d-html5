@@ -1448,7 +1448,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             }
         }
     },
-    doLayout: function () {
+    _doLayout: function () {
         if(!this._doLayoutDirty){
             return;
         }
