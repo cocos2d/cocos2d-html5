@@ -176,8 +176,8 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
                 locTweenData.scaleY -= 1;
             }
 
-            locWorldInfo.x = locTweenData.x + this._position._x;
-            locWorldInfo.y = locTweenData.y + this._position._y;
+            locWorldInfo.x = locTweenData.x + this._position.x;
+            locWorldInfo.y = locTweenData.y + this._position.y;
             locWorldInfo.scaleX = locTweenData.scaleX * this._scaleX;
             locWorldInfo.scaleY = locTweenData.scaleY * this._scaleY;
             locWorldInfo.skewX = locTweenData.skewX + this._skewX + this._rotationX;

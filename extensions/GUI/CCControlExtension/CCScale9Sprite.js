@@ -140,8 +140,8 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         var locTopLeftContentSize = locTopLeft.getContentSize();
         var locBottomLeftContentSize = locBottomLeft.getContentSize();
 
-        var sizableWidth = size._width - locTopLeftContentSize.width - locTopRight.getContentSize().width;
-        var sizableHeight = size._height - locTopLeftContentSize.height - locBottomRight.getContentSize().height;
+        var sizableWidth = size.width - locTopLeftContentSize.width - locTopRight.getContentSize().width;
+        var sizableHeight = size.height - locTopLeftContentSize.height - locBottomRight.getContentSize().height;
         var horizontalScale = sizableWidth / locCenterContentSize.width;
         var verticalScale = sizableHeight / locCenterContentSize.height;
         var rescaledWidth = locCenterContentSize.width * horizontalScale;
@@ -270,7 +270,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         }
         //backup the contentSize
         var contentSize = this._contentSize;
-        var tempWidth = contentSize._width, tempHeight = contentSize._height;
+        var tempWidth = contentSize.width, tempHeight = contentSize.height;
 
         this.updateWithBatchNode(this._scale9Image, this._spriteRect, this._spriteFrameRotated, capInsets);
         //restore the contentSize

@@ -41,7 +41,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      */
     ctor:function () {
         this._groupName = "";
-        this._positionOffset = cc._pConst(0,0);
+        this._positionOffset = cc.p(0,0);
         this._properties = [];
         this._objects = [];
     },
@@ -51,15 +51,15 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
      * @return {cc.Point}
      */
     getPositionOffset:function () {
-        return this._positionOffset;
+        return cc.p(this._positionOffset);
     },
 
     /**
      * @param {cc.Point} Var
      */
     setPositionOffset:function (Var) {
-        this._positionOffset._x = Var.x;
-        this._positionOffset._y = Var.y;
+        this._positionOffset.x = Var.x;
+        this._positionOffset.y = Var.y;
     },
 
     /**

@@ -405,23 +405,28 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                 switch (helper.type) {
                     case cc.TOUCH_BEGAN:
                         if (mutableTouches.length > 0) {
-                            if (handler.getDelegate().onTouchesBegan) handler.getDelegate().onTouchesBegan(mutableTouches, event);
+                            if (handler.getDelegate().onTouchesBegan)
+                                handler.getDelegate().onTouchesBegan(mutableTouches, event);
                         }
                         break;
                     case cc.TOUCH_MOVED:
                         if (mutableTouches.length > 0) {
                             if (cc.Browser.isMobile) {
-                                if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                                if (handler.getDelegate().onTouchesMoved)
+                                    handler.getDelegate().onTouchesMoved(mutableTouches, event);
                             } else {
-                                if (this._mousePressed && handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                                if (this._mousePressed && handler.getDelegate().onTouchesMoved)
+                                    handler.getDelegate().onTouchesMoved(mutableTouches, event);
                             }
                         }
                         break;
                     case cc.TOUCH_ENDED:
-                        if (handler.getDelegate().onTouchesEnded) handler.getDelegate().onTouchesEnded(mutableTouches, event);
+                        if (handler.getDelegate().onTouchesEnded && mutableTouches.length > 0)
+                            handler.getDelegate().onTouchesEnded(mutableTouches, event);
                         break;
                     case cc.TOUCH_CANCELLED:
-                        if (handler.getDelegate().onTouchesCancelled) handler.getDelegate().onTouchesCancelled(mutableTouches, event);
+                        if (handler.getDelegate().onTouchesCancelled)
+                            handler.getDelegate().onTouchesCancelled(mutableTouches, event);
                         break;
                 }
             }
