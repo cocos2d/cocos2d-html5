@@ -1586,7 +1586,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return this._innerContainer.getLayoutType();
     },
 
-    doLayout: function () {
+    _doLayout: function () {
         if (!this._doLayoutDirty)
             return;
         this._doLayoutDirty = false;
