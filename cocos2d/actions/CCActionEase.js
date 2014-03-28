@@ -33,9 +33,18 @@
 cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
     _inner:null,
 
-    ctor:function(){
+	/**
+	 * creates the action of ActionEase
+	 *
+	 * @constructor
+	 * @param {cc.ActionInterval} action
+	 *
+	 * @example
+	 * var moveEase = new cc.ActionEase(action);
+	 */
+    ctor: function (action) {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._inner = null;
+        action && this.initWithAction(action);
     },
 
     /** initializes the action
@@ -102,10 +111,7 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
  * var moveEase = cc.ActionEase.create(action);
  */
 cc.ActionEase.create = function (action) {
-    var ret = new cc.ActionEase();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.ActionEase(action);
 };
 
 /**
@@ -115,9 +121,22 @@ cc.ActionEase.create = function (action) {
  */
 cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
     _rate:0,
-    ctor:function(){
+
+	/**
+	 * Creates the action with the inner action and the rate parameter
+	 *
+	 * @constructor
+	 * @param {cc.ActionInterval} action
+	 * @param {Number} rate
+	 *
+	 * @example
+	 * // example
+	 * var moveEaseRateAction = new cc.EaseRateAction(action, 3.0);
+	 */
+    ctor: function(action, rate){
         cc.ActionEase.prototype.ctor.call(this);
-        this._rate = 0;
+
+		rate !== undefined && this.initWithAction(action, rate);
     },
 
     /** set rate value for the actions
@@ -171,10 +190,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
  * var moveEaseRateAction = cc.EaseRateAction.create(action, 3.0);
  */
 cc.EaseRateAction.create = function (action, rate) {
-    var ret = new cc.EaseRateAction();
-    if (ret)
-        ret.initWithAction(action, rate);
-    return ret;
+    return new cc.EaseRateAction(action, rate);
 };
 
 /**
@@ -213,10 +229,7 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
  * var moveEaseIn = cc.EaseIn.create(action, 3.0);
  */
 cc.EaseIn.create = function (action, rate) {
-    var ret = new cc.EaseIn();
-    if (ret)
-        ret.initWithAction(action, rate);
-    return ret;
+    return new cc.EaseIn(action, rate);
 };
 /**
  * cc.EaseOut action with a rate
@@ -254,10 +267,7 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
  * var moveEaseOut = cc.EaseOut.create(action, 3.0);
  */
 cc.EaseOut.create = function (action, rate) {
-    var ret = new cc.EaseOut();
-    if (ret)
-        ret.initWithAction(action, rate);
-    return ret;
+    return new cc.EaseOut(action, rate);
 };
 
 /**
@@ -300,10 +310,7 @@ cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
  * var moveEaseInOut = cc.EaseInOut.create(action, 3.0);
  */
 cc.EaseInOut.create = function (action, rate) {
-    var ret = new cc.EaseInOut();
-    if (ret)
-        ret.initWithAction(action, rate);
-    return ret;
+    return new cc.EaseInOut(action, rate);
 };
 /**
  * cc.Ease Exponential In
@@ -340,10 +347,7 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
  * var moveEaseExponentialIn = cc.EaseExponentialIn.create(action);
  */
 cc.EaseExponentialIn.create = function (action) {
-    var ret = new cc.EaseExponentialIn();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseExponentialIn(action);
 };
 /**
  * Ease Exponential Out
@@ -381,10 +385,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
  * var moveEaseExponentialOut = cc.EaseExponentialOut.create(action);
  */
 cc.EaseExponentialOut.create = function (action) {
-    var ret = new cc.EaseExponentialOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseExponentialOut(action);
 };
 
 /**
@@ -429,10 +430,7 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
  * var moveEaseExponentialInOut = cc.EaseExponentialInOut.create(action);
  */
 cc.EaseExponentialInOut.create = function (action) {
-    var ret = new cc.EaseExponentialInOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseExponentialInOut(action);
 };
 
 
@@ -472,10 +470,7 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
  * var moveSineIn = cc.EaseSineIn.create(action);
  */
 cc.EaseSineIn.create = function (action) {
-    var ret = new cc.EaseSineIn();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseSineIn(action);
 };
 /**
  * Ease Sine Out
@@ -514,10 +509,7 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
  * var moveEaseOut = cc.EaseSineOut.create(action);
  */
 cc.EaseSineOut.create = function (action) {
-    var ret = new cc.EaseSineOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseSineOut(action);
 };
 
 
@@ -558,10 +550,7 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
  * var moveEaseSineInOut = cc.EaseSineInOut.create(action);
  */
 cc.EaseSineInOut.create = function (action) {
-    var ret = new cc.EaseSineInOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseSineInOut(action);
 };
 
 /**
@@ -570,10 +559,22 @@ cc.EaseSineInOut.create = function (action) {
  * @extends cc.ActionEase
  */
 cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
-    _period:null,
-    ctor:function(){
+    _period: 0.3,
+
+	/** Creates the action with the inner action and the period in radians (default is 0.3)
+	 *
+	 * @constructor
+	 * @param {cc.ActionInterval} action
+	 * @param {Number} [period=0.3]
+	 *
+	 * @example
+	 * // example
+	 * var moveEaseElastic = new cc.EaseElastic(action, 3.0);
+	 */
+    ctor:function(action, period){
         cc.ActionEase.prototype.ctor.call(this);
-        this._period = 0.3;
+
+		action && this.initWithAction(action, period);
     },
 
     /** get period of the wave in radians. default is 0.3
@@ -624,10 +625,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
  * var moveEaseElastic = cc.EaseElastic.create(action, 3.0);
  */
 cc.EaseElastic.create = function (action, period) {
-    var ret = new cc.EaseElastic();
-    if (ret && ret.initWithAction(action, period))
-        return ret;
-    return null;
+    return new cc.EaseElastic(action, period);
 };
 
 /**
@@ -676,10 +674,7 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
  * var moveEaseElasticIn = cc.EaseElasticIn.create(action, 3.0);
  */
 cc.EaseElasticIn.create = function (action, period) {
-    var ret = new cc.EaseElasticIn();
-    if (ret && ret.initWithAction(action, period))
-        return ret;
-    return null;
+    return new cc.EaseElasticIn(action, period);
 };
 
 /**
@@ -728,10 +723,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
  * var moveEaseElasticOut = cc.EaseElasticOut.create(action, 3.0);
  */
 cc.EaseElasticOut.create = function (action, period) {
-    var ret = new cc.EaseElasticOut();
-    if (ret)
-        ret.initWithAction(action, period);
-    return ret;
+    return new cc.EaseElasticOut(action, period);
 };
 
 /**
@@ -787,10 +779,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
  * var moveEaseElasticInOut = cc.EaseElasticInOut.create(action, 3.0);
  */
 cc.EaseElasticInOut.create = function (action, period) {
-    var ret = new cc.EaseElasticInOut();
-    if (ret)
-        ret.initWithAction(action, period);
-    return ret;
+    return new cc.EaseElasticInOut(action, period);
 };
 
 /**
@@ -840,10 +829,7 @@ cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
  * var moveEaseBounce = cc.EaseBounce.create(action);
  */
 cc.EaseBounce.create = function (action) {
-    var ret = new cc.EaseBounce();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseBounce(action);
 };
 
 /**
@@ -883,10 +869,7 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
  * var moveEaseBounceIn = cc.EaseBounceIn.create(action);
  */
 cc.EaseBounceIn.create = function (action) {
-    var ret = new cc.EaseBounceIn();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseBounceIn(action);
 };
 /**
  * cc.EaseBounceOut action.
@@ -925,10 +908,7 @@ cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
  * var moveEaseBounceOut = cc.EaseBounceOut.create(action);
  */
 cc.EaseBounceOut.create = function (action) {
-    var ret = new cc.EaseBounceOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseBounceOut(action);
 };
 
 /**
@@ -974,10 +954,7 @@ cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
  * var moveEaseBounceInOut = cc.EaseBounceInOut.create(action);
  */
 cc.EaseBounceInOut.create = function (action) {
-    var ret = new cc.EaseBounceInOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseBounceInOut(action);
 };
 
 /**
@@ -1019,10 +996,7 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
  * var moveEaseBackIn = cc.EaseBackIn.create(action);
  */
 cc.EaseBackIn.create = function (action) {
-    var ret = new cc.EaseBackIn();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseBackIn(action);
 };
 
 /**
@@ -1064,10 +1038,7 @@ cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
  * var moveEaseBackOut = cc.EaseBackOut.create(action);
  */
 cc.EaseBackOut.create = function (action) {
-    var ret = new cc.EaseBackOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseBackOut(action);
 };
 
 /**
@@ -1115,9 +1086,6 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
  * var moveEaseBackInOut = cc.EaseBackInOut.create(action);
  */
 cc.EaseBackInOut.create = function (action) {
-    var ret = new cc.EaseBackInOut();
-    if (ret)
-        ret.initWithAction(action);
-    return ret;
+    return new cc.EaseBackInOut(action);
 };
 
