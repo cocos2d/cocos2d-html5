@@ -94,30 +94,32 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
  * @extends cc.ActionCamera
  */
 cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
-    _radius:0.0,
-    _deltaRadius:0.0,
-    _angleZ:0.0,
-    _deltaAngleZ:0.0,
-    _angleX:0.0,
-    _deltaAngleX:0.0,
-    _radZ:0.0,
-    _radDeltaZ:0.0,
-    _radX:0.0,
-    _radDeltaX:0.0,
+    _radius: 0.0,
+    _deltaRadius: 0.0,
+    _angleZ: 0.0,
+    _deltaAngleZ: 0.0,
+    _angleX: 0.0,
+    _deltaAngleX: 0.0,
+    _radZ: 0.0,
+    _radDeltaZ: 0.0,
+    _radX: 0.0,
+    _radDeltaX: 0.0,
 
-    ctor:function(){
+	/**
+	 * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
+	 * @constructor
+	 * @param {Number} t time
+	 * @param {Number} radius
+	 * @param {Number} deltaRadius
+	 * @param {Number} angleZ
+	 * @param {Number} deltaAngleZ
+	 * @param {Number} angleX
+	 * @param {Number} deltaAngleX
+	 */
+    ctor:function(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX){
         cc.ActionCamera.prototype.ctor.call(this);
 
-        this._radius=0.0;
-        this._deltaRadius=0.0;
-        this._angleZ=0.0;
-        this._deltaAngleZ=0.0;
-        this._angleX=0.0;
-        this._deltaAngleX=0.0;
-        this._radZ=0.0;
-        this._radDeltaZ=0.0;
-        this._radX=0.0;
-        this._radDeltaX=0.0;
+		deltaAngleX !== undefined && this.initWithDuration(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX);
     },
 
     /**
@@ -224,8 +226,5 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
  * @return {cc.OrbitCamera}
  */
 cc.OrbitCamera.create = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
-    var ret = new cc.OrbitCamera();
-    if (ret.initWithDuration(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX))
-        return ret;
-    return null;
+    return new cc.OrbitCamera(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX);
 };
