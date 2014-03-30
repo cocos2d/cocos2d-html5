@@ -2307,6 +2307,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
 cc.defineGetterSetter(_p, "x", _p.getPositionX, _p.setPositionX);
 cc.defineGetterSetter(_p, "y", _p.getPositionY, _p.setPositionY);
+cc.defineGetterSetter(_p, "position", _p.getPosition, _p.setPosition);
 /** @expose */
 //_p.pos;
 //cc.defineGetterSetter(_p, "pos", _p.getPosition, _p.setPosition);
