@@ -479,6 +479,7 @@ cc.CatmullRomBy = cc.CardinalSplineBy.extend({
 	 * var action1 = new cc.CatmullRomBy(3, array);
 	 */
 	ctor: function(dt, points) {
+		cc.CardinalSplineBy.prototype.ctor.call(this);
 		points && this.initWithDuration(dt, points);
 	},
 

@@ -444,8 +444,8 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         this._worldRect = cc.rect(0, 0, 0, 0);
 
 		if(followedNode)
-			rect ? ret.initWithTarget(followedNode, rect)
-				 : ret.initWithTarget(followedNode);
+			rect ? this.initWithTarget(followedNode, rect)
+				 : this.initWithTarget(followedNode);
     },
 
     clone:function () {
