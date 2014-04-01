@@ -495,11 +495,11 @@ cc.eventManager = /** @lends cc.eventManager# */{
         event._setCurrentTarget(listener._node);
         if(getCode == eventCode.BEGAN && listener.onTouchesBegan)
             listener.onTouchesBegan(touches, event);
-        if(getCode == eventCode.MOVED && listener.onTouchesMoved)
+        else if(getCode == eventCode.MOVED && listener.onTouchesMoved)
             listener.onTouchesMoved(touches, event);
-        if(getCode == eventCode.ENDED && listener.onTouchesEnded)
+        else if(getCode == eventCode.ENDED && listener.onTouchesEnded)
             listener.onTouchesEnded(touches, event);
-        if(getCode == eventCode.CANCELLED && listener.onTouchesCancelled)
+        else if(getCode == eventCode.CANCELLED && listener.onTouchesCancelled)
             listener.onTouchesCancelled(touches, event);
 
         // If the event was stopped, return directly.
