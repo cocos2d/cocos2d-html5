@@ -137,10 +137,11 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      * @param {cc.Color} color
      */
     setDrawColor: function (color) {
-        this._drawColor.r = color.r;
-        this._drawColor.g = color.g;
-        this._drawColor.b = color.b;
-        this._drawColor.a = color.a;
+        var locDrawColor = this._drawColor;
+        locDrawColor.r = color.r;
+        locDrawColor.g = color.g;
+        locDrawColor.b = color.b;
+        locDrawColor.a = (color.a == null) ? 255 : color.a;
     },
 
     /**
@@ -164,6 +165,9 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
         lineWidth = lineWidth || this._lineWidth;
         lineColor = lineColor || this.getDrawColor();
+        if(lineColor.a == null)
+            lineColor.a = 255;
+
         var vertices = [
             origin,
             cc.p(destination.x, origin.y),
@@ -179,6 +183,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
         element.lineCap = "butt";
         element.fillColor = fillColor;
         if (fillColor) {
+            if(fillColor.a == null)
+                fillColor.a = 255;
             element.isFill = true;
         }
         this._buffer.push(element);
@@ -198,6 +204,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     drawCircle: function (center, radius, angle, segments, drawLineToCenter, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
 
         var coef = 2.0 * Math.PI / segments;
         var vertices = [];
@@ -233,9 +241,10 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     drawQuadBezier: function (origin, control, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
 
-        var vertices = [];
-        var t = 0.0;
+        var vertices = [], t = 0.0;
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 2) * origin.x + 2.0 * (1 - t) * t * control.x + t * t * destination.x;
             var y = Math.pow(1 - t, 2) * origin.y + 2.0 * (1 - t) * t * control.y + t * t * destination.y;
@@ -267,9 +276,10 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     drawCubicBezier: function (origin, control1, control2, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
 
-        var vertices = [];
-        var t = 0;
+        var vertices = [], t = 0;
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 3) * origin.x + 3.0 * Math.pow(1 - t, 2) * t * control1.x + 3.0 * (1 - t) * t * t * control2.x + t * t * t * destination.x;
             var y = Math.pow(1 - t, 3) * origin.y + 3.0 * Math.pow(1 - t, 2) * t * control1.y + 3.0 * (1 - t) * t * t * control2.y + t * t * t * destination.y;
@@ -311,14 +321,12 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     drawCardinalSpline: function (config, tension, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
+        if(color.a == null)
+            color.a = 255;
 
-        var vertices = [];
-        var p, lt;
-        var deltaT = 1.0 / config.length;
-
+        var vertices = [], p, lt, deltaT = 1.0 / config.length;
         for (var i = 0; i < segments + 1; i++) {
             var dt = i / segments;
-
             // border
             if (dt == 1) {
                 p = config.length - 1;
@@ -355,6 +363,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
      */
     drawDot: function (pos, radius, color) {
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
         var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_DOT);
         element.verts = [pos];
         element.lineWidth = radius;
@@ -373,6 +383,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
         if(!points || points.length == 0)
             return;
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
         for(var i = 0, len = points.length; i < len; i++)
            this.drawDot(points[i], radius, color);
     },
@@ -387,7 +399,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     drawSegment: function (from, to, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
-
+        if (color.a == null)
+            color.a = 255;
         var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_POLY);
         element.verts = [from, to];
         element.lineWidth = lineWidth * 2;
@@ -407,6 +420,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     drawPoly_: function (verts, fillColor, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
         var element = new cc._DrawNodeElement(cc.DrawNode.TYPE_POLY);
         
         element.verts = verts;
@@ -416,9 +431,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
         element.isClosePolygon = true;
         element.isStroke = true;
         element.lineCap = "round";
-        if (fillColor) {
+        if (fillColor)
             element.isFill = true;
-        }
         this._buffer.push(element);
     },
     
@@ -438,30 +452,28 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     },
 
     draw: function (ctx) {
-        var context = ctx || cc._renderContext;
-        if ((this._blendFunc && (this._blendFunc.src == cc.SRC_ALPHA) && (this._blendFunc.dst == cc.ONE)))
+        var context = ctx || cc._renderContext, _t = this;
+        if ((_t._blendFunc && (_t._blendFunc.src == cc.SRC_ALPHA) && (_t._blendFunc.dst == cc.ONE)))
             context.globalCompositeOperation = 'lighter';
 
-        for (var i = 0; i < this._buffer.length; i++) {
-            var element = this._buffer[i];
+        for (var i = 0; i < _t._buffer.length; i++) {
+            var element = _t._buffer[i];
             switch (element.type) {
                 case cc.DrawNode.TYPE_DOT:
-                    this._drawDot(context, element);
+                    _t._drawDot(context, element);
                     break;
                 case cc.DrawNode.TYPE_SEGMENT:
-                    this._drawSegment(context, element);
+                    _t._drawSegment(context, element);
                     break;
                 case cc.DrawNode.TYPE_POLY:
-                    this._drawPoly(context, element);
+                    _t._drawPoly(context, element);
                     break;
             }
         }
     },
 
     _drawDot: function (ctx, element) {
-        var locColor = element.fillColor;
-        var locPos = element.verts[0];
-        var locRadius = element.lineWidth;
+        var locColor = element.fillColor, locPos = element.verts[0], locRadius = element.lineWidth;
         var locScaleX = cc.view.getScaleX(), locScaleY = cc.view.getScaleY();
 
         ctx.fillStyle = "rgba(" + (0 | locColor.r) + "," + (0 | locColor.g) + "," + (0 | locColor.b) + "," + locColor.a / 255 + ")";
@@ -609,10 +621,11 @@ cc.DrawNodeWebGL = cc.Node.extend({
      * @param {cc.Color} color
      */
     setDrawColor: function (color) {
-        this._drawColor.r = color.r;
-        this._drawColor.g = color.g;
-        this._drawColor.b = color.b;
-        this._drawColor.a = color.a;
+        var locDrawColor = this._drawColor;
+        locDrawColor.r = color.r;
+        locDrawColor.g = color.g;
+        locDrawColor.b = color.b;
+        locDrawColor.a = color.a;
     },
 
     /**
@@ -634,15 +647,12 @@ cc.DrawNodeWebGL = cc.Node.extend({
     drawRect: function (origin, destination, fillColor, lineWidth, lineColor) {
         lineWidth = lineWidth || this._lineWidth;
         lineColor = lineColor || this.getDrawColor();
-        var vertices = [
-            origin,
-            cc.p(destination.x, origin.y),
-            destination,
-            cc.p(origin.x, destination.y)
-        ];
-        if(fillColor == null){
+        if (lineColor.a == null)
+            lineColor.a = 255;
+        var vertices = [origin, cc.p(destination.x, origin.y), destination, cc.p(origin.x, destination.y)];
+        if(fillColor == null)
             this._drawSegments(vertices, lineWidth, lineColor, true);
-        } else
+        else
             this.drawPoly(vertices, fillColor, lineWidth, lineColor);
     },
 
@@ -660,10 +670,10 @@ cc.DrawNodeWebGL = cc.Node.extend({
     drawCircle: function (center, radius, angle, segments, drawLineToCenter, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
-
-        var coef = 2.0 * Math.PI / segments;
-        var vertices = [];
-        for (var i = 0; i <= segments; i++) {
+        if (color.a == null)
+            color.a = 255;
+        var coef = 2.0 * Math.PI / segments, vertices = [], i, len;
+        for (i = 0; i <= segments; i++) {
             var rads = i * coef;
             var j = radius * Math.cos(rads + angle) + center.x;
             var k = radius * Math.sin(rads + angle) + center.y;
@@ -673,8 +683,8 @@ cc.DrawNodeWebGL = cc.Node.extend({
             vertices.push(cc.p(center.x, center.y));
 
         lineWidth *= 0.5;
-        for (var j = 0, len = vertices.length; j < len - 1; j++)
-            this.drawSegment(vertices[j], vertices[j + 1], lineWidth, color);
+        for (i = 0, len = vertices.length; i < len - 1; i++)
+            this.drawSegment(vertices[i], vertices[i + 1], lineWidth, color);
     },
 
     /**
@@ -690,9 +700,9 @@ cc.DrawNodeWebGL = cc.Node.extend({
     drawQuadBezier: function (origin, control, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
-
-        var vertices = [];
-        var t = 0.0;
+        if (color.a == null)
+            color.a = 255;
+        var vertices = [], t = 0.0;
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 2) * origin.x + 2.0 * (1 - t) * t * control.x + t * t * destination.x;
             var y = Math.pow(1 - t, 2) * origin.y + 2.0 * (1 - t) * t * control.y + t * t * destination.y;
@@ -717,9 +727,9 @@ cc.DrawNodeWebGL = cc.Node.extend({
     drawCubicBezier: function (origin, control1, control2, destination, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
-
-        var vertices = [];
-        var t = 0;
+        if (color.a == null)
+            color.a = 255;
+        var vertices = [], t = 0;
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 3) * origin.x + 3.0 * Math.pow(1 - t, 2) * t * control1.x + 3.0 * (1 - t) * t * t * control2.x + t * t * t * destination.x;
             var y = Math.pow(1 - t, 3) * origin.y + 3.0 * Math.pow(1 - t, 2) * t * control1.y + 3.0 * (1 - t) * t * t * control2.y + t * t * t * destination.y;
@@ -754,9 +764,9 @@ cc.DrawNodeWebGL = cc.Node.extend({
     drawCardinalSpline: function (config, tension, segments, lineWidth, color) {
         lineWidth = lineWidth || this._lineWidth;
         color = color || this.getDrawColor();
-
-        var vertices = [], p, lt;
-        var deltaT = 1.0 / config.length;
+        if (color.a == null)
+            color.a = 255;
+        var vertices = [], p, lt, deltaT = 1.0 / config.length;
 
         for (var i = 0; i < segments + 1; i++) {
             var dt = i / segments;
@@ -809,26 +819,27 @@ cc.DrawNodeWebGL = cc.Node.extend({
     },
 
     _ensureCapacity:function(count){
-        var locBuffer = this._buffer;
-        if(locBuffer.length + count > this._bufferCapacity){
+        var _t = this;
+        var locBuffer = _t._buffer;
+        if(locBuffer.length + count > _t._bufferCapacity){
             var TriangleLength = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT;
-            this._bufferCapacity += Math.max(this._bufferCapacity, count);
+            _t._bufferCapacity += Math.max(_t._bufferCapacity, count);
             //re alloc
             if((locBuffer == null) || (locBuffer.length === 0)){
                 //init
-                this._buffer = [];
-                this._trianglesArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
-                this._trianglesReader = new Uint8Array(this._trianglesArrayBuffer);
+                _t._buffer = [];
+                _t._trianglesArrayBuffer = new ArrayBuffer(TriangleLength * _t._bufferCapacity);
+                _t._trianglesReader = new Uint8Array(_t._trianglesArrayBuffer);
             } else {
                 var newTriangles = [];
-                var newArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
+                var newArrayBuffer = new ArrayBuffer(TriangleLength * _t._bufferCapacity);
                 for(var i = 0; i < locBuffer.length;i++){
                     newTriangles[i] = new cc.V2F_C4B_T2F_Triangle(locBuffer[i].a,locBuffer[i].b,locBuffer[i].c,
                         newArrayBuffer, i * TriangleLength);
                 }
-                this._trianglesReader = new Uint8Array(newArrayBuffer);
-                this._trianglesArrayBuffer = newArrayBuffer;
-                this._buffer = newTriangles;
+                _t._trianglesReader = new Uint8Array(newArrayBuffer);
+                _t._trianglesArrayBuffer = newArrayBuffer;
+                _t._buffer = newTriangles;
             }
         }
     },
@@ -842,6 +853,8 @@ cc.DrawNodeWebGL = cc.Node.extend({
 
     drawDot:function (pos, radius, color) {
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
         var c4bColor = {r: 0 | color.r, g: 0 | color.g, b: 0 | color.b, a: 0 | color.a};
         var a = {vertices: {x: pos.x - radius, y: pos.y - radius}, colors: c4bColor, texCoords: {u: -1.0, v: -1.0}};
         var b = {vertices: {x: pos.x - radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: -1.0, v: 1.0}};
@@ -856,25 +869,25 @@ cc.DrawNodeWebGL = cc.Node.extend({
         if(!points || points.length == 0)
             return;
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
         for(var i = 0, len = points.length; i < len; i++)
             this.drawDot(points[i], radius, color);
     },
 
     drawSegment:function (from, to, radius, color) {
         color = color || this.getDrawColor();
+        if (color.a == null)
+            color.a = 255;
         radius = radius || (this._lineWidth * 0.5);
         var vertexCount = 6*3;
         this._ensureCapacity(vertexCount);
 
         var c4bColor = {r: 0 | color.r, g: 0 | color.g, b: 0 | color.b, a: 0 | color.a};
-        var a = cc.__v2f(from);
-        var b = cc.__v2f(to);
+        var a = cc.__v2f(from), b = cc.__v2f(to);
+        var n = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(b, a))), t = cc.v2fperp(n);
+        var nw = cc.v2fmult(n, radius), tw = cc.v2fmult(t, radius);
 
-        var n = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(b, a)));
-        var t = cc.v2fperp(n);
-
-        var nw = cc.v2fmult(n, radius);
-        var tw = cc.v2fmult(t, radius);
         var v0 = cc.v2fsub(b, cc.v2fadd(nw, tw));
         var v1 = cc.v2fadd(b, cc.v2fsub(nw, tw));
         var v2 = cc.v2fsub(b, nw);
@@ -884,30 +897,30 @@ cc.DrawNodeWebGL = cc.Node.extend({
         var v6 = cc.v2fsub(a, cc.v2fsub(nw, tw));
         var v7 = cc.v2fadd(a, cc.v2fadd(nw, tw));
 
-        var TriangleLength = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT, triangleBuffer = this._trianglesArrayBuffer;
-        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v0, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(cc.v2fadd(n, t)))},
+        var TriangleLength = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT, triangleBuffer = this._trianglesArrayBuffer, locBuffer = this._buffer;
+        locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v0, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(cc.v2fadd(n, t)))},
             {vertices: v1, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(n, t))}, {vertices: v2, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))},
-            triangleBuffer, this._buffer.length * TriangleLength));
+            triangleBuffer, locBuffer.length * TriangleLength));
 
-        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
+        locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
             {vertices: v1, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(n, t))}, {vertices: v2, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))},
-            triangleBuffer, this._buffer.length * TriangleLength));
+            triangleBuffer, locBuffer.length * TriangleLength));
 
-        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
+        locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
             {vertices: v4, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))}, {vertices: v2, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))},
-            triangleBuffer, this._buffer.length * TriangleLength));
+            triangleBuffer, locBuffer.length * TriangleLength));
 
-        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
+        locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
             {vertices: v4, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))}, {vertices: v5, colors: c4bColor, texCoords: cc.__t(n)},
-            triangleBuffer, this._buffer.length * TriangleLength));
+            triangleBuffer, locBuffer.length * TriangleLength));
 
-        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v6, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(t, n))},
+        locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v6, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(t, n))},
             {vertices: v4, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))}, {vertices: v5, colors: c4bColor, texCoords: cc.__t(n)},
-            triangleBuffer, this._buffer.length * TriangleLength));
+            triangleBuffer, locBuffer.length * TriangleLength));
 
-        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v6, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(t, n))},
+        locBuffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v6, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(t, n))},
             {vertices: v7, colors: c4bColor, texCoords: cc.__t(cc.v2fadd(n, t))}, {vertices: v5, colors: c4bColor, texCoords: cc.__t(n)},
-            triangleBuffer, this._buffer.length * TriangleLength));
+            triangleBuffer, locBuffer.length * TriangleLength));
         this._dirty = true;
     },
 
@@ -916,13 +929,15 @@ cc.DrawNodeWebGL = cc.Node.extend({
             this._drawSegments(verts, borderWidth, borderColor, true);
             return;
         }
+        if (fillColor.a == null)
+            fillColor.a = 255;
+        if (borderColor.a == null)
+            borderColor.a = 255;
         borderWidth = borderWidth || this._lineWidth;
         borderWidth *= 0.5;
         var c4bFillColor = {r: 0 | fillColor.r, g: 0 | fillColor.g, b: 0 | fillColor.b, a: 0 | fillColor.a};
         var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a};
-        var extrude = [], i;
-        var v0, v1, v2;
-        var count = verts.length;
+        var extrude = [], i, v0, v1, v2, count = verts.length;
         for (i = 0; i < count; i++) {
             v0 = cc.__v2f(verts[(i - 1 + count) % count]);
             v1 = cc.__v2f(verts[i]);
@@ -932,10 +947,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
             var offset = cc.v2fmult(cc.v2fadd(n1, n2), 1.0 / (cc.v2fdot(n1, n2) + 1.0));
             extrude[i] = {offset: offset, n: n2};
         }
-        var outline = (borderWidth > 0.0);
-
-        var triangleCount = 3 * count -2;
-        var vertexCount = 3 * triangleCount;
+        var outline = (borderWidth > 0.0), triangleCount = 3 * count - 2, vertexCount = 3 * triangleCount;
         this._ensureCapacity(vertexCount);
 
         var triangleBytesLen = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT, trianglesBuffer = this._trianglesArrayBuffer;
@@ -986,14 +998,14 @@ cc.DrawNodeWebGL = cc.Node.extend({
     _drawSegments: function(verts, borderWidth, borderColor, closePoly){
         borderWidth = borderWidth || this._lineWidth;
         borderColor = borderColor || this._drawColor;
+        if(borderColor.a == null)
+            borderColor.a = 255;
         borderWidth *= 0.5;
         if (borderWidth <= 0)
             return;
 
         var c4bBorderColor = {r: 0 | borderColor.r, g: 0 | borderColor.g, b: 0 | borderColor.b, a: 0 | borderColor.a };
-        var extrude = [], i;
-        var v0, v1, v2;
-        var count = verts.length;
+        var extrude = [], i, v0, v1, v2, count = verts.length;
         for (i = 0; i < count; i++) {
             v0 = cc.__v2f(verts[(i - 1 + count) % count]);
             v1 = cc.__v2f(verts[i]);
@@ -1004,8 +1016,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
             extrude[i] = {offset: offset, n: n2};
         }
 
-        var triangleCount = 3 * count - 2;
-        var vertexCount = 3 * triangleCount;
+        var triangleCount = 3 * count - 2, vertexCount = 3 * triangleCount;
         this._ensureCapacity(vertexCount);
 
         var triangleBytesLen = cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT, trianglesBuffer = this._trianglesArrayBuffer;
@@ -1054,15 +1065,16 @@ cc.DrawNode.create = function () {
 };
 
 cc._DrawNodeElement = function (type, verts, fillColor, lineWidth, lineColor, lineCap, isClosePolygon, isFill, isStroke) {
-    this.type = type;
-    this.verts = verts || null;
-    this.fillColor = fillColor || null;
-    this.lineWidth = lineWidth || 0;
-    this.lineColor = lineColor || null;
-    this.lineCap = lineCap || "butt";
-    this.isClosePolygon = isClosePolygon || false;
-    this.isFill = isFill || false;
-    this.isStroke = isStroke || false;
+    var _t = this;
+    _t.type = type;
+    _t.verts = verts || null;
+    _t.fillColor = fillColor || null;
+    _t.lineWidth = lineWidth || 0;
+    _t.lineColor = lineColor || null;
+    _t.lineCap = lineCap || "butt";
+    _t.isClosePolygon = isClosePolygon || false;
+    _t.isFill = isFill || false;
+    _t.isStroke = isStroke || false;
 };
 
 cc.DrawNode.TYPE_DOT = 0;
