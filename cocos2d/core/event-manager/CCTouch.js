@@ -168,7 +168,3 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
             this._prevPoint = cc.p(x || 0, y || 0);
     }
 });
-
-//how the touches are dispatched
-cc.Touch.ALL_AT_ONCE = 0;
-cc.Touch.ONE_BY_ONE = 1;
