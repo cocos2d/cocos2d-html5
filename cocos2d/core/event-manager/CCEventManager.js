@@ -70,25 +70,21 @@ cc._EventListenerVector = cc.Class.extend({
 });
 
 cc.__getListenerID = function (event) {
-    var eventType = cc.Event;
-    switch (event.getType()) {
-        case eventType.ACCELERATION:
-            return cc._EventListenerAcceleration.LISTENER_ID;
-        case eventType.CUSTOM:
-            return event.getEventName();
-        case eventType.KEYBOARD:
-            return cc._EventListenerKeyboard.LISTENER_ID;
-        case eventType.MOUSE:
-            return cc._EventListenerMouse.LISTENER_ID;
-        case eventType.TOUCH:
-            // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
-            // return UNKNOWN instead.
-            cc.log("Don't call this method if the event is for touch.");
-            return "";
-        default:
-            cc.log("Invalid event type!");
-            return "";
+    var eventType = cc.Event, getType = event.getType();
+    if(getType === eventType.ACCELERATION)
+        return cc._EventListenerAcceleration.LISTENER_ID;
+    if(getType === eventType.CUSTOM)
+        return event.getEventName();
+    if(getType === eventType.KEYBOARD)
+        return cc._EventListenerKeyboard.LISTENER_ID;
+    if(getType === eventType.MOUSE)
+        return cc._EventListenerMouse.LISTENER_ID;
+    if(getType === eventType.TOUCH){
+        // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
+        // return UNKNOWN instead.
+        cc.log("Don't call this method if the event is for touch.");
     }
+    return "";
 };
 
 /**
@@ -412,26 +408,18 @@ cc.eventManager = /** @lends cc.eventManager# */{
         } else if (listener._claimedTouches.length > 0
             && ((removedIdx = listener._claimedTouches.indexOf(selTouch)) != -1)) {
             isClaimed = true;
-            switch (getCode) {
-                case eventCode.MOVED:
-                    if (listener.onTouchMoved)
-                        listener.onTouchMoved(selTouch, event);
-                    break;
-                case eventCode.ENDED:
-                    if (listener.onTouchEnded)
-                        listener.onTouchEnded(selTouch, event);
-                    if (listener._registered)
-                        listener._claimedTouches.splice(removedIdx, 1);
-                    break;
-                case eventCode.CANCELLED:
-                    if (listener.onTouchCancelled)
-                        listener.onTouchCancelled(selTouch, event);
-                    if (listener._registered)
-                        listener._claimedTouches.splice(removedIdx, 1)
-                    break;
-                default:
-                    cc.log("The event code is invalid.");
-                    break;
+            if(getCode === eventCode.MOVED && listener.onTouchMoved){
+                listener.onTouchMoved(selTouch, event);
+            } else if(getCode === eventCode.ENDED){
+                if (listener.onTouchEnded)
+                    listener.onTouchEnded(selTouch, event);
+                if (listener._registered)
+                    listener._claimedTouches.splice(removedIdx, 1);
+            } else if(getCode === eventCode.CANCELLED){
+                if (listener.onTouchCancelled)
+                    listener.onTouchCancelled(selTouch, event);
+                if (listener._registered)
+                    listener._claimedTouches.splice(removedIdx, 1);
             }
         }
 
