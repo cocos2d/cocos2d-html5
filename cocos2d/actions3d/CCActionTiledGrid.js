@@ -33,10 +33,17 @@ cc.ShakyTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShakyTiles3D# */{
     _randRange:0,
     _shakeZ:false,
 
-    ctor:function () {
+	/**
+	 * creates the action with a range, whether or not to shake Z vertices, a grid size, and duration
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {cc.Size} gridSize
+	 * @param {Number} range
+	 * @param {Boolean} shakeZ
+	 */
+    ctor:function (duration, gridSize, range, shakeZ) {
         cc.GridAction.prototype.ctor.call(this);
-        this._randRange = 0;
-        this._shakeZ = false;
+		shakeZ !== undefined && this.initWithDuration(duration, gridSize, range, shakeZ);
     },
 
     /**
@@ -99,9 +106,7 @@ cc.ShakyTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShakyTiles3D# */{
  * @return {cc.ShakyTiles3D}
  */
 cc.ShakyTiles3D.create = function (duration, gridSize, range, shakeZ) {
-    var action = new cc.ShakyTiles3D();
-    action.initWithDuration(duration, gridSize, range, shakeZ);
-    return action;
+    return new cc.ShakyTiles3D(duration, gridSize, range, shakeZ);
 };
 
 /**
@@ -114,11 +119,17 @@ cc.ShatteredTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShatteredTiles3D
     _once:false,
     _shatterZ:false,
 
-    ctor:function () {
+	/**
+	 * creates the action with a range, whether of not to shatter Z vertices, a grid size and duration
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {cc.Size} gridSize
+	 * @param {Number} range
+	 * @param {Boolean} shatterZ
+	 */
+    ctor:function (duration, gridSize, range, shatterZ) {
         cc.GridAction.prototype.ctor.call(this);
-        this._randRange = 0;
-        this._shakeZ = false;
-        this._once = false;
+		shatterZ !== undefined && this.initWithDuration(duration, gridSize, range, shatterZ);
     },
 
     /**
@@ -184,9 +195,7 @@ cc.ShatteredTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShatteredTiles3D
  * @return {cc.ShatteredTiles3D}
  */
 cc.ShatteredTiles3D.create = function (duration, gridSize, range, shatterZ) {
-    var action = new cc.ShatteredTiles3D();
-    action.initWithDuration(duration, gridSize, range, shatterZ);
-    return action;
+    return new cc.ShatteredTiles3D(duration, gridSize, range, shatterZ);
 };
 
 /**
@@ -214,12 +223,19 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
     _tilesOrder:null,
     _tiles:null,
 
-    ctor:function () {
+	/**
+	 * creates the action with a random seed, the grid size and the duration
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {cc.Size} gridSize
+	 * @param {Number} seed
+	 */
+    ctor:function (duration, gridSize, seed) {
         cc.GridAction.prototype.ctor.call(this);
         this._tilesOrder = [];
         this._tiles = [];
-        this._seed = 0;
-        this._tilesCount = 0;
+
+		seed !== undefined && this.initWithDuration(duration, gridSize, seed);
     },
 
     /**
@@ -350,9 +366,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
  * @return {cc.ShuffleTiles}
  */
 cc.ShuffleTiles.create = function (duration, gridSize, seed) {
-    var action = new cc.ShuffleTiles();
-    action.initWithDuration(duration, gridSize, seed);
-    return action;
+    return new cc.ShuffleTiles(duration, gridSize, seed);
 };
 
 /**
@@ -441,9 +455,7 @@ cc.FadeOutTRTiles = cc.TiledGrid3DAction.extend(/** @lends cc.FadeOutTRTiles# */
  * @return {cc.FadeOutTRTiles}
  */
 cc.FadeOutTRTiles.create = function (duration, gridSize) {
-    var action = new cc.FadeOutTRTiles();
-    action.initWithDuration(duration, gridSize);
-    return action;
+    return new cc.FadeOutTRTiles(duration, gridSize);
 };
 
 /**
@@ -473,9 +485,7 @@ cc.FadeOutBLTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutBLTiles# */{
  * @return {cc.FadeOutBLTiles}
  */
 cc.FadeOutBLTiles.create = function (duration, gridSize) {
-    var action = new cc.FadeOutBLTiles();
-    action.initWithDuration(duration, gridSize);
-    return action;
+    return new cc.FadeOutBLTiles(duration, gridSize);
 };
 
 /**
@@ -511,9 +521,7 @@ cc.FadeOutUpTiles = cc.FadeOutTRTiles.extend(/** @lends cc.FadeOutUpTiles# */{
  * @return {cc.FadeOutUpTiles}
  */
 cc.FadeOutUpTiles.create = function (duration, gridSize) {
-    var action = new cc.FadeOutUpTiles();
-    action.initWithDuration(duration, gridSize);
-    return action;
+    return new cc.FadeOutUpTiles(duration, gridSize);
 };
 
 /**
@@ -537,9 +545,7 @@ cc.FadeOutDownTiles = cc.FadeOutUpTiles.extend(/** @lends cc.FadeOutDownTiles# *
  * @return {cc.FadeOutDownTiles}
  */
 cc.FadeOutDownTiles.create = function (duration, gridSize) {
-    var action = new cc.FadeOutDownTiles();
-    action.initWithDuration(duration, gridSize);
-    return action;
+    return new cc.FadeOutDownTiles(duration, gridSize);
 };
 
 
@@ -554,22 +560,34 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
     _tilesCount:0,
     _tilesOrder:null,
 
-    ctor:function () {
+	/**
+	 * creates the action with a random seed, the grid size and the duration
+	 * @param {Number} duration
+	 * @param {cc.Size} gridSize
+	 * @param {Number|Null} [seed=0]
+	 * @example
+	 * // turnOffTiles without seed
+	 * var toff = new cc.TurnOffTiles(this._duration, cc.size(x, y));
+	 *
+	 * // turnOffTiles with seed
+	 * var toff = new cc.TurnOffTiles(this._duration, cc.size(x, y), 0);
+	 */
+    ctor:function (duration, gridSize, seed) {
         cc.GridAction.prototype.ctor.call(this);
         this._tilesOrder = [];
-        this._seed = null;
-        this._tilesCount = 0;
+
+		gridSize !== undefined && this.initWithDuration(duration, gridSize, seed);
     },
 
     /** initializes the action with a random seed, the grid size and the duration
      * @param {Number} duration
      * @param {cc.Size} gridSize
-     * @param {Number} seed
+     * @param {Number|Null} [seed=0]
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize, seed) {
         if (cc.TiledGrid3DAction.prototype.initWithDuration.call(this, duration, gridSize)) {
-            this._seed = seed;
+            this._seed = seed || 0;
             this._tilesOrder.length = 0;
             return true;
         }
@@ -650,10 +668,7 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
  * var toff = cc.TurnOffTiles.create(this._duration, cc.size(x, y), 0);
  */
 cc.TurnOffTiles.create = function (duration, gridSize, seed) {
-    seed = seed || 0;
-    var action = new cc.TurnOffTiles();
-    action.initWithDuration(duration, gridSize, seed);
-    return action;
+    return new cc.TurnOffTiles(duration, gridSize, seed);
 };
 
 /**
@@ -666,11 +681,17 @@ cc.WavesTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.WavesTiles3D# */{
     _amplitude:0,
     _amplitudeRate:0,
 
-    ctor:function () {
+	/**
+	 * creates the action with a number of waves, the waves amplitude, the grid size and the duration
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {cc.Size} gridSize
+	 * @param {Number} waves
+	 * @param {Number} amplitude
+	 */
+    ctor:function (duration, gridSize, waves, amplitude) {
         cc.GridAction.prototype.ctor.call(this);
-        this._waves = 0;
-        this._amplitude = 0;
-        this._amplitudeRate = 0;
+		amplitude !== undefined && this.initWithDuration(duration, gridSize, waves, amplitude);
     },
 
     /**
@@ -751,9 +772,7 @@ cc.WavesTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.WavesTiles3D# */{
  * @return {cc.WavesTiles3D}
  */
 cc.WavesTiles3D.create = function (duration, gridSize, waves, amplitude) {
-    var action = new cc.WavesTiles3D();
-    action.initWithDuration(duration, gridSize, waves, amplitude);
-    return action;
+    return new cc.WavesTiles3D(duration, gridSize, waves, amplitude);
 };
 
 /**
@@ -766,11 +785,17 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
     _amplitude:0,
     _amplitudeRate:0,
 
-    ctor:function () {
+	/**
+	 * creates the action with the number of jumps, the sin amplitude, the grid size and the duration
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {cc.Size} gridSize
+	 * @param {Number} numberOfJumps
+	 * @param {Number} amplitude
+	 */
+    ctor:function (duration, gridSize, numberOfJumps, amplitude) {
         cc.GridAction.prototype.ctor.call(this);
-        this._jumps = 0;
-        this._amplitude = 0;
-        this._amplitudeRate = 0;
+		amplitude !== undefined && this.initWithDuration(duration, gridSize, numberOfJumps, amplitude);
     },
 
     /**
@@ -865,9 +890,7 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
  * @return {cc.JumpTiles3D}
  */
 cc.JumpTiles3D.create = function (duration, gridSize, numberOfJumps, amplitude) {
-    var action = new cc.JumpTiles3D();
-    action.initWithDuration(duration, gridSize, numberOfJumps, amplitude);
-    return action;
+    return new cc.JumpTiles3D(duration, gridSize, numberOfJumps, amplitude);
 };
 
 /**
@@ -879,10 +902,15 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
     _rows:0,
     _winSize:null,
 
-    ctor:function () {
+	/**
+	 * creates the action with the number of rows to split and the duration
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {Number} rows
+	 */
+    ctor:function (duration, rows) {
         cc.GridAction.prototype.ctor.call(this);
-        this._rows = 0;
-        this._winSize = null;
+		rows !== undefined && this.initWithDuration(duration, rows);
     },
 
     /**
@@ -929,9 +957,7 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
  * @return {cc.SplitRows}
  */
 cc.SplitRows.create = function (duration, rows) {
-    var action = new cc.SplitRows();
-    action.initWithDuration(duration, rows);
-    return action;
+    return new cc.SplitRows(duration, rows);
 };
 
 /**
@@ -943,10 +969,15 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
     _cols:0,
     _winSize:null,
 
-    ctor:function () {
+	/**
+	 * Creates the action with the number of columns to split and the duration
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {Number} cols
+	 */
+    ctor:function (duration, cols) {
         cc.GridAction.prototype.ctor.call(this);
-        this._cols = 0;
-        this._winSize = null;
+		cols !== undefined && this.initWithDuration(duration, cols);
     },
     /**
      * initializes the action with the number of columns to split and the duration
@@ -995,7 +1026,5 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
  * @return {cc.SplitCols}
  */
 cc.SplitCols.create = function (duration, cols) {
-    var action = new cc.SplitCols();
-    action.initWithDuration(duration, cols);
-    return action;
+    return new cc.SplitCols(duration, cols);
 };

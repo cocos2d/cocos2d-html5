@@ -220,18 +220,17 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * Otherwise it will return a reference of a previously loaded image. <br />
      * Supported image extensions: .png, .jpg, .gif</p>
      * @param {String} url
+     * @param {Function} cb
+     * @param {Object} target
      * @return {cc.Texture2D}
      * @example
      * //example
      * cc.textureCache.addImage("hello.png");
      */
-    addImage:function (url, target, cb) {
+    addImage:function (url, cb, target) {
         if(!url)
             throw "cc.Texture.addImage(): path should be non-null";
-        if(arguments.length == 2){
-            cb = target;
-            target = null;
-        }
+
         var locTexs = this._textures;
         if(cc._renderType === cc._RENDER_TYPE_WEBGL && !cc._rendererInitialized){
             locTexs = this._loadedTexturesBefore;

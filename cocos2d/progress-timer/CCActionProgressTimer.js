@@ -32,10 +32,20 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     _to:0,
     _from:0,
 
-    ctor: function(){
+	/**
+	 * Creates a ProgressTo action with a duration and a percent
+	 * @constructor
+	 * @param {Number} duration duration in seconds
+	 * @param {Number} percent
+	 * @example
+	 * var to = new cc.ProgressTo(2, 100);
+	 */
+    ctor: function(duration, percent){
         cc.ActionInterval.prototype.ctor.call(this);
         this._to = 0;
         this._from = 0;
+
+		percent !== undefined && this.initWithDuration(duration, percent);
     },
 
     /** Initializes with a duration and a percent
@@ -91,12 +101,9 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
  * @example
  * // example
  * var to = cc.ProgressTo.create(2, 100);
- *
  */
 cc.ProgressTo.create = function (duration, percent) {
-    var progressTo = new cc.ProgressTo();
-    progressTo.initWithDuration(duration, percent);
-    return progressTo;
+    return new cc.ProgressTo(duration, percent);
 };
 
 /**
@@ -108,10 +115,21 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
     _to:0,
     _from:0,
 
-    ctor:function(){
+	/**
+	 * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
+	 * @constructor
+	 * @param {Number} duration duration in seconds
+	 * @param {Number} fromPercentage
+	 * @param {Number} toPercentage
+	 * @example
+	 *  var fromTo = new cc.ProgressFromTo(2, 100.0, 0.0);
+	 */
+    ctor:function(duration, fromPercentage, toPercentage){
         cc.ActionInterval.prototype.ctor.call(this);
         this._to = 0;
         this._from = 0;
+
+		toPercentage !== undefined && this.initWithDuration(duration, fromPercentage, toPercentage);
     },
 
     /** Initializes the action with a duration, a "from" percentage and a "to" percentage
@@ -168,7 +186,5 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
  *  var fromTO = cc.ProgressFromTo.create(2, 100.0, 0.0);
  */
 cc.ProgressFromTo.create = function (duration, fromPercentage, toPercentage) {
-    var progressFromTo = new cc.ProgressFromTo();
-    progressFromTo.initWithDuration(duration, fromPercentage, toPercentage);
-    return progressFromTo;
+    return new cc.ProgressFromTo(duration, fromPercentage, toPercentage);
 };
