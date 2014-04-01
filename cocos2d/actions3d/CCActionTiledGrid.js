@@ -129,7 +129,7 @@ cc.ShatteredTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShatteredTiles3D
 	 */
     ctor:function (duration, gridSize, range, shatterZ) {
         cc.GridAction.prototype.ctor.call(this);
-		shatterZ !== undefined && this,initWithDuration(duration, gridSize, range, shatterZ);
+		shatterZ !== undefined && this.initWithDuration(duration, gridSize, range, shatterZ);
     },
 
     /**

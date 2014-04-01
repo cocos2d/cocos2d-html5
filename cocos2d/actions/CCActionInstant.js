@@ -463,7 +463,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
             this._selectorTarget = selectorTarget;
 	    }
 	    else if (selector)
-		    this._function = func;
+		    this._function = selector;
         return true;
     },
 
