@@ -125,7 +125,7 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
  * var hideAction = cc.Hide.create();
  */
 cc.Hide.create = function () {
-    return (new cc.Hide());
+    return new cc.Hide();
 };
 
 
@@ -160,14 +160,26 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
  * var toggleVisibilityAction = cc.ToggleVisibility.create();
  */
 cc.ToggleVisibility.create = function () {
-    return (new cc.ToggleVisibility());
+    return new cc.ToggleVisibility();
 };
 
 cc.RemoveSelf = cc.ActionInstant.extend({
-     _isNeedCleanUp:true,
-    ctor:function(){
+     _isNeedCleanUp: true,
+
+	/**
+	 * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
+	 *
+	 * @constructor
+	 * @param {Boolean} [isNeedCleanUp=true]
+	 *
+	 * @example
+	 * // example
+	 * var removeSelfAction = new cc.RemoveSelf(false);
+	 */
+    ctor:function(isNeedCleanUp){
         cc.FiniteTimeAction.prototype.ctor.call(this);
-        this._isNeedCleanUp = true;
+
+	    isNeedCleanUp !== undefined && this.init(isNeedCleanUp);
     },
 
     update:function(time){
@@ -188,13 +200,18 @@ cc.RemoveSelf = cc.ActionInstant.extend({
     }
 });
 
+/**
+ * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
+ *
+ * @param {Boolean} [isNeedCleanUp=true]
+ * @return {cc.RemoveSelf}
+ *
+ * @example
+ * // example
+ * var removeSelfAction = cc.RemoveSelf.create();
+ */
 cc.RemoveSelf.create = function(isNeedCleanUp){
-    if(isNeedCleanUp == null)
-        isNeedCleanUp = true;
-    var removeSelf = new cc.RemoveSelf();
-    if(removeSelf)
-        removeSelf.init(isNeedCleanUp);
-    return removeSelf;
+    return new cc.RemoveSelf(isNeedCleanUp);
 };
 
 /**
@@ -204,16 +221,28 @@ cc.RemoveSelf.create = function(isNeedCleanUp){
  */
 cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
     _flippedX:false,
-    ctor:function(){
+
+	/**
+	 * Create a FlipX action to flip or unflip the target
+	 *
+	 * @constructor
+	 * @param {Boolean} flip Indicate whether the target should be flipped or not
+	 *
+	 * @example
+	 * var flipXAction = new cc.FlipX(true);
+	 */
+    ctor:function(flip){
         cc.FiniteTimeAction.prototype.ctor.call(this);
         this._flippedX = false;
+		flip !== undefined && this.initWithFlipX(flip);
     },
+
     /**
-     * @param {Boolean} x
+     * @param {Boolean} flip
      * @return {Boolean}
      */
-    initWithFlipX:function (x) {
-        this._flippedX = x;
+    initWithFlipX:function (flip) {
+        this._flippedX = flip;
         return true;
     },
 
@@ -239,15 +268,15 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
 });
 
 /**
- * @param {Boolean} x
+ * Create a FlipX action to flip or unflip the target
+ *
+ * @param {Boolean} flip Indicate whether the target should be flipped or not
  * @return {cc.FlipX}
+ * @example
  * var flipXAction = cc.FlipX.create(true);
  */
-cc.FlipX.create = function (x) {
-    var ret = new cc.FlipX();
-    if (ret.initWithFlipX(x))
-        return ret;
-    return null;
+cc.FlipX.create = function (flip) {
+    return new cc.FlipX(flip);
 };
 
 /**
@@ -257,16 +286,27 @@ cc.FlipX.create = function (x) {
  */
 cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
     _flippedY:false,
-    ctor:function(){
+
+	/**
+	 * Create a FlipY action to flip or unflip the target
+	 *
+	 * @constructor
+	 * @param {Boolean} flip
+	 * @example
+	 * var flipYAction = new cc.FlipY(true);
+	 */
+    ctor: function(flip){
         cc.FiniteTimeAction.prototype.ctor.call(this);
         this._flippedY = false;
+
+		flip !== undefined && this.initWithFlipY(flip);
     },
     /**
-     * @param {Boolean} Y
+     * @param {Boolean} flip
      * @return {Boolean}
      */
-    initWithFlipY:function (Y) {
-        this._flippedY = Y;
+    initWithFlipY:function (flip) {
+        this._flippedY = flip;
         return true;
     },
 
@@ -292,17 +332,15 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
     }
 });
 /**
- * @param {Boolean} y
+ * Create a FlipY action to flip or unflip the target
+ *
+ * @param {Boolean} flip
  * @return {cc.FlipY}
  * @example
- * // example
- * var flipYAction = cc.FlipY.create();
+ * var flipYAction = cc.FlipY.create(true);
  */
-cc.FlipY.create = function (y) {
-    var ret = new cc.FlipY();
-    if (ret.initWithFlipY(y))
-        return ret;
-    return null;
+cc.FlipY.create = function (flip) {
+    return new cc.FlipY(flip);
 };
 
 
@@ -313,10 +351,29 @@ cc.FlipY.create = function (y) {
 cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
     _x: 0,
 	_y: 0,
-    ctor:function(){
+
+	/**
+	 * Creates a Place action with a position
+	 *
+	 * @constructor
+	 * @param {cc.Point|Number} pos
+	 * @param {Number} [y]
+	 * @example
+	 * var placeAction = new cc.Place.create(cc.p(200, 200));
+	 * var placeAction = new cc.Place.create(200, 200);
+	 */
+    ctor:function(pos, y){
         cc.FiniteTimeAction.prototype.ctor.call(this);
         this._x = 0;
 	    this._y = 0;
+
+		if (pos !== undefined) {
+			if (pos.x !== undefined) {
+				y = pos.y;
+				pos = pos.x;
+			}
+			this.initWithPosition(pos, y);
+		}
     },
 
     /** Initializes a Place action with a position
@@ -342,17 +399,18 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
         return action;
     }
 });
-/** creates a Place action with a position
- * @param {cc.Point} pos
+/**
+ * Creates a Place action with a position
+ * @param {cc.Point|Number} pos
+ * @param {Number} [y]
  * @return {cc.Place}
  * @example
  * // example
  * var placeAction = cc.Place.create(cc.p(200, 200));
+ * var placeAction = cc.Place.create(200, 200);
  */
-cc.Place.create = function (pos) {
-    var ret = new cc.Place();
-    ret.initWithPosition(pos.x, pos.y);
-    return ret;
+cc.Place.create = function (pos, y) {
+    return new cc.Place(pos, y);
 };
 
 
@@ -366,34 +424,46 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     _function:null,
     _data:null,
 
-    ctor:function(){
+	/**
+	 * Creates a CallFunc action with the callback
+	 *
+	 * @constructor
+	 * @param {function} selector
+	 * @param {object|null} [selectorTarget]
+	 * @param {*|null} [data] data for function, it accepts all data types.
+	 * @example
+	 * // example
+	 * // CallFunc without data
+	 * var finish = new cc.CallFunc(this.removeSprite, this);
+	 *
+	 * // CallFunc with data
+	 * var finish = new cc.CallFunc(this.removeFromParentAndCleanup, this,  true);
+	 */
+    ctor:function(selector, selectorTarget, data){
         cc.FiniteTimeAction.prototype.ctor.call(this);
-        this._selectorTarget = null;
-        this._callFunc = null;
-        this._function = null;
-        this._data = null;
+
+		if(selector !== undefined){
+			if(selectorTarget === undefined)
+				this.initWithFunction(selector);
+			else this.initWithFunction(selector, selectorTarget, data);
+		}
     },
 
     /**
-     * @param {function|Null} selector
-     * @param {object} selectorTarget
-     * @param {*|Null} data data for function, it accepts all data types.
+     * Initializes the action with a function or function and its target
+     * @param {function} selector
+     * @param {object|Null} selectorTarget
+     * @param {*|Null} [data] data for function, it accepts all data types.
      * @return {Boolean}
      */
-    initWithTarget:function (selector, selectorTarget, data) {
-        this._data = data;
-        this._callFunc = selector;
-        this._selectorTarget = selectorTarget;
-        return true;
-    },
-
-    /**
-     * initializes the action with the std::function<void()>
-     * @param {function} func
-     * @returns {boolean}
-     */
-    initWithFunction:function(func){
-        this._function = func;
+    initWithFunction:function (selector, selectorTarget, data) {
+	    if (selectorTarget) {
+            this._data = data;
+            this._callFunc = selector;
+            this._selectorTarget = selectorTarget;
+	    }
+	    else if (selector)
+		    this._function = selector;
         return true;
     },
 
@@ -436,7 +506,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     copy:function() {
         var n = new cc.CallFunc();
         if(this._selectorTarget){
-            n.initWithTarget(this._callFunc,  this._selectorTarget, this._data)
+            n.initWithFunction(this._callFunc,  this._selectorTarget, this._data)
         }else if(this._function){
             n.initWithFunction(this._function);
         }
@@ -446,17 +516,18 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     clone:function(){
        var action = new cc.CallFunc();
         if(this._selectorTarget){
-             action.initWithTarget(this._callFunc,  this._selectorTarget, this._data)
+             action.initWithFunction(this._callFunc,  this._selectorTarget, this._data)
         }else if(this._function){
              action.initWithFunction(this._function);
         }
         return action;
     }
 });
-/** creates the action with the callback
+/**
+ * Creates the action with the callback
  * @param {function} selector
- * @param {object|null} [selectorTarget=]
- * @param {*|Null} [data=] data for function, it accepts all data types.
+ * @param {object|null} [selectorTarget]
+ * @param {*|null} [data] data for function, it accepts all data types.
  * @return {cc.CallFunc}
  * @example
  * // example
@@ -464,19 +535,8 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
  * var finish = cc.CallFunc.create(this.removeSprite, this);
  *
  * // CallFunc with data
- * var finish = cc.CallFunc.create(this.removeFromParentAndCleanup, this._grossini,  true),
+ * var finish = cc.CallFunc.create(this.removeFromParentAndCleanup, this._grossini,  true);
  */
 cc.CallFunc.create = function (selector, selectorTarget, data) {
-    var ret = new cc.CallFunc();
-    if(selectorTarget === undefined){
-        if (ret && ret.initWithFunction(selector)) {
-            return ret;
-        }
-    }else{
-        if (ret && ret.initWithTarget(selector, selectorTarget, data)) {
-            ret._callFunc = selector;
-            return ret;
-        }
-    }
-    return null;
+    return new cc.CallFunc(selector, selectorTarget, data);
 };

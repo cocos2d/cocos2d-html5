@@ -179,65 +179,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      */
     initWithTexture:null,
 
-    _initWithTextureForCanvas:function(texture, tileWidth, tileHeight, itemsToRender){
-        this._itemWidth = tileWidth;
-        this._itemHeight = tileHeight;
-
-        this._opacityModifyRGB = true;
-        this._originalTexture = texture;
-        if (!this._originalTexture) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
-            return false;
-        }
-        this._textureForCanvas = this._originalTexture;
-        this._calculateMaxItems();
-
-        this.quadsToDraw = itemsToRender;
-        return true;
-    },
-
-    _initWithTextureForWebGL:function(texture, tileWidth, tileHeight, itemsToRender){
-        this._itemWidth = tileWidth;
-        this._itemHeight = tileHeight;
-        this._colorUnmodified = cc.color.WHITE;
-        this._opacityModifyRGB = true;
-
-        this._blendFunc.src = cc.BLEND_SRC;
-        this._blendFunc.dst = cc.BLEND_DST;
-
-        var locRealColor = this._realColor;
-        this._colorF32Array = new Float32Array([locRealColor.r / 255.0, locRealColor.g / 255.0, locRealColor.b / 255.0, this._realOpacity / 255.0]);
-        this.textureAtlas = new cc.TextureAtlas();
-        this.textureAtlas.initWithTexture(texture, itemsToRender);
-
-        if (!this.textureAtlas) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
-            return false;
-        }
-
-        this._updateBlendFunc();
-        this._updateOpacityModifyRGB();
-        this._calculateMaxItems();
-        this.quadsToDraw = itemsToRender;
-
-        //shader stuff
-        this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
-        this._uniformColor = cc._renderContext.getUniformLocation(this.shaderProgram.getProgram(), "u_color");
-        return true;
-    },
-
     draw:null,
-
-    /**
-     * @param {WebGLRenderingContext} ctx renderContext
-     */
-    _drawForWebGL:function (ctx) {
-        var context = ctx || cc._renderContext;
-        cc.NODE_DRAW_SETUP(this);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        context.uniform4fv(this._uniformColor, this._colorF32Array);
-        this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
-    },
 
     /**
      * @function
@@ -245,93 +187,20 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      */
     setColor: null,
 
-    _setColorForCanvas:function (color3) {
-        var locRealColor = this._realColor;
-        if ((locRealColor.r == color3.r) && (locRealColor.g == color3.g) && (locRealColor.b == color3.b))
-            return;
-        var temp = cc.color(color3.r,color3.g,color3.b);
-        this._colorUnmodified = color3;
-
-        if (this._opacityModifyRGB) {
-            var locDisplayedOpacity = this._displayedOpacity;
-            temp.r = temp.r * locDisplayedOpacity / 255;
-            temp.g = temp.g * locDisplayedOpacity / 255;
-            temp.b = temp.b * locDisplayedOpacity / 255;
-        }
-        cc.NodeRGBA.prototype.setColor.call(this, color3);
-
-        if (this.texture) {
-            var element = this._originalTexture.getHtmlElementObj();
-            if(!element)
-                return;
-            var cacheTextureForColor = cc.textureCache.getTextureColors(element);
-            if (cacheTextureForColor) {
-                var textureRect = cc.rect(0, 0, element.width, element.height);
-                element = cc.generateTintImage(element, cacheTextureForColor, this._realColor, textureRect);
-                var locTexture = new cc.Texture2D();
-                locTexture.initWithElement(element);
-                locTexture.handleLoadedTexture();
-                this.texture = locTexture;
-            }
-        }
-    },
-
-    _setColorForWebGL:function (color3) {
-        var temp = cc.color(color3.r,color3.g,color3.b);
-        this._colorUnmodified = color3;
-        var locDisplayedOpacity = this._displayedOpacity;
-        if (this._opacityModifyRGB) {
-            temp.r = temp.r * locDisplayedOpacity / 255;
-            temp.g = temp.g * locDisplayedOpacity / 255;
-            temp.b = temp.b * locDisplayedOpacity / 255;
-        }
-        cc.NodeRGBA.prototype.setColor.call(this, color3);
-        var locDisplayedColor = this._displayedColor;
-        this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-            locDisplayedColor.b / 255.0, locDisplayedOpacity / 255.0]);
-    },
-
     /**
      * @function
      * @param {Number} opacity
      */
     setOpacity: function (opacity) {},
 
-    _setOpacityForCanvas: function (opacity) {
-        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
-        // special opacity for premultiplied textures
-        if (this._opacityModifyRGB) {
-            this.color = this._colorUnmodified;
-        }
-    },
-
-    _setOpacityForWebGL: function (opacity) {
-        cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
-        // special opacity for premultiplied textures
-        if (this._opacityModifyRGB) {
-            this.color = this._colorUnmodified;
-        } else {
-            var locDisplayedColor = this._displayedColor;
-            this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-                locDisplayedColor.b / 255.0, this._displayedOpacity / 255.0]);
-        }
-    },
-
     // cc.Texture protocol
+    texture:null,
     /**
      * returns the used texture
      * @function
      * @return {cc.Texture2D}
      */
     getTexture: null,
-
-    _getTextureForCanvas: function () {
-        return  this._textureForCanvas;
-    },
-
-    _getTextureForWebGL: function () {
-        return  this.textureAtlas.texture;
-    },
 
     /**
      * sets a new texture. it will be retained
@@ -340,35 +209,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      */
     setTexture: null,
 
-    _setTextureForCanvas: function (texture) {
-        this._textureForCanvas = texture;
-    },
-
-    _setTextureForWebGL: function (texture) {
-        this.textureAtlas.texture = texture;
-        this._updateBlendFunc();
-        this._updateOpacityModifyRGB();
-    },
-
     _calculateMaxItems:null,
-
-    _calculateMaxItemsForCanvas:function () {
-        var selTexture = this.texture;
-        var size = selTexture.getContentSize();
-
-        this._itemsPerColumn = 0 | (size.height / this._itemHeight);
-        this._itemsPerRow = 0 | (size.width / this._itemWidth);
-    },
-
-    _calculateMaxItemsForWebGL:function () {
-        var selTexture = this.texture;
-        var size = selTexture.getContentSize();
-        if(this._ignoreContentScaleFactor)
-            size = selTexture.getContentSizeInPixels();
-
-        this._itemsPerColumn = 0 | (size.height / this._itemHeight);
-        this._itemsPerRow = 0 | (size.width / this._itemWidth);
-    },
 
     _updateBlendFunc:function () {
         if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
@@ -385,40 +226,6 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this._ignoreContentScaleFactor = ignoreContentScaleFactor;
     }
 });
-
-window._p = cc.AtlasNode.prototype;
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-	_p.initWithTexture = _p._initWithTextureForWebGL;
-	_p.draw = _p._drawForWebGL;
-	_p.setColor = _p._setColorForWebGL;
-	_p.setOpacity = _p._setOpacityForWebGL;
-	_p.getTexture = _p._getTextureForWebGL;
-	_p.setTexture = _p._setTextureForWebGL;
-	_p._calculateMaxItems = _p._calculateMaxItemsForWebGL;
-} else {
-    _p.initWithTexture = _p._initWithTextureForCanvas;
-    _p.draw = cc.Node.prototype.draw;
-    _p.setColor = _p._setColorForCanvas;
-    _p.setOpacity = _p._setOpacityForCanvas;
-    _p.getTexture = _p._getTextureForCanvas;
-    _p.setTexture = _p._setTextureForCanvas;
-    _p._calculateMaxItems = _p._calculateMaxItemsForCanvas;
-}
-
-// Override properties
-cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
-
-// Extended properties
-/** @expose */
-_p.texture;
-cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
-/** @expose */
-_p.textureAtlas;
-/** @expose */
-_p.quadsToDraw;
-
-delete window._p;
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
  * @param {String} tile
