@@ -74,7 +74,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * Shall be overridden in subclasses
      */
     updateAtlasValues:function () {
-        cc.log("cc.AtlasNode.updateAtlasValues(): Shall be overridden in subclasses") ;
+        cc.log("Shall be overridden in subclasses") ;
     },
 
     /** cc.AtlasNode - RGBA protocol
@@ -164,7 +164,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      */
     initWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
         if(!tile)
-            throw "cc.AtlasNode.initWithTileFile(): title should not be null";
+            throw "title should not be null";
         var texture = cc.textureCache.addImage(tile);
         return this.initWithTexture(texture, tileWidth, tileHeight, itemsToRender);
     },

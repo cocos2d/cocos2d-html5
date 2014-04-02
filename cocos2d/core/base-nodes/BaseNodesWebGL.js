@@ -25,115 +25,17 @@
  ****************************************************************************/
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-
-    /**
-     * CCAtlasNode
-     * @type {Object|Function|cc.AtlasNode|*}
-     * @private
-     */
-
-    var _p = cc.AtlasNode.prototype;
-
-    _p.initWithTexture = function(texture, tileWidth, tileHeight, itemsToRender){
-        var _t = this;
-        _t._itemWidth = tileWidth;
-        _t._itemHeight = tileHeight;
-        _t._colorUnmodified = cc.color.WHITE;
-        _t._opacityModifyRGB = true;
-
-        _t._blendFunc.src = cc.BLEND_SRC;
-        _t._blendFunc.dst = cc.BLEND_DST;
-
-        var locRealColor = _t._realColor;
-        _t._colorF32Array = new Float32Array([locRealColor.r / 255.0, locRealColor.g / 255.0, locRealColor.b / 255.0, _t._realOpacity / 255.0]);
-        _t.textureAtlas = new cc.TextureAtlas();
-        _t.textureAtlas.initWithTexture(texture, itemsToRender);
-
-        if (!_t.textureAtlas) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
-            return false;
-        }
-
-        _t._updateBlendFunc();
-        _t._updateOpacityModifyRGB();
-        _t._calculateMaxItems();
-        _t.quadsToDraw = itemsToRender;
-
-        //shader stuff
-        _t.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
-        _t._uniformColor = cc._renderContext.getUniformLocation(_t.shaderProgram.getProgram(), "u_color");
-        return true;
-    };
-
-    /**
-     * @param {WebGLRenderingContext} ctx renderContext
-     */
-    _p.draw = function (ctx) {
-        var _t = this;
-        var context = ctx || cc._renderContext;
-        cc.NODE_DRAW_SETUP(_t);
-        cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
-        context.uniform4fv(_t._uniformColor, _t._colorF32Array);
-        _t.textureAtlas.drawNumberOfQuads(_t.quadsToDraw, 0);
-    };
-
-    _p.setColor = function (color3) {
-        var _t = this;
-        var temp = cc.color(color3.r,color3.g,color3.b);
-        _t._colorUnmodified = color3;
-        var locDisplayedOpacity = _t._displayedOpacity;
-        if (_t._opacityModifyRGB) {
-            temp.r = temp.r * locDisplayedOpacity / 255;
-            temp.g = temp.g * locDisplayedOpacity / 255;
-            temp.b = temp.b * locDisplayedOpacity / 255;
-        }
-        cc.NodeRGBA.prototype.setColor.call(_t, color3);
-        var locDisplayedColor = _t._displayedColor;
-        _t._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-            locDisplayedColor.b / 255.0, locDisplayedOpacity / 255.0]);
-    };
-
-    _p.setOpacity = function (opacity) {
-        var _t = this;
-        cc.NodeRGBA.prototype.setOpacity.call(_t, opacity);
-        // special opacity for premultiplied textures
-        if (_t._opacityModifyRGB) {
-            _t.color = _t._colorUnmodified;
-        } else {
-            var locDisplayedColor = _t._displayedColor;
-            _t._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
-                locDisplayedColor.b / 255.0, _t._displayedOpacity / 255.0]);
-        }
-    };
-
-    _p.getTexture = function () {
-        return  this.textureAtlas.texture;
-    };
-
-    _p.setTexture = function (texture) {
-        this.textureAtlas.texture = texture;
-        this._updateBlendFunc();
-        this._updateOpacityModifyRGB();
-    };
-
-    _p._calculateMaxItems = function () {
-        var _t = this;
-        var selTexture = _t.texture;
-        var size = selTexture.getContentSize();
-        if(_t._ignoreContentScaleFactor)
-            size = selTexture.getContentSizeInPixels();
-
-        _t._itemsPerColumn = 0 | (size.height / _t._itemHeight);
-        _t._itemsPerRow = 0 | (size.width / _t._itemWidth);
-    };
-
     /**
      * CCNode
      * @type {Object|Function|cc.Node|*}
      * @private
      */
-
     _p = cc.Node.prototype;
+
+    _p._transform4x4 = null;
+    _p._stackMatrix = null;
+    _p._glServerState = null;
+    _p._camera = null;
 
     _p.ctor = function () {
         var _t = this;
@@ -304,6 +206,106 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         return _t._transform;
     };
 
+    /**
+     * CCAtlasNode
+     * @type {Object|Function|cc.AtlasNode|*}
+     * @private
+     */
+
+    var _p = cc.AtlasNode.prototype;
+
+    _p.initWithTexture = function(texture, tileWidth, tileHeight, itemsToRender){
+        var _t = this;
+        _t._itemWidth = tileWidth;
+        _t._itemHeight = tileHeight;
+        _t._colorUnmodified = cc.color.WHITE;
+        _t._opacityModifyRGB = true;
+
+        _t._blendFunc.src = cc.BLEND_SRC;
+        _t._blendFunc.dst = cc.BLEND_DST;
+
+        var locRealColor = _t._realColor;
+        _t._colorF32Array = new Float32Array([locRealColor.r / 255.0, locRealColor.g / 255.0, locRealColor.b / 255.0, _t._realOpacity / 255.0]);
+        _t.textureAtlas = new cc.TextureAtlas();
+        _t.textureAtlas.initWithTexture(texture, itemsToRender);
+
+        if (!_t.textureAtlas) {
+            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+            return false;
+        }
+
+        _t._updateBlendFunc();
+        _t._updateOpacityModifyRGB();
+        _t._calculateMaxItems();
+        _t.quadsToDraw = itemsToRender;
+
+        //shader stuff
+        _t.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR);
+        _t._uniformColor = cc._renderContext.getUniformLocation(_t.shaderProgram.getProgram(), "u_color");
+        return true;
+    };
+
+    /**
+     * @param {WebGLRenderingContext} ctx renderContext
+     */
+    _p.draw = function (ctx) {
+        var _t = this;
+        var context = ctx || cc._renderContext;
+        cc.NODE_DRAW_SETUP(_t);
+        cc.glBlendFunc(_t._blendFunc.src, _t._blendFunc.dst);
+        context.uniform4fv(_t._uniformColor, _t._colorF32Array);
+        _t.textureAtlas.drawNumberOfQuads(_t.quadsToDraw, 0);
+    };
+
+    _p.setColor = function (color3) {
+        var _t = this;
+        var temp = cc.color(color3.r,color3.g,color3.b);
+        _t._colorUnmodified = color3;
+        var locDisplayedOpacity = _t._displayedOpacity;
+        if (_t._opacityModifyRGB) {
+            temp.r = temp.r * locDisplayedOpacity / 255;
+            temp.g = temp.g * locDisplayedOpacity / 255;
+            temp.b = temp.b * locDisplayedOpacity / 255;
+        }
+        cc.NodeRGBA.prototype.setColor.call(_t, color3);
+        var locDisplayedColor = _t._displayedColor;
+        _t._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
+            locDisplayedColor.b / 255.0, locDisplayedOpacity / 255.0]);
+    };
+
+    _p.setOpacity = function (opacity) {
+        var _t = this;
+        cc.NodeRGBA.prototype.setOpacity.call(_t, opacity);
+        // special opacity for premultiplied textures
+        if (_t._opacityModifyRGB) {
+            _t.color = _t._colorUnmodified;
+        } else {
+            var locDisplayedColor = _t._displayedColor;
+            _t._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0,
+                locDisplayedColor.b / 255.0, _t._displayedOpacity / 255.0]);
+        }
+    };
+
+    _p.getTexture = function () {
+        return  this.textureAtlas.texture;
+    };
+
+    _p.setTexture = function (texture) {
+        this.textureAtlas.texture = texture;
+        this._updateBlendFunc();
+        this._updateOpacityModifyRGB();
+    };
+
+    _p._calculateMaxItems = function () {
+        var _t = this;
+        var selTexture = _t.texture;
+        var size = selTexture.getContentSize();
+        if(_t._ignoreContentScaleFactor)
+            size = selTexture.getContentSizeInPixels();
+
+        _t._itemsPerColumn = 0 | (size.height / _t._itemHeight);
+        _t._itemsPerRow = 0 | (size.width / _t._itemWidth);
+    };
     delete _p;
 
 }

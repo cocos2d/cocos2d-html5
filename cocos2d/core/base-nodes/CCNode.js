@@ -186,20 +186,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _showNode:false,
 
     _initNode:function () {
-        this._anchorPoint = cc.p(0, 0);
-        this._anchorPointInPoints = cc.p(0, 0);
-        this._contentSize = cc.size(0, 0);
-        this._position = cc.p(0, 0);
-        this._children = [];
-        this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
+        var _t = this;
+        _t._anchorPoint = cc.p(0, 0);
+        _t._anchorPointInPoints = cc.p(0, 0);
+        _t._contentSize = cc.size(0, 0);
+        _t._position = cc.p(0, 0);
+        _t._children = [];
+        _t._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
         var director = cc.director;
-        this._actionManager = director.getActionManager();
-        this._scheduler = director.getScheduler();
-        this._initializedNode = true;
-        this._additionalTransform = cc.AffineTransformMakeIdentity();
+        _t._actionManager = director.getActionManager();
+        _t._scheduler = director.getScheduler();
+        _t._initializedNode = true;
+        _t._additionalTransform = cc.AffineTransformMakeIdentity();
         if(cc.ComponentContainer){
-            this._componentContainer = new cc.ComponentContainer(this);
+            _t._componentContainer = new cc.ComponentContainer(_t);
         }
     },
 
@@ -479,7 +480,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getRotation:function () {
         if(this._rotationX !== this._rotationY)
-            cc.log("cc.Node.rotation(): RotationX != RotationY. Don't know which one to return");
+            cc.log("RotationX != RotationY. Don't know which one to return");
         return this._rotationX;
     },
 
@@ -554,7 +555,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getScale:function () {
         if(this._scaleX !== this._scaleY)
-            cc.log("cc.Node.getScale(): ScaleX != ScaleY. Don't know which one to return");
+            cc.log("ScaleX != ScaleY. Don't know which one to return");
         return this._scaleX;
     },
 
@@ -627,8 +628,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (yValue === undefined) {
             locPosition.x = newPosOrxValue.x;
             locPosition.y = newPosOrxValue.y;
-        }
-	    else {
+        } else {
 	        locPosition.x = newPosOrxValue;
 	        locPosition.y = yValue;
         }
@@ -1134,14 +1134,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     addChild:function (child, localZOrder, tag) {
         if(!child)
-            throw "cc.Node.addChild(): child must be non-null";
+            throw "child must be non-null";
         if (child === this) {
-            cc.log('cc.Node.addChild(): An Node can\'t be added as a child of itself.');
+            cc.log("An Node can't be added as a child of itself.");
             return;
         }
 
         if (child._parent !== null) {
-            cc.log("cc.Node.addChild(): child already added. It can't be added again");
+            cc.log("child already added. It can't be added again");
             return;
         }
 
@@ -1217,7 +1217,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeChildByTag:function (tag, cleanup) {
         if(tag === cc.NODE_TAG_INVALID)
-            cc.log("cc.Node.removeChildByTag(): argument tag is an invalid tag");
+            cc.log("argument tag is an invalid tag");
 
         var child = this.getChildByTag(tag);
         if (child == null)
@@ -1310,7 +1310,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     reorderChild:function (child, zOrder) {
         if(!child)
-            throw "cc.Node.reorderChild(): child must be non-null";
+            throw "child must be non-null";
         this._reorderChildDirty = true;
         child.arrivalOrder = cc.s_globalOrderOfArrival;
 	    cc.s_globalOrderOfArrival++;
@@ -1546,9 +1546,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         interval = interval || 0;
 
         if(!callback_fn)
-            throw "cc.Node.schedule(): callback function must be non-null";
+            throw "callback function must be non-null";
         if(interval < 0)
-            throw "cc.Node.schedule(): interval must be positive";
+            throw "interval must be positive";
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
@@ -1844,10 +1844,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._componentContainer.removeAll();
     },
 
-    _transform4x4:null,
-    _stackMatrix:null,
-    _glServerState:null,
-    _camera:null,
     grid:null,
 
     ctor: null,
