@@ -435,20 +435,5 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
  * var animation3 = cc.Animation.create(animationFrames, 0.2, 2);
  */
 cc.Animation.create = function (frames, delay, loops) {
-    var animation = new cc.Animation();
-    if (frames === undefined) {
-        animation.initWithSpriteFrames(null, 0);
-    } else {
-        var frame0 = frames[0];
-        if(frame0){
-            if (frame0 instanceof cc.SpriteFrame) {
-                //init with sprite frames , delay and loops.
-                animation.initWithSpriteFrames(frames, delay, loops);
-            }else if(frame0 instanceof cc.AnimationFrame) {
-                //init with sprite frames , delay and loops.
-                animation.initWithAnimationFrames(frames, delay, loops);
-            }
-        }
-    }
-    return animation;
+    return new cc.Animation(frames, delay, loops);
 };

@@ -63,11 +63,20 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _stencil: null,
     _godhelpme: false,
 
-    ctor: function () {
+	/**
+	 * Creates and initializes a clipping node with an other node as its stencil.
+	 * The stencil node will be retained.
+	 * @constructor
+	 * @param {cc.Node} [stencil=null]
+	 */
+    ctor: function (stencil) {
         cc.Node.prototype.ctor.call(this);
         this._stencil = null;
         this.alphaThreshold = 0;
         this.inverted = false;
+
+		stencil = stencil || null;
+		cc.ClippingNode.prototype.init.call(this, stencil);
     },
 
     /**
@@ -484,7 +493,7 @@ cc.ClippingNode._sharedCache = null;
 
 cc.ClippingNode._getSharedCache = function () {
     return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
-}
+};
 
 /**
  * Creates and initializes a clipping node with an other node as its stencil.                               <br/>
@@ -493,7 +502,5 @@ cc.ClippingNode._getSharedCache = function () {
  * @return {cc.ClippingNode}
  */
 cc.ClippingNode.create = function (stencil) {
-    var node = new cc.ClippingNode();
-    node.init(stencil);
-    return node;
+    return new cc.ClippingNode(stencil);
 };

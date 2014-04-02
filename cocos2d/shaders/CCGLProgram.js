@@ -283,13 +283,18 @@ cc.GLProgram = cc.Class.extend({
         return ( status == 1 );
     },
 
-    ctor: function (glContext) {
-        this._programObj = null;
-        this._vertShader = null;
-        this._fragShader = null;
+	/**
+	 * Create a cc.GLProgram object
+	 * @param {String} vShaderFileName
+	 * @param {String} fShaderFileName
+	 * @returns {cc.GLProgram}
+	 */
+    ctor: function (vShaderFileName, fShaderFileName, glContext) {
         this._uniforms = [];
         this._hashForUniforms = [];
         this._glContext = glContext || cc._renderContext;
+
+		vShaderFileName && fShaderFileName && this.init(vShaderFileName, fShaderFileName);
     },
 
     destroyProgram: function () {
@@ -846,8 +851,5 @@ cc.GLProgram = cc.Class.extend({
  * @returns {cc.GLProgram}
  */
 cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
-    var program = new cc.GLProgram();
-    if (program.init(vShaderFileName, fShaderFileName))
-        return program;
-    return null;
+    return new cc.GLProgram(vShaderFileName, fShaderFileName);
 };
