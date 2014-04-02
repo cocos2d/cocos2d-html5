@@ -77,10 +77,35 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
 });
 
 //event type
+/**
+ * The type code of Touch event.
+ * @constant
+ * @type {number}
+ */
 cc.Event.TOUCH = 0;
+/**
+ * The type code of Keyboard event.
+ * @constant
+ * @type {number}
+ */
 cc.Event.KEYBOARD = 1;
+/**
+ * The type code of Acceleration event.
+ * @constant
+ * @type {number}
+ */
 cc.Event.ACCELERATION = 2;
+/**
+ * The type code of Mouse event.
+ * @constant
+ * @type {number}
+ */
 cc.Event.MOUSE = 3;
+/**
+ * The type code of Custom event.
+ * @constant
+ * @type {number}
+ */
 cc.Event.CUSTOM = 4;
 
 /**
@@ -273,10 +298,35 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
 });
 
 //Different types of MouseEvent
+/**
+ * The none event code of  mouse event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.NONE = 0;
+/**
+ * The event type code of mouse down event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.DOWN = 1;
+/**
+ * The event type code of mouse up event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.UP = 2;
+/**
+ * The event type code of mouse move event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.MOVE = 3;
+/**
+ * The event type code of mouse scroll event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.SCROLL = 4;
 
 /**

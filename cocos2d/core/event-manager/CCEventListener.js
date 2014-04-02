@@ -122,12 +122,47 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
 });
 
 // event listener type
+/**
+ * The type code of unknown event listener.
+ * @constant
+ * @type {number}
+ */
 cc.EventListener.UNKNOWN = 0;
+/**
+ * The type code of one by one touch event listener.
+ * @constant
+ * @type {number}
+ */
 cc.EventListener.TOUCH_ONE_BY_ONE = 1;
+/**
+ * The type code of all at once touch event listener.
+ * @constant
+ * @type {number}
+ */
 cc.EventListener.TOUCH_ALL_AT_ONCE = 2;
+/**
+ * The type code of keyboard event listener.
+ * @constant
+ * @type {number}
+ */
 cc.EventListener.KEYBOARD = 3;
+/**
+ * The type code of mouse event listener.
+ * @constant
+ * @type {number}
+ */
 cc.EventListener.MOUSE = 4;
+/**
+ * The type code of acceleration event listener.
+ * @constant
+ * @type {number}
+ */
 cc.EventListener.ACCELERATION = 5;
+/**
+ * The type code of custom event listener.
+ * @constant
+ * @type {number}
+ */
 cc.EventListener.CUSTOM = 6;
 
 cc._EventListenerCustom = cc.EventListener.extend({
