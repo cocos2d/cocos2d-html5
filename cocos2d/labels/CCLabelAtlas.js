@@ -113,7 +113,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      */
     initWithString:function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
         var label = strText + "", textureFilename, width, height, startChar;
-        if (arguments.length === 2) {
+        if (itemWidth === undefined) {
             var dict = cc.loader.getRes(charMapFile);
             if(parseInt(dict["version"], 10) !== 1) {
                 cc.log("cc.LabelAtlas.initWithString(): Unsupported version. Upgrade cocos2d version");

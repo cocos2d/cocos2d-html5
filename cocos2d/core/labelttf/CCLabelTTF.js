@@ -140,7 +140,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 			this.initWithStringAndTextDefinition(text, fontName);
 		}
 		else {
-			this.initWithString(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
+			cc.LabelTTF.prototype.initWithString.call(this, text, fontName, fontSize, dimensions, hAlignment, vAlignment);
 		}
     },
 
@@ -1311,14 +1311,7 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
  * var myLabel = cc.LabelTTF.create('label text',  fontDef);
  */
 cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-    var ret = new cc.LabelTTF();
-    if (fontName && fontName instanceof cc.FontDefinition) {
-        if (ret.initWithStringAndTextDefinition(text, fontName))
-            return ret;
-    }
-    if (ret.initWithString(text, fontName, fontSize, dimensions, hAlignment, vAlignment))
-        return ret;
-    return null;
+    return new cc.LabelTTF(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
 };
 
 
