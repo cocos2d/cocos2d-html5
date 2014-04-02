@@ -50,7 +50,7 @@
                 <file name="cocos2d/core/sprites/CCAnimationCache.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteFrame.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteFrameCache.js"/>
-                <file name="cocos2d/core/sprites/CCSpriteBatchNode.js"/>
+                <!-- <file name="cocos2d/core/sprites/CCSpriteBatchNode.js"/> -->
                 <file name="cocos2d/core/sprites/SpritesCanvas.js"/>
                 <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <!-- <file name="cocos2d/core/CCConfiguration.js"/> -->
@@ -65,7 +65,7 @@
                 <file name="cocos2d/actions/CCAction.js"/>
                 <file name="cocos2d/actions/CCActionInterval.js"/>
                 <file name="cocos2d/actions/CCActionInstant.js"/>
-                <!-- <file name="cocos2d/actions/CCActionCamera.js"/> -->
+                 <file name="cocos2d/actions/CCActionCamera.js"/>
                 <file name="cocos2d/actions/CCActionEase.js"/>
                 <file name="cocos2d/actions/CCActionCatmullRom.js"/>
                 <file name="cocos2d/actions/CCActionTween.js"/>

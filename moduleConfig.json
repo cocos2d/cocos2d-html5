@@ -39,7 +39,7 @@
         ],
         "core" : [
             "cocos2d/core/platform/CCClass.js",
-	        "cocos2d/core/platform/CCCommon.js",
+            "cocos2d/core/platform/CCCommon.js",
             "cocos2d/core/cocoa/CCGeometry.js",
             "cocos2d/core/platform/CCSAXParser.js",
             "cocos2d/core/platform/CCLoaders.js",
@@ -61,40 +61,59 @@
             "cocos2d/core/event-manager/CCEvent.js",
             "cocos2d/core/event-manager/CCEventListener.js",
             "cocos2d/core/event-manager/CCEventManager.js",
+
             "cocos2d/core/base-nodes/CCNode.js",
             "cocos2d/core/base-nodes/CCAtlasNode.js",
             "cocos2d/core/base-nodes/BaseNodesCanvas.js",
             "cocos2d/core/base-nodes/BaseNodesWebGL.js",
             "cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
+            "cocos2d/core/base-nodes/BaseNodesCanvas.js",
+            "cocos2d/core/base-nodes/BaseNodesWebGL.js",
+            "cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
+
             "cocos2d/core/textures/CCTexture2D.js",
             "cocos2d/core/textures/CCTextureCache.js",
             "cocos2d/core/textures/CCTextureAtlas.js",
             "cocos2d/core/scenes/CCScene.js",
             "cocos2d/core/scenes/CCLoaderScene.js",
             "cocos2d/core/layers/CCLayer.js",
+
             "cocos2d/core/layers/CCLayerCanvas.js",
             "cocos2d/core/layers/CCLayerWebGL.js",
             "cocos2d/core/layers/CCLayerPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
-            "cocos2d/core/sprites/CCAnimation.js",
-            "cocos2d/core/sprites/CCAnimationCache.js",
-            "cocos2d/core/sprites/CCSpriteFrame.js",
-            "cocos2d/core/sprites/CCSpriteFrameCache.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
             "cocos2d/core/sprites/SpritesCanvas.js",
             "cocos2d/core/sprites/SpritesWebGL.js",
             "cocos2d/core/sprites/SpritesPropertyDefine.js",
+
+            "cocos2d/core/sprites/CCAnimation.js",
+            "cocos2d/core/sprites/CCAnimationCache.js",
+            "cocos2d/core/sprites/CCSpriteFrame.js",
+            "cocos2d/core/sprites/CCSpriteFrameCache.js",
+            "cocos2d/core/sprites/SpritesCanvas.js",
+            "cocos2d/core/sprites/SpritesWebGL.js",
+            "cocos2d/core/sprites/SpritesPropertyDefine.js",
             "cocos2d/core/CCConfiguration.js",
+
             "cocos2d/core/CCDirector.js",
             "cocos2d/core/FPSImageForWebGL.js",
+            "cocos2d/core/CCDirectorCanvas.js",
+            "cocos2d/core/CCDirectorWebGL.js",
+
             "cocos2d/core/CCCamera.js",
             "cocos2d/core/CCScheduler.js",
             "cocos2d/core/CCDrawingPrimitivesCanvas.js",
             "cocos2d/core/CCDrawingPrimitivesWebGL.js",
+
             "cocos2d/core/labelttf/CCLabelTTF.js",
             "cocos2d/core/labelttf/LabelTTFCanvas.js",
             "cocos2d/core/labelttf/LabelTTFWebGL.js",
             "cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
+            "cocos2d/core/labelttf/LabelTTFCanvas.js",
+            "cocos2d/core/labelttf/LabelTTFWebGL.js",
+            "cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
+
             "cocos2d/core/CCActionManager.js"
         ],
         "effects" : [
@@ -136,11 +155,11 @@
 
             "cocos2d/motion-streak/CCMotionStreak.js"
         ],
-	    "node-grid" : [
-		    "core",
+        "node-grid" : [
+            "core",
 
-		    "cocos2d/node-grid/CCNodeGrid.js"
-	    ],
+            "cocos2d/node-grid/CCNodeGrid.js"
+        ],
         "parallax" : [
             "core",
 
