@@ -31,7 +31,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.setColor = function (color3) {
         cc.NodeRGBA.prototype.setColor.call(this, color3);
 
-        this._setColorsStringForCanvas();
+        this._setColorsString();
     };
 
     _p._setColorsString = function () {
@@ -60,8 +60,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._needUpdateTexture = true;
     };
 
-    //TODO: _p._updateDisplayedOpacityForCanvas
-    _p.updateDisplayedOpacity = cc.sprite.prototype.updateDisplayedOpacity;
+    _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
 
     _p.initWithStringAndTextDefinition = function(text, textDefinition){
         if(!cc.Sprite.prototype.init.call(this))
