@@ -84,7 +84,11 @@
             "cocos2d/core/sprites/CCSpriteFrame.js",
             "cocos2d/core/sprites/CCSpriteFrameCache.js",
             "cocos2d/core/CCConfiguration.js",
+
             "cocos2d/core/CCDirector.js",
+            "cocos2d/core/CCDirectorCanvas.js",
+            "cocos2d/core/CCDirectorWebGL.js",
+
             "cocos2d/core/CCCamera.js",
             "cocos2d/core/CCScheduler.js",
             "cocos2d/core/CCDrawingPrimitives.js",
