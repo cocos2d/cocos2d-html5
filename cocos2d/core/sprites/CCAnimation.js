@@ -154,11 +154,49 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
     _delayPerUnit:0,
     _totalDelayUnits:0,
 
-    /**
-     * Constructor
-     */
-    ctor:function () {
+	/**
+	 * Creates an animation.
+	 * @constructor
+	 * @param {Array} frames
+	 * @param {Number} delay
+	 * @param {Number} [loops=1]
+	 * @example
+	 * // 1. Creates an empty animation
+	 * var animation1 = new cc.Animation();
+	 *
+	 * // 2. Create an animation with sprite frames, delay and loops.
+	 * var spriteFrames = [];
+	 * var frame = cache.getSpriteFrame("grossini_dance_01.png");
+	 * spriteFrames.push(frame);
+	 * var animation1 = new cc.Animation(spriteFrames);
+	 * var animation2 = new cc.Animation(spriteFrames, 0.2);
+	 * var animation2 = new cc.Animation(spriteFrames, 0.2, 2);
+	 *
+	 * // 3. Create an animation with animation frames, delay and loops.
+	 * var animationFrames = [];
+	 * var frame =  new cc.AnimationFrame();
+	 * animationFrames.push(frame);
+	 * var animation1 = new cc.Animation(animationFrames);
+	 * var animation2 = new cc.Animation(animationFrames, 0.2);
+	 * var animation3 = new cc.Animation(animationFrames, 0.2, 2);
+	 */
+    ctor:function (frames, delay, loops) {
         this._frames = [];
+
+		if (frames === undefined) {
+			this.initWithSpriteFrames(null, 0);
+		} else {
+			var frame0 = frames[0];
+			if(frame0){
+				if (frame0 instanceof cc.SpriteFrame) {
+					//init with sprite frames , delay and loops.
+					this.initWithSpriteFrames(frames, delay, loops);
+				}else if(frame0 instanceof cc.AnimationFrame) {
+					//init with sprite frames , delay and loops.
+					this.initWithAnimationFrames(frames, delay, loops);
+				}
+			}
+		}
     },
 
     // attributes
