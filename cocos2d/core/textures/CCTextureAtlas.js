@@ -195,8 +195,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
-
-        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -270,7 +268,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     /**
      * <p>Updates a Quad (texture, vertex and color) at a certain index <br />
      * index must be between 0 and the atlas capacity - 1 </p>
-     * @param {cc.V2F_C4B_T2F_Quad} quad
+     * @param {cc.V3F_C4B_T2F_Quad} quad
      * @param {Number} index
      */
     updateQuad:function (quad, index) {
@@ -286,7 +284,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     /**
      * <p>Inserts a Quad (texture, vertex and color) at a certain index<br />
      * index must be between 0 and the atlas capacity - 1 </p>
-     * @param {cc.V2F_C4B_T2F_Quad} quad
+     * @param {cc.V3F_C4B_T2F_Quad} quad
      * @param {Number} index
      */
     insertQuad:function (quad, index) {

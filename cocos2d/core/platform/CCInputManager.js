@@ -69,17 +69,18 @@ cc.inputManager = /** @lends cc.inputManager# */{
      * @param {Boolean} isEnable
      */
     setAccelerometerEnabled: function(isEnable){
-        if(this._accelEnabled === isEnable)
+        var _t = this;
+        if(_t._accelEnabled === isEnable)
             return;
 
-        this._accelEnabled = isEnable;
+        _t._accelEnabled = isEnable;
         var scheduler = cc.director.getScheduler();
-        if(this._accelEnabled){
-            this._accelCurTime = 0;
-            scheduler.scheduleUpdateForTarget(this);
+        if(_t._accelEnabled){
+            _t._accelCurTime = 0;
+            scheduler.scheduleUpdateForTarget(_t);
         } else {
-            this._accelCurTime = 0;
-            scheduler.unscheduleUpdateForTarget(this);
+            _t._accelCurTime = 0;
+            scheduler.unscheduleUpdateForTarget(_t);
         }
     },
 
@@ -537,32 +538,33 @@ cc.inputManager = /** @lends cc.inputManager# */{
     },
 
     _registerAccelerometerEvent: function(){
-        this._acceleration = new cc.Acceleration();
-        var w = window;
-        this._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
+        var w = window, _t = this;
+        _t._acceleration = new cc.Acceleration();
+        _t._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
 
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
         if (cc.sys.browserType == cc.sys.BROWSER_TYPE_MOBILE_QQ)
-            this._accelDeviceEvent = window.DeviceOrientationEvent;
+            _t._accelDeviceEvent = window.DeviceOrientationEvent;
 
-        var _deviceEventType = (this._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
+        var _deviceEventType = (_t._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
         var ua = navigator.userAgent;
         if (/Android/.test(ua) || (/Adr/.test(ua) && cc.sys.browserType == cc.BROWSER_TYPE_UC)) {
-            this._minus = -1;
+            _t._minus = -1;
         }
 
-        w.addEventListener(_deviceEventType, this.didAccelerate.bind(this), false);
+        w.addEventListener(_deviceEventType, _t.didAccelerate.bind(_t), false);
     },
 
     didAccelerate: function (eventData) {
-        if (!this._accelEnabled)
+        var _t = this, w = window;
+        if (!_t._accelEnabled)
             return;
 
-        var mAcceleration = this._acceleration;
-        if (this._accelDeviceEvent == window.DeviceMotionEvent) {
+        var mAcceleration = _t._acceleration;
+        if (_t._accelDeviceEvent == window.DeviceMotionEvent) {
             var eventAcceleration = eventData["accelerationIncludingGravity"];
-            mAcceleration.x = this._accelMinus * eventAcceleration.x * 0.1;
-            mAcceleration.y = this._accelMinus * eventAcceleration.y * 0.1;
+            mAcceleration.x = _t._accelMinus * eventAcceleration.x * 0.1;
+            mAcceleration.y = _t._accelMinus * eventAcceleration.y * 0.1;
             mAcceleration.z = eventAcceleration.z * 0.1;
         } else {
             mAcceleration.x = (eventData["gamma"] / 90) * 0.981;
@@ -572,24 +574,15 @@ cc.inputManager = /** @lends cc.inputManager# */{
         mAcceleration.timestamp = eventData.timeStamp || Date.now();
 
         var tmpX = mAcceleration.x;
-        switch (window.orientation) {
-            case cc.UIInterfaceOrientationLandscapeRight://-90
-                mAcceleration.x = -mAcceleration.y;
-                mAcceleration.y = tmpX;
-                break;
-
-            case cc.UIInterfaceOrientationLandscapeLeft://90
-                mAcceleration.x = mAcceleration.y;
-                mAcceleration.y = -tmpX;
-                break;
-
-            case cc.UIInterfaceOrientationPortraitUpsideDown://180
-                mAcceleration.x = -mAcceleration.x;
-                mAcceleration.y = -mAcceleration.y;
-                break;
-
-            case cc.UIInterfaceOrientationPortrait://0
-                break;
+        if(w.orientation === cc.UIInterfaceOrientationLandscapeRight){
+            mAcceleration.x = -mAcceleration.y;
+            mAcceleration.y = tmpX;
+        }else if(w.orientation === cc.UIInterfaceOrientationLandscapeLeft){
+            mAcceleration.x = mAcceleration.y;
+            mAcceleration.y = -tmpX;
+        }else if(w.orientation === cc.UIInterfaceOrientationPortraitUpsideDown){
+            mAcceleration.x = -mAcceleration.x;
+            mAcceleration.y = -mAcceleration.y;
         }
     },
 

@@ -1493,9 +1493,7 @@ cc._setup = function (el, width, height) {
     }
 
     cc._gameDiv = localContainer;
-
     cc.log(cc.ENGINE_VERSION);
-
     cc._setContextMenuEnable(false);
 
     if(cc.sys.isMobile){

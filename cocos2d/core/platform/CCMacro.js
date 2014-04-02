@@ -351,7 +351,6 @@ cc.ONE_MINUS_SRC_ALPHA = 0x0303;
  */
 cc.ONE_MINUS_DST_COLOR = 0x0307;
 
-
 cc.CHECK_GL_ERROR_DEBUG = function () {
     if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
         var _error = cc._renderContext.getError();

@@ -142,13 +142,14 @@ cc.HashUpdateEntry = function (list, entry, target, hh) {
  * @param {Array} hh
  */
 cc.HashTimerEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
-    this.timers = timers;
-    this.target = target;
-    this.timerIndex = timerIndex;
-    this.currentTimer = currentTimer;
-    this.currentTimerSalvaged = currentTimerSalvaged;
-    this.paused = paused;
-    this.hh = hh;
+    var _t = this;
+    _t.timers = timers;
+    _t.target = target;
+    _t.timerIndex = timerIndex;
+    _t.currentTimer = currentTimer;
+    _t.currentTimerSalvaged = currentTimerSalvaged;
+    _t.paused = paused;
+    _t.hh = hh;
 };
 
 /**
@@ -188,8 +189,8 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
      * cc.Timer's Constructor
      * @constructor
      * @param {cc.Class} target target
-     * @param {String|function} selector Selector
-     * @param {Number} [seconds=0] second
+     * @param {String|function} callback Selector
+     * @param {Number} [interval=0] second
      * @param {Number} [repeat=cc.REPEAT_FOREVER] repeat times
      * @param {Number} [delay=0] delay
      */
