@@ -199,10 +199,50 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     setColor: null,
 
+    _setColorForCanvas: function (color3) {
+        cc.NodeRGBA.prototype.setColor.call(this, color3);
+
+        this._setColorsStringForCanvas();
+    },
+
     _setColorsString: null,
 
+    _setColorsStringForCanvas: function () {
+        this._needUpdateTexture = true;
+
+        var locDisplayColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
+        var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
+
+        this._shadowColorStr = "rgba(" + (0 | (locDisplayColor.r * 0.5)) + "," + (0 | (locDisplayColor.g * 0.5)) + "," + (0 | (locDisplayColor.b * 0.5)) + "," + this._shadowOpacity + ")";
+        this._fillColorStr = "rgba(" + (0 | (locDisplayColor.r /255 * locFontFillColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locFontFillColor.g)) + ","
+            + (0 | (locDisplayColor.b / 255 * locFontFillColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
+        this._strokeColorStr = "rgba(" + (0 | (locDisplayColor.r / 255 * locStrokeColor.r)) + "," + (0 | (locDisplayColor.g / 255 * locStrokeColor.g)) + ","
+            + (0 | (locDisplayColor.b / 255 * locStrokeColor.b)) + ", " + locDisplayedOpacity / 255 + ")";
+    },
+
+    _setColorsStringForWebGL:function(){
+        this._needUpdateTexture = true;
+        var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
+        this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
+        this._fillColorStr = "rgba(" + (0 | locFontFillColor.r) + "," + (0 | locFontFillColor.g) + "," + (0 | locFontFillColor.b) + ", 1)";
+        this._strokeColorStr = "rgba(" + (0 | locStrokeColor.r) + "," + (0 | locStrokeColor.g) + "," + (0 | locStrokeColor.b) + ", 1)";
+    },
+
     updateDisplayedColor:null,
+    _updateDisplayedColorForCanvas:function(parentColor){
+        cc.NodeRGBA.prototype.updateDisplayedColor.call(this,parentColor);
+        this._setColorsString();
+    },
+
     setOpacity: null,
+
+    _setOpacityForCanvas: function (opacity) {
+        if (this._opacity === opacity)
+            return;
+        cc.Sprite.prototype.setOpacity.call(this, opacity);
+        this._setColorsString();
+        this._needUpdateTexture = true;
+    },
 
     updateDisplayedOpacity: null,
     updateDisplayedOpacityForCanvas: function(parentOpacity){
@@ -307,6 +347,35 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @return {Boolean}
      */
     initWithStringAndTextDefinition:null,
+
+    _initWithStringAndTextDefinitionForCanvas:function(text, textDefinition){
+        if(!cc.Sprite.prototype.init.call(this))
+            return false;
+
+        // prepare everything needed to render the label
+        this._updateWithTextDefinition(textDefinition, false);
+
+        // set the string
+        this.string = text;
+
+        return true;
+    },
+
+    _initWithStringAndTextDefinitionForWebGL:function(text, textDefinition){
+        if(!cc.Sprite.prototype.init.call(this))
+            return false;
+
+        // shader program
+        this.shaderProgram = cc.shaderCache.programForKey(cc.LabelTTF._SHADER_PROGRAM);
+
+        // prepare everything needed to render the label
+        this._updateWithTextDefinition(textDefinition, false);
+
+        // set the string
+        this.string = text;
+
+        return true;
+    },
 
     /**
      * set the text definition used by this label
@@ -500,6 +569,29 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @param {cc.Color} tintColor
      */
     setFontFillColor:null,
+
+    _setFontFillColorForCanvas: function (tintColor) {
+        var locTextFillColor = this._textFillColor;
+        if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
+            locTextFillColor.r = tintColor.r;
+            locTextFillColor.g = tintColor.g;
+            locTextFillColor.b = tintColor.b;
+
+            this._setColorsString();
+            this._needUpdateTexture = true;
+        }
+    },
+
+    _setFontFillColorForWebGL: function (tintColor) {
+        var locTextFillColor = this._textFillColor;
+        if (locTextFillColor.r != tintColor.r || locTextFillColor.g != tintColor.g || locTextFillColor.b != tintColor.b) {
+            locTextFillColor.r = tintColor.r;
+            locTextFillColor.g = tintColor.g;
+            locTextFillColor.b = tintColor.b;
+            this._setColorsString();
+            this._needUpdateTexture = true;
+        }
+    },
 
 	_getFillStyle: function () {
 		return this._textFillColor;
@@ -928,6 +1020,82 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 	 */
     draw: null,
 
+    _drawForWebGL: function (ctx) {
+        if (!this._string || this._string == "")
+            return;
+
+        var gl = ctx || cc._renderContext, locTexture = this._texture;
+
+        if (locTexture && locTexture._isLoaded) {
+            this._shaderProgram.use();
+            this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
+
+            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+            cc.glBindTexture2D(locTexture);
+
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
+            if (this._quadDirty) {
+                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                this._quadDirty = false;
+            }
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        }
+
+        if (cc.SPRITE_DEBUG_DRAW === 1) {
+            // draw bounding box
+            var locQuad = this._quad;
+            var verticesG1 = [
+                cc.p(locQuad.tl.vertices.x, locQuad.tl.vertices.y),
+                cc.p(locQuad.bl.vertices.x, locQuad.bl.vertices.y),
+                cc.p(locQuad.br.vertices.x, locQuad.br.vertices.y),
+                cc.p(locQuad.tr.vertices.x, locQuad.tr.vertices.y)
+            ];
+            cc._drawingUtil.drawPoly(verticesG1, 4, true);
+        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
+            // draw texture box
+            var drawSizeG2 = this.getTextureRect()._size;
+            var offsetPixG2X = this.offsetX, offsetPixG2Y = this.offsetY;
+            var verticesG2 = [cc.p(offsetPixG2X, offsetPixG2Y), cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y),
+                cc.p(offsetPixG2X + drawSizeG2.width, offsetPixG2Y + drawSizeG2.height), cc.p(offsetPixG2X, offsetPixG2Y + drawSizeG2.height)];
+            cc._drawingUtil.drawPoly(verticesG2, 4, true);
+        } // CC_SPRITE_DEBUG_DRAW
+        cc.g_NumberOfDraws++;
+    },
+
+    _setTextureRectForCanvas: function (rect, rotated, untrimmedSize) {
+        this._rectRotated = rotated || false;
+        untrimmedSize = untrimmedSize || rect;
+
+        this.setContentSize(untrimmedSize);
+        this.setVertexRect(rect);
+
+        var locTextureCoordRect = this._textureRect_Canvas;
+        locTextureCoordRect.x = rect.x;
+        locTextureCoordRect.y = rect.y;
+        locTextureCoordRect.width = rect.width;
+        locTextureCoordRect.height = rect.height;
+        locTextureCoordRect.validRect = !(locTextureCoordRect.width === 0 || locTextureCoordRect.height === 0
+            || locTextureCoordRect.x < 0 || locTextureCoordRect.y < 0);
+
+        var relativeOffset = this._unflippedOffsetPositionFromCenter;
+        if (this._flippedX)
+            relativeOffset.x = -relativeOffset.x;
+        if (this._flippedY)
+            relativeOffset.y = -relativeOffset.y;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
+
+        // rendering using batch node
+        if (this._batchNode) {
+            this.dirty = true;
+        }
+    },
+
     _setTextureCoords:function (rect) {
         var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
         if (!tex)
@@ -1007,6 +1175,88 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._quadDirty = true;
     }
 });
+
+window._p = cc.LabelTTF.prototype;
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+	_p.setColor = cc.Sprite.prototype.setColor;
+    _p._setColorsString = _p._setColorsStringForWebGL;
+    _p.updateDisplayedColor = cc.Sprite.prototype.updateDisplayedColor;
+    _p.setOpacity = cc.Sprite.prototype.setOpacity;
+    _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
+    _p.initWithStringAndTextDefinition = _p._initWithStringAndTextDefinitionForWebGL;
+    _p.setFontFillColor = _p._setFontFillColorForWebGL;
+    _p.draw = _p._drawForWebGL;
+    _p.setTextureRect = cc.Sprite.prototype._setTextureRectForWebGL;
+} else {
+    _p.setColor = _p._setColorForCanvas;
+    _p._setColorsString = _p._setColorsStringForCanvas;
+    _p.updateDisplayedColor = _p._updateDisplayedColorForCanvas;
+    _p.setOpacity = _p._setOpacityForCanvas;
+    _p.updateDisplayedOpacity = _p._updateDisplayedOpacityForCanvas;
+    _p.initWithStringAndTextDefinition = _p._initWithStringAndTextDefinitionForCanvas;
+    _p.setFontFillColor = _p._setFontFillColorForCanvas;
+    _p.draw = cc.Sprite.prototype.draw;
+    _p.setTextureRect = _p._setTextureRectForCanvas;
+}
+
+// Override properties
+cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
+
+// Extended properties
+/** @expose */
+_p.string;
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
+/** @expose */
+_p.textAlign;
+cc.defineGetterSetter(_p, "textAlign", _p.getHorizontalAlignment, _p.setHorizontalAlignment);
+/** @expose */
+_p.verticalAlign;
+cc.defineGetterSetter(_p, "verticalAlign", _p.getVerticalAlignment, _p.setVerticalAlignment);
+/** @expose */
+_p.fontSize;
+cc.defineGetterSetter(_p, "fontSize", _p.getFontSize, _p.setFontSize);
+/** @expose */
+_p.fontName;
+cc.defineGetterSetter(_p, "fontName", _p.getFontName, _p.setFontName);
+/** @expose */
+_p.font;
+cc.defineGetterSetter(_p, "font", _p._getFont, _p._setFont);
+/** @expose */
+_p.boundingSize;
+//cc.defineGetterSetter(_p, "boundingSize", _p.getDimensions, _p.setDimensions);
+/** @expose */
+_p.boundingWidth;
+cc.defineGetterSetter(_p, "boundingWidth", _p._getBoundingWidth, _p._setBoundingWidth);
+/** @expose */
+_p.boundingHeight;
+cc.defineGetterSetter(_p, "boundingHeight", _p._getBoundingHeight, _p._setBoundingHeight);
+/** @expose */
+_p.fillStyle;
+cc.defineGetterSetter(_p, "fillStyle", _p._getFillStyle, _p.setFontFillColor);
+/** @expose */
+_p.strokeStyle;
+cc.defineGetterSetter(_p, "strokeStyle", _p._getStrokeStyle, _p._setStrokeStyle);
+/** @expose */
+_p.lineWidth;
+cc.defineGetterSetter(_p, "lineWidth", _p._getLineWidth, _p._setLineWidth);
+/** @expose */
+_p.shadowOffset;
+//cc.defineGetterSetter(_p, "shadowOffset", _p._getShadowOffset, _p._setShadowOffset);
+/** @expose */
+_p.shadowOffsetX;
+cc.defineGetterSetter(_p, "shadowOffsetX", _p._getShadowOffsetX, _p._setShadowOffsetX);
+/** @expose */
+_p.shadowOffsetY;
+cc.defineGetterSetter(_p, "shadowOffsetY", _p._getShadowOffsetY, _p._setShadowOffsetY);
+/** @expose */
+_p.shadowOpacity;
+cc.defineGetterSetter(_p, "shadowOpacity", _p._getShadowOpacity, _p._setShadowOpacity);
+/** @expose */
+_p.shadowBlur;
+cc.defineGetterSetter(_p, "shadowBlur", _p._getShadowBlur, _p._setShadowBlur);
+
+delete window._p;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 
