@@ -43,14 +43,12 @@ var ClassManager = {
         //make the func to a string
         var str = func.toString();
         //find parameters
-        var pstart = str.indexOf('(');
-        var pend = str.indexOf(')');
+        var pstart = str.indexOf('('), pend = str.indexOf(')');
         var params = str.substring(pstart+1, pend);
         params = params.trim();
 
         //find function body
-        var bstart = str.indexOf('{');
-        var bend = str.lastIndexOf('}');
+        var bstart = str.indexOf('{'), bend = str.lastIndexOf('}');
         var str = str.substring(bstart+1, bend);
 
         //now we have the content of the function, replace this._super
@@ -224,7 +222,6 @@ ClassManager.compileSuper.ClassManager = ClassManager;
             return self.apply(bind || null, args);
         };
     };
-
 })();
 
 //
@@ -272,15 +269,5 @@ cc.base = function(me, opt_methodName, var_args) {
             'cc.base called from a method of one name ' +
                 'to a method of a different name');
     }
-};
-
-cc.concatObjectProperties = function(dstObject, srcObject){
-    if(!dstObject)
-        dstObject = {};
-
-    for(var selKey in srcObject){
-        dstObject[selKey] = srcObject[selKey];
-    }
-    return dstObject;
 };
 

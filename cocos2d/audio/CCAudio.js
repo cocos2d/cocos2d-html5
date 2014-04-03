@@ -452,7 +452,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
     },
     _getEffect : function(url){
         var self = this, audio;
-        if(!self._soundSupported) return;
+        if(!self._soundSupported) return null;
 
         var effList = this._getEffectList(url);
         for(var i = 0, li = effList.length; i < li; i++){

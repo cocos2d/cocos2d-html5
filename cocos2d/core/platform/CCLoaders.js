@@ -99,11 +99,12 @@ cc._fontLoader = {
 
         //<div style="font-family: PressStart;">.</div>
         var preloadDiv = document.createElement("div");
-        preloadDiv.style.fontFamily = name;
+        var _divStyle =  preloadDiv.style;
+        _divStyle.fontFamily = name;
         preloadDiv.innerHTML = ".";
-        preloadDiv.style.position = "absolute";
-        preloadDiv.style.left = "-100px";
-        preloadDiv.style.top = "-100px";
+        _divStyle.position = "absolute";
+        _divStyle.left = "-100px";
+        _divStyle.top = "-100px";
         doc.body.appendChild(preloadDiv);
     },
     load : function(realUrl, url, res, cb){

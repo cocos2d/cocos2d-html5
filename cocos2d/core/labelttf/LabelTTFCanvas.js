@@ -60,6 +60,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._needUpdateTexture = true;
     };
 
+    //TODO: _p._updateDisplayedOpacityForCanvas
     _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
 
     _p.initWithStringAndTextDefinition = function(text, textDefinition){

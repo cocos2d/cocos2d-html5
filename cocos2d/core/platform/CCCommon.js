@@ -247,28 +247,23 @@ cc.FMT_UNKNOWN = 5;
 
 cc.getImageFormatByData = function (imgData) {
 	// if it is a png file buffer.
-	if (imgData.length > 8) {
-		if (imgData[0] == 0x89
-			&& imgData[1] == 0x50
-			&& imgData[2] == 0x4E
-			&& imgData[3] == 0x47
-			&& imgData[4] == 0x0D
-			&& imgData[5] == 0x0A
-			&& imgData[6] == 0x1A
-			&& imgData[7] == 0x0A) {
-			return cc.FMT_PNG;
-		}
-	}
+    if (imgData.length > 8 && imgData[0] == 0x89
+        && imgData[1] == 0x50
+        && imgData[2] == 0x4E
+        && imgData[3] == 0x47
+        && imgData[4] == 0x0D
+        && imgData[5] == 0x0A
+        && imgData[6] == 0x1A
+        && imgData[7] == 0x0A) {
+        return cc.FMT_PNG;
+    }
 
 	// if it is a tiff file buffer.
-	if (imgData.length > 2) {
-		if ((imgData[0] == 0x49 && imgData[1] == 0x49)
-			|| (imgData[0] == 0x4d && imgData[1] == 0x4d)
-			|| (imgData[0] == 0xff && imgData[1] == 0xd8)) {
-			return cc.FMT_TIFF;
-		}
-	}
-
+    if (imgData.length > 2 && ((imgData[0] == 0x49 && imgData[1] == 0x49)
+        || (imgData[0] == 0x4d && imgData[1] == 0x4d)
+        || (imgData[0] == 0xff && imgData[1] == 0xd8))) {
+        return cc.FMT_TIFF;
+    }
 	return cc.FMT_UNKNOWN;
 };
 
@@ -283,27 +278,22 @@ cc.getImageFormatByData = function (imgData) {
  * @param {String}   getterName Name of getter function for the property
  * @param {String}   setterName Name of setter function for the property
  */
-cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, setterName)
-{
+cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, setterName){
 	if (proto.__defineGetter__) {
 		getter && proto.__defineGetter__(prop, getter);
 		setter && proto.__defineSetter__(prop, setter);
-	}
-	else if (Object.defineProperty) {
+	} else if (Object.defineProperty) {
 		var desc = { enumerable: false, configurable: true };
 		getter && (desc.get = getter);
 		setter && (desc.set = setter);
 		Object.defineProperty(proto, prop, desc);
-	}
-	else {
+	} else {
 		throw new Error("browser does not support getters");
-		return;
 	}
 
 	if(!getterName && !setterName) {
 		// Lookup getter/setter function
-		var hasGetter = (getter != null), hasSetter = (setter != undefined);
-		var props = Object.getOwnPropertyNames(proto);
+		var hasGetter = (getter != null), hasSetter = (setter != undefined), props = Object.getOwnPropertyNames(proto);
 		for (var i = 0; i < props.length; i++) {
 			var name = props[i];
 			if( proto.__lookupGetter__(name) || typeof proto[name] !== "function" ) continue;

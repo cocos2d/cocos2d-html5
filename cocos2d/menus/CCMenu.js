@@ -106,7 +106,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 		    else items = [menuItems];
 	    }
 		else if (argc > 1) {
-		    var items = [];
+		    items = [];
 		    for (var i = 0; i < argc; i++) {
 			    if (arguments[i])
 				    items.push(arguments[i]);

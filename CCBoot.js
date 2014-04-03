@@ -1493,9 +1493,7 @@ cc._setup = function (el, width, height) {
     }
 
     cc._gameDiv = localContainer;
-
     cc.log(cc.ENGINE_VERSION);
-
     cc._setContextMenuEnable(false);
 
     if(cc.sys.isMobile){
@@ -1680,7 +1678,7 @@ cc.game = {
     _initConfig : function(){
         var self = this, CONFIG_KEY = self.CONFIG_KEY;
         var _init = function(cfg){
-            cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "libs/cocos2d-html5";
+            cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "frameworks/cocos2d-html5";
             cfg[CONFIG_KEY.debugMode] = cfg[CONFIG_KEY.debugMode] || 0;
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
             cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 0;

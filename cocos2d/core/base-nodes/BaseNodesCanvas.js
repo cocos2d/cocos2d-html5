@@ -26,106 +26,10 @@
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
-    /**
-     * CCAtlasNode
-     * @type {Object|Function|cc.AtlasNode|*}
-     * @private
-     */
-
-    var _p = cc.AtlasNode.prototype;
-
-    _p.initWithTexture = function(texture, tileWidth, tileHeight, itemsToRender){
-        var _t = this;
-        _t._itemWidth = tileWidth;
-        _t._itemHeight = tileHeight;
-
-        _t._opacityModifyRGB = true;
-        _t._originalTexture = texture;
-        if (!_t._originalTexture) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
-            return false;
-        }
-        _t._textureForCanvas = _t._originalTexture;
-        _t._calculateMaxItems();
-
-        _t.quadsToDraw = itemsToRender;
-        return true;
-    };
-
-    _p.draw = cc.Node.prototype.draw;
-
-    _p.setColor = function (color3) {
-        var _t = this;
-        var locRealColor = _t._realColor;
-        if ((locRealColor.r == color3.r) && (locRealColor.g == color3.g) && (locRealColor.b == color3.b))
-            return;
-        var temp = cc.color(color3.r,color3.g,color3.b);
-        _t._colorUnmodified = color3;
-
-        if (_t._opacityModifyRGB) {
-            var locDisplayedOpacity = _t._displayedOpacity;
-            temp.r = temp.r * locDisplayedOpacity / 255;
-            temp.g = temp.g * locDisplayedOpacity / 255;
-            temp.b = temp.b * locDisplayedOpacity / 255;
-        }
-        cc.NodeRGBA.prototype.setColor.call(_t, color3);
-
-        if (_t.texture) {
-            var element = _t._originalTexture.getHtmlElementObj();
-            if(!element)
-                return;
-            var cacheTextureForColor = cc.textureCache.getTextureColors(element);
-            if (cacheTextureForColor) {
-                var textureRect = cc.rect(0, 0, element.width, element.height);
-                element = cc.generateTintImage(element, cacheTextureForColor, _t._realColor, textureRect);
-                var locTexture = new cc.Texture2D();
-                locTexture.initWithElement(element);
-                locTexture.handleLoadedTexture();
-                _t.texture = locTexture;
-            }
-        }
-    };
-
-    _p.setOpacity = function (opacity) {
-        var _t = this;
-        cc.NodeRGBA.prototype.setOpacity.call(_t, opacity);
-        // special opacity for premultiplied textures
-        if (_t._opacityModifyRGB) {
-            _t.color = _t._colorUnmodified;
-        }
-    };
-
-    _p.getTexture = function () {
-        return  this._textureForCanvas;
-    };
-
-    _p.setTexture = function (texture) {
-        this._textureForCanvas = texture;
-    };
-
-    _p._calculateMaxItems = function () {
-        var _t = this;
-        var selTexture = _t.texture;
-        var size = selTexture.getContentSize();
-
-        _t._itemsPerColumn = 0 | (size.height / _t._itemHeight);
-        _t._itemsPerRow = 0 | (size.width / _t._itemWidth);
-    };
-
-
-    /**
-     * CCNode
-     * @type {Object|Function|cc.Node|*}
-     * @private
-     */
-
-
-    _p = cc.Node.prototype;
-
+    //redefine cc.Node
+    var _p = cc.Node.prototype;
     _p.ctor = function () {
         this._initNode();
-
-        //Canvas
     };
 
     _p.setNodeDirty = function () {
@@ -247,6 +151,84 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         return _t._transform;
     };
 
+    // redefine cc.AtlasNode
+    _p = cc.AtlasNode.prototype;
+    _p.initWithTexture = function(texture, tileWidth, tileHeight, itemsToRender){
+        var _t = this;
+        _t._itemWidth = tileWidth;
+        _t._itemHeight = tileHeight;
+
+        _t._opacityModifyRGB = true;
+        _t._originalTexture = texture;
+        if (!_t._originalTexture) {
+            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+            return false;
+        }
+        _t._textureForCanvas = _t._originalTexture;
+        _t._calculateMaxItems();
+
+        _t.quadsToDraw = itemsToRender;
+        return true;
+    };
+
+    _p.draw = cc.Node.prototype.draw;
+    _p.setColor = function (color3) {
+        var _t = this;
+        var locRealColor = _t._realColor;
+        if ((locRealColor.r == color3.r) && (locRealColor.g == color3.g) && (locRealColor.b == color3.b))
+            return;
+        var temp = cc.color(color3.r,color3.g,color3.b);
+        _t._colorUnmodified = color3;
+
+        if (_t._opacityModifyRGB) {
+            var locDisplayedOpacity = _t._displayedOpacity;
+            temp.r = temp.r * locDisplayedOpacity / 255;
+            temp.g = temp.g * locDisplayedOpacity / 255;
+            temp.b = temp.b * locDisplayedOpacity / 255;
+        }
+        cc.NodeRGBA.prototype.setColor.call(_t, color3);
+
+        if (_t.texture) {
+            var element = _t._originalTexture.getHtmlElementObj();
+            if(!element)
+                return;
+            var cacheTextureForColor = cc.textureCache.getTextureColors(element);
+            if (cacheTextureForColor) {
+                var textureRect = cc.rect(0, 0, element.width, element.height);
+                element = cc.generateTintImage(element, cacheTextureForColor, _t._realColor, textureRect);
+                var locTexture = new cc.Texture2D();
+                locTexture.initWithElement(element);
+                locTexture.handleLoadedTexture();
+                _t.texture = locTexture;
+            }
+        }
+    };
+
+    _p.setOpacity = function (opacity) {
+        var _t = this;
+        cc.NodeRGBA.prototype.setOpacity.call(_t, opacity);
+        // special opacity for premultiplied textures
+        if (_t._opacityModifyRGB) {
+            _t.color = _t._colorUnmodified;
+        }
+    };
+
+    _p.getTexture = function () {
+        return  this._textureForCanvas;
+    };
+
+    _p.setTexture = function (texture) {
+        this._textureForCanvas = texture;
+    };
+
+    _p._calculateMaxItems = function () {
+        var _t = this;
+        var selTexture = _t.texture;
+        var size = selTexture.getContentSize();
+
+        _t._itemsPerColumn = 0 | (size.height / _t._itemHeight);
+        _t._itemsPerRow = 0 | (size.width / _t._itemWidth);
+    };
     delete _p;
 
 }
