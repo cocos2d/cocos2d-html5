@@ -80,7 +80,6 @@
 
             "cocos2d/core/scenes/CCScene.js",
             "cocos2d/core/scenes/CCLoaderScene.js",
-            "cocos2d/core/scenes/CCSceneFile.js",
 
             "cocos2d/core/layers/CCLayer.js",
 
