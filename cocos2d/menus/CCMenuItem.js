@@ -735,7 +735,13 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._selectedImage = null;
         this._disabledImage = null;
 
+
 	    var argc = arguments.length;
+
+        while(arguments[argc-1] === undefined){
+            argc--;
+        }
+
 		if (argc > 1) {
 		    normalSprite = arguments[0];
 		    selectedSprite = arguments[1];
@@ -1027,7 +1033,7 @@ delete window._p;
  * //same as above, but with disabled image, and passing in callback function
  */
 cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five) {
-	return new cc.MenuItemSprite(normalSprite, selectedSprite, three, four, five);
+    return new cc.MenuItemSprite(normalSprite, selectedSprite, three, four, five || undefined);
 };
 
 /**
