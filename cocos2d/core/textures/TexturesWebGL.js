@@ -184,8 +184,9 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         },
 
         description:function () {
-            return "<cc.Texture2D | Name = " + this._name + " | Dimensions = " + this._pixelsWide + " x " + this._pixelsHigh
-                + " | Coordinates = (" + this.maxS + ", " + this.maxT + ")>";
+            var _t = this;
+            return "<cc.Texture2D | Name = " + _t._name + " | Dimensions = " + _t._pixelsWide + " x " + _t._pixelsHigh
+                + " | Coordinates = (" + _t.maxS + ", " + _t.maxT + ")>";
         },
 
         /**
@@ -512,20 +513,21 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          * @param texParams
          */
         setTexParameters:function (texParams) {
+            var _t = this;
             var gl = cc._renderContext;
 
-            cc.assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
+            cc.assert((_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh)) ||
                 (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
                 "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
-            cc.glBindTexture2D(this);
+            cc.glBindTexture2D(_t);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, texParams.wrapS);
             gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, texParams.wrapT);
 
             //TODO
-            //VolatileTexture::setTexParameters(this, texParams);
+            //VolatileTexture::setTexParameters(_t, texParams);
         },
 
         /**
@@ -576,11 +578,12 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          *  It only works if the texture size is POT (power of 2).
          */
         generateMipmap:function () {
-            cc.assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
+            var _t = this;
+            cc.assert(_t._pixelsWide == cc.NextPOT(_t._pixelsWide) && _t._pixelsHigh == cc.NextPOT(_t._pixelsHigh), "Mimpap texture only works in POT textures");
 
-            cc.glBindTexture2D(this);
+            cc.glBindTexture2D(_t);
             cc._renderContext.generateMipmap(cc._renderContext.TEXTURE_2D);
-            this._hasMipmaps = true;
+            _t._hasMipmaps = true;
         },
 
         /**
@@ -744,23 +747,25 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     var _p = cc.TextureAtlas.prototype;
 
     _p._setupVBO = function () {
+        var _t = this;
         var gl = cc._renderContext;
         //create WebGLBuffer
-        this._buffersVBO[0] = gl.createBuffer();
-        this._buffersVBO[1] = gl.createBuffer();
+        _t._buffersVBO[0] = gl.createBuffer();
+        _t._buffersVBO[1] = gl.createBuffer();
 
-        this._quadsWebBuffer = gl.createBuffer();
-        this._mapBuffers();
+        _t._quadsWebBuffer = gl.createBuffer();
+        _t._mapBuffers();
     };
 
     _p._mapBuffers = function () {
+        var _t = this;
         var gl = cc._renderContext;
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadsWebBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, _t._quadsArrayBuffer, gl.DYNAMIC_DRAW);
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, _t._indices, gl.STATIC_DRAW);
 
         //cc.CHECK_GL_ERROR_DEBUG();
     };
@@ -773,38 +778,39 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
      * @param {Number} start
      */
     _p.drawNumberOfQuads = function (n, start) {
+        var _t = this;
         start = start || 0;
-        if (0 === n || !this.texture || !this.texture.isLoaded())
+        if (0 === n || !_t.texture || !_t.texture.isLoaded())
             return;
 
         var gl = cc._renderContext;
-        cc.glBindTexture2D(this.texture);
+        cc.glBindTexture2D(_t.texture);
 
         //
         // Using VBO without VAO
         //
         //vertices
-        //gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
+        //gl.bindBuffer(gl.ARRAY_BUFFER, _t._buffersVBO[0]);
         // XXX: update is done in draw... perhaps it should be done in a timer
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
-        if (this.dirty)
-            gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, _t._quadsWebBuffer);
+        if (_t.dirty)
+            gl.bufferData(gl.ARRAY_BUFFER, _t._quadsArrayBuffer, gl.DYNAMIC_DRAW);
 
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
 
-        if (this.dirty)
-            this.dirty = false;
+        if (_t.dirty)
+            _t.dirty = false;
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
 
         if (cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP)
-            gl.drawElements(gl.TRIANGLE_STRIP, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
+            gl.drawElements(gl.TRIANGLE_STRIP, n * 6, gl.UNSIGNED_SHORT, start * 6 * _t._indices.BYTES_PER_ELEMENT);
         else
-            gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
+            gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * _t._indices.BYTES_PER_ELEMENT);
 
         cc.g_NumberOfDraws++;
         //cc.CHECK_GL_ERROR_DEBUG();

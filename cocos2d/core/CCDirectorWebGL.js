@@ -43,9 +43,10 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     var _p = cc.Director.prototype;
 
     _p.setProjection = function (projection) {
-        var size = this._winSizeInPoints;
+        var _t = this;
+        var size = _t._winSizeInPoints;
 
-        this.setViewport();
+        _t.setViewport();
 
         switch (projection) {
             case cc.DIRECTOR_PROJECTION_2D:
@@ -58,7 +59,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 cc.kmGLLoadIdentity();
                 break;
             case cc.DIRECTOR_PROJECTION_3D:
-                var zeye = this.getZEye();
+                var zeye = _t.getZEye();
                 var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                 cc.kmGLLoadIdentity();
@@ -77,15 +78,15 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 cc.kmGLMultMatrix(matrixLookup);
                 break;
             case cc.DIRECTOR_PROJECTION_CUSTOM:
-                if (this._projectionDelegate)
-                    this._projectionDelegate.updateProjection();
+                if (_t._projectionDelegate)
+                    _t._projectionDelegate.updateProjection();
                 break;
             default:
                 cc.log("cocos2d: Director: unrecognized projection");
                 break;
         }
-        this._projection = projection;
-        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
+        _t._projection = projection;
+        cc.eventManager.dispatchEvent(_t._eventProjectionChanged);
         cc.setProjectionMatrixDirty();
     };
 
@@ -104,10 +105,11 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
     _p.setOpenGLView = function (openGLView) {
+        var _t = this;
         // set size
-        this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.height = cc._canvas.height;
-        this._openGLView = openGLView || cc.view;
+        _t._winSizeInPoints.width = cc._canvas.width;      //_t._openGLView.getDesignResolutionSize();
+        _t._winSizeInPoints.height = cc._canvas.height;
+        _t._openGLView = openGLView || cc.view;
 
         // Configuration. Gather GPU info
         var conf = cc.configuration;
@@ -115,19 +117,19 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         conf.dumpInfo();
 
         // set size
-        //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
-        //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+        //_t._winSizeInPoints = _t._openGLView.getDesignResolutionSize();
+        //_t._winSizeInPixels = cc.size(_t._winSizeInPoints.width * _t._contentScaleFactor, _t._winSizeInPoints.height * _t._contentScaleFactor);
 
-        //if (this._openGLView != openGLView) {
+        //if (_t._openGLView != openGLView) {
         // because EAGLView is not kind of CCObject
 
-        this._createStatsLabel();
+        _t._createStatsLabel();
 
-        //if (this._openGLView)
-        this.setGLDefaultValues();
+        //if (_t._openGLView)
+        _t.setGLDefaultValues();
 
-        /* if (this._contentScaleFactor != 1) {
-         this.updateContentScaleFactor();
+        /* if (_t._contentScaleFactor != 1) {
+         _t.updateContentScaleFactor();
          }*/
 
         //}
@@ -147,8 +149,9 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
     _p._createStatsLabel = function(){
+        var _t = this;
         if(!cc.LabelAtlas)
-            return this._createStatsLabelForCanvas();
+            return _t._createStatsLabelForCanvas();
 
         if((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
             return;
@@ -172,49 +175,50 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          */
         var factor = cc.view.getDesignResolutionSize().height / 320.0;
         if(factor === 0)
-            factor = this._winSizeInPoints.height / 320.0;
+            factor = _t._winSizeInPoints.height / 320.0;
 
         var tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("00.0", texture, 12, 32 , '.');
         tmpLabel.scale = factor;
-        this._FPSLabel = tmpLabel;
+        _t._FPSLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("0.000", texture, 12, 32, '.');
         tmpLabel.scale = factor;
-        this._SPFLabel = tmpLabel;
+        _t._SPFLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("000", texture, 12, 32, '.');
         tmpLabel.scale = factor;
-        this._drawsLabel = tmpLabel;
+        _t._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
-        this._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
-        this._FPSLabel.setPosition(locStatsPosition);
+        _t._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
+        _t._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
+        _t._FPSLabel.setPosition(locStatsPosition);
     };
 
     _p._createStatsLabelForCanvas = function(){
+        var _t = this;
         //The original _createStatsLabelForCanvas method
         //Because the referenced by a cc.Director.prototype._createStatsLabel
         var fontSize = 0;
-        if (this._winSizeInPoints.width > this._winSizeInPoints.height)
-            fontSize = 0 | (this._winSizeInPoints.height / 320 * 24);
+        if (_t._winSizeInPoints.width > _t._winSizeInPoints.height)
+            fontSize = 0 | (_t._winSizeInPoints.height / 320 * 24);
         else
-            fontSize = 0 | (this._winSizeInPoints.width / 320 * 24);
+            fontSize = 0 | (_t._winSizeInPoints.width / 320 * 24);
 
-        this._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
-        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
-        this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
+        _t._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
+        _t._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
+        _t._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(this._drawsLabel.width / 2 + locStatsPosition.x, this._drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        this._SPFLabel.setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        this._FPSLabel.setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
+        _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
+        _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
+        _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
     };
 
 
@@ -332,11 +336,12 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
      * sets the OpenGL default values
      */
     _p.setGLDefaultValues = function () {
-        this.setAlphaBlending(true);
+        var _t = this;
+        _t.setAlphaBlending(true);
         // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
         // [self setDepthTest: view_.depthFormat];
-        this.setDepthTest(false);
-        this.setProjection(this._projection);
+        _t.setDepthTest(false);
+        _t.setProjection(_t._projection);
 
         // set other opengl default values
         cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);

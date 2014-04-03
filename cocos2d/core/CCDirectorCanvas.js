@@ -53,20 +53,21 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
 
     _p._createStatsLabel = function(){
+        var _t = this;
         var fontSize = 0;
-        if (this._winSizeInPoints.width > this._winSizeInPoints.height)
-            fontSize = 0 | (this._winSizeInPoints.height / 320 * 24);
+        if (_t._winSizeInPoints.width > _t._winSizeInPoints.height)
+            fontSize = 0 | (_t._winSizeInPoints.height / 320 * 24);
         else
-            fontSize = 0 | (this._winSizeInPoints.width / 320 * 24);
+            fontSize = 0 | (_t._winSizeInPoints.width / 320 * 24);
 
-        this._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
-        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
-        this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
+        _t._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
+        _t._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
+        _t._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(this._drawsLabel.width / 2 + locStatsPosition.x, this._drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        this._SPFLabel.setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        this._FPSLabel.setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
+        _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
+        _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
+        _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
     };
 
     _p.getVisibleSize = function () {

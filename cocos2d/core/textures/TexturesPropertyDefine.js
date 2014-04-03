@@ -28,6 +28,8 @@
 CCTexture2D
  */
 
+window._c = cc.Texture2D;
+
 /**
  * <p>
  *    treats (or not) PVR files as if they have alpha premultiplied.                                                <br/>
@@ -39,11 +41,9 @@ CCTexture2D
  * @param haveAlphaPremultiplied
  * @constructor
  */
-cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied) {
+_c.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied) {
     cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
 };
-
-window._c = cc.Texture2D;
 
 /**
  * 32-bit texture: RGBA8888
