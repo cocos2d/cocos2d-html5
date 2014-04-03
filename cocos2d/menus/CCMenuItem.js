@@ -736,6 +736,11 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._disabledImage = null;
 
 	    var argc = arguments.length;
+
+        while(arguments[argc-1] === undefined){
+            argc--;
+        }
+
 		if (argc > 1) {
 		    normalSprite = arguments[0];
 		    selectedSprite = arguments[1];
