@@ -26,6 +26,20 @@
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
+
+    /**
+     * OpenGL projection protocol
+     * @class
+     * @extends cc.Class
+     */
+    cc.DirectorDelegate = cc.Class.extend(/** @lends cc.DirectorDelegate# */{
+        /**
+         * Called by CCDirector when the projection is updated, and "custom" projection is used
+         */
+        updateProjection:function () {
+        }
+    });
+
     var _p = cc.Director.prototype;
 
     _p.setProjection = function (projection) {
@@ -201,5 +215,130 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         this._drawsLabel.setPosition(this._drawsLabel.width / 2 + locStatsPosition.x, this._drawsLabel.height * 5 / 2 + locStatsPosition.y);
         this._SPFLabel.setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
         this._FPSLabel.setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
+    };
+
+
+    /**
+     * <p>
+     *     converts a UIKit coordinate to an OpenGL coordinate<br/>
+     *     Useful to convert (multi) touches coordinates to the current layout (portrait or landscape)
+     * </p>
+     * @param {cc.Point} uiPoint
+     * @return {cc.Point}
+     *
+     * convertToGL move to CCDirectorWebGL
+     */
+    _p.convertToGL = function (uiPoint) {
+        var transform = new cc.kmMat4();
+        cc.GLToClipTransform(transform);
+
+        var transformInv = new cc.kmMat4();
+        cc.kmMat4Inverse(transformInv, transform);
+
+        // Calculate z=0 using -> transform*[0, 0, 0, 1]/w
+        var zClip = transform.mat[14] / transform.mat[15];
+
+        var glSize = this._openGLView.getDesignResolutionSize();
+        var clipCoord = new cc.kmVec3(2.0 * uiPoint.x / glSize.width - 1.0, 1.0 - 2.0 * uiPoint.y / glSize.height, zClip);
+
+        var glCoord = new cc.kmVec3();
+        cc.kmVec3TransformCoord(glCoord, clipCoord, transformInv);
+
+        return cc.p(glCoord.x, glCoord.y);
+    };
+
+    /**
+     * <p>converts an OpenGL coordinate to a UIKit coordinate<br/>
+     * Useful to convert node points to window points for calls such as glScissor</p>
+     * @param {cc.Point} glPoint
+     * @return {cc.Point}
+     */
+    _p.convertToUI = function (glPoint) {
+        var transform = new cc.kmMat4();
+        cc.GLToClipTransform(transform);
+
+        var clipCoord = new cc.kmVec3();
+        // Need to calculate the zero depth from the transform.
+        var glCoord = new cc.kmVec3(glPoint.x, glPoint.y, 0.0);
+        cc.kmVec3TransformCoord(clipCoord, glCoord, transform);
+
+        var glSize = this._openGLView.getDesignResolutionSize();
+        return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5));
+    };
+
+
+
+
+    _p.getVisibleSize = function () {
+        //if (this._openGLView) {
+        return this._openGLView.getVisibleSize();
+        //} else {
+        //return this.getWinSize();
+        //}
+    };
+
+    _p.getVisibleOrigin = function () {
+        //if (this._openGLView) {
+        return this._openGLView.getVisibleOrigin();
+        //} else {
+        //return cc.p(0,0);
+        //}
+    };
+
+    _p.getZEye = function () {
+        return (this._winSizeInPoints.height / 1.1566 );
+    };
+
+    /**
+     * Sets the glViewport
+     */
+    _p.setViewport = function(){
+        if(this._openGLView) {
+            var locWinSizeInPoints = this._winSizeInPoints;
+            this._openGLView.setViewPortInPoints(0,0, locWinSizeInPoints.width, locWinSizeInPoints.height);
+        }
+    };
+
+    /**
+     *  Get the CCEGLView, where everything is rendered
+     * @return {*}
+     */
+    _p.getOpenGLView = function () {
+        return this._openGLView;
+    };
+
+    /**
+     * Sets an OpenGL projection
+     * @return {Number}
+     */
+    _p.getProjection = function () {
+        return this._projection;
+    };
+
+    /**
+     * enables/disables OpenGL alpha blending
+     * @param {Boolean} on
+     */
+    _p.setAlphaBlending = function (on) {
+        if (on)
+            cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        else
+            cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO);
+        //cc.CHECK_GL_ERROR_DEBUG();
+    };
+
+
+    /**
+     * sets the OpenGL default values
+     */
+    _p.setGLDefaultValues = function () {
+        this.setAlphaBlending(true);
+        // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
+        // [self setDepthTest: view_.depthFormat];
+        this.setDepthTest(false);
+        this.setProjection(this._projection);
+
+        // set other opengl default values
+        cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     };
 }

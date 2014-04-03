@@ -68,4 +68,21 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._SPFLabel.setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
         this._FPSLabel.setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
     };
+
+    _p.getVisibleSize = function () {
+        //if (this._openGLView) {
+        //return this._openGLView.getVisibleSize();
+        //} else {
+        return this.getWinSize();
+        //}
+    };
+
+    _p.getVisibleOrigin = function () {
+        //if (this._openGLView) {
+        //return this._openGLView.getVisibleOrigin();
+        //} else {
+        return cc.p(0,0);
+        //}
+    };
+
 }
