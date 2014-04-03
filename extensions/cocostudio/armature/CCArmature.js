@@ -53,7 +53,16 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
     _textureAtlasDic:null,
     _blendFunc:null,
     _className:"Armature",
-    ctor:function () {
+
+	/**
+	 * Create a armature node.
+	 * @constructor
+	 * @param {String} name
+	 * @param {ccs.Bone} parentBone
+	 * @example
+	 * var armature = new ccs.Armature();
+	 */
+    ctor:function (name, parentBone) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this.animation = null;
         this.armatureData = null;
@@ -70,6 +79,8 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
         this._body = null;
         this._textureAtlasDic = null;
         this._blendFunc = null;
+
+		parentBone && ccs.Armature.prototype.init.call(this, name, parentBone);
     },
 
     /**
@@ -696,7 +707,8 @@ delete window._p;
 
 /**
  * allocates and initializes a armature.
- * @constructs
+ * @param {String} name
+ * @param {ccs.Bone} parentBone
  * @return {ccs.Armature}
  * @example
  * // example

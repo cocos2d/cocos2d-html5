@@ -745,7 +745,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
     /**
      * Removes all listeners with the same event listener type or removes all listeners of a node
-     * @param {Number|cc.Node} listenerType or a node
+     * @param {Number|cc.Node} listenerType listenerType or a node
      * @param {Boolean} [recursive=false]
      */
     removeListeners: function (listenerType, recursive) {

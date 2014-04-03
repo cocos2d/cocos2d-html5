@@ -87,10 +87,24 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _className:"LabelTTF",
 
 
-    /**
-     * Constructor
-     */
-    ctor:function () {
+	/**
+	 * creates a cc.LabelTTF from a font name, alignment, dimension and font size
+	 * @constructor
+	 * @param {String} text
+	 * @param {String|cc.FontDefinition} [fontName="Arial"]
+	 * @param {Number} [fontSize=16]
+	 * @param {cc.Size} [dimensions=cc.size(0,0)]
+	 * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
+	 * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
+	 * @example
+	 * var myLabel = new cc.LabelTTF('label text',  'Times New Roman', 32, cc.size(320,32), cc.TEXT_ALIGNMENT_LEFT);
+	 *
+	 * var fontDef = new cc.FontDefinition();
+	 * fontDef.fontName = "Arial";
+	 * fontDef.fontSize = "32";
+	 * var myLabel = new cc.LabelTTF('label text',  fontDef);
+	 */
+    ctor:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
         cc.Sprite.prototype.ctor.call(this);
 
         this._dimensions = cc.size(0, 0);
@@ -121,6 +135,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._lineWidths = [];
 
         this._setColorsString();
+
+		if (fontName && fontName instanceof cc.FontDefinition) {
+			this.initWithStringAndTextDefinition(text, fontName);
+		}
+		else {
+			cc.LabelTTF.prototype.initWithString.call(this, text, fontName, fontSize, dimensions, hAlignment, vAlignment);
+		}
     },
 
     init:function () {
@@ -1273,10 +1294,10 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
 /**
  * creates a cc.LabelTTF from a font name, alignment, dimension and font size
  * @param {String} text
- * @param {String|cc.FontDefinition} fontName
- * @param {Number} fontSize
+ * @param {String|cc.FontDefinition} [fontName="Arial"]
+ * @param {Number} [fontSize=16]
  * @param {cc.Size} [dimensions=cc.size(0,0)]
- * @param {Number} [hAlignment=]
+ * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
  * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
  * @return {cc.LabelTTF|Null}
  * @example
@@ -1290,14 +1311,7 @@ cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
  * var myLabel = cc.LabelTTF.create('label text',  fontDef);
  */
 cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-    var ret = new cc.LabelTTF();
-    if (fontName && fontName instanceof cc.FontDefinition) {
-        if (ret.initWithStringAndTextDefinition(text, fontName))
-            return ret;
-    }
-    if (ret.initWithString(text, fontName, fontSize, dimensions, hAlignment, vAlignment))
-        return ret;
-    return null;
+    return new cc.LabelTTF(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
 };
 
 
