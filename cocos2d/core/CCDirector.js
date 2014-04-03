@@ -92,18 +92,6 @@ cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
  */
 cc.DEVICE_MAX_ORIENTATIONS = 2;
 
-/**
- * OpenGL projection protocol
- * @class
- * @extends cc.Class
- */
-cc.DirectorDelegate = cc.Class.extend(/** @lends cc.DirectorDelegate# */{
-    /**
-     * Called by CCDirector when the projection is updated, and "custom" projection is used
-     */
-    updateProjection:function () {
-    }
-});
 
 cc.GLToClipTransform = function (transformOut) {
     var projection = new cc.kmMat4();
@@ -270,50 +258,9 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     * <p>
-     *     converts a UIKit coordinate to an OpenGL coordinate<br/>
-     *     Useful to convert (multi) touches coordinates to the current layout (portrait or landscape)
-     * </p>
-     * @param {cc.Point} uiPoint
-     * @return {cc.Point}
+     * convertToGL move to CCDirectorWebGL
+     * convertToUI move to CCDirectorWebGL
      */
-    convertToGL:function (uiPoint) {
-        var transform = new cc.kmMat4();
-        cc.GLToClipTransform(transform);
-
-        var transformInv = new cc.kmMat4();
-        cc.kmMat4Inverse(transformInv, transform);
-
-        // Calculate z=0 using -> transform*[0, 0, 0, 1]/w
-        var zClip = transform.mat[14] / transform.mat[15];
-
-        var glSize = this._openGLView.getDesignResolutionSize();
-        var clipCoord = new cc.kmVec3(2.0 * uiPoint.x / glSize.width - 1.0, 1.0 - 2.0 * uiPoint.y / glSize.height, zClip);
-
-        var glCoord = new cc.kmVec3();
-        cc.kmVec3TransformCoord(glCoord, clipCoord, transformInv);
-
-        return cc.p(glCoord.x, glCoord.y);
-    },
-
-    /**
-     * <p>converts an OpenGL coordinate to a UIKit coordinate<br/>
-     * Useful to convert node points to window points for calls such as glScissor</p>
-     * @param {cc.Point} glPoint
-     * @return {cc.Point}
-     */
-    convertToUI:function (glPoint) {
-        var transform = new cc.kmMat4();
-        cc.GLToClipTransform(transform);
-
-        var clipCoord = new cc.kmVec3();
-        // Need to calculate the zero depth from the transform.
-        var glCoord = new cc.kmVec3(glPoint.x, glPoint.y, 0.0);
-        cc.kmVec3TransformCoord(clipCoord, glCoord, transform);
-
-        var glSize = this._openGLView.getDesignResolutionSize();
-        return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5));
-    },
 
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
@@ -417,25 +364,10 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         return cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
     },
 
-    getVisibleSize:function () {
-        if (this._openGLView) {
-            return this._openGLView.getVisibleSize();
-        } else {
-            return this.getWinSize();
-        }
-    },
-
-    getVisibleOrigin:function () {
-        if (this._openGLView) {
-            return this._openGLView.getVisibleOrigin();
-        } else {
-            return cc.p(0,0);
-        }
-    },
-
-    getZEye:function () {
-        return (this._winSizeInPoints.height / 1.1566 );
-    },
+    /**
+     * getVisibleSize/getVisibleOrigin move to CCDirectorWebGL/CCDirectorCanvas
+     * getZEye move to CCDirectorWebGL
+     */
 
     /**
      * pause director
@@ -577,18 +509,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     * enables/disables OpenGL alpha blending
-     * @param {Boolean} on
-     */
-    setAlphaBlending:function (on) {
-        if (on)
-            cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        else
-            cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO);
-        //cc.CHECK_GL_ERROR_DEBUG();
-    },
-
-    /**
      * <p>
      *   The size in pixels of the surface. It could be different than the screen size.<br/>
      *   High-res devices might have a higher surface size than the screen size.<br/>
@@ -615,20 +535,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      */
     setDefaultValues:function(){
 
-    },
-
-    /**
-     * sets the OpenGL default values
-     */
-    setGLDefaultValues:function () {
-        this.setAlphaBlending(true);
-        // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
-        // [self setDepthTest: view_.depthFormat];
-        this.setDepthTest(false);
-        this.setProjection(this._projection);
-
-        // set other opengl default values
-        cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     },
 
     /**
@@ -697,17 +603,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {*} openGLView
      *
      * setOpenGLView move to CCDirectorCanvas/CCDirectorWebGL
+     * setViewport move to CCDirectorWebGL
      */
-
-    /**
-     * Sets the glViewport
-     */
-    setViewport:function(){
-        if(this._openGLView) {
-            var locWinSizeInPoints = this._winSizeInPoints;
-            this._openGLView.setViewPortInPoints(0,0, locWinSizeInPoints.width, locWinSizeInPoints.height);
-        }
-    },
 
     /**
      * Sets an OpenGL projection
@@ -794,14 +691,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     *  Get the CCEGLView, where everything is rendered
-     * @return {*}
-     */
-    getOpenGLView:function () {
-        return this._openGLView;
-    },
-
-    /**
      * is next delta time zero
      * @return {Boolean}
      */
@@ -823,14 +712,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      */
     getTotalFrames:function () {
         return this._totalFrames;
-    },
-
-    /**
-     * Sets an OpenGL projection
-     * @return {Number}
-     */
-    getProjection:function () {
-        return this._projection;
     },
 
     /**

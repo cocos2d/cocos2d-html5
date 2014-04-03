@@ -402,14 +402,14 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     update:function (dt) {
         var self = this;
         var locUpdates = self._updates, locArrayForTimers = self._arrayForTimers;
-        var tmpEntry, elt;
+        var tmpEntry, elt, i, li;
         self._updateHashLocked = true;
 
         if (this._timeScale != 1.0) {
             dt *= this._timeScale;
         }
 
-        for(var i = 0, li = locUpdates.length; i < li && i >= 0; i++){
+        for(i = 0, li = locUpdates.length; i < li && i >= 0; i++){
             var update = self._updates[i];
             for(var j = 0, lj = update.length; j < lj; j++){
                 tmpEntry = update[j];
@@ -418,7 +418,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
 
         //Interate all over the custom callbacks
-        for(var i = 0, li = locArrayForTimers.length; i < li; i++){
+        for(i = 0, li = locArrayForTimers.length; i < li; i++){
             elt = locArrayForTimers[i];
             if(!elt) break;
             self._currentTarget = elt;
@@ -441,7 +441,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             }
         }
 
-        for(var i = 0, li = locUpdates.length; i < li; i++){
+        for(i = 0, li = locUpdates.length; i < li; i++){
             var update = self._updates[i];
             for(var j = 0, lj = update.length; j < lj; ){
                 tmpEntry = update[j];

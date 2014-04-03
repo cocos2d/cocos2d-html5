@@ -26,12 +26,27 @@
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
+
+    /**
+     * OpenGL projection protocol
+     * @class
+     * @extends cc.Class
+     */
+    cc.DirectorDelegate = cc.Class.extend(/** @lends cc.DirectorDelegate# */{
+        /**
+         * Called by CCDirector when the projection is updated, and "custom" projection is used
+         */
+        updateProjection:function () {
+        }
+    });
+
     var _p = cc.Director.prototype;
 
     _p.setProjection = function (projection) {
-        var size = this._winSizeInPoints;
+        var _t = this;
+        var size = _t._winSizeInPoints;
 
-        this.setViewport();
+        _t.setViewport();
 
         switch (projection) {
             case cc.DIRECTOR_PROJECTION_2D:
@@ -44,7 +59,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 cc.kmGLLoadIdentity();
                 break;
             case cc.DIRECTOR_PROJECTION_3D:
-                var zeye = this.getZEye();
+                var zeye = _t.getZEye();
                 var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                 cc.kmGLLoadIdentity();
@@ -63,15 +78,15 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 cc.kmGLMultMatrix(matrixLookup);
                 break;
             case cc.DIRECTOR_PROJECTION_CUSTOM:
-                if (this._projectionDelegate)
-                    this._projectionDelegate.updateProjection();
+                if (_t._projectionDelegate)
+                    _t._projectionDelegate.updateProjection();
                 break;
             default:
                 cc.log("cocos2d: Director: unrecognized projection");
                 break;
         }
-        this._projection = projection;
-        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
+        _t._projection = projection;
+        cc.eventManager.dispatchEvent(_t._eventProjectionChanged);
         cc.setProjectionMatrixDirty();
     };
 
@@ -90,10 +105,11 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
     _p.setOpenGLView = function (openGLView) {
+        var _t = this;
         // set size
-        this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.height = cc._canvas.height;
-        this._openGLView = openGLView || cc.view;
+        _t._winSizeInPoints.width = cc._canvas.width;      //_t._openGLView.getDesignResolutionSize();
+        _t._winSizeInPoints.height = cc._canvas.height;
+        _t._openGLView = openGLView || cc.view;
 
         // Configuration. Gather GPU info
         var conf = cc.configuration;
@@ -101,19 +117,19 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         conf.dumpInfo();
 
         // set size
-        //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
-        //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+        //_t._winSizeInPoints = _t._openGLView.getDesignResolutionSize();
+        //_t._winSizeInPixels = cc.size(_t._winSizeInPoints.width * _t._contentScaleFactor, _t._winSizeInPoints.height * _t._contentScaleFactor);
 
-        //if (this._openGLView != openGLView) {
+        //if (_t._openGLView != openGLView) {
         // because EAGLView is not kind of CCObject
 
-        this._createStatsLabel();
+        _t._createStatsLabel();
 
-        //if (this._openGLView)
-        this.setGLDefaultValues();
+        //if (_t._openGLView)
+        _t.setGLDefaultValues();
 
-        /* if (this._contentScaleFactor != 1) {
-         this.updateContentScaleFactor();
+        /* if (_t._contentScaleFactor != 1) {
+         _t.updateContentScaleFactor();
          }*/
 
         //}
@@ -133,8 +149,9 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
     _p._createStatsLabel = function(){
+        var _t = this;
         if(!cc.LabelAtlas)
-            return this._createStatsLabelForCanvas();
+            return _t._createStatsLabelForCanvas();
 
         if((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
             return;
@@ -158,48 +175,175 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          */
         var factor = cc.view.getDesignResolutionSize().height / 320.0;
         if(factor === 0)
-            factor = this._winSizeInPoints.height / 320.0;
+            factor = _t._winSizeInPoints.height / 320.0;
 
         var tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("00.0", texture, 12, 32 , '.');
         tmpLabel.scale = factor;
-        this._FPSLabel = tmpLabel;
+        _t._FPSLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("0.000", texture, 12, 32, '.');
         tmpLabel.scale = factor;
-        this._SPFLabel = tmpLabel;
+        _t._SPFLabel = tmpLabel;
 
         tmpLabel = new cc.LabelAtlas();
         tmpLabel._setIgnoreContentScaleFactor(true);
         tmpLabel.initWithString("000", texture, 12, 32, '.');
         tmpLabel.scale = factor;
-        this._drawsLabel = tmpLabel;
+        _t._drawsLabel = tmpLabel;
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
-        this._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
-        this._FPSLabel.setPosition(locStatsPosition);
+        _t._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
+        _t._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
+        _t._FPSLabel.setPosition(locStatsPosition);
     };
 
     _p._createStatsLabelForCanvas = function(){
+        var _t = this;
         //The original _createStatsLabelForCanvas method
         //Because the referenced by a cc.Director.prototype._createStatsLabel
         var fontSize = 0;
-        if (this._winSizeInPoints.width > this._winSizeInPoints.height)
-            fontSize = 0 | (this._winSizeInPoints.height / 320 * 24);
+        if (_t._winSizeInPoints.width > _t._winSizeInPoints.height)
+            fontSize = 0 | (_t._winSizeInPoints.height / 320 * 24);
         else
-            fontSize = 0 | (this._winSizeInPoints.width / 320 * 24);
+            fontSize = 0 | (_t._winSizeInPoints.width / 320 * 24);
 
-        this._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
-        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
-        this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
+        _t._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
+        _t._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
+        _t._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(this._drawsLabel.width / 2 + locStatsPosition.x, this._drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        this._SPFLabel.setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        this._FPSLabel.setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
+        _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
+        _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
+        _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
+    };
+
+
+    /**
+     * <p>
+     *     converts a UIKit coordinate to an OpenGL coordinate<br/>
+     *     Useful to convert (multi) touches coordinates to the current layout (portrait or landscape)
+     * </p>
+     * @param {cc.Point} uiPoint
+     * @return {cc.Point}
+     *
+     * convertToGL move to CCDirectorWebGL
+     */
+    _p.convertToGL = function (uiPoint) {
+        var transform = new cc.kmMat4();
+        cc.GLToClipTransform(transform);
+
+        var transformInv = new cc.kmMat4();
+        cc.kmMat4Inverse(transformInv, transform);
+
+        // Calculate z=0 using -> transform*[0, 0, 0, 1]/w
+        var zClip = transform.mat[14] / transform.mat[15];
+
+        var glSize = this._openGLView.getDesignResolutionSize();
+        var clipCoord = new cc.kmVec3(2.0 * uiPoint.x / glSize.width - 1.0, 1.0 - 2.0 * uiPoint.y / glSize.height, zClip);
+
+        var glCoord = new cc.kmVec3();
+        cc.kmVec3TransformCoord(glCoord, clipCoord, transformInv);
+
+        return cc.p(glCoord.x, glCoord.y);
+    };
+
+    /**
+     * <p>converts an OpenGL coordinate to a UIKit coordinate<br/>
+     * Useful to convert node points to window points for calls such as glScissor</p>
+     * @param {cc.Point} glPoint
+     * @return {cc.Point}
+     */
+    _p.convertToUI = function (glPoint) {
+        var transform = new cc.kmMat4();
+        cc.GLToClipTransform(transform);
+
+        var clipCoord = new cc.kmVec3();
+        // Need to calculate the zero depth from the transform.
+        var glCoord = new cc.kmVec3(glPoint.x, glPoint.y, 0.0);
+        cc.kmVec3TransformCoord(clipCoord, glCoord, transform);
+
+        var glSize = this._openGLView.getDesignResolutionSize();
+        return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5));
+    };
+
+
+
+
+    _p.getVisibleSize = function () {
+        //if (this._openGLView) {
+        return this._openGLView.getVisibleSize();
+        //} else {
+        //return this.getWinSize();
+        //}
+    };
+
+    _p.getVisibleOrigin = function () {
+        //if (this._openGLView) {
+        return this._openGLView.getVisibleOrigin();
+        //} else {
+        //return cc.p(0,0);
+        //}
+    };
+
+    _p.getZEye = function () {
+        return (this._winSizeInPoints.height / 1.1566 );
+    };
+
+    /**
+     * Sets the glViewport
+     */
+    _p.setViewport = function(){
+        if(this._openGLView) {
+            var locWinSizeInPoints = this._winSizeInPoints;
+            this._openGLView.setViewPortInPoints(0,0, locWinSizeInPoints.width, locWinSizeInPoints.height);
+        }
+    };
+
+    /**
+     *  Get the CCEGLView, where everything is rendered
+     * @return {*}
+     */
+    _p.getOpenGLView = function () {
+        return this._openGLView;
+    };
+
+    /**
+     * Sets an OpenGL projection
+     * @return {Number}
+     */
+    _p.getProjection = function () {
+        return this._projection;
+    };
+
+    /**
+     * enables/disables OpenGL alpha blending
+     * @param {Boolean} on
+     */
+    _p.setAlphaBlending = function (on) {
+        if (on)
+            cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        else
+            cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO);
+        //cc.CHECK_GL_ERROR_DEBUG();
+    };
+
+
+    /**
+     * sets the OpenGL default values
+     */
+    _p.setGLDefaultValues = function () {
+        var _t = this;
+        _t.setAlphaBlending(true);
+        // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
+        // [self setDepthTest: view_.depthFormat];
+        _t.setDepthTest(false);
+        _t.setProjection(_t._projection);
+
+        // set other opengl default values
+        cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     };
 }
