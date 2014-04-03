@@ -170,7 +170,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         var data = cc.SAXParser.getInstance().getList(fullpath);
 
         if (!data) {
-            cc.log("cc.BMFontConfiguration._parseConfigFile)(: Error parsing FNTfile " + controlFile);
+            cc.log("cc.BMFontConfiguration._parseConfigFile(): Error parsing FNTfile " + controlFile);
             return null;
         }
 
