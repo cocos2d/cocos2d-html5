@@ -25,10 +25,7 @@
  ****************************************************************************/
 
 var MyLayer = cc.Layer.extend({
-    isMouseDown:false,
-    helloImg:null,
     helloLabel:null,
-    circle:null,
     sprite:null,
 
     init:function () {
