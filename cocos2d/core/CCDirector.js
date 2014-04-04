@@ -391,8 +391,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      */
     popScene:function () {
-        if(!this._runningScene)
-            throw "running scene should not null";
+
+        cc.assert(this._runningScene, cc._LogInfos.Director_popScene);
 
         this._scenesStack.pop();
         var c = this._scenesStack.length;
@@ -455,8 +455,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {cc.Scene} scene
      */
     pushScene:function (scene) {
-        if(!scene)
-            throw "the scene should not null";
+
+        cc.assert(scene, cc._LogInfos.Director_pushScene);
 
         this._sendCleanupToScene = false;
 
@@ -469,8 +469,9 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {cc.Scene} scene
      */
     runScene:function(scene){
-        if(!scene)
-            throw "the scene should not be null";
+
+        cc.assert(scene, cc._LogInfos.Director_pushScene);
+
         if(!this._runningScene){
             //start scene
             this.pushScene(scene);
@@ -501,7 +502,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = Date.now();
         if (!this._lastUpdate) {
-            cc.log("cocos2d: Director: Error in gettimeofday");
+            cc.log(cc._LogInfos.Director_resume);
         }
 
         this._paused = false;
@@ -735,8 +736,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {Number} level
      */
     popToSceneStackLevel: function (level) {
-        if(!this._runningScene)
-            throw "A running Scene is needed";
+
+        cc.assert(this._runningScene, cc._LogInfos.Director_popToSceneStackLevel_2);
 
         var locScenesStack = this._scenesStack;
         var c = locScenesStack.length;

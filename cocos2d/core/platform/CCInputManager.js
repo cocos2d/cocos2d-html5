@@ -130,7 +130,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
             if(index == null){
                 var unusedIndex = this._getUnUsedIndex();
                 if (unusedIndex == -1) {
-                    cc.log("The touches is more than MAX_TOUCHES, nUnusedIndex = " + unusedIndex);
+                    cc.log(cc._LogInfos.inputManager_handleTouchesBegin, unusedIndex);
                     continue;
                 }
                 curTouch = this._touches[unusedIndex] = selTouch;

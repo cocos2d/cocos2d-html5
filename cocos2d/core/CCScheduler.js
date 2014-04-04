@@ -43,7 +43,7 @@ cc.arrayVerifyType = function (arr, type) {
     if (arr && arr.length > 0) {
         for (var i = 0; i < arr.length; i++) {
             if (!(arr[i] instanceof  type)) {
-                cc.log("element type is wrong!");
+                cc.log(cc._LogInfos.arrayVerifyType);
                 return false;
             }
         }
@@ -475,11 +475,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.director.getScheduler().scheduleCallbackForTarget(this, function, interval, repeat, delay, !this._isRunning );
      */
     scheduleCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
-        if(!callback_fn)
-            throw "cc.scheduler.scheduleCallbackForTarget(): callback_fn should be non-null.";
 
-        if(!target)
-            throw "cc.scheduler.scheduleCallbackForTarget(): target should be non-null.";
+        cc.assert(callback_fn, cc._LogInfos.Scheduler_scheduleCallbackForTarget_2);
+
+        cc.assert(target, cc._LogInfos.Scheduler_scheduleCallbackForTarget_3);
 
         // default arguments
         interval = interval || 0;
@@ -503,8 +502,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for (var i = 0; i < element.timers.length; i++) {
                 timer = element.timers[i];
                 if (callback_fn == timer._callback) {
-                    cc.log("CCSheduler#scheduleCallback. Callback already scheduled. Updating interval from:"
-                        + timer.getInterval().toFixed(4) + " to " + interval.toFixed(4));
+                    cc.log(cc._LogInfos.Scheduler_scheduleCallbackForTarget, timer.getInterval().toFixed(4), interval.toFixed(4));
                     timer._interval = interval;
                     return;
                 }
@@ -741,8 +739,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      */
     pauseTarget:function (target) {
-        if(!target)
-            throw "cc.Scheduler.pauseTarget():target should be non-null";
+
+        cc.assert(target, cc._LogInfos.Scheduler_pauseTarget);
 
         //customer selectors
         var self = this, element = self._hashForTimers[target.__instanceId];
@@ -764,8 +762,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      */
     resumeTarget:function (target) {
-        if(!target)
-            throw "cc.Scheduler.resumeTarget():target should be non-null";
+
+        cc.assert(target, cc._LogInfos.Scheduler_resumeTarget);
 
         // custom selectors
         var self = this, element = self._hashForTimers[target.__instanceId];
@@ -788,8 +786,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @return {Boolean}
      */
     isTargetPaused:function (target) {
-        if(!target)
-            throw "cc.Scheduler.isTargetPaused():target should be non-null";
+
+        cc.assert(target, cc._LogInfos.Scheduler_isTargetPaused);
 
         // Custom selectors
         var element = this._hashForTimers[target.__instanceId];

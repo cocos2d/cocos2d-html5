@@ -121,8 +121,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.initWithTexture = function (texture, rect, rotated) {
         var _t = this;
         var argnum = arguments.length;
-        if (argnum == 0)
-            throw "Sprite.initWithTexture(): Argument must be non-nil ";
+
+        cc.assert(argnum != 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
 
         rotated = rotated || false;
 
@@ -261,8 +261,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.addChild = function (child, localZOrder, tag) {
-        if(!child)
-            throw "cc.Sprite.addChild(): child should be non-null";
+
+        cc.assert(child, cc._LogInfos.CCSpriteBatchNode_addChild_2);
+
         if (localZOrder == null)
             localZOrder = child._localZOrder;
         if (tag == null)
@@ -304,8 +305,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         if(typeof(newFrame) == "string"){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
-            if(!newFrame)
-                throw "Invalid spriteFrameName";
+
+            cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame)
+
         }
 
         _t.setNodeDirty(true);
@@ -383,8 +385,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
 
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        if(texture && !(texture instanceof cc.Texture2D))
-            throw "Invalid argument: cc.Sprite texture setter expects a CCTexture2D.";
+
+        cc.assert(!texture || texture instanceof cc.Texture2D, cc._LogInfos.CCSpriteBatchNode_setTexture);
 
         if (_t._texture != texture) {
             if (texture && texture.getHtmlElementObj() instanceof  HTMLImageElement) {
@@ -490,10 +492,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.updateQuadFromSprite = function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.updateQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.CCSpriteBatchNode_updateQuadFromSprite_2);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.updateQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.CCSpriteBatchNode_updateQuadFromSprite);
             return;
         }
 
@@ -509,10 +512,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.insertQuadFromSprite = function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.insertQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite_2);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.insertQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite);
             return;
         }
 
@@ -627,10 +631,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.addChild = function (child, zOrder, tag) {
-        if (child == null)
-            throw "cc.SpriteBatchNode.addChild(): child should be non-null";
+
+        cc.assert(child != null, cc._LogInfos.CCSpriteBatchNode_addChild_3);
+
         if(!(child instanceof cc.Sprite)){
-            cc.log( "cc.SpriteBatchNode.addChild(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.CCSpriteBatchNode_addChild);
             return;
         }
 

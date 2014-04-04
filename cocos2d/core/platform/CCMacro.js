@@ -80,7 +80,7 @@ cc.SWAP = function (x, y, ref) {
         ref[x] = ref[y];
         ref[y] = tmp;
     } else
-        cc.log("cc.SWAP is being modified from original macro, please check usage");
+        cc.log(cc._LogInfos.SWAP);
 };
 
 /**
@@ -355,7 +355,7 @@ cc.CHECK_GL_ERROR_DEBUG = function () {
     if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
         var _error = cc._renderContext.getError();
         if (_error) {
-            cc.log("WebGL error " + _error);
+            cc.log(CC._localZOrder.CHECK_GL_ERROR_DEBUG, _error);
         }
     }
 };

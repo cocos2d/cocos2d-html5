@@ -59,7 +59,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addPVRTCImage:function (filename) {
-        cc.log("TextureCache:addPVRTCImage does not support on HTML5");
+        cc.log(cc._LogInfos.textureCache_addPVRTCImage);
     },
 
     /**
@@ -73,7 +73,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addETCImage:function (filename) {
-        cc.log("TextureCache:addPVRTCImage does not support on HTML5");
+        cc.log(cc._LogInfos.textureCache_addETCImage);
     },
 
     /**
@@ -146,7 +146,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addPVRImage:function (path) {
-        cc.log("addPVRImage does not support on HTML5");
+        cc.log(cc._LogInfos.textureCache_addPVRImage);
     },
 
     /**
@@ -231,8 +231,8 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addUIImage:function (image, key) {
-        if(!image)
-            throw "cc.Texture.addUIImage(): image should be non-null";
+
+        cc.assert(image, cc._LogInfos.textureCache_addUIImage_2);
 
         if (key) {
             if (this._textures[key])
@@ -245,7 +245,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
         if ((key != null) && (texture != null))
             this._textures[key] = texture;
         else
-            cc.log("cocos2d: Couldn't add UIImage in TextureCache");
+            cc.log(cc._LogInfos.textureCache_addUIImage);
         return texture;
     },
 
@@ -261,9 +261,9 @@ cc.textureCache = /** @lends cc.textureCache# */{
             var selTexture = locTextures[key];
             count++;
             if (selTexture.getHtmlElementObj() instanceof  HTMLImageElement)
-                cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
+                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo, key, selTexture.getHtmlElementObj().src, selTexture.pixelsWidth, selTexture.pixelsHeight);
             else {
-                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
+                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo_2, key, selTexture.pixelsWidth, selTexture.pixelsHeight);
             }
             totalBytes += selTexture.pixelsWidth * selTexture.pixelsHeight * 4;
         }
@@ -274,13 +274,12 @@ cc.textureCache = /** @lends cc.textureCache# */{
             for (var selCanvasKey in selCanvasColorsArr){
                 var selCanvas = selCanvasColorsArr[selCanvasKey];
                 count++;
-                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selCanvas.width + " x " + selCanvas.height);
+                cc.log("cocos2d: '%s' id= HTMLCanvasElement %s x %s", key, selCanvas.width, selCanvas.height);
                 totalBytes += selCanvas.width * selCanvas.height * 4;
             }
 
         }
-        cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, HTMLCanvasElement for "
-            + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
+        cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo_3, count, totalBytes / 1024, (totalBytes / (1024.0 * 1024.0)).toFixed(2));
     },
 
 	_clear: function () {

@@ -82,7 +82,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                     _t._projectionDelegate.updateProjection();
                 break;
             default:
-                cc.log("cocos2d: Director: unrecognized projection");
+                cc.log(cc._LogInfos.Director_setProjection);
                 break;
         }
         _t._projection = projection;

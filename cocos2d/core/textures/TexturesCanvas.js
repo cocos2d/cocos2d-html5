@@ -210,17 +210,17 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS){
         },
 
         initWithETCFile:function (file) {
-            cc.log("initWithETCFile does not support on HTML5");
+            cc.log(cc._LogInfos.Texture2D_initWithETCFile);
             return false;
         },
 
         initWithPVRFile:function (file) {
-            cc.log("initWithPVRFile does not support on HTML5");
+            cc.log(cc._LogInfos.Texture2D_initWithPVRFile);
             return false;
         },
 
         initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
-            cc.log("initWithPVRTCData does not support on HTML5");
+            cc.log(cc._LogInfos.Texture2D_initWithPVRTCData);
             return false;
         },
 
@@ -312,8 +312,8 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS){
      * cc.textureCache.addImage("hello.png");
      */
     _p.addImage = function (url, cb, target) {
-        if(!url)
-            throw "cc.Texture.addImage(): path should be non-null";
+
+        cc.assert(url, cc._LogInfos.Texture2D_addImage);
 
         var locTexs = this._textures;
         //remove judge

@@ -107,7 +107,9 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
      */
     _getFrameConfig : function(url){
         var dict = cc.loader.getRes(url);
-        if(!dict) throw "Please load the resource first : " + url;
+
+        cc.assert(dict, cc._LogInfos.spriteFrameCache__getFrameConfig_2, url);
+
         cc.loader.release(url);//release it in loader
         if(dict._inited){
             this._frameConfigCache[url] = dict;
@@ -134,7 +136,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                 var oh = frameDict["originalHeight"];
                 // check ow/oh
                 if (!ow || !oh) {
-                    cc.log("cocos2d: WARNING: originalWidth/Height not found on the cc.SpriteFrame. AnchorPoint won't work as expected. Regenrate the .plist");
+                    cc.log(cc._LogInfos.spriteFrameCache__getFrameConfig);
                 }
                 // Math.abs ow/oh
                 ow = Math.abs(ow);
@@ -189,8 +191,8 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
      * cc.spriteFrameCache.addSpriteFrames(s_grossiniJson);
      */
     addSpriteFrames: function (url, texture) {
-        if (!url)
-            throw "cc.SpriteFrameCache.addSpriteFrames(): plist should be non-null";
+
+        cc.assert(url, cc._LogInfos.spriteFrameCache_addSpriteFrames_2);
 
         var self = this;
         var frameConfig = self._frameConfigCache[url] || self._getFrameConfig(url);
@@ -203,7 +205,9 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
             //do nothing
         }else if(typeof texture == "string"){//string
             texture = cc.textureCache.addImage(texture);
-        }else throw "Argument must be non-nil"
+        }else{
+            cc.assert(0, cc._LogInfos.spriteFrameCache_addSpriteFrames_3);
+        }
 
         //create sprite frames
         var spAliases = self._spriteFramesAliases, spriteFrames = self._spriteFrames;
@@ -217,7 +221,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                     for(var i = 0, li = aliases.length; i < li; i++){
                         var alias = aliases[i];
                         if (spAliases[alias]) {
-                            cc.log("cocos2d: WARNING: an alias with name " + alias + " already exists");
+                            cc.log(cc._LogInfos.spriteFrameCache_addSpriteFrames, alias);
                         }
                         spAliases[alias] = key;
                     }
@@ -248,7 +252,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
 
         for (var key in framesDict) {
             if (this._spriteFrames[key]) {
-                cc.log("cocos2d: WARNING: Sprite frame: "+key+" has already been added by another source, please fix name conflit");
+                cc.log(cc._LogInfos.spriteFrameCache__checkConflict, key);
             }
         }
     },
@@ -364,7 +368,7 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                 if(!frame) delete self._spriteFramesAliases[name];
             }
         }
-        if (!frame) cc.log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
+        if (!frame) cc.log(cc._LogInfos.spriteFrameCache_getSpriteFrame, name);
         return frame;
     },
 
