@@ -224,50 +224,60 @@ ClassManager.compileSuper.ClassManager = ClassManager;
     };
 })();
 
-//
-// Another way to subclass: Using Google Closure.
-// The following code was copied + pasted from goog.base / goog.inherits
-//
-cc.inherits = function (childCtor, parentCtor) {
-    function tempCtor() {}
-    tempCtor.prototype = parentCtor.prototype;
-    childCtor.superClass_ = parentCtor.prototype;
-    childCtor.prototype = new tempCtor();
-    childCtor.prototype.constructor = childCtor;
-
-    // Copy "static" method, but doesn't generate subclasses.
-//  for( var i in parentCtor ) {
-//      childCtor[ i ] = parentCtor[ i ];
-//  }
-};
-cc.base = function(me, opt_methodName, var_args) {
-    var caller = arguments.callee.caller;
-    if (caller.superClass_) {
-        // This is a constructor. Call the superclass constructor.
-        ret =  caller.superClass_.constructor.apply( me, Array.prototype.slice.call(arguments, 1));
-        return ret;
+/**
+ * Common getter setter configuration function
+ * @function
+ * @param {Object}   proto      A class prototype or an object to config<br/>
+ * @param {String}   prop       Property name
+ * @param {function} getter     Getter function for the property
+ * @param {function} setter     Setter function for the property
+ * @param {String}   getterName Name of getter function for the property
+ * @param {String}   setterName Name of setter function for the property
+ */
+cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, setterName){
+    if (proto.__defineGetter__) {
+        getter && proto.__defineGetter__(prop, getter);
+        setter && proto.__defineSetter__(prop, setter);
+    } else if (Object.defineProperty) {
+        var desc = { enumerable: false, configurable: true };
+        getter && (desc.get = getter);
+        setter && (desc.set = setter);
+        Object.defineProperty(proto, prop, desc);
+    } else {
+        throw new Error("browser does not support getters");
     }
 
-    var args = Array.prototype.slice.call(arguments, 2);
-    var foundCaller = false;
-    for (var ctor = me.constructor; ctor; ctor = ctor.superClass_ && ctor.superClass_.constructor) {
-        if (ctor.prototype[opt_methodName] === caller) {
-            foundCaller = true;
-        } else if (foundCaller) {
-            return ctor.prototype[opt_methodName].apply(me, args);
+    if(!getterName && !setterName) {
+        // Lookup getter/setter function
+        var hasGetter = (getter != null), hasSetter = (setter != undefined), props = Object.getOwnPropertyNames(proto);
+        for (var i = 0; i < props.length; i++) {
+            var name = props[i];
+            if( proto.__lookupGetter__(name) || typeof proto[name] !== "function" ) continue;
+            var func = proto[name];
+            if (hasGetter && func === getter) {
+                getterName = name;
+                if(!hasSetter || setterName) break;
+            }
+            if (hasSetter && func === setter) {
+                setterName = name;
+                if(!hasGetter || getterName) break;
+            }
         }
     }
 
-    // If we did not find the caller in the prototype chain,
-    // then one of two things happened:
-    // 1) The caller is an instance method.
-    // 2) This method was not called by the right caller.
-    if (me[opt_methodName] === caller) {
-        return me.constructor.prototype[opt_methodName].apply(me, args);
-    } else {
-        throw Error(
-            'cc.base called from a method of one name ' +
-                'to a method of a different name');
+    // Found getter/setter
+    var ctor = proto.constructor;
+    if (getterName) {
+        if (!ctor.__getters__) {
+            ctor.__getters__ = {};
+        }
+        ctor.__getters__[getterName] = prop;
+    }
+    if (setterName) {
+        if (!ctor.__setters__) {
+            ctor.__setters__ = {};
+        }
+        ctor.__setters__[setterName] = prop;
     }
 };
 

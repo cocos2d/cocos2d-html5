@@ -12,7 +12,7 @@
             <sources dir="./../">
                 <file name="CCBoot.js"/>
                 <file name="cocos2d/core/platform/CCClass.js"/>
-                <file name="cocos2d/core/platform/CCCommon.js"/>
+                <!-- <file name="cocos2d/core/platform/CCCommon.js"/> -->
                 <file name="cocos2d/core/cocoa/CCGeometry.js"/>
                 <file name="cocos2d/core/platform/CCSAXParser.js"/>
                 <file name="cocos2d/core/platform/CCLoaders.js"/>
@@ -39,7 +39,8 @@
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
                 <file name="cocos2d/core/textures/CCTexture2D.js"/>
                 <file name="cocos2d/core/textures/CCTextureCache.js"/>
-                <file name="cocos2d/core/textures/CCTextureAtlas.js"/>
+                <!-- <file name="cocos2d/core/textures/CCTextureAtlas.js"/> -->
+                <file name="cocos2d/core/textures/TexturesCanvas.js"/>
                 <file name="cocos2d/core/scenes/CCScene.js"/>
                 <file name="cocos2d/core/scenes/CCLoaderScene.js"/>
                 <file name="cocos2d/core/layers/CCLayer.js"/>
@@ -57,11 +58,11 @@
                 <file name="cocos2d/core/CCDirector.js"/>
                 <file name="cocos2d/core/CCCamera.js"/>
                 <file name="cocos2d/core/CCScheduler.js"/>
-                <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/>
+                <!-- <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/> -->
                 <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFCanvas.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
-                <file name="cocos2d/core/CCActionManager.js"/>
+                <!-- <file name="cocos2d/core/CCActionManager.js"/>
                 <file name="cocos2d/actions/CCAction.js"/>
                 <file name="cocos2d/actions/CCActionInterval.js"/>
                 <file name="cocos2d/actions/CCActionInstant.js"/>
@@ -69,7 +70,7 @@
                 <file name="cocos2d/actions/CCActionEase.js"/>
                 <file name="cocos2d/actions/CCActionCatmullRom.js"/>
                 <file name="cocos2d/actions/CCActionTween.js"/>
-                <file name="cocos2d/audio/CCAudio.js"/>
+                <file name="cocos2d/audio/CCAudio.js"/>    -->
             </sources>
         </jscomp>
     </target>

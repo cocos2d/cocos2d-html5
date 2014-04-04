@@ -46,6 +46,7 @@ cc.LoaderScene = cc.Scene.extend({
         self.addChild(bgLayer, 0);
 
         //image move to CCSceneFile.js
+        var fontSize = 24, lblHeight =  -logoHeight / 2 + 100;
         if(cc._loaderImage){
             //loading logo
             cc.loader.loadImg(cc._loaderImage, {isCrossOrigin : false }, function(err, img){
@@ -53,18 +54,14 @@ cc.LoaderScene = cc.Scene.extend({
                 logoHeight = img.height;
                 self._initStage(img, centerPos);
             });
-            //loading percent
-            var label = self._label = cc.LabelTTF.create("Loading... 0%", "Arial", 14);
-            label.setPosition(cc.pAdd(centerPos, cc.p(0, -logoHeight / 2 - 10)));
-        }else{
-            //loading percent
-            var label = self._label = cc.LabelTTF.create("Loading... 0%", "Arial", 24);
-            label.setPosition(cc.pAdd(centerPos, cc.p(0, -logoHeight / 2 + 100)));
+            fontSize = 14;
+            lblHeight = -logoHeight / 2 - 10;
         }
-
+        //loading percent
+        var label = self._label = cc.LabelTTF.create("Loading... 0%", "Arial", fontSize);
+        label.setPosition(cc.pAdd(centerPos, cc.p(0, lblHeight)));
         label.setColor(cc.color(180, 180, 180));
         bgLayer.addChild(this._label, 10);
-
         return true;
     },
 
