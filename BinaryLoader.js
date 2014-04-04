@@ -54,6 +54,49 @@ cc.loader.loadBinary = function(url, cb){
     xhr.send(null);
 };
 
+cc.loader._str2Uint8Array = function(strData){
+    if (!strData)
+        return null;
+
+    var arrData = new Uint8Array(strData.length);
+    for (var i = 0; i < strData.length; i++) {
+        arrData[i] = strData.charCodeAt(i) & 0xff;
+    }
+    return arrData;
+};
+
+cc.loader.loadBinarySync = function(url){
+    var self = this;
+    var req = this.getXMLHttpRequest();
+    var errInfo = "load " + url + " failed!";
+    req.open('GET', url, false);
+    var arrayInfo = null;
+    if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+        req.setRequestHeader("Accept-Charset", "x-user-defined");
+        req.send(null);
+        if (req.status != 200) {
+            cc.log(errInfo);
+            return null;
+        }
+
+        var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
+        if (fileContents) {
+            arrayInfo = self._str2Uint8Array(fileContents);
+        }
+    } else {
+        if (req.overrideMimeType)
+            req.overrideMimeType('text\/plain; charset=x-user-defined');
+        req.send(null);
+        if (req.status != 200) {
+            cc.log(errInfo);
+            return null;
+        }
+
+        arrayInfo = this._str2Uint8Array(req.responseText);
+    }
+    return arrayInfo;
+};
+
 //Compatibility with IE9
 var Uint8Array = Uint8Array || Array;
 
