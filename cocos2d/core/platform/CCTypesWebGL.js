@@ -216,6 +216,23 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         this._br = br ? new cc.Vertex2F(br.x, br.y, locArrayBuffer, locElementLen * 3) : new cc.Vertex2F(0, 0, locArrayBuffer, locElementLen * 3);
     };
     cc.Quad2.BYTES_PER_ELEMENT = 32;
+
+    /**
+     * A 3D Quad. 4 * 3 floats
+     * @Class
+     * @Construct
+     * @param {cc.Vertex3F} bl1
+     * @param {cc.Vertex3F} br1
+     * @param {cc.Vertex3F} tl1
+     * @param {cc.Vertex3F} tr1
+     */
+    cc.Quad3 = function (bl1, br1, tl1, tr1) {
+        this.bl = bl1 || new cc.Vertex3F(0, 0, 0);
+        this.br = br1 || new cc.Vertex3F(0, 0, 0);
+        this.tl = tl1 || new cc.Vertex3F(0, 0, 0);
+        this.tr = tr1 || new cc.Vertex3F(0, 0, 0);
+    };
+
     Object.defineProperties(cc.Quad2.prototype, {
         tl: {
             get: function () {
