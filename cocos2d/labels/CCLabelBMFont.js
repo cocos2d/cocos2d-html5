@@ -126,16 +126,34 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 this.updateLabel();
         }
     },
-    /**
-     * Constructor
-     */
-    ctor:function () {
+
+	/**
+	 * creates a bitmap font atlas with an initial string and the FNT file
+	 * @constructor
+	 * @param {String} str
+	 * @param {String} fntFile
+	 * @param {Number} [width=-1]
+	 * @param {Number} [alignment=cc.TEXT_ALIGNMENT_LEFT]
+	 * @param {cc.Point} [imageOffset=cc.p(0,0)]
+	 * @example
+	 * // Example 01
+	 * var label1 = new cc.LabelBMFont("Test case", "test.fnt");
+	 *
+	 * // Example 02
+	 * var label2 = new cc.LabelBMFont("test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
+	 *
+	 * // Example 03
+	 * var label3 = new cc.LabelBMFont("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
+	 */
+    ctor:function (str, fntFile, width, alignment, imageOffset) {
         var self = this;
         cc.SpriteBatchNode.prototype.ctor.call(self);
         self._imageOffset = cc.p(0,0);
         self._displayedColor = cc.color(255, 255, 255, 255);
         self._realColor = cc.color(255, 255, 255, 255);
         self._reusedChar = [];
+
+		this.initWithString(str, fntFile, width, alignment, imageOffset);
     },
     /**
      * return  texture is loaded
@@ -354,9 +372,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * init a bitmap font altas with an initial string and the FNT file
      * @param {String} str
      * @param {String} fntFile
-     * @param {Number} width
-     * @param {Number} alignment
-     * @param {cc.Point} imageOffset
+     * @param {Number} [width=-1]
+     * @param {Number} [alignment=cc.TEXT_ALIGNMENT_LEFT]
+     * @param {cc.Point} [imageOffset=cc.p(0,0)]
      * @return {Boolean}
      */
     initWithString:function (str, fntFile, width, alignment, imageOffset) {
@@ -967,9 +985,9 @@ delete window._p;
  * creates a bitmap font atlas with an initial string and the FNT file
  * @param {String} str
  * @param {String} fntFile
- * @param {Number} width
- * @param {Number} alignment
- * @param {cc.Point} imageOffset
+ * @param {Number} [width=-1]
+ * @param {Number} [alignment=cc.TEXT_ALIGNMENT_LEFT]
+ * @param {cc.Point} [imageOffset=cc.p(0,0)]
  * @return {cc.LabelBMFont|Null}
  * @example
  * // Example 01
@@ -982,17 +1000,7 @@ delete window._p;
  * var label3 = cc.LabelBMFont.create("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.p(0,0));
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
-    var ret = new cc.LabelBMFont();
-    if (str === undefined) {
-        if (ret && ret.init())
-            return ret;
-        return null;
-    }
-
-    if (ret && ret.initWithString(str, fntFile, width, alignment, imageOffset)) {
-        return ret;
-    }
-    return null;
+    return new cc.LabelBMFont(str, fntFile, width, alignment, imageOffset);
 };
 
 /**

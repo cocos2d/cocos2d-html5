@@ -94,11 +94,17 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     _lineWidth: 1,
     _drawColor: null,
     _className:"DrawNodeCanvas",
+
+	/*
+	 * @constructor
+	 */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._buffer = [];
         this._drawColor = cc.color(255, 255, 255, 255);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+
+		this.init();
     },
 
     // ----common function start ----
@@ -587,6 +593,8 @@ cc.DrawNodeWebGL = cc.Node.extend({
         this._buffer = [];
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         this._drawColor = cc.color(255,255,255,255);
+
+	    this.init();
     },
 
     init:function () {
@@ -1058,10 +1066,7 @@ cc.DrawNode = cc._renderType == cc._RENDER_TYPE_WEBGL ? cc.DrawNodeWebGL : cc.Dr
  * @return {cc.DrawNode}
  */
 cc.DrawNode.create = function () {
-    var ret = new cc.DrawNode();
-    if (ret && ret.init())
-        return ret;
-    return null;
+    return new cc.DrawNode();
 };
 
 cc._DrawNodeElement = function (type, verts, fillColor, lineWidth, lineColor, lineCap, isClosePolygon, isFill, isStroke) {
