@@ -737,7 +737,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
 	    var argc = arguments.length;
 
-        while(arguments[argc-1] === undefined){
+        while(arguments[argc-1] === undefined && argc > 1){
             argc--;
         }
 
