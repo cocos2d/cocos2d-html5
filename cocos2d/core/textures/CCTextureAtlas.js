@@ -275,7 +275,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         cc.assert(quad, cc._LogInfos.TextureAtlas_updateQuad);
 
-        cc.assert(index >= 0 && index < this._capacity, cc._logList.TextureAtlas_updateQuad_2);
+        cc.assert(index >= 0 && index < this._capacity, cc._LogInfos.TextureAtlas_updateQuad_2);
 
         this._totalQuads = Math.max(index + 1, this._totalQuads);
         this._setQuadToArray(quad, index);

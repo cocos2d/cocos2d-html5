@@ -67,15 +67,4 @@ cc.defineGetterSetter(_p, "batchNode", _p.getBatchNode, _p.setBatchNode);
 _p.quad;
 cc.defineGetterSetter(_p, "quad", _p.getQuad);
 
-
-_p = cc.SpriteBatchNode.prototype;
-
-// Override properties
-cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
-
-// Extended properties
-/** @expose */
-_p.descendants;
-cc.defineGetterSetter(_p, "descendants", _p.getDescendants);
-
 delete window._p;

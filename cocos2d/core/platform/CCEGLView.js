@@ -951,8 +951,6 @@ cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
      * @param {cc.ContentStrategy} contentStg
      */
     setContentStrategy: function (contentStg) {
-        console.log(contentStg)
-        console.log(contentStg instanceof cc.ContentStrategy)
         if (contentStg instanceof cc.ContentStrategy)
             this._contentStrategy = contentStg;
     }

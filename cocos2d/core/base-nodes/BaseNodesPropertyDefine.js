@@ -24,24 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/*
- CCAtlasNode
- */
-
-window._p = cc.AtlasNode.prototype;
-
-// Override properties
-cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
-
-// Extended properties
-/** @expose */
-_p.texture;
-cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
-/** @expose */
-_p.textureAtlas;
-/** @expose */
-_p.quadsToDraw;
 
 /*
  CCNode
