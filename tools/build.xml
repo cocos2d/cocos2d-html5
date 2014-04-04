@@ -6,7 +6,7 @@
 
     <target name="compile">
     <!-- <jscomp compilationLevel="advanced" warning="quiet" -->
-        <jscomp compilationLevel="simple" warning="quiet"
+        <jscomp compilationLevel="advanced" warning="quiet"
                 debug="false" output="./../lib/cocos2d-html5-v3.0-alpha-min.js">
                 <!--sourceMapOutputFile="E:\Projects\cocos2d-js\samples\js-tests\publish\html5\sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
