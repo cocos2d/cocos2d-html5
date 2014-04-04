@@ -6,7 +6,7 @@
 
     <target name="compile">
     <!-- <jscomp compilationLevel="advanced" warning="quiet" -->
-        <jscomp compilationLevel="advanced" warning="quiet"
+        <jscomp compilationLevel="simple" warning="quiet"
                 debug="false" output="./../lib/cocos2d-html5-v3.0-alpha-min.js">
                 <!--sourceMapOutputFile="E:\Projects\cocos2d-js\samples\js-tests\publish\html5\sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
@@ -22,8 +22,8 @@
                 <file name="cocos2d/core/platform/CCTypesCanvas.js"/>
                 <file name="cocos2d/core/platform/CCTypes.js"/>
                 <file name="cocos2d/core/platform/CCEGLView.js"/>
-                <file name="cocos2d/core/platform/CCScreen.js"/>
-                <file name="cocos2d/core/platform/CCVisibleRect.js"/>
+                <!-- <file name="cocos2d/core/platform/CCScreen.js"/>
+                <file name="cocos2d/core/platform/CCVisibleRect.js"/>-->
                 <file name="cocos2d/core/platform/CCInputManager.js"/>
                 <file name="cocos2d/core/cocoa/CCAffineTransform.js"/>
                 <file name="cocos2d/core/support/CCPointExtension.js"/>
@@ -56,7 +56,7 @@
                 <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <!-- <file name="cocos2d/core/CCConfiguration.js"/> -->
                 <file name="cocos2d/core/CCDirector.js"/>
-                <file name="cocos2d/core/CCCamera.js"/>
+                <!-- <file name="cocos2d/core/CCCamera.js"/> -->
                 <file name="cocos2d/core/CCScheduler.js"/>
                 <!-- <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/> -->
                 <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>

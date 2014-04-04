@@ -1696,7 +1696,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         }
 
-                        var canvasObj = document.createElement("canvas");
+                        var canvasObj = cc.newElement("canvas");
                         if(imageFormat === cc.FMT_PNG){
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
@@ -2522,7 +2522,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         // Create another cache for the tinted version
                         // This speeds up things by a fair bit
                         if (!cacheTextureForColor.tintCache) {
-                            cacheTextureForColor.tintCache = document.createElement('canvas');
+                            cacheTextureForColor.tintCache = cc.newElement('canvas');
                             cacheTextureForColor.tintCache.width = element.width;
                             cacheTextureForColor.tintCache.height = element.height;
                         }

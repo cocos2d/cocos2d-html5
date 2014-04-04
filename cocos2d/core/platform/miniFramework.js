@@ -261,3 +261,4 @@ cc.$.findpos = function (obj) {
     } while (obj = obj.offsetParent);
     return {x: curleft, y: curtop};
 };
+

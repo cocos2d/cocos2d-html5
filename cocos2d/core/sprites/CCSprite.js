@@ -44,10 +44,10 @@ cc.generateTextureCacheForColor = function (texture) {
     }
 
     var textureCache = [
-        cc.$new("canvas"),
-        cc.$new("canvas"),
-        cc.$new("canvas"),
-        cc.$new("canvas")
+        cc.newElement("canvas"),
+        cc.newElement("canvas"),
+        cc.newElement("canvas"),
+        cc.newElement("canvas")
     ];
 
     function renderToCache() {
@@ -105,8 +105,8 @@ cc.generateTextureCacheForColor = function (texture) {
     return textureCache;
 };
 
-cc.generateTextureCacheForColor.canvas = document.createElement('canvas');
-cc.generateTextureCacheForColor.tempCanvas = document.createElement('canvas');
+cc.generateTextureCacheForColor.canvas = cc.newElement('canvas');
+cc.generateTextureCacheForColor.tempCanvas = cc.newElement('canvas');
 cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCanvas.getContext('2d');
 
 /**
@@ -125,7 +125,7 @@ cc.generateTintImage2 = function (texture, color, rect) {
         rect = cc.RECT_PIXELS_TO_POINTS(rect);
     }
 
-    var buff = document.createElement("canvas");
+    var buff = cc.newElement("canvas");
     var ctx = buff.getContext("2d");
 
     if (buff.width != rect.width) buff.width = rect.width;
@@ -170,7 +170,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
 
     // Create a new buffer if required
     if (!buff) {
-        buff = document.createElement("canvas");
+        buff = cc.newElement("canvas");
         buff.width = w;
         buff.height = h;
         ctx = buff.getContext("2d");
@@ -213,7 +213,7 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     if (!rect)
         return texture;
 
-    var nCanvas = document.createElement("canvas");
+    var nCanvas = cc.newElement("canvas");
     nCanvas.width = rect.width;
     nCanvas.height = rect.height;
 

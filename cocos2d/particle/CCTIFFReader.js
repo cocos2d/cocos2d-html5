@@ -230,7 +230,7 @@ cc.tiffReader = /** @lends cc.tiffReader# */{
      * @returns {*}
      */
     parseTIFF: function (tiffData, canvas) {
-        canvas = canvas || document.createElement('canvas');
+        canvas = canvas || cc.newElement('canvas');
 
         this._tiffData = tiffData;
         this.canvas = canvas;

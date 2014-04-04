@@ -80,8 +80,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _isAdjustViewPort: true,
 
     ctor: function () {
-        var _t = this;
-        _t._frame = (cc.container.parentNode === document.body) ? document.documentElement : cc.container.parentNode;
+        var _t = this, d = document, _strategy = cc.ContainerStrategy;
+        _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
         _t._frameSize = cc.size(0, 0);
         _t._initFrameSize();
 
@@ -98,11 +98,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.visibleRect.init(_t._designResolutionSize);
 
         // Setup system default resolution policies
-        _t._rpExactFit = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.EXACT_FIT);
-        _t._rpShowAll = new cc.ResolutionPolicy(cc.ContainerStrategy.PROPORTION_TO_FRAME, cc.ContentStrategy.SHOW_ALL);
-        _t._rpNoBorder = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.NO_BORDER);
-        _t._rpFixedHeight = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.FIXED_HEIGHT);
-        _t._rpFixedWidth = new cc.ResolutionPolicy(cc.ContainerStrategy.EQUAL_TO_FRAME, cc.ContentStrategy.FIXED_WIDTH);
+        _t._rpExactFit = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
+        _t._rpShowAll = new cc.ResolutionPolicy(_strategy.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
+        _t._rpNoBorder = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.NO_BORDER);
+        _t._rpFixedHeight = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
+        _t._rpFixedWidth = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
 
         _t._hDC = cc._canvas;
         _t._hRC = cc._renderContext;
@@ -127,7 +127,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
             if (!_t.__resizeWithBrowserSize) {
                 _t.__resizeWithBrowserSize = true;
                 adjustSize = _t._resizeEvent.bind(_t);
-                window.addEventListener('resize', adjustSize, false);
+                cc._addEventListener(window, 'resize', adjustSize, false);
             }
         } else {
             //disable
@@ -163,7 +163,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         if (this._isAdjustViewPort) {
 	        var viewportMetas = {"user-scalable": "no", "maximum-scale": "1.0", "initial-scale": "1.0"}, elems = document.getElementsByName("viewport"), vp, content;
             if (elems.length == 0) {
-                vp = document.createElement("meta");
+                vp = cc.newElement("meta");
                 vp.name = "viewport";
                 vp.content = "";
                 document.head.appendChild(vp);

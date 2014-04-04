@@ -102,7 +102,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
             var locCanvas = cc._canvas;
-            var tmpCanvas = document.createElement('canvas');
+            var tmpCanvas = cc.newElement('canvas');
             tmpCanvas.width = locCanvas.width;
             tmpCanvas.height = locCanvas.height;
             this._cacheCanvas = tmpCanvas;

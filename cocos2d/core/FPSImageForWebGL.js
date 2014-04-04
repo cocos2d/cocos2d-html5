@@ -1,5 +1,5 @@
 cc.Director._fpsImage = new Image();
-cc.Director._fpsImage.addEventListener("load", function () {
+cc._addEventListener(cc.Director._fpsImage, "load", function () {
     cc.Director._fpsImageLoaded = true;
 });
 if(cc._fpsImage){

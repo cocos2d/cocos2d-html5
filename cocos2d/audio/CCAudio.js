@@ -472,7 +472,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
             audio = self._getAudioByUrl(url);
             if(!audio) return null;
             audio = audio.cloneNode(true);
-            if(self._effectPauseCb) audio.addEventListener("pause", self._effectPauseCb);
+            if(self._effectPauseCb) cc._addEventListener(audio, "pause", self._effectPauseCb);
             audio.volume = this._effectsVolume;
             effList.push(audio);
         }
@@ -818,7 +818,8 @@ if (!cc.sys._supportWebAudio && cc.sys._supportMultipleAudio < 0){
                 audio = self._getAudioByUrl(url);
                 if(!audio) return null;
                 audio = audio.cloneNode(true);
-                if(self._effectPauseCb) audio.addEventListener("pause", self._effectPauseCb);
+                if(self._effectPauseCb)
+                    cc._addEventListener(audio, "pause", self._effectPauseCb);
                 audio.volume = self._effectsVolume;
                 self._effectCache4Single[url] = audio;
             }
@@ -985,12 +986,12 @@ cc._audioLoader = {
             cb(null, audio);
         }else{
             var canplaythrough = "canplaythrough", error = "error";
-            audio.addEventListener(canplaythrough, function(){
+            cc._addEventListener(audio, canplaythrough, function(){
                 cb(null, audio);
                 this.removeEventListener(canplaythrough, arguments.callee, false);
                 this.removeEventListener(error, arguments.callee, false);
             }, false);
-            audio.addEventListener(error, function(){
+            cc._addEventListener(audio, error, function(){
                 cb("load " + url + " failed")
                 this.removeEventListener(canplaythrough, arguments.callee, false);
                 this.removeEventListener(error, arguments.callee, false);
@@ -1005,7 +1006,7 @@ cc._audioLoader = {
     }
 };
 cc._audioLoader._supportedAudioTypes = function() {
-    var au = document.createElement('audio'), arr = [];;
+    var au = cc.newElement('audio'), arr = [];;
     if (au.canPlayType) {
         // <audio> tag is supported, go on
         var _check = function(typeStr) {

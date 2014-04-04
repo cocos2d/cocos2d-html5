@@ -790,7 +790,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return this._labelContext;
 
         if (!this._labelCanvas) {
-            var locCanvas = document.createElement("canvas");
+            var locCanvas = cc.newElement("canvas");
             var labelTexture = new cc.Texture2D();
             labelTexture.initWithElement(locCanvas);
             this.texture = labelTexture;
@@ -1056,7 +1056,7 @@ if(cc.USE_LA88_LABELS)
 else
     cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTUREA8COLOR;
 
-cc.LabelTTF.__labelHeightDiv = document.createElement("div");
+cc.LabelTTF.__labelHeightDiv = cc.newElement("div");
 cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";
 cc.LabelTTF.__labelHeightDiv.style.left = "-100px";

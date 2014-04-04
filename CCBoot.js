@@ -50,6 +50,14 @@ _p._super;
 _p.ctor;
 delete window._p;
 
+cc.newElement = function(x){
+    return document.createElement(x);
+};
+
+cc._addEventListener = function (element, type, listener, useCapture) {
+    element.addEventListener(type, listener, useCapture);
+};
+
 //is nodejs ? Used to support node-webkit.
 cc._isNodeJs = typeof require !== 'undefined' && require("fs");
 
@@ -345,7 +353,7 @@ if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
 
     // inject VBScript
     //document.write(IEBinaryToArray_ByteStr_Script);
-    var myVBScript = document.createElement('script');
+    var myVBScript = cc.newElement('script');
     myVBScript.type = "text/vbscript";
     myVBScript.textContent = IEBinaryToArray_ByteStr_Script;
     document.body.appendChild(myVBScript);
@@ -450,15 +458,15 @@ cc.loader = {
         });
     },
     _createScript : function(jsPath, isAsync, cb){
-        var d = document, self = this, s = d.createElement('script');
+        var d = document, self = this, s = cc.newElement('script');
         s.async = isAsync;
         s.src = jsPath;
         self._jsCache[jsPath] = true;
-        s.addEventListener('load',function(){
+        cc._addEventListener(s, 'load',function(){
             this.removeEventListener('load', arguments.callee, false);
             cb();
         },false);
-        s.addEventListener('error',function(){
+        cc._addEventListener(s, 'error',function(){
             cb("Load " + jsPath + " failed!");
         },false);
         d.body.appendChild(s);
@@ -477,7 +485,7 @@ cc.loader = {
     _loadJsImg : function(){
         var d = document, jsLoadingImg = d.getElementById("cocos2d_loadJsImg");
         if(!jsLoadingImg){
-            jsLoadingImg = d.createElement('img');
+            jsLoadingImg = cc.newElement('img');
 
             if(cc._loadingImage)
                 jsLoadingImg.src = cc._loadingImage;
@@ -589,13 +597,13 @@ cc.loader = {
         if(opt.isCrossOrigin)
             img.crossOrigin = "Anonymous";
 
-        img.addEventListener("load", function () {
+        cc._addEventListener(img, "load", function () {
             this.removeEventListener('load', arguments.callee, false);
             this.removeEventListener('error', arguments.callee, false);
             if(cb)
                 cb(null, img);
         });
-        img.addEventListener("error", function () {
+        cc._addEventListener(img, "error", function () {
             this.removeEventListener('error', arguments.callee, false);
             if(cb)
                 cb("load image failed");
@@ -898,19 +906,19 @@ cc.loader = {
             cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
 
-    if (typeof document.addEventListener !== "undefined" && hidden) {
-        document.addEventListener(visibilityChange, function () {
+    if (hidden) {
+        cc._addEventListener(document, visibilityChange, function () {
             if (document[hidden]) onHidden();
             else onShow();
         }, false);
     } else {
-        win.addEventListener("blur", onHidden, false);
-        win.addEventListener("focus", onShow, false);
+        cc._addEventListener(win, "blur", onHidden, false);
+        cc._addEventListener(win, "focus", onShow, false);
     }
 
     if ("onpageshow" in window && "onpagehide" in window) {
-        win.addEventListener("pagehide", onHidden, false);
-        win.addEventListener("pageshow", onShow, false);
+        cc._addEventListener(win, "pagehide", onHidden, false);
+        cc._addEventListener(win, "pageshow", onShow, false);
     }
     win = null;
     visibilityChange = null;
@@ -925,7 +933,7 @@ cc._logToWebPage = function (msg) {
     var logList = cc._logList;
     var doc = document;
     if(!logList){
-        var logDiv = doc.createElement("Div");
+        var logDiv = cc.newElement("Div");
         var logDivStyle = logDiv.style;
 
         logDiv.setAttribute("id", "logInfoDiv");
@@ -937,7 +945,7 @@ cc._logToWebPage = function (msg) {
         logDivStyle.top = "0";
         logDivStyle.left = "0";
 
-        logList = cc._logList = doc.createElement("textarea");
+        logList = cc._logList = cc.newElement("textarea");
         var logListStyle = logList.style;
 
         logList.setAttribute("rows", "20");
@@ -1251,7 +1259,7 @@ cc._initSys = function(config, CONFIG_KEY){
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
     var userRenderMode = parseInt(config[CONFIG_KEY.renderMode]);
     var renderType = cc._RENDER_TYPE_WEBGL;
-    var tempCanvas = document.createElement("Canvas");
+    var tempCanvas = cc.newElement("Canvas");
     cc._supportRender = true;
     var notInWhiteList = webglWhiteList.indexOf(sys.browserType) == -1;
     if(userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList))){
@@ -1447,7 +1455,7 @@ cc._setup = function (el, width, height) {
         height = height || element.height;
 
         //it is already a canvas, we wrap it around with a div
-        localContainer = cc.container = cc.$new("DIV");
+        localContainer = cc.container = cc.newElement("DIV");
         localCanvas = cc._canvas = element;
         localCanvas.parentNode.insertBefore(localContainer, localCanvas);
         localCanvas.appendTo(localContainer);
@@ -1459,7 +1467,7 @@ cc._setup = function (el, width, height) {
         width = width || element.clientWidth;
         height = height || element.clientHeight;
         localContainer = cc.container = element;
-        localCanvas = cc._canvas = cc.$new("CANVAS");
+        localCanvas = cc._canvas = cc.newElement("CANVAS");
         element.appendChild(localCanvas);
     }
 
@@ -1499,7 +1507,7 @@ cc._setup = function (el, width, height) {
     cc._setContextMenuEnable(false);
 
     if(cc.sys.isMobile){
-        var fontStyle = document.createElement("style");
+        var fontStyle = cc.newElement("style");
         fontStyle.type = "text/css";
         document.body.appendChild(fontStyle);
 
