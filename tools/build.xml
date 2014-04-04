@@ -34,7 +34,7 @@
                 <file name="cocos2d/core/event-manager/CCEventListener.js"/>
                 <file name="cocos2d/core/event-manager/CCEventManager.js"/>
                 <file name="cocos2d/core/base-nodes/CCNode.js"/>
-                <file name="cocos2d/core/base-nodes/CCAtlasNode.js"/>
+                <!-- <file name="cocos2d/core/base-nodes/CCAtlasNode.js"/> -->
                 <file name="cocos2d/core/base-nodes/BaseNodesCanvas.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
                 <file name="cocos2d/core/textures/CCTexture2D.js"/>

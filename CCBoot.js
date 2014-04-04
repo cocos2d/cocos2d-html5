@@ -883,27 +883,27 @@ cc.loader = {
 
 //+++++++++++++++++++++++++something about window events begin+++++++++++++++++++++++++++
 (function(){
-    var win = window, hidden, visibilityChange;
-    if (typeof document.hidden !== "undefined") {
+    var win = window, hidden, visibilityChange, _undef = "undefined";
+    if (typeof document.hidden !== _undef) {
         hidden = "hidden";
         visibilityChange = "visibilitychange";
-    } else if (typeof document.mozHidden !== "undefined") {
+    } else if (typeof document.mozHidden !== _undef) {
         hidden = "mozHidden";
         visibilityChange = "mozvisibilitychange";
-    } else if (typeof document.msHidden !== "undefined") {
+    } else if (typeof document.msHidden !== _undef) {
         hidden = "msHidden";
         visibilityChange = "msvisibilitychange";
-    } else if (typeof document.webkitHidden !== "undefined") {
+    } else if (typeof document.webkitHidden !== _undef) {
         hidden = "webkitHidden";
         visibilityChange = "webkitvisibilitychange";
     }
 
-    var onHidden = function(){
-        if(cc.eventManager)
+    var onHidden = function () {
+        if (cc.eventManager && cc.game._eventHide)
             cc.eventManager.dispatchEvent(cc.game._eventHide);
     };
-    var onShow = function(){
-        if(cc.eventManager)
+    var onShow = function () {
+        if (cc.eventManager && cc.game._eventShow)
             cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
 
