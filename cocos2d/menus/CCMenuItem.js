@@ -735,24 +735,29 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._selectedImage = null;
         this._disabledImage = null;
 
-		if (selectedSprite !== undefined) {
-		    normalSprite = normalSprite;
-		    selectedSprite = selectedSprite;
+	    var argc = arguments.length;
+
+        while(arguments[argc-1] === undefined && argc > 1){
+            argc--;
+        }
+
+		if (argc > 1) {
+		    normalSprite = arguments[0];
+		    selectedSprite = arguments[1];
 		    var disabledImage, target, callback;
 		    //when you send 4 arguments, five is undefined
-		    if (five !== undefined) {
-			    disabledImage = three;
-			    callback = four;
-			    target = five;
-		    } else if (four !== undefined && typeof four === "function") {
-			    disabledImage = three;
-			    callback = four;
-		    } else if (four !== undefined && typeof three === "function") {
-			    target = four;
-			    callback = three;
-			    disabledImage = selectedSprite;
-		    } else if (three === undefined) {
-			    disabledImage = selectedSprite;
+		    if (argc == 5) {
+			    disabledImage = arguments[2];
+			    callback = arguments[3];
+			    target = arguments[4];
+		    } else if (argc == 4 && typeof arguments[3] === "function") {
+			    disabledImage = arguments[2];
+			    callback = arguments[3];
+		    } else if (argc == 4 && typeof arguments[2] === "function") {
+			    target = arguments[3];
+			    callback = arguments[2];
+		    } else if (argc <= 2) {
+			    disabledImage = arguments[2];
 		    }
 		    this.initWithNormalSprite(normalSprite, selectedSprite, disabledImage,  callback, target);
 		}
@@ -1427,6 +1432,6 @@ cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     if((arguments.length > 0) && (arguments[arguments.length-1] == null))
         cc.log("parameters should not be ending with null in Javascript");
     var ret = new cc.MenuItemToggle();
-    ret.initWithItems(Array.prototype.slice.apply(arguments));
+    ret.initWithItems(arguments);
     return ret;
 };

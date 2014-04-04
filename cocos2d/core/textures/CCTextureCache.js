@@ -237,21 +237,23 @@ cc.textureCache = /** @lends cc.textureCache# */{
         }
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if(tex) {
-            cb && cb.call(target);
+            if(cb)
+                cb.call(target);
             return tex;
         }
 
         if(!cc.loader.getRes(url)){
             if (cc.loader._checkIsImageURL(url)) {
                 cc.loader.load(url, function (err) {
-	                cb && cb.call(target);
+                    if (cb)
+                        cb.call(target);
                 });
             } else {
                 cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
                     if(err)
-                        return cb ? cb(err) : err;
+                        return cb(err);
                     cc.textureCache.handleLoadedTexture(url);
-	                cb && cb(null, img);
+                    cb(null, img);
                 });
             }
         }
