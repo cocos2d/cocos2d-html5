@@ -161,7 +161,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._opacityModifyRGB = true;
         _t._originalTexture = texture;
         if (!_t._originalTexture) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+            cc.log(cc._LogInfos.Node_initWithTexture);
             return false;
         }
         _t._textureForCanvas = _t._originalTexture;

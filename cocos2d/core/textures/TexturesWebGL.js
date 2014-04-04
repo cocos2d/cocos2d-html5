@@ -264,7 +264,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                     format = gl.LUMINANCE;
                     break;
                 default:
-                    throw "NSInternalInconsistencyException";
+                    cc.assert(0, cc._LogInfos.Texture2D_initWithData);
             }
             gl.texImage2D(gl.TEXTURE_2D, 0, format, pixelsWide, pixelsHigh, 0, format, type, data);
 
@@ -367,7 +367,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          */
         initWithImage:function (uiImage) {
             if (uiImage == null) {
-                cc.log("cocos2d: cc.Texture2D. Can't create Texture. UIImage is nil");
+                cc.log(cc._LogInfos.Texture2D_initWithImage);
                 return false;
             }
 
@@ -376,7 +376,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
             var maxTextureSize = cc.configuration.getMaxTextureSize();
             if (imageWidth > maxTextureSize || imageHeight > maxTextureSize) {
-                cc.log("cocos2d: WARNING: Image (" + imageWidth + " x " + imageHeight + ") is bigger than the supported " + maxTextureSize + " x " + maxTextureSize);
+                cc.log(cc._LogInfos.Texture2D_initWithImage_2, imageWidth, imageHeight, maxTextureSize, maxTextureSize);
                 return false;
             }
             this._isLoaded = true;
@@ -462,7 +462,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          * @return {Boolean}
          */
         initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-            cc.log("initWithString isn't supported on cocos2d-html5");
+            cc.log(cc._LogInfos.Texture2D_initWithString);
             return null;
         },
 
@@ -473,7 +473,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          * @return {Boolean}
          */
         initWithETCFile:function (file) {
-            cc.log("initWithETCFile does not support on HTML5");
+            cc.log(cc._LogInfos.Texture2D_initWithETCFile_2);
             return false;
         },
 
@@ -483,7 +483,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          * @return {Boolean}
          */
         initWithPVRFile:function (file) {
-            cc.log("initWithPVRFile does not support on HTML5");
+            cc.log(cc._LogInfos.Texture2D_initWithPVRFile_2);
             return false;
         },
 
@@ -503,7 +503,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          * @return {Boolean}
          */
         initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
-            cc.log("initWithPVRTCData does not support on HTML5");
+            cc.log(cc._LogInfos.Texture2D_initWithPVRTCData_2);
             return false;
         },
 
@@ -602,7 +602,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             format = format || this._pixelFormat;
             var value = cc.Texture2D._B[format];
             if(value != null) return value;
-            cc.log("bitsPerPixelForFormat: " + format + ", cannot give useful result, it's a illegal pixel format");
+            cc.log(cc._LogInfos.Texture2D_bitsPerPixelForFormat, format);
             return -1;
         },
 
@@ -623,7 +623,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 if (bpp >= 8) {
                     pixelFormat = tex2d.PIXEL_FORMAT_RGB888;
                 } else {
-                    cc.log("cocos2d: cc.Texture2D: Using RGB565 texture since image has no alpha");
+                    cc.log(cc._LogInfos.Texture2D__initPremultipliedATextureWithImage);
                     pixelFormat = tex2d.PIXEL_FORMAT_RGB565;
                 }
             }
@@ -851,8 +851,9 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
      * cc.textureCache.addImage("hello.png");
      */
     _p.addImage = function (url, cb, target) {
-        if(!url)
-            throw "cc.Texture.addImage(): path should be non-null";
+
+
+        cc.assert(url, cc._LogInfos.Texture2D_addImage_2);
 
         var locTexs = this._textures;
         //remove judge(webgl)

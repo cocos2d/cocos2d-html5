@@ -123,8 +123,8 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.initWithTexture = function (texture, rect, rotated) {
         var _t = this;
         var argnum = arguments.length;
-        if (argnum == 0)
-            throw "Sprite.initWithTexture(): Argument must be non-nil ";
+
+        cc.assert(argnum!=0, cc._LogInfos.Sprite_initWithTexture);
 
         rotated = rotated || false;
 
@@ -334,8 +334,9 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
     _p.addChild = function (child, localZOrder, tag) {
         var _t = this;
-        if(!child)
-            throw "cc.Sprite.addChild(): child should be non-null";
+
+        cc.assert(child, cc._LogInfos.Sprite_addChild_3);
+
         if (localZOrder == null)
             localZOrder = child._localZOrder;
         if (tag == null)
@@ -343,11 +344,11 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
         if (_t._batchNode) {
             if(!(child instanceof cc.Sprite)){
-                cc.log("cc.Sprite.addChild(): cc.Sprite only supports cc.Sprites as children when using cc.SpriteBatchNode");
+                cc.log(cc._LogInfos.Sprite_addChild);
                 return;
             }
             if(child.texture._webTextureObj !== _t.textureAtlas.texture._webTextureObj)
-                cc.log("cc.Sprite.addChild(): cc.Sprite only supports a sprite using same texture as children when using cc.SpriteBatchNode");
+                cc.log(cc._LogInfos.Sprite_addChild_2);
 
             //put it in descendants array of batch node
             _t._batchNode.appendChild(child);
@@ -379,8 +380,8 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         var _t = this;
         if(typeof(newFrame) == "string"){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
-            if(!newFrame)
-                throw "Invalid spriteFrameName";
+
+            cc.assert(newFrame, cc._LogInfos.Sprite_setSpriteFrame);
         }
 
         _t.setNodeDirty(true);
@@ -457,12 +458,12 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             return;
         }
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        if(texture && !(texture instanceof cc.Texture2D))
-            throw "Invalid argument: cc.Sprite.texture setter expects a CCTexture2D.";
+
+        cc.assert(!texture || (texture instanceof cc.Texture2D), cc._LogInfos.Sprite_setTexture_2);
 
         // If batchnode, then texture id should be the same
         if(_t._batchNode && _t._batchNode.texture != texture) {
-            cc.log("cc.Sprite.texture setter: Batched sprites should use the same texture as the batchnode");
+            cc.log(cc._LogInfos.Sprite_setTexture);
             return;
         }
 
@@ -572,10 +573,11 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
     _p.updateQuadFromSprite = function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.updateQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.Sprite_updateQuadFromSprite_2);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.updateQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.Sprite_updateQuadFromSprite);
             return;
         }
 
@@ -597,10 +599,11 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
     _p.insertQuadFromSprite = function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.insertQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.Sprite_insertQuadFromSprite_2);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.insertQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.Sprite_insertQuadFromSprite);
             return;
         }
 
@@ -720,14 +723,15 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
 
     _p.addChild = function (child, zOrder, tag) {
-        if (child == null)
-            throw "cc.SpriteBatchNode.addChild(): child should be non-null";
+
+        cc.assert(child != null, cc._LogInfos.Sprite_addChild_6);
+
         if(!(child instanceof cc.Sprite)){
-            cc.log( "cc.SpriteBatchNode.addChild(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.Sprite_addChild_4);
             return;
         }
         if(child.texture != this.textureAtlas.texture){                    // check cc.Sprite is using the same texture id
-            cc.log( "cc.SpriteBatchNode.addChild(): cc.Sprite is not using the same texture");
+            cc.log(cc._LogInfos.Sprite_addChild_5);
             return;
         }
 

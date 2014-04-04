@@ -230,7 +230,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         _t.textureAtlas.initWithTexture(texture, itemsToRender);
 
         if (!_t.textureAtlas) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+            cc.log(cc._LogInfos.Node_initWithTexture);
             return false;
         }
 

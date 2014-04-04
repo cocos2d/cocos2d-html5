@@ -771,7 +771,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     initWithLayers:function (layers) {
 	    if((layers.length > 0) && (layers[layers.length-1] == null))
-		    cc.log("parameters should not be ending with null in Javascript");
+		    cc.log(cc._LogInfos.LayerMultiplex_initWithLayers);
 
         this._layers = layers;
         this._enabledLayer = 0;
@@ -786,7 +786,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     switchTo:function (n) {
         if(n >= this._layers.length){
-            cc.log("Invalid index in MultiplexLayer switchTo message");
+            cc.log(cc._LogInfos.LayerMultiplex_switchTo);
             return;
         }
 
@@ -801,7 +801,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     switchToAndReleaseMe:function (n) {
         if(n >= this._layers.length){
-            cc.log("Invalid index in MultiplexLayer switchTo message");
+            cc.log(cc._LogInfos.LayerMultiplex_switchToAndReleaseMe);
             return;
         }
 
@@ -818,7 +818,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      */
     addLayer:function (layer) {
         if(!layer){
-            cc.log("cc.Layer.addLayer(): layer should be non-null");
+            cc.log(cc._LogInfos.LayerMultiplex_addLayer);
             return;
         }
         this._layers.push(layer);

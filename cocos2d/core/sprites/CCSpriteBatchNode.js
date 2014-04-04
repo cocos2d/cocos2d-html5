@@ -76,10 +76,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {cc.SpriteBatchNode}
      */
     addSpriteWithoutQuad:function (child, z, aTag) {
-        if(!child)
-            throw "cc.SpriteBatchNode.addQuadFromSprite(): child should be non-null";
+
+        cc.assert(child, cc._LogInfos.SpriteBatchNode_addSpriteWithoutQuad_2)
+
         if(!(child instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.addQuadFromSprite(): SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.SpriteBatchNode_addSpriteWithoutQuad);
             return null;
         }
 
@@ -180,11 +181,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         var locCapacity = this.textureAtlas.capacity;
         var quantity = Math.floor((locCapacity + 1) * 4 / 3);
 
-        cc.log("cocos2d: CCSpriteBatchNode: resizing TextureAtlas capacity from " + locCapacity + " to " + quantity + ".");
+        cc.log(cc._LogInfos.SpriteBatchNode_increaseAtlasCapacity, locCapacity, quantity);
 
         if (!this.textureAtlas.resizeCapacity(quantity)) {
             // serious problems
-            cc.log("cocos2d: WARNING: Not enough memory to resize the atlas");
+            cc.log(cc._LogInfos.SpriteBatchNode_increaseAtlasCapacity_2);
         }
     },
 
@@ -335,10 +336,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} zOrder
      */
     reorderChild:function (child, zOrder) {
-        if(!child)
-            throw "cc.SpriteBatchNode.addChild():child should be non-null";
+
+        cc.assert(child, cc._LogInfos.SpriteBatchNode_reorderChild_2);
+
         if(this._children.indexOf(child) === -1) {
-            cc.log("cc.SpriteBatchNode.addChild(): Child doesn't belong to Sprite");
+            cc.log(cc._LogInfos.SpriteBatchNode_reorderChild);
             return;
         }
 
@@ -360,7 +362,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (child == null)
             return;
         if(this._children.indexOf(child) === -1){
-            cc.log("cc.SpriteBatchNode.addChild(): sprite batch node should contain the child");
+            cc.log(cc._LogInfos.SpriteBatchNode_removeChild);
             return;
         }
 

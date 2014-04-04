@@ -395,7 +395,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     setDesignResolutionSize: function (width, height, resolutionPolicy) {
         // Defensive code
         if (isNaN(width) || width == 0 || isNaN(height) || height == 0) {
-            cc.log("Resolution not valid");
+            cc.log(cc._LogInfos.EGLView_setDesignResolutionSize);
             return;
         }
         var _t = this;
@@ -404,7 +404,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         if (policy)
             policy.preApply(_t);
         else {
-            cc.log("should set resolutionPolicy");
+            cc.log(cc._LogInfos.EGLView_setDesignResolutionSize_2);
             return;
         }
 

@@ -218,7 +218,7 @@ cc.configuration = /** @lends cc.configuration# */{
     dumpInfo: function(){
          if(cc.ENABLE_GL_STATE_CACHE === 0){
              cc.log("");
-             cc.log("cocos2d: **** WARNING **** CC_ENABLE_PROFILERS is defined. Disable it when you finish profiling (from ccConfig.js)");
+             cc.log(cc._LogInfos.configuration_dumpInfo);
              cc.log("")
          }
     },
@@ -275,10 +275,11 @@ cc.configuration = /** @lends cc.configuration# */{
 		    this._init();
         var dict = cc.loader.getRes(url);
         if(!dict) throw "Please load the resource first : " + url;
+        cc.assert(dict, cc._LogInfos.configuration_loadConfigFile_2, url);
 
         var getDatas = dict["data"];
         if(!getDatas){
-            cc.log("Expected 'data' dict, but not found. Config file: " + url);
+            cc.log(cc._LogInfos.configuration_loadConfigFile, url);
             return;
         }
 

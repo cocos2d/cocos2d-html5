@@ -203,8 +203,9 @@ cc._EventListenerAcceleration = cc.EventListener.extend({
     },
 
     checkAvailable: function () {
-        if (!this._onAccelerationEvent)
-            throw "cc._EventListenerAcceleration.checkAvailable(): _onAccelerationEvent must be non-nil";
+
+        cc.assert(this._onAccelerationEvent, cc._LogInfos._EventListenerAcceleration_checkAvailable);
+
         return true;
     },
 
@@ -246,7 +247,7 @@ cc._EventListenerKeyboard = cc.EventListener.extend({
 
     checkAvailable: function () {
         if (this.onKeyPressed == null && this.onKeyReleased == null) {
-            cc.log("cc._EventListenerKeyboard.checkAvailable(): Invalid EventListenerKeyboard!");
+            cc.log(cc._LogInfos._EventListenerKeyboard_checkAvailable);
             return false;
         }
         return true;
@@ -342,7 +343,7 @@ cc._EventListenerTouchOneByOne = cc.EventListener.extend({
 
     checkAvailable: function () {
         if(!this.onTouchBegan){
-            cc.log("cc._EventListenerTouchOneByOne.checkAvailable(): Invalid EventListenerTouchOneByOne!");
+            cc.log(cc._LogInfos._EventListenerTouchOneByOne_checkAvailable);
             return false;
         }
         return true;
@@ -377,7 +378,7 @@ cc._EventListenerTouchAllAtOnce = cc.EventListener.extend({
     checkAvailable: function(){
         if (this.onTouchesBegan == null && this.onTouchesMoved == null
             && this.onTouchesEnded == null && this.onTouchesCancelled == null) {
-            cc.log("cc._EventListenerTouchAllAtOnce.checkAvailable(): Invalid EventListenerTouchAllAtOnce!");
+            cc.log(cc._LogInfos._EventListenerTouchAllAtOnce_checkAvailable);
             return false;
         }
         return true;
@@ -405,9 +406,9 @@ cc._EventListenerTouchAllAtOnce.create = function(){
  *    });
  */
 cc.EventListener.create = function(argObj){
-    if(!argObj || !argObj.event){
-        throw "Invalid parameter.";
-    }
+
+    cc.assert(argObj&&argObj.event, cc._LogInfos.EventListener_create);
+
     var listenerType = argObj.event;
     delete argObj.event;
 

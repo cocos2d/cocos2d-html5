@@ -276,7 +276,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 }
                 break;
             default :
-                throw "Unknown callback function";
+                cc.assert(0, cc._LogInfos.Node__arrayMakeObjectsPerformSelector);
                 break;
         }
     },
@@ -398,7 +398,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated
      */
     getZOrder: function () {
-        cc.log("getZOrder is deprecated. Please use getLocalZOrder instead.");
+        cc.log(cc._LogInfos.Node_getZOrder);
         return this.getLocalZOrder();
     },
 
@@ -415,7 +415,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated
      */
     setZOrder: function (z) {
-        cc.log("setZOrder is deprecated. Please use setLocalZOrder instead.");
+        cc.log(cc._LogInfos.Node_setZOrder);
         this.setLocalZOrder(z);
     },
 
@@ -480,7 +480,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getRotation:function () {
         if(this._rotationX !== this._rotationY)
-            cc.log("RotationX != RotationY. Don't know which one to return");
+            cc.log(cc._LogInfos.Node_getRotation);
         return this._rotationX;
     },
 
@@ -555,7 +555,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getScale:function () {
         if(this._scaleX !== this._scaleY)
-            cc.log("ScaleX != ScaleY. Don't know which one to return");
+            cc.log(cc._LogInfos.Node_getScale);
         return this._scaleX;
     },
 
@@ -1133,15 +1133,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild:function (child, localZOrder, tag) {
-        if(!child)
-            throw "child must be non-null";
+
+        cc.assert(child, cc._LogInfos.Node_addChild_3);
+
         if (child === this) {
-            cc.log("An Node can't be added as a child of itself.");
+            cc.log(cc._LogInfos.Node_addChild);
             return;
         }
 
         if (child._parent !== null) {
-            cc.log("child already added. It can't be added again");
+            cc.log(cc._LogInfos.Node_addChild_2);
             return;
         }
 
@@ -1182,7 +1183,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
      */
     removeFromParentAndCleanup:function (cleanup) {
-        cc.log("removeFromParentAndCleanup is deprecated. Use removeFromParent instead");
+        cc.log(cc._LogInfos.Node_removeFromParentAndCleanup);
         this.removeFromParent(cleanup);
     },
 
@@ -1217,11 +1218,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeChildByTag:function (tag, cleanup) {
         if(tag === cc.NODE_TAG_INVALID)
-            cc.log("argument tag is an invalid tag");
+            cc.log(cc._LogInfos.Node_removeChildByTag);
 
         var child = this.getChildByTag(tag);
         if (child == null)
-            cc.log("cocos2d: removeChildByTag(tag = " + tag + "): child not found!");
+            cc.log(cc._LogInfos.Node_removeChildByTag_2, tag);
         else
             this.removeChild(child, cleanup);
     },
@@ -1232,7 +1233,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean | null } cleanup
      */
     removeAllChildrenWithCleanup:function (cleanup) {
-        cc.log("removeAllChildrenWithCleanup is deprecated. Use removeAllChildren instead");
+        cc.log(cc._LogInfos.Node_removeAllChildrenWithCleanup);
         this.removeAllChildren(cleanup);
     },
 
@@ -1309,8 +1310,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} zOrder Z order for drawing priority. Please refer to setZOrder(int)
      */
     reorderChild:function (child, zOrder) {
-        if(!child)
-            throw "child must be non-null";
+        cc.assert(child, cc._LogInfos.Node_reorderChild)
         this._reorderChildDirty = true;
         child.arrivalOrder = cc.s_globalOrderOfArrival;
 	    cc.s_globalOrderOfArrival++;
@@ -1443,8 +1443,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action} An Action pointer
      */
     runAction:function (action) {
-        if(!action)
-            throw "cc.Node.runAction(): action must be non-null";
+
+        cc.assert(action, cc._LogInfos.Node_runAction);
+
         this.actionManager.addAction(action, this, !this._running);
         return action;
     },
@@ -1470,7 +1471,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     stopActionByTag:function (tag) {
         if(tag === cc.ACTION_TAG_INVALID){
-            cc.log("cc.Node.stopActionBy(): argument tag an invalid tag");
+            cc.log(cc._LogInfos.Node_stopActionByTag);
             return;
         }
         this.actionManager.removeActionByTag(tag, this);
@@ -1484,7 +1485,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getActionByTag:function (tag) {
         if(tag === cc.ACTION_TAG_INVALID){
-            cc.log("cc.Node.getActionByTag(): argument tag is an invalid tag");
+            cc.log(cc._LogInfos.Node_getActionByTag);
             return null;
         }
         return this.actionManager.getActionByTag(tag, this);
@@ -1545,10 +1546,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     schedule:function (callback_fn, interval, repeat, delay) {
         interval = interval || 0;
 
-        if(!callback_fn)
-            throw "callback function must be non-null";
-        if(interval < 0)
-            throw "interval must be positive";
+        cc.assert(callback_fn, cc._LogInfos.Node_schedule);
+
+        cc.assert(interval >= 0, cc._LogInfos.Node_schedule_2);
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
@@ -1593,7 +1593,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated
      */
     resumeSchedulerAndActions:function () {
-        cc.log("resumeSchedulerAndActions is deprecated, please use resume instead.");
+        cc.log(cc._LogInfos.Node_resumeSchedulerAndActions);
         this.resume();
     },
 
@@ -1613,7 +1613,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @deprecated
      */
     pauseSchedulerAndActions:function () {
-        cc.log("pauseSchedulerAndActions is deprecated, please use pause instead.");
+        cc.log(cc._LogInfos.Node_pauseSchedulerAndActions);
         this.pause();
     },
 

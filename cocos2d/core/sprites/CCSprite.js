@@ -433,8 +433,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * sprite.initWithSpriteFrame(spriteFrame);
      */
     initWithSpriteFrame:function (spriteFrame) {
-        if(!spriteFrame)
-           throw "cc.Sprite.initWithSpriteFrame(): spriteFrame should be non-null";
+
+        cc.assert(spriteFrame, cc._LogInfos.Sprite_initWithSpriteFrame);
+
         if(!spriteFrame.textureLoaded()){
             //add event listener
             this._textureLoaded = false;
@@ -459,8 +460,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * sprite.initWithSpriteFrameName("grossini_dance_01.png");
      */
     initWithSpriteFrameName:function (spriteFrameName) {
-        if(!spriteFrameName)
-            throw "cc.Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
+
+        cc.assert(cc._LogInfos.Sprite_initWithSpriteFrameName);
+
         var frame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
         return this.initWithSpriteFrame(frame);
     },
@@ -523,10 +525,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @override
      */
     reorderChild:function (child, zOrder) {
-        if(!child)
-            throw "cc.Sprite.reorderChild(): child should be non-null";
+
+        cc.assert(child, cc._LogInfos.Sprite_reorderChild_2);
+
         if(this._children.indexOf(child) === -1){
-            cc.log("cc.Sprite.reorderChild(): this child is not in children list");
+            cc.log(cc._LogInfos.Sprite_reorderChild);
             return;
         }
 
@@ -613,7 +616,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      */
     ignoreAnchorPointForPosition:function (relative) {
         if(this._batchNode){
-            cc.log("cc.Sprite.ignoreAnchorPointForPosition(): it is invalid in cc.Sprite when using SpriteBatchNode");
+            cc.log(cc._LogInfos.Sprite_ignoreAnchorPointForPosition);
             return;
         }
         cc.Node.prototype.ignoreAnchorPointForPosition.call(this, relative);
@@ -700,16 +703,17 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param frameIndex
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
-        if(!animationName)
-            throw "cc.Sprite.setDisplayFrameWithAnimationName(): animationName must be non-null";
+
+        cc.assert(animationName, cc._LogInfos.Sprite_setDisplayFrameWithAnimationName_3);
+
         var cache = cc.animationCache.getAnimation(animationName);
         if(!cache){
-            cc.log("cc.Sprite.setDisplayFrameWithAnimationName(): Frame not found");
+            cc.log(cc._LogInfos.Sprite_setDisplayFrameWithAnimationName);
             return;
         }
         var animFrame = cache.getFrames()[frameIndex];
         if(!animFrame){
-            cc.log("cc.Sprite.setDisplayFrameWithAnimationName(): Invalid frame index");
+            cc.log(cc._LogInfos.Sprite_setDisplayFrameWithAnimationName_2);
             return;
         }
         this.setSpriteFrame(animFrame.getSpriteFrame());
@@ -827,8 +831,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * mySprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
-        if(!filename)
-            throw "cc.Sprite.initWithFile(): filename should be non-null";
+
+        cc.assert(filename, cc._LogInfos.Sprite_initWithFile);
 
         var texture = cc.textureCache.textureForKey(filename);
         if (!texture) {
@@ -949,7 +953,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @deprecated
      */
     setDisplayFrame: function(newFrame){
-        cc.log("setDisplayFrame is deprecated, please use setSpriteFrame instead.");
+        cc.log(cc._LogInfos.Sprite_setDisplayFrame);
         this.setSpriteFrame(newFrame);
     },
 
@@ -996,7 +1000,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     // Texture protocol
     _updateBlendFunc:function () {
         if(this._batchNode){
-            cc.log("cc.Sprite._updateBlendFunc(): _updateBlendFunc doesn't work when the sprite is rendered using a cc.CCSpriteBatchNode");
+            cc.log(cc._LogInfos.Sprite__updateBlendFunc);
             return;
         }
 

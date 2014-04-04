@@ -25,6 +25,7 @@
  ****************************************************************************/
 
 var cc = cc || {};
+cc._LogInfos = {};
 
 /** @expose */
 window._p;
@@ -926,104 +927,12 @@ cc.loader = {
 //+++++++++++++++++++++++++something about window events end+++++++++++++++++++++++++++++
 
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
-cc._logToWebPage = function (msg) {
-    if(!cc._canvas)
-        return;
-
-    var logList = cc._logList;
-    var doc = document;
-    if(!logList){
-        var logDiv = cc.newElement("Div");
-        var logDivStyle = logDiv.style;
-
-        logDiv.setAttribute("id", "logInfoDiv");
-        cc._canvas.parentNode.appendChild(logDiv);
-        logDiv.setAttribute("width", "200");
-        logDiv.setAttribute("height", cc._canvas.height);
-        logDivStyle.zIndex = "99999";
-        logDivStyle.position = "absolute";
-        logDivStyle.top = "0";
-        logDivStyle.left = "0";
-
-        logList = cc._logList = cc.newElement("textarea");
-        var logListStyle = logList.style;
-
-        logList.setAttribute("rows", "20");
-        logList.setAttribute("cols", "30");
-        logList.setAttribute("disabled", true);
-        logDiv.appendChild(logList);
-        logListStyle.backgroundColor = "transparent";
-        logListStyle.borderBottom = "1px solid #cccccc";
-        logListStyle.borderRightWidth = "0px";
-        logListStyle.borderLeftWidth = "0px";
-        logListStyle.borderTopWidth = "0px";
-        logListStyle.borderTopStyle = "none";
-        logListStyle.borderRightStyle = "none";
-        logListStyle.borderLeftStyle = "none";
-        logListStyle.padding = "0px";
-        logListStyle.margin = 0;
-
-    }
-    msg = typeof msg == "string" ? msg : JSON.stringify(msg);
-    logList.value = logList.value + msg + "\r\n";
-    logList.scrollTop = logList.scrollHeight;
-};
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
-if(console.log){
-    cc.log = console.log.bind(console);
-    cc.warn = console.warn?console.warn.bind(console):console.log.bind(console);
-    cc.error = console.error?console.error.bind(console):console.log.bind(console);
-    if (console.assert)
-        cc.assert = console.assert.bind(console);
-    else {
-        cc.assert = function (cond, message) {
-            if (!cond && message)
-                cc.log(message);
-        };
-    }
-}else{
-    cc.log = cc.warn = cc.error = cc.assert = function(){};
-}
-/**
- * Init Debug setting.
- * @function
- */
-cc._initDebugSetting = function (mode) {
-    var ccGame = cc.game;
 
-    //log
-    if(mode == ccGame.DEBUG_MODE_INFO && console.log) {
-    }else if((mode == ccGame.DEBUG_MODE_INFO && !console.log)
-        || mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE){
-        cc.log = cc._logToWebPage.bind(cc);
-    }else cc.log = function(){}
+cc.log = console.log.bind(console);
+cc.log = cc.warn = cc.error = cc.assert = function(){};
 
-    //warn
-    if(!mode || mode == ccGame.DEBUG_MODE_NONE
-        || mode == ccGame.DEBUG_MODE_ERROR
-        || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE) cc.warn = function(){};
-    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
-        || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
-        || !console.warn) {
-        cc.warn = cc._logToWebPage.bind(cc);
-    }
-
-    //error and assert
-    if(!mode || mode == ccGame.DEBUG_MODE_NONE) {
-        cc.error = function(){};
-        cc.assert = function(){};
-    }
-    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
-        || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
-        || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE
-        || !console.error){
-        cc.error = cc._logToWebPage.bind(cc);
-        cc.assert = function(cond, msg){
-            if(!cond && msg) cc._logToWebPage(msg);
-        }
-    }
-};
 //+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
 
 /**
@@ -1706,7 +1615,7 @@ cc.game = {
                 self.config = _init({});
             }
         }
-        cc._initDebugSetting(self.config[CONFIG_KEY.debugMode]);
+        //init debug move to CCDebugger
         cc._initSys(self.config, CONFIG_KEY);
     },
 
