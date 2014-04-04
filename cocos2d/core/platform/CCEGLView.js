@@ -80,7 +80,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     _isAdjustViewPort: true,
 
     ctor: function () {
-        var _t = this, d = document, _strategy = cc.ContainerStrategy;
+        var _t = this, d = document, _strategyer = cc.ContainerStrategy, _strategy = cc.ContentStrategy;
         _t._frame = (cc.container.parentNode === d.body) ? d.documentElement : cc.container.parentNode;
         _t._frameSize = cc.size(0, 0);
         _t._initFrameSize();
@@ -98,11 +98,11 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         cc.visibleRect.init(_t._designResolutionSize);
 
         // Setup system default resolution policies
-        _t._rpExactFit = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
-        _t._rpShowAll = new cc.ResolutionPolicy(_strategy.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
-        _t._rpNoBorder = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.NO_BORDER);
-        _t._rpFixedHeight = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
-        _t._rpFixedWidth = new cc.ResolutionPolicy(_strategy.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
+        _t._rpExactFit = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
+        _t._rpShowAll = new cc.ResolutionPolicy(_strategyer.PROPORTION_TO_FRAME, _strategy.SHOW_ALL);
+        _t._rpNoBorder = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
+        _t._rpFixedHeight = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
+        _t._rpFixedWidth = new cc.ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
 
         _t._hDC = cc._canvas;
         _t._hRC = cc._renderContext;
@@ -951,6 +951,8 @@ cc.ResolutionPolicy = cc.Class.extend(/** @lends cc.ResolutionPolicy# */{
      * @param {cc.ContentStrategy} contentStg
      */
     setContentStrategy: function (contentStg) {
+        console.log(contentStg)
+        console.log(contentStg instanceof cc.ContentStrategy)
         if (contentStg instanceof cc.ContentStrategy)
             this._contentStrategy = contentStg;
     }
