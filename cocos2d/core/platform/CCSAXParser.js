@@ -186,9 +186,9 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.responseText) {
-                        cc.doCallback(selector, target);
                         that._xmlDict[fullfilePath] = xmlhttp.responseText;
                         xmlhttp = null;
+                        cc.doCallback(selector, target);
                     } else {
                         cc.doCallback(selector, target, filePath);
                     }
