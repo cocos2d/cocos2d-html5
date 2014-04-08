@@ -19,7 +19,6 @@
                 <file name="cocos2d/core/platform/CCConfig.js"/>
                 <file name="cocos2d/core/platform/miniFramework.js"/>
                 <file name="cocos2d/core/platform/CCMacro.js"/>
-                <file name="cocos2d/core/platform/CCTypesCanvas.js"/>
                 <file name="cocos2d/core/platform/CCTypes.js"/>
                 <file name="cocos2d/core/platform/CCEGLView.js"/>
                 <!-- <file name="cocos2d/core/platform/CCScreen.js"/>
@@ -35,16 +34,13 @@
                 <file name="cocos2d/core/event-manager/CCEventManager.js"/>
                 <file name="cocos2d/core/base-nodes/CCNode.js"/>
                 <!-- <file name="cocos2d/core/base-nodes/CCAtlasNode.js"/> -->
-                <file name="cocos2d/core/base-nodes/BaseNodesCanvas.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
                 <file name="cocos2d/core/textures/CCTexture2D.js"/>
                 <file name="cocos2d/core/textures/CCTextureCache.js"/>
                 <!-- <file name="cocos2d/core/textures/CCTextureAtlas.js"/> -->
-                <file name="cocos2d/core/textures/TexturesCanvas.js"/>
                 <file name="cocos2d/core/scenes/CCScene.js"/>
                 <file name="cocos2d/core/scenes/CCLoaderScene.js"/>
                 <file name="cocos2d/core/layers/CCLayer.js"/>
-                <file name="cocos2d/core/layers/CCLayerCanvas.js"/>
                 <file name="cocos2d/core/layers/CCLayerPropertyDefine.js"/>
                 <file name="cocos2d/core/sprites/CCSprite.js"/>
                 <file name="cocos2d/core/sprites/CCAnimation.js"/>
@@ -52,7 +48,6 @@
                 <file name="cocos2d/core/sprites/CCSpriteFrame.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteFrameCache.js"/>
                 <!-- <file name="cocos2d/core/sprites/CCSpriteBatchNode.js"/> -->
-                <file name="cocos2d/core/sprites/SpritesCanvas.js"/>
                 <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <!-- <file name="cocos2d/core/CCConfiguration.js"/> -->
                 <file name="cocos2d/core/CCDirector.js"/>
@@ -60,7 +55,6 @@
                 <file name="cocos2d/core/CCScheduler.js"/>
                 <!-- <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/> -->
                 <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
-                <file name="cocos2d/core/labelttf/LabelTTFCanvas.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
                 <!-- <file name="cocos2d/core/CCActionManager.js"/>
                 <file name="cocos2d/actions/CCAction.js"/>
