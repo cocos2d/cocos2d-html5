@@ -266,6 +266,81 @@ cc.FontDefinition = function () {
 };
 
 
+
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+    /**
+     * The color class
+     * @param {Number} r 0 to 255
+     * @param {Number} g 0 to 255
+     * @param {Number} b 0 to 255
+     * @param {Number} a 0 to 255
+     * @constructor
+     */
+    cc.Color = function (r, g, b, a) {
+        this.r = r || 0;
+        this.g = g || 0;
+        this.b = b || 0;
+        this.a = a || 0;
+    };
+
+    /**
+     *
+     * @param {Number|String|cc.Color} r
+     * @param {Number} g
+     * @param {Number} b
+     * @param {Number} a
+     * @returns {cc.Color}
+     */
+    cc.color = function (r, g, b, a) {
+        if (r === undefined)
+            return {r: 0, g: 0, b: 0, a: 255};
+        if (typeof r === "string")
+            return cc.hexToColor(r);
+        if (typeof r === "object")
+            return {r: r.r, g: r.g, b: r.b, a: r.a};
+        return  {r: r, g: g, b: b, a: a };
+    };
+
+    /**
+     * A vertex composed of 2 floats: x, y
+     * @Class
+     * @Construct
+     * @param {Number} x1
+     * @param {Number} y1
+     */
+    cc.Vertex2F = function (x1, y1) {
+        this.x = x1 || 0;
+        this.y = y1 || 0;
+    };
+
+    /**
+     * A vertex composed of 3 floats: x, y, z
+     * @Class
+     * @Construct
+     * @param {Number} x1
+     * @param {Number} y1
+     * @param {Number} z1
+     */
+    cc.Vertex3F = function (x1, y1, z1) {
+        this.x = x1 || 0;
+        this.y = y1 || 0;
+        this.z = z1 || 0;
+    };
+
+    /**
+     * A texcoord composed of 2 floats: u, y
+     * @Class
+     * @Construct
+     * @param {Number} u1
+     * @param {Number} v1
+     */
+    cc.Tex2F = function (u1, v1) {
+        this.u = u1 || 0;
+        this.v = v1 || 0;
+    };
+}
+
+
 /**
  * White color (255, 255, 255, 255)
  * @returns {cc.Color}
@@ -375,77 +450,3 @@ cc.defineGetterSetter(_p, "ORANGE", _p._getOrange);
 _p.GRAY;
 cc.defineGetterSetter(_p, "GRAY", _p._getGray);
 delete window._p;
-
-
-if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-    /**
-     * The color class
-     * @param {Number} r 0 to 255
-     * @param {Number} g 0 to 255
-     * @param {Number} b 0 to 255
-     * @param {Number} a 0 to 255
-     * @constructor
-     */
-    cc.Color = function (r, g, b, a) {
-        this.r = r || 0;
-        this.g = g || 0;
-        this.b = b || 0;
-        this.a = a || 0;
-    };
-
-    /**
-     *
-     * @param {Number|String|cc.Color} r
-     * @param {Number} g
-     * @param {Number} b
-     * @param {Number} a
-     * @returns {cc.Color}
-     */
-    cc.color = function (r, g, b, a) {
-        if (r === undefined)
-            return {r: 0, g: 0, b: 0, a: 255};
-        if (typeof r === "string")
-            return cc.hexToColor(r);
-        if (typeof r === "object")
-            return {r: r.r, g: r.g, b: r.b, a: r.a};
-        return  {r: r, g: g, b: b, a: a };
-    };
-
-    /**
-     * A vertex composed of 2 floats: x, y
-     * @Class
-     * @Construct
-     * @param {Number} x1
-     * @param {Number} y1
-     */
-    cc.Vertex2F = function (x1, y1) {
-        this.x = x1 || 0;
-        this.y = y1 || 0;
-    };
-
-    /**
-     * A vertex composed of 3 floats: x, y, z
-     * @Class
-     * @Construct
-     * @param {Number} x1
-     * @param {Number} y1
-     * @param {Number} z1
-     */
-    cc.Vertex3F = function (x1, y1, z1) {
-        this.x = x1 || 0;
-        this.y = y1 || 0;
-        this.z = z1 || 0;
-    };
-
-    /**
-     * A texcoord composed of 2 floats: u, y
-     * @Class
-     * @Construct
-     * @param {Number} u1
-     * @param {Number} v1
-     */
-    cc.Tex2F = function (u1, v1) {
-        this.u = u1 || 0;
-        this.v = v1 || 0;
-    };
-}
