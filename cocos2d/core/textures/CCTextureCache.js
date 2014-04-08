@@ -289,3 +289,70 @@ cc.textureCache = /** @lends cc.textureCache# */{
 		this._loadedTexturesBefore = {};
 	}
 };
+
+if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+
+    var _p = cc.textureCache;
+
+    _p.handleLoadedTexture = function(url){
+        var locTexs = this._textures;
+        //remove judge
+        var tex = locTexs[url];
+        if(!tex) {
+            tex = locTexs[url] = new cc.Texture2D();
+            tex.url = url;
+        }
+        tex.handleLoadedTexture();
+    };
+
+    /**
+     * <p>Returns a Texture2D object given an file image <br />
+     * If the file image was not previously loaded, it will create a new Texture2D <br />
+     *  object and it will return it. It will use the filename as a key.<br />
+     * Otherwise it will return a reference of a previously loaded image. <br />
+     * Supported image extensions: .png, .jpg, .gif</p>
+     * @param {String} url
+     * @param {Function} cb
+     * @param {Object} target
+     * @return {cc.Texture2D}
+     * @example
+     * //example
+     * cc.textureCache.addImage("hello.png");
+     */
+    _p.addImage = function (url, cb, target) {
+
+        cc.assert(url, cc._LogInfos.Texture2D_addImage);
+
+        var locTexs = this._textures;
+        //remove judge
+        var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
+        if(tex) {
+            if(cb)
+                cb.call(target);
+            return tex;
+        }
+
+        if(!cc.loader.getRes(url)){
+            if (cc.loader._checkIsImageURL(url)) {
+                cc.loader.load(url, function (err) {
+                    if (cb)
+                        cb.call(target);
+                });
+            } else {
+                cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
+                    if(err)
+                        return cb(err);
+                    cc.textureCache.handleLoadedTexture(url);
+                    cb(null, img);
+                });
+            }
+        }
+
+        tex = locTexs[url] = new cc.Texture2D();
+        tex.url = url;
+        return tex;
+    };
+
+    delete _p;
+
+}

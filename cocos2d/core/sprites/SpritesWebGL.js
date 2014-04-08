@@ -450,7 +450,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         var _t = this;
         if(texture && (typeof(texture) === "string")){
             texture = cc.textureCache.addImage(texture);
-            _t._setTextureForWebGL(texture);
+            _t.setTexture(texture);
 
             //TODO
             var size = texture.getContentSize();

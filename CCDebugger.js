@@ -237,8 +237,13 @@ cc._logToWebPage = function (msg) {
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 if(console.log){
-    cc.warn = console.warn ? console.warn : console.log;
-    cc.error = console.error ? console.error : console.log;
+    cc.log = Function.prototype.bind.call(console.log, console);
+    cc.warn = console.warn ?
+        Function.prototype.bind.call(console.warn, console) :
+        cc.log;
+    cc.error = console.error ?
+        Function.prototype.bind.call(console.error, console) :
+        cc.log;
     cc.assert = function(cond, msg){
         if(!cond && msg){
             for(var i= 2; i<arguments.length; i++){
@@ -257,8 +262,7 @@ var mode = cc.game.config[cc.game.CONFIG_KEY.debugMode];
 var ccGame = cc.game;
 
 //log
-if(console.log)
-    mode === ccGame.DEBUG_MODE_INFO && ( cc.log = console.log.bind(console) );
+if(console.log && mode === ccGame.DEBUG_MODE_INFO){}
 else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE)
     mode === ccGame.DEBUG_MODE_INFO && ( cc.log = cc._logToWebPage.bind(cc) );
 else
