@@ -814,7 +814,6 @@ cc.loader = {
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 
-cc.log = console.log.bind(console);
 cc.log = cc.warn = cc.error = cc.assert = function(){};
 
 //+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
