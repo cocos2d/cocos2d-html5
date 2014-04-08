@@ -109,19 +109,6 @@ cc.Event.MOUSE = 3;
 cc.Event.CUSTOM = 4;
 
 /**
- * The acceleration event
- * @class
- * @extends cc.Event
- */
-cc.EventAcceleration = cc.Event.extend(/** @lends cc.EventAcceleration# */{
-    _acc: null,
-    ctor: function (acc) {
-        cc.Event.prototype.ctor.call(this, cc.Event.ACCELERATION);
-        this._acc = acc;
-    }
-});
-
-/**
  * The Custom event
  * @class
  * @extends cc.Event
@@ -156,22 +143,6 @@ cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
      */
     getEventName: function () {
         return this._eventName;
-    }
-});
-
-/**
- * The keyboard event
- * @class
- * @extends cc.Event
- */
-cc.EventKeyboard = cc.Event.extend(/** @lends cc.EventKeyboard# */{
-    _keyCode: 0,
-    _isPressed: false,
-
-    ctor: function (keyCode, isPressed) {
-        cc.Event.prototype.ctor.call(this, cc.Event.KEYBOARD);
-        this._keyCode = keyCode;
-        this._isPressed = isPressed;
     }
 });
 

@@ -53,15 +53,20 @@
             "cocos2d/core/platform/CCEGLView.js",
             "cocos2d/core/platform/CCScreen.js",
             "cocos2d/core/platform/CCVisibleRect.js",
+
             "cocos2d/core/platform/CCInputManager.js",
+            "cocos2d/core/platform/CCInputExtension.js",
+
             "cocos2d/core/cocoa/CCAffineTransform.js",
             "cocos2d/core/support/CCPointExtension.js",
             "cocos2d/core/support/CCVertex.js",
             "cocos2d/core/support/TransformUtils.js",
             "cocos2d/core/event-manager/CCTouch.js",
+
             "cocos2d/core/event-manager/CCEvent.js",
             "cocos2d/core/event-manager/CCEventListener.js",
             "cocos2d/core/event-manager/CCEventManager.js",
+            "cocos2d/core/event-manager/CCEventExtension.js",
 
             "cocos2d/core/base-nodes/CCNode.js",
             "cocos2d/core/base-nodes/CCAtlasNode.js",
