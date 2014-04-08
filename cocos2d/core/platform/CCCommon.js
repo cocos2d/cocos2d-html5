@@ -306,7 +306,12 @@ cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, sette
 		var props = Object.getOwnPropertyNames(proto);
 		for (var i = 0; i < props.length; i++) {
 			var name = props[i];
-			if( proto.__lookupGetter__(name) || typeof proto[name] !== "function" ) continue;
+
+			if( (Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(proto, name)
+												 : proto.__lookupGetter__(name))
+				|| typeof proto[name] !== "function" )
+				continue;
+
 			var func = proto[name];
 			if (hasGetter && func === getter) {
 				getterName = name;
