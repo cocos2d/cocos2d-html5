@@ -527,6 +527,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * cc.director.getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
+        if(target === null)
+            return;
         var self = this, locUpdates = self._updates;
         var hashElement = self._hashForUpdates[target.__instanceId];
 

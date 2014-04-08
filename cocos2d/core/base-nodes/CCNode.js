@@ -1454,7 +1454,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Stops and removes all actions from the running action list .
      */
     stopAllActions:function () {
-        this.actionManager.removeAllActionsFromTarget(this);
+        this.actionManager && this.actionManager.removeAllActionsFromTarget(this);
     },
 
     /**
@@ -1603,7 +1603,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     resume: function() {
         this.scheduler.resumeTarget(this);
-        this.actionManager.resumeTarget(this);
+        this.actionManager && this.actionManager.resumeTarget(this);
         cc.eventManager.resumeTarget(this);
     },
 
@@ -1623,7 +1623,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     pause: function(){
         this.scheduler.pauseTarget(this);
-        this.actionManager.pauseTarget(this);
+        this.actionManager && this.actionManager.pauseTarget(this);
         cc.eventManager.pauseTarget(this);
     },
 
