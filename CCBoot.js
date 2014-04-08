@@ -1316,7 +1316,7 @@ cc._setup = function (el, width, height) {
 
 	// Director
 	cc.director = cc.Director._getInstance();
-	cc.director.setOpenGLView(cc.view);
+    if(cc.director.setOpenGLView)cc.director.setOpenGLView(cc.view);
     cc.winSize = cc.director.getWinSize();
 
 	// Parsers
