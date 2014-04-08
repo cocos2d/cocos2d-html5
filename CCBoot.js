@@ -960,12 +960,19 @@ cc._logToWebPage = function (msg) {
 };
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
+//for ie9: console.log is not a instance of Function
 if(console.log){
-    cc.log = console.log.bind(console);
-    cc.warn = console.warn?console.warn.bind(console):console.log.bind(console);
-    cc.error = console.error?console.error.bind(console):console.log.bind(console);
+    cc.log = Function.prototype.bind.call(console.log, console);
+    cc.warn = console.warn ?
+        Function.prototype.bind.call(console.warn, console) :
+        cc.log;
+    cc.error = console.error ?
+        Function.prototype.bind.call(console.error, console) :
+        cc.log;
     if (console.assert)
-        cc.assert = console.assert.bind(console);
+    {
+        cc.assert = Function.prototype.bind.call(console.assert, console);
+    }
     else {
         cc.assert = function (cond, message) {
             if (!cond && message)
@@ -975,6 +982,7 @@ if(console.log){
 }else{
     cc.log = cc.warn = cc.error = cc.assert = function(){};
 }
+
 /**
  * Init Debug setting.
  * @function
