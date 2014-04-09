@@ -138,10 +138,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this.anchorX = 0;
 	    this.anchorY = 0;
 
-        format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
-        depthStencilFormat = depthStencilFormat || 0;
-        if(width !== undefined && height !== undefined)
+        if(width !== undefined && height !== undefined){
+            format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
+            depthStencilFormat = depthStencilFormat || 0;
             this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        }
     },
 
     /**
@@ -159,10 +160,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         cc.Node.prototype.ctor.call(this);
         this._clearColor = cc.color(0, 0, 0, 0);
 
-        format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
-        depthStencilFormat = depthStencilFormat || 0;
-        if(width !== undefined && height !== undefined)
+        if(width !== undefined && height !== undefined){
+            format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
+            depthStencilFormat = depthStencilFormat || 0;
             this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        }
     },
 
     cleanup:null,
