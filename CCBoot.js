@@ -25,6 +25,7 @@
  ****************************************************************************/
 
 var cc = cc || {};
+cc._LogInfos = {};
 
 /** @expose */
 window._p;
@@ -49,6 +50,14 @@ _p._super;
 /** @expose */
 _p.ctor;
 delete window._p;
+
+cc.newElement = function(x){
+    return document.createElement(x);
+};
+
+cc._addEventListener = function (element, type, listener, useCapture) {
+    element.addEventListener(type, listener, useCapture);
+};
 
 //is nodejs ? Used to support node-webkit.
 cc._isNodeJs = typeof require !== 'undefined' && require("fs");
@@ -322,52 +331,6 @@ cc.path = {
 };
 //+++++++++++++++++++++++++something about path end++++++++++++++++++++++++++++++++
 
-//Compatibility with IE9
-var Uint8Array = Uint8Array || Array;
-
-if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-    var IEBinaryToArray_ByteStr_Script =
-        "<!-- IEBinaryToArray_ByteStr -->\r\n" +
-            //"<script type='text/vbscript'>\r\n" +
-            "Function IEBinaryToArray_ByteStr(Binary)\r\n" +
-            "   IEBinaryToArray_ByteStr = CStr(Binary)\r\n" +
-            "End Function\r\n" +
-            "Function IEBinaryToArray_ByteStr_Last(Binary)\r\n" +
-            "   Dim lastIndex\r\n" +
-            "   lastIndex = LenB(Binary)\r\n" +
-            "   if lastIndex mod 2 Then\r\n" +
-            "       IEBinaryToArray_ByteStr_Last = Chr( AscB( MidB( Binary, lastIndex, 1 ) ) )\r\n" +
-            "   Else\r\n" +
-            "       IEBinaryToArray_ByteStr_Last = " + '""' + "\r\n" +
-            "   End If\r\n" +
-            "End Function\r\n";// +
-    //"</script>\r\n";
-
-    // inject VBScript
-    //document.write(IEBinaryToArray_ByteStr_Script);
-    var myVBScript = document.createElement('script');
-    myVBScript.type = "text/vbscript";
-    myVBScript.textContent = IEBinaryToArray_ByteStr_Script;
-    document.body.appendChild(myVBScript);
-
-    // helper to convert from responseBody to a "responseText" like thing
-    cc._convertResponseBodyToText = function (binary) {
-        var byteMapping = {};
-        for (var i = 0; i < 256; i++) {
-            for (var j = 0; j < 256; j++) {
-                byteMapping[ String.fromCharCode(i + j * 256) ] =
-                    String.fromCharCode(i) + String.fromCharCode(j);
-            }
-        }
-        var rawBytes = IEBinaryToArray_ByteStr(binary);
-        var lastChr = IEBinaryToArray_ByteStr_Last(binary);
-        return rawBytes.replace(/[\s\S]/g,
-            function (match) {
-                return byteMapping[match];
-            }) + lastChr;
-    };
-}
-
 //+++++++++++++++++++++++++something about loader start+++++++++++++++++++++++++++
 cc.loader = {
     _jsCache : {},//cache for js
@@ -450,15 +413,15 @@ cc.loader = {
         });
     },
     _createScript : function(jsPath, isAsync, cb){
-        var d = document, self = this, s = d.createElement('script');
+        var d = document, self = this, s = cc.newElement('script');
         s.async = isAsync;
         s.src = jsPath;
         self._jsCache[jsPath] = true;
-        s.addEventListener('load',function(){
+        cc._addEventListener(s, 'load',function(){
             this.removeEventListener('load', arguments.callee, false);
             cb();
         },false);
-        s.addEventListener('error',function(){
+        cc._addEventListener(s, 'error',function(){
             cb("Load " + jsPath + " failed!");
         },false);
         d.body.appendChild(s);
@@ -477,8 +440,10 @@ cc.loader = {
     _loadJsImg : function(){
         var d = document, jsLoadingImg = d.getElementById("cocos2d_loadJsImg");
         if(!jsLoadingImg){
-            jsLoadingImg = d.createElement('img');
-            jsLoadingImg.src = "data:image/gif;base64,R0lGODlhEAAQALMNAD8/P7+/vyoqKlVVVX9/fxUVFUBAQGBgYMDAwC8vL5CQkP///wAAAP///wAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQFAAANACwAAAAAEAAQAAAEO5DJSau9OOvNex0IMnDIsiCkiW6g6BmKYlBFkhSUEgQKlQCARG6nEBwOgl+QApMdCIRD7YZ5RjlGpCUCACH5BAUAAA0ALAAAAgAOAA4AAAQ6kLGB0JA4M7QW0hrngRllkYyhKAYqKUGguAws0ypLS8JxCLQDgXAIDg+FRKIA6v0SAECCBpXSkstMBAAh+QQFAAANACwAAAAACgAQAAAEOJDJORAac6K1kDSKYmydpASBUl0mqmRfaGTCcQgwcxDEke+9XO2WkxQSiUIuAQAkls0n7JgsWq8RACH5BAUAAA0ALAAAAAAOAA4AAAQ6kMlplDIzTxWC0oxwHALnDQgySAdBHNWFLAvCukc215JIZihVIZEogDIJACBxnCSXTcmwGK1ar1hrBAAh+QQFAAANACwAAAAAEAAKAAAEN5DJKc4RM+tDyNFTkSQF5xmKYmQJACTVpQSBwrpJNteZSGYoFWjIGCAQA2IGsVgglBOmEyoxIiMAIfkEBQAADQAsAgAAAA4ADgAABDmQSVZSKjPPBEDSGucJxyGA1XUQxAFma/tOpDlnhqIYN6MEAUXvF+zldrMBAjHoIRYLhBMqvSmZkggAIfkEBQAADQAsBgAAAAoAEAAABDeQyUmrnSWlYhMASfeFVbZdjHAcgnUQxOHCcqWylKEohqUEAYVkgEAMfkEJYrFA6HhKJsJCNFoiACH5BAUAAA0ALAIAAgAOAA4AAAQ3kMlJq704611SKloCAEk4lln3DQgyUMJxCBKyLAh1EMRR3wiDQmHY9SQslyIQUMRmlmVTIyRaIgA7";
+            jsLoadingImg = cc.newElement('img');
+
+            if(cc._loadingImage)
+                jsLoadingImg.src = cc._loadingImage;
 
             var canvasNode = d.getElementById(cc.game.config["id"]);
             canvasNode.style.backgroundColor = "black";
@@ -589,89 +554,19 @@ cc.loader = {
         if(opt.isCrossOrigin)
             img.crossOrigin = "Anonymous";
 
-        img.addEventListener("load", function () {
+        cc._addEventListener(img, "load", function () {
             this.removeEventListener('load', arguments.callee, false);
             this.removeEventListener('error', arguments.callee, false);
             if(cb)
                 cb(null, img);
         });
-        img.addEventListener("error", function () {
+        cc._addEventListener(img, "error", function () {
             this.removeEventListener('error', arguments.callee, false);
             if(cb)
                 cb("load image failed");
         });
         img.src = url;
         return img;
-    },
-
-    _str2Uint8Array : function(strData){
-        if (!strData)
-            return null;
-
-        var arrData = new Uint8Array(strData.length);
-        for (var i = 0; i < strData.length; i++) {
-            arrData[i] = strData.charCodeAt(i) & 0xff;
-        }
-        return arrData;
-    },
-
-    /**
-     * Load binary data by url.
-     * @param {String} url
-     * @param {Function} [cb]
-     */
-    loadBinary : function(url, cb){
-        var self = this;
-        var xhr = this.getXMLHttpRequest(),
-            errInfo = "load " + url + " failed!";
-        xhr.open("GET", url, true);
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            // IE-specific logic here
-            xhr.setRequestHeader("Accept-Charset", "x-user-defined");
-            xhr.onreadystatechange = function () {
-                if(xhr.readyState == 4 && xhr.status == 200){
-                    var fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
-                    cb(null, self._str2Uint8Array(fileContents));
-                } else cb(errInfo);
-            };
-        } else {
-            if (xhr.overrideMimeType) xhr.overrideMimeType("text\/plain; charset=x-user-defined");
-            xhr.onload = function () {
-                xhr.readyState == 4 && xhr.status == 200 ? cb(null, self._str2Uint8Array(xhr.responseText)) : cb(errInfo);
-            };
-        }
-        xhr.send(null);
-    },
-    loadBinarySync : function(url){
-        var self = this;
-        var req = this.getXMLHttpRequest();
-        var errInfo = "load " + url + " failed!";
-        req.open('GET', url, false);
-        var arrayInfo = null;
-        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            req.setRequestHeader("Accept-Charset", "x-user-defined");
-            req.send(null);
-            if (req.status != 200) {
-                cc.log(errInfo);
-                return null;
-            }
-
-            var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
-            if (fileContents) {
-                arrayInfo = self._str2Uint8Array(fileContents);
-            }
-        } else {
-            if (req.overrideMimeType)
-                req.overrideMimeType('text\/plain; charset=x-user-defined');
-            req.send(null);
-            if (req.status != 200) {
-                cc.log(errInfo);
-                return null;
-            }
-
-            arrayInfo = this._str2Uint8Array(req.responseText);
-        }
-        return arrayInfo;
     },
 
     /**
@@ -874,17 +769,17 @@ cc.loader = {
 
 //+++++++++++++++++++++++++something about window events begin+++++++++++++++++++++++++++
 (function(){
-    var win = window, hidden, visibilityChange;
-    if (typeof document.hidden !== "undefined") {
+    var win = window, hidden, visibilityChange, _undef = "undefined";
+    if (typeof document.hidden !== _undef) {
         hidden = "hidden";
         visibilityChange = "visibilitychange";
-    } else if (typeof document.mozHidden !== "undefined") {
+    } else if (typeof document.mozHidden !== _undef) {
         hidden = "mozHidden";
         visibilityChange = "mozvisibilitychange";
-    } else if (typeof document.msHidden !== "undefined") {
+    } else if (typeof document.msHidden !== _undef) {
         hidden = "msHidden";
         visibilityChange = "msvisibilitychange";
-    } else if (typeof document.webkitHidden !== "undefined") {
+    } else if (typeof document.webkitHidden !== _undef) {
         hidden = "webkitHidden";
         visibilityChange = "webkitvisibilitychange";
     }
@@ -898,19 +793,19 @@ cc.loader = {
             cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
 
-    if (typeof document.addEventListener !== "undefined" && hidden) {
-        document.addEventListener(visibilityChange, function () {
+    if (hidden) {
+        cc._addEventListener(document, visibilityChange, function () {
             if (document[hidden]) onHidden();
             else onShow();
         }, false);
     } else {
-        win.addEventListener("blur", onHidden, false);
-        win.addEventListener("focus", onShow, false);
+        cc._addEventListener(win, "blur", onHidden, false);
+        cc._addEventListener(win, "focus", onShow, false);
     }
 
     if ("onpageshow" in window && "onpagehide" in window) {
-        win.addEventListener("pagehide", onHidden, false);
-        win.addEventListener("pageshow", onShow, false);
+        cc._addEventListener(win, "pagehide", onHidden, false);
+        cc._addEventListener(win, "pageshow", onShow, false);
     }
     win = null;
     visibilityChange = null;
@@ -918,112 +813,11 @@ cc.loader = {
 //+++++++++++++++++++++++++something about window events end+++++++++++++++++++++++++++++
 
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
-cc._logToWebPage = function (msg) {
-    if(!cc._canvas)
-        return;
-
-    var logList = cc._logList;
-    var doc = document;
-    if(!logList){
-        var logDiv = doc.createElement("Div");
-        var logDivStyle = logDiv.style;
-
-        logDiv.setAttribute("id", "logInfoDiv");
-        cc._canvas.parentNode.appendChild(logDiv);
-        logDiv.setAttribute("width", "200");
-        logDiv.setAttribute("height", cc._canvas.height);
-        logDivStyle.zIndex = "99999";
-        logDivStyle.position = "absolute";
-        logDivStyle.top = "0";
-        logDivStyle.left = "0";
-
-        logList = cc._logList = doc.createElement("textarea");
-        var logListStyle = logList.style;
-
-        logList.setAttribute("rows", "20");
-        logList.setAttribute("cols", "30");
-        logList.setAttribute("disabled", true);
-        logDiv.appendChild(logList);
-        logListStyle.backgroundColor = "transparent";
-        logListStyle.borderBottom = "1px solid #cccccc";
-        logListStyle.borderRightWidth = "0px";
-        logListStyle.borderLeftWidth = "0px";
-        logListStyle.borderTopWidth = "0px";
-        logListStyle.borderTopStyle = "none";
-        logListStyle.borderRightStyle = "none";
-        logListStyle.borderLeftStyle = "none";
-        logListStyle.padding = "0px";
-        logListStyle.margin = 0;
-
-    }
-    msg = typeof msg == "string" ? msg : JSON.stringify(msg);
-    logList.value = logList.value + msg + "\r\n";
-    logList.scrollTop = logList.scrollHeight;
-};
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
-//for ie9: console.log is not a instance of Function
-if(console.log){
-    cc.log = Function.prototype.bind.call(console.log, console);
-    cc.warn = console.warn ?
-        Function.prototype.bind.call(console.warn, console) :
-        cc.log;
-    cc.error = console.error ?
-        Function.prototype.bind.call(console.error, console) :
-        cc.log;
-    if (console.assert)
-    {
-        cc.assert = Function.prototype.bind.call(console.assert, console);
-    }
-    else {
-        cc.assert = function (cond, message) {
-            if (!cond && message)
-                cc.log(message);
-        };
-    }
-}else{
-    cc.log = cc.warn = cc.error = cc.assert = function(){};
-}
 
-/**
- * Init Debug setting.
- * @function
- */
-cc._initDebugSetting = function (mode) {
-    var ccGame = cc.game;
+cc.log = cc.warn = cc.error = cc.assert = function(){};
 
-    //log
-    if(mode == ccGame.DEBUG_MODE_INFO && console.log) {
-    }else if((mode == ccGame.DEBUG_MODE_INFO && !console.log)
-        || mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE){
-        cc.log = cc._logToWebPage.bind(cc);
-    }else cc.log = function(){}
-
-    //warn
-    if(!mode || mode == ccGame.DEBUG_MODE_NONE
-        || mode == ccGame.DEBUG_MODE_ERROR
-        || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE) cc.warn = function(){};
-    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
-        || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
-        || !console.warn) {
-        cc.warn = cc._logToWebPage.bind(cc);
-    }
-
-    //error and assert
-    if(!mode || mode == ccGame.DEBUG_MODE_NONE) {
-        cc.error = function(){};
-        cc.assert = function(){};
-    }
-    else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE
-        || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE
-        || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE
-        || !console.error){
-        cc.error = cc._logToWebPage.bind(cc);
-        cc.assert = function(cond, msg){
-            if(!cond && msg) cc._logToWebPage(msg);
-        }
-    }
-};
 //+++++++++++++++++++++++++something about log end+++++++++++++++++++++++++++++
 
 /**
@@ -1259,7 +1053,7 @@ cc._initSys = function(config, CONFIG_KEY){
     //++++++++++++++++++something about cc._renderTYpe and cc._supportRender begin++++++++++++++++++++++++++++
     var userRenderMode = parseInt(config[CONFIG_KEY.renderMode]);
     var renderType = cc._RENDER_TYPE_WEBGL;
-    var tempCanvas = document.createElement("Canvas");
+    var tempCanvas = cc.newElement("Canvas");
     cc._supportRender = true;
     var notInWhiteList = webglWhiteList.indexOf(sys.browserType) == -1;
     if(userRenderMode === 1 || (userRenderMode === 0 && (sys.isMobile || notInWhiteList))){
@@ -1455,7 +1249,7 @@ cc._setup = function (el, width, height) {
         height = height || element.height;
 
         //it is already a canvas, we wrap it around with a div
-        localContainer = cc.container = cc.$new("DIV");
+        localContainer = cc.container = cc.newElement("DIV");
         localCanvas = cc._canvas = element;
         localCanvas.parentNode.insertBefore(localContainer, localCanvas);
         localCanvas.appendTo(localContainer);
@@ -1467,7 +1261,7 @@ cc._setup = function (el, width, height) {
         width = width || element.clientWidth;
         height = height || element.clientHeight;
         localContainer = cc.container = element;
-        localCanvas = cc._canvas = cc.$new("CANVAS");
+        localCanvas = cc._canvas = cc.newElement("CANVAS");
         element.appendChild(localCanvas);
     }
 
@@ -1503,13 +1297,11 @@ cc._setup = function (el, width, height) {
     }
 
     cc._gameDiv = localContainer;
-
     cc.log(cc.ENGINE_VERSION);
-
     cc._setContextMenuEnable(false);
 
     if(cc.sys.isMobile){
-        var fontStyle = document.createElement("style");
+        var fontStyle = cc.newElement("style");
         fontStyle.type = "text/css";
         document.body.appendChild(fontStyle);
 
@@ -1526,7 +1318,7 @@ cc._setup = function (el, width, height) {
 
 	// Director
 	cc.director = cc.Director._getInstance();
-	cc.director.setOpenGLView(cc.view);
+    if(cc.director.setOpenGLView)cc.director.setOpenGLView(cc.view);
     cc.winSize = cc.director.getWinSize();
 
 	// Parsers
@@ -1708,7 +1500,7 @@ cc.game = {
                 self.config = _init({});
             }
         }
-        cc._initDebugSetting(self.config[CONFIG_KEY.debugMode]);
+        //init debug move to CCDebugger
         cc._initSys(self.config, CONFIG_KEY);
     },
 

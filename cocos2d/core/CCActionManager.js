@@ -167,7 +167,7 @@ cc.ActionManager = cc.Class.extend({
                 }
             }
         } else {
-            cc.log("cocos2d: removeAction: Target not found");
+            cc.log(cc._LogInfos.ActionManager_removeAction);
         }
     },
 
@@ -177,9 +177,9 @@ cc.ActionManager = cc.Class.extend({
      */
     removeActionByTag:function (tag, target) {
         if(tag == cc.ACTION_TAG_INVALID)
-            cc.log("cc.ActionManager.removeActionByTag(): an invalid tag");
-        if(!target)
-            throw "cc.ActionManager.removeActionByTag(): target must be non-null";
+            cc.log(cc._LogInfos.ActionManager_addAction);
+
+        cc.assert(target, cc._LogInfos.ActionManager_addAction);
 
         var element = this._hashTargets[target.__instanceId];
 
@@ -202,7 +202,7 @@ cc.ActionManager = cc.Class.extend({
      */
     getActionByTag:function (tag, target) {
         if(tag == cc.ACTION_TAG_INVALID)
-            cc.log("cc.ActionManager.getActionByTag(): an invalid tag");
+            cc.log(cc._LogInfos.ActionManager_getActionByTag);
 
         var element = this._hashTargets[target.__instanceId];
         if (element) {
@@ -213,7 +213,7 @@ cc.ActionManager = cc.Class.extend({
                         return action;
                 }
             }
-            cc.log("cocos2d : getActionByTag(tag =" + tag + "): Action not found");
+            cc.log(cc._LogInfos.ActionManager_getActionByTag_2, tag);
         }
         return null;
     },

@@ -79,10 +79,10 @@ cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
         idx = i * 2;
         var idx1 = idx + 2;
 
-        var v1 = cc.Vertex2(vertices[idx * 2], vertices[idx * 2 + 1]);
-        var v2 = cc.Vertex2(vertices[(idx + 1) * 2], vertices[(idx + 1) * 2 + 1]);
-        var v3 = cc.Vertex2(vertices[idx1 * 2], vertices[idx1 * 2]);
-        var v4 = cc.Vertex2(vertices[(idx1 + 1) * 2], vertices[(idx1 + 1) * 2 + 1]);
+        var v1 = cc.vertex2(vertices[idx * 2], vertices[idx * 2 + 1]);
+        var v2 = cc.vertex2(vertices[(idx + 1) * 2], vertices[(idx + 1) * 2 + 1]);
+        var v3 = cc.vertex2(vertices[idx1 * 2], vertices[idx1 * 2]);
+        var v4 = cc.vertex2(vertices[(idx1 + 1) * 2], vertices[(idx1 + 1) * 2 + 1]);
 
         //BOOL fixVertex = !ccpLineIntersect(ccp(p1.x, p1.y), ccp(p4.x, p4.y), ccp(p2.x, p2.y), ccp(p3.x, p3.y), &s, &t);
         var fixVertexResult = !cc.vertexLineIntersect(v1.x, v1.y, v4.x, v4.y, v2.x, v2.y, v3.x, v3.y);
@@ -100,7 +100,7 @@ cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
 };
 
 /**
- * returns wheter or not the line intersects
+ * returns whether or not the line intersects
  * @param {Number} Ax
  * @param {Number} Ay
  * @param {Number} Bx

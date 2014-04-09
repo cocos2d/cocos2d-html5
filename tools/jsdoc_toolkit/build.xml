@@ -55,7 +55,7 @@
                 <include name="core/CCCamera.js"/>
                 <include name="core/CCScheduler.js"/>
                 <include name="core/CCLoader.js"/>
-                <include name="core/CCDrawingPrimitives.js"/>
+                <include name="core/CCDrawingPrimitivesCanvas.js"/>
                 <include name="core/platform/CCSAXParser.js"/>
                 <include name="core/event-manager/CCEvent.js"/>
                 <include name="core/event-manager/CCTouch.js"/>

@@ -376,10 +376,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _quadsArrayBuffer:null,
 
     /**
-     * Constructor
-     * @override
+     * <p> return the string found by key in dict. <br/>
+     *    This plist files can be create manually or with Particle Designer:<br/>
+     *    http://particledesigner.71squared.com/<br/>
+     * </p>
+     * @constructor
+     * @param {String|Number} plistFile
      */
-    ctor:function () {
+    ctor:function (plistFile) {
         cc.Node.prototype.ctor.call(this);
         this.emitterMode = cc.PARTICLE_MODE_GRAVITY;
         this.modeA = new cc.ParticleSystem.ModeA();
@@ -439,6 +443,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             this._quadsArrayBuffer = null;
+        }
+
+        if (!plistFile || typeof(plistFile) === "number") {
+            var ton = plistFile || 100;
+            this.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
+            this.initWithTotalParticles(ton);
+        }else{
+            this.initWithFile(plistFile);
         }
     },
 
@@ -1696,7 +1708,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         }
 
-                        var canvasObj = document.createElement("canvas");
+                        var canvasObj = cc.newElement("canvas");
                         if(imageFormat === cc.FMT_PNG){
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
@@ -2522,7 +2534,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         // Create another cache for the tinted version
                         // This speeds up things by a fair bit
                         if (!cacheTextureForColor.tintCache) {
-                            cacheTextureForColor.tintCache = document.createElement('canvas');
+                            cacheTextureForColor.tintCache = cc.newElement('canvas');
                             cacheTextureForColor.tintCache.width = element.width;
                             cacheTextureForColor.tintCache.height = element.height;
                         }
@@ -2676,7 +2688,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-window._p = cc.ParticleSystem.prototype;
+var _p = cc.ParticleSystem.prototype;
 
 // Extended properties
 /** @expose */
@@ -2755,7 +2767,6 @@ cc.defineGetterSetter(_p, "totalParticles", _p.getTotalParticles, _p.setTotalPar
 _p.texture;
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
-delete window._p;
 
 /**
  * <p> return the string found by key in dict. <br/>
@@ -2766,17 +2777,7 @@ delete window._p;
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    var ret = new cc.ParticleSystem();
-    if (!plistFile || typeof(plistFile) === "number") {
-        var ton = plistFile || 100;
-        ret.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
-        ret.initWithTotalParticles(ton);
-        return ret;
-    }
-
-    if (ret && ret.initWithFile(plistFile))
-        return ret;
-    return null;
+    return new cc.ParticleSystem(plistFile);
 };
 
 // Different modes
