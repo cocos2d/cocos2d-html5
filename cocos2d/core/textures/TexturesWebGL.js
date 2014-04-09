@@ -870,15 +870,14 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         if(!cc.loader.getRes(url)){
             if (cc.loader._checkIsImageURL(url)) {
                 cc.loader.load(url, function (err) {
-                    if (cb)
-                        cb.call(target);
+                    cb && cb.call(target);
                 });
             } else {
                 cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
                     if(err)
-                        return cb(err);
+                        return cb ? cb(err) : err;
                     cc.textureCache.handleLoadedTexture(url);
-                    cb(null, img);
+                    cb && cb(null, img);
                 });
             }
         }
