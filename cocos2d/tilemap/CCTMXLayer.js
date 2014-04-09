@@ -90,10 +90,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     // Maximum pixel number by cache, a little more than 3072*3072, real limit is 4096*4096
     _maxCachePixel:10000000,
     _className:"TMXLayer",
+
     /**
-     *  Constructor
+     * Creates a cc.TMXLayer with an tile set info, a layer info and a map info
+     * @constructor
+     * @param {cc.TMXTilesetInfo} tilesetInfo
+     * @param {cc.TMXLayerInfo} layerInfo
+     * @param {cc.TMXMapInfo} mapInfo
      */
-    ctor:function () {
+    ctor:function (tilesetInfo, layerInfo, mapInfo) {
         cc.SpriteBatchNode.prototype.ctor.call(this);
         this._descendants = [];
 
@@ -102,7 +107,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
             var locCanvas = cc._canvas;
-            var tmpCanvas = document.createElement('canvas');
+            var tmpCanvas = cc.newElement('canvas');
             tmpCanvas.width = locCanvas.width;
             tmpCanvas.height = locCanvas.height;
             this._cacheCanvas = tmpCanvas;
@@ -116,6 +121,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 	        // This class uses cache, so its default cachedParent should be himself
 	        this._cachedParent = this;
         }
+
+        this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
     },
 
     /**
@@ -1023,7 +1030,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     }
 });
 
-window._p = cc.TMXLayer.prototype;
+var _p = cc.TMXLayer.prototype;
 
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
 	_p.draw = cc.SpriteBatchNode.prototype.draw;
@@ -1052,7 +1059,6 @@ cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
 _p.tileHeight;
 cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
-delete window._p;
 
 /**
  * Creates a cc.TMXLayer with an tile set info, a layer info and a map info
@@ -1062,8 +1068,5 @@ delete window._p;
  * @return {cc.TMXLayer|Null}
  */
 cc.TMXLayer.create = function (tilesetInfo, layerInfo, mapInfo) {
-    var ret = new cc.TMXLayer();
-    if (ret.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo))
-        return ret;
-    return null;
+    return new cc.TMXLayer(tilesetInfo, layerInfo, mapInfo);
 };

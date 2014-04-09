@@ -909,7 +909,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     }
 });
 
-window._p = cc.ProgressTimer.prototype;
+var _p = cc.ProgressTimer.prototype;
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     _p.ctor = _p._ctorForWebGL;
     _p.setReverseProgress = _p._setReverseProgressForWebGL;
@@ -949,7 +949,7 @@ cc.defineGetterSetter(_p, "sprite", _p.getSprite, _p.setSprite);
 /** @expose */
 _p.reverseDir;
 cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDirection);
-delete window._p;
+
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage

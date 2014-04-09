@@ -34,18 +34,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
 
     _loadedTexturesBefore: {},
 
-    handleLoadedTexture : function(url){
-        var locTexs = this._textures;
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL && !cc._rendererInitialized){
-            locTexs = this._loadedTexturesBefore;
-        }
-        var tex = locTexs[url];
-        if(!tex) {
-            tex = locTexs[url] = new cc.Texture2D();
-            tex.url = url;
-        }
-        tex.handleLoadedTexture();
-    },
+    //handleLoadedTexture move to Canvas/WebGL
 
     _initializingRenderer : function(){
         var selPath;
@@ -70,7 +59,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addPVRTCImage:function (filename) {
-        cc.log("TextureCache:addPVRTCImage does not support on HTML5");
+        cc.log(cc._LogInfos.textureCache_addPVRTCImage);
     },
 
     /**
@@ -84,7 +73,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addETCImage:function (filename) {
-        cc.log("TextureCache:addPVRTCImage does not support on HTML5");
+        cc.log(cc._LogInfos.textureCache_addETCImage);
     },
 
     /**
@@ -157,7 +146,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addPVRImage:function (path) {
-        cc.log("addPVRImage does not support on HTML5");
+        cc.log(cc._LogInfos.textureCache_addPVRImage);
     },
 
     /**
@@ -213,53 +202,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
             delete(this._textures[textureKeyName]);
     },
 
-    /**
-     * <p>Returns a Texture2D object given an file image <br />
-     * If the file image was not previously loaded, it will create a new Texture2D <br />
-     *  object and it will return it. It will use the filename as a key.<br />
-     * Otherwise it will return a reference of a previously loaded image. <br />
-     * Supported image extensions: .png, .jpg, .gif</p>
-     * @param {String} url
-     * @param {Function} cb
-     * @param {Object} target
-     * @return {cc.Texture2D}
-     * @example
-     * //example
-     * cc.textureCache.addImage("hello.png");
-     */
-    addImage:function (url, cb, target) {
-        if(!url)
-            throw "cc.Texture.addImage(): path should be non-null";
-
-        var locTexs = this._textures;
-        if(cc._renderType === cc._RENDER_TYPE_WEBGL && !cc._rendererInitialized){
-            locTexs = this._loadedTexturesBefore;
-        }
-        var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
-        if(tex) {
-            cb && cb.call(target);
-            return tex;
-        }
-
-        if(!cc.loader.getRes(url)){
-            if (cc.loader._checkIsImageURL(url)) {
-                cc.loader.load(url, function (err) {
-	                cb && cb.call(target);
-                });
-            } else {
-                cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
-                    if(err)
-                        return cb ? cb(err) : err;
-                    cc.textureCache.handleLoadedTexture(url);
-	                cb && cb(null, img);
-                });
-            }
-        }
-
-        tex = locTexs[url] = new cc.Texture2D();
-        tex.url = url;
-        return tex;
-    },
+    //addImage move to Canvas/WebGL
 
     /**
      *  Cache the image data
@@ -288,8 +231,8 @@ cc.textureCache = /** @lends cc.textureCache# */{
      * @return {cc.Texture2D}
      */
     addUIImage:function (image, key) {
-        if(!image)
-            throw "cc.Texture.addUIImage(): image should be non-null";
+
+        cc.assert(image, cc._LogInfos.textureCache_addUIImage_2);
 
         if (key) {
             if (this._textures[key])
@@ -302,7 +245,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
         if ((key != null) && (texture != null))
             this._textures[key] = texture;
         else
-            cc.log("cocos2d: Couldn't add UIImage in TextureCache");
+            cc.log(cc._LogInfos.textureCache_addUIImage);
         return texture;
     },
 
@@ -318,9 +261,9 @@ cc.textureCache = /** @lends cc.textureCache# */{
             var selTexture = locTextures[key];
             count++;
             if (selTexture.getHtmlElementObj() instanceof  HTMLImageElement)
-                cc.log("cocos2d: '" + key + "' id=" + selTexture.getHtmlElementObj().src + " " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
+                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo, key, selTexture.getHtmlElementObj().src, selTexture.pixelsWidth, selTexture.pixelsHeight);
             else {
-                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selTexture.pixelsWidth + " x " + selTexture.pixelsHeight);
+                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo_2, key, selTexture.pixelsWidth, selTexture.pixelsHeight);
             }
             totalBytes += selTexture.pixelsWidth * selTexture.pixelsHeight * 4;
         }
@@ -331,13 +274,12 @@ cc.textureCache = /** @lends cc.textureCache# */{
             for (var selCanvasKey in selCanvasColorsArr){
                 var selCanvas = selCanvasColorsArr[selCanvasKey];
                 count++;
-                cc.log("cocos2d: '" + key + "' id= HTMLCanvasElement " + selCanvas.width + " x " + selCanvas.height);
+                cc.log("cocos2d: '%s' id= HTMLCanvasElement %s x %s", key, selCanvas.width, selCanvas.height);
                 totalBytes += selCanvas.width * selCanvas.height * 4;
             }
 
         }
-        cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, HTMLCanvasElement for "
-            + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
+        cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo_3, count, totalBytes / 1024, (totalBytes / (1024.0 * 1024.0)).toFixed(2));
     },
 
 	_clear: function () {
@@ -347,3 +289,70 @@ cc.textureCache = /** @lends cc.textureCache# */{
 		this._loadedTexturesBefore = {};
 	}
 };
+
+if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+
+    var _p = cc.textureCache;
+
+    _p.handleLoadedTexture = function(url){
+        var locTexs = this._textures;
+        //remove judge
+        var tex = locTexs[url];
+        if(!tex) {
+            tex = locTexs[url] = new cc.Texture2D();
+            tex.url = url;
+        }
+        tex.handleLoadedTexture();
+    };
+
+    /**
+     * <p>Returns a Texture2D object given an file image <br />
+     * If the file image was not previously loaded, it will create a new Texture2D <br />
+     *  object and it will return it. It will use the filename as a key.<br />
+     * Otherwise it will return a reference of a previously loaded image. <br />
+     * Supported image extensions: .png, .jpg, .gif</p>
+     * @param {String} url
+     * @param {Function} cb
+     * @param {Object} target
+     * @return {cc.Texture2D}
+     * @example
+     * //example
+     * cc.textureCache.addImage("hello.png");
+     */
+    _p.addImage = function (url, cb, target) {
+
+        cc.assert(url, cc._LogInfos.Texture2D_addImage);
+
+        var locTexs = this._textures;
+        //remove judge
+        var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
+        if(tex) {
+            if(cb)
+                cb.call(target);
+            return tex;
+        }
+
+        if(!cc.loader.getRes(url)){
+            if (cc.loader._checkIsImageURL(url)) {
+                cc.loader.load(url, function (err) {
+                    if (cb)
+                        cb.call(target);
+                });
+            } else {
+                cc.loader.cache[url] = cc.loader.loadImg(url, function (err, img) {
+                    if(err)
+                        return cb(err);
+                    cc.textureCache.handleLoadedTexture(url);
+                    cb(null, img);
+                });
+            }
+        }
+
+        tex = locTexs[url] = new cc.Texture2D();
+        tex.url = url;
+        return tex;
+    };
+
+    delete _p;
+
+}
