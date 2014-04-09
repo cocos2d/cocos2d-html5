@@ -191,30 +191,20 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
     /**
      * play animation by animation name.
      * @param {String} animationName The animation name you want to play
-     * @param {Number} durationTo
+     * @param {Number} [durationTo=-1]
      *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
      *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} durationTween he
-     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
-     *         -1 : use the value from CCMovementData get from flash design panel
-     * @param {Number} loop
+     * @param {Number} [loop=-1]
      *          Whether the animation is loop.
      *         loop < 0 : use the value from CCMovementData get from flash design panel
      *         loop = 0 : this animation is not loop
      *         loop > 0 : this animation is loop
-     * @param {Number} tweenEasing
-     *          CCTween easing is used for calculate easing effect
-     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
-     *         -1 : fade out
-     *         0  : line
-     *         1  : fade in
-     *         2  : fade in and out
      * @example
      * // example
-     * armature.getAnimation().play("run",-1,-1,1,-1);//loop play
-     * armature.getAnimation().play("run",-1,-1,0,-1);//not loop play
+     * armature.getAnimation().play("run",-1,1);//loop play
+     * armature.getAnimation().play("run",-1,0);//not loop play
      */
-    play:function (animationName, durationTo, durationTween, loop, tweenEasing) {
+    play:function (animationName, durationTo, loop) {
         if (this.animationData == null) {
             cc.log("this.animationData can not be null");
             return;
@@ -224,11 +214,11 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
             cc.log("this._movementData can not be null");
             return;
         }
-        if (typeof durationTo == "undefined") {
+        if (durationTo === undefined) {
             durationTo = -1;
         }
 
-        if (typeof loop == "undefined") {
+        if (loop === undefined) {
             loop = -1;
         }
 
@@ -240,7 +230,7 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         //Further processing parameters
         durationTo = (durationTo == -1) ? locMovementData.durationTo : durationTo;
         var durationTween = locMovementData.durationTween;
-        durationTween = (durationTween == 0) ? locMovementData.duration : durationTween;//todo
+        durationTween = (durationTween == 0) ? this._rawDuration : durationTween;//todo
         var tweenEasing = locMovementData.tweenEasing;
 
         if (loop < 0) {

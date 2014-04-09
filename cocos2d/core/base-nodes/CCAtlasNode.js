@@ -63,11 +63,23 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
     _className:"AtlasNode",
 
-    ctor:function () {
+	/**
+	 * Creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
+	 * @constructor
+	 * @param {String} tile
+	 * @param {Number} tileWidth
+	 * @param {Number} tileHeight
+	 * @param {Number} itemsToRender
+	 * @example
+	 * var node = new cc.AtlasNode("pathOfTile", 16, 16, 1);
+	 */
+    ctor: function (tile, tileWidth, tileHeight, itemsToRender) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._colorUnmodified = cc.color.WHITE;
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
         this._ignoreContentScaleFactor = false;
+
+		itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
     },
 
     /** updates the Atlas (indexed vertex array).
@@ -431,9 +443,6 @@ delete window._p;
  * var node = cc.AtlasNode.create("pathOfTile", 16, 16, 1);
  */
 cc.AtlasNode.create = function (tile, tileWidth, tileHeight, itemsToRender) {
-    var ret = new cc.AtlasNode();
-    if (ret.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender))
-        return ret;
-    return null;
+    return new cc.AtlasNode(tile, tileWidth, tileHeight, itemsToRender);
 };
 
