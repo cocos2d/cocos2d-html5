@@ -106,7 +106,7 @@ cc.color._getGray = function () {
     return cc.color(166, 166, 166);
 };
 
-window._p = cc.color;
+var _p = cc.color;
 /** @expose */
 _p.WHITE;
 cc.defineGetterSetter(_p, "WHITE", _p._getWhite);
@@ -134,4 +134,3 @@ cc.defineGetterSetter(_p, "ORANGE", _p._getOrange);
 /** @expose */
 _p.GRAY;
 cc.defineGetterSetter(_p, "GRAY", _p._getGray);
-delete window._p;
