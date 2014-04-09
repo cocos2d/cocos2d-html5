@@ -284,7 +284,23 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _resources:"",
     _currentFirstGID:0,
 
-    ctor:function () {
+    /**
+     * Creates a TMX Format with a tmx file or content string
+     * @constructor
+     * @param {String} tmxFile fileName or content string
+     * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
+     * @example
+     * 1.
+     * //create a TMXMapInfo with file name
+     * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
+     * 2.
+     * //create a TMXMapInfo with content string and resource path
+     * var resources = "res/TileMaps";
+     * var filePath = "res/TileMaps/orthogonal-test1.tmx";
+     * var xmlStr = cc.loader.getRes(filePath);
+     * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
+     */
+    ctor:function (tmxFile, resourcePath) {
         cc.SAXParser.prototype.ctor.apply(this);
         this._mapSize = cc.size(0, 0);
         this._tileSize = cc.size(0, 0);
@@ -295,6 +311,12 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._tileProperties = {};
 
         this._currentFirstGID = 0;
+
+        if (resourcePath === undefined) {
+            this.initWithTMXFile(tmxFile);
+        } else {
+            this.initWithXML(tmxFile,resourcePath);
+        }
     },
     /**
      * @return {Number}
@@ -910,15 +932,7 @@ delete window._p;
  * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
  */
 cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
-    var ret = new cc.TMXMapInfo();
-    if (resourcePath) {
-        if (ret.initWithXML(tmxFile, resourcePath))
-            return ret;
-    } else {
-        if (ret.initWithTMXFile(tmxFile))
-            return ret;
-    }
-    return null;
+    return new cc.TMXMapInfo(tmxFile, resourcePath);
 };
 
 
