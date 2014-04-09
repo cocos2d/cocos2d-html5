@@ -417,7 +417,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     }
 });
 
-window._p = cc.TMXTiledMap.prototype;
+var _p = cc.TMXTiledMap.prototype;
 
 // Extended properties
 /** @expose */
@@ -433,7 +433,6 @@ cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
 _p.tileHeight;
 cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
-delete window._p;
 
 /**
  * Creates a TMX Tiled Map with a TMX file  or content string.

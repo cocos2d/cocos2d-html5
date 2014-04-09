@@ -358,7 +358,7 @@
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
     cc.PhysicsSprite._className = "PhysicsSprite";
-    window._p = cc.PhysicsSprite.prototype;
+    var _p = cc.PhysicsSprite.prototype;
     // Extended properties
     /** @expose */
     _p.body;
@@ -366,7 +366,7 @@
     /** @expose */
     _p.dirty;
     cc.defineGetterSetter(_p, "dirty", _p.isDirty, _p.setDirty);
-    delete window._p;
+
 
     /**
      * Create a PhysicsSprite with filename and rect

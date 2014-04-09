@@ -1030,7 +1030,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     }
 });
 
-window._p = cc.TMXLayer.prototype;
+var _p = cc.TMXLayer.prototype;
 
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
 	_p.draw = cc.SpriteBatchNode.prototype.draw;
@@ -1059,7 +1059,6 @@ cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
 _p.tileHeight;
 cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
-delete window._p;
 
 /**
  * Creates a cc.TMXLayer with an tile set info, a layer info and a map info

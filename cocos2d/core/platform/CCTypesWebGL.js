@@ -26,8 +26,8 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     //redefine some types with ArrayBuffer for WebGL
     cc.color = function (r, g, b, a, arrayBuffer, offset) {
         if (r === undefined)
-            return new cc.Color(0,0,0,255, arrayBuffer, offset);
-        if (typeof r === "string"){
+            return new cc.Color(0, 0, 0, 255, arrayBuffer, offset);
+        if (typeof r === "string") {
             var color = cc.hexToColor(r);
             return new cc.Color(color.r, color.g, color.b, color.a);
         }
@@ -57,44 +57,45 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
     cc.Color.BYTES_PER_ELEMENT = 4;
 
-    window._p = cc.Color.prototype;
-    _p._getR = function(){
+    var _p = cc.Color.prototype;
+
+    _p._getR = function () {
         return this._rU8[0];
     };
-    _p._setR = function(value){
+    _p._setR = function (value) {
         this._rU8[0] = value < 0 ? 0 : value;
     };
-    _p._getG = function(){
+    _p._getG = function () {
         return this._gU8[0];
     };
-    _p._setG = function(value){
+    _p._setG = function (value) {
         this._gU8[0] = value < 0 ? 0 : value;
     };
-    _p._getB = function(){
+    _p._getB = function () {
         return this._bU8[0];
     };
-    _p._setB = function(value){
+    _p._setB = function (value) {
         this._bU8[0] = value < 0 ? 0 : value;
     };
-    _p._getA = function(){
+    _p._getA = function () {
         return this._aU8[0];
     };
-    _p._setA = function(value){
+    _p._setA = function (value) {
         this._aU8[0] = value < 0 ? 0 : value;
     };
     /** @expose */
     _p.r;
-    cc.defineGetterSetter(_p, "r", _p._getR,_p._setR);
+    cc.defineGetterSetter(_p, "r", _p._getR, _p._setR);
     /** @expose */
     _p.g;
-    cc.defineGetterSetter(_p, "g", _p._getG,_p._setG);
+    cc.defineGetterSetter(_p, "g", _p._getG, _p._setG);
     /** @expose */
     _p.b;
-    cc.defineGetterSetter(_p, "b", _p._getB,_p._setB);
+    cc.defineGetterSetter(_p, "b", _p._getB, _p._setB);
     /** @expose */
     _p.a;
-    cc.defineGetterSetter(_p, "a", _p._getA,_p._setA);
-    delete window._p;
+    cc.defineGetterSetter(_p, "a", _p._getA, _p._setA);
+
 
     //redefine cc.Vertex2F
     cc.Vertex2F = function (x, y, arrayBuffer, offset) {
@@ -345,7 +346,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
     cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT = 96;
     Object.defineProperties(cc.V3F_C4B_T2F_Quad.prototype, {
-        tl:{
+        tl: {
             get: function () {
                 return this._tl;
             },
@@ -357,7 +358,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             },
             enumerable: true
         },
-        bl:{
+        bl: {
             get: function () {
                 return this._bl;
             },
@@ -369,7 +370,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             },
             enumerable: true
         },
-        tr:{
+        tr: {
             get: function () {
                 return this._tr;
             },
@@ -381,7 +382,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             },
             enumerable: true
         },
-        br:{
+        br: {
             get: function () {
                 return this._br;
             },
@@ -393,14 +394,14 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             },
             enumerable: true
         },
-        arrayBuffer:{
+        arrayBuffer: {
             get: function () {
                 return this._arrayBuffer;
             },
             enumerable: true
         }
     });
-    cc.V3F_C4B_T2F_QuadZero = function(){
+    cc.V3F_C4B_T2F_QuadZero = function () {
         return new cc.V3F_C4B_T2F_Quad();
     };
 
@@ -502,7 +503,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     };
     cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60;
     Object.defineProperties(cc.V2F_C4B_T2F_Triangle.prototype, {
-        a:{
+        a: {
             get: function () {
                 return this._a;
             },
@@ -514,7 +515,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             },
             enumerable: true
         },
-        b:{
+        b: {
             get: function () {
                 return this._b;
             },
@@ -526,7 +527,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             },
             enumerable: true
         },
-        c:{
+        c: {
             get: function () {
                 return this._c;
             },
