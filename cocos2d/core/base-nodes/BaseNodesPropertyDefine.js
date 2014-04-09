@@ -29,7 +29,7 @@
  CCNode
  */
 
-window._p = cc.Node.prototype;
+var _p = cc.Node.prototype;
 
 cc.defineGetterSetter(_p, "x", _p.getPositionX, _p.setPositionX);
 cc.defineGetterSetter(_p, "y", _p.getPositionY, _p.setPositionY);
@@ -124,7 +124,7 @@ cc.defineGetterSetter(_p, "shaderProgram", _p.getShaderProgram, _p.setShaderProg
 _p.glServerState;
 cc.defineGetterSetter(_p, "glServerState", _p.getGLServerState, _p.setGLServerState);
 
-window._p = cc.NodeRGBA.prototype;
+var _p = cc.NodeRGBA.prototype;
 /** @expose */
 _p.opacity;
 cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
@@ -141,4 +141,3 @@ cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 _p.cascadeColor;
 cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
 
-delete window._p;

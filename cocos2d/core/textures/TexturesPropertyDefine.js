@@ -25,10 +25,10 @@
  ****************************************************************************/
 
 /*
-CCTexture2D
+ CCTexture2D
  */
 
-window._c = cc.Texture2D;
+var _c = cc.Texture2D;
 
 /**
  * <p>
@@ -155,7 +155,7 @@ _c.PIXEL_FORMAT_PVRTC2 = 10;
  */
 _c.PIXEL_FORMAT_DEFAULT = _c.PIXEL_FORMAT_RGBA8888;
 
-window._M = cc.Texture2D._M = {};
+var _M = cc.Texture2D._M = {};
 _M[_c.PIXEL_FORMAT_RGBA8888] = "RGBA8888";
 _M[_c.PIXEL_FORMAT_RGB888] = "RGB888";
 _M[_c.PIXEL_FORMAT_RGB565] = "RGB565";
@@ -167,7 +167,7 @@ _M[_c.PIXEL_FORMAT_RGB5A1] = "RGB5A1";
 _M[_c.PIXEL_FORMAT_PVRTC4] = "PVRTC4";
 _M[_c.PIXEL_FORMAT_PVRTC2] = "PVRTC2";
 
-window._B = cc.Texture2D._B = {};
+var _B = cc.Texture2D._B = {};
 _B[_c.PIXEL_FORMAT_RGBA8888] = 32;
 _B[_c.PIXEL_FORMAT_RGB888] = 24;
 _B[_c.PIXEL_FORMAT_RGB565] = 16;
@@ -180,7 +180,7 @@ _B[_c.PIXEL_FORMAT_PVRTC4] = 4;
 _B[_c.PIXEL_FORMAT_PVRTC2] = 3;
 
 
-window._p = cc.Texture2D.prototype;
+var _p = cc.Texture2D.prototype;
 
 // Extended properties
 /** @expose */
@@ -205,24 +205,12 @@ cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
 
 cc.Texture2D.defaultPixelFormat = _c.PIXEL_FORMAT_DEFAULT;
 
-/** @expose */
-window._c;
-/** @expose */
-window._M;
-/** @expose */
-window._B;
-
-delete window._p;
-delete window._c;
-delete window._M;
-delete window._B;
-
 
 /*
-CCTextureAtlas
+ CCTextureAtlas
  */
 
-window._p = cc.TextureAtlas.prototype;
+var _p = cc.TextureAtlas.prototype;
 
 // Extended properties
 /** @expose */
@@ -234,5 +222,3 @@ cc.defineGetterSetter(_p, "capacity", _p.getCapacity);
 /** @expose */
 _p.quads;
 cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
-
-delete window._p;

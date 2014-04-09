@@ -404,7 +404,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     }
 });
 
-window._p = cc.TextFieldTTF.prototype;
+var _p = cc.TextFieldTTF.prototype;
 
 // Extended properties
 /** @expose */
@@ -413,7 +413,7 @@ cc.defineGetterSetter(_p, "charCount", _p.getCharCount);
 /** @expose */
 _p.placeHolder;
 cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
-delete window._p;
+
 
 /**
  *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size

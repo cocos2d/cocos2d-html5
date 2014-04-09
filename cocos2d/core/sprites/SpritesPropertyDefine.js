@@ -28,7 +28,7 @@
  CCSprite
  */
 
-window._p = cc.Sprite.prototype;
+var _p = cc.Sprite.prototype;
 
 // Override properties
 cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
@@ -66,5 +66,3 @@ cc.defineGetterSetter(_p, "batchNode", _p.getBatchNode, _p.setBatchNode);
 /** @expose */
 _p.quad;
 cc.defineGetterSetter(_p, "quad", _p.getQuad);
-
-delete window._p;

@@ -897,7 +897,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     }
 });
 
-window._p = cc.TMXMapInfo.prototype;
+var _p = cc.TMXMapInfo.prototype;
 
 // Extended properties
 /** @expose */
@@ -913,7 +913,6 @@ cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
 _p.tileHeight;
 cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
-delete window._p;
 
 /**
  * Creates a TMX Format with a tmx file or content string

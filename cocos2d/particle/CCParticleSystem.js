@@ -2688,7 +2688,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-window._p = cc.ParticleSystem.prototype;
+var _p = cc.ParticleSystem.prototype;
 
 // Extended properties
 /** @expose */
@@ -2767,7 +2767,6 @@ cc.defineGetterSetter(_p, "totalParticles", _p.getTotalParticles, _p.setTotalPar
 _p.texture;
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
-delete window._p;
 
 /**
  * <p> return the string found by key in dict. <br/>

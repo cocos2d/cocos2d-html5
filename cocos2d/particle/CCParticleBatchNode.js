@@ -542,14 +542,13 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     }
 });
 
-window._p = cc.ParticleBatchNode.prototype;
+var _p = cc.ParticleBatchNode.prototype;
 
 // Extended properties
 /** @expose */
 _p.texture;
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
-delete window._p;
 
 /**
  * initializes the particle system with the name of a file on disk (for a list of supported formats look at the cc.Texture2D class), a capacity of particles

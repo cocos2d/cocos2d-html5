@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-window._p = cc.LayerRGBA.prototype;
+var _p = cc.LayerRGBA.prototype;
 // Extended properties
 /** @expose */
 _p.opacityModifyRGB;
@@ -39,17 +39,14 @@ cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
 /** @expose */
 _p.cascadeColor;
 cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
-delete window._p;
 
-window._p = cc.LayerColor.prototype;
+var _p = cc.LayerColor.prototype;
 
 // Override properties
 cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
 cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
 
-delete window._p;
-
-window._p = cc.LayerGradient.prototype;
+var _p = cc.LayerGradient.prototype;
 
 // Extended properties
 /** @expose */
@@ -67,5 +64,3 @@ cc.defineGetterSetter(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
 /** @expose */
 _p.vector;
 cc.defineGetterSetter(_p, "vector", _p.getVector, _p.setVector);
-
-delete window._p;

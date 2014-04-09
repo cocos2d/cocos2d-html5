@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-window._p = cc.LabelTTF.prototype;
+var _p = cc.LabelTTF.prototype;
 
 // Override properties
 cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
@@ -82,5 +82,3 @@ cc.defineGetterSetter(_p, "shadowOpacity", _p._getShadowOpacity, _p._setShadowOp
 /** @expose */
 _p.shadowBlur;
 cc.defineGetterSetter(_p, "shadowBlur", _p._getShadowBlur, _p._setShadowBlur);
-
-delete window._p;

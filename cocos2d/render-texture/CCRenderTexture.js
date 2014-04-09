@@ -824,7 +824,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     }
 });
 
-window._p = cc.RenderTexture.prototype;
+var _p = cc.RenderTexture.prototype;
 
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     _p.ctor = _p._ctorForWebGL;
@@ -859,7 +859,6 @@ if(cc._renderType == cc._RENDER_TYPE_WEBGL){
 _p.clearColorVal;
 cc.defineGetterSetter(_p, "clearColorVal", _p.getClearColor, _p.setClearColor);
 
-delete window._p;
 
 /**
  * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
