@@ -641,7 +641,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position);
     },
 
     /**
