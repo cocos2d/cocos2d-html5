@@ -263,7 +263,7 @@ cc.configuration = /** @lends cc.configuration# */{
         this._supportsShareableVAO = this.checkForGLExtension("vertex_array_object");
         locValueDict["gl.supports_vertex_array_object"] = this._supportsShareableVAO;
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.checkGLErrorDebug();
     },
 
     /**

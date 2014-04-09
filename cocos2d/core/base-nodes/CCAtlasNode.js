@@ -245,7 +245,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      */
     _drawForWebGL: function (ctx) {
         var context = ctx || cc._renderContext;
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.uniform4fv(this._uniformColor, this._colorF32Array);
         this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);

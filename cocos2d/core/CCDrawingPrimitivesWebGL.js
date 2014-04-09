@@ -89,7 +89,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.POINTS, 0, 1);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -118,7 +118,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.POINTS, 0, points.length);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     _pointsToTypeArray:function (points) {
@@ -152,7 +152,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.LINES, 0, 2);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -210,7 +210,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
             glContext.drawArrays(glContext.LINE_STRIP, 0, vertices.length);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -237,7 +237,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.TRIANGLE_FAN, 0, poli.length);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -286,7 +286,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + additionalSegment);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -324,7 +324,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + 1);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -362,7 +362,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + 1);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -422,7 +422,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + 1);
         glContext.deleteBuffer(pointBuffer);
 
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     /**
@@ -444,7 +444,7 @@ cc.DrawingPrimitiveWebGL = cc.Class.extend(/** @lends cc.DrawingPrimitiveWebGL# 
      * @param {Number} pointSize
      */
     setPointSize:function (pointSize) {
-        this._pointSize = pointSize * cc.CONTENT_SCALE_FACTOR();
+        this._pointSize = pointSize * cc.contentScaleFactor();
     },
 
     /**

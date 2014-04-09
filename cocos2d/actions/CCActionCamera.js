@@ -145,8 +145,8 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
             _t._angleX = angleX;
             _t._deltaAngleX = deltaAngleX;
 
-            _t._radDeltaZ = cc.DEGREES_TO_RADIANS(deltaAngleZ);
-            _t._radDeltaX = cc.DEGREES_TO_RADIANS(deltaAngleX);
+            _t._radDeltaZ = cc.degreesToRadians(deltaAngleZ);
+            _t._radDeltaX = cc.degreesToRadians(deltaAngleX);
             return true;
         }
         return false;
@@ -188,13 +188,13 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
             _t._radius = retValue.newRadius;
 
         if (isNaN(_t._angleZ))
-            _t._angleZ = cc.RADIANS_TO_DEGREES(retValue.zenith);
+            _t._angleZ = cc.radiansToDegress(retValue.zenith);
 
         if (isNaN(_t._angleX))
-            _t._angleX = cc.RADIANS_TO_DEGREES(retValue.azimuth);
+            _t._angleX = cc.radiansToDegress(retValue.azimuth);
 
-        _t._radZ = cc.DEGREES_TO_RADIANS(_t._angleZ);
-        _t._radX = cc.DEGREES_TO_RADIANS(_t._angleX);
+        _t._radZ = cc.degreesToRadians(_t._angleZ);
+        _t._radX = cc.degreesToRadians(_t._angleX);
     },
 
     clone:function(){

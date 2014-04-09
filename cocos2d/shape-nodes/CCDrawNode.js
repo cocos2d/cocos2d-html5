@@ -822,8 +822,8 @@ cc.DrawNodeWebGL = cc.Node.extend({
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, triangleSize, 12);
 
         gl.drawArrays(gl.TRIANGLES, 0, this._buffer.length * 3);
-        cc.INCREMENT_GL_DRAWS(1);
-        //cc.CHECK_GL_ERROR_DEBUG();
+        cc.incrementGLDraws(1);
+        //cc.checkGLErrorDebug();
     },
 
     _ensureCapacity:function(count){

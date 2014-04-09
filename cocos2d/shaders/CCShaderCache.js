@@ -151,7 +151,7 @@ cc.shaderCache = /** @lends cc.shaderCache# */{
         program.link();
         program.updateUniforms();
 
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
     },
 
     /**

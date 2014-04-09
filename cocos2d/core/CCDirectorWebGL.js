@@ -101,7 +101,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         } else {
             loc_gl.disable(loc_gl.DEPTH_TEST);
         }
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
     };
 
     _p.setOpenGLView = function (openGLView) {
@@ -328,7 +328,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         else
             cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO);
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
     };
 
 

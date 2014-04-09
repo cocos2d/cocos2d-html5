@@ -389,7 +389,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
         if (locDirty)
             this._dirty = false;
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     reuse:function () {
@@ -618,7 +618,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
         if (locDirty)
             this._dirty = false;
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     reuse:function () {

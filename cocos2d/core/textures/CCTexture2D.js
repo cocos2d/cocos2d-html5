@@ -143,15 +143,15 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS){
         },
 
         getContentSize:function () {
-            var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+            var locScaleFactor = cc.contentScaleFactor();
             return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
         },
 
         _getWidth:function () {
-            return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+            return this._contentSize.width / cc.contentScaleFactor();
         },
         _getHeight:function () {
-            return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+            return this._contentSize.height / cc.contentScaleFactor();
         },
 
         getContentSizeInPixels:function () {

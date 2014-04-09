@@ -123,14 +123,14 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          * @return {cc.Size}
          */
         getContentSize:function () {
-            return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
+            return cc.size(this._contentSize.width / cc.contentScaleFactor(), this._contentSize.height / cc.contentScaleFactor());
         },
 
         _getWidth:function () {
-            return this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
+            return this._contentSize.width / cc.contentScaleFactor();
         },
         _getHeight:function () {
-            return this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
+            return this._contentSize.height / cc.contentScaleFactor();
         },
 
         getContentSizeInPixels:function () {
@@ -767,7 +767,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _t._buffersVBO[1]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, _t._indices, gl.STATIC_DRAW);
 
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
     };
 
 
@@ -813,7 +813,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * _t._indices.BYTES_PER_ELEMENT);
 
         cc.g_NumberOfDraws++;
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
     };
 
     /*

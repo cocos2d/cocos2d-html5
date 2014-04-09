@@ -80,7 +80,7 @@ cc.swap = function (x, y, ref) {
         ref[x] = ref[y];
         ref[y] = tmp;
     } else
-        cc.log(cc._LogInfos.SWAP);
+        cc.log(cc._LogInfos.swap);
 };
 
 /**
@@ -244,9 +244,25 @@ cc.contentScaleFactor = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
  * @return {cc.Point}
  * @function
  */
-cc.POINT_POINTS_TO_PIXELS = function (points) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
+cc.pointPointsToPixels = function (points) {
+    var scale = cc.contentScaleFactor();
     return cc.p(points.x * scale, points.y * scale);
+};
+
+/**
+ * Converts a Point in pixels to points
+ * @param {Point} pixels
+ * @function
+ */
+cc.pointPixelsToPoints = function (pixels) {
+	var scale = cc.contentScaleFactor();
+	return cc.p(pixels.x / scale, pixels.y / scale);
+};
+
+cc._pointPixelsToPointsOut = function(pixels, outPoint){
+	var scale = cc.contentScaleFactor();
+	outPoint.x = pixels.x / scale;
+	outPoint.y = pixels.y / scale;
 };
 
 /**
@@ -255,8 +271,8 @@ cc.POINT_POINTS_TO_PIXELS = function (points) {
  * @return {cc.Size}
  * @function
  */
-cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
+cc.sizePointsToPixels = function (sizeInPoints) {
+    var scale = cc.contentScaleFactor();
     return cc.size(sizeInPoints.width * scale, sizeInPoints.height * scale);
 };
 
@@ -266,31 +282,15 @@ cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
  * @return {cc.Size}
  * @function
  */
-cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
+cc.sizePixelsToPoints = function (sizeInPixels) {
+    var scale = cc.contentScaleFactor();
     return cc.size(sizeInPixels.width / scale, sizeInPixels.height / scale);
 };
 
-cc._SIZE_PIXELS_TO_POINTS_OUT = function (sizeInPixels, outSize) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
+cc._sizePixelsToPointsOut = function (sizeInPixels, outSize) {
+    var scale = cc.contentScaleFactor();
     outSize.width = sizeInPixels.width / scale;
     outSize.height = sizeInPixels.height / scale;
-};
-
-/**
- * Converts a Point in pixels to points
- * @param {Point} pixels
- * @function
- */
-cc.POINT_PIXELS_TO_POINTS = function (pixels) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
-    return cc.p(pixels.x / scale, pixels.y / scale);
-};
-
-cc._POINT_PIXELS_TO_POINTS_OUT = function(pixels, outPoint){
-    var scale = cc.CONTENT_SCALE_FACTOR();
-    outPoint.x = pixels.x / scale;
-    outPoint.y = pixels.y / scale;
 };
 
 /**
@@ -298,8 +298,8 @@ cc._POINT_PIXELS_TO_POINTS_OUT = function(pixels, outPoint){
  * @param {cc.Rect} pixel
  * @function
  */
-cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
-    var scale = cc.CONTENT_SCALE_FACTOR();
+cc.rectPixelsToPoints = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
+    var scale = cc.contentScaleFactor();
     return cc.rect(pixel.x / scale, pixel.y / scale,
         pixel.width / scale, pixel.height / scale);
 } : function (p) {
@@ -311,8 +311,8 @@ cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
  * @param {cc.Rect} point
  * @function
  */
-cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
-   var scale = cc.CONTENT_SCALE_FACTOR();
+cc.rectPointsToPixels = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
+   var scale = cc.contentScaleFactor();
     return cc.rect(point.x * scale, point.y * scale,
         point.width * scale, point.height * scale);
 } : function (p) {
@@ -349,11 +349,11 @@ cc.ONE_MINUS_SRC_ALPHA = 0x0303;
  */
 cc.ONE_MINUS_DST_COLOR = 0x0307;
 
-cc.CHECK_GL_ERROR_DEBUG = function () {
+cc.checkGLErrorDebug = function () {
     if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
         var _error = cc._renderContext.getError();
         if (_error) {
-            cc.log(CC._localZOrder.CHECK_GL_ERROR_DEBUG, _error);
+            cc.log(CC._localZOrder.checkGLErrorDebug, _error);
         }
     }
 };
