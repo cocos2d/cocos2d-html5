@@ -376,10 +376,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _quadsArrayBuffer:null,
 
     /**
-     * Constructor
-     * @override
+     * <p> return the string found by key in dict. <br/>
+     *    This plist files can be create manually or with Particle Designer:<br/>
+     *    http://particledesigner.71squared.com/<br/>
+     * </p>
+     * @constructor
+     * @param {String|Number} plistFile
      */
-    ctor:function () {
+    ctor:function (plistFile) {
         cc.Node.prototype.ctor.call(this);
         this.emitterMode = cc.PARTICLE_MODE_GRAVITY;
         this.modeA = new cc.ParticleSystem.ModeA();
@@ -439,6 +443,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             this._quadsArrayBuffer = null;
+        }
+
+        if (!plistFile || typeof(plistFile) === "number") {
+            var ton = plistFile || 100;
+            this.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
+            this.initWithTotalParticles(ton);
+        }else{
+            this.initWithFile(plistFile);
         }
     },
 
@@ -2766,17 +2778,7 @@ delete window._p;
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    var ret = new cc.ParticleSystem();
-    if (!plistFile || typeof(plistFile) === "number") {
-        var ton = plistFile || 100;
-        ret.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
-        ret.initWithTotalParticles(ton);
-        return ret;
-    }
-
-    if (ret && ret.initWithFile(plistFile))
-        return ret;
-    return null;
+    return new cc.ParticleSystem(plistFile);
 };
 
 // Different modes
