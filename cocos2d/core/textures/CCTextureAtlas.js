@@ -43,8 +43,8 @@
  * @property {Array}    quads           - <@readonly> Quads that are going to be rendered
  */
 cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
-	dirty:false,
-	texture:null,
+    dirty:false,
+    texture:null,
 
     _indices:null,
     //0: vertex  1: indices
@@ -56,8 +56,30 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     _quadsWebBuffer:null,
     _quadsReader:null,
 
-    ctor:function () {
+    /**
+     * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
+     * The TextureAtlas capacity can be increased in runtime. </p>
+     * @constructor
+     * @param {String|cc.Texture2D} fileName
+     * @param {Number} capacity
+     * @example
+     * 1.
+     * //creates a TextureAtlas with  filename
+     * var textureAtlas = new cc.TextureAtlas("res/hello.png", 3);
+     * 2.
+     * //creates a TextureAtlas with texture
+     * var texture = cc.textureCache.addImage("hello.png");
+     * var textureAtlas = new cc.TextureAtlas(texture, 3);
+     */
+    ctor:function (fileName, capacity) {
         this._buffersVBO = [];
+
+        if (typeof(fileName) == "string"){
+            this.initWithFile(fileName, capacity);
+        }
+        else if (fileName instanceof cc.Texture2D){
+            this.initWithTexture(file, capacity);
+        }
     },
 
     /**
@@ -667,15 +689,5 @@ delete window._p;
  * var textureAtlas = cc.TextureAtlas.create(texture, 3);
  */
 cc.TextureAtlas.create = function (fileName, capacity) {
-    var textureAtlas = new cc.TextureAtlas();
-    if (typeof(fileName) == "string"){
-        if(textureAtlas.initWithFile(fileName, capacity))
-            return textureAtlas;
-    }
-    else if (fileName instanceof cc.Texture2D){
-        if(textureAtlas.initWithTexture(file, capacity))
-            return textureAtlas;
-    }
-
-    return null;
+    return new cc.TextureAtlas(fileName,capacity);
 };
