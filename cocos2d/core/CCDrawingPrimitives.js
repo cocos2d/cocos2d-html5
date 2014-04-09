@@ -437,7 +437,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
             }
 
             // Interpolate
-            var newPos = cc.CardinalSplineAt(
+            var newPos = cc.cardinalSplineAt(
                 cc.getControlPointAt(config, p - 1),
                 cc.getControlPointAt(config, p - 0),
                 cc.getControlPointAt(config, p + 1),
@@ -954,7 +954,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
                 lt = (dt - deltaT * p) / deltaT;
             }
 
-            var newPos = cc.CardinalSplineAt(
+            var newPos = cc.cardinalSplineAt(
                 cc.getControlPointAt(config, p - 1),
                 cc.getControlPointAt(config, p),
                 cc.getControlPointAt(config, p + 1),
