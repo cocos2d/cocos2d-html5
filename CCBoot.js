@@ -485,6 +485,8 @@ cc.loader = {
             canvasNode.parentNode.appendChild(jsLoadingImg);
 
             var canvasStyle = getComputedStyle?getComputedStyle(canvasNode):canvasNode.currentStyle;
+            if (!canvasStyle)
+                canvasStyle = {width: canvasNode.width, height: canvasNode.height};
             jsLoadingImg.style.left = canvasNode.offsetLeft + (parseFloat(canvasStyle.width) - jsLoadingImg.width)/2 + "px";
             jsLoadingImg.style.top = canvasNode.offsetTop + (parseFloat(canvasStyle.height) - jsLoadingImg.height)/2 + "px";
             jsLoadingImg.style.position = "absolute";
@@ -888,11 +890,11 @@ cc.loader = {
     }
 
     var onHidden = function(){
-        if(cc.eventManager)
+        if(cc.eventManager && cc.game._eventHide)
             cc.eventManager.dispatchEvent(cc.game._eventHide);
     };
     var onShow = function(){
-        if(cc.eventManager)
+        if(cc.eventManager && cc.game._eventShow)
             cc.eventManager.dispatchEvent(cc.game._eventShow);
     };
 
