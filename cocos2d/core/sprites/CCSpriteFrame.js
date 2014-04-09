@@ -52,7 +52,28 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _textureLoaded:false,
     _eventListeners:null,
 
-    ctor:function () {
+    /**
+     * <p>
+     *    Create a cc.SpriteFrame with a texture filename, rect, rotated, offset and originalSize in pixels.<br/>
+     *    The originalSize is the size in pixels of the frame before being trimmed.
+     * </p>
+     * @constructor
+     * @param {String|cc.Texture2D} filename
+     * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
+     * @param {Boolean} rotated
+     * @param {cc.Point} offset
+     * @param {cc.Size} originalSize
+     * @example
+     * // 1.Create a cc.SpriteFrame with image path
+     * var frame1 = new cc.SpriteFrame("res/grossini_dance.png",cc.rect(0,0,90,128));
+     * var frame2 = new cc.SpriteFrame("res/grossini_dance.png",cc.rect(0,0,90,128),false,0,cc.size(90,128));
+     *
+     * // 2.Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
+     * var texture = cc.textureCache.addImage("res/grossini_dance.png");
+     * var frame1 = new cc.SpriteFrame(texture, cc.rect(0,0,90,128));
+     * var frame2 = new cc.SpriteFrame(texture, cc.rect(0,0,90,128),false,0,cc.size(90,128));
+     */
+    ctor:function (filename, rect, rotated, offset, originalSize) {
         this._offset = cc.p(0, 0);
         this._offsetInPixels = cc.p(0, 0);
         this._originalSize = cc.size(0, 0);
@@ -61,6 +82,15 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._textureFilename = "";
         this._texture = null;
         this._textureLoaded = false;
+
+        if(filename !== undefined && rect !== undefined ){
+            if(rotated === undefined || offset === undefined || originalSize === undefined){
+                this.initWithTexture(filename, rect);
+            }
+            else{
+                this.initWithTexture(filename, rect, rotated, offset, originalSize)
+            }
+        }
     },
 
     // attributes
@@ -360,19 +390,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
  * var frame2 = cc.SpriteFrame.create(texture, cc.rect(0,0,90,128),false,0,cc.size(90,128));
  */
 cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize) {
-    var spriteFrame = new cc.SpriteFrame();
-    switch (arguments.length) {
-        case 2:
-            spriteFrame.initWithTexture(filename, rect);
-            break;
-        case 5:
-            spriteFrame.initWithTexture(filename, rect, rotated, offset, originalSize);
-            break;
-        default:
-            throw "Argument must be non-nil ";
-            break;
-    }
-    return spriteFrame;
+    return new cc.SpriteFrame(filename,rect,rotated,offset,originalSize);
 };
 
 cc.SpriteFrame._frameWithTextureForCanvas = function (texture, rect, rotated, offset, originalSize) {
