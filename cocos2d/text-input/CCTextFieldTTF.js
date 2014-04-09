@@ -120,17 +120,12 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         cc.imeDispatcher.addDelegate(this);
         cc.LabelTTF.prototype.ctor.call(this);
 
-        switch (arguments.length) {
-            case 5:
-                this.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize);
-                break;
-            case 3:
-                fontName = arguments[1];
-                fontSize = arguments[2];
-                this.initWithString("", fontName, fontSize);
-                break;
-            default:
-                break;
+        if(fontSize !== undefined)
+            this.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize);
+        else if(fontName === undefined && alignment !== undefined){
+            fontName = arguments[1];
+            fontSize = arguments[2];
+            this.initWithString("", fontName, fontSize);
         }
     },
 
