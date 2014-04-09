@@ -47,8 +47,9 @@
             "cocos2d/core/platform/CCConfig.js",
             "cocos2d/core/platform/miniFramework.js",
             "cocos2d/core/platform/CCMacro.js",
-            "cocos2d/core/platform/CCTypesWebGL.js",
             "cocos2d/core/platform/CCTypes.js",
+            "cocos2d/core/platform/CCTypesWebGL.js",
+            "cocos2d/core/platform/CCTypesPropertyDefine.js",
             "cocos2d/core/platform/CCEGLView.js",
             "cocos2d/core/platform/CCScreen.js",
             "cocos2d/core/platform/CCVisibleRect.js",
@@ -86,9 +87,6 @@
             "cocos2d/core/layers/CCLayerPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
             "cocos2d/core/sprites/CCSpriteBatchNode.js",
-            "cocos2d/core/sprites/SpritesWebGL.js",
-            "cocos2d/core/sprites/SpritesPropertyDefine.js",
-
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
             "cocos2d/core/sprites/CCSpriteFrame.js",
@@ -98,7 +96,6 @@
             "cocos2d/core/CCConfiguration.js",
 
             "cocos2d/core/CCDirector.js",
-            "cocos2d/core/FPSImageForWebGL.js",
             "cocos2d/core/CCDirectorWebGL.js",
 
             "cocos2d/core/CCCamera.js",
