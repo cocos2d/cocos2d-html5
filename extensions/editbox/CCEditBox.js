@@ -233,35 +233,35 @@ cc.EditBox = cc.ControlButton.extend({
         this._textColor = cc.color.WHITE;
         this._placeholderColor = cc.color.GRAY;
         this.setContentSize(boxSize);
-        this._domInputSprite = new cc.Sprite();
-        this._domInputSprite.draw = function(){ };                           //redefine draw function
-        this.addChild(this._domInputSprite);
+        var tmpDOMSprite = this._domInputSprite = new cc.Sprite();
+        tmpDOMSprite.draw = function(){ };                           //redefine draw function
+        this.addChild(tmpDOMSprite);
         var selfPointer = this;
-        this._edTxt = document.createElement("input");
-        this._edTxt.type = "text";
-        this._edTxt.style.fontSize = this._edFontSize + "px";
-        this._edTxt.style.color = "#000000";
-        this._edTxt.style.border = 0;
-        this._edTxt.style.background = "transparent";
-        //this._edTxt.style.paddingLeft = "2px";
-        this._edTxt.style.width = "100%";
-        this._edTxt.style.height = "100%";
-        this._edTxt.style.active = 0;
-        this._edTxt.style.outline = "medium";
+        var tmpEdTxt = this._edTxt = cc.newElement("input");
+        tmpEdTxt.type = "text";
+        tmpEdTxt.style.fontSize = this._edFontSize + "px";
+        tmpEdTxt.style.color = "#000000";
+        tmpEdTxt.style.border = 0;
+        tmpEdTxt.style.background = "transparent";
+        //tmpEdTxt.style.paddingLeft = "2px";
+        tmpEdTxt.style.width = "100%";
+        tmpEdTxt.style.height = "100%";
+        tmpEdTxt.style.active = 0;
+        tmpEdTxt.style.outline = "medium";
 
         // TODO the event listener will be remove when EditBox removes from parent.
-        this._edTxt.addEventListener("input", function () {
+        cc._addEventListener(tmpEdTxt, "input", function () {
             if (selfPointer._delegate && selfPointer._delegate.editBoxTextChanged)
                 selfPointer._delegate.editBoxTextChanged(selfPointer, this.value);
         });
-        this._edTxt.addEventListener("keypress", function (e) {
+        cc._addEventListener(tmpEdTxt, "keypress", function (e) {
             if (e.keyCode === cc.KEY.enter) {
                 e.stopPropagation();
                 e.preventDefault();
                 cc._canvas.focus();
             }
         });
-        this._edTxt.addEventListener("focus", function () {
+        cc._addEventListener(tmpEdTxt, "focus", function () {
             if (this.value == selfPointer._placeholderText) {
                 this.value = "";
                 this.style.fontSize = selfPointer._edFontSize + "px" ;
@@ -270,7 +270,7 @@ cc.EditBox = cc.ControlButton.extend({
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
                 selfPointer._delegate.editBoxEditingDidBegin(selfPointer);
         });
-        this._edTxt.addEventListener("blur", function () {
+        cc._addEventListener(tmpEdTxt, "blur", function () {
             if (this.value == "") {
                 this.value = selfPointer._placeholderText;
                 this.style.fontSize = selfPointer._placeholderFontSize + "px" ;
@@ -282,16 +282,16 @@ cc.EditBox = cc.ControlButton.extend({
                 selfPointer._delegate.editBoxReturn(selfPointer);
         });
 
-        cc.DOM.convert(this._domInputSprite);
-        this._domInputSprite.dom.appendChild(this._edTxt);
-        this._domInputSprite.dom.showTooltipDiv = false;
-        this._domInputSprite.dom.style.width = (boxSize.width - 6) +"px";
-        this._domInputSprite.dom.style.height = (boxSize.height - 6) +"px";
+        cc.DOM.convert(tmpDOMSprite);
+        tmpDOMSprite.dom.appendChild(tmpEdTxt);
+        tmpDOMSprite.dom.showTooltipDiv = false;
+        tmpDOMSprite.dom.style.width = (boxSize.width - 6) +"px";
+        tmpDOMSprite.dom.style.height = (boxSize.height - 6) +"px";
 
         //this._domInputSprite.dom.style.borderWidth = "1px";
         //this._domInputSprite.dom.style.borderStyle = "solid";
         //this._domInputSprite.dom.style.borderRadius = "8px";
-        this._domInputSprite.canvas.remove();
+        tmpDOMSprite.canvas.remove();
     },
 
     /**

@@ -1516,7 +1516,7 @@ if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
 }
 ccui.Layout._getSharedCache = function () {
-    return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
+    return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = cc.newElement("canvas"));
 };
 
 window._p = ccui.Layout.prototype;

@@ -191,74 +191,6 @@ cc._EventListenerCustom.create = function (eventName, callback) {
     return new cc._EventListenerCustom(eventName, callback);
 };
 
-cc._EventListenerAcceleration = cc.EventListener.extend({
-    _onAccelerationEvent: null,
-    ctor: function (callback) {
-        this._onAccelerationEvent = callback;
-        var selfPointer = this;
-        var listener = function (event) {
-            selfPointer._onAccelerationEvent(event._acc, event);
-        };
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.ACCELERATION, cc._EventListenerAcceleration.LISTENER_ID, listener);
-    },
-
-    checkAvailable: function () {
-        if (!this._onAccelerationEvent)
-            throw "cc._EventListenerAcceleration.checkAvailable(): _onAccelerationEvent must be non-nil";
-        return true;
-    },
-
-    clone: function () {
-        return new cc._EventListenerAcceleration(this._onAccelerationEvent);
-    }
-});
-
-cc._EventListenerAcceleration.LISTENER_ID = "__cc_acceleration";
-
-cc._EventListenerAcceleration.create = function (callback) {
-    return new cc._EventListenerAcceleration(callback);
-};
-
-cc._EventListenerKeyboard = cc.EventListener.extend({
-    onKeyPressed: null,
-    onKeyReleased: null,
-
-    ctor: function () {
-        var selfPointer = this;
-        var listener = function (event) {
-            if (event._isPressed) {
-                if (selfPointer.onKeyPressed)
-                    selfPointer.onKeyPressed(event._keyCode, event);
-            } else {
-                if (selfPointer.onKeyReleased)
-                    selfPointer.onKeyReleased(event._keyCode, event);
-            }
-        };
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.KEYBOARD, cc._EventListenerKeyboard.LISTENER_ID, listener);
-    },
-
-    clone: function () {
-        var eventListener = new cc._EventListenerKeyboard();
-        eventListener.onKeyPressed = this.onKeyPressed;
-        eventListener.onKeyReleased = this.onKeyReleased;
-        return eventListener;
-    },
-
-    checkAvailable: function () {
-        if (this.onKeyPressed == null && this.onKeyReleased == null) {
-            cc.log("cc._EventListenerKeyboard.checkAvailable(): Invalid EventListenerKeyboard!");
-            return false;
-        }
-        return true;
-    }
-});
-
-cc._EventListenerKeyboard.LISTENER_ID = "__cc_keyboard";
-
-cc._EventListenerKeyboard.create = function () {
-    return new cc._EventListenerKeyboard();
-};
-
 cc._EventListenerMouse = cc.EventListener.extend({
     onMouseDown: null,
     onMouseUp: null,
@@ -342,7 +274,7 @@ cc._EventListenerTouchOneByOne = cc.EventListener.extend({
 
     checkAvailable: function () {
         if(!this.onTouchBegan){
-            cc.log("cc._EventListenerTouchOneByOne.checkAvailable(): Invalid EventListenerTouchOneByOne!");
+            cc.log(cc._LogInfos._EventListenerTouchOneByOne_checkAvailable);
             return false;
         }
         return true;
@@ -377,7 +309,7 @@ cc._EventListenerTouchAllAtOnce = cc.EventListener.extend({
     checkAvailable: function(){
         if (this.onTouchesBegan == null && this.onTouchesMoved == null
             && this.onTouchesEnded == null && this.onTouchesCancelled == null) {
-            cc.log("cc._EventListenerTouchAllAtOnce.checkAvailable(): Invalid EventListenerTouchAllAtOnce!");
+            cc.log(cc._LogInfos._EventListenerTouchAllAtOnce_checkAvailable);
             return false;
         }
         return true;
@@ -405,9 +337,9 @@ cc._EventListenerTouchAllAtOnce.create = function(){
  *    });
  */
 cc.EventListener.create = function(argObj){
-    if(!argObj || !argObj.event){
-        throw "Invalid parameter.";
-    }
+
+    cc.assert(argObj&&argObj.event, cc._LogInfos.EventListener_create);
+
     var listenerType = argObj.event;
     delete argObj.event;
 

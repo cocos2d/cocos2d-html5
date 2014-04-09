@@ -41,8 +41,8 @@
  *
  */
 cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
-	textureAtlas:null,
-	quadsToDraw:0,
+    textureAtlas:null,
+    quadsToDraw:0,
 
     RGBAProtocol:true,
     //! chars per row
@@ -400,13 +400,13 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
 window._p = cc.AtlasNode.prototype;
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-	_p.initWithTexture = _p._initWithTextureForWebGL;
-	_p.draw = _p._drawForWebGL;
-	_p.setColor = _p._setColorForWebGL;
-	_p.setOpacity = _p._setOpacityForWebGL;
-	_p.getTexture = _p._getTextureForWebGL;
-	_p.setTexture = _p._setTextureForWebGL;
-	_p._calculateMaxItems = _p._calculateMaxItemsForWebGL;
+    _p.initWithTexture = _p._initWithTextureForWebGL;
+    _p.draw = _p._drawForWebGL;
+    _p.setColor = _p._setColorForWebGL;
+    _p.setOpacity = _p._setOpacityForWebGL;
+    _p.getTexture = _p._getTextureForWebGL;
+    _p.setTexture = _p._setTextureForWebGL;
+    _p._calculateMaxItems = _p._calculateMaxItemsForWebGL;
 } else {
     _p.initWithTexture = _p._initWithTextureForCanvas;
     _p.draw = cc.Node.prototype.draw;

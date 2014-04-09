@@ -71,9 +71,7 @@ cc.p = function (x, y) {
  * @return {Boolean}
  */
 cc.pointEqualToPoint = function (point1, point2) {
-    if (!point1 || !point2)
-        return false;
-    return ((point1.x === point2.x) && (point1.y === point2.y));
+    return point1 && point2 && (point1.x === point2.x) && (point1.y === point2.y);
 };
 
 
@@ -125,9 +123,7 @@ cc.size = function (w, h) {
  * @return {Boolean}
  */
 cc.sizeEqualToSize = function (size1, size2) {
-    if (!size1 || !size2)
-        return false;
-    return ((size1.width == size2.width) && (size1.height == size2.height));
+    return (size1 && size2 && (size1.width == size2.width) && (size1.height == size2.height));
 };
 
 
@@ -173,24 +169,22 @@ cc.rect = function (x, y, w, h) {
 };
 
 /**
+ * whether the rect1 equals the rect2
  * @function
  * @param {cc.Rect} rect1
  * @param {cc.Rect} rect2
  * @return {Boolean}
  */
 cc.rectEqualToRect = function (rect1, rect2) {
-    if(!rect1 || !rect2)
-        return false;
-    return (rect1.x === rect2.x) && (rect1.y === rect2.y) && (rect1.width === rect2.width) && (rect1.height === rect2.height);
+    return rect1 && rect2 && (rect1.x === rect2.x) && (rect1.y === rect2.y) && (rect1.width === rect2.width) && (rect1.height === rect2.height);
 };
 
 cc._rectEqualToZero = function(rect){
-    if(!rect)
-        return false;
-    return (rect.x === 0) && (rect.y === 0) && (rect.width === 0) && (rect.height === 0);
+    return rect && (rect.x === 0) && (rect.y === 0) && (rect.width === 0) && (rect.height === 0);
 };
 
 /**
+ * return whether the rect1 contains rect2
  * @function
  * @param {cc.Rect} rect1
  * @param {cc.Rect} rect2
@@ -199,7 +193,6 @@ cc._rectEqualToZero = function(rect){
 cc.rectContainsRect = function (rect1, rect2) {
     if (!rect1 || !rect2)
         return false;
-
     return !((rect1.x >= rect2.x) || (rect1.y >= rect2.y) ||
         ( rect1.x + rect1.width <= rect2.x + rect2.width) ||
         ( rect1.y + rect1.height <= rect2.y + rect2.height));

@@ -217,8 +217,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
-
-        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -239,7 +237,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (texture)
             return this.initWithTexture(texture, capacity);
         else {
-            cc.log("cocos2d: Could not open file: " + file);
+            cc.log(cc._LogInfos.TextureAtlas_initWithFile, file);
             return false;
         }
     },
@@ -259,8 +257,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * textureAtlas.initWithTexture(texture, 3);
      */
     initWithTexture:function (texture, capacity) {
-        if(!texture)
-            throw "cc.TextureAtlas.initWithTexture():texture should be non-null";
+
+        cc.assert(texture, cc._LogInfos.TextureAtlas_initWithTexture);
 
         capacity = 0 | (capacity);
         this._capacity = capacity;
@@ -292,14 +290,15 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     /**
      * <p>Updates a Quad (texture, vertex and color) at a certain index <br />
      * index must be between 0 and the atlas capacity - 1 </p>
-     * @param {cc.V2F_C4B_T2F_Quad} quad
+     * @param {cc.V3F_C4B_T2F_Quad} quad
      * @param {Number} index
      */
     updateQuad:function (quad, index) {
-        if(!quad)
-            throw "cc.TextureAtlas.updateQuad(): quad should be non-null";
-        if((index < 0) || (index >= this._capacity))
-            throw "cc.TextureAtlas.updateQuad(): Invalid index";
+
+        cc.assert(quad, cc._LogInfos.TextureAtlas_updateQuad);
+
+        cc.assert(index >= 0 && index < this._capacity, cc._LogInfos.TextureAtlas_updateQuad_2);
+
         this._totalQuads = Math.max(index + 1, this._totalQuads);
         this._setQuadToArray(quad, index);
         this.dirty = true;
@@ -308,16 +307,16 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     /**
      * <p>Inserts a Quad (texture, vertex and color) at a certain index<br />
      * index must be between 0 and the atlas capacity - 1 </p>
-     * @param {cc.V2F_C4B_T2F_Quad} quad
+     * @param {cc.V3F_C4B_T2F_Quad} quad
      * @param {Number} index
      */
     insertQuad:function (quad, index) {
-        if(index >= this._capacity)
-            throw "cc.TextureAtlas.insertQuad(): Invalid index";
+
+        cc.assert(index < this._capacity, cc._LogInfos.TextureAtlas_insertQuad_2);
 
         this._totalQuads++;
         if(this._totalQuads > this._capacity) {
-            cc.log("cc.TextureAtlas.insertQuad(): invalid totalQuads");
+            cc.log(cc._LogInfos.TextureAtlas_insertQuad);
             return;
         }
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
@@ -344,13 +343,13 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     insertQuads:function (quads, index, amount) {
         amount = amount || quads.length;
-        if((index + amount) > this._capacity)
-            throw "cc.TextureAtlas.insertQuad(): Invalid index + amount";
+
+        cc.assert((index + amount) <= this._capacity, cc._LogInfos.TextureAtlas_insertQuads);
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         this._totalQuads += amount;
         if(this._totalQuads > this._capacity) {
-            cc.log("cc.TextureAtlas.insertQuad(): invalid totalQuads");
+            cc.log(cc._LogInfos.TextureAtlas_insertQuad);
             return;
         }
 
@@ -380,10 +379,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (fromIndex === newIndex)
             return;
 
-        if(newIndex < 0 && newIndex >= this._totalQuads)
-            throw "cc.TextureAtlas.insertQuadFromIndex(): Invalid newIndex";
-        if(fromIndex < 0 && fromIndex >= this._totalQuads)
-            throw "cc.TextureAtlas.insertQuadFromIndex(): Invalid fromIndex";
+        cc.assert(newIndex >= 0 || newIndex < this._totalQuads, cc._LogInfos.TextureAtlas_insertQuadFromIndex);
+
+        cc.assert(fromIndex >=0 || fromIndex < this._totalQuads, cc._LogInfos.TextureAtlas_insertQuadFromIndex_2);
 
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         var locQuadsReader = this._quadsReader;
@@ -409,8 +407,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     removeQuadAtIndex:function (index) {
-        if(index >= this._totalQuads)
-            throw "cc.TextureAtlas.removeQuadAtIndex(): Invalid index";
+
+        cc.assert(index < this._totalQuads, cc._LogInfos.TextureAtlas_removeQuadAtIndex);
+
         var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         this._totalQuads--;
         this._quads.length = this._totalQuads;
@@ -424,8 +423,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     removeQuadsAtIndex:function (index, amount) {
-        if(index + amount > this._totalQuads)
-            throw "cc.TextureAtlas.removeQuadsAtIndex(): index + amount out of bounds";
+
+        cc.assert(index + amount <= this._totalQuads, cc._LogInfos.TextureAtlas_removeQuadsAtIndex);
+
         this._totalQuads -= amount;
 
         if(index !== this._totalQuads){
@@ -545,15 +545,16 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (newIndex === undefined) {
             newIndex = amount;
             amount = this._totalQuads - oldIndex;
-            if((newIndex + (this._totalQuads - oldIndex)) > this._capacity)
-                throw "cc.TextureAtlas.moveQuadsFromIndex(): move is out of bounds";
+
+            cc.assert((newIndex + (this._totalQuads - oldIndex)) <= this._capacity, cc._LogInfos.TextureAtlas_moveQuadsFromIndex);
+
             if(amount === 0)
                 return;
         }else{
-            if((newIndex + amount) > this._totalQuads)
-                throw "cc.TextureAtlas.moveQuadsFromIndex(): Invalid newIndex";
-            if(oldIndex >= this._totalQuads)
-                throw "cc.TextureAtlas.moveQuadsFromIndex(): Invalid oldIndex";
+
+            cc.assert((newIndex + amount) <= this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_2);
+
+            cc.assert(oldIndex < this._totalQuads, cc._LogInfos.TextureAtlas_moveQuadsFromIndex_3);
 
             if (oldIndex == newIndex)
                 return;
@@ -593,50 +594,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     // TextureAtlas - Drawing
-
-    /**
-     * <p>Draws n quads from an index (offset). <br />
-     * n + start can't be greater than the capacity of the atlas</p>
-     * @param {Number} n
-     * @param {Number} start
-     */
-    drawNumberOfQuads:function (n, start) {
-        start = start || 0;
-        if (0 === n || !this.texture || !this.texture.isLoaded())
-            return;
-
-        var gl = cc._renderContext;
-        cc.glBindTexture2D(this.texture);
-
-        //
-        // Using VBO without VAO
-        //
-        //vertices
-        //gl.bindBuffer(gl.ARRAY_BUFFER, this._buffersVBO[0]);
-        // XXX: update is done in draw... perhaps it should be done in a timer
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._quadsWebBuffer);
-        if (this.dirty)
-            gl.bufferData(gl.ARRAY_BUFFER, this._quadsArrayBuffer, gl.DYNAMIC_DRAW);
-
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);               // vertices
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);          // colors
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);            // tex coords
-
-        if (this.dirty)
-            this.dirty = false;
-
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
-
-        if (cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP)
-            gl.drawElements(gl.TRIANGLE_STRIP, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
-        else
-            gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
-
-        cc.g_NumberOfDraws++;
-        //cc.CHECK_GL_ERROR_DEBUG();
-    },
 
     /**
      * Draws all the Atlas's Quads

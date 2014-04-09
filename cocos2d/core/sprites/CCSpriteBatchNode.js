@@ -60,7 +60,7 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     textureAtlas:null,
 
-	_blendFunc:null,
+    _blendFunc:null,
     // all descendants: chlidren, gran children, etc...
     _descendants:null,
     _className:"SpriteBatchNode",
@@ -76,10 +76,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {cc.SpriteBatchNode}
      */
     addSpriteWithoutQuad:function (child, z, aTag) {
-        if(!child)
-            throw "cc.SpriteBatchNode.addQuadFromSprite(): child should be non-null";
+
+        cc.assert(child, cc._LogInfos.SpriteBatchNode_addSpriteWithoutQuad_2);
+
         if(!(child instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.addQuadFromSprite(): SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.SpriteBatchNode_addSpriteWithoutQuad);
             return null;
         }
 
@@ -180,11 +181,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         var locCapacity = this.textureAtlas.capacity;
         var quantity = Math.floor((locCapacity + 1) * 4 / 3);
 
-        cc.log("cocos2d: CCSpriteBatchNode: resizing TextureAtlas capacity from " + locCapacity + " to " + quantity + ".");
+        cc.log(cc._LogInfos.SpriteBatchNode_increaseAtlasCapacity, locCapacity, quantity);
 
         if (!this.textureAtlas.resizeCapacity(quantity)) {
             // serious problems
-            cc.log("cocos2d: WARNING: Not enough memory to resize the atlas");
+            cc.log(cc._LogInfos.SpriteBatchNode_increaseAtlasCapacity_2);
         }
     },
 
@@ -265,7 +266,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Number}
      */
     atlasIndexForChild:function (sprite, nZ) {
-	    var selParent = sprite.parent;
+        var selParent = sprite.parent;
         var brothers = selParent.children;
         var childIndex = brothers.indexOf(sprite);
 
@@ -335,10 +336,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} zOrder
      */
     reorderChild:function (child, zOrder) {
-        if(!child)
-            throw "cc.SpriteBatchNode.addChild():child should be non-null";
+
+        cc.assert(child, cc._LogInfos.SpriteBatchNode_reorderChild_2);
+
         if(this._children.indexOf(child) === -1) {
-            cc.log("cc.SpriteBatchNode.addChild(): Child doesn't belong to Sprite");
+            cc.log(cc._LogInfos.SpriteBatchNode_reorderChild);
             return;
         }
 
@@ -360,7 +362,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (child == null)
             return;
         if(this._children.indexOf(child) === -1){
-            cc.log("cc.SpriteBatchNode.addChild(): sprite batch node should contain the child");
+            cc.log(cc._LogInfos.SpriteBatchNode_removeChild);
             return;
         }
 
@@ -399,34 +401,34 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _ctorForCanvas: function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
 
-	    var texture2D;
-	    capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
-	    if (typeof(fileImage) == "string") {
-		    texture2D = cc.textureCache.textureForKey(fileImage);
-		    if (!texture2D)
-			    texture2D = cc.textureCache.addImage(fileImage);
-	    }
-	    else if (fileImage instanceof cc.Texture2D)
-		    texture2D  = fileImage;
+        var texture2D;
+        capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
+        if (typeof(fileImage) == "string") {
+            texture2D = cc.textureCache.textureForKey(fileImage);
+            if (!texture2D)
+                texture2D = cc.textureCache.addImage(fileImage);
+        }
+        else if (fileImage instanceof cc.Texture2D)
+            texture2D  = fileImage;
 
-	    texture2D && this.initWithTexture(texture2D, capacity);
+        texture2D && this.initWithTexture(texture2D, capacity);
     },
 
     _ctorForWebGL: function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
         this._mvpMatrix = new cc.kmMat4();
 
-	    var texture2D;
-	    capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
-	    if (typeof(fileImage) == "string") {
-		    texture2D = cc.textureCache.textureForKey(fileImage);
-		    if (!texture2D)
-			    texture2D = cc.textureCache.addImage(fileImage);
-	    }
-	    else if (fileImage instanceof cc.Texture2D)
-		    texture2D  = fileImage;
+        var texture2D;
+        capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
+        if (typeof(fileImage) == "string") {
+            texture2D = cc.textureCache.textureForKey(fileImage);
+            if (!texture2D)
+                texture2D = cc.textureCache.addImage(fileImage);
+        }
+        else if (fileImage instanceof cc.Texture2D)
+            texture2D  = fileImage;
 
-	    texture2D && this.initWithTexture(texture2D, capacity);
+        texture2D && this.initWithTexture(texture2D, capacity);
     },
 
 
@@ -443,10 +445,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     updateQuadFromSprite:null,
 
     _updateQuadFromSpriteForCanvas:function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.updateQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.CCSpriteBatchNode_updateQuadFromSprite_2);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.updateQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.CCSpriteBatchNode_updateQuadFromSprite);
             return;
         }
 
@@ -462,10 +465,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _updateQuadFromSpriteForWebGL:function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.updateQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.CCSpriteBatchNode_updateQuadFromSprite);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.updateQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.CCSpriteBatchNode_updateQuadFromSprite);
             return;
         }
 
@@ -515,10 +519,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     insertQuadFromSprite:null,
 
     _insertQuadFromSpriteForCanvas:function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.insertQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite_2);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.insertQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.CCSpriteBatchNode_insertQuadFromSprite);
             return;
         }
 
@@ -536,10 +541,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _insertQuadFromSpriteForWebGL:function (sprite, index) {
-        if(!sprite)
-            throw "cc.SpriteBatchNode.insertQuadFromSprite(): sprite should be non-null";
+
+        cc.assert(sprite, cc._LogInfos.Sprite_insertQuadFromSprite_2);
+
         if(!(sprite instanceof cc.Sprite)){
-            cc.log("cc.SpriteBatchNode.insertQuadFromSprite(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.Sprite_insertQuadFromSprite);
             return;
         }
 
@@ -688,7 +694,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         var locChildren = sprite.children, child;
         if (locChildren) {
             for (i = 0, l = locChildren.length || 0; i < l; i++) {
-				child = locChildren[i];
+                child = locChildren[i];
                 if (child) {
                     var getIndex = this.atlasIndexForChild(child, child.zIndex);
                     this.insertChild(child, getIndex);
@@ -899,10 +905,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     addChild: null,
 
     _addChildForCanvas: function (child, zOrder, tag) {
-        if (child == null)
-            throw "cc.SpriteBatchNode.addChild(): child should be non-null";
+
+        cc.assert(child != null, cc._LogInfos.CCSpriteBatchNode_addChild_3);
+
         if(!(child instanceof cc.Sprite)){
-           cc.log( "cc.SpriteBatchNode.addChild(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.CCSpriteBatchNode_addChild);
             return;
         }
 
@@ -915,14 +922,15 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _addChildForWebGL: function (child, zOrder, tag) {
-        if (child == null)
-            throw "cc.SpriteBatchNode.addChild(): child should be non-null";
+
+        cc.assert(child != null, cc._LogInfos.Sprite_addChild_6);
+
         if(!(child instanceof cc.Sprite)){
-            cc.log( "cc.SpriteBatchNode.addChild(): cc.SpriteBatchNode only supports cc.Sprites as children");
+            cc.log(cc._LogInfos.Sprite_addChild_4);
             return;
         }
         if(child.texture != this.textureAtlas.texture){                    // check cc.Sprite is using the same texture id
-            cc.log( "cc.SpriteBatchNode.addChild(): cc.Sprite is not using the same texture");
+            cc.log(cc._LogInfos.Sprite_addChild_5);
             return;
         }
 

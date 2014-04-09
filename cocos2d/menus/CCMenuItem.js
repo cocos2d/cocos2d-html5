@@ -1027,7 +1027,7 @@ delete window._p;
  * //same as above, but with disabled image, and passing in callback function
  */
 cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five) {
-	return new cc.MenuItemSprite(normalSprite, selectedSprite, three, four, five);
+    return new cc.MenuItemSprite(normalSprite, selectedSprite, three, four, five || undefined);
 };
 
 /**

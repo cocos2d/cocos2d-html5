@@ -22,6 +22,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * copy an array's item to a new array (its performance is better than Array.slice)
+ * @param {Array} arr
+ * @returns {Array}
+ */
+cc.copyArray = function(arr){
+    var i, len = arr.length, arr_clone = new Array(len);
+    for (i = 0; i < len; i += 1)
+        arr_clone[i] = arr[i];
+    return arr_clone;
+};
+
 cc._EventListenerVector = cc.Class.extend({
     _fixedListeners: null,
     _sceneGraphListeners: null,
@@ -82,7 +94,7 @@ cc.__getListenerID = function (event) {
     if(getType === eventType.TOUCH){
         // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
         // return UNKNOWN instead.
-        cc.log("Don't call this method if the event is for touch.");
+        cc.log(cc._LogInfos.__getListenerID);
     }
     return "";
 };
@@ -179,7 +191,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
             var node = listener._getSceneGraphPriority();
             if (node == null)
-                cc.log("Invalid scene graph priority!");
+                cc.log(cc._LogInfos.eventManager__forceAddEventListener);
 
             this._associateNodeAndEventListener(node, listener);
             if (node.isRunning())
@@ -632,16 +644,18 @@ cc.eventManager = /** @lends cc.eventManager# */{
      *         except calls removeAllListeners().
      */
     addListener: function (listener, nodeOrPriority) {
-        if (!listener || !nodeOrPriority)
-            throw "Invalid parameters.";
+
+        cc.assert(listener && nodeOrPriority, cc._LogInfos.eventManager_addListener_2);
 
         if(!(listener instanceof cc.EventListener)){
-            if(typeof(nodeOrPriority) === "number")
-                throw "listener must be a cc.EventListener object when adding a fixed priority listener";
+
+            cc.assert(typeof nodeOrPriority !== "number", cc._LogInfos.eventManager_addListener_3);
+
             listener = cc.EventListener.create(listener);
         } else{
-            if (listener._isRegistered())
-                throw "The listener has been registered.";
+
+            cc.assert(!listener._isRegistered(), cc._LogInfos.eventManager_addListener_4);
+
         }
 
         if (!listener.checkAvailable())
@@ -649,7 +663,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         if (typeof nodeOrPriority == "number") {
             if (nodeOrPriority == 0) {
-                cc.log("0 priority is forbidden for fixed priority since it's used for scene graph based priority.");
+                cc.log(cc._LogInfos.eventManager_addListener);
                 return;
             }
 
@@ -780,7 +794,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             else if (listenerType == cc.EventListener.KEYBOARD)
                 _t._removeListenersForListenerID(cc._EventListenerKeyboard.LISTENER_ID);
             else
-                cc.log("Invalid listener type!");
+                cc.log(cc._LogInfos.eventManager_removeListeners);
         }
     },
 
@@ -820,7 +834,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
                 var found = fixedPriorityListeners.indexOf(listener);
                 if (found != -1) {
                     if(listener._getSceneGraphPriority() != null)
-                        cc.log("Can't set fixed priority with scene graph based listener.");
+                        cc.log(cc._LogInfos.eventManager_setPriority);
                     if (listener._getFixedPriority() !== fixedPriority) {
                         listener._setFixedPriority(fixedPriority);
                         this._setDirty(listener._getListenerID(), this.DIRTY_FIXED_PRIORITY);
@@ -857,6 +871,8 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         this._updateDirtyFlagForSceneGraph();
         this._inDispatch++;
+        if(!event || !event.getType)
+            throw "event is undefined";
         if (event.getType() == cc.Event.TOUCH) {
             this._dispatchTouchEvent(event);
             this._inDispatch--;
