@@ -78,7 +78,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             this.initWithFile(fileName, capacity);
         }
         else if (fileName instanceof cc.Texture2D){
-            this.initWithTexture(file, capacity);
+            this.initWithTexture(fileName, capacity);
         }
     },
 
