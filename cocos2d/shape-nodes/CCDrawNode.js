@@ -343,7 +343,7 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
             }
 
             // Interpolate
-            var newPos = cc.CardinalSplineAt(
+            var newPos = cc.cardinalSplineAt(
                 cc.getControlPointAt(config, p - 1),
                 cc.getControlPointAt(config, p - 0),
                 cc.getControlPointAt(config, p + 1),
@@ -789,7 +789,7 @@ cc.DrawNodeWebGL = cc.Node.extend({
             }
 
             // Interpolate
-            var newPos = cc.CardinalSplineAt(
+            var newPos = cc.cardinalSplineAt(
                 cc.getControlPointAt(config, p - 1),
                 cc.getControlPointAt(config, p - 0),
                 cc.getControlPointAt(config, p + 1),
