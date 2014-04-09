@@ -21,7 +21,6 @@
                 <file name="cocos2d/core/platform/CCMacro.js"/>
                 <file name="cocos2d/core/platform/CCTypes.js"/>
                 <file name="cocos2d/core/platform/CCTypesPropertyDefine.js"/>
-                <file name="cocos2d/core/platform/CCTypesPropertyDefine.js"/>
                 <file name="cocos2d/core/platform/CCEGLView.js"/>
                 <file name="cocos2d/core/platform/CCScreen.js"/>
                 <file name="cocos2d/core/platform/CCVisibleRect.js"/>
@@ -35,7 +34,7 @@
                 <file name="cocos2d/core/event-manager/CCEventListener.js"/>
                 <file name="cocos2d/core/event-manager/CCEventManager.js"/>
                 <file name="cocos2d/core/base-nodes/CCNode.js"/>
-                <file name="cocos2d/core/base-nodes/CCLabelTTF.js"/>
+                <file name="cocos2d/core/base-nodes/CCAtlasNode.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesWebGL.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
                 <file name="cocos2d/core/textures/CCTexture2D.js"/>
