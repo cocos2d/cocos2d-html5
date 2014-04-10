@@ -113,9 +113,13 @@ cc.NodeGrid = cc.Node.extend({
             var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate) {
-                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
+                if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                    apx = 0 | apx;
+                    apy = 0 | apy;
+                }
+                cc.kmGLTranslatef(apx, apy, 0);
                 this._camera.locate();
-                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(-apx), cc.RENDER_IN_SUBPIXEL(-apy), 0);
+                cc.kmGLTranslatef(-apx, -apy, 0);
             } else {
                 this._camera.locate();
             }
