@@ -195,10 +195,10 @@ _tmp.PrototypeTexture2D = function () {
     //cc.defineGetterSetter(_p, "size", _p.getContentSize, _p.setContentSize);
     /** @expose */
     _p.width;
-    cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
+    cc.defineGetterSetter(_p, "width", _p._getWidth);
     /** @expose */
     _p.height;
-    cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
+    cc.defineGetterSetter(_p, "height", _p._getHeight);
 
     _c.defaultPixelFormat = _c.PIXEL_FORMAT_DEFAULT;
 };

@@ -1030,73 +1030,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     }
 });
 
-_tmp.PrototypeLabelTTF();
-delete _tmp.PrototypeLabelTTF;
-
-cc.LabelTTF._textAlign = ["left", "center", "right"];
-
-cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
-
-// Class static properties for measure util
-cc.LabelTTF._checkRegEx = /(.+?)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
-cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
-cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
-
-// Only support style in this format: "18px Verdana" or "18px 'Helvetica Neue'"
-cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
-
-/**
- * creates a cc.LabelTTF from a font name, alignment, dimension and font size
- * @param {String} text
- * @param {String|cc.FontDefinition} [fontName="Arial"]
- * @param {Number} [fontSize=16]
- * @param {cc.Size} [dimensions=cc.size(0,0)]
- * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
- * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
- * @return {cc.LabelTTF|Null}
- * @example
- * // Example
- * 1.
- * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(320,32), cc.TEXT_ALIGNMENT_LEFT);
- * 2.
- * var fontDef = new cc.FontDefinition();
- * fontDef.fontName = "Arial";
- * fontDef.fontSize = "32";
- * var myLabel = cc.LabelTTF.create('label text',  fontDef);
- */
-cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-    return new cc.LabelTTF(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
-};
-
-
-if (cc.USE_LA88_LABELS)
-    cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;
-else
-    cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTUREA8COLOR;
-
-cc.LabelTTF.__labelHeightDiv = cc.newElement("div");
-cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
-cc.LabelTTF.__labelHeightDiv.style.position = "absolute";
-cc.LabelTTF.__labelHeightDiv.style.left = "-100px";
-cc.LabelTTF.__labelHeightDiv.style.top = "-100px";
-cc.LabelTTF.__labelHeightDiv.style.lineHeight = "normal";
-document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
-
-cc.LabelTTF.__getFontHeightByDiv = function (fontName, fontSize) {
-    var clientHeight = cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize];
-    if (clientHeight > 0) return clientHeight;
-    var labelDiv = cc.LabelTTF.__labelHeightDiv;
-    labelDiv.innerHTML = "ajghl~!";
-    labelDiv.style.fontFamily = fontName;
-    labelDiv.style.fontSize = fontSize + "px";
-    clientHeight = labelDiv.clientHeight;
-    cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize] = clientHeight;
-    labelDiv.innerHTML = "";
-    return clientHeight;
-};
-
-cc.LabelTTF.__fontHeightCache = {};
-
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     var _p = cc.LabelTTF.prototype;
@@ -1197,3 +1130,71 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _tmp.WebGLLabelTTF();
     delete _tmp.WebGLLabelTTF;
 }
+
+
+_tmp.PrototypeLabelTTF();
+delete _tmp.PrototypeLabelTTF;
+
+cc.LabelTTF._textAlign = ["left", "center", "right"];
+
+cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
+
+// Class static properties for measure util
+cc.LabelTTF._checkRegEx = /(.+?)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
+cc.LabelTTF._reverseCheckRegEx = /(.*)([\s\n\r\-\/\\\:]|[\u4E00-\u9FA5]|[\uFE30-\uFFA0])/;
+cc.LabelTTF._checkEnRegEx = /[\s\-\/\\\:]/;
+
+// Only support style in this format: "18px Verdana" or "18px 'Helvetica Neue'"
+cc.LabelTTF._fontStyleRE = /^(\d+)px\s+['"]?([\w\s\d]+)['"]?$/;
+
+/**
+ * creates a cc.LabelTTF from a font name, alignment, dimension and font size
+ * @param {String} text
+ * @param {String|cc.FontDefinition} [fontName="Arial"]
+ * @param {Number} [fontSize=16]
+ * @param {cc.Size} [dimensions=cc.size(0,0)]
+ * @param {Number} [hAlignment=cc.TEXT_ALIGNMENT_LEFT]
+ * @param {Number} [vAlignment=cc.VERTICAL_TEXT_ALIGNMENT_TOP]
+ * @return {cc.LabelTTF|Null}
+ * @example
+ * // Example
+ * 1.
+ * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(320,32), cc.TEXT_ALIGNMENT_LEFT);
+ * 2.
+ * var fontDef = new cc.FontDefinition();
+ * fontDef.fontName = "Arial";
+ * fontDef.fontSize = "32";
+ * var myLabel = cc.LabelTTF.create('label text',  fontDef);
+ */
+cc.LabelTTF.create = function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+    return new cc.LabelTTF(text, fontName, fontSize, dimensions, hAlignment, vAlignment);
+};
+
+
+if (cc.USE_LA88_LABELS)
+    cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTURECOLOR;
+else
+    cc.LabelTTF._SHADER_PROGRAM = cc.SHADER_POSITION_TEXTUREA8COLOR;
+
+cc.LabelTTF.__labelHeightDiv = cc.newElement("div");
+cc.LabelTTF.__labelHeightDiv.style.fontFamily = "Arial";
+cc.LabelTTF.__labelHeightDiv.style.position = "absolute";
+cc.LabelTTF.__labelHeightDiv.style.left = "-100px";
+cc.LabelTTF.__labelHeightDiv.style.top = "-100px";
+cc.LabelTTF.__labelHeightDiv.style.lineHeight = "normal";
+document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
+
+cc.LabelTTF.__getFontHeightByDiv = function (fontName, fontSize) {
+    var clientHeight = cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize];
+    if (clientHeight > 0) return clientHeight;
+    var labelDiv = cc.LabelTTF.__labelHeightDiv;
+    labelDiv.innerHTML = "ajghl~!";
+    labelDiv.style.fontFamily = fontName;
+    labelDiv.style.fontSize = fontSize + "px";
+    clientHeight = labelDiv.clientHeight;
+    cc.LabelTTF.__fontHeightCache[fontName + "." + fontSize] = clientHeight;
+    labelDiv.innerHTML = "";
+    return clientHeight;
+};
+
+cc.LabelTTF.__fontHeightCache = {};
