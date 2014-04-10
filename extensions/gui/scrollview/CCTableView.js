@@ -319,7 +319,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
             if (this._direction == cc.SCROLLVIEW_DIRECTION_HORIZONTAL) {
                 this.setContentOffset(cc.p(0, 0));
             } else {
-                this.setContentOffset(cc.p(0, this._getMinContainerOffset().y));
+                this.setContentOffset(cc.p(0, this.minContainerOffset().y));
             }
             this._oldDirection = this._direction;
         }
