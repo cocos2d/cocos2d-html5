@@ -356,6 +356,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    _tmp.WebGLTextureAtlas();
-    delete _tmp.WebGLTextureAtlas;
+    _tmp.WebGLTextureCache();
+    delete _tmp.WebGLTextureCache;
 }
