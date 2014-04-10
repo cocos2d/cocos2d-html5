@@ -62,7 +62,7 @@ cc.BatchNode = cc.Node.extend({
     },
 
     draw:function (ctx) {
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
         var child = null;
         for (var i = 0; i < this._children.length; i++) {
             child = this._children[i];

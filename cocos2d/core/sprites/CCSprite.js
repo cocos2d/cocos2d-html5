@@ -122,7 +122,7 @@ cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCa
 cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
         rect = cc.rect(0, 0, texture.width, texture.height);
-        rect = cc.RECT_PIXELS_TO_POINTS(rect);
+        rect = cc.rectPixelsToPoints(rect);
     }
 
     var buff = cc.newElement("canvas");
@@ -971,10 +971,10 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      */
     displayFrame: function () {
         return cc.SpriteFrame.create(this._texture,
-            cc.RECT_POINTS_TO_PIXELS(this._rect),
+            cc.rectPointsToPixels(this._rect),
             this._rectRotated,
-            cc.POINT_POINTS_TO_PIXELS(this._unflippedOffsetPositionFromCenter),
-            cc.SIZE_POINTS_TO_PIXELS(this._contentSize));
+            cc.pointPointsToPixels(this._unflippedOffsetPositionFromCenter),
+            cc.sizePointsToPixels(this._contentSize));
     },
 
     /**
@@ -1041,7 +1041,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     },
 
     _setTextureCoords:function (rect) {
-        rect = cc.RECT_POINTS_TO_PIXELS(rect);
+        rect = cc.rectPointsToPixels(rect);
 
         var tex = this._batchNode ? this.textureAtlas.texture : this._texture;
         if (!tex)
@@ -1343,7 +1343,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         _t.setVertexRect(rect);
 
-        var locTextureRect = _t._textureRect_Canvas, scaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var locTextureRect = _t._textureRect_Canvas, scaleFactor = cc.contentScaleFactor();
         locTextureRect.x = 0 | (rect.x * scaleFactor);
         locTextureRect.y = 0 | (rect.y * scaleFactor);
         locTextureRect.width = 0 | (rect.width * scaleFactor);

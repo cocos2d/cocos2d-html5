@@ -45,7 +45,7 @@
  * @param {Number} t
  * @return {cc.Point}
  */
-cc.CardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
+cc.cardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
     var t2 = t * t;
     var t3 = t2 * t;
 
@@ -204,7 +204,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
             lt = (time - locDT * p) / locDT;
         }
 
-        var newPos = cc.CardinalSplineAt(
+        var newPos = cc.cardinalSplineAt(
             cc.getControlPointAt(ps, p - 1),
             cc.getControlPointAt(ps, p - 0),
             cc.getControlPointAt(ps, p + 1),

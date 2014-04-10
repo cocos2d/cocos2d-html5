@@ -98,7 +98,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext;
 
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
         //
