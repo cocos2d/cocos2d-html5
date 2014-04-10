@@ -140,71 +140,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         }
     };
 
-    _p.nodeToParentTransform = function () {
-        var _t = this;
-        if (_t._transformDirty) {
-            // Translate values
-            var x = _t._position.x;
-            var y = _t._position.y;
-            var apx = _t._anchorPointInPoints.x, napx = -apx;
-            var apy = _t._anchorPointInPoints.y, napy = -apy;
-            var scx = _t._scaleX, scy = _t._scaleY;
-
-            if (_t._ignoreAnchorPointForPosition) {
-                x += apx;
-                y += apy;
-            }
-
-            // Rotation values
-            // Change rotation code to handle X and Y
-            // If we skew with the exact same value for both x and y then we're simply just rotating
-            var cx = 1, sx = 0, cy = 1, sy = 0;
-            if (_t._rotationX !== 0 || _t._rotationY !== 0) {
-                cx = Math.cos(-_t._rotationRadiansX);
-                sx = Math.sin(-_t._rotationRadiansX);
-                cy = Math.cos(-_t._rotationRadiansY);
-                sy = Math.sin(-_t._rotationRadiansY);
-            }
-            var needsSkewMatrix = ( _t._skewX || _t._skewY );
-
-            // optimization:
-            // inline anchor point calculation if skew is not needed
-            // Adjusted transform calculation for rotational skew
-            if (!needsSkewMatrix && (apx !== 0 || apy !== 0)) {
-                x += cy * napx * scx + -sx * napy * scy;
-                y += sy * napx * scx + cx * napy * scy;
-            }
-
-            // Build Transform Matrix
-            // Adjusted transform calculation for rotational skew
-            var t = _t._transform;
-            t.a = cy * scx;
-            t.b = sy * scx;
-            t.c = -sx * scy;
-            t.d = cx * scy;
-            t.tx = x;
-            t.ty = y;
-
-            // XXX: Try to inline skew
-            // If skew is needed, apply skew and then anchor point
-            if (needsSkewMatrix) {
-                t = cc.AffineTransformConcat({a: 1.0, b: Math.tan(cc.degreesToRadians(_t._skewY)),
-                    c: Math.tan(cc.degreesToRadians(_t._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
-
-                // adjust anchor point
-                if (apx !== 0 || apy !== 0)
-                    t = cc.AffineTransformTranslate(t, napx, napy);
-            }
-
-            if (_t._additionalTransformDirty) {
-                t = cc.AffineTransformConcat(t, _t._additionalTransform);
-                _t._additionalTransformDirty = false;
-            }
-            _t._transform = t;
-            _t._transformDirty = false;
-        }
-        return _t._transform;
-    };
+    _p.nodeToParentTransform = _p._nodeToParentTransformForWebGL;
 
     delete _p;
 
