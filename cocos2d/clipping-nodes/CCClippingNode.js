@@ -323,7 +323,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
             context.save();
             // Draw everything first using node visit function
-            this._super(context);
+            cc.Node.prototype.visit.call(this, context);
 
             context.globalCompositeOperation = this.inverted ? "destination-out" : "destination-in";
 
