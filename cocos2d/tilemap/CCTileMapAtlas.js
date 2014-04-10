@@ -68,7 +68,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      */
     ctor:function(tile, mapFile, tileWidth, tileHeight){
         cc.AtlasNode.prototype.ctor.call(this);
-        this.initWithTileFile(tile, mapFile, tileWidth, tileHeight);
+        if(tileHeight !== undefined)
+            this.initWithTileFile(tile, mapFile, tileWidth, tileHeight);
     },
 
     /**

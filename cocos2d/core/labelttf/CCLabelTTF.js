@@ -302,7 +302,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         vAlignment = vAlignment || cc.VERTICAL_TEXT_ALIGNMENT_TOP;
 
         if (cc.Sprite.prototype.init.call(this)) {
-            this._texture = null;
+            this._labelContext = null;
             this._opacityModifyRGB = false;
             this._dimensions = cc.size(dimensions.width, dimensions.height);
             this._fontName = fontName || "Arial";

@@ -110,7 +110,8 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._colorPointerBuffer = null;
         this._texCoordsBuffer = null;
 
-        this.initWithFade(fade, minSeg, stroke, color, texture);
+        if(texture !== undefined)
+            this.initWithFade(fade, minSeg, stroke, color, texture);
     },
 
     /**

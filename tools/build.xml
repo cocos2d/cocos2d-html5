@@ -11,6 +11,7 @@
                 <file name="Base64Images.js"/>
                 <file name="CCBoot.js"/>
                 <file name="CCDebugger.js"/>
+                <file name="cocos2d/core/utils/BinaryLoader.js"/>
                 <file name="cocos2d/core/platform/CCClass.js"/>
                 <file name="cocos2d/core/platform/CCCommon.js"/>
                 <file name="cocos2d/core/cocoa/CCGeometry.js"/>
