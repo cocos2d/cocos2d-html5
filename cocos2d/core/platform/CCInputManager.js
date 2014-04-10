@@ -431,8 +431,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 (function(_pointerEvent, _touchEvent){
                     cc._addEventListener(element, _pointerEvent, function (event){
                         var pos = selfPointer.getHTMLElementPosition(element);
-                        pos.left -= document.body.scrollLeft;
-                        pos.top -= document.body.scrollTop;
+                        pos.left -= document.documentElement.scrollLeft;
+                        pos.top -= document.documentElement.scrollTop;
 
                         _touchEvent.call(selfPointer, [selfPointer.getTouchByXY(event.clientX, event.clientY, pos)]);
                         event.stopPropagation();
