@@ -302,14 +302,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         vAlignment = vAlignment || cc.VERTICAL_TEXT_ALIGNMENT_TOP;
 
         if (cc.Sprite.prototype.init.call(this)) {
-            this._texture = null;
+            this._labelContext = null;
             this._opacityModifyRGB = false;
             this._dimensions = cc.size(dimensions.width, dimensions.height);
             this._fontName = fontName || "Arial";
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
 
-            //this._fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.CONTENT_SCALE_FACTOR();
+            //this._fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.contentScaleFactor();
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
@@ -567,10 +567,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         var texDef = new cc.FontDefinition();
 
         if (adjustForResolution){
-            //texDef.fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? this._fontSize : this._fontSize * cc.CONTENT_SCALE_FACTOR();
+            //texDef.fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? this._fontSize : this._fontSize * cc.contentScaleFactor();
             texDef.fontSize = this._fontSize;
-            texDef.boundingWidth = cc.CONTENT_SCALE_FACTOR() * this._dimensions.width;
-	        texDef.boundingHeight = cc.CONTENT_SCALE_FACTOR() * this._dimensions.height;
+            texDef.boundingWidth = cc.contentScaleFactor() * this._dimensions.width;
+	        texDef.boundingHeight = cc.contentScaleFactor() * this._dimensions.height;
         } else {
             texDef.fontSize = this._fontSize;
 	        texDef.boundingWidth = this._dimensions.width;
@@ -596,8 +596,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             texDef.shadowBlur = this._shadowBlur;
             texDef.shadowOpacity = this._shadowOpacity;
 
-            texDef.shadowOffsetX = (adjustForResolution ? cc.CONTENT_SCALE_FACTOR() : 1) * this._shadowOffset.x;
-	        texDef.shadowOffsetY = (adjustForResolution ? cc.CONTENT_SCALE_FACTOR() : 1) * this._shadowOffset.y;
+            texDef.shadowOffsetX = (adjustForResolution ? cc.contentScaleFactor() : 1) * this._shadowOffset.x;
+	        texDef.shadowOffsetY = (adjustForResolution ? cc.contentScaleFactor() : 1) * this._shadowOffset.y;
         } else
             texDef._shadowEnabled = false;
 

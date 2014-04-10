@@ -31,7 +31,7 @@
  * @param {Function} [cb]
  */
 
-cc.loader.loadBinary = function(url, cb){
+cc.loader.loadBinary = function (url, cb) {
     var self = this;
     var xhr = this.getXMLHttpRequest(),
         errInfo = "load " + url + " failed!";
@@ -40,7 +40,7 @@ cc.loader.loadBinary = function(url, cb){
         // IE-specific logic here
         xhr.setRequestHeader("Accept-Charset", "x-user-defined");
         xhr.onreadystatechange = function () {
-            if(xhr.readyState == 4 && xhr.status == 200){
+            if (xhr.readyState == 4 && xhr.status == 200) {
                 var fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
                 cb(null, self._str2Uint8Array(fileContents));
             } else cb(errInfo);
@@ -54,7 +54,7 @@ cc.loader.loadBinary = function(url, cb){
     xhr.send(null);
 };
 
-cc.loader._str2Uint8Array = function(strData){
+cc.loader._str2Uint8Array = function (strData) {
     if (!strData)
         return null;
 
@@ -65,7 +65,7 @@ cc.loader._str2Uint8Array = function(strData){
     return arrData;
 };
 
-cc.loader.loadBinarySync = function(url){
+cc.loader.loadBinarySync = function (url) {
     var self = this;
     var req = this.getXMLHttpRequest();
     var errInfo = "load " + url + " failed!";

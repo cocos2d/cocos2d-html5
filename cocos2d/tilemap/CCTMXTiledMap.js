@@ -143,7 +143,7 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
 
         if(resourcePath !== undefined){
             this.initWithXML(tmxFile,resourcePath);
-        }else{
+        }else if(tmxFile !== undefined){
             this.initWithTMXFile(tmxFile);
         }
     },

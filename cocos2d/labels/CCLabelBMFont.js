@@ -495,7 +495,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
             var rect = cc.rect(fontDef.rect.x, fontDef.rect.y, fontDef.rect.width, fontDef.rect.height);
-            rect = cc.RECT_PIXELS_TO_POINTS(rect);
+            rect = cc.rectPixelsToPoints(rect);
             rect.x += self._imageOffset.x;
             rect.y += self._imageOffset.y;
 
@@ -531,8 +531,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var yOffset = locCfg.commonHeight - fontDef.yOffset;
             var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
-                nextFontPositionY + yOffset - rect.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
-            fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
+                nextFontPositionY + yOffset - rect.height * 0.5 * cc.contentScaleFactor());
+            fontChar.setPosition(cc.pointPixelsToPoints(fontPos));
 
             // update kerning
             nextFontPositionX += fontDef.xAdvance + kerningAmount;
@@ -544,7 +544,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         tmpSize.width = longestLine;
         tmpSize.height = totalHeight;
-        self.setContentSize(cc.SIZE_PIXELS_TO_POINTS(tmpSize));
+        self.setContentSize(cc.sizePixelsToPoints(tmpSize));
     },
 
     /**

@@ -58,9 +58,9 @@ cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
             // Calculate angle between vectors
             var angle = Math.acos(cc.pDot(p2p1, p0p1));
 
-            if (angle < cc.DEGREES_TO_RADIANS(70))
+            if (angle < cc.degreesToRadians(70))
                 perpVector = cc.pPerp(cc.pNormalize(cc.pMidpoint(p2p1, p0p1)));
-            else if (angle < cc.DEGREES_TO_RADIANS(170))
+            else if (angle < cc.degreesToRadians(170))
                 perpVector = cc.pNormalize(cc.pMidpoint(p2p1, p0p1));
             else
                 perpVector = cc.pPerp(cc.pNormalize(cc.pSub(p2, p0)));

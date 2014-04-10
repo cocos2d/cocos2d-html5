@@ -329,7 +329,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (this.textureAtlas.totalQuads == 0)
             return;
 
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
         cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
         this.textureAtlas.drawQuads();
 

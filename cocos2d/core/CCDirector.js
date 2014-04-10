@@ -442,7 +442,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         // Clear all caches
         this.purgeCachedData();
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.checkGLErrorDebug();
     },
 
     /**

@@ -364,8 +364,8 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
-                t = cc.AffineTransformConcat({a:1.0, b:Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
-                    c:Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), d:1.0, tx:0.0, ty:0.0}, t);
+                t = cc.AffineTransformConcat({a:1.0, b:Math.tan(cc.degreesToRadians(this._skewY)),
+                    c:Math.tan(cc.degreesToRadians(this._skewX)), d:1.0, tx:0.0, ty:0.0}, t);
 
                 // adjust anchor point
                 if (apx !== 0 || apy !== 0)

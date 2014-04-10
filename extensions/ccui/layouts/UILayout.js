@@ -262,7 +262,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         // enable stencil use
         gl.enable(gl.STENCIL_TEST);
         // check for OpenGL error while enabling stencil test
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
 
         // all bits on the stencil buffer are readonly, except the current layer bit,
         // this means that operation like glClear or glStencilOp will be masked with this value

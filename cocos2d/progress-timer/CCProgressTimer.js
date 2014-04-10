@@ -505,7 +505,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         }
 
         context.restore();
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     _drawForWebGL:function (ctx) {
@@ -513,7 +513,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!this._vertexData || !this._sprite)
             return;
 
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
 
         var blendFunc = this._sprite.getBlendFunc();
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);

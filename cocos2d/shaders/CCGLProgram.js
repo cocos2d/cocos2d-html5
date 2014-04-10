@@ -315,7 +315,7 @@ cc.GLProgram = cc.Class.extend({
     initWithVertexShaderByteArray: function (vertShaderStr, fragShaderStr) {
         var locGL = this._glContext;
         this._programObj = locGL.createProgram();
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
 
         this._vertShader = null;
         this._fragShader = null;
@@ -337,13 +337,13 @@ cc.GLProgram = cc.Class.extend({
 
         if (this._vertShader)
             locGL.attachShader(this._programObj, this._vertShader);
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.checkGLErrorDebug();
 
         if (this._fragShader)
             locGL.attachShader(this._programObj, this._fragShader);
         this._hashForUniforms.length = 0;
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.checkGLErrorDebug();
         return true;
     },
 

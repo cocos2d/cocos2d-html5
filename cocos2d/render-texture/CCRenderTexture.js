@@ -138,10 +138,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         this.anchorX = 0;
 	    this.anchorY = 0;
 
-        format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
-        depthStencilFormat = depthStencilFormat || 0;
-
-        this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        if(width !== undefined && height !== undefined){
+            format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
+            depthStencilFormat = depthStencilFormat || 0;
+            this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        }
     },
 
     /**
@@ -159,10 +160,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         cc.Node.prototype.ctor.call(this);
         this._clearColor = cc.color(0, 0, 0, 0);
 
-        format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
-        depthStencilFormat = depthStencilFormat || 0;
-
-        this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        if(width !== undefined && height !== undefined){
+            format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
+            depthStencilFormat = depthStencilFormat || 0;
+            this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        }
     },
 
     cleanup:null,
@@ -214,7 +216,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     initWithWidthAndHeight: null,
 
     _initWithWidthAndHeightForCanvas: function (width, height, format, depthStencilFormat) {
-        var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.contentScaleFactor();
         locCacheCanvas.width = 0 | (width * locScaleFactor);
         locCacheCanvas.height = 0 | (height * locScaleFactor);
         this._cacheContext.translate(0, locCacheCanvas.height);
@@ -229,7 +231,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if(format == cc.Texture2D.PIXEL_FORMAT_A8)
             cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
-        var gl = cc._renderContext, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var gl = cc._renderContext, locScaleFactor = cc.contentScaleFactor();
 
         width = 0 | (width * locScaleFactor);
         height = 0 | (height * locScaleFactor);
@@ -370,7 +372,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             // -- bind a temporary texture so we can clear the render buffer without losing our texture
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
-            //cc.CHECK_GL_ERROR_DEBUG();
+            //cc.checkGLErrorDebug();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
         }
@@ -486,11 +488,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         /* var size = director.getWinSizeInPixels();
 
          // restore viewport
-         gl.viewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+         gl.viewport(0, 0, size.width * cc.contentScaleFactor(), size.height * cc.contentScaleFactor());
 
          // special viewport for 3d projection + retina display
-         if (director.getProjection() == cc.DIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1) {
-         gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
+         if (director.getProjection() == cc.DIRECTOR_PROJECTION_3D && cc.contentScaleFactor() != 1) {
+         gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.contentScaleFactor()), (size.height * cc.contentScaleFactor()));
          }
 
          director.setProjection(director.getProjection());*/

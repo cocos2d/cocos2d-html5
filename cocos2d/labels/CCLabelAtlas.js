@@ -121,7 +121,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             }
 
             textureFilename = cc.path.changeBasename(charMapFile, dict["textureFilename"]);
-            var locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+            var locScaleFactor = cc.contentScaleFactor();
             width = parseInt(dict["itemWidth"], 10) / locScaleFactor;
             height = parseInt(dict["itemHeight"], 10) / locScaleFactor;
             startChar = String.fromCharCode(parseInt(dict["firstChar"], 10));
@@ -192,7 +192,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var locString = this._string;
         var n = locString.length;
         var texture = this.texture;
-        var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight;     //needn't multiply cc.CONTENT_SCALE_FACTOR(), because sprite's draw will do this
+        var locItemWidth = this._itemWidth , locItemHeight = this._itemHeight;     //needn't multiply cc.contentScaleFactor(), because sprite's draw will do this
 
         for (var i = 0; i < n; i++) {
             var a = locString.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
@@ -238,8 +238,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var itemWidthInPixels = this._itemWidth;
         var itemHeightInPixels = this._itemHeight;
         if (!this._ignoreContentScaleFactor) {
-            itemWidthInPixels = this._itemWidth * cc.CONTENT_SCALE_FACTOR();
-            itemHeightInPixels = this._itemHeight * cc.CONTENT_SCALE_FACTOR();
+            itemWidthInPixels = this._itemWidth * cc.contentScaleFactor();
+            itemHeightInPixels = this._itemHeight * cc.contentScaleFactor();
         }
         if (n > locTextureAtlas.getCapacity())
             cc.log("cc.LabelAtlas._updateAtlasValues(): Invalid String length");

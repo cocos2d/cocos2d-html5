@@ -121,8 +121,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 	        // This class uses cache, so its default cachedParent should be himself
 	        this._cachedParent = this;
         }
-
-        this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
+        if(mapInfo !== undefined)
+            this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
     },
 
     /**
@@ -137,7 +137,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if(cc._renderType === cc._RENDER_TYPE_CANVAS){
             var locCanvas = this._cacheCanvas;
-            var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+            var scaleFactor = cc.contentScaleFactor();
             locCanvas.width = 0 | (locContentSize.width * 1.5 * scaleFactor);
             locCanvas.height = 0 | (locContentSize.height * 1.5 * scaleFactor);
 
@@ -420,10 +420,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             // offset (after layer orientation is set);
             var offset = this._calculateLayerOffset(layerInfo.offset);
-            this.setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
+            this.setPosition(cc.pointPixelsToPoints(offset));
 
             this._atlasIndexArray = [];
-            this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
+            this.setContentSize(cc.sizePixelsToPoints(cc.size(this._layerSize.width * this._mapTileSize.width,
                 this._layerSize.height * this._mapTileSize.height)));
             this._useAutomaticVertexZ = false;
             this._vertexZvalue = 0;
@@ -477,7 +477,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // tile not created yet. create it
         if (!tile) {
             var rect = this.tileset.rectForGID(gid);
-            rect = cc.RECT_PIXELS_TO_POINTS(rect);
+            rect = cc.rectPixelsToPoints(rect);
 
             tile = new cc.Sprite();
             tile.initWithTexture(this.texture, rect);
@@ -584,7 +584,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 var sprite = this.getChildByTag(z);
                 if (sprite) {
                     var rect = this.tileset.rectForGID(gid);
-                    rect = cc.RECT_PIXELS_TO_POINTS(rect);
+                    rect = cc.rectPixelsToPoints(rect);
 
                     sprite.setTextureRect(rect, false);
                     if (flags != null)
@@ -666,7 +666,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 ret = this._positionForHexAt(pos);
                 break;
         }
-        return cc.POINT_PIXELS_TO_POINTS(ret);
+        return cc.pointPixelsToPoints(ret);
     },
     // XXX: Deprecated. For backward compatibility only
     // positionAt:getPositionAt,
@@ -809,7 +809,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _appendTileForGID:function (gid, pos) {
         var rect = this.tileset.rectForGID(gid);
-        rect = cc.RECT_PIXELS_TO_POINTS(rect);
+        rect = cc.rectPixelsToPoints(rect);
 
         var z = 0 | (pos.x + pos.y * this._layerSize.width);
         var tile = this._reusedTileWithRect(rect);
@@ -830,7 +830,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _insertTileForGID:function (gid, pos) {
         var rect = this.tileset.rectForGID(gid);
-        rect = cc.RECT_PIXELS_TO_POINTS(rect);
+        rect = cc.rectPixelsToPoints(rect);
 
         var z = 0 | (pos.x + pos.y * this._layerSize.width);
         var tile = this._reusedTileWithRect(rect);

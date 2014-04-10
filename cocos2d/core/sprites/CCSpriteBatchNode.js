@@ -1056,7 +1056,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (this.textureAtlas.totalQuads === 0)
             return;
 
-        //cc.NODE_DRAW_SETUP(this);
+        //cc.nodeDrawSetup(this);
         this._shaderProgram.use();
         this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);

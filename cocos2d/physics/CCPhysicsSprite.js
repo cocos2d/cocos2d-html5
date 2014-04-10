@@ -67,9 +67,7 @@
 
             if (fileName === undefined) {
                 cc.PhysicsSprite.prototype.init.call(this);
-            }
-
-            if (typeof(fileName) === "string") {
+            }else if (typeof(fileName) === "string") {
                 if (fileName[0] === "#") {
                     //init with a sprite frame name
                     var frameName = fileName.substr(1, fileName.length - 1);
@@ -79,9 +77,7 @@
                     //init  with filename and rect
                     this.init(fileName, rect);
                 }
-            }
-
-            if (typeof(fileName) === "object") {
+            }else if (typeof(fileName) === "object") {
                 if (fileName instanceof cc.Texture2D) {
                     //init  with texture and rect
                     this.initWithTexture(fileName, rect);
@@ -115,7 +111,7 @@
             this.setNodeDirty();
         },
         getRotation:function () {
-            return (this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadians) : cc.RADIANS_TO_DEGREES(this._body.GetAngle()));
+            return (this._ignoreBodyRotation ? cc.radiansToDegress(this._rotationRadians) : cc.radiansToDegress(this._body.GetAngle()));
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
@@ -123,7 +119,7 @@
             } else {
                 var locBody = this._body;
                 var p = locBody.GetPosition();
-                locBody.SetTransform(p, cc.DEGREES_TO_RADIANS(r));
+                locBody.SetTransform(p, cc.degreesToRadians(r));
             }
             this.setNodeDirty();
         },
@@ -186,9 +182,7 @@
 
             if (fileName === undefined) {
                 cc.PhysicsSprite.prototype.init.call(this);
-            }
-
-            if (typeof(fileName) === "string") {
+            }else if (typeof(fileName) === "string") {
                 if (fileName[0] === "#") {
                     //init with a sprite frame name
                     var frameName = fileName.substr(1, fileName.length - 1);
@@ -198,9 +192,7 @@
                     //init  with filename and rect
                     this.init(fileName, rect);
                 }
-            }
-
-            if (typeof(fileName) === "object") {
+            }else if (typeof(fileName) === "object") {
                 if (fileName instanceof cc.Texture2D) {
                     //init  with texture and rect
                     this.initWithTexture(fileName, rect);
@@ -255,19 +247,19 @@
             }
         },
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadiansX) : -cc.RADIANS_TO_DEGREES(this._body.a);
+            return this._ignoreBodyRotation ? cc.radiansToDegress(this._rotationRadiansX) : -cc.radiansToDegress(this._body.a);
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
                 cc.Sprite.prototype.setRotation.call(this, r);
             } else {
-                this._body.a = -cc.DEGREES_TO_RADIANS(r);
+                this._body.a = -cc.degreesToRadians(r);
                 //this._syncRotation();
             }
         },
         _syncRotation:function () {
             if (this._rotationRadiansX != -this._body.a) {
-                cc.Sprite.prototype.setRotation.call(this, -cc.RADIANS_TO_DEGREES(this._body.a));
+                cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegress(this._body.a));
             }
         },
         nodeToParentTransform:function () {

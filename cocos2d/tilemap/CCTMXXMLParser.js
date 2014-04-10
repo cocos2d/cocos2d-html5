@@ -312,10 +312,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
         this._currentFirstGID = 0;
 
-        if (resourcePath === undefined) {
-            this.initWithTMXFile(tmxFile);
-        } else {
+        if (resourcePath !== undefined) {
             this.initWithXML(tmxFile,resourcePath);
+        } else if(tmxFile !== undefined){
+            this.initWithTMXFile(tmxFile);
         }
     },
     /**

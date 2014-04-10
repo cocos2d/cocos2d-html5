@@ -68,7 +68,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
      */
     ctor:function(tile, mapFile, tileWidth, tileHeight){
         cc.AtlasNode.prototype.ctor.call(this);
-        this.initWithTileFile(tile, mapFile, tileWidth, tileHeight);
+        if(tileHeight !== undefined)
+            this.initWithTileFile(tile, mapFile, tileWidth, tileHeight);
     },
 
     /**
@@ -210,8 +211,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
         var locItemWidth = this._itemWidth;
         var locItemHeight = this._itemHeight;
-        var itemWidthInPixels = locItemWidth * cc.CONTENT_SCALE_FACTOR();
-        var itemHeightInPixels = locItemHeight * cc.CONTENT_SCALE_FACTOR();
+        var itemWidthInPixels = locItemWidth * cc.contentScaleFactor();
+        var itemHeightInPixels = locItemHeight * cc.contentScaleFactor();
 
         var left, right, top, bottom;
         if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
