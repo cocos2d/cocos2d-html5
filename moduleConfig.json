@@ -38,6 +38,8 @@
             "cocos2d/compression/zlib.min.js"
         ],
         "core" : [
+            "CCDebugger.js",
+            "cocos2d/core/utils/BinaryLoader.js",
             "Base64Images.js",
             "cocos2d/core/platform/CCClass.js",
             "cocos2d/core/platform/CCCommon.js",
