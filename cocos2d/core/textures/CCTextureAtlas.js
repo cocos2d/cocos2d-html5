@@ -646,3 +646,11 @@ cc.defineGetterSetter(_p, "quads", _p.getQuads, _p.setQuads);
 cc.TextureAtlas.create = function (fileName, capacity) {
     return new cc.TextureAtlas(fileName, capacity);
 };
+
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+    _tmp.WebGLTextureAtlas();
+    delete _tmp.WebGLTextureAtlas;
+}
+
+_tmp.PrototypeTextureAtlas();
+delete _tmp.PrototypeTextureAtlas;

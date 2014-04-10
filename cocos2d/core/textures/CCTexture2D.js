@@ -96,7 +96,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
 
 //cc.Texture2DWebGL move to TextureWebGL.js
 
-if(cc._renderType === cc._RENDER_TYPE_CANVAS){
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     /**
      * <p>
@@ -121,44 +121,44 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS){
      */
 
     cc.Texture2D = cc.Class.extend({
-        _contentSize:null,
-        _isLoaded:false,
-        _htmlElementObj:null,
-        _loadedEventListeners:null,
+        _contentSize: null,
+        _isLoaded: false,
+        _htmlElementObj: null,
+        _loadedEventListeners: null,
 
-        url : null,
+        url: null,
 
-        ctor:function () {
-            this._contentSize = cc.size(0,0);
+        ctor: function () {
+            this._contentSize = cc.size(0, 0);
             this._isLoaded = false;
             this._htmlElementObj = null;
         },
 
-        getPixelsWide:function () {
+        getPixelsWide: function () {
             return this._contentSize.width;
         },
 
-        getPixelsHigh:function () {
+        getPixelsHigh: function () {
             return this._contentSize.height;
         },
 
-        getContentSize:function () {
+        getContentSize: function () {
             var locScaleFactor = cc.contentScaleFactor();
             return cc.size(this._contentSize.width / locScaleFactor, this._contentSize.height / locScaleFactor);
         },
 
-        _getWidth:function () {
+        _getWidth: function () {
             return this._contentSize.width / cc.contentScaleFactor();
         },
-        _getHeight:function () {
+        _getHeight: function () {
             return this._contentSize.height / cc.contentScaleFactor();
         },
 
-        getContentSizeInPixels:function () {
+        getContentSizeInPixels: function () {
             return this._contentSize;
         },
 
-        initWithElement:function (element) {
+        initWithElement: function (element) {
             if (!element)
                 return;
             this._htmlElementObj = element;
@@ -168,182 +168,182 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS){
          * HTMLElement Object getter
          * @return {HTMLElement}
          */
-        getHtmlElementObj:function(){
+        getHtmlElementObj: function () {
             return this._htmlElementObj;
         },
 
-        isLoaded:function () {
+        isLoaded: function () {
             return this._isLoaded;
         },
 
-        handleLoadedTexture:function () {
+        handleLoadedTexture: function () {
             var self = this
-            if(self._isLoaded) return;
-            if(!self._htmlElementObj){
+            if (self._isLoaded) return;
+            if (!self._htmlElementObj) {
                 var img = cc.loader.getRes(self.url);
-                if(!img) return;
+                if (!img) return;
                 self.initWithElement(img);
             }
 
             self._isLoaded = true;
-            var locElement =  self._htmlElementObj;
+            var locElement = self._htmlElementObj;
             self._contentSize.width = locElement.width;
             self._contentSize.height = locElement.height;
 
             self._callLoadedEventCallbacks();
         },
 
-        description:function () {
-            return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height+">";
+        description: function () {
+            return "<cc.Texture2D | width = " + this._contentSize.width + " height " + this._contentSize.height + ">";
         },
 
-        initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
+        initWithData: function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
             //support only in WebGl rendering mode
             return false;
         },
 
-        initWithImage:function (uiImage) {
+        initWithImage: function (uiImage) {
             //support only in WebGl rendering mode
             return false;
         },
 
-        initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+        initWithString: function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
             //support only in WebGl rendering mode
             return false;
         },
 
-        releaseTexture:function () {
+        releaseTexture: function () {
             //support only in WebGl rendering mode
         },
 
-        getName:function () {
+        getName: function () {
             //support only in WebGl rendering mode
             return null;
         },
 
-        getMaxS:function () {
+        getMaxS: function () {
             //support only in WebGl rendering mode
             return 1;
         },
 
-        setMaxS:function (maxS) {
+        setMaxS: function (maxS) {
             //support only in WebGl rendering mode
         },
 
-        getMaxT:function () {
+        getMaxT: function () {
             return 1;
         },
 
-        setMaxT:function (maxT) {
+        setMaxT: function (maxT) {
             //support only in WebGl rendering mode
         },
 
-        getPixelFormat:function () {
-            //support only in WebGl rendering mode
-            return null;
-        },
-
-        getShaderProgram:function () {
+        getPixelFormat: function () {
             //support only in WebGl rendering mode
             return null;
         },
 
-        setShaderProgram:function (shaderProgram) {
+        getShaderProgram: function () {
+            //support only in WebGl rendering mode
+            return null;
+        },
+
+        setShaderProgram: function (shaderProgram) {
             //support only in WebGl rendering mode
         },
 
-        hasPremultipliedAlpha:function () {
+        hasPremultipliedAlpha: function () {
             //support only in WebGl rendering mode
             return false;
         },
 
-        hasMipmaps:function () {
+        hasMipmaps: function () {
             //support only in WebGl rendering mode
             return false;
         },
 
-        releaseData:function (data) {
+        releaseData: function (data) {
             //support only in WebGl rendering mode
             data = null;
         },
 
-        keepData:function (data, length) {
+        keepData: function (data, length) {
             //support only in WebGl rendering mode
             return data;
         },
 
-        drawAtPoint:function (point) {
+        drawAtPoint: function (point) {
             //support only in WebGl rendering mode
         },
 
-        drawInRect:function (rect) {
+        drawInRect: function (rect) {
             //support only in WebGl rendering mode
         },
 
-        initWithETCFile:function (file) {
+        initWithETCFile: function (file) {
             cc.log(cc._LogInfos.Texture2D_initWithETCFile);
             return false;
         },
 
-        initWithPVRFile:function (file) {
+        initWithPVRFile: function (file) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRFile);
             return false;
         },
 
-        initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
+        initWithPVRTCData: function (data, level, bpp, hasAlpha, length, pixelFormat) {
             cc.log(cc._LogInfos.Texture2D_initWithPVRTCData);
             return false;
         },
 
-        setTexParameters:function (texParams) {
+        setTexParameters: function (texParams) {
             //support only in WebGl rendering mode
         },
 
-        setAntiAliasTexParameters:function () {
+        setAntiAliasTexParameters: function () {
             //support only in WebGl rendering mode
         },
 
-        setAliasTexParameters:function () {
+        setAliasTexParameters: function () {
             //support only in WebGl rendering mode
         },
 
-        generateMipmap:function () {
+        generateMipmap: function () {
             //support only in WebGl rendering mode
         },
 
-        stringForFormat:function () {
+        stringForFormat: function () {
             //support only in WebGl rendering mode
             return "";
         },
 
-        bitsPerPixelForFormat:function (format) {
+        bitsPerPixelForFormat: function (format) {
             //support only in WebGl rendering mode
             return -1;
         },
 
-        addLoadedEventListener:function(callback, target){
-            if(!this._loadedEventListeners)
+        addLoadedEventListener: function (callback, target) {
+            if (!this._loadedEventListeners)
                 this._loadedEventListeners = [];
-            this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
+            this._loadedEventListeners.push({eventCallback: callback, eventTarget: target});
         },
 
-        removeLoadedEventListener:function(target){
-            if(!this._loadedEventListeners)
+        removeLoadedEventListener: function (target) {
+            if (!this._loadedEventListeners)
                 return;
             var locListeners = this._loadedEventListeners;
-            for(var i = 0;  i < locListeners.length; i++){
+            for (var i = 0; i < locListeners.length; i++) {
                 var selCallback = locListeners[i];
-                if(selCallback.eventTarget == target){
+                if (selCallback.eventTarget == target) {
                     locListeners.splice(i, 1);
                 }
             }
         },
 
-        _callLoadedEventCallbacks:function(){
-            if(!this._loadedEventListeners)
+        _callLoadedEventCallbacks: function () {
+            if (!this._loadedEventListeners)
                 return;
             var locListeners = this._loadedEventListeners;
-            for(var i = 0, len = locListeners.length;  i < len; i++){
+            for (var i = 0, len = locListeners.length; i < len; i++) {
                 var selCallback = locListeners[i];
                 selCallback.eventCallback.call(selCallback.eventTarget, this);
             }
@@ -351,4 +351,10 @@ if(cc._renderType === cc._RENDER_TYPE_CANVAS){
         }
     });
 
+} else {
+    _tmp.WebGLTexture2D();
+    delete _tmp.WebGLTexture2D;
 }
+
+_tmp.PrototypeTexture2D();
+delete _tmp.PrototypeTexture2D;
