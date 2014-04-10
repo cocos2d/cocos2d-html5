@@ -22,7 +22,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+_tmp.WebGLLayerColor = function () {
     //cc.LayerColor define start
     var _p = cc.LayerColor.prototype;
     _p._squareVertices = null;
@@ -54,7 +54,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
         cc.LayerColor.prototype.init.call(_t, color, width, height);
     };
-    _p.setContentSize = function(size, height){
+    _p.setContentSize = function (size, height) {
         var locSquareVertices = this._squareVertices;
         if (height === undefined) {
             locSquareVertices[1].x = size.width;
@@ -116,7 +116,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p._bindLayerVerticesBufferData = function () {
         var glContext = cc._renderContext;
         glContext.bindBuffer(glContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareVerticesAB , glContext.STATIC_DRAW);
+        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareVerticesAB, glContext.STATIC_DRAW);
     };
 
     _p._bindLayerColorsBufferData = function () {
@@ -125,11 +125,13 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
     };
     //cc.LayerColor define end
+}
 
+_tmp.WebGLLayerGradient = function () {
     //cc.LayerGradient define start
-    _p = cc.LayerGradient.prototype;
+    var _p = cc.LayerGradient.prototype;
     _p.draw = cc.LayerColor.prototype.draw;
-    _p._updateColor = function(){
+    _p._updateColor = function () {
         var _t = this;
         var locAlongVector = _t._alongVector;
         var h = cc.pLength(locAlongVector);

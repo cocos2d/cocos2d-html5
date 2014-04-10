@@ -24,7 +24,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+_tmp.WebGLCCNode = function () {
+
     /**
      * CCNode
      * @type {Object|Function|cc.Node|*}
@@ -54,7 +55,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         this._transformDirty === false && (this._transformDirty = this._inverseDirty = true);
     };
 
-    _p.visit = function(){
+    _p.visit = function () {
         var _t = this;
         // quick return if not visible
         if (!_t._visible)
@@ -106,7 +107,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.transform = function () {
         var _t = this;
         //optimize performance for javascript
-        var t4x4 = _t._transform4x4,  topMat4 = cc.current_stack.top;
+        var t4x4 = _t._transform4x4, topMat4 = cc.current_stack.top;
 
         // Convert 3x3 into 4x4 matrix
         //cc.CGAffineToGL(_t.nodeToParentTransform(), _t._transform4x4.mat);
@@ -130,7 +131,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         if (_t._camera != null && !(_t.grid != null && _t.grid.isActive())) {
             var apx = _t._anchorPointInPoints.x, apy = _t._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
-            if (translate){
+            if (translate) {
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
                 _t._camera.locate();
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(-apx), cc.RENDER_IN_SUBPIXEL(-apy), 0);
@@ -142,6 +143,4 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
     _p.nodeToParentTransform = _p._nodeToParentTransformForWebGL;
 
-    delete _p;
-
-}
+};
