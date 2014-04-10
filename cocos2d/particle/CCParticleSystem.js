@@ -1828,7 +1828,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Particle} particle
      */
     initParticle:function (particle) {
-        var locRandomMinus11 = cc.cc.randomMinus1To1;
+        var locRandomMinus11 = cc.randomMinus1To1;
         // timeToLive
         // no negative life. prevent division by 0
         particle.timeToLive = this.life + this.lifeVar * locRandomMinus11();

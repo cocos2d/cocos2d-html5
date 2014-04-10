@@ -84,7 +84,7 @@ cc._LogInfos = {
     inputManager_handleTouchesBegin: "The touches is more than MAX_TOUCHES, nUnusedIndex = %s",
 
     swap: "cc.swap is being modified from original macro, please check usage",
-	checkGLErrorDebug: "WebGL error %s",
+    checkGLErrorDebug: "WebGL error %s",
 
     animationCache__addAnimationsWithDictionary: "cocos2d: cc.AnimationCache: No animations were found in provided dictionary.",
     animationCache__addAnimationsWithDictionary_2: "cc.AnimationCache. Invalid animation format",
