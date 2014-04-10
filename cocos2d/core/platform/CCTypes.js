@@ -63,7 +63,7 @@ cc.color = function (r, g, b, a) {
  * @param {cc.Color} color2
  * @return {Boolean}  true if both ccColor3B are equal. Otherwise it returns false.
  */
-cc.colorEqual = function(color1, color2){
+cc.colorEqual = function (color1, color2) {
     return color1.r === color2.r && color1.g === color2.g && color1.b === color2.b;
 };
 
@@ -308,7 +308,7 @@ cc._Dictionary = cc.Class.extend({
         this._valueMapTb = {};
     },
 
-    count: function() {
+    count: function () {
         return this.allKeys().length;
     }
 });
@@ -333,3 +333,12 @@ cc.FontDefinition = function () {
     _t.shadowBlur = 0;
     _t.shadowOpacity = 1.0;
 };
+
+if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+    _tmp.WebGLColor();
+    delete _tmp.WebGLColor;
+}
+
+_tmp.PrototypeColor();
+delete _tmp.PrototypeColor;
+

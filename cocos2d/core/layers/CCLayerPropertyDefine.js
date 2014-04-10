@@ -22,45 +22,49 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var _p = cc.LayerRGBA.prototype;
-// Extended properties
-/** @expose */
-_p.opacityModifyRGB;
-cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
-/** @expose */
-_p.opacity;
-cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-/** @expose */
-_p.cascadeOpacity;
-cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
-/** @expose */
-_p.color;
-cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
-/** @expose */
-_p.cascadeColor;
-cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+_tmp.PrototypeLayerRGBA = function () {
+    var _p = cc.LayerRGBA.prototype;
+    // Extended properties
+    /** @expose */
+    _p.opacityModifyRGB;
+    cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
+    /** @expose */
+    _p.opacity;
+    cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
+    /** @expose */
+    _p.cascadeOpacity;
+    cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
+    /** @expose */
+    _p.color;
+    cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
+    /** @expose */
+    _p.cascadeColor;
+    cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
+};
 
-var _p = cc.LayerColor.prototype;
+_tmp.PrototypeLayerColor = function () {
+    var _p = cc.LayerColor.prototype;
+    // Override properties
+    cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
+    cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
+};
 
-// Override properties
-cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
-cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
-
-var _p = cc.LayerGradient.prototype;
-
-// Extended properties
-/** @expose */
-_p.startColor;
-cc.defineGetterSetter(_p, "startColor", _p.getStartColor, _p.setStartColor);
-/** @expose */
-_p.endColor;
-cc.defineGetterSetter(_p, "endColor", _p.getEndColor, _p.setEndColor);
-/** @expose */
-_p.startOpacity;
-cc.defineGetterSetter(_p, "startOpacity", _p.getStartOpacity, _p.setStartOpacity);
-/** @expose */
-_p.endOpacity;
-cc.defineGetterSetter(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
-/** @expose */
-_p.vector;
-cc.defineGetterSetter(_p, "vector", _p.getVector, _p.setVector);
+_tmp.PrototypeLayerGradient = function () {
+    var _p = cc.LayerGradient.prototype;
+    // Extended properties
+    /** @expose */
+    _p.startColor;
+    cc.defineGetterSetter(_p, "startColor", _p.getStartColor, _p.setStartColor);
+    /** @expose */
+    _p.endColor;
+    cc.defineGetterSetter(_p, "endColor", _p.getEndColor, _p.setEndColor);
+    /** @expose */
+    _p.startOpacity;
+    cc.defineGetterSetter(_p, "startOpacity", _p.getStartOpacity, _p.setStartOpacity);
+    /** @expose */
+    _p.endOpacity;
+    cc.defineGetterSetter(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
+    /** @expose */
+    _p.vector;
+    cc.defineGetterSetter(_p, "vector", _p.getVector, _p.setVector);
+};

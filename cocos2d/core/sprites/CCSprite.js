@@ -1160,11 +1160,6 @@ cc.Sprite.create = function (fileName, rect) {
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
-
-    /*
-     CCSprite
-     */
-
     var _p = cc.Sprite.prototype;
 
     _p._spriteFrameLoadedCallback = function(spriteFrame){
@@ -1605,4 +1600,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     delete _p;
+} else {
+    _tmp.WebGLSprite();
+    delete _tmp.WebGLSprite;
 }
+_tmp.PrototypeSprite();
+delete _tmp.PrototypeSprite;
+
