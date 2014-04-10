@@ -100,6 +100,15 @@ cc.lerp = function (a, b, r) {
 };
 
 /**
+ * get a random number from 0 to 0xffffff
+ * @function
+ * @returns {number}
+ */
+cc.rand = function () {
+	return Math.random() * 0xffffff;
+};
+
+/**
  * returns a random float between -1 and 1
  * @return {Number}
  * @function
@@ -341,13 +350,61 @@ cc.SRC_ALPHA = 0x0302;
  * @constant
  * @type Number
  */
+cc.SRC_ALPHA_SATURATE = 0x308;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.SRC_COLOR = 0x300;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.DST_ALPHA = 0x304;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.DST_COLOR = 0x306;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.ONE_MINUS_SRC_ALPHA = 0x0303;
 
 /**
  * @constant
  * @type Number
  */
+cc.ONE_MINUS_SRC_COLOR = 0x301;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.ONE_MINUS_DST_ALPHA = 0x305;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.ONE_MINUS_DST_COLOR = 0x0307;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.ONE_MINUS_CONSTANT_ALPHA	= 0x8004;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.ONE_MINUS_CONSTANT_COLOR	= 0x8002;
 
 cc.checkGLErrorDebug = function () {
     if (cc.renderMode == cc._RENDER_TYPE_WEBGL) {
