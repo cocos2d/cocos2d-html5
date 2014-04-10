@@ -121,8 +121,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 	        // This class uses cache, so its default cachedParent should be himself
 	        this._cachedParent = this;
         }
-
-        this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
+        if(mapInfo !== undefined)
+            this.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo);
     },
 
     /**
