@@ -25,14 +25,6 @@
  ****************************************************************************/
 
 /**
- * get a random number from 0 to 0xffffff
- * @function
- * @returns {number}
- */
-cc.rand = function () {
-    return Math.random() * 0xffffff;
-};
-/**
  * cc.Waves3D action
  * @class
  * @extends cc.Grid3DAction

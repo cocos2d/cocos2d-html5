@@ -100,6 +100,15 @@ cc.lerp = function (a, b, r) {
 };
 
 /**
+ * get a random number from 0 to 0xffffff
+ * @function
+ * @returns {number}
+ */
+cc.rand = function () {
+	return Math.random() * 0xffffff;
+};
+
+/**
  * returns a random float between -1 and 1
  * @return {Number}
  * @function
