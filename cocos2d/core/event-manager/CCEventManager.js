@@ -131,6 +131,9 @@ cc.eventManager = /** @lends cc.eventManager# */{
         // Mark the node dirty only when there is an event listener associated with it.
         if (this._nodeListenersMap[node.__instanceId] != null)
             this._dirtyNodes.push(node);
+        var _children = node.getChildren();
+        for(var i = 0, len = _children.length; i < len; i++)
+            this._setDirtyForNode(_children[i]);
     },
 
     /**
