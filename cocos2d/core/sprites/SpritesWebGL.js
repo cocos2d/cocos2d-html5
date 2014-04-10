@@ -24,11 +24,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+_tmp.WebGLSprite = function () {
 
-    /*
-     CCSprite
-     */
 
     var _p = cc.Sprite.prototype;
 

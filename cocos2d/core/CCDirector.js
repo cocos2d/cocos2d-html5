@@ -354,6 +354,10 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         //cleanup scheduler
         this.getScheduler().unscheduleAllCallbacks();
 
+        // Disable event dispatching
+        if(cc.eventManager)
+            cc.eventManager.setEnabled(false);
+
         // don't release the event handlers
         // They are needed in case the director is run again
 
@@ -840,7 +844,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p.setDepthTest = function () {
-        return;
     };
 
     _p.setOpenGLView = function (openGLView) {
@@ -848,8 +851,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
         this._winSizeInPoints.height = cc._canvas.height;
         this._openGLView = openGLView || cc.view;
-
-        return;
+        if(cc.eventManager)
+            cc.eventManager.setEnabled(true);
     };
 
     _p._clear = function() {

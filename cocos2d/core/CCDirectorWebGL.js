@@ -133,6 +133,8 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
          }*/
 
         //}
+        if(cc.eventManager)
+            cc.eventManager.setEnabled(true);
     };
 
     _p._clear = function() {

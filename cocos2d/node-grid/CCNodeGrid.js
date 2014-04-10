@@ -130,8 +130,7 @@ cc.NodeGrid = cc.Node.extend({
 var _p = cc.NodeGrid.prototype;
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     _p.transform = _p._transformForWebGL;
-} else {
-    _p.transform = _p._transformForCanvas;
+    //The parent class method directly from canvas model
 }
 // Extended property
 /** @expose */

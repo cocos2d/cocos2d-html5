@@ -24,13 +24,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
+_tmp.WebGLLabelTTF = function () {
 
     var _p = cc.LabelTTF.prototype;
 
     _p.setColor = cc.Sprite.prototype.setColor;
 
-    _p._setColorsString = function(){
+    _p._setColorsString = function () {
         this._needUpdateTexture = true;
         var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
         this._shadowColorStr = "rgba(128,128,128," + this._shadowOpacity + ")";
@@ -44,8 +44,8 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
     _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
 
-    _p.initWithStringAndTextDefinition = function(text, textDefinition){
-        if(!cc.Sprite.prototype.init.call(this))
+    _p.initWithStringAndTextDefinition = function (text, textDefinition) {
+        if (!cc.Sprite.prototype.init.call(this))
             return false;
 
         // shader program
