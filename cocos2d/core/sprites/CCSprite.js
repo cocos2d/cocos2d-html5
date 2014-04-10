@@ -25,13 +25,6 @@
  ****************************************************************************/
 
 /**
- * cc.Sprite invalid index on the cc.SpriteBatchNode
- * @constant
- * @type Number
- */
-cc.SPRITE_INDEX_NOT_INITIALIZED = -1;
-
-/**
  * generate texture's cache for texture tint
  * @function
  * @param {HTMLImageElement} texture
@@ -223,15 +216,6 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     ctx.drawImage(texture, rect.x, rect.y, rect.height, rect.width, -rect.height / 2, -rect.width / 2, rect.height, rect.width);
     return nCanvas;
 };
-
-cc.RENDER_IN_SUBPIXEL = function (A) {
-    return (0 | A);
-};
-if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
-    cc.RENDER_IN_SUBPIXEL = function (A) {
-        return A;
-    };
-}
 
 /**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )  <br/>
@@ -910,7 +894,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
         // renders using Sprite Manager
         if (this._batchNode) {
-            if (this.atlasIndex != cc.SPRITE_INDEX_NOT_INITIALIZED) {
+            if (this.atlasIndex != cc.Sprite.INDEX_NOT_INITIALIZED) {
                 this.textureAtlas.updateQuad(locQuad, this.atlasIndex)
             } else {
                 // no need to set it recursively
@@ -1156,6 +1140,14 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 cc.Sprite.create = function (fileName, rect) {
     return new cc.Sprite(fileName, rect);
 };
+
+
+/**
+ * cc.Sprite invalid index on the cc.SpriteBatchNode
+ * @constant
+ * @type Number
+ */
+cc.Sprite.INDEX_NOT_INITIALIZED = -1;
 
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
@@ -1494,7 +1486,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         // self render
         if (!_t._batchNode) {
-            _t.atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
+            _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
             _t.textureAtlas = null;
             _t._recursiveDirty = false;
             _t.dirty = false;

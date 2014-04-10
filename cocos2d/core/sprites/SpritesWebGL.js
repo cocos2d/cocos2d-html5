@@ -423,7 +423,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
 
         // self render
         if (!_t._batchNode) {
-            _t.atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
+            _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
             _t.textureAtlas = null;
             _t._recursiveDirty = false;
             _t.dirty = false;

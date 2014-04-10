@@ -49,7 +49,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
         _t.setViewport();
 
         switch (projection) {
-            case cc.DIRECTOR_PROJECTION_2D:
+            case cc.Director.PROJECTION_2D:
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                 cc.kmGLLoadIdentity();
                 var orthoMatrix = new cc.kmMat4();
@@ -58,7 +58,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
                 break;
-            case cc.DIRECTOR_PROJECTION_3D:
+            case cc.Director.PROJECTION_3D:
                 var zeye = _t.getZEye();
                 var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
@@ -77,7 +77,7 @@ if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
                 cc.kmMat4LookAt(matrixLookup, eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
                 break;
-            case cc.DIRECTOR_PROJECTION_CUSTOM:
+            case cc.Director.PROJECTION_CUSTOM:
                 if (_t._projectionDelegate)
                     _t._projectionDelegate.updateProjection();
                 break;
