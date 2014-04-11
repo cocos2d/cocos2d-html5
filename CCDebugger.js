@@ -193,12 +193,12 @@ cc._LogInfos = {
 
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
 cc._logToWebPage = function (msg) {
-    if(!cc._canvas)
+    if (!cc._canvas)
         return;
 
     var logList = cc._logList;
     var doc = document;
-    if(!logList){
+    if (!logList) {
         var logDiv = doc.createElement("Div");
         var logDivStyle = logDiv.style;
 
@@ -236,7 +236,7 @@ cc._logToWebPage = function (msg) {
 };
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
-if(console.log){
+if (console.log) {
     cc.log = Function.prototype.bind.call(console.log, console);
     cc.warn = console.warn ?
         Function.prototype.bind.call(console.warn, console) :
@@ -244,9 +244,9 @@ if(console.log){
     cc.error = console.error ?
         Function.prototype.bind.call(console.error, console) :
         cc.log;
-    cc.assert = function(cond, msg){
-        if(!cond && msg){
-            for(var i= 2; i<arguments.length; i++){
+    cc.assert = function (cond, msg) {
+        if (!cond && msg) {
+            for (var i = 2; i < arguments.length; i++) {
                 msg = msg.replace("%s", arguments[i]);
             }
             throw msg;
@@ -262,30 +262,34 @@ var mode = cc.game.config[cc.game.CONFIG_KEY.debugMode];
 var ccGame = cc.game;
 
 //log
-if(console.log && mode === ccGame.DEBUG_MODE_INFO){}
-else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE)
-    mode === ccGame.DEBUG_MODE_INFO && ( cc.log = cc._logToWebPage.bind(cc) );
+if (console.log && mode === ccGame.DEBUG_MODE_INFO) {
+}
+else if (mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE)
+    cc.log = cc._logToWebPage.bind(cc);
 else
-    //Clear
-    cc.log = function(){};
+//Clear
+    cc.log = function () {
+    };
 
 //warn
-if(!mode || mode == ccGame.DEBUG_MODE_NONE || mode == ccGame.DEBUG_MODE_ERROR || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE)
-    cc.warn = function(){};
-if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE || !console.warn)
+if (!mode || mode == ccGame.DEBUG_MODE_NONE || mode == ccGame.DEBUG_MODE_ERROR || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE)
+    cc.warn = function () {
+    };
+if (mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE || !console.warn)
     cc.warn = cc._logToWebPage.bind(cc);
 
 
-
 //error and assert
-if(!mode || mode == ccGame.DEBUG_MODE_NONE) {
-    cc.error = function(){};
-    cc.assert = function(){};
-}else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE || !console.error){
+if (!mode || mode == ccGame.DEBUG_MODE_NONE) {
+    cc.error = function () {
+    };
+    cc.assert = function () {
+    };
+} else if (mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE || mode == ccGame.DEBUG_MODE_WARN_FOR_WEB_PAGE || mode == ccGame.DEBUG_MODE_ERROR_FOR_WEB_PAGE || !console.error) {
     cc.error = cc._logToWebPage.bind(cc);
-    cc.assert = function(cond, msg){
-        if(!cond && msg){
-            for(var i= 2; i<arguments.length; i++){
+    cc.assert = function (cond, msg) {
+        if (!cond && msg) {
+            for (var i = 2; i < arguments.length; i++) {
                 msg = msg.replace("%s", arguments[i]);
             }
             cc._logToWebPage(msg);
