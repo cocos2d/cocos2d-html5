@@ -24,50 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-/**
- * default size for font size
- * @constant
- * @type Number
- */
-cc.ITEM_SIZE = 32;
-
 cc._globalFontSize = cc.ITEM_SIZE;
 cc._globalFontName = "Arial";
 cc._globalFontNameRelease = false;
-
-/**
- * default tag for current item
- * @constant
- * @type Number
- */
-cc.CURRENT_ITEM = 0xc0c05001;
-/**
- * default tag for zoom action tag
- * @constant
- * @type Number
- */
-cc.ZOOM_ACTION_TAG = 0xc0c05002;
-/**
- * default tag for normal
- * @constant
- * @type Number
- */
-cc.NORMAL_TAG = 8801;
-
-/**
- * default selected tag
- * @constant
- * @type Number
- */
-cc.SELECTED_TAG = 8802;
-
-/**
- * default disabled tag
- * @constant
- * @type Number
- */
-cc.DISABLE_TAG = 8803;
 
 /**
  * Subclass cc.MenuItem (or any subclass) to create your custom cc.MenuItem objects.

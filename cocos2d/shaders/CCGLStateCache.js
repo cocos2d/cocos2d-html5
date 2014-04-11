@@ -24,40 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-// ------------------- vertex attrib flags -----------------------------
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_NONE = 0;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_POSITION = 1 << 0;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = ( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS );
-
-/**
- * GL server side states
- * @constant
- * @type {Number}
- */
-cc.GL_ALL = 0;
-
 cc._currentProjectionMatrix = -1;
 cc._vertexAttribPosition = false;
 cc._vertexAttribColor = false;

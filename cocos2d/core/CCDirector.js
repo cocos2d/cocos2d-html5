@@ -24,74 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//Possible OpenGL projections used by director
-/**
- * sets a 2D projection (orthogonal projection)
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_2D = 0;
-
 cc.g_NumberOfDraws = 0;
-
-/**
- * sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_3D = 1;
-
-/**
- * it calls "updateProjection" on the projection delegate.
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_CUSTOM = 3;
-
-/**
- * Default projection is 3D projection
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_DEFAULT = cc.DIRECTOR_PROJECTION_3D;
-
-//----------------------------------------------------------------------------------------------------------------------
-//Possible device orientations
-/**
- * Device oriented vertically, home button on the bottom (UIDeviceOrientationPortrait)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_PORTRAIT = 0;
-
-/**
- * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = 1;
-
-/**
- * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = 2;
-
-/**
- * Device oriented horizontally, home button on the left (UIDeviceOrientationLandscapeRight)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
-
-/**
- * In browsers, we only support 2 orientations by change window size.
- * @constant
- * @type Number
- */
-cc.DEVICE_MAX_ORIENTATIONS = 2;
-
 
 cc.GLToClipTransform = function (transformOut) {
     var projection = new cc.kmMat4();
@@ -197,7 +130,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         this._oldAnimationInterval = this._animationInterval = 1.0 / cc.defaultFPS;
         this._scenesStack = [];
         // Set default projection (3D)
-        this._projection = cc.DIRECTOR_PROJECTION_DEFAULT;
+        this._projection = cc.Director.PROJECTION_DEFAULT;
         // projection delegate if "Custom" projection is used
         this._projectionDelegate = null;
 
@@ -871,6 +804,35 @@ cc.Director._getInstance = function () {
  * @type Number
  */
 cc.defaultFPS = 60;
+
+//Possible OpenGL projections used by director
+/**
+ * sets a 2D projection (orthogonal projection)
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_2D = 0;
+
+/**
+ * sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_3D = 1;
+
+/**
+ * it calls "updateProjection" on the projection delegate.
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_CUSTOM = 3;
+
+/**
+ * Default projection is 3D projection
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_3D;
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 

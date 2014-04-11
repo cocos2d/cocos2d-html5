@@ -491,7 +491,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
          gl.viewport(0, 0, size.width * cc.contentScaleFactor(), size.height * cc.contentScaleFactor());
 
          // special viewport for 3d projection + retina display
-         if (director.getProjection() == cc.DIRECTOR_PROJECTION_3D && cc.contentScaleFactor() != 1) {
+         if (director.getProjection() == cc.Director.PROJECTION_3D && cc.contentScaleFactor() != 1) {
          gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.contentScaleFactor()), (size.height * cc.contentScaleFactor()));
          }
 
