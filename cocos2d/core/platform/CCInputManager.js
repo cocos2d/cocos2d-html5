@@ -288,7 +288,11 @@ cc.inputManager = /** @lends cc.inputManager# */{
         for (var i = 0; i < length; i++) {
             touch_event = event.changedTouches[i];
             if (touch_event) {
-                var location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos);
+                var location;
+                if (cc.sys.BROWSER_TYPE_FIREFOX === cc.sys.browserType)
+                    location = locView.convertToLocationInView(touch_event.pageX, touch_event.pageY, pos);
+                else
+                    location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos);
                 if (touch_event.identifier != null) {
                     touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                     //use Touch Pool
