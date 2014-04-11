@@ -193,6 +193,7 @@ cc._LogInfos = {
 
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++
 cc._logToWebPage = function (msg) {
+    alert(1);
     if(!cc._canvas)
         return;
 
@@ -264,7 +265,7 @@ var ccGame = cc.game;
 //log
 if(console.log && mode === ccGame.DEBUG_MODE_INFO){}
 else if(mode == ccGame.DEBUG_MODE_INFO_FOR_WEB_PAGE)
-    mode === ccGame.DEBUG_MODE_INFO && ( cc.log = cc._logToWebPage.bind(cc) );
+    cc.log = cc._logToWebPage.bind(cc);
 else
     //Clear
     cc.log = function(){};
