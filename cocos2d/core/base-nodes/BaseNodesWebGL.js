@@ -131,10 +131,14 @@ _tmp.WebGLCCNode = function () {
         if (_t._camera != null && !(_t.grid != null && _t.grid.isActive())) {
             var apx = _t._anchorPointInPoints.x, apy = _t._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
-            if (translate) {
-                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
+            if (translate){
+                if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                    apx = 0 | apx;
+                    apy = 0 | apy;
+                }
+                cc.kmGLTranslatef(apx, apy, 0);
                 _t._camera.locate();
-                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(-apx), cc.RENDER_IN_SUBPIXEL(-apy), 0);
+                cc.kmGLTranslatef(-apx, -apy, 0);
             } else {
                 _t._camera.locate();
             }

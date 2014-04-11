@@ -303,10 +303,20 @@ _tmp.WebGLSprite = function () {
                 var dy = x1 * sr + y2 * cr2 + y;
 
                 var locVertexZ = _t._vertexZ;
-                locQuad.bl.vertices = {x: cc.RENDER_IN_SUBPIXEL(ax), y: cc.RENDER_IN_SUBPIXEL(ay), z: locVertexZ};
-                locQuad.br.vertices = {x: cc.RENDER_IN_SUBPIXEL(bx), y: cc.RENDER_IN_SUBPIXEL(by), z: locVertexZ};
-                locQuad.tl.vertices = {x: cc.RENDER_IN_SUBPIXEL(dx), y: cc.RENDER_IN_SUBPIXEL(dy), z: locVertexZ};
-                locQuad.tr.vertices = {x: cc.RENDER_IN_SUBPIXEL(cx), y: cc.RENDER_IN_SUBPIXEL(cy), z: locVertexZ};
+                if(!cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
+                    ax = 0 | ax;
+                    ay = 0 | ay;
+                    bx = 0 | bx;
+                    by = 0 | by;
+                    cx = 0 | cx;
+                    cy = 0 | cy;
+                    dx = 0 | dx;
+                    dy = 0 | dy;
+                }
+                locQuad.bl.vertices = {x: ax, y: ay, z: locVertexZ};
+                locQuad.br.vertices = {x: bx, y: by, z: locVertexZ};
+                locQuad.tl.vertices = {x: dx, y: dy, z: locVertexZ};
+                locQuad.tr.vertices = {x: cx, y: cy, z: locVertexZ};
             }
             _t.textureAtlas.updateQuad(locQuad, _t.atlasIndex);
             _t._recursiveDirty = false;
@@ -420,7 +430,7 @@ _tmp.WebGLSprite = function () {
 
         // self render
         if (!_t._batchNode) {
-            _t.atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
+            _t.atlasIndex = cc.Sprite.INDEX_NOT_INITIALIZED;
             _t.textureAtlas = null;
             _t._recursiveDirty = false;
             _t.dirty = false;

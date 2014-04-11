@@ -414,3 +414,290 @@ cc.checkGLErrorDebug = function () {
         }
     }
 };
+
+//Possible device orientations
+/**
+ * Device oriented vertically, home button on the bottom (UIDeviceOrientationPortrait)
+ * @constant
+ * @type Number
+ */
+cc.DEVICE_ORIENTATION_PORTRAIT = 0;
+
+/**
+ * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
+ * @constant
+ * @type Number
+ */
+cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = 1;
+
+/**
+ * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
+ * @constant
+ * @type Number
+ */
+cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = 2;
+
+/**
+ * Device oriented horizontally, home button on the left (UIDeviceOrientationLandscapeRight)
+ * @constant
+ * @type Number
+ */
+cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
+
+/**
+ * In browsers, we only support 2 orientations by change window size.
+ * @constant
+ * @type Number
+ */
+cc.DEVICE_MAX_ORIENTATIONS = 2;
+
+
+// ------------------- vertex attrib flags -----------------------------
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_FLAG_NONE = 0;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_FLAG_POSITION = 1 << 0;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = ( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS );
+
+/**
+ * GL server side states
+ * @constant
+ * @type {Number}
+ */
+cc.GL_ALL = 0;
+
+//-------------Vertex Attributes-----------
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_POSITION = 0;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_COLOR = 1;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_TEX_COORDS = 2;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.VERTEX_ATTRIB_MAX = 3;
+
+//------------Uniforms------------------
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_PMATRIX = 0;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_MVMATRIX = 1;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_MVPMATRIX = 2;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_TIME = 3;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_SINTIME = 4;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_COSTIME = 5;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_RANDOM01 = 6;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_SAMPLER = 7;
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.UNIFORM_MAX = 8;
+
+//------------Shader Name---------------
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_TEXTURECOLOR = "ShaderPositionTextureColor";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_COLOR = "ShaderPositionColor";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTexture_uColor";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_UCOLOR = "ShaderPosition_uColor";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_LENGTHTEXTURECOLOR = "ShaderPositionLengthTextureColor";
+
+//------------uniform names----------------
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_PMATRIX_S = "CC_PMatrix";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_MVMATRIX_S = "CC_MVMatrix";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_MVPMATRIX_S = "CC_MVPMatrix";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_TIME_S = "CC_Time";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_SINTIME_S = "CC_SinTime";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_COSTIME_S = "CC_CosTime";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_RANDOM01_S = "CC_Random01";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_SAMPLER_S = "CC_Texture0";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.UNIFORM_ALPHA_TEST_VALUE_S = "CC_alpha_value";
+
+//------------Attribute names--------------
+/**
+ * @constant
+ * @type {String}
+ */
+cc.ATTRIBUTE_NAME_COLOR = "a_color";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.ATTRIBUTE_NAME_POSITION = "a_position";
+/**
+ * @constant
+ * @type {String}
+ */
+cc.ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
+
+
+/**
+ * default size for font size
+ * @constant
+ * @type Number
+ */
+cc.ITEM_SIZE = 32;
+
+/**
+ * default tag for current item
+ * @constant
+ * @type Number
+ */
+cc.CURRENT_ITEM = 0xc0c05001;
+/**
+ * default tag for zoom action tag
+ * @constant
+ * @type Number
+ */
+cc.ZOOM_ACTION_TAG = 0xc0c05002;
+/**
+ * default tag for normal
+ * @constant
+ * @type Number
+ */
+cc.NORMAL_TAG = 8801;
+
+/**
+ * default selected tag
+ * @constant
+ * @type Number
+ */
+cc.SELECTED_TAG = 8802;
+
+/**
+ * default disabled tag
+ * @constant
+ * @type Number
+ */
+cc.DISABLE_TAG = 8803;
