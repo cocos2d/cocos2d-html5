@@ -301,25 +301,21 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         hAlignment = hAlignment || cc.TEXT_ALIGNMENT_LEFT;
         vAlignment = vAlignment || cc.VERTICAL_TEXT_ALIGNMENT_TOP;
 
-        if (cc.Sprite.prototype.init.call(this)) {
-            this._labelContext = null;
-            this._opacityModifyRGB = false;
-            this._dimensions = cc.size(dimensions.width, dimensions.height);
-            this._fontName = fontName || "Arial";
-            this._hAlignment = hAlignment;
-            this._vAlignment = vAlignment;
+        this._opacityModifyRGB = false;
+        this._dimensions = cc.size(dimensions.width, dimensions.height);
+        this._fontName = fontName || "Arial";
+        this._hAlignment = hAlignment;
+        this._vAlignment = vAlignment;
 
-            //this._fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.contentScaleFactor();
-            this._fontSize = fontSize;
-            this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
-            this.string = strInfo;
-            this._setColorsString();
-            this._updateTexture();
-            this._needUpdateTexture = false;
-            return true;
-        }
-        return false;
+        //this._fontSize = (cc._renderType === cc._RENDER_TYPE_CANVAS) ? fontSize : fontSize * cc.contentScaleFactor();
+        this._fontSize = fontSize;
+        this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
+        this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
+        this.string = strInfo;
+        this._setColorsString();
+        this._updateTexture();
+        this._needUpdateTexture = false;
+        return true;
     },
 
     /**
@@ -1070,9 +1066,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.updateDisplayedOpacity = cc.Sprite.prototype.updateDisplayedOpacity;
 
     _p.initWithStringAndTextDefinition = function (text, textDefinition) {
-        if (!cc.Sprite.prototype.init.call(this))
-            return false;
-
         // prepare everything needed to render the label
         this._updateWithTextDefinition(textDefinition, false);
 

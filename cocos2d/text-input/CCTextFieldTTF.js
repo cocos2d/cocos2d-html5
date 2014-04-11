@@ -123,13 +123,11 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         if(fontSize !== undefined){
             this.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize);
             if(placeholder)
-                this._placeHolder = placeholder;
+                this.setPlaceHolder(placeholder);
         }else if(fontName === undefined && alignment !== undefined){
-            fontName = arguments[1];
-            fontSize = arguments[2];
-            this.initWithString("", fontName, fontSize);
+            this.initWithString("", arguments[1], arguments[2]);
             if(placeholder)
-                this._placeHolder = placeholder;
+                this.setPlaceHolder(placeholder);
         }
     },
 
@@ -187,17 +185,15 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         switch (arguments.length) {
             case 5:
                 if (placeholder) {
-                    this._placeHolder = placeholder;
+                    this.setPlaceHolder(placeholder);
                 }
                 return this.initWithString(this._placeHolder,fontName, fontSize, dimensions, alignment);
                 break;
             case 3:
                 if (placeholder) {
-                    this._placeHolder = placeholder;
+                    this.setPlaceHolder(placeholder);
                 }
-                fontName = arguments[1];
-                fontSize = arguments[2];
-                return this.initWithString(this._placeHolder, fontName, fontSize);
+                return this.initWithString(this._placeHolder, arguments[1], arguments[2]);
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -266,6 +262,10 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
         this.color = color;
+    },
+
+    visit: function(ctx){
+        this._super(ctx);
     },
 
     //////////////////////////////////////////////////////////////////////////
@@ -338,8 +338,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         }
 
         // set new input text
-        var sText = this._inputText.substring(0, strLen - deleteLen);
-        this.string = sText;
+        this.string = this._inputText.substring(0, strLen - deleteLen);
     },
 
     /**

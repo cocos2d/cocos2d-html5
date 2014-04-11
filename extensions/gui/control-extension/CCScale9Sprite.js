@@ -467,8 +467,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 }, this);
             }
         }
-        var batchnode = cc.SpriteBatchNode.create(file, 9);
-        return this.initWithBatchNode(batchnode, rect, false, capInsets);
+        return this.initWithBatchNode(cc.SpriteBatchNode.create(file, 9), rect, false, capInsets);
     },
 
     /**
