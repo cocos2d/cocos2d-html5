@@ -86,7 +86,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
             //animationData
             var animationData = armatureDataManager.getAnimationData(name);
             if (!animationData) {
-                cc.log("AnimationData not exist! ");
+                cc.log("AnimationData of " + name + " not exist! ");
                 return false;
             }
             this._animation.setAnimationData(animationData);
