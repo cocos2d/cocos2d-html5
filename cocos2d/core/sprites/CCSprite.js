@@ -444,10 +444,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * sprite.initWithSpriteFrameName("grossini_dance_01.png");
      */
     initWithSpriteFrameName:function (spriteFrameName) {
-
-        cc.assert(cc._LogInfos.Sprite_initWithSpriteFrameName);
-
+        cc.assert(spriteFrameName, cc._LogInfos.Sprite_initWithSpriteFrameName);
         var frame = cc.spriteFrameCache.getSpriteFrame(spriteFrameName);
+        cc.assert(frame, spriteFrameName + cc._LogInfos.Sprite_initWithSpriteFrameName1);
         return this.initWithSpriteFrame(frame);
     },
 
