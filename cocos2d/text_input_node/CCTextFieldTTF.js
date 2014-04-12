@@ -400,9 +400,7 @@ cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName,
             break;
         case 3:
             ret = new cc.TextFieldTTF();
-            fontName = arguments[1];
-            fontSize = arguments[2];
-            if (ret && ret.initWithString("", fontName, fontSize)) {
+            if (ret && ret.initWithString("", arguments[1], arguments[2])) {
                 if (placeholder)
                     ret.setPlaceHolder(placeholder);
                 return ret;
