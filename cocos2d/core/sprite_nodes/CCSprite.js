@@ -507,6 +507,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         if(!spriteFrameName)
             throw "cc.Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null";
         var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
+        if(!frame)
+            throw spriteFrameName + " is null, please check.";
         return this.initWithSpriteFrame(frame);
     },
 
