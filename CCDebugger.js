@@ -105,6 +105,7 @@ cc._LogInfos = {
     Sprite__updateBlendFunc: "cc.Sprite._updateBlendFunc(): _updateBlendFunc doesn't work when the sprite is rendered using a cc.CCSpriteBatchNode",
     Sprite_initWithSpriteFrame: "cc.Sprite.initWithSpriteFrame(): spriteFrame should be non-null",
     Sprite_initWithSpriteFrameName: "cc.Sprite.initWithSpriteFrameName(): spriteFrameName should be non-null",
+    Sprite_initWithSpriteFrameName1: " is null, please check.",
     Sprite_initWithFile: "cc.Sprite.initWithFile(): filename should be non-null",
     Sprite_setDisplayFrameWithAnimationName_3: "cc.Sprite.setDisplayFrameWithAnimationName(): animationName must be non-null",
     Sprite_reorderChild_2: "cc.Sprite.reorderChild(): child should be non-null",
