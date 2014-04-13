@@ -46,6 +46,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
     // The visible rect in content's coordinate in point
     _visibleRect: null,
 	_retinaEnabled: false,
+    _autoFullScreen: true,
     // The device's pixel ratio (for retina displays)
     _devicePixelRatio: 1,
     // the view name
@@ -241,6 +242,23 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
 	isRetinaEnabled: function() {
 		return this._retinaEnabled;
 	},
+
+    /**
+     * If enabled, the application will try automatically to enter full screen mode on mobile devices
+     * You can pass true as parameter to enable it and disable it by passing false
+     * @param {Boolean} enabled  Enable or disable auto full screen on mobile devices
+     */
+    enableAutoFullScreen: function(enabled) {
+        this._autoFullScreen = enabled ? true : false;
+    },
+
+    /**
+     * Check whether auto full screen is enabled.
+     * @return {Boolean}
+     */
+    isAutoFullScreenEnabled: function() {
+        return this._autoFullScreen;
+    },
 
     /**
      * Force destroying EGL view, subclass must implement this method.
@@ -627,7 +645,7 @@ cc.ContainerStrategy = cc.Class.extend(/** @lends cc.ContainerStrategy# */{
 
     _setupContainer: function (view, w, h) {
         var frame = view._frame;
-        if (cc.sys.isMobile && frame == document.documentElement) {
+        if (this._autoFullScreen && cc.sys.isMobile && frame == document.documentElement) {
             // Automatically full screen when user touches on mobile version
             cc.screen.autoFullScreen(frame);
         }
