@@ -885,7 +885,7 @@ cc.ScrollView = cc.Layer.extend(/** @lends cc.ScrollView# */{
     }
 });
 
-window._p = cc.ScrollView.prototype;
+var _p = cc.ScrollView.prototype;
 
 // Extended properties
 /** @expose */
@@ -913,7 +913,7 @@ cc.defineGetterSetter(_p, "delegate", _p.getDelegate, _p.setDelegate);
 _p.clippingToBounds;
 cc.defineGetterSetter(_p, "clippingToBounds", _p.isClippingToBounds, _p.setClippingToBounds);
 
-delete window._p;
+_p = null;
 
 /**
  * Returns an autoreleased scroll view object.

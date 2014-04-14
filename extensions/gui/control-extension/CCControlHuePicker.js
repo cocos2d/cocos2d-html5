@@ -174,7 +174,7 @@ cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
     }
 });
 
-window._p = cc.ControlHuePicker.prototype;
+var _p = cc.ControlHuePicker.prototype;
 
 // Extended properties
 /** @expose */
@@ -193,7 +193,7 @@ cc.defineGetterSetter(_p, "slider", _p.getSlider);
 _p.startPos;
 cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 
-delete window._p;
+_p = null;
 
 cc.ControlHuePicker.create = function (target, pos) {
     var pRet = new cc.ControlHuePicker();

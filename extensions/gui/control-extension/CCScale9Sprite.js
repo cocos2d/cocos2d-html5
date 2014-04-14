@@ -902,7 +902,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     }
 });
 
-window._p = cc.Scale9Sprite.prototype;
+var _p = cc.Scale9Sprite.prototype;
 
 // Extended properties
 /** @expose */
@@ -924,7 +924,7 @@ cc.defineGetterSetter(_p, "insetRight", _p.getInsetRight, _p.setInsetRight);
 _p.insetBottom;
 cc.defineGetterSetter(_p, "insetBottom", _p.getInsetBottom, _p.setInsetBottom);
 
-delete window._p;
+_p = null;
 
 /**
  * Creates a 9-slice sprite with a texture file, a delimitation zone and
