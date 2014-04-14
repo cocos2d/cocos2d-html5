@@ -10,13 +10,13 @@ Core Developers:
 
     Dingping Lv (David Lv)
 
-    Shengxiang Chen (Nero Chan)
-
     Ricardo Quesada
 
-    Xingsen Ma
-
     Huabin LING
+
+    Sijie Wang
+
+    Jialong Zhai
 
 Contributors:
 Name                GithubID    Main contribution
@@ -24,6 +24,7 @@ Name                GithubID    Main contribution
 Dali Kilani         @dadilcool  added instruction to read me
 
 Chris               @hannon235	added node.js api for box2d
+                                added SocketIO and SocketIO tests
 
 Jason Aeschliman    @jaeschliman  fixed cc.Node setposition
 
@@ -112,6 +113,7 @@ XiaoJun Zheng        @SmallAiTT    _getResType error fix
                                    refactor some public functions in cc to private
                                    add node.js scripts for publishing game
                                    refactor cc.CCBReader
+                                   cc.view bug fix
 
 Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
 
@@ -157,10 +159,19 @@ Andor Salga          @asalga        typo fix
 erykwalder           @erykwalder    Function.prototype.bind bug fix
 
 ZippoLag             @ZippoLag      cc.Application.getCurrentLanguage bug fix
+                                    typo fix
 
+Asano                @LaercioAsano  cc.Node bug fix
+
+Bruno Assarisse      @bassarisse    cc.LabelBMFont bug fix
+
+
+Retired Core Developers:
+      Shengxiang Chen (Nero Chan)
+      Xingsen Ma
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 
-Thanks to all developers who report & trace bugs, dicuss the engine usage in forum & QQ groups!
+Thanks to all developers who report & trace bugs, discuss the engine usage in forum & QQ groups!
 
 Special thanks to Ricardo Quesada for giving us lots of guidances & suggestions.
