@@ -246,7 +246,7 @@ cc.ControlPotentiometer = cc.Control.extend(/** @lends cc.ControlPotentiometer# 
     }
 });
 
-window._p = cc.ControlPotentiometer.prototype;
+var _p = cc.ControlPotentiometer.prototype;
 
 // Extended properties
 /** @expose */
@@ -268,7 +268,7 @@ cc.defineGetterSetter(_p, "thumbSprite", _p.getThumbSprite, _p.setThumbSprite);
 _p.prevLocation;
 cc.defineGetterSetter(_p, "prevLocation", _p.getPreviousLocation, _p.setPreviousLocation);
 
-delete window._p;
+_p = null;
 
 cc.ControlPotentiometer.create = function (backgroundFile, progressFile, thumbFile) {
     var pRet = new cc.ControlPotentiometer();

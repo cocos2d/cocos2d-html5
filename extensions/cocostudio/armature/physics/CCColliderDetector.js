@@ -56,13 +56,13 @@ ccs.ColliderFilter = ccs.Class.extend(/** @lends ccs.ColliderFilter# */{
 ccs.ColliderBody = ccs.Class.extend(/** @lends ccs.ColliderBody# */{
     shape: null,
     coutourData: null,
-    colliderFilter:null,
-    _calculatedVertexList:null,
+    colliderFilter: null,
+    _calculatedVertexList: null,
     ctor: function (contourData) {
         this.shape = null;
         this.coutourData = contourData;
         this.colliderFilter = new ccs.ColliderFilter();
-        if(ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX){
+        if (ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
             this._calculatedVertexList = [];
         }
     },
@@ -119,7 +119,7 @@ ccs.ColliderBody = ccs.Class.extend(/** @lends ccs.ColliderBody# */{
      * get calculated vertex list
      * @returns {Array}
      */
-    getCalculatedVertexList:function(){
+    getCalculatedVertexList: function () {
         return this._calculatedVertexList;
     }
 });
@@ -188,7 +188,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
     removeContourData: function (contourData) {
         var locColliderBodyList = this._colliderBodyList;
         for (var i = 0; i < locColliderBodyList.length; i++) {
-            if(locColliderBodyList[i].getContourData()==contourData){
+            if (locColliderBodyList[i].getContourData() == contourData) {
                 locColliderBodyList.splice(i, 1);
                 return;
             }
@@ -223,7 +223,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
      * get colliderFilter
      * @returns {ccs.ColliderFilter}
      */
-    getColliderFilter:function(){
+    getColliderFilter: function () {
         return this._filter;
     },
 
@@ -283,14 +283,14 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
                     shape.verts[j * 2 + 1] = locHelpPoint.y;
                 }
                 if (ccs.ENABLE_PHYSICS_SAVE_CALCULATED_VERTEX) {
-                    var v =  cc.p(0, 0);
+                    var v = cc.p(0, 0);
                     v.x = locHelpPoint.x;
                     v.y = locHelpPoint.y;
                     cvs[j] = v;
                 }
             }
             if (shape) {
-                for (var j = 0; j < vs.length; j++)            {
+                for (var j = 0; j < vs.length; j++) {
                     var b = shape.verts[(j + 1) % shape.verts.length];
                     var n = cp.v.normalize(cp.v.perp(cp.v.sub(b, shape.verts[j])));
                     shape.axes[j].n = n;
@@ -318,7 +318,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
             var shape = new cp.PolyShape(this._body, verts, cp.vzero);
             shape.sensor = true;
             shape.data = this._bone;
-            if (this._active){
+            if (this._active) {
                 this._body.space.addShape(shape);
             }
             colliderBody.setShape(shape);
@@ -327,7 +327,7 @@ ccs.ColliderDetector = ccs.Class.extend(/** @lends ccs.ColliderDetector# */{
     }
 });
 
-window._p = ccs.ColliderDetector.prototype;
+var _p = ccs.ColliderDetector.prototype;
 
 // Extended properties
 /** @expose */
@@ -340,7 +340,7 @@ cc.defineGetterSetter(_p, "active", _p.getActive, _p.setActive);
 _p.body;
 cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
 
-delete window._p;
+_p = null;
 
 ccs.ColliderDetector.create = function (bone) {
     var colliderDetector = new ccs.ColliderDetector();

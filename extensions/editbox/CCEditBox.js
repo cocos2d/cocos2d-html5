@@ -222,7 +222,7 @@ cc.EditBox = cc.ControlButton.extend({
     _placeholderFontSize: 14,
 
     _tooltip: false,
-    _className:"EditBox",
+    _className: "EditBox",
 
     /**
      * * Constructor.
@@ -234,7 +234,8 @@ cc.EditBox = cc.ControlButton.extend({
         this._placeholderColor = cc.color.GRAY;
         this.setContentSize(boxSize);
         var tmpDOMSprite = this._domInputSprite = new cc.Sprite();
-        tmpDOMSprite.draw = function(){ };                           //redefine draw function
+        tmpDOMSprite.draw = function () {
+        };                           //redefine draw function
         this.addChild(tmpDOMSprite);
         var selfPointer = this;
         var tmpEdTxt = this._edTxt = cc.newElement("input");
@@ -264,7 +265,7 @@ cc.EditBox = cc.ControlButton.extend({
         cc._addEventListener(tmpEdTxt, "focus", function () {
             if (this.value == selfPointer._placeholderText) {
                 this.value = "";
-                this.style.fontSize = selfPointer._edFontSize + "px" ;
+                this.style.fontSize = selfPointer._edFontSize + "px";
                 this.style.color = cc.colorToHex(selfPointer._textColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
@@ -273,7 +274,7 @@ cc.EditBox = cc.ControlButton.extend({
         cc._addEventListener(tmpEdTxt, "blur", function () {
             if (this.value == "") {
                 this.value = selfPointer._placeholderText;
-                this.style.fontSize = selfPointer._placeholderFontSize + "px" ;
+                this.style.fontSize = selfPointer._placeholderFontSize + "px";
                 this.style.color = cc.colorToHex(selfPointer._placeholderColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidEnd)
@@ -285,8 +286,8 @@ cc.EditBox = cc.ControlButton.extend({
         cc.DOM.convert(tmpDOMSprite);
         tmpDOMSprite.dom.appendChild(tmpEdTxt);
         tmpDOMSprite.dom.showTooltipDiv = false;
-        tmpDOMSprite.dom.style.width = (boxSize.width - 6) +"px";
-        tmpDOMSprite.dom.style.height = (boxSize.height - 6) +"px";
+        tmpDOMSprite.dom.style.width = (boxSize.width - 6) + "px";
+        tmpDOMSprite.dom.style.height = (boxSize.height - 6) + "px";
 
         //this._domInputSprite.dom.style.borderWidth = "1px";
         //this._domInputSprite.dom.style.borderStyle = "solid";
@@ -305,20 +306,20 @@ cc.EditBox = cc.ControlButton.extend({
         this._setFontToEditBox();
     },
 
-	_setFont: function (fontStyle) {
-		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
-		if(res) {
-			this._edFontSize = parseInt(res[1]);
-			this._edFontName = res[2];
-			this._setFontToEditBox();
-		}
-	},
+    _setFont: function (fontStyle) {
+        var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
+        if (res) {
+            this._edFontSize = parseInt(res[1]);
+            this._edFontName = res[2];
+            this._setFontToEditBox();
+        }
+    },
 
     /**
      * set fontName
      * @param {String} fontName
      */
-    setFontName: function(fontName){
+    setFontName: function (fontName) {
         this._edFontName = fontName;
         this._setFontToEditBox();
     },
@@ -327,15 +328,15 @@ cc.EditBox = cc.ControlButton.extend({
      * set fontSize
      * @param {Number} fontSize
      */
-    setFontSize: function(fontSize){
+    setFontSize: function (fontSize) {
         this._edFontSize = fontSize;
         this._setFontToEditBox();
     },
 
     _setFontToEditBox: function () {
-        if (this._edTxt.value != this._placeholderText){
+        if (this._edTxt.value != this._placeholderText) {
             this._edTxt.style.fontFamily = this._edFontName;
-            this._edTxt.style.fontSize = this._edFontSize+"px";
+            this._edTxt.style.fontSize = this._edFontSize + "px";
         }
     },
 
@@ -414,14 +415,14 @@ cc.EditBox = cc.ControlButton.extend({
         this._placeholderFontSize = fontSize;
         this._setPlaceholderFontToEditText();
     },
-	_setPlaceholderFont: function (fontStyle) {
-		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
-		if(res) {
-			this._placeholderFontName = res[2];
-			this._placeholderFontSize = parseInt(res[1]);
-			this._setPlaceholderFontToEditText();
-		}
-	},
+    _setPlaceholderFont: function (fontStyle) {
+        var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
+        if (res) {
+            this._placeholderFontName = res[2];
+            this._placeholderFontSize = parseInt(res[1]);
+            this._setPlaceholderFontToEditText();
+        }
+    },
 
     /**
      * Set the placeholder's fontName.
@@ -442,7 +443,7 @@ cc.EditBox = cc.ControlButton.extend({
     },
 
     _setPlaceholderFontToEditText: function () {
-        if (this._edTxt.value == this._placeholderText){
+        if (this._edTxt.value == this._placeholderText) {
             this._edTxt.style.fontFamily = this._placeholderFontName;
             this._edTxt.style.fontSize = this._placeholderFontSize + "px";
         }
@@ -488,12 +489,12 @@ cc.EditBox = cc.ControlButton.extend({
     initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
         if (this.initWithBackgroundSprite(normal9SpriteBg)) {
             this._domInputSprite.x = 3;
-	        this._domInputSprite.y = 3;
+            this._domInputSprite.y = 3;
 
             this.setZoomOnTouchDown(false);
             this.setPreferredSize(size);
             this.x = 0;
-	        this.y = 0;
+            this.y = 0;
             this._addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
             return true;
         }
@@ -573,7 +574,7 @@ cc.EditBox = cc.ControlButton.extend({
     }
 });
 
-window._p = cc.EditBox.prototype;
+var _p = cc.EditBox.prototype;
 
 // Extended properties
 /** @expose */
@@ -622,7 +623,7 @@ cc.defineGetterSetter(_p, "inputMode", null, _p.setInputMode);
 _p.returnType;
 cc.defineGetterSetter(_p, "returnType", null, _p.setReturnType);
 
-delete window._p;
+_p = null;
 
 cc.EditBox.getRect = function (node) {
     var contentSize = node.getContentSize();

@@ -208,7 +208,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend(/** @lends cc.ControlSa
     }
 });
 
-window._p = cc.ControlSaturationBrightnessPicker.prototype;
+var _p = cc.ControlSaturationBrightnessPicker.prototype;
 
 // Extended properties
 /** @expose */
@@ -233,7 +233,7 @@ cc.defineGetterSetter(_p, "slider", _p.getSlider);
 _p.startPos;
 cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 
-delete window._p;
+_p = null;
 
 cc.ControlSaturationBrightnessPicker.create = function (target, pos) {
     var pRet = new cc.ControlSaturationBrightnessPicker();
