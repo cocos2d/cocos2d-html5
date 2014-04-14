@@ -34,7 +34,7 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     _fileHasInit: false,
     _fntFileName: "",
     _stringValue: "",
-    _className:"TextBMFont",
+    _className: "TextBMFont",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._labelBMFontRenderer = null;
@@ -94,22 +94,22 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
      * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
     setAnchorPoint: function (point, y) {
-        if(y === undefined){
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
-	        this._labelBMFontRenderer.setAnchorPoint(point);
+        if (y === undefined) {
+            ccui.Widget.prototype.setAnchorPoint.call(this, point);
+            this._labelBMFontRenderer.setAnchorPoint(point);
         } else {
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
-	        this._labelBMFontRenderer.setAnchorPoint(point, y);
+            ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
+            this._labelBMFontRenderer.setAnchorPoint(point, y);
         }
     },
-	_setAnchorX: function (value) {
-		ccui.Widget.prototype._setAnchorX.call(this, value);
-		this._labelBMFontRenderer._setAnchorX(value);
-	},
-	_setAnchorY: function (value) {
-		ccui.Widget.prototype._setAnchorY.call(this, value);
-		this._labelBMFontRenderer._setAnchorY(value);
-	},
+    _setAnchorX: function (value) {
+        ccui.Widget.prototype._setAnchorX.call(this, value);
+        this._labelBMFontRenderer._setAnchorX(value);
+    },
+    _setAnchorY: function (value) {
+        ccui.Widget.prototype._setAnchorY.call(this, value);
+        this._labelBMFontRenderer._setAnchorY(value);
+    },
 
     onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
@@ -123,12 +123,12 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     getContentSize: function () {
         return this._labelBMFontRenderer.getContentSize();
     },
-	_getWidth: function () {
-		return this._labelBMFontRenderer._getWidth();
-	},
-	_getHeight: function () {
-		return this._labelBMFontRenderer._getHeight();
-	},
+    _getWidth: function () {
+        return this._labelBMFontRenderer._getWidth();
+    },
+    _getHeight: function () {
+        return this._labelBMFontRenderer._getHeight();
+    },
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -184,14 +184,14 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     }
 });
 
-window._p = ccui.TextBMFont.prototype;
+var _p = ccui.TextBMFont.prototype;
 
 // Extended properties
 /** @expose */
 _p.string;
 cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
 
-delete window._p;
+_p = null;
 
 /**
  * allocates and initializes a UILabelBMFont.
