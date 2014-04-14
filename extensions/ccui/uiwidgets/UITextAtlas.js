@@ -36,7 +36,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _itemWidth: 0,
     _itemHeight: 0,
     _startCharMap: "",
-    _className:"TextAtlas",
+    _className: "TextAtlas",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._labelAtlasRenderer = null;
@@ -98,21 +98,21 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      */
     setAnchorPoint: function (point, y) {
         if (y === undefined) {
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
-	        this._labelAtlasRenderer.setAnchorPoint(point);
+            ccui.Widget.prototype.setAnchorPoint.call(this, point);
+            this._labelAtlasRenderer.setAnchorPoint(point);
         } else {
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
-	        this._labelAtlasRenderer.setAnchorPoint(point, y);
+            ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
+            this._labelAtlasRenderer.setAnchorPoint(point, y);
         }
     },
-	_setAnchorX: function (value) {
-		ccui.Widget.prototype._setAnchorX.call(this, value);
-		this._labelAtlasRenderer._setAnchorX(value);
-	},
-	_setAnchorY: function (value) {
-		ccui.Widget.prototype._setAnchorY.call(this, value);
-		this._labelAtlasRenderer._setAnchorY(value);
-	},
+    _setAnchorX: function (value) {
+        ccui.Widget.prototype._setAnchorX.call(this, value);
+        this._labelAtlasRenderer._setAnchorX(value);
+    },
+    _setAnchorY: function (value) {
+        ccui.Widget.prototype._setAnchorY.call(this, value);
+        this._labelAtlasRenderer._setAnchorY(value);
+    },
 
     onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
@@ -126,12 +126,12 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     getContentSize: function () {
         return this._labelAtlasRenderer.getContentSize();
     },
-	_getWidth: function () {
-		return this._labelAtlasRenderer._getWidth();
-	},
-	_getHeight: function () {
-		return this._labelAtlasRenderer._getHeight();
-	},
+    _getWidth: function () {
+        return this._labelAtlasRenderer._getWidth();
+    },
+    _getHeight: function () {
+        return this._labelAtlasRenderer._getHeight();
+    },
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -186,14 +186,14 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     }
 });
 
-window._p = ccui.TextAtlas.prototype;
+var _p = ccui.TextAtlas.prototype;
 
 // Extended properties
 /** @expose */
 _p.string;
 cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
 
-delete window._p;
+_p = null;
 
 /**
  * allocates and initializes a UILabelAtlas.

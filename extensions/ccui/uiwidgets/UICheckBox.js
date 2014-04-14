@@ -48,7 +48,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     _frontCrossFileName: "",
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
-    _className:"CheckBox",
+    _className: "CheckBox",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._backGroundBoxRenderer = null;
@@ -137,11 +137,11 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this.updateAnchorPoint();
         this.updateFlippedX();
         this.updateFlippedY();
-        if(!bgBoxRenderer.textureLoaded()){
+        if (!bgBoxRenderer.textureLoaded()) {
             this._backGroundBoxRenderer.setContentSize(this._customSize);
-            bgBoxRenderer.addLoadedEventListener(function(){
+            bgBoxRenderer.addLoadedEventListener(function () {
                 this.backGroundTextureScaleChangedWithSize();
-            },this);
+            }, this);
         }
         this.backGroundTextureScaleChangedWithSize();
     },
@@ -261,7 +261,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this.frontCrossDisabledTextureScaleChangedWithSize();
     },
 
-    onTouchEnded: function (touch , event) {
+    onTouchEnded: function (touch, event) {
         var touchPoint = touch.getLocation();
         this._touchEndPos.x = touchPoint.x;
         this._touchEndPos.y = touchPoint.y;
@@ -278,7 +278,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         }
         this.setFocused(false);
         var widgetParent = this.getWidgetParent();
-        if(widgetParent){
+        if (widgetParent) {
             widgetParent.checkChildInfo(2, this, touchPoint);
         }
     },
@@ -363,38 +363,38 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
      * @param {Number} [y] The anchor point.y of UICheckBox.
      */
     setAnchorPoint: function (point, y) {
-        if(y === undefined){
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point);
-	        this._backGroundBoxRenderer.setAnchorPoint(point);
-	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
-	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
-	        this._frontCrossRenderer.setAnchorPoint(point);
-	        this._frontCrossDisabledRenderer.setAnchorPoint(point);
-        }else{
-	        ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
-	        this._backGroundBoxRenderer.setAnchorPoint(point, y);
-	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
-	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
-	        this._frontCrossRenderer.setAnchorPoint(point, y);
-	        this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
+        if (y === undefined) {
+            ccui.Widget.prototype.setAnchorPoint.call(this, point);
+            this._backGroundBoxRenderer.setAnchorPoint(point);
+            this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
+            this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
+            this._frontCrossRenderer.setAnchorPoint(point);
+            this._frontCrossDisabledRenderer.setAnchorPoint(point);
+        } else {
+            ccui.Widget.prototype.setAnchorPoint.call(this, point, y);
+            this._backGroundBoxRenderer.setAnchorPoint(point, y);
+            this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
+            this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
+            this._frontCrossRenderer.setAnchorPoint(point, y);
+            this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
         }
     },
-	_setAnchorX: function (value) {
-		ccui.Widget.prototype._setAnchorX.call(this, value);
-		this._backGroundBoxRenderer._setAnchorX(value);
-		this._backGroundSelectedBoxRenderer._setAnchorX(value);
-		this._backGroundBoxDisabledRenderer._setAnchorX(value);
-		this._frontCrossRenderer._setAnchorX(value);
-		this._frontCrossDisabledRenderer._setAnchorX(value);
-	},
-	_setAnchorY: function (value) {
-		ccui.Widget.prototype._setAnchorY.call(this, value);
-		this._backGroundBoxRenderer._setAnchorY(value);
-		this._backGroundSelectedBoxRenderer._setAnchorY(value);
-		this._backGroundBoxDisabledRenderer._setAnchorY(value);
-		this._frontCrossRenderer._setAnchorY(value);
-		this._frontCrossDisabledRenderer._setAnchorY(value);
-	},
+    _setAnchorX: function (value) {
+        ccui.Widget.prototype._setAnchorX.call(this, value);
+        this._backGroundBoxRenderer._setAnchorX(value);
+        this._backGroundSelectedBoxRenderer._setAnchorX(value);
+        this._backGroundBoxDisabledRenderer._setAnchorX(value);
+        this._frontCrossRenderer._setAnchorX(value);
+        this._frontCrossDisabledRenderer._setAnchorX(value);
+    },
+    _setAnchorY: function (value) {
+        ccui.Widget.prototype._setAnchorY.call(this, value);
+        this._backGroundBoxRenderer._setAnchorY(value);
+        this._backGroundSelectedBoxRenderer._setAnchorY(value);
+        this._backGroundBoxDisabledRenderer._setAnchorY(value);
+        this._frontCrossRenderer._setAnchorY(value);
+        this._frontCrossDisabledRenderer._setAnchorY(value);
+    },
 
     onSizeChanged: function () {
         ccui.Widget.prototype.onSizeChanged.call(this);
@@ -412,12 +412,12 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     getContentSize: function () {
         return this._backGroundBoxRenderer.getContentSize();
     },
-	_getWidth: function () {
-		return this._backGroundBoxRenderer._getWidth();
-	},
-	_getHeight: function () {
-		return this._backGroundBoxRenderer._getHeight();
-	},
+    _getWidth: function () {
+        return this._backGroundBoxRenderer._getWidth();
+    },
+    _getHeight: function () {
+        return this._backGroundBoxRenderer._getHeight();
+    },
 
     /**
      * override "getVirtualRenderer" method of widget.
@@ -553,14 +553,14 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     }
 });
 
-window._p = ccui.CheckBox.prototype;
+var _p = ccui.CheckBox.prototype;
 
 // Extended properties
 /** @expose */
 _p.selected;
 cc.defineGetterSetter(_p, "selected", _p.getSelectedState, _p.setSelectedState);
 
-delete window._p;
+_p = null;
 
 /**
  * allocates and initializes a UICheckBox.
