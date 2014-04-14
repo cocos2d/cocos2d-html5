@@ -30,15 +30,15 @@
  * @type Object
  */
 cc.VisibleRect = {
-    _topLeft:cc._pConst(0,0),
-    _topRight:cc._pConst(0,0),
-    _top:cc._pConst(0,0),
-    _bottomLeft:cc._pConst(0,0),
-    _bottomRight:cc._pConst(0,0),
-    _bottom:cc._pConst(0,0),
-    _center:cc._pConst(0,0),
-    _left:cc._pConst(0,0),
-    _right:cc._pConst(0,0),
+    _topLeft:cc.p(0,0),
+    _topRight:cc.p(0,0),
+    _top:cc.p(0,0),
+    _bottomLeft:cc.p(0,0),
+    _bottomRight:cc.p(0,0),
+    _bottom:cc.p(0,0),
+    _center:cc.p(0,0),
+    _left:cc.p(0,0),
+    _right:cc.p(0,0),
     _width:0,
     _height:0,
     init:function(size){
@@ -49,26 +49,26 @@ cc.VisibleRect = {
         var h = this._height;
 
         //top
-        this._topLeft._y = h;
-        this._topRight._x = w;
-        this._topRight._y = h;
-        this._top._x = w/2;
-        this._top._y = h;
+        this._topLeft.y = h;
+        this._topRight.x = w;
+        this._topRight.y = h;
+        this._top.x = w/2;
+        this._top.y = h;
 
         //bottom
-        this._bottomRight._x = w;
-        this._bottom._x = w/2;
+        this._bottomRight.x = w;
+        this._bottom.x = w/2;
 
         //center
-        this._center._x = w/2;
-        this._center._y = h/2;
+        this._center.x = w/2;
+        this._center.y = h/2;
 
         //left
-        this._left._y = h/2;
+        this._left.y = h/2;
 
         //right
-        this._right._x = w;
-        this._right._y = h/2;
+        this._right.x = w;
+        this._right.y = h/2;
     },
     getWidth:function(){
         return this._width;
@@ -77,30 +77,30 @@ cc.VisibleRect = {
         return this._height;
     },
     topLeft:function(){
-        return this._topLeft;
+        return cc.p(this._topLeft);
     },
     topRight:function(){
-        return this._topRight;
+        return cc.p(this._topRight);
     },
     top:function(){
-        return this._top;
+        return cc.p(this._top);
     },
     bottomLeft:function(){
-        return this._bottomLeft;
+        return cc.p(this._bottomLeft);
     },
     bottomRight:function(){
-        return this._bottomRight;
+        return cc.p(this._bottomRight);
     },
     bottom:function(){
-        return this._bottom;
+        return cc.p(this._bottom);
     },
     center:function(){
-        return this._center;
+        return cc.p(this._center);
     },
     left:function(){
-        return this._left;
+        return cc.p(this._left);
     },
     right:function(){
-        return this._right;
+        return cc.p(this._right);
     }
 };

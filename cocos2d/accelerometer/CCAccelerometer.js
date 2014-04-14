@@ -66,21 +66,24 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
     _delegate: null,
     _acceleration: null,
     _deviceEvent: null,
-    _interval: 0,
+    _interval: 1/30,
     _minus: 1,
+    _curTime:0,
     init: function () {
         this._acceleration = new cc.Acceleration();
-        this._deviceEvent = window.DeviceMotionEvent || window.DeviceOrientationEvent;
-        var ua = navigator.userAgent;
-        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.Browser.type == "ucbrowser")) {
-            this._minus = -1;
-        }
+        var w = window;
+        this._deviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
 
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
         if (cc.Browser.type == "mqqbrowser") {
             this._deviceEvent = window.DeviceOrientationEvent;
         }
-        return true;
+
+        this._deviceEventType = (this._deviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
+        var ua = navigator.userAgent;
+        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.Browser.type == "ucbrowser")) {
+            this._minus = -1;
+        }
     },
 
     getDelegate: function () {
@@ -89,18 +92,13 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
 
     addDelegate: function (delegate) {
         this._delegate = delegate;
-        var acc = this.didAccelerate.bind(this);
-
+        var acc = this.didAccelerate.bind(this), w = window, scheduler = cc.Director.getInstance().getScheduler();
         if (this._delegate) {
-            if (this._deviceEvent == window.DeviceMotionEvent)
-                window.addEventListener('devicemotion', acc, false);
-            else
-                window.addEventListener('deviceorientation', acc, false);
+            w.addEventListener(this._deviceEventType, acc, false);
+            scheduler.scheduleUpdateForTarget(this);
         } else {
-            if (this._deviceEvent == window.DeviceMotionEvent)
-                window.removeEventListener('devicemotion', acc);
-            else
-                window.removeEventListener('deviceorientation', acc);
+            w.removeEventListener(this._deviceEventType, acc);
+            scheduler.unscheduleUpdateForTarget(this);
         }
     },
 
@@ -115,47 +113,49 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
             return;
         }
 
-        var now = Date.now();
-         if ((now - this._acceleration.timestamp) / 1000 < this._interval) return;
-
+        var mAcceleration = this._acceleration;
         if (this._deviceEvent == window.DeviceMotionEvent) {
-            var acceleration = eventData.accelerationIncludingGravity;
-            this._acceleration.x = this._minus * acceleration.x * 0.1;
-            this._acceleration.y = this._minus * acceleration.y * 0.1;
-            this._acceleration.z = acceleration.z * 0.1;
+            var eventAcceleration = eventData.accelerationIncludingGravity;
+            mAcceleration.x = this._minus * eventAcceleration.x * 0.1;
+            mAcceleration.y = this._minus * eventAcceleration.y * 0.1;
+            mAcceleration.z = eventAcceleration.z * 0.1;
         }
         else {
-            this._acceleration.x = (eventData.gamma / 90) * 0.981;
-            this._acceleration.y = -(eventData.beta / 90) * 0.981;
-            this._acceleration.z = (eventData.alpha / 90) * 0.981;
+            mAcceleration.x = (eventData.gamma / 90) * 0.981;
+            mAcceleration.y = -(eventData.beta / 90) * 0.981;
+            mAcceleration.z = (eventData.alpha / 90) * 0.981;
         }
-        this._acceleration.timestamp = Date.now();
+        mAcceleration.timestamp = eventData.timeStamp || Date.now();
 
-        var tmp = this._acceleration.x;
+        var tmpX = mAcceleration.x;
         switch (window.orientation) {
             case cc.UIInterfaceOrientationLandscapeRight://-90
-                this._acceleration.x = -this._acceleration.y;
-                this._acceleration.y = tmp;
+                mAcceleration.x = -mAcceleration.y;
+                mAcceleration.y = tmpX;
                 break;
 
             case cc.UIInterfaceOrientationLandscapeLeft://90
-                this._acceleration.x = this._acceleration.y;
-                this._acceleration.y = -tmp;
+                mAcceleration.x = mAcceleration.y;
+                mAcceleration.y = -tmpX;
                 break;
 
             case cc.UIInterfaceOrientationPortraitUpsideDown://180
-                this._acceleration.x = -this._acceleration.x
-                this._acceleration.y = -this._acceleration.y;
+                mAcceleration.x = -mAcceleration.x;
+                mAcceleration.y = -mAcceleration.y;
                 break;
 
             case cc.UIInterfaceOrientationPortrait://0
                 break;
         }
-
-        this._delegate.onAccelerometer(this._acceleration);
+    },
+    update:function(dt){
+        if(this._curTime > this._interval){
+            this._curTime -= this._interval;
+            this._delegate.onAccelerometer(this._acceleration);
+        }
+        this._curTime += dt;
     }
 });
-
 
 cc.AccelerometerDispatcher.getInstance = function () {
     if (!this._instance) {

@@ -71,7 +71,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      */
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
-        this._positionR = cc._pConst(0, 0);
+        this._positionR = cc.p(0, 0);
         this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
         this._vertexWebGLBuffer = cc.renderContext.createBuffer();
 
@@ -129,9 +129,9 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (dst === undefined) {
             this._blendFunc = src;
-        } else if (arguments.length == 2) {
+        } else {
             this._blendFunc.src = src;
             this._blendFunc.dst = dst;
         }
@@ -278,12 +278,12 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
      */
     setPosition:function (position, yValue) {
         this._startingPositionInitialized = true;
-        if(arguments.length === 1){
-            this._positionR._x = position.x;
-            this._positionR._y = position.y;
+        if(yValue === undefined){
+            this._positionR.x = position.x;
+            this._positionR.y = position.y;
         } else {
-            this._positionR._x = position;
-            this._positionR._y = yValue;
+            this._positionR.x = position;
+            this._positionR.y = yValue;
         }
     },
 
@@ -298,7 +298,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         if(this._texture && this._texture.isLoaded()){
             ctx = ctx || cc.renderContext;
             cc.NODE_DRAW_SETUP(this);
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
             cc.glBindTexture2D(this._texture);
@@ -396,8 +396,8 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         }
 
         if (appendNewPoint) {
-            locPointVertexes[locNuPoints * 2] = this._positionR._x;
-            locPointVertexes[locNuPoints * 2 + 1] = this._positionR._y;
+            locPointVertexes[locNuPoints * 2] = this._positionR.x;
+            locPointVertexes[locNuPoints * 2 + 1] = this._positionR.y;
             locPointState[locNuPoints] = 1.0;
 
             // Color assignment

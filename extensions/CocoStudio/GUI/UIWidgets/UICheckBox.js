@@ -83,6 +83,7 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
     },
     init: function () {
         if (ccs.Widget.prototype.init.call(this)) {
+            this.setTouchEnabled(true);
             this.setSelectedState(false);
             return true;
         }
@@ -95,11 +96,11 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._frontCrossRenderer = cc.Sprite.create();
         this._backGroundBoxDisabledRenderer = cc.Sprite.create();
         this._frontCrossDisabledRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUNDBOXRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUNDBOXSELECTEDRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONTCROSSRENDERERZ, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUNDBOXDISABLEDRENDERER, -1);
-        cc.NodeRGBA.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONTCROSSDISABLEDRENDERER, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundBoxRenderer, ccs.BACKGROUNDBOXRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundSelectedBoxRenderer, ccs.BACKGROUNDBOXSELECTEDRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._frontCrossRenderer, ccs.FRONTCROSSRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._backGroundBoxDisabledRenderer, ccs.BACKGROUNDBOXDISABLEDRENDERER, -1);
+        cc.Node.prototype.addChild.call(this, this._frontCrossDisabledRenderer, ccs.FRONTCROSSDISABLEDRENDERER, -1);
     },
 
     /**
@@ -143,8 +144,10 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
                 break;
         }
 
-        this._updateDisplay();
-
+        this.updateRGBAToRenderer(bgBoxRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         if(!bgBoxRenderer.textureLoaded()){
             this._backGroundBoxRenderer.setContentSize(this._customSize);
             bgBoxRenderer.addLoadedEventListener(function(){
@@ -175,7 +178,10 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateRGBAToRenderer(this._backGroundSelectedBoxRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.backGroundSelectedTextureScaleChangedWithSize();
     },
 
@@ -201,7 +207,10 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateRGBAToRenderer(this._frontCrossRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.frontCrossTextureScaleChangedWithSize();
     },
 
@@ -227,7 +236,10 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._updateDisplay();
+        this.updateRGBAToRenderer(this._backGroundBoxDisabledRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.backGroundDisabledTextureScaleChangedWithSize();
     },
 
@@ -253,14 +265,11 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
             default:
                 break;
         }
-        this._updateDisplay();
-        this.frontCrossDisabledTextureScaleChangedWithSize();
-    },
-
-    _updateDisplay:function(){
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
+        this.updateRGBAToRenderer(this._frontCrossDisabledRenderer);
         this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
+        this.frontCrossDisabledTextureScaleChangedWithSize();
     },
 
     onTouchEnded: function (touch , event) {
@@ -343,44 +352,20 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         this._checkBoxEventListener = target;
     },
 
-    /**
-     * Sets whether the widget should be flipped horizontally or not.
-     * @param {Boolean} flipX
-     */
-    setFlippedX: function (flipX) {
-        this._backGroundBoxRenderer.setFlippedX(flipX);
-        this._backGroundSelectedBoxRenderer.setFlippedX(flipX);
-        this._frontCrossRenderer.setFlippedX(flipX);
-        this._backGroundBoxDisabledRenderer.setFlippedX(flipX);
-        this._frontCrossDisabledRenderer.setFlippedX(flipX);
+    updateFlippedX: function () {
+        this._backGroundBoxRenderer.setFlippedX(this._flippedX);
+        this._backGroundSelectedBoxRenderer.setFlippedX(this._flippedX);
+        this._frontCrossRenderer.setFlippedX(this._flippedX);
+        this._backGroundBoxDisabledRenderer.setFlippedX(this._flippedX);
+        this._frontCrossDisabledRenderer.setFlippedX(this._flippedX);
     },
 
-    /**
-     * override "setFlippedY" of widget.
-     * @param {Boolean} flipY
-     */
-    setFlippedY: function (flipY) {
-        this._backGroundBoxRenderer.setFlippedY(flipY);
-        this._backGroundSelectedBoxRenderer.setFlippedY(flipY);
-        this._frontCrossRenderer.setFlippedY(flipY);
-        this._backGroundBoxDisabledRenderer.setFlippedY(flipY);
-        this._frontCrossDisabledRenderer.setFlippedY(flipY);
-    },
-
-    /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        return this._backGroundBoxRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        return this._backGroundBoxRenderer.isFlippedY();
+    updateFlippedY: function () {
+        this._backGroundBoxRenderer.setFlippedY(this._flippedY);
+        this._backGroundSelectedBoxRenderer.setFlippedY(this._flippedY);
+        this._frontCrossRenderer.setFlippedY(this._flippedY);
+        this._backGroundBoxDisabledRenderer.setFlippedY(this._flippedY);
+        this._frontCrossDisabledRenderer.setFlippedY(this._flippedY);
     },
 
     /**
@@ -389,20 +374,20 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
      * @param {Number} [y] The anchor point.y of UICheckBox.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._backGroundBoxRenderer.setAnchorPoint(point, y);
-            this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
-            this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
-            this._frontCrossRenderer.setAnchorPoint(point, y);
-            this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._backGroundBoxRenderer.setAnchorPoint(point);
+	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
+	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
+	        this._frontCrossRenderer.setAnchorPoint(point);
+	        this._frontCrossDisabledRenderer.setAnchorPoint(point);
         }else{
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._backGroundBoxRenderer.setAnchorPoint(point);
-            this._backGroundSelectedBoxRenderer.setAnchorPoint(point);
-            this._backGroundBoxDisabledRenderer.setAnchorPoint(point);
-            this._frontCrossRenderer.setAnchorPoint(point);
-            this._frontCrossDisabledRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._backGroundBoxRenderer.setAnchorPoint(point, y);
+	        this._backGroundSelectedBoxRenderer.setAnchorPoint(point, y);
+	        this._backGroundBoxDisabledRenderer.setAnchorPoint(point, y);
+	        this._frontCrossRenderer.setAnchorPoint(point, y);
+	        this._frontCrossDisabledRenderer.setAnchorPoint(point, y);
         }
     },
 
@@ -519,6 +504,31 @@ ccs.CheckBox = ccs.Widget.extend(/** @lends ccs.CheckBox# */{
         }
     },
 
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._backGroundBoxRenderer);
+        this.updateColorToRenderer(this._backGroundSelectedBoxRenderer);
+        this.updateColorToRenderer(this._frontCrossRenderer);
+        this.updateColorToRenderer(this._backGroundBoxDisabledRenderer);
+        this.updateColorToRenderer(this._frontCrossDisabledRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._backGroundBoxRenderer);
+        this.updateOpacityToRenderer(this._backGroundSelectedBoxRenderer);
+        this.updateOpacityToRenderer(this._frontCrossRenderer);
+        this.updateOpacityToRenderer(this._backGroundBoxDisabledRenderer);
+        this.updateOpacityToRenderer(this._frontCrossDisabledRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._backGroundBoxRenderer);
+        this.updateRGBAToRenderer(this._backGroundSelectedBoxRenderer);
+        this.updateRGBAToRenderer(this._frontCrossRenderer);
+        this.updateRGBAToRenderer(this._backGroundBoxDisabledRenderer);
+        this.updateRGBAToRenderer(this._frontCrossDisabledRenderer);
+    },
+    
     /**
      * Returns the "class name" of widget.
      * @returns {string}

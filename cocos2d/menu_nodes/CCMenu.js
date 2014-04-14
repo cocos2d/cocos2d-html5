@@ -141,6 +141,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
     /**
      * initializes a cc.Menu with a Array of cc.MenuItem objects
+     * @param {Array} arrayOfItems
+     * @return {Boolean}
      */
     initWithArray:function (arrayOfItems) {
         if (this.init()) {

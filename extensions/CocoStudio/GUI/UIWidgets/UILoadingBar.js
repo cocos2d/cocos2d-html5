@@ -62,7 +62,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
 
     initRenderer: function () {
         this._barRenderer = cc.Sprite.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
         this._barRenderer.setAnchorPoint(0.0, 0.5);
     },
 
@@ -130,8 +130,8 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         if (this._scale9Enabled){
             barRenderer.setCapInsets(this._capInsets);
         }
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
+        
+        this.updateRGBAToRenderer(barRenderer);
 
         var textLoaded = barRenderer.textureLoaded();
         this._isTextureLoaded = textLoaded;
@@ -181,7 +181,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             return;
         }
         this._scale9Enabled = enabled;
-        cc.NodeRGBA.prototype.removeChild.call(this, this._barRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._barRenderer, true);
         this._barRenderer = null;
         if (this._scale9Enabled) {
             this._barRenderer = cc.Scale9Sprite.create();
@@ -190,7 +190,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             this._barRenderer = cc.Sprite.create();
         }
         this.loadTexture(this._textureFile, this._renderBarTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._barRenderer, ccs.BARRENDERERZ, -1);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -200,6 +200,15 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             this.ignoreContentAdaptWithSize(this._prevIgnoreSize);
         }
         this.setCapInsets(this._capInsets);
+        this.setPercent(this._percent);
+    },
+
+    /**
+     * Get  loadingBar is using scale9 renderer or not..
+     * @returns {Boolean}
+     */
+    isScale9Enabled:function(){
+        return this._scale9Enabled;
     },
 
     /**
@@ -212,6 +221,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             return;
         }
         this._barRenderer.setCapInsets(capInsets);
+    },
+
+    /**
+     * Get cap insets for loadingBar.
+     * @returns {cc.Rect}
+     */
+    getCapInsets:function(){
+        return this._capInsets;
     },
 
     /**
@@ -329,6 +346,18 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         this._barRenderer.setPreferredSize(cc.size(width, this._size.height));
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._barRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._barRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._barRenderer);
+    },
+    
     /**
      * Returns the "class name" of widget.
      * @returns {string}
@@ -347,6 +376,7 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
         this.loadTexture(loadingBar._textureFile, loadingBar._renderBarTexType);
         this.setCapInsets(loadingBar._capInsets);
         this.setPercent(loadingBar._percent);
+        this.setDirection(loadingBar._barType);
     }
 });
 /**

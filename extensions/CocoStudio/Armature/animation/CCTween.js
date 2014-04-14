@@ -206,7 +206,6 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
                     this._currentFrame = ccs.fmodf(this._currentFrame, this._nextFrameIndex);
                     this._totalDuration = 0;
                     this._betweenDuration = 0;
-                    this._fromIndex = this._toIndex = 0;
                     break;
             }
         }
@@ -269,11 +268,12 @@ ccs.Tween = ccs.ProcessBase.extend(/** @lends ccs.Tween# */{
             var displayManager = locBone.getDisplayManager();
             if (!displayManager.getForceChangeDisplay()) {
                 displayManager.changeDisplayWithIndex(displayIndex, false);
-
+                var locRenderNode = displayManager.getDisplayRenderNode();
+                if(locRenderNode)
+                    locRenderNode.setBlendFunc(keyFrameData.blendFunc);
             }
             this._tweenData.zOrder = keyFrameData.zOrder;
             locBone.updateZOrder();
-            locBone.setBlendFunc(keyFrameData.blendFunc);
             var childAramture = locBone.getChildArmature();
             if (childAramture) {
                 if (keyFrameData.movement != "") {

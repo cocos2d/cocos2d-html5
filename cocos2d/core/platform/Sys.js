@@ -53,13 +53,13 @@ Object.defineProperties(sys,
             if(cc.Browser.supportWebGL)
                 capabilities["opengl"] = true;
 
-			if( 'ontouchstart' in document.documentElement  || window.navigator.msPointerEnabled)
+			if( document.documentElement['ontouchstart'] !== undefined || window.navigator.msPointerEnabled)
 				capabilities["touches"] = true;
 
-			else if( 'onmouseup' in document.documentElement )
+			else if( document.documentElement['onmouseup'] !== undefined )
 				capabilities["mouse"] = true;
 
-			if( 'onkeyup' in document.documentElement )
+			if( document.documentElement['onkeyup'] !== undefined )
 				capabilities["keyboard"] = true;
 
             if(window.DeviceMotionEvent || window.DeviceOrientationEvent)
@@ -77,14 +77,14 @@ Object.defineProperties(sys,
 			var OSName=navigator.appVersion;
 			if (navigator.appVersion.indexOf("Win")!=-1)
 				OSName="Windows";
+			else if( iOS )
+				OSName = "iOS";
 			else if (navigator.appVersion.indexOf("Mac")!=-1)
 				OSName="OS X";
 			else if (navigator.appVersion.indexOf("X11")!=-1)
 				OSName="UNIX";
 			else if (navigator.appVersion.indexOf("Linux")!=-1)
 				OSName="Linux";
-			else if( iOS )
-				OSName = "iOS";
 			else if( isAndroid )
 				OSName = "Android";
 			return OSName;

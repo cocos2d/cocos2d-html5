@@ -43,10 +43,11 @@ cc.loadImage = function (imageUrl) {
     }
     var image = new Image();
     image.src = imageUrl;
-    image.addEventListener('load',function(){
-        cc.TextureCache.getInstance().cacheImage(imageUrl, image);
-        this.removeEventListener('load', arguments.callee, false);
-    },false);
+    image.addEventListener('load', cc.loadImage.handler, false);
+};
+cc.loadImage.handler = function(){
+    cc.TextureCache.getInstance().cacheImage(this.src, this);
+    this.removeEventListener('load', cc.loadImage.handler, false);
 };
 
 /**
@@ -96,11 +97,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     _addImageAsyncCallBack:function (target, selector) {
-        if (target && (typeof(selector) === "string")) {
-            target[selector]();
-        } else if (target && (typeof(selector) === "function")) {
-            selector.call(target);
-        }
+        cc.doCallback(selector, target);
     },
 
     _initializingRenderer : function(){
@@ -167,7 +164,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      */
     textureForKey:function (textureKeyName) {
         var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
-        if (this._textures.hasOwnProperty(fullPath))
+        if (this._textures[fullPath])
             return this._textures[fullPath];
         return null;
     },
@@ -209,7 +206,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
                 key = this._generalTextureKey();
         }
 
-        if (!this._textureColorsCache.hasOwnProperty(key))
+        if (!this._textureColorsCache[key])
             this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
         return this._textureColorsCache[key];
     },
@@ -296,17 +293,53 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             delete(this._textures[fullPath]);
     },
 
+    // Use same function for all load image error event callback
+    _loadErrorHandler: function(path, textureCache, removeFrom) {
+        //remove from cache
+        if (removeFrom[path])
+            delete removeFrom[path];
+
+        this.removeEventListener('error', textureCache._loadErrorHandler, false);
+    },
+
+    // Use same function for addImage image load event (with callback)
+    _clientLoadHandler: function (texture, textureCache, callback, target) {
+        if(texture instanceof cc.Texture2D)
+            texture.handleLoadedTexture();
+        else if(textureCache._textures[texture])
+            textureCache._textures[texture].handleLoadedTexture();
+        textureCache._addImageAsyncCallBack(target, callback);
+        this.removeEventListener('load', textureCache._addAsyncLoadHandler, false);
+    },
+
+    _preloadHandler: function (texture, textureCache) {
+        if(texture instanceof cc.Texture2D)
+            texture.handleLoadedTexture();
+        else if(textureCache._textures[texture])
+            textureCache._textures[texture].handleLoadedTexture();
+        this.removeEventListener('load', textureCache._addAsyncLoadHandler, false);
+    },
+
+    _beforeRendererLoadHandler: function (path, textureCache) {
+        var loading = textureCache._loadingTexturesBefore;
+        if(loading[path]) {
+            textureCache._loadedTexturesBefore[path] = loading[path];
+            delete loading[path];
+        }
+        this.removeEventListener('load', textureCache._beforeRendererLoadHandler, false);
+    },
+
     /**
      *  Loading the images asynchronously
      * @param {String} path
-     * @param {cc.Node} target
      * @param {Function} selector
+     * @param {Object} target
      * @return {cc.Texture2D}
      * @example
      * //example
      * cc.TextureCache.getInstance().addImageAsync("hello.png", this, this.loadingCallBack);
      */
-    addImageAsync:function (path, target, selector) {
+    addImageAsync:function (path, selector, target) {
         if(!path)
             throw "cc.TextureCache.addImageAsync(): path should be non-null";
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
@@ -316,34 +349,15 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             if(texture.isLoaded()){
                 this._addImageAsyncCallBack(target, selector);
             }else{
-                that = this;
                 image = texture.getHtmlElementObj();
-                image.addEventListener("load", function () {
-                    texture.handleLoadedTexture();
-                    that._addImageAsyncCallBack(target, selector);
-                    this.removeEventListener('load', arguments.callee, false);
-                });
+                image.addEventListener("load", this._clientLoadHandler.bind(image, texture, this, selector, target));
             }
         } else {
             image = new Image();
             image.crossOrigin = "Anonymous";
 
-            that = this;
-            image.addEventListener("load", function () {
-                if (that._textures.hasOwnProperty(path))
-                    that._textures[path].handleLoadedTexture();
-                that._addImageAsyncCallBack(target, selector);
-                this.removeEventListener('load', arguments.callee, false);
-                this.removeEventListener('error', arguments.callee, false);
-            });
-            image.addEventListener("error", function () {
-                cc.Loader.getInstance().onResLoadingErr(path);
-                //remove from cache
-                if (that._textures.hasOwnProperty(path))
-                    delete that._textures[path];
-
-                this.removeEventListener('error', arguments.callee, false);
-            });
+            image.addEventListener("load", this._clientLoadHandler.bind(image, path, this, selector, target));
+            image.addEventListener("error", this._loadErrorHandler.bind(image, path, this, this._textures));
             image.src = path;
             var texture2d = new cc.Texture2D();
             texture2d.initWithElement(image);
@@ -355,21 +369,9 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     _addImageBeforeRenderer:function(path){
         var texture = new Image();
         texture.crossOrigin = "Anonymous";
-        var that = this;
-        texture.addEventListener("load", function () {
-            cc.Loader.getInstance().onResLoaded();
-            that._loadedTexturesBefore[path] = texture;
-            delete that._loadingTexturesBefore[path];
 
-            this.removeEventListener('load', arguments.callee, false);
-            this.removeEventListener('error', arguments.callee, false);
-        });
-        texture.addEventListener("error", function () {
-            cc.Loader.getInstance().onResLoadingErr(path);
-            delete that._loadingTexturesBefore[path];
-
-            this.removeEventListener('error', arguments.callee, false);
-        });
+        texture.addEventListener("load", this._beforeRendererLoadHandler.bind(texture, path, this));
+        texture.addEventListener("error", this._loadErrorHandler.bind(texture, path, this, this._loadingTexturesBefore));
         texture.src = path;
         this._loadingTexturesBefore[path] = texture;
     },
@@ -399,36 +401,16 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         var texture = this._textures[path];
         var image;
         if (texture) {
-            if (texture.isLoaded()) {
-                cc.Loader.getInstance().onResLoaded();
-            } else {
+            if (!texture.isLoaded()) {
                 image = texture.getHtmlElementObj();
-                image.addEventListener("load", function () {
-                    texture.handleLoadedTexture();
-                    cc.Loader.getInstance().onResLoaded();
-                    this.removeEventListener('load', arguments.callee, false);
-                });
+                image.addEventListener("load", this._preloadHandler.bind(image, texture, this));
             }
         } else {
             image = new Image();
             image.crossOrigin = "Anonymous";
 
-            var that = this;
-            image.addEventListener("load", function () {
-                cc.Loader.getInstance().onResLoaded();
-                if (that._textures.hasOwnProperty(path))
-                    that._textures[path].handleLoadedTexture();
-                this.removeEventListener('load', arguments.callee, false);
-                this.removeEventListener('error', arguments.callee, false);
-            });
-            image.addEventListener("error", function () {
-                cc.Loader.getInstance().onResLoadingErr(path);
-                //remove from cache
-                if (that._textures.hasOwnProperty(path))
-                    delete that._textures[path];
-
-                this.removeEventListener('error', arguments.callee, false);
-            });
+            image.addEventListener("load", this._preloadHandler.bind(image, path, this));
+            image.addEventListener("error", this._loadErrorHandler.bind(image, path, this, this._textures));
             image.src = path;
             var texture2d = new cc.Texture2D();
             texture2d.initWithElement(image);
@@ -469,7 +451,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             throw "cc.Texture.addUIImage(): image should be non-null";
 
         if (key) {
-            if (this._textures.hasOwnProperty(key) && this._textures[key])
+            if (this._textures[key])
                 return this._textures[key];
         }
 

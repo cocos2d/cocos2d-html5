@@ -54,6 +54,13 @@ ccs.UICCTextField = cc.TextFieldTTF.extend({
         this._insertText = false;
         this._deleteBackward = false;
     },
+    init:function(){
+        if(ccs.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
+            return true;
+        }
+        return false;
+    },
     onEnter: function () {
         cc.TextFieldTTF.prototype.onEnter.call(this);
         cc.TextFieldTTF.prototype.setDelegate.call(this,this);
@@ -271,28 +278,33 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         this._deleteBackwardSelector = null;
     },
 
-    init: function () {
-        if (ccs.Widget.prototype.init.call(this)) {
-            this.setUpdateEnabled(true);
-            return true;
-        }
-        return false;
+    onEnter:function(){
+        ccs.Widget.prototype.onEnter.call(this);
+        this.setUpdateEnabled(true);
     },
 
     initRenderer: function () {
         this._textFieldRender = ccs.UICCTextField.create("input words here", "Thonburi", 20);
-        cc.NodeRGBA.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELDRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._textFieldRender, ccs.TEXTFIELDRENDERERZ, -1);
 
     },
 
     /**
-     * set touch size
+     * Set touch size.
      * @param {cc.Size} size
      */
     setTouchSize: function (size) {
         this._useTouchArea = true;
         this._touchWidth = size.width;
         this._touchHeight = size.height;
+    },
+
+    /**
+     * Get touch size.
+     * @returns {cc.Size}
+     */
+    getTouchSize:function(){
+        return cc.size(this._touchWidth,this._touchHeight);
     },
 
     /**
@@ -303,6 +315,7 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         if (!text) {
             return;
         }
+        text = String(text);
         if (this.isMaxLengthEnabled()) {
             text = text.substr(0, this.getMaxLength());
         }
@@ -326,6 +339,13 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
+     * @returns {String}
+     */
+    getPlaceHolder:function(){
+        return this._textFieldRender.getPlaceHolder();
+    },
+
+    /**
      * @param {cc.Size} size
      */
     setFontSize: function (size) {
@@ -334,11 +354,25 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
+     * @returns {Number}
+     */
+    getFontSize:function(){
+        return this._textFieldRender.getFontSize();
+    },
+
+    /**
      * @param {String} name
      */
     setFontName: function (name) {
         this._textFieldRender.setFontName(name);
         this.textfieldRendererScaleChangedWithSize();
+    },
+
+    /**
+     * @returns {String}
+     */
+    getFontName:function(){
+        return this._textFieldRender.getFontName();
     },
 
     /**
@@ -417,11 +451,18 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     },
 
     /**
-     * @param {String} enable
+     * @param {String} styleText
      */
     setPasswordStyleText: function (styleText) {
         this._textFieldRender.setPasswordStyleText(styleText);
         this._passwordStyleText = styleText;
+    },
+
+    /**
+     * @returns {String}
+     */
+    getPasswordStyleText:function(){
+        return this._passwordStyleText;
     },
 
     update: function (dt) {
@@ -549,11 +590,8 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
     hitTest: function (pt) {
         var nsp = this.convertToNodeSpace(pt);
         var locSize = this._textFieldRender.getContentSize();
-        var bb = cc.rect(-locSize.width * this._anchorPoint._x, -locSize.height * this._anchorPoint._y, locSize.width, locSize.height);
-        if (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height) {
-            return true;
-        }
-        return false;
+        var bb = cc.rect(-locSize.width * this._anchorPoint.x, -locSize.height * this._anchorPoint.y, locSize.width, locSize.height);
+        return (nsp.x >= bb.x && nsp.x <= bb.x + bb.width && nsp.y >= bb.y && nsp.y <= bb.y + bb.height);
     },
 
     /**
@@ -562,12 +600,12 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
      * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._textFieldRender.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._textFieldRender.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._textFieldRender.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._textFieldRender.setAnchorPoint(point, y);
         }
     },
 
@@ -612,6 +650,18 @@ ccs.TextField = ccs.Widget.extend(/** @lends ccs.TextField# */{
         return this._textFieldRender;
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._textFieldRender);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._textFieldRender);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._textFieldRender);
+    },
+    
     /**
      * Returns the "class name" of widget.
      * @returns {string}

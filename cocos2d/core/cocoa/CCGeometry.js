@@ -31,58 +31,26 @@
 //--------------------------------------------------------
 /**
  * @class
- * @param {Number} _x
+ * @param {Number|cc.Point} _x
  * @param {Number} _y
  * Constructor
  */
 cc.Point = function (_x, _y) {
-    this.x = _x || 0;
-    this.y = _y || 0;
-};
-
-cc._PointConst = function (x, y) {
-    this._x = x || 0;
-    this._y = y || 0;
-
-    this.setX = function (x) {
-        this._x = x;
-    };
-    this.setY = function (y) {
-        this._y = y;
+    if(_x !== undefined && _y === undefined){
+        this.x = _x.x;
+        this.y = _x.y;
+    } else {
+        this.x = _x || 0;
+        this.y = _y || 0;
     }
 };
-
-cc._pConst = function (x, y) {
-    return new cc._PointConst(x, y);
-};
-
-Object.defineProperties(cc._PointConst.prototype, {
-    x: {
-        get: function () {
-            return this._x;
-        },
-        set: function () {
-            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    },
-
-    y: {
-        get: function () {
-            return this._y;
-        },
-        set: function () {
-            console.warn("Warning of _PointConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    }
-});
 
 /**
  * @function
  * @param {Number} x
  * @param {Number} y
  * @return {cc.Point}
+ * @deprecated
  */
 cc.PointMake = function (x, y) {
     cc.log("cc.PointMake will be deprecated sooner or later. Use cc.p instead.");
@@ -91,17 +59,22 @@ cc.PointMake = function (x, y) {
 
 /**
  * Helper macro that creates a cc.Point.
- * @param {Number} x
+ * @param {Number|cc.Point} x
  * @param {Number} y
  */
 cc.p = function (x, y) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
     // memory usage and overall performance drastically
-    //return new cc.Point(x, y);
+    // return new cc.Point(x, y);
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT,
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Point(x, y)
-    return {x: x, y: y};
+    if (x === undefined)
+        return {x: 0, y: 0};
+    else if (y === undefined)
+        return {x: x.x, y: x.y};
+    else
+        return {x: x || 0, y: y || 0};
 };
 
 // JSB compatbility: in JSB, cc._p reuses objects instead of creating new ones
@@ -140,58 +113,26 @@ cc.pointEqualToPoint = function (point1, point2) {
 
 /**
  * @class
- * @param {Number} _width
+ * @param {Number|cc.Size} _width
  * @param {Number} _height
  * Constructor
  */
 cc.Size = function (_width, _height) {
-    this.width = _width || 0;
-    this.height = _height || 0;
-};
-
-cc._SizeConst = function (width, height) {
-    this._width = width || 0;
-    this._height = height || 0;
-
-    this.setWidth = function (width) {
-        this._width = width;
-    };
-    this.setHeight = function (height) {
-        this._height = height;
+    if(_width !== undefined && _height === undefined){
+        this.width = _width.width;
+        this.height = _width.height;
+    } else {
+        this.width = _width || 0;
+        this.height = _height || 0;
     }
 };
-
-cc._sizeConst = function (width, height) {
-    return new cc._SizeConst(width, height);
-};
-
-Object.defineProperties(cc._SizeConst.prototype, {
-    width: {
-        get: function () {
-            return this._width;
-        },
-        set: function () {
-            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    },
-
-    height: {
-        get: function () {
-            return this._height;
-        },
-        set: function () {
-            console.warn("Warning of _SizeConst: Modification to const or private property is forbidden");
-        },
-        enumerable: true
-    }
-});
 
 /**
  * @function
  * @param {Number} width
  * @param {Number} height
  * @return {cc.Size}
+ * @deprecated
  */
 cc.SizeMake = function (width, height) {
     cc.log("cc.SizeMake will be deprecated sooner or later. Use cc.size instead.");
@@ -200,18 +141,22 @@ cc.SizeMake = function (width, height) {
 
 /**
  * @function
- * @param {Number} w width
+ * @param {Number|cc.Size} w width or a size object
  * @param {Number} h height
  * @return {cc.Size}
  */
 cc.size = function (w, h) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
-    // memory usage and overall peformance drastically
+    // memory usage and overall performance drastically
     //return new cc.Size(w, h);
     // but this one will instead flood the heap with newly allocated hash maps
     // giving little room for optimization by the JIT
     // note: we have tested this item on Chrome and firefox, it is faster than new cc.Size(w, h)
-    return { width: w, height: h};
+    if (w === undefined)
+        return {width: 0, height: 0};
+    if (h === undefined)
+        return { width: w.width, height: w.height};
+    return { width: w || 0, height: h || 0};
 };
 
 // JSB compatbility: in JSB, cc._size reuses objects instead of creating new ones
@@ -226,17 +171,15 @@ cc.SizeZero = function () {
     return cc.size(0, 0);
 };
 
-cc._zeroConsts = {pointZero: cc._pConst(0,0), sizeZero: cc._sizeConst(0,0)};
-
 Object.defineProperties(cc, {
     POINT_ZERO:{
         get:function () {
-            return cc._zeroConsts.pointZero;
+            return cc.p();
         }
     },
     SIZE_ZERO:{
         get:function () {
-            return cc._zeroConsts.sizeZero;
+            return cc.size(0,0);
         }
     },
     RECT_ZERO:{

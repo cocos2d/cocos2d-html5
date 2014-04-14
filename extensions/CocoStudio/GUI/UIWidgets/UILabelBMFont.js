@@ -40,7 +40,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.LABELBMFONTRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._labelBMFontRenderer, ccs.LABELBMFONTRENDERERZ, -1);
     },
 
     /**
@@ -73,7 +73,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
         if (!value) {
             return;
         }
-        this._strStringValue = value;
+        this._stringValue = value;
         this._labelBMFontRenderer.setString(value);
         this.labelBMFontScaleChangedWithSize();
     },
@@ -83,7 +83,7 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
      * @returns {String}
      */
     getStringValue: function () {
-        return this._strStringValue;
+        return this._stringValue;
     },
 
     /**
@@ -92,12 +92,12 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
      * @param {Number} [y] The anchor point.y of UILabelBMFont.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._labelBMFontRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._labelBMFontRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._labelBMFontRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._labelBMFontRenderer.setAnchorPoint(point, y);
         }
     },
 
@@ -142,6 +142,18 @@ ccs.LabelBMFont = ccs.Widget.extend(/** @lends ccs.LabelBMFont# */{
         }
     },
 
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelBMFontRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelBMFontRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._labelBMFontRenderer);
+    },
+    
     /**
      * Returns the "class name" of widget.
      * @returns {string}

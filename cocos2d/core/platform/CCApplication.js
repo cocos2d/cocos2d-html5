@@ -240,6 +240,8 @@ cc.setup = function (el, width, height) {
         cc._addUserSelectStatus();
     }
 
+    var isScreenHidden = false;
+
     var hidden, visibilityChange;
     if (typeof document.hidden !== "undefined") {
         hidden = "hidden";
@@ -255,38 +257,44 @@ cc.setup = function (el, width, height) {
         visibilityChange = "webkitvisibilitychange";
     }
 
-    function handleVisibilityChange() {
-        if(!cc.AudioEngine) return;
+    function handleFocus() {
+        if (!cc.AudioEngine || !isScreenHidden) return;
+        isScreenHidden = false;
         var audioEngine = cc.AudioEngine.getInstance();
-        if (!document[hidden]){
-            cc.Director.getInstance()._resetLastUpdate();
-            audioEngine.resumeAllEffects();
-            audioEngine.resumeMusic();
-        } else{
-            audioEngine.pauseAllEffects();
-            audioEngine.pauseMusic();
-        }
+        audioEngine.resumeAllEffects();
+        audioEngine.resumeMusic();
+    }
+
+    function handleBlur() {
+        if (!cc.AudioEngine || isScreenHidden) return;
+        isScreenHidden = true;
+        var audioEngine = cc.AudioEngine.getInstance();
+        audioEngine.pauseAllEffects();
+        audioEngine.pauseMusic();
+    }
+
+    function handleVisibilityChange() {
+        if (!document[hidden])
+            handleFocus();
+        else
+            handleBlur();
     }
 
     if (typeof document.addEventListener === "undefined" ||
         typeof hidden === "undefined") {
         cc.isAddedHiddenEvent = false;
-        window.addEventListener("focus", function () {
-            if(!cc.AudioEngine) return;
-            var audioEngine = cc.AudioEngine.getInstance();
-            audioEngine.resumeAllEffects();
-            audioEngine.resumeMusic();
-        }, false);
-        window.addEventListener("blur", function () {
-            if(!cc.AudioEngine) return;
-            var audioEngine = cc.AudioEngine.getInstance();
-            audioEngine.pauseAllEffects();
-            audioEngine.pauseMusic();
-        }, false);
+        window.addEventListener("focus", handleFocus, false);
+        window.addEventListener("blur", handleBlur, false);
     } else {
         cc.isAddedHiddenEvent = true;
         document.addEventListener(visibilityChange, handleVisibilityChange, false);
     }
+
+    if ("onpageshow" in window && "onpagehide" in window) {
+        window.addEventListener("pageshow", handleFocus, false);
+        window.addEventListener("pagehide", handleBlur, false);
+    }
+    
 };
 
 cc._addUserSelectStatus = function(){
@@ -400,14 +408,17 @@ cc.Application.getCurrentLanguage = function () {
     var ret = cc.LANGUAGE_ENGLISH;
 
     var currentLang = navigator.language;
-    if(!currentLang)
+    if(!currentLang){
         currentLang = navigator.browserLanguage || navigator.userLanguage;
-    if(!currentLang)
+    }
+    if(!currentLang){
         return ret;
+    }
 
-    currentLang = currentLang.toLowerCase();
+    currentLang = currentLang.substring(0,2).toLowerCase();
     switch (currentLang) {
-        case "zh-cn":
+        case "cn":
+        case "zh":
             ret = cc.LANGUAGE_CHINESE;
             break;
         case "fr":

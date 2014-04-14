@@ -349,6 +349,14 @@ ccs.ListView = ccs.ScrollView.extend({
     },
 
     /**
+     * Get the margin between each item.
+     * @returns {Number}
+     */
+    getItemsMargin:function(){
+        return this._itemsMargin;
+    },
+
+    /**
      * Changes scroll direction of scrollview.
      * @param {ccs.ScrollViewDir } dir
      */

@@ -34,55 +34,54 @@
 var cc = cc || {};
 
 //
-function ClassManager(){
-    //tells own name
-    return arguments.callee.name || (arguments.callee.toString()).match(/^function ([^(]+)/)[1];
-}
-ClassManager.id=(0|(Math.random()*998));
-ClassManager.instanceId=(0|(Math.random()*998));
-ClassManager.compileSuper=function(func, name, id){
-    //make the func to a string
-    var str = func.toString();
-    //find parameters
-    var pstart = str.indexOf('(');
-    var pend = str.indexOf(')');
-    var params = str.substring(pstart+1, pend);
-    params = params.trim();
+var ClassManager = {
+    id : (0|(Math.random()*998)),
 
-    //find function body
-    var bstart = str.indexOf('{');
-    var bend = str.lastIndexOf('}');
-    var str = str.substring(bstart+1, bend);
+    instanceId : (0|(Math.random()*998)),
 
-    //now we have the content of the function, replace this._super
-    //find this._super
-    while(str.indexOf('this._super')!= -1)
-    {
-        var sp = str.indexOf('this._super');
-        //find the first '(' from this._super)
-        var bp = str.indexOf('(', sp);
+    compileSuper : function(func, name, id){
+        //make the func to a string
+        var str = func.toString();
+        //find parameters
+        var pstart = str.indexOf('(');
+        var pend = str.indexOf(')');
+        var params = str.substring(pstart+1, pend);
+        params = params.trim();
 
-        //find if we are passing params to super
-        var bbp = str.indexOf(')', bp);
-        var superParams = str.substring(bp+1, bbp);
-        superParams = superParams.trim();
-        var coma = superParams? ',':'';
+        //find function body
+        var bstart = str.indexOf('{');
+        var bend = str.lastIndexOf('}');
+        var str = str.substring(bstart+1, bend);
 
-        //find name of ClassManager
-        var Cstr = arguments.callee.ClassManager();
+        //now we have the content of the function, replace this._super
+        //find this._super
+        while(str.indexOf('this._super')!= -1)
+        {
+            var sp = str.indexOf('this._super');
+            //find the first '(' from this._super)
+            var bp = str.indexOf('(', sp);
 
-        //replace this._super
-        str = str.substring(0, sp)+  Cstr+'['+id+'].'+name+'.call(this'+coma+str.substring(bp+1);
+            //find if we are passing params to super
+            var bbp = str.indexOf(')', bp);
+            var superParams = str.substring(bp+1, bbp);
+            superParams = superParams.trim();
+            var coma = superParams? ',':'';
+
+            //replace this._super
+            str = str.substring(0, sp)+  'ClassManager['+id+'].'+name+'.call(this'+coma+str.substring(bp+1);
+        }
+        return Function(params, str);
+    },
+
+    getNewID : function(){
+        return this.id++;
+    },
+
+    getNewInstanceId : function(){
+        return this.instanceId++;
     }
-    return Function(params, str);
 };
 ClassManager.compileSuper.ClassManager = ClassManager;
-ClassManager.getNewID=function(){
-    return this.id++;
-};
-ClassManager.getNewInstanceId=function(){
-    return this.instanceId++;
-};
 
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
@@ -171,7 +170,7 @@ ClassManager.getNewInstanceId=function(){
         Object.defineProperty(Class.prototype, 'constructor', desc);
 
         // And make this Class extendable
-        Class.extend = arguments.callee;
+        Class.extend = cc.Class.extend;
 
         //add implementation method
         Class.implement = function (prop) {
@@ -184,9 +183,9 @@ ClassManager.getNewInstanceId=function(){
 
     Function.prototype.bind = Function.prototype.bind || function (bind) {
         var self = this;
+        var args = Array.prototype.slice.call(arguments, 1);
         return function () {
-            var args = Array.prototype.slice.call(arguments);
-            return self.apply(bind || null, args);
+            return self.apply(bind || null, args.concat(Array.prototype.slice.call(arguments)));
         };
     };
 
@@ -219,8 +218,7 @@ cc.base = function(me, opt_methodName, var_args) {
 
     var args = Array.prototype.slice.call(arguments, 2);
     var foundCaller = false;
-    for (var ctor = me.constructor;
-        ctor; ctor = ctor.superClass_ && ctor.superClass_.constructor) {
+    for (var ctor = me.constructor; ctor; ctor = ctor.superClass_ && ctor.superClass_.constructor) {
         if (ctor.prototype[opt_methodName] === caller) {
             foundCaller = true;
         } else if (foundCaller) {
@@ -236,8 +234,8 @@ cc.base = function(me, opt_methodName, var_args) {
         return me.constructor.prototype[opt_methodName].apply(me, args);
     } else {
         throw Error(
-                    'cc.base called from a method of one name ' +
-                    'to a method of a different name');
+            'cc.base called from a method of one name ' +
+                'to a method of a different name');
     }
 };
 

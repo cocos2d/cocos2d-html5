@@ -86,7 +86,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             for (var index = 0; index < locDescendants.length; index++) {
                 var obj = locDescendants[index];
                 if (obj && (obj.getAtlasIndex() >= z))
-                    ++i;
+                    break;
+                ++i;
             }
         }
         this._descendants = cc.ArrayAppendObjectToIndex(locDescendants, child, i);
@@ -311,7 +312,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1)
+        if (dst === undefined)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -906,7 +907,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._descendants = [];
+        this._descendants.length = 0;
     },
 
     _removeAllChildrenForWebGL:function (cleanup) {
@@ -920,7 +921,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             }
         }
         cc.Node.prototype.removeAllChildren.call(this, cleanup);
-        this._descendants = [];
+        this._descendants.length = 0;
         this._textureAtlas.removeAllQuads();
     },
 

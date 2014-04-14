@@ -492,7 +492,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
         var blendFunc = this._sprite.getBlendFunc();
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
 
         if (this._sprite.getTexture())
             cc.glBindTexture2D(this._sprite.getTexture());

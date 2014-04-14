@@ -99,7 +99,7 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * @param {string} id
      */
     removeArmatureData:function(id){
-        if (this._armarureDatas.hasOwnProperty(id))
+        if (this._armarureDatas[id])
            delete this._armarureDatas[id];
     },
 
@@ -142,7 +142,7 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * @param {string} id
      */
     removeAnimationData:function(id){
-        if (this._animationDatas.hasOwnProperty(id))
+        if (this._animationDatas[id])
             delete this._animationDatas[id];
     },
 
@@ -185,7 +185,7 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * @param {string} id
      */
     removeTextureData:function(id){
-        if (this._textureDatas.hasOwnProperty(id))
+        if (this._textureDatas[id])
             delete this._textureDatas[id];
     },
 
@@ -221,8 +221,8 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * //example2
      * ccs.ArmatureDataManager.getInstance().addArmatureFileInfo("res/test.png","res/test.plist","res/test.json");
      */
-    addArmatureFileInfo:function (/*imagePath,plistPath,configFilePath*/) {
-        var imagePath,plistPath,configFilePath;
+    addArmatureFileInfo:function (/*imagePath, plistPath, configFilePath*/) {
+        var imagePath, plistPath, configFilePath;
         var isLoadSpriteFrame = false;
         if (arguments.length == 1) {
             configFilePath = arguments[0];
@@ -246,8 +246,8 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * @param {Object} target
      * @param {Function} configFilePath
      */
-    addArmatureFileInfoAsync:function (/*imagePath, plistPath, configFilePath,target,selector*/) {
-        var imagePath, plistPath, configFilePath,target,selector;
+    addArmatureFileInfoAsync:function (/*imagePath, plistPath, configFilePath, target, selector*/) {
+        var imagePath, plistPath, configFilePath, target, selector;
         var isLoadSpriteFrame = false;
         if (arguments.length == 3) {
             configFilePath = arguments[0];
@@ -288,7 +288,7 @@ ccs.ArmatureDataManager = ccs.Class.extend(/** @lends ccs.ArmatureDataManager# *
      * @param {String} configFilePath
      */
     addRelativeData: function (configFilePath) {
-        if (!this._relativeDatas.hasOwnProperty(configFilePath))
+        if (!this._relativeDatas[configFilePath])
             this._relativeDatas[configFilePath] = new ccs.RelativeData();
     },
 

@@ -59,18 +59,27 @@ cc.Browser = {};
  */
 cc.Browser.webglWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari"];
 
+/**
+ * Browsers that multiple audio support well
+ * @type {Array}
+ */
+cc.Browser.multipleAudioWhiteList = ["baidubrowser", "opera", "firefox", "chrome", "safari", "ucbrowser", "qqbrowser", "mqqbrowser", "ie"];
+
 (function () {
     var ua = navigator.userAgent;
     cc.Browser.ua = ua.toLowerCase();
     cc.Browser.platform = navigator.platform.toLowerCase();
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
     cc.Browser.type = (function () {
-        var browserTypes = cc.Browser.ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baidubrowser|maxthon|ie|opera|firefox/) || cc.Browser.ua.match(/chrome|safari/);
+        var browserTypes = cc.Browser.ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baiduboxapp|baidubrowser|maxthon|ie|opera|miuibrowser|firefox/)
+            || cc.Browser.ua.match(/chrome|safari/);
+
         if (browserTypes && browserTypes.length > 0) {
             var el = browserTypes[0];
             if (el == 'micromessenger') {
                 return 'wechat';
-            }
+            }else if( el === "safari" && (cc.Browser.ua.match(/android.*applewebkit/) != null))
+                return "androidbrowser";
             return el;
         }
         return "unknow";

@@ -39,6 +39,14 @@ ccs.Class.extend = ccs.Class.extend || cc.Class.extend;
  * @class
  * @extends ccs.Class
  */
+ccs.Node = ccs.Node || cc.Node;
+ccs.Node.extend = ccs.Node.extend || cc.Node.extend;
+
+/**
+ * that same as cc.NodeRGBA
+ * @class
+ * @extends ccs.Class
+ */
 ccs.NodeRGBA = ccs.NodeRGBA || cc.NodeRGBA;
 ccs.NodeRGBA.extend = ccs.NodeRGBA.extend || cc.NodeRGBA.extend;
 
@@ -62,4 +70,4 @@ ccs.Component.extend = ccs.Component.extend || cc.Component.extend;
  * cocostudio version
  * @type {string}
  */
-ccs.CocoStudioVersion = "1.0";
+ccs.CocoStudioVersion = "1.3";

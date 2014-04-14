@@ -62,7 +62,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
 
     initRenderer: function () {
         this._labelRenderer = cc.LabelTTF.create();
-        cc.NodeRGBA.prototype.addChild.call(this, this._labelRenderer, ccs.LABELRENDERERZ, -1);
+        cc.Node.prototype.addChild.call(this, this._labelRenderer, ccs.LABELRENDERERZ, -1);
     },
 
     /**
@@ -102,6 +102,14 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     },
 
     /**
+     * Get font Size
+     * @returns {Number}
+     */
+    getFontSize:function(){
+        return this._fontSize;
+    },
+
+    /**
      * set fontName
      * @param {String} name
      */
@@ -109,6 +117,14 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this._fontName = name;
         this._labelRenderer.setFontName(name);
         this.labelScaleChangedWithSize();
+    },
+
+    /**
+     * Get font name
+     * @returns {string}
+     */
+    getFontName:function(){
+        return this._fontName;
     },
 
     /**
@@ -123,6 +139,14 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     },
 
     /**
+     * Get textArea size
+     * @returns {cc.Size}
+     */
+    getTextAreaSize:function(){
+        return this._labelRenderer.getDimensions();
+    },
+
+    /**
      * set Horizontal Alignment of cc.LabelTTF
      * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
      */
@@ -130,6 +154,14 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         this._textHorizontalAlignment = alignment;
         this._labelRenderer.setHorizontalAlignment(alignment);
         this.labelScaleChangedWithSize();
+    },
+
+    /**
+     * return Horizontal Alignment of cc.LabelTTF
+     * @returns {TEXT_ALIGNMENT_LEFT|TEXT_ALIGNMENT_CENTER|TEXT_ALIGNMENT_RIGHT}
+     */
+    getTextHorizontalAlignment:function(){
+        return this._labelRenderer.getHorizontalAlignment();
     },
 
     /**
@@ -143,11 +175,11 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
     },
 
     /**
-     * Sets the touch scale enabled of label.
-     * @param {Boolean} enable
+     * Get text vertical alignment.
+     * @returns {VERTICAL_TEXT_ALIGNMENT_TOP|VERTICAL_TEXT_ALIGNMENT_CENTER|VERTICAL_TEXT_ALIGNMENT_BOTTOM}
      */
-    setTouchScaleChangeAble: function (enable) {
-        this.setTouchScaleChangeEnabled(enable);
+    getTextVerticalAlignment:function(){
+        return this._labelRenderer.getVerticalAlignment();
     },
 
     /**
@@ -164,8 +196,6 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      */
     setTouchScaleChangeEnabled: function (enable) {
         this._touchScaleChangeEnabled = enable;
-        this._normalScaleValueX = this.getScaleX();
-        this._normalScaleValueY = this.getScaleY();
     },
 
     /**
@@ -180,81 +210,28 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
         if (!this._touchScaleChangeEnabled) {
             return;
         }
-        this.clickScale(this._normalScaleValueX,this._normalScaleValueY);
+        this._labelRenderer.setScaleX(this._normalScaleValueX);
+        this._labelRenderer.setScaleY(this._normalScaleValueY);
     },
 
     onPressStateChangedToPressed: function () {
         if (!this._touchScaleChangeEnabled) {
             return;
         }
-        this.clickScale(this._normalScaleValueX + this._onSelectedScaleOffset,this._normalScaleValueY + this._onSelectedScaleOffset);
+        this._labelRenderer.setScaleX(this._normalScaleValueX + this._onSelectedScaleOffset);
+        this._labelRenderer.setScaleY(this._normalScaleValueY + this._onSelectedScaleOffset);
     },
 
     onPressStateChangedToDisabled: function () {
 
     },
 
-    /**
-     * set scale
-     * @param {Number} scale
-     */
-    setScale: function (scale) {
-        ccs.Widget.prototype.setScale.call(this, scale);
-        this._normalScaleValueX = this._normalScaleValueY = scale;
+    updateFlippedX: function () {
+        this._labelRenderer.setFlippedX(this._flippedX);
     },
 
-    /**
-     * set scaleX
-     * @param {Number} scaleX
-     */
-    setScaleX: function (scaleX) {
-        ccs.Widget.prototype.setScaleX.call(this, scaleX);
-        this._normalScaleValueX = scaleX;
-    },
-
-    /**
-     * set scaleY
-     * @param {Number} scaleY
-     */
-    setScaleY: function (scaleY) {
-        ccs.Widget.prototype.setScaleY.call(this, scaleY);
-        this._normalScaleValueY = scaleY;
-    },
-
-    clickScale: function (scale, scaleY) {
-        this.setScale(scale, scaleY);
-    },
-
-    /**
-     * override "setFlippedX" of widget.
-     * @param {Boolean} flipX
-     */
-    setFlippedX: function (flipX) {
-        this._labelRenderer.setFlippedX(flipX);
-    },
-
-    /**
-     * override "setFlippedY" of widget.
-     * @param {Boolean} flipY
-     */
-    setFlippedY: function (flipY) {
-        this._labelRenderer.setFlippedY(flipY);
-    },
-
-    /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        return this._labelRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        return this._labelRenderer.isFlippedY();
+    updateFlippedY: function () {
+        this._labelRenderer.setFlippedY(this._flippedY);
     },
 
     /**
@@ -263,12 +240,12 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
      * @param {Number} [y] The anchor point.y of UILabel.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
-            this._labelRenderer.setAnchorPoint(point, y);
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._labelRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this, point);
-            this._labelRenderer.setAnchorPoint(point);
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._labelRenderer.setAnchorPoint(point, y);
         }
     },
 
@@ -299,6 +276,7 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
             var renderSize = this._labelRenderer.getContentSize();
             this._size.width = renderSize.width;
             this._size.height = renderSize.height;
+            this._normalScaleValueX = this._normalScaleValueY = 1;
         }
         else {
             var textureSize = this._labelRenderer.getContentSize();
@@ -310,7 +288,21 @@ ccs.Label = ccs.Widget.extend(/** @lends ccs.Label# */{
             var scaleY = this._size.height / textureSize.height;
             this._labelRenderer.setScaleX(scaleX);
             this._labelRenderer.setScaleY(scaleY);
+            this._normalScaleValueX = scaleX;
+            this._normalScaleValueY = scaleY;
         }
+    },
+
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._labelRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._labelRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._labelRenderer);
     },
 
     /**

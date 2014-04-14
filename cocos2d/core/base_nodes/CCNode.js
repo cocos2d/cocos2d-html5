@@ -153,10 +153,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationRadiansY:0,
 
     _initNode:function () {
-        this._anchorPoint = cc._pConst(0, 0);
-        this._anchorPointInPoints = cc._pConst(0, 0);
-        this._contentSize = cc._sizeConst(0, 0);
-        this._position = cc._pConst(0, 0);
+        this._anchorPoint = cc.p(0, 0);
+        this._anchorPointInPoints = cc.p(0, 0);
+        this._contentSize = cc.size(0, 0);
+        this._position = cc.p(0, 0);
         this._children = [];
         this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
 
@@ -355,9 +355,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} z Z order of this node.
      */
     setZOrder:function (z) {
-        this._setZOrder(z);
+        // ZOrder is set on parent's reorderChild.
         if (this._parent)
             this._parent.reorderChild(this, z);
+        else
+            this._setZOrder(z);
     },
 
     /**
@@ -536,12 +538,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setPosition:function (newPosOrxValue, yValue) {
         var locPosition = this._position;
-        if (arguments.length == 2) {
-            locPosition._x = newPosOrxValue;
-            locPosition._y = yValue;
-        } else if (arguments.length == 1) {
-            locPosition._x = newPosOrxValue.x;
-            locPosition._y = newPosOrxValue.y;
+        if (yValue === undefined) {
+            locPosition.x = newPosOrxValue.x;
+            locPosition.y = newPosOrxValue.y;
+        } else {
+	        locPosition.x = newPosOrxValue;
+	        locPosition.y = yValue;
         }
         this.setNodeDirty();
     },
@@ -552,21 +554,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition:function () {
-        return this._position;
+        return cc.p(this._position);
     },
 
     /**
      * @return {Number}
      */
     getPositionX:function () {
-        return this._position._x;
+        return this._position.x;
     },
 
     /**
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this._position._x = x;
+        this._position.x = x;
         this.setNodeDirty();
     },
 
@@ -574,14 +576,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getPositionY:function () {
-        return  this._position._y;
+        return  this._position.y;
     },
 
     /**
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this._position._y = y;
+        this._position.y = y;
         this.setNodeDirty();
     },
 
@@ -637,7 +639,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint:function () {
-        return this._anchorPoint;
+        return cc.p(this._anchorPoint);
     },
 
     /**
@@ -655,20 +657,20 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setAnchorPoint:function (point, y) {
         var locAnchorPoint = this._anchorPoint;
-        if (arguments.length === 2) {
-            if ((point === locAnchorPoint._x) && (y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point;
-            locAnchorPoint._y = y;
+        if (y === undefined) {
+	        if ((point.x === locAnchorPoint.x) && (point.y === locAnchorPoint.y))
+		        return;
+	        locAnchorPoint.x = point.x;
+	        locAnchorPoint.y = point.y;
         } else {
-            if ((point.x === locAnchorPoint._x) && (point.y === locAnchorPoint._y))
-                return;
-            locAnchorPoint._x = point.x;
-            locAnchorPoint._y = point.y;
+	        if ((point === locAnchorPoint.x) && (y === locAnchorPoint.y))
+		        return;
+	        locAnchorPoint.x = point;
+	        locAnchorPoint.y = y;
         }
         var locAPP = this._anchorPointInPoints, locSize = this._contentSize;
-        locAPP._x = locSize._width * locAnchorPoint._x;
-        locAPP._y = locSize._height * locAnchorPoint._y;
+        locAPP.x = locSize.width * locAnchorPoint.x;
+        locAPP.y = locSize.height * locAnchorPoint.y;
         this.setNodeDirty();
     },
 
@@ -680,7 +682,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
-        return this._anchorPointInPoints;
+        return cc.p(this._anchorPointInPoints);
     },
 
     /**
@@ -691,7 +693,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
-        return this._contentSize;
+        return cc.size(this._contentSize);
     },
 
     /**
@@ -706,20 +708,20 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setContentSize:function (size, height) {
         var locContentSize = this._contentSize;
-        if (arguments.length === 2) {
-            if ((size === locContentSize._width) && (height === locContentSize._height))
-                return;
-            locContentSize._width = size;
-            locContentSize._height = height;
+        if (height === undefined) {
+	        if ((size.width === locContentSize.width) && (size.height === locContentSize.height))
+		        return;
+	        locContentSize.width = size.width;
+	        locContentSize.height = size.height;
         } else {
-            if ((size.width === locContentSize._width) && (size.height === locContentSize._height))
-                return;
-            locContentSize._width = size.width;
-            locContentSize._height = size.height;
+	        if ((size === locContentSize.width) && (height === locContentSize.height))
+		        return;
+	        locContentSize.width = size;
+	        locContentSize.height = height;
         }
         var locAPP = this._anchorPointInPoints, locAnchorPoint = this._anchorPoint;
-        locAPP._x = locContentSize._width * locAnchorPoint._x;
-        locAPP._y = locContentSize._height * locAnchorPoint._y;
+        locAPP.x = locContentSize.width * locAnchorPoint.x;
+        locAPP.y = locContentSize.height * locAnchorPoint.y;
         this.setNodeDirty();
     },
 
@@ -945,7 +947,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         return cc._RectApplyAffineTransformIn(rect, this.nodeToParentTransform());
     },
 
@@ -1671,8 +1673,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * removes a component by its name
-     * @param {String} name
+     * removes a component by its name or a component
+     * @param {String|cc.Component} name
      */
     removeComponent:function(name){
         return this._componentContainer.remove(name);
@@ -1837,7 +1839,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
-            var apx = this._anchorPointInPoints._x, apy = this._anchorPointInPoints._y;
+            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate){
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
@@ -1856,14 +1858,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     nodeToParentTransform: null,
 
     _nodeToParentTransformForCanvas:function () {
-        if (!this._transform)
-            this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
         if (this._transformDirty) {
             var t = this._transform;// quick reference
 
             // base position
-            t.tx = this._position._x;
-            t.ty = this._position._y;
+            t.tx = this._position.x;
+            t.ty = this._position.y;
 
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
@@ -1878,7 +1878,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             t.c = Sin;
 
             var lScaleX = this._scaleX, lScaleY = this._scaleY;
-            var appX = this._anchorPointInPoints._x, appY = this._anchorPointInPoints._y;
+            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
 
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
@@ -1919,7 +1919,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             }
 
             if (this._additionalTransformDirty) {
-                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
+                this._transform = cc.AffineTransformConcat(t, this._additionalTransform);
                 this._additionalTransformDirty = false;
             }
 
@@ -1931,10 +1931,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _nodeToParentTransformForWebGL:function () {
         if (this._transformDirty) {
             // Translate values
-            var x = this._position._x;
-            var y = this._position._y;
-            var apx = this._anchorPointInPoints._x, napx = -apx;
-            var apy = this._anchorPointInPoints._y, napy = -apy;
+            var x = this._position.x;
+            var y = this._position.y;
+            var apx = this._anchorPointInPoints.x, napx = -apx;
+            var apy = this._anchorPointInPoints.y, napy = -apy;
             var scx = this._scaleX, scy = this._scaleY;
 
             if (this._ignoreAnchorPointForPosition) {
@@ -1964,7 +1964,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // Build Transform Matrix
             // Adjusted transform calculation for rotational skew
-            var t = {a: cy * scx, b: sy * scx, c: -sx * scy, d: cx * scy, tx: x, ty: y};
+            var t = this._transform;
+            t.a = cy * scx;
+            t.b = sy * scx;
+            t.c = -sx * scy;
+            t.d = cx * scy;
+            t.tx = x;
+            t.ty = y;
 
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
@@ -2068,7 +2074,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = this.nodeToWorldTransform();
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         //rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
@@ -2090,7 +2096,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _getBoundingBoxToCurrentNode: function (parentTransform) {
-        var rect = cc.rect(0, 0, this._contentSize._width, this._contentSize._height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var trans = (parentTransform == null) ? this.nodeToParentTransform() : cc.AffineTransformConcat(this.nodeToParentTransform(), parentTransform);
         rect = cc.RectApplyAffineTransform(rect, trans);
 
@@ -2179,14 +2185,26 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this._cascadeOpacityEnabled = false;
     },
 
+    /**
+     * Get the opacity of Node
+     * @returns {number} opacity
+     */
     getOpacity:function(){
         return this._realOpacity;
     },
 
+    /**
+     * Get the displayed opacity of Node
+     * @returns {number} displayed opacity
+     */
     getDisplayedOpacity:function(){
         return this._displayedOpacity;
     },
 
+    /**
+     * Set the opacity of Node
+     * @param {Number} opacity
+     */
     setOpacity:function(opacity){
         this._displayedOpacity = this._realOpacity = opacity;
 
@@ -2196,6 +2214,10 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this.updateDisplayedOpacity(parentOpacity);
     },
 
+    /**
+     * Update displayed opacity
+     * @param {Number} parentOpacity
+     */
     updateDisplayedOpacity: function (parentOpacity) {
         this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
         if (this._cascadeOpacityEnabled) {
@@ -2208,10 +2230,18 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade opacity.
+     * @returns {boolean}
+     */
     isCascadeOpacityEnabled:function(){
         return this._cascadeOpacityEnabled;
     },
 
+    /**
+     * Enable or disable cascade opacity
+     * @param {boolean} cascadeOpacityEnabled
+     */
     setCascadeOpacityEnabled:function(cascadeOpacityEnabled){
         if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
             return;
@@ -2241,15 +2271,27 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         }
     },
 
+    /**
+     * Get the color of Node
+     * @returns {cc.Color3B}
+     */
     getColor:function(){
         var locRealColor = this._realColor;
         return new cc.Color3B(locRealColor.r, locRealColor.g, locRealColor.b);
     },
 
+    /**
+     * Get the displayed color of Node
+     * @returns {cc.Color3B}
+     */
     getDisplayedColor:function(){
         return this._displayedColor;
     },
 
+    /**
+     * Set the color of Node
+     * @param {cc.Color3B} color
+     */
     setColor:function(color){
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
         locDisplayedColor.r = locRealColor.r = color.r;
@@ -2264,6 +2306,10 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this.updateDisplayedColor(parentColor);
     },
 
+    /**
+     * update the displayed color of Node
+     * @param {cc.Color3B} parentColor
+     */
     updateDisplayedColor: function (parentColor) {
         var locDispColor = this._displayedColor, locRealColor = this._realColor;
         locDispColor.r = 0 | (locRealColor.r * parentColor.r / 255.0);
@@ -2280,10 +2326,18 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         }
     },
 
+    /**
+     * whether or not it will set cascade color.
+     * @returns {boolean}
+     */
     isCascadeColorEnabled:function(){
         return this._cascadeColorEnabled;
     },
 
+    /**
+     * Enable or disable cascade color
+     * @param {boolean} cascadeColorEnabled
+     */
     setCascadeColorEnabled:function(cascadeColorEnabled){
         if(this._cascadeColorEnabled === cascadeColorEnabled)
             return;
@@ -2317,6 +2371,13 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         }
     },
 
+    /**
+     * add a child to node
+     * @overried
+     * @param {cc.Node} child  A child node
+     * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
+     */
     addChild:function(child, zOrder, tag){
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
 

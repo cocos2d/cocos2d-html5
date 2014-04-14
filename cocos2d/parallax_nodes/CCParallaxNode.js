@@ -155,7 +155,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
         obj.setChild(child);
         this._parallaxArray.push(obj);
 
-        var pos = cc.p(this._position._x, this._position._y);
+        var pos = cc.p(this._position.x, this._position.y);
         pos.x = pos.x * ratio.x + offset.x;
         pos.y = pos.y * ratio.y + offset.y;
         child.setPosition(pos);
@@ -188,7 +188,7 @@ cc.ParallaxNode = cc.NodeRGBA.extend(/** @lends cc.ParallaxNode# */{
      * @param {Boolean} cleanup
      */
     removeAllChildren:function (cleanup) {
-        this._parallaxArray = [];
+        this._parallaxArray.length = 0;
         cc.NodeRGBA.prototype.removeAllChildren.call(this, cleanup);
     },
 

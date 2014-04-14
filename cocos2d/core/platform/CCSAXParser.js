@@ -66,7 +66,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
         for (var i = 0, len = plist.childNodes.length; i < len; i++) {
             node = plist.childNodes[i];
             if (node.nodeType == 1)
-                break
+                break;
         }
         xmlDoc = null;
 
@@ -172,8 +172,8 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * Preload plist file
      * @param {String} filePath
      */
-    preloadPlist: function (filePath) {
-        filePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
+    preloadPlist: function (filePath, selector, target) {
+        var fullfilePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
 
         if (window.XMLHttpRequest) {
             var xmlhttp = new XMLHttpRequest();
@@ -186,17 +186,16 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             xmlhttp.onreadystatechange = function () {
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.responseText) {
-                        cc.Loader.getInstance().onResLoaded();
-                        that._xmlDict[filePath] = xmlhttp.responseText;
+                        that._xmlDict[fullfilePath] = xmlhttp.responseText;
                         xmlhttp = null;
+                        cc.doCallback(selector, target);
                     } else {
-                        cc.Loader.getInstance().onResLoaded();
-                        cc.log("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
+                        cc.doCallback(selector, target, filePath);
                     }
                 }
             };
             // load xml
-            xmlhttp.open("GET", filePath, true);
+            xmlhttp.open("GET", fullfilePath, true);
             xmlhttp.send(null);
         } else
             throw "cocos2d:Your browser does not support XMLHTTP.";
@@ -207,7 +206,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} filePath
      */
     unloadPlist: function (filePath) {
-        if (this._xmlDict.hasOwnProperty(filePath))
+        if (this._xmlDict[filePath])
             delete this._xmlDict[filePath];
     },
 

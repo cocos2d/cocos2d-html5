@@ -94,8 +94,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     init: function () {
-        if (ccs.Widget.prototype.init.call(this))
+        if (ccs.Widget.prototype.init.call(this)){
+            this.setTouchEnabled(true);
             return true;
+        }
         return false;
     },
 
@@ -104,10 +106,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._buttonClickedRenderer = cc.Sprite.create();
         this._buttonDisableRenderer = cc.Sprite.create();
         this._titleRenderer = cc.LabelTTF.create("");
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._titleRenderer, TITLE_RENDERER_ZORDER);
     },
 
     /**
@@ -121,9 +123,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._brightStyle = ccs.BrightStyle.none;
         this._scale9Enabled = able;
 
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
-        cc.NodeRGBA.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonNormalRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonClickedRenderer, true);
+        cc.Node.prototype.removeChild.call(this, this._buttonDisableRenderer, true);
 
         if (this._scale9Enabled) {
             this._buttonNormalRenderer = cc.Scale9Sprite.create();
@@ -139,9 +141,9 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this.loadTextureNormal(this._normalFileName, this._normalTexType);
         this.loadTexturePressed(this._clickedFileName, this._pressedTexType);
         this.loadTextureDisabled(this._disabledFileName, this._disabledTexType);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
-        cc.NodeRGBA.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonNormalRenderer, NORMAL_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonClickedRenderer, PRESSED_RENDERER_ZORDER);
+        cc.Node.prototype.addChild.call(this, this._buttonDisableRenderer, DISABLED_RENDERER_ZORDER);
         if (this._scale9Enabled) {
             var ignoreBefore = this._ignoreSize;
             this.ignoreContentAdaptWithSize(false);
@@ -154,6 +156,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this.setCapInsetsPressedRenderer(this._capInsetsPressed);
         this.setCapInsetsDisabledRenderer(this._capInsetsDisabled);
         this.setBright(this._bright);
+    },
+
+    /**
+     *  Get button is using scale9 renderer or not.
+     * @returns {Boolean}
+     */
+    isScale9Enabled:function(){
+        return this._scale9Enabled;
     },
 
     /**
@@ -223,7 +233,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             buttonNormalRenderer.setCapInsets(this._capInsetsNormal);
         }
 
-        this._updateDisplay();
+        this.updateRGBAToRenderer(buttonNormalRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.normalTextureScaleChangedWithSize();
         this._normalTextureLoaded = true;
     },
@@ -269,7 +282,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             clickedRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._updateDisplay();
+        this.updateRGBAToRenderer(clickedRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.pressedTextureScaleChangedWithSize();
         this._pressedTextureLoaded = true;
     },
@@ -315,15 +331,12 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         if (this._scale9Enabled) {
             disableRenderer.setCapInsets(this._capInsetsNormal);
         }
-        this._updateDisplay();
+        this.updateRGBAToRenderer(disableRenderer);
+        this.updateAnchorPoint();
+        this.updateFlippedX();
+        this.updateFlippedY();
         this.disabledTextureScaleChangedWithSize();
         this._disabledTextureLoaded = true;
-    },
-
-    _updateDisplay:function(){
-        this.updateDisplayedColor(this.getColor());
-        this.updateDisplayedOpacity(this.getOpacity());
-        this.updateAnchorPoint();
     },
 
     /**
@@ -349,6 +362,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     /**
+     *  Get normal renderer cap insets  .
+     * @returns {cc.Rect}
+     */
+    getCapInsetNormalRenderer:function(){
+        return this._capInsetsNormal;
+    },
+
+    /**
      * Sets capinsets for button, if button is using scale9 renderer.
      * @param {cc.Rect} capInsets
      */
@@ -361,6 +382,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
     },
 
     /**
+     *  Get pressed renderer cap insets  .
+     * @returns {cc.Rect}
+     */
+    getCapInsetPressedRenderer:function(){
+        return this._capInsetsPressed;
+    },
+
+    /**
      * Sets capinsets for button, if button is using scale9 renderer.
      * @param {cc.Rect} capInsets
      */
@@ -370,6 +399,14 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             return;
         }
         this._buttonDisableRenderer.setCapInsets(capInsets);
+    },
+
+    /**
+     *  Get disable renderer cap insets  .
+     * @returns {cc.Rect}
+     */
+    getCapInsetDisabledRenderer:function(){
+        return this._capInsetsDisabled;
     },
 
     onPressStateChangedToNormal: function () {
@@ -390,8 +427,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             }
         } else {
             this._buttonNormalRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
-            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize, this._normalTextureScaleYInSize);
         }
     },
 
@@ -416,8 +452,7 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
             this._buttonClickedRenderer.setVisible(true);
             this._buttonDisableRenderer.setVisible(false);
             this._buttonNormalRenderer.stopAllActions();
-            var zoomAction = cc.ScaleTo.create(0.05, this._pressedTextureScaleXInSize + 0.1, this._pressedTextureScaleYInSize + 0.1);
-            this._buttonNormalRenderer.runAction(zoomAction);
+            this._buttonNormalRenderer.setScale(this._normalTextureScaleXInSize + 0.1, this._normalTextureScaleYInSize + 0.1);
         }
     },
 
@@ -429,54 +464,44 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         this._buttonClickedRenderer.setScale(this._pressedTextureScaleXInSize, this._pressedTextureScaleYInSize);
     },
 
-    /**
-     * override "setFlippedX" of widget.
-     * @param {Boolean} flipX
-     */
-    setFlippedX: function (flipX) {
-        this._titleRenderer.setFlippedX(flipX);
+    updateFlippedX: function () {
+        this._titleRenderer.setFlippedX(this._flippedX);
         if (this._scale9Enabled) {
-            return;
+            if (this._flippedX) {
+                this._buttonNormalRenderer.setScaleX(-1);
+                this._buttonClickedRenderer.setScaleX(-1);
+                this._buttonDisableRenderer.setScaleX(-1);
+            }
+            else {
+                this._buttonNormalRenderer.setScaleX(1);
+                this._buttonClickedRenderer.setScaleX(1);
+                this._buttonDisableRenderer.setScaleX(1);
+            }
+        } else {
+            this._buttonNormalRenderer.setFlippedX(this._flippedX);
+            this._buttonClickedRenderer.setFlippedX(this._flippedX);
+            this._buttonDisableRenderer.setFlippedX(this._flippedX);
         }
-        this._buttonNormalRenderer.setFlippedX(flipX);
-        this._buttonClickedRenderer.setFlippedX(flipX);
-        this._buttonDisableRenderer.setFlippedX(flipX);
     },
 
-    /**
-     * override "setFlippedY" of widget.
-     * @param {Boolean} flipY
-     */
-    setFlippedY: function (flipY) {
-        this._titleRenderer.setFlippedY(flipY);
+    updateFlippedY: function () {
+        this._titleRenderer.setFlippedY(this._flippedY);
         if (this._scale9Enabled) {
-            return;
+            if (this._flippedX) {
+                this._buttonNormalRenderer.setScaleY(-1);
+                this._buttonClickedRenderer.setScaleX(-1);
+                this._buttonDisableRenderer.setScaleX(-1);
+            }
+            else {
+                this._buttonNormalRenderer.setScaleY(1);
+                this._buttonClickedRenderer.setScaleY(1);
+                this._buttonDisableRenderer.setScaleY(1);
+            }
+        }else{
+            this._buttonNormalRenderer.setFlippedY(this._flippedY);
+            this._buttonClickedRenderer.setFlippedY(this._flippedY);
+            this._buttonDisableRenderer.setFlippedY(this._flippedY);
         }
-        this._buttonNormalRenderer.setFlippedY(flipY);
-        this._buttonClickedRenderer.setFlippedY(flipY);
-        this._buttonDisableRenderer.setFlippedY(flipY);
-    },
-
-    /**
-     * override "isFlippedX" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedX: function () {
-        if (this._scale9Enabled) {
-            return false;
-        }
-        return this._buttonNormalRenderer.isFlippedX();
-    },
-
-    /**
-     * override "isFlippedY" of widget.
-     * @returns {Boolean}
-     */
-    isFlippedY: function () {
-        if (this._scale9Enabled) {
-            return false;
-        }
-        return this._buttonNormalRenderer.isFlippedY();
     },
 
     /**
@@ -485,19 +510,18 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      * @param {Number} [y] The anchor point.y of UIButton.
      */
     setAnchorPoint: function (point, y) {
-        if(arguments.length === 2){
-            ccs.Widget.prototype.setAnchorPoint.call(this,point, y);
-            this._buttonNormalRenderer.setAnchorPoint(point, y);
-            this._buttonClickedRenderer.setAnchorPoint(point, y);
-            this._buttonDisableRenderer.setAnchorPoint(point, y);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+        if(y === undefined){
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point);
+	        this._buttonNormalRenderer.setAnchorPoint(point);
+	        this._buttonClickedRenderer.setAnchorPoint(point);
+	        this._buttonDisableRenderer.setAnchorPoint(point);
         } else {
-            ccs.Widget.prototype.setAnchorPoint.call(this,point);
-            this._buttonNormalRenderer.setAnchorPoint(point);
-            this._buttonClickedRenderer.setAnchorPoint(point);
-            this._buttonDisableRenderer.setAnchorPoint(point);
-            this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint._x), this._size.height * (0.5 - this._anchorPoint._y));
+	        ccs.Widget.prototype.setAnchorPoint.call(this, point, y);
+	        this._buttonNormalRenderer.setAnchorPoint(point, y);
+	        this._buttonClickedRenderer.setAnchorPoint(point, y);
+	        this._buttonDisableRenderer.setAnchorPoint(point, y);
         }
+	    this._titleRenderer.setPosition(this._size.width * (0.5 - this._anchorPoint.x), this._size.height * (0.5 - this._anchorPoint.y));
     },
 
     onSizeChanged: function () {
@@ -646,8 +670,10 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
      * @param {cc.c3b} color
      */
     setTitleColor: function (color) {
-        this._titleColor = color;
-        this._titleRenderer.updateDisplayedColor(color);
+        this._titleColor.r = color.r;
+        this._titleColor.g = color.g;
+        this._titleColor.b = color.b;
+        this._titleRenderer.setColor(color);
     },
 
     /**
@@ -690,14 +716,22 @@ ccs.Button = ccs.Widget.extend(/** @lends ccs.Button# */{
         return this._titleRenderer.getFontName();
     },
 
-    /**
-     * Sets color to widget
-     * It default change the color of widget's children.
-     * @param color
-     */
-    setColor: function (color) {
-        ccs.Widget.prototype.setColor.call(this,color);
-        this.setTitleColor(this._titleColor);
+    updateTextureColor: function () {
+        this.updateColorToRenderer(this._buttonNormalRenderer);
+        this.updateColorToRenderer(this._buttonClickedRenderer);
+        this.updateColorToRenderer(this._buttonDisableRenderer);
+    },
+
+    updateTextureOpacity: function () {
+        this.updateOpacityToRenderer(this._buttonNormalRenderer);
+        this.updateOpacityToRenderer(this._buttonClickedRenderer);
+        this.updateOpacityToRenderer(this._buttonDisableRenderer);
+    },
+
+    updateTextureRGBA: function () {
+        this.updateRGBAToRenderer(this._buttonNormalRenderer);
+        this.updateRGBAToRenderer(this._buttonClickedRenderer);
+        this.updateRGBAToRenderer(this._buttonDisableRenderer);
     },
 
     /**

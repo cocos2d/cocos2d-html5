@@ -40,7 +40,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
     ctor:function(){
         cc.AtlasNode.prototype.ctor.call(this);
-        this._loadedEventListeners = [];
     },
 
     /**
@@ -57,15 +56,19 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {Object} target
      */
     addLoadedEventListener:function(callback, target){
+        if(!this._loadedEventListeners)
+            this._loadedEventListeners = [];
         this._loadedEventListeners.push({eventCallback:callback, eventTarget:target});
     },
 
     _callLoadedEventCallbacks:function(){
+        if(!this._loadedEventListeners)
+            return;
         this._textureLoaded = true;
         var locListeners = this._loadedEventListeners;
         for(var i = 0, len = locListeners.length;  i < len; i++){
             var selCallback = locListeners[i];
-            selCallback.eventCallback.call(selCallback.eventTarget, this);
+            cc.doCallback(selCallback.eventCallback, selCallback.eventTarget, this);
         }
         locListeners.length = 0;
     },

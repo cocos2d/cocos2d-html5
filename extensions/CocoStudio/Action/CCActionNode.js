@@ -63,7 +63,7 @@ ccs.ActionNode = ccs.Class.extend({
         for (var i = 0; i < actionframelist.length; i++) {
             var actionFrameDic = actionframelist[i];
             var frameInex = actionFrameDic["frameid"];
-            if (actionFrameDic.hasOwnProperty("positionx")) {
+            if (actionFrameDic["positionx"] !== undefined) {
                 var positionX = actionFrameDic["positionx"];
                 var positionY = actionFrameDic["positiony"];
                 var actionFrame = new ccs.ActionMoveFrame();
@@ -73,7 +73,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("scalex")) {
+            if (actionFrameDic["scalex"] !== undefined) {
                 var scaleX = actionFrameDic["scalex"];
                 var scaleY = actionFrameDic["scaley"];
                 var actionFrame = new ccs.ActionScaleFrame();
@@ -84,7 +84,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("rotation")) {
+            if (actionFrameDic["rotation"] !== undefined) {
                 var rotation = actionFrameDic["rotation"];
                 var actionFrame = new ccs.ActionRotationFrame();
                 actionFrame.setFrameIndex(frameInex);
@@ -93,7 +93,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("opacity")) {
+            if (actionFrameDic["opacity"] !== undefined) {
                 var opacity = actionFrameDic["opacity"];
                 var actionFrame = new ccs.ActionFadeFrame();
                 actionFrame.setFrameIndex(frameInex);
@@ -102,7 +102,7 @@ ccs.ActionNode = ccs.Class.extend({
                 actionArray.push(actionFrame);
             }
 
-            if (actionFrameDic.hasOwnProperty("colorr")) {
+            if (actionFrameDic["colorr"] !== undefined) {
                 var colorR = actionFrameDic["colorr"];
                 var colorG = actionFrameDic["colorg"];
                 var colorB = actionFrameDic["colorb"];
@@ -200,7 +200,7 @@ ccs.ActionNode = ccs.Class.extend({
         }
         var frameType = frame.getFrameType();
         var array = this._frameArray[frameType];
-        array[index] = frame;
+        array.splice(index, 0, frame);
     },
 
     /**

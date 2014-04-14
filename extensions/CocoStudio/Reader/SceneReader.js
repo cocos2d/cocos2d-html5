@@ -97,7 +97,7 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
                 var resType = 0;
                 path +=this._baseBath;
                 if (fileData != null) {
-                    if(fileData.hasOwnProperty("resourceType")){
+                    if(fileData["resourceType"] !== undefined){
                         resType = fileData["resourceType"]
                     }else{
                         resType =-1;
@@ -348,25 +348,25 @@ ccs.SceneReader = ccs.Class.extend(/** @lends ccs.SceneReader# */{
      * @param {Object} dict
      */
     setPropertyFromJsonDict: function (node, dict) {
-        var x = dict["x"] || 0;
-        var y = dict["y"] || 0;
+        var x = (typeof dict["x"] === 'undefined')?0:dict["x"];
+        var y = (typeof dict["y"] === 'undefined')?0:dict["y"];
         node.setPosition(cc.p(x, y));
 
-        var bVisible = Boolean(dict["visible"] || 1);
+        var bVisible = Boolean((typeof dict["visible"] === 'undefined')?1:dict["visible"]);
         node.setVisible(bVisible);
 
-        var nTag = dict["objecttag"] || -1;
+        var nTag = (typeof dict["objecttag"] === 'undefined')?-1:dict["objecttag"];
         node.setTag(nTag);
 
-        var nZorder = dict["zorder"] || 0;
+        var nZorder = (typeof dict["zorder"] === 'undefined')?0:dict["zorder"];
         node.setZOrder(nZorder);
 
-        var fScaleX = dict["scalex"] || 1;
-        var fScaleY = dict["scaley"] || 1;
+        var fScaleX = (typeof dict["scalex"] === 'undefined')?1:dict["scalex"];
+        var fScaleY = (typeof dict["scaley"] === 'undefined')?1:dict["scaley"];
         node.setScaleX(fScaleX);
         node.setScaleY(fScaleY);
 
-        var fRotationZ = dict["rotation"] || 0;
+        var fRotationZ = (typeof dict["rotation"] === 'undefined')?0:dict["rotation"];
         node.setRotation(fRotationZ);
     },
     setTarget : function(selector,listener){
