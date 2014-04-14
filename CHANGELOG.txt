@@ -12,7 +12,7 @@ Cocos2d-html5-v3.0 alpha2 @ April.14, 2014
 * cc.Node's pauseSchedulerAndActions and resumeSchedulerAndActions are deprecated, please use pause and resume instead.
 * Add render mode checking to 3D action classes.
 * Use undefined check in cc.loader for better performance.
-* Sync cc.eventManager to the latest version of Cocos2d-x v3.0 Stable.
+* Sync cc.eventManager to the latest version of Cocos2d-x v3.0 final.
 * ccui.Layout's doLayout function has been set to private function "_doLayout".
 * Rename all Uppercase functions to lowercase in CCMacro.js.
 * Add more necessary GL constants in engine.
