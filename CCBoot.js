@@ -1238,7 +1238,11 @@ cc._rendererInitialized = false;
  * // declare like this: <div id="Cocos2dGameContainer" width="800" height="450"></div>
  * cc._setup("Cocos2dGameContainer");
  */
+cc._setupCalled = false;
 cc._setup = function (el, width, height) {
+    // Avoid setup to be called twice.
+    if (cc._setupCalled) return;
+    else cc._setupCalled = true;
     var win = window;
     win.requestAnimFrame = win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
