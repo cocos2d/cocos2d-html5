@@ -630,24 +630,23 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                     tileset.sourceImage = this._resources + (this._resources ? "/" : "") + imagename;
                 }
                 this.setTilesets(tileset);
-            }
-        }
 
-        // PARSE  <tile>
-        var tiles = map.querySelectorAll('tile');
-        if (tiles) {
-            for (i = 0; i < tiles.length; i++) {
-                var info = this._tilesets[0];
-                var t = tiles[i];
-                this.parentGID = parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0);
-                var tp = t.querySelectorAll("properties > property");
-                if (tp) {
-                    var dict = {};
-                    for (j = 0; j < tp.length; j++) {
-                        var name = tp[j].getAttribute('name');
-                        dict[name] = tp[j].getAttribute('value');
+                // PARSE  <tile>
+                var tiles = selTileset.getElementsByTagName('tile');
+                if (tiles) {
+                    for (i = 0; i < tiles.length; i++) {
+                        var t = tiles[i];
+                        this.parentGID = parseInt(tileset.firstGid) + parseInt(t.getAttribute('id') || 0);
+                        var tp = t.querySelectorAll("properties > property");
+                        if (tp) {
+                            var dict = {};
+                            for (j = 0; j < tp.length; j++) {
+                                var name = tp[j].getAttribute('name');
+                                dict[name] = tp[j].getAttribute('value');
+                            }
+                            this._tileProperties[this.parentGID] = dict;
+                        }
                     }
-                    this._tileProperties[this.parentGID] = dict;
                 }
             }
         }
