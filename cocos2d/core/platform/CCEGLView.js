@@ -444,8 +444,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         }
 
         // reset director's member variables to fit visible rect
-        cc.winSize.width = _t._visibleRect.width;
-        cc.winSize.height = _t._visibleRect.height;
+        var director = cc.director;
+        cc.winSize.width = director._winSizeInPoints.width = _t._visibleRect.width;
+        cc.winSize.height = director._winSizeInPoints.height = _t._visibleRect.height;
 
         policy.postApply(this);
 
