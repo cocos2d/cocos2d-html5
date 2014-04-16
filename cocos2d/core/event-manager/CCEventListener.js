@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2010-2014 cocos2d-x.org
+ Copyright (c) 2010-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -41,6 +41,7 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
     _fixedPriority: 0,                      // The higher the number, the higher the priority, 0 is for scene graph base priority.
     _node: null,                           // scene graph based priority
     _paused: false,                        // Whether the listener is paused
+    _isEnabled: true,                      // Whether the listener is enabled
 
     /**
      * Initializes event with type and callback function
@@ -54,42 +55,103 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
         this._listenerID = listenerID || "";
     },
 
+    /**
+     * <p>
+     *     Sets paused state for the listener
+     *     The paused state is only used for scene graph priority listeners.
+     *     `EventDispatcher::resumeAllEventListenersForTarget(node)` will set the paused state to `true`,
+     *     while `EventDispatcher::pauseAllEventListenersForTarget(node)` will set it to `false`.
+     *     @note 1) Fixed priority listeners will never get paused. If a fixed priority doesn't want to receive events,
+     *              call `setEnabled(false)` instead.
+     *            2) In `Node`'s onEnter and onExit, the `paused state` of the listeners which associated with that node will be automatically updated.
+     * </p>
+     * @param {boolean} paused
+     * @private
+     */
     _setPaused: function (paused) {
         this._paused = paused;
     },
 
+    /**
+     * Checks whether the listener is paused
+     * @returns {boolean}
+     * @private
+     */
     _isPaused: function () {
         return this._paused;
     },
 
+    /**
+     * Marks the listener was registered by EventDispatcher
+     * @param {boolean} registered
+     * @private
+     */
     _setRegistered: function (registered) {
         this._registered = registered;
     },
 
+    /**
+     * Checks whether the listener was registered by EventDispatcher
+     * @returns {boolean}
+     * @private
+     */
     _isRegistered: function () {
         return this._registered;
     },
 
+    /**
+     * Gets the type of this listener
+     * @note It's different from `EventType`, e.g. TouchEvent has two kinds of event listeners - EventListenerOneByOne, EventListenerAllAtOnce
+     * @returns {number}
+     * @private
+     */
     _getType: function () {
         return this._type;
     },
 
+    /**
+     *  Gets the listener ID of this listener
+     *  When event is being dispatched, listener ID is used as key for searching listeners according to event type.
+     * @returns {string}
+     * @private
+     */
     _getListenerID: function () {
         return this._listenerID;
     },
 
+    /**
+     * Sets the fixed priority for this listener
+     *  @note This method is only used for `fixed priority listeners`, it needs to access a non-zero value. 0 is reserved for scene graph priority listeners
+     * @param {number} fixedPriority
+     * @private
+     */
     _setFixedPriority: function (fixedPriority) {
         this._fixedPriority = fixedPriority;
     },
 
+    /**
+     * Gets the fixed priority of this listener
+     * @returns {number} 0 if it's a scene graph priority listener, non-zero for fixed priority listener
+     * @private
+     */
     _getFixedPriority: function () {
         return this._fixedPriority;
     },
 
+    /**
+     * Sets scene graph priority for this listener
+     * @param {cc.Node} node
+     * @private
+     */
     _setSceneGraphPriority: function (node) {
         this._node = node;
     },
 
+    /**
+     * Gets scene graph priority of this listener
+     * @returns {cc.Node} if it's a fixed priority listener, non-null for scene graph priority listener
+     * @private
+     */
     _getSceneGraphPriority: function () {
         return this._node;
     },
@@ -108,6 +170,26 @@ cc.EventListener = cc.Class.extend(/** @lends cc.EventListener# */{
      */
     clone: function () {
         return null;
+    },
+
+    /**
+     *  Enables or disables the listener
+     *  @note Only listeners with `enabled` state will be able to receive events.
+     *          When an listener was initialized, it's enabled by default.
+     *          An event listener can receive events when it is enabled and is not paused.
+     *          paused state is always false when it is a fixed priority listener.
+     * @param {boolean} enabled
+     */
+    setEnabled: function(enabled){
+        this._isEnabled = enabled;
+    },
+
+    /**
+     * Checks whether the listener is enabled
+     * @returns {boolean}
+     */
+    isEnabled: function(){
+        return this._isEnabled;
     },
 
     /**
@@ -189,74 +271,6 @@ cc._EventListenerCustom = cc.EventListener.extend({
 
 cc._EventListenerCustom.create = function (eventName, callback) {
     return new cc._EventListenerCustom(eventName, callback);
-};
-
-cc._EventListenerAcceleration = cc.EventListener.extend({
-    _onAccelerationEvent: null,
-    ctor: function (callback) {
-        this._onAccelerationEvent = callback;
-        var selfPointer = this;
-        var listener = function (event) {
-            selfPointer._onAccelerationEvent(event._acc, event);
-        };
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.ACCELERATION, cc._EventListenerAcceleration.LISTENER_ID, listener);
-    },
-
-    checkAvailable: function () {
-        if (!this._onAccelerationEvent)
-            throw "cc._EventListenerAcceleration.checkAvailable(): _onAccelerationEvent must be non-nil";
-        return true;
-    },
-
-    clone: function () {
-        return new cc._EventListenerAcceleration(this._onAccelerationEvent);
-    }
-});
-
-cc._EventListenerAcceleration.LISTENER_ID = "__cc_acceleration";
-
-cc._EventListenerAcceleration.create = function (callback) {
-    return new cc._EventListenerAcceleration(callback);
-};
-
-cc._EventListenerKeyboard = cc.EventListener.extend({
-    onKeyPressed: null,
-    onKeyReleased: null,
-
-    ctor: function () {
-        var selfPointer = this;
-        var listener = function (event) {
-            if (event._isPressed) {
-                if (selfPointer.onKeyPressed)
-                    selfPointer.onKeyPressed(event._keyCode, event);
-            } else {
-                if (selfPointer.onKeyReleased)
-                    selfPointer.onKeyReleased(event._keyCode, event);
-            }
-        };
-        cc.EventListener.prototype.ctor.call(this, cc.EventListener.KEYBOARD, cc._EventListenerKeyboard.LISTENER_ID, listener);
-    },
-
-    clone: function () {
-        var eventListener = new cc._EventListenerKeyboard();
-        eventListener.onKeyPressed = this.onKeyPressed;
-        eventListener.onKeyReleased = this.onKeyReleased;
-        return eventListener;
-    },
-
-    checkAvailable: function () {
-        if (this.onKeyPressed == null && this.onKeyReleased == null) {
-            cc.log("cc._EventListenerKeyboard.checkAvailable(): Invalid EventListenerKeyboard!");
-            return false;
-        }
-        return true;
-    }
-});
-
-cc._EventListenerKeyboard.LISTENER_ID = "__cc_keyboard";
-
-cc._EventListenerKeyboard.create = function () {
-    return new cc._EventListenerKeyboard();
 };
 
 cc._EventListenerMouse = cc.EventListener.extend({
@@ -342,7 +356,7 @@ cc._EventListenerTouchOneByOne = cc.EventListener.extend({
 
     checkAvailable: function () {
         if(!this.onTouchBegan){
-            cc.log("cc._EventListenerTouchOneByOne.checkAvailable(): Invalid EventListenerTouchOneByOne!");
+            cc.log(cc._LogInfos._EventListenerTouchOneByOne_checkAvailable);
             return false;
         }
         return true;
@@ -377,7 +391,7 @@ cc._EventListenerTouchAllAtOnce = cc.EventListener.extend({
     checkAvailable: function(){
         if (this.onTouchesBegan == null && this.onTouchesMoved == null
             && this.onTouchesEnded == null && this.onTouchesCancelled == null) {
-            cc.log("cc._EventListenerTouchAllAtOnce.checkAvailable(): Invalid EventListenerTouchAllAtOnce!");
+            cc.log(cc._LogInfos._EventListenerTouchAllAtOnce_checkAvailable);
             return false;
         }
         return true;
@@ -405,9 +419,9 @@ cc._EventListenerTouchAllAtOnce.create = function(){
  *    });
  */
 cc.EventListener.create = function(argObj){
-    if(!argObj || !argObj.event){
-        throw "Invalid parameter.";
-    }
+
+    cc.assert(argObj&&argObj.event, cc._LogInfos.EventListener_create);
+
     var listenerType = argObj.event;
     delete argObj.event;
 

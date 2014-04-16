@@ -41,38 +41,40 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
     _upZOrig:0,
 
     ctor:function(){
-        cc.ActionInterval.prototype.ctor.call(this);
+        var _t = this;
+        cc.ActionInterval.prototype.ctor.call(_t);
 
-        this._centerXOrig=0;
-        this._centerYOrig=0;
-        this._centerZOrig=0;
-        this._eyeXOrig=0;
-        this._eyeYOrig=0;
-        this._eyeZOrig=0;
-        this._upXOrig=0;
-        this._upYOrig=0;
-        this._upZOrig=0;
+        _t._centerXOrig=0;
+        _t._centerYOrig=0;
+        _t._centerZOrig=0;
+        _t._eyeXOrig=0;
+        _t._eyeYOrig=0;
+        _t._eyeZOrig=0;
+        _t._upXOrig=0;
+        _t._upYOrig=0;
+        _t._upZOrig=0;
     },
 
 
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
+        var _t = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_t, target);
 
         var camera = target.getCamera();
         var centerXYZ = camera.getCenter();
-        this._centerXOrig = centerXYZ.x;
-        this._centerYOrig = centerXYZ.y;
-        this._centerZOrig = centerXYZ.z;
+        _t._centerXOrig = centerXYZ.x;
+        _t._centerYOrig = centerXYZ.y;
+        _t._centerZOrig = centerXYZ.z;
 
         var eyeXYZ = camera.getEye();
-        this._eyeXOrig = eyeXYZ.x;
-        this._eyeYOrig = eyeXYZ.y;
-        this._eyeZOrig = eyeXYZ.z;
+        _t._eyeXOrig = eyeXYZ.x;
+        _t._eyeYOrig = eyeXYZ.y;
+        _t._eyeZOrig = eyeXYZ.z;
 
         var upXYZ = camera.getUp();
-        this._upXOrig = upXYZ.x;
-        this._upYOrig = upXYZ.y;
-        this._upZOrig = upXYZ.z;
+        _t._upXOrig = upXYZ.x;
+        _t._upYOrig = upXYZ.y;
+        _t._upZOrig = upXYZ.z;
     },
 
     /**
@@ -135,15 +137,16 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
      */
     initWithDuration:function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, t)) {
-            this._radius = radius;
-            this._deltaRadius = deltaRadius;
-            this._angleZ = angleZ;
-            this._deltaAngleZ = deltaAngleZ;
-            this._angleX = angleX;
-            this._deltaAngleX = deltaAngleX;
+            var _t = this;
+            _t._radius = radius;
+            _t._deltaRadius = deltaRadius;
+            _t._angleZ = angleZ;
+            _t._deltaAngleZ = deltaAngleZ;
+            _t._angleX = angleX;
+            _t._deltaAngleX = deltaAngleX;
 
-            this._radDeltaZ = cc.DEGREES_TO_RADIANS(deltaAngleZ);
-            this._radDeltaX = cc.DEGREES_TO_RADIANS(deltaAngleX);
+            _t._radDeltaZ = cc.degreesToRadians(deltaAngleZ);
+            _t._radDeltaX = cc.degreesToRadians(deltaAngleX);
             return true;
         }
         return false;
@@ -159,9 +162,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
         var eyeXYZ = camera.getEye();
         var centerXYZ = camera.getCenter();
 
-        var x = eyeXYZ.x - centerXYZ.x;
-        var y = eyeXYZ.y - centerXYZ.y;
-        var z = eyeXYZ.z - centerXYZ.z;
+        var x = eyeXYZ.x - centerXYZ.x, y = eyeXYZ.y - centerXYZ.y, z = eyeXYZ.z - centerXYZ.z;
 
         var r = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
         var s = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
@@ -180,24 +181,25 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
     },
 
     startWithTarget:function (target) {
-        cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        var retValue = this.sphericalRadius();
-        if (isNaN(this._radius))
-            this._radius = retValue.newRadius;
+        var _t = this;
+        cc.ActionInterval.prototype.startWithTarget.call(_t, target);
+        var retValue = _t.sphericalRadius();
+        if (isNaN(_t._radius))
+            _t._radius = retValue.newRadius;
 
-        if (isNaN(this._angleZ))
-            this._angleZ = cc.RADIANS_TO_DEGREES(retValue.zenith);
+        if (isNaN(_t._angleZ))
+            _t._angleZ = cc.radiansToDegress(retValue.zenith);
 
-        if (isNaN(this._angleX))
-            this._angleX = cc.RADIANS_TO_DEGREES(retValue.azimuth);
+        if (isNaN(_t._angleX))
+            _t._angleX = cc.radiansToDegress(retValue.azimuth);
 
-        this._radZ = cc.DEGREES_TO_RADIANS(this._angleZ);
-        this._radX = cc.DEGREES_TO_RADIANS(this._angleX);
+        _t._radZ = cc.degreesToRadians(_t._angleZ);
+        _t._radX = cc.degreesToRadians(_t._angleX);
     },
 
     clone:function(){
-        var a = new cc.OrbitCamera();
-        a.initWithDuration(this._duration, this._radius, this._deltaRadius, this._angleZ, this._deltaAngleZ, this._angleX, this._deltaAngleX);
+        var a = new cc.OrbitCamera(), _t = this;
+        a.initWithDuration(_t._duration, _t._radius, _t._deltaRadius, _t._angleZ, _t._deltaAngleZ, _t._angleX, _t._deltaAngleX);
         return a;
     },
 

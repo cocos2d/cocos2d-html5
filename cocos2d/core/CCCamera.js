@@ -273,5 +273,3 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
 cc.Camera.getZEye = function () {
     return cc.FLT_EPSILON;
 };
-
-//cc.CONTENT_SCALE_FACTOR = cc.director.getContentScaleFactor();

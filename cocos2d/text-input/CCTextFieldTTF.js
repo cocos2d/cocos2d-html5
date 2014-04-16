@@ -100,10 +100,35 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _charCount:0,
     _className:"TextFieldTTF",
 
-    ctor:function () {
+    /**
+     *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size
+     * @constructor
+     * @param {String} placeholder
+     * @param {cc.Size} dimensions
+     * @param {Number} alignment
+     * @param {String} fontName
+     * @param {Number} fontSize
+     * @example
+     * //example
+     * // When five parameters
+     * var textField = cc.TextFieldTTF.create("<click here for input>", cc.size(100,50), cc.TEXT_ALIGNMENT_LEFT,"Arial", 32);
+     * // When three parameters
+     * var textField = cc.TextFieldTTF.create("<click here for input>", "Arial", 32);
+     */
+    ctor:function (placeholder, dimensions, alignment, fontName, fontSize) {
         this.colorSpaceHolder = cc.color(127, 127, 127);
         cc.imeDispatcher.addDelegate(this);
         cc.LabelTTF.prototype.ctor.call(this);
+
+        if(fontSize !== undefined){
+            this.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize);
+            if(placeholder)
+                this.setPlaceHolder(placeholder);
+        }else if(fontName === undefined && alignment !== undefined){
+            this.initWithString("", arguments[1], arguments[2]);
+            if(placeholder)
+                this.setPlaceHolder(placeholder);
+        }
     },
 
     /**
@@ -160,17 +185,15 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         switch (arguments.length) {
             case 5:
                 if (placeholder) {
-                    this._placeHolder = placeholder;
+                    this.setPlaceHolder(placeholder);
                 }
                 return this.initWithString(this._placeHolder,fontName, fontSize, dimensions, alignment);
                 break;
             case 3:
                 if (placeholder) {
-                    this._placeHolder = placeholder;
+                    this.setPlaceHolder(placeholder);
                 }
-                fontName = arguments[1];
-                fontSize = arguments[2];
-                return this.initWithString(this._placeHolder, fontName, fontSize);
+                return this.initWithString(this._placeHolder, arguments[1], arguments[2]);
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -239,6 +262,10 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this._updateTexture();
         cc.LabelTTF.prototype.draw.call(this, context);
         this.color = color;
+    },
+
+    visit: function(ctx){
+        this._super(ctx);
     },
 
     //////////////////////////////////////////////////////////////////////////
@@ -311,8 +338,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         }
 
         // set new input text
-        var sText = this._inputText.substring(0, strLen - deleteLen);
-        this.string = sText;
+        this.string = this._inputText.substring(0, strLen - deleteLen);
     },
 
     /**
@@ -376,7 +402,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     }
 });
 
-window._p = cc.TextFieldTTF.prototype;
+var _p = cc.TextFieldTTF.prototype;
 
 // Extended properties
 /** @expose */
@@ -385,7 +411,7 @@ cc.defineGetterSetter(_p, "charCount", _p.getCharCount);
 /** @expose */
 _p.placeHolder;
 cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);
-delete window._p;
+
 
 /**
  *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size
@@ -403,31 +429,6 @@ delete window._p;
  * var textField = cc.TextFieldTTF.create("<click here for input>", "Arial", 32);
  */
 cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName, fontSize) {
-    var ret;
-    switch (arguments.length) {
-        case 5:
-            ret = new cc.TextFieldTTF();
-            if (ret && ret.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize)) {
-                if (placeholder)
-                    ret.placeHolder = placeholder;
-                return ret;
-            }
-            return null;
-            break;
-        case 3:
-            ret = new cc.TextFieldTTF();
-            fontName = arguments[1];
-            fontSize = arguments[2];
-            if (ret && ret.initWithString("", fontName, fontSize)) {
-                if (placeholder)
-                    ret.placeHolder = placeholder;
-                return ret;
-            }
-            return null;
-            break;
-        default:
-            throw "Argument must be non-nil ";
-            break;
-    }
+    return new cc.TextFieldTTF(placeholder, dimensions, alignment, fontName, fontSize);
 };
 

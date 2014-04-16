@@ -376,10 +376,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _quadsArrayBuffer:null,
 
     /**
-     * Constructor
-     * @override
+     * <p> return the string found by key in dict. <br/>
+     *    This plist files can be create manually or with Particle Designer:<br/>
+     *    http://particledesigner.71squared.com/<br/>
+     * </p>
+     * @constructor
+     * @param {String|Number} plistFile
      */
-    ctor:function () {
+    ctor:function (plistFile) {
         cc.Node.prototype.ctor.call(this);
         this.emitterMode = cc.PARTICLE_MODE_GRAVITY;
         this.modeA = new cc.ParticleSystem.ModeA();
@@ -440,6 +444,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
             this._quadsArrayBuffer = null;
         }
+
+        if (!plistFile || typeof(plistFile) === "number") {
+            var ton = plistFile || 100;
+            this.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
+            this.initWithTotalParticles(ton);
+        }else{
+            this.initWithFile(plistFile);
+        }
     },
 
     /**
@@ -467,7 +479,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Rect} pointRect
      */
     initTexCoordsWithRect:function (pointRect) {
-        var scaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var scaleFactor = cc.contentScaleFactor();
         // convert to pixels coords
         var rect = cc.rect(
             pointRect.x * scaleFactor,
@@ -1696,7 +1708,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         }
 
-                        var canvasObj = document.createElement("canvas");
+                        var canvasObj = cc.newElement("canvas");
                         if(imageFormat === cc.FMT_PNG){
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
@@ -1816,7 +1828,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Particle} particle
      */
     initParticle:function (particle) {
-        var locRandomMinus11 = cc.RANDOM_MINUS1_1;
+        var locRandomMinus11 = cc.randomMinus1To1;
         // timeToLive
         // no negative life. prevent division by 0
         particle.timeToLive = this.life + this.lifeVar * locRandomMinus11();
@@ -1893,7 +1905,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
 
         // direction
-        var a = cc.DEGREES_TO_RADIANS(this.angle + this.angleVar * locRandomMinus11());
+        var a = cc.degreesToRadians(this.angle + this.angleVar * locRandomMinus11());
 
         // Mode Gravity: A
         if (this.emitterMode === cc.PARTICLE_MODE_GRAVITY) {
@@ -1913,7 +1925,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
             // rotation is dir
             if(locModeA.rotationIsDir)
-                particle.rotation = -cc.RADIANS_TO_DEGREES(cc.pToAngle(locParticleModeA.dir));
+                particle.rotation = -cc.radiansToDegress(cc.pToAngle(locParticleModeA.dir));
         } else {
             // Mode Radius: B
             var locModeB = this.modeB, locParitlceModeB = particle.modeB;
@@ -1926,7 +1938,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             locParitlceModeB.deltaRadius = (locModeB.endRadius === cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS) ? 0 : (endRadius - startRadius) / locParticleTimeToLive;
 
             locParitlceModeB.angle = a;
-            locParitlceModeB.degreesPerSecond = cc.DEGREES_TO_RADIANS(locModeB.rotatePerSecond + locModeB.rotatePerSecondVar * locRandomMinus11());
+            locParitlceModeB.degreesPerSecond = cc.degreesToRadians(locModeB.rotatePerSecond + locModeB.rotatePerSecondVar * locRandomMinus11());
         }
     },
 
@@ -2019,7 +2031,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             var x = newPosition.x;
             var y = newPosition.y;
 
-            var rad = -cc.DEGREES_TO_RADIANS(particle.rotation);
+            var rad = -cc.degreesToRadians(particle.rotation);
             var cr = Math.cos(rad);
             var sr = Math.sin(rad);
             var ax = x1 * cr - y1 * sr + x;
@@ -2084,7 +2096,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             // memcpy(buf, m_pQuads, sizeof(m_pQuads[0])*m_uTotalParticles);
             // glUnmapBuffer(GL_ARRAY_BUFFER);
 
-            //cc.CHECK_GL_ERROR_DEBUG();
+            //cc.checkGLErrorDebug();
         }
     },
 
@@ -2512,7 +2524,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
 
                 if (particle.rotation)
-                    context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
+                    context.rotate(cc.degreesToRadians(particle.rotation));
 
                 context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
                 if (particle.isChangeColor) {
@@ -2522,7 +2534,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         // Create another cache for the tinted version
                         // This speeds up things by a fair bit
                         if (!cacheTextureForColor.tintCache) {
-                            cacheTextureForColor.tintCache = document.createElement('canvas');
+                            cacheTextureForColor.tintCache = cc.newElement('canvas');
                             cacheTextureForColor.tintCache.width = element.width;
                             cacheTextureForColor.tintCache.height = element.height;
                         }
@@ -2542,7 +2554,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                 if (this.shapeType == cc.PARTICLE_STAR_SHAPE) {
                     if (particle.rotation)
-                        context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
+                        context.rotate(cc.degreesToRadians(particle.rotation));
                     cc._drawingUtil.drawStar(context, lpx, particle.color);
                 } else
                     cc._drawingUtil.drawColorBall(context, lpx, particle.color);
@@ -2645,7 +2657,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
 
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
     },
 
     _allocMemory:function () {
@@ -2676,7 +2688,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-window._p = cc.ParticleSystem.prototype;
+var _p = cc.ParticleSystem.prototype;
 
 // Extended properties
 /** @expose */
@@ -2755,7 +2767,6 @@ cc.defineGetterSetter(_p, "totalParticles", _p.getTotalParticles, _p.setTotalPar
 _p.texture;
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
-delete window._p;
 
 /**
  * <p> return the string found by key in dict. <br/>
@@ -2766,17 +2777,7 @@ delete window._p;
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    var ret = new cc.ParticleSystem();
-    if (!plistFile || typeof(plistFile) === "number") {
-        var ton = plistFile || 100;
-        ret.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
-        ret.initWithTotalParticles(ton);
-        return ret;
-    }
-
-    if (ret && ret.initWithFile(plistFile))
-        return ret;
-    return null;
+    return new cc.ParticleSystem(plistFile);
 };
 
 // Different modes

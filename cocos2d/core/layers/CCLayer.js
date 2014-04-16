@@ -36,17 +36,17 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * init layer
      * @return {Boolean}
      */
-    _className:"Layer",
+    _className: "Layer",
 
-	/**
-	 * @constructor
-	 */
+    /**
+     * @constructor
+     */
     ctor: function () {
-		var nodep = cc.Node.prototype;
-		nodep.ctor.call(this);
+        var nodep = cc.Node.prototype;
+        nodep.ctor.call(this);
         this._ignoreAnchorPointForPosition = true;
-		nodep.setAnchorPoint.call(this, 0.5, 0.5);
-		nodep.setContentSize.call(this, cc.winSize);
+        nodep.setAnchorPoint.call(this, 0.5, 0.5);
+        nodep.setContentSize.call(this, cc.winSize);
     }
 });
 
@@ -81,31 +81,31 @@ cc.Layer.create = function () {
  * @property {Boolean}      cascadeColor        - Indicate whether or not it will set cascade color
  */
 cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
-    RGBAProtocol:true,
+    RGBAProtocol: true,
     _displayedOpacity: 255,
     _realOpacity: 255,
     _displayedColor: null,
     _realColor: null,
     _cascadeOpacityEnabled: false,
     _cascadeColorEnabled: false,
-    _className:"LayerRGBA",
+    _className: "LayerRGBA",
 
-	/**
-	 * @constructor
-	 */
+    /**
+     * @constructor
+     */
     ctor: function () {
         cc.Layer.prototype.ctor.call(this);
-		this._displayedColor = cc.color(255, 255, 255, 255);
-		this._realColor = cc.color(255, 255, 255, 255);
+        this._displayedColor = cc.color(255, 255, 255, 255);
+        this._realColor = cc.color(255, 255, 255, 255);
     },
 
     init: function () {
-	    var nodep = cc.Layer.prototype;
-	    this._ignoreAnchorPointForPosition = true;
-	    nodep.setAnchorPoint.call(this, 0.5, 0.5);
-	    nodep.setContentSize.call(this, cc.winSize);
-        this.cascadeOpacity = false;
-        this.cascadeColor = false;
+        var nodep = cc.Layer.prototype, _t = this;
+        _t._ignoreAnchorPointForPosition = true;
+        nodep.setAnchorPoint.call(_t, 0.5, 0.5);
+        nodep.setContentSize.call(_t, cc.winSize);
+        _t.cascadeOpacity = false;
+        _t.cascadeColor = false;
         return true;
     },
 
@@ -130,14 +130,15 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * @param {Number} opacity
      */
     setOpacity: function (opacity) {
-        this._displayedOpacity = this._realOpacity = opacity;
+        var _t = this;
+        _t._displayedOpacity = _t._realOpacity = opacity;
 
-        var parentOpacity = 255, locParent = this._parent;
+        var parentOpacity = 255, locParent = _t._parent;
         if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
-        this.updateDisplayedOpacity(parentOpacity);
+        _t.updateDisplayedOpacity(parentOpacity);
 
-        this._displayedColor.a = this._realColor.a = opacity;
+        _t._displayedColor.a = _t._realColor.a = opacity;
     },
 
     /**
@@ -145,14 +146,15 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * @param {Number} parentOpacity
      */
     updateDisplayedOpacity: function (parentOpacity) {
-        this._displayedOpacity = 0 | (this._realOpacity * parentOpacity / 255.0);
+        var _t = this;
+        _t._displayedOpacity = 0 | (_t._realOpacity * parentOpacity / 255.0);
 
-        if (this._cascadeOpacityEnabled) {
-            var locChildren = this._children;
+        if (_t._cascadeOpacityEnabled) {
+            var locChildren = _t._children, selItem;
             for (var i = 0; i < locChildren.length; i++) {
-                var selItem = locChildren[i];
+                selItem = locChildren[i];
                 if (selItem && selItem.RGBAProtocol)
-                    selItem.updateDisplayedOpacity(this._displayedOpacity);
+                    selItem.updateDisplayedOpacity(_t._displayedOpacity);
             }
         }
     },
@@ -170,29 +172,29 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * @param {boolean} cascadeOpacityEnabled
      */
     setCascadeOpacityEnabled: function (cascadeOpacityEnabled) {
-        if(this._cascadeOpacityEnabled === cascadeOpacityEnabled)
+        if (this._cascadeOpacityEnabled === cascadeOpacityEnabled)
             return;
 
         this._cascadeOpacityEnabled = cascadeOpacityEnabled;
-        if(cascadeOpacityEnabled)
+        if (cascadeOpacityEnabled)
             this._enableCascadeOpacity();
         else
             this._disableCascadeOpacity();
     },
 
-    _enableCascadeOpacity:function(){
+    _enableCascadeOpacity: function () {
         var parentOpacity = 255, locParent = this._parent;
         if (locParent && locParent.RGBAProtocol && locParent.cascadeOpacity)
             parentOpacity = locParent.getDisplayedOpacity();
         this.updateDisplayedOpacity(parentOpacity);
     },
 
-    _disableCascadeOpacity:function(){
+    _disableCascadeOpacity: function () {
         this._displayedOpacity = this._realOpacity;
-        var selChildren = this._children;
-        for(var i = 0; i< selChildren.length;i++){
-            var item = selChildren[i];
-            if(item && item.RGBAProtocol)
+        var selChildren = this._children, item;
+        for (var i = 0; i < selChildren.length; i++) {
+            item = selChildren[i];
+            if (item && item.RGBAProtocol)
                 item.updateDisplayedOpacity(255);
         }
     },
@@ -248,9 +250,9 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
         locDisplayedColor.b = 0 | (locRealColor.b * parentColor.b / 255.0);
 
         if (this._cascadeColorEnabled) {
-            var locChildren = this._children;
+            var locChildren = this._children, selItem;
             for (var i = 0; i < locChildren.length; i++) {
-                var selItem = locChildren[i];
+                selItem = locChildren[i];
                 if (selItem && selItem.RGBAProtocol)
                     selItem.updateDisplayedColor(locDisplayedColor);
             }
@@ -270,34 +272,34 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * @param {boolean} cascadeColorEnabled
      */
     setCascadeColorEnabled: function (cascadeColorEnabled) {
-        if(this._cascadeColorEnabled === cascadeColorEnabled)
+        if (this._cascadeColorEnabled === cascadeColorEnabled)
             return;
         this._cascadeColorEnabled = cascadeColorEnabled;
-        if(this._cascadeColorEnabled)
+        if (this._cascadeColorEnabled)
             this._enableCascadeColor();
         else
             this._disableCascadeColor();
     },
 
-    _enableCascadeColor: function(){
-        var parentColor , locParent =  this._parent;
-        if (locParent && locParent.RGBAProtocol &&  locParent.cascadeColor)
+    _enableCascadeColor: function () {
+        var parentColor , locParent = this._parent;
+        if (locParent && locParent.RGBAProtocol && locParent.cascadeColor)
             parentColor = locParent.getDisplayedColor();
         else
             parentColor = cc.color.WHITE;
         this.updateDisplayedColor(parentColor);
     },
 
-    _disableCascadeColor: function(){
+    _disableCascadeColor: function () {
         var locDisplayedColor = this._displayedColor, locRealColor = this._realColor;
         locDisplayedColor.r = locRealColor.r;
         locDisplayedColor.g = locRealColor.g;
         locDisplayedColor.b = locRealColor.b;
 
-        var selChildren = this._children, whiteColor = cc.color.WHITE;
-        for(var i = 0; i< selChildren.length;i++){
-            var item = selChildren[i];
-            if(item && item.RGBAProtocol)
+        var selChildren = this._children, whiteColor = cc.color.WHITE, item, i;
+        for (i = 0; i < selChildren.length; i++) {
+            item = selChildren[i];
+            if (item && item.RGBAProtocol)
                 item.updateDisplayedColor(whiteColor);
         }
     },
@@ -309,12 +311,12 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
      * @param {Number} [zOrder=]  Z order for drawing priority. Please refer to setLocalZOrder(int)
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
-    addChild:function(child, zOrder, tag){
+    addChild: function (child, zOrder, tag) {
         cc.Node.prototype.addChild.call(this, child, zOrder, tag);
 
-        if(this._cascadeColorEnabled)
+        if (this._cascadeColorEnabled)
             this._enableCascadeColor();
-        if(this._cascadeOpacityEnabled)
+        if (this._cascadeOpacityEnabled)
             this._enableCascadeOpacity();
     },
 
@@ -326,24 +328,8 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
-window._p = cc.LayerRGBA.prototype;
-// Extended properties
-/** @expose */
-_p.opacityModifyRGB;
-cc.defineGetterSetter(_p, "opacityModifyRGB", _p.isOpacityModifyRGB, _p.setOpacityModifyRGB);
-/** @expose */
-_p.opacity;
-cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
-/** @expose */
-_p.cascadeOpacity;
-cc.defineGetterSetter(_p, "cascadeOpacity", _p.isCascadeOpacityEnabled, _p.setCascadeOpacityEnabled);
-/** @expose */
-_p.color;
-cc.defineGetterSetter(_p, "color", _p.getColor, _p.setColor);
-/** @expose */
-_p.cascadeColor;
-cc.defineGetterSetter(_p, "cascadeColor", _p.isCascadeColorEnabled, _p.setCascadeColorEnabled);
-delete window._p;
+_tmp.PrototypeLayerRGBA();
+delete _tmp.PrototypeLayerRGBA;
 
 /**
  * <p>
@@ -356,14 +342,14 @@ delete window._p;
  * @extends cc.LayerRGBA
  */
 cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
-    _blendFunc:null,
-    _className:"LayerColor",
+    _blendFunc: null,
+    _className: "LayerColor",
 
     /**
      * blendFunc getter
      * @return {cc.BlendFunc}
      */
-    getBlendFunc:function () {
+    getBlendFunc: function () {
         return this._blendFunc;
     },
 
@@ -373,9 +359,9 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      * @param {Number} h height
      */
-    changeWidthAndHeight:function (w, h) {
+    changeWidthAndHeight: function (w, h) {
         this.width = w;
-	    this.height = h;
+        this.height = h;
     },
 
     /**
@@ -383,7 +369,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @deprecated
      * @param {Number} w width
      */
-    changeWidth:function (w) {
+    changeWidth: function (w) {
         this.width = w;
     },
 
@@ -392,7 +378,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @deprecated
      * @param {Number} h height
      */
-    changeHeight:function (h) {
+    changeHeight: function (h) {
         this.height = h;
     },
 
@@ -400,202 +386,100 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * set OpacityModifyRGB of cc.LayerColor
      * @param {Boolean}  value
      */
-    setOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB: function (value) {
     },
 
     /**
      * is OpacityModifyRGB
      * @return {Boolean}
      */
-    isOpacityModifyRGB:function () {
+    isOpacityModifyRGB: function () {
         return false;
     },
 
-    setColor:function(color){
+    setColor: function (color) {
         cc.LayerRGBA.prototype.setColor.call(this, color);
         this._updateColor();
     },
 
-    setOpacity:function(opacity){
+    setOpacity: function (opacity) {
         cc.LayerRGBA.prototype.setOpacity.call(this, opacity);
         this._updateColor();
     },
 
-    _isLighterMode:false,
-    _squareVertices:null,
-    _squareColors:null,
-    _verticesFloat32Buffer:null,
-    _colorsUint8Buffer:null,
-    _squareVerticesAB:null,
-    _squareColorsAB:null,
+    _isLighterMode: false,
+    /**
+     * @constructor
+     * @function
+     * @param {cc.Color} [color=]
+     * @param {Number} [width=]
+     * @param {Number} [height=]
+     */
+    ctor: null,
 
-	/**
-	 * @constructor
-	 * @function
-	 * @param {cc.Color} [color=]
-	 * @param {Number} [width=]
-	 * @param {Number} [height=]
-	 */
-	ctor: null,
+    /**
+     * @param {cc.Color} [color=]
+     * @param {Number} [width=]
+     * @param {Number} [height=]
+     * @return {Boolean}
+     */
+    init: function (color, width, height) {
+        if (cc._renderType !== cc._RENDER_TYPE_CANVAS)
+            this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
 
-    _ctorForCanvas: function (color, width, height) {
-        cc.LayerRGBA.prototype.ctor.call(this);
-        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        var winSize = cc.director.getWinSize();
+        color = color || cc.color(0, 0, 0, 255);
+        width = width === undefined ? winSize.width : width;
+        height = height === undefined ? winSize.height : height;
 
-	    cc.LayerColor.prototype.init.call(this, color, width, height);
+        var locDisplayedColor = this._displayedColor;
+        locDisplayedColor.r = color.r;
+        locDisplayedColor.g = color.g;
+        locDisplayedColor.b = color.b;
+
+        var locRealColor = this._realColor;
+        locRealColor.r = color.r;
+        locRealColor.g = color.g;
+        locRealColor.b = color.b;
+
+        this._displayedOpacity = color.a;
+        this._realOpacity = color.a;
+
+        var proto = cc.LayerColor.prototype;
+        proto.setContentSize.call(this, width, height);
+        proto._updateColor.call(this);
+        return true;
     },
-
-    _ctorForWebGL: function (color, width, height) {
-	    this._squareVerticesAB = new ArrayBuffer(32);
-	    this._squareColorsAB = new ArrayBuffer(16);
-
-	    var locSquareVerticesAB = this._squareVerticesAB, locSquareColorsAB = this._squareColorsAB;
-	    var locVertex2FLen = cc.Vertex2F.BYTES_PER_ELEMENT, locColorLen = cc.Color.BYTES_PER_ELEMENT;
-	    this._squareVertices = [new cc.Vertex2F(0, 0, locSquareVerticesAB, 0),
-		    new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen),
-		    new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 2),
-		    new cc.Vertex2F(0, 0, locSquareVerticesAB, locVertex2FLen * 3)];
-	    this._squareColors = [cc.color(0, 0, 0, 255, locSquareColorsAB, 0),
-		    cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen),
-		    cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 2),
-		    cc.color(0, 0, 0, 255, locSquareColorsAB, locColorLen * 3)];
-	    this._verticesFloat32Buffer = cc._renderContext.createBuffer();
-	    this._colorsUint8Buffer = cc._renderContext.createBuffer();
-
-	    cc.LayerRGBA.prototype.ctor.call(this);
-        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-
-	    cc.LayerColor.prototype.init.call(this, color, width, height);
-    },
-
-	/**
-	 * @param {cc.Color} [color=]
-	 * @param {Number} [width=]
-	 * @param {Number} [height=]
-	 * @return {Boolean}
-	 */
-	init: function (color, width, height) {
-		if(cc._renderType !== cc._RENDER_TYPE_CANVAS)
-			this.shaderProgram = cc.shaderCache.programForKey(cc.SHADER_POSITION_COLOR);
-
-		var winSize = cc.director.getWinSize();
-		color = color ||  cc.color(0, 0, 0, 255);
-		width = width === undefined ? winSize.width : width;
-		height = height === undefined ? winSize.height : height;
-
-		var locDisplayedColor = this._displayedColor;
-		locDisplayedColor.r = color.r;
-		locDisplayedColor.g = color.g;
-		locDisplayedColor.b = color.b;
-
-		var locRealColor = this._realColor;
-		locRealColor.r = color.r;
-		locRealColor.g = color.g;
-		locRealColor.b = color.b;
-
-		this._displayedOpacity = color.a;
-		this._realOpacity = color.a;
-
-		var proto = cc.LayerColor.prototype;
-		proto.setContentSize.call(this, width, height);
-		proto._updateColor.call(this);
-
-		return true;
-	},
 
     /**
      * blendFunc setter
      * @param {Number} src
      * @param {Number} dst
      */
-    setBlendFunc:function (src, dst) {
+    setBlendFunc: function (src, dst) {
+        var _t = this;
         if (dst === undefined)
-            this._blendFunc = src;
+            _t._blendFunc = src;
         else
-            this._blendFunc = {src:src, dst:dst};
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
+            _t._blendFunc = {src: src, dst: dst};
+        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
+            _t._isLighterMode = (_t._blendFunc && (_t._blendFunc.src == 1) && (_t._blendFunc.dst == 771));
     },
 
-    /**
-     * Sets the untransformed size of the LayerColor.
-     * @override
-     * @function
-     * @param {cc.Size|Number} size The untransformed size of the LayerColor or The untransformed size's width of the LayerColor.
-     * @param {Number} [height] The untransformed size's height of the LayerColor.
-     */
-    setContentSize:null,
+    _setWidth: null,
 
-    _setContentSizeForWebGL:function (size, height) {
-        var locSquareVertices = this._squareVertices;
+    _setHeight: null,
 
-        if (height === undefined) {
-	        locSquareVertices[1].x = size.width;
-	        locSquareVertices[2].y = size.height;
-	        locSquareVertices[3].x = size.width;
-	        locSquareVertices[3].y = size.height;
-        } else {
-	        locSquareVertices[1].x = size;
-	        locSquareVertices[2].y = height;
-	        locSquareVertices[3].x = size;
-	        locSquareVertices[3].y = height;
-        }
-	    this._bindLayerVerticesBufferData();
-	    cc.Layer.prototype.setContentSize.call(this, size, height);
-    },
+    _updateColor: null,
 
-	_setWidthForWebGL:function (width) {
-		var locSquareVertices = this._squareVertices;
-		locSquareVertices[1].x = width;
-		locSquareVertices[3].x = width;
-		this._bindLayerVerticesBufferData();
-		cc.Layer.prototype._setWidth.call(this, width);
-	},
-	_setHeightForWebGL:function (height) {
-		var locSquareVertices = this._squareVertices;
-		locSquareVertices[2].y = height;
-		locSquareVertices[3].y = height;
-		this._bindLayerVerticesBufferData();
-		cc.Layer.prototype._setHeight.call(this, height);
-	},
-
-    _updateColor:null,
-
-    _updateColorForCanvas:function () {
-    },
-
-    _updateColorForWebGL:function () {
-        var locDisplayedColor = this._displayedColor;
-        var locDisplayedOpacity = this._displayedOpacity, locSquareColors = this._squareColors;
-        for (var i = 0; i < 4; i++) {
-            locSquareColors[i].r = locDisplayedColor.r;
-            locSquareColors[i].g = locDisplayedColor.g;
-            locSquareColors[i].b = locDisplayedColor.b;
-            locSquareColors[i].a = locDisplayedOpacity;
-        }
-        this._bindLayerColorsBufferData();
-    },
-
-    updateDisplayedColor:function(parentColor){
+    updateDisplayedColor: function (parentColor) {
         cc.LayerRGBA.prototype.updateDisplayedColor.call(this, parentColor);
         this._updateColor();
     },
 
-    updateDisplayedOpacity: function(parentOpacity){
+    updateDisplayedOpacity: function (parentOpacity) {
         cc.LayerRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
         this._updateColor();
-    },
-
-    _bindLayerVerticesBufferData:function () {
-        var glContext = cc._renderContext;
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareVerticesAB , glContext.STATIC_DRAW);
-    },
-
-    _bindLayerColorsBufferData:function () {
-        var glContext = cc._renderContext;
-        glContext.bindBuffer(glContext.ARRAY_BUFFER, this._colorsUint8Buffer);
-        glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
     },
 
     /**
@@ -603,63 +487,8 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
      * @function
      * @param {CanvasRenderingContext2D|WebGLRenderingContext} ctx
      */
-    draw:null,
-
-    _drawForCanvas:function (ctx) {
-        var context = ctx || cc._renderContext;
-
-        var locEGLViewer = cc.view;
-        var locDisplayedColor = this._displayedColor;
-
-        context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
-            + (0 | locDisplayedColor.b) + "," + this._displayedOpacity / 255 + ")";
-        context.fillRect(0, 0, this.width * locEGLViewer.getScaleX(), -this.height * locEGLViewer.getScaleY());
-
-        cc.g_NumberOfDraws++;
-    },
-
-    _drawForWebGL:function (ctx) {
-        var context = ctx || cc._renderContext;
-
-        cc.NODE_DRAW_SETUP(this);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
-
-        //
-        // Attributes
-        //
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
-
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
-    }
+    draw: null
 });
-
-window._p = cc.LayerColor.prototype;
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    _p.ctor = _p._ctorForWebGL;
-    _p.setContentSize = _p._setContentSizeForWebGL;
-	_p._setWidth = _p._setWidthForWebGL;
-	_p._setHeight = _p._setHeightForWebGL;
-    _p._updateColor = _p._updateColorForWebGL;
-    _p.draw = _p._drawForWebGL;
-} else {
-    _p.ctor = _p._ctorForCanvas;
-    _p.setContentSize = cc.LayerRGBA.prototype.setContentSize;
-	_p._setWidth = cc.LayerRGBA.prototype._setWidth;
-	_p._setHeight = cc.LayerRGBA.prototype._setHeight;
-    _p._updateColor = _p._updateColorForCanvas;
-    _p.draw = _p._drawForCanvas;
-}
-
-// Override properties
-cc.defineGetterSetter(_p, "width", _p._getWidth, _p._setWidth);
-cc.defineGetterSetter(_p, "height", _p._getHeight, _p._setHeight);
-
-delete window._p;
 
 /**
  * creates a cc.Layer with color, width and height in Points
@@ -677,8 +506,40 @@ delete window._p;
  * var yellowBox = cc.LayerColor.create(cc.color(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
-	return new cc.LayerColor(color, width, height);
+    return new cc.LayerColor(color, width, height);
 };
+
+
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+    //cc.LayerColor define start
+    var _p = cc.LayerColor.prototype;
+    _p.ctor = function (color, width, height) {
+        cc.LayerRGBA.prototype.ctor.call(this);
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        cc.LayerColor.prototype.init.call(this, color, width, height);
+    }
+    _p._setWidth = cc.LayerRGBA.prototype._setWidth;
+    _p._setHeight = cc.LayerRGBA.prototype._setHeight;
+    _p._updateColor = function () {
+    };
+    _p.draw = function (ctx) {
+        var context = ctx || cc._renderContext, _t = this;
+        var locEGLViewer = cc.view, locDisplayedColor = _t._displayedColor;
+
+        context.fillStyle = "rgba(" + (0 | locDisplayedColor.r) + "," + (0 | locDisplayedColor.g) + ","
+            + (0 | locDisplayedColor.b) + "," + _t._displayedOpacity / 255 + ")";
+        context.fillRect(0, 0, _t.width * locEGLViewer.getScaleX(), -_t.height * locEGLViewer.getScaleY());
+        cc.g_NumberOfDraws++;
+    };
+    //cc.LayerGradient define end
+    _p = null;
+} else {
+    _tmp.WebGLLayerColor();
+    delete _tmp.WebGLLayerColor;
+}
+
+_tmp.PrototypeLayerColor();
+delete _tmp.PrototypeLayerColor;
 
 /**
  * <p>
@@ -710,67 +571,69 @@ cc.LayerColor.create = function (color, width, height) {
  * @property {Number}   compresseInterpolation  - Indicate whether or not the interpolation will be compressed
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
-    _startColor:null,
-    _endColor:null,
-    _startOpacity:255,
-    _endOpacity:255,
-    _alongVector:null,
-    _compressedInterpolation:false,
-    _gradientStartPoint:null,
-    _gradientEndPoint:null,
-    _className:"LayerGradient",
+    _startColor: null,
+    _endColor: null,
+    _startOpacity: 255,
+    _endOpacity: 255,
+    _alongVector: null,
+    _compressedInterpolation: false,
+    _gradientStartPoint: null,
+    _gradientEndPoint: null,
+    _className: "LayerGradient",
 
-	/**
-	 * @constructor
-	 * @param {cc.Color} start starting color
-	 * @param {cc.Color} end
-	 * @param {cc.Point|Null} v
-	 */
-    ctor:function (start, end, v) {
-        cc.LayerColor.prototype.ctor.call(this);
+    /**
+     * @constructor
+     * @param {cc.Color} start starting color
+     * @param {cc.Color} end
+     * @param {cc.Point|Null} v
+     */
+    ctor: function (start, end, v) {
+        var _t = this;
+        cc.LayerColor.prototype.ctor.call(_t);
 
-		this._startColor =  cc.color(0, 0, 0, 255);
-		this._endColor =  cc.color(0, 0, 0, 255);
-		this._alongVector = cc.p(0, -1);
-		this._startOpacity = 255;
-		this._endOpacity = 255;
-		this._gradientStartPoint = cc.p(0, 0);
-		this._gradientEndPoint = cc.p(0, 0);
-		cc.LayerGradient.prototype.init.call(this, start, end, v);
+        _t._startColor = cc.color(0, 0, 0, 255);
+        _t._endColor = cc.color(0, 0, 0, 255);
+        _t._alongVector = cc.p(0, -1);
+        _t._startOpacity = 255;
+        _t._endOpacity = 255;
+        _t._gradientStartPoint = cc.p(0, 0);
+        _t._gradientEndPoint = cc.p(0, 0);
+        cc.LayerGradient.prototype.init.call(_t, start, end, v);
     },
 
-	/**
-	 * @param {cc.Color} start starting color
-	 * @param {cc.Color} end
-	 * @param {cc.Point|Null} v
-	 * @return {Boolean}
-	 */
-	init:function (start, end, v) {
-		start = start || cc.color(0,0,0,255);
-		end = end || cc.color(0,0,0,255);
-		v = v || cc.p(0, -1);
+    /**
+     * @param {cc.Color} start starting color
+     * @param {cc.Color} end
+     * @param {cc.Point|Null} v
+     * @return {Boolean}
+     */
+    init: function (start, end, v) {
+        start = start || cc.color(0, 0, 0, 255);
+        end = end || cc.color(0, 0, 0, 255);
+        v = v || cc.p(0, -1);
+        var _t = this;
 
-		// Initializes the CCLayer with a gradient between start and end in the direction of v.
-		var locStartColor = this._startColor, locEndColor = this._endColor;
-		locStartColor.r = start.r;
-		locStartColor.g = start.g;
-		locStartColor.b = start.b;
-		this._startOpacity = start.a;
+        // Initializes the CCLayer with a gradient between start and end in the direction of v.
+        var locStartColor = _t._startColor, locEndColor = _t._endColor;
+        locStartColor.r = start.r;
+        locStartColor.g = start.g;
+        locStartColor.b = start.b;
+        _t._startOpacity = start.a;
 
-		locEndColor.r = end.r;
-		locEndColor.g = end.g;
-		locEndColor.b = end.b;
-		this._endOpacity = end.a;
+        locEndColor.r = end.r;
+        locEndColor.g = end.g;
+        locEndColor.b = end.b;
+        _t._endOpacity = end.a;
 
-		this._alongVector = v;
-		this._compressedInterpolation = true;
-		this._gradientStartPoint = cc.p(0, 0);
-		this._gradientEndPoint = cc.p(0, 0);
+        _t._alongVector = v;
+        _t._compressedInterpolation = true;
+        _t._gradientStartPoint = cc.p(0, 0);
+        _t._gradientEndPoint = cc.p(0, 0);
 
-		cc.LayerColor.prototype.init.call(this, cc.color(start.r, start.g, start.b, 255));
-		cc.LayerGradient.prototype._updateColor.call(this);
-		return true;
-	},
+        cc.LayerColor.prototype.init.call(_t, cc.color(start.r, start.g, start.b, 255));
+        cc.LayerGradient.prototype._updateColor.call(_t);
+        return true;
+    },
 
     /**
      * Sets the untransformed size of the LayerGradient.
@@ -778,25 +641,25 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Size|Number} size The untransformed size of the LayerGradient or The untransformed size's width of the LayerGradient.
      * @param {Number} [height] The untransformed size's height of the LayerGradient.
      */
-    setContentSize:function(size, height){
-	    cc.LayerColor.prototype.setContentSize.call(this,size, height);
+    setContentSize: function (size, height) {
+        cc.LayerColor.prototype.setContentSize.call(this, size, height);
         this._updateColor();
     },
 
-	_setWidth:function(width){
-		cc.LayerColor.prototype._setWidth.call(this, width);
-		this._updateColor();
-	},
-	_setHeight:function(height){
-		cc.LayerColor.prototype._setHeight.call(this, height);
-		this._updateColor();
-	},
+    _setWidth: function (width) {
+        cc.LayerColor.prototype._setWidth.call(this, width);
+        this._updateColor();
+    },
+    _setHeight: function (height) {
+        cc.LayerColor.prototype._setHeight.call(this, height);
+        this._updateColor();
+    },
 
     /**
      * get the starting color
      * @return {cc.Color}
      */
-    getStartColor:function () {
+    getStartColor: function () {
         return this._realColor;
     },
 
@@ -808,7 +671,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * myGradientLayer.setStartColor(cc.color(255,0,0));
      * //set the starting gradient to red
      */
-    setStartColor:function (color) {
+    setStartColor: function (color) {
         this.color = color;
     },
 
@@ -820,7 +683,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * myGradientLayer.setEndColor(cc.color(255,0,0));
      * //set the ending gradient to red
      */
-    setEndColor:function (color) {
+    setEndColor: function (color) {
         this._endColor = color;
         this._updateColor();
     },
@@ -829,7 +692,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * get the end color
      * @return {cc.Color}
      */
-    getEndColor:function () {
+    getEndColor: function () {
         return this._endColor;
     },
 
@@ -837,7 +700,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * set starting gradient opacity
      * @param {Number} o from 0 to 255, 0 is transparent
      */
-    setStartOpacity:function (o) {
+    setStartOpacity: function (o) {
         this._startOpacity = o;
         this._updateColor();
     },
@@ -846,7 +709,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * get the starting gradient opacity
      * @return {Number}
      */
-    getStartOpacity:function () {
+    getStartOpacity: function () {
         return this._startOpacity;
     },
 
@@ -854,7 +717,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * set the end gradient opacity
      * @param {Number} o
      */
-    setEndOpacity:function (o) {
+    setEndOpacity: function (o) {
         this._endOpacity = o;
         this._updateColor();
     },
@@ -863,7 +726,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * get the end gradient opacity
      * @return {Number}
      */
-    getEndOpacity:function () {
+    getEndOpacity: function () {
         return this._endOpacity;
     },
 
@@ -871,7 +734,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * set vector
      * @param {cc.Point} Var
      */
-    setVector:function (Var) {
+    setVector: function (Var) {
         this._alongVector.x = Var.x;
         this._alongVector.y = Var.y;
         this._updateColor();
@@ -880,132 +743,29 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     /**
      * @return {cc.Point}
      */
-    getVector:function () {
+    getVector: function () {
         return cc.p(this._alongVector.x, this._alongVector.y);
     },
 
     /** is Compressed Interpolation
      * @return {Boolean}
      */
-    isCompressedInterpolation:function () {
+    isCompressedInterpolation: function () {
         return this._compressedInterpolation;
     },
 
     /**
      * @param {Boolean} compress
      */
-    setCompressedInterpolation:function (compress) {
+    setCompressedInterpolation: function (compress) {
         this._compressedInterpolation = compress;
         this._updateColor();
     },
 
-    draw:function (ctx) {
-        if (cc._renderType === cc._RENDER_TYPE_WEBGL){
-            cc.LayerColor.prototype.draw.call(this, ctx);
-            return;
-        }
+    _draw: null,
 
-        var context = ctx || cc._renderContext;
-        if (this._isLighterMode)
-            context.globalCompositeOperation = 'lighter';
-
-        context.save();
-        var locEGLViewer = cc.view, opacityf = this._displayedOpacity / 255.0;
-        var tWidth = this.width * locEGLViewer.getScaleX();
-        var tHeight = this.height * locEGLViewer.getScaleY();
-        var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
-            this._gradientEndPoint.x, this._gradientEndPoint.y);
-        var locDisplayedColor = this._displayedColor;
-        var locEndColor = this._endColor;
-        tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
-            + Math.round(locDisplayedColor.b) + "," + (opacityf * (this._startOpacity / 255)).toFixed(4) + ")");
-        tGradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
-            + Math.round(locEndColor.b) + "," + (opacityf * (this._endOpacity / 255)).toFixed(4) + ")");
-        context.fillStyle = tGradient;
-        context.fillRect(0, 0, tWidth, -tHeight);
-
-        if (this._rotation != 0)
-            context.rotate(this._rotationRadians);
-        context.restore();
-    },
-
-    _updateColor:function () {
-        var locAlongVector = this._alongVector;
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            var tWidth = this.width * 0.5;
-            var tHeight = this.height * 0.5;
-
-            this._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
-            this._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;
-            this._gradientEndPoint.x = tWidth * locAlongVector.x + tWidth;
-            this._gradientEndPoint.y = tHeight * (-locAlongVector.y) - tHeight;
-        } else {
-            var h = cc.pLength(locAlongVector);
-            if (h === 0)
-                return;
-
-            var c = Math.sqrt(2.0);
-            var u = cc.p(locAlongVector.x / h, locAlongVector.y / h);
-
-            // Compressed Interpolation mode
-            if (this._compressedInterpolation) {
-                var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
-                u = cc.pMult(u, h2 * c);
-            }
-
-            var opacityf = this._displayedOpacity / 255.0;
-            var locDisplayedColor = this._displayedColor, locEndColor = this._endColor;
-            var S = { r: locDisplayedColor.r, g: locDisplayedColor.g, b: locDisplayedColor.b, a: this._startOpacity * opacityf};
-            var E = {r: locEndColor.r, g: locEndColor.g, b: locEndColor.b, a: this._endOpacity * opacityf};
-
-            // (-1, -1)
-            var locSquareColors = this._squareColors;
-            var locSquareColor0 = locSquareColors[0], locSquareColor1 = locSquareColors[1], locSquareColor2 = locSquareColors[2],locSquareColor3 = locSquareColors[3];
-            locSquareColor0.r = ((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
-            locSquareColor0.g = ((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
-            locSquareColor0.b = ((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
-            locSquareColor0.a = ((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
-            // (1, -1)
-            locSquareColor1.r = ((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
-            locSquareColor1.g = ((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
-            locSquareColor1.b = ((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
-            locSquareColor1.a = ((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
-            // (-1, 1)
-            locSquareColor2.r = ((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
-            locSquareColor2.g = ((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
-            locSquareColor2.b = ((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
-            locSquareColor2.a = ((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
-            // (1, 1)
-            locSquareColor3.r = ((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
-            locSquareColor3.g = ((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
-            locSquareColor3.b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
-            locSquareColor3.a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
-
-            this._bindLayerColorsBufferData();
-        }
-    }
+    _updateColor: null
 });
-
-window._p = cc.LayerGradient.prototype;
-
-// Extended properties
-/** @expose */
-_p.startColor;
-cc.defineGetterSetter(_p, "startColor", _p.getStartColor, _p.setStartColor);
-/** @expose */
-_p.endColor;
-cc.defineGetterSetter(_p, "endColor", _p.getEndColor, _p.setEndColor);
-/** @expose */
-_p.startOpacity;
-cc.defineGetterSetter(_p, "startOpacity", _p.getStartOpacity, _p.setStartOpacity);
-/** @expose */
-_p.endOpacity;
-cc.defineGetterSetter(_p, "endOpacity", _p.getEndOpacity, _p.setEndOpacity);
-/** @expose */
-_p.vector;
-cc.defineGetterSetter(_p, "vector", _p.getVector, _p.setVector);
-
-delete window._p;
 
 /**
  * creates a gradient layer
@@ -1018,6 +778,50 @@ cc.LayerGradient.create = function (start, end, v) {
     return new cc.LayerGradient(start, end, v);
 };
 
+
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+    //cc.LayerGradient define start
+    var _p = cc.LayerGradient.prototype;
+    _p.draw = function (ctx) {
+        var context = ctx || cc._renderContext, _t = this;
+        if (_t._isLighterMode)
+            context.globalCompositeOperation = 'lighter';
+
+        context.save();
+        var locEGLViewer = cc.view, opacityf = _t._displayedOpacity / 255.0;
+        var tWidth = _t.width * locEGLViewer.getScaleX(), tHeight = _t.height * locEGLViewer.getScaleY();
+        var tGradient = context.createLinearGradient(_t._gradientStartPoint.x, _t._gradientStartPoint.y,
+            _t._gradientEndPoint.x, _t._gradientEndPoint.y);
+        var locDisplayedColor = _t._displayedColor, locEndColor = _t._endColor;
+        tGradient.addColorStop(0, "rgba(" + Math.round(locDisplayedColor.r) + "," + Math.round(locDisplayedColor.g) + ","
+            + Math.round(locDisplayedColor.b) + "," + (opacityf * (_t._startOpacity / 255)).toFixed(4) + ")");
+        tGradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
+            + Math.round(locEndColor.b) + "," + (opacityf * (_t._endOpacity / 255)).toFixed(4) + ")");
+        context.fillStyle = tGradient;
+        context.fillRect(0, 0, tWidth, -tHeight);
+
+        if (_t._rotation != 0)
+            context.rotate(_t._rotationRadians);
+        context.restore();
+    };
+    _p._updateColor = function () {
+        var _t = this;
+        var locAlongVector = _t._alongVector, tWidth = _t.width * 0.5, tHeight = _t.height * 0.5;
+
+        _t._gradientStartPoint.x = tWidth * (-locAlongVector.x) + tWidth;
+        _t._gradientStartPoint.y = tHeight * locAlongVector.y - tHeight;
+        _t._gradientEndPoint.x = tWidth * locAlongVector.x + tWidth;
+        _t._gradientEndPoint.y = tHeight * (-locAlongVector.y) - tHeight;
+    };
+    //cc.LayerGradient define end
+    _p = null;
+} else {
+    _tmp.WebGLLayerGradient();
+    delete _tmp.WebGLLayerGradient;
+}
+_tmp.PrototypeLayerGradient();
+delete _tmp.PrototypeLayerGradient;
+
 /**
  * CCMultipleLayer is a CCLayer with the ability to multiplex it's children.<br/>
  * Features:<br/>
@@ -1027,26 +831,26 @@ cc.LayerGradient.create = function (start, end, v) {
  *  @extends cc.Layer
  */
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
-    _enabledLayer:0,
-    _layers:null,
-    _className:"LayerMultiplex",
+    _enabledLayer: 0,
+    _layers: null,
+    _className: "LayerMultiplex",
 
-	/**
-	 * @constructor
-	 * @param {Array} layers an array of cc.Layer
-	 */
-	ctor: function (layers) {
-		cc.Layer.prototype.ctor.call(this);
-		layers && cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
-	},
+    /**
+     * @constructor
+     * @param {Array} layers an array of cc.Layer
+     */
+    ctor: function (layers) {
+        cc.Layer.prototype.ctor.call(this);
+        layers && cc.LayerMultiplex.prototype.initWithLayers.call(this, layers);
+    },
 
     /**
      * @param {Array} layers an array of cc.Layer
      * @return {Boolean}
      */
-    initWithLayers:function (layers) {
-	    if((layers.length > 0) && (layers[layers.length-1] == null))
-		    cc.log("parameters should not be ending with null in Javascript");
+    initWithLayers: function (layers) {
+        if ((layers.length > 0) && (layers[layers.length - 1] == null))
+            cc.log(cc._LogInfos.LayerMultiplex_initWithLayers);
 
         this._layers = layers;
         this._enabledLayer = 0;
@@ -1059,9 +863,9 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      * @param {Number} n the layer index to switch to
      */
-    switchTo:function (n) {
-        if(n >= this._layers.length){
-            cc.log("cc.LayerMultiplex.switchTo():Invalid index in MultiplexLayer switchTo message");
+    switchTo: function (n) {
+        if (n >= this._layers.length) {
+            cc.log(cc._LogInfos.LayerMultiplex_switchTo);
             return;
         }
 
@@ -1074,9 +878,9 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      * @param {Number} n the layer index to switch to
      */
-    switchToAndReleaseMe:function (n) {
-        if(n >= this._layers.length){
-            cc.log("cc.LayerMultiplex.switchToAndReleaseMe():Invalid index in MultiplexLayer switchTo message");
+    switchToAndReleaseMe: function (n) {
+        if (n >= this._layers.length) {
+            cc.log(cc._LogInfos.LayerMultiplex_switchToAndReleaseMe);
             return;
         }
 
@@ -1091,9 +895,9 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     /**
      * @param {cc.Layer} layer
      */
-    addLayer:function (layer) {
-        if(!layer){
-            cc.log("cc.Layer.addLayer(): layer should be non-null");
+    addLayer: function (layer) {
+        if (!layer) {
+            cc.log(cc._LogInfos.LayerMultiplex_addLayer);
             return;
         }
         this._layers.push(layer);

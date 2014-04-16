@@ -43,14 +43,12 @@ var ClassManager = {
         //make the func to a string
         var str = func.toString();
         //find parameters
-        var pstart = str.indexOf('(');
-        var pend = str.indexOf(')');
+        var pstart = str.indexOf('('), pend = str.indexOf(')');
         var params = str.substring(pstart+1, pend);
         params = params.trim();
 
         //find function body
-        var bstart = str.indexOf('{');
-        var bend = str.lastIndexOf('}');
+        var bstart = str.indexOf('{'), bend = str.lastIndexOf('}');
         var str = str.substring(bstart+1, bend);
 
         //now we have the content of the function, replace this._super
@@ -224,63 +222,111 @@ ClassManager.compileSuper.ClassManager = ClassManager;
             return self.apply(bind || null, args);
         };
     };
-
 })();
 
-//
-// Another way to subclass: Using Google Closure.
-// The following code was copied + pasted from goog.base / goog.inherits
-//
-cc.inherits = function (childCtor, parentCtor) {
-    function tempCtor() {}
-    tempCtor.prototype = parentCtor.prototype;
-    childCtor.superClass_ = parentCtor.prototype;
-    childCtor.prototype = new tempCtor();
-    childCtor.prototype.constructor = childCtor;
-
-    // Copy "static" method, but doesn't generate subclasses.
-//  for( var i in parentCtor ) {
-//      childCtor[ i ] = parentCtor[ i ];
-//  }
-};
-cc.base = function(me, opt_methodName, var_args) {
-    var caller = arguments.callee.caller;
-    if (caller.superClass_) {
-        // This is a constructor. Call the superclass constructor.
-        ret =  caller.superClass_.constructor.apply( me, Array.prototype.slice.call(arguments, 1));
-        return ret;
+/**
+ * Common getter setter configuration function
+ * @function
+ * @param {Object}   proto      A class prototype or an object to config<br/>
+ * @param {String}   prop       Property name
+ * @param {function} getter     Getter function for the property
+ * @param {function} setter     Setter function for the property
+ * @param {String}   getterName Name of getter function for the property
+ * @param {String}   setterName Name of setter function for the property
+ */
+cc.defineGetterSetter = function (proto, prop, getter, setter, getterName, setterName){
+    if (proto.__defineGetter__) {
+        getter && proto.__defineGetter__(prop, getter);
+        setter && proto.__defineSetter__(prop, setter);
+    } else if (Object.defineProperty) {
+        var desc = { enumerable: false, configurable: true };
+        getter && (desc.get = getter);
+        setter && (desc.set = setter);
+        Object.defineProperty(proto, prop, desc);
+    } else {
+        throw new Error("browser does not support getters");
     }
 
-    var args = Array.prototype.slice.call(arguments, 2);
-    var foundCaller = false;
-    for (var ctor = me.constructor; ctor; ctor = ctor.superClass_ && ctor.superClass_.constructor) {
-        if (ctor.prototype[opt_methodName] === caller) {
-            foundCaller = true;
-        } else if (foundCaller) {
-            return ctor.prototype[opt_methodName].apply(me, args);
+    if(!getterName && !setterName) {
+        // Lookup getter/setter function
+        var hasGetter = (getter != null), hasSetter = (setter != undefined), props = Object.getOwnPropertyNames(proto);
+        for (var i = 0; i < props.length; i++) {
+            var name = props[i];
+
+            if( (proto.__lookupGetter__ ? proto.__lookupGetter__(name)
+                                        : Object.getOwnPropertyDescriptor(proto, name))
+                || typeof proto[name] !== "function" )
+                continue;
+
+            var func = proto[name];
+            if (hasGetter && func === getter) {
+                getterName = name;
+                if(!hasSetter || setterName) break;
+            }
+            if (hasSetter && func === setter) {
+                setterName = name;
+                if(!hasGetter || getterName) break;
+            }
         }
     }
 
-    // If we did not find the caller in the prototype chain,
-    // then one of two things happened:
-    // 1) The caller is an instance method.
-    // 2) This method was not called by the right caller.
-    if (me[opt_methodName] === caller) {
-        return me.constructor.prototype[opt_methodName].apply(me, args);
-    } else {
-        throw Error(
-            'cc.base called from a method of one name ' +
-                'to a method of a different name');
+    // Found getter/setter
+    var ctor = proto.constructor;
+    if (getterName) {
+        if (!ctor.__getters__) {
+            ctor.__getters__ = {};
+        }
+        ctor.__getters__[getterName] = prop;
+    }
+    if (setterName) {
+        if (!ctor.__setters__) {
+            ctor.__setters__ = {};
+        }
+        ctor.__setters__[setterName] = prop;
     }
 };
 
-cc.concatObjectProperties = function(dstObject, srcObject){
-    if(!dstObject)
-        dstObject = {};
+/**
+ * copy an new object
+ * @function
+ * @param {object|Array} obj source object
+ * @return {Array|object}
+ */
+cc.clone = function (obj) {
+    // Cloning is better if the new object is having the same prototype chain
+    // as the copied obj (or otherwise, the cloned object is certainly going to
+    // have a different hidden class). Play with C1/C2 of the
+    // PerformanceVirtualMachineTests suite to see how this makes an impact
+    // under extreme conditions.
+    //
+    // Object.create(Object.getPrototypeOf(obj)) doesn't work well because the
+    // prototype lacks a link to the constructor (Carakan, V8) so the new
+    // object wouldn't have the hidden class that's associated with the
+    // constructor (also, for whatever reasons, utilizing
+    // Object.create(Object.getPrototypeOf(obj)) + Object.defineProperty is even
+    // slower than the original in V8). Therefore, we call the constructor, but
+    // there is a big caveat - it is possible that the this.init() in the
+    // constructor would throw with no argument. It is also possible that a
+    // derived class forgets to set "constructor" on the prototype. We ignore
+    // these possibities for and the ultimate solution is a standardized
+    // Object.clone(<object>).
+    var newObj = (obj.constructor) ? new obj.constructor : {};
 
-    for(var selKey in srcObject){
-        dstObject[selKey] = srcObject[selKey];
+    // Assuming that the constuctor above initialized all properies on obj, the
+    // following keyed assignments won't turn newObj into dictionary mode
+    // becasue they're not *appending new properties* but *assigning existing
+    // ones* (note that appending indexed properties is another story). See
+    // CCClass.js for a link to the devils when the assumption fails.
+    for (var key in obj) {
+        var copy = obj[key];
+        // Beware that typeof null == "object" !
+        if (((typeof copy) == "object") && copy &&
+            !(copy instanceof cc.Node) && !(copy instanceof HTMLElement)) {
+            newObj[key] = cc.clone(copy);
+        } else {
+            newObj[key] = copy;
+        }
     }
-    return dstObject;
+    return newObj;
 };
 

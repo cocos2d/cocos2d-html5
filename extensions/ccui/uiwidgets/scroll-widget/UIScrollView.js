@@ -71,7 +71,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     inertiaScrollEnabled: false,
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
-    _className:"ScrollView",
+    _className: "ScrollView",
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
         this._innerContainer = null;
@@ -123,7 +123,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         return false;
     },
 
-    onEnter:function(){
+    onEnter: function () {
         ccui.Layout.prototype.onEnter.call(this);
         this.setUpdateEnabled(true);
     },
@@ -214,72 +214,72 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
             innerContainer.setPosition(innerPos.x, locSize.height - (1.0 - innerAP.y) * innerSize.height);
         }
     },
-	_setInnerWidth: function (width) {
-		var locW = this._size.width,
-			innerWidth = locW,
-			container = this._innerContainer,
-			oldInnerWidth = container.width;
-		if (width < locW)
-			cc.log("Inner width <= scrollview width, it will be force sized!");
-		else
-			innerWidth = width;
-		container.width = innerWidth;
+    _setInnerWidth: function (width) {
+        var locW = this._size.width,
+            innerWidth = locW,
+            container = this._innerContainer,
+            oldInnerWidth = container.width;
+        if (width < locW)
+            cc.log("Inner width <= scrollview width, it will be force sized!");
+        else
+            innerWidth = width;
+        container.width = innerWidth;
 
-		switch (this.direction) {
-			case ccui.ScrollView.DIR_HORIZONTAL:
-			case ccui.ScrollView.DIR_BOTH:
-				if (container.getRightInParent() <= locW) {
-					var newInnerWidth = container.width;
-					var offset = oldInnerWidth - newInnerWidth;
-					this.scrollChildren(offset, 0);
-				}
-				break;
-		}
-		var innerAX = container.anchorX;
-		if (container.getLeftInParent() > 0.0) {
-			container.x = innerAX * innerWidth;
-		}
-		if (container.getRightInParent() < locW) {
-			container.x = locW - ((1.0 - innerAX) * innerWidth);
-		}
-	},
-	_setInnerHeight: function (height) {
-		var locH = this._size.height,
-			innerHeight = locH,
-			container = this._innerContainer,
-			oldInnerHeight = container.height;
-		if (height < locH)
-			cc.log("Inner height <= scrollview height, it will be force sized!");
-		else
-			innerHeight = height;
-		container.height = innerHeight;
+        switch (this.direction) {
+            case ccui.ScrollView.DIR_HORIZONTAL:
+            case ccui.ScrollView.DIR_BOTH:
+                if (container.getRightInParent() <= locW) {
+                    var newInnerWidth = container.width;
+                    var offset = oldInnerWidth - newInnerWidth;
+                    this.scrollChildren(offset, 0);
+                }
+                break;
+        }
+        var innerAX = container.anchorX;
+        if (container.getLeftInParent() > 0.0) {
+            container.x = innerAX * innerWidth;
+        }
+        if (container.getRightInParent() < locW) {
+            container.x = locW - ((1.0 - innerAX) * innerWidth);
+        }
+    },
+    _setInnerHeight: function (height) {
+        var locH = this._size.height,
+            innerHeight = locH,
+            container = this._innerContainer,
+            oldInnerHeight = container.height;
+        if (height < locH)
+            cc.log("Inner height <= scrollview height, it will be force sized!");
+        else
+            innerHeight = height;
+        container.height = innerHeight;
 
-		switch (this.direction) {
-			case ccui.ScrollView.DIR_VERTICAL:
-			case ccui.ScrollView.DIR_BOTH:
-				var newInnerHeight = innerHeight;
-				var offset = oldInnerHeight - newInnerHeight;
-				this.scrollChildren(0, offset);
-				break;
-		}
-		var innerAY = container.anchorY;
-		if (container.getLeftInParent() > 0.0) {
-			container.y = innerAY * innerHeight;
-		}
-		if (container.getRightInParent() < locH) {
-			container.y = locH - ((1.0 - innerAY) * innerHeight);
-		}
-	},
+        switch (this.direction) {
+            case ccui.ScrollView.DIR_VERTICAL:
+            case ccui.ScrollView.DIR_BOTH:
+                var newInnerHeight = innerHeight;
+                var offset = oldInnerHeight - newInnerHeight;
+                this.scrollChildren(0, offset);
+                break;
+        }
+        var innerAY = container.anchorY;
+        if (container.getLeftInParent() > 0.0) {
+            container.y = innerAY * innerHeight;
+        }
+        if (container.getRightInParent() < locH) {
+            container.y = locH - ((1.0 - innerAY) * innerHeight);
+        }
+    },
 
     getInnerContainerSize: function () {
         return this._innerContainer.getSize();
     },
-	_getInnerWidth: function () {
-		return this._innerContainer.width;
-	},
-	_getInnerHeight: function () {
-		return this._innerContainer.height;
-	},
+    _getInnerWidth: function () {
+        return this._innerContainer.width;
+    },
+    _getInnerHeight: function () {
+        return this._innerContainer.height;
+    },
 
     /**
      * Add widget
@@ -303,7 +303,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @returns {boolean}
      */
     removeChild: function (child, cleanup) {
-        return this._innerContainer.removeChild(child,cleanup);
+        return this._innerContainer.removeChild(child, cleanup);
     },
 
     /**
@@ -584,10 +584,10 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     },
 
     jumpToDestination: function (dstX, dstY) {
-	    if(dstX.x !== undefined) {
-		    dstY = dstX.y;
-		    dstX = dstX.x;
-	    }
+        if (dstX.x !== undefined) {
+            dstY = dstX.y;
+            dstX = dstX.x;
+        }
         var finalOffsetX = dstX;
         var finalOffsetY = dstY;
         switch (this.direction) {
@@ -1371,26 +1371,26 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this._bePressed = false;
     },
 
-    onTouchBegan: function (touch , event) {
-        var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch , event);
-        if (this._hitted)        {
+    onTouchBegan: function (touch, event) {
+        var pass = ccui.Layout.prototype.onTouchBegan.call(this, touch, event);
+        if (this._hitted) {
             this.handlePressLogic(this._touchStartPos);
         }
         return pass;
     },
 
-    onTouchMoved: function (touch , event) {
-        ccui.Layout.prototype.onTouchMoved.call(this, touch , event);
+    onTouchMoved: function (touch, event) {
+        ccui.Layout.prototype.onTouchMoved.call(this, touch, event);
         this.handleMoveLogic(this._touchMovePos);
     },
 
-    onTouchEnded: function (touch , event) {
-        ccui.Layout.prototype.onTouchEnded.call(this, touch , event);
+    onTouchEnded: function (touch, event) {
+        ccui.Layout.prototype.onTouchEnded.call(this, touch, event);
         this.handleReleaseLogic(this._touchEndPos);
     },
 
-    onTouchCancelled: function (touch , event) {
-        ccui.Layout.prototype.onTouchCancelled.call(this, touch , event);
+    onTouchCancelled: function (touch, event) {
+        ccui.Layout.prototype.onTouchCancelled.call(this, touch, event);
     },
 
     onTouchLongClicked: function (touchPoint) {
@@ -1447,7 +1447,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
      * @param {cc.Point} touchPoint
      */
     checkChildInfo: function (handleState, sender, touchPoint) {
-        if(this._enabled && this._touchEnabled)
+        if (this._enabled && this._touchEnabled)
             this.interceptTouchEvent(handleState, sender, touchPoint);
     },
 
@@ -1613,7 +1613,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     }
 });
 
-window._p = ccui.ScrollView.prototype;
+var _p = ccui.ScrollView.prototype;
 
 // Extended properties
 /** @expose */
@@ -1623,7 +1623,7 @@ cc.defineGetterSetter(_p, "innerWidth", _p._getInnerWidth, _p._setInnerWidth);
 _p.innerHeight;
 cc.defineGetterSetter(_p, "innerHeight", _p._getInnerHeight, _p._setInnerHeight);
 
-delete window._p;
+_p = null;
 
 /**
  * allocates and initializes a UIScrollView.

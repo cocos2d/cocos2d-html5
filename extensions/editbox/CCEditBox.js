@@ -222,7 +222,7 @@ cc.EditBox = cc.ControlButton.extend({
     _placeholderFontSize: 14,
 
     _tooltip: false,
-    _className:"EditBox",
+    _className: "EditBox",
 
     /**
      * * Constructor.
@@ -233,47 +233,48 @@ cc.EditBox = cc.ControlButton.extend({
         this._textColor = cc.color.WHITE;
         this._placeholderColor = cc.color.GRAY;
         this.setContentSize(boxSize);
-        this._domInputSprite = new cc.Sprite();
-        this._domInputSprite.draw = function(){ };                           //redefine draw function
-        this.addChild(this._domInputSprite);
+        var tmpDOMSprite = this._domInputSprite = new cc.Sprite();
+        tmpDOMSprite.draw = function () {
+        };                           //redefine draw function
+        this.addChild(tmpDOMSprite);
         var selfPointer = this;
-        this._edTxt = document.createElement("input");
-        this._edTxt.type = "text";
-        this._edTxt.style.fontSize = this._edFontSize + "px";
-        this._edTxt.style.color = "#000000";
-        this._edTxt.style.border = 0;
-        this._edTxt.style.background = "transparent";
-        //this._edTxt.style.paddingLeft = "2px";
-        this._edTxt.style.width = "100%";
-        this._edTxt.style.height = "100%";
-        this._edTxt.style.active = 0;
-        this._edTxt.style.outline = "medium";
+        var tmpEdTxt = this._edTxt = cc.newElement("input");
+        tmpEdTxt.type = "text";
+        tmpEdTxt.style.fontSize = this._edFontSize + "px";
+        tmpEdTxt.style.color = "#000000";
+        tmpEdTxt.style.border = 0;
+        tmpEdTxt.style.background = "transparent";
+        //tmpEdTxt.style.paddingLeft = "2px";
+        tmpEdTxt.style.width = "100%";
+        tmpEdTxt.style.height = "100%";
+        tmpEdTxt.style.active = 0;
+        tmpEdTxt.style.outline = "medium";
 
         // TODO the event listener will be remove when EditBox removes from parent.
-        this._edTxt.addEventListener("input", function () {
+        cc._addEventListener(tmpEdTxt, "input", function () {
             if (selfPointer._delegate && selfPointer._delegate.editBoxTextChanged)
                 selfPointer._delegate.editBoxTextChanged(selfPointer, this.value);
         });
-        this._edTxt.addEventListener("keypress", function (e) {
+        cc._addEventListener(tmpEdTxt, "keypress", function (e) {
             if (e.keyCode === cc.KEY.enter) {
                 e.stopPropagation();
                 e.preventDefault();
                 cc._canvas.focus();
             }
         });
-        this._edTxt.addEventListener("focus", function () {
+        cc._addEventListener(tmpEdTxt, "focus", function () {
             if (this.value == selfPointer._placeholderText) {
                 this.value = "";
-                this.style.fontSize = selfPointer._edFontSize + "px" ;
+                this.style.fontSize = selfPointer._edFontSize + "px";
                 this.style.color = cc.colorToHex(selfPointer._textColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidBegin)
                 selfPointer._delegate.editBoxEditingDidBegin(selfPointer);
         });
-        this._edTxt.addEventListener("blur", function () {
+        cc._addEventListener(tmpEdTxt, "blur", function () {
             if (this.value == "") {
                 this.value = selfPointer._placeholderText;
-                this.style.fontSize = selfPointer._placeholderFontSize + "px" ;
+                this.style.fontSize = selfPointer._placeholderFontSize + "px";
                 this.style.color = cc.colorToHex(selfPointer._placeholderColor);
             }
             if (selfPointer._delegate && selfPointer._delegate.editBoxEditingDidEnd)
@@ -282,16 +283,16 @@ cc.EditBox = cc.ControlButton.extend({
                 selfPointer._delegate.editBoxReturn(selfPointer);
         });
 
-        cc.DOM.convert(this._domInputSprite);
-        this._domInputSprite.dom.appendChild(this._edTxt);
-        this._domInputSprite.dom.showTooltipDiv = false;
-        this._domInputSprite.dom.style.width = (boxSize.width - 6) +"px";
-        this._domInputSprite.dom.style.height = (boxSize.height - 6) +"px";
+        cc.DOM.convert(tmpDOMSprite);
+        tmpDOMSprite.dom.appendChild(tmpEdTxt);
+        tmpDOMSprite.dom.showTooltipDiv = false;
+        tmpDOMSprite.dom.style.width = (boxSize.width - 6) + "px";
+        tmpDOMSprite.dom.style.height = (boxSize.height - 6) + "px";
 
         //this._domInputSprite.dom.style.borderWidth = "1px";
         //this._domInputSprite.dom.style.borderStyle = "solid";
         //this._domInputSprite.dom.style.borderRadius = "8px";
-        this._domInputSprite.canvas.remove();
+        tmpDOMSprite.canvas.remove();
     },
 
     /**
@@ -305,20 +306,20 @@ cc.EditBox = cc.ControlButton.extend({
         this._setFontToEditBox();
     },
 
-	_setFont: function (fontStyle) {
-		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
-		if(res) {
-			this._edFontSize = parseInt(res[1]);
-			this._edFontName = res[2];
-			this._setFontToEditBox();
-		}
-	},
+    _setFont: function (fontStyle) {
+        var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
+        if (res) {
+            this._edFontSize = parseInt(res[1]);
+            this._edFontName = res[2];
+            this._setFontToEditBox();
+        }
+    },
 
     /**
      * set fontName
      * @param {String} fontName
      */
-    setFontName: function(fontName){
+    setFontName: function (fontName) {
         this._edFontName = fontName;
         this._setFontToEditBox();
     },
@@ -327,15 +328,15 @@ cc.EditBox = cc.ControlButton.extend({
      * set fontSize
      * @param {Number} fontSize
      */
-    setFontSize: function(fontSize){
+    setFontSize: function (fontSize) {
         this._edFontSize = fontSize;
         this._setFontToEditBox();
     },
 
     _setFontToEditBox: function () {
-        if (this._edTxt.value != this._placeholderText){
+        if (this._edTxt.value != this._placeholderText) {
             this._edTxt.style.fontFamily = this._edFontName;
-            this._edTxt.style.fontSize = this._edFontSize+"px";
+            this._edTxt.style.fontSize = this._edFontSize + "px";
         }
     },
 
@@ -414,14 +415,14 @@ cc.EditBox = cc.ControlButton.extend({
         this._placeholderFontSize = fontSize;
         this._setPlaceholderFontToEditText();
     },
-	_setPlaceholderFont: function (fontStyle) {
-		var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
-		if(res) {
-			this._placeholderFontName = res[2];
-			this._placeholderFontSize = parseInt(res[1]);
-			this._setPlaceholderFontToEditText();
-		}
-	},
+    _setPlaceholderFont: function (fontStyle) {
+        var res = cc.LabelTTF._fontStyleRE.exec(fontStyle);
+        if (res) {
+            this._placeholderFontName = res[2];
+            this._placeholderFontSize = parseInt(res[1]);
+            this._setPlaceholderFontToEditText();
+        }
+    },
 
     /**
      * Set the placeholder's fontName.
@@ -442,7 +443,7 @@ cc.EditBox = cc.ControlButton.extend({
     },
 
     _setPlaceholderFontToEditText: function () {
-        if (this._edTxt.value == this._placeholderText){
+        if (this._edTxt.value == this._placeholderText) {
             this._edTxt.style.fontFamily = this._placeholderFontName;
             this._edTxt.style.fontSize = this._placeholderFontSize + "px";
         }
@@ -488,12 +489,12 @@ cc.EditBox = cc.ControlButton.extend({
     initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
         if (this.initWithBackgroundSprite(normal9SpriteBg)) {
             this._domInputSprite.x = 3;
-	        this._domInputSprite.y = 3;
+            this._domInputSprite.y = 3;
 
             this.setZoomOnTouchDown(false);
             this.setPreferredSize(size);
             this.x = 0;
-	        this.y = 0;
+            this.y = 0;
             this._addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
             return true;
         }
@@ -573,7 +574,7 @@ cc.EditBox = cc.ControlButton.extend({
     }
 });
 
-window._p = cc.EditBox.prototype;
+var _p = cc.EditBox.prototype;
 
 // Extended properties
 /** @expose */
@@ -622,7 +623,7 @@ cc.defineGetterSetter(_p, "inputMode", null, _p.setInputMode);
 _p.returnType;
 cc.defineGetterSetter(_p, "returnType", null, _p.setReturnType);
 
-delete window._p;
+_p = null;
 
 cc.EditBox.getRect = function (node) {
     var contentSize = node.getContentSize();

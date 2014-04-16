@@ -33,13 +33,13 @@
  *
  */
 ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
-    _skinData:null,
-    bone:null,
-    _skinTransform:null,
-    _displayName:"",
-    _armature:null,
-    _className:"Skin",
-    ctor:function () {
+    _skinData: null,
+    bone: null,
+    _skinTransform: null,
+    _displayName: "",
+    _armature: null,
+    _className: "Skin",
+    ctor: function () {
         cc.Sprite.prototype.ctor.call(this);
         this._skinData = null;
         this.bone = null;
@@ -47,23 +47,23 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this._skinTransform = cc.AffineTransformIdentity();
         this._armature = null;
     },
-    initWithSpriteFrameName:function(spriteFrameName){
-        var ret = cc.Sprite.prototype.initWithSpriteFrameName.call(this,spriteFrameName);
+    initWithSpriteFrameName: function (spriteFrameName) {
+        var ret = cc.Sprite.prototype.initWithSpriteFrameName.call(this, spriteFrameName);
         this._displayName = spriteFrameName;
         return ret;
     },
-    initWithFile:function(fileName){
-        var ret = cc.Sprite.prototype.initWithFile.call(this,fileName);
+    initWithFile: function (fileName) {
+        var ret = cc.Sprite.prototype.initWithFile.call(this, fileName);
         this._displayName = fileName;
         return ret;
     },
-    setSkinData:function (skinData) {
+    setSkinData: function (skinData) {
         this._skinData = skinData;
 
         this.setScaleX(skinData.scaleX);
         this.setScaleY(skinData.scaleY);
-        this.setRotationX(cc.RADIANS_TO_DEGREES(skinData.skewX));
-        this.setRotationY(cc.RADIANS_TO_DEGREES(-skinData.skewY));
+        this.setRotationX(cc.radiansToDegress(skinData.skewX));
+        this.setRotationY(cc.radiansToDegress(-skinData.skewY));
         this.setPosition(skinData.x, skinData.y);
 
         var localTransform = this.nodeToParentTransform();
@@ -77,19 +77,19 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
         this.updateArmatureTransform();
     },
 
-    getSkinData:function () {
+    getSkinData: function () {
         return this._skinData;
     },
 
-    setBone:function (bone) {
+    setBone: function (bone) {
         this.bone = bone;
     },
 
-    getBone:function () {
+    getBone: function () {
         return this.bone;
     },
 
-    updateArmatureTransform:function () {
+    updateArmatureTransform: function () {
         this._transform = cc.AffineTransformConcat(this._skinTransform, this.bone.nodeToArmatureTransform());
         var locTransform = this._transform;
         var locArmature = this._armature;
@@ -109,7 +109,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * The returned box is relative only to its parent.
      * @return {cc.Rect}
      */
-    getBoundingBox:function () {
+    getBoundingBox: function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         var transForm = this.nodeToParentTransform();
         return cc.RectApplyAffineTransform(rect, transForm);
@@ -119,7 +119,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
      * display name getter
      * @returns {String}
      */
-    getDisplayName:function(){
+    getDisplayName: function () {
         return this._displayName;
     },
 
@@ -141,7 +141,7 @@ ccs.Skin = ccs.Sprite.extend(/** @lends ccs.Skin# */{
 });
 ccs.Skin.prototype.nodeToParentTransform = cc.Node.prototype._nodeToParentTransformForWebGL;
 
-window._p = ccs.Skin.prototype;
+var _p = ccs.Skin.prototype;
 
 // Extended properties
 /** @expose */
@@ -151,7 +151,7 @@ cc.defineGetterSetter(_p, "skinData", _p.getSkinData, _p.setSkinData);
 _p.displayName;
 cc.defineGetterSetter(_p, "displayName", _p.getDisplayName);
 
-delete window._p;
+_p = null;
 
 /**
  * allocates and initializes a skin.

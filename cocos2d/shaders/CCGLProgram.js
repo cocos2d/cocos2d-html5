@@ -26,181 +26,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//-------------Vertex Attributes-----------
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_POSITION = 0;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_COLOR = 1;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_TEX_COORDS = 2;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_MAX = 3;
-
-//------------Uniforms------------------
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_PMATRIX = 0;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_MVMATRIX = 1;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_MVPMATRIX = 2;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_TIME = 3;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_SINTIME = 4;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_COSTIME = 5;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_RANDOM01 = 6;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_SAMPLER = 7;
-/**
- * @constant
- * @type {Number}
- */
-cc.UNIFORM_MAX = 8;
-
-//------------Shader Name---------------
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_TEXTURECOLOR = "ShaderPositionTextureColor";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_TEXTURECOLORALPHATEST = "ShaderPositionTextureColorAlphaTest";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_COLOR = "ShaderPositionColor";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_TEXTURE = "ShaderPositionTexture";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_TEXTURE_UCOLOR = "ShaderPositionTexture_uColor";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_TEXTUREA8COLOR = "ShaderPositionTextureA8Color";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_UCOLOR = "ShaderPosition_uColor";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_LENGTHTEXTURECOLOR = "ShaderPositionLengthTextureColor";
-
-//------------uniform names----------------
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_PMATRIX_S = "CC_PMatrix";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_MVMATRIX_S = "CC_MVMatrix";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_MVPMATRIX_S = "CC_MVPMatrix";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_TIME_S = "CC_Time";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_SINTIME_S = "CC_SinTime";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_COSTIME_S = "CC_CosTime";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_RANDOM01_S = "CC_Random01";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_SAMPLER_S = "CC_Texture0";
-/**
- * @constant
- * @type {String}
- */
-cc.UNIFORM_ALPHA_TEST_VALUE_S = "CC_alpha_value";
-
-//------------Attribute names--------------
-/**
- * @constant
- * @type {String}
- */
-cc.ATTRIBUTE_NAME_COLOR = "a_color";
-/**
- * @constant
- * @type {String}
- */
-cc.ATTRIBUTE_NAME_POSITION = "a_position";
-/**
- * @constant
- * @type {String}
- */
-cc.ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
-
 cc.HashUniformEntry = function (value, location, hh) {
     this.value = value;
     this.location = location;
@@ -315,7 +140,7 @@ cc.GLProgram = cc.Class.extend({
     initWithVertexShaderByteArray: function (vertShaderStr, fragShaderStr) {
         var locGL = this._glContext;
         this._programObj = locGL.createProgram();
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
 
         this._vertShader = null;
         this._fragShader = null;
@@ -337,13 +162,13 @@ cc.GLProgram = cc.Class.extend({
 
         if (this._vertShader)
             locGL.attachShader(this._programObj, this._vertShader);
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.checkGLErrorDebug();
 
         if (this._fragShader)
             locGL.attachShader(this._programObj, this._fragShader);
         this._hashForUniforms.length = 0;
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.checkGLErrorDebug();
         return true;
     },
 

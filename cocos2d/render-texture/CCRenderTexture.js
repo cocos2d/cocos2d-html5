@@ -117,20 +117,54 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     ctor: null,
 
-    _ctorForCanvas: function () {
+    /**
+     * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
+     * @constructor
+     * @param {Number} width
+     * @param {Number} height
+     * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
+     * @param {Number} depthStencilFormat
+     * @example
+     * // Example
+     * var rt = new cc.RenderTexture(width, height, format, depthStencilFormat)
+     */
+    _ctorForCanvas: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
         this._clearColor = cc.color(255, 255, 255, 255);
         this._clearColorStr = "rgba(255,255,255,1)";
 
-        this._cacheCanvas = document.createElement('canvas');
+        this._cacheCanvas = cc.newElement('canvas');
         this._cacheContext = this._cacheCanvas.getContext('2d');
         this.anchorX = 0;
 	    this.anchorY = 0;
+
+        if(width !== undefined && height !== undefined){
+            format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
+            depthStencilFormat = depthStencilFormat || 0;
+            this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        }
     },
 
-    _ctorForWebGL: function () {
+    /**
+     * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
+     * @constructor
+     * @param {Number} width
+     * @param {Number} height
+     * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
+     * @param {Number} depthStencilFormat
+     * @example
+     * // Example
+     * var rt = new cc.RenderTexture(width, height, format, depthStencilFormat)
+     */
+    _ctorForWebGL: function (width, height, format, depthStencilFormat) {
         cc.Node.prototype.ctor.call(this);
         this._clearColor = cc.color(0, 0, 0, 0);
+
+        if(width !== undefined && height !== undefined){
+            format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
+            depthStencilFormat = depthStencilFormat || 0;
+            this.initWithWidthAndHeight(width, height, format, depthStencilFormat);
+        }
     },
 
     cleanup:null,
@@ -182,7 +216,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     initWithWidthAndHeight: null,
 
     _initWithWidthAndHeightForCanvas: function (width, height, format, depthStencilFormat) {
-        var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var locCacheCanvas = this._cacheCanvas, locScaleFactor = cc.contentScaleFactor();
         locCacheCanvas.width = 0 | (width * locScaleFactor);
         locCacheCanvas.height = 0 | (height * locScaleFactor);
         this._cacheContext.translate(0, locCacheCanvas.height);
@@ -197,7 +231,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if(format == cc.Texture2D.PIXEL_FORMAT_A8)
             cc.log( "cc.RenderTexture._initWithWidthAndHeightForWebGL() : only RGB and RGBA formats are valid for a render texture;");
 
-        var gl = cc._renderContext, locScaleFactor = cc.CONTENT_SCALE_FACTOR();
+        var gl = cc._renderContext, locScaleFactor = cc.contentScaleFactor();
 
         width = 0 | (width * locScaleFactor);
         height = 0 | (height * locScaleFactor);
@@ -338,7 +372,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if (cc.configuration.checkForGLExtension("GL_QCOM")) {
             // -- bind a temporary texture so we can clear the render buffer without losing our texture
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
-            //cc.CHECK_GL_ERROR_DEBUG();
+            //cc.checkGLErrorDebug();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
         }
@@ -454,11 +488,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         /* var size = director.getWinSizeInPixels();
 
          // restore viewport
-         gl.viewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+         gl.viewport(0, 0, size.width * cc.contentScaleFactor(), size.height * cc.contentScaleFactor());
 
          // special viewport for 3d projection + retina display
-         if (director.getProjection() == cc.DIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1) {
-         gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
+         if (director.getProjection() == cc.Director.PROJECTION_3D && cc.contentScaleFactor() != 1) {
+         gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.contentScaleFactor()), (size.height * cc.contentScaleFactor()));
          }
 
          director.setProjection(director.getProjection());*/
@@ -792,7 +826,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     }
 });
 
-window._p = cc.RenderTexture.prototype;
+var _p = cc.RenderTexture.prototype;
 
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     _p.ctor = _p._ctorForWebGL;
@@ -827,7 +861,6 @@ if(cc._renderType == cc._RENDER_TYPE_WEBGL){
 _p.clearColorVal;
 cc.defineGetterSetter(_p, "clearColorVal", _p.getClearColor, _p.setClearColor);
 
-delete window._p;
 
 /**
  * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
@@ -841,11 +874,5 @@ delete window._p;
  * var rt = cc.RenderTexture.create()
  */
 cc.RenderTexture.create = function (width, height, format, depthStencilFormat) {
-    format = format || cc.Texture2D.PIXEL_FORMAT_RGBA8888;
-    depthStencilFormat = depthStencilFormat || 0;
-
-    var ret = new cc.RenderTexture();
-    if (ret && ret.initWithWidthAndHeight(width, height, format, depthStencilFormat))
-        return ret;
-    return null;
+    return new cc.RenderTexture(width, height, format, depthStencilFormat);
 };

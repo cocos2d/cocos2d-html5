@@ -160,14 +160,14 @@ cc.ControlColourPicker = cc.Control.extend(/** @lends cc.ControlColourPicker# */
     }
 });
 
-window._p = cc.ControlColourPicker.prototype;
+var _p = cc.ControlColourPicker.prototype;
 
 // Extended properties
 /** @expose */
 _p.background;
 cc.defineGetterSetter(_p, "background", _p.getBackground);
 
-delete window._p;
+_p = null;
 
 cc.ControlColourPicker.create = function () {
     var pRet = new cc.ControlColourPicker();

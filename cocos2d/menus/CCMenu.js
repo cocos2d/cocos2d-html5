@@ -55,28 +55,28 @@ cc.DEFAULT_PADDING = 5;
  * @property {Boolean}  enabled - Indicates whether or not the menu is enabled
  */
 cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
-	enabled:false,
+    enabled: false,
 
-    _color:null,
-    _opacity:0,
-    _selectedItem:null,
-    _state:-1,
+    _color: null,
+    _opacity: 0,
+    _selectedItem: null,
+    _state: -1,
     _touchListener: null,
-    _className:"Menu",
+    _className: "Menu",
 
-	/**
-	 * Constructor of cc.Menu
-	 * @constructor
-	 * @function
-	 * @param {...cc.MenuItem|null} menuItems
-	 *
-	 * @example
-	 * // Example
-	 * //there is no limit on how many menu item you can pass in
-	 * var myMenu1 = cc.Menu.create(menuitem1, menuitem2, menuitem3);
-	 * var myMenu2 = cc.Menu.create([menuitem1, menuitem2, menuitem3]);
-	 */
-    ctor:function(menuItems){
+    /**
+     * Constructor of cc.Menu
+     * @constructor
+     * @function
+     * @param {...cc.MenuItem|null} menuItems
+     *
+     * @example
+     * // Example
+     * //there is no limit on how many menu item you can pass in
+     * var myMenu1 = cc.Menu.create(menuitem1, menuitem2, menuitem3);
+     * var myMenu2 = cc.Menu.create([menuitem1, menuitem2, menuitem3]);
+     */
+    ctor: function (menuItems) {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._color = cc.color.WHITE;
         this.enabled = false;
@@ -93,31 +93,31 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             onTouchCancelled: this._onTouchCancelled
         });
 
-	    if((arguments.length > 0) && (arguments[arguments.length-1] == null))
-		    cc.log("parameters should not be ending with null in Javascript");
+        if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
+            cc.log("parameters should not be ending with null in Javascript");
 
-		var argc = arguments.length, items;
-	    if (argc == 0) {
-		    items = [];
-	    } else if (argc == 1) {
-		    if (menuItems instanceof Array) {
-			    items = menuItems;
-		    }
-		    else items = [menuItems];
-	    }
-		else if (argc > 1) {
-		    var items = [];
-		    for (var i = 0; i < argc; i++) {
-			    if (arguments[i])
-				    items.push(arguments[i]);
-		    }
-	    }
-	    this.initWithArray(items);
+        var argc = arguments.length, items;
+        if (argc == 0) {
+            items = [];
+        } else if (argc == 1) {
+            if (menuItems instanceof Array) {
+                items = menuItems;
+            }
+            else items = [menuItems];
+        }
+        else if (argc > 1) {
+            items = [];
+            for (var i = 0; i < argc; i++) {
+                if (arguments[i])
+                    items.push(arguments[i]);
+            }
+        }
+        this.initWithArray(items);
     },
 
-    onEnter: function(){
+    onEnter: function () {
         var locListener = this._touchListener;
-        if(!locListener._isRegistered())
+        if (!locListener._isRegistered())
             cc.eventManager.addListener(locListener, this);
         cc.Node.prototype.onEnter.call(this);
     },
@@ -125,7 +125,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     /**
      * @return {cc.Color}
      */
-    getColor:function () {
+    getColor: function () {
         var locColor = this._color;
         return cc.color(locColor.r, locColor.g, locColor.b, locColor.a);
     },
@@ -133,7 +133,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     /**
      * @param {cc.Color} color
      */
-    setColor:function (color) {
+    setColor: function (color) {
         var locColor = this._color;
         locColor.r = color.r;
         locColor.g = color.g;
@@ -141,7 +141,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
-            for (var i = 0; i < locChildren.length; i++){
+            for (var i = 0; i < locChildren.length; i++) {
                 locChildren[i].setColor(color);
             }
         }
@@ -154,14 +154,14 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     /**
      * @return {Number}
      */
-    getOpacity:function () {
+    getOpacity: function () {
         return this._opacity;
     },
 
     /**
      * @param {Number} opa
      */
-    setOpacity:function (opa) {
+    setOpacity: function (opa) {
         this._opacity = opa;
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
@@ -175,7 +175,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * return whether or not the menu will receive events
      * @return {Boolean}
      */
-    isEnabled:function () {
+    isEnabled: function () {
         return this.enabled;
     },
 
@@ -183,7 +183,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * set whether or not the menu will receive events
      * @param {Boolean} enabled
      */
-    setEnabled:function (enabled) {
+    setEnabled: function (enabled) {
         this.enabled = enabled;
     },
 
@@ -192,7 +192,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Array} args
      * @return {Boolean}
      */
-    initWithItems:function (args) {
+    initWithItems: function (args) {
         var pArray = [];
         if (args) {
             for (var i = 0; i < args.length; i++) {
@@ -209,20 +209,20 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Array} arrayOfItems
      * @return {Boolean}
      */
-    initWithArray:function (arrayOfItems) {
+    initWithArray: function (arrayOfItems) {
         if (cc.LayerRGBA.prototype.init.call(this)) {
             this.enabled = true;
 
             // menu in the center of the screen
             var winSize = cc.winSize;
-	        this.setPosition(winSize.width / 2, winSize.height / 2);
-		    this.setContentSize(winSize);
-	        this.setAnchorPoint(0.5, 0.5);
-	        this.ignoreAnchorPointForPosition(true);
+            this.setPosition(winSize.width / 2, winSize.height / 2);
+            this.setContentSize(winSize);
+            this.setAnchorPoint(0.5, 0.5);
+            this.ignoreAnchorPointForPosition(true);
 
             if (arrayOfItems) {
                 for (var i = 0; i < arrayOfItems.length; i++)
-                    this.addChild(arrayOfItems[i],i);
+                    this.addChild(arrayOfItems[i], i);
             }
 
             this._selectedItem = null;
@@ -242,8 +242,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {Number|Null} [zOrder=]
      * @param {Number|Null} [tag=]
      */
-    addChild:function (child, zOrder, tag) {
-        if(!(child instanceof cc.MenuItem))
+    addChild: function (child, zOrder, tag) {
+        if (!(child instanceof cc.MenuItem))
             throw "cc.Menu.addChild() : Menu only supports MenuItem objects as children";
         cc.Layer.prototype.addChild.call(this, child, zOrder, tag);
     },
@@ -251,7 +251,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     /**
      * align items vertically with default padding
      */
-    alignItemsVertically:function () {
+    alignItemsVertically: function () {
         this.alignItemsVerticallyWithPadding(cc.DEFAULT_PADDING);
     },
 
@@ -259,7 +259,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * align items vertically with specified padding
      * @param {Number} padding
      */
-    alignItemsVerticallyWithPadding:function (padding) {
+    alignItemsVerticallyWithPadding: function (padding) {
         var height = -padding, locChildren = this._children, len, i, locScaleY, locHeight, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
@@ -280,7 +280,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     /**
      * align items horizontally with default padding
      */
-    alignItemsHorizontally:function () {
+    alignItemsHorizontally: function () {
         this.alignItemsHorizontallyWithPadding(cc.DEFAULT_PADDING);
     },
 
@@ -288,7 +288,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * align items horizontally with specified padding
      * @param {Number} padding
      */
-    alignItemsHorizontallyWithPadding:function (padding) {
+    alignItemsHorizontallyWithPadding: function (padding) {
         var width = -padding, locChildren = this._children, i, len, locScaleX, locWidth, locChild;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++)
@@ -299,7 +299,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             for (i = 0, len = locChildren.length; i < len; i++) {
                 locChild = locChildren[i];
                 locScaleX = locChild.scaleX;
-                locWidth =  locChildren[i].width;
+                locWidth = locChildren[i].width;
                 locChild.setPosition(x + locWidth * locScaleX / 2, 0);
                 x += locWidth * locScaleX + padding;
             }
@@ -314,8 +314,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      *
      * menu.alignItemsInColumns(3,3)//this creates 2 columns, each have 3 items
      */
-    alignItemsInColumns:function (/*Multiple Arguments*/) {
-        if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+    alignItemsInColumns: function (/*Multiple Arguments*/) {
+        if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
             cc.log("parameters should not be ending with null in Javascript");
 
         var rows = [];
@@ -330,12 +330,12 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         var locChildren = this._children;
         if (locChildren && locChildren.length > 0) {
             for (i = 0, len = locChildren.length; i < len; i++) {
-                if(row >= rows.length)
+                if (row >= rows.length)
                     continue;
 
                 rowColumns = rows[row];
                 // can not have zero columns on a row
-                if(!rowColumns)
+                if (!rowColumns)
                     continue;
 
                 tmp = locChildren[i].height;
@@ -396,8 +396,8 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      *
      * menu.alignItemsInRows(4,4,4,4)//this creates 4 rows each have 4 items
      */
-    alignItemsInRows:function (/*Multiple arguments*/) {
-        if((arguments.length > 0) && (arguments[arguments.length-1] == null))
+    alignItemsInRows: function (/*Multiple arguments*/) {
+        if ((arguments.length > 0) && (arguments[arguments.length - 1] == null))
             cc.log("parameters should not be ending with null in Javascript");
         var columns = [], i;
         for (i = 0; i < arguments.length; i++) {
@@ -418,12 +418,12 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
             for (i = 0, len = locChildren.length; i < len; i++) {
                 child = locChildren[i];
                 // check if too many menu items for the amount of rows/columns
-                if(column >= columns.length)
+                if (column >= columns.length)
                     continue;
 
                 columnRows = columns[column];
                 // can't have zero rows on a column
-                if(!columnRows)
+                if (!columnRows)
                     continue;
 
                 // columnWidth = fmaxf(columnWidth, [item contentSize].width);
@@ -487,10 +487,10 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
      * @param {cc.Node} child
      * @param {boolean} cleanup
      */
-    removeChild:function(child, cleanup){
-        if(child == null)
+    removeChild: function (child, cleanup) {
+        if (child == null)
             return;
-        if(!(child instanceof cc.MenuItem)){
+        if (!(child instanceof cc.MenuItem)) {
             cc.log("cc.Menu.removeChild():Menu only supports MenuItem objects as children");
             return;
         }
@@ -500,7 +500,7 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
-    _onTouchBegan:function (touch, event) {
+    _onTouchBegan: function (touch, event) {
         var target = event.getCurrentTarget();
         if (target._state != cc.MENU_STATE_WAITING || !target._visible || !target.enabled)
             return false;
@@ -519,9 +519,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         return false;
     },
 
-    _onTouchEnded:function (touch, event) {
+    _onTouchEnded: function (touch, event) {
         var target = event.getCurrentTarget();
-        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
+        if (target._state !== cc.MENU_STATE_TRACKING_TOUCH) {
             cc.log("cc.Menu.onTouchEnded(): invalid state");
             return;
         }
@@ -532,9 +532,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         target._state = cc.MENU_STATE_WAITING;
     },
 
-    _onTouchCancelled:function (touch, event) {
+    _onTouchCancelled: function (touch, event) {
         var target = event.getCurrentTarget();
-        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
+        if (target._state !== cc.MENU_STATE_TRACKING_TOUCH) {
             cc.log("cc.Menu.onTouchCancelled(): invalid state");
             return;
         }
@@ -543,9 +543,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         target._state = cc.MENU_STATE_WAITING;
     },
 
-    _onTouchMoved:function (touch, event) {
+    _onTouchMoved: function (touch, event) {
         var target = event.getCurrentTarget();
-        if(target._state !== cc.MENU_STATE_TRACKING_TOUCH){
+        if (target._state !== cc.MENU_STATE_TRACKING_TOUCH) {
             cc.log("cc.Menu.onTouchMoved(): invalid state");
             return;
         }
@@ -562,9 +562,9 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     /**
      * custom on exit
      */
-    onExit:function () {
+    onExit: function () {
         if (this._state == cc.MENU_STATE_TRACKING_TOUCH) {
-            if(this._selectedItem){
+            if (this._selectedItem) {
                 this._selectedItem.unselected();
                 this._selectedItem = null;
             }
@@ -573,14 +573,14 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
         cc.Node.prototype.onExit.call(this);
     },
 
-    setOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB: function (value) {
     },
 
-    isOpacityModifyRGB:function () {
+    isOpacityModifyRGB: function () {
         return false;
     },
 
-    _itemForTouch:function (touch) {
+    _itemForTouch: function (touch) {
         var touchLocation = touch.getLocation();
         var itemChildren = this._children, locItemChild;
         if (itemChildren && itemChildren.length > 0) {
@@ -600,12 +600,11 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
     }
 });
 
-window._p = cc.Menu.prototype;
+var _p = cc.Menu.prototype;
 
 // Extended properties
 /** @expose */
 _p.enabled;
-delete window._p;
 
 /**
  * create a new menu
@@ -617,16 +616,16 @@ delete window._p;
  * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu.create = function (menuItems) {
-	var argc = arguments.length;
-    if((argc > 0) && (arguments[argc-1] == null))
+    var argc = arguments.length;
+    if ((argc > 0) && (arguments[argc - 1] == null))
         cc.log("parameters should not be ending with null in Javascript");
 
-	var ret;
-	if (argc == 0)
-		ret = new cc.Menu();
-	else if (argc == 1)
+    var ret;
+    if (argc == 0)
+        ret = new cc.Menu();
+    else if (argc == 1)
         ret = new cc.Menu(menuItems);
-	else
-		ret = new cc.Menu(Array.prototype.slice.call(arguments, 0));
+    else
+        ret = new cc.Menu(Array.prototype.slice.call(arguments, 0));
     return ret;
 };

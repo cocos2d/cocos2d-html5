@@ -337,7 +337,7 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
     }
 });
 
-window._p = cc.ControlStepper.prototype;
+var _p = cc.ControlStepper.prototype;
 
 // Extedned properties
 /** @expose */
@@ -371,7 +371,7 @@ cc.defineGetterSetter(_p, "minusLabel", _p.getMinusLabel, _p.setMinusLabel);
 _p.plusLabel;
 cc.defineGetterSetter(_p, "plusLabel", _p.getPlusLabel, _p.setPlusLabel);
 
-delete window._p;
+_p = null;
 
 cc.ControlStepper.create = function (minusSprite, plusSprite) {
     var pRet = new cc.ControlStepper();

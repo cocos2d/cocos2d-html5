@@ -43,7 +43,14 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
     _dirty:false,
 
-    ctor:function () {
+    /**
+     * create one cc.GridBase Object
+     * @constructor
+     * @param {cc.Size} gridSize
+     * @param {cc.Texture2D} [texture=]
+     * @param {Boolean} [flipped=]
+     */
+    ctor:function (gridSize, texture, flipped) {
         cc._checkWebGLRenderMode();
         this._active=false;
         this._reuseGrid=0;
@@ -55,6 +62,9 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._shaderProgram=null;
         this._directorProjection=0;
         this._dirty=false;
+
+        if(gridSize !== undefined)
+            this.initWithSize(gridSize, texture, flipped);
     },
 
     /**
@@ -269,10 +279,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
  * @return {cc.GridBase}
  */
 cc.GridBase.create = function (gridSize, texture, flipped) {
-    var gridBase = new cc.GridBase();
-    if (gridBase && gridBase.initWithSize(gridSize, texture, flipped))
-        return gridBase;
-    return null;
+    return new cc.GridBase(gridSize, texture, flipped);
 };
 
 /**
@@ -290,7 +297,14 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     _verticesBuffer:null,
     _indicesBuffer:null,
 
-    ctor:function () {
+    /**
+     * create one Grid3D object
+     * @constructor
+     * @param {cc.Size} gridSize
+     * @param {cc.Texture2D} [texture=]
+     * @param {Boolean} [flipped=]
+     */
+    ctor:function (gridSize, texture, flipped) {
         cc.GridBase.prototype.ctor.call(this);
         this._texCoordinates=null;
         this._vertices=null;
@@ -300,6 +314,9 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         this._texCoordinateBuffer=null;
         this._verticesBuffer=null;
         this._indicesBuffer=null;
+
+        if(gridSize !== undefined)
+            this.initWithSize(gridSize, texture, flipped);
     },
 
     /**
@@ -372,7 +389,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
         if (locDirty)
             this._dirty = false;
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     reuse:function () {
@@ -470,10 +487,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
  * @return {cc.Grid3D}
  */
 cc.Grid3D.create = function (gridSize, texture, flipped) {
-    var grid3D = new cc.Grid3D();
-    if (grid3D && grid3D.initWithSize(gridSize, texture, flipped))
-        return grid3D;
-    return null;
+    return new cc.Grid3D(gridSize, texture, flipped);
 };
 
 /**
@@ -492,7 +506,14 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
     _verticesBuffer:null,
     _indicesBuffer:null,
 
-    ctor:function () {
+    /**
+     * create one TiledGrid3D object
+     * @constructor
+     * @param {cc.Size} gridSize
+     * @param {cc.Texture2D} [texture=]
+     * @param {Boolean} [flipped=]
+     */
+    ctor:function (gridSize, texture, flipped) {
         cc.GridBase.prototype.ctor.call(this);
         this._texCoordinates=null;
         this._vertices=null;
@@ -502,6 +523,9 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         this._texCoordinateBuffer=null;
         this._verticesBuffer=null;
         this._indicesBuffer=null;
+
+        if(gridSize !== undefined)
+            this.initWithSize(gridSize, texture, flipped);
     },
 
     /**
@@ -594,7 +618,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
         if (locDirty)
             this._dirty = false;
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     reuse:function () {
@@ -700,7 +724,5 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
  * @return {cc.TiledGrid3D}
  */
 cc.TiledGrid3D.create = function (gridSize, texture, flipped) {
-    var ret = new cc.TiledGrid3D();
-    ret.initWithSize(gridSize, texture, flipped);
-    return ret;
+    return new cc.TiledGrid3D(gridSize, texture, flipped);
 };

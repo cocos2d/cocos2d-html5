@@ -66,9 +66,29 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _blendFunc:null,
     _className:"ParticleBatchNode",
 
-    ctor:function () {
+    /**
+     * initializes the particle system with the name of a file on disk (for a list of supported formats look at the cc.Texture2D class), a capacity of particles
+     * @constructor
+     * @param {String|cc.Texture2D} fileImage
+     * @param {Number} capacity
+     * @example
+     * 1.
+     * //Create a cc.ParticleBatchNode with image path  and capacity
+     * var particleBatchNode = new cc.ParticleBatchNode("res/grossini_dance.png",30);
+     *
+     * 2.
+     * //Create a cc.ParticleBatchNode with a texture and capacity
+     * var texture = cc.TextureCache.getInstance().addImage("res/grossini_dance.png");
+     * var particleBatchNode = new cc.ParticleBatchNode(texture, 30);
+     */
+    ctor:function (fileImage, capacity) {
         cc.Node.prototype.ctor.call(this);
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
+        if (typeof(fileImage) == "string") {
+            this.init(fileImage, capacity);
+        } else if (fileImage instanceof cc.Texture2D) {
+            this.initWithTexture(fileImage, capacity);
+        }
     },
 
     /**
@@ -309,7 +329,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         if (this.textureAtlas.totalQuads == 0)
             return;
 
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
         cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
         this.textureAtlas.drawQuads();
 
@@ -522,14 +542,13 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     }
 });
 
-window._p = cc.ParticleBatchNode.prototype;
+var _p = cc.ParticleBatchNode.prototype;
 
 // Extended properties
 /** @expose */
 _p.texture;
 cc.defineGetterSetter(_p, "texture", _p.getTexture, _p.setTexture);
 
-delete window._p;
 
 /**
  * initializes the particle system with the name of a file on disk (for a list of supported formats look at the cc.Texture2D class), a capacity of particles
@@ -547,11 +566,5 @@ delete window._p;
  * var particleBatchNode = cc.ParticleBatchNode.create(texture, 30);
  */
 cc.ParticleBatchNode.create = function (fileImage, capacity) {
-    var ret = new cc.ParticleBatchNode();
-    if (typeof(fileImage) == "string") {
-        ret.init(fileImage, capacity);
-    } else if (fileImage instanceof cc.Texture2D) {
-        ret.initWithTexture(fileImage, capacity);
-    }
-    return ret;
+    return new cc.ParticleBatchNode(fileImage, capacity);
 };

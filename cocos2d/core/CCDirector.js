@@ -24,86 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-//Possible OpenGL projections used by director
-/**
- * sets a 2D projection (orthogonal projection)
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_2D = 0;
-
 cc.g_NumberOfDraws = 0;
-
-/**
- * sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_3D = 1;
-
-/**
- * it calls "updateProjection" on the projection delegate.
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_CUSTOM = 3;
-
-/**
- * Default projection is 3D projection
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_DEFAULT = cc.DIRECTOR_PROJECTION_3D;
-
-//----------------------------------------------------------------------------------------------------------------------
-//Possible device orientations
-/**
- * Device oriented vertically, home button on the bottom (UIDeviceOrientationPortrait)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_PORTRAIT = 0;
-
-/**
- * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = 1;
-
-/**
- * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = 2;
-
-/**
- * Device oriented horizontally, home button on the left (UIDeviceOrientationLandscapeRight)
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
-
-/**
- * In browsers, we only support 2 orientations by change window size.
- * @constant
- * @type Number
- */
-cc.DEVICE_MAX_ORIENTATIONS = 2;
-
-/**
- * OpenGL projection protocol
- * @class
- * @extends cc.Class
- */
-cc.DirectorDelegate = cc.Class.extend(/** @lends cc.DirectorDelegate# */{
-    /**
-     * Called by CCDirector when the projection is updated, and "custom" projection is used
-     */
-    updateProjection:function () {
-    }
-});
 
 cc.GLToClipTransform = function (transformOut) {
     var projection = new cc.kmMat4();
@@ -209,7 +130,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         this._oldAnimationInterval = this._animationInterval = 1.0 / cc.defaultFPS;
         this._scenesStack = [];
         // Set default projection (3D)
-        this._projection = cc.DIRECTOR_PROJECTION_DEFAULT;
+        this._projection = cc.Director.PROJECTION_DEFAULT;
         // projection delegate if "Custom" projection is used
         this._projectionDelegate = null;
 
@@ -234,7 +155,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         //scheduler
         this._scheduler = new cc.Scheduler();
         //action manager
-        this._actionManager = new cc.ActionManager();
+        this._actionManager = cc.ActionManager ? new cc.ActionManager() : null;
         this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.Scheduler.PRIORITY_SYSTEM, false);
 
         this._eventAfterDraw = new cc.EventCustom(cc.Director.EVENT_AFTER_DRAW);
@@ -270,50 +191,9 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     * <p>
-     *     converts a UIKit coordinate to an OpenGL coordinate<br/>
-     *     Useful to convert (multi) touches coordinates to the current layout (portrait or landscape)
-     * </p>
-     * @param {cc.Point} uiPoint
-     * @return {cc.Point}
+     * convertToGL move to CCDirectorWebGL
+     * convertToUI move to CCDirectorWebGL
      */
-    convertToGL:function (uiPoint) {
-        var transform = new cc.kmMat4();
-        cc.GLToClipTransform(transform);
-
-        var transformInv = new cc.kmMat4();
-        cc.kmMat4Inverse(transformInv, transform);
-
-        // Calculate z=0 using -> transform*[0, 0, 0, 1]/w
-        var zClip = transform.mat[14] / transform.mat[15];
-
-        var glSize = this._openGLView.getDesignResolutionSize();
-        var clipCoord = new cc.kmVec3(2.0 * uiPoint.x / glSize.width - 1.0, 1.0 - 2.0 * uiPoint.y / glSize.height, zClip);
-
-        var glCoord = new cc.kmVec3();
-        cc.kmVec3TransformCoord(glCoord, clipCoord, transformInv);
-
-        return cc.p(glCoord.x, glCoord.y);
-    },
-
-    /**
-     * <p>converts an OpenGL coordinate to a UIKit coordinate<br/>
-     * Useful to convert node points to window points for calls such as glScissor</p>
-     * @param {cc.Point} glPoint
-     * @return {cc.Point}
-     */
-    convertToUI:function (glPoint) {
-        var transform = new cc.kmMat4();
-        cc.GLToClipTransform(transform);
-
-        var clipCoord = new cc.kmVec3();
-        // Need to calculate the zero depth from the transform.
-        var glCoord = new cc.kmVec3(glPoint.x, glPoint.y, 0.0);
-        cc.kmVec3TransformCoord(clipCoord, glCoord, transform);
-
-        var glSize = this._openGLView.getDesignResolutionSize();
-        return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5));
-    },
 
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
@@ -361,26 +241,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
             this._calculateMPF();
     },
 
-    _clearCanvas: function() {
-        var viewport = this._openGLView.getViewPortRect();
-        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
-    },
-
-    _clearWebGL: function() {
-        var gl = cc._renderContext;
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    },
-
     _beforeVisitScene: null,
     _afterVisitScene: null,
-
-    _beforeVisitSceneWebGL: function() {
-        cc.kmGLPushMatrix();
-    },
-
-    _afterVisitSceneWebGL: function() {
-        cc.kmGLPopMatrix();
-    },
 
     /**
      * end director
@@ -435,25 +297,10 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         return cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
     },
 
-    getVisibleSize:function () {
-        if (this._openGLView) {
-            return this._openGLView.getVisibleSize();
-        } else {
-            return this.getWinSize();
-        }
-    },
-
-    getVisibleOrigin:function () {
-        if (this._openGLView) {
-            return this._openGLView.getVisibleOrigin();
-        } else {
-            return cc.p(0,0);
-        }
-    },
-
-    getZEye:function () {
-        return (this._winSizeInPoints.height / 1.1566 );
-    },
+    /**
+     * getVisibleSize/getVisibleOrigin move to CCDirectorWebGL/CCDirectorCanvas
+     * getZEye move to CCDirectorWebGL
+     */
 
     /**
      * pause director
@@ -477,8 +324,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      */
     popScene:function () {
-        if(!this._runningScene)
-            throw "running scene should not null";
+
+        cc.assert(this._runningScene, cc._LogInfos.Director_popScene);
 
         this._scenesStack.pop();
         var c = this._scenesStack.length;
@@ -507,6 +354,10 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         //cleanup scheduler
         this.getScheduler().unscheduleAllCallbacks();
 
+        // Disable event dispatching
+        if(cc.eventManager)
+            cc.eventManager.setEnabled(false);
+
         // don't release the event handlers
         // They are needed in case the director is run again
 
@@ -528,7 +379,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         // Clear all caches
         this.purgeCachedData();
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.checkGLErrorDebug();
     },
 
     /**
@@ -541,8 +392,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {cc.Scene} scene
      */
     pushScene:function (scene) {
-        if(!scene)
-            throw "the scene should not null";
+
+        cc.assert(scene, cc._LogInfos.Director_pushScene);
 
         this._sendCleanupToScene = false;
 
@@ -555,8 +406,9 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {cc.Scene} scene
      */
     runScene:function(scene){
-        if(!scene)
-            throw "the scene should not be null";
+
+        cc.assert(scene, cc._LogInfos.Director_pushScene);
+
         if(!this._runningScene){
             //start scene
             this.pushScene(scene);
@@ -587,23 +439,11 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = Date.now();
         if (!this._lastUpdate) {
-            cc.log("cocos2d: Director: Error in gettimeofday");
+            cc.log(cc._LogInfos.Director_resume);
         }
 
         this._paused = false;
         this._deltaTime = 0;
-    },
-
-    /**
-     * enables/disables OpenGL alpha blending
-     * @param {Boolean} on
-     */
-    setAlphaBlending:function (on) {
-        if (on)
-            cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        else
-            cc.glBlendFunc(cc._renderContext.ONE, cc._renderContext.ZERO);
-        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -624,42 +464,15 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * enables/disables OpenGL depth test
      * @param {Boolean} on
+     *
+     * setDepthTest move to CCDirectorCanvas/CCDirectorWebGL
      */
-    setDepthTest:function (on) {
-        if(cc._renderType === cc._RENDER_TYPE_CANVAS)
-            return;
-
-        var loc_gl= cc._renderContext;
-        if (on) {
-            loc_gl.clearDepth(1.0);
-            loc_gl.enable(loc_gl.DEPTH_TEST);
-            loc_gl.depthFunc(loc_gl.LEQUAL);
-            //cc._renderContext.hint(cc._renderContext.PERSPECTIVE_CORRECTION_HINT, cc._renderContext.NICEST);
-        } else {
-            loc_gl.disable(loc_gl.DEPTH_TEST);
-        }
-        //cc.CHECK_GL_ERROR_DEBUG();
-    },
 
     /**
      * sets the default values based on the CCConfiguration info
      */
     setDefaultValues:function(){
 
-    },
-
-    /**
-     * sets the OpenGL default values
-     */
-    setGLDefaultValues:function () {
-        this.setAlphaBlending(true);
-        // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
-        // [self setDepthTest: view_.depthFormat];
-        this.setDepthTest(false);
-        this.setProjection(this._projection);
-
-        // set other opengl default values
-        cc._renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     },
 
     /**
@@ -726,106 +539,17 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * Set the CCEGLView, where everything is rendered
      * @param {*} openGLView
+     *
+     * setOpenGLView move to CCDirectorCanvas/CCDirectorWebGL
+     * setViewport move to CCDirectorWebGL
      */
-    setOpenGLView:function (openGLView) {
-        // set size
-        this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
-        this._winSizeInPoints.height = cc._canvas.height;
-        this._openGLView = openGLView || cc.view;
-
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS)
-            return;
-
-        // Configuration. Gather GPU info
-        var conf = cc.configuration;
-        conf.gatherGPUInfo();
-        conf.dumpInfo();
-
-        // set size
-        //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
-        //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
-
-        //if (this._openGLView != openGLView) {
-        // because EAGLView is not kind of CCObject
-
-        this._createStatsLabel();
-
-        //if (this._openGLView)
-        this.setGLDefaultValues();
-
-        /* if (this._contentScaleFactor != 1) {
-         this.updateContentScaleFactor();
-         }*/
-
-        //}
-    },
-
-    /**
-     * Sets the glViewport
-     */
-    setViewport:function(){
-        if(this._openGLView) {
-            var locWinSizeInPoints = this._winSizeInPoints;
-            this._openGLView.setViewPortInPoints(0,0, locWinSizeInPoints.width, locWinSizeInPoints.height);
-        }
-    },
 
     /**
      * Sets an OpenGL projection
      * @param {Number} projection
+     *
+     * setProjection move to CCDiretorCanvas/CCDiretorWebGL
      */
-    setProjection: function (projection) {
-        var size = this._winSizeInPoints;
-
-        if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-            this._projection = projection;
-            cc.eventManager.dispatchEvent(this._eventProjectionChanged);
-            return;
-        }
-
-        this.setViewport();
-
-        switch (projection) {
-            case cc.DIRECTOR_PROJECTION_2D:
-                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-                cc.kmGLLoadIdentity();
-                var orthoMatrix = new cc.kmMat4();
-                cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width, 0, size.height, -1024, 1024);
-                cc.kmGLMultMatrix(orthoMatrix);
-                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-                cc.kmGLLoadIdentity();
-                break;
-            case cc.DIRECTOR_PROJECTION_3D:
-                var zeye = this.getZEye();
-                var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
-                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-                cc.kmGLLoadIdentity();
-
-                // issue #1334
-                cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
-
-                cc.kmGLMultMatrix(matrixPerspective);
-
-                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-                cc.kmGLLoadIdentity();
-                var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
-                var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
-                var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
-                cc.kmMat4LookAt(matrixLookup, eye, center, up);
-                cc.kmGLMultMatrix(matrixLookup);
-                break;
-            case cc.DIRECTOR_PROJECTION_CUSTOM:
-                if (this._projectionDelegate)
-                    this._projectionDelegate.updateProjection();
-                break;
-            default:
-                cc.log("cocos2d: Director: unrecognized projection");
-                break;
-        }
-        this._projection = projection;
-        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
-        cc.setProjectionMatrixDirty();
-    },
 
     /**
      * shows the FPS in the screen
@@ -905,14 +629,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     *  Get the CCEGLView, where everything is rendered
-     * @return {*}
-     */
-    getOpenGLView:function () {
-        return this._openGLView;
-    },
-
-    /**
      * is next delta time zero
      * @return {Boolean}
      */
@@ -937,14 +653,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     * Sets an OpenGL projection
-     * @return {Number}
-     */
-    getProjection:function () {
-        return this._projection;
-    },
-
-    /**
      * <p>
      *     Pops out all scenes from the queue until the root scene in the queue. <br/>
      *     This scene will replace the running one.  <br/>
@@ -965,8 +673,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {Number} level
      */
     popToSceneStackLevel: function (level) {
-        if(!this._runningScene)
-            throw "A running Scene is needed";
+
+        cc.assert(this._runningScene, cc._LogInfos.Director_popToSceneStackLevel_2);
 
         var locScenesStack = this._scenesStack;
         var c = locScenesStack.length;
@@ -1021,90 +729,11 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
 
     _createStatsLabel: null,
 
-    _createStatsLabelForWebGL:function(){
-        if(!cc.LabelAtlas)
-            return this._createStatsLabelForCanvas();
-
-        if((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
-            return;
-
-        var texture = new cc.Texture2D();
-        texture.initWithElement(cc.Director._fpsImage);
-        texture.handleLoadedTexture();
-
-        /*
-         We want to use an image which is stored in the file named ccFPSImage.c
-         for any design resolutions and all resource resolutions.
-
-         To achieve this,
-
-         Firstly, we need to ignore 'contentScaleFactor' in 'CCAtlasNode' and 'CCLabelAtlas'.
-         So I added a new method called 'setIgnoreContentScaleFactor' for 'CCAtlasNode',
-         this is not exposed to game developers, it's only used for displaying FPS now.
-
-         Secondly, the size of this image is 480*320, to display the FPS label with correct size,
-         a factor of design resolution ratio of 480x320 is also needed.
-         */
-        var factor = cc.view.getDesignResolutionSize().height / 320.0;
-        if(factor === 0)
-            factor = this._winSizeInPoints.height / 320.0;
-
-        var tmpLabel = new cc.LabelAtlas();
-        tmpLabel._setIgnoreContentScaleFactor(true);
-        tmpLabel.initWithString("00.0", texture, 12, 32 , '.');
-        tmpLabel.scale = factor;
-        this._FPSLabel = tmpLabel;
-
-        tmpLabel = new cc.LabelAtlas();
-        tmpLabel._setIgnoreContentScaleFactor(true);
-        tmpLabel.initWithString("0.000", texture, 12, 32, '.');
-        tmpLabel.scale = factor;
-        this._SPFLabel = tmpLabel;
-
-        tmpLabel = new cc.LabelAtlas();
-        tmpLabel._setIgnoreContentScaleFactor(true);
-        tmpLabel.initWithString("000", texture, 12, 32, '.');
-        tmpLabel.scale = factor;
-        this._drawsLabel = tmpLabel;
-
-        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(locStatsPosition.x, 34 * factor + locStatsPosition.y);
-        this._SPFLabel.setPosition(locStatsPosition.x, 17 * factor + locStatsPosition.y);
-        this._FPSLabel.setPosition(locStatsPosition);
-    },
-
-    _createStatsLabelForCanvas:function(){
-        var fontSize = 0;
-        if (this._winSizeInPoints.width > this._winSizeInPoints.height)
-            fontSize = 0 | (this._winSizeInPoints.height / 320 * 24);
-        else
-            fontSize = 0 | (this._winSizeInPoints.width / 320 * 24);
-
-        this._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
-        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
-        this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
-
-        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
-        this._drawsLabel.setPosition(this._drawsLabel.width / 2 + locStatsPosition.x, this._drawsLabel.height * 5 / 2 + locStatsPosition.y);
-        this._SPFLabel.setPosition(this._SPFLabel.width / 2 + locStatsPosition.x, this._SPFLabel.height * 3 / 2 + locStatsPosition.y);
-        this._FPSLabel.setPosition(this._FPSLabel.width / 2 + locStatsPosition.x, this._FPSLabel.height / 2 + locStatsPosition.y);
-    },
-
     _calculateMPF: function () {
         var now = Date.now();
         this._secondsPerFrame = (now - this._lastUpdate) / 1000;
     }
 });
-
-if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    cc.Director.prototype._clear = cc.Director.prototype._clearWebGL;
-    cc.Director.prototype._beforeVisitScene = cc.Director.prototype._beforeVisitSceneWebGL;
-    cc.Director.prototype._afterVisitScene = cc.Director.prototype._afterVisitSceneWebGL;
-    cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForWebGL;
-} else {
-    cc.Director.prototype._clear = cc.Director.prototype._clearCanvas;
-    cc.Director.prototype._createStatsLabel = cc.Director.prototype._createStatsLabelForCanvas;
-}
 
 cc.Director.EVENT_PROJECTION_CHANGED = "director_projection_changed";
 cc.Director.EVENT_AFTER_DRAW = "director_after_draw";
@@ -1176,9 +805,101 @@ cc.Director._getInstance = function () {
  */
 cc.defaultFPS = 60;
 
-cc.Director._fpsImage = new Image();
-cc.Director._fpsImage.addEventListener("load", function () {
-    cc.Director._fpsImageLoaded = true;
-});
-cc.Director._fpsImage.src = "data:image/png;base64,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";
+//Possible OpenGL projections used by director
+/**
+ * sets a 2D projection (orthogonal projection)
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_2D = 0;
 
+/**
+ * sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_3D = 1;
+
+/**
+ * it calls "updateProjection" on the projection delegate.
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_CUSTOM = 3;
+
+/**
+ * Default projection is 3D projection
+ * @constant
+ * @type Number
+ */
+cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_3D;
+
+if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
+
+    var _p = cc.Director.prototype;
+
+    _p.setProjection = function (projection) {
+        this._projection = projection;
+        cc.eventManager.dispatchEvent(this._eventProjectionChanged);
+    };
+
+    _p.setDepthTest = function () {
+    };
+
+    _p.setOpenGLView = function (openGLView) {
+        // set size
+        this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
+        this._winSizeInPoints.height = cc._canvas.height;
+        this._openGLView = openGLView || cc.view;
+        if(cc.eventManager)
+            cc.eventManager.setEnabled(true);
+    };
+
+    _p._clear = function() {
+        var viewport = this._openGLView.getViewPortRect();
+        cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
+    };
+
+
+    _p._createStatsLabel = function(){
+        var _t = this;
+        var fontSize = 0;
+        if (_t._winSizeInPoints.width > _t._winSizeInPoints.height)
+            fontSize = 0 | (_t._winSizeInPoints.height / 320 * 24);
+        else
+            fontSize = 0 | (_t._winSizeInPoints.width / 320 * 24);
+
+        _t._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
+        _t._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
+        _t._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
+
+        var locStatsPosition = cc.DIRECTOR_STATS_POSITION;
+        _t._drawsLabel.setPosition(_t._drawsLabel.width / 2 + locStatsPosition.x, _t._drawsLabel.height * 5 / 2 + locStatsPosition.y);
+        _t._SPFLabel.setPosition(_t._SPFLabel.width / 2 + locStatsPosition.x, _t._SPFLabel.height * 3 / 2 + locStatsPosition.y);
+        _t._FPSLabel.setPosition(_t._FPSLabel.width / 2 + locStatsPosition.x, _t._FPSLabel.height / 2 + locStatsPosition.y);
+    };
+
+    _p.getVisibleSize = function () {
+        //if (this._openGLView) {
+        //return this._openGLView.getVisibleSize();
+        //} else {
+        return this.getWinSize();
+        //}
+    };
+
+    _p.getVisibleOrigin = function () {
+        //if (this._openGLView) {
+        //return this._openGLView.getVisibleOrigin();
+        //} else {
+        return cc.p(0,0);
+        //}
+    };
+}else {
+    cc.Director._fpsImage = new Image();
+    cc._addEventListener(cc.Director._fpsImage, "load", function () {
+        cc.Director._fpsImageLoaded = true;
+    });
+    if(cc._fpsImage){
+        cc.Director._fpsImage.src = cc._fpsImage;
+    }
+}

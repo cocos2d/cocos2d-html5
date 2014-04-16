@@ -77,7 +77,7 @@ cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
 
         // Update angle
         var angleDeg = this._huePercentage * 360.0 - 180.0;
-        var angle = cc.DEGREES_TO_RADIANS(angleDeg);
+        var angle = cc.degreesToRadians(angleDeg);
 
         // Set new position of the slider
         var x = centerX + limit * Math.cos(angle);
@@ -133,7 +133,7 @@ cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
 
         // Update angle by using the direction of the location
         var angle = Math.atan2(dy, dx);
-        var angleDeg = cc.RADIANS_TO_DEGREES(angle) + 180.0;
+        var angleDeg = cc.radiansToDegress(angle) + 180.0;
 
         // use the position / slider width to determin the percentage the dragger is at
         this.setHue(angleDeg);
@@ -174,7 +174,7 @@ cc.ControlHuePicker = cc.Control.extend(/** @lends cc.ControlHuePicker# */{
     }
 });
 
-window._p = cc.ControlHuePicker.prototype;
+var _p = cc.ControlHuePicker.prototype;
 
 // Extended properties
 /** @expose */
@@ -193,7 +193,7 @@ cc.defineGetterSetter(_p, "slider", _p.getSlider);
 _p.startPos;
 cc.defineGetterSetter(_p, "startPos", _p.getStartPos);
 
-delete window._p;
+_p = null;
 
 cc.ControlHuePicker.create = function (target, pos) {
     var pRet = new cc.ControlHuePicker();

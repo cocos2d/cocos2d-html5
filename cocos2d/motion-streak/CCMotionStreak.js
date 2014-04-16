@@ -41,8 +41,8 @@
  * @property {Boolean}      startingPositionInitialized     - Indicate whether starting position initialized.
  */
 cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
-	texture:null,
-	fastMode:false,
+    texture:null,
+    fastMode:false,
     startingPositionInitialized:false,
 
     _blendFunc:null,
@@ -70,9 +70,15 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
     _className:"MotionStreak",
 
     /**
-     * Constructor
+     * creates and initializes a motion streak with fade in seconds, minimum segments, stroke's width, color, texture filename or texture
+     * @constructor
+     * @param {Number} fade time to fade
+     * @param {Number} minSeg minimum segment size
+     * @param {Number} stroke stroke's width
+     * @param {Number} color
+     * @param {string|cc.Texture2D} texture texture filename or texture
      */
-    ctor: function () {
+    ctor: function (fade, minSeg, stroke, color, texture) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._positionR = cc.p(0, 0);
         this._blendFunc = new cc.BlendFunc(cc.SRC_ALPHA, cc.ONE_MINUS_SRC_ALPHA);
@@ -103,6 +109,9 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         this._verticesBuffer = null;
         this._colorPointerBuffer = null;
         this._texCoordsBuffer = null;
+
+        if(texture !== undefined)
+            this.initWithFade(fade, minSeg, stroke, color, texture);
     },
 
     /**
@@ -204,7 +213,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 
         cc.Node.prototype.setPosition.call(this, cc.p(0,0));
         this.anchorX = 0;
-	    this.anchorY = 0;
+        this.anchorY = 0;
         this.ignoreAnchor = true;
         this.startingPositionInitialized = false;
 
@@ -291,37 +300,37 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
         }
     },
 
-	/**
-	 * @return {Number}
-	 */
-	getPositionX:function () {
-		return this._positionR.x;
-	},
+    /**
+     * @return {Number}
+     */
+    getPositionX:function () {
+        return this._positionR.x;
+    },
 
-	/**
-	 * @param {Number} x
-	 */
-	setPositionX:function (x) {
-		this._positionR.x = x;
-		if(!this.startingPositionInitialized)
-			this.startingPositionInitialized = true;
-	},
+    /**
+     * @param {Number} x
+     */
+    setPositionX:function (x) {
+        this._positionR.x = x;
+        if(!this.startingPositionInitialized)
+            this.startingPositionInitialized = true;
+    },
 
-	/**
-	 * @return {Number}
-	 */
-	getPositionY:function () {
-		return  this._positionR.y;
-	},
+    /**
+     * @return {Number}
+     */
+    getPositionY:function () {
+        return  this._positionR.y;
+    },
 
-	/**
-	 * @param {Number} y
-	 */
-	setPositionY:function (y) {
-		this._positionR.y = y;
-		if(!this.startingPositionInitialized)
-			this.startingPositionInitialized = true;
-	},
+    /**
+     * @param {Number} y
+     */
+    setPositionY:function (y) {
+        this._positionR.y = y;
+        if(!this.startingPositionInitialized)
+            this.startingPositionInitialized = true;
+    },
 
     /**
      * @override
@@ -333,7 +342,7 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
 
         if(this.texture && this.texture.isLoaded()){
             ctx = ctx || cc._renderContext;
-            cc.NODE_DRAW_SETUP(this);
+            cc.nodeDrawSetup(this);
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
@@ -494,8 +503,5 @@ cc.MotionStreak = cc.NodeRGBA.extend(/** @lends cc.MotionStreak# */{
  * @return {cc.MotionStreak}
  */
 cc.MotionStreak.create = function (fade, minSeg, stroke, color, texture) {
-    var ret = new cc.MotionStreak();
-    if (ret && ret.initWithFade(fade, minSeg, stroke, color, texture))
-        return ret;
-    return null;
+    return new cc.MotionStreak(fade, minSeg, stroke, color, texture);
 };

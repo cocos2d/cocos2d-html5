@@ -57,26 +57,26 @@ cc.setProgram = function (node, program) {
  * @property {cc.Node}  stencil         - he cc.Node to use as a stencil to do the clipping.
  */
 cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
-	alphaThreshold: 0,
-	inverted: false,
+    alphaThreshold: 0,
+    inverted: false,
 
     _stencil: null,
     _godhelpme: false,
 
-	/**
-	 * Creates and initializes a clipping node with an other node as its stencil.
-	 * The stencil node will be retained.
-	 * @constructor
-	 * @param {cc.Node} [stencil=null]
-	 */
+    /**
+     * Creates and initializes a clipping node with an other node as its stencil.
+     * The stencil node will be retained.
+     * @constructor
+     * @param {cc.Node} [stencil=null]
+     */
     ctor: function (stencil) {
         cc.Node.prototype.ctor.call(this);
         this._stencil = null;
         this.alphaThreshold = 0;
         this.inverted = false;
 
-		stencil = stencil || null;
-		cc.ClippingNode.prototype.init.call(this, stencil);
+        stencil = stencil || null;
+        cc.ClippingNode.prototype.init.call(this, stencil);
     },
 
     /**
@@ -85,7 +85,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
      * @param {cc.Node} [stencil=null]
      */
     init: null,
-    _className:"ClippingNode",
+    _className: "ClippingNode",
 
     _initForWebGL: function (stencil) {
         this._stencil = stencil;
@@ -194,7 +194,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // enable stencil use
         gl.enable(gl.STENCIL_TEST);
         // check for OpenGL error while enabling stencil test
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
 
         // all bits on the stencil buffer are readonly, except the current layer bit,
         // this means that operation like glClear or glStencilOp will be masked with this value
@@ -227,7 +227,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc._drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
+        cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -323,7 +323,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
             context.save();
             // Draw everything first using node visit function
-            this._super(context);
+            cc.Node.prototype.visit.call(this, context);
 
             context.globalCompositeOperation = this.inverted ? "destination-out" : "destination-in";
 
@@ -466,7 +466,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     }
 });
 
-window._p = cc.ClippingNode.prototype;
+var _p = cc.ClippingNode.prototype;
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
     //WebGL
@@ -484,7 +484,6 @@ cc.defineGetterSetter(_p, "stencil", _p.getStencil, _p.setStencil);
 /** @expose */
 _p.stencil;
 
-delete window._p;
 
 cc.ClippingNode._init_once = null;
 cc.ClippingNode._visit_once = null;

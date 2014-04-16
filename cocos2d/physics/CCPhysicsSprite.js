@@ -37,6 +37,56 @@
         _body:null,
         _PTMRatio:32,
         _rotation:1,
+        /**
+         * Create a PhysicsSprite with filename and rect
+         * @constructor
+         * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
+         * @param {cc.Rect} rect
+         * @example
+         *
+         * 1.Create a sprite with image path and rect
+         * var physicsSprite1 = cc.PhysicsSprite.create("res/HelloHTML5World.png");
+         * var physicsSprite2 = new cc.PhysicsSprite("res/HelloHTML5World.png",cc.rect(0,0,480,320));
+         *
+         * 2.Create a sprite with a sprite frame name. Must add "#" before fame name.
+         * var physicsSprite = new cc.PhysicsSprite('#grossini_dance_01.png');
+         *
+         * 3.Create a sprite with a sprite frame
+         * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
+         * var physicsSprite = new cc.PhysicsSprite(spriteFrame);
+         *
+         * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
+         *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
+         * var texture = cc.textureCache.addImage("HelloHTML5World.png");
+         * var physicsSprite1 = new cc.PhysicsSprite(texture);
+         * var physicsSprite2 = new cc.PhysicsSprite(texture, cc.rect(0,0,480,320));
+         *
+         */
+        ctor:function(fileName, rect){
+            cc.Sprite.prototype.ctor.call(this);
+
+            if (fileName === undefined) {
+                cc.PhysicsSprite.prototype.init.call(this);
+            }else if (typeof(fileName) === "string") {
+                if (fileName[0] === "#") {
+                    //init with a sprite frame name
+                    var frameName = fileName.substr(1, fileName.length - 1);
+                    var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
+                    this.initWithSpriteFrame(spriteFrame);
+                } else {
+                    //init  with filename and rect
+                    this.init(fileName, rect);
+                }
+            }else if (typeof(fileName) === "object") {
+                if (fileName instanceof cc.Texture2D) {
+                    //init  with texture and rect
+                    this.initWithTexture(fileName, rect);
+                } else if (fileName instanceof cc.SpriteFrame) {
+                    //init with a sprite frame
+                    this.initWithSpriteFrame(fileName);
+                }
+            }
+        },
         setBody:function (body) {
             this._body = body;
         },
@@ -61,7 +111,7 @@
             this.setNodeDirty();
         },
         getRotation:function () {
-            return (this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadians) : cc.RADIANS_TO_DEGREES(this._body.GetAngle()));
+            return (this._ignoreBodyRotation ? cc.radiansToDegress(this._rotationRadians) : cc.radiansToDegress(this._body.GetAngle()));
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
@@ -69,7 +119,7 @@
             } else {
                 var locBody = this._body;
                 var p = locBody.GetPosition();
-                locBody.SetTransform(p, cc.DEGREES_TO_RADIANS(r));
+                locBody.SetTransform(p, cc.degreesToRadians(r));
             }
             this.setNodeDirty();
         },
@@ -101,6 +151,57 @@
         _ignoreBodyRotation:false,
         _body:null, //physics body
         _rotation:1,
+
+        /**
+         * Create a PhysicsSprite with filename and rect
+         * @constructor
+         * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
+         * @param {cc.Rect} rect
+         * @example
+         *
+         * 1.Create a sprite with image path and rect
+         * var physicsSprite1 = cc.PhysicsSprite.create("res/HelloHTML5World.png");
+         * var physicsSprite2 = new cc.PhysicsSprite("res/HelloHTML5World.png",cc.rect(0,0,480,320));
+         *
+         * 2.Create a sprite with a sprite frame name. Must add "#" before fame name.
+         * var physicsSprite = new cc.PhysicsSprite('#grossini_dance_01.png');
+         *
+         * 3.Create a sprite with a sprite frame
+         * var spriteFrame = cc.spriteFrameCache.getSpriteFrame("grossini_dance_01.png");
+         * var physicsSprite = new cc.PhysicsSprite(spriteFrame);
+         *
+         * 4.Creates a sprite with an exsiting texture contained in a CCTexture2D object
+         *      After creation, the rect will be the size of the texture, and the offset will be (0,0).
+         * var texture = cc.textureCache.addImage("HelloHTML5World.png");
+         * var physicsSprite1 = new cc.PhysicsSprite(texture);
+         * var physicsSprite2 = new cc.PhysicsSprite(texture, cc.rect(0,0,480,320));
+         *
+         */
+        ctor:function(fileName, rect){
+            cc.Sprite.prototype.ctor.call(this);
+
+            if (fileName === undefined) {
+                cc.PhysicsSprite.prototype.init.call(this);
+            }else if (typeof(fileName) === "string") {
+                if (fileName[0] === "#") {
+                    //init with a sprite frame name
+                    var frameName = fileName.substr(1, fileName.length - 1);
+                    var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
+                    this.initWithSpriteFrame(spriteFrame);
+                } else {
+                    //init  with filename and rect
+                    this.init(fileName, rect);
+                }
+            }else if (typeof(fileName) === "object") {
+                if (fileName instanceof cc.Texture2D) {
+                    //init  with texture and rect
+                    this.initWithTexture(fileName, rect);
+                } else if (fileName instanceof cc.SpriteFrame) {
+                    //init with a sprite frame
+                    this.initWithSpriteFrame(fileName);
+                }
+            }
+        },
         setBody:function (body) {
             this._body = body;
         },
@@ -122,22 +223,22 @@
 
         setPosition:function (newPosOrxValue, yValue) {
             if (yValue === undefined) {
-	            this._body.p.x = newPosOrxValue.x;
-	            this._body.p.y = newPosOrxValue.y;
+                this._body.p.x = newPosOrxValue.x;
+                this._body.p.y = newPosOrxValue.y;
             } else {
-	            this._body.p.x = newPosOrxValue;
-	            this._body.p.y = yValue;
+                this._body.p.x = newPosOrxValue;
+                this._body.p.y = yValue;
             }
             //this._syncPosition();
         },
-	    setPositionX:function (xValue) {
-		    this._body.p.x = xValue;
-		    //this._syncPosition();
-	    },
-	    setPositionY:function (yValue) {
-		    this._body.p.y = yValue;
-		    //this._syncPosition();
-	    },
+        setPositionX:function (xValue) {
+            this._body.p.x = xValue;
+            //this._syncPosition();
+        },
+        setPositionY:function (yValue) {
+            this._body.p.y = yValue;
+            //this._syncPosition();
+        },
 
         _syncPosition:function () {
             var locPosition = this._position, locBody = this._body;
@@ -146,19 +247,19 @@
             }
         },
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadiansX) : -cc.RADIANS_TO_DEGREES(this._body.a);
+            return this._ignoreBodyRotation ? cc.radiansToDegress(this._rotationRadiansX) : -cc.radiansToDegress(this._body.a);
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
                 cc.Sprite.prototype.setRotation.call(this, r);
             } else {
-                this._body.a = -cc.DEGREES_TO_RADIANS(r);
+                this._body.a = -cc.degreesToRadians(r);
                 //this._syncRotation();
             }
         },
         _syncRotation:function () {
             if (this._rotationRadiansX != -this._body.a) {
-                cc.Sprite.prototype.setRotation.call(this, -cc.RADIANS_TO_DEGREES(this._body.a));
+                cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegress(this._body.a));
             }
         },
         nodeToParentTransform:function () {
@@ -249,19 +350,19 @@
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
     cc.PhysicsSprite._className = "PhysicsSprite";
-	window._p = cc.PhysicsSprite.prototype;
-	// Extended properties
-	/** @expose */
-	_p.body;
-	cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
+    var _p = cc.PhysicsSprite.prototype;
+    // Extended properties
+    /** @expose */
+    _p.body;
+    cc.defineGetterSetter(_p, "body", _p.getBody, _p.setBody);
     /** @expose */
     _p.dirty;
     cc.defineGetterSetter(_p, "dirty", _p.isDirty, _p.setDirty);
-	delete window._p;
+
 
     /**
      * Create a PhysicsSprite with filename and rect
-     * @constructs
+     * @constructor
      * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
      * @param {cc.Rect} rect
      * @return {cc.PhysicsSprite}
@@ -286,41 +387,6 @@
      *
      */
     cc.PhysicsSprite.create = function (fileName, rect) {
-        var sprite = new cc.PhysicsSprite();
-
-        if (arguments.length == 0) {
-            sprite.init();
-            return sprite;
-        }
-
-        if (typeof(fileName) === "string") {
-            if (fileName[0] === "#") {
-                //init with a sprite frame name
-                var frameName = fileName.substr(1, fileName.length - 1);
-                var spriteFrame = cc.spriteFrameCache.getSpriteFrame(frameName);
-                if (sprite.initWithSpriteFrame(spriteFrame))
-                    return sprite;
-            } else {
-                //init  with filename and rect
-                if (sprite.init(fileName, rect))
-                    return  sprite;
-            }
-            return null;
-        }
-
-        if (typeof(fileName) === "object") {
-            if (fileName instanceof cc.Texture2D) {
-                //init  with texture and rect
-                if (sprite.initWithTexture(fileName, rect))
-                    return  sprite;
-            } else if (fileName instanceof cc.SpriteFrame) {
-                //init with a sprite frame
-                if (sprite.initWithSpriteFrame(fileName))
-                    return sprite;
-            }
-            return null;
-        }
-
-        return null;
+        return new cc.PhysicsSprite(fileName, rect);
     };
 })();

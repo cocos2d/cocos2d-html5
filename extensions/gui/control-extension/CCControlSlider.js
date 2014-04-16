@@ -248,7 +248,7 @@ cc.ControlSlider = cc.Control.extend(/** @lends cc.ControlSlider# */{
     }
 });
 
-window._p = cc.ControlSlider.prototype;
+var _p = cc.ControlSlider.prototype;
 
 // Extended properties
 /** @expose */
@@ -276,7 +276,7 @@ cc.defineGetterSetter(_p, "progressSprite", _p.getProgressSprite);
 _p.backgroundSprite;
 cc.defineGetterSetter(_p, "backgroundSprite", _p.getBackgroundSprite);
 
-delete window._p;
+_p = null;
 
 /**
  * Creates a slider with a given background sprite and a progress bar and a

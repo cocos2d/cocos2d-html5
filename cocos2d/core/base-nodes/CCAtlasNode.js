@@ -41,58 +41,58 @@
  *
  */
 cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
-	textureAtlas:null,
-	quadsToDraw:0,
+    textureAtlas: null,
+    quadsToDraw: 0,
 
-    RGBAProtocol:true,
+    RGBAProtocol: true,
     //! chars per row
-    _itemsPerRow:0,
+    _itemsPerRow: 0,
     //! chars per column
-    _itemsPerColumn:0,
+    _itemsPerColumn: 0,
     //! width of each char
-    _itemWidth:0,
+    _itemWidth: 0,
     //! height of each char
-    _itemHeight:0,
+    _itemHeight: 0,
 
-    _colorUnmodified:null,
+    _colorUnmodified: null,
 
     // protocol variables
-    _opacityModifyRGB:false,
-    _blendFunc:null,
+    _opacityModifyRGB: false,
+    _blendFunc: null,
 
-    _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
-    _className:"AtlasNode",
+    _ignoreContentScaleFactor: false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
+    _className: "AtlasNode",
 
-	/**
-	 * Creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
-	 * @constructor
-	 * @param {String} tile
-	 * @param {Number} tileWidth
-	 * @param {Number} tileHeight
-	 * @param {Number} itemsToRender
-	 * @example
-	 * var node = new cc.AtlasNode("pathOfTile", 16, 16, 1);
-	 */
+    /**
+     * Creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
+     * @constructor
+     * @param {String} tile
+     * @param {Number} tileWidth
+     * @param {Number} tileHeight
+     * @param {Number} itemsToRender
+     * @example
+     * var node = new cc.AtlasNode("pathOfTile", 16, 16, 1);
+     */
     ctor: function (tile, tileWidth, tileHeight, itemsToRender) {
         cc.NodeRGBA.prototype.ctor.call(this);
         this._colorUnmodified = cc.color.WHITE;
-        this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
         this._ignoreContentScaleFactor = false;
 
-		itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
+        itemsToRender !== undefined && this.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender);
     },
 
     /** updates the Atlas (indexed vertex array).
      * Shall be overridden in subclasses
      */
-    updateAtlasValues:function () {
-        cc.log("cc.AtlasNode.updateAtlasValues(): Shall be overridden in subclasses") ;
+    updateAtlasValues: function () {
+        cc.log("cc.AtlasNode.updateAtlasValues(): Shall be overridden in subclasses");
     },
 
     /** cc.AtlasNode - RGBA protocol
      * @return {cc.Color}
      */
-    getColor:function () {
+    getColor: function () {
         if (this._opacityModifyRGB)
             return this._colorUnmodified;
         return cc.NodeRGBA.prototype.getColor.call(this);
@@ -101,7 +101,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     /**
      * @param {Boolean} value
      */
-    setOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB: function (value) {
         var oldColor = this.color;
         this._opacityModifyRGB = value;
         this.color = oldColor;
@@ -110,14 +110,14 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     /**
      * @return {Boolean}
      */
-    isOpacityModifyRGB:function () {
+    isOpacityModifyRGB: function () {
         return this._opacityModifyRGB;
     },
 
     /** cc.AtlasNode - CocosNodeTexture protocol
      * @return {cc.BlendFunc}
      */
-    getBlendFunc:function () {
+    getBlendFunc: function () {
         return this._blendFunc;
     },
 
@@ -126,46 +126,46 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {Number | cc.BlendFunc} src
      * @param {Number} dst
      */
-    setBlendFunc:function (src, dst) {
+    setBlendFunc: function (src, dst) {
         if (dst === undefined)
             this._blendFunc = src;
         else
-            this._blendFunc = {src:src, dst:dst};
+            this._blendFunc = {src: src, dst: dst};
     },
 
     /**
      * @param {cc.TextureAtlas} value
      */
-    setTextureAtlas:function (value) {
+    setTextureAtlas: function (value) {
         this.textureAtlas = value;
     },
 
     /**
      * @return {cc.TextureAtlas}
      */
-    getTextureAtlas:function () {
+    getTextureAtlas: function () {
         return this.textureAtlas;
     },
 
     /**
      * @return {Number}
      */
-    getQuadsToDraw:function () {
+    getQuadsToDraw: function () {
         return this.quadsToDraw;
     },
 
     /**
      * @param {Number} quadsToDraw
      */
-    setQuadsToDraw:function (quadsToDraw) {
+    setQuadsToDraw: function (quadsToDraw) {
         this.quadsToDraw = quadsToDraw;
     },
 
-    _textureForCanvas:null,
-    _originalTexture:null,
+    _textureForCanvas: null,
+    _originalTexture: null,
 
-    _uniformColor:null,
-    _colorF32Array:null,
+    _uniformColor: null,
+    _colorF32Array: null,
 
     /** initializes an cc.AtlasNode  with an Atlas file the width and height of each item and the quantity of items to render
      * @param {String} tile
@@ -174,8 +174,8 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {Number} itemsToRender
      * @return {Boolean}
      */
-    initWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
-        if(!tile)
+    initWithTileFile: function (tile, tileWidth, tileHeight, itemsToRender) {
+        if (!tile)
             throw "cc.AtlasNode.initWithTileFile(): title should not be null";
         var texture = cc.textureCache.addImage(tile);
         return this.initWithTexture(texture, tileWidth, tileHeight, itemsToRender);
@@ -189,9 +189,9 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {Number} itemsToRender
      * @return {Boolean}
      */
-    initWithTexture:null,
+    initWithTexture: null,
 
-    _initWithTextureForCanvas:function(texture, tileWidth, tileHeight, itemsToRender){
+    _initWithTextureForCanvas: function (texture, tileWidth, tileHeight, itemsToRender) {
         this._itemWidth = tileWidth;
         this._itemHeight = tileHeight;
 
@@ -208,7 +208,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         return true;
     },
 
-    _initWithTextureForWebGL:function(texture, tileWidth, tileHeight, itemsToRender){
+    _initWithTextureForWebGL: function (texture, tileWidth, tileHeight, itemsToRender) {
         this._itemWidth = tileWidth;
         this._itemHeight = tileHeight;
         this._colorUnmodified = cc.color.WHITE;
@@ -238,14 +238,14 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         return true;
     },
 
-    draw:null,
+    draw: null,
 
     /**
      * @param {WebGLRenderingContext} ctx renderContext
      */
-    _drawForWebGL:function (ctx) {
+    _drawForWebGL: function (ctx) {
         var context = ctx || cc._renderContext;
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.uniform4fv(this._uniformColor, this._colorF32Array);
         this.textureAtlas.drawNumberOfQuads(this.quadsToDraw, 0);
@@ -257,11 +257,11 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      */
     setColor: null,
 
-    _setColorForCanvas:function (color3) {
+    _setColorForCanvas: function (color3) {
         var locRealColor = this._realColor;
         if ((locRealColor.r == color3.r) && (locRealColor.g == color3.g) && (locRealColor.b == color3.b))
             return;
-        var temp = cc.color(color3.r,color3.g,color3.b);
+        var temp = cc.color(color3.r, color3.g, color3.b);
         this._colorUnmodified = color3;
 
         if (this._opacityModifyRGB) {
@@ -274,7 +274,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
         if (this.texture) {
             var element = this._originalTexture.getHtmlElementObj();
-            if(!element)
+            if (!element)
                 return;
             var cacheTextureForColor = cc.textureCache.getTextureColors(element);
             if (cacheTextureForColor) {
@@ -288,8 +288,8 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         }
     },
 
-    _setColorForWebGL:function (color3) {
-        var temp = cc.color(color3.r,color3.g,color3.b);
+    _setColorForWebGL: function (color3) {
+        var temp = cc.color(color3.r, color3.g, color3.b);
         this._colorUnmodified = color3;
         var locDisplayedOpacity = this._displayedOpacity;
         if (this._opacityModifyRGB) {
@@ -307,7 +307,8 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @function
      * @param {Number} opacity
      */
-    setOpacity: function (opacity) {},
+    setOpacity: function (opacity) {
+    },
 
     _setOpacityForCanvas: function (opacity) {
         cc.NodeRGBA.prototype.setOpacity.call(this, opacity);
@@ -362,9 +363,9 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this._updateOpacityModifyRGB();
     },
 
-    _calculateMaxItems:null,
+    _calculateMaxItems: null,
 
-    _calculateMaxItemsForCanvas:function () {
+    _calculateMaxItemsForCanvas: function () {
         var selTexture = this.texture;
         var size = selTexture.getContentSize();
 
@@ -372,41 +373,41 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this._itemsPerRow = 0 | (size.width / this._itemWidth);
     },
 
-    _calculateMaxItemsForWebGL:function () {
+    _calculateMaxItemsForWebGL: function () {
         var selTexture = this.texture;
         var size = selTexture.getContentSize();
-        if(this._ignoreContentScaleFactor)
+        if (this._ignoreContentScaleFactor)
             size = selTexture.getContentSizeInPixels();
 
         this._itemsPerColumn = 0 | (size.height / this._itemHeight);
         this._itemsPerRow = 0 | (size.width / this._itemWidth);
     },
 
-    _updateBlendFunc:function () {
+    _updateBlendFunc: function () {
         if (!this.textureAtlas.texture.hasPremultipliedAlpha()) {
             this._blendFunc.src = cc.SRC_ALPHA;
             this._blendFunc.dst = cc.ONE_MINUS_SRC_ALPHA;
         }
     },
 
-    _updateOpacityModifyRGB:function () {
+    _updateOpacityModifyRGB: function () {
         this._opacityModifyRGB = this.textureAtlas.texture.hasPremultipliedAlpha();
     },
 
-    _setIgnoreContentScaleFactor:function(ignoreContentScaleFactor){
+    _setIgnoreContentScaleFactor: function (ignoreContentScaleFactor) {
         this._ignoreContentScaleFactor = ignoreContentScaleFactor;
     }
 });
 
-window._p = cc.AtlasNode.prototype;
+var _p = cc.AtlasNode.prototype;
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-	_p.initWithTexture = _p._initWithTextureForWebGL;
-	_p.draw = _p._drawForWebGL;
-	_p.setColor = _p._setColorForWebGL;
-	_p.setOpacity = _p._setOpacityForWebGL;
-	_p.getTexture = _p._getTextureForWebGL;
-	_p.setTexture = _p._setTextureForWebGL;
-	_p._calculateMaxItems = _p._calculateMaxItemsForWebGL;
+    _p.initWithTexture = _p._initWithTextureForWebGL;
+    _p.draw = _p._drawForWebGL;
+    _p.setColor = _p._setColorForWebGL;
+    _p.setOpacity = _p._setOpacityForWebGL;
+    _p.getTexture = _p._getTextureForWebGL;
+    _p.setTexture = _p._setTextureForWebGL;
+    _p._calculateMaxItems = _p._calculateMaxItemsForWebGL;
 } else {
     _p.initWithTexture = _p._initWithTextureForCanvas;
     _p.draw = cc.Node.prototype.draw;
@@ -430,7 +431,6 @@ _p.textureAtlas;
 /** @expose */
 _p.quadsToDraw;
 
-delete window._p;
 
 /** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
  * @param {String} tile

@@ -38,47 +38,78 @@
             "cocos2d/compression/zlib.min.js"
         ],
         "core" : [
+            "CCDebugger.js",
+            "cocos2d/core/utils/BinaryLoader.js",
+            "Base64Images.js",
             "cocos2d/core/platform/CCClass.js",
-	        "cocos2d/core/platform/CCCommon.js",
+            "cocos2d/core/platform/CCCommon.js",
             "cocos2d/core/cocoa/CCGeometry.js",
             "cocos2d/core/platform/CCSAXParser.js",
             "cocos2d/core/platform/CCLoaders.js",
             "cocos2d/core/platform/CCConfig.js",
             "cocos2d/core/platform/miniFramework.js",
             "cocos2d/core/platform/CCMacro.js",
+            "cocos2d/core/platform/CCTypesWebGL.js",
+            "cocos2d/core/platform/CCTypesPropertyDefine.js",
             "cocos2d/core/platform/CCTypes.js",
             "cocos2d/core/platform/CCEGLView.js",
             "cocos2d/core/platform/CCScreen.js",
             "cocos2d/core/platform/CCVisibleRect.js",
+
             "cocos2d/core/platform/CCInputManager.js",
+            "cocos2d/core/platform/CCInputExtension.js",
+
             "cocos2d/core/cocoa/CCAffineTransform.js",
             "cocos2d/core/support/CCPointExtension.js",
             "cocos2d/core/support/CCVertex.js",
             "cocos2d/core/support/TransformUtils.js",
             "cocos2d/core/event-manager/CCTouch.js",
+
             "cocos2d/core/event-manager/CCEvent.js",
             "cocos2d/core/event-manager/CCEventListener.js",
             "cocos2d/core/event-manager/CCEventManager.js",
+            "cocos2d/core/event-manager/CCEventExtension.js",
+
+            "cocos2d/core/base-nodes/BaseNodesWebGL.js",
+            "cocos2d/core/base-nodes/BaseNodesPropertyDefine.js",
             "cocos2d/core/base-nodes/CCNode.js",
             "cocos2d/core/base-nodes/CCAtlasNode.js",
+
+            "cocos2d/core/textures/TexturesWebGL.js",
+            "cocos2d/core/textures/TexturesPropertyDefine.js",
             "cocos2d/core/textures/CCTexture2D.js",
             "cocos2d/core/textures/CCTextureCache.js",
             "cocos2d/core/textures/CCTextureAtlas.js",
+
             "cocos2d/core/scenes/CCScene.js",
             "cocos2d/core/scenes/CCLoaderScene.js",
+
+            "cocos2d/core/layers/CCLayerWebGL.js",
+            "cocos2d/core/layers/CCLayerPropertyDefine.js",
             "cocos2d/core/layers/CCLayer.js",
+
+            "cocos2d/core/sprites/SpritesWebGL.js",
+            "cocos2d/core/sprites/SpritesPropertyDefine.js",
             "cocos2d/core/sprites/CCSprite.js",
+            "cocos2d/core/sprites/CCSpriteBatchNode.js",
             "cocos2d/core/sprites/CCAnimation.js",
             "cocos2d/core/sprites/CCAnimationCache.js",
             "cocos2d/core/sprites/CCSpriteFrame.js",
             "cocos2d/core/sprites/CCSpriteFrameCache.js",
-            "cocos2d/core/sprites/CCSpriteBatchNode.js",
             "cocos2d/core/CCConfiguration.js",
+
             "cocos2d/core/CCDirector.js",
+            "cocos2d/core/CCDirectorWebGL.js",
+
             "cocos2d/core/CCCamera.js",
             "cocos2d/core/CCScheduler.js",
-            "cocos2d/core/CCDrawingPrimitives.js",
+            "cocos2d/core/CCDrawingPrimitivesCanvas.js",
+            "cocos2d/core/CCDrawingPrimitivesWebGL.js",
+
+            "cocos2d/core/labelttf/LabelTTFWebGL.js",
+            "cocos2d/core/labelttf/LabelTTFPropertyDefine.js",
             "cocos2d/core/labelttf/CCLabelTTF.js",
+
             "cocos2d/core/CCActionManager.js"
         ],
         "effects" : [
@@ -120,11 +151,11 @@
 
             "cocos2d/motion-streak/CCMotionStreak.js"
         ],
-	    "node-grid" : [
-		    "core",
+        "node-grid" : [
+            "core",
 
-		    "cocos2d/node-grid/CCNodeGrid.js"
-	    ],
+            "cocos2d/node-grid/CCNodeGrid.js"
+        ],
         "parallax" : [
             "core",
 

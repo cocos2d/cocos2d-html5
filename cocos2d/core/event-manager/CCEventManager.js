@@ -22,6 +22,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * copy an array's item to a new array (its performance is better than Array.slice)
+ * @param {Array} arr
+ * @returns {Array}
+ */
+cc.copyArray = function(arr){
+    var i, len = arr.length, arr_clone = new Array(len);
+    for (i = 0; i < len; i += 1)
+        arr_clone[i] = arr[i];
+    return arr_clone;
+};
+
 cc._EventListenerVector = cc.Class.extend({
     _fixedListeners: null,
     _sceneGraphListeners: null,
@@ -82,7 +94,7 @@ cc.__getListenerID = function (event) {
     if(getType === eventType.TOUCH){
         // Touch listener is very special, it contains two kinds of listeners, EventListenerTouchOneByOne and EventListenerTouchAllAtOnce.
         // return UNKNOWN instead.
-        cc.log("Don't call this method if the event is for touch.");
+        cc.log(cc._LogInfos.__getListenerID);
     }
     return "";
 };
@@ -110,7 +122,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
     _toAddedListeners: [],
     _dirtyNodes: [],
     _inDispatch: 0,
-    _isEnabled: true,
+    _isEnabled: false,
     _nodePriorityIndex: 0,
 
     _internalCustomListenerIDs:[cc.game.EVENT_HIDE, cc.game.EVENT_SHOW],
@@ -119,6 +131,9 @@ cc.eventManager = /** @lends cc.eventManager# */{
         // Mark the node dirty only when there is an event listener associated with it.
         if (this._nodeListenersMap[node.__instanceId] != null)
             this._dirtyNodes.push(node);
+        var _children = node.getChildren();
+        for(var i = 0, len = _children.length; i < len; i++)
+            this._setDirtyForNode(_children[i]);
     },
 
     /**
@@ -179,7 +194,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
             var node = listener._getSceneGraphPriority();
             if (node == null)
-                cc.log("Invalid scene graph priority!");
+                cc.log(cc._LogInfos.eventManager__forceAddEventListener);
 
             this._associateNodeAndEventListener(node, listener);
             if (node.isRunning())
@@ -259,22 +274,28 @@ cc.eventManager = /** @lends cc.eventManager# */{
     },
 
     _sortEventListeners: function (listenerID) {
-        var dirtyFlag = this.DIRTY_NONE;
-        if (this._priorityDirtyFlagMap[listenerID])
-            dirtyFlag = this._priorityDirtyFlagMap[listenerID];
+        var dirtyFlag = this.DIRTY_NONE,  locFlagMap = this._priorityDirtyFlagMap;
+        if (locFlagMap[listenerID])
+            dirtyFlag = locFlagMap[listenerID];
 
         if (dirtyFlag != this.DIRTY_NONE) {
+            // Clear the dirty flag first, if `rootNode` is null, then set its dirty flag of scene graph priority
+            locFlagMap[listenerID] = this.DIRTY_NONE;
+
             if (dirtyFlag & this.DIRTY_FIXED_PRIORITY)
                 this._sortListenersOfFixedPriority(listenerID);
 
-            if (dirtyFlag & this.DIRTY_SCENE_GRAPH_PRIORITY)
-                this._sortListenersOfSceneGraphPriority(listenerID);
-
-            this._priorityDirtyFlagMap[listenerID] = this.DIRTY_NONE;
+            if (dirtyFlag & this.DIRTY_SCENE_GRAPH_PRIORITY){
+                var rootNode = cc.director.getRunningScene();
+                if(rootNode)
+                    this._sortListenersOfSceneGraphPriority(listenerID, rootNode);
+                else
+                    locFlagMap[listenerID] = this.DIRTY_SCENE_GRAPH_PRIORITY;
+            }
         }
     },
 
-    _sortListenersOfSceneGraphPriority: function (listenerID) {
+    _sortListenersOfSceneGraphPriority: function (listenerID, rootNode) {
         var listeners = this._getListeners(listenerID);
         if (!listeners)
             return;
@@ -283,7 +304,6 @@ cc.eventManager = /** @lends cc.eventManager# */{
         if(!sceneGraphListener || sceneGraphListener.length === 0)
             return;
 
-        var rootNode = cc.director.getRunningScene();
         // Reset priority index
         this._nodePriorityIndex = 0;
         this._nodePriorityMap = {};
@@ -526,7 +546,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             if (fixedPriorityListeners.length !== 0) {
                 for (; i < listeners.gt0Index; ++i) {
                     selListener = fixedPriorityListeners[i];
-                    if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
+                    if (selListener.isEnabled() && !selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
                         shouldStopPropagation = true;
                         break;
                     }
@@ -537,7 +557,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         if (sceneGraphPriorityListeners && !shouldStopPropagation) {    // priority == 0, scene graph priority
             for (j = 0; j < sceneGraphPriorityListeners.length; j++) {
                 selListener = sceneGraphPriorityListeners[j];
-                if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
+                if (selListener.isEnabled() && !selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
                     shouldStopPropagation = true;
                     break;
                 }
@@ -547,7 +567,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         if (fixedPriorityListeners && !shouldStopPropagation) {    // priority > 0
             for (; i < fixedPriorityListeners.length; ++i) {
                 selListener = fixedPriorityListeners[i];
-                if (!selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
+                if (selListener.isEnabled() && !selListener._isPaused() && selListener._isRegistered() && onEvent(selListener, eventOrArgs)) {
                     shouldStopPropagation = true;
                     break;
                 }
@@ -632,16 +652,18 @@ cc.eventManager = /** @lends cc.eventManager# */{
      *         except calls removeAllListeners().
      */
     addListener: function (listener, nodeOrPriority) {
-        if (!listener || !nodeOrPriority)
-            throw "Invalid parameters.";
+
+        cc.assert(listener && nodeOrPriority, cc._LogInfos.eventManager_addListener_2);
 
         if(!(listener instanceof cc.EventListener)){
-            if(typeof(nodeOrPriority) === "number")
-                throw "listener must be a cc.EventListener object when adding a fixed priority listener";
+
+            cc.assert(typeof nodeOrPriority !== "number", cc._LogInfos.eventManager_addListener_3);
+
             listener = cc.EventListener.create(listener);
         } else{
-            if (listener._isRegistered())
-                throw "The listener has been registered.";
+
+            cc.assert(!listener._isRegistered(), cc._LogInfos.eventManager_addListener_4);
+
         }
 
         if (!listener.checkAvailable())
@@ -649,7 +671,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         if (typeof nodeOrPriority == "number") {
             if (nodeOrPriority == 0) {
-                cc.log("0 priority is forbidden for fixed priority since it's used for scene graph based priority.");
+                cc.log(cc._LogInfos.eventManager_addListener);
                 return;
             }
 
@@ -763,6 +785,23 @@ cc.eventManager = /** @lends cc.eventManager# */{
             for (i = 0; i < listenersCopy.length; i++)
                 _t.removeListener(listenersCopy[i]);
             listenersCopy.length = 0;
+
+            // Bug fix: ensure there are no references to the node in the list of listeners to be added.
+            // If we find any listeners associated with the destroyed node in this list then remove them.
+            // This is to catch the scenario where the node gets destroyed before it's listener
+            // is added into the event dispatcher fully. This could happen if a node registers a listener
+            // and gets destroyed while we are dispatching an event (touch etc.)
+            var locToAddedListeners = _t._toAddedListeners;
+            for (i = 0; i < locToAddedListeners.length; ) {
+                var listener = locToAddedListeners[i];
+                if (listener._getSceneGraphPriority() == listenerType) {
+                    listener._setSceneGraphPriority(null);                      // Ensure no dangling ptr to the target node.
+                    listener._setRegistered(false);
+                    locToAddedListeners.splice(i, 1);
+                } else
+                    ++i;
+            }
+
             if (recursive === true) {
                 var locChildren = listenerType.getChildren(), len;
                 for (i = 0, len = locChildren.length; i< len; i++)
@@ -780,7 +819,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
             else if (listenerType == cc.EventListener.KEYBOARD)
                 _t._removeListenersForListenerID(cc._EventListenerKeyboard.LISTENER_ID);
             else
-                cc.log("Invalid listener type!");
+                cc.log(cc._LogInfos.eventManager_removeListeners);
         }
     },
 
@@ -820,7 +859,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
                 var found = fixedPriorityListeners.indexOf(listener);
                 if (found != -1) {
                     if(listener._getSceneGraphPriority() != null)
-                        cc.log("Can't set fixed priority with scene graph based listener.");
+                        cc.log(cc._LogInfos.eventManager_setPriority);
                     if (listener._getFixedPriority() !== fixedPriority) {
                         listener._setFixedPriority(fixedPriority);
                         this._setDirty(listener._getListenerID(), this.DIRTY_FIXED_PRIORITY);
@@ -857,6 +896,8 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
         this._updateDirtyFlagForSceneGraph();
         this._inDispatch++;
+        if(!event || !event.getType)
+            throw "event is undefined";
         if (event.getType() == cc.Event.TOUCH) {
             this._dispatchTouchEvent(event);
             this._inDispatch--;

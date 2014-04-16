@@ -43,10 +43,6 @@ cc.AffineTransform = function (a, b, c, d, tx, ty) {
     this.ty = ty;
 };
 
-cc.__AffineTransformMake = function (a, b, c, d, tx, ty) {
-    return {a: a, b: b, c: c, d: d, tx: tx, ty: ty};
-};
-
 /**
  * @memberOf cc
  * @function
@@ -61,10 +57,6 @@ cc.__AffineTransformMake = function (a, b, c, d, tx, ty) {
  */
 cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
     return {a: a, b: b, c: c, d: d, tx: tx, ty: ty};
-};
-
-cc.__PointApplyAffineTransform = function (point, t) {
-    return {x: t.a * point.x + t.c * point.y + t.tx, y: t.b * point.x + t.d * point.y + t.ty};
 };
 
 /**
@@ -82,10 +74,6 @@ cc.PointApplyAffineTransform = function (point, t) {
 cc._PointApplyAffineTransform = function (x, y, t) {
     return {x: t.a * x + t.c * y + t.tx,
         y: t.b * x + t.d * y + t.ty};
-};
-
-cc.__SizeApplyAffineTransform = function (size, t) {
-    return {width: t.a * size.width + t.c * size.height, height: t.b * size.width + t.d * size.height};
 };
 
 /**
@@ -256,6 +244,7 @@ cc.AffineTransformEqualToTransform = function (t1, t2) {
 };
 
 /**
+ * Get the invert value of an AffineTransform object
  * @memberOf cc
  * @function
  * @param {cc.AffineTransform} t

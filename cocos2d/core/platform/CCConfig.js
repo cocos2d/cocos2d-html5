@@ -33,7 +33,7 @@
  * @constant
  * @type String
  */
-cc.ENGINE_VERSION = "Cocos2d-html5-v3.0 alpha";
+cc.ENGINE_VERSION = "Cocos2d-html5-v3.0 alpha 2";
 
 /**
  * <p>
@@ -68,7 +68,7 @@ cc.DIRECTOR_STATS_POSITION = cc.p(0, 0);
 
 /**
  * <p>
- *   Senconds between FPS updates.<br/>
+ *   Seconds between FPS updates.<br/>
  *   0.5 seconds, means that the FPS number will be updated every 0.5 seconds.<br/>
  *   Having a bigger number means a more reliable FPS<br/>
  *   <br/>
@@ -105,7 +105,7 @@ cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
 
 /**
  * <p>
- *     If most of your imamges have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).<br/>
+ *     If most of your images have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).<br/>
  *     Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)<br/>
  *     <br/>
  *     To enable set it to a value different than 0. Enabled by default.
@@ -204,7 +204,7 @@ cc.USE_LA88_LABELS = 1;
 /**
  * <p>
  *   If enabled, all subclasses of cc.Sprite will draw a bounding box<br/>
- *   Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *   Useful for debugging purposes only. It is recommend to leave it disabled.<br/>
  *   <br/>
  *   To enable set it to a value different than 0. Disabled by default:<br/>
  *      0 -- disabled<br/>
@@ -219,7 +219,7 @@ cc.SPRITE_DEBUG_DRAW = 0;
 /**
  * <p>
  *    If enabled, all subclasses of cc.Sprite that are rendered using an cc.SpriteBatchNode draw a bounding box.<br/>
- *    Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *    Useful for debugging purposes only. It is recommend to leave it disabled.<br/>
  *    <br/>
  *    To enable set it to a value different than 0. Disabled by default.
  * </p>
@@ -231,7 +231,7 @@ cc.SPRITEBATCHNODE_DEBUG_DRAW = 0;
 /**
  * <p>
  *   If enabled, all subclasses of cc.LabelBMFont will draw a bounding box <br/>
- *   Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *   Useful for debugging purposes only. It is recommend to leave it disabled.<br/>
  *   <br/>
  *   To enable set it to a value different than 0. Disabled by default.<br/>
  * </p>
@@ -242,8 +242,8 @@ cc.LABELBMFONT_DEBUG_DRAW = 0;
 
 /**
  * <p>
- *    If enabled, all subclasses of cc.LabeltAtlas will draw a bounding box<br/>
- *    Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *    If enabled, all subclasses of cc.LabelAtlas will draw a bounding box<br/>
+ *    Useful for debugging purposes only. It is recommend to leave it disabled.<br/>
  *    <br/>
  *    To enable set it to a value different than 0. Disabled by default.
  * </p>
@@ -280,13 +280,13 @@ cc.ENABLE_STACKABLE_ACTIONS = 1;
 /**
  * <p>
  *      If enabled, cocos2d will maintain an OpenGL state cache internally to avoid unnecessary switches.                                     <br/>
- *      In order to use them, you have to use the following functions, insead of the the GL ones:                                             <br/>
+ *      In order to use them, you have to use the following functions, instead of the the GL ones:                                             <br/>
  *          - ccGLUseProgram() instead of glUseProgram()                                                                                      <br/>
  *          - ccGLDeleteProgram() instead of glDeleteProgram()                                                                                <br/>
  *          - ccGLBlendFunc() instead of glBlendFunc()                                                                                        <br/>
  *                                                                                                                                            <br/>
  *      If this functionality is disabled, then ccGLUseProgram(), ccGLDeleteProgram(), ccGLBlendFunc() will call the GL ones, without using the cache.              <br/>
- *      It is recommened to enable whenever possible to improve speed.                                                                        <br/>
+ *      It is recommend to enable whenever possible to improve speed.                                                                        <br/>
  *      If you are migrating your code from GL ES 1.1, then keep it disabled. Once all your code works as expected, turn it on.
  * </p>
  * @constant
