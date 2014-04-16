@@ -858,8 +858,7 @@ _tmp.WebGLTextureCache = function () {
         }
         var tex = locTexs[url] || locTexs[cc.loader._aliases[url]];
         if (tex) {
-            if (cb)
-                cb.call(target);
+            cb && cb.call(target);
             return tex;
         }
 
