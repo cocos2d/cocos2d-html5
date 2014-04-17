@@ -269,6 +269,11 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._color.a = opacity;
     },
 
+    updateDisplayedOpacity: function(parentOpacity){
+        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        this.setOpacity(this._displayedOpacity);
+    },
+
     /** Color: conforms to CCRGBAProtocol protocol */
     getColor: function () {
         var locColor = this._color;
@@ -293,6 +298,11 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         if (color.a !== undefined && !color.a_undefined) {
             this.setOpacity(color.a);
         }
+    },
+
+    updateDisplayedColor: function(parentColor){
+        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        this.setColor(this._displayedColor);
     },
 
     getCapInsets: function () {
