@@ -49,10 +49,10 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
 
             // Gravity Mode: gravity
@@ -83,7 +83,7 @@ cc.ParticleFire = cc.ParticleSystem.extend(/** @lends cc.ParticleFire# */{
             // size, in pixels
             this.setStartSize(54.0);
             this.setStartSizeVar(10.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per frame
             this.setEmissionRate(this.getTotalParticles() / this.getLife());
@@ -142,10 +142,10 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, -90));
@@ -182,7 +182,7 @@ cc.ParticleFireworks = cc.ParticleSystem.extend(/** @lends cc.ParticleFireworks#
             // size, in pixels
             this.setStartSize(8.0);
             this.setStartSizeVar(2.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // additive
             this.setBlendAdditive(false);
@@ -235,10 +235,10 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
             this.setBlendAdditive(true);
 
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, 0));
@@ -267,7 +267,7 @@ cc.ParticleSun = cc.ParticleSystem.extend(/** @lends cc.ParticleSun# */{
             // size, in pixels
             this.setStartSize(30.0);
             this.setStartSizeVar(10.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per seconds
             this.setEmissionRate(this.getTotalParticles() / this.getLife());
@@ -326,10 +326,10 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, 0));
@@ -362,7 +362,7 @@ cc.ParticleGalaxy = cc.ParticleSystem.extend(/** @lends cc.ParticleGalaxy# */{
             // size, in pixels
             this.setStartSize(37.0);
             this.setStartSizeVar(10.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
             this.setEmissionRate(this.getTotalParticles() / this.getLife());
@@ -420,10 +420,10 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, 0));
@@ -456,7 +456,7 @@ cc.ParticleFlower = cc.ParticleSystem.extend(/** @lends cc.ParticleFlower# */{
             // size, in pixels
             this.setStartSize(30.0);
             this.setStartSizeVar(10.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
             this.setEmissionRate(this.getTotalParticles() / this.getLife());
@@ -516,10 +516,10 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(-200, 200));
@@ -552,7 +552,7 @@ cc.ParticleMeteor = cc.ParticleSystem.extend(/** @lends cc.ParticleMeteor# */{
             // size, in pixels
             this.setStartSize(60.0);
             this.setStartSizeVar(10.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
             this.setEmissionRate(this.getTotalParticles() / this.getLife());
@@ -611,10 +611,10 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, 0));
@@ -647,7 +647,7 @@ cc.ParticleSpiral = cc.ParticleSystem.extend(/** @lends cc.ParticleSpiral# */{
             // size, in pixels
             this.setStartSize(20.0);
             this.setStartSizeVar(0.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
             this.setEmissionRate(this.getTotalParticles() / this.getLife());
@@ -709,7 +709,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
             // duration
             this.setDuration(0.1);
 
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, 0));
@@ -742,7 +742,7 @@ cc.ParticleExplosion = cc.ParticleSystem.extend(/** @lends cc.ParticleExplosion#
             // size, in pixels
             this.setStartSize(15.0);
             this.setStartSizeVar(10.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
             this.setEmissionRate(this.getTotalParticles() / this.getDuration());
@@ -802,10 +802,10 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // Emitter mode: Gravity Mode
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, 0));
@@ -834,7 +834,7 @@ cc.ParticleSmoke = cc.ParticleSystem.extend(/** @lends cc.ParticleSmoke# */{
             // size, in pixels
             this.setStartSize(60.0);
             this.setStartSizeVar(10.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per frame
             this.setEmissionRate(this.getTotalParticles() / this.getLife());
@@ -893,10 +893,10 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
             // set gravity mode.
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(0, -1));
@@ -929,7 +929,7 @@ cc.ParticleSnow = cc.ParticleSystem.extend(/** @lends cc.ParticleSnow# */{
             // size, in pixels
             this.setStartSize(10.0);
             this.setStartSizeVar(5.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
             this.setEmissionRate(10);
@@ -989,9 +989,9 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             // duration
-            this.setDuration(cc.PARTICLE_DURATION_INFINITY);
+            this.setDuration(cc.ParticleSystem.DURATION_INFINITY);
 
-            this.setEmitterMode(cc.PARTICLE_MODE_GRAVITY);
+            this.setEmitterMode(cc.ParticleSystem.MODE_GRAVITY);
 
             // Gravity Mode: gravity
             this.setGravity(cc.p(10, -10));
@@ -1025,7 +1025,7 @@ cc.ParticleRain = cc.ParticleSystem.extend(/** @lends cc.ParticleRain# */{
             // size, in pixels
             this.setStartSize(4.0);
             this.setStartSizeVar(2.0);
-            this.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+            this.setEndSize(cc.ParticleSystem.START_SIZE_EQUAL_TO_END_SIZE);
 
             // emits per second
             this.setEmissionRate(20);
