@@ -211,8 +211,6 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
 
     ctor: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
-        this._cascadeColorEnabled = true;
-        this._cascadeOpacityEnabled = true;
         this._spriteRect = cc.rect(0, 0, 0, 0);
         this._capInsetsInternal = cc.rect(0, 0, 0, 0);
 
