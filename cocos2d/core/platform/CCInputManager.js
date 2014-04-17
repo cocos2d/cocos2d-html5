@@ -378,8 +378,8 @@ cc.inputManager = /** @lends cc.inputManager# */{
             }, false);
 
             cc._addEventListener(element, "mousemove", function (event) {
-                if(!selfPointer._mousePressed)
-                    return;
+                //if(!selfPointer._mousePressed)
+                //    return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
@@ -388,7 +388,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
                     selfPointer.handleTouchesMove([selfPointer.getTouchByXY(location.x, location.y, pos)]);
 
                 var mouseEvent = selfPointer.getMouseEvent(location,pos,cc.EventMouse.MOVE);
-                mouseEvent.setButton(event.button);
+                if(selfPointer._mousePressed)
+                    mouseEvent.setButton(event.button);
+                else
+                    mouseEvent.setButton(null);
                 cc.eventManager.dispatchEvent(mouseEvent);
 
                 event.stopPropagation();
