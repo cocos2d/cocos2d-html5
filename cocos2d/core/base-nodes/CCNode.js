@@ -30,20 +30,6 @@
  * @type Number
  */
 cc.NODE_TAG_INVALID = -1;
-/**
- * Node on enter
- * @constant
- */
-cc.Node.ON_ENTER = 0;
-/**
- * Node on exit
- * @constant
- */
-cc.Node.ON_EXIT = 1;
-
-cc.Node.ON_ENTER_TRANSITION_DID_FINISH = 2;
-cc.Node.ON_EXIT_TRANSITOIN_DID_START = 3;
-cc.Node.ON_CLEAN_UP = 4;
 
 /**
  *  XXX: Yes, nodes might have a sort problem once every 15 days if the game runs at 60 FPS and each frame sprites are reordered.
@@ -2483,3 +2469,18 @@ cc.NodeRGBA.create = function () {
 
 _tmp.PrototypeCCNodeRGBA();
 delete _tmp.PrototypeCCNodeRGBA;
+
+/**
+ * Node on enter
+ * @constant
+ */
+cc.Node.ON_ENTER = 0;
+/**
+ * Node on exit
+ * @constant
+ */
+cc.Node.ON_EXIT = 1;
+
+cc.Node.ON_ENTER_TRANSITION_DID_FINISH = 2;
+cc.Node.ON_EXIT_TRANSITOIN_DID_START = 3;
+cc.Node.ON_CLEAN_UP = 4;
