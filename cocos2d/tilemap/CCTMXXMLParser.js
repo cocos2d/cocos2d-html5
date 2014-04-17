@@ -28,27 +28,6 @@
  * @constant
  * @type Number
  */
-cc.TMX_LAYER_ATTRIB_NONE = 1 << 0;
-/**
- * @constant
- * @type Number
- */
-cc.TMX_LAYER_ATTRIB_BASE64 = 1 << 1;
-/**
- * @constant
- * @type Number
- */
-cc.TMX_LAYER_ATTRIB_GZIP = 1 << 2;
-/**
- * @constant
- * @type Number
- */
-cc.TMX_LAYER_ATTRIB_ZLIB = 1 << 3;
-
-/**
- * @constant
- * @type Number
- */
 cc.TMX_PROPERTY_NONE = 0;
 
 /**
@@ -717,7 +696,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         }
                         break;
                     default:
-                        if(this.layerAttrs == cc.TMX_LAYER_ATTRIB_NONE)
+                        if(this.layerAttrs == cc.TMXLayerInfo.ATTRIB_NONE)
                             cc.log("cc.TMXMapInfo.parseXMLFile(): Only base64 and/or gzip/zlib maps are supported");
                         break;
                 }
@@ -890,7 +869,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         // tmp vars
         this.currentString = "";
         this.storingCharacters = false;
-        this.layerAttrs = cc.TMX_LAYER_ATTRIB_NONE;
+        this.layerAttrs = cc.TMXLayerInfo.ATTRIB_NONE;
         this.parentElement = cc.TMX_PROPERTY_NONE;
         this._currentFirstGID = 0;
     }
@@ -935,3 +914,25 @@ cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
 
 
 cc.loader.register(["tmx", "tsx"], cc._txtLoader);
+
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_NONE = 1 << 0;
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_BASE64 = 1 << 1;
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_GZIP = 1 << 2;
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_ZLIB = 1 << 3;
