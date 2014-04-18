@@ -1450,12 +1450,14 @@ cc.game = {
     /**
      * Run game.
      */
-    run: function () {
+    run: function (gameID) {
         var self = this;
+        if(gameID)
+            self.config[self.CONFIG_KEY.id] = gameID;
         if (!self._prepareCalled) {
             self.prepare(function () {
                 if (cc._supportRender) {
-                    cc._setup(self.config[self.CONFIG_KEY.id]);
+                    cc._setup(gameID);
                     self._runMainLoop();
                     self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
                     self._eventHide.setUserData(self);
@@ -1468,7 +1470,7 @@ cc.game = {
             if (cc._supportRender) {
                 self._checkPrepare = setInterval(function () {
                     if (self._prepared) {
-                        cc._setup(self.config[self.CONFIG_KEY.id]);
+                        cc._setup(gameID);
                         self._runMainLoop();
                         self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
                         self._eventHide.setUserData(self);
@@ -1493,7 +1495,7 @@ cc.game = {
             cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "frameworks/cocos2d-html5";
             cfg[CONFIG_KEY.debugMode] = cfg[CONFIG_KEY.debugMode] || 0;
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
-            cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 0;
+            cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 1;
             return cfg;
         };
         if (document["ccConfig"]) {

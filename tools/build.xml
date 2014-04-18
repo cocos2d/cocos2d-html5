@@ -242,8 +242,8 @@
                 <file name="cocos2d/core/platform/CCConfig.js"/>
                 <file name="cocos2d/core/platform/miniFramework.js"/>
                 <file name="cocos2d/core/platform/CCMacro.js"/>
-                <file name="cocos2d/core/platform/CCTypes.js"/>
                 <file name="cocos2d/core/platform/CCTypesPropertyDefine.js"/>
+                <file name="cocos2d/core/platform/CCTypes.js"/>
                 <file name="cocos2d/core/platform/CCEGLView.js"/>
                 <file name="cocos2d/core/platform/CCInputManager.js"/>
                 <file name="cocos2d/core/cocoa/CCAffineTransform.js"/>
@@ -252,24 +252,25 @@
                 <file name="cocos2d/core/event-manager/CCEvent.js"/>
                 <file name="cocos2d/core/event-manager/CCEventListener.js"/>
                 <file name="cocos2d/core/event-manager/CCEventManager.js"/>
-                <file name="cocos2d/core/base-nodes/CCNode.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
+                <file name="cocos2d/core/base-nodes/CCNode.js"/>
+                <file name="cocos2d/core/textures/TexturesPropertyDefine.js"/>
                 <file name="cocos2d/core/textures/CCTexture2D.js"/>
                 <file name="cocos2d/core/textures/CCTextureCache.js"/>
                 <file name="cocos2d/core/scenes/CCScene.js"/>
                 <file name="cocos2d/core/scenes/CCLoaderScene.js"/>
-                <file name="cocos2d/core/layers/CCLayer.js"/>
                 <file name="cocos2d/core/layers/CCLayerPropertyDefine.js"/>
+                <file name="cocos2d/core/layers/CCLayer.js"/>
+                <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <file name="cocos2d/core/sprites/CCSprite.js"/>
                 <file name="cocos2d/core/sprites/CCAnimation.js"/>
                 <file name="cocos2d/core/sprites/CCAnimationCache.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteFrame.js"/>
                 <file name="cocos2d/core/sprites/CCSpriteFrameCache.js"/>
-                <file name="cocos2d/core/sprites/SpritesPropertyDefine.js"/>
                 <file name="cocos2d/core/CCDirector.js"/>
                 <file name="cocos2d/core/CCScheduler.js"/>
-                <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
+                <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
             </sources>
         </jscomp>
     </target>
