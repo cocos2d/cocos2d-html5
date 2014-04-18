@@ -1450,24 +1450,15 @@ cc.game = {
     /**
      * Run game.
      */
-    run: function () {
+    run: function (id) {
         var self = this;
-        if (!self._prepareCalled) {
-            self.prepare(function () {
-                if (cc._supportRender) {
-                    cc._setup(self.config[self.CONFIG_KEY.id]);
-                    self._runMainLoop();
-                    self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
-                    self._eventHide.setUserData(self);
-                    self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
-                    self._eventShow.setUserData(self);
-                    self.onStart();
-                }
-            });
-        } else {
-            if (cc._supportRender) {
-                self._checkPrepare = setInterval(function () {
-                    if (self._prepared) {
+        var _run = function () {
+            if (id) {
+                self.config[self.CONFIG_KEY.id] = id;
+            }
+            if (!self._prepareCalled) {
+                self.prepare(function () {
+                    if (cc._supportRender) {
                         cc._setup(self.config[self.CONFIG_KEY.id]);
                         self._runMainLoop();
                         self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
@@ -1475,11 +1466,31 @@ cc.game = {
                         self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                         self._eventShow.setUserData(self);
                         self.onStart();
-                        clearInterval(self._checkPrepare);
                     }
-                }, 10);
+                });
+            } else {
+                if (cc._supportRender) {
+                    self._checkPrepare = setInterval(function () {
+                        if (self._prepared) {
+                            cc._setup(self.config[self.CONFIG_KEY.id]);
+                            self._runMainLoop();
+                            self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
+                            self._eventHide.setUserData(self);
+                            self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
+                            self._eventShow.setUserData(self);
+                            self.onStart();
+                            clearInterval(self._checkPrepare);
+                        }
+                    }, 10);
+                }
             }
-        }
+        };
+        document.body ?
+            _run() :
+            cc._addEventListener(window, 'load', function () {
+                this.removeEventListener('load', arguments.callee, false);
+                _run();
+            }, false);
     },
     /**
      * Init config.
@@ -1493,7 +1504,7 @@ cc.game = {
             cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "frameworks/cocos2d-html5";
             cfg[CONFIG_KEY.debugMode] = cfg[CONFIG_KEY.debugMode] || 0;
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
-            cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 0;
+            cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 1;
             return cfg;
         };
         if (document["ccConfig"]) {

@@ -19,10 +19,57 @@
             -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
         }
     </style>
+    <script src="../lib/cocos2d-html5-v3.0-alpha2-core-min.js"></script>
+    <!--<script src="../CCBoot.js"></script>-->
+    <!--<script src="main.js"></script>-->
+    <script>
+        cc.game.onStart = function () {
+            //load resources
+            cc.LoaderScene.preload("res/Normal/HelloWorld.jpg", function () {
+                var MyScene = cc.Scene.extend({
+                    _ez: 0,
+                    onEnter: function () {
+                        this._super();
+                        var size = cc.director.getWinSize();
+                        this._sprite = cc.Sprite.create("res/Normal/HelloWorld.jpg");
+                        this._sprite.setPosition(size.width / 2, size.height / 2);
+                        this.addChild(this._sprite, 0);
+
+                        this.schedule(this.rotation, 0.01);
+
+                        this._label = cc.LabelTTF.create("Hello World", "Arial", 40);
+                        this._label.setPosition(size.width / 2, size.height / 2);
+                        this.addChild(this._label, 1);
+
+                        this.schedule(this.enlarge, 0.02);
+                    },
+                    rotation: function () {
+                        var t = this._sprite.getRotation();
+                        if (t + 2 >= 360) {
+                            this._sprite.setRotation(360);
+                            this.unschedule(this.rotation);
+                        }
+                        this._sprite.setRotation(t + 2);
+                    },
+                    enlarge: function () {
+                        var t = this._label.getScale();
+                        if (++this._ez <= 45) {
+                            this._label.setScale(t + 0.01);
+                        } else if (this._ez <= 90) {
+                            this._label.setScale(t - 0.01);
+                        } else {
+                            this._label.setScale(1);
+                            this.unschedule(this.enlarge);
+                        }
+                    }
+                });
+                cc.director.runScene(new MyScene());
+            }, this);
+        };
+        cc.game.run("gameCanvas");
+    </script>
 </head>
 <body style="padding:0; margin: 0; background: #000;">
 <canvas id="gameCanvas" width="321" height="480"></canvas>
-<script src="../CCBoot.js"></script>
-<script src="main.js"></script>
 </body>
 </html>
