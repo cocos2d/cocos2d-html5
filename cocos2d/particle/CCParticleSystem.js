@@ -247,10 +247,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _allocatedParticles: 0,
 
     //drawMode
-    drawMode: cc.ParticleSystem.SHAPE_MODE,
+    drawMode: null,
 
     //shape type
-    shapeType: cc.ParticleSystem.BALL_SHAPE,
+    shapeType: null,
     _isActive: false,
     particleCount: 0,
     duration: 0,
@@ -277,7 +277,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _texture: null,
     _blendFunc: null,
     _opacityModifyRGB: false,
-    positionType: cc.ParticleSystem.TYPE_FREE,
+    positionType: null,
     autoRemoveOnFinish: false,
     emitterMode: 0,
 
