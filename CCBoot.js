@@ -1450,38 +1450,47 @@ cc.game = {
     /**
      * Run game.
      */
-    run: function (gameID) {
+    run: function (id) {
         var self = this;
-        if(gameID)
-            self.config[self.CONFIG_KEY.id] = gameID;
-        if (!self._prepareCalled) {
-            self.prepare(function () {
-                if (cc._supportRender) {
-                    cc._setup(gameID);
-                    self._runMainLoop();
-                    self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
-                    self._eventHide.setUserData(self);
-                    self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
-                    self._eventShow.setUserData(self);
-                    self.onStart();
-                }
-            });
-        } else {
-            if (cc._supportRender) {
-                self._checkPrepare = setInterval(function () {
-                    if (self._prepared) {
-                        cc._setup(gameID);
+        var _run = function () {
+            if (id) {
+                self.config[self.CONFIG_KEY.id] = id;
+            }
+            if (!self._prepareCalled) {
+                self.prepare(function () {
+                    if (cc._supportRender) {
+                        cc._setup(self.config[self.CONFIG_KEY.id]);
                         self._runMainLoop();
                         self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
                         self._eventHide.setUserData(self);
                         self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                         self._eventShow.setUserData(self);
                         self.onStart();
-                        clearInterval(self._checkPrepare);
                     }
-                }, 10);
+                });
+            } else {
+                if (cc._supportRender) {
+                    self._checkPrepare = setInterval(function () {
+                        if (self._prepared) {
+                            cc._setup(self.config[self.CONFIG_KEY.id]);
+                            self._runMainLoop();
+                            self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
+                            self._eventHide.setUserData(self);
+                            self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
+                            self._eventShow.setUserData(self);
+                            self.onStart();
+                            clearInterval(self._checkPrepare);
+                        }
+                    }, 10);
+                }
             }
-        }
+        };
+        document.body ?
+            _run() :
+            cc._addEventListener(window, 'load', function () {
+                this.removeEventListener('load', arguments.callee, false);
+                _run();
+            }, false);
     },
     /**
      * Init config.
