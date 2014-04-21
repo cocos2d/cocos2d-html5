@@ -272,7 +272,7 @@ cc.path = {
     },
 
     /**
-     * Get ext name of a file path.
+     * Get dirname of a file path.
      * @example
      * unix
      cc.path.driname("a/b/c.png");//-->"a/b"
