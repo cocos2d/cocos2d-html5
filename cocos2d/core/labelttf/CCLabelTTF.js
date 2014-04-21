@@ -1181,7 +1181,6 @@ document.body ?
     cc._addEventListener(window, 'load', function () {
         this.removeEventListener('load', arguments.callee, false);
         document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
-        console.log(1);
     }, false);
 
 

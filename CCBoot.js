@@ -553,7 +553,7 @@ cc.loader = {
             cb = option;
 
         var img = new Image();
-        if (opt.isCrossOrigin)
+        if (opt.isCrossOrigin && location.origin != "file://")
             img.crossOrigin = "Anonymous";
 
         cc._addEventListener(img, "load", function () {
@@ -1502,9 +1502,11 @@ cc.game = {
         var self = this, CONFIG_KEY = self.CONFIG_KEY;
         var _init = function (cfg) {
             cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "frameworks/cocos2d-html5";
-            cfg[CONFIG_KEY.debugMode] = cfg[CONFIG_KEY.debugMode] || 0;
+            if(cfg[CONFIG_KEY.debugMode] == null)
+                cfg[CONFIG_KEY.debugMode] = 0;
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
-            cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 1;
+            if(cfg[CONFIG_KEY.renderMode] == null)
+                cfg[CONFIG_KEY.renderMode] = 1;
             return cfg;
         };
         if (document["ccConfig"]) {
