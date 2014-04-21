@@ -40,8 +40,19 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
     _delayPerUnit:0,
     _userInfo:null,
 
-    ctor:function () {
+    /**
+     * @constructor
+     * @param spriteFrame
+     * @param delayUnits
+     * @param userInfo
+     * @returns {AnimationFrame}
+     */
+    ctor:function (spriteFrame, delayUnits, userInfo) {
         this._delayPerUnit = 0;
+        if(userInfo !== undefined)
+        {
+            this.initWithSpriteFrame(spriteFrame,delayUnits,userInfo);
+        }
     },
 
     clone: function(){
@@ -122,6 +133,18 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
         this._userInfo = userInfo;
     }
 });
+
+/**
+ * Creates an animation frame.
+ * @param {cc.SpriteFrame} spriteFrame
+ * @param {Number} delayUnits
+ * @param {object} userInfo
+ * @example
+ *
+ */
+cc.AnimationFrame.create = function(spriteFrame,delayUnits,userInfo){
+    return new cc.AnimationFrame(spriteFrame,delayUnits,userInfo);
+};
 
 /**
  * <p>
