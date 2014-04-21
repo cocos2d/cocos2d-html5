@@ -49,10 +49,9 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
      */
     ctor:function (spriteFrame, delayUnits, userInfo) {
         this._delayPerUnit = 0;
-        if(userInfo !== undefined)
-        {
-            this.initWithSpriteFrame(spriteFrame,delayUnits,userInfo);
-        }
+        this._spriteFrame = spriteFrame || null;
+        this._delayPerUnit = delayUnits || null;
+        this._userInfo = userInfo || null;
     },
 
     clone: function(){
