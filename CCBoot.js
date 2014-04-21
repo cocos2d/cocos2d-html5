@@ -272,15 +272,21 @@ cc.path = {
     },
 
     /**
-     * Get ext name of a file path.
+     * Get dirname of a file path.
      * @example
+     * unix
      cc.path.driname("a/b/c.png");//-->"a/b"
      cc.path.driname("a/b/c.png?a=1&b=2");//-->"a/b"
+     cc.path.dirname("a/b/");//-->"a/b"
+     cc.path.dirname("c.png");//-->""
+     * windows
+     cc.path.driname("a\\b\\c.png");//-->"a\b"
+     cc.path.driname("a\\b\\c.png?a=1&b=2");//-->"a\b"
      * @param {string} pathStr
      * @returns {*}
      */
     dirname: function (pathStr) {
-        return pathStr.replace(/(\/|\\\\)$/, "").replace(/(\/|\\\\)[^(\/|\\\\)]+$/, "");
+        return pathStr.replace(/((.*)(\/|\\|\\\\))?(.*?\..*$)?/, '$2');
     },
 
     /**
