@@ -276,11 +276,12 @@ cc.path = {
      * @example
      cc.path.driname("a/b/c.png");//-->"a/b"
      cc.path.driname("a/b/c.png?a=1&b=2");//-->"a/b"
+     cc.path.dirname("c.png");//-->""
      * @param {string} pathStr
      * @returns {*}
      */
     dirname: function (pathStr) {
-        return pathStr.replace(/(\/|\\\\)$/, "").replace(/(\/|\\\\)[^(\/|\\\\)]+$/, "");
+        return pathStr.replace(/((.*)\/)?(.*?\..*$)/, '$2');
     },
 
     /**
