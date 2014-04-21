@@ -48,7 +48,6 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
      * @returns {AnimationFrame}
      */
     ctor:function (spriteFrame, delayUnits, userInfo) {
-        this._delayPerUnit = 0;
         this._spriteFrame = spriteFrame || null;
         this._delayPerUnit = delayUnits || 0;
         this._userInfo = userInfo || null;
