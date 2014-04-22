@@ -26,6 +26,7 @@
                 <file name="cocos2d/core/platform/CCScreen.js"/>
                 <file name="cocos2d/core/platform/CCVisibleRect.js"/>
                 <file name="cocos2d/core/platform/CCInputManager.js"/>
+                <file name="cocos2d/core/platform/CCInputExtension.js"/>
                 <file name="cocos2d/core/cocoa/CCAffineTransform.js"/>
                 <file name="cocos2d/core/support/CCPointExtension.js"/>
                 <file name="cocos2d/core/support/CCVertex.js"/>
@@ -230,7 +231,7 @@
     </target>
 
     <target name="compile_core">
-        <jscomp compilationLevel="simple" warning="quiet"
+        <jscomp compilationLevel="whitespace" warning="quiet"
                 debug="false" output="./../lib/cocos2d-html5-v3.0-alpha2-core-min.js">
                 <!--sourceMapOutputFile="E:\Projects\cocos2d-js\samples\js-tests\publish\html5\sourcemap" sourceMapFormat="V3" -->
             <sources dir="./../">
@@ -271,6 +272,19 @@
                 <file name="cocos2d/core/CCScheduler.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
                 <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
+                <!-- action
+                <file name="cocos2d/core/CCActionManager.js"/>
+                <file name="cocos2d/actions/CCAction.js"/>
+                <file name="cocos2d/actions/CCActionInterval.js"/>
+                <file name="cocos2d/actions/CCActionInstant.js"/>
+                <file name="cocos2d/actions/CCActionCamera.js"/>
+                <file name="cocos2d/actions/CCActionEase.js"/>
+                <file name="cocos2d/actions/CCActionCatmullRom.js"/>
+                <file name="cocos2d/actions/CCActionTween.js"/>
+                -->
+                <!-- audio
+                <file name="cocos2d/audio/CCAudio.js"/>
+                -->
             </sources>
         </jscomp>
     </target>
