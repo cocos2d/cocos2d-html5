@@ -342,7 +342,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
         if (this._musicPlayState > 0) {
             var audio = this._currMusic;
             if (!audio) return;
-            this._stopAudio(audio);
+            if (!this._stopAudio(audio)) return;
             if (releaseData) cc.loader.release(this._currMusicPath);
             this._currMusic = null;
             this._currMusicPath = null;
@@ -358,7 +358,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
                 audio.pause();
                 audio.duration && (audio.currentTime = audio.duration);
             }
+            return true;
         }
+        return false;
     },
 
     /**
