@@ -975,8 +975,7 @@ cc._audioLoader = {
         return this._supportedAudioTypes.indexOf(type.toLowerCase()) >= 0;
     },
     _loadAudio: function (url, audio, cb) {
-
-        var _Audio = cc.WebAudio || Audio;
+        var _Audio = (location.origin == "file://") ? Audio : (cc.WebAudio || Audio);
         if (arguments.length == 2) {
             cb = audio, audio = new _Audio();
         } else if (arguments.length == 3 && !audio) {
