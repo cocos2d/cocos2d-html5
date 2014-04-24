@@ -24,6 +24,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+var _tmp = _tmp || {};
+
 /**
  * Function added for JS bindings compatibility. Not needed in cocos2d-html5.
  * @function

@@ -191,8 +191,12 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
      * cc.spriteFrameCache.addSpriteFrames(s_grossiniJson);
      */
     addSpriteFrames: function (url, texture) {
-
         cc.assert(url, cc._LogInfos.spriteFrameCache_addSpriteFrames_2);
+
+        //Is it a SpriteFrame plist?
+        var dict = cc.loader.getRes(url);
+        if(!dict["frames"])
+            return;
 
         var self = this;
         var frameConfig = self._frameConfigCache[url] || self._getFrameConfig(url);

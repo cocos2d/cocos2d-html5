@@ -342,7 +342,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
         if (this._musicPlayState > 0) {
             var audio = this._currMusic;
             if (!audio) return;
-            this._stopAudio(audio);
+            if (!this._stopAudio(audio)) return;
             if (releaseData) cc.loader.release(this._currMusicPath);
             this._currMusic = null;
             this._currMusicPath = null;
@@ -358,7 +358,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.audioEngine# */{
                 audio.pause();
                 audio.duration && (audio.currentTime = audio.duration);
             }
+            return true;
         }
+        return false;
     },
 
     /**
@@ -957,7 +959,8 @@ cc._audioLoader = {
         } else {
             return cb("can not found the resource of audio! Last match url is : " + realUrl);
         }
-        if (tryArr.indexOf(extname) >= 0) return self._load(realUrl, url, res, count + 1, tryArr, audio, cb);
+        if (tryArr.indexOf(extname) >= 0)
+            return self._load(realUrl, url, res, count + 1, tryArr, audio, cb);
         realUrl = path.changeExtname(realUrl, extname);
         tryArr.push(extname);
         audio = self._loadAudio(realUrl, audio, function (err) {
@@ -972,7 +975,7 @@ cc._audioLoader = {
         return this._supportedAudioTypes.indexOf(type.toLowerCase()) >= 0;
     },
     _loadAudio: function (url, audio, cb) {
-        var _Audio = cc.WebAudio || Audio;
+        var _Audio = (location.origin == "file://") ? Audio : (cc.WebAudio || Audio);
         if (arguments.length == 2) {
             cb = audio, audio = new _Audio();
         } else if (arguments.length == 3 && !audio) {
@@ -1008,7 +1011,6 @@ cc._audioLoader = {
 };
 cc._audioLoader._supportedAudioTypes = function () {
     var au = cc.newElement('audio'), arr = [];
-    ;
     if (au.canPlayType) {
         // <audio> tag is supported, go on
         var _check = function (typeStr) {
