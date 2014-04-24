@@ -177,8 +177,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchPriority = priority;
             // Update touch priority with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+                this.setTouchEnabled(false, this._swallowTouch);
+                this.setTouchEnabled(true, this._swallowTouch);
             }
         }
     },
@@ -198,8 +198,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._touchMode = mode;
             // update the mode with handler
             if (this._isTouchEnabled) {
-                this.setTouchEnabled(false);
-                this.setTouchEnabled(true);
+                this.setTouchEnabled(false, this._swallowTouch);
+                this.setTouchEnabled(true, this._swallowTouch);
             }
         }
     },
