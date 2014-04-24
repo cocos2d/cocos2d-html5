@@ -1637,21 +1637,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // texture
                 // Try to get the texture from the cache
                 var textureName = locValueForKey("textureFileName", dictionary);
-                var fileUtils = cc.FileUtils.getInstance();
+                var fileUtils = cc.FileUtils.getInstance(), textureCache = cc.TextureCache.getInstance();
                 var imgPath = fileUtils.fullPathFromRelativeFile(textureName, this._plistFile);
-                var tex = cc.TextureCache.getInstance().textureForKey(imgPath);
+                var tex = textureCache.textureForKey(imgPath);
 
-                if (tex) {
+                if (tex && tex.isLoaded()) {
                     this.setTexture(tex);
                 } else {
                     var textureData = locValueForKey("textureImageData", dictionary);
 
                     if (textureData && textureData.length == 0) {
-                        tex = cc.TextureCache.getInstance().addImage(imgPath);
+                        tex = textureCache.addImage(imgPath);
                         if (!tex)
                             return false;
                         this.setTexture(tex);
                     } else {
+                        if(tex)
+                            textureCache.removeTexture(tex);
                         buffer = cc.unzipBase64AsArray(textureData, 1);
                         if (!buffer) {
                             cc.log("cc.ParticleSystem: error decoding or ungzipping textureImageData");
