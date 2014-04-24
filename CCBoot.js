@@ -272,15 +272,21 @@ cc.path = {
     },
 
     /**
-     * Get ext name of a file path.
+     * Get dirname of a file path.
      * @example
+     * unix
      cc.path.driname("a/b/c.png");//-->"a/b"
      cc.path.driname("a/b/c.png?a=1&b=2");//-->"a/b"
+     cc.path.dirname("a/b/");//-->"a/b"
+     cc.path.dirname("c.png");//-->""
+     * windows
+     cc.path.driname("a\\b\\c.png");//-->"a\b"
+     cc.path.driname("a\\b\\c.png?a=1&b=2");//-->"a\b"
      * @param {string} pathStr
      * @returns {*}
      */
     dirname: function (pathStr) {
-        return pathStr.replace(/(\/|\\\\)$/, "").replace(/(\/|\\\\)[^(\/|\\\\)]+$/, "");
+        return pathStr.replace(/((.*)(\/|\\|\\\\))?(.*?\..*$)?/, '$2');
     },
 
     /**
@@ -553,7 +559,7 @@ cc.loader = {
             cb = option;
 
         var img = new Image();
-        if (opt.isCrossOrigin)
+        if (opt.isCrossOrigin && location.origin != "file://")
             img.crossOrigin = "Anonymous";
 
         cc._addEventListener(img, "load", function () {
@@ -1238,7 +1244,11 @@ cc._rendererInitialized = false;
  * // declare like this: <div id="Cocos2dGameContainer" width="800" height="450"></div>
  * cc._setup("Cocos2dGameContainer");
  */
+cc._setupCalled = false;
 cc._setup = function (el, width, height) {
+    // Avoid setup to be called twice.
+    if (cc._setupCalled) return;
+    else cc._setupCalled = true;
     var win = window;
     win.requestAnimFrame = win.requestAnimationFrame ||
         win.webkitRequestAnimationFrame ||
@@ -1446,24 +1456,15 @@ cc.game = {
     /**
      * Run game.
      */
-    run: function () {
+    run: function (id) {
         var self = this;
-        if (!self._prepareCalled) {
-            self.prepare(function () {
-                if (cc._supportRender) {
-                    cc._setup(self.config[self.CONFIG_KEY.id]);
-                    self._runMainLoop();
-                    self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
-                    self._eventHide.setUserData(self);
-                    self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
-                    self._eventShow.setUserData(self);
-                    self.onStart();
-                }
-            });
-        } else {
-            if (cc._supportRender) {
-                self._checkPrepare = setInterval(function () {
-                    if (self._prepared) {
+        var _run = function () {
+            if (id) {
+                self.config[self.CONFIG_KEY.id] = id;
+            }
+            if (!self._prepareCalled) {
+                self.prepare(function () {
+                    if (cc._supportRender) {
                         cc._setup(self.config[self.CONFIG_KEY.id]);
                         self._runMainLoop();
                         self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
@@ -1471,11 +1472,31 @@ cc.game = {
                         self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                         self._eventShow.setUserData(self);
                         self.onStart();
-                        clearInterval(self._checkPrepare);
                     }
-                }, 10);
+                });
+            } else {
+                if (cc._supportRender) {
+                    self._checkPrepare = setInterval(function () {
+                        if (self._prepared) {
+                            cc._setup(self.config[self.CONFIG_KEY.id]);
+                            self._runMainLoop();
+                            self._eventHide = self._eventHide || new cc.EventCustom(self.EVENT_HIDE);
+                            self._eventHide.setUserData(self);
+                            self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
+                            self._eventShow.setUserData(self);
+                            self.onStart();
+                            clearInterval(self._checkPrepare);
+                        }
+                    }, 10);
+                }
             }
-        }
+        };
+        document.body ?
+            _run() :
+            cc._addEventListener(window, 'load', function () {
+                this.removeEventListener('load', arguments.callee, false);
+                _run();
+            }, false);
     },
     /**
      * Init config.
@@ -1487,9 +1508,11 @@ cc.game = {
         var self = this, CONFIG_KEY = self.CONFIG_KEY;
         var _init = function (cfg) {
             cfg[CONFIG_KEY.engineDir] = cfg[CONFIG_KEY.engineDir] || "frameworks/cocos2d-html5";
-            cfg[CONFIG_KEY.debugMode] = cfg[CONFIG_KEY.debugMode] || 0;
+            if(cfg[CONFIG_KEY.debugMode] == null)
+                cfg[CONFIG_KEY.debugMode] = 0;
             cfg[CONFIG_KEY.frameRate] = cfg[CONFIG_KEY.frameRate] || 60;
-            cfg[CONFIG_KEY.renderMode] = cfg[CONFIG_KEY.renderMode] || 0;
+            if(cfg[CONFIG_KEY.renderMode] == null)
+                cfg[CONFIG_KEY.renderMode] = 1;
             return cfg;
         };
         if (document["ccConfig"]) {
