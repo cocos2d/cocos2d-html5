@@ -115,10 +115,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
     _initStencilForCanvas: function () {
         this._clippingStencil = cc.DrawNode.create();
-        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         var locContext = cc._renderContext;
         var stencil = this._clippingStencil;
         stencil.draw = function () {
+            var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
             for (var i = 0; i < stencil._buffer.length; i++) {
                 var element = stencil._buffer[i];
                 var vertices = element.verts;
