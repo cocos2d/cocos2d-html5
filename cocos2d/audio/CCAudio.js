@@ -957,7 +957,8 @@ cc._audioLoader = {
         } else {
             return cb("can not found the resource of audio! Last match url is : " + realUrl);
         }
-        if (tryArr.indexOf(extname) >= 0) return self._load(realUrl, url, res, count + 1, tryArr, audio, cb);
+        if (tryArr.indexOf(extname) >= 0)
+            return self._load(realUrl, url, res, count + 1, tryArr, audio, cb);
         realUrl = path.changeExtname(realUrl, extname);
         tryArr.push(extname);
         audio = self._loadAudio(realUrl, audio, function (err) {
@@ -972,6 +973,7 @@ cc._audioLoader = {
         return this._supportedAudioTypes.indexOf(type.toLowerCase()) >= 0;
     },
     _loadAudio: function (url, audio, cb) {
+
         var _Audio = cc.WebAudio || Audio;
         if (arguments.length == 2) {
             cb = audio, audio = new _Audio();
@@ -1008,7 +1010,6 @@ cc._audioLoader = {
 };
 cc._audioLoader._supportedAudioTypes = function () {
     var au = cc.newElement('audio'), arr = [];
-    ;
     if (au.canPlayType) {
         // <audio> tag is supported, go on
         var _check = function (typeStr) {
