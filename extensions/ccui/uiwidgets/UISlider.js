@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -408,9 +409,9 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             if (this._progressBarTexType == ccui.Widget.PLIST_TEXTURE) {
                 var barNode = this._progressBarRenderer;
                 if (barNode) {
-                    var to = barNode.getTextureRect()._origin;
-                    x = to.x;
-                    y = to.y;
+                    var rect = barNode.getTextureRect();
+                    x = rect.x;
+                    y = rect.y;
                 }
             }
             this._progressBarRenderer.setTextureRect(cc.rect(x, y, this._progressBarTextureSize.width * (percent / 100.0), this._progressBarTextureSize.height));

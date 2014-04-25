@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -173,7 +173,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             else this._subCacheCount = 0;
         }
     },
-
 
     /**
      * Return texture of cc.SpriteBatchNode
@@ -452,12 +451,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * You can remove either by calling: <br/>
      * - layer.removeChild(sprite, cleanup); <br/>
      * - or layer.removeTileAt(ccp(x,y)); </p>
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} pos or x
+     * @param {Number} [y]
      * @return {cc.Sprite}
      */
-    getTileAt: function (pos) {
+    getTileAt: function (pos, y) {
         if(!pos)
             throw "cc.TMXLayer.getTileAt(): pos should be non-null";
+        if(y !== undefined)
+            pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
             throw "cc.TMXLayer.getTileAt(): invalid position";
         if(!this.tiles || !this._atlasIndexArray){
@@ -465,8 +467,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             return null;
         }
 
-        var tile = null;
-        var gid = this.getTileGIDAt(pos);
+        var tile = null, gid = this.getTileGIDAt(pos);
 
         // if GID == 0, then no tile is present
         if (gid === 0)
@@ -498,12 +499,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * Returns the tile gid at a given tile coordinate. <br />
      * if it returns 0, it means that the tile is empty. <br />
      * This method requires the the tile map has not been previously released (eg. don't call layer.releaseMap())<br />
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} pos or x
+     * @param {Number} [y]
      * @return {Number}
      */
-    getTileGIDAt:function (pos) {
+    getTileGIDAt:function (pos, y) {
         if(!pos)
             throw "cc.TMXLayer.getTileGIDAt(): pos should be non-null";
+        if(y !== undefined)
+            pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
             throw "cc.TMXLayer.getTileGIDAt(): invalid position";
         if(!this.tiles || !this._atlasIndexArray){
@@ -522,12 +526,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     /**
      *  lipped tiles can be changed dynamically
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} pos or x
+     * @param {Number} [y]
      * @return {Number}
      */
-    getTileFlagsAt:function (pos) {
+    getTileFlagsAt:function (pos, y) {
         if(!pos)
             throw "cc.TMXLayer.getTileFlagsAt(): pos should be non-null";
+        if(y !== undefined)
+            pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
             throw "cc.TMXLayer.getTileFlagsAt(): invalid position";
         if(!this.tiles || !this._atlasIndexArray){
@@ -549,26 +556,33 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * The Tile GID can be obtained by using the method "tileGIDAt" or by using the TMX editor . Tileset Mgr +1.<br />
      * If a tile is already placed at that position, then it will be removed.</p>
      * @param {Number} gid
-     * @param {cc.Point} pos
-     * @param {Number} flags
+     * @param {cc.Point|Number} posOrX position or x
+     * @param {Number} flagsOrY flags or y
+     * @param {Number} [flags]
      */
-    setTileGID:function (gid, pos, flags) {
-        if(!pos)
+    setTileGID: function(gid, posOrX, flagsOrY, flags) {
+        if(!posOrX)
             throw "cc.TMXLayer.setTileGID(): pos should be non-null";
+        var pos;
+        if (flags !== undefined) {
+            pos = cc.p(posOrX, flagsOrY);
+        } else {
+            pos = posOrX;
+            flags = flagsOrY;
+        }
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
             throw "cc.TMXLayer.setTileGID(): invalid position";
         if(!this.tiles || !this._atlasIndexArray){
             cc.log("cc.TMXLayer.setTileGID(): TMXLayer: the tiles map has been released");
-            return null;
+            return;
         }
         if(gid !== 0 && gid < this.tileset.firstGid){
             cc.log( "cc.TMXLayer.setTileGID(): invalid gid:" + gid);
-            return null;
+            return;
         }
 
         flags = flags || 0;
         this._setNodeDirtyForCache();
-
         var currentFlags = this.getTileFlagsAt(pos);
         var currentGID = this.getTileGIDAt(pos);
 
@@ -599,16 +613,19 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     /**
      * Removes a tile at given tile coordinate
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} pos position or x
+     * @param {Number} [y]
      */
-    removeTileAt:function (pos) {
+    removeTileAt:function (pos, y) {
         if(!pos)
             throw "cc.TMXLayer.removeTileAt(): pos should be non-null";
+        if(y !== undefined)
+            pos = cc.p(pos, y);
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
             throw "cc.TMXLayer.removeTileAt(): invalid position";
         if(!this.tiles || !this._atlasIndexArray){
             cc.log("cc.TMXLayer.removeTileAt(): TMXLayer: the tiles map has been released");
-            return null;
+            return;
         }
 
         var gid = this.getTileGIDAt(pos);
@@ -650,10 +667,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     /**
      * Returns the position in pixels of a given tile coordinate
-     * @param {cc.Point} pos
+     * @param {cc.Point|Number} pos position or x
+     * @param {Number} [y]
      * @return {cc.Point}
      */
-    getPositionAt:function (pos) {
+    getPositionAt:function (pos, y) {
+        if (y !== undefined)
+            pos = cc.p(pos, y);
         var ret = cc.p(0,0);
         switch (this.layerOrientation) {
             case cc.TMX_ORIENTATION_ORTHO:
@@ -871,8 +891,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._setupTileSprite(tile, pos, gid);
 
         // get atlas index
-        var indexForZ = this._atlasIndexForExistantZ(z);
-        tile.atlasIndex = indexForZ;
+        tile.atlasIndex = this._atlasIndexForExistantZ(z);
         tile.dirty = true;
         tile.updateTransform();
         this.tiles[z] = gid;
