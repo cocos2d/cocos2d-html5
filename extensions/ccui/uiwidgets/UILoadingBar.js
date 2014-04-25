@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -251,9 +252,9 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         if (this._renderBarTexType == ccui.Widget.PLIST_TEXTURE) {
             var barNode = this._barRenderer;
             if (barNode) {
-                var to = barNode.getTextureRect()._origin;
-                x = to.x;
-                y = to.y;
+                var rect = barNode.getTextureRect();
+                x = rect.x;
+                y = rect.y;
             }
         }
         if (this._scale9Enabled)

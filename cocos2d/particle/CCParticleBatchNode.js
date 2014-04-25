@@ -1,8 +1,8 @@
 /**
- * Copyright (c) 2010-2012 cocos2d-x.org
+ * Copyright (c) 2008-2010 Ricardo Quesada
+ * Copyright (c) 2011-2012 cocos2d-x.org
+ * Copyright (c) 2013-2014 Chukong Technologies Inc.
  * Copyright (C) 2009 Matt Oswald
- * Copyright (c) 2009-2010 Ricardo Quesada
- * Copyright (c) 2011 Zynga Inc.
  * Copyright (c) 2011 Marco Tillemans
  *
  * http://www.cocos2d-x.org
