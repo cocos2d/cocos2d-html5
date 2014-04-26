@@ -409,6 +409,9 @@ _tmp.WebGLTexture2D = function () {
                 if (!img) return;
                 self.initWithElement(img);
             }
+            if (!self._htmlElementObj.width || !self._htmlElementObj.height) {
+                return;
+            }
             self._isLoaded = true;
             //upload image to buffer
             var gl = cc._renderContext;
