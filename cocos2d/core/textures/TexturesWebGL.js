@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -408,6 +408,9 @@ _tmp.WebGLTexture2D = function () {
                 var img = cc.loader.getRes(self.url);
                 if (!img) return;
                 self.initWithElement(img);
+            }
+            if (!self._htmlElementObj.width || !self._htmlElementObj.height) {
+                return;
             }
             self._isLoaded = true;
             //upload image to buffer

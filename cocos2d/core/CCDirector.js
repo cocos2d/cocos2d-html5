@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -71,52 +71,52 @@ cc.GLToClipTransform = function (transformOut) {
  */
 cc.Director = cc.Class.extend(/** @lends cc.director# */{
     //Variables
-    _landscape:false,
-    _nextDeltaTimeZero:false,
-    _paused:false,
-    _purgeDirectorInNextLoop:false,
-    _sendCleanupToScene:false,
-    _animationInterval:0.0,
-    _oldAnimationInterval:0.0,
-    _projection:0,
-    _accumDt:0.0,
-    _contentScaleFactor:1.0,
+    _landscape: false,
+    _nextDeltaTimeZero: false,
+    _paused: false,
+    _purgeDirectorInNextLoop: false,
+    _sendCleanupToScene: false,
+    _animationInterval: 0.0,
+    _oldAnimationInterval: 0.0,
+    _projection: 0,
+    _accumDt: 0.0,
+    _contentScaleFactor: 1.0,
 
-    _displayStats:false,
-    _deltaTime:0.0,
-    _frameRate:0.0,
+    _displayStats: false,
+    _deltaTime: 0.0,
+    _frameRate: 0.0,
 
-    _FPSLabel:null,
-    _SPFLabel:null,
-    _drawsLabel:null,
+    _FPSLabel: null,
+    _SPFLabel: null,
+    _drawsLabel: null,
 
-    _winSizeInPoints:null,
+    _winSizeInPoints: null,
 
-    _lastUpdate:null,
-    _nextScene:null,
-    _notificationNode:null,
-    _openGLView:null,
-    _scenesStack:null,
-    _projectionDelegate:null,
-    _runningScene:null,
+    _lastUpdate: null,
+    _nextScene: null,
+    _notificationNode: null,
+    _openGLView: null,
+    _scenesStack: null,
+    _projectionDelegate: null,
+    _runningScene: null,
 
-    _frames:0,
-    _totalFrames:0,
-    _secondsPerFrame:0,
+    _frames: 0,
+    _totalFrames: 0,
+    _secondsPerFrame: 0,
 
-    _dirtyRegion:null,
+    _dirtyRegion: null,
 
-    _scheduler:null,
-    _actionManager:null,
+    _scheduler: null,
+    _actionManager: null,
     _eventProjectionChanged: null,
     _eventAfterDraw: null,
     _eventAfterVisit: null,
     _eventAfterUpdate: null,
 
-    ctor:function () {
+    ctor: function () {
         var self = this;
         self._lastUpdate = Date.now();
-        cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function(){
+        cc.eventManager.addCustomListener(cc.game.EVENT_SHOW, function () {
             self._lastUpdate = Date.now();
         });
     },
@@ -125,7 +125,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * initializes cc.director
      * @return {Boolean}
      */
-    init:function () {
+    init: function () {
         // scenes
         this._oldAnimationInterval = this._animationInterval = 1.0 / cc.defaultFPS;
         this._scenesStack = [];
@@ -173,7 +173,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * calculates delta time since last time it was called
      */
-    calculateDeltaTime:function () {
+    calculateDeltaTime: function () {
         var now = Date.now();
 
         // new delta time.
@@ -198,7 +198,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
-    drawScene: function() {
+    drawScene: function () {
         // calculate "global" dt
         this.calculateDeltaTime();
 
@@ -247,7 +247,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * end director
      */
-    end:function () {
+    end: function () {
         this._purgeDirectorInNextLoop = true;
     },
 
@@ -258,7 +258,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      * @return {Number}
      */
-    getContentScaleFactor:function () {
+    getContentScaleFactor: function () {
         return this._contentScaleFactor;
     },
 
@@ -270,7 +270,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      * @return {cc.Node}
      */
-    getNotificationNode:function () {
+    getNotificationNode: function () {
         return this._notificationNode;
     },
 
@@ -281,7 +281,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      * @return {cc.Size}
      */
-    getWinSize:function () {
+    getWinSize: function () {
         return this._winSizeInPoints;
     },
 
@@ -293,7 +293,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      * @return {cc.Size}
      */
-    getWinSizeInPixels:function () {
+    getWinSizeInPixels: function () {
         return cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
     },
 
@@ -305,7 +305,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * pause director
      */
-    pause:function () {
+    pause: function () {
         if (this._paused)
             return;
 
@@ -323,7 +323,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      *     ONLY call it if there is a running scene.
      * </p>
      */
-    popScene:function () {
+    popScene: function () {
 
         cc.assert(this._runningScene, cc._LogInfos.Director_popScene);
 
@@ -341,21 +341,21 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * Removes cached all cocos2d cached data. It will purge the cc.textureCache, cc.spriteFrameCache, cc.animationCache
      */
-    purgeCachedData:function () {
-	    cc.animationCache._clear();
-	    cc.spriteFrameCache._clear();
-	    cc.textureCache._clear();
+    purgeCachedData: function () {
+        cc.animationCache._clear();
+        cc.spriteFrameCache._clear();
+        cc.textureCache._clear();
     },
 
     /**
      * purge Director
      */
-    purgeDirector:function () {
+    purgeDirector: function () {
         //cleanup scheduler
         this.getScheduler().unscheduleAllCallbacks();
 
         // Disable event dispatching
-        if(cc.eventManager)
+        if (cc.eventManager)
             cc.eventManager.setEnabled(false);
 
         // don't release the event handlers
@@ -391,7 +391,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      * @param {cc.Scene} scene
      */
-    pushScene:function (scene) {
+    pushScene: function (scene) {
 
         cc.assert(scene, cc._LogInfos.Director_pushScene);
 
@@ -405,18 +405,18 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * Run a scene. Replaces the running scene with a new one when the  scene is running.
      * @param {cc.Scene} scene
      */
-    runScene:function(scene){
+    runScene: function (scene) {
 
         cc.assert(scene, cc._LogInfos.Director_pushScene);
 
-        if(!this._runningScene){
+        if (!this._runningScene) {
             //start scene
             this.pushScene(scene);
             this.startAnimation();
-        }else{
+        } else {
             //replace scene
             var i = this._scenesStack.length;
-            if(i === 0){
+            if (i === 0) {
                 this._sendCleanupToScene = true;
                 this._scenesStack[i] = scene;
                 this._nextScene = scene;
@@ -431,7 +431,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * resume director
      */
-    resume:function () {
+    resume: function () {
         if (!this._paused) {
             return;
         }
@@ -454,7 +454,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      * @param {Number} scaleFactor
      */
-    setContentScaleFactor:function (scaleFactor) {
+    setContentScaleFactor: function (scaleFactor) {
         if (scaleFactor != this._contentScaleFactor) {
             this._contentScaleFactor = scaleFactor;
             this._createStatsLabel();
@@ -471,7 +471,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * sets the default values based on the CCConfiguration info
      */
-    setDefaultValues:function(){
+    setDefaultValues: function () {
 
     },
 
@@ -479,16 +479,16 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * set next delta time is zero
      * @param {Boolean} nextDeltaTimeZero
      */
-    setNextDeltaTimeZero:function (nextDeltaTimeZero) {
+    setNextDeltaTimeZero: function (nextDeltaTimeZero) {
         this._nextDeltaTimeZero = nextDeltaTimeZero;
     },
 
     /**
      * set next scene
      */
-    setNextScene:function () {
+    setNextScene: function () {
         var runningIsTransition = false, newIsTransition = false;
-        if(cc.TransitionScene){
+        if (cc.TransitionScene) {
             runningIsTransition = this._runningScene ? this._runningScene instanceof cc.TransitionScene : false;
             newIsTransition = this._nextScene ? this._nextScene instanceof cc.TransitionScene : false;
         }
@@ -520,7 +520,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * set Notification Node
      * @param {cc.Node} node
      */
-    setNotificationNode:function (node) {
+    setNotificationNode: function (node) {
         this._notificationNode = node;
     },
 
@@ -528,11 +528,11 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      *  CCDirector delegate. It shall implemente the CCDirectorDelegate protocol
      *  @return {cc.DirectorDelegate}
      */
-    getDelegate:function () {
+    getDelegate: function () {
         return this._projectionDelegate;
     },
 
-    setDelegate:function (delegate) {
+    setDelegate: function (delegate) {
         this._projectionDelegate = delegate;
     },
 
@@ -584,7 +584,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * </p>
      * @return {Boolean}
      */
-    isSendCleanupToScene:function () {
+    isSendCleanupToScene: function () {
         return this._sendCleanupToScene;
     },
 
@@ -592,7 +592,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * Get current running Scene. Director can only run one Scene at the time
      * @return {cc.Scene}
      */
-    getRunningScene:function () {
+    getRunningScene: function () {
         return this._runningScene;
     },
 
@@ -600,7 +600,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * Get the FPS value
      * @return {Number}
      */
-    getAnimationInterval:function () {
+    getAnimationInterval: function () {
         return this._animationInterval;
     },
 
@@ -608,7 +608,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * Whether or not to display the FPS on the bottom-left corner
      * @return {Boolean}
      */
-    isDisplayStats:function () {
+    isDisplayStats: function () {
         return this._displayStats;
     },
 
@@ -616,7 +616,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * Display the FPS on the bottom-left corner
      * @param {Boolean} displayStats
      */
-    setDisplayStats:function (displayStats) {
+    setDisplayStats: function (displayStats) {
         this._displayStats = displayStats;
     },
 
@@ -624,7 +624,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * seconds per frame
      * @return {Number}
      */
-    getSecondsPerFrame:function () {
+    getSecondsPerFrame: function () {
         return this._secondsPerFrame;
     },
 
@@ -632,7 +632,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * is next delta time zero
      * @return {Boolean}
      */
-    isNextDeltaTimeZero:function () {
+    isNextDeltaTimeZero: function () {
         return this._nextDeltaTimeZero;
     },
 
@@ -640,7 +640,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * Whether or not the Director is paused
      * @return {Boolean}
      */
-    isPaused:function () {
+    isPaused: function () {
         return this._paused;
     },
 
@@ -648,7 +648,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * How many frames were called since the director started
      * @return {Number}
      */
-    getTotalFrames:function () {
+    getTotalFrames: function () {
         return this._totalFrames;
     },
 
@@ -659,7 +659,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      *     Internally it will call `popToSceneStackLevel(1)`
      * </p>
      */
-    popToRootScene:function () {
+    popToRootScene: function () {
         this.popToSceneStackLevel(1);
     },
 
@@ -704,26 +704,26 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     /**
      * (cc.Scheduler associated with this director)
      */
-    getScheduler:function () {
+    getScheduler: function () {
         return this._scheduler;
     },
 
-    setScheduler:function (scheduler) {
+    setScheduler: function (scheduler) {
         if (this._scheduler != scheduler) {
             this._scheduler = scheduler;
         }
     },
 
-    getActionManager:function () {
+    getActionManager: function () {
         return this._actionManager;
     },
-    setActionManager:function (actionManager) {
+    setActionManager: function (actionManager) {
         if (this._actionManager != actionManager) {
             this._actionManager = actionManager;
         }
     },
 
-    getDeltaTime:function(){
+    getDeltaTime: function () {
         return this._deltaTime;
     },
 
@@ -744,12 +744,12 @@ cc.Director.EVENT_AFTER_UPDATE = "director_after_update";
  * implementation of DisplayLinkDirector
  **************************************************/
 cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.director# */{
-    invalid:false,
+    invalid: false,
 
     /**
      * start Animation
      */
-    startAnimation:function () {
+    startAnimation: function () {
         this._nextDeltaTimeZero = true;
         this.invalid = false;
     },
@@ -757,7 +757,7 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.director# */{
     /**
      * main loop of director
      */
-    mainLoop:function () {
+    mainLoop: function () {
         if (this._purgeDirectorInNextLoop) {
             this._purgeDirectorInNextLoop = false;
             this.purgeDirector();
@@ -770,7 +770,7 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.director# */{
     /**
      * stop animation
      */
-    stopAnimation:function () {
+    stopAnimation: function () {
         this.invalid = true;
     },
 
@@ -778,7 +778,7 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.director# */{
      * set Animation Interval
      * @param {Number} value
      */
-    setAnimationInterval:function (value) {
+    setAnimationInterval: function (value) {
         this._animationInterval = value;
         if (!this.invalid) {
             this.stopAnimation();
@@ -851,17 +851,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._winSizeInPoints.width = cc._canvas.width;      //this._openGLView.getDesignResolutionSize();
         this._winSizeInPoints.height = cc._canvas.height;
         this._openGLView = openGLView || cc.view;
-        if(cc.eventManager)
+        if (cc.eventManager)
             cc.eventManager.setEnabled(true);
     };
 
-    _p._clear = function() {
+    _p._clear = function () {
         var viewport = this._openGLView.getViewPortRect();
         cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
     };
 
 
-    _p._createStatsLabel = function(){
+    _p._createStatsLabel = function () {
         var _t = this;
         var fontSize = 0;
         if (_t._winSizeInPoints.width > _t._winSizeInPoints.height)
@@ -891,15 +891,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         //if (this._openGLView) {
         //return this._openGLView.getVisibleOrigin();
         //} else {
-        return cc.p(0,0);
+        return cc.p(0, 0);
         //}
     };
-}else {
+} else {
     cc.Director._fpsImage = new Image();
     cc._addEventListener(cc.Director._fpsImage, "load", function () {
         cc.Director._fpsImageLoaded = true;
     });
-    if(cc._fpsImage){
+    if (cc._fpsImage) {
         cc.Director._fpsImage.src = cc._fpsImage;
     }
+    _tmp.DirectorWebGL && _tmp.DirectorWebGL();
+    delete _tmp.DirectorWebGL;
 }
