@@ -266,6 +266,16 @@
         ]);
     }
 
+    if (c.loadSpine != null && c.loadSpine == true) {
+        engine = engine.concat([
+            //protocols
+            '../extensions/Spine/Spine.js',
+            '../extensions/Spine/CCSkeleton.js',
+            '../extensions/Spine/CCSkeletonAnimation.js',
+            '../extensions/Spine/Spine-cocos2d-html5.js'
+        ]);
+    }
+
     if (!c.engineDir) {
         engine = [];
     }

@@ -1,0 +1,285 @@
+cc.SP_VERTEX_INDEX = {
+    X1: 0,
+    Y1: 1,
+    X2: 2,
+    Y2: 3,
+    X3: 4,
+    Y3: 5,
+    X4: 6,
+    Y4: 7
+};
+
+cc.SP_ATTACHMENT_TYPE = {
+    REGION: 0,
+    REGION_SEQUENCE: 1,
+    BOUNDING_BOX: 2
+};
+
+cc.Skeleton = cc.NodeRGBA.extend({
+    _skeleton: null,
+    _rootBone: null,
+    _timeScale: 1,
+    _debugSlots: false,
+    _debugBones: false,
+    _premultipliedAlpha: false,
+    _ownsSkeletonData: null,
+    _atlas: null,
+    _blendFunc: null,
+    ctor:function(){
+        cc.NodeRGBA.prototype.ctor.call(this);
+        this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
+    },
+    init: function () {
+        this._super();
+        this._blendFunc.src = gl.ONE;
+        this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+        this.setOpacityModifyRGB(true);
+        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this.scheduleUpdate();
+    },
+    setDebugSolots:function(v){
+        this._debugSlots = v;
+    },
+
+    setDebugBones:function(v){
+        this._debugBones = v;
+    },
+
+    setTimeScale:function(v){
+        this._timeScale = v;
+    },
+
+    initWithArgs: function (/*multi arguments*/) {
+        var argSkeletonFile = arguments[0], argAtlasFile = arguments[1],
+            skeletonData, atlas, scale, ownsSkeletonData;
+
+        var fileUtils = cc.FileUtils.getInstance();
+
+        if (typeof argSkeletonFile == 'string') {
+            if (typeof argAtlasFile == 'string') {
+                var data = fileUtils.getTextFileData(argAtlasFile);
+                cc._spAtlasLoader.setAtlasFile(argAtlasFile);
+                atlas = new spine.Atlas(data, cc._spAtlasLoader);
+            }
+            else {
+                atlas = arguments[1];
+            }
+            scale = arguments[2] || 1 / cc.Director.getInstance().getContentScaleFactor();
+
+            var attachmentLoader = new spine.AtlasAttachmentLoader(atlas);
+            var skeletonJsonReader = new spine.SkeletonJson(attachmentLoader);
+            skeletonJsonReader.scale = scale;
+
+            var skeletonJson = JSON.parse(fileUtils.getTextFileData(argSkeletonFile));
+            skeletonData = skeletonJsonReader.readSkeletonData(skeletonJson);
+            atlas.dispose(skeletonJsonReader);
+            ownsSkeletonData = true;
+        }
+        else {
+            skeletonData = arguments[0];
+            ownsSkeletonData = arguments[1];
+        }
+
+        this.setSkeletonData(skeletonData, ownsSkeletonData);
+
+        this.init();
+    },
+    boundingBox: function () {
+        var minX = cc.FLT_MAX, minY = cc.FLT_MAX, maxX = cc.FLT_MIN, maxY = cc.FLT_MIN;
+        var scaleX = this.getScaleX(), scaleY = this.getScaleY(), vertices = [],
+            slots = this._skeleton.slots, VERTEX = cc.SP_VERTEX_INDEX;
+
+        for (var i = 0, slotCount = slots.length; i < slotCount; ++i) {
+            var slot = slots[i];
+            if (!slot.attachment || slot.attachment.type != cc.SP_ATTACHMENT_TYPE.REGION) continue;
+            var attachment = slot.attachment;
+            attachment.computeWorldVertices(slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
+            minX = min(minX, vertices[VERTEX.X1] * scaleX);
+            minY = min(minY, vertices[VERTEX.Y1] * scaleY);
+            maxX = max(maxX, vertices[VERTEX.X1] * scaleX);
+            maxY = max(maxY, vertices[VERTEX.Y1] * scaleY);
+            minX = min(minX, vertices[VERTEX.X4] * scaleX);
+            minY = min(minY, vertices[VERTEX.Y4] * scaleY);
+            maxX = max(maxX, vertices[VERTEX.X4] * scaleX);
+            maxY = max(maxY, vertices[VERTEX.Y4] * scaleY);
+            minX = min(minX, vertices[VERTEX.X2] * scaleX);
+            minY = min(minY, vertices[VERTEX.Y2] * scaleY);
+            maxX = max(maxX, vertices[VERTEX.X2] * scaleX);
+            maxY = max(maxY, vertices[VERTEX.Y2] * scaleY);
+            minX = min(minX, vertices[VERTEX.X3] * scaleX);
+            minY = min(minY, vertices[VERTEX.Y3] * scaleY);
+            maxX = max(maxX, vertices[VERTEX.X3] * scaleX);
+            maxY = max(maxY, vertices[VERTEX.Y3] * scaleY);
+        }
+        var position = this.getPosition();
+        return cc.rect(position.x + minX, position.y + minY, maxX - minX, maxY - minY);
+    },
+    updateWorldTransform: function () {
+        this._skeleton.updateWorldTransform();
+    },
+    setToSetupPose: function () {
+        this._skeleton.setToSetupPose();
+    },
+    setBonesToSetupPose: function () {
+        this._skeleton.setBonesToSetupPose();
+    },
+    setSlotsToSetupPose: function () {
+        this._skeleton.setSlotsToSetupPose();
+    },
+    findBone: function (boneName) {
+        return this._skeleton.findBone(boneName);
+    },
+    findSlot: function (slotName) {
+        return this._skeleton.findSlot(slotName);
+    },
+    setSkin: function (skinName) {
+        return this._skeleton.setSkinByName(skinName);
+    },
+    getAttachment: function (slotName, attachmentName) {
+        return this._skeleton.getAttachmentBySlotName(slotName, attachmentName);
+    },
+    setAttachment: function (slotName, attachmentName) {
+        return this._skeleton.setAttachment(slotName, attachmentName);
+    },
+    setOpacityModifyRGB: function (v) {
+        this._premultipliedAlpha = v;
+    },
+    isOpacityModifyRGB: function () {
+        return this._premultipliedAlpha;
+    },
+    setSkeletonData: function (skeletonData, ownsSkeletonData) {
+        this._skeleton = new spine.Skeleton(skeletonData);
+        this._rootBone = this._skeleton.getRootBone();
+        this._ownsSkeletonData = ownsSkeletonData;
+    },
+    getTextureAtlas: function (regionAttachment) {
+        return regionAttachment.rendererObject.page.rendererObject;
+    },
+    getBlendFunc: function () {
+        return this._blendFunc;
+    },
+    setBlendFunc: function (_blendFunc) {
+        this._blendFunc = _blendFunc;
+    },
+
+    update: function (dt) {
+        this._skeleton.update(dt);
+    },
+    draw: function (ctx) {
+        cc.NODE_DRAW_SETUP(this);
+//        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        var color = this.getColor();
+        this._skeleton.r = color.r / 255;
+        this._skeleton.g = color.g / 255;
+        this._skeleton.b = color.b / 255;
+        this._skeleton.a = this.getOpacity() / 255;
+        if (this._premultipliedAlpha) {
+            this._skeleton.r *= this._skeleton.a;
+            this._skeleton.g *= this._skeleton.a;
+            this._skeleton.b *= this._skeleton.a;
+        }
+
+        var additive,textureAtlas,attachment,slot, i, n,
+            quad = new cc.V3F_C4B_T2F_Quad();
+            quad.tl.vertices.z = 0;
+            quad.tr.vertices.z = 0;
+            quad.bl.vertices.z = 0;
+            quad.br.vertices.z = 0;
+
+        for (i = 0, n = this._skeleton.slots.length; i < n; i++) {
+            slot = this._skeleton.drawOrder[i];
+            if (!slot.attachment || slot.attachment.type != cc.SP_ATTACHMENT_TYPE.REGION) continue;
+            attachment = slot.attachment;
+            var regionTextureAtlas = this.getTextureAtlas(attachment);
+
+            if (slot.data.additiveBlending != additive) {
+                if (textureAtlas) {
+                    textureAtlas.drawQuads();
+                    textureAtlas.removeAllQuads();
+                }
+                additive = !additive;
+//                cc.glBlendFunc(this._blendFunc.src, additive ? gl.ONE : this._blendFunc.dst);
+            } else if (regionTextureAtlas != textureAtlas && textureAtlas) {
+                textureAtlas.drawQuads();
+                textureAtlas.removeAllQuads();
+            }
+            textureAtlas = regionTextureAtlas;
+
+            var quadCount = textureAtlas.getTotalQuads();
+            if (textureAtlas.getCapacity() == quadCount) {
+                textureAtlas.drawQuads();
+                textureAtlas.removeAllQuads();
+                if (!textureAtlas.resizeCapacity(textureAtlas.getCapacity() * 2)) return;
+            }
+
+            cc._spRegionAttachment_updateQuad(attachment, slot, quad, this._premultipliedAlpha);
+            textureAtlas.updateQuad(quad, quadCount);
+        }
+
+        if (textureAtlas) {
+            textureAtlas.drawQuads();
+            textureAtlas.removeAllQuads();
+        }
+
+        var drawingUtil = cc.drawingUtil;
+        if (this._debugSlots) {
+            // Slots.
+            drawingUtil.setDrawColor4B(0, 0, 255, 255);
+            drawingUtil.setLineWidth(1);
+            var i,n,slot,quad,attachment;
+
+            for (i = 0, n = this._skeleton.slots.length; i < n; i++) {
+                slot = this._skeleton.drawOrder[i];
+                if (!slot.attachment || slot.attachment.type != cc.SP_ATTACHMENT_TYPE.REGION) continue;
+                attachment = slot.attachment;
+                quad = new cc.V3F_C4B_T2F_Quad();
+                cc._spRegionAttachment_updateQuad(attachment, slot, quad);
+
+                var points = [];
+                points.push(cc.p(quad.bl.vertices.x, quad.bl.vertices.y));
+                points.push(cc.p(quad.br.vertices.x, quad.br.vertices.y));
+                points.push(cc.p(quad.tr.vertices.x, quad.tr.vertices.y));
+                points.push(cc.p(quad.tl.vertices.x, quad.tl.vertices.y));
+                drawingUtil.drawPoly(points, 4, true);
+            }
+        }
+
+        if (this._debugBones) {
+            // Bone lengths.
+            var bone, i,n;
+            drawingUtil.setLineWidth(2);
+            drawingUtil.setDrawColor4B(255, 0, 0, 255);
+
+            for (i = 0, n = this._skeleton.bones.length; i < n; i++) {
+                bone = this._skeleton.bones[i];
+                var x = bone.data.length * bone.m00 + bone.worldX;
+                var y = bone.data.length * bone.m10 + bone.worldY;
+                drawingUtil.drawLine(cc.p(bone.worldX, bone.worldY), cc.p(x, y));
+            }
+
+            // Bone origins.
+            drawingUtil.setPointSize(4);
+            drawingUtil.setDrawColor4B(0, 0, 255, 255); // Root bone is blue.
+
+            for (i = 0, n = this._skeleton.bones.length; i < n; i++) {
+                bone = this._skeleton.bones[i];
+                drawingUtil.drawPoint(cc.p(bone.worldX, bone.worldY));
+                if (i == 0) {
+                    drawingUtil.setDrawColor4B(0, 255, 0, 255);
+                }
+            }
+        }
+    }
+});
+
+cc.Skeleton.createWithData = function (skeletonData, ownsSkeletonData) {
+    var c = new cc.Skeleton();
+    c.initWithArgs.apply(c, arguments);
+    return c;
+};
+
+cc.Skeleton.createWithFile = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
+    var c = new cc.Skeleton();
+    c.initWithArgs.apply(c, arguments);
+    return c;
+};
