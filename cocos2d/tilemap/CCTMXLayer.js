@@ -452,10 +452,12 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * You can remove either by calling: <br/>
      * - layer.removeChild(sprite, cleanup); <br/>
      * - or layer.removeTileAt(ccp(x,y)); </p>
-     * @param {cc.Point} pos
+     * @param {Number} posX
+     * @param {Number} posY
      * @return {cc.Sprite}
      */
-    getTileAt: function (pos) {
+    getTileAt: function (posX, posY) {
+        var pos = posY !== undefined ? cc.p(posX, posY) : posX;
         if(!pos)
             throw "cc.TMXLayer.getTileAt(): pos should be non-null";
         if(pos.x >= this._layerSize.width || pos.y >= this._layerSize.height || pos.x < 0 || pos.y < 0)
