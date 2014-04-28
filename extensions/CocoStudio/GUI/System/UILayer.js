@@ -55,7 +55,6 @@ ccs.UILayer = cc.Layer.extend(/** @lends ccs.UILayer# */{
         this.setTouchMode(cc.TOUCH_ONE_BY_ONE);
         this.setTouchEnabled(true);
         cc.Layer.prototype.onEnter.call(this);
-
     },
 
     onExit: function () {

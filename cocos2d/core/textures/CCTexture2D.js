@@ -173,6 +173,14 @@ cc.Texture2DWebGL = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     releaseTexture:function () {
+        this._loadedEventListeners = null;
+        var locElement = this._htmlElementObj;
+        if(locElement){
+            if(locElement.__loadListener)
+                locElement.removeEventListener("load", locElement.__loadListener, false);
+            if(locElement.__errorListener)
+                locElement.removeEventListener("error", locElement.__errorListener, false);
+        }
         if (this._webTextureObj)
             cc.renderContext.deleteTexture(this._webTextureObj);
     },
@@ -1069,7 +1077,14 @@ cc.Texture2DCanvas = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     releaseTexture:function () {
-        //support only in WebGl rendering mode
+        this._loadedEventListeners = null;
+        var locElement = this._htmlElementObj;
+        if(locElement){
+            if(locElement.__loadListener)
+                locElement.removeEventListener("load", locElement.__loadListener, false);
+            if(locElement.__errorListener)
+                locElement.removeEventListener("error", locElement.__errorListener, false);
+        }
     },
 
     /**
