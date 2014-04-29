@@ -75,6 +75,7 @@ if (cc.sys._supportWebAudio) {
             var self = this;
             var sourceNode = self._sourceNode = _ctx["createBufferSource"]();
             var volumeNode = self._volumeNode;
+            offset = offset || 0;
 
             sourceNode.buffer = self._buffer;
             volumeNode["gain"].value = self._volume;
