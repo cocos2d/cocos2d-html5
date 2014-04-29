@@ -1544,7 +1544,7 @@
         //this.vx = v.x; this.vy = v.y;
         var v_limit = this.v_limit;
         var lensq = vx * vx + vy * vy;
-        var scale = (lensq > v_limit*v_limit) ? v_limit / Math.sqrt(len) : 1;
+        var scale = (lensq > v_limit*v_limit) ? v_limit / Math.sqrt(lensq) : 1;
         this.vx = vx * scale;
         this.vy = vy * scale;
 
