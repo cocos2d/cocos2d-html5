@@ -1525,14 +1525,19 @@ cc.game = {
                     var _t = cocos_script[i].getAttribute('cocos');
                     if(_t == '' || _t){break;}
                 }
-                var _src, txt;
+                var _src, txt, _resPath;
                 if(i < cocos_script.length){
                     _src = cocos_script[i].src;
-                    _src && (_src = _src.replace(/(.*?)\/[^\/]*$/, '$1/project.json'));
+                    if(_src){
+                        _resPath = /(.*)\//.exec(_src)[0];
+                        cc.loader.resPath = _resPath;
+                        _src = cc.path.join(_resPath, 'project.json');
+                    }
                     txt = cc.loader._loadTxtSync(_src);
                 }
-                if(!txt)
+                if(!txt){
                     txt = cc.loader._loadTxtSync("project.json");
+                }
                 var data = JSON.parse(txt);
                 self.config = _init(data || {});
             } catch (e) {
