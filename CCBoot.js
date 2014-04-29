@@ -1517,14 +1517,29 @@ cc.game = {
         if (document["ccConfig"]) {
             self.config = _init(document["ccConfig"]);
         } else {
+
             try {
-                var txt = cc.loader._loadTxtSync("project.json");
+
+                var cocos_script = document.getElementsByTagName('script');
+                for(var i=0;i<cocos_script.length;i++){
+                    var _t = cocos_script[i].getAttribute('cocos');
+                    if(_t == '' || _t){break;}
+                }
+                var _src, txt;
+                if(i < cocos_script.length){
+                    _src = cocos_script[i].src;
+                    _src && (_src = _src.replace(/(.*?)\/[^\/]*$/, '$1/project.json'));
+                    txt = cc.loader._loadTxtSync(_src);
+                }
+                if(!txt)
+                    txt = cc.loader._loadTxtSync("project.json");
                 var data = JSON.parse(txt);
                 self.config = _init(data || {});
             } catch (e) {
                 cc.log("Failed to read or parse project.json");
                 self.config = _init({});
             }
+
         }
         //init debug move to CCDebugger
         cc._initSys(self.config, CONFIG_KEY);
