@@ -308,16 +308,14 @@ ccs.LoadingBar = ccs.Widget.extend(/** @lends ccs.LoadingBar# */{
             if (!this._scale9Enabled) {
                 this._totalLength = this._barRendererTextureSize.width;
                 this._barRenderer.setScale(1.0);
-                this._size.width = this._barRendererTextureSize;
+                this._size.width = this._barRendererTextureSize.width;
+                this._size.height = this._barRendererTextureSize.height;
             }
-        }
-        else {
+        } else {
             this._totalLength = this._size.width;
             if (this._scale9Enabled) {
                 this.setScale9Scale();
-            }
-            else {
-
+            } else {
                 var textureSize = this._barRendererTextureSize;
                 if (textureSize.width <= 0.0 || textureSize.height <= 0.0) {
                     this._barRenderer.setScale(1.0);
