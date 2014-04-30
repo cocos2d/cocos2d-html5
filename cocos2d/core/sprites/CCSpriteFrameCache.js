@@ -194,8 +194,8 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
         cc.assert(url, cc._LogInfos.spriteFrameCache_addSpriteFrames_2);
 
         //Is it a SpriteFrame plist?
-        var dict = cc.loader.getRes(url);
-        if(!dict["frames"])
+        var dict = this._frameConfigCache[url] || cc.loader.getRes(url);
+        if(!dict || !dict["frames"])
             return;
 
         var self = this;
