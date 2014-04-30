@@ -56,11 +56,15 @@ _p.setAccelerometerInterval = function(interval){
 };
 
 _p._registerKeyboardEvent = function(){
-    cc._addEventListener(document, "keydown", function (e) {
+    cc._addEventListener(cc._canvas, "keydown", function (e) {
         cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, true));
+        e.stopPropagation();
+        e.preventDefault();
     });
-    cc._addEventListener(document, "keyup", function (e) {
+    cc._addEventListener(cc._canvas, "keyup", function (e) {
         cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, false));
+        e.stopPropagation();
+        e.preventDefault();
     });
 };
 
