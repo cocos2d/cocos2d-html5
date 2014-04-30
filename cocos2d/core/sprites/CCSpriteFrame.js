@@ -353,6 +353,13 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             this.setTexture(texture);
         }
 
+        if(rect.x + rect.width > texture.width){
+            rect.width = texture.width - rect.x;
+        }
+        if(rect.y + rect.height > texture.height){
+            rect.height = texture.height - rect.y;
+        }
+
         this._rectInPixels = rect;
         this._rect = cc.rectPixelsToPoints(rect);
         this._offsetInPixels.x = offset.x;
