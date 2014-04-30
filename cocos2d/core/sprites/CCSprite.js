@@ -1287,6 +1287,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         if (!rect) {
             rect = cc.rect(0, 0, texture.width, texture.height);
         }
+
+        if(rect.x + rect.width > texture.width){
+            rect.width = texture.width - rect.x;
+        }
+        if(rect.y + rect.height > texture.height){
+            rect.height = texture.height - rect.y;
+        }
+
         _t._originalTexture = texture;
 
         _t.texture = texture;
