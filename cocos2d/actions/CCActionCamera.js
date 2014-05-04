@@ -188,10 +188,10 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
             _t._radius = retValue.newRadius;
 
         if (isNaN(_t._angleZ))
-            _t._angleZ = cc.radiansToDegress(retValue.zenith);
+            _t._angleZ = cc.radiansToDegrees(retValue.zenith);
 
         if (isNaN(_t._angleX))
-            _t._angleX = cc.radiansToDegress(retValue.azimuth);
+            _t._angleX = cc.radiansToDegrees(retValue.azimuth);
 
         _t._radZ = cc.degreesToRadians(_t._angleZ);
         _t._radX = cc.degreesToRadians(_t._angleX);

@@ -140,7 +140,11 @@ cc.degreesToRadians = function (angle) {
  * @return {Number}
  * @function
  */
+cc.radiansToDegrees = function (angle) {
+    return angle * cc.DEG;
+};
 cc.radiansToDegress = function (angle) {
+    cc.log('cc.radiansToDegress() should be called cc.radiansToDegrees()');
     return angle * cc.DEG;
 };
 
