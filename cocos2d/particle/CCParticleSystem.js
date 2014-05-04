@@ -1844,7 +1844,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
             // rotation is dir
             if(locModeA.rotationIsDir)
-                particle.rotation = -cc.radiansToDegress(cc.pToAngle(locParticleModeA.dir));
+                particle.rotation = -cc.radiansToDegrees(cc.pToAngle(locParticleModeA.dir));
         } else {
             // Mode Radius: B
             var locModeB = this.modeB, locParitlceModeB = particle.modeB;
