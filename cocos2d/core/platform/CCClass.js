@@ -82,7 +82,7 @@ var ClassManager = {
 ClassManager.compileSuper.ClassManager = ClassManager;
 
 (function () {
-    var initializing = false, fnTest = /\b_super\b/;
+    var fnTest = /\b_super\b/;
     var config = cc.game.config;
     var releaseMode = config[cc.game.CONFIG_KEY.classReleaseMode];
     if(releaseMode) {
