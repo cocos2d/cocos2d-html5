@@ -1288,8 +1288,10 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             rect = cc.rect(0, 0, texture.width, texture.height);
         }
 
-        cc.assert(rect.x + rect.width <= texture.width || texture == "", 'Rect width exceeds maximum margin: %s', texture.url);
-        cc.assert(rect.y + rect.height <= texture.height || texture == "", 'Rect height exceeds the maximum margin: %s', texture.url);
+        if(!texture) {
+            cc.assert(rect.x + rect.width <= texture.width, 'Rect width exceeds maximum margin: %s', texture.url);
+            cc.assert(rect.y + rect.height <= texture.height, 'Rect height exceeds the maximum margin: %s', texture.url);
+        }
 
         _t._originalTexture = texture;
 
