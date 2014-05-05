@@ -79,13 +79,13 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
         var locRendererSize = imageRenderer.getContentSize();
         if(imageRenderer.textureLoaded()){
-            this._imageTextureSize.width = locRendererSize.width;
-            this._imageTextureSize.height = locRendererSize.height;
+            this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locRendererSize.width;
+            this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locRendererSize.height;
         }else{
             imageRenderer.addLoadedEventListener(function(){
                 var locSize = imageRenderer.getContentSize();
-                this._imageTextureSize.width = locSize.width;
-                this._imageTextureSize.height = locSize.height;
+                this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locSize.width;
+                this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locSize.height;
                 if (imageRenderer.setCapInsets) {
                     imageRenderer.setCapInsets(this._capInsets);
                 }
