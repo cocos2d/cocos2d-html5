@@ -115,7 +115,7 @@
             this.setNodeDirty();
         },
         getRotation:function () {
-            return (this._ignoreBodyRotation ? cc.radiansToDegress(this._rotationRadians) : cc.radiansToDegress(this._body.GetAngle()));
+            return (this._ignoreBodyRotation ? cc.radiansToDegrees(this._rotationRadians) : cc.radiansToDegrees(this._body.GetAngle()));
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
@@ -251,7 +251,7 @@
             }
         },
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.radiansToDegress(this._rotationRadiansX) : -cc.radiansToDegress(this._body.a);
+            return this._ignoreBodyRotation ? cc.radiansToDegrees(this._rotationRadiansX) : -cc.radiansToDegrees(this._body.a);
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
@@ -263,7 +263,7 @@
         },
         _syncRotation:function () {
             if (this._rotationRadiansX != -this._body.a) {
-                cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegress(this._body.a));
+                cc.Sprite.prototype.setRotation.call(this, -cc.radiansToDegrees(this._body.a));
             }
         },
         nodeToParentTransform:function () {
