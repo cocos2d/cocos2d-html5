@@ -209,7 +209,6 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     var nCanvas = cc.newElement("canvas");
     nCanvas.width = rect.width;
     nCanvas.height = rect.height;
-
     var ctx = nCanvas.getContext("2d");
     ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
     ctx.rotate(-1.5707963267948966);
@@ -425,8 +424,9 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             this._textureLoaded = false;
             spriteFrame.addLoadedEventListener(this._spriteFrameLoadedCallback, this);
         }
-        var ret = this.initWithTexture(spriteFrame.getTexture(), spriteFrame.getRect());
+
         this.setSpriteFrame(spriteFrame);
+        var ret = this.initWithTexture(spriteFrame.getTexture(), spriteFrame.getRect(), spriteFrame._rotated);
 
         return ret;
     },
@@ -1246,6 +1246,18 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         rotated = rotated || false;
 
+
+        if (rotated && texture.isLoaded()) {
+            var tempElement = texture.getHtmlElementObj();
+            tempElement = cc.cutRotateImageToCanvas(tempElement, rect);
+            var tempTexture = new cc.Texture2D();
+            tempTexture.initWithElement(tempElement);
+            tempTexture.handleLoadedTexture();
+            texture = tempTexture;
+
+            _t._rect = cc.rect(0, 0, rect.width, rect.height);
+        }
+
         if (!cc.NodeRGBA.prototype.init.call(_t))
             return false;
 
@@ -1273,7 +1285,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         _t._textureLoaded = locTextureLoaded;
 
         if (!locTextureLoaded) {
-            _t._rectRotated = rotated || false;
+            _t._rectRotated = rotated;
             if (rect) {
                 _t._rect.x = rect.x;
                 _t._rect.y = rect.y;
@@ -1288,9 +1300,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             rect = cc.rect(0, 0, texture.width, texture.height);
         }
 
-        if(!texture) {
-            cc.assert(rect.x + rect.width <= texture.width, 'Rect width exceeds maximum margin: %s', texture.url);
-            cc.assert(rect.y + rect.height <= texture.height, 'Rect height exceeds the maximum margin: %s', texture.url);
+        if(texture) {
+            var _x, _y;
+
+            _x = rect.x + rect.width;
+            _y = rect.y + rect.height;
+
+            cc.assert(_x <= texture.width, 'Rect width exceeds maximum margin: %s', texture.url);
+            cc.assert(_y <= texture.height, 'Rect height exceeds the maximum margin: %s', texture.url);
         }
 
         _t._originalTexture = texture;
