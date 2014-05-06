@@ -820,7 +820,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
         var texture = cc.textureCache.textureForKey(filename);
         if (!texture) {
             texture = cc.textureCache.addImage(filename);
-            return this.initWithTexture(texture, rect);
+            return this.initWithTexture(texture, rect || cc.rect(0, 0, 0, 0));
         } else {
             if (!rect) {
                 var size = texture.getContentSize();

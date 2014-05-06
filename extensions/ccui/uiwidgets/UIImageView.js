@@ -65,7 +65,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._textureFile = fileName;
         this._imageTexType = texType;
-        var imageRenderer = this._imageRenderer
+        var imageRenderer = this._imageRenderer;
         switch (this._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 imageRenderer.initWithFile(fileName);
