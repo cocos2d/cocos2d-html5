@@ -357,8 +357,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         if(texture) {
             var _x, _y;
             if(rotated){
-                _x = rect.y + rect.height;
-                _y = rect.x + rect.width;
+                _x = rect.x + rect.height;
+                _y = rect.y + rect.width;
             }else{
                 _x = rect.x + rect.width;
                 _y = rect.y + rect.height;
