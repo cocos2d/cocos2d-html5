@@ -138,7 +138,6 @@
         // useless
         'CCUserDefault.js',
         'CCImage.js'
-
     ];
 
     var d = document;
@@ -237,8 +236,12 @@
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIListView.js',
             '../extensions/CocoStudio/GUI/UIWidgets/ScrollWidget/UIPageView.js',
             '../extensions/CocoStudio/Reader/GUIReader.js',
-            '../extensions/CocoStudio/Reader/SceneReader.js'
+            '../extensions/CocoStudio/Reader/SceneReader.js',
 
+            //spine
+            '../extensions/Spine/Spine.js',
+            '../extensions/Spine/CCSkeleton.js',
+            '../extensions/Spine/CCSkeletonAnimation.js'
         ]);
     }
 
@@ -263,16 +266,6 @@
             '../extensions/PluginX/plugins/SocialFacebook.js',
             //'../extensions/PluginX/plugins/AdsGoogle.js',
             '../extensions/PluginX/plugins/AnalyticsFlurry.js'
-        ]);
-    }
-
-    if (c.loadSpine != null && c.loadSpine == true) {
-        engine = engine.concat([
-            //protocols
-            '../extensions/Spine/Spine.js',
-            '../extensions/Spine/CCSkeleton.js',
-            '../extensions/Spine/CCSkeletonAnimation.js',
-            '../extensions/Spine/Spine-cocos2d-html5.js'
         ]);
     }
 

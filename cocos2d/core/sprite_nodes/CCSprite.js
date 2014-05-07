@@ -811,7 +811,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * Also, flipping the texture doesn't alter the anchorPoint.                                                    <br/>
      * If you want to flip the anchorPoint too, and/or to flip the children too use:                                <br/>
      *      sprite->setScaleX(sprite->getScaleX() * -1);  <p/>
-     * @return {Boolean} true if the sprite is flipped horizaontally, false otherwise.
+     * @return {Boolean} true if the sprite is flipped horizontally, false otherwise.
      */
     isFlippedX:function () {
         return this._flippedX;
@@ -825,7 +825,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      *      Also, flipping the texture doesn't alter the anchorPoint.                                               <br/>
      *      If you want to flip the anchorPoint too, and/or to flip the children too use:                           <br/>
      *         sprite->setScaleY(sprite->getScaleY() * -1); <p/>
-     * @return {Boolean} true if the sprite is flipped vertically, flase otherwise.
+     * @return {Boolean} true if the sprite is flipped vertically, false otherwise.
      */
     isFlippedY:function () {
         return this._flippedY;
@@ -2193,6 +2193,7 @@ if(cc.Browser.supportWebGL){
  * @constructs
  * @param {cc.Texture2D} texture  A pointer to an existing CCTexture2D object. You can use a CCTexture2D object for many sprites.
  * @param {cc.Rect} rect Only the contents inside the rect of this texture will be applied for this sprite.
+ * @param {boolean} [rotate] Whether or not the texture rectangle is rotated.
  * @return {cc.Sprite} A valid sprite object
  * @example
  * //get an image
@@ -2205,9 +2206,10 @@ if(cc.Browser.supportWebGL){
  * var sprite2 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320));
  *
  */
-cc.Sprite.createWithTexture = function (texture, rect) {
+cc.Sprite.createWithTexture = function (texture, rect, rotate) {
     var argnum = arguments.length;
     var sprite = new cc.Sprite();
+    rotate = rotate || false;
     switch (argnum) {
         case 1:
             /** Creates an sprite with a texture.
@@ -2220,10 +2222,11 @@ cc.Sprite.createWithTexture = function (texture, rect) {
             break;
 
         case 2:
+        case 3:
             /** Creates an sprite with a texture and a rect.
              The offset will be (0,0).
              */
-            if (sprite && sprite.initWithTexture(texture, rect))
+            if (sprite && sprite.initWithTexture(texture, rect, rotate))
                 return sprite;
             return null;
             break;
