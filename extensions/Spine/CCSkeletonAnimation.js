@@ -114,42 +114,18 @@ sp._regionAttachment_updateQuad = function(self, slot, quad, premultipliedAlpha)
     quad.br.texCoords.v = self.uvs[VERTEX.Y4];
 };
 
-sp._regionAttachment_updateSprite = function(self, slot, sprite, premultipliedAlpha) {
+sp._regionAttachment_updateSlotForCanvas = function(self, slot, points) {
+    if(!points)
+        return;
+
     var vertices = {};
     self.computeVertices(slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
-    var r = slot.skeleton.r * slot.r * 255;
-    var g = slot.skeleton.g * slot.g * 255;
-    var b = slot.skeleton.b * slot.b * 255;
-    var normalizedAlpha = slot.skeleton.a * slot.a;
-    if (premultipliedAlpha) {
-        r *= normalizedAlpha;
-        g *= normalizedAlpha;
-        b *= normalizedAlpha;
-    }
-    var a = normalizedAlpha * 255;
-
-    sprite.setColor(cc.c3b(r,g,b));
-    sprite.setOpacity(a);
-
     var VERTEX = sp.VERTEX_INDEX;
-
-    quad.bl.vertices.x = vertices[VERTEX.X1];
-    quad.bl.vertices.y = vertices[VERTEX.Y1];
-    quad.tl.vertices.x = vertices[VERTEX.X2];
-    quad.tl.vertices.y = vertices[VERTEX.Y2];
-    quad.tr.vertices.x = vertices[VERTEX.X3];
-    quad.tr.vertices.y = vertices[VERTEX.Y3];
-    quad.br.vertices.x = vertices[VERTEX.X4];
-    quad.br.vertices.y = vertices[VERTEX.Y4];
-
-    quad.bl.texCoords.u = self.uvs[VERTEX.X1];
-    quad.bl.texCoords.v = self.uvs[VERTEX.Y1];
-    quad.tl.texCoords.u = self.uvs[VERTEX.X2];
-    quad.tl.texCoords.v = self.uvs[VERTEX.Y2];
-    quad.tr.texCoords.u = self.uvs[VERTEX.X3];
-    quad.tr.texCoords.v = self.uvs[VERTEX.Y3];
-    quad.br.texCoords.u = self.uvs[VERTEX.X4];
-    quad.br.texCoords.v = self.uvs[VERTEX.Y4];
+    points.length = 0;
+    points.push(cc.p(vertices[VERTEX.X1], vertices[VERTEX.Y1]));
+    points.push(cc.p(vertices[VERTEX.X4], vertices[VERTEX.Y4]));
+    points.push(cc.p(vertices[VERTEX.X3], vertices[VERTEX.Y3]));
+    points.push(cc.p(vertices[VERTEX.X2], vertices[VERTEX.Y2]));
 };
 
 sp.ANIMATION_EVENT_TYPE = {
