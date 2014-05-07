@@ -597,8 +597,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
                 this._trianglesArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
                 this._trianglesReader = new Uint8Array(this._trianglesArrayBuffer);
             } else {
-                var newTriangles = this._buffer;
-                newTriangles.length = 0;
+                var newTriangles = [];
                 var newArrayBuffer = new ArrayBuffer(TriangleLength * this._bufferCapacity);
 
                 for(var i = 0; i < this._buffer.length;i++){
@@ -630,9 +629,13 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
         var b = {vertices: {x: pos.x - radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: -1.0, v: 1.0}};
         var c = {vertices: {x: pos.x + radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: 1.0, v: 1.0}};
         var d = {vertices: {x: pos.x + radius, y: pos.y - radius}, colors: c4bColor, texCoords: {u: 1.0, v: -1.0}};
+
+        this._ensureCapacity(2 * 3);
+
         this._buffer.push(new cc.V2F_C4B_T2F_Triangle(a, b, c, this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
         this._buffer.push(new cc.V2F_C4B_T2F_Triangle(a, c, d, this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
         this._dirty = true;
+
     },
 
     /**
