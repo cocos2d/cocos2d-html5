@@ -1,4 +1,32 @@
-cc.SP_VERTEX_INDEX = {
+/****************************************************************************
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2014 Shengxiang Chen (Nero Chan)
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
+var sp = sp || {};
+
+sp.VERTEX_INDEX = {
     X1: 0,
     Y1: 1,
     X2: 2,
@@ -9,13 +37,13 @@ cc.SP_VERTEX_INDEX = {
     Y4: 7
 };
 
-cc.SP_ATTACHMENT_TYPE = {
+sp.ATTACHMENT_TYPE = {
     REGION: 0,
     REGION_SEQUENCE: 1,
     BOUNDING_BOX: 2
 };
 
-cc.Skeleton = cc.NodeRGBA.extend({
+sp.Skeleton = cc.NodeRGBA.extend({
     _skeleton: null,
     _rootBone: null,
     _timeScale: 1,
@@ -30,11 +58,12 @@ cc.Skeleton = cc.NodeRGBA.extend({
         this._blendFunc = {src: cc.BLEND_SRC, dst: cc.BLEND_DST};
     },
     init: function () {
-        this._super();
+        cc.Node.prototype.init.call(this);
+        this.setOpacityModifyRGB(true);
         this._blendFunc.src = gl.ONE;
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-        this.setOpacityModifyRGB(true);
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        if(cc.renderContextType === cc.WEBGL)
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
         this.scheduleUpdate();
     },
     setDebugSolots:function(v){
@@ -54,14 +83,12 @@ cc.Skeleton = cc.NodeRGBA.extend({
             skeletonData, atlas, scale, ownsSkeletonData;
 
         var fileUtils = cc.FileUtils.getInstance();
-
         if (typeof argSkeletonFile == 'string') {
             if (typeof argAtlasFile == 'string') {
                 var data = fileUtils.getTextFileData(argAtlasFile);
-                cc._spAtlasLoader.setAtlasFile(argAtlasFile);
-                atlas = new spine.Atlas(data, cc._spAtlasLoader);
-            }
-            else {
+                sp._atlasLoader.setAtlasFile(argAtlasFile);
+                atlas = new spine.Atlas(data, sp._atlasLoader);
+            } else {
                 atlas = arguments[1];
             }
             scale = arguments[2] || 1 / cc.Director.getInstance().getContentScaleFactor();
@@ -74,42 +101,29 @@ cc.Skeleton = cc.NodeRGBA.extend({
             skeletonData = skeletonJsonReader.readSkeletonData(skeletonJson);
             atlas.dispose(skeletonJsonReader);
             ownsSkeletonData = true;
-        }
-        else {
+        } else {
             skeletonData = arguments[0];
             ownsSkeletonData = arguments[1];
         }
-
         this.setSkeletonData(skeletonData, ownsSkeletonData);
-
         this.init();
     },
+
     boundingBox: function () {
         var minX = cc.FLT_MAX, minY = cc.FLT_MAX, maxX = cc.FLT_MIN, maxY = cc.FLT_MIN;
         var scaleX = this.getScaleX(), scaleY = this.getScaleY(), vertices = [],
-            slots = this._skeleton.slots, VERTEX = cc.SP_VERTEX_INDEX;
+            slots = this._skeleton.slots, VERTEX = sp.VERTEX_INDEX;
 
         for (var i = 0, slotCount = slots.length; i < slotCount; ++i) {
             var slot = slots[i];
-            if (!slot.attachment || slot.attachment.type != cc.SP_ATTACHMENT_TYPE.REGION) continue;
+            if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
+                continue;
             var attachment = slot.attachment;
-            attachment.computeWorldVertices(slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
-            minX = min(minX, vertices[VERTEX.X1] * scaleX);
-            minY = min(minY, vertices[VERTEX.Y1] * scaleY);
-            maxX = max(maxX, vertices[VERTEX.X1] * scaleX);
-            maxY = max(maxY, vertices[VERTEX.Y1] * scaleY);
-            minX = min(minX, vertices[VERTEX.X4] * scaleX);
-            minY = min(minY, vertices[VERTEX.Y4] * scaleY);
-            maxX = max(maxX, vertices[VERTEX.X4] * scaleX);
-            maxY = max(maxY, vertices[VERTEX.Y4] * scaleY);
-            minX = min(minX, vertices[VERTEX.X2] * scaleX);
-            minY = min(minY, vertices[VERTEX.Y2] * scaleY);
-            maxX = max(maxX, vertices[VERTEX.X2] * scaleX);
-            maxY = max(maxY, vertices[VERTEX.Y2] * scaleY);
-            minX = min(minX, vertices[VERTEX.X3] * scaleX);
-            minY = min(minY, vertices[VERTEX.Y3] * scaleY);
-            maxX = max(maxX, vertices[VERTEX.X3] * scaleX);
-            maxY = max(maxY, vertices[VERTEX.Y3] * scaleY);
+            sp.regionAttachment_computeWorldVertices(attachment, slot.skeleton.x, slot.skeleton.y, slot.bone, vertices);
+            minX = Math.min(minX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
+            minY = Math.min(minY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
+            maxX = Math.max(maxX, vertices[VERTEX.X1] * scaleX, vertices[VERTEX.X4] * scaleX, vertices[VERTEX.X2] * scaleX, vertices[VERTEX.X3] * scaleX);
+            maxY = Math.max(maxY, vertices[VERTEX.Y1] * scaleY, vertices[VERTEX.Y4] * scaleY, vertices[VERTEX.Y2] * scaleY, vertices[VERTEX.Y3] * scaleY);
         }
         var position = this.getPosition();
         return cc.rect(position.x + minX, position.y + minY, maxX - minX, maxY - minY);
@@ -151,7 +165,24 @@ cc.Skeleton = cc.NodeRGBA.extend({
         this._skeleton = new spine.Skeleton(skeletonData);
         this._rootBone = this._skeleton.getRootBone();
         this._ownsSkeletonData = ownsSkeletonData;
+
+        if(cc.renderContextType === cc.CANVAS){
+            var locSkeleton = this._skeleton, rendererObject, rect;
+            for (var i = 0, n = locSkeleton.drawOrder.length; i < n; i++) {
+                var slot = locSkeleton.drawOrder[i];
+                var attachment = slot.attachment;
+                if (!(attachment instanceof spine.RegionAttachment)) {
+                    continue;
+                }
+                rendererObject = attachment.rendererObject;
+                rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
+                var sprite = cc.Sprite.createWithTexture(rendererObject.page._texture, rect, rendererObject.rotate);
+                this.addChild(sprite,-1);
+                slot.currentSprite = sprite;
+            }
+        }
     },
+
     getTextureAtlas: function (regionAttachment) {
         return regionAttachment.rendererObject.page.rendererObject;
     },
@@ -164,31 +195,85 @@ cc.Skeleton = cc.NodeRGBA.extend({
 
     update: function (dt) {
         this._skeleton.update(dt);
+
+        if (cc.renderContextType === cc.CANVAS) {
+            var color = this.getColor(), locSkeleton = this._skeleton;
+            locSkeleton.updateWorldTransform();
+            locSkeleton.r = color.r / 255;
+            locSkeleton.g = color.g / 255;
+            locSkeleton.b = color.b / 255;
+            locSkeleton.a = this.getOpacity() / 255;
+            if (this._premultipliedAlpha) {
+                locSkeleton.r *= locSkeleton.a;
+                locSkeleton.g *= locSkeleton.a;
+                locSkeleton.b *= locSkeleton.a;
+            }
+            var drawOrder = this._skeleton.drawOrder, r, g, b, a, normalizedAlpha;
+            for (var i = 0, n = drawOrder.length; i < n; i++) {
+                var slot = drawOrder[i];
+                var attachment = slot.attachment, selSprite = slot.currentSprite;
+                if (!(attachment instanceof spine.RegionAttachment)) {
+                    if(selSprite)
+                        selSprite.setVisible(false);
+                    continue;
+                }
+                if(!selSprite){
+                    var rendererObject = attachment.rendererObject;
+                    var rect = cc.rect(rendererObject.x, rendererObject.y, rendererObject.width,rendererObject.height);
+                    var sprite = cc.Sprite.createWithTexture(rendererObject.page._texture, rect, rendererObject.rotate);
+                    this.addChild(sprite,-1);
+                    slot.currentSprite = sprite;
+                }
+                selSprite.setVisible(true);
+                //update color and blendFunc
+                selSprite.setBlendFunc(cc.BLEND_SRC, slot.data.additiveBlending ? gl.ONE : cc.BLEND_DST);
+
+                r = slot.skeleton.r * slot.r * 255;
+                g = slot.skeleton.g * slot.g * 255;
+                b = slot.skeleton.b * slot.b * 255;
+                normalizedAlpha = slot.skeleton.a * slot.a;
+                if (this._premultipliedAlpha) {
+                    r *= normalizedAlpha;
+                    g *= normalizedAlpha;
+                    b *= normalizedAlpha;
+                }
+                selSprite.setColor(cc.c3b(r,g,b));
+                a = normalizedAlpha * 255;
+                selSprite.setOpacity(a);
+
+                var bone = slot.bone;
+                selSprite.setPosition(bone.worldX + attachment.x * bone.m00 + attachment.y * bone.m01,
+                    bone.worldY + attachment.x * bone.m10 + attachment.y * bone.m11);
+                selSprite.setScale(bone.worldScaleX, bone.worldScaleY);
+                selSprite.setRotation(- (slot.bone.worldRotation + attachment.rotation));
+            }
+        }
     },
-    draw: function (ctx) {
+
+    draw: null,
+
+    _drawForWebGL: function () {
         cc.NODE_DRAW_SETUP(this);
 //        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        var color = this.getColor();
-        this._skeleton.r = color.r / 255;
-        this._skeleton.g = color.g / 255;
-        this._skeleton.b = color.b / 255;
-        this._skeleton.a = this.getOpacity() / 255;
+        var color = this.getColor(), locSkeleton = this._skeleton;
+        locSkeleton.r = color.r / 255;
+        locSkeleton.g = color.g / 255;
+        locSkeleton.b = color.b / 255;
+        locSkeleton.a = this.getOpacity() / 255;
         if (this._premultipliedAlpha) {
-            this._skeleton.r *= this._skeleton.a;
-            this._skeleton.g *= this._skeleton.a;
-            this._skeleton.b *= this._skeleton.a;
+            locSkeleton.r *= locSkeleton.a;
+            locSkeleton.g *= locSkeleton.a;
+            locSkeleton.b *= locSkeleton.a;
         }
 
         var additive,textureAtlas,attachment,slot, i, n,
             quad = new cc.V3F_C4B_T2F_Quad();
-            quad.tl.vertices.z = 0;
-            quad.tr.vertices.z = 0;
-            quad.bl.vertices.z = 0;
-            quad.br.vertices.z = 0;
+        var locBlendFunc = this._blendFunc;
 
-        for (i = 0, n = this._skeleton.slots.length; i < n; i++) {
-            slot = this._skeleton.drawOrder[i];
-            if (!slot.attachment || slot.attachment.type != cc.SP_ATTACHMENT_TYPE.REGION) continue;
+        for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
+            slot = locSkeleton.drawOrder[i];
+            if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
+                continue;
             attachment = slot.attachment;
             var regionTextureAtlas = this.getTextureAtlas(attachment);
 
@@ -198,7 +283,7 @@ cc.Skeleton = cc.NodeRGBA.extend({
                     textureAtlas.removeAllQuads();
                 }
                 additive = !additive;
-//                cc.glBlendFunc(this._blendFunc.src, additive ? gl.ONE : this._blendFunc.dst);
+                cc.glBlendFunc(locBlendFunc.src, additive ? gl.ONE : locBlendFunc.dst);
             } else if (regionTextureAtlas != textureAtlas && textureAtlas) {
                 textureAtlas.drawQuads();
                 textureAtlas.removeAllQuads();
@@ -209,10 +294,11 @@ cc.Skeleton = cc.NodeRGBA.extend({
             if (textureAtlas.getCapacity() == quadCount) {
                 textureAtlas.drawQuads();
                 textureAtlas.removeAllQuads();
-                if (!textureAtlas.resizeCapacity(textureAtlas.getCapacity() * 2)) return;
+                if (!textureAtlas.resizeCapacity(textureAtlas.getCapacity() * 2))
+                    return;
             }
 
-            cc._spRegionAttachment_updateQuad(attachment, slot, quad, this._premultipliedAlpha);
+            sp._regionAttachment_updateQuad(attachment, slot, quad, this._premultipliedAlpha);
             textureAtlas.updateQuad(quad, quadCount);
         }
 
@@ -226,14 +312,14 @@ cc.Skeleton = cc.NodeRGBA.extend({
             // Slots.
             drawingUtil.setDrawColor4B(0, 0, 255, 255);
             drawingUtil.setLineWidth(1);
-            var i,n,slot,quad,attachment;
 
-            for (i = 0, n = this._skeleton.slots.length; i < n; i++) {
-                slot = this._skeleton.drawOrder[i];
-                if (!slot.attachment || slot.attachment.type != cc.SP_ATTACHMENT_TYPE.REGION) continue;
+            for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
+                slot = locSkeleton.drawOrder[i];
+                if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
+                    continue;
                 attachment = slot.attachment;
                 quad = new cc.V3F_C4B_T2F_Quad();
-                cc._spRegionAttachment_updateQuad(attachment, slot, quad);
+                sp._regionAttachment_updateQuad(attachment, slot, quad);
 
                 var points = [];
                 points.push(cc.p(quad.bl.vertices.x, quad.bl.vertices.y));
@@ -246,12 +332,12 @@ cc.Skeleton = cc.NodeRGBA.extend({
 
         if (this._debugBones) {
             // Bone lengths.
-            var bone, i,n;
+            var bone;
             drawingUtil.setLineWidth(2);
             drawingUtil.setDrawColor4B(255, 0, 0, 255);
 
-            for (i = 0, n = this._skeleton.bones.length; i < n; i++) {
-                bone = this._skeleton.bones[i];
+            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
+                bone = locSkeleton.bones[i];
                 var x = bone.data.length * bone.m00 + bone.worldX;
                 var y = bone.data.length * bone.m10 + bone.worldY;
                 drawingUtil.drawLine(cc.p(bone.worldX, bone.worldY), cc.p(x, y));
@@ -261,25 +347,79 @@ cc.Skeleton = cc.NodeRGBA.extend({
             drawingUtil.setPointSize(4);
             drawingUtil.setDrawColor4B(0, 0, 255, 255); // Root bone is blue.
 
-            for (i = 0, n = this._skeleton.bones.length; i < n; i++) {
-                bone = this._skeleton.bones[i];
+            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
+                bone = locSkeleton.bones[i];
                 drawingUtil.drawPoint(cc.p(bone.worldX, bone.worldY));
                 if (i == 0) {
                     drawingUtil.setDrawColor4B(0, 255, 0, 255);
                 }
             }
         }
+    },
+
+    _drawForCanvas: function (ctx) {
+        if(!this._debugSlots && !this._debugBones){
+            return;
+        }
+        var locSkeleton = this._skeleton;
+        var attachment,slot, i, n, quad, drawingUtil = cc.drawingUtil;
+        if (this._debugSlots) {
+            // Slots.
+            drawingUtil.setDrawColor4B(0, 0, 255, 255);
+            drawingUtil.setLineWidth(1);
+
+            var points = [];
+            for (i = 0, n = locSkeleton.slots.length; i < n; i++) {
+                slot = locSkeleton.drawOrder[i];
+                if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
+                    continue;
+                attachment = slot.attachment;
+                sp._regionAttachment_updateSlotForCanvas(attachment, slot, points);
+                drawingUtil.drawPoly(points, 4, true);
+            }
+        }
+
+        if (this._debugBones) {
+            // Bone lengths.
+            var bone;
+            drawingUtil.setLineWidth(2);
+            drawingUtil.setDrawColor4B(255, 0, 0, 255);
+
+            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
+                bone = locSkeleton.bones[i];
+                var x = bone.data.length * bone.m00 + bone.worldX;
+                var y = bone.data.length * bone.m10 + bone.worldY;
+                drawingUtil.drawLine(cc.p(bone.worldX, bone.worldY), cc.p(x, y));
+            }
+
+            // Bone origins.
+            drawingUtil.setPointSize(4);
+            drawingUtil.setDrawColor4B(0, 0, 255, 255); // Root bone is blue.
+
+            for (i = 0, n = locSkeleton.bones.length; i < n; i++) {
+                bone = locSkeleton.bones[i];
+                drawingUtil.drawPoint(cc.p(bone.worldX, bone.worldY));
+                if (i === 0)
+                    drawingUtil.setDrawColor4B(0, 255, 0, 255);
+            }
+        }
     }
 });
 
-cc.Skeleton.createWithData = function (skeletonData, ownsSkeletonData) {
-    var c = new cc.Skeleton();
+if(cc.Browser.supportWebGL){
+    sp.Skeleton.prototype.draw = sp.Skeleton.prototype._drawForWebGL;
+}else{
+    sp.Skeleton.prototype.draw = sp.Skeleton.prototype._drawForCanvas;
+}
+
+sp.Skeleton.createWithData = function (skeletonData, ownsSkeletonData) {
+    var c = new sp.Skeleton();
     c.initWithArgs.apply(c, arguments);
     return c;
 };
 
-cc.Skeleton.createWithFile = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
-    var c = new cc.Skeleton();
+sp.Skeleton.createWithFile = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
+    var c = new sp.Skeleton();
     c.initWithArgs.apply(c, arguments);
     return c;
 };
