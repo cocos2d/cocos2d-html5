@@ -418,7 +418,7 @@ sp.Skeleton.createWithData = function (skeletonData, ownsSkeletonData) {
     return c;
 };
 
-sp.Skeleton.createWithFile = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
+sp.Skeleton.create = function (skeletonDataFile, atlasFile/* or atlas*/, scale) {
     var c = new sp.Skeleton();
     c.initWithArgs.apply(c, arguments);
     return c;
