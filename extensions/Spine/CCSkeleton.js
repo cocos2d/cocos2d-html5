@@ -374,14 +374,7 @@ sp.Skeleton = cc.NodeRGBA.extend({
                 if (!slot.attachment || slot.attachment.type != sp.ATTACHMENT_TYPE.REGION)
                     continue;
                 attachment = slot.attachment;
-                quad = new cc.V3F_C4B_T2F_Quad();
-                sp._regionAttachment_updateQuad(attachment, slot, quad);
-
-                points.length = 0;
-                points.push(cc.p(quad.bl.vertices.x, quad.bl.vertices.y));
-                points.push(cc.p(quad.br.vertices.x, quad.br.vertices.y));
-                points.push(cc.p(quad.tr.vertices.x, quad.tr.vertices.y));
-                points.push(cc.p(quad.tl.vertices.x, quad.tl.vertices.y));
+                sp._regionAttachment_updateSlotForCanvas(attachment, slot, points);
                 drawingUtil.drawPoly(points, 4, true);
             }
         }
