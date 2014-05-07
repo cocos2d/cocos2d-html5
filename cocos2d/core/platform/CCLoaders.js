@@ -28,7 +28,7 @@ cc._txtLoader = {
         cc.loader.loadTxt(realUrl, cb);
     }
 };
-cc.loader.register(["txt", "xml", "vsh", "fsh"], cc._txtLoader);
+cc.loader.register(["txt", "xml", "vsh", "fsh", "atlas"], cc._txtLoader);
 
 cc._jsonLoader = {
     load : function(realUrl, url, res, cb){

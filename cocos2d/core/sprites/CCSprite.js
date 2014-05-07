@@ -637,7 +637,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * Also, flipping the texture doesn't alter the anchorPoint.                                                    <br/>
      * If you want to flip the anchorPoint too, and/or to flip the children too use:                                <br/>
      *      sprite->setScaleX(sprite->getScaleX() * -1);  <p/>
-     * @return {Boolean} true if the sprite is flipped horizaontally, false otherwise.
+     * @return {Boolean} true if the sprite is flipped horizontally, false otherwise.
      */
     isFlippedX:function () {
         return this._flippedX;
@@ -651,7 +651,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      *      Also, flipping the texture doesn't alter the anchorPoint.                                               <br/>
      *      If you want to flip the anchorPoint too, and/or to flip the children too use:                           <br/>
      *         sprite->setScaleY(sprite->getScaleY() * -1); <p/>
-     * @return {Boolean} true if the sprite is flipped vertically, flase otherwise.
+     * @return {Boolean} true if the sprite is flipped vertically, false otherwise.
      */
     isFlippedY:function () {
         return this._flippedY;
@@ -741,10 +741,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @function
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
      * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
+     * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
      */
     ctor: null,
 
-	_softInit: function (fileName, rect) {
+	_softInit: function (fileName, rect, rotated) {
 		if (fileName === undefined)
 			cc.Sprite.prototype.init.call(this);
 		else if (typeof(fileName) === "string") {
@@ -761,7 +762,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 		else if (typeof(fileName) === "object") {
 			if (fileName instanceof cc.Texture2D) {
 				// Init  with texture and rect
-				this.initWithTexture(fileName, rect);
+				this.initWithTexture(fileName, rect, rotated);
 			} else if (fileName instanceof cc.SpriteFrame) {
 				// Init with a sprite frame
 				this.initWithSpriteFrame(fileName);
@@ -1115,6 +1116,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
  * @constructs
  * @param {String|cc.SpriteFrame|HTMLImageElement|cc.Texture2D} fileName  The string which indicates a path to image file, e.g., "scene1/monster.png".
  * @param {cc.Rect} rect  Only the contents inside rect of pszFileName's texture will be applied for this sprite.
+ * @param {Boolean} [rotated] Whether or not the texture rectangle is rotated.
  * @return {cc.Sprite} A valid sprite object
  * @example
  *
@@ -1136,8 +1138,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
  * var sprite2 = cc.Sprite.create(texture, cc.rect(0,0,480,320));
  *
  */
-cc.Sprite.create = function (fileName, rect) {
-    return new cc.Sprite(fileName, rect);
+cc.Sprite.create = function (fileName, rect, rotated) {
+    return new cc.Sprite(fileName, rect, rotated);
 };
 
 
@@ -1150,7 +1152,6 @@ cc.Sprite.INDEX_NOT_INITIALIZED = -1;
 
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     var _p = cc.Sprite.prototype;
 
     _p._spriteFrameLoadedCallback = function(spriteFrame){
@@ -1176,7 +1177,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._setNodeDirtyForCache();
     };
 
-    _p.ctor = function (fileName, rect) {
+    _p.ctor = function (fileName, rect, rotated) {
         var self = this;
         cc.NodeRGBA.prototype.ctor.call(self);
         self._shouldBeHidden = false;
@@ -1190,7 +1191,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         self._textureRect_Canvas = {x: 0, y: 0, width: 0, height:0, validRect: false};
         self._drawSize_Canvas = cc.size(0, 0);
 
-        self._softInit(fileName, rect);
+        self._softInit(fileName, rect, rotated);
     };
 
     _p.setBlendFunc = function (src, dst) {
@@ -1240,12 +1241,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.initWithTexture = function (texture, rect, rotated) {
         var _t = this;
-        var argnum = arguments.length;
-
-        cc.assert(argnum != 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
+        cc.assert(arguments.length != 0, cc._LogInfos.CCSpriteBatchNode_initWithTexture);
 
         rotated = rotated || false;
-
 
         if (rotated && texture.isLoaded()) {
             var tempElement = texture.getHtmlElementObj();
@@ -1262,7 +1260,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return false;
 
         _t._batchNode = null;
-
         _t._recursiveDirty = false;
         _t.dirty = false;
         _t._opacityModifyRGB = true;
@@ -1301,17 +1298,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
 
         if(texture) {
-            var _x, _y;
-
-            _x = rect.x + rect.width;
-            _y = rect.y + rect.height;
-
+            var _x = rect.x + rect.width, _y = rect.y + rect.height;
             cc.assert(_x <= texture.width, 'Rect width exceeds maximum margin: %s', texture.url);
             cc.assert(_y <= texture.height, 'Rect height exceeds the maximum margin: %s', texture.url);
         }
-
         _t._originalTexture = texture;
-
         _t.texture = texture;
         _t.setTextureRect(rect, rotated);
 
