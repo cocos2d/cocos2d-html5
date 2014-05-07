@@ -364,11 +364,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             this._quadsArrayBuffer = null;
         }
 
-        if (!plistFile || typeof(plistFile) === "number") {
-            var ton = plistFile || 100;
+        if (typeof(plistFile) === "number") {
+            var ton = plistFile;
             this.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
             this.initWithTotalParticles(ton);
-        }else{
+        } else if (plistFile) {
             this.initWithFile(plistFile);
         }
     },
