@@ -363,8 +363,14 @@
 
             "extensions/pluginx/plugins/AnalyticsFlurry.js"
         ],
-        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "pluginx"],
+        "spine":[
+            "core",
 
+            "extensions/spine/Spine.js",
+            "extensions/spine/CCSkeleton.js",
+            "extensions/spine/CCSkeletonAnimation.js"
+        ],
+        "extensions" : ["gui", "ccbreader", "editbox", "cocostudio", "pluginx", "spine"],
 
         "box2d" : [
             "core", "physics",
@@ -377,7 +383,6 @@
             "external/chipmunk/chipmunk.js"
         ],
         "socketio" : [
-
             "external/socketio/socket.io.min.js"
         ],
         "external" : ["box2d", "chipmunk", "socketio"]

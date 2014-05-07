@@ -542,9 +542,6 @@ cc.loader = {
      * @param {!string} url
      * @param {object} [option]
      * @param {function} cb
-     * @param {string} url
-     * @param {object} [option]
-     * @param {function} [cb]
      * @returns {Image}
      */
     loadImg: function (url, option, cb) {

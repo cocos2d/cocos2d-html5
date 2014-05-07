@@ -47,7 +47,7 @@ _tmp.WebGLSprite = function () {
         this.updateColor();
     };
 
-    _p.ctor = function (fileName, rect) {
+    _p.ctor = function (fileName, rect, rotated) {
         var self = this;
         cc.NodeRGBA.prototype.ctor.call(self);
         self._shouldBeHidden = false;
@@ -62,7 +62,7 @@ _tmp.WebGLSprite = function () {
 
         self._textureLoaded = true;
 
-        self._softInit(fileName, rect);
+        self._softInit(fileName, rect, rotated);
     };
 
     _p.setBlendFunc = function (src, dst) {

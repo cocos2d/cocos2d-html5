@@ -2117,7 +2117,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
 
                     // color
-                    if (!this._dontTint) {
+                    if (!this._dontTint || cc._renderType === cc._RENDER_TYPE_CANVAS) {
                         selParticle.color.r += (selParticle.deltaColor.r * dt);
                         selParticle.color.g += (selParticle.deltaColor.g * dt);
                         selParticle.color.b += (selParticle.deltaColor.b * dt);
@@ -2344,7 +2344,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 retParticle._opacityModifyRGB = this._opacityModifyRGB;
 
                 // texture
-                retParticle._texture = this._texture;
+                this.setTextureWithRect(this._texture,this._pointRect);
             }
         }
         return retParticle;
