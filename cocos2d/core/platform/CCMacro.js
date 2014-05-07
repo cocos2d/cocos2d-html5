@@ -47,6 +47,12 @@ cc.FLT_MAX = parseFloat('3.402823466e+38F');
  * @constant
  * @type Number
  */
+cc.FLT_MIN = parseFloat("1.175494351e-38F");
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.RAD = cc.PI / 180;
 
 /**

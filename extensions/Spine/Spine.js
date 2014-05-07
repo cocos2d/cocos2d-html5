@@ -17,7 +17,7 @@
  * this license and terms. THIS SOFTWARE IS PROVIDED BY ESOTERIC SOFTWARE
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTARE BE LIABLE FOR ANY
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ESOTERIC SOFTWARE BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
@@ -26,7 +26,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-var spine = {};
+var spine = spine || {};
 
 spine.BoneData = function (name, parent) {
     this.name = name;
@@ -1465,7 +1465,6 @@ spine.Atlas = function (atlasText, textureLoader) {
             textureLoader.load(page, line, this);
 
             this.pages.push(page);
-
         } else {
             var region = new spine.AtlasRegion();
             region.name = line;
@@ -1549,23 +1548,23 @@ spine.Atlas.prototype = {
 };
 
 spine.Atlas.Format = {
-    alpha: 0,
-    intensity: 1,
-    luminanceAlpha: 2,
-    rgb565: 3,
-    rgba4444: 4,
-    rgb888: 5,
-    rgba8888: 6
+    Alpha: 0,
+    Intensity: 1,
+    LuminanceAlpha: 2,
+    RGB565: 3,
+    RGBA4444: 4,
+    RGB888: 5,
+    RGBA8888: 6
 };
 
 spine.Atlas.TextureFilter = {
-    nearest: 0,
-    linear: 1,
-    mipMap: 2,
-    mipMapNearestNearest: 3,
-    mipMapLinearNearest: 4,
-    mipMapNearestLinear: 5,
-    mipMapLinearLinear: 6
+    Nearest: 0,
+    Linear: 1,
+    MipMap: 2,
+    MipMapNearestNearest: 3,
+    MipMapLinearNearest: 4,
+    MipMapNearestLinear: 5,
+    MipMapLinearLinear: 6
 };
 
 spine.Atlas.TextureWrap = {

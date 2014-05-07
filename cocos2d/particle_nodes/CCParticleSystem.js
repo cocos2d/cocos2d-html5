@@ -2093,7 +2093,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
 
         if (this._visible) {
-
             // Used to reduce memory allocation / creation within the loop
             var tpa = cc.Particle.TemporaryPoints[1],
                 tpb = cc.Particle.TemporaryPoints[2],
@@ -2142,11 +2141,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         cc.pMultIn(tmp, dt);
                         cc.pAddIn(selParticle.modeA.dir, tmp);
 
-
                         cc.pIn(tmp, selParticle.modeA.dir);
                         cc.pMultIn(tmp, dt);
                         cc.pAddIn(selParticle.pos, tmp);
-
                     } else {
                         // Mode B: radius movement
                         var selModeB = selParticle.modeB;
@@ -2159,7 +2156,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
 
                     // color
-                    if (!this._dontTint) {
+                    if ((!this._dontTint) || cc.renderContextType === cc.WEBGL) {
                         selParticle.color.r += (selParticle.deltaColor.r * dt);
                         selParticle.color.g += (selParticle.deltaColor.g * dt);
                         selParticle.color.b += (selParticle.deltaColor.b * dt);
@@ -2385,7 +2382,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 retParticle._opacityModifyRGB = this._opacityModifyRGB;
 
                 // texture
-                retParticle._texture = this._texture;
+                //retParticle._texture = this._texture;
+                this.setTextureWithRect(this._texture,this._pointRect);
             }
         }
         return retParticle;
