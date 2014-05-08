@@ -147,23 +147,34 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {Boolean} [swallow=true] if the event listener will swallow touch after been triggered
      */
     setTouchEnabled:function (enabled, swallow) {
-        var swallowTemp = (swallow === false ? false : true);
-        if(this._isTouchEnabled === enabled && this._swallowTouch === swallowTemp){
+        swallow = (swallow === false ? false : true);
+        enabled = (enabled ? true : false);
+        if (this._isTouchEnabled == enabled && this._swallowTouch == swallow){
             return;
         }
 
-        this._swallowTouch = swallowTemp;
-        if (this._running) {
-            if (enabled) {
-                if(this._isTouchEnabled)
-                    cc.unregisterTouchDelegate(this);
-                else this._isTouchEnabled = true;
+        var needRegister = false;
+        if (this._swallowTouch != swallow) {
+            this._swallowTouch = swallow;
+            needRegister = true;
+        }
 
-                this.registerWithTouchDispatcher();
-            } else {
-                this._isTouchEnabled = false;
-                cc.unregisterTouchDelegate(this);
+        if (this._isTouchEnabled != enabled) {
+            if (this._running) {
+                if (enabled) {
+                    needRegister = true;
+                }
+                else {
+                    needRegister = false;
+                    cc.unregisterTouchDelegate(this);
+                }
             }
+            this._isTouchEnabled = enabled;
+        }
+
+        if (needRegister) {
+            cc.unregisterTouchDelegate(this);
+            this.registerWithTouchDispatcher();
         }
     },
 
