@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -273,5 +273,3 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
 cc.Camera.getZEye = function () {
     return cc.FLT_EPSILON;
 };
-
-//cc.CONTENT_SCALE_FACTOR = cc.director.getContentScaleFactor();

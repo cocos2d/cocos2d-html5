@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -23,40 +23,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-// ------------------- vertex attrib flags -----------------------------
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_NONE = 0;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_POSITION = 1 << 0;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_TEX_COORDS = 1 << 2;
-/**
- * @constant
- * @type {Number}
- */
-cc.VERTEX_ATTRIB_FLAG_POS_COLOR_TEX = ( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEX_COORDS );
-
-/**
- * GL server side states
- * @constant
- * @type {Number}
- */
-cc.GL_ALL = 0;
 
 cc._currentProjectionMatrix = -1;
 cc._vertexAttribPosition = false;

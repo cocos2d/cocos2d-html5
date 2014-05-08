@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -62,7 +63,7 @@ cc.BatchNode = cc.Node.extend({
     },
 
     draw:function (ctx) {
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
         var child = null;
         for (var i = 0; i < this._children.length; i++) {
             child = this._children[i];

@@ -1,5 +1,8 @@
 /**
- * Copyright (c) 2012 cocos2d-x.org
+ * Copyright (c) 2008-2010 Ricardo Quesada
+ * Copyright (c) 2011-2012 cocos2d-x.org
+ * Copyright (c) 2013-2014 Chukong Technologies Inc.
+ *
  * http://www.cocos2d-x.org
  *
  * Copyright 2012 Yannick Loriot. All rights reserved.
@@ -337,7 +340,7 @@ cc.ControlStepper = cc.Control.extend(/** @lends cc.ControlStepper# */{
     }
 });
 
-window._p = cc.ControlStepper.prototype;
+var _p = cc.ControlStepper.prototype;
 
 // Extedned properties
 /** @expose */
@@ -371,7 +374,7 @@ cc.defineGetterSetter(_p, "minusLabel", _p.getMinusLabel, _p.setMinusLabel);
 _p.plusLabel;
 cc.defineGetterSetter(_p, "plusLabel", _p.getPlusLabel, _p.setPlusLabel);
 
-delete window._p;
+_p = null;
 
 cc.ControlStepper.create = function (minusSprite, plusSprite) {
     var pRet = new cc.ControlStepper();

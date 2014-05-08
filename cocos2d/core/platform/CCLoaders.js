@@ -1,7 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -29,7 +28,7 @@ cc._txtLoader = {
         cc.loader.loadTxt(realUrl, cb);
     }
 };
-cc.loader.register(["txt", "xml", "vsh", "fsh"], cc._txtLoader);
+cc.loader.register(["txt", "xml", "vsh", "fsh", "atlas"], cc._txtLoader);
 
 cc._jsonLoader = {
     load : function(realUrl, url, res, cb){
@@ -80,7 +79,7 @@ cc._fontLoader = {
         "svg" : "svg"
     },
     _loadFont : function(name, srcs, type){
-        var doc = document, path = cc.path, TYPE = this.TYPE, fontStyle = doc.createElement("style");
+        var doc = document, path = cc.path, TYPE = this.TYPE, fontStyle = cc.newElement("style");
         fontStyle.type = "text/css";
         doc.body.appendChild(fontStyle);
 
@@ -98,12 +97,13 @@ cc._fontLoader = {
         fontStyle.textContent += fontStr + "};";
 
         //<div style="font-family: PressStart;">.</div>
-        var preloadDiv = document.createElement("div");
-        preloadDiv.style.fontFamily = name;
+        var preloadDiv = cc.newElement("div");
+        var _divStyle =  preloadDiv.style;
+        _divStyle.fontFamily = name;
         preloadDiv.innerHTML = ".";
-        preloadDiv.style.position = "absolute";
-        preloadDiv.style.left = "-100px";
-        preloadDiv.style.top = "-100px";
+        _divStyle.position = "absolute";
+        _divStyle.left = "-100px";
+        _divStyle.top = "-100px";
         doc.body.appendChild(preloadDiv);
     },
     load : function(realUrl, url, res, cb){

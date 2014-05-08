@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -254,10 +254,17 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
     _speed:0.0,
     _innerAction:null,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {cc.ActionInterval} action
+	 * @param {Number} speed
+	 */
+    ctor:function (action, speed) {
         cc.Action.prototype.ctor.call(this);
         this._speed = 0;
         this._innerAction = null;
+
+		action && this.initWithAction(action, speed);
     },
 
     /**
@@ -360,10 +367,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
  * @return {cc.Speed}
  */
 cc.Speed.create = function (action, speed) {
-    var ret = new cc.Speed();
-    if (ret && ret.initWithAction(action, speed))
-        return ret;
-    return null;
+    return new cc.Speed(action, speed);
 };
 
 /**
@@ -406,7 +410,26 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
     bottomBoundary:0.0,
     _worldRect:null,
 
-    ctor:function () {
+	/**
+	 * creates the action with a set boundary <br/>
+	 * creates the action with no boundary set
+	 *
+	 * @constructor
+	 * @param {cc.Node} followedNode
+	 * @param {cc.Rect} rect
+	 * @example
+	 * // example
+	 * // creates the action with a set boundary
+	 * var sprite = new cc.Sprite("spriteFileName");
+	 * var followAction = new cc.Follow(sprite, cc.rect(0, 0, s.width * 2 - 100, s.height));
+	 * this.runAction(followAction);
+	 *
+	 * // creates the action with no boundary set
+	 * var sprite = new cc.Sprite("spriteFileName");
+	 * var followAction = new cc.Follow(sprite);
+	 * this.runAction(followAction);
+	 */
+    ctor:function (followedNode, rect) {
         cc.Action.prototype.ctor.call(this);
         this._followedNode = null;
         this._boundarySet = false;
@@ -420,6 +443,10 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         this.topBoundary = 0.0;
         this.bottomBoundary = 0.0;
         this._worldRect = cc.rect(0, 0, 0, 0);
+
+		if(followedNode)
+			rect ? this.initWithTarget(followedNode, rect)
+				 : this.initWithTarget(followedNode);
     },
 
     clone:function () {
@@ -543,11 +570,5 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * this.runAction(followAction);
  */
 cc.Follow.create = function (followedNode, rect) {
-    rect = rect || cc.rect(0, 0, 0, 0);
-    var ret = new cc.Follow();
-    if (rect != null && ret && ret.initWithTarget(followedNode, rect))
-        return ret;
-    else if (ret && ret.initWithTarget(followedNode))
-        return ret;
-    return null;
+    return new cc.Follow(followedNode, rect);
 };

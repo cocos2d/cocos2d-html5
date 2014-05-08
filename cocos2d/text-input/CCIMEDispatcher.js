@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -169,10 +169,10 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
         }
         var selfPointer = this;
         //add event listener
-        this._domInputControl.addEventListener("input", function () {
+        cc._addEventListener(this._domInputControl, "input", function () {
             selfPointer._processDomInputString(selfPointer._domInputControl.value);
         }, false);
-        this._domInputControl.addEventListener("keydown", function (e) {
+        cc._addEventListener(this._domInputControl, "keydown", function (e) {
             // ignore tab key
             if (e.keyCode === cc.KEY.tab) {
                 e.stopPropagation();
@@ -185,14 +185,14 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.imeDispatcher# */{
         }, false);
 
         if (/msie/i.test(navigator.userAgent)) {
-            this._domInputControl.addEventListener("keyup", function (e) {
+            cc._addEventListener(this._domInputControl, "keyup", function (e) {
                 if (e.keyCode == cc.KEY.backspace) {
                     selfPointer._processDomInputString(selfPointer._domInputControl.value);
                 }
             }, false);
         }
 
-        window.addEventListener('mousedown', function (event) {
+        cc._addEventListener(window, 'mousedown', function (event) {
             var tx = event.pageX || 0;
             var ty = event.pageY || 0;
 
@@ -515,4 +515,9 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
 
 // Initialize imeDispatcher singleton
 cc.imeDispatcher = new cc.IMEDispatcher();
-cc.imeDispatcher.init();
+
+document.body ?
+    cc.imeDispatcher.init() :
+    cc._addEventListener(window, 'load', function () {
+        cc.imeDispatcher.init();
+    }, false);

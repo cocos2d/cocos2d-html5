@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -115,7 +115,7 @@ cc.screen = /** @lends cc.screen# */{
 		    if (this._preOnFullScreenChange)
 			    document.removeEventListener(eventName, this._preOnFullScreenChange);
 		    this._preOnFullScreenChange = onFullScreenChange;
-		    document.addEventListener(eventName, onFullScreenChange, false);
+            cc._addEventListener(document, eventName, onFullScreenChange, false);
 	    }
 
         return element[ this._fn.requestFullscreen ]();
@@ -143,7 +143,7 @@ cc.screen = /** @lends cc.screen# */{
             touchTarget.removeEventListener(theScreen._touchEvent, callback);
         }
         this.requestFullScreen(element, onFullScreenChange);
-        touchTarget.addEventListener(this._touchEvent, callback);
+        cc._addEventListener(touchTarget, this._touchEvent, callback);
     }
 };
 cc.screen.init();

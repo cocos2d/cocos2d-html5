@@ -1,6 +1,8 @@
 /**
  *
- * Copyright (c) 2010-2012 cocos2d-x.org
+ * Copyright (c) 2008-2010 Ricardo Quesada
+ * Copyright (c) 2011-2012 cocos2d-x.org
+ * Copyright (c) 2013-2014 Chukong Technologies Inc.
  *
  * Copyright 2011 Yannick Loriot. All rights reserved.
  * http://yannickloriot.com
@@ -380,7 +382,7 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
     }
 });
 
-window._p = cc.ControlSwitchSprite.prototype;
+var _p = cc.ControlSwitchSprite.prototype;
 
 /** @expose */
 _p.sliderX;
@@ -419,4 +421,4 @@ cc.defineGetterSetter(_p, "onSideWidth", _p._getOnSideWidth);
 _p.offSideWidth;
 cc.defineGetterSetter(_p, "offSideWidth", _p._getOffSideWidth);
 
-delete window._p;
+_p = null;

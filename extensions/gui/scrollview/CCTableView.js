@@ -1,5 +1,7 @@
 /****************************************************************************
- Copyright (c) 2012 cocos2d-x.org
+ Copyright (c) 2008-2010 Ricardo Quesada
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
  Copyright (c) 2010 Sangwoo Im
 
  http://www.cocos2d-x.org
@@ -74,13 +76,13 @@ cc.TableViewCell = cc.Node.extend(/** @lends cc.TableViewCell# */{
     }
 });
 
-window._p = cc.TableViewCell.prototype;
+var _p = cc.TableViewCell.prototype;
 
 /** @expose */
 _p.objectId;
 cc.defineGetterSetter(_p, "objectId", _p.getObjectID, _p.setObjectID);
 
-delete window._p;
+_p = null;
 
 /**
  * Sole purpose of this delegate is to single touch event in this version.
@@ -319,7 +321,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
             if (this._direction == cc.SCROLLVIEW_DIRECTION_HORIZONTAL) {
                 this.setContentOffset(cc.p(0, 0));
             } else {
-                this.setContentOffset(cc.p(0, this._getMinContainerOffset().y));
+                this.setContentOffset(cc.p(0, this.minContainerOffset().y));
             }
             this._oldDirection = this._direction;
         }
@@ -678,7 +680,7 @@ cc.TableView = cc.ScrollView.extend(/** @lends cc.TableView# */{
     }
 });
 
-window._p = cc.TableView.prototype;
+var _p = cc.TableView.prototype;
 
 /** @expose */
 _p.dataSource;
@@ -690,7 +692,7 @@ cc.defineGetterSetter(_p, "delegate", _p.getDelegate, _p.setDelegate);
 _p.verticalFillOrder;
 cc.defineGetterSetter(_p, "verticalFillOrder", _p.getVerticalFillOrder, _p.setVerticalFillOrder);
 
-delete window._p;
+_p = null;
 
 /**
  * An initialized table view object

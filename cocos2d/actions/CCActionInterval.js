@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -47,10 +47,16 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
     _firstTick:false,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} d duration in seconds
+	 * @example
+	 * var actionInterval = new cc.ActionInterval(3);
+	 */
+    ctor:function (d) {
         cc.FiniteTimeAction.prototype.ctor.call(this);
-        this._elapsed = 0;
-        this._firstTick = false;
+
+		d !== undefined && this.initWithDuration(d);
     },
 
     /** how many seconds had elapsed since the actions started to run.
@@ -86,27 +92,24 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @returns {cc.ActionInterval}
      */
     clone:function () {
-        var action = new cc.ActionInterval();
-        action.initWithDuration(this._duration);
-        return action;
+        return new cc.ActionInterval(this._duration);
     },
 
     /**
      * @param {Number} dt delta time in seconds
      */
     step:function (dt) {
-        var _this = this;
-        if (_this._firstTick) {
-            _this._firstTick = false;
-            _this._elapsed = 0;
+        if (this._firstTick) {
+            this._firstTick = false;
+            this._elapsed = 0;
         } else
-            _this._elapsed += dt;
+            this._elapsed += dt;
 
         //this.update((1 > (this._elapsed / this._duration)) ? this._elapsed / this._duration : 1);
         //this.update(Math.max(0, Math.min(1, this._elapsed / Math.max(this._duration, cc.FLT_EPSILON))));
-        var t = _this._elapsed / (_this._duration > 0.0000001192092896 ? _this._duration : 0.0000001192092896);
+        var t = this._elapsed / (this._duration > 0.0000001192092896 ? this._duration : 0.0000001192092896);
         t = (1 > t ? t : 1);
-        _this.update(t > 0 ? t : 0);
+        this.update(t > 0 ? t : 0);
     },
 
     /**
@@ -137,10 +140,9 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     /**
      * @return {Number}
      */
-    getAmplitudeRate: function () {
+    getAmplitudeRate:function () {
         // Abstract class needs implementation
         cc.log("cc.ActionInterval.getAmplitudeRate(): it should be overridden in subclass.");
-        return 0;
     }
 });
 
@@ -152,9 +154,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
  * var actionInterval = cc.ActionInterval.create(3);
  */
 cc.ActionInterval.create = function (d) {
-    var action = new cc.ActionInterval();
-    action.initWithDuration(d);
-    return action;
+    return new cc.ActionInterval(d);
 };
 
 
@@ -167,14 +167,37 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     _split:null,
     _last:0,
 
-    /**
-     * Constructor
-     */
-    ctor:function () {
+	/** Create an array of sequenceable actions
+	 * @constructor
+	 * @param {Array|cc.FiniteTimeAction} tempArray
+	 * @return {cc.Sequence}
+	 * @example
+	 * // create sequence with actions
+	 * var seq = new cc.Sequence(act1, act2);
+	 *
+	 * // create sequence with array
+	 * var seq = new cc.Sequence(actArray);
+	 */
+    ctor:function (tempArray) {
         cc.ActionInterval.prototype.ctor.call(this);
         this._actions = [];
-        this._split = null;
-        this._last = 0;
+
+		var paramArray = (tempArray instanceof Array) ? tempArray : arguments;
+		var last = paramArray.length - 1;
+		if ((last >= 0) && (paramArray[last] == null))
+			cc.log("parameters should not be ending with null in Javascript");
+
+		if (last >= 0) {
+			var prev = paramArray[0], action1;
+			for (var i = 1; i < last; i++) {
+				if (paramArray[i]) {
+					action1 = prev;
+					prev = cc.Sequence.create();
+					prev.initWithTwoActions(action1, paramArray[i]);
+				}
+			}
+			this.initWithTwoActions(prev, paramArray[last]);
+		}
     },
 
     /** initializes the action <br/>
@@ -227,9 +250,8 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @param {Number} time  time in seconds
      */
     update:function (time) {
-        var _this = this;
         var new_t, found = 0;
-        var locSplit = _this._split, locActions = _this._actions, locLast = _this._last;
+        var locSplit = this._split, locActions = this._actions, locLast = this._last;
         if (time < locSplit) {
             // action[0]
             new_t = (locSplit !== 0) ? time / locSplit : 1;
@@ -249,7 +271,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 
             if (locLast === -1) {
                 // action[0] was skipped, execute it.
-                locActions[0].startWithTarget(_this.target);
+                locActions[0].startWithTarget(this.target);
                 locActions[0].update(1);
                 locActions[0].stop();
             }
@@ -266,10 +288,10 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 
         // Last action found and it is done
         if (locLast !== found)
-            locActions[found].startWithTarget(_this.target);
+            locActions[found].startWithTarget(this.target);
 
         locActions[found].update(new_t);
-        _this._last = found;
+        this._last = found;
     },
 
     /**
@@ -277,6 +299,14 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     reverse:function () {
         return cc.Sequence._actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
+    },
+
+    /**
+     * to copy object with deep copy.
+     * @return {object}
+     */
+    copy:function () {
+        return this.clone();
     }
 });
 /** helper constructor to create an array of sequenceable actions
@@ -291,14 +321,14 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
  * var seq = cc.Sequence.create(actArray);
  */
 cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
-    var paraArray = (tempArray instanceof Array) ? tempArray : arguments;
-    if ((paraArray.length > 0) && (paraArray[paraArray.length - 1] == null))
+    var paramArray = (tempArray instanceof Array) ? tempArray : arguments;
+    if ((paramArray.length > 0) && (paramArray[paramArray.length - 1] == null))
         cc.log("parameters should not be ending with null in Javascript");
 
-    var prev = paraArray[0];
-    for (var i = 1; i < paraArray.length; i++) {
-        if (paraArray[i])
-            prev = cc.Sequence._actionOneTwo(prev, paraArray[i]);
+    var prev = paramArray[0];
+    for (var i = 1; i < paramArray.length; i++) {
+        if (paramArray[i])
+            prev = cc.Sequence._actionOneTwo(prev, paramArray[i]);
     }
     return prev;
 };
@@ -315,7 +345,9 @@ cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
     return sequence;
 };
 
-/** Repeats an action a number of times.
+
+/**
+ * Repeats an action a number of times.
  * To repeat an action forever use the CCRepeatForever action.
  * @class
  * @extends cc.ActionInterval
@@ -327,14 +359,18 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     _actionInstant:false,
     _innerAction:null, //CCFiniteTimeAction
 
-    ctor:function () {
-        var _this = this;
-        cc.ActionInterval.prototype.ctor.call(_this);
-        _this._times = 0;
-        _this._total = 0;
-        _this._nextDt = 0;
-        _this._actionInstant = false;
-        _this._innerAction = null;
+	/**
+	 * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
+	 * @constructor
+	 * @param {cc.FiniteTimeAction} action
+	 * @param {Number} times
+	 * @example
+	 * var rep = new cc.Repeat(cc.Sequence.create(jump2, jump1), 5);
+	 */
+    ctor: function (action, times) {
+        cc.ActionInterval.prototype.ctor.call(this);
+
+		times !== undefined && this.initWithAction(action, times);
     },
 
     /**
@@ -388,29 +424,28 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        var _this = this;
-        var locInnerAction = _this._innerAction;
-        var locDuration = _this._duration;
-        var locTimes = _this._times;
-        var locNextDt = _this._nextDt;
+        var locInnerAction = this._innerAction;
+        var locDuration = this._duration;
+        var locTimes = this._times;
+        var locNextDt = this._nextDt;
 
         if (time >= locNextDt) {
-            while (time > locNextDt && _this._total < locTimes) {
+            while (time > locNextDt && this._total < locTimes) {
                 locInnerAction.update(1);
-                _this._total++;
+                this._total++;
                 locInnerAction.stop();
-                locInnerAction.startWithTarget(_this.target);
+                locInnerAction.startWithTarget(this.target);
                 locNextDt += locInnerAction.getDuration() / locDuration;
-                _this._nextDt = locNextDt;
+                this._nextDt = locNextDt;
             }
 
             // fix for issue #1288, incorrect end value of repeat
-            if (time >= 1.0 && _this._total < locTimes)
-                _this._total++;
+            if (time >= 1.0 && this._total < locTimes)
+                this._total++;
 
             // don't set a instantaction back or update it, it has no use because it has no duration
-            if (_this._actionInstant) {
-                if (_this._total == locTimes) {
+            if (this._actionInstant) {
+                if (this._total == locTimes) {
                     locInnerAction.update(1);
                     locInnerAction.stop();
                 } else {
@@ -453,7 +488,8 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
         return this._innerAction;
     }
 });
-/** creates a CCRepeat action. Times is an unsigned integer between 1 and pow(2,30)
+/**
+ * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
  * @param {cc.FiniteTimeAction} action
  * @param {Number} times
  * @return {cc.Repeat}
@@ -462,9 +498,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
  * var rep = cc.Repeat.create(cc.Sequence.create(jump2, jump1), 5);
  */
 cc.Repeat.create = function (action, times) {
-    var repeat = new cc.Repeat();
-    repeat.initWithAction(action, times);
-    return repeat;
+    return new cc.Repeat(action, times);
 };
 
 
@@ -478,9 +512,17 @@ cc.Repeat.create = function (action, times) {
 cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     _innerAction:null, //CCActionInterval
 
-    ctor:function () {
+	/**
+	 * Create a acton which repeat forever
+	 * @param {cc.FiniteTimeAction} action
+	 * @example
+	 * var repeat = new cc.RepeatForever(cc.RotateBy.create(1.0, 360));
+	 */
+    ctor:function (action) {
         cc.ActionInterval.prototype.ctor.call(this);
         this._innerAction = null;
+
+		action && this.initWithAction(action);
     },
 
     /**
@@ -537,10 +579,10 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     },
 
     /**
-     * @return {cc.RepeatForever}
+     * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.RepeatForever.create(this._innerAction.reverse());
+        return (cc.RepeatForever.create(this._innerAction.reverse()));
     },
 
     /**
@@ -561,18 +603,15 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     }
 });
 /**
- * Repeat the acton forever
- * @param action
+ * Create a acton which repeat forever
+ * @param {cc.FiniteTimeAction} action
  * @return {cc.RepeatForever}
  * @example
  * // example
  * var repeat = cc.RepeatForever.create(cc.RotateBy.create(1.0, 360));
  */
 cc.RepeatForever.create = function (action) {
-    var ret = new cc.RepeatForever();
-    if (ret && ret.initWithAction(action))
-        return ret;
-    return null;
+    return new cc.RepeatForever(action);
 };
 
 
@@ -584,10 +623,33 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
     _one:null,
     _two:null,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Array|cc.FiniteTimeAction} tempArray
+	 * @example
+	 * var action = new cc.Spawn(cc.JumpBy.create(2, cc.p(300, 0), 50, 4), cc.RotateBy.create(2, 720));
+	 */
+    ctor:function (tempArray) {
         cc.ActionInterval.prototype.ctor.call(this);
         this._one = null;
         this._two = null;
+
+		var paramArray = (tempArray instanceof Array) ? tempArray : arguments;
+		var last = paramArray.length - 1;
+		if ((last >= 0) && (paramArray[last] == null))
+			cc.log("parameters should not be ending with null in Javascript");
+
+		if (last >= 0) {
+			var prev = paramArray[0], action1;
+			for (var i = 1; i < last; i++) {
+				if (paramArray[i]) {
+					action1 = prev;
+					prev = cc.Spwan.create();
+					prev.initWithTwoActions(action1, paramArray[i]);
+				}
+			}
+			this.initWithTwoActions(prev, paramArray[last]);
+		}
     },
 
     /** initializes the Spawn action with the 2 actions to spawn
@@ -599,18 +661,21 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
         if(!action1 || !action2)
             throw "cc.Spawn.initWithTwoActions(): arguments must all be non null" ;
 
-        var _this = this, ret = false;
-        var d1 = action1.getDuration(), d2 = action2.getDuration();
+        var ret = false;
 
-        if (_this.initWithDuration(Math.max(d1, d2))) {
-            _this._one = action1;
-            _this._two = action2;
+        var d1 = action1.getDuration();
+        var d2 = action2.getDuration();
+
+        if (this.initWithDuration(Math.max(d1, d2))) {
+            this._one = action1;
+            this._two = action2;
 
             if (d1 > d2) {
-                _this._two = cc.Sequence._actionOneTwo(action2, cc.DelayTime.create(d1 - d2));
+                this._two = cc.Sequence._actionOneTwo(action2, cc.DelayTime.create(d1 - d2));
             } else if (d1 < d2) {
-                _this._one = cc.Sequence._actionOneTwo(action1, cc.DelayTime.create(d2 - d1));
+                this._one = cc.Sequence._actionOneTwo(action1, cc.DelayTime.create(d2 - d1));
             }
+
             ret = true;
         }
         return ret;
@@ -710,16 +775,19 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     _startAngleY:0,
     _diffAngleY:0,
 
-    ctor:function () {
-        var _this = this;
-        cc.ActionInterval.prototype.ctor.call(_this);
-        _this._dstAngleX = 0;
-        _this._startAngleX = 0;
-        _this._diffAngleX = 0;
+	/**
+	 * Creates a RotateTo action with x and y rotation angles
+	 * @constructor
+	 * @param {Number} duration duration in seconds
+	 * @param {Number} deltaAngleX deltaAngleX in degrees.
+	 * @param {Number} [deltaAngleY] deltaAngleY in degrees.
+	 * @example
+	 * var rotateTo = new cc.RotateTo(2, 61.0);
+	 */
+    ctor:function (duration, deltaAngleX, deltaAngleY) {
+        cc.ActionInterval.prototype.ctor.call(this);
 
-        _this._dstAngleY = 0;
-        _this._startAngleY = 0;
-        _this._diffAngleY = 0;
+		deltaAngleX !== undefined && this.initWithDuration(duration, deltaAngleX, deltaAngleY);
     },
 
     /**
@@ -784,28 +852,25 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        var _this = this;
-        if (_this.target) {
-            _this.target.rotationX = _this._startAngleX + _this._diffAngleX * time;
-            _this.target.rotationY = _this._startAngleY + _this._diffAngleY * time;
+        if (this.target) {
+            this.target.rotationX = this._startAngleX + this._diffAngleX * time;
+            this.target.rotationY = this._startAngleY + this._diffAngleY * time;
         }
     }
 });
 
 /**
- * creates the action with separate rotation angles
+ * Creates a RotateTo action with separate rotation angles
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees.
- * @param {Number} [deltaAngleY=] deltaAngleY in degrees.
+ * @param {Number} [deltaAngleY] deltaAngleY in degrees.
  * @return {cc.RotateTo}
  * @example
  * // example
  * var rotateTo = cc.RotateTo.create(2, 61.0);
  */
 cc.RotateTo.create = function (duration, deltaAngleX, deltaAngleY) {
-    var rotateTo = new cc.RotateTo();
-    rotateTo.initWithDuration(duration, deltaAngleX, deltaAngleY);
-    return rotateTo;
+    return new cc.RotateTo(duration, deltaAngleX, deltaAngleY);
 };
 
 
@@ -819,12 +884,18 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     _angleY:0,
     _startAngleY:0,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} duration druation in seconds
+	 * @param {Number} deltaAngleX deltaAngleX in degrees
+	 * @param {Number} [deltaAngleY] deltaAngleY in degrees
+	 * @example
+	 * var actionBy = new cc.RotateBy(2, 360);
+	 */
+    ctor: function (duration, deltaAngleX, deltaAngleY) {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._angleX = 0;
-        this._startAngleX = 0;
-        this._angleY = 0;
-        this._startAngleY = 0;
+
+		deltaAngleX !== undefined && this.initWithDuration(duration, deltaAngleX, deltaAngleY);
     },
 
     /**
@@ -865,10 +936,9 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      * @param {Number} time
      */
     update:function (time) {
-        var _this = this;
-        if (_this.target) {
-            _this.target.rotationX = _this._startAngleX + _this._angleX * time;
-            _this.target.rotationY = _this._startAngleY + _this._angleY * time;
+        if (this.target) {
+            this.target.rotationX = this._startAngleX + this._angleX * time;
+            this.target.rotationY = this._startAngleY + this._angleY * time;
         }
     },
 
@@ -883,7 +953,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
 /**
  * @param {Number} duration druation in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees
- * @param {Number} [deltaAngleY=] deltaAngleY in degrees
+ * @param {Number} [deltaAngleY] deltaAngleY in degrees
  * @return {cc.RotateBy}
  * @example
  * // example
@@ -911,23 +981,39 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     _startPosition:null,
     _previousPosition:null,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} duration duration in seconds
+	 * @param {cc.Point|Number} deltaPos
+	 * @param {Number} [deltaY]
+	 * @example
+	 * var actionTo = cc.MoveBy.create(2, cc.p(windowSize.width - 40, windowSize.height - 40));
+	 */
+    ctor:function (duration, deltaPos, deltaY) {
         cc.ActionInterval.prototype.ctor.call(this);
 
         this._positionDelta = cc.p(0, 0);
         this._startPosition = cc.p(0, 0);
         this._previousPosition = cc.p(0, 0);
+
+		deltaPos !== undefined && this.initWithDuration(duration, deltaPos, deltaY);
     },
 
     /**
      * @param {Number} duration duration in seconds
      * @param {cc.Point} position
+     * @param {Number} [y]
      * @return {Boolean}
      */
-    initWithDuration:function (duration, position) {
+    initWithDuration:function (duration, position, y) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._positionDelta.x = position.x;
-            this._positionDelta.y = position.y;
+	        if(position.x !== undefined) {
+		        y = position.y;
+		        position = position.x;
+	        }
+
+            this._positionDelta.x = position;
+            this._positionDelta.y = y;
             return true;
         }
         return false;
@@ -947,29 +1033,27 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      * @param {Number} target
      */
     startWithTarget:function (target) {
-        var _this = this;
-        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         var locPosX = target.getPositionX();
         var locPosY = target.getPositionY();
-        _this._previousPosition.x = locPosX;
-        _this._previousPosition.y = locPosY;
-        _this._startPosition.x = locPosX;
-        _this._startPosition.y = locPosY;
+        this._previousPosition.x = locPosX;
+        this._previousPosition.y = locPosY;
+        this._startPosition.x = locPosX;
+        this._startPosition.y = locPosY;
     },
 
     /**
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        var _this = this;
         if (this.target) {
-            var x = _this._positionDelta.x * time;
-            var y = _this._positionDelta.y * time;
-            var locStartPosition = _this._startPosition;
+            var x = this._positionDelta.x * time;
+            var y = this._positionDelta.y * time;
+            var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
-                var targetX = _this.target.getPositionX();
-                var targetY = _this.target.getPositionY();
-                var locPreviousPosition = _this._previousPosition;
+                var targetX = this.target.getPositionX();
+                var targetY = this.target.getPositionY();
+                var locPreviousPosition = this._previousPosition;
 
                 locStartPosition.x = locStartPosition.x + targetX - locPreviousPosition.x;
                 locStartPosition.y = locStartPosition.y + targetY - locPreviousPosition.y;
@@ -977,9 +1061,9 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
                 y = y + locStartPosition.y;
 	            locPreviousPosition.x = x;
 	            locPreviousPosition.y = y;
-                _this.target.setPosition(x, y);
+	            this.target.setPosition(x, y);
             } else {
-                _this.target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
+                this.target.setPosition(locStartPosition.x + x, locStartPosition.y + y);
             }
         }
     },
@@ -994,16 +1078,15 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
 
 /**
  * @param {Number} duration duration in seconds
- * @param {cc.Point} deltaPosition
+ * @param {cc.Point|Number} deltaPosition
+ * @param {Number} deltaY
  * @return {cc.MoveBy}
  * @example
  * // example
  * var actionTo = cc.MoveBy.create(2, cc.p(windowSize.width - 40, windowSize.height - 40));
  */
-cc.MoveBy.create = function (duration, deltaPosition) {
-    var moveBy = new cc.MoveBy();
-    moveBy.initWithDuration(duration, deltaPosition);
-    return moveBy;
+cc.MoveBy.create = function (duration, deltaPos, deltaY) {
+    return new cc.MoveBy(duration, deltaPos, deltaY);
 };
 
 
@@ -1016,20 +1099,37 @@ cc.MoveBy.create = function (duration, deltaPosition) {
  */
 cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     _endPosition:null,
-    ctor:function () {
+
+	/**
+	 * @constructor
+	 * @param {Number} duration duration in seconds
+	 * @param {cc.Point|Number} position
+	 * @param {Number} y
+	 * @example
+	 * var actionBy = cc.MoveTo.create(2, cc.p(80, 80));
+	 */
+    ctor:function (duration, position, y) {
         cc.MoveBy.prototype.ctor.call(this);
         this._endPosition = cc.p(0, 0);
+
+		position !== undefined && this.initWithDuration(duration, position, y);
     },
 
     /**
      * @param {Number} duration  duration in seconds
      * @param {cc.Point} position
+     * @param {Number} y
      * @return {Boolean}
      */
-    initWithDuration:function (duration, position) {
-        if (cc.MoveBy.prototype.initWithDuration.call(this, duration, position)) {
-            this._endPosition.x = position.x;
-            this._endPosition.y = position.y;
+    initWithDuration:function (duration, position, y) {
+        if (cc.MoveBy.prototype.initWithDuration.call(this, duration, position, y)) {
+	        if(position.x !== undefined) {
+		        y = position.y;
+		        position = position.x;
+	        }
+
+            this._endPosition.x = position;
+            this._endPosition.y = y;
             return true;
         }
         return false;
@@ -1049,24 +1149,22 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        var _this = this;
-        cc.MoveBy.prototype.startWithTarget.call(_this, target);
-        _this._positionDelta.x = _this._endPosition.x - target.getPositionX();
-        _this._positionDelta.y = _this._endPosition.y - target.getPositionY();
+        cc.MoveBy.prototype.startWithTarget.call(this, target);
+        this._positionDelta.x = this._endPosition.x - target.getPositionX();
+        this._positionDelta.y = this._endPosition.y - target.getPositionY();
     }
 });
 /**
  * @param {Number} duration duration in seconds
  * @param {cc.Point} position
+ * @param {Number} y
  * @return {cc.MoveBy}
  * @example
  * // example
  * var actionBy = cc.MoveTo.create(2, cc.p(80, 80));
  */
-cc.MoveTo.create = function (duration, position) {
-    var moveTo = new cc.MoveTo();
-    moveTo.initWithDuration(duration, position);
-    return moveTo;
+cc.MoveTo.create = function (duration, position, y) {
+    return new cc.MoveTo(duration, position, y);
 };
 
 /**
@@ -1084,17 +1182,18 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     _deltaX:0,
     _deltaY:0,
 
-    ctor:function () {
-        var _this = this;
-        cc.ActionInterval.prototype.ctor.call(_this);
-        _this._skewX = 0;
-        _this._skewY = 0;
-        _this._startSkewX = 0;
-        _this._startSkewY = 0;
-        _this._endSkewX = 0;
-        _this._endSkewY = 0;
-        _this._deltaX = 0;
-        _this._deltaY = 0;
+	/**
+	 * @constructor
+	 * @param {Number} t time in seconds
+	 * @param {Number} sx
+	 * @param {Number} sy
+	 * @example
+	 * var actionTo = new cc.SkewTo(2, 37.2, -37.2);
+	 */
+    ctor: function (t, sx, sy) {
+        cc.ActionInterval.prototype.ctor.call(this);
+
+		sy !== undefined && this.initWithDuration(t, sx, sy);
     },
 
     /**
@@ -1127,22 +1226,21 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        var _this = this;
-        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
-        _this._startSkewX = target.skewX % 180;
-        _this._deltaX = _this._endSkewX - _this._startSkewX;
-        if (_this._deltaX > 180)
-            _this._deltaX -= 360;
-        if (_this._deltaX < -180)
-            _this._deltaX += 360;
+        this._startSkewX = target.skewX % 180;
+        this._deltaX = this._endSkewX - this._startSkewX;
+        if (this._deltaX > 180)
+            this._deltaX -= 360;
+        if (this._deltaX < -180)
+            this._deltaX += 360;
 
-        _this._startSkewY = target.skewY % 360;
-        _this._deltaY = _this._endSkewY - _this._startSkewY;
-        if (_this._deltaY > 180)
-            _this._deltaY -= 360;
-        if (_this._deltaY < -180)
-            _this._deltaY += 360;
+        this._startSkewY = target.skewY % 360;
+        this._deltaY = this._endSkewY - this._startSkewY;
+        if (this._deltaY > 180)
+            this._deltaY -= 360;
+        if (this._deltaY < -180)
+            this._deltaY += 360;
     },
 
     /**
@@ -1163,10 +1261,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
  * var actionTo = cc.SkewTo.create(2, 37.2, -37.2);
  */
 cc.SkewTo.create = function (t, sx, sy) {
-    var skewTo = new cc.SkewTo();
-    if (skewTo)
-        skewTo.initWithDuration(t, sx, sy);
-    return skewTo;
+    return new cc.SkewTo(t, sx, sy);
 };
 
 /** Skews a cc.Node object by skewX and skewY degrees
@@ -1174,6 +1269,18 @@ cc.SkewTo.create = function (t, sx, sy) {
  * @extends cc.SkewTo
  */
 cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
+
+	/**
+	 * @constructor
+	 * @param {Number} t time in seconds
+	 * @param {Number} sx  skew in degrees for X axis
+	 * @param {Number} sy  skew in degrees for Y axis
+	 */
+	ctor: function(t, sx, sy) {
+		cc.SkewTo.prototype.ctor.call(this);
+		sy !== undefined && this.initWithDuration(t, sx, sy);
+	},
+
     /**
      * @param {Number} t time in seconds
      * @param {Number} deltaSkewX  skew in degrees for X axis
@@ -1204,12 +1311,11 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        var _this = this;
-        cc.SkewTo.prototype.startWithTarget.call(_this, target);
-        _this._deltaX = _this._skewX;
-        _this._deltaY = _this._skewY;
-        _this._endSkewX = _this._startSkewX + _this._deltaX;
-        _this._endSkewY = _this._startSkewY + _this._deltaY;
+        cc.SkewTo.prototype.startWithTarget.call(this, target);
+        this._deltaX = this._skewX;
+        this._deltaY = this._skewY;
+        this._endSkewX = this._startSkewX + this._deltaX;
+        this._endSkewY = this._startSkewY + this._deltaY;
     },
 
     /**
@@ -1247,29 +1353,48 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     _jumps:0,
     _previousPosition:null,
 
-    ctor:function () {
-        var _this = this;
-        cc.ActionInterval.prototype.ctor.call(_this);
-        _this._startPosition = cc.p(0, 0);
-        _this._previousPosition = cc.p(0, 0);
-        _this._delta = cc.p(0, 0);
-        _this._height = 0;
-        _this._jumps = 0;
+	/**
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {cc.Point|Number} position
+	 * @param {Number} [y]
+	 * @param {Number} height
+	 * @param {Number} jumps
+	 * @example
+	 * var actionBy = new cc.JumpBy(2, cc.p(300, 0), 50, 4);
+	 * var actionBy = new cc.JumpBy(2, 300, 0, 50, 4);
+	 */
+    ctor:function (duration, position, y, height, jumps) {
+        cc.ActionInterval.prototype.ctor.call(this);
+        this._startPosition = cc.p(0, 0);
+        this._previousPosition = cc.p(0, 0);
+        this._delta = cc.p(0, 0);
+
+		height !== undefined && this.initWithDuration(duration, position, y, height, jumps);
     },
     /**
      * @param {Number} duration
-     * @param {cc.Point} position
+     * @param {cc.Point|Number} position
+     * @param {Number} [y]
      * @param {Number} height
      * @param {Number} jumps
      * @return {Boolean}
+     * @example
+     * actionBy.initWithDuration(2, cc.p(300, 0), 50, 4);
+     * actionBy.initWithDuration(2, 300, 0, 50, 4);
      */
-    initWithDuration:function (duration, position, height, jumps) {
-        var _this = this;
-        if (cc.ActionInterval.prototype.initWithDuration.call(_this, duration)) {
-            _this._delta.x = position.x;
-            _this._delta.y = position.y;
-            _this._height = height;
-            _this._jumps = jumps;
+    initWithDuration:function (duration, position, y, height, jumps) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
+	        if (jumps === undefined) {
+		        jumps = height;
+		        height = y;
+		        y = position.y;
+		        position = position.x;
+	        }
+            this._delta.x = position;
+            this._delta.y = y;
+            this._height = height;
+            this._jumps = jumps;
             return true;
         }
         return false;
@@ -1289,14 +1414,13 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        var _this = this;
-        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         var locPosX = target.getPositionX();
         var locPosY = target.getPositionY();
-        _this._previousPosition.x = locPosX;
-        _this._previousPosition.y = locPosY;
-        _this._startPosition.x = locPosX;
-        _this._startPosition.y = locPosY;
+        this._previousPosition.x = locPosX;
+        this._previousPosition.y = locPosY;
+        this._startPosition.x = locPosX;
+        this._startPosition.y = locPosY;
     },
 
     /**
@@ -1338,18 +1462,18 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
 
 /**
  * @param {Number} duration
- * @param {cc.Point} position
+ * @param {cc.Point|Number} position
+ * @param {Number} [y]
  * @param {Number} height
  * @param {Number} jumps
  * @return {cc.JumpBy}
  * @example
  * // example
  * var actionBy = cc.JumpBy.create(2, cc.p(300, 0), 50, 4);
+ * var actionBy = cc.JumpBy.create(2, 300, 0, 50, 4);
  */
-cc.JumpBy.create = function (duration, position, height, jumps) {
-    var jumpBy = new cc.JumpBy();
-    jumpBy.initWithDuration(duration, position, height, jumps);
-    return jumpBy;
+cc.JumpBy.create = function (duration, position, y, height, jumps) {
+    return new cc.JumpBy(duration, position, y, height, jumps);
 };
 
 /**  Moves a cc.Node object to a parabolic position simulating a jump movement by modifying it's position attribute.
@@ -1357,7 +1481,8 @@ cc.JumpBy.create = function (duration, position, height, jumps) {
  * @extends cc.JumpBy
  */
 cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
-    /**
+
+	/**
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -1379,18 +1504,18 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
 
 /**
  * @param {Number} duration
- * @param {cc.Point} position
+ * @param {cc.Point|Number} position
+ * @param {Number} [y]
  * @param {Number} height
  * @param {Number} jumps
  * @return {cc.JumpTo}
  * @example
  * // example
  * var actionTo = cc.JumpTo.create(2, cc.p(300, 300), 50, 4);
+ * var actionTo = cc.JumpTo.create(2, 300, 300, 50, 4);
  */
-cc.JumpTo.create = function (duration, position, height, jumps) {
-    var jumpTo = new cc.JumpTo();
-    jumpTo.initWithDuration(duration, position, height, jumps);
-    return jumpTo;
+cc.JumpTo.create = function (duration, position, y, height, jumps) {
+    return new cc.JumpTo(duration, position, y, height, jumps);
 };
 
 /**
@@ -1418,14 +1543,21 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     _startPosition:null,
     _previousPosition:null,
 
-    /**
-     * Constructor
-     */
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} t time in seconds
+	 * @param {Array} c Array of points
+	 * @example
+	 * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
+	 * var bezierForward = new cc.BezierBy(3, bezier);
+	 */
+    ctor:function (t, c) {
         cc.ActionInterval.prototype.ctor.call(this);
         this._config = [];
         this._startPosition = cc.p(0, 0);
         this._previousPosition = cc.p(0, 0);
+
+		c && this.initWithDuration(t, c);
     },
     /**
      * @param {Number} t time in seconds
@@ -1459,14 +1591,13 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        var _this = this;
-        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         var locPosX = target.getPositionX();
         var locPosY = target.getPositionY();
-        _this._previousPosition.x = locPosX;
-        _this._previousPosition.y = locPosY;
-        _this._startPosition.x = locPosX;
-        _this._startPosition.y = locPosY;
+        this._previousPosition.x = locPosX;
+        this._previousPosition.y = locPosY;
+        this._startPosition.x = locPosX;
+        this._startPosition.y = locPosY;
     },
 
     /**
@@ -1475,10 +1606,18 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     update:function (time) {
         if (this.target) {
             var locConfig = this._config;
-            var xa = 0, xb = locConfig[0].x, xc = locConfig[1].x, xd = locConfig[2].x;
-            var ya = 0, yb = locConfig[0].y, yc = locConfig[1].y, yd = locConfig[2].y;
+            var xa = 0;
+            var xb = locConfig[0].x;
+            var xc = locConfig[1].x;
+            var xd = locConfig[2].x;
 
-            var x = cc.bezierAt(xa, xb, xc, xd, time), y = cc.bezierAt(ya, yb, yc, yd, time);
+            var ya = 0;
+            var yb = locConfig[0].y;
+            var yc = locConfig[1].y;
+            var yd = locConfig[2].y;
+
+            var x = cc.bezierAt(xa, xb, xc, xd, time);
+            var y = cc.bezierAt(ya, yb, yc, yd, time);
 
             var locStartPosition = this._startPosition;
             if (cc.ENABLE_STACKABLE_ACTIONS) {
@@ -1520,12 +1659,9 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
  * // example
  * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
  * var bezierForward = cc.BezierBy.create(3, bezier);
- *
  */
 cc.BezierBy.create = function (t, c) {
-    var bezierBy = new cc.BezierBy();
-    bezierBy.initWithDuration(t, c);
-    return bezierBy;
+    return new cc.BezierBy(t, c);
 };
 
 
@@ -1536,9 +1672,18 @@ cc.BezierBy.create = function (t, c) {
 cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     _toConfig:null,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} t
+	 * @param {Array} c array of points
+	 * @example
+	 * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
+	 * var bezierTo = new cc.BezierTo(2, bezier);
+	 */
+    ctor:function (t, c) {
         cc.BezierBy.prototype.ctor.call(this);
         this._toConfig = [];
+		c && this.initWithDuration(t, c);
     },
 
     /**
@@ -1569,7 +1714,9 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      */
     startWithTarget:function (target) {
         cc.BezierBy.prototype.startWithTarget.call(this, target);
-        var locStartPos = this._startPosition, locToConfig = this._toConfig, locConfig = this._config;
+        var locStartPos = this._startPosition;
+        var locToConfig = this._toConfig;
+        var locConfig = this._config;
 
         locConfig[0] = cc.pSub(locToConfig[0], locStartPos);
         locConfig[1] = cc.pSub(locToConfig[1], locStartPos);
@@ -1586,9 +1733,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
  * var bezierTo = cc.BezierTo.create(2, bezier);
  */
 cc.BezierTo.create = function (t, c) {
-    var bezierTo = new cc.BezierTo();
-    bezierTo.initWithDuration(t, c);
-    return bezierTo;
+    return new cc.BezierTo(t, c);
 };
 
 
@@ -1607,17 +1752,21 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     _deltaX:0,
     _deltaY:0,
 
-    ctor:function () {
-        var _this = this;
-        cc.ActionInterval.prototype.ctor.call(_this);
-        _this._scaleX = 1;
-        _this._scaleY = 1;
-        _this._startScaleX = 1;
-        _this._startScaleY = 1;
-        _this._endScaleX = 0;
-        _this._endScaleY = 0;
-        _this._deltaX = 0;
-        _this._deltaY = 0;
+	/**
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {Number} sx  scale parameter in X
+	 * @param {Number} [sy] scale parameter in Y, if Null equal to sx
+	 * @example
+	 * // It scales to 0.5 in both X and Y.
+	 * var actionTo = new cc.ScaleTo(2, 0.5);
+	 *
+	 * // It scales to 0.5 in x and 2 in Y
+	 * var actionTo = new cc.ScaleTo(2, 0.5, 2);
+	 */
+    ctor:function (duration, sx, sy) {
+        cc.ActionInterval.prototype.ctor.call(this);
+		sx !== undefined && this.initWithDuration(duration, sx, sy);
     },
 
     /**
@@ -1649,12 +1798,11 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        var _this = this;
-        cc.ActionInterval.prototype.startWithTarget.call(_this, target);
-        _this._startScaleX = target.scaleX;
-        _this._startScaleY = target.scaleY;
-        _this._deltaX = _this._endScaleX - _this._startScaleX;
-        _this._deltaY = _this._endScaleY - _this._startScaleY;
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
+        this._startScaleX = target.scaleX;
+        this._startScaleY = target.scaleY;
+        this._deltaX = this._endScaleX - this._startScaleX;
+        this._deltaY = this._endScaleY - this._startScaleY;
     },
 
     /**
@@ -1670,7 +1818,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
 /**
  * @param {Number} duration
  * @param {Number} sx  scale parameter in X
- * @param {Number} [sy=] scale parameter in Y, if Null equal to sx
+ * @param {Number} [sy] scale parameter in Y, if Null equal to sx
  * @return {cc.ScaleTo}
  * @example
  * // example
@@ -1731,9 +1879,7 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
  * var actionBy2 = cc.ScaleBy.create(2, 0.25, 4.5);
  */
 cc.ScaleBy.create = function (duration, sx, sy) {
-    var scaleBy = new cc.ScaleBy();
-    scaleBy.initWithDuration(duration, sx, sy);
-    return scaleBy;
+    return new cc.ScaleBy(duration, sx, sy);
 };
 
 /** Blinks a cc.Node object by modifying it's visible attribute
@@ -1744,10 +1890,16 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     _times:0,
     _originalState:false,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} duration  duration in seconds
+	 * @param (Number) blinks  blinks in times
+	 * @example
+	 * var action = new cc.Blink(2, 10);
+	 */
+    ctor:function (duration, blinks) {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._times = 0;
-        this._originalState = false;
+		blinks !== undefined && this.initWithDuration(duration, blinks);
     },
 
     /**
@@ -1821,13 +1973,19 @@ cc.Blink.create = function (duration, blinks) {
  * @extends cc.ActionInterval
  */
 cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
-    _toOpacity:null,
-    _fromOpacity:null,
+    _toOpacity:0,
+    _fromOpacity:0,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {Number} opacity 0-255, 0 is transparent
+	 * @example
+	 * var action = new cc.FadeTo(1.0, 0);
+	 */
+    ctor:function (duration, opacity) {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._toOpacity = 0;
-        this._fromOpacity = 0;
+		opacity !== undefined && this.initWithDuration(duration, opacity);
     },
 
     /**
@@ -1883,9 +2041,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
  * var action = cc.FadeTo.create(1.0, 0);
  */
 cc.FadeTo.create = function (duration, opacity) {
-    var fadeTo = new cc.FadeTo();
-    fadeTo.initWithDuration(duration, opacity);
-    return fadeTo;
+    return new cc.FadeTo(duration, opacity);
 };
 
 /** Fades In an object that implements the cc.RGBAProtocol protocol. It modifies the opacity from 0 to 255.<br/>
@@ -1935,9 +2091,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
 cc.FadeIn.create = function (duration, toOpacity) {
     if(toOpacity == null)
         toOpacity = 255;
-    var action = new cc.FadeIn();
-    action.initWithDuration(duration, toOpacity);
-    return action;
+    return new cc.FadeIn(duration, toOpacity);
 };
 
 
@@ -1990,10 +2144,21 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     _to:null,
     _from:null,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {Number} red 0-255
+	 * @param {Number} green  0-255
+	 * @param {Number} blue 0-255
+	 * @example
+	 * var action = new cc.TintTo(2, 255, 0, 255);
+	 */
+    ctor:function (duration, red, green, blue) {
         cc.ActionInterval.prototype.ctor.call(this);
         this._to = cc.color(0, 0, 0);
         this._from = cc.color(0, 0, 0);
+
+		blue !== undefined && this.initWithDuration(duration, red, green, blue);
     },
 
     /**
@@ -2056,9 +2221,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
  * var action = cc.TintTo.create(2, 255, 0, 255);
  */
 cc.TintTo.create = function (duration, red, green, blue) {
-    var tintTo = new cc.TintTo();
-    tintTo.initWithDuration(duration, red, green, blue);
-    return tintTo;
+    return new cc.TintTo(duration, red, green, blue);
 };
 
 
@@ -2075,15 +2238,18 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     _fromG:0,
     _fromB:0,
 
-    ctor:function () {
-        var _this = this;
-        cc.ActionInterval.prototype.ctor.call(_this);
-        _this._deltaR = 0;
-        _this._deltaG = 0;
-        _this._deltaB = 0;
-        _this._fromR = 0;
-        _this._fromG = 0;
-        _this._fromB = 0;
+	/**
+	 * @constructor
+	 * @param {Number} duration  duration in seconds
+	 * @param {Number} deltaRed
+	 * @param {Number} deltaGreen
+	 * @param {Number} deltaBlue
+	 * @example
+	 * var action = new cc.TintBy(2, -127, -255, -127);
+	 */
+    ctor:function (duration, deltaRed, deltaGreen, deltaBlue) {
+        cc.ActionInterval.prototype.ctor.call(this);
+		deltaBlue !== undefined && this.initWithDuration(duration, deltaRed, deltaGreen, deltaBlue);
     },
 
     /**
@@ -2156,9 +2322,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
  * var action = cc.TintBy.create(2, -127, -255, -127);
  */
 cc.TintBy.create = function (duration, deltaRed, deltaGreen, deltaBlue) {
-    var tintBy = new cc.TintBy();
-    tintBy.initWithDuration(duration, deltaRed, deltaGreen, deltaBlue);
-    return tintBy;
+    return new cc.TintBy(duration, deltaRed, deltaGreen, deltaBlue);
 };
 
 /** Delays the action a certain amount of seconds
@@ -2198,9 +2362,7 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
  * var delay = cc.DelayTime.create(1);
  */
 cc.DelayTime.create = function (d) {
-    var action = new cc.DelayTime();
-    action.initWithDuration(d);
-    return action;
+    return new cc.DelayTime(d);
 };
 
 /**
@@ -2215,9 +2377,17 @@ cc.DelayTime.create = function (d) {
 cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
     _other:null,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * @param {cc.FiniteTimeAction} action
+	 * @example
+	 *  var reverse = new cc.ReverseTime(this);
+	 */
+    ctor:function (action) {
         cc.ActionInterval.prototype.ctor.call(this);
         this._other = null;
+
+		action && this.initWithAction(action);
     },
 
     /**
@@ -2288,9 +2458,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
  *  var reverse = cc.ReverseTime.create(this);
  */
 cc.ReverseTime.create = function (action) {
-    var reverseTime = new cc.ReverseTime();
-    reverseTime.initWithAction(action);
-    return reverseTime;
+    return new cc.ReverseTime(action);
 };
 
 
@@ -2305,13 +2473,19 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     _executedLoops:0,
     _splitTimes:null,
 
-    ctor:function () {
+	/**
+	 * @constructor
+	 * create the animate with animation
+	 * @param {cc.Animation} animation
+	 * @example
+	 * // create the animation with animation
+	 * var anim = new cc.Animate(dance_grey);
+	 */
+    ctor:function (animation) {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._animation = null;
-        this._nextFrame = 0;
-        this._origFrame = null;
-        this._executedLoops = 0;
         this._splitTimes = [];
+
+		animation && this.initWithAnimation(animation);
     },
 
     /**
@@ -2420,7 +2594,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      */
     reverse:function () {
         var locAnimation = this._animation;
-        var oldArray = locAnimation.getFrames(), newArray = [];
+        var oldArray = locAnimation.getFrames();
+        var newArray = [];
         cc.arrayVerifyType(oldArray, cc.AnimationFrame);
         if (oldArray.length > 0) {
             for (var i = oldArray.length - 1; i >= 0; i--) {
@@ -2455,9 +2630,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
  * var anim = cc.Animate.create(dance_grey);
  */
 cc.Animate.create = function (animation) {
-    var animate = new cc.Animate();
-    animate.initWithAnimation(animation);
-    return animate;
+    return new cc.Animate(animation);
 };
 
 /**
@@ -2472,10 +2645,15 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
     _action:null,
     _forcedTarget:null,
 
-    ctor:function () {
+	/**
+	 * Create an action with the specified action and forced target
+	 * @constructor
+	 * @param {cc.Node} target
+	 * @param {cc.FiniteTimeAction} action
+	 */
+    ctor: function (target, action) {
         cc.ActionInterval.prototype.ctor.call(this);
-        this._action = null;
-        this._forcedTarget = null;
+		action && this.initWithTarget(target, action);
     },
 
     /**
@@ -2538,9 +2716,8 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
  * Create an action with the specified action and forced target
  * @param {cc.Node} target
  * @param {cc.FiniteTimeAction} action
+ * @return {cc.TargetedAction}
  */
 cc.TargetedAction.create = function (target, action) {
-    var retObj = new cc.TargetedAction();
-    retObj.initWithTarget(target, action);
-    return retObj;
+    return new cc.TargetedAction(target, action);
 };

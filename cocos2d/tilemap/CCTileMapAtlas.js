@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -53,6 +53,24 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     //x,y to altas dictionary
     _posToAtlasIndex:null,
     _className:"TileMapAtlas",
+
+    /**
+     * <p>Creates a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.<br />
+     * The tile file will be loaded using the TextureMgr. </p>
+     * @constructor
+     * @param {String} tile
+     * @param {String} mapFile
+     * @param {Number} tileWidth
+     * @param {Number} tileHeight
+     * @example
+     * //example
+     * var tmpAtlas = new cc.TileMapAtlas("hello.png", "hello.tga", 16, 16);
+     */
+    ctor:function(tile, mapFile, tileWidth, tileHeight){
+        cc.AtlasNode.prototype.ctor.call(this);
+        if(tileHeight !== undefined)
+            this.initWithTileFile(tile, mapFile, tileWidth, tileHeight);
+    },
 
     /**
      * @return {cc.ImageTGA}
@@ -193,8 +211,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
         var locItemWidth = this._itemWidth;
         var locItemHeight = this._itemHeight;
-        var itemWidthInPixels = locItemWidth * cc.CONTENT_SCALE_FACTOR();
-        var itemHeightInPixels = locItemHeight * cc.CONTENT_SCALE_FACTOR();
+        var itemWidthInPixels = locItemWidth * cc.contentScaleFactor();
+        var itemHeightInPixels = locItemHeight * cc.contentScaleFactor();
 
         var left, right, top, bottom;
         if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
@@ -283,9 +301,5 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
  *  tmpAtlas.initWithTileFile("hello.png", "hello.tga", 16, 16);
  */
 cc.TileMapAtlas.create = function (tile, mapFile, tileWidth, tileHeight) {
-    var ret = new cc.TileMapAtlas();
-    if (ret.initWithTileFile(tile, mapFile, tileWidth, tileHeight)) {
-        return ret;
-    }
-    return null;
+    return new cc.TileMapAtlas(tile, mapFile, tileWidth, tileHeight);
 };

@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2014 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -77,24 +78,36 @@ cc.Event = cc.Class.extend(/** @lends cc.Event# */{
 });
 
 //event type
-cc.Event.TOUCH = 0;
-cc.Event.KEYBOARD = 1;
-cc.Event.ACCELERATION = 2;
-cc.Event.MOUSE = 3;
-cc.Event.CUSTOM = 4;
-
 /**
- * The acceleration event
- * @class
- * @extends cc.Event
+ * The type code of Touch event.
+ * @constant
+ * @type {number}
  */
-cc.EventAcceleration = cc.Event.extend(/** @lends cc.EventAcceleration# */{
-    _acc: null,
-    ctor: function (acc) {
-        cc.Event.prototype.ctor.call(this, cc.Event.ACCELERATION);
-        this._acc = acc;
-    }
-});
+cc.Event.TOUCH = 0;
+/**
+ * The type code of Keyboard event.
+ * @constant
+ * @type {number}
+ */
+cc.Event.KEYBOARD = 1;
+/**
+ * The type code of Acceleration event.
+ * @constant
+ * @type {number}
+ */
+cc.Event.ACCELERATION = 2;
+/**
+ * The type code of Mouse event.
+ * @constant
+ * @type {number}
+ */
+cc.Event.MOUSE = 3;
+/**
+ * The type code of Custom event.
+ * @constant
+ * @type {number}
+ */
+cc.Event.CUSTOM = 4;
 
 /**
  * The Custom event
@@ -131,22 +144,6 @@ cc.EventCustom = cc.Event.extend(/** @lends cc.EventCustom# */{
      */
     getEventName: function () {
         return this._eventName;
-    }
-});
-
-/**
- * The keyboard event
- * @class
- * @extends cc.Event
- */
-cc.EventKeyboard = cc.Event.extend(/** @lends cc.EventKeyboard# */{
-    _keyCode: 0,
-    _isPressed: false,
-
-    ctor: function (keyCode, isPressed) {
-        cc.Event.prototype.ctor.call(this, cc.Event.KEYBOARD);
-        this._keyCode = keyCode;
-        this._isPressed = isPressed;
     }
 });
 
@@ -273,10 +270,35 @@ cc.EventMouse = cc.Event.extend(/** @lends cc.EventMouse# */{
 });
 
 //Different types of MouseEvent
+/**
+ * The none event code of  mouse event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.NONE = 0;
+/**
+ * The event type code of mouse down event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.DOWN = 1;
+/**
+ * The event type code of mouse up event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.UP = 2;
+/**
+ * The event type code of mouse move event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.MOVE = 3;
+/**
+ * The event type code of mouse scroll event.
+ * @constant
+ * @type {number}
+ */
 cc.EventMouse.SCROLL = 4;
 
 /**

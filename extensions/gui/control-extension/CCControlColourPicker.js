@@ -1,6 +1,8 @@
 /**
  *
- * Copyright (c) 2010-2012 cocos2d-x.org
+ * Copyright (c) 2008-2010 Ricardo Quesada
+ * Copyright (c) 2011-2012 cocos2d-x.org
+ * Copyright (c) 2013-2014 Chukong Technologies Inc.
  *
  * Copyright 2012 Stewart Hamilton-Arrandale.
  * http://creativewax.co.uk
@@ -24,10 +26,8 @@
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * THE SOFTWARE. *
  *
- *
- * converted to Javascript / cocos2d-x by Angus C
  */
 
 /**
@@ -160,14 +160,14 @@ cc.ControlColourPicker = cc.Control.extend(/** @lends cc.ControlColourPicker# */
     }
 });
 
-window._p = cc.ControlColourPicker.prototype;
+var _p = cc.ControlColourPicker.prototype;
 
 // Extended properties
 /** @expose */
 _p.background;
 cc.defineGetterSetter(_p, "background", _p.getBackground);
 
-delete window._p;
+_p = null;
 
 cc.ControlColourPicker.create = function () {
     var pRet = new cc.ControlColourPicker();

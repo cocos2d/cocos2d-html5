@@ -1,5 +1,8 @@
 /**
- * Copyright (c) 2012 cocos2d-x.org
+ * Copyright (c) 2008-2010 Ricardo Quesada
+ * Copyright (c) 2011-2012 cocos2d-x.org
+ * Copyright (c) 2013-2014 Chukong Technologies Inc.
+ *
  * http://www.cocos2d-x.org
  *
  * Copyright 2012 Yannick Loriot. All rights reserved.
@@ -246,7 +249,7 @@ cc.ControlPotentiometer = cc.Control.extend(/** @lends cc.ControlPotentiometer# 
     }
 });
 
-window._p = cc.ControlPotentiometer.prototype;
+var _p = cc.ControlPotentiometer.prototype;
 
 // Extended properties
 /** @expose */
@@ -268,7 +271,7 @@ cc.defineGetterSetter(_p, "thumbSprite", _p.getThumbSprite, _p.setThumbSprite);
 _p.prevLocation;
 cc.defineGetterSetter(_p, "prevLocation", _p.getPreviousLocation, _p.setPreviousLocation);
 
-delete window._p;
+_p = null;
 
 cc.ControlPotentiometer.create = function (backgroundFile, progressFile, thumbFile) {
     var pRet = new cc.ControlPotentiometer();

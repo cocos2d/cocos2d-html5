@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -576,7 +577,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         ccui.Layout.prototype.copySpecialProperties.call(this, pageView);
     },
 
-    doLayout: function () {
+    _doLayout: function () {
         if (!this._doLayoutDirty)
             return;
         this._doLayoutDirty = false;

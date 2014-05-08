@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -51,14 +52,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _layoutType: null,
     _doLayoutDirty: false,
     _clippingRectDirty: false,
-    _clippingType : null,
+    _clippingType: null,
     _clippingStencil: null,
     _handleScissor: false,
     _scissorRectDirty: false,
     _clippingRect: null,
     _clippingParent: null,
-	_className:"Layout",
-    _backGroundImageColor:null,
+    _className: "Layout",
+    _backGroundImageColor: null,
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._clippingEnabled = false;
@@ -89,7 +90,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
     },
     init: function () {
-        if (cc.Node.prototype.init.call(this)){
+        if (cc.Node.prototype.init.call(this)) {
             this._layoutParameterDictionary = {};
             this._widgetChildren = [];
             this.initRenderer();
@@ -102,8 +103,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
         return false;
     },
-    initStencil : null,
-    _initStencilForWebGL:function(){
+    initStencil: null,
+    _initStencilForWebGL: function () {
         this._clippingStencil = cc.DrawNode.create();
         ccui.Layout._init_once = true;
         if (ccui.Layout._init_once) {
@@ -115,10 +116,10 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
     _initStencilForCanvas: function () {
         this._clippingStencil = cc.DrawNode.create();
-        var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
         var locContext = cc._renderContext;
         var stencil = this._clippingStencil;
         stencil.draw = function () {
+            var locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
             for (var i = 0; i < stencil._buffer.length; i++) {
                 var element = stencil._buffer[i];
                 var vertices = element.verts;
@@ -138,7 +139,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {Number} tag
      */
     addChild: function (widget, zOrder, tag) {
-        if(!(widget instanceof ccui.Widget)){
+        if (!(widget instanceof ccui.Widget)) {
             throw "the child add to Layout  must a type of cc.Widget";
         }
         this.supplyTheLayoutParameterLackToChild(widget);
@@ -151,8 +152,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @param {ccui.Widget} widget
      * @param {Boolean} cleanup
      */
-    removeChild:function(widget,cleanup){
-        ccui.Widget.prototype.removeChild.call(this, widget,cleanup);
+    removeChild: function (widget, cleanup) {
+        ccui.Widget.prototype.removeChild.call(this, widget, cleanup);
         this._doLayoutDirty = true;
     },
 
@@ -160,7 +161,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Remove all widget
      * @param {Boolean} cleanup
      */
-    removeAllChildren:function(cleanup){
+    removeAllChildren: function (cleanup) {
         ccui.Widget.prototype.removeAllChildren.call(this, cleanup);
         this._doLayoutDirty = true;
     },
@@ -190,16 +191,16 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             }
         }
         else {
-            cc.Node.prototype.visit.call(this,ctx);
+            cc.Node.prototype.visit.call(this, ctx);
         }
     },
 
     sortAllChildren: function () {
         ccui.Widget.prototype.sortAllChildren.call(this);
-        this.doLayout();
+        this._doLayout();
     },
 
-    stencilClippingVisit : null,
+    stencilClippingVisit: null,
 
     _stencilClippingVisitForWebGL: function (ctx) {
         var gl = ctx || cc._renderContext;
@@ -262,7 +263,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         // enable stencil use
         gl.enable(gl.STENCIL_TEST);
         // check for OpenGL error while enabling stencil test
-        //cc.CHECK_GL_ERROR_DEBUG();
+        //cc.checkGLErrorDebug();
 
         // all bits on the stencil buffer are readonly, except the current layer bit,
         // this means that operation like glClear or glStencilOp will be masked with this value
@@ -295,7 +296,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc._drawingUtil.drawSolidRect(cc.p(0,0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
+        cc._drawingUtil.drawSolidRect(cc.p(0, 0), cc.pFromSize(cc.director.getWinSize()), cc.color(255, 255, 255, 255));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -427,14 +428,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         }
     },
 
-    _godhelpme:false,
+    _godhelpme: false,
     _cangodhelpme: function (godhelpme) {
         if (godhelpme === true || godhelpme === false)
             cc.ClippingNode.prototype._godhelpme = godhelpme;
         return cc.ClippingNode.prototype._godhelpme;
     },
 
-    scissorClippingVisit : null,
+    scissorClippingVisit: null,
     _scissorClippingVisitForWebGL: function (ctx) {
         var clippingRect = this.getClippingRect();
         var gl = ctx || cc._renderContext;
@@ -489,7 +490,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get clipping type
      * @returns {ccui.Layout.CLIPPING_STENCIL|ccui.Layout.CLIPPING_SCISSOR}
      */
-    getClippingType : function(){
+    getClippingType: function () {
         return this._clippingType;
     },
 
@@ -507,11 +508,11 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     },
 
     rendererVisitCallBack: function () {
-        this.doLayout();
+        this._doLayout();
     },
 
     getClippingRect: function () {
-        if (this._clippingRectDirty){
+        if (this._clippingRectDirty) {
             this._handleScissor = true;
             var worldPos = this.convertToWorldSpace(cc.p(0, 0));
             var t = this.nodeToWorldTransform();
@@ -632,7 +633,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get background image is use scale9 renderer.
      * @returns {Boolean}
      */
-    isBackGroundImageScale9Enabled:function(){
+    isBackGroundImageScale9Enabled: function () {
         return this._backGroundScale9Enabled;
     },
 
@@ -684,7 +685,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get  background image cap insets.
      * @returns {cc.Rect}
      */
-    getBackGroundImageCapInsets:function(){
+    getBackGroundImageCapInsets: function () {
         return this._backGroundImageCapInsets;
     },
 
@@ -804,7 +805,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get color type.
      * @returns {ccui.Layout.BG_COLOR_NONE|ccui.Layout.BG_COLOR_SOLID|ccui.Layout.BG_COLOR_GRADIENT}
      */
-    getBackGroundColorType:function(){
+    getBackGroundColorType: function () {
         return this._colorType;
     },
 
@@ -840,7 +841,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get back ground color
      * @returns {cc.Color}
      */
-    getBackGroundColor:function(){
+    getBackGroundColor: function () {
         return this._color;
     },
 
@@ -848,7 +849,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get back ground start color
      * @returns {cc.Color}
      */
-    getBackGroundStartColor:function(){
+    getBackGroundStartColor: function () {
         return this._startColor;
     },
 
@@ -856,7 +857,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get back ground end color
      * @returns {cc.Color}
      */
-    getBackGroundEndColor:function(){
+    getBackGroundEndColor: function () {
         return this._endColor;
     },
 
@@ -884,7 +885,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * Get background opacity value.
      * @returns {Number}
      */
-    getBackGroundColorOpacity:function(){
+    getBackGroundColorOpacity: function () {
         return this._opacity;
     },
 
@@ -904,7 +905,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      *  Get background color value.
      * @returns {cc.Point}
      */
-    getBackGroundColorVector:function(){
+    getBackGroundColorVector: function () {
         return this._alongVector;
     },
 
@@ -1274,7 +1275,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                         default:
                             break;
                     }
-                    var locRelativeWidgetMargin,locRelativeWidgetLPAlign;
+                    var locRelativeWidgetMargin, locRelativeWidgetLPAlign;
                     var locMargin = locLayoutParameter.getMargin();
                     if (locRelativeWidgetLP) {
                         locRelativeWidgetMargin = locRelativeWidgetLP.getMargin();
@@ -1319,8 +1320,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             locFinalPosY += locMargin.left;
@@ -1330,8 +1330,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             break;
@@ -1340,8 +1339,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_CENTER_HORIZONTAL
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT) {
                                 locFinalPosY += locRelativeWidgetMargin.top;
                             }
                             locFinalPosX -= locMargin.right;
@@ -1351,8 +1349,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             locFinalPosY -= locMargin.top;
@@ -1362,8 +1359,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             break;
@@ -1372,8 +1368,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_LEFT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_NONE
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_CENTER_VERTICAL) {
                                 locFinalPosX -= locRelativeWidgetMargin.left;
                             }
                             locFinalPosY += locMargin.bottom;
@@ -1383,8 +1378,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             locFinalPosX += locMargin.left;
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             locFinalPosY -= locMargin.top;
@@ -1393,8 +1387,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             locFinalPosX += locMargin.left;
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             break;
@@ -1402,8 +1395,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             locFinalPosX += locMargin.left;
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_TOP_RIGHT
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_CENTER_VERTICAL) {
                                 locFinalPosX += locRelativeWidgetMargin.right;
                             }
                             locFinalPosY += locMargin.bottom;
@@ -1413,8 +1405,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             locFinalPosY -= locMargin.top;
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             locFinalPosX += locMargin.left;
@@ -1423,8 +1414,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             locFinalPosY -= locMargin.top;
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             break;
@@ -1432,8 +1422,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
                             locFinalPosY -= locMargin.top;
                             if (locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_LEFT_BOTTOM
                                 && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_RIGHT_BOTTOM
-                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL)
-                            {
+                                && locRelativeWidgetLPAlign != ccui.RELATIVE_ALIGN_PARENT_BOTTOM_CENTER_HORIZONTAL) {
                                 locFinalPosY -= locRelativeWidgetMargin.bottom;
                             }
                             locFinalPosX -= locMargin.right;
@@ -1448,8 +1437,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
             }
         }
     },
-    doLayout: function () {
-        if(!this._doLayoutDirty){
+    _doLayout: function () {
+        if (!this._doLayoutDirty) {
             return;
         }
         switch (this._layoutType) {
@@ -1505,21 +1494,21 @@ ccui.Layout._visit_once = null;
 ccui.Layout._layer = null;
 ccui.Layout._sharedCache = null;
 
-if(cc._renderType == cc._RENDER_TYPE_WEBGL){
+if (cc._renderType == cc._RENDER_TYPE_WEBGL) {
     //WebGL
     ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForWebGL;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForWebGL;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._scissorClippingVisitForWebGL;
-}else{
+} else {
     ccui.Layout.prototype.initStencil = ccui.Layout.prototype._initStencilForCanvas;
     ccui.Layout.prototype.stencilClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
     ccui.Layout.prototype.scissorClippingVisit = ccui.Layout.prototype._stencilClippingVisitForCanvas;
 }
 ccui.Layout._getSharedCache = function () {
-    return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = document.createElement("canvas"));
+    return (cc.ClippingNode._sharedCache) || (cc.ClippingNode._sharedCache = cc.newElement("canvas"));
 };
 
-window._p = ccui.Layout.prototype;
+var _p = ccui.Layout.prototype;
 
 // Extended properties
 /** @expose */
@@ -1532,7 +1521,7 @@ cc.defineGetterSetter(_p, "clippingType", null, _p.setClippingType);
 _p.layoutType;
 cc.defineGetterSetter(_p, "layoutType", _p.getLayoutType, _p.setLayoutType);
 
-delete window._p;
+_p = null;
 
 /**
  * allocates and initializes a UILayout.

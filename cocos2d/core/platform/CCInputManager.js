@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
  Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
@@ -64,35 +64,6 @@ cc.inputManager = /** @lends cc.inputManager# */{
     _acceleration: null,
     _accelDeviceEvent: null,
 
-    /**
-     * whether enable accelerometer event
-     * @param {Boolean} isEnable
-     */
-    setAccelerometerEnabled: function(isEnable){
-        if(this._accelEnabled === isEnable)
-            return;
-
-        this._accelEnabled = isEnable;
-        var scheduler = cc.director.getScheduler();
-        if(this._accelEnabled){
-            this._accelCurTime = 0;
-            scheduler.scheduleUpdateForTarget(this);
-        } else {
-            this._accelCurTime = 0;
-            scheduler.unscheduleUpdateForTarget(this);
-        }
-    },
-
-    /**
-     * set accelerometer interval value
-     * @param {Number} interval
-     */
-    setAccelerometerInterval: function(interval){
-        if (this._accelInterval !== interval) {
-            this._accelInterval = interval;
-        }
-    },
-
     _getUnUsedIndex: function () {
         var temp = this._indexBitsUsed;
 
@@ -129,7 +100,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
             if(index == null){
                 var unusedIndex = this._getUnUsedIndex();
                 if (unusedIndex == -1) {
-                    cc.log("The touches is more than MAX_TOUCHES, nUnusedIndex = " + unusedIndex);
+                    cc.log(cc._LogInfos.inputManager_handleTouchesBegin, unusedIndex);
                     continue;
                 }
                 curTouch = this._touches[unusedIndex] = selTouch;
@@ -317,7 +288,11 @@ cc.inputManager = /** @lends cc.inputManager# */{
         for (var i = 0; i < length; i++) {
             touch_event = event.changedTouches[i];
             if (touch_event) {
-                var location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos);
+                var location;
+                if (cc.sys.BROWSER_TYPE_FIREFOX === cc.sys.browserType)
+                    location = locView.convertToLocationInView(touch_event.pageX, touch_event.pageY, pos);
+                else
+                    location = locView.convertToLocationInView(touch_event.clientX, touch_event.clientY, pos);
                 if (touch_event.identifier != null) {
                     touch = new cc.Touch(location.x, location.y, touch_event.identifier);
                     //use Touch Pool
@@ -345,11 +320,11 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
         //register touch event
         if (supportMouse) {
-            window.addEventListener('mousedown', function () {
+            cc._addEventListener(window, 'mousedown', function () {
                 selfPointer._mousePressed = true;
             }, false);
 
-            window.addEventListener('mouseup', function (event) {
+            cc._addEventListener(window, 'mouseup', function (event) {
                 var savePressed = selfPointer._mousePressed;
                 selfPointer._mousePressed = false;
 
@@ -369,7 +344,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
             }, false);
 
             //register canvas mouse event
-            element.addEventListener("mousedown", function (event) {
+            cc._addEventListener(element,"mousedown", function (event) {
                 selfPointer._mousePressed = true;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
@@ -385,7 +360,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 event.preventDefault();
             }, false);
 
-            element.addEventListener("mouseup", function (event) {
+            cc._addEventListener(element, "mouseup", function (event) {
                 selfPointer._mousePressed = false;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
@@ -402,9 +377,9 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 event.preventDefault();
             }, false);
 
-            element.addEventListener("mousemove", function (event) {
-                if(!selfPointer._mousePressed)
-                    return;
+            cc._addEventListener(element, "mousemove", function (event) {
+                //if(!selfPointer._mousePressed)
+                //    return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
@@ -413,14 +388,17 @@ cc.inputManager = /** @lends cc.inputManager# */{
                     selfPointer.handleTouchesMove([selfPointer.getTouchByXY(location.x, location.y, pos)]);
 
                 var mouseEvent = selfPointer.getMouseEvent(location,pos,cc.EventMouse.MOVE);
-                mouseEvent.setButton(event.button);
+                if(selfPointer._mousePressed)
+                    mouseEvent.setButton(event.button);
+                else
+                    mouseEvent.setButton(null);
                 cc.eventManager.dispatchEvent(mouseEvent);
 
                 event.stopPropagation();
                 event.preventDefault();
             }, false);
 
-            element.addEventListener("mousewheel", function (event) {
+            cc._addEventListener(element, "mousewheel", function (event) {
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
 
@@ -434,7 +412,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
             }, false);
 
             /* firefox fix */
-            element.addEventListener("DOMMouseScroll", function(event) {
+            cc._addEventListener(element, "DOMMouseScroll", function(event) {
                 var pos = selfPointer.getHTMLElementPosition(element);
                 var location = selfPointer.getPointByEvent(event, pos);
 
@@ -458,10 +436,10 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
             for(var eventName in _pointerEventsMap){
                 (function(_pointerEvent, _touchEvent){
-                    element.addEventListener(_pointerEvent, function (event){
+                    cc._addEventListener(element, _pointerEvent, function (event){
                         var pos = selfPointer.getHTMLElementPosition(element);
-                        pos.left -= document.body.scrollLeft;
-                        pos.top -= document.body.scrollTop;
+                        pos.left -= document.documentElement.scrollLeft;
+                        pos.top -= document.documentElement.scrollTop;
 
                         _touchEvent.call(selfPointer, [selfPointer.getTouchByXY(event.clientX, event.clientY, pos)]);
                         event.stopPropagation();
@@ -473,7 +451,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
 
         if(supportTouches) {
             //register canvas touch event
-            element.addEventListener("touchstart", function (event) {
+            cc._addEventListener(element,"touchstart", function (event) {
                 if (!event.changedTouches) return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
@@ -484,7 +462,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 event.preventDefault();
             }, false);
 
-            element.addEventListener("touchmove", function (event) {
+            cc._addEventListener(element, "touchmove", function (event) {
                 if (!event.changedTouches) return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
@@ -495,7 +473,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 event.preventDefault();
             }, false);
 
-            element.addEventListener("touchend", function (event) {
+            cc._addEventListener(element, "touchend", function (event) {
                 if (!event.changedTouches) return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
@@ -506,7 +484,7 @@ cc.inputManager = /** @lends cc.inputManager# */{
                 event.preventDefault();
             }, false);
 
-            element.addEventListener("touchcancel", function (event) {
+            cc._addEventListener(element, "touchcancel", function (event) {
                 if (!event.changedTouches) return;
 
                 var pos = selfPointer.getHTMLElementPosition(element);
@@ -527,71 +505,9 @@ cc.inputManager = /** @lends cc.inputManager# */{
         this._isRegisterEvent = true;
     },
 
-    _registerKeyboardEvent: function(){
-        document.addEventListener("keydown", function (e) {
-            cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, true));
-        });
-        document.addEventListener("keyup", function (e) {
-            cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, false));
-        });
-    },
+    _registerKeyboardEvent: function(){},
 
-    _registerAccelerometerEvent: function(){
-        this._acceleration = new cc.Acceleration();
-        var w = window;
-        this._accelDeviceEvent = w.DeviceMotionEvent || w.DeviceOrientationEvent;
-
-        //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
-        if (cc.sys.browserType == cc.sys.BROWSER_TYPE_MOBILE_QQ)
-            this._accelDeviceEvent = window.DeviceOrientationEvent;
-
-        var _deviceEventType = (this._accelDeviceEvent == w.DeviceMotionEvent) ? "devicemotion" : "deviceorientation";
-        var ua = navigator.userAgent;
-        if (/Android/.test(ua) || (/Adr/.test(ua) && cc.sys.browserType == cc.BROWSER_TYPE_UC)) {
-            this._minus = -1;
-        }
-
-        w.addEventListener(_deviceEventType, this.didAccelerate.bind(this), false);
-    },
-
-    didAccelerate: function (eventData) {
-        if (!this._accelEnabled)
-            return;
-
-        var mAcceleration = this._acceleration;
-        if (this._accelDeviceEvent == window.DeviceMotionEvent) {
-            var eventAcceleration = eventData["accelerationIncludingGravity"];
-            mAcceleration.x = this._accelMinus * eventAcceleration.x * 0.1;
-            mAcceleration.y = this._accelMinus * eventAcceleration.y * 0.1;
-            mAcceleration.z = eventAcceleration.z * 0.1;
-        } else {
-            mAcceleration.x = (eventData["gamma"] / 90) * 0.981;
-            mAcceleration.y = -(eventData["beta"] / 90) * 0.981;
-            mAcceleration.z = (eventData["alpha"] / 90) * 0.981;
-        }
-        mAcceleration.timestamp = eventData.timeStamp || Date.now();
-
-        var tmpX = mAcceleration.x;
-        switch (window.orientation) {
-            case cc.UIInterfaceOrientationLandscapeRight://-90
-                mAcceleration.x = -mAcceleration.y;
-                mAcceleration.y = tmpX;
-                break;
-
-            case cc.UIInterfaceOrientationLandscapeLeft://90
-                mAcceleration.x = mAcceleration.y;
-                mAcceleration.y = -tmpX;
-                break;
-
-            case cc.UIInterfaceOrientationPortraitUpsideDown://180
-                mAcceleration.x = -mAcceleration.x;
-                mAcceleration.y = -mAcceleration.y;
-                break;
-
-            case cc.UIInterfaceOrientationPortrait://0
-                break;
-        }
-    },
+    _registerAccelerometerEvent: function(){},
 
     update:function(dt){
         if(this._accelCurTime > this._accelInterval){

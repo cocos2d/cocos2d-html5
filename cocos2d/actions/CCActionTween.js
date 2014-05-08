@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -56,12 +56,19 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
     to:0,
     delta:0,
 
-    ctor:function(){
+	/**
+	 * Creates an initializes the action with the property name (key), and the from and to parameters.
+	 * @constructor
+	 * @param {Number} duration
+	 * @param {String} key
+	 * @param {Number} from
+	 * @param {Number} to
+	 */
+    ctor:function(duration, key, from, to){
         cc.ActionInterval.prototype.ctor.call(this);
         this.key = "";
-        this.from = 0;
-        this.to = 0;
-        this.delta = 0;
+
+		to !== undefined && this.initWithDuration(duration, key, from, to);
     },
 
     /**

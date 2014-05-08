@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -91,7 +91,6 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
     }
 });
 
-/**  */
 /**
  * create PageTurn3D action
  * @param {Number} duration
@@ -99,7 +98,5 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
  * @return {cc.PageTurn3D}
  */
 cc.PageTurn3D.create = function (duration, gridSize) {
-    var action = new cc.PageTurn3D();
-    action.initWithDuration(duration, gridSize);
-    return action;
+    return new cc.PageTurn3D(duration, gridSize);
 };

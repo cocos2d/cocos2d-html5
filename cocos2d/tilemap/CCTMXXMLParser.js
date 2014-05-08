@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -23,27 +23,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-/**
- * @constant
- * @type Number
- */
-cc.TMX_LAYER_ATTRIB_NONE = 1 << 0;
-/**
- * @constant
- * @type Number
- */
-cc.TMX_LAYER_ATTRIB_BASE64 = 1 << 1;
-/**
- * @constant
- * @type Number
- */
-cc.TMX_LAYER_ATTRIB_GZIP = 1 << 2;
-/**
- * @constant
- * @type Number
- */
-cc.TMX_LAYER_ATTRIB_ZLIB = 1 << 3;
 
 /**
  * @constant
@@ -284,7 +263,23 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _resources:"",
     _currentFirstGID:0,
 
-    ctor:function () {
+    /**
+     * Creates a TMX Format with a tmx file or content string
+     * @constructor
+     * @param {String} tmxFile fileName or content string
+     * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
+     * @example
+     * 1.
+     * //create a TMXMapInfo with file name
+     * var tmxMapInfo = cc.TMXMapInfo.create("res/orthogonal-test1.tmx");
+     * 2.
+     * //create a TMXMapInfo with content string and resource path
+     * var resources = "res/TileMaps";
+     * var filePath = "res/TileMaps/orthogonal-test1.tmx";
+     * var xmlStr = cc.loader.getRes(filePath);
+     * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
+     */
+    ctor:function (tmxFile, resourcePath) {
         cc.SAXParser.prototype.ctor.apply(this);
         this._mapSize = cc.size(0, 0);
         this._tileSize = cc.size(0, 0);
@@ -295,6 +290,12 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._tileProperties = {};
 
         this._currentFirstGID = 0;
+
+        if (resourcePath !== undefined) {
+            this.initWithXML(tmxFile,resourcePath);
+        } else if(tmxFile !== undefined){
+            this.initWithTMXFile(tmxFile);
+        }
     },
     /**
      * @return {Number}
@@ -608,24 +609,23 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                     tileset.sourceImage = this._resources + (this._resources ? "/" : "") + imagename;
                 }
                 this.setTilesets(tileset);
-            }
-        }
 
-        // PARSE  <tile>
-        var tiles = map.querySelectorAll('tile');
-        if (tiles) {
-            for (i = 0; i < tiles.length; i++) {
-                var info = this._tilesets[0];
-                var t = tiles[i];
-                this.parentGID = parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0);
-                var tp = t.querySelectorAll("properties > property");
-                if (tp) {
-                    var dict = {};
-                    for (j = 0; j < tp.length; j++) {
-                        var name = tp[j].getAttribute('name');
-                        dict[name] = tp[j].getAttribute('value');
+                // PARSE  <tile>
+                var tiles = selTileset.getElementsByTagName('tile');
+                if (tiles) {
+                    for (var tIdx = 0; tIdx < tiles.length; tIdx++) {
+                        var t = tiles[tIdx];
+                        this.parentGID = parseInt(tileset.firstGid) + parseInt(t.getAttribute('id') || 0);
+                        var tp = t.querySelectorAll("properties > property");
+                        if (tp) {
+                            var dict = {};
+                            for (j = 0; j < tp.length; j++) {
+                                var name = tp[j].getAttribute('name');
+                                dict[name] = tp[j].getAttribute('value');
+                            }
+                            this._tileProperties[this.parentGID] = dict;
+                        }
                     }
-                    this._tileProperties[this.parentGID] = dict;
                 }
             }
         }
@@ -696,7 +696,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         }
                         break;
                     default:
-                        if(this.layerAttrs == cc.TMX_LAYER_ATTRIB_NONE)
+                        if(this.layerAttrs == cc.TMXLayerInfo.ATTRIB_NONE)
                             cc.log("cc.TMXMapInfo.parseXMLFile(): Only base64 and/or gzip/zlib maps are supported");
                         break;
                 }
@@ -869,13 +869,13 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         // tmp vars
         this.currentString = "";
         this.storingCharacters = false;
-        this.layerAttrs = cc.TMX_LAYER_ATTRIB_NONE;
+        this.layerAttrs = cc.TMXLayerInfo.ATTRIB_NONE;
         this.parentElement = cc.TMX_PROPERTY_NONE;
         this._currentFirstGID = 0;
     }
 });
 
-window._p = cc.TMXMapInfo.prototype;
+var _p = cc.TMXMapInfo.prototype;
 
 // Extended properties
 /** @expose */
@@ -891,7 +891,6 @@ cc.defineGetterSetter(_p, "tileWidth", _p._getTileWidth, _p._setTileWidth);
 _p.tileHeight;
 cc.defineGetterSetter(_p, "tileHeight", _p._getTileHeight, _p._setTileHeight);
 
-delete window._p;
 
 /**
  * Creates a TMX Format with a tmx file or content string
@@ -910,16 +909,30 @@ delete window._p;
  * var tmxMapInfo = cc.TMXMapInfo.create(xmlStr, resources);
  */
 cc.TMXMapInfo.create = function (tmxFile, resourcePath) {
-    var ret = new cc.TMXMapInfo();
-    if (resourcePath) {
-        if (ret.initWithXML(tmxFile, resourcePath))
-            return ret;
-    } else {
-        if (ret.initWithTMXFile(tmxFile))
-            return ret;
-    }
-    return null;
+    return new cc.TMXMapInfo(tmxFile, resourcePath);
 };
 
 
 cc.loader.register(["tmx", "tsx"], cc._txtLoader);
+
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_NONE = 1 << 0;
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_BASE64 = 1 << 1;
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_GZIP = 1 << 2;
+/**
+ * @constant
+ * @type Number
+ */
+cc.TMXLayerInfo.ATTRIB_ZLIB = 1 << 3;

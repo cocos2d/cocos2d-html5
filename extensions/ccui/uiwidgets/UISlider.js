@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -56,7 +57,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _ballPTexType: null,
     _ballDTexType: null,
     _isTextureLoaded: false,
-    _className:"Slider",
+    _className: "Slider",
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._barRenderer = null;
@@ -87,8 +88,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._isTextureLoaded = false;
     },
 
-    init:function(){
-        if(ccui.Widget.prototype.init.call(this)){
+    init: function () {
+        if (ccui.Widget.prototype.init.call(this)) {
             this.setTouchEnabled(true);
             return true;
         }
@@ -231,7 +232,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * Get  slider is using scale9 renderer or not.
      * @returns {Boolean}
      */
-    isScale9Enabled:function(){
+    isScale9Enabled: function () {
         return this._scale9Enabled;
     },
 
@@ -271,7 +272,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * Get cap insets for slider.
      * @returns {cc.Rect}
      */
-    getCapInsetBarRenderer:function(){
+    getCapInsetBarRenderer: function () {
         return this._capInsetsBarRenderer;
     },
 
@@ -291,7 +292,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      * Get cap insets for slider.
      * @returns {cc.Rect}
      */
-    getCapInsetProgressBarRenderer:function(){
+    getCapInsetProgressBarRenderer: function () {
         return this._capInsetsProgressBarRenderer;
     },
 
@@ -395,7 +396,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             percent = 0;
         }
         this._percent = percent;
-        if(!this._isTextureLoaded){
+        if (!this._isTextureLoaded) {
             return;
         }
         var dis = this._barLength * (percent / 100.0);
@@ -408,18 +409,18 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
             if (this._progressBarTexType == ccui.Widget.PLIST_TEXTURE) {
                 var barNode = this._progressBarRenderer;
                 if (barNode) {
-                    var to = barNode.getTextureRect()._origin;
-                    x = to.x;
-                    y = to.y;
+                    var rect = barNode.getTextureRect();
+                    x = rect.x;
+                    y = rect.y;
                 }
             }
             this._progressBarRenderer.setTextureRect(cc.rect(x, y, this._progressBarTextureSize.width * (percent / 100.0), this._progressBarTextureSize.height));
         }
     },
 
-    onTouchBegan: function (touch , event) {
-        var pass = ccui.Widget.prototype.onTouchBegan.call(this,touch , event);
-        if(this._hitted){
+    onTouchBegan: function (touch, event) {
+        var pass = ccui.Widget.prototype.onTouchBegan.call(this, touch, event);
+        if (this._hitted) {
             var nsp = this.convertToNodeSpace(this._touchStartPos);
             this.setPercent(this.getPercentWithBallPos(nsp.x));
             this.percentChangedEvent();
@@ -427,7 +428,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         return pass;
     },
 
-    onTouchMoved: function (touch , event) {
+    onTouchMoved: function (touch, event) {
         var touchPoint = touch.getLocation();
         this._touchMovePos.x = touchPoint.x;
         this._touchMovePos.y = touchPoint.y;
@@ -437,12 +438,12 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this.percentChangedEvent();
     },
 
-    onTouchEnded: function (touch , event) {
-        ccui.Widget.prototype.onTouchEnded.call(this, touch , event);
+    onTouchEnded: function (touch, event) {
+        ccui.Widget.prototype.onTouchEnded.call(this, touch, event);
     },
 
-    onTouchCancelled: function (touch , event) {
-        ccui.Widget.prototype.onTouchCancelled.call(this, touch , event);
+    onTouchCancelled: function (touch, event) {
+        ccui.Widget.prototype.onTouchCancelled.call(this, touch, event);
     },
 
     /**
@@ -490,14 +491,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
      */
     getContentSize: function () {
         var locContentSize = this._barRenderer.getContentSize();
-        return cc.size(locContentSize.width,locContentSize.height);
+        return cc.size(locContentSize.width, locContentSize.height);
     },
-	_getWidth: function () {
-		return this._barRenderer._getWidth();
-	},
-	_getHeight: function () {
-		return this._barRenderer._getHeight();
-	},
+    _getWidth: function () {
+        return this._barRenderer._getWidth();
+    },
+    _getHeight: function () {
+        return this._barRenderer._getHeight();
+    },
 
     /**
      * override "getContentSize" method of widget.
@@ -518,7 +519,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         else {
             this._barLength = this._size.width;
             if (this._scale9Enabled) {
-                this._barRenderer.setPreferredSize(cc.size(this._size.width,this._size.height));
+                this._barRenderer.setPreferredSize(cc.size(this._size.width, this._size.height));
             }
             else {
                 var btextureSize = this._barRenderer.getContentSize();
@@ -547,7 +548,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         }
         else {
             if (this._scale9Enabled) {
-                this._progressBarRenderer.setPreferredSize(cc.size(this._size.width,this._size.height));
+                this._progressBarRenderer.setPreferredSize(cc.size(this._size.width, this._size.height));
             }
             else {
                 var ptextureSize = this._progressBarTextureSize;
@@ -623,14 +624,14 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     }
 });
 
-window._p = ccui.Slider.prototype;
+var _p = ccui.Slider.prototype;
 
 // Extended properties
 /** @expose */
 _p.percent;
 cc.defineGetterSetter(_p, "percent", _p.getPercent, _p.setPercent);
 
-delete window._p;
+_p = null;
 
 /**
  * allocates and initializes a UISlider.

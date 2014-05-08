@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -541,8 +542,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
         frameData.y *= this._positionReadScale;
         frameData.scaleX = parseFloat(frameXML.getAttribute(ccs.CONST_A_SCALE_X)) || 0;
         frameData.scaleY = parseFloat(frameXML.getAttribute(ccs.CONST_A_SCALE_Y)) || 0;
-        frameData.skewX = cc.DEGREES_TO_RADIANS(parseFloat(frameXML.getAttribute(ccs.CONST_A_SKEW_X)) || 0);
-        frameData.skewY = cc.DEGREES_TO_RADIANS(-parseFloat(frameXML.getAttribute(ccs.CONST_A_SKEW_Y)) || 0);
+        frameData.skewX = cc.degreesToRadians(parseFloat(frameXML.getAttribute(ccs.CONST_A_SKEW_X)) || 0);
+        frameData.skewY = cc.degreesToRadians(-parseFloat(frameXML.getAttribute(ccs.CONST_A_SKEW_Y)) || 0);
         frameData.duration = parseFloat(frameXML.getAttribute(ccs.CONST_A_DURATION)) || 0;
         frameData.displayIndex = parseFloat(frameXML.getAttribute(ccs.CONST_A_DISPLAY_INDEX)) || 0;
         frameData.zOrder = parseFloat(frameXML.getAttribute(ccs.CONST_A_Z)) || 0;
@@ -611,8 +612,8 @@ ccs.dataReaderHelper = /** @lends ccs.dataReaderHelper# */{
             helpNode.skewY = parseFloat(parentFrameXml.getAttribute(ccs.CONST_A_SKEW_Y)) || 0;
 
             helpNode.y = -helpNode.y;
-            helpNode.skewX = cc.DEGREES_TO_RADIANS(helpNode.skewX);
-            helpNode.skewY = cc.DEGREES_TO_RADIANS(-helpNode.skewY);
+            helpNode.skewX = cc.degreesToRadians(helpNode.skewX);
+            helpNode.skewY = cc.degreesToRadians(-helpNode.skewY);
             ccs.TransformHelp.transformFromParent(frameData, helpNode);
         }
         return frameData;

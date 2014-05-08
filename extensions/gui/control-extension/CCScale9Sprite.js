@@ -1,5 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2008-2010 Ricardo Quesada
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
  Copyright (c) 2012 Neofect. All rights reserved.
 
  http://www.cocos2d-x.org
@@ -24,19 +26,6 @@
 
  Created by Jung Sang-Taik on 2012-03-16
  ****************************************************************************/
-
-/**
- * @ignore
- */
-cc.POSITIONS_CENTRE = 0;
-cc.POSITIONS_TOP = 1;
-cc.POSITIONS_LEFT = 2;
-cc.POSITIONS_RIGHT = 3;
-cc.POSITIONS_BOTTOM = 4;
-cc.POSITIONS_TOPRIGHT = 5;
-cc.POSITIONS_TOPLEFT = 6;
-cc.POSITIONS_BOTTOMRIGHT = 7;
-cc.POSITIONS_BOTTOMLEFT = 8;
 
 /**
  * A 9-slice sprite for cocos2d.
@@ -269,6 +258,11 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         this._color.a = opacity;
     },
 
+    updateDisplayedOpacity: function(parentOpacity){
+        cc.NodeRGBA.prototype.updateDisplayedOpacity.call(this, parentOpacity);
+        this.setOpacity(this._displayedOpacity);
+    },
+
     /** Color: conforms to CCRGBAProtocol protocol */
     getColor: function () {
         var locColor = this._color;
@@ -293,6 +287,11 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
         if (color.a !== undefined && !color.a_undefined) {
             this.setOpacity(color.a);
         }
+    },
+
+    updateDisplayedColor: function(parentColor){
+        cc.NodeRGBA.prototype.updateDisplayedColor.call(this, parentColor);
+        this.setColor(this._displayedColor);
     },
 
     getCapInsets: function () {
@@ -467,8 +466,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
                 }, this);
             }
         }
-        var batchnode = cc.SpriteBatchNode.create(file, 9);
-        return this.initWithBatchNode(batchnode, rect, false, capInsets);
+        return this.initWithBatchNode(cc.SpriteBatchNode.create(file, 9), rect, false, capInsets);
     },
 
     /**
@@ -721,47 +719,47 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             // Centre
             this._centre = new cc.Sprite();
             this._centre.initWithTexture(selTexture, centerbounds);
-            locScale9Image.addChild(this._centre, 0, cc.POSITIONS_CENTRE);
+            locScale9Image.addChild(this._centre, 0, cc.Scale9Sprite.POSITIONS_CENTRE);
 
             // Top
             this._top = new cc.Sprite();
             this._top.initWithTexture(selTexture, centertopbounds);
-            locScale9Image.addChild(this._top, 1, cc.POSITIONS_TOP);
+            locScale9Image.addChild(this._top, 1, cc.Scale9Sprite.POSITIONS_TOP);
 
             // Bottom
             this._bottom = new cc.Sprite();
             this._bottom.initWithTexture(selTexture, centerbottombounds);
-            locScale9Image.addChild(this._bottom, 1, cc.POSITIONS_BOTTOM);
+            locScale9Image.addChild(this._bottom, 1, cc.Scale9Sprite.POSITIONS_BOTTOM);
 
             // Left
             this._left = new cc.Sprite();
             this._left.initWithTexture(selTexture, leftcenterbounds);
-            locScale9Image.addChild(this._left, 1, cc.POSITIONS_LEFT);
+            locScale9Image.addChild(this._left, 1, cc.Scale9Sprite.POSITIONS_LEFT);
 
             // Right
             this._right = new cc.Sprite();
             this._right.initWithTexture(selTexture, rightcenterbounds);
-            locScale9Image.addChild(this._right, 1, cc.POSITIONS_RIGHT);
+            locScale9Image.addChild(this._right, 1, cc.Scale9Sprite.POSITIONS_RIGHT);
 
             // Top left
             this._topLeft = new cc.Sprite();
             this._topLeft.initWithTexture(selTexture, lefttopbounds);
-            locScale9Image.addChild(this._topLeft, 2, cc.POSITIONS_TOPLEFT);
+            locScale9Image.addChild(this._topLeft, 2, cc.Scale9Sprite.POSITIONS_TOPLEFT);
 
             // Top right
             this._topRight = new cc.Sprite();
             this._topRight.initWithTexture(selTexture, righttopbounds);
-            locScale9Image.addChild(this._topRight, 2, cc.POSITIONS_TOPRIGHT);
+            locScale9Image.addChild(this._topRight, 2, cc.Scale9Sprite.POSITIONS_TOPRIGHT);
 
             // Bottom left
             this._bottomLeft = new cc.Sprite();
             this._bottomLeft.initWithTexture(selTexture, leftbottombounds);
-            locScale9Image.addChild(this._bottomLeft, 2, cc.POSITIONS_BOTTOMLEFT);
+            locScale9Image.addChild(this._bottomLeft, 2, cc.Scale9Sprite.POSITIONS_BOTTOMLEFT);
 
             // Bottom right
             this._bottomRight = new cc.Sprite();
             this._bottomRight.initWithTexture(selTexture, rightbottombounds);
-            locScale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
+            locScale9Image.addChild(this._bottomRight, 2, cc.Scale9Sprite.POSITIONS_BOTTOMRIGHT);
         } else {
             // set up transformation of coordinates
             // to handle the case where the sprite is stored rotated
@@ -820,47 +818,47 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
             // Centre
             this._centre = new cc.Sprite();
             this._centre.initWithTexture(selTexture, rotatedcenterbounds, true);
-            locScale9Image.addChild(this._centre, 0, cc.POSITIONS_CENTRE);
+            locScale9Image.addChild(this._centre, 0, cc.Scale9Sprite.POSITIONS_CENTRE);
 
             // Top
             this._top = new cc.Sprite();
             this._top.initWithTexture(selTexture, rotatedcentertopbounds, true);
-            locScale9Image.addChild(this._top, 1, cc.POSITIONS_TOP);
+            locScale9Image.addChild(this._top, 1, cc.Scale9Sprite.POSITIONS_TOP);
 
             // Bottom
             this._bottom = new cc.Sprite();
             this._bottom.initWithTexture(selTexture, rotatedcenterbottombounds, true);
-            locScale9Image.addChild(this._bottom, 1, cc.POSITIONS_BOTTOM);
+            locScale9Image.addChild(this._bottom, 1, cc.Scale9Sprite.POSITIONS_BOTTOM);
 
             // Left
             this._left = new cc.Sprite();
             this._left.initWithTexture(selTexture, rotatedleftcenterbounds, true);
-            locScale9Image.addChild(this._left, 1, cc.POSITIONS_LEFT);
+            locScale9Image.addChild(this._left, 1, cc.Scale9Sprite.POSITIONS_LEFT);
 
             // Right
             this._right = new cc.Sprite();
             this._right.initWithTexture(selTexture, rotatedrightcenterbounds, true);
-            locScale9Image.addChild(this._right, 1, cc.POSITIONS_RIGHT);
+            locScale9Image.addChild(this._right, 1, cc.Scale9Sprite.POSITIONS_RIGHT);
 
             // Top left
             this._topLeft = new cc.Sprite();
             this._topLeft.initWithTexture(selTexture, rotatedlefttopbounds, true);
-            locScale9Image.addChild(this._topLeft, 2, cc.POSITIONS_TOPLEFT);
+            locScale9Image.addChild(this._topLeft, 2, cc.Scale9Sprite.POSITIONS_TOPLEFT);
 
             // Top right
             this._topRight = new cc.Sprite();
             this._topRight.initWithTexture(selTexture, rotatedrighttopbounds, true);
-            locScale9Image.addChild(this._topRight, 2, cc.POSITIONS_TOPRIGHT);
+            locScale9Image.addChild(this._topRight, 2, cc.Scale9Sprite.POSITIONS_TOPRIGHT);
 
             // Bottom left
             this._bottomLeft = new cc.Sprite();
             this._bottomLeft.initWithTexture(selTexture, rotatedleftbottombounds, true);
-            locScale9Image.addChild(this._bottomLeft, 2, cc.POSITIONS_BOTTOMLEFT);
+            locScale9Image.addChild(this._bottomLeft, 2, cc.Scale9Sprite.POSITIONS_BOTTOMLEFT);
 
             // Bottom right
             this._bottomRight = new cc.Sprite();
             this._bottomRight.initWithTexture(selTexture, rotatedrightbottombounds, true);
-            locScale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
+            locScale9Image.addChild(this._bottomRight, 2, cc.Scale9Sprite.POSITIONS_BOTTOMRIGHT);
         }
 
         this.setContentSize(rect);
@@ -903,7 +901,7 @@ cc.Scale9Sprite = cc.NodeRGBA.extend(/** @lends cc.Scale9Sprite# */{
     }
 });
 
-window._p = cc.Scale9Sprite.prototype;
+var _p = cc.Scale9Sprite.prototype;
 
 // Extended properties
 /** @expose */
@@ -925,7 +923,7 @@ cc.defineGetterSetter(_p, "insetRight", _p.getInsetRight, _p.setInsetRight);
 _p.insetBottom;
 cc.defineGetterSetter(_p, "insetBottom", _p.getInsetBottom, _p.setInsetBottom);
 
-delete window._p;
+_p = null;
 
 /**
  * Creates a 9-slice sprite with a texture file, a delimitation zone and
@@ -982,3 +980,16 @@ cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets
         return pReturn;
     return null;
 };
+
+
+/**
+ * @ignore
+ */
+cc.Scale9Sprite.POSITIONS_CENTRE = 0;
+cc.Scale9Sprite.POSITIONS_TOP = 1;
+cc.Scale9Sprite.POSITIONS_LEFT = 2;
+cc.Scale9Sprite.POSITIONS_RIGHT = 3;
+cc.Scale9Sprite.POSITIONS_BOTTOM = 4;
+cc.Scale9Sprite.POSITIONS_TOPRIGHT = 5;
+cc.Scale9Sprite.POSITIONS_TOPLEFT = 6;
+cc.Scale9Sprite.POSITIONS_BOTTOMRIGHT = 7;

@@ -1,5 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2011 cocos2d-x.org
+ Copyright (c) 2008-2010 Ricardo Quesada
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
  Copyright (c) 2010      Lam Pham
 
  http://www.cocos2d-x.org
@@ -23,32 +25,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-/**
- * Radial Counter-Clockwise
- * @type Number
- * @constant
- */
-cc.PROGRESS_TIMER_TYPE_RADIAL = 0;
-/**
- * Bar
- * @type Number
- * @constant
- */
-cc.PROGRESS_TIMER_TYPE_BAR = 1;
-
-/**
- * @constant
- * @type Number
- */
-cc.PROGRESS_TEXTURE_COORDS_COUNT = 4;
-
-/**
- * @constant
- * @type Number
- */
-cc.PROGRESS_TEXTURE_COORDS = 0x4b;
-
 /**
  * cc.Progresstimer is a subclass of cc.Node.   <br/>
  * It renders the inner sprite according to the percentage.<br/>
@@ -65,7 +41,7 @@ cc.PROGRESS_TEXTURE_COORDS = 0x4b;
  *                                              you want a bottom to top then set the midpoint all the way to cc.p(x,0)<br/>
  *                                              you want a top to bottom then set the midpoint all the way to cc.p(x,1)</p>
  * @property {cc.Point}     barChangeRate   - This allows the bar type to move the component at a specific rate.
- * @property {enum}         type            - Type of the progress timer: cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR.
+ * @property {enum}         type            - Type of the progress timer: cc.ProgressTimer.TYPE_RADIAL|cc.ProgressTimer.TYPE_BAR.
  * @property {Number}       percentage      - Percentage to change progress, from 0 to 100.
  * @property {cc.Sprite}    sprite          - The sprite to show the progress percentage.
  * @property {Boolean}      reverseDir      - Indicate whether the direction is reversed.
@@ -123,7 +99,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      *  Change the percentage to change progress
-     * @return {cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR}
+     * @return {cc.ProgressTimer.TYPE_RADIAL|cc.ProgressTimer.TYPE_BAR}
      */
     getType:function () {
         return this._type;
@@ -168,8 +144,8 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     },
 
     _boundaryTexCoord:function (index) {
-        if (index < cc.PROGRESS_TEXTURE_COORDS_COUNT) {
-            var locProTextCoords = cc.PROGRESS_TEXTURE_COORDS;
+        if (index < cc.ProgressTimer.TEXTURE_COORDS_COUNT) {
+            var locProTextCoords = cc.ProgressTimer.TEXTURE_COORDS;
             if (this._reverseDirection)
                 return cc.p((locProTextCoords >> (7 - (index << 1))) & 1, (locProTextCoords >> (7 - ((index << 1) + 1))) & 1);
             else
@@ -196,7 +172,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     _ctorForCanvas: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
 
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._percentage = 0.0;
         this._midPoint = cc.p(0, 0);
         this._barChangeRate = cc.p(0, 0);
@@ -214,7 +190,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _ctorForWebGL: function () {
         cc.NodeRGBA.prototype.ctor.call(this);
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._percentage = 0.0;
         this._midPoint = cc.p(0, 0);
         this._barChangeRate = cc.p(0, 0);
@@ -317,7 +293,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
     /**
      * set Progress type of cc.ProgressTimer
      * @function
-     * @param {cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR} type
+     * @param {cc.ProgressTimer.TYPE_RADIAL|cc.ProgressTimer.TYPE_BAR} type
      */
     setType:null,
 
@@ -406,7 +382,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this.anchorX = 0.5;
 	    this.anchorY = 0.5;
 
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._reverseDirection = false;
 	    this.midPoint = cc.p(0.5, 0.5);
 	    this.barChangeRate = cc.p(1, 1);
@@ -423,7 +399,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         this.anchorX = 0.5;
 	    this.anchorY = 0.5;
 
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._type = cc.ProgressTimer.TYPE_RADIAL;
         this._reverseDirection = false;
         this.midPoint = cc.p(0.5, 0.5);
         this.barChangeRate = cc.p(1, 1);
@@ -470,13 +446,13 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         flipYOffset *= locEGL_ScaleY;
 
         //clip
-        if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
+        if (this._type == cc.ProgressTimer.TYPE_BAR) {
             var locBarRect = this._barRect;
             context.beginPath();
             context.rect(locBarRect.x * locEGL_ScaleX, locBarRect.y * locEGL_ScaleY, locBarRect.width * locEGL_ScaleX, locBarRect.height * locEGL_ScaleY);
             context.clip();
             context.closePath();
-        } else if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
+        } else if (this._type == cc.ProgressTimer.TYPE_RADIAL) {
             var locOriginX = this._origin.x * locEGL_ScaleX;
             var locOriginY = this._origin.y * locEGL_ScaleY;
             context.beginPath();
@@ -505,7 +481,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         }
 
         context.restore();
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.incrementGLDraws(1);
     },
 
     _drawForWebGL:function (ctx) {
@@ -513,7 +489,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         if (!this._vertexData || !this._sprite)
             return;
 
-        cc.NODE_DRAW_SETUP(this);
+        cc.nodeDrawSetup(this);
 
         var blendFunc = this._sprite.getBlendFunc();
         cc.glBlendFunc(blendFunc.src, blendFunc.dst);
@@ -531,9 +507,9 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, locVertexDataLen, 8);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, locVertexDataLen, 12);
 
-        if (this._type === cc.PROGRESS_TIMER_TYPE_RADIAL)
+        if (this._type === cc.ProgressTimer.TYPE_RADIAL)
             context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
-        else if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
+        else if (this._type == cc.ProgressTimer.TYPE_BAR) {
             if (!this._reverseDirection)
                 context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount);
             else {
@@ -590,7 +566,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
             //    We loop through five points since the top is split in half
 
             var min_t = cc.FLT_MAX;
-            var locProTextCoordsCount = cc.PROGRESS_TEXTURE_COORDS_COUNT;
+            var locProTextCoordsCount = cc.ProgressTimer.TEXTURE_COORDS_COUNT;
             for (i = 0; i <= locProTextCoordsCount; ++i) {
                 var pIndex = (i + (locProTextCoordsCount - 1)) % locProTextCoordsCount;
 
@@ -814,7 +790,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         var sw = locSprite.width, sh = locSprite.height;
         var locMidPoint = this._midPoint;
 
-        if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
+        if (this._type == cc.ProgressTimer.TYPE_RADIAL) {
             this._radius = Math.round(Math.sqrt(sw * sw + sh * sh));
             var locStartAngle, locEndAngle, locCounterClockWise = false, locOrigin = this._origin;
             locOrigin.x = sw * locMidPoint.x;
@@ -901,15 +877,15 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
 
     _updateProgressForWebGL:function () {
         var locType = this._type;
-        if(locType === cc.PROGRESS_TIMER_TYPE_RADIAL)
+        if(locType === cc.ProgressTimer.TYPE_RADIAL)
             this._updateRadial();
-        else if(locType === cc.PROGRESS_TIMER_TYPE_BAR)
+        else if(locType === cc.ProgressTimer.TYPE_BAR)
             this._updateBar();
         this._vertexDataDirty = true;
     }
 });
 
-window._p = cc.ProgressTimer.prototype;
+var _p = cc.ProgressTimer.prototype;
 if(cc._renderType == cc._RENDER_TYPE_WEBGL){
     _p.ctor = _p._ctorForWebGL;
     _p.setReverseProgress = _p._setReverseProgressForWebGL;
@@ -949,7 +925,7 @@ cc.defineGetterSetter(_p, "sprite", _p.getSprite, _p.setSprite);
 /** @expose */
 _p.reverseDir;
 cc.defineGetterSetter(_p, "reverseDir", _p.isReverseDirection, _p.setReverseDirection);
-delete window._p;
+
 
 /**
  * create a progress timer object with image file name that renders the inner sprite according to the percentage
@@ -966,4 +942,28 @@ cc.ProgressTimer.create = function (sprite) {
     return null;
 };
 
+/**
+ * @constant
+ * @type Number
+ */
+cc.ProgressTimer.TEXTURE_COORDS_COUNT = 4;
 
+/**
+ * @constant
+ * @type Number
+ */
+cc.ProgressTimer.TEXTURE_COORDS = 0x4b;
+
+/**
+ * Radial Counter-Clockwise
+ * @type Number
+ * @constant
+ */
+cc.ProgressTimer.TYPE_RADIAL = 0;
+
+/**
+ * Bar
+ * @type Number
+ * @constant
+ */
+cc.ProgressTimer.TYPE_BAR = 1;

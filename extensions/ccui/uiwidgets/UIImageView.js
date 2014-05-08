@@ -1,5 +1,6 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -64,7 +65,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         texType = texType || ccui.Widget.LOCAL_TEXTURE;
         this._textureFile = fileName;
         this._imageTexType = texType;
-        var imageRenderer = this._imageRenderer
+        var imageRenderer = this._imageRenderer;
         switch (this._imageTexType) {
             case ccui.Widget.LOCAL_TEXTURE:
                 imageRenderer.initWithFile(fileName);
@@ -78,13 +79,13 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
         var locRendererSize = imageRenderer.getContentSize();
         if(imageRenderer.textureLoaded()){
-            this._imageTextureSize.width = locRendererSize.width;
-            this._imageTextureSize.height = locRendererSize.height;
+            this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locRendererSize.width;
+            this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locRendererSize.height;
         }else{
             imageRenderer.addLoadedEventListener(function(){
                 var locSize = imageRenderer.getContentSize();
-                this._imageTextureSize.width = locSize.width;
-                this._imageTextureSize.height = locSize.height;
+                this._imageTextureSize.width = this._customSize.width ? this._customSize.width : locSize.width;
+                this._imageTextureSize.height = this._customSize.height ? this._customSize.height : locSize.height;
                 if (imageRenderer.setCapInsets) {
                     imageRenderer.setCapInsets(this._capInsets);
                 }

@@ -1,7 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2011-2012 cocos2d-x.org
+ Copyright (c) 2013-2014 Chukong Technologies Inc.
 
  http://www.cocos2d-x.org
 
@@ -79,6 +79,18 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
     _isInSceneOnTop:false,
     _isSendCleanupToScene:false,
     _className:"TransitionScene",
+
+    /**
+     * creates a base transition with duration and incoming scene
+     * @constructor
+     * @param {Number} t time in seconds
+     * @param {cc.Scene} scene the scene to transit with
+     */
+    ctor:function(t, scene){
+        cc.Scene.prototype.ctor.call(this);
+        if(t !== undefined && scene !== undefined)
+            this.initWithDuration(t, scene);
+    },
 
     //private
     _setNewScene:function (dt) {
@@ -235,11 +247,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
  * @return {cc.TransitionScene|Null}
  */
 cc.TransitionScene.create = function (t, scene) {
-    var tempScene = new cc.TransitionScene();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
-        return tempScene;
-    }
-    return null;
+    return new cc.TransitionScene(t, scene);
 };
 
 /**
