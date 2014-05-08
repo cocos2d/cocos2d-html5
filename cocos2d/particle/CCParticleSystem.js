@@ -1072,7 +1072,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getStartColor:function () {
-        var color = cc.c4f(this._startColor.r, this._startColor.g, this._startColor.b, this._startColor.a);
+        var color = cc.color(this._startColor.r, this._startColor.g, this._startColor.b, this._startColor.a);
         return color;
     },
 
@@ -1089,7 +1089,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getStartColorVar:function () {
-        var color = cc.c4f(this._startColorVar.r, this._startColorVar.g, this._startColorVar.b, this._startColorVar.a);
+        var color = cc.color(this._startColorVar.r, this._startColorVar.g, this._startColorVar.b, this._startColorVar.a);
         return color;
     },
 
@@ -1106,7 +1106,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getEndColor:function () {
-        var color = cc.c4f(this._endColor.r, this._endColor.g, this._endColor.b, this._endColor.a);
+        var color = cc.color(this._endColor.r, this._endColor.g, this._endColor.b, this._endColor.a);
         return color;
     },
 
@@ -1123,7 +1123,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getEndColorVar:function () {
-        var color = cc.c4f(this._endColorVar.r, this._endColorVar.g, this._endColorVar.b, this._endColorVar.a);
+        var color = cc.color(this._endColorVar.r, this._endColorVar.g, this._endColorVar.b, this._endColorVar.a);
         return color;
     },
 
@@ -2242,113 +2242,95 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             }
         }
     },
-
-    clone:function () {
+    clone:function(){
         var retParticle = new cc.ParticleSystem();
 
         // self, not super
-        if (retParticle.initWithTotalParticles(this._totalParticles)) {
+        if (retParticle.initWithTotalParticles(this.getTotalParticles())) {
             // angle
-            retParticle.angle = this.angle;
-            retParticle.angleVar = this.angleVar;
+            retParticle.setAngle(this.getAngle());
+            retParticle.setAngleVar(this.getAngleVar());
 
             // duration
-            retParticle.duration = this.duration;
+            retParticle.setDuration(this.getDuration());
 
             // blend function
-            retParticle._blendFunc.src = this._blendFunc.src;
-            retParticle._blendFunc.dst = this._blendFunc.dst;
+            var blend = this.getBlendFunc();
+            retParticle.setBlendFunc(blend.src,blend.dst);
 
             // color
-            var particleStartColor = retParticle._startColor, locStartColor = this._startColor;
-            particleStartColor.r = locStartColor.r;
-            particleStartColor.g = locStartColor.g;
-            particleStartColor.b = locStartColor.b;
-            particleStartColor.a = locStartColor.a;
+            retParticle.setStartColor(this.getStartColor());
 
-            var particleStartColorVar =  retParticle._startColorVar, locStartColorVar = this._startColorVar;
-            particleStartColorVar.r = locStartColorVar.r;
-            particleStartColorVar.g = locStartColorVar.g;
-            particleStartColorVar.b = locStartColorVar.b;
-            particleStartColorVar.a = locStartColorVar.a;
+            retParticle.setStartColorVar(this.getStartColorVar());
 
-            var particleEndColor = retParticle._endColor, locEndColor = this._endColor;
-            particleEndColor.r = locEndColor.r;
-            particleEndColor.g = locEndColor.g;
-            particleEndColor.b = locEndColor.b;
-            particleEndColor.a = locEndColor.a;
+            retParticle.setEndColor(this.getEndColor());
 
-            var particleEndColorVar = retParticle._endColorVar, locEndColorVar = this._endColorVar;
-            particleEndColorVar.r = locEndColorVar.r;
-            particleEndColorVar.g = locEndColorVar.g;
-            particleEndColorVar.b = locEndColorVar.b;
-            particleEndColorVar.a = locEndColorVar.a;
+            retParticle.setEndColorVar(this.getEndColorVar());
 
-            // particle size
-            retParticle.startSize = this.startSize;
-            retParticle.startSizeVar = this.startSizeVar;
-            retParticle.endSize = this.endSize;
-            retParticle.endSizeVar = this.endSizeVar;
+            // this size
+            retParticle.setStartSize(this.getStartSize());
+            retParticle.setStartSizeVar(this.getStartSizeVar());
+            retParticle.setEndSize(this.getEndSize());
+            retParticle.setEndSizeVar(this.getEndSizeVar());
 
             // position
-            retParticle.x = this._position.x;
-	        retParticle.y = this._position.y;
-            retParticle._posVar.x = this._posVar.x;
-            retParticle._posVar.y = this._posVar.y;
+            retParticle.setPosition(cc.p(this.x, this.y));
+            retParticle.setPosVar(cc.p(this.getPosVar().x,this.getPosVar().y));
 
             // Spinning
-            retParticle.startSpin = this.startSpin;
-            retParticle.startSpinVar = this.startSpinVar;
-            retParticle.endSpin = this.endSpin;
-            retParticle.endSpinVar = this.endSpinVar;
+            retParticle.setStartSpin(this.getStartSpin()||0);
+            retParticle.setStartSpinVar(this.getStartSpinVar()||0);
+            retParticle.setEndSpin(this.getEndSpin()||0);
+            retParticle.setEndSpinVar(this.getEndSpinVar()||0);
 
-            retParticle.emitterMode = this.emitterMode;
+            retParticle.setEmitterMode(this.getEmitterMode());
 
             // Mode A: Gravity + tangential accel + radial accel
-            if (this.emitterMode == cc.ParticleSystem.MODE_GRAVITY) {
-                var particleModeA = retParticle.modeA, locModeA = this.modeA;
+            if (this.getEmitterMode() == cc.ParticleSystem.MODE_GRAVITY) {
                 // gravity
-                particleModeA.gravity.x = locModeA.gravity.x;
-                particleModeA.gravity.y = locModeA.gravity.y;
+                var gra = this.getGravity();
+                retParticle.setGravity(cc.p(gra.x,gra.y));
 
                 // speed
-                particleModeA.speed = locModeA.speed;
-                particleModeA.speedVar = locModeA.speedVar;
+                retParticle.setSpeed(this.getSpeed());
+                retParticle.setSpeedVar(this.getSpeedVar());
 
                 // radial acceleration
-                particleModeA.radialAccel = locModeA.radialAccel;
-
-                particleModeA.radialAccelVar = locModeA.radialAccelVar;
+                retParticle.setRadialAccel(this.getRadialAccel());
+                retParticle.setRadialAccelVar(this.getRadialAccelVar());
 
                 // tangential acceleration
-                particleModeA.tangentialAccel = locModeA.tangentialAccel;
+                retParticle.setTangentialAccel(this.getTangentialAccel());
+                retParticle.setTangentialAccelVar(this.getTangentialAccelVar());
 
-                particleModeA.tangentialAccelVar = locModeA.tangentialAccelVar;
-            } else if (this.emitterMode == cc.ParticleSystem.MODE_RADIUS) {
-                var particleModeB = retParticle.modeB, locModeB = this.modeB;
+            } else if (this.getEmitterMode() == cc.ParticleSystem.MODE_RADIUS) {
                 // or Mode B: radius movement
-                particleModeB.startRadius = locModeB.startRadius;
-                particleModeB.startRadiusVar = locModeB.startRadiusVar;
-                particleModeB.endRadius = locModeB.endRadius;
-                particleModeB.endRadiusVar = locModeB.endRadiusVar;
-                particleModeB.rotatePerSecond = locModeB.rotatePerSecond;
-                particleModeB.rotatePerSecondVar = locModeB.rotatePerSecondVar;
+                retParticle.setStartRadius(this.getStartRadius());
+                retParticle.setStartRadiusVar(this.getStartRadiusVar());
+                retParticle.setEndRadius(this.getEndRadius());
+                retParticle.setEndRadiusVar(this.getEndRadiusVar());
+
+                retParticle.setRotatePerSecond(this.getRotatePerSecond());
+                retParticle.setRotatePerSecondVar(this.getRotatePerSecondVar());
             }
 
             // life span
-            retParticle.life = this.life;
-            retParticle.lifeVar = this.lifeVar;
+            retParticle.setLife(this.getLife());
+            retParticle.setLifeVar(this.getLifeVar());
 
             // emission Rate
-            retParticle.emissionRate = this.emissionRate;
+            retParticle.setEmissionRate(this.getEmissionRate());
 
             //don't get the internal texture if a batchNode is used
-            if (!this._batchNode) {
+            if (!this.getBatchNode()) {
                 // Set a compatible default for the alpha transfer
-                retParticle._opacityModifyRGB = this._opacityModifyRGB;
-
+                retParticle.setOpacityModifyRGB(this.isOpacityModifyRGB());
                 // texture
-                this.setTextureWithRect(this._texture,this._pointRect);
+                var texture = this.getTexture();
+                if(texture){
+                    var size = texture.getContentSize();
+                    retParticle.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
+                }
             }
         }
         return retParticle;
