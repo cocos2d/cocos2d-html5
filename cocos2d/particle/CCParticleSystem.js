@@ -1072,7 +1072,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getStartColor:function () {
-        return this._startColor;
+        var color = cc.c4f(this._startColor.r, this._startColor.g, this._startColor.b, this._startColor.a);
+        return color;
     },
 
     /**
@@ -1088,7 +1089,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getStartColorVar:function () {
-        return this._startColorVar;
+        var color = cc.c4f(this._startColorVar.r, this._startColorVar.g, this._startColorVar.b, this._startColorVar.a);
+        return color;
     },
 
     /**
@@ -1104,7 +1106,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getEndColor:function () {
-        return this._endColor;
+        var color = cc.c4f(this._endColor.r, this._endColor.g, this._endColor.b, this._endColor.a);
+        return color;
     },
 
     /**
@@ -1120,7 +1123,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Color}
      */
     getEndColorVar:function () {
-        return this._endColorVar;
+        var color = cc.c4f(this._endColorVar.r, this._endColorVar.g, this._endColorVar.b, this._endColorVar.a);
+        return color;
     },
 
     /**
