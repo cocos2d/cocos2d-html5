@@ -137,9 +137,10 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     /**
      * @return {Number}
      */
-    getAmplitudeRate:function () {
+    getAmplitudeRate: function () {
         // Abstract class needs implementation
         cc.log("cc.ActionInterval.getAmplitudeRate(): it should be overridden in subclass.");
+        return 0;
     }
 });
 
@@ -536,10 +537,10 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.RepeatForever}
      */
     reverse:function () {
-        return (cc.RepeatForever.create(this._innerAction.reverse()));
+        return cc.RepeatForever.create(this._innerAction.reverse());
     },
 
     /**
