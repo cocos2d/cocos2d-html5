@@ -2242,7 +2242,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             }
         }
     },
-    clone:function(){
+
+    clone:function () {
         var retParticle = new cc.ParticleSystem();
 
         // self, not super
