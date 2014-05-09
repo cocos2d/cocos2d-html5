@@ -58,6 +58,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      * @return {object}
      */
     copy:function () {
+        cc.log("copy is deprecated. Please use clone instead.");
         return this.clone();
     },
 
@@ -480,37 +481,38 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         if(!followedNode)
             throw "cc.Follow.initWithAction(): followedNode must be non nil";
 
+        var _this = this;
         rect = rect || cc.rect(0, 0, 0, 0);
-        this._followedNode = followedNode;
-        this._worldRect = rect;
+        _this._followedNode = followedNode;
+        _this._worldRect = rect;
 
-        this._boundarySet = !cc._rectEqualToZero(rect);
+        _this._boundarySet = !cc._rectEqualToZero(rect);
 
-        this._boundaryFullyCovered = false;
+        _this._boundaryFullyCovered = false;
 
         var winSize = cc.director.getWinSize();
-        this._fullScreenSize = cc.p(winSize.width, winSize.height);
-        this._halfScreenSize = cc.pMult(this._fullScreenSize, 0.5);
+        _this._fullScreenSize = cc.p(winSize.width, winSize.height);
+        _this._halfScreenSize = cc.pMult(_this._fullScreenSize, 0.5);
 
-        if (this._boundarySet) {
-            this.leftBoundary = -((rect.x + rect.width) - this._fullScreenSize.x);
-            this.rightBoundary = -rect.x;
-            this.topBoundary = -rect.y;
-            this.bottomBoundary = -((rect.y + rect.height) - this._fullScreenSize.y);
+        if (_this._boundarySet) {
+            _this.leftBoundary = -((rect.x + rect.width) - _this._fullScreenSize.x);
+            _this.rightBoundary = -rect.x;
+            _this.topBoundary = -rect.y;
+            _this.bottomBoundary = -((rect.y + rect.height) - _this._fullScreenSize.y);
 
-            if (this.rightBoundary < this.leftBoundary) {
+            if (_this.rightBoundary < _this.leftBoundary) {
                 // screen width is larger than world's boundary width
                 //set both in the middle of the world
-                this.rightBoundary = this.leftBoundary = (this.leftBoundary + this.rightBoundary) / 2;
+                _this.rightBoundary = _this.leftBoundary = (_this.leftBoundary + _this.rightBoundary) / 2;
             }
-            if (this.topBoundary < this.bottomBoundary) {
+            if (_this.topBoundary < _this.bottomBoundary) {
                 // screen width is larger than world's boundary width
                 //set both in the middle of the world
-                this.topBoundary = this.bottomBoundary = (this.topBoundary + this.bottomBoundary) / 2;
+                _this.topBoundary = _this.bottomBoundary = (_this.topBoundary + _this.bottomBoundary) / 2;
             }
 
-            if ((this.topBoundary == this.bottomBoundary) && (this.leftBoundary == this.rightBoundary))
-                this._boundaryFullyCovered = true;
+            if ((_this.topBoundary == _this.bottomBoundary) && (_this.leftBoundary == _this.rightBoundary))
+                _this._boundaryFullyCovered = true;
         }
         return true;
     },

@@ -503,16 +503,6 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
         }
     },
 
-    copy:function() {
-        var n = new cc.CallFunc();
-        if(this._selectorTarget){
-            n.initWithFunction(this._callFunc,  this._selectorTarget, this._data)
-        }else if(this._function){
-            n.initWithFunction(this._function);
-        }
-        return n;
-    },
-
     clone:function(){
        var action = new cc.CallFunc();
         if(this._selectorTarget){
