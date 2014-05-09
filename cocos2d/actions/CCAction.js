@@ -177,35 +177,6 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     retain:function () {
     },
     release:function () {
-    },
-
-    _speed:0.0,
-
-    /**
-     * Changes the speed of an action, making it take longer (speed>1)
-     * or less (speed<1) time. <br/>
-     * Useful to simulate 'slow motion' or 'fast forward' effect.
-     *
-     * @param speed
-     * @returns {cc.Action}
-     */
-    speed: function(speed){
-
-        var self = this;
-        self._speed = speed;
-        var _step = self.step;
-        self.step = function(dt){
-            _step.call(self, dt * speed);
-        };
-
-        return this;
-    },
-
-    /**
-     * @return {Number}
-     */
-    getSpeed: function(speed){
-        return this._speed;
     }
 });
 /** Allocates and initializes the action
