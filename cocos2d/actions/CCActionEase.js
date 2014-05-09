@@ -174,7 +174,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseRateAction}
      */
     reverse:function () {
         return cc.EaseRateAction.create(this._inner.reverse(), 1 / this._rate);
@@ -207,7 +207,7 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseIn}
      */
     reverse:function () {
         return cc.EaseIn.create(this._inner.reverse(), 1 / this._rate);
@@ -231,6 +231,15 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
 cc.EaseIn.create = function (action, rate) {
     return new cc.EaseIn(action, rate);
 };
+
+cc.easeIn = function (rate) {
+    return {
+        _rate: rate,
+        easing: function (dt) {
+            return Math.pow(dt, this._rate);
+        }};
+};
+
 /**
  * cc.EaseOut action with a rate
  * @class
@@ -245,7 +254,7 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseOut}
      */
     reverse:function () {
         return cc.EaseOut.create(this._inner.reverse(), 1 / this._rate);
@@ -268,6 +277,14 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
  */
 cc.EaseOut.create = function (action, rate) {
     return new cc.EaseOut(action, rate);
+};
+
+cc.easeOut = function (rate) {
+    return {
+        _rate: rate,
+        easing: function (dt) {
+            return Math.pow(dt, 1 / this._rate);
+        }};
 };
 
 /**
@@ -294,7 +311,7 @@ cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseInOut}
      */
     reverse:function () {
         return cc.EaseInOut.create(this._inner.reverse(), this._rate);
@@ -312,6 +329,19 @@ cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
 cc.EaseInOut.create = function (action, rate) {
     return new cc.EaseInOut(action, rate);
 };
+
+cc.easeInOut = function (rate) {
+    return {
+        _rate: rate,
+        easing: function (dt) {
+            dt *= 2;
+            if (dt < 1)
+                return 0.5 * Math.pow(dt, this._rate);
+            else
+                return 1.0 - 0.5 * Math.pow(2 - dt, this._rate);
+        }};
+};
+
 /**
  * cc.Ease Exponential In
  * @class
@@ -326,7 +356,7 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseExponentialOut}
      */
     reverse:function () {
         return cc.EaseExponentialOut.create(this._inner.reverse());
@@ -349,13 +379,22 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
 cc.EaseExponentialIn.create = function (action) {
     return new cc.EaseExponentialIn(action);
 };
+
+cc._easeExponentialInObj = {
+    easing: function(dt){
+        return dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1));
+    }
+};
+cc.easeExponentialIn = function(){
+    return cc._easeExponentialInObj;
+};
+
 /**
  * Ease Exponential Out
  * @class
  * @extends cc.ActionEase
  */
 cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# */{
-
     /**
      * @param {Number} time1
      */
@@ -364,7 +403,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseExponentialIn}
      */
     reverse:function () {
         return cc.EaseExponentialIn.create(this._inner.reverse());
@@ -386,6 +425,15 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
  */
 cc.EaseExponentialOut.create = function (action) {
     return new cc.EaseExponentialOut(action);
+};
+
+cc._easeExponentialOutObj = {
+    easing: function(dt){
+        return dt == 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1);
+    }
+};
+cc.easeExponentialOut = function(){
+    return cc._easeExponentialOutObj;
 };
 
 /**
@@ -422,7 +470,7 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
     }
 });
 
-/** creates the action
+/** creates an EaseExponentialInOut action
  * @param {cc.ActionInterval} action
  * @return {cc.EaseExponentialInOut}
  * @example
@@ -433,6 +481,21 @@ cc.EaseExponentialInOut.create = function (action) {
     return new cc.EaseExponentialInOut(action);
 };
 
+cc._easeExponentialInOutObj = {
+    easing: function(dt){
+        if( dt !== 1 && dt !== 0) {
+            dt *= 2;
+            if (dt < 1)
+                return 0.5 * Math.pow(2, 10 * (dt - 1));
+            else
+                return 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2);
+        }
+        return dt;
+    }
+};
+cc.easeExponentialInOut = function(){
+    return cc._easeExponentialInOutObj;
+};
 
 /**
  * Ease Sine In
@@ -444,12 +507,12 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        time1 = time1===0 || time1==1 ? time1 : -1 * Math.cos(time1 * Math.PI / 2) + 1;
+        time1 = time1===0 || time1===1 ? time1 : -1 * Math.cos(time1 * Math.PI / 2) + 1;
         this._inner.update(time1);
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseSineOut}
      */
     reverse:function () {
         return cc.EaseSineOut.create(this._inner.reverse());
@@ -462,7 +525,7 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
     }
 });
 
-/** creates the action
+/** creates an EaseSineIn action
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineIn}
  * @example
@@ -472,6 +535,16 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
 cc.EaseSineIn.create = function (action) {
     return new cc.EaseSineIn(action);
 };
+
+cc._easeSineInObj = {
+    easing: function(dt){
+        return (dt===0 || dt===1) ? dt : -1 * Math.cos(dt * Math.PI / 2) + 1;
+    }
+};
+cc.easeSineIn = function(){
+    return cc._easeSineInObj;
+};
+
 /**
  * Ease Sine Out
  * @class
@@ -482,12 +555,12 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        time1 = time1===0 || time1==1 ? time1 : Math.sin(time1 * Math.PI / 2);
+        time1 = time1===0 || time1===1 ? time1 : Math.sin(time1 * Math.PI / 2);
         this._inner.update(time1);
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseSineIn}
      */
     reverse:function () {
         return cc.EaseSineIn.create(this._inner.reverse());
@@ -500,8 +573,7 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
     }
 });
 
-
-/** creates the action
+/** creates an EaseSineOut action
  * @param {cc.ActionInterval} action
  * @return {cc.EaseSineOut}
  * @example
@@ -512,6 +584,14 @@ cc.EaseSineOut.create = function (action) {
     return new cc.EaseSineOut(action);
 };
 
+cc._easeSineOutObj = {
+    easing: function(dt){
+        return (dt===0 || dt==1) ? dt : Math.sin(dt * Math.PI / 2);
+    }
+};
+cc.easeSineOut = function(){
+    return cc._easeSineOutObj;
+};
 
 /**
  * Ease Sine InOut
@@ -523,9 +603,8 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        time1 = time1===0 || time1==1 ? time1 : -0.5 * (Math.cos(Math.PI * time1) - 1);
+        time1 = time1===0 || time1===1 ? time1 : -0.5 * (Math.cos(Math.PI * time1) - 1);
         this._inner.update(time1);
-
     },
 
     clone:function(){
@@ -535,7 +614,7 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseSineInOut}
      */
     reverse:function () {
         return cc.EaseSineInOut.create(this._inner.reverse());
@@ -551,6 +630,15 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
  */
 cc.EaseSineInOut.create = function (action) {
     return new cc.EaseSineInOut(action);
+};
+
+cc._easeSineInOutObj = {
+    easing: function(dt){
+        return (dt === 0 || dt === 1) ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1);
+    }
+};
+cc.easeSineInOut = function(){
+    return cc._easeSineInOutObj;
 };
 
 /**
@@ -607,6 +695,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
      */
     reverse:function () {
         cc.log("cc.EaseElastic.reverse(): it should be overridden in subclass.");
+        return null;
     },
 
     clone:function(){
@@ -630,7 +719,7 @@ cc.EaseElastic.create = function (action, period) {
 
 /**
  * Ease Elastic In action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseElastic
  */
@@ -651,7 +740,7 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseElasticOut}
      */
     reverse:function () {
         return cc.EaseElasticOut.create(this._inner.reverse(), this._period);
@@ -664,10 +753,9 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
     }
 });
 
-
 /** Creates the action with the inner action and the period in radians (default is 0.3)
  * @param {cc.ActionInterval} action
- * @param {Number} [period=]
+ * @param {Number} [period=0.3]
  * @return {cc.EaseElasticIn}
  * @example
  * // example
@@ -675,6 +763,30 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
  */
 cc.EaseElasticIn.create = function (action, period) {
     return new cc.EaseElasticIn(action, period);
+};
+
+//default ease elastic in object (period = 0.3)
+cc._easeElasticInObj = {
+   easing:function(dt){
+       if (dt === 0 || dt === 1)
+           return dt;
+       dt = dt - 1;
+       return -Math.pow(2, 10 * dt) * Math.sin((dt - (0.3 / 4)) * Math.PI * 2 / 0.3);
+   }
+};
+
+cc.easeElasticIn = function (period) {
+    if(period && period !== 0.3){
+        return {
+            _period: period,
+            easing: function (dt) {
+                if (dt === 0 || dt === 1)
+                    return dt;
+                dt = dt - 1;
+                return -Math.pow(2, 10 * dt) * Math.sin((dt - (this._period / 4)) * Math.PI * 2 / this._period);
+            }};
+    }
+    return cc._easeElasticInObj;
 };
 
 /**
@@ -700,7 +812,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseElasticIn}
      */
     reverse:function () {
         return cc.EaseElasticIn.create(this._inner.reverse(), this._period);
@@ -713,7 +825,6 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
     }
 });
 
-
 /** Creates the action with the inner action and the period in radians (default is 0.3)
  * @param {cc.ActionInterval} action
  * @param {Number} [period=0.3]
@@ -724,6 +835,24 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
  */
 cc.EaseElasticOut.create = function (action, period) {
     return new cc.EaseElasticOut(action, period);
+};
+
+//default ease elastic out object (period = 0.3)
+cc._easeElasticOutObj = {
+    easing: function (dt) {
+        return (dt === 0 || dt === 1) ? dt : Math.pow(2, -10 * dt) * Math.sin((dt - (0.3 / 4)) * Math.PI * 2 / 0.3) + 1;
+    }
+};
+
+cc.easeElasticOut = function (period) {
+    if(period && period !== 0.3){
+        return {
+            _period: period,
+            easing: function (dt) {
+                return (dt === 0 || dt === 1) ? dt : Math.pow(2, -10 * dt) * Math.sin((dt - (this._period / 4)) * Math.PI * 2 / this._period) + 1;
+            }};
+    }
+    return cc._easeElasticOutObj;
 };
 
 /**
@@ -738,7 +867,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
      */
     update:function (time1) {
         var newT = 0;
-        var locPeriod = this._period
+        var locPeriod = this._period;
         if (time1 === 0 || time1 == 1) {
             newT = time1;
         } else {
@@ -757,7 +886,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseElasticInOut}
      */
     reverse:function () {
         return cc.EaseElasticInOut.create(this._inner.reverse(), this._period);
@@ -780,6 +909,30 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
  */
 cc.EaseElasticInOut.create = function (action, period) {
     return new cc.EaseElasticInOut(action, period);
+};
+
+cc.easeElasticInOut = function (period) {
+    period = period || 0.3;
+    return {
+        _period: period,
+        easing: function (dt) {
+            var newT = 0;
+            var locPeriod = this._period;
+            if (dt === 0 || dt === 1) {
+                newT = dt;
+            } else {
+                dt = dt * 2;
+                if (!locPeriod)
+                    locPeriod = this._period = 0.3 * 1.5;
+                var s = locPeriod / 4;
+                dt = dt - 1;
+                if (dt < 0)
+                    newT = -0.5 * Math.pow(2, 10 * dt) * Math.sin((dt - s) * Math.PI * 2 / locPeriod);
+                else
+                    newT = Math.pow(2, -10 * dt) * Math.sin((dt - s) * Math.PI * 2 / locPeriod) * 0.5 + 1;
+            }
+            return newT;
+        }};
 };
 
 /**
@@ -814,14 +967,14 @@ cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseBounce}
      */
     reverse:function () {
         return cc.EaseBounce.create(this._inner.reverse());
     }
 });
 
-/** creates the action
+/** creates an ease bounce action
  * @param {cc.ActionInterval} action
  * @return {cc.EaseBounce}
  * @example
@@ -848,7 +1001,7 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseBounceOut}
      */
     reverse:function () {
         return cc.EaseBounceOut.create(this._inner.reverse());
@@ -871,9 +1024,34 @@ cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
 cc.EaseBounceIn.create = function (action) {
     return new cc.EaseBounceIn(action);
 };
+
+cc._bounceTime = function (time1) {
+    if (time1 < 1 / 2.75) {
+        return 7.5625 * time1 * time1;
+    } else if (time1 < 2 / 2.75) {
+        time1 -= 1.5 / 2.75;
+        return 7.5625 * time1 * time1 + 0.75;
+    } else if (time1 < 2.5 / 2.75) {
+        time1 -= 2.25 / 2.75;
+        return 7.5625 * time1 * time1 + 0.9375;
+    }
+
+    time1 -= 2.625 / 2.75;
+    return 7.5625 * time1 * time1 + 0.984375;
+};
+
+cc._easeBounceInObj = {
+    easing: function(dt){
+        return 1 - cc._bounceTime(1 - dt);
+    }
+};
+cc.easeBounceIn = function(){
+    return cc._easeBounceInObj;
+};
+
 /**
  * cc.EaseBounceOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseBounce
  */
@@ -911,9 +1089,18 @@ cc.EaseBounceOut.create = function (action) {
     return new cc.EaseBounceOut(action);
 };
 
+cc._easeBounceOutObj = {
+    easing: function(dt){
+        return cc._bounceTime(dt);
+    }
+};
+cc.easeBounceOut = function(){
+    return cc._easeBounceOutObj;
+};
+
 /**
  * cc.EaseBounceInOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseBounce
  */
@@ -939,7 +1126,7 @@ cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseBounceInOut}
      */
     reverse:function () {
         return cc.EaseBounceInOut.create(this._inner.reverse());
@@ -957,9 +1144,25 @@ cc.EaseBounceInOut.create = function (action) {
     return new cc.EaseBounceInOut(action);
 };
 
+cc._easeBounceInOutObj = {
+    easing: function (time1) {
+        var newT;
+        if (time1 < 0.5) {
+            time1 = time1 * 2;
+            newT = (1 - cc._bounceTime(1 - time1)) * 0.5;
+        } else {
+            newT = cc._bounceTime(time1 * 2 - 1) * 0.5 + 0.5;
+        }
+        return newT;
+    }};
+
+cc.easeBounceInOut = function(){
+    return cc._easeBounceInOutObj;
+};
+
 /**
  * cc.EaseBackIn action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.ActionEase
  */
@@ -974,7 +1177,7 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseBackOut}
      */
     reverse:function () {
         return cc.EaseBackOut.create(this._inner.reverse());
@@ -999,9 +1202,19 @@ cc.EaseBackIn.create = function (action) {
     return new cc.EaseBackIn(action);
 };
 
+cc._easeBackInObj = {
+    easing: function (time1) {
+        var overshoot = 1.70158;
+        return (time1===0 || time1===1) ? time1 : time1 * time1 * ((overshoot + 1) * time1 - overshoot);
+    }};
+
+cc.easeBackIn = function(){
+    return cc._easeBackInObj;
+};
+
 /**
  * cc.EaseBackOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.ActionEase
  */
@@ -1011,13 +1224,12 @@ cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
      */
     update:function (time1) {
         var overshoot = 1.70158;
-
         time1 = time1 - 1;
         this._inner.update(time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1);
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseBackIn}
      */
     reverse:function () {
         return cc.EaseBackIn.create(this._inner.reverse());
@@ -1041,9 +1253,20 @@ cc.EaseBackOut.create = function (action) {
     return new cc.EaseBackOut(action);
 };
 
+cc._easeBackOutObj = {
+    easing: function (time1) {
+        var overshoot = 1.70158;
+        time1 = time1 - 1;
+        return time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1;
+    }};
+
+cc.easeBackOut = function(){
+    return cc._easeBackOutObj;
+};
+
 /**
  * cc.EaseBackInOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.ActionEase
  */
@@ -1053,7 +1276,6 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
      */
     update:function (time1) {
         var overshoot = 1.70158 * 1.525;
-
         time1 = time1 * 2;
         if (time1 < 1) {
             this._inner.update((time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2);
@@ -1070,7 +1292,7 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.EaseBackInOut}
      */
     reverse:function () {
         return cc.EaseBackInOut.create(this._inner.reverse());
@@ -1087,5 +1309,21 @@ cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
  */
 cc.EaseBackInOut.create = function (action) {
     return new cc.EaseBackInOut(action);
+};
+
+cc._easeBackInOutObj = {
+    easing: function (time1) {
+        var overshoot = 1.70158 * 1.525;
+        time1 = time1 * 2;
+        if (time1 < 1) {
+            return (time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2;
+        } else {
+            time1 = time1 - 2;
+            return (time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1;
+        }
+    }};
+
+cc.easeBackInOut = function(){
+    return cc._easeBackInOutObj;
 };
 
