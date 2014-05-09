@@ -1468,7 +1468,7 @@ cc.game = {
                         self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                         self._eventShow.setUserData(self);
                         self.onStart();
-                        self._mirrorMthod();
+                        self._mirrorMethod();
                     }
                 });
             } else {
@@ -1482,7 +1482,7 @@ cc.game = {
                             self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                             self._eventShow.setUserData(self);
                             self.onStart();
-                            self._mirrorMthod();
+                            self._mirrorMethod();
                             clearInterval(self._checkPrepare);
                         }
                     }, 10);
@@ -1501,7 +1501,7 @@ cc.game = {
      * To create the mirror method
      * @private
      */
-    _mirrorMthod: function(){
+    _mirrorMethod: function(){
         cc.action = cc.Action.create;
         cc.speed = cc.Speed.create;
         cc.follow = cc.Follow.create;
