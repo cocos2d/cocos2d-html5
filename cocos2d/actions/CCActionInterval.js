@@ -47,6 +47,8 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
     _firstTick:false,
     _easeList: null,
+    _times:0,
+    _speed:0.0,
 
 	/**
 	 * @constructor
@@ -55,6 +57,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 	 * var actionInterval = new cc.ActionInterval(3);
 	 */
     ctor:function (d) {
+        this._times = 0;
         cc.FiniteTimeAction.prototype.ctor.call(this);
 		d !== undefined && this.initWithDuration(d);
     },
@@ -131,6 +134,19 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         var t = this._elapsed / (this._duration > 0.0000001192092896 ? this._duration : 0.0000001192092896);
         t = (1 > t ? t : 1);
         this.update(t > 0 ? t : 0);
+
+        if(this._times > 1 && this.isDone()){
+            if(!this._repeatForever){
+                this._times--;
+            }
+            //var diff = locInnerAction.getElapsed() - locInnerAction.getDuration();
+            this.startWithTarget(this.target);
+            // to prevent jerk. issue #390 ,1247
+            //this._innerAction.step(0);
+            //this._innerAction.step(diff);
+            this.step(this.getElapsed() - this.getDuration());
+
+        }
     },
 
     /**
@@ -167,8 +183,6 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         return 0;
     },
 
-    _speed:0.0,
-
     /**
      * Changes the speed of an action, making it take longer (speed>1)
      * or less (speed<1) time. <br/>
@@ -194,6 +208,34 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     getSpeed: function(speed){
         return this._speed;
+    },
+
+    /**
+     * Repeats an action a number of times.
+     * To repeat an action forever use the CCRepeatForever action.
+     * @param times
+     * @returns {cc.ActionInterval}
+     */
+    repeat: function(times){
+
+        times = parseInt(times);
+        if(isNaN(parseInt(times))){
+            this._times = 0;
+        }else{
+            this._times = times;
+        }
+        return this;
+    },
+
+    /**
+     * Repeats an action for ever.  <br/>
+     * To repeat the an action for a limited number of times use the Repeat action. <br/>
+     * @returns {cc.ActionInterval}
+     */
+    repeatForever: function(){
+        this._times = 2;
+        this._repeatForever = 1;
+        return this;
     }
 });
 
