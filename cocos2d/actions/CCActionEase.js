@@ -239,7 +239,7 @@ cc.easeIn = function (rate) {
             return Math.pow(dt, this._rate);
         },
         reverse: function(){
-            return cc.easeOut(this._rate);
+            return cc.easeIn(1 / this._rate);
         }
     };
 };
@@ -290,7 +290,7 @@ cc.easeOut = function (rate) {
             return Math.pow(dt, 1 / this._rate);
         },
         reverse: function(){
-            return cc.easeIn(this._rate)
+            return cc.easeOut(1 / this._rate)
         }
     };
 };

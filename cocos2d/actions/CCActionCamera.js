@@ -204,6 +204,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
     },
 
     update:function (dt) {
+        dt = this._computeEaseTime(dt);
         var r = (this._radius + this._deltaRadius * dt) * cc.Camera.getZEye();
         var za = this._radZ + this._radDeltaZ * dt;
         var xa = this._radX + this._radDeltaX * dt;

@@ -119,7 +119,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         if(this._easeList){
             action._easeList = [];
             for(var i=0; i<this._easeList.length; i++){
-                action._easeList.push(this._easeList[i]);
+                action._easeList.push(this._easeList[i].reverse());
             }
         }
     },
@@ -149,7 +149,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         if ((!locList) || (locList.length === 0))
             return dt;
         for (var i = 0, n = locList.length; i < n; i++)
-            dt = locList.easing(dt);
+            dt = locList[i].easing(dt);
         return dt;
     },
 
@@ -157,7 +157,6 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @param {Number} dt delta time in seconds
      */
     step:function (dt) {
-        dt = this._computeEaseTime(dt);
         if (this._firstTick) {
             this._firstTick = false;
             this._elapsed = 0;
@@ -230,6 +229,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     speed: function(speed){
 
         this._speed = speed;
+        this._speedMethod = true;
 
         return this;
     },
@@ -376,6 +376,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @param {Number} time  time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         var new_t, found = 0;
         var locSplit = this._split, locActions = this._actions, locLast = this._last;
         if (time < locSplit) {
@@ -548,6 +549,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         var locInnerAction = this._innerAction;
         var locDuration = this._duration;
         var locTimes = this._times;
@@ -845,6 +847,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this._one)
             this._one.update(time);
         if (this._two)
@@ -988,6 +991,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target) {
             this.target.rotationX = this._startAngleX + this._diffAngleX * time;
             this.target.rotationY = this._startAngleY + this._diffAngleY * time;
@@ -1073,6 +1077,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      * @param {Number} time
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target) {
             this.target.rotationX = this._startAngleX + this._angleX * time;
             this.target.rotationY = this._startAngleY + this._angleY * time;
@@ -1187,6 +1192,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target) {
             var x = this._positionDelta.x * time;
             var y = this._positionDelta.y * time;
@@ -1393,6 +1399,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
      * @param {Number} t time in seconds
      */
     update:function (t) {
+        t = this._computeEaseTime(t);
         this.target.skewX = this._startSkewX + this._deltaX * t;
         this.target.skewY = this._startSkewY + this._deltaY * t;
     }
@@ -1578,6 +1585,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      * @param {Number} time
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target) {
             var frac = time * this._jumps % 1.0;
             var y = this._height * 4 * frac * (1 - frac);
@@ -1760,6 +1768,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      * @param {Number} time
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target) {
             var locConfig = this._config;
             var xa = 0;
@@ -1970,6 +1979,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      * @param {Number} time
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target) {
             this.target.scaleX = this._startScaleX + this._deltaX * time;
 	        this.target.scaleY = this._startScaleY + this._deltaY * time;
@@ -2095,6 +2105,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target && !this.isDone()) {
             var slice = 1.0 / this._times;
             var m = time % slice;
@@ -2185,6 +2196,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target.RGBAProtocol) {
             var fromOpacity = this._fromOpacity;
             this.target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
@@ -2378,6 +2390,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         var locFrom = this._from, locTo = this._to;
         if (this.target.RGBAProtocol) {
             this.target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * time,
@@ -2474,6 +2487,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this.target.RGBAProtocol) {
             this.target.color = cc.color(this._fromR + this._deltaR * time,
                                         this._fromG + this._deltaG * time,
@@ -2617,6 +2631,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         if (this._other)
             this._other.update(1 - time);
     },
@@ -2749,6 +2764,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      * @param {Number} time
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         // if t==1, ignore. Animation should finish with t==1
         if (time < 1.0) {
             time *= this._animation.getLoops();
@@ -2884,6 +2900,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
     },
 
     update:function (time) {
+        time = this._computeEaseTime(time);
         this._action.update(time);
     },
 

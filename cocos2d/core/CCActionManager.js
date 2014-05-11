@@ -345,6 +345,7 @@ cc.ActionManager = cc.Class.extend({
                         continue;
 
                     locCurrTarget.currentActionSalvaged = false;
+                    //use for speed
                     locCurrTarget.currentAction.step(dt * ( locCurrTarget.currentAction._speedMethod ? locCurrTarget.currentAction._speed : 1 ) );
                     if (locCurrTarget.currentActionSalvaged) {
                         // The currentAction told the node to remove it. To prevent the action from
