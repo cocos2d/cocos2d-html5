@@ -116,12 +116,11 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @private
      */
     _reverseEaseList: function(action){
-
         if(this._easeList){
-
-            action._easeList = this._easeList.map(function(_ease){
-                return _ease.reverse();
-            });
+            action._easeList = [];
+            for(var i=0; i<this._easeList.length; i++){
+                action._easeList.push(this._easeList[i]);
+            }
         }
     },
 
