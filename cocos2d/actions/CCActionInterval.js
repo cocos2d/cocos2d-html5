@@ -107,7 +107,22 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         action._repeatForever = this._repeatForever;
         action._speed = this._speed;
         action._times = this._times;
-        action._easeList = this._easeList;;
+        action._easeList = this._easeList;
+    },
+
+    /**
+     *
+     * @param action
+     * @private
+     */
+    _reverseEaseList: function(action){
+
+        if(this._easeList){
+
+            action._easeList = this._easeList.map(function(_ease){
+                return _ease.reverse();
+            });
+        }
     },
 
     /**
@@ -121,13 +136,12 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     easing: function (easeObj) {
-        var locEaseList = this._easeList;
-        if (locEaseList)
-            locEaseList.length = 0;
+        if (this._easeList)
+            this._easeList.length = 0;
         else
-            locEaseList = [];
+            this._easeList = [];
         for (var i = 0; i < arguments.length; i++)
-            locEaseList.push(arguments[i]);
+            this._easeList.push(arguments[i]);
         return this;
     },
 
@@ -413,6 +427,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     reverse:function () {
         var action = cc.Sequence._actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -581,6 +596,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     reverse:function () {
         var action = cc.Repeat.create(this._innerAction.reverse(), this._times);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     },
 
@@ -697,6 +713,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     reverse:function () {
         var action = cc.RepeatForever.create(this._innerAction.reverse());
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     },
 
@@ -841,6 +858,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
     reverse:function () {
         var action = cc.Spawn._actionOneTwo(this._one.reverse(), this._two.reverse());
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -1068,6 +1086,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     reverse:function () {
         var action = cc.RotateBy.create(this._duration, -this._angleX, -this._angleY);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -1197,6 +1216,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     reverse:function () {
         var action = cc.MoveBy.create(this._duration, cc.p(-this._positionDelta.x, -this._positionDelta.y));
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -1452,6 +1472,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
     reverse:function () {
         var action = cc.SkewBy.create(this._duration, -this._skewX, -this._skewY);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -1589,6 +1610,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     reverse:function () {
         var action = cc.JumpBy.create(this._duration, cc.p(-this._delta.x, -this._delta.y), this._height, this._jumps);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -1784,6 +1806,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             cc.pNeg(locConfig[2]) ];
         var action = cc.BezierBy.create(this._duration, r);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -1994,6 +2017,7 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
     reverse:function () {
         var action = cc.ScaleBy.create(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     },
 
@@ -2095,6 +2119,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     reverse:function () {
         var action = cc.Blink.create(this._duration, this._times);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -2204,6 +2229,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
         var action = new cc.FadeOut();
         action.initWithDuration(this._duration, 0);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     },
 
@@ -2257,6 +2283,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
         action._reverseAction = this;
         action.initWithDuration(this._duration, 255);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     },
 
@@ -2461,6 +2488,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     reverse:function () {
         var action = cc.TintBy.create(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     }
 });
@@ -2496,6 +2524,7 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
     reverse:function () {
         var action = cc.DelayTime.create(this._duration);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
         return action;
     },
 
@@ -2769,6 +2798,8 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         newAnim.setRestoreOriginalFrame(locAnimation.getRestoreOriginalFrame());
         var action = cc.Animate.create(newAnim);
         this._cloneDecoration(action);
+        this._reverseEaseList(action);
+
         return action;
     },
 
