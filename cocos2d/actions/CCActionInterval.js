@@ -57,7 +57,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 	 * var actionInterval = new cc.ActionInterval(3);
 	 */
     ctor:function (d) {
-        this._times = 0;
+        this._times = 1;
         cc.FiniteTimeAction.prototype.ctor.call(this);
 		d !== undefined && this.initWithDuration(d);
     },
