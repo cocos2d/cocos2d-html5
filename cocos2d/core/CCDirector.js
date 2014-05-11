@@ -216,7 +216,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
             this.setNextScene();
         }
 
-        if (this._beforeVisitScene) this._beforeVisitScene();
+        if (this._beforeVisitScene)
+            this._beforeVisitScene();
 
         // draw the scene
         if (this._runningScene) {
@@ -231,7 +232,8 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         if (this._displayStats)
             this._showStats();
 
-        if (this._afterVisitScene) this._afterVisitScene();
+        if (this._afterVisitScene)
+            this._afterVisitScene();
 
         //TODO
         cc.eventManager.dispatchEvent(this._eventAfterDraw);
