@@ -152,8 +152,10 @@ _tmp.DirectorWebGL = function () {
 
     _p._createStatsLabel = function () {
         var _t = this;
-        if (!cc.LabelAtlas)
-            return _t._createStatsLabelForCanvas();
+        if (!cc.LabelAtlas){
+            _t._createStatsLabelForCanvas();
+            return
+        }
 
         if ((cc.Director._fpsImageLoaded == null) || (cc.Director._fpsImageLoaded == false))
             return;
