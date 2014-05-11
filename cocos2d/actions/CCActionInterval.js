@@ -46,6 +46,7 @@
 cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
     _firstTick:false,
+    _easeList: null,
 
 	/**
 	 * @constructor
@@ -55,7 +56,6 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 	 */
     ctor:function (d) {
         cc.FiniteTimeAction.prototype.ctor.call(this);
-
 		d !== undefined && this.initWithDuration(d);
     },
 
@@ -95,10 +95,31 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         return new cc.ActionInterval(this._duration);
     },
 
+    easing: function (easeObj) {
+        var locEaseList = this._easeList;
+        if (locEaseList)
+            locEaseList.length = 0;
+        else
+            locEaseList = [];
+        for (var i = 0; i < arguments.length; i++)
+            locEaseList.push(arguments[i]);
+        return this;
+    },
+
+    _computeEaseTime: function (dt) {
+        var locList = this._easeList;
+        if ((!locList) || (locList.length === 0))
+            return dt;
+        for (var i = 0, n = locList.length; i < n; i++)
+            dt = locList.easing(dt);
+        return dt;
+    },
+
     /**
      * @param {Number} dt delta time in seconds
      */
     step:function (dt) {
+        dt = this._computeEaseTime(dt);
         if (this._firstTick) {
             this._firstTick = false;
             this._elapsed = 0;
@@ -143,6 +164,36 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     getAmplitudeRate:function () {
         // Abstract class needs implementation
         cc.log("cc.ActionInterval.getAmplitudeRate(): it should be overridden in subclass.");
+        return 0;
+    },
+
+    _speed:0.0,
+
+    /**
+     * Changes the speed of an action, making it take longer (speed>1)
+     * or less (speed<1) time. <br/>
+     * Useful to simulate 'slow motion' or 'fast forward' effect.
+     *
+     * @param speed
+     * @returns {cc.Action}
+     */
+    speed: function(speed){
+
+        var self = this;
+        self._speed = speed;
+        var _step = self.step;
+        self.step = function(dt){
+            _step.call(self, dt * speed);
+        };
+
+        return this;
+    },
+
+    /**
+     * @return {Number}
+     */
+    getSpeed: function(speed){
+        return this._speed;
     }
 });
 
@@ -170,7 +221,6 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 	/** Create an array of sequenceable actions
 	 * @constructor
 	 * @param {Array|cc.FiniteTimeAction} tempArray
-	 * @return {cc.Sequence}
 	 * @example
 	 * // create sequence with actions
 	 * var seq = new cc.Sequence(act1, act2);
@@ -299,14 +349,6 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     reverse:function () {
         return cc.Sequence._actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
-    },
-
-    /**
-     * to copy object with deep copy.
-     * @return {object}
-     */
-    copy:function () {
-        return this.clone();
     }
 });
 /** helper constructor to create an array of sequenceable actions
@@ -504,7 +546,7 @@ cc.Repeat.create = function (action, times) {
 
 /**  Repeats an action for ever.  <br/>
  * To repeat the an action for a limited number of times use the Repeat action. <br/>
- * @warning This action can't be Sequencable because it is not an IntervalAction
+ * @warning This action can't be Sequenceable because it is not an IntervalAction
  * @class
  * @extends cc.ActionInterval
  */
@@ -2366,11 +2408,12 @@ cc.DelayTime.create = function (d) {
 };
 
 /**
- * Executes an action in reverse order, from time=duration to time=0
- * @warning Use this action carefully. This action is not
- * sequenceable. Use it as the default "reversed" method
- * of your own actions, but using it outside the "reversed"
+ * <p>
+ * Executes an action in reverse order, from time=duration to time=0                                     <br/>
+ * @warning Use this action carefully. This action is not sequenceable.                                 <br/>
+ * Use it as the default "reversed" method of your own actions, but using it outside the "reversed"      <br/>
  * scope is not recommended.
+ * </p>
  * @class
  * @extends cc.ActionInterval
  */
