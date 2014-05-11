@@ -850,7 +850,11 @@ cc.easeElasticOut = function (period) {
             _period: period,
             easing: function (dt) {
                 return (dt === 0 || dt === 1) ? dt : Math.pow(2, -10 * dt) * Math.sin((dt - (this._period / 4)) * Math.PI * 2 / this._period) + 1;
-            }};
+            },
+            reverse:function(){
+                return cc.easeElasticIn(this._period);
+            }
+        };
     }
     return cc._easeElasticOutObj;
 };
