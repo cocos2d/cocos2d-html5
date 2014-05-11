@@ -189,6 +189,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * @param {Number} time
      */
     update:function (time) {
+        time = this._computeEaseTime(time);
         var p, lt;
         var ps = this._points;
         // eg.
