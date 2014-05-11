@@ -491,8 +491,10 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
         if (this.initWithDuration(duration)) {
             this._times = times;
             this._innerAction = action;
-            if (action instanceof cc.ActionInstant)
+            if (action instanceof cc.ActionInstant){
+                this._actionInstant = true;
                 this._times -= 1;
+            }
             this._total = 0;
             return true;
         }
@@ -551,9 +553,9 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
             if (time >= 1.0 && this._total < locTimes)
                 this._total++;
 
-            // don't set a instantaction back or update it, it has no use because it has no duration
-            if (this._actionInstant) {
-                if (this._total == locTimes) {
+            // don't set a instant action back or update it, it has no use because it has no duration
+            if (!this._actionInstant) {
+                if (this._total === locTimes) {
                     locInnerAction.update(1);
                     locInnerAction.stop();
                 } else {
@@ -1003,7 +1005,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
 
 	/**
 	 * @constructor
-	 * @param {Number} duration druation in seconds
+	 * @param {Number} duration duration in seconds
 	 * @param {Number} deltaAngleX deltaAngleX in degrees
 	 * @param {Number} [deltaAngleY] deltaAngleY in degrees
 	 * @example
@@ -1061,7 +1063,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     },
 
     /**
-     * @return {cc.ActionInterval}
+     * @return {cc.RotateBy}
      */
     reverse:function () {
         var action = cc.RotateBy.create(this._duration, -this._angleX, -this._angleY);
@@ -1071,7 +1073,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
 });
 
 /**
- * @param {Number} duration druation in seconds
+ * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees
  * @param {Number} [deltaAngleY] deltaAngleY in degrees
  * @return {cc.RotateBy}
@@ -1201,7 +1203,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
 
 /**
  * @param {Number} duration duration in seconds
- * @param {cc.Point|Number} deltaPosition
+ * @param {cc.Point|Number} deltaPos
  * @param {Number} deltaY
  * @return {cc.MoveBy}
  * @example
