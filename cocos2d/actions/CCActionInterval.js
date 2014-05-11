@@ -47,8 +47,10 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
     _firstTick:false,
     _easeList: null,
-    _times:0,
-    _speed:0.0,
+    _times:1,
+    _repeatForever: false,
+    _repeatMethod: false,//Compatible with repeat class, Discard after can be deleted
+    _speed: 1,
 
 	/**
 	 * @constructor
@@ -57,7 +59,11 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
 	 * var actionInterval = new cc.ActionInterval(3);
 	 */
     ctor:function (d) {
+        this._speed = 1;
         this._times = 1;
+        this._repeatForever = false;
+        this.MAX_VALUE = 2;
+        this._repeatMethod =false;//Compatible with repeat class, Discard after can be deleted
         cc.FiniteTimeAction.prototype.ctor.call(this);
 		d !== undefined && this.initWithDuration(d);
     },
@@ -91,11 +97,25 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     },
 
     /**
+     * Some additional parameters of cloning
+     * @param {cc.Action} action
+     * @private
+     */
+    _cloneDecoration: function(action){
+        action._repeatForever = this._repeatForever;
+        action._speed = this._speed;
+        action._times = this._times;
+        action._easeList = this._easeList;;
+    },
+
+    /**
      * returns a new clone of the action
      * @returns {cc.ActionInterval}
      */
     clone:function () {
-        return new cc.ActionInterval(this._duration);
+        var action = new cc.ActionInterval(this._duration);
+        this._cloneDecoration(action);
+        return action;
     },
 
     easing: function (easeObj) {
@@ -135,16 +155,17 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         t = (1 > t ? t : 1);
         this.update(t > 0 ? t : 0);
 
-        if(this._times > 1 && this.isDone()){
+        //Compatible with repeat class, Discard after can be deleted (this._repeatMethod)
+        if(this._repeatMethod && this._times > 1 && this.isDone()){
             if(!this._repeatForever){
                 this._times--;
             }
-            //var diff = locInnerAction.getElapsed() - locInnerAction.getDuration();
+            //var diff = locInnerAction.getElapsed() - locInnerAction._duration;
             this.startWithTarget(this.target);
             // to prevent jerk. issue #390 ,1247
             //this._innerAction.step(0);
             //this._innerAction.step(diff);
-            this.step(this.getElapsed() - this.getDuration());
+            this.step(this._elapsed - this._duration);
 
         }
     },
@@ -193,12 +214,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     speed: function(speed){
 
-        var self = this;
-        self._speed = speed;
-        var _step = self.step;
-        self.step = function(dt){
-            _step.call(self, dt * speed);
-        };
+        this._speed = speed;
 
         return this;
     },
@@ -218,9 +234,10 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     repeat: function(times){
 
+        this._repeatMethod = true;//Compatible with repeat class, Discard after can be deleted
         times = parseInt(times);
         if(isNaN(parseInt(times))){
-            this._times = 0;
+            this._times = 1;
         }else{
             this._times = times;
         }
@@ -233,8 +250,9 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @returns {cc.ActionInterval}
      */
     repeatForever: function(){
-        this._times = 2;
-        this._repeatForever = 1;
+        this._repeatMethod = true;//Compatible with repeat class, Discard after can be deleted
+        this._times = this.MAX_VALUE;
+        this._repeatForever = true;
         return this;
     }
 });
@@ -301,7 +319,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         if(!actionOne || !actionTwo)
             throw "cc.Sequence.initWithTwoActions(): arguments must all be non nil";
 
-        var d = actionOne.getDuration() + actionTwo.getDuration();
+        var d = actionOne._duration + actionTwo._duration;
         this.initWithDuration(d);
 
         this._actions[0] = actionOne;
@@ -315,6 +333,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     clone:function () {
         var action = new cc.Sequence();
+        this._cloneDecoration(action);
         action.initWithTwoActions(this._actions[0].clone(), this._actions[1].clone());
         return action;
     },
@@ -324,7 +343,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._split = this._actions[0].getDuration() / this._duration;
+        this._split = this._actions[0]._duration / this._duration;
         this._last = -1;
     },
 
@@ -390,7 +409,9 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.Sequence._actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
+        var action = cc.Sequence._actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
+        this._cloneDecoration(action);
+        return action;
     }
 });
 /** helper constructor to create an array of sequenceable actions
@@ -463,7 +484,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @return {Boolean}
      */
     initWithAction:function (action, times) {
-        var duration = action.getDuration() * times;
+        var duration = action._duration * times;
 
         if (this.initWithDuration(duration)) {
             this._times = times;
@@ -482,6 +503,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      */
     clone:function () {
         var action = new cc.Repeat();
+        this._cloneDecoration(action);
         action.initWithAction(this._innerAction.clone(), this._times);
         return action;
     },
@@ -491,7 +513,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      */
     startWithTarget:function (target) {
         this._total = 0;
-        this._nextDt = this._innerAction.getDuration() / this._duration;
+        this._nextDt = this._innerAction._duration / this._duration;
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._innerAction.startWithTarget(target);
     },
@@ -519,7 +541,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
                 this._total++;
                 locInnerAction.stop();
                 locInnerAction.startWithTarget(this.target);
-                locNextDt += locInnerAction.getDuration() / locDuration;
+                locNextDt += locInnerAction._duration / locDuration;
                 this._nextDt = locNextDt;
             }
 
@@ -534,7 +556,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
                     locInnerAction.stop();
                 } else {
                     // issue #390 prevent jerk, use right update
-                    locInnerAction.update(time - (locNextDt - locInnerAction.getDuration() / locDuration));
+                    locInnerAction.update(time - (locNextDt - locInnerAction._duration / locDuration));
                 }
             }
         } else {
@@ -553,7 +575,9 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.Repeat.create(this._innerAction.reverse(), this._times);
+        var action = cc.Repeat.create(this._innerAction.reverse(), this._times);
+        this._cloneDecoration(action);
+        return action;
     },
 
     /**
@@ -627,6 +651,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      */
     clone:function () {
         var action = new cc.RepeatForever();
+        this._cloneDecoration(action);
         action.initWithAction(this._innerAction.clone());
         return action;
     },
@@ -646,12 +671,12 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
         var locInnerAction = this._innerAction;
         locInnerAction.step(dt);
         if (locInnerAction.isDone()) {
-            //var diff = locInnerAction.getElapsed() - locInnerAction.getDuration();
+            //var diff = locInnerAction.getElapsed() - locInnerAction._duration;
             locInnerAction.startWithTarget(this.target);
             // to prevent jerk. issue #390 ,1247
             //this._innerAction.step(0);
             //this._innerAction.step(diff);
-            locInnerAction.step(locInnerAction.getElapsed() - locInnerAction.getDuration());
+            locInnerAction.step(locInnerAction.getElapsed() - locInnerAction._duration);
         }
     },
 
@@ -666,7 +691,9 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return (cc.RepeatForever.create(this._innerAction.reverse()));
+        var action = cc.RepeatForever.create(this._innerAction.reverse());
+        this._cloneDecoration(action);
+        return action;
     },
 
     /**
@@ -747,8 +774,8 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
 
         var ret = false;
 
-        var d1 = action1.getDuration();
-        var d2 = action2.getDuration();
+        var d1 = action1._duration;
+        var d2 = action2._duration;
 
         if (this.initWithDuration(Math.max(d1, d2))) {
             this._one = action1;
@@ -771,6 +798,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      */
     clone:function () {
         var action = new cc.Spawn();
+        this._cloneDecoration(action);
         action.initWithTwoActions(this._one.clone(), this._two.clone());
         return action;
     },
@@ -807,7 +835,9 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * @return {cc.FiniteTimeAction}
      */
     reverse:function () {
-        return cc.Spawn._actionOneTwo(this._one.reverse(), this._two.reverse());
+        var action = cc.Spawn._actionOneTwo(this._one.reverse(), this._two.reverse());
+        this._cloneDecoration(action);
+        return action;
     }
 });
 
@@ -895,6 +925,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      */
     clone:function () {
         var action = new cc.RotateTo();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._dstAngleX, this._dstAngleY);
         return action;
     },
@@ -1003,6 +1034,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      */
     clone:function () {
         var action = new cc.RotateBy();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._angleX, this._angleY);
         return action;
     },
@@ -1030,7 +1062,9 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.RotateBy.create(this._duration, -this._angleX, -this._angleY);
+        var action = cc.RotateBy.create(this._duration, -this._angleX, -this._angleY);
+        this._cloneDecoration(action);
+        return action;
     }
 });
 
@@ -1109,6 +1143,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      */
     clone:function () {
         var action = new cc.MoveBy();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._positionDelta)
         return action;
     },
@@ -1156,7 +1191,9 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
      * MoveTo reverse is not implemented
      */
     reverse:function () {
-        return cc.MoveBy.create(this._duration, cc.p(-this._positionDelta.x, -this._positionDelta.y));
+        var action = cc.MoveBy.create(this._duration, cc.p(-this._positionDelta.x, -this._positionDelta.y));
+        this._cloneDecoration(action);
+        return action;
     }
 });
 
@@ -1225,6 +1262,7 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      */
     clone:function () {
         var action = new cc.MoveTo();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._endPosition);
         return action;
     },
@@ -1302,6 +1340,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
      */
     clone:function () {
         var action = new cc.SkewTo();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._endSkewX, this._endSkewY);
         return action;
     },
@@ -1387,6 +1426,7 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
      */
     clone:function () {
         var action = new cc.SkewBy();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._skewX, this._skewY);
         return action;
     },
@@ -1406,7 +1446,9 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.SkewBy.create(this._duration, -this._skewX, -this._skewY);
+        var action = cc.SkewBy.create(this._duration, -this._skewX, -this._skewY);
+        this._cloneDecoration(action);
+        return action;
     }
 });
 /**
@@ -1490,6 +1532,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      */
     clone:function () {
         var action = new cc.JumpBy();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._delta, this._height, this._jumps);
         return action;
     },
@@ -1540,7 +1583,9 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.JumpBy.create(this._duration, cc.p(-this._delta.x, -this._delta.y), this._height, this._jumps);
+        var action = cc.JumpBy.create(this._duration, cc.p(-this._delta.x, -this._delta.y), this._height, this._jumps);
+        this._cloneDecoration(action);
+        return action;
     }
 });
 
@@ -1581,6 +1626,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
      */
     clone:function () {
         var action = new cc.JumpTo();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._delta, this._height, this._jumps);
         return action;
     }
@@ -1662,6 +1708,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     clone:function () {
         var action = new cc.BezierBy();
+        this._cloneDecoration(action);
         var newConfigs = [];
         for (var i = 0; i < this._config.length; i++) {
             var selConf = this._config[i];
@@ -1731,7 +1778,9 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             cc.pAdd(locConfig[1], cc.pNeg(locConfig[2])),
             cc.pAdd(locConfig[0], cc.pNeg(locConfig[2])),
             cc.pNeg(locConfig[2]) ];
-        return cc.BezierBy.create(this._duration, r);
+        var action = cc.BezierBy.create(this._duration, r);
+        this._cloneDecoration(action);
+        return action;
     }
 });
 
@@ -1789,6 +1838,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      */
     clone:function () {
         var action = new cc.BezierTo();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._toConfig);
         return action;
     },
@@ -1874,6 +1924,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      */
     clone:function () {
         var action = new cc.ScaleTo();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._endScaleX, this._endScaleY);
         return action;
     },
@@ -1937,7 +1988,9 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.ScaleBy.create(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
+        var action = cc.ScaleBy.create(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
+        this._cloneDecoration(action);
+        return action;
     },
 
     /**
@@ -1946,6 +1999,7 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
      */
     clone:function () {
         var action = new cc.ScaleBy();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._endScaleX, this._endScaleY);
         return action;
     }
@@ -2005,6 +2059,7 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
      */
     clone:function () {
         var action = new cc.Blink();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._times);
         return action;
     },
@@ -2034,7 +2089,9 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.Blink.create(this._duration, this._times);
+        var action = cc.Blink.create(this._duration, this._times);
+        this._cloneDecoration(action);
+        return action;
     }
 });
 /**
@@ -2091,6 +2148,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
      */
     clone:function () {
         var action = new cc.FadeTo();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._toOpacity);
         return action;
     },
@@ -2141,6 +2199,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
     reverse:function () {
         var action = new cc.FadeOut();
         action.initWithDuration(this._duration, 0);
+        this._cloneDecoration(action);
         return action;
     },
 
@@ -2150,6 +2209,7 @@ cc.FadeIn = cc.FadeTo.extend(/** @lends cc.FadeIn# */{
      */
     clone:function () {
         var action = new cc.FadeIn();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._toOpacity);
         return action;
     },
@@ -2192,6 +2252,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
         var action = new cc.FadeIn();
         action._reverseAction = this;
         action.initWithDuration(this._duration, 255);
+        this._cloneDecoration(action);
         return action;
     },
 
@@ -2201,6 +2262,7 @@ cc.FadeOut = cc.FadeTo.extend(/** @lends cc.FadeOut# */{
      */
     clone:function () {
         var action = new cc.FadeOut();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._toOpacity);
         return action;
     }
@@ -2266,6 +2328,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     clone:function () {
         var action = new cc.TintTo();
+        this._cloneDecoration(action);
         var locTo = this._to;
         action.initWithDuration(this._duration, locTo.r, locTo.g, locTo.b);
         return action;
@@ -2359,6 +2422,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      */
     clone:function () {
         var action = new cc.TintBy();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration, this._deltaR, this._deltaG, this._deltaB);
         return action;
     },
@@ -2391,7 +2455,9 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.TintBy.create(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
+        var action = cc.TintBy.create(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
+        this._cloneDecoration(action);
+        return action;
     }
 });
 
@@ -2424,7 +2490,9 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.DelayTime.create(this._duration);
+        var action = cc.DelayTime.create(this._duration);
+        this._cloneDecoration(action);
+        return action;
     },
 
     /**
@@ -2433,6 +2501,7 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
      */
     clone:function () {
         var action = new cc.DelayTime();
+        this._cloneDecoration(action);
         action.initWithDuration(this._duration);
         return action;
     }
@@ -2485,7 +2554,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
         if(action == this._other)
             throw "cc.ReverseTime.initWithAction(): the action was already passed in.";
 
-        if (cc.ActionInterval.prototype.initWithDuration.call(this, action.getDuration())) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, action._duration)) {
             // Don't leak if action is reused
             this._other = action;
             return true;
@@ -2499,6 +2568,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      */
     clone:function () {
         var action = new cc.ReverseTime();
+        this._cloneDecoration(action);
         action.initWithAction(this._other.clone());
         return action;
     },
@@ -2594,7 +2664,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     initWithAnimation:function (animation) {
         if(!animation)
             throw "cc.Animate.initWithAnimation(): animation must be non-NULL";
-        var singleDuration = animation.getDuration();
+        var singleDuration = animation._duration;
         if (this.initWithDuration(singleDuration * animation.getLoops())) {
             this._nextFrame = 0;
             this.setAnimation(animation);
@@ -2627,6 +2697,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      */
     clone:function () {
         var action = new cc.Animate();
+        this._cloneDecoration(action);
         action.initWithAnimation(this._animation.clone());
         return action;
     },
@@ -2692,7 +2763,9 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         }
         var newAnim = cc.Animation.create(newArray, locAnimation.getDelayPerUnit(), locAnimation.getLoops());
         newAnim.setRestoreOriginalFrame(locAnimation.getRestoreOriginalFrame());
-        return cc.Animate.create(newAnim);
+        var action = cc.Animate.create(newAnim);
+        this._cloneDecoration(action);
+        return action;
     },
 
     /**
@@ -2748,7 +2821,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
      * @return {Boolean}
      */
     initWithTarget:function (target, action) {
-        if (this.initWithDuration(action.getDuration())) {
+        if (this.initWithDuration(action._duration)) {
             this._forcedTarget = target;
             this._action = action;
             return true;
@@ -2762,6 +2835,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
      */
     clone:function () {
         var action = new cc.TargetedAction();
+        this._cloneDecoration(action);
         action.initWithTarget(this._forcedTarget, this._action.clone());
         return action;
     },
