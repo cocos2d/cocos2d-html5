@@ -345,7 +345,7 @@ cc.ActionManager = cc.Class.extend({
                         continue;
 
                     locCurrTarget.currentActionSalvaged = false;
-                    locCurrTarget.currentAction.step(dt * (locCurrTarget.currentAction._speed || 1));
+                    locCurrTarget.currentAction.step(dt * ( locCurrTarget.currentAction._speedMethod ? locCurrTarget.currentAction._speed : 1 ) );
                     if (locCurrTarget.currentActionSalvaged) {
                         // The currentAction told the node to remove it. To prevent the action from
                         // accidentally deallocating itself before finishing its step, we retained

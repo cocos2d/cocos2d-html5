@@ -51,6 +51,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _repeatForever: false,
     _repeatMethod: false,//Compatible with repeat class, Discard after can be deleted
     _speed: 1,
+    _speedMethod: false,//Compatible with speed class, Discard after can be deleted
 
 	/**
 	 * @constructor
@@ -63,7 +64,8 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         this._times = 1;
         this._repeatForever = false;
         this.MAX_VALUE = 2;
-        this._repeatMethod =false;//Compatible with repeat class, Discard after can be deleted
+        this._repeatMethod = false;//Compatible with repeat class, Discard after can be deleted
+        this._speedMethod = false;//Compatible with repeat class, Discard after can be deleted
         cc.FiniteTimeAction.prototype.ctor.call(this);
 		d !== undefined && this.initWithDuration(d);
     },
@@ -2664,7 +2666,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     initWithAnimation:function (animation) {
         if(!animation)
             throw "cc.Animate.initWithAnimation(): animation must be non-NULL";
-        var singleDuration = animation._duration;
+        var singleDuration = animation.getDuration();
         if (this.initWithDuration(singleDuration * animation.getLoops())) {
             this._nextFrame = 0;
             this.setAnimation(animation);
