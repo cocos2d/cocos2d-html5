@@ -108,6 +108,8 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         action._speed = this._speed;
         action._times = this._times;
         action._easeList = this._easeList;
+        action._speedMethod = this._speedMethod;
+        action._repeatMethod = this._repeatMethod;
     },
 
     /**
