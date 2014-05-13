@@ -229,18 +229,31 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @returns {cc.Action}
      */
     speed: function(speed){
+        if(speed <= 0){
+            cc.log("The speed parameter error");
+            return this;
+        }
 
+        this._speedMethod = true;//Compatible with repeat class, Discard after can be deleted
         this._speed *= speed;
-        this._speedMethod = true;
-
         return this;
     },
 
     /**
      * @return {Number}
      */
-    getSpeed: function(speed){
+    getSpeed: function(){
         return this._speed;
+    },
+
+    /**
+     *
+     * @param {Number} speed
+     * @returns {cc.ActionInterval}
+     */
+    setSpeed: function(speed){
+        this._speed = speed;
+        return this;
     },
 
     /**
@@ -250,14 +263,13 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @returns {cc.ActionInterval}
      */
     repeat: function(times){
-
-        this._repeatMethod = true;//Compatible with repeat class, Discard after can be deleted
-        times = parseInt(times);
-        if(isNaN(parseInt(times))){
-            this._times = 1;
-        }else{
-            this._times *= times;
+        times = Math.round(times);
+        if(times < 1){
+            cc.log("The repeat parameter error");
+            return this;
         }
+        this._repeatMethod = true;//Compatible with repeat class, Discard after can be deleted
+        this._times *= times;
         return this;
     },
 
