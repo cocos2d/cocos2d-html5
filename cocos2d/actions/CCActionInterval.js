@@ -230,7 +230,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     speed: function(speed){
 
-        this._speed = speed;
+        this._speed *= speed;
         this._speedMethod = true;
 
         return this;
@@ -256,7 +256,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         if(isNaN(parseInt(times))){
             this._times = 1;
         }else{
-            this._times = times;
+            this._times *= times;
         }
         return this;
     },
