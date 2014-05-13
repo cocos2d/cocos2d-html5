@@ -60,6 +60,14 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _clippingParent: null,
     _className: "Layout",
     _backGroundImageColor: null,
+
+    /**
+     * allocates and initializes a UILayout.
+     * @constructor
+     * @example
+     * // example
+     * var uiLayout = new ccui.Layout();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._clippingEnabled = false;
@@ -88,6 +96,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
         this._clippingRect = cc.rect(0, 0, 0, 0);
         this._clippingParent = null;
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
+
+        this.init();
     },
     init: function () {
         if (cc.Node.prototype.init.call(this)) {
@@ -1532,11 +1542,7 @@ _p = null;
  * var uiLayout = ccui.Layout.create();
  */
 ccui.Layout.create = function () {
-    var layout = new ccui.Layout();
-    if (layout && layout.init()) {
-        return layout;
-    }
-    return null;
+    return new ccui.Layout();
 };
 
 // Constants

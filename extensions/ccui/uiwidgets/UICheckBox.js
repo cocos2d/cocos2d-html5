@@ -50,6 +50,14 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
     _className: "CheckBox",
+
+    /**
+     * allocates and initializes a UICheckBox.
+     * @constructor
+     * @example
+     * // example
+     * var uiCheckBox = new ccui.CheckBox();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._backGroundBoxRenderer = null;
@@ -70,6 +78,8 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
         this._frontCrossFileName = "";
         this._backGroundDisabledFileName = "";
         this._frontCrossDisabledFileName = "";
+
+        this.init();
     },
     init: function () {
         if (ccui.Widget.prototype.init.call(this)) {
@@ -572,11 +582,7 @@ _p = null;
  * var uiCheckBox = ccui.CheckBox.create();
  */
 ccui.CheckBox.create = function () {
-    var uiCheckBox = new ccui.CheckBox();
-    if (uiCheckBox && uiCheckBox.init()) {
-        return uiCheckBox;
-    }
-    return null;
+    return new ccui.Checkbox();
 };
 
 // Constants

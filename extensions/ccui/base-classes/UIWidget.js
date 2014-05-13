@@ -83,6 +83,15 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _className: "Widget",
     _flippedX: false,
     _flippedY: false,
+
+
+    /**
+     * allocates and initializes a UIWidget.
+     * @constructor
+     * @example
+     * // example
+     * var uiWidget = new ccui.Widget();
+     */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
         this._enabled = true;
@@ -117,6 +126,8 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         this._touchListener = null;
         this._flippedX = false;
         this._flippedY = false;
+
+        this.init();
     },
 
     /**
@@ -1491,11 +1502,7 @@ _p = null;
  * var uiWidget = ccui.Widget.create();
  */
 ccui.Widget.create = function () {
-    var widget = new ccui.Widget();
-    if (widget && widget.init()) {
-        return widget;
-    }
-    return null;
+    return new ccui.Widget();
 };
 
 

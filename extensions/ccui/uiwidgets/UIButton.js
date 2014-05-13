@@ -65,6 +65,14 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
     _className: "Button",
+
+    /**
+     * allocates and initializes a UIButton.
+     * @constructor
+     * @example
+     * // example
+     * var uiButton = new ccui.Button();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._buttonNormalRenderer = null;
@@ -95,6 +103,8 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this._normalTextureLoaded = false;
         this._pressedTextureLoaded = false;
         this._disabledTextureLoaded = false;
+
+        this.init();
     },
 
     init: function () {
@@ -821,11 +831,7 @@ _p = null;
  * var uiButton = ccui.Button.create();
  */
 ccui.Button.create = function () {
-    var uiButton = new ccui.Button();
-    if (uiButton && uiButton.init()) {
-        return uiButton;
-    }
-    return null;
+    return new ccui.Button;
 };
 
 // Constants
