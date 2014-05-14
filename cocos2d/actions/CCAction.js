@@ -214,7 +214,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
      * @return {Number}
      */
     getDuration:function () {
-        return this._duration;
+        return this._duration * (this._times || 1);
     },
 
     /** set duration in seconds of the action

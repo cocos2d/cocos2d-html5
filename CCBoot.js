@@ -1468,7 +1468,6 @@ cc.game = {
                         self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                         self._eventShow.setUserData(self);
                         self.onStart();
-                        self._mirrorMethod();
                     }
                 });
             } else {
@@ -1482,7 +1481,6 @@ cc.game = {
                             self._eventShow = self._eventShow || new cc.EventCustom(self.EVENT_SHOW);
                             self._eventShow.setUserData(self);
                             self.onStart();
-                            self._mirrorMethod();
                             clearInterval(self._checkPrepare);
                         }
                     }, 10);
@@ -1495,79 +1493,6 @@ cc.game = {
                 this.removeEventListener('load', arguments.callee, false);
                 _run();
             }, false);
-    },
-
-    /**
-     * To create the mirror method
-     * @private
-     */
-    _mirrorMethod: function(){
-        cc.action = cc.Action.create;
-        cc.speed = cc.Speed.create;
-        cc.follow = cc.Follow.create;
-        cc.orbitCamera = cc.OrbitCamera.create;
-        cc.cardinalSplineTo = cc.CardinalSplineTo.create;
-        cc.cardinalSplineBy = cc.CardinalSplineBy.create;
-        cc.catmullRomTo = cc.CatmullRomTo.create;
-        cc.catmullRomBy = cc.CatmullRomBy.create;
-//        cc.actionEase = cc.ActionEase.create;
-//        cc.easeRateAction = cc.EaseRateAction.create;
-//        cc.easeIn = cc.EaseIn.create;
-//        cc.easeOut = cc.EaseOut.create;
-//        cc.easeInOut = cc.EaseInOut.create;
-//        cc.easeExponentialIn = cc.EaseExponentialIn.create;
-//        cc.easeExponentialOut = cc.EaseExponentialOut.create;
-//        cc.easeExponentialInOut = cc.EaseExponentialInOut.create;
-//        cc.easeSineIn = cc.EaseSineIn.create;
-//        cc.easeSineOut = cc.EaseSineOut.create;
-//        cc.easeSineInOut = cc.EaseSineInOut.create;
-//        cc.easeElastic = cc.EaseElastic.create;
-//        cc.easeElasticIn = cc.EaseElasticIn.create;
-//        cc.easeElasticOut = cc.EaseElasticOut.create;
-//        cc.easeElasticInOut = cc.EaseElasticInOut.create;
-//        cc.easeBounce = cc.EaseBounce.create;
-//        cc.easeBounceIn = cc.EaseBounceIn.create;
-//        cc.easeBounceOut = cc.EaseBounceOut.create;
-//        cc.easeBounceInOut = cc.EaseBounceInOut.create;
-//        cc.easeBackIn = cc.EaseBackIn.create;
-//        cc.easeBackOut = cc.EaseBackOut.create;
-//        cc.easeBackInOut = cc.EaseBackInOut.create;
-        cc.show = cc.Show.create;
-        cc.hide = cc.Hide.create;
-        cc.toggleVisibility = cc.ToggleVisibility.create;
-        cc.removeSelf = cc.RemoveSelf.create;
-        cc.flipX = cc.FlipX.create;
-        cc.flipY = cc.FlipY.create;
-        cc.place = cc.Place.create;
-        cc.callFunc = cc.CallFunc.create;
-        cc.actionInterval = cc.ActionInterval.create;
-        cc.sequence = cc.Sequence.create;
-        cc.repeat = cc.Repeat.create;
-        cc.repeatForever = cc.RepeatForever.create;
-        cc.spawn = cc.Spawn.create;
-        cc.rotateTo = cc.RotateTo.create;
-        cc.rotateBy = cc.RotateBy.create;
-        cc.moveBy = cc.MoveBy.create;
-        cc.moveTo = cc.MoveTo.create;
-        cc.skewTo = cc.SkewTo.create;
-        cc.skewBy = cc.SkewBy.create;
-        cc.jumpBy = cc.JumpBy.create;
-        cc.jumpTo = cc.JumpTo.create;
-        cc.bezierBy = cc.BezierBy.create;
-        cc.bezierTo = cc.BezierTo.create;
-        cc.scaleTo = cc.ScaleTo.create;
-        cc.scaleBy = cc.ScaleBy.create;
-        cc.blink = cc.Blink.create;
-        cc.fadeTo = cc.FadeTo.create;
-        cc.fadeIn = cc.FadeIn.create;
-        cc.fadeOut = cc.FadeOut.create;
-        cc.tintTo = cc.TintTo.create;
-        cc.tintBy = cc.TintBy.create;
-        cc.delayTime = cc.DelayTime.create;
-        cc.reverseTime = cc.ReverseTime.create;
-        cc.animate = cc.Animate.create;
-        cc.targetedAction = cc.TargetedAction.create;
-        cc.actionTween = cc.ActionTween.create;
     },
 
     /**

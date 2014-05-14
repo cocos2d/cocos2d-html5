@@ -237,7 +237,11 @@ cc.easeIn = function (rate) {
         _rate: rate,
         easing: function (dt) {
             return Math.pow(dt, this._rate);
-        }};
+        },
+        reverse: function(){
+            return cc.easeIn(1 / this._rate);
+        }
+    };
 };
 
 /**
@@ -284,7 +288,11 @@ cc.easeOut = function (rate) {
         _rate: rate,
         easing: function (dt) {
             return Math.pow(dt, 1 / this._rate);
-        }};
+        },
+        reverse: function(){
+            return cc.easeOut(1 / this._rate)
+        }
+    };
 };
 
 /**
@@ -339,7 +347,11 @@ cc.easeInOut = function (rate) {
                 return 0.5 * Math.pow(dt, this._rate);
             else
                 return 1.0 - 0.5 * Math.pow(2 - dt, this._rate);
-        }};
+        },
+        reverse: function(){
+            return cc.easeInOut(this._rate);
+        }
+    };
 };
 
 /**
@@ -383,6 +395,9 @@ cc.EaseExponentialIn.create = function (action) {
 cc._easeExponentialInObj = {
     easing: function(dt){
         return dt === 0 ? 0 : Math.pow(2, 10 * (dt - 1));
+    },
+    reverse: function(){
+        return cc._easeExponentialOutObj;
     }
 };
 cc.easeExponentialIn = function(){
@@ -430,6 +445,9 @@ cc.EaseExponentialOut.create = function (action) {
 cc._easeExponentialOutObj = {
     easing: function(dt){
         return dt == 1 ? 1 : (-(Math.pow(2, -10 * dt)) + 1);
+    },
+    reverse: function(){
+        return cc._easeExponentialInObj;
     }
 };
 cc.easeExponentialOut = function(){
@@ -491,6 +509,9 @@ cc._easeExponentialInOutObj = {
                 return 0.5 * (-Math.pow(2, -10 * (dt - 1)) + 2);
         }
         return dt;
+    },
+    reverse: function(){
+        return cc._easeExponentialInOutObj;
     }
 };
 cc.easeExponentialInOut = function(){
@@ -539,6 +560,9 @@ cc.EaseSineIn.create = function (action) {
 cc._easeSineInObj = {
     easing: function(dt){
         return (dt===0 || dt===1) ? dt : -1 * Math.cos(dt * Math.PI / 2) + 1;
+    },
+    reverse: function(){
+        return cc._easeSineOutObj;
     }
 };
 cc.easeSineIn = function(){
@@ -587,6 +611,9 @@ cc.EaseSineOut.create = function (action) {
 cc._easeSineOutObj = {
     easing: function(dt){
         return (dt===0 || dt==1) ? dt : Math.sin(dt * Math.PI / 2);
+    },
+    reverse: function(){
+        return cc._easeSineInObj;
     }
 };
 cc.easeSineOut = function(){
@@ -635,6 +662,9 @@ cc.EaseSineInOut.create = function (action) {
 cc._easeSineInOutObj = {
     easing: function(dt){
         return (dt === 0 || dt === 1) ? dt : -0.5 * (Math.cos(Math.PI * dt) - 1);
+    },
+    reverse: function(){
+        return cc._easeSineInOutObj;
     }
 };
 cc.easeSineInOut = function(){
@@ -772,7 +802,10 @@ cc._easeElasticInObj = {
            return dt;
        dt = dt - 1;
        return -Math.pow(2, 10 * dt) * Math.sin((dt - (0.3 / 4)) * Math.PI * 2 / 0.3);
-   }
+   },
+    reverse:function(){
+        return cc._easeElasticOutObj;
+    }
 };
 
 cc.easeElasticIn = function (period) {
@@ -784,7 +817,14 @@ cc.easeElasticIn = function (period) {
                     return dt;
                 dt = dt - 1;
                 return -Math.pow(2, 10 * dt) * Math.sin((dt - (this._period / 4)) * Math.PI * 2 / this._period);
-            }};
+            },
+            /**
+             * @return {cc.EaseElasticIn}
+             */
+            reverse:function () {
+                return cc.easeElasticOut(this._period);
+            }
+        };
     }
     return cc._easeElasticInObj;
 };
@@ -841,6 +881,9 @@ cc.EaseElasticOut.create = function (action, period) {
 cc._easeElasticOutObj = {
     easing: function (dt) {
         return (dt === 0 || dt === 1) ? dt : Math.pow(2, -10 * dt) * Math.sin((dt - (0.3 / 4)) * Math.PI * 2 / 0.3) + 1;
+    },
+    reverse:function(){
+        return cc._easeElasticInObj;
     }
 };
 
@@ -936,7 +979,11 @@ cc.easeElasticInOut = function (period) {
                     newT = Math.pow(2, -10 * dt) * Math.sin((dt - s) * Math.PI * 2 / locPeriod) * 0.5 + 1;
             }
             return newT;
-        }};
+        },
+        reverse: function(){
+            return cc.EaseElasticInOut(this._period);
+        }
+    };
 };
 
 /**
@@ -1047,6 +1094,9 @@ cc._bounceTime = function (time1) {
 cc._easeBounceInObj = {
     easing: function(dt){
         return 1 - cc._bounceTime(1 - dt);
+    },
+    reverse: function(){
+        return cc._easeBounceOutObj;
     }
 };
 cc.easeBounceIn = function(){
@@ -1096,6 +1146,9 @@ cc.EaseBounceOut.create = function (action) {
 cc._easeBounceOutObj = {
     easing: function(dt){
         return cc._bounceTime(dt);
+    },
+    reverse:function () {
+        return cc._easeBounceInObj;
     }
 };
 cc.easeBounceOut = function(){
@@ -1158,7 +1211,11 @@ cc._easeBounceInOutObj = {
             newT = cc._bounceTime(time1 * 2 - 1) * 0.5 + 0.5;
         }
         return newT;
-    }};
+    },
+    reverse: function(){
+        return cc._easeBounceInOutObj;
+    }
+};
 
 cc.easeBounceInOut = function(){
     return cc._easeBounceInOutObj;
@@ -1210,7 +1267,11 @@ cc._easeBackInObj = {
     easing: function (time1) {
         var overshoot = 1.70158;
         return (time1===0 || time1===1) ? time1 : time1 * time1 * ((overshoot + 1) * time1 - overshoot);
-    }};
+    },
+    reverse: function(){
+        return cc._easeBackOutObj;
+    }
+};
 
 cc.easeBackIn = function(){
     return cc._easeBackInObj;
@@ -1262,7 +1323,11 @@ cc._easeBackOutObj = {
         var overshoot = 1.70158;
         time1 = time1 - 1;
         return time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1;
-    }};
+    },
+    reverse: function(){
+        return cc._easeBackInObj;
+    }
+};
 
 cc.easeBackOut = function(){
     return cc._easeBackOutObj;
@@ -1325,7 +1390,11 @@ cc._easeBackInOutObj = {
             time1 = time1 - 2;
             return (time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1;
         }
-    }};
+    },
+    reverse: function(){
+        return cc._easeBackInOutObj;
+    }
+};
 
 cc.easeBackInOut = function(){
     return cc._easeBackInOutObj;
