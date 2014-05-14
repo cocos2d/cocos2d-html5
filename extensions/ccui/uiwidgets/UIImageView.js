@@ -37,6 +37,14 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     _imageTexType: null,
     _imageTextureSize: null,
     _className:"ImageView",
+
+    /**
+     * allocates and initializes a UIImageView.
+     * @constructor
+     * @example
+     * // example
+     * var uiImageView = new ccui.ImageView;
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._scale9Enabled = false;
@@ -46,6 +54,8 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
         this._textureFile = "";
         this._imageTexType = ccui.Widget.LOCAL_TEXTURE;
         this._imageTextureSize = cc.size(this._size.width, this._size.height);
+
+        this.init();
     },
 
     initRenderer: function () {
@@ -320,11 +330,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
  * var uiImageView = ccui.ImageView.create();
  */
 ccui.ImageView.create = function () {
-    var uiImageView = new ccui.ImageView();
-    if (uiImageView && uiImageView.init()) {
-        return uiImageView;
-    }
-    return null;
+    return new ccui.ImageView();
 };
 
 // Constants

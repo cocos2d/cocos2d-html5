@@ -58,6 +58,13 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _ballDTexType: null,
     _isTextureLoaded: false,
     _className: "Slider",
+    /**
+     * allocates and initializes a UISlider.
+     * @constructor
+     * @example
+     * // example
+     * var uiSlider = new ccui.Slider();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._barRenderer = null;
@@ -86,6 +93,8 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
         this._ballPTexType = ccui.Widget.LOCAL_TEXTURE;
         this._ballDTexType = ccui.Widget.LOCAL_TEXTURE;
         this._isTextureLoaded = false;
+
+        this.init();
     },
 
     init: function () {
@@ -642,11 +651,7 @@ _p = null;
  * var uiSlider = ccui.Slider.create();
  */
 ccui.Slider.create = function () {
-    var uiSlider = new ccui.Slider();
-    if (uiSlider && uiSlider.init()) {
-        return uiSlider;
-    }
-    return null;
+    return new ccui.Slider();
 };
 
 // Constant

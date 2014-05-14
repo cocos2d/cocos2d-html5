@@ -267,6 +267,14 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     _insertTextSelector: null,
     _deleteBackwardSelector: null,
     _passwordStyleText: "",
+
+    /**
+     * allocates and initializes a UITextField.
+     * @constructor
+     * @example
+     * // example
+     * var uiTextField = new ccui.TextField();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._textFieldRender = null;
@@ -284,6 +292,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
         this._detachWithIMESelector = null;
         this._insertTextSelector = null;
         this._deleteBackwardSelector = null;
+
+        this.init();
     },
 
     onEnter: function () {
@@ -767,11 +777,7 @@ _p = null;
  * var uiTextField = ccui.TextField.create();
  */
 ccui.TextField.create = function () {
-    var uiTextField = new ccui.TextField();
-    if (uiTextField && uiTextField.init()) {
-        return uiTextField;
-    }
-    return null;
+    return new ccui.TextField();
 };
 
 // Constants

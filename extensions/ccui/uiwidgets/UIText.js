@@ -51,6 +51,14 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     _textVerticalAlignment: 0,
     _textHorizontalAlignment: 0,
     _className: "Text",
+
+    /**
+     * allocates and initializes a UILabel.
+     * @constructor
+     * @example
+     * // example
+     * var uiLabel = new ccui.Text();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this.touchScaleEnabled = false;
@@ -63,6 +71,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
         this._textAreaSize = cc.size(0, 0);
         this._textVerticalAlignment = 0;
         this._textHorizontalAlignment = 0;
+
+        this.init();
     },
 
     init: function () {
@@ -414,11 +424,7 @@ _p = null;
  * var uiLabel = ccui.Text.create();
  */
 ccui.Text.create = function () {
-    var uiLabel = new ccui.Text();
-    if (uiLabel && uiLabel.init()) {
-        return uiLabel;
-    }
-    return null;
+    return new ccui.Text();
 };
 
 ccui.Text.RENDERER_ZORDER = -1;

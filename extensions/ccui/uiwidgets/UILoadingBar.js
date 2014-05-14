@@ -44,6 +44,14 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     _textureFile: "",
     _isTextureLoaded: false,
     _className: "LoadingBar",
+
+    /**
+     * allocates and initializes a UILoadingBar.
+     * @constructor
+     * @example
+     * // example
+     * var uiLoadingBar = new ccui.LoadingBar;
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._barType = ccui.LoadingBar.TYPE_LEFT;
@@ -56,6 +64,8 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
         this._prevIgnoreSize = true;
         this._capInsets = cc.rect(0, 0, 0, 0);
         this._textureFile = "";
+
+        this.init();
     },
 
     initRenderer: function () {
@@ -404,11 +414,7 @@ _p = null;
  * var uiLoadingBar = ccui.LoadingBar.create();
  */
 ccui.LoadingBar.create = function () {
-    var uiLoadingBar = new ccui.LoadingBar();
-    if (uiLoadingBar && uiLoadingBar.init()) {
-        return uiLoadingBar;
-    }
-    return null;
+    return new ccui.LoadingBar();
 };
 
 // Constants

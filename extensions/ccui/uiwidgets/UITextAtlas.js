@@ -38,9 +38,19 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
     _itemHeight: 0,
     _startCharMap: "",
     _className: "TextAtlas",
+
+    /**
+     * allocates and initializes a UILabelAtlas.
+     * @constructor
+     * @example
+     * // example
+     * var uiLabelAtlas = new ccui.TextAtlas();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._labelAtlasRenderer = null;
+
+        this.init();
     },
 
     initRenderer: function () {
@@ -205,11 +215,7 @@ _p = null;
  * var uiLabelAtlas = ccui.TextAtlas.create();
  */
 ccui.TextAtlas.create = function () {
-    var uiLabelAtlas = new ccui.TextAtlas();
-    if (uiLabelAtlas && uiLabelAtlas.init()) {
-        return uiLabelAtlas;
-    }
-    return null;
+   return new ccui.TextAtlas();
 };
 
 // Constants
