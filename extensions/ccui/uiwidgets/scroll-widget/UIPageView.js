@@ -47,6 +47,13 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _pageViewEventListener: null,
     _pageViewEventSelector: null,
     _className:"PageView",
+    /**
+     * allocates and initializes a UIPageView.
+     * @constructor
+     * @example
+     * // example
+     * var uiPageView = new ccui.PageView();
+     */
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
         this._curPageIdx = 0;
@@ -66,6 +73,8 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
         this._childFocusCancelOffset = 5;
         this._pageViewEventListener = null;
         this._pageViewEventSelector = null;
+
+        this.init();
     },
 
     init: function () {
@@ -592,11 +601,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
  * var uiPageView = ccui.PageView.create();
  */
 ccui.PageView.create = function () {
-    var uiPageView = new ccui.PageView();
-    if (uiPageView && uiPageView.init()) {
-        return uiPageView;
-    }
-    return null;
+    return new ccui.PageView();
 };
 
 // Constants
