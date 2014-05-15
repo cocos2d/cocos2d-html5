@@ -861,7 +861,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
 
 
     setPropsForWidgetFromJsonDictionary: function (widget, options) {
-        if (options["ignoreSize"] !== undefined) {
+        if (options["ignoreSize"]) {
             widget.ignoreContentAdaptWithSize(options["ignoreSize"]);
         }
         widget.setSizeType(options["sizeType"]);
