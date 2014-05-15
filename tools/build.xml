@@ -21,6 +21,7 @@
                 <file name="cocos2d/core/platform/CCConfig.js"/>
                 <file name="cocos2d/core/platform/miniFramework.js"/>
                 <file name="cocos2d/core/platform/CCMacro.js"/>
+                <file name="cocos2d/core/platform/CCTypesWebGL.js"/>
                 <file name="cocos2d/core/platform/CCTypes.js"/>
                 <file name="cocos2d/core/platform/CCEGLView.js"/>
                 <file name="cocos2d/core/platform/CCScreen.js"/>
@@ -65,6 +66,7 @@
                 <file name="cocos2d/core/CCDrawingPrimitivesCanvas.js"/>
                 <file name="cocos2d/core/CCDrawingPrimitivesWebGL.js"/>
                 <file name="cocos2d/core/labelttf/LabelTTFPropertyDefine.js"/>
+                <file name="cocos2d/core/labelttf/LabelTTFWebGL.js"/>
                 <file name="cocos2d/core/labelttf/CCLabelTTF.js"/>
                 <file name="cocos2d/core/CCActionManager.js"/>
                 <file name="cocos2d/kazmath/utility.js"/>
