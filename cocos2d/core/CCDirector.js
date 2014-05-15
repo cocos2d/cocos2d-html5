@@ -362,7 +362,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
 
         // don't release the event handlers
         // They are needed in case the director is run again
-
         if (this._runningScene) {
             this._runningScene.onExitTransitionDidStart();
             this._runningScene.onExit();
@@ -527,7 +526,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
     },
 
     /**
-     *  CCDirector delegate. It shall implemente the CCDirectorDelegate protocol
+     *  CCDirector delegate. It shall implement the CCDirectorDelegate protocol
      *  @return {cc.DirectorDelegate}
      */
     getDelegate: function () {
@@ -675,7 +674,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      * @param {Number} level
      */
     popToSceneStackLevel: function (level) {
-
         cc.assert(this._runningScene, cc._LogInfos.Director_popToSceneStackLevel_2);
 
         var locScenesStack = this._scenesStack;

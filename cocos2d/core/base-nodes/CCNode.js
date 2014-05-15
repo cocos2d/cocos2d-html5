@@ -151,7 +151,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _cacheDirty: true,
     // Cached parent serves to construct the cached parent chain
     _cachedParent: null,
-    _transformGLDirty: null,
     _transform: null,
     _inverse: null,
 
@@ -1123,7 +1122,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} [tag=]  A integer to identify the node easily. Please refer to setTag(int)
      */
     addChild: function (child, localZOrder, tag) {
-
         cc.assert(child, cc._LogInfos.Node_addChild_3);
 
         if (child === this) {
@@ -1137,10 +1135,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         var tmpzOrder = (localZOrder != null) ? localZOrder : child._localZOrder;
-        child.tag = (tag != null) ? tag : child.tag;
         this._insertChild(child, tmpzOrder);
+
+        child.tag = (tag != null) ? tag : child.tag;
         child._parent = this;
         this._cachedParent && (child._cachedParent = this._cachedParent);
+        child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
 
         if (this._running) {
             child.onEnter();
@@ -1302,8 +1302,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     reorderChild: function (child, zOrder) {
         cc.assert(child, cc._LogInfos.Node_reorderChild)
         this._reorderChildDirty = true;
-        child.arrivalOrder = cc.s_globalOrderOfArrival;
-        cc.s_globalOrderOfArrival++;
+        child.arrivalOrder = cc.s_globalOrderOfArrival++;
         child._setLocalZOrder(zOrder);
         this.setNodeDirty();
     },

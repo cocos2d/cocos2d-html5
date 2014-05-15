@@ -243,16 +243,10 @@ ccs.ArmatureAnimation = ccs.ProcessBase.extend(/** @lends ccs.ArmatureAnimation#
         this._onMovementList = false;
         ccs.ProcessBase.prototype.play.call(this, durationTo, tweenEasing);
 
-        if (this._rawDuration == 0) {
+        if (this._rawDuration === 0) {
             this._loopType = ccs.ANIMATION_TYPE_SINGLE_FRAME;
-        }
-        else {
-            if (loop) {
-                this._loopType = ccs.ANIMATION_TYPE_TO_LOOP_FRONT;
-            }
-            else {
-                this._loopType = ccs.ANIMATION_TYPE_NO_LOOP;
-            }
+        } else {
+            this._loopType = loop ? ccs.ANIMATION_TYPE_TO_LOOP_FRONT : ccs.ANIMATION_TYPE_NO_LOOP;
             this._durationTween = durationTween;
         }
 
