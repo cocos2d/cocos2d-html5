@@ -49,14 +49,14 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _capInsetsNormal: null,
     _capInsetsPressed: null,
     _capInsetsDisabled: null,
-    _normalTexType: null,
-    _pressedTexType: null,
-    _disabledTexType: null,
+    _normalTexType: ccui.Widget.LOCAL_TEXTURE,
+    _pressedTexType: ccui.Widget.LOCAL_TEXTURE,
+    _disabledTexType: ccui.Widget.LOCAL_TEXTURE,
     _normalTextureSize: null,
     _pressedTextureSize: null,
     _disabledTextureSize: null,
     pressedActionEnabled: false,
-    _titleColor: null,
+    _titleColor: cc.color.WHITE,
     _normalTextureScaleXInSize: 1,
     _normalTextureScaleYInSize: 1,
     _pressedTextureScaleXInSize: 1,
@@ -65,36 +65,24 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
     _className: "Button",
+
+    /**
+     * allocates and initializes a UIButton.
+     * @constructor
+     * @example
+     * // example
+     * var uiButton = new ccui.Button();
+     */
     ctor: function () {
-        ccui.Widget.prototype.ctor.call(this);
-        this._buttonNormalRenderer = null;
-        this._buttonClickedRenderer = null;
-        this._buttonDisableRenderer = null;
-        this._titleRenderer = null;
-        this._normalFileName = "";
-        this._clickedFileName = "";
-        this._disabledFileName = "";
-        this._prevIgnoreSize = true;
-        this._scale9Enabled = false;
         this._capInsetsNormal = cc.rect(0, 0, 0, 0);
         this._capInsetsPressed = cc.rect(0, 0, 0, 0);
         this._capInsetsDisabled = cc.rect(0, 0, 0, 0);
-        this._normalTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._pressedTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._disabledTexType = ccui.Widget.LOCAL_TEXTURE;
         var locSize = this._size;
         this._normalTextureSize = cc.size(locSize.width, locSize.height);
         this._pressedTextureSize = cc.size(locSize.width, locSize.height);
         this._disabledTextureSize = cc.size(locSize.width, locSize.height);
-        this.pressedActionEnabled = false;
-        this._titleColor = cc.color.WHITE;
-        this._normalTextureScaleXInSize = 1;
-        this._normalTextureScaleYInSize = 1;
-        this._pressedTextureScaleXInSize = 1;
-        this._pressedTextureScaleYInSize = 1;
-        this._normalTextureLoaded = false;
-        this._pressedTextureLoaded = false;
-        this._disabledTextureLoaded = false;
+
+        ccui.Widget.prototype.ctor.call(this);
     },
 
     init: function () {
@@ -821,11 +809,7 @@ _p = null;
  * var uiButton = ccui.Button.create();
  */
 ccui.Button.create = function () {
-    var uiButton = new ccui.Button();
-    if (uiButton && uiButton.init()) {
-        return uiButton;
-    }
-    return null;
+    return new ccui.Button;
 };
 
 // Constants

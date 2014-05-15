@@ -166,6 +166,12 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
     _verticalSpace: 0,
     _elementRenderersContainer: null,
 
+    /**
+     * create a rich text
+     * @constructor
+     * @example
+     * var uiRichText = new ccui.RichTex();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
         this._formatTextDirty = false;
@@ -174,6 +180,8 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
         this._leftSpaceWidth = 0;
         this._verticalSpace = 0;
         this._elementRenderersContainer = null;
+
+        this.init();
     },
 
     initRenderer: function () {
@@ -451,11 +459,11 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
 /**
  * create a rich text
  * @returns {RichText}
+ * @example
+ * var uiRichText = ccui.RichTex.create();
  */
 ccui.RichText.create = function(){
-    var richText = new ccui.RichText();
-    richText.init();
-    return richText;
+    return new ccui.RichText();
 };
 
 // Constants

@@ -39,37 +39,27 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
     _isSelected: true,
     _checkBoxEventListener: null,
     _checkBoxEventSelector: null,
-    _backGroundTexType: null,
-    _backGroundSelectedTexType: null,
-    _frontCrossTexType: null,
-    _backGroundDisabledTexType: null,
-    _frontCrossDisabledTexType: null,
+    _backGroundTexType: ccui.Widget.LOCAL_TEXTURE,
+    _backGroundSelectedTexType: ccui.Widget.LOCAL_TEXTURE,
+    _frontCrossTexType: ccui.Widget.LOCAL_TEXTURE,
+    _backGroundDisabledTexType: ccui.Widget.LOCAL_TEXTURE,
+    _frontCrossDisabledTexType: ccui.Widget.LOCAL_TEXTURE,
     _backGroundFileName: "",
     _backGroundSelectedFileName: "",
     _frontCrossFileName: "",
     _backGroundDisabledFileName: "",
     _frontCrossDisabledFileName: "",
     _className: "CheckBox",
+
+    /**
+     * allocates and initializes a UICheckBox.
+     * @constructor
+     * @example
+     * // example
+     * var uiCheckBox = new ccui.CheckBox();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
-        this._backGroundBoxRenderer = null;
-        this._backGroundSelectedBoxRenderer = null;
-        this._frontCrossRenderer = null;
-        this._backGroundBoxDisabledRenderer = null;
-        this._frontCrossDisabledRenderer = null;
-        this._isSelected = true;
-        this._checkBoxEventListener = null;
-        this._checkBoxEventSelector = null;
-        this._backGroundTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._backGroundSelectedTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._frontCrossTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._backGroundDisabledTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._frontCrossDisabledTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._backGroundFileName = "";
-        this._backGroundSelectedFileName = "";
-        this._frontCrossFileName = "";
-        this._backGroundDisabledFileName = "";
-        this._frontCrossDisabledFileName = "";
     },
     init: function () {
         if (ccui.Widget.prototype.init.call(this)) {
@@ -572,11 +562,7 @@ _p = null;
  * var uiCheckBox = ccui.CheckBox.create();
  */
 ccui.CheckBox.create = function () {
-    var uiCheckBox = new ccui.CheckBox();
-    if (uiCheckBox && uiCheckBox.init()) {
-        return uiCheckBox;
-    }
-    return null;
+    return new ccui.CheckBox();
 };
 
 // Constants

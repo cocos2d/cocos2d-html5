@@ -73,6 +73,13 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _scrollViewEventListener: null,
     _scrollViewEventSelector: null,
     _className: "ScrollView",
+    /**
+     * allocates and initializes a UIScrollView.
+     * @constructor
+     * @example
+     * // example
+     * var uiScrollView = new ccui.ScrollView();
+     */
     ctor: function () {
         ccui.Layout.prototype.ctor.call(this);
         this._innerContainer = null;
@@ -112,6 +119,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
         this.inertiaScrollEnabled = true;
         this._scrollViewEventListener = null;
         this._scrollViewEventSelector = null;
+        this.init();
     },
 
     init: function () {
@@ -1635,11 +1643,7 @@ _p = null;
  * var uiScrollView = ccui.ScrollView.create();
  */
 ccui.ScrollView.create = function () {
-    var uiScrollView = new ccui.ScrollView();
-    if (uiScrollView && uiScrollView.init()) {
-        return uiScrollView;
-    }
-    return null;
+    return new ccui.ScrollView();
 };
 
 // Constants
