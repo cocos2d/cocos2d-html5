@@ -43,26 +43,25 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     touchScaleEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
-    _fontName: "",
-    _fontSize: 0,
-    _onSelectedScaleOffset: 0,
+    _fontName: "Thonburi",
+    _fontSize: 10,
+    _onSelectedScaleOffset:0.5,
     _labelRenderer: "",
     _textAreaSize: null,
     _textVerticalAlignment: 0,
     _textHorizontalAlignment: 0,
     _className: "Text",
+
+    /**
+     * allocates and initializes a UILabel.
+     * @constructor
+     * @example
+     * // example
+     * var uiLabel = new ccui.Text();
+     */
     ctor: function () {
-        ccui.Widget.prototype.ctor.call(this);
-        this.touchScaleEnabled = false;
-        this._normalScaleValueX = 0;
-        this._normalScaleValueY = 0;
-        this._fontName = "Thonburi";
-        this._fontSize = 10;
-        this._onSelectedScaleOffset = 0.5;
-        this._labelRenderer = "";
         this._textAreaSize = cc.size(0, 0);
-        this._textVerticalAlignment = 0;
-        this._textHorizontalAlignment = 0;
+        ccui.Widget.prototype.ctor.call(this);
     },
 
     init: function () {
@@ -414,11 +413,7 @@ _p = null;
  * var uiLabel = ccui.Text.create();
  */
 ccui.Text.create = function () {
-    var uiLabel = new ccui.Text();
-    if (uiLabel && uiLabel.init()) {
-        return uiLabel;
-    }
-    return null;
+    return new ccui.Text();
 };
 
 ccui.Text.RENDERER_ZORDER = -1;

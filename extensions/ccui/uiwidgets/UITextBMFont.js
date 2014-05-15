@@ -36,10 +36,16 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
     _fntFileName: "",
     _stringValue: "",
     _className: "TextBMFont",
+
+    /**
+     * allocates and initializes a UILabelBMFont.
+     * @constructor
+     * @example
+     * // example
+     * var uiLabelBMFont = new ccui.TextBMFont();
+     */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
-        this._labelBMFontRenderer = null;
-        this._fileHasInit = false;
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();
@@ -203,11 +209,7 @@ _p = null;
  * var uiLabelBMFont = ccui.TextBMFont.create();
  */
 ccui.TextBMFont.create = function () {
-    var uiLabelBMFont = new ccui.TextBMFont();
-    if (uiLabelBMFont && uiLabelBMFont.init()) {
-        return uiLabelBMFont;
-    }
-    return null;
+    return new ccui.TextBMFont();
 };
 
 // Constants

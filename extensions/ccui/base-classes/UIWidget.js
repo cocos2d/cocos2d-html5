@@ -64,7 +64,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _name: "default",
     _widgetType: null,
     _actionTag: 0,
-    _size: null,
+    _size: cc.size(0, 0),
     _customSize: null,
     _layoutParameterDictionary: null,
     _ignoreSize: false,
@@ -85,38 +85,22 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
     _flippedY: false,
     ctor: function () {
         cc.Node.prototype.ctor.call(this);
-        this._enabled = true;
-        this._bright = true;
-        this._touchEnabled = false;
-        this._touchPassedEnabled = false;
-        this._focus = false;
         this._brightStyle = ccui.Widget.BRIGHT_STYLE_NONE;
-        this._updateEnabled = false;
         this._touchStartPos = cc.p(0, 0);
         this._touchMovePos = cc.p(0, 0);
         this._touchEndPos = cc.p(0, 0);
-        this._touchEventListener = null;
-        this._touchEventSelector = null;
-        this._name = "default";
         this._widgetType = ccui.Widget.TYPE_WIDGET;
-        this._actionTag = 0;
         this._size = cc.size(0, 0);
         this._customSize = cc.size(0, 0);
         this._layoutParameterDictionary = {};
-        this._ignoreSize = false;
         this._widgetChildren = [];
-        this._affectByClipping = false;
         this._sizeType = ccui.Widget.SIZE_ABSOLUTE;
         this._sizePercent = cc.p(0, 0);
         this.positionType = ccui.Widget.POSITION_ABSOLUTE;
         this._positionPercent = cc.p(0, 0);
-        this._reorderWidgetChildDirty = false;
-        this._hitted = false;
         this._nodes = [];
         this._color = cc.color(255, 255, 255, 255);
-        this._touchListener = null;
-        this._flippedX = false;
-        this._flippedY = false;
+        this.init();
     },
 
     /**
@@ -203,7 +187,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         if (__children != null) {
             for (var i = 0; i < __children.length; i++) {
                 var node = __children[i];
-                if (node && node._tag == tag)
+                if (node && node.tag == tag)
                     return node;
             }
         }
@@ -1491,11 +1475,7 @@ _p = null;
  * var uiWidget = ccui.Widget.create();
  */
 ccui.Widget.create = function () {
-    var widget = new ccui.Widget();
-    if (widget && widget.init()) {
-        return widget;
-    }
-    return null;
+    return new ccui.Widget();
 };
 
 

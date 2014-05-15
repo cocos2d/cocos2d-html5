@@ -51,41 +51,25 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _capInsetsProgressBarRenderer: null,
     _sliderEventListener: null,
     _sliderEventSelector: null,
-    _barTexType: null,
-    _progressBarTexType: null,
-    _ballNTexType: null,
-    _ballPTexType: null,
-    _ballDTexType: null,
+    _barTexType: ccui.Widget.LOCAL_TEXTURE,
+    _progressBarTexType: ccui.Widget.LOCAL_TEXTURE,
+    _ballNTexType: ccui.Widget.LOCAL_TEXTURE,
+    _ballPTexType: ccui.Widget.LOCAL_TEXTURE,
+    _ballDTexType: ccui.Widget.LOCAL_TEXTURE,
     _isTextureLoaded: false,
     _className: "Slider",
+    /**
+     * allocates and initializes a UISlider.
+     * @constructor
+     * @example
+     * // example
+     * var uiSlider = new ccui.Slider();
+     */
     ctor: function () {
-        ccui.Widget.prototype.ctor.call(this);
-        this._barRenderer = null;
-        this._progressBarRenderer = null;
         this._progressBarTextureSize = cc.size(0, 0);
-        this._slidBallNormalRenderer = null;
-        this._slidBallPressedRenderer = null;
-        this._slidBallDisabledRenderer = null;
-        this._slidBallRenderer = null;
-        this._barLength = 0;
-        this._percent = 0;
-        this._scale9Enabled = false;
-        this._prevIgnoreSize = true;
-        this._textureFile = "";
-        this._progressBarTextureFile = "";
-        this._slidBallNormalTextureFile = "";
-        this._slidBallPressedTextureFile = "";
-        this._slidBallDisabledTextureFile = "";
         this._capInsetsBarRenderer = cc.rect(0, 0, 0, 0);
         this._capInsetsProgressBarRenderer = cc.rect(0, 0, 0, 0);
-        this._sliderEventListener = null;
-        this._sliderEventSelector = null;
-        this._barTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._progressBarTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._ballNTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._ballPTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._ballDTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._isTextureLoaded = false;
+        ccui.Widget.prototype.ctor.call(this);
     },
 
     init: function () {
@@ -642,11 +626,7 @@ _p = null;
  * var uiSlider = ccui.Slider.create();
  */
 ccui.Slider.create = function () {
-    var uiSlider = new ccui.Slider();
-    if (uiSlider && uiSlider.init()) {
-        return uiSlider;
-    }
-    return null;
+    return new ccui.Slider();
 };
 
 // Constant
