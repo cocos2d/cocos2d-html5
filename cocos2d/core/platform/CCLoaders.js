@@ -73,10 +73,10 @@ cc.loader.register(["plist"], cc._plistLoader);
 
 cc._fontLoader = {
     TYPE : {
-        "eot" : "embedded-opentype",
-        "ttf" : "truetype",
-        "woff" : "woff",
-        "svg" : "svg"
+        ".eot" : "embedded-opentype",
+        ".ttf" : "truetype",
+        ".woff" : "woff",
+        ".svg" : "svg"
     },
     _loadFont : function(name, srcs, type){
         var doc = document, path = cc.path, TYPE = this.TYPE, fontStyle = cc.newElement("style");
