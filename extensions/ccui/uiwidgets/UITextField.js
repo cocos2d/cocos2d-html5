@@ -277,23 +277,6 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
      */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
-        this._textFieldRender = null;
-        this._touchWidth = 0;
-        this._touchHeight = 0;
-        this._useTouchArea = false;
-
-        this._textFieldEventListener = null;
-        this._textFieldEventSelector = null;
-        this._attachWithIMEListener = null;
-        this._detachWithIMEListener = null;
-        this._insertTextListener = null;
-        this._deleteBackwardListener = null;
-        this._attachWithIMESelector = null;
-        this._detachWithIMESelector = null;
-        this._insertTextSelector = null;
-        this._deleteBackwardSelector = null;
-
-        this.init();
     },
 
     onEnter: function () {

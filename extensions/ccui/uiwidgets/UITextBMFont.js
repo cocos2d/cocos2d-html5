@@ -46,10 +46,6 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
      */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
-        this._labelBMFontRenderer = null;
-        this._fileHasInit = false;
-
-        this.init()
     },
     initRenderer: function () {
         this._labelBMFontRenderer = cc.LabelBMFont.create();

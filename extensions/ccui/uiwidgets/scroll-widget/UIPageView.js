@@ -79,7 +79,6 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
 
     init: function () {
         if (ccui.Layout.prototype.init.call(this)) {
-            this._pages = [];
             this.setClippingEnabled(true);
             this.setTouchEnabled(true);
             return true;
@@ -280,14 +279,16 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     },
 
     updateChildrenSize: function () {
-        if (!this._pages.length <= 0) {
-            return;
-        }
+        if(this._pages){
+            if (!this._pages.length <= 0) {
+                return;
+            }
 
-        var selfSize = this.getSize();
-        for (var i = 0; i < this._pages.length; i++) {
-            var page = this._pages[i];
-            page.setSize(selfSize);
+            var selfSize = this.getSize();
+            for (var i = 0; i < this._pages.length; i++) {
+                var page = this._pages[i];
+                page.setSize(selfSize);
+            }
         }
     },
 

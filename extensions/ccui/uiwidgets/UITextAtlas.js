@@ -48,9 +48,6 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
      */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
-        this._labelAtlasRenderer = null;
-
-        this.init();
     },
 
     initRenderer: function () {

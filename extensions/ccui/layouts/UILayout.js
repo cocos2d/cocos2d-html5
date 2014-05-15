@@ -40,18 +40,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
     _backGroundImageFileName: null,
     _backGroundImageCapInsets: null,
     _colorType: null,
-    _bgImageTexType: null,
+    _bgImageTexType: ccui.Widget.LOCAL_TEXTURE,
     _colorRender: null,
     _gradientRender: null,
     _color: null,
     _startColor: null,
     _endColor: null,
     _alongVector: null,
-    _opacity: null,
+    _opacity: 255,
     _backGroundImageTextureSize: null,
     _layoutType: null,
-    _doLayoutDirty: false,
-    _clippingRectDirty: false,
+    _doLayoutDirty: true,
+    _clippingRectDirty: true,
     _clippingType: null,
     _clippingStencil: null,
     _handleScissor: false,
@@ -70,34 +70,18 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      */
     ctor: function () {
         ccui.Widget.prototype.ctor.call(this);
-        this._clippingEnabled = false;
-        this._backGroundScale9Enabled = false;
-        this._backGroundImage = null;
-        this._backGroundImageFileName = "";
         this._backGroundImageCapInsets = cc.rect(0, 0, 0, 0);
         this._colorType = ccui.Layout.BG_COLOR_NONE;
-        this._bgImageTexType = ccui.Widget.LOCAL_TEXTURE;
-        this._colorRender = null;
-        this._gradientRender = null;
         this._color = cc.color(255, 255, 255, 255);
         this._startColor = cc.color(255, 255, 255, 255);
         this._endColor = cc.color(255, 255, 255, 255);
         this._alongVector = cc.p(0, -1);
-        this._opacity = 255;
         this._backGroundImageTextureSize = cc.size(0, 0);
         this._layoutType = ccui.Layout.ABSOLUTE;
         this._widgetType = ccui.Widget.TYPE_CONTAINER;
-        this._doLayoutDirty = true;
-        this._clippingRectDirty = true;
         this._clippingType = ccui.Layout.CLIPPING_STENCIL;
-        this._clippingStencil = null;
-        this._handleScissor = false;
-        this._scissorRectDirty = false;
         this._clippingRect = cc.rect(0, 0, 0, 0);
-        this._clippingParent = null;
         this._backGroundImageColor = cc.color(255, 255, 255, 255);
-
-        this.init();
     },
     init: function () {
         if (cc.Node.prototype.init.call(this)) {

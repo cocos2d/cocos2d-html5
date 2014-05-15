@@ -34,7 +34,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
     _capInsets: null,
     _imageRenderer: null,
     _textureFile: "",
-    _imageTexType: null,
+    _imageTexType: ccui.Widget.LOCAL_TEXTURE,
     _imageTextureSize: null,
     _className:"ImageView",
 
@@ -46,16 +46,9 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
      * var uiImageView = new ccui.ImageView;
      */
     ctor: function () {
-        ccui.Widget.prototype.ctor.call(this);
-        this._scale9Enabled = false;
-        this._prevIgnoreSize = true;
         this._capInsets = cc.rect(0,0,0,0);
-        this._imageRenderer = null;
-        this._textureFile = "";
-        this._imageTexType = ccui.Widget.LOCAL_TEXTURE;
         this._imageTextureSize = cc.size(this._size.width, this._size.height);
-
-        this.init();
+        ccui.Widget.prototype.ctor.call(this);
     },
 
     initRenderer: function () {

@@ -43,9 +43,9 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     touchScaleEnabled: false,
     _normalScaleValueX: 0,
     _normalScaleValueY: 0,
-    _fontName: "",
-    _fontSize: 0,
-    _onSelectedScaleOffset: 0,
+    _fontName: "Thonburi",
+    _fontSize: 10,
+    _onSelectedScaleOffset:0.5,
     _labelRenderer: "",
     _textAreaSize: null,
     _textVerticalAlignment: 0,
@@ -60,19 +60,8 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
      * var uiLabel = new ccui.Text();
      */
     ctor: function () {
-        ccui.Widget.prototype.ctor.call(this);
-        this.touchScaleEnabled = false;
-        this._normalScaleValueX = 0;
-        this._normalScaleValueY = 0;
-        this._fontName = "Thonburi";
-        this._fontSize = 10;
-        this._onSelectedScaleOffset = 0.5;
-        this._labelRenderer = "";
         this._textAreaSize = cc.size(0, 0);
-        this._textVerticalAlignment = 0;
-        this._textHorizontalAlignment = 0;
-
-        this.init();
+        ccui.Widget.prototype.ctor.call(this);
     },
 
     init: function () {

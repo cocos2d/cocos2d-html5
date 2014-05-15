@@ -36,7 +36,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
     _percent: 100,
     _totalLength: 0,
     _barRenderer: null,
-    _renderBarTexType: null,
+    _renderBarTexType: ccui.Widget.LOCAL_TEXTURE,
     _barRendererTextureSize: null,
     _scale9Enabled: false,
     _prevIgnoreSize: true,
@@ -53,19 +53,10 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
      * var uiLoadingBar = new ccui.LoadingBar;
      */
     ctor: function () {
-        ccui.Widget.prototype.ctor.call(this);
         this._barType = ccui.LoadingBar.TYPE_LEFT;
-        this._percent = 100;
-        this._totalLength = 0;
-        this._barRenderer = null;
-        this._renderBarTexType = ccui.Widget.LOCAL_TEXTURE;
         this._barRendererTextureSize = cc.size(0, 0);
-        this._scale9Enabled = false;
-        this._prevIgnoreSize = true;
         this._capInsets = cc.rect(0, 0, 0, 0);
-        this._textureFile = "";
-
-        this.init();
+        ccui.Widget.prototype.ctor.call(this);
     },
 
     initRenderer: function () {
