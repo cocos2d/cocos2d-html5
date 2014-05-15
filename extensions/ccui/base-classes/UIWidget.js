@@ -203,7 +203,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
         if (__children != null) {
             for (var i = 0; i < __children.length; i++) {
                 var node = __children[i];
-                if (node && node._tag == tag)
+                if (node && node.tag == tag)
                     return node;
             }
         }
