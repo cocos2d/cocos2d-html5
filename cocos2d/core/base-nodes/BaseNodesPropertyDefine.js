@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.PrototypeCCNode = function () {
+cc._tmp.PrototypeCCNode = function () {
 
     var _p = cc.Node.prototype;
 
@@ -122,7 +122,7 @@ _tmp.PrototypeCCNode = function () {
     cc.defineGetterSetter(_p, "glServerState", _p.getGLServerState, _p.setGLServerState);
 };
 
-_tmp.PrototypeCCNodeRGBA = function () {
+cc._tmp.PrototypeCCNodeRGBA = function () {
 
     var _p = cc.NodeRGBA.prototype;
     /** @expose */

@@ -1299,8 +1299,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if(texture) {
             var _x = rect.x + rect.width, _y = rect.y + rect.height;
-            cc.assert(_x <= texture.width, 'Rect width exceeds maximum margin: %s', texture.url);
-            cc.assert(_y <= texture.height, 'Rect height exceeds the maximum margin: %s', texture.url);
+            cc.assert(_x <= texture.width, cc._LogInfos.RectWidth, texture.url);
+            cc.assert(_y <= texture.height, cc._LogInfos.RectHeight, texture.url);
         }
         _t._originalTexture = texture;
         _t.texture = texture;
@@ -1606,9 +1606,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     delete _p;
 } else {
-    _tmp.WebGLSprite();
-    delete _tmp.WebGLSprite;
+    cc.assert(typeof cc._tmp.WebGLSprite === "function", cc._LogInfos.MissingFile, "SpritesWebGL.js");
+    cc._tmp.WebGLSprite();
+    delete cc._tmp.WebGLSprite;
 }
-_tmp.PrototypeSprite();
-delete _tmp.PrototypeSprite;
+
+cc.assert(typeof cc._tmp.PrototypeSprite === "function", cc._LogInfos.MissingFile, "SpritesPropertyDefine.js");
+cc._tmp.PrototypeSprite();
+delete cc._tmp.PrototypeSprite;
 

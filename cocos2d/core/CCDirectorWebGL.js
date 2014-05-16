@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 
-_tmp.DirectorWebGL = function () {
+cc._tmp.DirectorWebGL = function () {
 
     /**
      * OpenGL projection protocol

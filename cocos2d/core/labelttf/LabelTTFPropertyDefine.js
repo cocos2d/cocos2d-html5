@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 
-_tmp.PrototypeLabelTTF = function () {
+cc._tmp.PrototypeLabelTTF = function () {
     var _p = cc.LabelTTF.prototype;
 
     // Override properties

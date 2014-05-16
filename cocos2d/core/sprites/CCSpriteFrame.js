@@ -363,8 +363,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                 _x = rect.x + rect.width;
                 _y = rect.y + rect.height;
             }
-            cc.assert(_x <= texture.width, 'Rect width exceeds maximum margin: %s', texture.url);
-            cc.assert(_y <= texture.height, 'Rect height exceeds the maximum margin: %s', texture.url);
+            cc.assert(_x <= texture.width, cc._LogInfos.RectWidth, texture.url);
+            cc.assert(_y <= texture.height, cc._LogInfos.RectHeight, texture.url);
         }
 
         this._rectInPixels = rect;

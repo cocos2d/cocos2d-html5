@@ -2203,11 +2203,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    _tmp.WebGLCCNode();
-    delete _tmp.WebGLCCNode;
+    cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
+    cc._tmp.WebGLCCNode();
+    delete cc._tmp.WebGLCCNode;
 }
-_tmp.PrototypeCCNode();
-delete _tmp.PrototypeCCNode;
+cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc._tmp.PrototypeCCNode();
+delete cc._tmp.PrototypeCCNode;
 
 
 /**
@@ -2470,8 +2472,9 @@ cc.NodeRGBA.create = function () {
     return res;
 };
 
-_tmp.PrototypeCCNodeRGBA();
-delete _tmp.PrototypeCCNodeRGBA;
+cc.assert(typeof cc._tmp.PrototypeCCNodeRGBA === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc._tmp.PrototypeCCNodeRGBA();
+delete cc._tmp.PrototypeCCNodeRGBA;
 
 /**
  * Node on enter
