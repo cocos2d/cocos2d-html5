@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.PrototypeColor = function () {
+cc._tmp.PrototypeColor = function () {
     var _p = cc.color;
     /**
      * White color (255, 255, 255, 255)

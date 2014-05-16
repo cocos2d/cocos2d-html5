@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.WebGLTexture2D = function () {
+cc._tmp.WebGLTexture2D = function () {
 
     /**
      * <p>
@@ -742,7 +742,7 @@ _tmp.WebGLTexture2D = function () {
 };
 
 
-_tmp.WebGLTextureAtlas = function () {
+cc._tmp.WebGLTextureAtlas = function () {
 
     var _p = cc.TextureAtlas.prototype;
 
@@ -816,8 +816,8 @@ _tmp.WebGLTextureAtlas = function () {
         //cc.checkGLErrorDebug();
     };
 
-}
-_tmp.WebGLTextureCache = function () {
+};
+cc._tmp.WebGLTextureCache = function () {
 
     var _p = cc.textureCache;
 

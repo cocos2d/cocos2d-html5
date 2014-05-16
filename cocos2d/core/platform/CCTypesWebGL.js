@@ -24,9 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var _tmp = _tmp || {};
+cc._tmp = cc._tmp || {};
 
-_tmp.WebGLColor = function () {
+cc._tmp.WebGLColor = function () {
     //redefine some types with ArrayBuffer for WebGL
     cc.color = function (r, g, b, a, arrayBuffer, offset) {
         if (r === undefined)

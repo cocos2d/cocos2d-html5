@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.WebGLSprite = function () {
+cc._tmp.WebGLSprite = function () {
 
 
     var _p = cc.Sprite.prototype;
@@ -184,8 +184,8 @@ _tmp.WebGLSprite = function () {
                 _x = rect.x + rect.width;
                 _y = rect.y + rect.height;
             }
-            cc.assert(_x <= texture.width, 'Rect width exceeds maximum margin: %s', texture.url);
-            cc.assert(_y <= texture.height, 'Rect height exceeds the maximum margin: %s', texture.url);
+            cc.assert(_x <= texture.width, cc._LogInfos.RectWidth, texture.url);
+            cc.assert(_y <= texture.height, cc._LogInfos.RectHeight, texture.url);
         }
 
         _t.texture = texture;

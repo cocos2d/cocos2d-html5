@@ -274,7 +274,7 @@ cc.textureCache = /** @lends cc.textureCache# */{
             for (var selCanvasKey in selCanvasColorsArr) {
                 var selCanvas = selCanvasColorsArr[selCanvasKey];
                 count++;
-                cc.log("cocos2d: '%s' id= HTMLCanvasElement %s x %s", key, selCanvas.width, selCanvas.height);
+                cc.log(cc._LogInfos.textureCache_dumpCachedTextureInfo_2, key, selCanvas.width, selCanvas.height);
                 totalBytes += selCanvas.width * selCanvas.height * 4;
             }
 
@@ -354,6 +354,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    _tmp.WebGLTextureCache();
-    delete _tmp.WebGLTextureCache;
+    cc.assert(typeof cc._tmp.WebGLTextureCache === "function", cc._LogInfos.MissingFile, "TexturesWebGL.js");
+    cc._tmp.WebGLTextureCache();
+    delete cc._tmp.WebGLTextureCache;
 }

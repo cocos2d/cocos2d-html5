@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.PrototypeSprite = function () {
+cc._tmp.PrototypeSprite = function () {
     var _p = cc.Sprite.prototype;
 
     // Override properties

@@ -648,9 +648,11 @@ cc.TextureAtlas.create = function (fileName, capacity) {
 };
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    _tmp.WebGLTextureAtlas();
-    delete _tmp.WebGLTextureAtlas;
+    cc.assert(typeof cc._tmp.WebGLTextureAtlas === "function", cc._LogInfos.MissingFile, "TexturesWebGL.js");
+    cc._tmp.WebGLTextureAtlas();
+    delete cc._tmp.WebGLTextureAtlas;
 }
 
-_tmp.PrototypeTextureAtlas();
-delete _tmp.PrototypeTextureAtlas;
+cc.assert(typeof cc._tmp.PrototypeTextureAtlas === "function", cc._LogInfos.MissingFile, "TexturesPropertyDefine.js");
+cc._tmp.PrototypeTextureAtlas();
+delete cc._tmp.PrototypeTextureAtlas;

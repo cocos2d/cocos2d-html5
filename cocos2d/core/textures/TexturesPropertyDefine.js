@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.PrototypeTexture2D = function () {
+cc._tmp.PrototypeTexture2D = function () {
 
     var _c = cc.Texture2D;
 
@@ -203,7 +203,7 @@ _tmp.PrototypeTexture2D = function () {
     _c.defaultPixelFormat = _c.PIXEL_FORMAT_DEFAULT;
 };
 
-_tmp.PrototypeTextureAtlas = function () {
+cc._tmp.PrototypeTextureAtlas = function () {
 
     var _p = cc.TextureAtlas.prototype;
 

@@ -383,7 +383,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
 
     _updateListeners: function (event) {
         var locInDispatch = this._inDispatch;
-        cc.assert(locInDispatch > 0, "If program goes here, there should be event in dispatch.");
+        cc.assert(locInDispatch > 0, cc._LogInfos.EventManager__updateListeners);
         if (event.getType() == cc.Event.TOUCH) {
             this._onUpdateListeners(cc._EventListenerTouchOneByOne.LISTENER_ID);
             this._onUpdateListeners(cc._EventListenerTouchAllAtOnce.LISTENER_ID);
@@ -393,7 +393,7 @@ cc.eventManager = /** @lends cc.eventManager# */{
         if(locInDispatch > 1)
             return;
 
-        cc.assert(locInDispatch == 1, "_inDispatch should be 1 here.");
+        cc.assert(locInDispatch == 1, cc._LogInfos.EventManager__updateListeners_2);
         var locListenersMap = this._listenersMap, locPriorityDirtyFlagMap = this._priorityDirtyFlagMap;
         for (var selKey in locListenersMap) {
             if (locListenersMap[selKey].empty()) {
