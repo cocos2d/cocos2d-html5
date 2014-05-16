@@ -36,6 +36,7 @@
                 <file name="cocos2d/core/event-manager/CCEvent.js"/>
                 <file name="cocos2d/core/event-manager/CCEventListener.js"/>
                 <file name="cocos2d/core/event-manager/CCEventManager.js"/>
+                <file name="cocos2d/core/event-manager/CCEventExtension.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesWebGL.js"/>
                 <file name="cocos2d/core/base-nodes/BaseNodesPropertyDefine.js"/>
                 <file name="cocos2d/core/base-nodes/CCNode.js"/>
