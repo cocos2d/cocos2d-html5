@@ -478,27 +478,36 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
 
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var j, tempItem, locChildren = this._children, tempChild;
-            for (var i = 1; i < locChildren.length; i++) {
-                tempItem = locChildren[i];
+            var _children = this._children;
+
+            // insertion sort
+            var len = _children.length, i, j, tmp;
+            for(i=1; i<len; i++){
+                tmp = _children[i];
                 j = i - 1;
-                tempChild =  locChildren[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
-                    locChildren[j + 1] = tempChild;
-                    j = j - 1;
-                    tempChild =  locChildren[j];
+                while(j >= 0){
+                    if(tmp._localZOrder < _children[j]._localZOrder){
+                        _children[j+1] = _children[j];
+                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
+                        _children[j+1] = _children[j];
+                    }else{
+                        break;
+                    }
+                    j--;
                 }
-                locChildren[j + 1] = tempItem;
+                _children[j+1] = tmp;
             }
 
             if (this._batchNode) {
-                this._arrayMakeObjectsPerformSelector(locChildren, cc.Node.StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(_children, cc.Node.StateCallbackType.sortAllChildren);
             }
+
+            //don't need to check children recursively, that's done in visit of each child
             this._reorderChildDirty = false;
         }
+
     },
 
     /**
