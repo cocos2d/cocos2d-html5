@@ -199,6 +199,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
     drawScene: function () {
+        var renderer = cc.renderer;
         // calculate "global" dt
         this.calculateDeltaTime();
 
@@ -207,7 +208,6 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
             this._scheduler.update(this._deltaTime);
             cc.eventManager.dispatchEvent(this._eventAfterUpdate);
         }
-
         this._clear();
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
@@ -221,7 +221,15 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
 
         // draw the scene
         if (this._runningScene) {
-            this._runningScene.visit();
+            if(renderer.childrenOrderDirty === true){
+                cc.renderer.clearRenderCommands();
+                this._runningScene._curLevel = 0;                          //level start from 0;
+                this._runningScene.visit();
+                renderer.transformDirty = renderer.childrenOrderDirty = false;
+            } else if(renderer.transformDirty === true){
+                renderer.transform();
+                renderer.transformDirty = false;
+            }
             cc.eventManager.dispatchEvent(this._eventAfterVisit);
         }
 
@@ -235,7 +243,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         if (this._afterVisitScene)
             this._afterVisitScene();
 
-        //TODO
+        renderer.rendering(cc._renderContext);
         cc.eventManager.dispatchEvent(this._eventAfterDraw);
         this._totalFrames++;
 
@@ -509,6 +517,7 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
         }
 
         this._runningScene = this._nextScene;
+        cc.renderer.childrenOrderDirty = true;
 
         this._nextScene = null;
         if ((!runningIsTransition) && (this._runningScene != null)) {
@@ -835,7 +844,6 @@ cc.Director.PROJECTION_CUSTOM = 3;
 cc.Director.PROJECTION_DEFAULT = cc.Director.PROJECTION_3D;
 
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
-
     var _p = cc.Director.prototype;
 
     _p.setProjection = function (projection) {
@@ -859,7 +867,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var viewport = this._openGLView.getViewPortRect();
         cc._renderContext.clearRect(-viewport.x, viewport.y, viewport.width, -viewport.height);
     };
-
 
     _p._createStatsLabel = function () {
         var _t = this;

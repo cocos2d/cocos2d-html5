@@ -1197,7 +1197,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     },
 
     /**
-     * @param {cc.Color} Color
+     * @param {cc.Color} color
      */
     setColor: function (color) {
         var locColor = this._color;

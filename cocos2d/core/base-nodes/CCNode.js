@@ -151,7 +151,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _cacheDirty: true,
     // Cached parent serves to construct the cached parent chain
     _cachedParent: null,
-    _transform: null,
+    _transform: null,            //local transform
+    _transformWorld: null,       //world transform
     _inverse: null,
 
     //since 2.0 api
@@ -174,6 +175,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _className: "Node",
     _showNode: false,
 
+    //for new renderer
+    _curLevel: -1,
+    _rendererCmd: null,
+
     _initNode: function () {
         var _t = this;
         _t._anchorPoint = cc.p(0, 0);
@@ -182,6 +187,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         _t._position = cc.p(0, 0);
         _t._children = [];
         _t._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+        _t._transformWorld = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
 
         var director = cc.director;
         _t._actionManager = director.getActionManager();
@@ -2047,6 +2053,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             _t._transformDirty = false;
         }
         return _t._transform;
+    },
+
+    toRenderer: function(){
+        //do nothing
     }
 });
 
@@ -2081,19 +2091,23 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         _t._setNodeDirtyForCache();
         _t._transformDirty === false && (_t._transformDirty = _t._inverseDirty = true);
+        cc.renderer.transformDirty = true;
+        cc.renderer.pushDirtyNode(this);
     };
 
-    _p.visit = function (ctx) {
+    _p.visit = function () {
         var _t = this;
         // quick return if not visible
         if (!_t._visible)
             return;
 
+        _t._curLevel = _t._parent ? _t._parent._curLevel + 1 : -1;
+
         //visit for canvas
-        var context = ctx || cc._renderContext, i;
-        var children = _t._children, child;
-        context.save();
-        _t.transform(context);
+        //var context = ctx || cc._renderContext, i;
+        var i, children = _t._children, child;
+        //context.save();
+        _t.transform();
         var len = children.length;
         if (len > 0) {
             _t.sortAllChildren();
@@ -2101,27 +2115,88 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             for (i = 0; i < len; i++) {
                 child = children[i];
                 if (child._localZOrder < 0)
-                    child.visit(context);
+                    child.visit();
                 else
                     break;
             }
-            _t.draw(context);
+            //_t.draw(context);
+            _t.toRenderer();
             for (; i < len; i++) {
-                children[i].visit(context);
+                children[i].visit();
             }
         } else
-            _t.draw(context);
+            //_t.draw(context);
+            _t.toRenderer();
 
         _t.arrivalOrder = 0;
-        context.restore();
+        //context.restore();
     };
+
+    _p._transformForRenderer = function () {
+        //TODO add a flag
+        var t = this.nodeToParentTransform(), worldT = this._transformWorld;
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+            //worldT = cc.AffineTransformConcat(t, parentTransform);
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            worldT.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;                    //tx
+            worldT.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;				      //ty
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+        if(this._rendererCmd){
+            var locCmd = this._rendererCmd;
+            locCmd._transform.a = worldT.a;
+            locCmd._transform.b = worldT.b;
+            locCmd._transform.c = worldT.c;
+            locCmd._transform.d = worldT.d;
+            locCmd._transform.tx = worldT.tx * cc.view.getScaleX();
+            locCmd._transform.ty = worldT.ty * cc.view.getScaleY();
+        }
+
+
+        if(!this._children || this._children.length === 0)
+            return;
+        var i, len, locChildren = this._children;
+        for(i = 0, len = locChildren.length; i< len; i++){
+            locChildren[i]._transformForRenderer()
+        }
+    },
 
     _p.transform = function (ctx) {
         // transform for canvas
-        var context = ctx || cc._renderContext, eglViewer = cc.view;
+        //var context = ctx || cc._renderContext, eglViewer = cc.view;
+        var t = this.nodeToParentTransform(), worldT = this._transformWorld;         //get the world transform
 
-        var t = this.nodeToParentTransform();
-        context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
+        if(this._parent){
+            var pt = this._parent._transformWorld;
+
+            //worldT = cc.AffineTransformConcat(t, parentTransform);
+            worldT.a = t.a * pt.a + t.b * pt.c;                               //a
+            worldT.b = t.a * pt.b + t.b * pt.d;                               //b
+            worldT.c = t.c * pt.a + t.d * pt.c;                               //c
+            worldT.d = t.c * pt.b + t.d * pt.d;                               //d
+            worldT.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;                    //tx
+            worldT.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;				      //ty
+        } else {
+            worldT.a = t.a;
+            worldT.b = t.b;
+            worldT.c = t.c;
+            worldT.d = t.d;
+            worldT.tx = t.tx;
+            worldT.ty = t.ty;
+        }
+
+        //TODO
+        //context.transform(t.a, t.c, t.b, t.d, t.tx * eglViewer.getScaleX(), -t.ty * eglViewer.getScaleY());
     };
 
     _p.nodeToParentTransform = function () {

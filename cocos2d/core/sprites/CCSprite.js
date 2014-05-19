@@ -364,7 +364,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
+        return cc.rect(this._rect);
     },
 
     /**
@@ -470,10 +470,11 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect
      */
     setVertexRect:function (rect) {
-        this._rect.x = rect.x;
-        this._rect.y = rect.y;
-        this._rect.width = rect.width;
-        this._rect.height = rect.height;
+        var locRect = this._rect;
+        locRect.x = rect.x;
+        locRect.y = rect.y;
+        locRect.width = rect.width;
+        locRect.height = rect.height;
     },
 
     sortAllChildren:function () {
@@ -1192,6 +1193,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         self._drawSize_Canvas = cc.size(0, 0);
 
         self._softInit(fileName, rect, rotated);
+        self._rendererCmd = new cc.TextureRenderCmdCanvas(this);
     };
 
     _p.setBlendFunc = function (src, dst) {
@@ -1439,9 +1441,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         if(typeof(newFrame) == "string"){
             newFrame = cc.spriteFrameCache.getSpriteFrame(newFrame);
-
-            cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame)
-
+            cc.assert(newFrame, cc._LogInfos.CCSpriteBatchNode_setSpriteFrame);
         }
 
         _t.setNodeDirty(true);
@@ -1530,6 +1530,61 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         }
     };
 
+    _p.toRenderer = function(renderer){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        renderer = renderer || cc.renderer;
+        renderer.pushRenderCommand(locCmd);
+        //set the data to the rendererCmd
+        var locWT = this._transformWorld;
+        locCmd._transform.a = locWT.a;
+        locCmd._transform.b = locWT.b;
+        locCmd._transform.c = locWT.c;
+        locCmd._transform.d = locWT.d;
+        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
+        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
+
+        //TODO
+        var locColor = this._displayedColor;
+        locCmd._texture = this._texture;
+        locCmd._isLighterMode = this._isLighterMode;
+        locCmd._flippedX = this._flippedX;
+        locCmd._flippedY = this._flippedY;
+        locCmd._opacity = this._displayedOpacity/255;
+        locCmd._color.r = locColor.r;
+        locCmd._color.g = locColor.g;
+        locCmd._color.b = locColor.b;
+
+        var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
+        //TODO texture rect and drawingRect
+        var locTextureCoord = _t._textureRect_Canvas;
+        locCmd._textureCoord.x = locTextureCoord.x;
+        locCmd._textureCoord.y = locTextureCoord.y;
+        locCmd._textureCoord.width = locTextureCoord.width;
+        locCmd._textureCoord.height = locTextureCoord.height;
+        locCmd._textureCoord.validRect = locTextureCoord.validRect;
+
+        var locRect = _t._rect, locOffsetPosition = _t._offsetPosition, locDrawSizeCanvas = _t._drawSize_Canvas;
+        var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;
+        locDrawSizeCanvas.width = locRect.width * locEGL_ScaleX;
+        locDrawSizeCanvas.height = locRect.height * locEGL_ScaleY;
+
+        if (_t._flippedX)
+            flipXOffset = -locOffsetPosition.x - locRect.width;
+        if (_t._flippedY)
+            flipYOffset = locOffsetPosition.y;
+        flipXOffset *= locEGL_ScaleX;
+        flipYOffset *= locEGL_ScaleY;
+
+        locCmd._drawingRect.x = flipXOffset;
+        locCmd._drawingRect.y = flipYOffset;
+        locCmd._drawingRect.width = locDrawSizeCanvas.width;
+        locCmd._drawingRect.height = locDrawSizeCanvas.height;
+    };
+
+
     _p.draw = function (ctx) {
         var _t = this;
         if (!_t._textureLoaded)
@@ -1593,10 +1648,9 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             context.strokeStyle = "rgba(0,255,0,1)";
-            var drawRect = _t._rect;
             flipYOffset = -flipYOffset;
-            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + drawRect.width, flipYOffset),
-                cc.p(flipXOffset + drawRect.width, flipYOffset - drawRect.height), cc.p(flipXOffset, flipYOffset - drawRect.height)];
+            var vertices2 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset),
+                cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height), cc.p(flipXOffset, flipYOffset - locRect.height)];
             cc._drawingUtil.drawPoly(vertices2, 4, true);
         }
         if (_t._flippedX || _t._flippedY)

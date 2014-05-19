@@ -172,11 +172,12 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         if (!this._rect){
             this._rect = cc.rect(0,0,0,0);
         }
-        this._rect.x = rect.x;
-        this._rect.y = rect.y;
-        this._rect.width = rect.width;
-        this._rect.height = rect.height;
-        this._rectInPixels = cc.rectPointsToPixels(this._rect);
+        var locRect = this._rect;
+        locRect.x = rect.x;
+        locRect.y = rect.y;
+        locRect.width = rect.width;
+        locRect.height = rect.height;
+        this._rectInPixels = cc.rectPointsToPixels(locRect);
     },
 
     /**
