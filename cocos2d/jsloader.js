@@ -24,7 +24,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-(function () {
+(function (cc) {
+    if(cc){
+        return;
+    }
     var engine = [
         // Core
         'core/platform/CCClass.js',
@@ -354,4 +357,4 @@
             d.body.appendChild(s);
         });
     }
-})();
+})(cc);
