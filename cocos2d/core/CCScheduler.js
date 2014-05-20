@@ -409,11 +409,22 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             dt *= this._timeScale;
         }
 
-        for(i = 0, li = locUpdates.length; i < li && i >= 0; i++){
+        for(i = 0; i < locUpdates.length && i >= 0; i++){
             var update = self._updates[i];
-            for(var j = 0, lj = update.length; j < lj; j++){
+            for(var j = 0; j < update.length; j++){
                 tmpEntry = update[j];
-                if ((!tmpEntry.paused) && (!tmpEntry.markedForDeletion)) tmpEntry.target.update(dt);
+
+                if(tmpEntry.markedForDeletion){
+                    self._removeUpdateFromHash(tmpEntry);
+                }else{
+                    if(!tmpEntry.paused){
+                        tmpEntry.target.update(dt);
+                    }
+                    j++;
+                    if(tmpEntry.markedForDeletion){
+                        self._removeUpdateFromHash(update[j]);
+                    }
+                }
             }
         }
 
@@ -438,16 +449,6 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             if ((self._currentTargetSalvaged) && (elt.timers.length == 0)){
                 self._removeHashElement(elt);
                 i--;
-            }
-        }
-
-        for(i = 0, li = locUpdates.length; i < li; i++){
-            var update = self._updates[i];
-            for(var j = 0, lj = update.length; j < lj; ){
-                tmpEntry = update[j];
-                if(!tmpEntry) break;
-                if (tmpEntry.markedForDeletion) self._removeUpdateFromHash(tmpEntry);
-                else j++;
             }
         }
 
