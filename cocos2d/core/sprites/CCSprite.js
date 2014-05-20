@@ -425,8 +425,8 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
             spriteFrame.addLoadedEventListener(this._spriteFrameLoadedCallback, this);
         }
 
+        var ret = this.initWithTexture(spriteFrame.getTexture(), spriteFrame.getRect());
         this.setSpriteFrame(spriteFrame);
-        var ret = this.initWithTexture(spriteFrame.getTexture(), spriteFrame.getRect(), spriteFrame._rotated);
 
         return ret;
     },
