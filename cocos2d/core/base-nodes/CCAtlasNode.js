@@ -86,7 +86,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * Shall be overridden in subclasses
      */
     updateAtlasValues: function () {
-        cc.log("cc.AtlasNode.updateAtlasValues(): Shall be overridden in subclasses");
+        cc.log(cc._LogInfos.AtlasNode_updateAtlasValues);
     },
 
     /** cc.AtlasNode - RGBA protocol
@@ -198,7 +198,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this._opacityModifyRGB = true;
         this._originalTexture = texture;
         if (!this._originalTexture) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+            cc.log(cc._LogInfos.AtlasNode__initWithTexture);
             return false;
         }
         this._textureForCanvas = this._originalTexture;
@@ -223,7 +223,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         this.textureAtlas.initWithTexture(texture, itemsToRender);
 
         if (!this.textureAtlas) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+            cc.log(cc._LogInfos.AtlasNode__initWithTexture);
             return false;
         }
 

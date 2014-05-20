@@ -1323,22 +1323,25 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     sortAllChildren: function () {
         if (this._reorderChildDirty) {
             var _children = this._children;
-            var i, j, length = _children.length, tempChild;
 
             // insertion sort
-            for (i = 0; i < length; i++) {
-                var tempItem = _children[i];
+            var len = _children.length, i, j, tmp;
+            for(i=1; i<len; i++){
+                tmp = _children[i];
                 j = i - 1;
-                tempChild = _children[j];
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._localZOrder < tempChild._localZOrder ||
-                    ( tempItem._localZOrder == tempChild._localZOrder && tempItem.arrivalOrder < tempChild.arrivalOrder ))) {
-                    _children[j + 1] = tempChild;
-                    j = j - 1;
-                    tempChild = _children[j];
+                while(j >= 0){
+                    if(tmp._localZOrder < _children[j]._localZOrder){
+                        _children[j+1] = _children[j];
+                    }else if(tmp._localZOrder === _children[j]._localZOrder && tmp.arrivalOrder < _children[j].arrivalOrder){
+                        _children[j+1] = _children[j];
+                    }else{
+                        break;
+                    }
+                    j--;
                 }
-                _children[j + 1] = tempItem;
+                _children[j+1] = tmp;
             }
 
             //don't need to check children recursively, that's done in visit of each child
@@ -2271,11 +2274,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    _tmp.WebGLCCNode();
-    delete _tmp.WebGLCCNode;
+    cc.assert(typeof cc._tmp.WebGLCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesWebGL.js");
+    cc._tmp.WebGLCCNode();
+    delete cc._tmp.WebGLCCNode;
 }
-_tmp.PrototypeCCNode();
-delete _tmp.PrototypeCCNode;
+cc.assert(typeof cc._tmp.PrototypeCCNode === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc._tmp.PrototypeCCNode();
+delete cc._tmp.PrototypeCCNode;
 
 
 /**
@@ -2538,8 +2543,9 @@ cc.NodeRGBA.create = function () {
     return res;
 };
 
-_tmp.PrototypeCCNodeRGBA();
-delete _tmp.PrototypeCCNodeRGBA;
+cc.assert(typeof cc._tmp.PrototypeCCNodeRGBA === "function", cc._LogInfos.MissingFile, "BaseNodesPropertyDefine.js");
+cc._tmp.PrototypeCCNodeRGBA();
+delete cc._tmp.PrototypeCCNodeRGBA;
 
 /**
  * Node on enter

@@ -150,7 +150,7 @@ cc.radiansToDegrees = function (angle) {
     return angle * cc.DEG;
 };
 cc.radiansToDegress = function (angle) {
-    cc.log('cc.radiansToDegress() should be called cc.radiansToDegrees()');
+    cc.log(cc._LogInfos.radiansToDegress);
     return angle * cc.DEG;
 };
 

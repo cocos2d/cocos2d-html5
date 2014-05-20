@@ -1120,13 +1120,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p = null;
 
 } else {
-    _tmp.WebGLLabelTTF();
-    delete _tmp.WebGLLabelTTF;
+    cc.assert(typeof cc._tmp.WebGLLabelTTF === "function", cc._LogInfos.MissingFile, "LabelTTFWebGL.js");
+    cc._tmp.WebGLLabelTTF();
+    delete cc._tmp.WebGLLabelTTF;
 }
 
-
-_tmp.PrototypeLabelTTF();
-delete _tmp.PrototypeLabelTTF;
+cc.assert(typeof cc._tmp.PrototypeLabelTTF === "function", cc._LogInfos.MissingFile, "LabelTTFPropertyDefine.js");
+cc._tmp.PrototypeLabelTTF();
+delete cc._tmp.PrototypeLabelTTF;
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 

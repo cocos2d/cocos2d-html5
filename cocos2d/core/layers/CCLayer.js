@@ -328,8 +328,9 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     }
 });
 
-_tmp.PrototypeLayerRGBA();
-delete _tmp.PrototypeLayerRGBA;
+cc.assert(typeof cc._tmp.PrototypeLayerRGBA === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
+cc._tmp.PrototypeLayerRGBA();
+delete cc._tmp.PrototypeLayerRGBA;
 
 /**
  * <p>
@@ -564,12 +565,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define end
     _p = null;
 } else {
-    _tmp.WebGLLayerColor();
-    delete _tmp.WebGLLayerColor;
+    cc.assert(typeof cc._tmp.WebGLLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc._tmp.WebGLLayerColor();
+    delete cc._tmp.WebGLLayerColor;
 }
 
-_tmp.PrototypeLayerColor();
-delete _tmp.PrototypeLayerColor;
+cc.assert(typeof cc._tmp.PrototypeLayerColor === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
+cc._tmp.PrototypeLayerColor();
+delete cc._tmp.PrototypeLayerColor;
 
 /**
  * <p>
@@ -887,11 +890,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define end
     _p = null;
 } else {
-    _tmp.WebGLLayerGradient();
-    delete _tmp.WebGLLayerGradient;
+    cc.assert(typeof cc._tmp.WebGLLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerWebGL.js");
+    cc._tmp.WebGLLayerGradient();
+    delete cc._tmp.WebGLLayerGradient;
 }
-_tmp.PrototypeLayerGradient();
-delete _tmp.PrototypeLayerGradient;
+
+cc.assert(typeof cc._tmp.PrototypeLayerGradient === "function", cc._LogInfos.MissingFile, "CCLayerPropertyDefine.js");
+cc._tmp.PrototypeLayerGradient();
+delete cc._tmp.PrototypeLayerGradient;
 
 /**
  * CCMultipleLayer is a CCLayer with the ability to multiplex it's children.<br/>

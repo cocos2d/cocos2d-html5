@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.WebGLLayerColor = function () {
+cc._tmp.WebGLLayerColor = function () {
     //cc.LayerColor define start
     var _p = cc.LayerColor.prototype;
     _p._squareVertices = null;
@@ -129,7 +129,7 @@ _tmp.WebGLLayerColor = function () {
     //cc.LayerColor define end
 }
 
-_tmp.WebGLLayerGradient = function () {
+cc._tmp.WebGLLayerGradient = function () {
     //cc.LayerGradient define start
     var _p = cc.LayerGradient.prototype;
     _p.draw = cc.LayerColor.prototype.draw;

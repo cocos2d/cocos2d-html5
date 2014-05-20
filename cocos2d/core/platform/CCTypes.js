@@ -335,10 +335,12 @@ cc.FontDefinition = function () {
 };
 
 if (cc._renderType === cc._RENDER_TYPE_WEBGL) {
-    _tmp.WebGLColor();
-    delete _tmp.WebGLColor;
+    cc.assert(typeof cc._tmp.WebGLColor === "function", cc._LogInfos.MissingFile, "CCTypesWebGL.js");
+    cc._tmp.WebGLColor();
+    delete cc._tmp.WebGLColor;
 }
 
-_tmp.PrototypeColor();
-delete _tmp.PrototypeColor;
+cc.assert(typeof cc._tmp.PrototypeColor === "function", cc._LogInfos.MissingFile, "CCTypesPropertyDefine.js");
+cc._tmp.PrototypeColor();
+delete cc._tmp.PrototypeColor;
 

@@ -73,8 +73,9 @@ cc._LogInfos = {
     Node_schedule_2: "interval must be positive",
     Node_initWithTexture: "cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.",
 
-    AtlasNode_updateAtlasValues: "Shall be overridden in subclasses",
+    AtlasNode_updateAtlasValues: "cc.AtlasNode.updateAtlasValues(): Shall be overridden in subclasses",
     AtlasNode_initWithTileFile: "",
+    AtlasNode__initWithTexture: "cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.",
 
     _EventListenerKeyboard_checkAvailable: "cc._EventListenerKeyboard.checkAvailable(): Invalid EventListenerKeyboard!",
     _EventListenerTouchOneByOne_checkAvailable: "cc._EventListenerTouchOneByOne.checkAvailable(): Invalid EventListenerTouchOneByOne!",
@@ -208,8 +209,15 @@ cc._LogInfos = {
     Texture2D_bitsPerPixelForFormat: "bitsPerPixelForFormat: %s, cannot give useful result, it's a illegal pixel format",
     Texture2D__initPremultipliedATextureWithImage: "cocos2d: cc.Texture2D: Using RGB565 texture since image has no alpha",
     Texture2D_addImage_2: "cc.Texture.addImage(): path should be non-null",
-    Texture2D_initWithData: "NSInternalInconsistencyException"
+    Texture2D_initWithData: "NSInternalInconsistencyException",
 
+    MissingFile: "Missing file: %s",
+    radiansToDegress: "cc.radiansToDegress() should be called cc.radiansToDegrees()",
+    RectWidth: "Rect width exceeds maximum margin: %s",
+    RectHeight: "Rect height exceeds maximum margin: %s",
+
+    EventManager__updateListeners: "If program goes here, there should be event in dispatch.",
+    EventManager__updateListeners_2: "_inDispatch should be 1 here."
 };
 
 //+++++++++++++++++++++++++something about log start++++++++++++++++++++++++++++

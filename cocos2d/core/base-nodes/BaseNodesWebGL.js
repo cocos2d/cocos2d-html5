@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.WebGLCCNode = function () {
+cc._tmp.WebGLCCNode = function () {
 
     /**
      * CCNode

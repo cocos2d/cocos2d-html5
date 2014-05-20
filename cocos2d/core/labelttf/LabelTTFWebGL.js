@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-_tmp.WebGLLabelTTF = function () {
+cc._tmp.WebGLLabelTTF = function () {
 
     var _p = cc.LabelTTF.prototype;
 
