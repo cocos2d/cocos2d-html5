@@ -44,7 +44,7 @@ cc._LogInfos = {
 
     arrayVerifyType: "element type is wrong!",
 
-    Scheduler_scheduleCallbackForTarget: "CCSheduler#scheduleCallback. Callback already scheduled. Updating interval from:%d to %d",
+    Scheduler_scheduleCallbackForTarget: "CCSheduler#scheduleCallback. Callback already scheduled. Updating interval from:%s to %s",
     Scheduler_scheduleCallbackForTarget_2: "cc.scheduler.scheduleCallbackForTarget(): callback_fn should be non-null.",
     Scheduler_scheduleCallbackForTarget_3: "cc.scheduler.scheduleCallbackForTarget(): target should be non-null.",
     Scheduler_pauseTarget: "cc.Scheduler.pauseTarget():target should be non-null",
@@ -266,12 +266,27 @@ cc._logToWebPage = function (msg) {
 
 //to make sure the cc.log, cc.warn, cc.error and cc.assert would not throw error before init by debugger mode.
 if (console.log) {
-    cc.log = Function.prototype.bind.call(console.log, console);
+    cc.log = function(msg){
+        for (var i = 1; i < arguments.length; i++) {
+            msg = msg.replace("%s", arguments[i]);
+        }
+        console.log(msg);
+    };
     cc.warn = console.warn ?
-        Function.prototype.bind.call(console.warn, console) :
+        function(msg){
+            for (var i = 1; i < arguments.length; i++) {
+                msg = msg.replace("%s", arguments[i]);
+            }
+            console.warn(msg);
+        } :
         cc.log;
     cc.error = console.error ?
-        Function.prototype.bind.call(console.error, console) :
+        function(msg){
+            for (var i = 1; i < arguments.length; i++) {
+                msg = msg.replace("%s", arguments[i]);
+            }
+            console.error(msg);
+        } :
         cc.log;
     cc.assert = function (cond, msg) {
         if (!cond && msg) {
