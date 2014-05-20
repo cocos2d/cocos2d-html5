@@ -517,11 +517,41 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.LayerRGBA.prototype.ctor.call(this);
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         cc.LayerColor.prototype.init.call(this, color, width, height);
+        this._rendererCmd = new cc.RectRenderCmdCanvas(this);
     }
     _p._setWidth = cc.LayerRGBA.prototype._setWidth;
     _p._setHeight = cc.LayerRGBA.prototype._setHeight;
     _p._updateColor = function () {
     };
+
+    _p.toRenderer = function(renderer){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        renderer = renderer || cc.renderer;
+        renderer.pushRenderCommand(locCmd);
+        //set the data to the rendererCmd
+        var locWT = this._transformWorld;
+        locCmd._transform.a = locWT.a;
+        locCmd._transform.b = locWT.b;
+        locCmd._transform.c = locWT.c;
+        locCmd._transform.d = locWT.d;
+        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
+        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
+
+        var locColor = this._displayedColor;
+        locCmd._isLighterMode = this._isLighterMode;
+
+        locCmd._color.r = locColor.r;
+        locCmd._color.g = locColor.g;
+        locCmd._color.b = locColor.b;
+        locCmd._color.a = this._displayedOpacity / 255;
+
+        locCmd._drawingRect.width = this.width * cc.view.getScaleX();
+        locCmd._drawingRect.height = this.height * cc.view.getScaleY();
+    };
+
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
         var locEGLViewer = cc.view, locDisplayedColor = _t._displayedColor;
@@ -599,6 +629,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         _t._gradientStartPoint = cc.p(0, 0);
         _t._gradientEndPoint = cc.p(0, 0);
         cc.LayerGradient.prototype.init.call(_t, start, end, v);
+
+        this._rendererCmd = new cc.GradientRectRenderCmdCanvas(this);
     },
 
     /**
@@ -778,10 +810,48 @@ cc.LayerGradient.create = function (start, end, v) {
     return new cc.LayerGradient(start, end, v);
 };
 
-
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerGradient define start
     var _p = cc.LayerGradient.prototype;
+    _p.toRenderer = function(renderer){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        renderer = renderer || cc.renderer;
+        renderer.pushRenderCommand(locCmd);
+        //set the data to the rendererCmd
+        var locWT = this._transformWorld;
+        locCmd._transform.a = locWT.a;
+        locCmd._transform.b = locWT.b;
+        locCmd._transform.c = locWT.c;
+        locCmd._transform.d = locWT.d;
+        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
+        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
+
+        var locColor = this._displayedColor, locEndColor = this._endColor;
+        locCmd._isLighterMode = this._isLighterMode;
+        locCmd._opacity = this._displayedOpacity/255;
+
+        locCmd._startColor.r = locColor.r;
+        locCmd._startColor.g = locColor.g;
+        locCmd._startColor.b = locColor.b;
+        locCmd._startColor.a = locColor.a;
+
+        locCmd._endColor.r = locEndColor.r;
+        locCmd._endColor.g = locEndColor.g;
+        locCmd._endColor.b = locEndColor.b;
+        locCmd._endColor.a = locEndColor.a;
+
+        locCmd._startPoint.x = this._gradientStartPoint.x;
+        locCmd._startPoint.y = this._gradientStartPoint.y;
+        locCmd._endPoint.x = this._gradientEndPoint.x;
+        locCmd._endPoint.y = this._gradientEndPoint.y;
+
+        locCmd._drawingRect.width = this.width * cc.view.getScaleX();
+        locCmd._drawingRect.height = this.height * cc.view.getScaleY();
+    };
+
     _p.draw = function (ctx) {
         var context = ctx || cc._renderContext, _t = this;
         if (_t._isLighterMode)
@@ -800,6 +870,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         context.fillStyle = tGradient;
         context.fillRect(0, 0, tWidth, -tHeight);
 
+        //TODO Why?
         if (_t._rotation != 0)
             context.rotate(_t._rotationRadians);
         context.restore();

@@ -26,7 +26,6 @@
 
 cc.rendererCanvas = {
     childrenOrderDirty: true,
-    transformDirty: false,
     _transformNodePool: [],                              //save nodes transform dirty
     _renderCmds: [],                                    //save renderer commands
 
@@ -38,6 +37,11 @@ cc.rendererCanvas = {
         }
     },
 
+    resetFlag: function(){
+        this.childrenOrderDirty = false;
+        this._transformNodePool.length = 0;
+    },
+
     transform: function () {
         var locPool = this._transformNodePool;
         //sort the pool
@@ -45,9 +49,14 @@ cc.rendererCanvas = {
 
         //transform node
         for(var i = 0, len = locPool.length; i< len; i++){
-            locPool[i]._transformForRenderer();
+            if(locPool[i]._transformDirty)
+                locPool[i]._transformForRenderer();
         }
         locPool.length = 0;
+    },
+
+    transformDirty : function(){
+        return this._transformNodePool.length > 0;
     },
 
     _sortNodeByLevelAsc: function (n1, n2) {
@@ -124,4 +133,60 @@ cc.TextureRenderCmdCanvas.prototype.rendering = function (ctx) {
     cc.g_NumberOfDraws++;
 };
 
+cc.RectRenderCmdCanvas = function(node){
+    this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+    this._isLighterMode = false;
+    this._drawingRect = cc.rect(0, 0, 0, 0);
+    this._color = cc.color(255,255,255,255);
 
+    this._node = node;
+};
+
+cc.RectRenderCmdCanvas.prototype.rendering = function(ctx){
+    var context = ctx || cc._renderContext, t = this._transform, curColor = this._color, locRect = this._drawingRect;
+    context.save();
+    if (this._isLighterMode)
+        context.globalCompositeOperation = 'lighter';
+    //transform
+    context.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
+    context.fillStyle = "rgba(" + (0 | curColor.r) + "," + (0 | curColor.g) + ","
+        + (0 | curColor.b) + "," + curColor.a + ")";
+    context.fillRect(locRect.x, locRect.y, locRect.width, -locRect.height);
+
+    context.restore();
+    cc.g_NumberOfDraws++;
+};
+
+cc.GradientRectRenderCmdCanvas = function(node){
+    this._transform = {a: 1, b: 0, c: 0, d: 1, tx: 0, ty: 0};
+    this._isLighterMode = false;
+    this._opacity = 1;
+    this._drawingRect = cc.rect(0, 0, 0, 0);
+    this._startColor = cc.color(255,255,255,255);
+    this._endColor = cc.color(255,255,255,255);
+    this._startPoint = cc.p(0,0);
+    this._endPoint = cc.p(0,0);
+
+    this._node = node;
+};
+
+cc.GradientRectRenderCmdCanvas.prototype.rendering = function(ctx){
+    var context = ctx || cc._renderContext, _t = this, t = this._transform;
+    context.save();
+    if (_t._isLighterMode)
+        context.globalCompositeOperation = 'lighter';
+    //transform
+    context.transform(t.a, t.c, t.b, t.d, t.tx, -t.ty);
+
+    var opacity = _t._opacity, locRect = this._drawingRect;
+    var gradient = context.createLinearGradient(_t._startPoint.x, _t._startPoint.y, _t._endPoint.x, _t._endPoint.y);
+    var locStartColor = _t._startColor, locEndColor = _t._endColor;
+    gradient.addColorStop(0, "rgba(" + Math.round(locStartColor.r) + "," + Math.round(locStartColor.g) + ","
+        + Math.round(locStartColor.b) + "," + (opacity * (locStartColor.a / 255)).toFixed(4) + ")");
+    gradient.addColorStop(1, "rgba(" + Math.round(locEndColor.r) + "," + Math.round(locEndColor.g) + ","
+        + Math.round(locEndColor.b) + "," + (opacity * (locEndColor.a / 255)).toFixed(4) + ")");
+    context.fillStyle = gradient;
+    context.fillRect(locRect.x, locRect.y, locRect.width, -locRect.height);
+
+    context.restore();
+};

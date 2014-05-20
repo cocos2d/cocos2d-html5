@@ -443,6 +443,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.view# */{
         if (result.scale && result.scale.length == 2) {
             _t._scaleX = result.scale[0];
             _t._scaleY = result.scale[1];
+            cc.renderer.childrenOrderDirty = true;
         }
         if (result.viewport) {
             var vp = _t._viewPortRect = result.viewport, visible = _t._visibleRect;

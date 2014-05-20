@@ -225,10 +225,9 @@ cc.Director = cc.Class.extend(/** @lends cc.director# */{
                 cc.renderer.clearRenderCommands();
                 this._runningScene._curLevel = 0;                          //level start from 0;
                 this._runningScene.visit();
-                renderer.transformDirty = renderer.childrenOrderDirty = false;
-            } else if(renderer.transformDirty === true){
+                renderer.resetFlag();
+            } else if(renderer.transformDirty() === true){
                 renderer.transform();
-                renderer.transformDirty = false;
             }
             cc.eventManager.dispatchEvent(this._eventAfterVisit);
         }

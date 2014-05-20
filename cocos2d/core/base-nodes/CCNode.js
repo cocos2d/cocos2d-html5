@@ -2091,7 +2091,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var _t = this;
         _t._setNodeDirtyForCache();
         _t._transformDirty === false && (_t._transformDirty = _t._inverseDirty = true);
-        cc.renderer.transformDirty = true;
         cc.renderer.pushDirtyNode(this);
     };
 
@@ -2133,7 +2132,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     };
 
     _p._transformForRenderer = function () {
-        //TODO add a flag
         var t = this.nodeToParentTransform(), worldT = this._transformWorld;
         if(this._parent){
             var pt = this._parent._transformWorld;
@@ -2161,7 +2159,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locCmd._transform.tx = worldT.tx * cc.view.getScaleX();
             locCmd._transform.ty = worldT.ty * cc.view.getScaleY();
         }
-
 
         if(!this._children || this._children.length === 0)
             return;
