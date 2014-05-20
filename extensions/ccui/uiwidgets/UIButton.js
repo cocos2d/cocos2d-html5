@@ -64,6 +64,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
     _normalTextureLoaded: false,
     _pressedTextureLoaded: false,
     _disabledTextureLoaded: false,
+    _cascadeOpacityEnabled: true,
     _className: "Button",
 
     /**
@@ -741,12 +742,6 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
         this.updateColorToRenderer(this._buttonNormalRenderer);
         this.updateColorToRenderer(this._buttonClickedRenderer);
         this.updateColorToRenderer(this._buttonDisableRenderer);
-    },
-
-    updateTextureOpacity: function () {
-        this.updateOpacityToRenderer(this._buttonNormalRenderer);
-        this.updateOpacityToRenderer(this._buttonClickedRenderer);
-        this.updateOpacityToRenderer(this._buttonDisableRenderer);
     },
 
     /**
