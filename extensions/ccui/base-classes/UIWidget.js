@@ -47,6 +47,8 @@
  * @property {Number}           actionTag       - The action tag of the widget
  */
 ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
+
+    RGBAProtocol: true,
     _enabled: true,            ///< Highest control of widget
     _bright: true,             ///< is this widget bright
     _touchEnabled: false,       ///< is this widget touch endabled
@@ -1385,7 +1387,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      */
     setOpacity: function (opacity) {
         this._color.a = opacity;
-        this.updateTextureOpacity();
+        this.updateTextureOpacity(opacity);
     },
 
     /**
@@ -1400,8 +1402,14 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
 
     },
 
-    updateTextureOpacity: function () {
+    updateTextureOpacity: function (opacity) {
+        for(var p in this._children){
+            var item = this._children[p];
+            if(item && item.RGBAProtocol){
+                item.setOpacity(opacity);
+            }
 
+        }
     },
 
 
@@ -1463,6 +1471,9 @@ cc.defineGetterSetter(_p, "name", _p.getName, _p.setName);
 /** @expose */
 _p.actionTag;
 cc.defineGetterSetter(_p, "actionTag", _p.getActionTag, _p.setActionTag);
+/** @expose */
+_p.opacity;
+cc.defineGetterSetter(_p, "opacity", _p.getOpacity, _p.setOpacity);
 
 _p = null;
 
