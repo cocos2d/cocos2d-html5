@@ -34,6 +34,51 @@ ccs.FRAME_TYPE_TINT = 3;
 ccs.FRAME_TYPE_FADE = 4;
 ccs.FRAME_TYPE_MAX = 5;
 
+ccs.FrameEaseType = {
+    Linear : 0,
+
+    Sine_EaseIn : 1,
+    Sine_EaseOut : 2,
+    Sine_EaseInOut : 3,
+
+    Quad_EaseIn : 4,
+    Quad_EaseOut : 5,
+    Quad_EaseInOut : 6,
+
+    Cubic_EaseIn : 7,
+    Cubic_EaseOut : 8,
+    Cubic_EaseInOut : 9,
+
+    Quart_EaseIn : 10,
+    Quart_EaseOut : 11,
+    Quart_EaseInOut : 12,
+
+    Quint_EaseIn : 13,
+    Quint_EaseOut : 14,
+    Quint_EaseInOut : 15,
+
+    Expo_EaseIn : 16,
+    Expo_EaseOut : 17,
+    Expo_EaseInOut : 18,
+
+    Circ_EaseIn : 19,
+    Circ_EaseOut : 20,
+    Circ_EaseInOut : 21,
+
+    Elastic_EaesIn : 22,
+    Elastic_EaesOut : 23,
+    Elastic_EaesInOut : 24,
+
+    Back_EaseIn : 25,
+    Back_EaseOut : 26,
+    Back_EaseInOut : 27,
+
+    Bounce_EaseIn : 28,
+    Bounce_EaseOut : 29,
+    Bounce_EaseInOut : 30
+};
+
+
 /**
  * Base class for ccs.ActionFrame
  * @class
@@ -58,6 +103,113 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
      */
     getAction: function (duration) {
         return null;
+    },
+
+    _getEasingAction : function (action) {
+        if (action == null) {
+            console.error("Action cannot be null!");
+            return null;
+        }
+
+        var resultAction;
+        switch (this.easingType) {
+            case ccs.FrameEaseType.Linear:
+                resultAction = action;
+                break;
+            case ccs.FrameEaseType.Sine_EaseIn:
+                resultAction = cc.EaseSineIn.create(action);
+                break;
+            case ccs.FrameEaseType.Sine_EaseOut:
+                resultAction = cc.EaseSineOut.create(action);
+                break;
+            case ccs.FrameEaseType.Sine_EaseInOut:
+                resultAction = cc.EaseSineInOut.create(action);
+                break;
+//            case ccs.FrameEaseType.Quad_EaseIn:
+//                resultAction = cc.Quad_EaseIn.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quad_EaseOut:
+//                resultAction = cc.Quad_EaseOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quad_EaseInOut:
+//                resultAction = cc.Quad_EaseInOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Cubic_EaseIn:
+//                resultAction = cc.Cubic_EaseIn.create(action);
+//                break;
+//            case ccs.FrameEaseType.Cubic_EaseOut:
+//                resultAction = cc.Cubic_EaseOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Cubic_EaseInOut:
+//                resultAction = cc.Cubic_EaseInOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quart_EaseIn:
+//                resultAction = cc.Quart_EaseIn.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quart_EaseOut:
+//                resultAction = cc.Quart_EaseOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quart_EaseInOut:
+//                resultAction = cc.Quart_EaseInOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quint_EaseIn:
+//                resultAction = cc.Quint_EaseIn.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quint_EaseOut:
+//                resultAction = cc.Quint_EaseOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Quint_EaseInOut:
+//                resultAction = cc.Quint_EaseInOut.create(action);
+//                break;
+            case ccs.FrameEaseType.Expo_EaseIn:
+                resultAction = cc.EaseExponentialIn.create(action);
+                break;
+            case ccs.FrameEaseType.Expo_EaseOut:
+                resultAction = cc.EaseExponentialOut.create(action);
+                break;
+            case ccs.FrameEaseType.Expo_EaseInOut:
+                resultAction = cc.EaseExponentialInOut.create(action);
+                break;
+//            case ccs.FrameEaseType.Circ_EaseIn:
+//                resultAction = cc.Circ_EaseIn.create(action);
+//                break;
+//            case ccs.FrameEaseType.Circ_EaseOut:
+//                resultAction = cc.Circ_EaseOut.create(action);
+//                break;
+//            case ccs.FrameEaseType.Circ_EaseInOut:
+//                resultAction = cc.Circ_EaseInOut.create(action);
+//                break;
+            case ccs.FrameEaseType.Elastic_EaesIn:
+                resultAction = cc.Elastic_EaesIn.create(action);
+                break;
+            case ccs.FrameEaseType.Elastic_EaesOut:
+                resultAction = cc.Elastic_EaesOut.create(action);
+                break;
+            case ccs.FrameEaseType.Elastic_EaesInOut:
+                resultAction = cc.Elastic_EaesInOut.create(action);
+                break;
+            case ccs.FrameEaseType.Back_EaseIn:
+                resultAction = cc.EaseBackIn.create(action);
+                break;
+            case ccs.FrameEaseType.Back_EaseOut:
+                resultAction = cc.EaseBackOut.create(action);
+                break;
+            case ccs.FrameEaseType.Back_EaseInOut:
+                resultAction = cc.EaseBackInOut.create(action);
+                break;
+            case ccs.FrameEaseType.Bounce_EaseIn:
+                resultAction = cc.Bounce_EaseIn.create(action);
+                break;
+            case ccs.FrameEaseType.Bounce_EaseOut:
+                resultAction = cc.Bounce_EaseOut.create(action);
+                break;
+            case ccs.FrameEaseType.Bounce_EaseInOut:
+                resultAction = cc.Bounce_EaseInOut.create(action);
+            default:
+                console.error("Frame ease type: " + this.easingType + " is currently not supported.");
+        }
+
+        return resultAction;
     }
 });
 
@@ -100,10 +252,11 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionMoveFrame# */{
     /**
      * Gets the CCAction of ActionFrame.
      * @param {number} duration
-     * @returns {cc.MoveTo}
+     * @returns {cc.Action}
      */
     getAction: function (duration) {
-        return cc.MoveTo.create(duration, this._position);
+        var action = cc.MoveTo.create(duration, this._position);
+        return this._getEasingAction(action);
     }
 });
 
@@ -157,10 +310,11 @@ ccs.ActionScaleFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionScaleFrame# *
     /**
      * Gets the action of ActionFrame.
      * @param duration
-     * @returns {cc.ScaleTo}
+     * @returns {cc.Action}
      */
     getAction: function (duration) {
-        return cc.ScaleTo.create(duration, this._scaleX, this._scaleY);
+        var action = cc.ScaleTo.create(duration, this._scaleX, this._scaleY);
+        return this._getEasingAction(action);
     }
 });
 
@@ -196,10 +350,11 @@ ccs.ActionRotationFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionRotationFr
     /**
      * Gets the CCAction of ActionFrame.
      * @param {number} duration
-     * @returns {cc.RotateTo}
+     * @returns {cc.Action}
      */
     getAction: function (duration) {
-        return cc.RotateTo.create(duration, this._rotation);
+        var action = cc.RotateTo.create(duration, this._rotation);
+        return this._getEasingAction(action);
     }
 });
 
@@ -235,10 +390,11 @@ ccs.ActionFadeFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionFadeFrame# */{
     /**
      * Gets the CCAction of ActionFrame.
      * @param duration
-     * @returns {cc.FadeTo}
+     * @returns {cc.Action}
      */
     getAction: function (duration) {
-        return cc.FadeTo.create(duration, this._opacity);
+        var action = cc.FadeTo.create(duration, this._opacity);
+        return this._getEasingAction(action);
     }
 });
 
@@ -278,9 +434,10 @@ ccs.ActionTintFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionTintFrame# */{
     /**
      * Gets the action of ActionFrame.
      * @param duration
-     * @returns {cc.TintTo}
+     * @returns {cc.Action}
      */
     getAction: function (duration) {
-        return cc.TintTo.create(duration, this._color.r, this._color.g, this._color.b);
+        var action = cc.TintTo.create(duration, this._color.r, this._color.g, this._color.b);
+        return this._getEasingAction(action);
     }
 });
