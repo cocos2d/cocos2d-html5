@@ -166,11 +166,6 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * @param dt
      */
     update: function (dt) {
-
-        // quick return if not visible
-        if (!this._visible)
-            return;
-
         var locParentBone = this.parentBone;
         var locArmature = this._armature;
         var locTweenData = this._tweenData;
@@ -247,8 +242,11 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * Rewrite visit ,when node draw, g_NumberOfDraws is changeless
      */
     visit: function (ctx) {
-        var node = this.getDisplayManager().getDisplayRenderNode();
+        // quick return if not visible
+        if (!this._visible)
+            return;
 
+        var node = this.getDisplayManager().getDisplayRenderNode();
         if (node) {
             node.visit(ctx);
         }
