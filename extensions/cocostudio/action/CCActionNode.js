@@ -65,6 +65,7 @@ ccs.ActionNode = ccs.Class.extend(/** @lends ccs.ActionNode# */{
             var actionFrameDic = actionframelist[i];
             var frameInex = actionFrameDic["frameid"];
             var frameTweenType = actionFrameDic["tweenType"];
+            var frameTweenParameter = actionFrameDic["tweenParameter"];
 
             if (actionFrameDic["positionx"] !== undefined) {
                 var positionX = actionFrameDic["positionx"];

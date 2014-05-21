@@ -35,6 +35,8 @@ ccs.FRAME_TYPE_FADE = 4;
 ccs.FRAME_TYPE_MAX = 5;
 
 ccs.FrameEaseType = {
+    Custom : -1,
+
     Linear : 0,
 
     Sine_EaseIn : 1,
@@ -88,6 +90,7 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
     frameType: 0,
     easingType: 0,
     frameIndex: 0,
+    frameTweenParameter: null,
     time: 0,
     ctor: function () {
         this.frameType = 0;
@@ -113,6 +116,9 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
 
         var resultAction;
         switch (this.easingType) {
+//            case ccs.FrameEaseType.Custom:
+//
+//                break;
             case ccs.FrameEaseType.Linear:
                 resultAction = action;
                 break;
