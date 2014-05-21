@@ -2212,7 +2212,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     update:function (time) {
         time = this._computeEaseTime(time);
         if (this.target.RGBAProtocol) {
-            var fromOpacity = this._fromOpacity || 255;
+            var fromOpacity = this._fromOpacity !== undefined ? this._fromOpacity : 255;
             this.target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
         }
     },
