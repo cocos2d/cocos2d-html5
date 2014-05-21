@@ -1,6 +1,5 @@
 /****************************************************************************
- Copyright (c) 2011-2012 cocos2d-x.org
- Copyright (c) 2013-2014 Chukong Technologies Inc.
+ Copyright (c) 2010-2012 cocos2d-x.org
 
  http://www.cocos2d-x.org
 
@@ -204,13 +203,13 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
                 resultAction = cc.EaseBackInOut.create(action);
                 break;
             case ccs.FrameEaseType.Bounce_EaseIn:
-                resultAction = cc.Bounce_EaseIn.create(action);
+                resultAction = cc.EaseBounceIn.create(action);
                 break;
             case ccs.FrameEaseType.Bounce_EaseOut:
-                resultAction = cc.Bounce_EaseOut.create(action);
+                resultAction = cc.EaseBounceOut.create(action);
                 break;
             case ccs.FrameEaseType.Bounce_EaseInOut:
-                resultAction = cc.Bounce_EaseInOut.create(action);
+                resultAction = cc.EaseBounceInOut.create(action);
             default:
                 console.error("Frame ease type: " + this.easingType + " is currently not supported.");
         }
