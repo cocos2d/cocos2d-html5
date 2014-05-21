@@ -264,7 +264,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     repeat: function(times){
         times = Math.round(times);
-        if(times < 1){
+        if(isNaN(times) || times < 1){
             cc.log("The repeat parameter error");
             return this;
         }
