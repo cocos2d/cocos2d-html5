@@ -235,9 +235,6 @@ cc.spriteFrameCache = /** @lends cc.spriteFrameCache# */{
                     //clip to canvas
                     var locTexture = spriteFrame.getTexture();
                     if (locTexture.isLoaded()) {
-
-                        spriteFrame.setRotated(false);
-
                         var tempElement = spriteFrame.getTexture().getHtmlElementObj();
                         tempElement = cc.cutRotateImageToCanvas(tempElement, spriteFrame.getRectInPixels());
                         var tempTexture = new cc.Texture2D();

@@ -242,6 +242,10 @@ ccs.Bone = ccs.NodeRGBA.extend(/** @lends ccs.Bone# */{
      * Rewrite visit ,when node draw, g_NumberOfDraws is changeless
      */
     visit: function (ctx) {
+        // quick return if not visible
+        if (!this._visible)
+            return;
+
         var node = this.getDisplayManager().getDisplayRenderNode();
         if (node) {
             node.visit(ctx);

@@ -981,7 +981,7 @@ cc.easeElasticInOut = function (period) {
             return newT;
         },
         reverse: function(){
-            return cc.EaseElasticInOut(this._period);
+            return cc.easeElasticInOut(this._period);
         }
     };
 };

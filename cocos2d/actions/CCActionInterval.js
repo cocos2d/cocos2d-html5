@@ -264,7 +264,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     repeat: function(times){
         times = Math.round(times);
-        if(times < 1){
+        if(isNaN(times) || times < 1){
             cc.log("The repeat parameter error");
             return this;
         }
@@ -2212,7 +2212,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     update:function (time) {
         time = this._computeEaseTime(time);
         if (this.target.RGBAProtocol) {
-            var fromOpacity = this._fromOpacity;
+            var fromOpacity = this._fromOpacity !== undefined ? this._fromOpacity : 255;
             this.target.opacity = fromOpacity + (this._toOpacity - fromOpacity) * time;
         }
     },
@@ -2406,7 +2406,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     update:function (time) {
         time = this._computeEaseTime(time);
         var locFrom = this._from, locTo = this._to;
-        if (this.target.RGBAProtocol) {
+        if (locFrom && this.target.RGBAProtocol) {
             this.target.color = cc.color(locFrom.r + (locTo.r - locFrom.r) * time,
                                         locFrom.g + (locTo.g - locFrom.g) * time,
 	                                    locFrom.b + (locTo.b - locFrom.b) * time);

@@ -2257,6 +2257,12 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                 // offset the anchorpoint
                 var skx = Math.tan(-_t._skewX * Math.PI / 180);
                 var sky = Math.tan(-_t._skewY * Math.PI / 180);
+                if(skx === Infinity){
+                    skx = 99999999;
+                }
+                if(sky === Infinity){
+                    sky = 99999999;
+                }
                 var xx = appY * skx * sx;
                 var yy = appX * sky * sy;
                 t.a = Cos + -Sin * sky;
