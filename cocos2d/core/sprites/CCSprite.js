@@ -1426,7 +1426,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     _p.setColor = function (color3) {
         var _t = this;
         var curColor = _t.color;
-        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b) && (curColor.a === color3.a))
+        if ((curColor.r === color3.r) && (curColor.g === color3.g) && (curColor.b === color3.b))
             return;
 
         cc.NodeRGBA.prototype.setColor.call(_t, color3);
