@@ -2446,7 +2446,8 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
      * @returns {cc.Color}
      */
     getDisplayedColor: function () {
-        return this._displayedColor;
+        var tmpColor = this._displayedColor;
+        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
     },
 
     /**
