@@ -185,13 +185,13 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
 //                resultAction = cc.Circ_EaseInOut.create(action);
 //                break;
             case ccs.FrameEaseType.Elastic_EaesIn:
-                resultAction = cc.Elastic_EaesIn.create(action);
+                resultAction = cc.EaseElasticIn.create(action);
                 break;
             case ccs.FrameEaseType.Elastic_EaesOut:
-                resultAction = cc.Elastic_EaesOut.create(action);
+                resultAction = cc.EaseElasticOut.create(action);
                 break;
             case ccs.FrameEaseType.Elastic_EaesInOut:
-                resultAction = cc.Elastic_EaesInOut.create(action);
+                resultAction = cc.EaseElasticInOut.create(action);
                 break;
             case ccs.FrameEaseType.Back_EaseIn:
                 resultAction = cc.EaseBackIn.create(action);
