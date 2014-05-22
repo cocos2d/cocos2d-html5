@@ -1271,7 +1271,7 @@ cc._setup = function (el, width, height) {
         width = width || element.clientWidth;
         height = height || element.clientHeight;
         localContainer = cc.container = element;
-        localCanvas = cc._canvas = cc.newElement("CANVAS");
+        localCanvas = cc._canvas = cc.$(cc.newElement("CANVAS"));
         element.appendChild(localCanvas);
     }
 
