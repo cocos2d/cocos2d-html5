@@ -836,7 +836,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {cc.Color}
      */
     getBackGroundColor: function () {
-        return this._color;
+        var tmpColor = this._color;
+        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
     },
 
     /**
@@ -844,7 +845,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {cc.Color}
      */
     getBackGroundStartColor: function () {
-        return this._startColor;
+        var tmpColor = this._startColor;
+        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
     },
 
     /**
@@ -852,7 +854,8 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
      * @returns {cc.Color}
      */
     getBackGroundEndColor: function () {
-        return this._endColor;
+        var tmpColor = this._endColor;
+        return cc.color(tmpColor.r, tmpColor.g, tmpColor.b, tmpColor.a);
     },
 
     /**
