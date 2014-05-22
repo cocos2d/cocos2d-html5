@@ -172,12 +172,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     _rotationRadiansX: 0,
     _rotationRadiansY: 0,
+
+    // for debug
     _className: "Node",
     _showNode: false,
 
     //for new renderer
     _curLevel: -1,
     _rendererCmd: null,
+    _renderCmdDiry: false,
 
     _initNode: function () {
         var _t = this;
@@ -708,6 +711,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setVisible: function (Var) {
         this._visible = Var;
+        cc.renderer.childrenOrderDirty = true;
         this.setNodeDirty();
     },
 
@@ -1295,7 +1299,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @private
      */
     _insertChild: function (child, z) {
-        this._reorderChildDirty = true;
+        cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
         this._children.push(child);
         child._setLocalZOrder(z);
     },
@@ -1307,7 +1311,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     reorderChild: function (child, zOrder) {
         cc.assert(child, cc._LogInfos.Node_reorderChild)
-        this._reorderChildDirty = true;
+        cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
         child.arrivalOrder = cc.s_globalOrderOfArrival++;
         child._setLocalZOrder(zOrder);
         this.setNodeDirty();
@@ -1871,7 +1875,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _setNodeDirtyForCache: function () {
         if (this._cacheDirty === false) {
             this._cacheDirty = true;
-
             var cachedP = this._cachedParent;
             cachedP && cachedP != this && cachedP._setNodeDirtyForCache();
         }
@@ -2060,7 +2063,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     toRenderer: function(){
         //do nothing
-    }
+    },
+
+    _transformForRenderer: null
 });
 
 /**
@@ -2092,9 +2097,11 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
     _p.setNodeDirty = function () {
         var _t = this;
-        _t._setNodeDirtyForCache();
-        _t._transformDirty === false && (_t._transformDirty = _t._inverseDirty = true);
-        cc.renderer.pushDirtyNode(this);
+        if(_t._transformDirty === false){
+            _t._setNodeDirtyForCache();
+            _t._renderCmdDiry = _t._transformDirty = _t._inverseDirty = true;
+            cc.renderer.pushDirtyNode(this);
+        }
     };
 
     _p.visit = function () {
@@ -2138,13 +2145,21 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var t = this.nodeToParentTransform(), worldT = this._transformWorld;
         if(this._parent){
             var pt = this._parent._transformWorld;
-            //worldT = cc.AffineTransformConcat(t, parentTransform);
+            //worldT = cc.AffineTransformConcat(t, pt);
             worldT.a = t.a * pt.a + t.b * pt.c;                               //a
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            worldT.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;                    //tx
-            worldT.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;				      //ty
+            if(!this._skewX || this._skewY){
+                var plt = this._parent._transform;
+                var xOffset = -(plt.b + plt.c) * t.ty ;
+                var yOffset = -(plt.b + plt.c) * t.tx;
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            }else{
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+            }
         } else {
             worldT.a = t.a;
             worldT.b = t.b;
@@ -2153,7 +2168,8 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.tx = t.tx;
             worldT.ty = t.ty;
         }
-        if(this._rendererCmd){
+
+        /*if(this._rendererCmd){
             var locCmd = this._rendererCmd;
             locCmd._transform.a = worldT.a;
             locCmd._transform.b = worldT.b;
@@ -2161,13 +2177,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locCmd._transform.d = worldT.d;
             locCmd._transform.tx = worldT.tx * cc.view.getScaleX();
             locCmd._transform.ty = worldT.ty * cc.view.getScaleY();
-        }
-
+        }*/
+        //this.toRenderer();
+        this._renderCmdDiry = false;
         if(!this._children || this._children.length === 0)
             return;
         var i, len, locChildren = this._children;
         for(i = 0, len = locChildren.length; i< len; i++){
-            locChildren[i]._transformForRenderer()
+            locChildren[i]._transformForRenderer();
         }
     },
 
@@ -2178,14 +2195,21 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
 
         if(this._parent){
             var pt = this._parent._transformWorld;
-
-            //worldT = cc.AffineTransformConcat(t, parentTransform);
+            //worldT = cc.AffineTransformConcat(t, pt);
             worldT.a = t.a * pt.a + t.b * pt.c;                               //a
             worldT.b = t.a * pt.b + t.b * pt.d;                               //b
             worldT.c = t.c * pt.a + t.d * pt.c;                               //c
             worldT.d = t.c * pt.b + t.d * pt.d;                               //d
-            worldT.tx = t.tx * pt.a + t.ty * pt.c + pt.tx;                    //tx
-            worldT.ty = t.tx * pt.b + t.ty * pt.d + pt.ty;				      //ty
+            if(!this._skewX || this._skewY){
+                var plt = this._parent._transform;
+                var xOffset = -(plt.b + plt.c) * t.ty ;
+                var yOffset = -(plt.b + plt.c) * t.tx;
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx + xOffset);        //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty + yOffset);		  //ty
+            }else{
+                worldT.tx = (t.tx * pt.a + t.ty * pt.c + pt.tx);          //tx
+                worldT.ty = (t.tx * pt.b + t.ty * pt.d + pt.ty);		  //ty
+            }
         } else {
             worldT.a = t.a;
             worldT.b = t.b;

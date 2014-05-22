@@ -314,8 +314,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this.string = strInfo;
         this._setColorsString();
         this._updateTexture();
-        this._needUpdateTexture = false;
+        this._setUpdateTextureDirty();
         return true;
+    },
+
+    _setUpdateTextureDirty: function(){
+        this._renderCmdDiry = this._needUpdateTexture = true;
+        cc.renderer.pushDirtyNode(this);
     },
 
     /**
@@ -368,7 +373,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowBlur != shadowBlur)
             this._shadowBlur = shadowBlur;
 
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
     },
 
     _getShadowOffsetX: function () {
@@ -380,7 +385,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._shadowOffset.x != x) {
             this._shadowOffset.x = x;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -393,7 +398,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._shadowOffset._y != y) {
             this._shadowOffset._y = y;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -407,7 +412,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowOffset.x != offset.x || this._shadowOffset.y != offset.y) {
             this._shadowOffset.x = offset.x;
             this._shadowOffset.y = offset.y;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -421,7 +426,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._shadowOpacity != shadowOpacity) {
             this._shadowOpacity = shadowOpacity;
             this._setColorsString();
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -434,7 +439,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._shadowBlur != shadowBlur) {
             this._shadowBlur = shadowBlur;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -444,7 +449,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     disableShadow: function () {
         if (this._shadowEnabled) {
             this._shadowEnabled = false;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -468,7 +473,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (this._strokeSize !== strokeSize)
             this._strokeSize = strokeSize || 0;
 
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
     },
 
     _getStrokeStyle: function () {
@@ -485,7 +490,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             locStrokeColor.b = strokeStyle.b;
             this._setColorsString();
 
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -498,7 +503,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         if (this._strokeSize !== lineWidth) {
             this._strokeSize = lineWidth || 0;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -508,7 +513,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     disableStroke: function () {
         if (this._strokeEnabled) {
             this._strokeEnabled = false;
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -617,7 +622,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._updateString();
 
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
     _updateString: function () {
@@ -632,7 +637,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._hAlignment = alignment;
 
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -645,7 +650,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._vAlignment = verticalAlignment;
 
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -658,7 +663,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._dimensions = dim;
             this._updateString();
             // Force udpate
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -670,7 +675,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._dimensions.width = width;
             this._updateString();
             // Force udpate
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -682,7 +687,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._dimensions.height = height;
             this._updateString();
             // Force udpate
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -696,7 +701,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontStyleStr = fontSize + "px '" + this._fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, fontSize);
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -710,7 +715,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName, this._fontSize);
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -725,7 +730,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontStyleStr = fontStyle;
             this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName, this._fontSize);
             // Force update
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     },
 
@@ -1036,8 +1041,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         this._setColorsString();
     };
 
+    _p._transformForRenderer = function(){
+        if (this._needUpdateTexture) {
+            this._needUpdateTexture = false;
+            this._updateTexture();
+            this.toRenderer();
+        }
+        cc.Sprite.prototype._transformForRenderer.call(this);
+    },
+
     _p._setColorsString = function () {
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
 
         var locDisplayColor = this._displayedColor, locDisplayedOpacity = this._displayedOpacity;
         var locStrokeColor = this._strokeColor, locFontFillColor = this._textFillColor;
@@ -1059,7 +1073,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             return;
         cc.Sprite.prototype.setOpacity.call(this, opacity);
         this._setColorsString();
-        this._needUpdateTexture = true;
+        this._setUpdateTextureDirty();
     };
 
     //TODO: _p._updateDisplayedOpacityForCanvas
@@ -1083,7 +1097,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             locTextFillColor.b = tintColor.b;
 
             this._setColorsString();
-            this._needUpdateTexture = true;
+            this._setUpdateTextureDirty();
         }
     };
 

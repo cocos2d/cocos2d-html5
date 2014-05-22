@@ -366,11 +366,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (!plistFile || typeof(plistFile) === "number") {
             var ton = plistFile || 100;
-            this.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
+            if (cc._renderType === cc._RENDER_TYPE_WEBGL)
+                this.setDrawMode(cc.ParticleSystem.TEXTURE_MODE);
             this.initWithTotalParticles(ton);
         } else if (plistFile) {
             this.initWithFile(plistFile);
         }
+
+        this._rendererCmd = new cc.ParticleRenderCmdCanvas(this);
     },
 
     /**
@@ -544,6 +547,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setDrawMode:function (drawMode) {
         this.drawMode = drawMode;
+        if(this._rendererCmd)
+            this._rendererCmd._drawMode = drawMode;
     },
 
     /**
@@ -560,6 +565,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setShapeType:function (shapeType) {
         this.shapeType = shapeType;
+        if(this._rendererCmd)
+            this._rendererCmd._shapeType = shapeType;
     },
 
     /**
@@ -2587,7 +2594,37 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
         this._quadsArrayBuffer = locQuadsArrayBuffer;
         return true;
+    },
+
+    toRenderer: function(renderer){
+        if(!this._rendererCmd)
+            return;
+
+        var locCmd = this._rendererCmd;
+        renderer = renderer || cc.renderer;
+        renderer.pushRenderCommand(locCmd);
+
+        var locWT = this._transformWorld;
+        locCmd._transform.a = locWT.a;
+        locCmd._transform.b = locWT.b;
+        locCmd._transform.c = locWT.c;
+        locCmd._transform.d = locWT.d;
+        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
+        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
+
+        //TODO
+        locCmd._isBlendAdditive = this.isBlendAdditive();
+        locCmd._drawMode = this.drawMode;
+        locCmd._shapeType = this.shapeType;
+        locCmd._texture = this._texture;
+
+        var locRect = this._pointRect;
+        locCmd._pointRect.x = locRect.x;
+        locCmd._pointRect.y = locRect.y;
+        locCmd._pointRect.width = locRect.width;
+        locCmd._pointRect.height = locRect.height;
     }
+
 });
 
 var _p = cc.ParticleSystem.prototype;

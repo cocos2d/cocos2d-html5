@@ -510,7 +510,6 @@ cc.LayerColor.create = function (color, width, height) {
     return new cc.LayerColor(color, width, height);
 };
 
-
 if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
     //cc.LayerColor define start
     var _p = cc.LayerColor.prototype;
@@ -520,9 +519,17 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.LayerColor.prototype.init.call(this, color, width, height);
         this._rendererCmd = new cc.RectRenderCmdCanvas(this);
     }
-    _p._setWidth = cc.LayerRGBA.prototype._setWidth;
-    _p._setHeight = cc.LayerRGBA.prototype._setHeight;
+    _p._setWidth = cc.Node.prototype._setWidth;
+    _p._setHeight = cc.Node.prototype._setHeight;
     _p._updateColor = function () {
+        var locCmd = this._rendererCmd;
+        if(!locCmd)
+            return;
+        var locColor = this._displayedColor;
+        locCmd._color.r = locColor.r;
+        locCmd._color.g = locColor.g;
+        locCmd._color.b = locColor.b;
+        locCmd._color.a = this._displayedOpacity / 255;
     };
 
     _p.toRenderer = function(renderer){

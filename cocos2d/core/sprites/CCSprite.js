@@ -189,7 +189,6 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         ctx.globalAlpha = b * a;
         ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
     }
-
     if (r + g + b < 1) {
         ctx.globalAlpha = a;
         ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
@@ -696,7 +695,6 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
      * @param frameIndex
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
-
         cc.assert(animationName, cc._LogInfos.Sprite_setDisplayFrameWithAnimationName_3);
 
         var cache = cc.animationCache.getAnimation(animationName);
@@ -723,7 +721,7 @@ cc.Sprite = cc.NodeRGBA.extend(/** @lends cc.Sprite# */{
     _setReorderChildDirtyRecursively:function () {
         //only set parents flag the first time
         if (!this._reorderChildDirty) {
-            this._reorderChildDirty = true;
+            cc.renderer.childrenOrderDirty = this._reorderChildDirty = true;
             var pNode = this._parent;
             while (pNode && pNode != this._batchNode) {
                 pNode._setReorderChildDirtyRecursively();
@@ -1547,13 +1545,13 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         renderer = renderer || cc.renderer;
         renderer.pushRenderCommand(locCmd);
         //set the data to the rendererCmd
-        var locWT = this._transformWorld;
+/*        var locWT = this._transformWorld;
         locCmd._transform.a = locWT.a;
         locCmd._transform.b = locWT.b;
         locCmd._transform.c = locWT.c;
         locCmd._transform.d = locWT.d;
         locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
-        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
+        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();*/
 
         //TODO
         var locColor = this._displayedColor;
@@ -1592,7 +1590,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         locCmd._drawingRect.width = locDrawSizeCanvas.width;
         locCmd._drawingRect.height = locDrawSizeCanvas.height;
     };
-
 
     _p.draw = function (ctx) {
         var _t = this;
