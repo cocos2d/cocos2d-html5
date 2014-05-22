@@ -24,6 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+var cc = cc || {};
 cc._tmp = cc._tmp || {};
 
 cc._tmp.WebGLColor = function () {
