@@ -519,8 +519,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         cc.LayerColor.prototype.init.call(this, color, width, height);
         this._rendererCmd = new cc.RectRenderCmdCanvas(this);
     }
-    _p._setWidth = cc.Node.prototype._setWidth;
-    _p._setHeight = cc.Node.prototype._setHeight;
+    _p._setWidth = function(width){
+        cc.Node.prototype._setWidth.call(this, width);
+        this._rendererCmd._drawingRect.width = width;
+    };
+    _p._setHeight = function(height){
+        cc.Node.prototype._setHeight.call(this, height);
+        this._rendererCmd._drawingRect.height = height;
+    };
     _p._updateColor = function () {
         var locCmd = this._rendererCmd;
         if(!locCmd)
@@ -539,14 +545,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         var locCmd = this._rendererCmd;
         renderer = renderer || cc.renderer;
         renderer.pushRenderCommand(locCmd);
-        //set the data to the rendererCmd
-        var locWT = this._transformWorld;
-        locCmd._transform.a = locWT.a;
-        locCmd._transform.b = locWT.b;
-        locCmd._transform.c = locWT.c;
-        locCmd._transform.d = locWT.d;
-        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
-        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();
 
         var locColor = this._displayedColor;
         locCmd._isLighterMode = this._isLighterMode;

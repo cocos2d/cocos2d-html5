@@ -2168,17 +2168,6 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
             worldT.tx = t.tx;
             worldT.ty = t.ty;
         }
-
-        /*if(this._rendererCmd){
-            var locCmd = this._rendererCmd;
-            locCmd._transform.a = worldT.a;
-            locCmd._transform.b = worldT.b;
-            locCmd._transform.c = worldT.c;
-            locCmd._transform.d = worldT.d;
-            locCmd._transform.tx = worldT.tx * cc.view.getScaleX();
-            locCmd._transform.ty = worldT.ty * cc.view.getScaleY();
-        }*/
-        //this.toRenderer();
         this._renderCmdDiry = false;
         if(!this._children || this._children.length === 0)
             return;
@@ -2186,7 +2175,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         for(i = 0, len = locChildren.length; i< len; i++){
             locChildren[i]._transformForRenderer();
         }
-    },
+    };
 
     _p.transform = function (ctx) {
         // transform for canvas
@@ -2389,6 +2378,9 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
      */
     updateDisplayedOpacity: function (parentOpacity) {
         this._displayedOpacity = this._realOpacity * parentOpacity / 255.0;
+        if(this._rendererCmd && this._rendererCmd._opacity !== undefined)
+            this._rendererCmd._opacity = this._displayedOpacity / 255;
+
         if (this._cascadeOpacityEnabled) {
             var selChildren = this._children;
             for (var i = 0; i < selChildren.length; i++) {

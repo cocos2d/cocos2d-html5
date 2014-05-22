@@ -1546,33 +1546,14 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
         renderer = renderer || cc.renderer;
         renderer.pushRenderCommand(locCmd);
         //set the data to the rendererCmd
-/*        var locWT = this._transformWorld;
-        locCmd._transform.a = locWT.a;
-        locCmd._transform.b = locWT.b;
-        locCmd._transform.c = locWT.c;
-        locCmd._transform.d = locWT.d;
-        locCmd._transform.tx = locWT.tx * cc.view.getScaleX();
-        locCmd._transform.ty = locWT.ty * cc.view.getScaleY();*/
 
-        //TODO
-        var locColor = this._displayedColor;
         locCmd._texture = this._texture;
         locCmd._isLighterMode = this._isLighterMode;
         locCmd._flippedX = this._flippedX;
         locCmd._flippedY = this._flippedY;
-        locCmd._opacity = this._displayedOpacity/255;
-        locCmd._color.r = locColor.r;
-        locCmd._color.g = locColor.g;
-        locCmd._color.b = locColor.b;
+        locCmd._opacity = this._displayedOpacity / 255;
 
         var _t = this, locEGL_ScaleX = cc.view.getScaleX(), locEGL_ScaleY = cc.view.getScaleY();
-        //TODO texture rect and drawingRect
-        var locTextureCoord = _t._textureRect_Canvas;
-        locCmd._textureCoord.x = locTextureCoord.x;
-        locCmd._textureCoord.y = locTextureCoord.y;
-        locCmd._textureCoord.width = locTextureCoord.width;
-        locCmd._textureCoord.height = locTextureCoord.height;
-        locCmd._textureCoord.validRect = locTextureCoord.validRect;
 
         var locRect = _t._rect, locOffsetPosition = _t._offsetPosition, locDrawSizeCanvas = _t._drawSize_Canvas;
         var flipXOffset = 0 | (locOffsetPosition.x), flipYOffset = -locOffsetPosition.y - locRect.height;

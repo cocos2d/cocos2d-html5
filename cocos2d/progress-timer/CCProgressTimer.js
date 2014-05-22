@@ -481,7 +481,7 @@ cc.ProgressTimer = cc.NodeRGBA.extend(/** @lends cc.ProgressTimer# */{
         }
 
         context.restore();
-        cc.incrementGLDraws(1);
+        cc.g_NumberOfDraws++;
     },
 
     _drawForWebGL:function (ctx) {
