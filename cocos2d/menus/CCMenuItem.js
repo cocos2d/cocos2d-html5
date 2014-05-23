@@ -43,8 +43,7 @@ cc.MenuItem = cc.NodeRGBA.extend(/** @lends cc.MenuItem# */{
     _className: "MenuItem",
 
     /**
-     * Constructor
-     * @constructor
+     * Constructor of cc.MenuItem
      * @param {function|String} callback
      * @param {cc.Node} target
      */
@@ -212,7 +211,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _colorBackup: null,
 
     /**
-     * @constructor
+     * Constructor of cc.MenuItemLabel
      * @param {cc.Node} label
      * @param {function|String} selector
      * @param {cc.Node} target
@@ -502,7 +501,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     _fontName: null,
 
     /**
-     * @constructor
+     * Constructor of cc.MenuItemFont
      * @param {String} value text for the menu item
      * @param {function|String} callback
      * @param {cc.Node} target
@@ -669,7 +668,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     _disabledImage: null,
 
     /**
-     * @constructor
+     * Constructor of cc.MenuItemSprite
      * @param {Image|Null} normalSprite normal state image
      * @param {Image|Null} selectedSprite selected state image
      * @param {Image|cc.Node|Null} three disabled state image OR target node
@@ -999,7 +998,7 @@ cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, 
 cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
 
     /**
-     * @constructor
+     * Constructor of cc.MenuItemImage
      * @param {string|null} normalImage
      * @param {string|null} selectedImage
      * @param {string|null} disabledImage
@@ -1124,7 +1123,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     _color: null,
 
     /**
-     * @constructor
+     * Constructor of cc.MenuItemToggle
      * @example
      * // Example
      * //create a toggle item with 2 menu items (which you can then toggle between them later)

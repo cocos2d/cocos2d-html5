@@ -54,7 +54,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 
     /**
      * allocates and initializes a UILabel.
-     * @constructor
+     * Constructor of ccui.Text
      * @example
      * // example
      * var uiLabel = new ccui.Text();

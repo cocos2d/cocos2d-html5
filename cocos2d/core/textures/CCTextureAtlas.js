@@ -59,7 +59,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     /**
      * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
      * The TextureAtlas capacity can be increased in runtime. </p>
-     * @constructor
+     * Constructor of cc.TextureAtlas
      * @param {String|cc.Texture2D} fileName
      * @param {Number} capacity
      * @example

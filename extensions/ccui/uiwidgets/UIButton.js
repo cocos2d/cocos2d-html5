@@ -69,7 +69,7 @@ ccui.Button = ccui.Widget.extend(/** @lends ccui.Button# */{
 
     /**
      * allocates and initializes a UIButton.
-     * @constructor
+     * Constructor of ccui.Button
      * @example
      * // example
      * var uiButton = new ccui.Button();

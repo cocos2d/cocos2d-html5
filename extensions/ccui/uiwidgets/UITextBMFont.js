@@ -39,7 +39,7 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
 
     /**
      * allocates and initializes a UILabelBMFont.
-     * @constructor
+     * Constructor of ccui.TextBMFont
      * @example
      * // example
      * var uiLabelBMFont = new ccui.TextBMFont();

@@ -187,7 +187,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
 
     /**
      * cc.Timer's Constructor
-     * @constructor
+     * Constructor of cc.Timer
      * @param {cc.Class} target target
      * @param {String|function} callback Selector
      * @param {Number} [interval=0] second

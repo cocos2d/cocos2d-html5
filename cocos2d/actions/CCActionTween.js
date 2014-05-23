@@ -58,7 +58,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
 
 	/**
 	 * Creates an initializes the action with the property name (key), and the from and to parameters.
-	 * @constructor
+	 * Constructor of cc.ActionTween
 	 * @param {Number} duration
 	 * @param {String} key
 	 * @param {Number} from

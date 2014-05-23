@@ -57,7 +57,7 @@ ccs.Armature = ccs.NodeRGBA.extend(/** @lends ccs.Armature# */{
 
     /**
      * Create a armature node.
-     * @constructor
+     * Constructor of ccs.Armature
      * @param {String} name
      * @param {ccs.Bone} parentBone
      * @example

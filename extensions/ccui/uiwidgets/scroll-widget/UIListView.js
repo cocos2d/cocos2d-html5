@@ -40,7 +40,7 @@ ccui.ListView = ccui.ScrollView.extend(/** @lends ccui.ListView# */{
     _className:"ListView",
     /**
      * allocates and initializes a UIListView.
-     * @constructor
+     * Constructor of ccui.ListView
      * @example
      * // example
      * var uiPageView = new ccui.ListView();

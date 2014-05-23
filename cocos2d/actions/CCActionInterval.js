@@ -54,7 +54,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _speedMethod: false,//Compatible with speed class, Discard after can be deleted
 
 	/**
-	 * @constructor
+	 * constructor of cc.ActionInterval
 	 * @param {Number} d duration in seconds
 	 * @example
 	 * var actionInterval = new cc.ActionInterval(3);
@@ -308,7 +308,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     _last:0,
 
 	/** Create an array of sequenceable actions
-	 * @constructor
+	 * Constructor of cc.Sequence
 	 * @param {Array|cc.FiniteTimeAction} tempArray
 	 * @example
 	 * // create sequence with actions
@@ -497,7 +497,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
 
 	/**
 	 * Creates a Repeat action. Times is an unsigned integer between 1 and pow(2,30)
-	 * @constructor
+	 * Constructor of cc.Repeat
 	 * @param {cc.FiniteTimeAction} action
 	 * @param {Number} times
 	 * @example
@@ -771,7 +771,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
     _two:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.Spawn
 	 * @param {Array|cc.FiniteTimeAction} tempArray
 	 * @example
 	 * var action = new cc.Spawn(cc.JumpBy.create(2, cc.p(300, 0), 50, 4), cc.RotateBy.create(2, 720));
@@ -929,7 +929,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
 
 	/**
 	 * Creates a RotateTo action with x and y rotation angles
-	 * @constructor
+	 * Constructor of cc.RotateTo
 	 * @param {Number} duration duration in seconds
 	 * @param {Number} deltaAngleX deltaAngleX in degrees.
 	 * @param {Number} [deltaAngleY] deltaAngleY in degrees.
@@ -1039,7 +1039,7 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
     _startAngleY:0,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.RotateBy
 	 * @param {Number} duration duration in seconds
 	 * @param {Number} deltaAngleX deltaAngleX in degrees
 	 * @param {Number} [deltaAngleY] deltaAngleY in degrees
@@ -1141,7 +1141,7 @@ cc.MoveBy = cc.ActionInterval.extend(/** @lends cc.MoveBy# */{
     _previousPosition:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.MoveBy
 	 * @param {Number} duration duration in seconds
 	 * @param {cc.Point|Number} deltaPos
 	 * @param {Number} [deltaY]
@@ -1265,7 +1265,7 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
     _endPosition:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.MoveTo
 	 * @param {Number} duration duration in seconds
 	 * @param {cc.Point|Number} position
 	 * @param {Number} y
@@ -1348,7 +1348,7 @@ cc.SkewTo = cc.ActionInterval.extend(/** @lends cc.SkewTo# */{
     _deltaY:0,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.SkewTo
 	 * @param {Number} t time in seconds
 	 * @param {Number} sx
 	 * @param {Number} sy
@@ -1438,7 +1438,7 @@ cc.SkewTo.create = function (t, sx, sy) {
 cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
 
 	/**
-	 * @constructor
+	 * Constructor of cc.SkewBy
 	 * @param {Number} t time in seconds
 	 * @param {Number} sx  skew in degrees for X axis
 	 * @param {Number} sy  skew in degrees for Y axis
@@ -1525,7 +1525,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     _previousPosition:null,
 
 	/**
-	 * @constructor
+	 * Constructor of JumpBy
 	 * @param {Number} duration
 	 * @param {cc.Point|Number} position
 	 * @param {Number} [y]
@@ -1721,7 +1721,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     _previousPosition:null,
 
 	/**
-	 * @constructor
+	 * Constructor of BezierBy
 	 * @param {Number} t time in seconds
 	 * @param {Array} c Array of points
 	 * @example
@@ -1855,7 +1855,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     _toConfig:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.BezierTo
 	 * @param {Number} t
 	 * @param {Array} c array of points
 	 * @example
@@ -1936,7 +1936,7 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
     _deltaY:0,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.ScaleTo
 	 * @param {Number} duration
 	 * @param {Number} sx  scale parameter in X
 	 * @param {Number} [sy] scale parameter in Y, if Null equal to sx
@@ -2080,9 +2080,9 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
     _originalState:false,
 
 	/**
-	 * @constructor
-	 * @param {Number} duration  duration in seconds
-	 * @param (Number) blinks  blinks in times
+	 * Constructor of cc.Blink
+     * @param {Number} duration  duration in seconds
+	 * @param {Number} blinks  blinks in times
 	 * @example
 	 * var action = new cc.Blink(2, 10);
 	 */
@@ -2171,7 +2171,7 @@ cc.FadeTo = cc.ActionInterval.extend(/** @lends cc.FadeTo# */{
     _fromOpacity:0,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.FadeTo
 	 * @param {Number} duration
 	 * @param {Number} opacity 0-255, 0 is transparent
 	 * @example
@@ -2347,7 +2347,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
     _from:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.TintTo
 	 * @param {Number} duration
 	 * @param {Number} red 0-255
 	 * @param {Number} green  0-255
@@ -2443,7 +2443,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
     _fromB:0,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.TintBy
 	 * @param {Number} duration  duration in seconds
 	 * @param {Number} deltaRed
 	 * @param {Number} deltaGreen
@@ -2592,7 +2592,7 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
     _other:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.ReverseTime
 	 * @param {cc.FiniteTimeAction} action
 	 * @example
 	 *  var reverse = new cc.ReverseTime(this);
@@ -2690,7 +2690,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     _splitTimes:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.Animate
 	 * create the animate with animation
 	 * @param {cc.Animation} animation
 	 * @example
@@ -2869,7 +2869,7 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
 
 	/**
 	 * Create an action with the specified action and forced target
-	 * @constructor
+	 * Constructor of cc.TargetedAction
 	 * @param {cc.Node} target
 	 * @param {cc.FiniteTimeAction} action
 	 */

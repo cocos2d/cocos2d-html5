@@ -55,9 +55,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     /**
      * <p>
      *    Create a cc.SpriteFrame with a texture filename, rect, rotated, offset and originalSize in pixels.<br/>
-     *    The originalSize is the size in pixels of the frame before being trimmed.
+     *    The originalSize is the size in pixels of the frame before being trimmed.                         <br/>
+     *    Constructor of cc.SpriteFrame
      * </p>
-     * @constructor
+     *
      * @param {String|cc.Texture2D} filename
      * @param {cc.Rect} rect if parameters' length equal 2, rect in points, else rect in pixels
      * @param {Boolean} rotated

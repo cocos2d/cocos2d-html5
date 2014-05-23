@@ -47,7 +47,7 @@ ccui.LoadingBar = ccui.Widget.extend(/** @lends ccui.LoadingBar# */{
 
     /**
      * allocates and initializes a UILoadingBar.
-     * @constructor
+     * Constructor of ccui.LoadingBar
      * @example
      * // example
      * var uiLoadingBar = new ccui.LoadingBar;
