@@ -1,41 +1,80 @@
 ChangeLog:
+
+Cocos2d-html5-v3.0 beta @ May.23, 2014
+
+* Refactored actions to make it more friendly and easy-to-use.
+* Integrated Spine skeleton animation feature.
+* Renamed constants of ProgressTimer, Scale9Sprite, TMXLayerInfo, Node, ParticleSystem for maintainability.
+* Modified mouseMove event behavior of cc.inputManager to compatible with Cocos2d-x
+* Modified cc.game.run to receive a canvas id as parameter.
+* Added local audio file playing from 'file://' origin.
+* Added local images file displaying from 'file://' origin.
+* Refactored cc.TMXLayer's setTileAt etc functions to support point or x,y as their parameters.
+* Added a check to cc.Sprite and cc.SpriteFrame to avoid its texture rect out of bounds.
+* Added a check to cc.SpriteFrame to avoid cc.loader release invalid sprite frame file.
+* Made cc.Touch return copies of point.
+* Made the default of cc.Color alpha value is 255 to avoid cc.Sprite's setColor is invalid.
+* Optimized cc.Node.sortAllChildren for better performance.
+* Added warning of cc.Texture2D if it has an invalid texture.
+
+* Bugs fix:
+    1. Fixed a bug of cc.winSize that it returns incorrect value when using setDesignResolution.
+    2. Added a check to cc._setup to avoid double invocation.
+    3. Fixed a bug of cc.TMXMapInfo that its tile's property id is incorrect.
+    4. Fixed a bug of cc.Scale9Sprite that its CascadeColor and CascadeOpacity are invalid.
+    5. Fixed a bug of ccs.UILoadingBar which its barRendererScaleChangedWithSize is incorrect.
+    6. Added some forgotten files to build.xml for minimize core.
+    7. Corrected a mistake of renderMode default value in CCBoot.js.
+    8. Fixed a bug of ccui.Layout's draw function that its scaleX, scaleY value is incorrect.
+    9. Fixed a bug of cc.Audio's stopMusic function.
+    10. Fixed a bug of TextureCache that it can't remove image's event handler.
+    11. Fixed ClippingNode's DrawNode stencil bug on Canvas.
+    12. Fixed a typo 'cc.radiansToDegress' function to 'cc.radiansToDegrees'.
+    13. Fixed a bug of ccui.ImageView that its setSize is invalid when the picture without pre-load.
+    14. Fixed a bug of cc.ParticleSystem that it throws a error when create from CocosBuilder.
+    15. Fixed a bug of cc.LabelAtlas that it can't display its children.
+    16. Fixed a bug of cc.fontLoader that it can't load custom font.
+    17. Fixed a bug of ccui.Widget that its setOpacity is invalid.
+    18. Fixed a bug of cc.Node that it transform value is incorrect when a node skew to a special value.
+
 Cocos2d-html5-v3.0 alpha2 @ April.14, 2014
 
-* Minimize the size of core from 254k to 113k after google closure advanced compiling.
-* Make engine classes can be constructed via `new` with the same parameters as create functions.
-* Make engine classes extendable directly via ctor.
-* Made cc.DrawNode support some DrawingPrimitive's drawing function on WebGL mode.
+* Minimized the size of core from 254k to 113k after google closure advanced compiling
+* Made cc.DrawNode support some DrawingPrimitive's drawing function on WebGL mode
+* Added undefined checking in cc.loader for better performance.
 * cc.Sprite supports creating a sprite through external URL.
-* Add SocketIO to framework's external.
-* Add the warning information to notice developers that their project.json cannot be loaded or parsed.
-* Add retina display support to cc.Editbox.
+* Added the warning information to notice developers that their project.json cannot be loaded or parsed.
+* Added retina display support to cc.Editbox.
 * cc.Node's pauseSchedulerAndActions and resumeSchedulerAndActions are deprecated, please use pause and resume instead.
-* Add render mode checking to 3D action classes.
-* Use undefined check in cc.loader for better performance.
-* Sync cc.eventManager to the latest version of Cocos2d-x v3.0 final.
-* ccui.Layout's doLayout function has been set to private function "_doLayout".
-* Rename all Uppercase functions to lowercase in CCMacro.js.
-* Add more necessary GL constants in engine.
-* Rename ccs.comAttribute's `getCString` function to `getString`.
+* Added render mode checking to 3D action classes.
+* Added SocketIO
+* Sync cc.eventManager to the latest version of Cocos2d-x v3.0 Stable.
+* ccui.Layout's doLayout function has been set to private function "_doLayout"
+* Made actions extendable directly via ctor
+* Added null callback check in cc.textureCache.addImage
+* Fixed the API inconsistence of ccs.ArmatureAnimation.play
+* Fixed compatibility and performance for ctor
+* Renamed all Uppercase functions to lowercase in CCMacro
+* Added necessary GL constants in H5
+* Fixed CONSTANTS inconsistence between h5 and JSB
 
 * Bugs fix:
     1. Fixed ccs.comAttribute API incompatible issue
-    2. Fixed a bug of CocoStudio's data reader that getting isTween value is incorrect when the attribute value is false.
-    3. Fixed a bug of Sprite that it stops to work when its texture doesn't preload and its parent is a SpriteBatchNode
-    4. Fixed a bug in CCBoot.js that console.error is invalid on firefox.
-    5. Fixed a bug of cc.LabelBMFont that it's multiline works incorrectly.
-    6. Fixed a bug that Touches event doesn't work in release mode on IE browser.
-    7. Fixed a bug that cc.winSize has not been reset after cc.view.setDesignResolutionSize.
-    8. Fixed typo error in ccui.Widget.TOUCH_BEGAN
-    9. Fixed a bug of cc.MenuItemSprite.create that its can't create item when the length of arguments equals 4.
-    10. Fixed a bug of cc.loader that it need to set value before calling the callback.
-    11. Fixed a bug of cc.log that it doesn't work in IE9
-    12. Fixed IE incompatible issue with __lookupGetter__
-    13. Fixed a bug of cc.Node that it returns a reference of _position in getPosition
-    14. Fixed a bug of cc.ClippingNode that its _super is undefined
-    15. Fixed a bug of inputManager's touch event in IE browser
-    16. Add callback null check to avoid bugs in cc.textureCache.addImage.
-    17. Fixed some comment errors of framework.
+    2. Fixed a bug of Cocostudio's data reader that getting isTween value is incorrect when the attribute value is false.
+	3. Fixed a bug of Sprite that it doesn't work when its texture doesn't preload and its parent is a SpriteBatchNode
+	4. Fixed a bug in CCBoot.js that console.error is invalid on firefox.
+	5. Fixed some comment errors of framework.
+	6. Fixed a bug of cc.LabelBMFont that it's multiline works incorrectly.
+	7. Fixed a bug that Touches event doesn't work in release mode on IE browser.
+	8. Fixed a bug that cc.winSize has not been reset after cc.view.setDesignResolutionSize.
+	9. Fixed typo in ccui.Widget.TOUCH_BEGAN
+	10. Fixed a bug of cc.MenuItemSprite.create that
+	11. Fixed a bug of cc.loader that it need to set value before call the callback.
+	12. Fixed a bug of cc.log that it doesn't work in IE9
+	13. Fixed IE incompatible issue with __lookupGetter__
+	14. Fixed a mistake of cc.Node that it return a reference of _position in getPosition
+	15. Fixed a bug of cc.ClippingNode that its _super is undefined
+	16. Fixed a bug of inputManager's touch event in IE browser
 
 * Known Issues:
     1. EventListener is not extendable.
