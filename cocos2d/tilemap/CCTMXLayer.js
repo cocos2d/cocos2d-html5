@@ -92,8 +92,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _className:"TMXLayer",
 
     /**
-     * Creates a cc.TMXLayer with an tile set info, a layer info and a map info
-     * @constructor
+     * Creates a cc.TMXLayer with an tile set info, a layer info and a map info   <br/>
+     * Constructor of cc.TMXLayer
      * @param {cc.TMXTilesetInfo} tilesetInfo
      * @param {cc.TMXLayerInfo} layerInfo
      * @param {cc.TMXMapInfo} mapInfo

@@ -264,8 +264,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _currentFirstGID:0,
 
     /**
-     * Creates a TMX Format with a tmx file or content string
-     * @constructor
+     * Creates a TMX Format with a tmx file or content string                           <br/>
+     * Constructor of cc.TMXMapInfo
      * @param {String} tmxFile fileName or content string
      * @param {String} resourcePath  If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
      * @example

@@ -41,7 +41,7 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 
     /**
      * allocates and initializes a UILabelAtlas.
-     * @constructor
+     * Constructor of ccui.TextAtlas
      * @example
      * // example
      * var uiLabelAtlas = new ccui.TextAtlas();

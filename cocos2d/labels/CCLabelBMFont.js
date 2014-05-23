@@ -129,7 +129,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     /**
      * creates a bitmap font atlas with an initial string and the FNT file
-     * @constructor
+     * Constructor of cc.LabelBMFont
      * @param {String} str
      * @param {String} fntFile
      * @param {Number} [width=-1]

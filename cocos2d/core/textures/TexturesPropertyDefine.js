@@ -37,7 +37,6 @@ cc._tmp.PrototypeTexture2D = function () {
      *    By default it is disabled.                                                                                    <br/>
      * </p>
      * @param haveAlphaPremultiplied
-     * @constructor
      */
     _c.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied) {
         cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;

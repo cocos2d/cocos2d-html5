@@ -60,7 +60,7 @@ ccui.Slider = ccui.Widget.extend(/** @lends ccui.Slider# */{
     _className: "Slider",
     /**
      * allocates and initializes a UISlider.
-     * @constructor
+     * Constructor of ccui.Slider
      * @example
      * // example
      * var uiSlider = new ccui.Slider();

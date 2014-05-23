@@ -65,7 +65,7 @@ cc.AtlasNode = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
 
     /**
      * Creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
-     * @constructor
+     * Constructor of cc.AtlasNode
      * @param {String} tile
      * @param {Number} tileWidth
      * @param {Number} tileHeight

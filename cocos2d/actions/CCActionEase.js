@@ -36,7 +36,7 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
 	/**
 	 * creates the action of ActionEase
 	 *
-	 * @constructor
+	 * Constructor of cc.ActionEase
 	 * @param {cc.ActionInterval} action
 	 *
 	 * @example
@@ -125,7 +125,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
 	/**
 	 * Creates the action with the inner action and the rate parameter
 	 *
-	 * @constructor
+	 * Constructor of cc.EaseRateAction
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} rate
 	 *
@@ -681,7 +681,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
 
 	/** Creates the action with the inner action and the period in radians (default is 0.3)
 	 *
-	 * @constructor
+	 * Constructor of cc.EaseElastic
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} [period=0.3]
 	 *

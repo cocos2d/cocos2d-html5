@@ -43,7 +43,7 @@
         _rotation:1,
         /**
          * Create a PhysicsSprite with filename and rect
-         * @constructor
+         * Constructor of cc.PhysicsSprite for Box2d
          * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
          * @param {cc.Rect} rect
          * @example
@@ -158,7 +158,7 @@
 
         /**
          * Create a PhysicsSprite with filename and rect
-         * @constructor
+         * Constructor of cc.PhysicsSprite for chipmunk
          * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
          * @param {cc.Rect} rect
          * @example
@@ -366,7 +366,6 @@
 
     /**
      * Create a PhysicsSprite with filename and rect
-     * @constructor
      * @param {String|cc.Texture2D|cc.SpriteFrame} fileName
      * @param {cc.Rect} rect
      * @return {cc.PhysicsSprite}

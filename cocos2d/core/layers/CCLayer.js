@@ -39,7 +39,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _className: "Layer",
 
     /**
-     * @constructor
+     * Constructor of cc.Layer
      */
     ctor: function () {
         var nodep = cc.Node.prototype;
@@ -91,7 +91,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     _className: "LayerRGBA",
 
     /**
-     * @constructor
+     * Constructor of cc.LayerRGBA
      */
     ctor: function () {
         cc.Layer.prototype.ctor.call(this);
@@ -410,7 +410,7 @@ cc.LayerColor = cc.LayerRGBA.extend(/** @lends cc.LayerColor# */{
 
     _isLighterMode: false,
     /**
-     * @constructor
+     * Constructor of cc.LayerColor
      * @function
      * @param {cc.Color} [color=]
      * @param {Number} [width=]
@@ -585,7 +585,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _className: "LayerGradient",
 
     /**
-     * @constructor
+     * Constructor of cc.LayerGradient
      * @param {cc.Color} start starting color
      * @param {cc.Color} end
      * @param {cc.Point|Null} v
@@ -842,7 +842,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     _className: "LayerMultiplex",
 
     /**
-     * @constructor
+     * Constructor of cc.LayerMultiplex
      * @param {Array} layers an array of cc.Layer
      */
     ctor: function (layers) {

@@ -41,7 +41,7 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
     _userInfo:null,
 
     /**
-     * @constructor
+     * Constructor of cc.AnimationFrame
      * @param spriteFrame
      * @param delayUnits
      * @param userInfo
@@ -177,7 +177,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
 
 	/**
 	 * Creates an animation.
-	 * @constructor
+	 * Constructor of cc.Animation
 	 * @param {Array} frames
 	 * @param {Number} delay
 	 * @param {Number} [loops=1]

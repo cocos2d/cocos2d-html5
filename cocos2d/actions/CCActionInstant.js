@@ -169,7 +169,7 @@ cc.RemoveSelf = cc.ActionInstant.extend({
 	/**
 	 * Create a RemoveSelf object with a flag indicate whether the target should be cleaned up while removing.
 	 *
-	 * @constructor
+	 * Constructor of cc.RemoveSelf
 	 * @param {Boolean} [isNeedCleanUp=true]
 	 *
 	 * @example
@@ -225,7 +225,7 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
 	/**
 	 * Create a FlipX action to flip or unflip the target
 	 *
-	 * @constructor
+	 * Constructor of cc.FlipX
 	 * @param {Boolean} flip Indicate whether the target should be flipped or not
 	 *
 	 * @example
@@ -290,7 +290,7 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
 	/**
 	 * Create a FlipY action to flip or unflip the target
 	 *
-	 * @constructor
+	 * Constructor of cc.FlipY
 	 * @param {Boolean} flip
 	 * @example
 	 * var flipYAction = new cc.FlipY(true);
@@ -355,7 +355,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
 	/**
 	 * Creates a Place action with a position
 	 *
-	 * @constructor
+	 * Constructor of cc.Place
 	 * @param {cc.Point|Number} pos
 	 * @param {Number} [y]
 	 * @example
@@ -427,7 +427,7 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
 	/**
 	 * Creates a CallFunc action with the callback
 	 *
-	 * @constructor
+	 * Constructor of cc.CallFunc
 	 * @param {function} selector
 	 * @param {object|null} [selectorTarget]
 	 * @param {*|null} [data] data for function, it accepts all data types.

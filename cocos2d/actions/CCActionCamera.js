@@ -109,7 +109,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
 
 	/**
 	 * creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
-	 * @constructor
+	 * Constructor of cc.OrbitCamera
 	 * @param {Number} t time
 	 * @param {Number} radius
 	 * @param {Number} deltaRadius

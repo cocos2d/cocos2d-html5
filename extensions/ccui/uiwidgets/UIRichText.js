@@ -168,7 +168,7 @@ ccui.RichText = ccui.Widget.extend(/** @lends ccui.RichText# */{
 
     /**
      * create a rich text
-     * @constructor
+     * Constructor of ccui.RichText
      * @example
      * var uiRichText = new ccui.RichTex();
      */

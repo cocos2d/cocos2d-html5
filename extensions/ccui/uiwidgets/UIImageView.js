@@ -40,7 +40,7 @@ ccui.ImageView = ccui.Widget.extend(/** @lends ccui.ImageView# */{
 
     /**
      * allocates and initializes a UIImageView.
-     * @constructor
+     * Constructor of ccui.ImageView
      * @example
      * // example
      * var uiImageView = new ccui.ImageView;

@@ -36,7 +36,7 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
 
 	/**
 	 * Creates a ProgressTo action with a duration and a percent
-	 * @constructor
+	 * Constructor of cc.ProgressTo
 	 * @param {Number} duration duration in seconds
 	 * @param {Number} percent
 	 * @example
@@ -119,7 +119,7 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
 
 	/**
 	 * Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
-	 * @constructor
+	 * Constructor of cc.ProgressFromTo
 	 * @param {Number} duration duration in seconds
 	 * @param {Number} fromPercentage
 	 * @param {Number} toPercentage

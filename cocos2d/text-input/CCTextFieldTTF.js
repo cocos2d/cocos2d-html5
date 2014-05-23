@@ -101,8 +101,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _className:"TextFieldTTF",
 
     /**
-     *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size
-     * @constructor
+     *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size   <br/>
+     * Constructor of cc.TextFieldTTF
      * @param {String} placeholder
      * @param {cc.Size} dimensions
      * @param {Number} alignment

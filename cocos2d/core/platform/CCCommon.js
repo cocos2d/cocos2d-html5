@@ -230,7 +230,6 @@ cc.getImageFormatByData = function (imgData) {
 // The following code was copied + pasted from goog.base / goog.inherits
 //
 cc.inherits = function (childCtor, parentCtor) {
-    /** @constructor */
     function tempCtor() {}
     tempCtor.prototype = parentCtor.prototype;
     childCtor.superClass_ = parentCtor.prototype;

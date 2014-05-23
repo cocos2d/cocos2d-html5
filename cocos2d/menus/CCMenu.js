@@ -66,7 +66,6 @@ cc.Menu = cc.LayerRGBA.extend(/** @lends cc.Menu# */{
 
     /**
      * Constructor of cc.Menu
-     * @constructor
      * @function
      * @param {...cc.MenuItem|null} menuItems
      *

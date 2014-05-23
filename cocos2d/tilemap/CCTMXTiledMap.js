@@ -119,9 +119,8 @@ cc.TMXTiledMap = cc.NodeRGBA.extend(/** @lends cc.TMXTiledMap# */{
     _className: "TMXTiledMap",
 
     /**
-     * Creates a TMX Tiled Map with a TMX file  or content string.
-     * Implementation cc.TMXTiledMap
-     * @constructor
+     * Creates a TMX Tiled Map with a TMX file  or content string. <br/>
+     * Constructor of cc.TMXTiledMap
      * @param {String} tmxFile tmxFile fileName or content string
      * @param {String} resourcePath   If tmxFile is a file name ,it is not required.If tmxFile is content string ,it is must required.
      * @example

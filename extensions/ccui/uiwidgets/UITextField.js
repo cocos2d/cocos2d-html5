@@ -270,7 +270,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      * allocates and initializes a UITextField.
-     * @constructor
+     * Constructor of ccui.TextField
      * @example
      * // example
      * var uiTextField = new ccui.TextField();

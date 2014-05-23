@@ -299,7 +299,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *    This plist files can be create manually or with Particle Designer:<br/>
      *    http://particledesigner.71squared.com/<br/>
      * </p>
-     * @constructor
+     * Constructor of cc.ParticleSystem
      * @param {String|Number} plistFile
      */
     ctor:function (plistFile) {
