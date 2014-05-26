@@ -93,9 +93,19 @@ ccui.TextAtlas = ccui.Widget.extend(/** @lends ccui.TextAtlas# */{
 
     /**
      * get string value for labelatlas.
+     * @deprecated
      * @returns {String}
      */
     getStringValue: function () {
+        cc.log("Please use the getString");
+        return this._labelAtlasRenderer.getString();
+    },
+
+    /**
+     * get string value for labelatlas.
+     * @returns {String}
+     */
+    getString: function () {
         return this._labelAtlasRenderer.getString();
     },
 
@@ -199,7 +209,7 @@ var _p = ccui.TextAtlas.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
 
 _p = null;
 
