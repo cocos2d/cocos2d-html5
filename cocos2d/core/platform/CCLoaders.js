@@ -87,7 +87,7 @@ cc._fontLoader = {
         if(srcs instanceof Array){
             for(var i = 0, li = srcs.length; i < li; i++){
                 var src = srcs[i];
-                type = path.extname(src);
+                type = path.extname(src).toLowerCase();
                 fontStr += "url('" + srcs[i] + "') format('" + TYPE[type] + "')";
                 fontStr += (i == li - 1) ? ";" : ",";
             }

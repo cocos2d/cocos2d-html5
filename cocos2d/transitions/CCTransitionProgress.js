@@ -364,7 +364,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
         pNode.barChangeRate = cc.p(1, 1);
 
         pNode.percentage = 100;
-        this._setAttrs(pNode, winSize.width / 2, winSize.height / 2);
+        this._setAttrs(pNode, size.width / 2, size.height / 2);
 
         return pNode;
     }

@@ -104,8 +104,10 @@ cc.LoaderScene = cc.Scene.extend({
         self.unschedule(self._startLoading);
         var res = self.resources;
         self._length = res.length;
+        self._count = 0;
         cc.loader.load(res, function(result, count){ self._count = count; }, function(){
-            self.cb();
+            if(self.cb)
+                self.cb();
         });
         self.schedule(self._updatePercent);
     },

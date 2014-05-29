@@ -59,9 +59,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
  * @return {cc.Layer|Null}
  */
 cc.Layer.create = function () {
-    var ret = new cc.Layer();
-    return ret;
-
+    return new cc.Layer();
 };
 
 /**
