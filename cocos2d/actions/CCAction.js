@@ -255,7 +255,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
     _innerAction:null,
 
 	/**
-	 * @constructor
+	 * Constructor of cc.Speed
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} speed
 	 */
@@ -414,7 +414,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
 	 * creates the action with a set boundary <br/>
 	 * creates the action with no boundary set
 	 *
-	 * @constructor
+	 * Constructor of cc.Follow
 	 * @param {cc.Node} followedNode
 	 * @param {cc.Rect} rect
 	 * @example

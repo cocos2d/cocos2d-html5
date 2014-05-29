@@ -39,7 +39,7 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
 
     /**
      * allocates and initializes a UILabelBMFont.
-     * @constructor
+     * Constructor of ccui.TextBMFont
      * @example
      * // example
      * var uiLabelBMFont = new ccui.TextBMFont();
@@ -65,7 +65,7 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
         this.updateAnchorPoint();
         this.labelBMFontScaleChangedWithSize();
         this._fileHasInit = true;
-        this.setText(this._stringValue);
+        this.setString(this._stringValue);
 
         if (!this._labelBMFontRenderer.textureLoaded()) {
             this._labelBMFontRenderer.addLoadedEventListener(function () {
@@ -76,9 +76,24 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
 
     /**
      * set string value for labelbmfont
+     * @deprecated
      * @param {String} value
      */
     setText: function (value) {
+        cc.log("Please use the setString");
+        if (!value) {
+            return;
+        }
+        this._stringValue = value;
+        this._labelBMFontRenderer.setString(value);
+        this.labelBMFontScaleChangedWithSize();
+    },
+
+    /**
+     * set string value for labelbmfont
+     * @param {String} value
+     */
+    setString: function (value) {
         if (!value) {
             return;
         }
@@ -91,7 +106,7 @@ ccui.TextBMFont = ccui.Widget.extend(/** @lends ccui.TextBMFont# */{
      * get string value for labelbmfont.
      * @returns {String}
      */
-    getStringValue: function () {
+    getString: function () {
         return this._stringValue;
     },
 
@@ -196,7 +211,7 @@ var _p = ccui.TextBMFont.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setStringValue);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setStringValue);
 
 _p = null;
 

@@ -49,7 +49,7 @@ ccui.PageView = ccui.Layout.extend(/** @lends ccui.PageView# */{
     _className:"PageView",
     /**
      * allocates and initializes a UIPageView.
-     * @constructor
+     * Constructor of ccui.PageView
      * @example
      * // example
      * var uiPageView = new ccui.PageView();

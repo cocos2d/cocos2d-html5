@@ -153,6 +153,8 @@ samael               @samael65535   CCPhysicsSprite bug fix
 
 NatWeiss             @NatWeiss      Add analytics plugin protocol ,Flurry plugin and ProtocolAds.js plugin protocol
                                     cc.FileUtils refactoring
+                                    cc.Audio bugs fix
+                                    cc.Texture2D bug fix
 
 Andor Salga          @asalga        typo fix
 
@@ -165,6 +167,10 @@ Asano                @LaercioAsano  cc.Node bug fix
 
 Bruno Assarisse      @bassarisse    cc.LabelBMFont bug fix
 
+musikov              @musikov       cc.ClippingNode bug fix
+                                    cc.fontLoader bug fix
+
+Han XiaoLong         @kpkhxlgy0     cc.ParticleSytem bug fix
 
 Retired Core Developers:
       Shengxiang Chen (Nero Chan)

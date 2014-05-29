@@ -343,9 +343,27 @@ cc.EditBox = cc.ControlButton.extend({
 
     /**
      *  Set the text entered in the edit box.
+     * @deprecated
      * @param {string} text The given text.
      */
     setText: function (text) {
+        cc.log("Please use the setString");
+        if (text != null) {
+            if (text == "") {
+                this._edTxt.value = this._placeholderText;
+                this._edTxt.style.color = cc.colorToHex(this._placeholderColor);
+            } else {
+                this._edTxt.value = text;
+                this._edTxt.style.color = cc.colorToHex(this._textColor);
+            }
+        }
+    },
+
+    /**
+     *  Set the text entered in the edit box.
+     * @param {string} text The given text.
+     */
+    setString: function (text) {
         if (text != null) {
             if (text == "") {
                 this._edTxt.value = this._placeholderText;
@@ -476,9 +494,19 @@ cc.EditBox = cc.ControlButton.extend({
 
     /**
      * Gets the  input string of the edit box.
+     * @deprecated
      * @return {string}
      */
     getText: function () {
+        cc.log("Please use the getString");
+        return this._edTxt.value;
+    },
+
+    /**
+     * Gets the  input string of the edit box.
+     * @return {string}
+     */
+    getString: function () {
         return this._edTxt.value;
     },
 
@@ -592,7 +620,7 @@ _p.fontColor;
 cc.defineGetterSetter(_p, "fontColor", null, _p.setFontColor);
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getText, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 /** @expose */
 _p.maxLength;
 cc.defineGetterSetter(_p, "maxLength", _p.getMaxLength, _p.setMaxLength);

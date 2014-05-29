@@ -66,7 +66,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     /**
      * Creates and initializes a clipping node with an other node as its stencil.
      * The stencil node will be retained.
-     * @constructor
+     * Constructor of cc.ClippingNode
      * @param {cc.Node} [stencil=null]
      */
     ctor: function (stencil) {

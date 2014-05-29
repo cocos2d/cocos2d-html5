@@ -447,7 +447,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var touchScaleChangeAble = options["touchScaleEnable"];
         label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
-        label.setText(text);
+        label.setString(text);
         if (options["fontSize"] !== undefined) {
             label.setFontSize(options["fontSize"]);
         }
@@ -622,7 +622,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
     setPropsForTextAreaFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textArea = widget;
-        textArea.setText(options["text"]);
+        textArea.setString(options["text"]);
         if (options["fontSize"] !== undefined) {
             textArea.setFontSize(options["fontSize"]);
         }
@@ -668,7 +668,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         if (options["placeHolder"] !== undefined) {
             textField.setPlaceHolder(options["placeHolder"]);
         }
-        textField.setText(options["text"]);
+        textField.setString(options["text"]);
         if (options["fontSize"] !== undefined) {
             textField.setFontSize(options["fontSize"]);
         }
@@ -732,7 +732,7 @@ ccs.WidgetPropertiesReader0250 = ccs.WidgetPropertiesReader.extend({
         var cmf_tp = this._filePath + cmft;
         labelBMFont.setFntFile(cmf_tp);
         var text = options["text"];
-        labelBMFont.setText(text);
+        labelBMFont.setString(text);
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     }
 });
@@ -1182,7 +1182,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         var touchScaleChangeAble = options["touchScaleEnable"];
         label.setTouchScaleChangeEnabled(touchScaleChangeAble);
         var text = options["text"];
-        label.setText(text);
+        label.setString(text);
         if (options["fontSize"] !== undefined) {
             label.setFontSize(options["fontSize"]);
         }
@@ -1428,7 +1428,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
     setPropsForTextAreaFromJsonDictionary: function (widget, options) {
         this.setPropsForWidgetFromJsonDictionary(widget, options);
         var textArea = widget;
-        textArea.setText(options["text"]);
+        textArea.setString(options["text"]);
         if (options["fontSize"] !== undefined) {
             textArea.setFontSize(options["fontSize"]);
         }
@@ -1474,7 +1474,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         if (options["placeHolder"] !== undefined) {
             textField.setPlaceHolder(options["placeHolder"]);
         }
-        textField.setText(options["text"]);
+        textField.setString(options["text"]);
         if (options["fontSize"] !== undefined) {
             textField.setFontSize(options["fontSize"]);
         }
@@ -1588,7 +1588,7 @@ ccs.WidgetPropertiesReader0300 = ccs.WidgetPropertiesReader.extend({
         cmftDic = null;
 
         var text = options["text"];
-        labelBMFont.setText(text);
+        labelBMFont.setString(text);
 
         this.setColorPropsForWidgetFromJsonDictionary(widget, options);
     }

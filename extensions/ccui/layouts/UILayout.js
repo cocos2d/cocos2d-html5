@@ -63,7 +63,7 @@ ccui.Layout = ccui.Widget.extend(/** @lends ccui.Layout# */{
 
     /**
      * allocates and initializes a UILayout.
-     * @constructor
+     * Constructor of ccui.Layout
      * @example
      * // example
      * var uiLayout = new ccui.Layout();

@@ -382,9 +382,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      *    creates a cc.SpriteBatchNodeCanvas with a file image (.png, .jpg etc) with a default capacity of 29 children.<br/>
      *    The capacity will be increased in 33% in runtime if it run out of space.<br/>
      *    The file will be loaded using the TextureMgr.<br/>
+     *    Constructor of cc.SpriteBatchNode
      * </p>
      * @function
-     * @constructor
+     *
      * @param {String} fileImage
      * @param {Number} capacity
      * @example

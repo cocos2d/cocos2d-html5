@@ -95,8 +95,8 @@ cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNode# */{
     _drawColor: null,
     _className:"DrawNodeCanvas",
 
-	/*
-	 * @constructor
+	/**
+	 * Constructor of cc.DrawNode for Canvas
 	 */
     ctor: function () {
         cc.Node.prototype.ctor.call(this);

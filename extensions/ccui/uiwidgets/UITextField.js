@@ -270,7 +270,7 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      * allocates and initializes a UITextField.
-     * @constructor
+     * Constructor of ccui.TextField
      * @example
      * // example
      * var uiTextField = new ccui.TextField();
@@ -310,9 +310,34 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      *  Changes the string value of textField.
+     * @deprecated
      * @param {String} text
      */
     setText: function (text) {
+        cc.log("Please use the setString");
+        if (!text) {
+            return;
+        }
+        text = String(text);
+        if (this.isMaxLengthEnabled()) {
+            text = text.substr(0, this.getMaxLength());
+        }
+        if (this.isPasswordEnabled()) {
+            this._textFieldRender.setPasswordText(text);
+            this._textFieldRender.insertText(text, text.length);
+        }
+        else {
+            this._textFieldRender.setString(text);
+        }
+        this._textFieldRender.setString(text);
+        this.textfieldRendererScaleChangedWithSize();
+    },
+
+    /**
+     *  Changes the string value of textField.
+     * @param {String} text
+     */
+    setString: function (text) {
         if (!text) {
             return;
         }
@@ -398,9 +423,19 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
 
     /**
      * get textField string value
+     * @deprecated
      * @returns {String}
      */
     getStringValue: function () {
+        cc.log("Please use the getString");
+        return this._textFieldRender.getString();
+    },
+
+    /**
+     * get textField string value
+     * @returns {String}
+     */
+    getString: function () {
         return this._textFieldRender.getString();
     },
 
@@ -706,8 +741,8 @@ ccui.TextField = ccui.Widget.extend(/** @lends ccui.TextField# */{
     },
 
     copySpecialProperties: function (textField) {
-        this.setText(textField._textFieldRender.getString());
-        this.setPlaceHolder(textField.getStringValue());
+        this.setString(textField._textFieldRender.getString());
+        this.setPlaceHolder(textField.getString());
         this.setFontSize(textField._textFieldRender.getFontSize());
         this.setFontName(textField._textFieldRender.getFontName());
         this.setMaxLengthEnabled(textField.isMaxLengthEnabled());
@@ -726,7 +761,7 @@ var _p = ccui.TextField.prototype;
 // Extended properties
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setText);
 /** @expose */
 _p.placeHolder;
 cc.defineGetterSetter(_p, "placeHolder", _p.getPlaceHolder, _p.setPlaceHolder);

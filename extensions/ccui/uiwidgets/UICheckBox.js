@@ -53,7 +53,7 @@ ccui.CheckBox = ccui.Widget.extend(/** @lends ccui.CheckBox# */{
 
     /**
      * allocates and initializes a UICheckBox.
-     * @constructor
+     * Constructor of ccui.CheckBox
      * @example
      * // example
      * var uiCheckBox = new ccui.CheckBox();

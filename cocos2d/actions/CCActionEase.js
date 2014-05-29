@@ -36,7 +36,7 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
 	/**
 	 * creates the action of ActionEase
 	 *
-	 * @constructor
+	 * Constructor of cc.ActionEase
 	 * @param {cc.ActionInterval} action
 	 *
 	 * @example
@@ -125,7 +125,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
 	/**
 	 * Creates the action with the inner action and the rate parameter
 	 *
-	 * @constructor
+	 * Constructor of cc.EaseRateAction
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} rate
 	 *
@@ -681,7 +681,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
 
 	/** Creates the action with the inner action and the period in radians (default is 0.3)
 	 *
-	 * @constructor
+	 * Constructor of cc.EaseElastic
 	 * @param {cc.ActionInterval} action
 	 * @param {Number} [period=0.3]
 	 *
@@ -1398,5 +1398,719 @@ cc._easeBackInOutObj = {
 
 cc.easeBackInOut = function(){
     return cc._easeBackInOutObj;
+};
+
+/**
+ * cc.EaseBezierAction action.
+ * @type {Function|*}
+ */
+cc.EaseBezierAction = cc.ActionEase.extend(/** @lends cc.EaseBezierAction# */{
+
+    _p0: null,
+    _p1: null,
+    _p2: null,
+    _p3: null,
+
+    ctor: function(action){
+        cc.ActionEase.prototype.ctor.call(this, action);
+    },
+
+    _updateTime: function(a, b, c, d, t){
+        return (Math.pow(1-t,3) * a + 3*t*(Math.pow(1-t,2))*b + 3*Math.pow(t,2)*(1-t)*c + Math.pow(t,3)*d );
+    },
+
+    update: function(time){
+        var t = this._updateTime(this._p0, this._p1, this._p2, this._p3, time);
+        this._inner.update(t);
+    },
+    clone: function(){
+        var action = new cc.EaseBezierAction();
+        action.initWithAction(this._inner.clone());
+        action.setBezierParamer(this._p0, this._p1, this._p2, this._p3);
+        return action;
+    },
+    reverse: function(){
+        var action = cc.EaseBezierAction.create(this._inner.reverse());
+        action.setBezierParamer(this._p3, this._p2, this._p1, this._p0);
+        return action;
+    },
+    setBezierParamer: function(p0, p1, p2, p3){
+        this._p0 = p0 || 0;
+        this._p1 = p1 || 0;
+        this._p2 = p2 || 0;
+        this._p3 = p3 || 0;
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionIn}
+ */
+cc.EaseBezierAction.create = function(action){
+    return new cc.EaseBezierAction(action);
+};
+
+cc.easeBezierAction = function(p0, p1, p2, p3){
+    return {
+        easing: function(time){
+            return cc.EaseBezierAction.prototype._updateTime(p0, p1, p2, p3, time);
+        },
+        reverse: function(){
+            return cc.easeBezierAction(p3, p2, p1, p0);
+        }
+    };
+};
+
+
+/**
+ * cc.EaseQuadraticActionIn action.
+ * @type {Function|*}
+ */
+cc.EaseQuadraticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActionIn# */{
+
+    _updateTime: function(time){
+        return Math.pow(time, 2);
+    },
+
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+
+    clone: function(){
+        var action = new cc.EaseQuadraticActionIn();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+
+    reverse: function(){
+        return cc.EaseQuadraticActionIn.create(this._inner.reverse());
+    }
+
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionIn}
+ */
+cc.EaseQuadraticActionIn.create = function(action){
+    return new cc.EaseQuadraticActionIn(action);
+};
+
+cc._easeQuadraticActionIn = {
+    easing: cc.EaseQuadraticActionIn.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuadraticActionIn;
+    }
+};
+
+cc.easeQuadraticActionIn = function(){
+    return cc._easeQuadraticActionIn;
+};
+
+/**
+ * cc.EaseQuadraticActionIn action.
+ * @type {Function|*}
+ */
+cc.EaseQuadraticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActionOut# */{
+
+    _updateTime: function(time){
+        return -time*(time-2);
+    },
+
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuadraticActionOut();
+        action.initWithAction();
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuadraticActionOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuadraticActionOut.create = function(action){
+    return new cc.EaseQuadraticActionOut(action);
+};
+
+cc._easeQuadraticActionOut = {
+    easing: cc.EaseQuadraticActionOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuadraticActionOut;
+    }
+};
+
+cc.easeQuadraticActionOut = function(){
+    return cc._easeQuadraticActionOut;
+};
+
+/**
+ * cc.EaseQuadraticActionInOut action.
+ * @type {Function|*}
+ */
+cc.EaseQuadraticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuadraticActionInOut# */{
+    _updateTime: function(time){
+        var resultTime = time;
+        time *= 2;
+        if(time < 1){
+            resultTime = time * time * 0.5;
+        }else{
+            --time;
+            resultTime = -0.5 * ( time * ( time - 2 ) - 1)
+        }
+        return resultTime;
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuadraticActionInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuadraticActionInOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuadraticActionInOut.create = function(action){
+    return new cc.EaseQuadraticActionInOut(action);
+};
+
+cc._easeQuadraticActionInOut = {
+    easing: cc.EaseQuadraticActionInOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuadraticActionInOut;
+    }
+};
+
+cc.easeQuadraticActionInOut = function(){
+    return cc._easeQuadraticActionInOut;
+};
+
+/**
+ * cc.EaseQuarticActionIn action.
+ * @type {Function|*}
+ */
+cc.EaseQuarticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionIn# */{
+    _updateTime: function(time){
+        return time * time * time * time;
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuarticActionIn();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuarticActionIn.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuarticActionIn.create = function(action){
+    return new cc.EaseQuarticActionIn(action);
+};
+
+cc._easeQuarticActionIn = {
+    easing: cc.EaseQuarticActionIn.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuarticActionIn;
+    }
+};
+
+cc.easeQuarticActionIn = function(){
+    return cc._easeQuarticActionIn;
+};
+
+/**
+ * cc.EaseQuarticActionOut action.
+ * @type {Function|*}
+ */
+cc.EaseQuarticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionOut# */{
+    _updateTime: function(time){
+        time -= 1;
+        return -(time * time * time * time - 1);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuarticActionOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuarticActionOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuarticActionOut.create = function(action){
+    return new cc.EaseQuarticActionOut(action);
+};
+
+cc._easeQuarticActionOut = {
+    easing: cc.EaseQuarticActionOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuarticActionOut;
+    }
+};
+
+cc.easeQuarticActionOut = function(){
+    return cc._easeQuarticActionOut;
+};
+
+/**
+ * cc.EaseQuarticActionInOut action.
+ * @type {Function|*}
+ */
+cc.EaseQuarticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuarticActionInOut# */{
+    _updateTime: function(time){
+        time = time*2;
+        if (time < 1)
+            return 0.5 * time * time * time * time;
+        time -= 2;
+        return -0.5 * (time * time * time * time - 2);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuarticActionInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuarticActionInOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuarticActionInOut.create = function(action){
+    return new cc.EaseQuarticActionInOut(action);
+};
+
+cc._easeQuarticActionInOut = {
+    easing: cc.EaseQuarticActionInOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuarticActionInOut;
+    }
+};
+
+cc.easeQuarticActionInOut = function(){
+    return cc._easeQuarticActionInOut;
+};
+
+/**
+ * cc.EaseQuinticActionIn action.
+ * @type {Function|*}
+ */
+cc.EaseQuinticActionIn = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionIn# */{
+    _updateTime: function(time){
+        return time * time * time * time * time;
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuinticActionIn();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuinticActionIn.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuinticActionIn.create = function(action){
+    return new cc.EaseQuinticActionIn(action);
+};
+
+cc._easeQuinticActionIn = {
+    easing: cc.EaseQuinticActionIn.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuinticActionIn;
+    }
+};
+
+cc.easeQuinticActionIn = function(){
+    return cc._easeQuinticActionIn;
+};
+
+/**
+ * cc.EaseQuinticActionOut action.
+ * @type {Function|*}
+ */
+cc.EaseQuinticActionOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionOut# */{
+    _updateTime: function(time){
+        time -=1;
+        return (time * time * time * time * time + 1);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuinticActionOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuinticActionOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuinticActionOut.create = function(action){
+    return new cc.EaseQuinticActionOut(action);
+};
+
+cc._easeQuinticActionOut = {
+    easing: cc.EaseQuinticActionOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuinticActionOut;
+    }
+};
+
+cc.easeQuinticActionOut = function(){
+    return cc._easeQuinticActionOut;
+};
+
+/**
+ * cc.EaseQuinticActionInOut action.
+ * @type {Function|*}
+ */
+cc.EaseQuinticActionInOut = cc.ActionEase.extend(/** @lends cc.EaseQuinticActionInOut# */{
+    _updateTime: function(time){
+        time = time*2;
+        if (time < 1)
+            return 0.5 * time * time * time * time * time;
+        time -= 2;
+        return 0.5 * (time * time * time * time * time + 2);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseQuinticActionInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseQuinticActionInOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseQuinticActionInOut.create = function(action){
+    return new cc.EaseQuinticActionInOut(action);
+};
+
+cc._easeQuinticActionInOut = {
+    easing: cc.EaseQuinticActionInOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeQuinticActionInOut;
+    }
+};
+
+cc.easeQuinticActionInOut = function(){
+    return cc._easeQuinticActionInOut;
+};
+
+/**
+ * cc.EaseCircleActionIn action.
+ * @type {Function|*}
+ */
+cc.EaseCircleActionIn = cc.ActionEase.extend(/** @lends cc.EaseCircleActionIn# */{
+    _updateTime: function(time){
+        return -1 * (Math.sqrt(1 - time * time) - 1);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseCircleActionIn();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseCircleActionIn.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseCircleActionIn.create = function(action){
+    return new cc.EaseCircleActionIn(action);
+};
+
+cc._easeCircleActionIn = {
+    easing: cc.EaseCircleActionIn.prototype._updateTime,
+    reverse: function(){
+        return cc._easeCircleActionIn;
+    }
+};
+
+cc.easeCircleActionIn = function(){
+    return cc._easeCircleActionIn;
+};
+
+/**
+ * cc.EaseCircleActionOut action.
+ * @type {Function|*}
+ */
+cc.EaseCircleActionOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionOut# */{
+    _updateTime: function(time){
+        time = time - 1;
+        return Math.sqrt(1 - time * time);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseCircleActionOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseCircleActionOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseCircleActionOut.create = function(action){
+    return new cc.EaseCircleActionOut(action);
+};
+
+cc._easeCircleActionOut = {
+    easing: cc.EaseCircleActionOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeCircleActionOut;
+    }
+};
+
+cc.easeCircleActionOut = function(){
+    return cc._easeCircleActionOut;
+};
+
+/**
+ * cc.EaseCircleActionInOut action.
+ * @type {Function|*}
+ */
+cc.EaseCircleActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCircleActionInOut# */{
+    _updateTime: function(time){
+        time = time * 2;
+        if (time < 1)
+            return -0.5 * (Math.sqrt(1 - time * time) - 1);
+        time -= 2;
+        return 0.5 * (Math.sqrt(1 - time * time) + 1);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseCircleActionInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseCircleActionInOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseCircleActionInOut.create = function(action){
+    return new cc.EaseCircleActionInOut(action);
+};
+
+cc._easeCircleActionInOut = {
+    easing: cc.EaseCircleActionInOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeCircleActionInOut;
+    }
+};
+
+cc.easeCircleActionInOut = function(){
+    return cc._easeCircleActionInOut;
+};
+
+/**
+ * cc.EaseCubicActionIn action.
+ * @type {Function|*}
+ */
+cc.EaseCubicActionIn = cc.ActionEase.extend(/** @lends cc.EaseCubicActionIn# */{
+    _updateTime: function(time){
+        return time * time * time;
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseCubicActionIn();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseCubicActionIn.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseCubicActionIn.create = function(action){
+    return new cc.EaseCubicActionIn(action);
+};
+
+cc._easeCubicActionIn = {
+    easing: cc.EaseCubicActionIn.prototype._updateTime,
+    reverse: function(){
+        return cc._easeCubicActionIn;
+    }
+};
+
+cc.easeCubicActionIn = function(){
+    return cc._easeCubicActionIn;
+};
+
+/**
+ * cc.EaseCubicActionOut action.
+ * @type {Function|*}
+ */
+cc.EaseCubicActionOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionOut# */{
+    _updateTime: function(time){
+        time -= 1;
+        return (time * time * time + 1);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseCubicActionOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseCubicActionOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseCubicActionOut.create = function(action){
+    return new cc.EaseCubicActionOut(action);
+};
+
+cc._easeCubicActionOut = {
+    easing: cc.EaseCubicActionOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeCubicActionOut;
+    }
+};
+
+cc.easeCubicActionOut = function(){
+    return cc._easeCubicActionOut;
+};
+
+
+/**
+ * cc.EaseCubicActionInOut action.
+ * @type {Function|*}
+ */
+cc.EaseCubicActionInOut = cc.ActionEase.extend(/** @lends cc.EaseCubicActionInOut# */{
+    _updateTime: function(time){
+        time = time*2;
+        if (time < 1)
+            return 0.5 * time * time * time;
+        time -= 2;
+        return 0.5 * (time * time * time + 2);
+    },
+    update: function(time){
+        this._inner.update(this._updateTime(time));
+    },
+    clone: function(){
+        var action = new cc.EaseCubicActionInOut();
+        action.initWithAction(this._inner.clone());
+        return action;
+    },
+    reverse: function(){
+        return cc.EaseCubicActionInOut.create(this._inner.reverse());
+    }
+});
+
+/**
+ * creates the action
+ * @param action
+ * @returns {cc.EaseQuadraticActionOut}
+ */
+cc.EaseCubicActionInOut.create = function(action){
+    return new cc.EaseCubicActionInOut(action);
+};
+
+cc._easeCubicActionInOut = {
+    easing: cc.EaseCubicActionInOut.prototype._updateTime,
+    reverse: function(){
+        return cc._easeCubicActionInOut;
+    }
+};
+
+cc.easeCubicActionInOut = function(){
+    return cc._easeCubicActionInOut;
 };
 

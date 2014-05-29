@@ -54,7 +54,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
 
     /**
      * allocates and initializes a UILabel.
-     * @constructor
+     * Constructor of ccui.Text
      * @example
      * // example
      * var uiLabel = new ccui.Text();
@@ -77,19 +77,40 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     },
 
     /**
-     *  Changes the  value of label.
+     * Changes the  value of label.
+     * @deprecated
      * @param {String} text
      */
     setText: function (text) {
+        cc.log("Please use the setString");
+        this._labelRenderer.setString(text);
+        this.labelScaleChangedWithSize();
+    },
+
+    /**
+     * Changes the  value of label.
+     * @param {String} text
+     */
+    setString: function (text) {
         this._labelRenderer.setString(text);
         this.labelScaleChangedWithSize();
     },
 
     /**
      * Gets the string value of label.
+     * @deprecated
      * @returns {String}
      */
     getStringValue: function () {
+        cc.log("Please use the getString");
+        return this._labelRenderer.getString();
+    },
+
+    /**
+     * Gets the string value of label.
+     * @returns {String}
+     */
+    getString: function () {
         return this._labelRenderer.getString();
     },
 
@@ -363,7 +384,7 @@ ccui.Text = ccui.Widget.extend(/** @lends ccui.Text# */{
     copySpecialProperties: function (uiLabel) {
         this.setFontName(uiLabel._fontName);
         this.setFontSize(uiLabel._labelRenderer.getFontSize());
-        this.setText(uiLabel.getStringValue());
+        this.setString(uiLabel.getString());
         this.setTouchScaleChangeEnabled(uiLabel.touchScaleEnabled);
         this.setTextAreaSize(uiLabel._size);
         this.setTextHorizontalAlignment(uiLabel._textHorizontalAlignment);
@@ -382,7 +403,7 @@ _p.boundingHeight;
 cc.defineGetterSetter(_p, "boundingHeight", _p._getBoundingHeight, _p._setBoundingHeight);
 /** @expose */
 _p.string;
-cc.defineGetterSetter(_p, "string", _p.getStringValue, _p.setText);
+cc.defineGetterSetter(_p, "string", _p.getString, _p.setString);
 /** @expose */
 _p.stringLength;
 cc.defineGetterSetter(_p, "stringLength", _p.getStringLength);

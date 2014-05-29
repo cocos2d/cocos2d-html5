@@ -35,7 +35,7 @@ cc.ShakyTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShakyTiles3D# */{
 
 	/**
 	 * creates the action with a range, whether or not to shake Z vertices, a grid size, and duration
-	 * @constructor
+	 * Constructor of cc.ShakyTiles3D
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} range
@@ -121,7 +121,7 @@ cc.ShatteredTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.ShatteredTiles3D
 
 	/**
 	 * creates the action with a range, whether of not to shatter Z vertices, a grid size and duration
-	 * @constructor
+	 * Constructor of cc.ShatteredTiles3D
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} range
@@ -225,7 +225,7 @@ cc.ShuffleTiles = cc.TiledGrid3DAction.extend(/** @lends cc.ShuffleTiles# */{
 
 	/**
 	 * creates the action with a random seed, the grid size and the duration
-	 * @constructor
+	 * Constructor of cc.ShuffleTiles
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} seed
@@ -683,7 +683,7 @@ cc.WavesTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.WavesTiles3D# */{
 
 	/**
 	 * creates the action with a number of waves, the waves amplitude, the grid size and the duration
-	 * @constructor
+	 * Constructor of cc.WavesTiles3D
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} waves
@@ -787,7 +787,7 @@ cc.JumpTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.JumpTiles3D# */{
 
 	/**
 	 * creates the action with the number of jumps, the sin amplitude, the grid size and the duration
-	 * @constructor
+	 * Constructor of cc.JumpTiles3D
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} numberOfJumps
@@ -904,7 +904,7 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
 
 	/**
 	 * creates the action with the number of rows to split and the duration
-	 * @constructor
+	 * Constructor of cc.SplitRows
 	 * @param {Number} duration
 	 * @param {Number} rows
 	 */
@@ -971,7 +971,7 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
 
 	/**
 	 * Creates the action with the number of columns to split and the duration
-	 * @constructor
+	 * Constructor of cc.SplitCols
 	 * @param {Number} duration
 	 * @param {Number} cols
 	 */

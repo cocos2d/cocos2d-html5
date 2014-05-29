@@ -1616,7 +1616,7 @@ if (cc._renderType === cc._RENDER_TYPE_CANVAS) {
                     locTextureCoord.x, locTextureCoord.y, locTextureCoord.width,  locTextureCoord.height,
                     flipXOffset, flipYOffset, locDrawSizeCanvas.width , locDrawSizeCanvas.height);
             }
-        } else if (locContentSize.width !== 0) {
+        } else if (!_t._texture && locTextureCoord.validRect) {
             var curColor = _t.color;
             context.fillStyle = "rgba(" + curColor.r + "," + curColor.g + "," + curColor.b + ",1)";
             context.fillRect(flipXOffset, flipYOffset, locContentSize.width * locEGL_ScaleX, locContentSize.height * locEGL_ScaleY);

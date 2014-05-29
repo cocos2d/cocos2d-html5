@@ -1386,6 +1386,7 @@ ccui.Widget = ccui.Node.extend(/** @lends ccui.Widget# */{
      * @param {Number} opacity
      */
     setOpacity: function (opacity) {
+        if(opacity === this._color.a) return;
         this._color.a = opacity;
         this.updateTextureOpacity(opacity);
     },

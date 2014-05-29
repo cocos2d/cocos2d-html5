@@ -89,7 +89,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * creates a cc.LabelTTF from a font name, alignment, dimension and font size
-     * @constructor
+     * Constructor of cc.LabelTTF
      * @param {String} text
      * @param {String|cc.FontDefinition} [fontName="Arial"]
      * @param {Number} [fontSize=16]

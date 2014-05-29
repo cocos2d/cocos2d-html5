@@ -75,7 +75,7 @@ ccui.ScrollView = ccui.Layout.extend(/** @lends ccui.ScrollView# */{
     _className: "ScrollView",
     /**
      * allocates and initializes a UIScrollView.
-     * @constructor
+     * Constructor of ccui.ScrollView
      * @example
      * // example
      * var uiScrollView = new ccui.ScrollView();

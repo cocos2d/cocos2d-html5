@@ -133,7 +133,7 @@ cc.FlipX3D = cc.Grid3DAction.extend(/** @lends cc.FlipX3D# */{
 
 	/**
 	 * Create a Flip X 3D action with duration
-	 * @constructor
+	 * Constructor of cc.FlipX3D
 	 * @param {Number} duration
 	 */
 	ctor: function(duration) {
@@ -247,7 +247,7 @@ cc.FlipY3D = cc.FlipX3D.extend(/** @lends cc.FlipY3D# */{
 
 	/**
 	 * Create a flip Y 3d action with duration
-	 * @constructor
+	 * Constructor of cc.FlipY3D
 	 * @param {Number} duration
 	 */
 	ctor: function(duration) {
@@ -346,7 +346,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
 
 	/**
 	 * creates a lens 3d action with center position, radius
-	 * @constructor
+	 * Constructor of cc.Lens3D
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {cc.Point} position
@@ -492,7 +492,7 @@ cc.Ripple3D = cc.Grid3DAction.extend(/** @lends cc.Ripple3D# */{
 
 	/**
 	 * creates a ripple 3d action with radius, number of waves, amplitude
-	 * @constructor
+	 * Constructor of cc.Ripple3D
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {cc.Point} position
@@ -629,7 +629,7 @@ cc.Shaky3D = cc.Grid3DAction.extend(/** @lends cc.Shaky3D# */{
 
 	/**
 	 * Create a shaky3d action with a range, shake Z vertices
-	 * @constructor
+	 * Constructor of cc.Shaky3D
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} range
@@ -700,8 +700,7 @@ cc.Liquid = cc.Grid3DAction.extend(/** @lends cc.Liquid# */{
 
 	/**
 	 * Create a liquid action with amplitude, a grid and duration
-	 *
-	 * @constructor
+	 * Constructor of cc.Liquid
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} waves
@@ -805,8 +804,7 @@ cc.Waves = cc.Grid3DAction.extend(/** @lends cc.Waves# */{
 
 	/**
 	 * Create a wave action with amplitude, horizontal sin, vertical sin, a grid and duration
-	 *
-	 * @constructor
+	 * Constructor of cc.Waves
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {Number} waves
@@ -922,8 +920,7 @@ cc.Twirl = cc.Grid3DAction.extend(/** @lends cc.Twirl# */{
 
 	/**
 	 * Create a grid 3d action with center position, number of twirls, amplitude, a grid size and duration
-	 *
-	 * @constructor
+	 * Constructor of cc.Twirl
 	 * @param {Number} duration
 	 * @param {cc.Size} gridSize
 	 * @param {cc.Point} position
