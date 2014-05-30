@@ -60,12 +60,12 @@ _p._registerKeyboardEvent = function(){
         cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, true));
         e.stopPropagation();
         e.preventDefault();
-    });
+    }, false);
     cc._addEventListener(cc._canvas, "keyup", function (e) {
         cc.eventManager.dispatchEvent(new cc.EventKeyboard(e.keyCode, false));
         e.stopPropagation();
         e.preventDefault();
-    });
+    }, false);
 };
 
 _p._registerAccelerometerEvent = function(){
