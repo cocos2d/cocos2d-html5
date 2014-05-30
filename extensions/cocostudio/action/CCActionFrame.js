@@ -109,7 +109,7 @@ ccs.ActionFrame = ccs.Class.extend(/** @lends ccs.ActionFrame# */{
     },
 
     _getEasingAction : function (action) {
-        if (action == null) {
+        if (action === null) {
             console.error("Action cannot be null!");
             return null;
         }
@@ -258,10 +258,11 @@ ccs.ActionMoveFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionMoveFrame# */{
     /**
      * Gets the CCAction of ActionFrame.
      * @param {number} duration
-     * @returns {cc.Action}
+     * @returns {cc.MoveTo}
      */
     getAction: function (duration) {
         var action = cc.MoveTo.create(duration, this._position);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
         return this._getEasingAction(action);
     }
 });
@@ -316,10 +317,11 @@ ccs.ActionScaleFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionScaleFrame# *
     /**
      * Gets the action of ActionFrame.
      * @param duration
-     * @returns {cc.Action}
+     * @returns {cc.ScaleTo}
      */
     getAction: function (duration) {
         var action = cc.ScaleTo.create(duration, this._scaleX, this._scaleY);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
         return this._getEasingAction(action);
     }
 });
@@ -356,10 +358,11 @@ ccs.ActionRotationFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionRotationFr
     /**
      * Gets the CCAction of ActionFrame.
      * @param {number} duration
-     * @returns {cc.Action}
+     * @returns {cc.RotateTo}
      */
     getAction: function (duration) {
         var action = cc.RotateTo.create(duration, this._rotation);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
         return this._getEasingAction(action);
     }
 });
@@ -396,10 +399,11 @@ ccs.ActionFadeFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionFadeFrame# */{
     /**
      * Gets the CCAction of ActionFrame.
      * @param duration
-     * @returns {cc.Action}
+     * @returns {cc.FadeTo}
      */
     getAction: function (duration) {
         var action = cc.FadeTo.create(duration, this._opacity);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
         return this._getEasingAction(action);
     }
 });
@@ -440,10 +444,11 @@ ccs.ActionTintFrame = ccs.ActionFrame.extend(/** @lends ccs.ActionTintFrame# */{
     /**
      * Gets the action of ActionFrame.
      * @param duration
-     * @returns {cc.Action}
+     * @returns {cc.TintTo}
      */
     getAction: function (duration) {
         var action = cc.TintTo.create(duration, this._color.r, this._color.g, this._color.b);
+        action.easingType = this.easingType || ccs.FrameEaseType.Linear;
         return this._getEasingAction(action);
     }
 });
