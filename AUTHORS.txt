@@ -114,6 +114,7 @@ XiaoJun Zheng        @SmallAiTT    _getResType error fix
                                    add node.js scripts for publishing game
                                    refactor cc.CCBReader
                                    cc.view bug fix
+                                   multiple property object supports in extend function
 
 Guozhu Cheng         @bengol       cc.SimpleAudioEngine bug fix
 
