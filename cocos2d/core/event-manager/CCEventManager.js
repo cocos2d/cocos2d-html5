@@ -653,18 +653,15 @@ cc.eventManager = /** @lends cc.eventManager# */{
      *         except calls removeAllListeners().
      */
     addListener: function (listener, nodeOrPriority) {
-
         cc.assert(listener && nodeOrPriority, cc._LogInfos.eventManager_addListener_2);
-
         if(!(listener instanceof cc.EventListener)){
-
             cc.assert(typeof nodeOrPriority !== "number", cc._LogInfos.eventManager_addListener_3);
-
             listener = cc.EventListener.create(listener);
-        } else{
-
-            cc.assert(!listener._isRegistered(), cc._LogInfos.eventManager_addListener_4);
-
+        } else {
+            if(listener._isRegistered()){
+                cc.log(cc._LogInfos.eventManager_addListener_4);
+                return;
+            }
         }
 
         if (!listener.checkAvailable())
